@@ -1,5 +1,5 @@
-# Disciple Tools Android App
-The code base for the Android OS for the Disciple Tools mobile app.
+# Disciple Tools Mobile App
+The React Native code base for the Disciple Tools mobile app.
 
 ## Team
 * [Mobile App Team](https://github.com/orgs/DiscipleTools/teams/mobile-app-lead-team)
