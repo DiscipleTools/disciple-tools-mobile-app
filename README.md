@@ -21,6 +21,7 @@ Currently pure React Native, can be 'ejected' to integrate native code when the 
 To try out the app without setting up the development environment, download the "expo" app on iOS or Android:
 
 [Expo Client (iOS)](https://itunes.apple.com/us/app/expo-client/id982107779?mt=8)
-[Expo Client (Google)](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US)
+
+[Expo Client (Android)](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US)
 
 Then open the url https://exp.host/@joswin/DiscipleToolsApp to view within the expo app.
