@@ -1,17 +1,22 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, Text, FlatList, TouchableHighlight } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
+import DataStore from '../bus/DataStore';
+import Colors from '../constants/Colors';
 
 export default class ContactsScreen extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
-      contactData: [ {name: 'Zohour', key: 'item1', location: 'Amman, Jordan'},
-                      {name: 'Ravi', key: 'item2', location: 'Cairo, Egypt'},
-                      {name: 'Saladin', key: 'item3', location: 'Beirut, Lebanon'},
-                 ],
+      contactData: [],
+      errorMsg: "",
     }
+
+    this.token = "";
+    this.username = "xxxx";
+    this.password = "123456";
   }
 
   static navigationOptions = {
@@ -27,6 +32,46 @@ export default class ContactsScreen extends React.Component {
           backgroundColor: "#dddddd",
         }}
       />
+    );
+  }
+
+  async componentDidMount() {
+
+    //get contacts
+    var success = await this.getToken();
+    if (success) { 
+        this.fetchContacts();
+    }
+
+  }
+
+  async getToken() {
+    console.log('getting token...');
+
+    var token = "";
+    try {
+      token = await DataStore.getTokenAsync({
+          username: this.username,
+          password: this.password
+      });
+    } catch (error) {
+      console.log(error);
+      this.setState({errorMsg: error.toString()});
+      return false;
+    }
+
+    console.log('token is: '+token);
+    this.token = token;
+  }
+
+  fetchContacts() {
+    console.log('fetching contacts...');
+
+    DataStore.getAllContactsAsync(this.state.token)
+    .then(result => {
+      this.setState({contactData: result})
+      console.log('contacts is: '+result)
+      }
     );
   }
 
@@ -47,11 +92,17 @@ export default class ContactsScreen extends React.Component {
 
   render() {
     return (
+      <View>
+    { !!!this.state.errorMsg ? 
       <FlatList
           ItemSeparatorComponent = {this.FlatListItemSeparator}
           data={this.state.contactData}
           renderItem={({item, separators}) => this.renderRow(item, separators)}
       />
+      :
+      <Text style={styles.errorText} > {this.state.errorMsg} </Text>
+    }
+    </View>
     );
   }
 
@@ -73,5 +124,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
     padding: 10,
+  },
+  errorText: {
+    textAlign: 'center',
+    height:100,
+    padding: 20,
+    color: 'rgba(0,0,0,0.4)',
   }
 });
