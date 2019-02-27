@@ -62,12 +62,13 @@ export default class ContactsScreen extends React.Component {
 
     console.log('token is: '+token);
     this.token = token;
+    return true;
   }
 
   fetchContacts() {
     console.log('fetching contacts...');
 
-    DataStore.getAllContactsAsync(this.state.token)
+    DataStore.getAllContactsAsync(this.token)
     .then(result => {
       this.setState({contactData: result})
       console.log('contacts is: '+result)
@@ -75,18 +76,45 @@ export default class ContactsScreen extends React.Component {
     );
   }
 
-  renderRow(item, separators) {
+  renderRow(contact, separators) {
     return ( 
       <TouchableHighlight
-        onPress={() => this.onSelectItem(item)}
+        onPress={() => this.onSelectItem(contact)}
         onShowUnderlay={separators.highlight}
         onHideUnderlay={separators.unhighlight}
         style={styles.contactContainer}>
         <View style={styles.contactItem}>
-          <Text style={{fontWeight: 'bold'}}>{item.name}</Text>
-          <Text style={{fontWeight: '200'}}>{item.location}</Text>
+          <Text style={{fontWeight: 'bold'}}>{contact.name}</Text>
+          { this.makeSubtitle(contact) }
         </View>
       </TouchableHighlight>
+    );
+  }
+
+  makeSubtitle(contact) {
+        // + 
+        // " • "+contact.faithMilestones+ 
+        // " • "+contact.assignedTo+ 
+        // " • "+contact.locations}</Text>
+    return (
+      <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+        <Text style={styles.contactSubtitle}>{contact.status}</Text>
+        { !!contact.status && 
+          <Text style={styles.contactSubtitle}>{" • "+contact.status}</Text>
+        }
+        { !!contact.seekerPath && 
+          <Text style={styles.contactSubtitle}>{" • "+contact.seekerPath}</Text>
+        }
+        { !!contact.faithMilestones && 
+          <Text style={styles.contactSubtitle}>{" • "+contact.faithMilestones}</Text>
+        }
+        { !!contact.assignedTo && 
+          <Text style={styles.contactSubtitle}>{" • "+contact.assignedTo}</Text>
+        }
+        { contact.locations.length>1 && 
+          <Text style={styles.contactSubtitle}>{" • "+contact.locations}</Text>
+        }
+      </View>
     );
   }
 
@@ -120,10 +148,15 @@ const styles = StyleSheet.create({
   contactContainer: {
   },
   contactItem: {
-    height: 60,
+    height: 90,
     justifyContent: 'center',
     backgroundColor: 'white',
-    padding: 10,
+    padding: 20,
+  },
+  contactSubtitle: {
+    paddingTop:6,
+    fontWeight: "200",
+    color: 'rgba(0,0,0,0.6)',
   },
   errorText: {
     textAlign: 'center',

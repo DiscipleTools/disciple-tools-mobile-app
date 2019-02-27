@@ -24,14 +24,13 @@ export default class DataStore {
         //get response
         const dataJson = await response.json();
 
-        //check status
-        const status = dataJson["status"];
-        if (status!=200) {
+        //check response
+        const token = dataJson["token"];
+        if (!token) {
             var msg = dataJson["message"];
             console.log('Error getting token: '+msg);
             throw new Error(msg)
         }
-        const token = dataJson["token"];
 
         return token;
     }
@@ -45,24 +44,36 @@ export default class DataStore {
             }
         });
 
+        //get response
         const dataJson = await response.json();
         const contacts = [];
 
+        //check response
         contactsArray = dataJson["contacts"];
-        contactsArray.forEach(contactJson => {
-            contacts.push({
-                key: contactJson["ID"],
-                name: contactJson["post_title"],
-                status: contactJson["overall_status"],
-                seekerPath: contactJson["seeker_path"],
-                faithMilestones: contactJson["milestones"],
-                assignedTo: contactJson["assigned_to"]["name"],
-                locations: contactJson["locations"],
-                groups: contactJson["groups"] 
-            });
-        });
+        if (!contactsArray) {
 
-        return contacts;
-}
+            var msg = dataJson["message"];
+            console.log('Error getting contacts: '+msg);
+            throw new Error(msg)
+
+        } else {
+
+            contactsArray.forEach(contactJson => {
+                contacts.push({
+                    key: contactJson["ID"].toString(),
+                    name: contactJson["post_title"],
+                    status: contactJson["overall_status"],
+                    seekerPath: contactJson["seeker_path"],
+                    faithMilestones: contactJson["milestones"],
+                    assignedTo: contactJson["assigned_to"]["name"],
+                    locations: contactJson["locations"],
+                    groups: contactJson["groups"] 
+                });
+            });
+
+            return contacts;
+        }
+
+    }
 
 }
