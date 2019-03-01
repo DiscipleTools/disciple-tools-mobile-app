@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { createStackNavigator, createSwitchNavigator,  createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
@@ -9,10 +9,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 
 import Colors from '../constants/Colors';
 
-const HomeStack = createStackNavigator({
-  Home: HomeScreen,
-});
-
+const HomeStack = createStackNavigator({ Home: HomeScreen, });
 HomeStack.navigationOptions = {
   tabBarLabel: 'Home',
   tabBarIcon: ({ focused }) => (
@@ -55,6 +52,7 @@ SettingsStack.navigationOptions = {
   ),
   tabBarOptions: { activeTintColor:Colors.tabIconSelected },
 };
+
 
 export default createBottomTabNavigator({
   HomeStack,

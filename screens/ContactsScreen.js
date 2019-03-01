@@ -15,8 +15,8 @@ export default class ContactsScreen extends React.Component {
     }
 
     this.token = "";
-    this.username = "xxxx";
-    this.password = "123456";
+    this.username = "oswin.oswald@post.com";
+    this.password = "demopswd556";
   }
 
   static navigationOptions = {
