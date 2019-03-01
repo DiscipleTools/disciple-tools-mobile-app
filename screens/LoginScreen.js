@@ -1,7 +1,8 @@
 import React from 'react';
 import { ScrollView, View, 
 	Text, Button, AsyncStorage, TextInput, 
-  	StyleSheet, Image, TouchableOpacity } from 'react-native';
+  	StyleSheet, Image, TouchableOpacity, 
+    Keyboard, ActivityIndicator } from 'react-native';
 import DataStore from '../bus/DataStore';
 import Colors from '../constants/Colors';
 
@@ -18,7 +19,10 @@ export default class LoginScreen extends React.Component {
     this.state = {
   		username: '',
   		password: '',
+      errorMsg: '',
+      isLoading: false,
     }
+
   }
 
   componentDidMount() {
@@ -42,6 +46,7 @@ export default class LoginScreen extends React.Component {
 
   }
 
+  //TODO: How to disable iCloud save password feature?
   render() {
     return (
       <View style={styles.container}>
@@ -56,37 +61,99 @@ export default class LoginScreen extends React.Component {
 	        onChangeText={(text) => this.setState({username: text})}
           placeholder="username"
           placeholderTextColor= { opaqueGrey }
+          autoCorrect = {false}
 	        value={this.state.username}
+          returnKeyType='next'
+          textContentType='emailAddress'
+          disabled={this.state.isLoading}
 	    />
 	    <TextInput
         	style={styles.inputBox}
         	onChangeText={(text) => this.setState({password: text})}
           placeholder="password"
           placeholderTextColor= { opaqueGrey }
+          autoCorrect = {false}
+          secureTextEntry = {true}
         	value={this.state.password}
+          returnKeyType='go'
+          selectTextOnFocus = {true}
+          onSubmitEditing={this._signInAsync}
+          blurOnSubmit={true}
+          textContentType='none'
+          disabled={this.state.isLoading}
       	/>
-        <TouchableOpacity style = {styles.signInButton} onPress={this._signInAsync}> 
-           <Text style = {{color: Colors.tintColor}}>
-               Log In
-           </Text>
-        </TouchableOpacity >
-        <TouchableOpacity style = {styles.forgotButton} onPress={this._goToForgotPassword}> 
-           <Text style = {{color: opaqueGrey }}>
-               Forgot password?
-           </Text>
-        </TouchableOpacity >
-      </View>
+
+        {
+          !!!this.state.isLoading &&
+          <TouchableOpacity style = {styles.signInButton} onPress={this._signInAsync}> 
+             <Text style = {{color: Colors.tintColor}}>
+                 Log In
+             </Text>
+          </TouchableOpacity >
+        }
+
+        { !!this.state.errorMsg &&
+          <Text style= {{color: Colors.warningText, marginLeft: 10, marginRight: 10}}> {this.state.errorMsg} </Text>
+        }
+
+        {
+          !!!this.state.isLoading &&
+          <TouchableOpacity style = {styles.forgotButton} onPress={this._goToForgotPassword} disabled={this.state.isLoading}> 
+            <Text style = {{color: opaqueGrey }}> 
+                Forgot password?
+            </Text>
+          </TouchableOpacity >
+        }
+        {
+          !!this.state.isLoading &&
+            <ActivityIndicator style={{margin:20}} size='small' />
+        }
+
+        </View>
+
     );
   }
 
   _signInAsync = async () => {
+    Keyboard.dismiss();
+    this.setState({errorMsg: '', isLoading: true});
+
     await AsyncStorage.setItem('@KeyStore:username', this.state.username);
-    await AsyncStorage.setItem('@KeyStore:password', this.state.password);
-    this.props.navigation.navigate('Home');
+    token = await this._getToken(this.state.username, this.state.password);
+
+
+    if (token) {
+      await AsyncStorage.setItem('@KeyStore:token', token);
+      this.props.navigation.navigate('Home');
+    } else {
+      this.setState({isLoading: false});
+    }
+
+
   };
 
   _goToForgotPassword() {
     console.log('forgot password');
+  }
+
+
+  _getToken = async (username, password) => {
+    console.log('getting token...');
+
+    var token = "";
+    try {
+      token = await DataStore.getTokenAsync({
+          username: username,
+          password: password
+      });
+    } catch (error) {
+      console.log(error);
+      this.setState({errorMsg: error.toString()});
+      return;
+    }
+
+    console.log('token is: '+token);
+    return token;
   }
 }
 
@@ -128,5 +195,14 @@ const styles = StyleSheet.create({
     padding: 12,
     marginLeft: 20,
     marginRight: 20,
+  },
+  loading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
