@@ -1,12 +1,34 @@
+import { AsyncStorage } from 'react-native';
+
 export default class DataStore {
-    static base_url = 'https://dtappdemo.wpengine.com';
+    // static base_url = 'https://dtappdemo.wpengine.com';
+    static domain = '';
+
+    static async setBaseUrl(domain) {
+        DataStore.domain = domain;
+
+        await AsyncStorage.setItem('@KeyStore:domain', domain);
+    }
+
+    static async _getBaseDomain() {
+
+        if (!DataStore.domain) {
+            //Read from storage
+            DataStore.domain = await AsyncStorage.getItem('@KeyStore:domain');
+        }
+
+        return DataStore.domain;
+    }
 
     static async getTokenAsync(config) {
 
         //Post for token
         let response;
         try {
-            response = await fetch(DataStore.base_url + "/wp-json/jwt-auth/v1/token", {
+
+            const domain = await this._getBaseDomain();
+
+            response = await fetch('https://' + domain + "/wp-json/jwt-auth/v1/token", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -36,7 +58,10 @@ export default class DataStore {
     }
 
     static async getAllContactsAsync(authToken) {
-        const response = await fetch(DataStore.base_url + "/wp-json/dt/v1/contacts", {
+        const domain = await this._getBaseDomain();
+        console.log('domain: '+domain);
+
+        const response = await fetch('https://' + domain + "/wp-json/dt/v1/contacts", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

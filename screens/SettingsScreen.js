@@ -8,6 +8,7 @@ export default class SettingsScreen extends React.Component {
 
     this.state = {
       username: '',
+      domain: '',
     }
   }
 
@@ -18,6 +19,7 @@ export default class SettingsScreen extends React.Component {
 
   componentDidMount() {
     AsyncStorage.getItem('@KeyStore:username').then(username => this.setState({username:username}));
+    AsyncStorage.getItem('@KeyStore:domain').then(domain => this.setState({domain:domain}));
   }
 
   render() {
@@ -25,6 +27,7 @@ export default class SettingsScreen extends React.Component {
      * content, we just wanted to give you a quick view of your config */
     return (
 	    <View style={{flex:1, justifyContent: 'center', alignItems:'center'}}> 
+        <Text style={{margin:20, color: 'rgba(0,0,0,0.4)'}}> {'Domain: '+this.state.domain} </Text>
         <Text style={{margin:20, color: 'rgba(0,0,0,0.4)'}}> {'Signed in as: '+this.state.username} </Text>
         <Button style={{padding: 50}} title="Sign out" onPress={this._signOutAsync} />
 	    </View>
@@ -32,7 +35,7 @@ export default class SettingsScreen extends React.Component {
   }
 
   _signOutAsync = async () => {
-    await AsyncStorage.removeItem("@KeyStore:password");
+    await AsyncStorage.removeItem("@KeyStore:token");
     this.props.navigation.navigate('Auth');
   };
 }

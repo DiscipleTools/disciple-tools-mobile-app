@@ -21,6 +21,7 @@ export default class LoginScreen extends React.Component {
   		password: '',
       errorMsg: '',
       isLoading: false,
+      domain: '',
     }
 
   }
@@ -32,14 +33,10 @@ export default class LoginScreen extends React.Component {
   _getStoredValues = async () => {
     console.log('getting stored values...');
 	try {
-		const username = await AsyncStorage.getItem('@KeyStore:username');
-		if (username !== null) {
-		  	// We have data!!
-		  	console.log("username "+ username);
-			this.setState({username: username});
-		}
+		await AsyncStorage.getItem('@KeyStore:username').then(username => this.setState({username: username}));
+    await AsyncStorage.getItem('@KeyStore:domain').then(domain => this.setState({domain: domain}));
 	} catch (error) {
-		console.log("error getting username: "+error);
+		console.log("error getting username or domain: "+error);
 		// Error retrieving data
 	}
 
@@ -54,6 +51,18 @@ export default class LoginScreen extends React.Component {
       <Image
         source={require('../assets/images/dt-logo2.png')}
         style={styles.welcomeImage}
+      />
+
+      <TextInput
+          style={styles.inputBox}
+          onChangeText={(text) => this.setState({domain: text})}
+          placeholder="domain"
+          placeholderTextColor= { opaqueGrey }
+          autoCorrect = {false}
+          value={this.state.domain}
+          returnKeyType='next'
+          textContentType='URL'
+          disabled={this.state.isLoading}
       />
 
 	    <TextInput
@@ -119,7 +128,8 @@ export default class LoginScreen extends React.Component {
     this.setState({errorMsg: '', isLoading: true});
 
     await AsyncStorage.setItem('@KeyStore:username', this.state.username);
-    token = await this._getToken(this.state.username, this.state.password);
+    await AsyncStorage.setItem('@KeyStore:domain', this.state.domain);
+    token = await this._getToken(this.state.domain, this.state.username, this.state.password);
 
 
     if (token) {
@@ -137,11 +147,12 @@ export default class LoginScreen extends React.Component {
   }
 
 
-  _getToken = async (username, password) => {
+  _getToken = async (domain, username, password) => {
     console.log('getting token...');
 
     var token = "";
     try {
+      await DataStore.setBaseUrl(domain);
       token = await DataStore.getTokenAsync({
           username: username,
           password: password
