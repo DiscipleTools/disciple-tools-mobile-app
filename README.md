@@ -13,7 +13,10 @@ The React Native code base for the Disciple Tools mobile app.
 ## Installation (Development)
 * [Set up React Native (expo)](https://facebook.github.io/react-native/docs/getting-started)
 
-`npm start`
+```
+npm install
+npm start
+```
 
 Currently pure React Native, can be 'ejected' to integrate native code when the need arises.
 

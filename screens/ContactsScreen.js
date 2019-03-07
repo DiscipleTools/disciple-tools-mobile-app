@@ -2,7 +2,6 @@ import React from 'react';
 import { ScrollView, StyleSheet, View, Text, 
   FlatList, TouchableHighlight, AsyncStorage,
   ActivityIndicator } from 'react-native';
-import { ExpoLinksView } from '@expo/samples';
 import DataStore from '../bus/DataStore';
 import Colors from '../constants/Colors';
 
