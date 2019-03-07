@@ -3,18 +3,24 @@ import {
   ActivityIndicator,
   AsyncStorage,
   StatusBar,
-  StyleSheet,
   View,
 } from 'react-native';
+import PropTypes from 'prop-types';
 
-export default class AuthLoadingScreen extends React.Component {
+const propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
+class AuthLoadingScreen extends React.Component {
   constructor(props) {
     super(props);
-    this._bootstrapAsync();
+    this.bootstrapAsync();
   }
 
   // Fetch the token from storage then navigate to our appropriate place
-  _bootstrapAsync = async () => {
+  bootstrapAsync = async () => {
     const userToken = await AsyncStorage.getItem('@KeyStore:token');
 
     // This will switch to the App screen or Auth screen and this loading
@@ -32,3 +38,6 @@ export default class AuthLoadingScreen extends React.Component {
     );
   }
 }
+
+AuthLoadingScreen.propTypes = propTypes;
+export default AuthLoadingScreen;

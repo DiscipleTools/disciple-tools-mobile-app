@@ -1,0 +1,20 @@
+{
+  "extends": "airbnb",
+  "env": {
+    "node": true,
+    "browser": true,
+    "es6": true,
+    "jest": true
+  },
+  "globals": {
+    "__DEV__": "writable"
+  },
+  "parser": "babel-eslint",
+  "rules": {
+    "react/destructuring-assignment": 0,
+    "react/jsx-filename-extension": 0,
+    "global-require": 0,
+    "no-plusplus": 0,
+    "no-restricted-syntax": 0
+  }
+}
