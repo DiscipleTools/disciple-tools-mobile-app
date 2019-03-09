@@ -1,8 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {
   View,
   Text,
-  AsyncStorage,
   TextInput,
   StyleSheet,
   Image,
@@ -11,17 +11,10 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import DataStore from '../bus/DataStore';
 import Colors from '../constants/Colors';
+import { login } from '../store/actions/user.actions';
 
 const opaqueGrey = 'rgba(255,255,255,0.4)';
-
-const propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
-};
-
 
 const styles = StyleSheet.create({
   container: {
@@ -81,66 +74,34 @@ class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
 
+    if (props.user && props.user.token) {
+      props.navigation.navigate('Home');
+    }
+
     this.state = {
-      username: '',
+      username: props.user.username || '',
       password: '',
-      errorMsg: '',
-      isLoading: false,
-      domain: '',
+      domain: props.user.domain || '',
     };
   }
 
-  componentDidMount() {
-    this.getStoredValues();
-  }
-
-  getStoredValues = async () => {
-    console.log('getting stored values...');
-    try {
-      await AsyncStorage.getItem('@KeyStore:username').then(username => this.setState({ username }));
-      await AsyncStorage.getItem('@KeyStore:domain').then(domain => this.setState({ domain }));
-    } catch (error) {
-      console.log(`error getting username or domain: ${error}`);
-      // Error retrieving data
+  componentDidUpdate() {
+    if (this.props.user) {
+      if (this.props.user.token) {
+        this.props.navigation.navigate('Home');
+      }
     }
   }
 
-  signInAsync = async () => {
+  onLoginPress = () => {
     Keyboard.dismiss();
-    this.setState({ errorMsg: '', isLoading: true });
-
-    await AsyncStorage.setItem('@KeyStore:username', this.state.username);
-    await AsyncStorage.setItem('@KeyStore:domain', this.state.domain);
-    const token = await this.getToken(this.state.domain, this.state.username, this.state.password);
-
-
-    if (token) {
-      await AsyncStorage.setItem('@KeyStore:token', token);
-      this.props.navigation.navigate('Home');
-    } else {
-      this.setState({ isLoading: false });
-    }
+    const {
+      domain,
+      username,
+      password,
+    } = this.state;
+    this.props.loginDispatch(domain, username, password);
   };
-
-  getToken = async (domain, username, password) => {
-    console.log('getting token...');
-
-    let token = '';
-    try {
-      await DataStore.setBaseUrl(domain);
-      token = await DataStore.getTokenAsync({
-        username,
-        password,
-      });
-    } catch (error) {
-      console.log(error);
-      this.setState({ errorMsg: error.toString() });
-      return null;
-    }
-
-    console.log(`token is: ${token}`);
-    return token;
-  }
 
   /* eslint-disable class-methods-use-this */
   goToForgotPassword() {
@@ -150,6 +111,15 @@ class LoginScreen extends React.Component {
 
   // TODO: How to disable iCloud save password feature?
   render() {
+    const { user } = this.props;
+    let errorMessage;
+    if (user && user.error && user.error.message) {
+      errorMessage = (
+        <Text style={{ color: Colors.warningText, marginLeft: 10, marginRight: 10 }}>
+          {user.error.message}
+        </Text>
+      );
+    }
     return (
       <View style={styles.container}>
 
@@ -167,7 +137,7 @@ class LoginScreen extends React.Component {
           value={this.state.domain}
           returnKeyType="next"
           textContentType="URL"
-          disabled={this.state.isLoading}
+          disabled={user.isLoading}
         />
 
         <TextInput
@@ -179,7 +149,7 @@ class LoginScreen extends React.Component {
           value={this.state.username}
           returnKeyType="next"
           textContentType="emailAddress"
-          disabled={this.state.isLoading}
+          disabled={user.isLoading}
         />
         <TextInput
           style={styles.inputBox}
@@ -194,12 +164,12 @@ class LoginScreen extends React.Component {
           onSubmitEditing={this.signInAsync}
           blurOnSubmit
           textContentType="none"
-          disabled={this.state.isLoading}
+          disabled={user.isLoading}
         />
 
         {
-          !this.state.isLoading && (
-            <TouchableOpacity style={styles.signInButton} onPress={this.signInAsync}>
+          !user.isLoading && (
+            <TouchableOpacity style={styles.signInButton} onPress={this.onLoginPress}>
               <Text style={{ color: Colors.tintColor }}>
                 Log In
               </Text>
@@ -207,19 +177,14 @@ class LoginScreen extends React.Component {
           )
         }
 
-        {!!this.state.errorMsg && (
-          <Text style={{ color: Colors.warningText, marginLeft: 10, marginRight: 10 }}>
-            {this.state.errorMsg}
-          </Text>
-        )
-        }
+        {errorMessage}
 
         {
-          !this.state.isLoading && (
+          !user.isLoading && (
             <TouchableOpacity
               style={styles.forgotButton}
               onPress={this.goToForgotPassword}
-              disabled={this.state.isLoading}
+              disabled={user.isLoading}
             >
               <Text style={{ color: opaqueGrey }}>
                 Forgot password?
@@ -228,15 +193,38 @@ class LoginScreen extends React.Component {
           )
         }
         {
-          !!this.state.isLoading
+          !!user.isLoading
           && <ActivityIndicator style={{ margin: 20 }} size="small" />
         }
-
       </View>
 
     );
   }
 }
 
-LoginScreen.propTypes = propTypes;
-export default LoginScreen;
+LoginScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+  user: PropTypes.shape({
+    domain: PropTypes.string,
+    username: PropTypes.string,
+    token: PropTypes.string,
+    isLoading: PropTypes.bool,
+    error: PropTypes.shape({
+      code: PropTypes.string,
+      message: PropTypes.string,
+    }),
+  }).isRequired,
+  loginDispatch: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => ({
+  user: state.user,
+});
+const mapDispatchToProps = dispatch => ({
+  loginDispatch: (domain, username, password) => {
+    dispatch(login(domain, username, password));
+  },
+});
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

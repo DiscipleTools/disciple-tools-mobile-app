@@ -12,9 +12,16 @@ import {
   Font,
   Icon,
 } from 'expo';
+import { Provider } from 'react-redux';
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
 
 import AppNavigator from './navigation/AppNavigator';
+import store from './store/store';
 
+const persistor = persistStore(store);
+
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -22,6 +29,7 @@ const styles = StyleSheet.create({
   },
 });
 
+// App
 class App extends React.Component {
   state = {
     isLoadingComplete: false,
@@ -52,6 +60,13 @@ class App extends React.Component {
   };
 
   render() {
+    const AppContainer = (
+      <View style={styles.container}>
+        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+        <AppNavigator />
+      </View>
+    );
+
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
         <AppLoading
@@ -63,10 +78,11 @@ class App extends React.Component {
     }
 
     return (
-      <View style={styles.container}>
-        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-        <AppNavigator />
-      </View>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          {AppContainer}
+        </PersistGate>
+      </Provider>
     );
   }
 }

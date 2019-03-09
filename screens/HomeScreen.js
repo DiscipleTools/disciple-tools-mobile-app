@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {
   Image,
   Platform,
@@ -15,6 +16,9 @@ import Colors from '../constants/Colors';
 const propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
+  }).isRequired,
+  user: PropTypes.shape({
+    id: PropTypes.number,
   }).isRequired,
 };
 
@@ -128,11 +132,18 @@ class HomeScreen extends React.Component {
         </Text>
       );
 
+      const debugInfo = (
+        <Text>
+          {JSON.stringify(this.props.user)}
+        </Text>
+      );
+
       return (
         <Text style={styles.developmentModeText}>
           Development mode is enabled, your app will be slower but you can use useful development
           tools.
           {learnMoreButton}
+          {debugInfo}
         </Text>
       );
     }
@@ -165,4 +176,9 @@ class HomeScreen extends React.Component {
 }
 
 HomeScreen.propTypes = propTypes;
-export default HomeScreen;
+// export default HomeScreen;
+const mapStateToProps = state => ({
+  user: state.user,
+});
+
+export default connect(mapStateToProps, null)(HomeScreen);
