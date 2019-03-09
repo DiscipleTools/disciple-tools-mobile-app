@@ -1,22 +1,16 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {
   StyleSheet,
   View,
   Text,
   FlatList,
   TouchableHighlight,
-  AsyncStorage,
   ActivityIndicator,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import DataStore from '../bus/DataStore';
 
-const propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
-};
-
+import { getAll as getAllContacts } from '../store/actions/contacts.actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -84,26 +78,9 @@ class ContactsScreen extends React.Component {
     );
   }
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      contactData: [],
-      errorMsg: '',
-      isLoading: true,
-    };
-
-    this.token = '';
-  }
-
-  async componentDidMount() {
+  componentDidMount() {
     // get contacts
-    this.token = await AsyncStorage.getItem('@KeyStore:token');
-    if (this.token) {
-      this.fetchContacts();
-    } else {
-      console.log('error, no token');
-    }
+    this.props.getContacts(this.props.user.domain, this.props.user.token);
   }
 
   /* eslint-disable class-methods-use-this */
@@ -122,50 +99,39 @@ class ContactsScreen extends React.Component {
     />
   )
 
-  fetchContacts() {
-    console.log('fetching contacts...');
-
-    DataStore.getAllContactsAsync(this.token)
-      .then((result) => {
-        this.setState({ contactData: result, isLoading: false });
-        console.log(`contacts is: ${result}`);
-      });
-  }
-
-  renderRow(contact, separators) {
-    return (
-      <TouchableHighlight
-        onPress={() => this.onSelectItem(contact)}
-        onShowUnderlay={separators.highlight}
-        onHideUnderlay={separators.unhighlight}
-        style={styles.contactContainer}
-      >
-        <View style={styles.contactItem}>
-          <Text style={{ fontWeight: 'bold' }}>{contact.name}</Text>
-          { this.makeSubtitle(contact) }
-        </View>
-      </TouchableHighlight>
-    );
-  }
+  renderRow = (contact, separators) => (
+    <TouchableHighlight
+      onPress={() => this.onSelectItem(contact)}
+      onShowUnderlay={separators.highlight}
+      onHideUnderlay={separators.unhighlight}
+      style={styles.contactContainer}
+      key={contact.key}
+    >
+      <View style={styles.contactItem}>
+        <Text style={{ fontWeight: 'bold' }}>{contact.name}</Text>
+        { ContactsScreen.makeSubtitle(contact) }
+      </View>
+    </TouchableHighlight>
+  )
 
   render() {
     return (
       <View style={styles.container}>
-        { !this.state.errorMsg
+        { !this.props.error
           ? (
             <FlatList
               ItemSeparatorComponent={this.FlatListItemSeparator}
-              data={this.state.contactData}
+              data={this.props.contacts}
               renderItem={({ item, separators }) => this.renderRow(item, separators)}
             />
           )
           : (
             <Text style={styles.errorText}>
-              {this.state.errorMsg}
+              {this.props.error.message}
             </Text>
           )
         }
-        { !!this.state.isLoading
+        { !!this.props.isLoading
           && <ActivityIndicator style={styles.loading} size="small" />
         }
       </View>
@@ -173,5 +139,35 @@ class ContactsScreen extends React.Component {
   }
 }
 
-ContactsScreen.propTypes = propTypes;
-export default ContactsScreen;
+ContactsScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+  user: PropTypes.shape({
+    domain: PropTypes.string,
+    token: PropTypes.string,
+  }).isRequired,
+  contacts: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string,
+  })).isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  error: PropTypes.shape({
+    message: PropTypes.string,
+  }),
+  getContacts: PropTypes.func.isRequired,
+};
+ContactsScreen.defaultProps = {
+  error: null,
+};
+const mapStateToProps = state => ({
+  contacts: state.contacts.items,
+  isLoading: state.contacts.isLoading,
+  error: state.contacts.error,
+  user: state.user,
+});
+const mapDispatchToProps = dispatch => ({
+  getContacts: (domain, token) => {
+    dispatch(getAllContacts(domain, token));
+  },
+});
+export default connect(mapStateToProps, mapDispatchToProps)(ContactsScreen);

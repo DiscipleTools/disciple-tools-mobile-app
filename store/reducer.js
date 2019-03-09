@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
-import * as actions from './actions/user.actions';
+import * as userActions from './actions/user.actions';
+import * as contactsActions from './actions/contacts.actions';
 
 const initialState = {
   user: {
@@ -11,27 +12,20 @@ const initialState = {
     error: null,
   },
   contacts: {
+    isLoading: false,
+    error: null,
     items: [],
   },
 };
 
-/* function createReducer(initialState, handlers) {
-  return function reducer(state = initialState, action) {
-    if (handlers.hasOwnProperty(action.type)) {
-      return handlers[action.type](state, action);
-    }
-    return state;
-  };
-} */
-
 function user(state = initialState.user, action) {
   switch (action.type) {
-    case actions.USER_LOGIN_START:
+    case userActions.USER_LOGIN_START:
       return Object.assign({}, state, {
         isLoading: true,
         error: null,
       });
-    case actions.USER_LOGIN_SUCCESS:
+    case userActions.USER_LOGIN_SUCCESS:
       return Object.assign({}, state, {
         isLoading: false,
         domain: action.domain,
@@ -40,12 +34,12 @@ function user(state = initialState.user, action) {
         displayName: action.user.user_display_name,
         email: action.user.user_email,
       });
-    case actions.USER_LOGIN_FAILURE:
+    case userActions.USER_LOGIN_FAILURE:
       return Object.assign({}, state, {
         isLoading: false,
         error: action.error,
       });
-    case actions.USER_LOGOUT:
+    case userActions.USER_LOGOUT:
       return Object.assign({}, state, {
         token: null,
       });
@@ -54,24 +48,30 @@ function user(state = initialState.user, action) {
   }
 }
 
-/* function requestContacts(state, action) {
-  return Object.assign({}, state, {
-    isFetching: true,
-  });
+function contacts(state = initialState.contacts, action) {
+  switch (action.type) {
+    case contactsActions.CONTACTS_GETALL_START:
+      return Object.assign({}, state, {
+        isLoading: true,
+        error: null,
+      });
+    case contactsActions.CONTACTS_GETALL_SUCCESS:
+      return Object.assign({}, state, {
+        isLoading: false,
+        items: action.contacts,
+      });
+    case contactsActions.CONTACTS_GETALL_FAILURE:
+      return Object.assign({}, state, {
+        isLoading: false,
+        error: action.error,
+      });
+    default:
+      return state;
+  }
 }
-function setContacts(state, action) {
-  return Object.assign({}, state, {
-    isFetching: false,
-    items: action.contacts,
-  });
-}
-const contactsReducer = createReducer([], {
-  [REQUEST_CONTACTS]: requestContacts,
-  [RECEIVE_CONTACTS]: setContacts,
-}); */
 
 const reducers = combineReducers({
-  // contacts: contactsReducer,
+  contacts,
   user,
 });
 

@@ -22,20 +22,3 @@ export function login(domain, username, password) {
 export function logout() {
   return { type: USER_LOGOUT };
 }
-
-/* export function getContacts() {
-  return function (dispatch, getState) {
-    const state = getState();
-    dispatch(requestContacts());
-
-    const url = `${state.user.baseUrl}/wp-json/dt/v1/contacts`;
-    return fetch(url)
-      .then(
-        response => response.json(),
-        error => console.log('Error fetching contacts', error),
-      )
-      .then((json) => {
-        dispatch(receiveContacts(json));
-      });
-  };
-} */
