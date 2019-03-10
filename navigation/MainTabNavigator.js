@@ -38,7 +38,7 @@ function ContactsIcon({ focused }) {
   return (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-contact' : 'md-perm-contact-cal'}
+      name={Platform.OS === 'ios' ? 'ios-contacts' : 'md-contacts'}
     />
   );
 }
