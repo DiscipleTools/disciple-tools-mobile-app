@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   Image,
   TouchableOpacity,
@@ -11,42 +10,47 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import {
+  Button, Form, Item, Icon, Input, Label,
+} from 'native-base';
+
 import Colors from '../constants/Colors';
 import { login } from '../store/actions/user.actions';
-
-const opaqueGrey = 'rgba(255,255,255,0.4)';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.tintColor,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+  },
+  header: {
+    backgroundColor: Colors.tintColor,
+    width: '100%',
+    paddingTop: 100,
+    // flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   welcomeImage: {
     height: 60,
-    width: 200,
+    width: 250,
     resizeMode: 'contain',
     padding: 20,
   },
-  inputBox: {
-    alignSelf: 'stretch',
-    height: 40,
-    marginTop: 20,
-    marginLeft: 20,
-    marginRight: 20,
-    padding: 8,
-    borderColor: 'rgba(255,255,255,0.4)',
-    borderBottomWidth: 1,
-    color: 'white',
+  formContainer: {
+    width: '100%',
+    padding: 20,
+  },
+  formField: {
+    marginLeft: 0,
   },
   signInButton: {
-    alignSelf: 'stretch',
-    alignItems: 'center',
-    padding: 12,
-    margin: 20,
-    backgroundColor: 'white',
+    marginTop: 20,
+    backgroundColor: Colors.tintColor,
     borderRadius: 2,
+  },
+  signInButtonText: {
+    color: 'white',
   },
   forgotButton: {
     alignSelf: 'stretch',
@@ -54,6 +58,9 @@ const styles = StyleSheet.create({
     padding: 12,
     marginLeft: 20,
     marginRight: 20,
+  },
+  forgotButtonText: {
+    color: Colors.tintColor,
   },
   loading: {
     position: 'absolute',
@@ -123,59 +130,73 @@ class LoginScreen extends React.Component {
     return (
       <View style={styles.container}>
 
-        <Image
-          source={require('../assets/images/dt-logo2.png')}
-          style={styles.welcomeImage}
-        />
+        <View style={styles.header}>
+          <Image
+            source={require('../assets/images/dt-logo2.png')}
+            style={styles.welcomeImage}
+          />
+        </View>
 
-        <TextInput
-          style={styles.inputBox}
-          onChangeText={text => this.setState({ domain: text })}
-          placeholder="domain"
-          placeholderTextColor={opaqueGrey}
-          autoCorrect={false}
-          value={this.state.domain}
-          returnKeyType="next"
-          textContentType="URL"
-          disabled={user.isLoading}
-        />
+        <Form style={styles.formContainer}>
+          <Item floatingLabel style={styles.formField}>
+            <Icon active name="globe" />
+            <Label>URL</Label>
+            <Input
+              style={styles.input}
+              onChangeText={text => this.setState({ domain: text })}
+              autoCapitalize="none"
+              autoCorrect={false}
+              value={this.state.domain}
+              returnKeyType="next"
+              textContentType="URL"
+              disabled={user.isLoading}
+            />
+          </Item>
 
-        <TextInput
-          style={styles.inputBox}
-          onChangeText={text => this.setState({ username: text })}
-          placeholder="username"
-          placeholderTextColor={opaqueGrey}
-          autoCorrect={false}
-          value={this.state.username}
-          returnKeyType="next"
-          textContentType="emailAddress"
-          disabled={user.isLoading}
-        />
-        <TextInput
-          style={styles.inputBox}
-          onChangeText={text => this.setState({ password: text })}
-          placeholder="password"
-          placeholderTextColor={opaqueGrey}
-          autoCorrect={false}
-          secureTextEntry
-          value={this.state.password}
-          returnKeyType="go"
-          selectTextOnFocus
-          onSubmitEditing={this.signInAsync}
-          blurOnSubmit
-          textContentType="none"
-          disabled={user.isLoading}
-        />
+          <Item floatingLabel style={styles.formField}>
+            <Icon active name="person" />
+            <Label>Username</Label>
+            <Input
+              style={styles.input}
+              onChangeText={text => this.setState({ username: text })}
+              autoCapitalize="none"
+              autoCorrect={false}
+              value={this.state.username}
+              returnKeyType="next"
+              textContentType="emailAddress"
+              disabled={user.isLoading}
+            />
+          </Item>
 
-        {
-          !user.isLoading && (
-            <TouchableOpacity style={styles.signInButton} onPress={this.onLoginPress}>
-              <Text style={{ color: Colors.tintColor }}>
-                Log In
-              </Text>
-            </TouchableOpacity>
-          )
-        }
+          <Item floatingLabel style={styles.formField}>
+            <Icon active name="key" />
+            <Label>Password</Label>
+            <Input
+              style={styles.input}
+              onChangeText={text => this.setState({ password: text })}
+              autoCapitalize="none"
+              autoCorrect={false}
+              secureTextEntry
+              value={this.state.password}
+              returnKeyType="go"
+              selectTextOnFocus
+              onSubmitEditing={this.signInAsync}
+              blurOnSubmit
+              textContentType="password"
+              disabled={user.isLoading}
+            />
+          </Item>
+
+          {
+            !user.isLoading && (
+              <Button style={styles.signInButton} onPress={this.onLoginPress} block>
+                <Text style={styles.signInButtonText}>
+                  Log In
+                </Text>
+              </Button>
+            )
+          }
+        </Form>
 
         {errorMessage}
 
@@ -186,8 +207,8 @@ class LoginScreen extends React.Component {
               onPress={this.goToForgotPassword}
               disabled={user.isLoading}
             >
-              <Text style={{ color: opaqueGrey }}>
-                Forgot password?
+              <Text style={styles.forgotButtonText}>
+                Lost your password?
               </Text>
             </TouchableOpacity>
           )
