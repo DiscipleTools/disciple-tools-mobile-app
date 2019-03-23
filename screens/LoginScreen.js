@@ -8,27 +8,27 @@ import {
   TouchableOpacity,
   Keyboard,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import {
-  Button, Form, Item, Icon, Input, Label,
-} from 'native-base';
+import { Button } from 'native-base';
 
 import i18n from '../languages';
 import Colors from '../constants/Colors';
-import { login } from '../store/actions/user.actions';
+import { login, clearError } from '../store/actions/user.actions';
+import TextField from '../components/TextField';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-start',
+    backgroundColor: Colors.canvas,
   },
   header: {
     backgroundColor: Colors.tintColor,
     width: '100%',
     paddingTop: 100,
-    // flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
@@ -39,11 +39,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   formContainer: {
-    width: '100%',
+    alignSelf: 'stretch',
+    flexGrow: 1,
     padding: 20,
-  },
-  formField: {
-    marginLeft: 0,
   },
   signInButton: {
     marginTop: 20,
@@ -72,6 +70,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  textField: {
+    backgroundColor: '#ffffff',
+  },
 });
 
 class LoginScreen extends React.Component {
@@ -91,6 +92,10 @@ class LoginScreen extends React.Component {
       password: '',
       domain: props.user.domain || '',
     };
+  }
+
+  componentDidMount() {
+    this.props.clearError();
   }
 
   componentDidUpdate() {
@@ -138,55 +143,50 @@ class LoginScreen extends React.Component {
           />
         </View>
 
-        <Form style={styles.formContainer}>
-          <Item floatingLabel style={styles.formField}>
-            <Icon active name="globe" />
-            <Label>{i18n.t('login.domain.label')}</Label>
-            <Input
-              style={styles.input}
-              onChangeText={text => this.setState({ domain: text })}
-              autoCapitalize="none"
-              autoCorrect={false}
-              value={this.state.domain}
-              returnKeyType="next"
-              textContentType="URL"
-              disabled={user.isLoading}
-            />
-          </Item>
+        <View style={styles.formContainer}>
+          <TextField
+            containerStyle={styles.textField}
+            iconName="ios-globe"
+            label={i18n.t('login.domain.label')}
+            onChangeText={text => this.setState({ domain: text })}
+            autoCapitalize="none"
+            autoCorrect={false}
+            value={this.state.domain}
+            returnKeyType="next"
+            textContentType="URL"
+            disabled={user.isLoading}
+            placeholder={i18n.t('login.domain.placeholder')}
+          />
 
-          <Item floatingLabel style={styles.formField}>
-            <Icon active name="person" />
-            <Label>{i18n.t('login.username.label')}</Label>
-            <Input
-              style={styles.input}
-              onChangeText={text => this.setState({ username: text })}
-              autoCapitalize="none"
-              autoCorrect={false}
-              value={this.state.username}
-              returnKeyType="next"
-              textContentType="emailAddress"
-              disabled={user.isLoading}
-            />
-          </Item>
+          <TextField
+            containerStyle={styles.textField}
+            iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
+            label={i18n.t('login.username.label')}
+            onChangeText={text => this.setState({ username: text })}
+            autoCapitalize="none"
+            autoCorrect={false}
+            value={this.state.username}
+            returnKeyType="next"
+            textContentType="emailAddress"
+            disabled={user.isLoading}
+          />
 
-          <Item floatingLabel style={styles.formField}>
-            <Icon active name="key" />
-            <Label>{i18n.t('login.password.label')}</Label>
-            <Input
-              style={styles.input}
-              onChangeText={text => this.setState({ password: text })}
-              autoCapitalize="none"
-              autoCorrect={false}
-              secureTextEntry
-              value={this.state.password}
-              returnKeyType="go"
-              selectTextOnFocus
-              onSubmitEditing={this.signInAsync}
-              blurOnSubmit
-              textContentType="password"
-              disabled={user.isLoading}
-            />
-          </Item>
+          <TextField
+            containerStyle={styles.textField}
+            iconName={Platform.OS === 'ios' ? 'ios-key' : 'md-key'}
+            label={i18n.t('login.password.label')}
+            onChangeText={text => this.setState({ password: text })}
+            autoCapitalize="none"
+            autoCorrect={false}
+            secureTextEntry
+            value={this.state.password}
+            returnKeyType="go"
+            selectTextOnFocus
+            onSubmitEditing={this.signInAsync}
+            blurOnSubmit
+            textContentType="password"
+            disabled={user.isLoading}
+          />
 
           {
             !user.isLoading && (
@@ -197,27 +197,27 @@ class LoginScreen extends React.Component {
               </Button>
             )
           }
-        </Form>
 
-        {errorMessage}
+          {errorMessage}
 
-        {
-          !user.isLoading && (
-            <TouchableOpacity
-              style={styles.forgotButton}
-              onPress={this.goToForgotPassword}
-              disabled={user.isLoading}
-            >
-              <Text style={styles.forgotButtonText}>
-                {i18n.t('login.forgotPassword')}
-              </Text>
-            </TouchableOpacity>
-          )
-        }
-        {
-          !!user.isLoading
-          && <ActivityIndicator style={{ margin: 20 }} size="small" />
-        }
+          {
+            !user.isLoading && (
+              <TouchableOpacity
+                style={styles.forgotButton}
+                onPress={this.goToForgotPassword}
+                disabled={user.isLoading}
+              >
+                <Text style={styles.forgotButtonText}>
+                  {i18n.t('login.forgotPassword')}
+                </Text>
+              </TouchableOpacity>
+            )
+          }
+          {
+            !!user.isLoading
+            && <ActivityIndicator style={{ margin: 20 }} size="small" />
+          }
+        </View>
       </View>
 
     );
@@ -239,6 +239,7 @@ LoginScreen.propTypes = {
     }),
   }).isRequired,
   loginDispatch: PropTypes.func.isRequired,
+  clearError: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -247,6 +248,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   loginDispatch: (domain, username, password) => {
     dispatch(login(domain, username, password));
+  },
+  clearError: () => {
+    dispatch(clearError());
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

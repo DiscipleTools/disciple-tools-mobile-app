@@ -43,6 +43,10 @@ function user(state = initialState.user, action) {
       return Object.assign({}, state, {
         token: null,
       });
+    case userActions.USER_CLEAR_ERROR:
+      return Object.assign({}, state, {
+        error: null,
+      });
     default:
       return state;
   }
