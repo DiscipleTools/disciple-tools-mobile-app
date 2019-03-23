@@ -1,0 +1,16 @@
+{
+  "login": {
+    "domain": {
+      "label": "اسم نطاق أدوات التلمذة",
+      "placeholder": "مثلاً: myteam.disciple.tools"
+    },
+    "username": {
+      "label": "اسم المستخدم"
+    },
+    "password": {
+      "label": "كلمة المرور"
+    },
+    "login": "تسجيل الدخول",
+    "forgotPassword": "فقدت كلمة المرور الخاصة بك؟"
+  }
+}

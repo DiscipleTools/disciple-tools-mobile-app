@@ -14,6 +14,7 @@ import {
   Button, Form, Item, Icon, Input, Label,
 } from 'native-base';
 
+import i18n from '../languages';
 import Colors from '../constants/Colors';
 import { login } from '../store/actions/user.actions';
 
@@ -140,7 +141,7 @@ class LoginScreen extends React.Component {
         <Form style={styles.formContainer}>
           <Item floatingLabel style={styles.formField}>
             <Icon active name="globe" />
-            <Label>URL</Label>
+            <Label>{i18n.t('login.domain.label')}</Label>
             <Input
               style={styles.input}
               onChangeText={text => this.setState({ domain: text })}
@@ -155,7 +156,7 @@ class LoginScreen extends React.Component {
 
           <Item floatingLabel style={styles.formField}>
             <Icon active name="person" />
-            <Label>Username</Label>
+            <Label>{i18n.t('login.username.label')}</Label>
             <Input
               style={styles.input}
               onChangeText={text => this.setState({ username: text })}
@@ -170,7 +171,7 @@ class LoginScreen extends React.Component {
 
           <Item floatingLabel style={styles.formField}>
             <Icon active name="key" />
-            <Label>Password</Label>
+            <Label>{i18n.t('login.password.label')}</Label>
             <Input
               style={styles.input}
               onChangeText={text => this.setState({ password: text })}
@@ -191,7 +192,7 @@ class LoginScreen extends React.Component {
             !user.isLoading && (
               <Button style={styles.signInButton} onPress={this.onLoginPress} block>
                 <Text style={styles.signInButtonText}>
-                  Log In
+                  {i18n.t('login.login')}
                 </Text>
               </Button>
             )
@@ -208,7 +209,7 @@ class LoginScreen extends React.Component {
               disabled={user.isLoading}
             >
               <Text style={styles.forgotButtonText}>
-                Lost your password?
+                {i18n.t('login.forgotPassword')}
               </Text>
             </TouchableOpacity>
           )

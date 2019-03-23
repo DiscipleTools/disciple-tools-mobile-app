@@ -1,0 +1,16 @@
+{
+  "login": {
+    "domain": {
+      "label": "Disciple Tools URL",
+      "placeholder": "E.g. myteam.disciple.tools"
+    },
+    "username": {
+      "label": "Username"
+    },
+    "password": {
+      "label": "Password"
+    },
+    "login": "Log In",
+    "forgotPassword": "Lost your password?"
+  }
+}
