@@ -32,7 +32,7 @@ HomeStack.propTypes = {
 };
 
 const ContactsStack = createStackNavigator({
-  Links: ContactsScreen,
+  Contacts: ContactsScreen,
 });
 function ContactsIcon({ focused }) {
   return (

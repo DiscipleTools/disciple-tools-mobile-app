@@ -7,7 +7,11 @@ import {
   FlatList,
   TouchableHighlight,
   ActivityIndicator,
+  RefreshControl
 } from 'react-native';
+import { Fab } from 'native-base';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Colors from '../constants/Colors';
 import PropTypes from 'prop-types';
 
 import { getAll as getAllContacts } from '../store/actions/contacts.actions';
@@ -15,7 +19,7 @@ import { getAll as getAllContacts } from '../store/actions/contacts.actions';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 15,
+    paddingTop: 5,
   },
   contactContainer: {},
   contactItem: {
@@ -44,12 +48,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  actionButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: 'white',
+  },
 });
 
 class ContactsScreen extends React.Component {
   static navigationOptions = {
     title: 'Contacts',
+    headerLeft: null
   };
+
+  constructor(props) {
+    super(props)
+    this.state = { refreshing: false }
+  }
 
   static makeSubtitle(contact) {
     // +
@@ -58,20 +73,20 @@ class ContactsScreen extends React.Component {
     // " • "+contact.locations}</Text>
     return (
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-        <Text style={styles.contactSubtitle}>{contact.status}</Text>
-        { !!contact.status
-        && <Text style={styles.contactSubtitle}>{` • ${contact.status}`}</Text>
+        <Text style={styles.contactSubtitle}>{contact.overall_status}</Text>
+        { !!contact.overall_status
+        && <Text style={styles.contactSubtitle}>{` • ${contact.overall_status}`}</Text>
         }
-        { !!contact.seekerPath
-        && <Text style={styles.contactSubtitle}>{` • ${contact.seekerPath}`}</Text>
+        { !!contact.seeker_path
+        && <Text style={styles.contactSubtitle}>{` • ${contact.seeker_path}`}</Text>
         }
-        { !!contact.faithMilestones
-        && <Text style={styles.contactSubtitle}>{` • ${contact.faithMilestones}`}</Text>
+        { !!contact.milestones
+        && <Text style={styles.contactSubtitle}>{` • ${contact.milestones}`}</Text>
         }
-        { !!contact.assignedTo
-        && <Text style={styles.contactSubtitle}>{` • ${contact.assignedTo}`}</Text>
+        { !!contact.assigned_to
+        && <Text style={styles.contactSubtitle}>{` • ${contact.assigned_to}`}</Text>
         }
-        { contact.locations.length > 1
+        { !!contact.locations && contact.locations.length > 1
         && <Text style={styles.contactSubtitle}>{` • ${contact.locations}`}</Text>
         }
       </View>
@@ -79,15 +94,28 @@ class ContactsScreen extends React.Component {
   }
 
   componentDidMount() {
-    // get contacts
-    this.props.getContacts(this.props.user.domain, this.props.user.token);
+    this._onRefresh()
+  }
+
+  onFABPress = () => {
+    this.props.navigation.push('NewEditContact', { headerTitleParam: 'Add New Contact'})
   }
 
   /* eslint-disable class-methods-use-this */
   onSelectItem(item) {
-    console.log(item);
+    // navigate to ContactDetails screen (using params in case state is updated in background when coming online)
+    this.props.navigation.push('ContactDetails', { contact: item })
   }
   /* eslint-enable class-methods-use-this */
+
+  _onRefresh = () => {
+    this.setState({ refreshing: true });
+    this.props.getAllContacts(this.props.user.domain, this.props.user.token);
+    var that = this;
+    setTimeout(function() { 
+      that.setState({ refreshing: false });
+    }, 1000);
+  };
 
   FlatListItemSeparator = () => (
     <View
@@ -119,20 +147,32 @@ class ContactsScreen extends React.Component {
       <View style={styles.container}>
         { !this.props.error
           ? (
-            <FlatList
-              ItemSeparatorComponent={this.FlatListItemSeparator}
-              data={this.props.contacts}
-              renderItem={({ item, separators }) => this.renderRow(item, separators)}
-            />
+            <View style={styles.container}>
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={this.state.refreshing}
+                    onRefresh={this._onRefresh}
+                  />
+                }
+                ItemSeparatorComponent={this.FlatListItemSeparator}
+                data={this.props.contacts}
+                renderItem={({ item, separators }) => this.renderRow(item, separators)}
+              />
+              <Fab
+                style={{ backgroundColor: Colors.tintColor }}
+                position="bottomRight"
+                onPress={() => this.onFABPress()}
+              >
+                <Icon name="md-add" />
+              </Fab>
+            </View>
           )
           : (
             <Text style={styles.errorText}>
               {this.props.error.message}
             </Text>
           )
-        }
-        { !!this.props.isLoading
-          && <ActivityIndicator style={styles.loading} size="small" />
         }
       </View>
     );
@@ -154,19 +194,20 @@ ContactsScreen.propTypes = {
   error: PropTypes.shape({
     message: PropTypes.string,
   }),
-  getContacts: PropTypes.func.isRequired,
+  getAllContacts: PropTypes.func.isRequired,
 };
 ContactsScreen.defaultProps = {
   error: null,
 };
 const mapStateToProps = state => ({
-  contacts: state.contacts.items,
-  isLoading: state.contacts.isLoading,
-  error: state.contacts.error,
-  user: state.user,
+  contacts: state.contactsReducer.items,
+  isLoading: state.contactsReducer.isLoading,
+  isConnected: state.networkConnectivityReducer.isConnected,
+  error: state.contactsReducer.error,
+  user: state.userReducer
 });
 const mapDispatchToProps = dispatch => ({
-  getContacts: (domain, token) => {
+  getAllContacts: (domain, token) => {
     dispatch(getAllContacts(domain, token));
   },
 });

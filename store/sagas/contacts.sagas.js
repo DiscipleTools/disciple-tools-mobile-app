@@ -1,55 +1,150 @@
-import { put, takeLatest, all } from 'redux-saga/effects';
+import {
+  put, take, takeEvery, takeLatest, all, race, call, delay,
+} from 'redux-saga/effects';
 import * as actions from '../actions/contacts.actions';
 
 export function* getAll({ domain, token }) {
   yield put({ type: actions.CONTACTS_GETALL_START });
 
-  let response;
-  try {
-    response = yield fetch(`https://${domain}/wp-json/dt/v1/contacts`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+  // get all contacts
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `http://${domain}/wp-json/dt/v1/contacts`,
+      data: {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
-  } catch (error) {
-    // console.log(error);
-    yield put({
-      type: actions.CONTACTS_GETALL_FAILURE,
-      error,
-    });
-  }
+      action: actions.CONTACTS_GETALL_RESPONSE
+    },
+  });
 
-  const jsonData = yield response.json();
-  if (jsonData.contacts) {
-    yield put({
-      type: actions.CONTACTS_GETALL_SUCCESS,
-      contacts: jsonData.contacts.map(contact => ({
-        key: contact.ID.toString(),
-        name: contact.post_title,
-        status: contact.overall_status,
-        seekerPath: contact.seeker_path,
-        faithMilestones: contact.milestones,
-        assignedTo: contact.assigned_to.name,
-        locations: contact.locations,
-        groups: contact.groups,
-      })),
-    });
-  } else {
-    yield put({
-      type: actions.CONTACTS_GETALL_FAILURE,
-      error: {
-        code: jsonData.code,
-        message: jsonData.message,
-        data: jsonData.data,
-      },
-    });
+  // handle response
+  try {
+    // TODO: will this block and cause responses to be missed?
+    // use channel instead
+    const res = yield take(actions.CONTACTS_GETALL_RESPONSE)
+    if (res) {
+      response = res.payload;
+      jsonData = yield response.json();
+      if (response.status === 200) {
+        if (jsonData.contacts) {
+          yield put({
+            type: actions.CONTACTS_GETALL_SUCCESS,
+            contacts: jsonData.contacts.map(contact => ({
+              key: contact.ID.toString(),
+              assigned_to: contact.assigned_to.name,
+              groups: contact.groups,
+              is_team_contact: contact.is_team_contact,
+              last_modified: contact.last_modified,
+              locations: [], //contact.locations,
+              milestone_baptized: contact.milestone_baptized,
+              overall_status: contact.overall_status,
+              permalink: contact.permalink,
+              contact_phone: contact.phone_numbers,
+              name: contact.post_title,
+              requires_update: contact.requires_update,
+              seeker_path: contact.seeker_path,
+              shared_with_user: contact.shared_with_user
+            })),
+          })
+        } else {
+          // TODO: empty list; display placeholder
+        }
+      } else {
+        yield put({ type: actions.CONTACTS_GETALL_FAILURE, error: { code: jsonData.code, message: jsonData.message, data: jsonData.data } });
+      }
+    }
+  } catch (error) {
+    yield put({ type: actions.CONTACTS_GETALL_FAILURE, error: { code: '400', message: '(400) Unable to process the request. Please try again later.' } });
   }
+}
+
+export function* saveContact({ user, contact }) {
+  yield put({ type: actions.CONTACTS_SAVECONTACT_START });
+
+  const url_part = contact.key ? contact.key : "create" 
+  //sources: [{values: [{ value: `${contact.sources }` }]}],
+  //locations: [{ value: `${contact.locations}` }],
+  // create new contact or update existing contact
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `http://${user.domain}/wp-json/dt/v1/contact/${url_part}`,
+      data: {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({
+          title: `${contact.name}`,
+          //contact_phone: [{ value: `${contact.contact_phone}` }, { value: "999-99-9999" }],
+          contact_phone: [{ value: `${contact.contact_phone}` }],
+          contact_email: [{ value: `${contact.contact_email}` }],
+          //sources: { values: [{ value: "linkedin" }, { value: "referral" }]},
+          //locations: { values: [{ value: "36" }, { value: 35 }]}
+          initial_comment: `${contact.initial_comment}` 
+        }),
+      },
+      action: actions.CONTACTS_SAVECONTACT_RESPONSE,
+    },
+  });
+
+  // handle response
+  try {
+    // TODO: will this block and cause responses to be missed?
+    // use channel instead
+    const res = yield take(actions.CONTACTS_SAVECONTACT_RESPONSE)
+    if (res) {
+      response = res.payload;
+      //console.log("*** SAVE CONTACT RESPONSE ***", response)
+      jsonData = yield response.json();
+      if (response.status === 200) {
+        // NOTE: create contact endpoint only returns 'post_id' and 'permalink'
+        const key = jsonData.post_id ? jsonData.post_id.toString() : jsonData.ID.toString() 
+        // refresh state w/ D.T key/ID for new contact, or to sync existing
+        yield put({ type: actions.CONTACTS_SAVECONTACT_SUCCESS, contact: contact, key: key })
+        if (contact.initial_comment) { 
+          // submit the comment now, AFTER receiving the D.T key/ID  
+          delayPostInitialComment(user, contact.initial_comment, key)
+        }
+      } else {
+        yield put({ type: actions.CONTACTS_SAVECONTACT_FAILURE, error: { code: jsonData.code, message: jsonData.message } });
+      }
+    }
+  } catch (error) {
+    console.log("*** SAVE CONTACT ERROR ***", error)
+    yield put({ type: actions.CONTACTS_SAVECONTACT_FAILURE, error: { code: '400', message: '(400) Unable to process the request. Please try again later.' } });
+  }
+}
+
+function* delayPostInitialComment(user, comment, contact_id) {
+  // post the delayed initial comment 
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `http://${user.domain}/wp-json/dt/v1/contact/${contact_id}/comment`,
+      data: {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({
+          comment: `${comment}`
+        })
+      }
+    }
+  })
 }
 
 export default function* contactsSaga() {
   yield all([
     takeLatest(actions.CONTACTS_GETALL, getAll),
+    takeEvery(actions.CONTACTS_SAVECONTACT, saveContact),
   ]);
 }
