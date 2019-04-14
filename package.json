@@ -5,26 +5,37 @@
     "android": "./node_modules/.bin/expo start --android",
     "ios": "./node_modules/.bin/expo start --ios",
     "eject": "./node_modules/.bin/expo eject",
-    "lint": "./node_modules/.bin/eslint --ext .jsx,.js ./ --fix",
-    "test": "node ./node_modules/jest/bin/jest.js --watchAll",
-    "prestart": "npm run lint"
+    "test": "node ./node_modules/jest/bin/jest.js"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!react-native|react-navigation|@react-navigation|expo|@expo|native-base|prop-types)"
+    ],
+    "automock": false,
+    "setupFiles": [
+      "./setupJest.js"
+    ]
   },
   "dependencies": {
+    "es6-promise": "^4.2.6",
     "expo": "^32.0.0",
     "i18n-js": "^3.2.1",
+    "isomorphic-fetch": "^2.2.1",
     "native-base": "^2.12.1",
     "prop-types": "^15.7.2",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "react-native-action-button": "^2.8.5",
+    "react-native-easy-toast": "^1.2.0",
+    "react-native-vector-icons": "^6.4.1",
     "react-navigation": "^3.0.9",
     "react-redux": "^6.0.1",
     "react-test-renderer": "^16.8.4",
     "redux": "^4.0.1",
     "redux-persist": "^5.10.0",
-    "redux-saga": "^1.0.2"
+    "redux-saga": "^1.0.2",
+    "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
@@ -34,7 +45,10 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.12.4",
-    "jest-expo": "^32.0.0"
+    "jest-expo": "^32.0.0",
+    "jest": "^24.6.0",
+    "jest-fetch-mock": "^2.1.2",
+    "redux-saga-test-plan": "4.0.0-beta.2"
   },
   "private": true
 }
