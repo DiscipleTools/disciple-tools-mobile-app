@@ -56,7 +56,6 @@ class SettingsScreen extends React.Component {
   };
 
   onFABPress = () => {
-    AsyncStorage.clear();
     this.toggleNetworkConnectivityIcon(this.props.isConnected)
     let toastMsg = this.props.isConnected ? 'Network unavailable. Now in OFFLINE mode' : 'Network detected. Back to ONLINE mode' 
     this.refs.toast.show(toastMsg);
