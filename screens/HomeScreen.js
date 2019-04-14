@@ -178,7 +178,7 @@ class HomeScreen extends React.Component {
 HomeScreen.propTypes = propTypes;
 // export default HomeScreen;
 const mapStateToProps = state => ({
-  user: state.user,
+  user: state.userReducer,
 });
 
 export default connect(mapStateToProps, null)(HomeScreen);

@@ -125,6 +125,7 @@ class LoginScreen extends React.Component {
   // TODO: How to disable iCloud save password feature?
   render() {
     const { user } = this.props;
+    user.isLoading = false
     let errorMessage;
     if (user && user.error && user.error.message) {
       errorMessage = (
@@ -243,7 +244,7 @@ LoginScreen.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  user: state.user,
+  user: state.userReducer,
 });
 const mapDispatchToProps = dispatch => ({
   loginDispatch: (domain, username, password) => {
