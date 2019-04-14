@@ -1,4 +1,4 @@
-import * as userActions from '../actions/user.actions';
+import * as actions from '../actions/user.actions';
 
 const initialState = {
   baseUrl: null,
@@ -7,16 +7,16 @@ const initialState = {
   email: null,
   token: null,
   error: null,
-}
+};
 
 export default function userReducer(state = initialState, action) {
   switch (action.type) {
-    case userActions.USER_LOGIN_START:
+    case actions.USER_LOGIN_START:
       return Object.assign({}, state, {
         isLoading: true,
         error: null,
       });
-    case userActions.USER_LOGIN_SUCCESS:
+    case actions.USER_LOGIN_SUCCESS:
       return Object.assign({}, state, {
         isLoading: false,
         domain: action.domain,
@@ -25,12 +25,12 @@ export default function userReducer(state = initialState, action) {
         displayName: action.user.user_display_name,
         email: action.user.user_email,
       });
-    case userActions.USER_LOGIN_FAILURE:
+    case actions.USER_LOGIN_FAILURE:
       return Object.assign({}, state, {
         isLoading: false,
         error: action.error,
       });
-    case userActions.USER_LOGOUT:
+    case actions.USER_LOGOUT:
       return Object.assign({}, state, {
         token: null,
       });
