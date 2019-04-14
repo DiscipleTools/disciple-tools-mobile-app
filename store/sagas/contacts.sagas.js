@@ -10,7 +10,7 @@ export function* getAll({ domain, token }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `http://${domain}/wp-json/dt/v1/contacts`,
+      url: `https://${domain}/wp-json/dt/v1/contacts`,
       data: {
         method: 'GET',
         headers: {
@@ -73,7 +73,7 @@ export function* saveContact({ user, contact }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `http://${user.domain}/wp-json/dt/v1/contact/${url_part}`,
+      url: `https://${user.domain}/wp-json/dt/v1/contact/${url_part}`,
       data: {
         method: 'POST',
         headers: {
@@ -127,7 +127,7 @@ function* delayPostInitialComment(user, comment, contact_id) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `http://${user.domain}/wp-json/dt/v1/contact/${contact_id}/comment`,
+      url: `https://${user.domain}/wp-json/dt/v1/contact/${contact_id}/comment`,
       data: {
         method: 'POST',
         headers: {

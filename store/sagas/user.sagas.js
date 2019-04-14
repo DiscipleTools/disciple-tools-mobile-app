@@ -11,7 +11,7 @@ export function* login({ domain, username, password }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `http://${domain}/wp-json/jwt-auth/v1/token`,
+      url: `https://${domain}/wp-json/jwt-auth/v1/token`,
       data: {
         method: 'POST',
         headers: {
