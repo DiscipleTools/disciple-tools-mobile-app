@@ -13,13 +13,14 @@ This `/store` directory is setup with the following structure:
 
 * `actions/` - Redux action creators and constants grouped together by their root state property name (e.g. `users` and `contacts`)
 * `sagas/` - Redux sagas grouped together by their root state property name. Sagas handle async actions and will dispatch the appropriate actions based on success/failure conditions.
-* `reducer.js` - Redux reducers that directly transform the state. (Currently in a single file, but could be split off into individual files like actions and sagas)
+* `reducers/` - Redux reducers that directly transform the state.
 * `sagas.js` - Root saga that joins together the individual sagas.
+* `reducer.js` - Root reducer that joins together the individual reducers.
 * `store.js` - Initialization of the app data store to be included in the root of the app
 
 ## Accessing Data in Components/Screens ##
 
-The structure of the data can be seen in `reducer.js` by looking at the `initialState` constant.
+The structure of the data can be seen in `reducers/` by looking at the `initialState` constant of each reducer.
 
 In order to access data from the store within a Component or Screen, there are a few things to add to the component.
 
@@ -136,60 +137,145 @@ Asynchronous data updates are those that will wait for a response from an extern
    ```
 1. Saga intercepts action and executes async code using [ES6 generators](https://goshakkk.name/javascript-generators-understanding-sample-use-cases/):
    ```javascript
-   export function* login({ domain, username, password }) {
-     yield put({ type: actions.USER_LOGIN_START });
-   
-     let response = yield fetch(`https://${domain}/wp-json/jwt-auth/v1/token`, {
-         method: 'POST',
-         ...
-       });
-   
-     const jsonData = yield response.json();
-     if (jsonData && jsonData.code && jsonData.data && jsonData.data.status
-       && jsonData.data.status === 403) {
-       yield put({
-         type: actions.USER_LOGIN_FAILURE,
-         error: {
-           code: jsonData.code,
-           message: jsonData.message,
-         },
-       });
-     } else {
-       yield put({
-         type: actions.USER_LOGIN_SUCCESS,
-         domain,
-         user: jsonData,
-       });
-     }
-   }
+    export function* login({ domain, username, password }) {
+      yield put({ type: actions.USER_LOGIN_START });
+
+      // fetch JWT token
+      yield put({
+        type: 'REQUEST',
+        payload: {
+          url: `http://${domain}/wp-json/jwt-auth/v1/token`,
+          data: {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              username,
+              password,
+            }),
+          },
+          action: actions.USER_LOGIN_RESPONSE
+        },
+      });
+
+      // handle response
+      try {
+        const res = yield take(actions.USER_LOGIN_RESPONSE)
+        if (res) {
+          response = res.payload;
+          jsonData = yield response.json();
+          if (response.status === 200) {
+            yield put({ type: actions.USER_LOGIN_SUCCESS, domain, user: jsonData });
+          } else {
+            yield put({ type: actions.USER_LOGIN_FAILURE, error: { code: jsonData.code, message: jsonData.message } });
+          }
+        }
+      } catch (error) {
+        yield put({ type: actions.USER_LOGIN_FAILURE, error: { code: '400', message: '(400) Unable to process the request. Please try again later.' } });
+      }
+    }
    ```
    1. At the start of a request, we dispatch (or `put`) action to update the state that we are loading data.
-   1. On success, we dispatches success action.
-   1. On failure, we dispatches failure action.
+   1. Next, we dispatch (or `put`) our payload onto the `REQUEST` actionChannel. Notice that we are specifying an *action* property in the payload; this is so that the Request Saga can return control/response to us when it's available.  Also when this payload is dispatched to the `REQUEST` actionChannel, the requestReducer state will also be updated to queue this new request
+   1. Handle eventual response (optional):
+      - On success, we dispatch success action. 
+      - On failure, we dispatch failure action. 
+1. Request Saga will `fork` and process the previous Saga (if ONLINE), otherwise (if OFFLINE) it will queue requests and wait (block) to come back ONLINE, and only then continue processing (adapted from: https://www.youtube.com/watch?v=Pg7LgW3TL7A and https://redux-saga.js.org/docs/advanced/Channels.html ). We continually `race` between taking from the `OFFLINE` channel and the `REQUEST` channel:  
+    - if we take the `OFFLINE` channel, then block (requests continue to queue) until we `take` from `ONLINE` at some future time, otherwise... 
+    - if we take from the `REQUEST` channel, then `select` requestReducer state (an array of requests) and ensure that the request is still present (it may have been removed due to another offline edit, etc...); if the request is still present, then go ahead and `fork` it to be processed:
+   ```javascript
+    export default function* requestSaga() {
+      // buffer all incoming requests
+      const reqChannel = yield actionChannel('REQUEST')
+      const offlineChannel = yield actionChannel('OFFLINE') 
+
+      // enqueue when offline, fork when online
+      while (true) {
+        const { offline, payload } = yield race({
+          offline: take(offlineChannel), 
+          payload: take(reqChannel)
+        })
+        if (offline) {
+          // block until we come back online
+          yield take('ONLINE')
+        } else {
+          /* 
+          NOTE: compare actionChannel request with requests in requestReducer state.
+          if the request is present in the requestReducer state, then fork it, otherwise skip it 
+          */
+          const reqState = yield select(state => state.requestReducer)
+          for (let req of reqState) {
+            if (req === payload) {
+              // process the request
+              yield fork(processRequest, payload)
+            } 
+          }
+        }
+      }
+    }
+   ```
+    - A forked request is then processed via [Fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), and we have another `race` to ensure that a response is received prior to a specified timeout.  Assuming that our request is successful, then we check whether the payload contained an `action` and dispatch (or `put`) the response to be handled by the saga which dispatched the original request (e.g., `user.sagas.js`). The response is also dispatched (or `put`) to the `RESPONSE` queue in order to remove the request from the state queue. Since we are queueing up requests that we want to be sent, when we do successfully send a request then we also want to dequeue that same request.
+   ```javascript
+    function* processRequest(req) {
+      // race 'fetch' against a timeout
+      const { timeout, res } = yield race({
+        res: call(fetch, req.payload.url, req.payload.data),
+        timeout: delay(REQUEST_TIMEOUT_MILLIS)
+      });
+      if (res) {
+        if (req.payload.action) {
+          yield put({ type: req.payload.action, payload: res })
+        }
+        yield put({ type: 'RESPONSE', payload: { req, res } })
+      }
+      if (timeout) {
+        yield put({ type: 'OFFLINE' });
+      }
+    }
+   ```
 1. Reducer looks for action type and updates the store appropriately:
    ```javascript
-   switch (action.type) {
-     case userActions.USER_LOGIN_START:
-       return Object.assign({}, state, {
-         isLoading: true,
-         error: null,
-       });
-     case userActions.USER_LOGIN_SUCCESS:
-       return Object.assign({}, state, {
-         isLoading: false,
-         domain: action.domain,
-         token: action.user.token,
-         username: action.user.user_nicename,
-         displayName: action.user.user_display_name,
-         email: action.user.user_email,
-       });
-     case userActions.USER_LOGIN_FAILURE:
-       return Object.assign({}, state, {
-         isLoading: false,
-         error: action.error,
-       });
-     ...
-     default:
-       return state;
-   }
+    export default function userReducer(state = initialState, action) {
+     switch (action.type) {
+       case userActions.USER_LOGIN_START:
+         return Object.assign({}, state, {
+           isLoading: true,
+           error: null,
+         });
+       case userActions.USER_LOGIN_SUCCESS:
+         return Object.assign({}, state, {
+           isLoading: false,
+           domain: action.domain,
+           token: action.user.token,
+           username: action.user.user_nicename,
+           displayName: action.user.user_display_name,
+           email: action.user.user_email,
+         });
+       case userActions.USER_LOGIN_FAILURE:
+         return Object.assign({}, state, {
+           isLoading: false,
+           error: action.error,
+         });
+       ...
+       default:
+         return state;
+     }
+    }
    ```
+   - The `requestReducer` is kind of a special case where we are only concerned with queueing new requests to the state queue, and filter/removing requests when a successful response has been received. (There is also some logic for properly handling offline create and edit, but that is not displayed here).
+  ```javascript
+    export default function requestReducer(state = [], action) {
+      switch (action.type) {
+        case actions.REQUEST:
+          ...
+          // add the new request to the state queue
+          return [...state, action]
+        case actions.RESPONSE:
+          // loop through every item in local storage and filter out the successful request
+          return state.filter(existing => existing.req === action.payload.req)
+        default:
+          return state
+      }
+    }
+  ```
