@@ -27,7 +27,7 @@ To try out the app without setting up the development environment, download the 
 
 [Expo Client (Android)](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US)
 
-Then open the url https://exp.host/@joswin/DiscipleToolsApp to view within the expo app.
+Then open the url https://expo.io/@discipletools/DiscipleToolsApp to view within the expo app.
 
 ## DataStore
 Information on the redux setup for managing data: [Data Store](https://github.com/DiscipleTools/disciple-tools-mobile-app/tree/master/store)

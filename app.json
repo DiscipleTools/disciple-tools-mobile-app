@@ -23,7 +23,11 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "tools.disciple.app",
       "supportsTablet": true
+    },
+    "android": {
+      "package": "tools.disciple.app"
     }
   }
 }
