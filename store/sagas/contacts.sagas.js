@@ -87,7 +87,6 @@ export function* saveContact({ user, contact }) {
           contact_email: [{ value: `${contact.contact_email}` }],
           //sources: { values: [{ value: "linkedin" }, { value: "referral" }]},
           //locations: { values: [{ value: "36" }, { value: 35 }]}
-          initial_comment: `${contact.initial_comment}` 
         }),
       },
       action: actions.CONTACTS_SAVECONTACT_RESPONSE,
