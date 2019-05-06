@@ -62,8 +62,9 @@ export default function contactsReducer(state = initialState, action) {
       })
     case actions.CONTACTS_SAVECONTACT:
       // check whether already exists; if exists, remove and add new edit
+      state.items = state.items.filter(existing => existing.key != action.contact.key || existing.name != action.contact.name)
       return Object.assign({}, state, {
-        items: [...state.items.filter(existing => existing.name != action.contact.name), action.contact],
+        items: [...state.items, action.contact]
       })
     case actions.CONTACTS_SAVECONTACT_SUCCESS:
       /*
@@ -75,11 +76,10 @@ export default function contactsReducer(state = initialState, action) {
       */ 
       contact_with_id = action.contact
       contact_with_id['key'] = action.key
-      state = Object.assign({}, state, {
+      return Object.assign({}, state, {
         isLoading: false,
-        items: [...state.items.filter(existing => existing != action.contact), contact_with_id],
+        items: [...state.items.filter(existing => existing != action.contact), contact_with_id]
       })
-      return state
     case actions.CONTACTS_GETALL_START:
       return Object.assign({}, state, {
         isLoading: true,
