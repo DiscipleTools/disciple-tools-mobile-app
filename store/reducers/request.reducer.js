@@ -23,6 +23,10 @@ export default function requestReducer(state = [], action) {
           }
         })
       }
+      // filter out redundant GET requests
+      if (action.payload.data.method === "GET") {
+        state = state.filter(existing => existing.payload.url != action.payload.url)
+      }
       return [...state, action]
     case actions.RESPONSE:
       // loop through every item in local storage and filter out the successful request
