@@ -4,7 +4,7 @@ import {
   StatusBar,
   StyleSheet,
   View,
-  NetInfo
+  NetInfo,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {
@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
 
 // App
 class App extends React.Component {
-
   constructor() {
     super();
     this.state = {
@@ -44,21 +43,21 @@ class App extends React.Component {
 
   componentDidMount() {
     // add network connectivity handler
-    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange)
+    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
     // initial detection
     NetInfo.isConnected.fetch().done((isConnected) => {
-      store.dispatch(setNetworkConnectivity(isConnected))
-    })
+      store.dispatch(setNetworkConnectivity(isConnected));
+    });
   }
 
   componentWillUnmount() {
     // remove network connectivity handler
-    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange)
+    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
   }
 
-  handleConnectivityChange = (isConnected) => { 
-    // dispatch network connectivity action 
-    store.dispatch(setNetworkConnectivity(isConnected))
+  handleConnectivityChange = (isConnected) => {
+    // dispatch network connectivity action
+    store.dispatch(setNetworkConnectivity(isConnected));
   }
 
   loadResourcesAsync = async () => Promise.all([
@@ -78,6 +77,7 @@ class App extends React.Component {
   handleLoadingError = (error) => {
     // In this case, you might want to report the error to your error
     // reporting service, for example Sentry
+    // eslint-disable-next-line no-console
     console.warn(error);
   };
 

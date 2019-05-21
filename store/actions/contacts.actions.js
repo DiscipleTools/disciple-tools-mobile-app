@@ -22,7 +22,7 @@ export function getAll(domain, token) {
   return {
     type: CONTACTS_GETALL,
     domain,
-    token
+    token,
   };
 }
 
@@ -30,7 +30,7 @@ export function saveContact(user, contact) {
   return {
     type: CONTACTS_SAVECONTACT,
     user,
-    contact
+    contact,
   };
 }
 
@@ -38,6 +38,6 @@ export function deleteContact(user, contact) {
   return {
     type: CONTACTS_DELETECONTACT,
     user,
-    contact
+    contact,
   };
 }

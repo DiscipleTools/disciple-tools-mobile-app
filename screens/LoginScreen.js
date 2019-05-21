@@ -116,16 +116,16 @@ class LoginScreen extends React.Component {
     this.props.loginDispatch(domain, username, password);
   };
 
-  /* eslint-disable class-methods-use-this */
+  /* eslint-disable class-methods-use-this, no-console */
   goToForgotPassword() {
     console.log('forgot password');
   }
-  /* eslint-enable class-methods-use-this */
+  /* eslint-enable class-methods-use-this, no-console */
 
   // TODO: How to disable iCloud save password feature?
   render() {
     const { user } = this.props;
-    user.isLoading = false
+    user.isLoading = false;
     let errorMessage;
     if (user && user.error && user.error.message) {
       errorMessage = (

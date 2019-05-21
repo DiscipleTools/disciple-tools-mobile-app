@@ -11,6 +11,6 @@ export default function* rootSaga() {
   yield all([
     requestSaga(),
     userSaga(),
-    contactsSaga()
+    contactsSaga(),
   ]);
 }

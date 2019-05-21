@@ -2,8 +2,10 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "./node_modules/.bin/expo start",
+    "postinstall": "if ! test \"$NODE_ENV\" = \"production\" ; then mkdir -p .git/hooks && cp -f git-hooks/pre-commit .git/hooks/ && chmod 755 .git/hooks/pre-commit ; fi",
     "android": "./node_modules/.bin/expo start --android",
     "ios": "./node_modules/.bin/expo start --ios",
+    "lint": "./node_modules/.bin/eslint --ext .jsx,.js ./ --fix",
     "eject": "./node_modules/.bin/expo eject",
     "test": "node ./node_modules/jest/bin/jest.js"
   },

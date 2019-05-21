@@ -4,11 +4,9 @@ import {
   View,
   Button,
   Text,
-  AsyncStorage
 } from 'react-native';
 import { Fab, Icon } from 'native-base';
-import Toast from 'react-native-easy-toast'
-import Colors from '../constants/Colors';
+import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
 
 import { logout } from '../store/actions/user.actions';
@@ -18,6 +16,7 @@ const propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
+  isConnected: PropTypes.bool.isRequired,
   user: PropTypes.shape({
     domain: PropTypes.string,
     username: PropTypes.string,
@@ -32,21 +31,21 @@ class SettingsScreen extends React.Component {
   };
 
   constructor() {
-    super()
-    this.state = { iconName: 'ios-flash' }
+    super();
+    this.state = { iconName: 'ios-flash' };
   }
 
   componentDidMount() {
-    this.setNetworkConnectivityIcon(this.props.isConnected)
+    this.setNetworkConnectivityIcon(this.props.isConnected);
   }
-  
+
 
   setNetworkConnectivityIcon = (isConnected) => {
-    this.setState({ iconName: isConnected ? 'ios-flash' : 'ios-flash-off' })
+    this.setState({ iconName: isConnected ? 'ios-flash' : 'ios-flash-off' });
   }
 
   toggleNetworkConnectivityIcon = (isConnected) => {
-    this.setNetworkConnectivityIcon(!isConnected)
+    this.setNetworkConnectivityIcon(!isConnected);
   }
 
   signOutAsync = async () => {
@@ -56,10 +55,10 @@ class SettingsScreen extends React.Component {
   };
 
   onFABPress = () => {
-    this.toggleNetworkConnectivityIcon(this.props.isConnected)
-    let toastMsg = this.props.isConnected ? 'Network unavailable. Now in OFFLINE mode' : 'Network detected. Back to ONLINE mode' 
-    this.refs.toast.show(toastMsg);
-    this.props.toggleNetworkConnectivity(this.props.isConnected)
+    this.toggleNetworkConnectivityIcon(this.props.isConnected);
+    const toastMsg = this.props.isConnected ? 'Network unavailable. Now in OFFLINE mode' : 'Network detected. Back to ONLINE mode';
+    this.toast.show(toastMsg);
+    this.props.toggleNetworkConnectivity(this.props.isConnected);
   }
 
   render() {
@@ -76,14 +75,14 @@ class SettingsScreen extends React.Component {
           {this.props.user.username}
         </Text>
         <Button style={{ padding: 50 }} title="Sign out" onPress={this.signOutAsync} />
-        <Fab 
+        <Fab
           style={{ backgroundColor: '#E74C3C' }}
           position="bottomRight"
           onPress={() => this.onFABPress()}
         >
           <Icon name={this.state.iconName} />
         </Fab>
-        <Toast ref="toast" position={'center'}/>
+        <Toast ref={(c) => { this.toast = c; }} position="center" />
       </View>
     );
   }
@@ -93,7 +92,7 @@ SettingsScreen.propTypes = propTypes;
 
 const mapStateToProps = state => ({
   isConnected: state.networkConnectivityReducer.isConnected,
-  user: state.userReducer
+  user: state.userReducer,
 });
 const mapDispatchToProps = dispatch => ({
   toggleNetworkConnectivity: (isConnected) => {

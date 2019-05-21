@@ -58,28 +58,32 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_DELETECONTACT:
       return Object.assign({}, state, {
         // remove the contact from the contactsReducer state
-        items: [...state.items.filter(existing => existing.key != action.contact.key)]
-      })
-    case actions.CONTACTS_SAVECONTACT:
+        items: [...state.items.filter(existing => existing.key !== action.contact.key)],
+      });
+    case actions.CONTACTS_SAVECONTACT: {
       // check whether already exists; if exists, remove and add new edit
-      state.items = state.items.filter(existing => existing.key != action.contact.key || existing.name != action.contact.name)
+      const filteredItems = state.items.filter(
+        existing => existing.key !== action.contact.key || existing.name !== action.contact.name,
+      );
       return Object.assign({}, state, {
-        items: [...state.items, action.contact]
-      })
-    case actions.CONTACTS_SAVECONTACT_SUCCESS:
+        items: [...filteredItems, action.contact],
+      });
+    }
+    case actions.CONTACTS_SAVECONTACT_SUCCESS: {
       /*
       NOTE: assumes a successful responses from a D.T API contact create/update.
-      remove the previous contact in contactsReducer state, and add incoming; 
-      this is required in the case of contact creation (bc we need to set the 
+      remove the previous contact in contactsReducer state, and add incoming;
+      this is required in the case of contact creation (bc we need to set the
       key/ID provided to us in the D.T API response. it is superfluous with a
       contact update, but we just keep things consistent
-      */ 
-      contact_with_id = action.contact
-      contact_with_id['key'] = action.key
+      */
+      const contactWithId = action.contact;
+      contactWithId.key = action.key;
       return Object.assign({}, state, {
         isLoading: false,
-        items: [...state.items.filter(existing => existing != action.contact), contact_with_id]
-      })
+        items: [...state.items.filter(existing => existing !== action.contact), contactWithId],
+      });
+    }
     case actions.CONTACTS_GETALL_START:
       return Object.assign({}, state, {
         isLoading: true,
@@ -90,7 +94,7 @@ export default function contactsReducer(state = initialState, action) {
         isLoading: false,
       });
     case actions.CONTACTS_GETALL_SUCCESS:
-      // success; sync local contact list with D.T API list 
+      // success; sync local contact list with D.T API list
       return Object.assign({}, state, {
         isLoading: false,
         items: action.contacts,

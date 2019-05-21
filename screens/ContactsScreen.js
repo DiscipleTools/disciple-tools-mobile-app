@@ -6,13 +6,12 @@ import {
   Text,
   FlatList,
   TouchableHighlight,
-  ActivityIndicator,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
 import { Fab } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Colors from '../constants/Colors';
 import PropTypes from 'prop-types';
+import Colors from '../constants/Colors';
 
 import { getAll as getAllContacts } from '../store/actions/contacts.actions';
 
@@ -58,13 +57,8 @@ const styles = StyleSheet.create({
 class ContactsScreen extends React.Component {
   static navigationOptions = {
     title: 'Contacts',
-    headerLeft: null
+    headerLeft: null,
   };
-
-  constructor(props) {
-    super(props)
-    this.state = { refreshing: false }
-  }
 
   static makeSubtitle(contact) {
     // +
@@ -93,26 +87,31 @@ class ContactsScreen extends React.Component {
     );
   }
 
+  constructor(props) {
+    super(props);
+    this.state = { refreshing: false };
+  }
+
   componentDidMount() {
-    this._onRefresh()
+    this.onRefresh();
   }
 
   onFABPress = () => {
-    this.props.navigation.push('NewEditContact', { headerTitleParam: 'Add New Contact'})
+    this.props.navigation.push('NewEditContact', { headerTitleParam: 'Add New Contact' });
   }
 
   /* eslint-disable class-methods-use-this */
   onSelectItem(item) {
     // navigate to ContactDetails screen (using params in case state is updated in background when coming online)
-    this.props.navigation.push('ContactDetails', { contact: item })
+    this.props.navigation.push('ContactDetails', { contact: item });
   }
   /* eslint-enable class-methods-use-this */
 
-  _onRefresh = () => {
+  onRefresh = () => {
     this.setState({ refreshing: true });
     this.props.getAllContacts(this.props.user.domain, this.props.user.token);
-    var that = this;
-    setTimeout(function() { 
+    const that = this;
+    setTimeout(() => {
       that.setState({ refreshing: false });
     }, 1000);
   };
@@ -149,12 +148,12 @@ class ContactsScreen extends React.Component {
           ? (
             <View style={styles.container}>
               <FlatList
-                refreshControl={
+                refreshControl={(
                   <RefreshControl
                     refreshing={this.state.refreshing}
-                    onRefresh={this._onRefresh}
+                    onRefresh={this.onRefresh}
                   />
-                }
+)}
                 ItemSeparatorComponent={this.FlatListItemSeparator}
                 data={this.props.contacts}
                 renderItem={({ item, separators }) => this.renderRow(item, separators)}
@@ -182,6 +181,7 @@ class ContactsScreen extends React.Component {
 ContactsScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }).isRequired,
   user: PropTypes.shape({
     domain: PropTypes.string,
@@ -190,7 +190,6 @@ ContactsScreen.propTypes = {
   contacts: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string,
   })).isRequired,
-  isLoading: PropTypes.bool.isRequired,
   error: PropTypes.shape({
     message: PropTypes.string,
   }),
@@ -201,10 +200,9 @@ ContactsScreen.defaultProps = {
 };
 const mapStateToProps = state => ({
   contacts: state.contactsReducer.items,
-  isLoading: state.contactsReducer.isLoading,
   isConnected: state.networkConnectivityReducer.isConnected,
   error: state.contactsReducer.error,
-  user: state.userReducer
+  user: state.userReducer,
 });
 const mapDispatchToProps = dispatch => ({
   getAllContacts: (domain, token) => {

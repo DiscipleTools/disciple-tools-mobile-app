@@ -3,17 +3,15 @@ import { connect } from 'react-redux';
 import {
   ScrollView,
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Keyboard,
-  BackHandler
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {
-  Button, Form, Item, Icon, Input, InputGroup, Label, Picker, Textarea
+  Form, Item, Icon, Input, Label, Picker,
 } from 'native-base';
-import Toast, { DURATION } from 'react-native-easy-toast';
+import Toast from 'react-native-easy-toast';
 import Colors from '../constants/Colors';
 
 import { saveContact } from '../store/actions/contacts.actions';
@@ -56,34 +54,36 @@ const styles = StyleSheet.create({
 });
 
 class NewEditContactScreen extends React.Component {
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: navigation.getParam('headerTitleParam', 'Contact'),
-      headerRight: 
-        <TouchableOpacity style={ [{ paddingHorizontal:15 }] }
-          onPress={navigation.getParam('onSavePress')}>
-          <Icon name="md-checkmark" />
-        </TouchableOpacity>,
-      headerLeft:
-        <Icon name="md-arrow-back"
-          onPress={() => navigation.push('Contacts')}
-          style={ [{ paddingHorizontal:15 }] } 
-        />
-    };
-  };
+  static navigationOptions = ({ navigation }) => ({
+    title: navigation.getParam('headerTitleParam', 'Contact'),
+    headerRight:
+  <TouchableOpacity
+    style={[{ paddingHorizontal: 15 }]}
+    onPress={navigation.getParam('onSavePress')}
+  >
+    <Icon name="md-checkmark" />
+  </TouchableOpacity>,
+    headerLeft:
+  <Icon
+    name="md-arrow-back"
+    onPress={() => navigation.push('Contacts')}
+    style={[{ paddingHorizontal: 15 }]}
+  />,
+  });
 
   constructor(props) {
     super(props);
     if (props.navigation.getParam('isEdit')) {
-      const contact = props.navigation.getParam('contact')
+      const contact = props.navigation.getParam('contact');
       // TODO: implement support for multi-select sources
       if (Array.isArray(contact.sources)) {
-        contact.sources = contact.sources[0]
+        /* eslint-disable-next-line prefer-destructuring */
+        contact.sources = contact.sources[0];
       }
-      // TODO: implement support for multi-select locations 
+      // TODO: implement support for multi-select locations
       if (Array.isArray(contact.locations)) {
-        contact.locations = contact.locations[0]
+        /* eslint-disable-next-line prefer-destructuring */
+        contact.locations = contact.locations[0];
       }
       this.state = {
         key: contact.key || '',
@@ -92,8 +92,8 @@ class NewEditContactScreen extends React.Component {
         contact_email: contact.contact_email || '',
         sources: contact.sources || '',
         locations: contact.locations || '',
-        initial_comment: contact.initial_comment || ''
-      }
+        initial_comment: contact.initial_comment || '',
+      };
     } else {
       this.state = {
         key: '',
@@ -102,20 +102,20 @@ class NewEditContactScreen extends React.Component {
         contact_email: '',
         sources: '',
         locations: '',
-        initial_comment: ''
-      }
+        initial_comment: '',
+      };
     }
   }
 
   componentDidMount() {
-    this.props.navigation.setParams({ onSavePress: this._onSavePress });
+    this.props.navigation.setParams({ onSavePress: this.onSavePress });
   }
 
-  _onSavePress = () => {
+  onSavePress = () => {
     Keyboard.dismiss();
     this.props.saveContact(this.props.user, this.state);
-    this.refs.toast.show('Contact Saved!', 100, () => {
-      this.props.navigation.push('ContactDetails', { contact: this.state })
+    this.toast.show('Contact Saved!', 100, () => {
+      this.props.navigation.push('ContactDetails', { contact: this.state });
     });
   };
 
@@ -153,7 +153,7 @@ class NewEditContactScreen extends React.Component {
               />
             </Item>
             <Item stackedLabel style={styles.formField}>
-              <Icon name="mail"/>
+              <Icon name="mail" />
               <Label>Email</Label>
               <Input
                 style={styles.input}
@@ -163,15 +163,15 @@ class NewEditContactScreen extends React.Component {
                 returnKeyType="next"
                 textContentType="emailAddress"
                 keyboardType="email-address"
-                //disabled={user.isLoading}
+                // disabled={user.isLoading}
               />
             </Item>
             <Item picker style={styles.formField}>
-              <Icon name="md-git-branch"/>
+              <Icon name="md-git-branch" />
               <Picker
                 mode="dropdown"
                 placeholder="Source"
-                placeholderStyle={{ color: "#bfc6ea" }}
+                placeholderStyle={{ color: '#bfc6ea' }}
                 placeholderIconColor="#007aff"
                 selectedValue={this.state.sources.toLowerCase()}
                 onValueChange={value => this.setState({ sources: value })}
@@ -199,7 +199,7 @@ class NewEditContactScreen extends React.Component {
                 returnKeyType="next"
                 textContentType="none"
                 keyboardType="default"
-                //disabled={user.isLoading}
+                // disabled={user.isLoading}
               />
             </Item>
             <Item stackedLabel style={styles.formField}>
@@ -213,11 +213,11 @@ class NewEditContactScreen extends React.Component {
                 returnKeyType="next"
                 textContentType="none"
                 keyboardType="default"
-                //disabled={user.isLoading}
+                // disabled={user.isLoading}
               />
             </Item>
           </Form>
-          <Toast ref="toast" position={'center'}/>
+          <Toast ref={(c) => { this.toast = c; }} position="center" />
         </View>
       </ScrollView>
     );
@@ -225,7 +225,10 @@ class NewEditContactScreen extends React.Component {
 }
 NewEditContactScreen.propTypes = {
   navigation: PropTypes.shape({
+    getParam: PropTypes.func.isRequired,
     navigate: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
   }).isRequired,
   user: PropTypes.shape({
     domain: PropTypes.string,
@@ -245,11 +248,11 @@ NewEditContactScreen.propTypes = {
   saveContact: PropTypes.func.isRequired,
 };
 const mapStateToProps = state => ({
-  user: state.userReducer
+  user: state.userReducer,
 });
 const mapDispatchToProps = dispatch => ({
   saveContact: (user, contact) => {
     dispatch(saveContact(user, contact));
-  }
+  },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(NewEditContactScreen);

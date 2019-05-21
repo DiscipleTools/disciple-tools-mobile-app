@@ -1,5 +1,5 @@
 import {
-  put, take, takeLatest, all, race, call, delay
+  put, take, takeLatest, all,
 } from 'redux-saga/effects';
 import * as actions from '../actions/user.actions';
 // import REQUEST from '../actions/request.actions';
@@ -22,7 +22,7 @@ export function* login({ domain, username, password }) {
           password,
         }),
       },
-      action: actions.USER_LOGIN_RESPONSE
+      action: actions.USER_LOGIN_RESPONSE,
     },
   });
 
@@ -30,14 +30,20 @@ export function* login({ domain, username, password }) {
   try {
     // TODO: will this block and cause responses to be missed?
     // use channel instead
-    const res = yield take(actions.USER_LOGIN_RESPONSE)
+    const res = yield take(actions.USER_LOGIN_RESPONSE);
     if (res) {
-      response = res.payload;
-      jsonData = yield response.json();
+      const response = res.payload;
+      const jsonData = yield response.json();
       if (response.status === 200) {
         yield put({ type: actions.USER_LOGIN_SUCCESS, domain, user: jsonData });
       } else {
-        yield put({ type: actions.USER_LOGIN_FAILURE, error: { code: jsonData.code, message: jsonData.message } });
+        yield put({
+          type: actions.USER_LOGIN_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
       }
     }
   } catch (error) {

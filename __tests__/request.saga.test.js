@@ -1,8 +1,6 @@
-import { expectSaga, testSaga } from 'redux-saga-test-plan';
+import { expectSaga } from 'redux-saga-test-plan';
 
 import { combineReducers } from 'redux';
-import { channel } from 'redux-saga';
-import { call } from 'redux-saga/effects'; // set it to 4 secs (just under jest default of 5000ms)
 
 import requestSaga from '../store/sagas/request.sagas';
 import requestReducer from '../store/reducers/request.reducer';
@@ -14,18 +12,14 @@ const reducers = combineReducers({
   requestReducer,
 });
 
-user = {
+const user = {
   domain: 'localhost:8000',
   token: '??',
   username: 'zdmc',
   password: 'changeme',
 };
 
-contact = {
-  name: 'Luigi',
-};
-
-testLoginPayload = {
+const testLoginPayload = {
   url: `http://${user.domain}/wp-json/jwt-auth/v1/token`,
   data: {
     method: 'POST',
@@ -39,7 +33,7 @@ testLoginPayload = {
   },
 };
 
-testLogin = {
+const testLogin = {
   type: 'REQUEST',
   payload: testLoginPayload,
 };
@@ -65,7 +59,7 @@ describe('Request Saga', () => {
   });
   */
   it('online post', () => {
-    initialState = {
+    const initialState = {
       networkConnectivityReducer: { isConnected: true },
       requestReducer: [],
     };

@@ -5,7 +5,6 @@ import LoginScreen from '../screens/LoginScreen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import NewEditContactScreen from '../screens/NewEditContactScreen';
 import ContactDetailsScreen from '../screens/ContactDetailsScreen';
-import ContactsScreen from '../screens/ContactsScreen';
 
 const AuthStack = createStackNavigator({ Login: LoginScreen });
 const NewEditContactStack = createStackNavigator({

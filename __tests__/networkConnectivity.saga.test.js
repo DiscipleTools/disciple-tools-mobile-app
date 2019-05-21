@@ -1,4 +1,4 @@
-import { expectSaga, testSaga } from 'redux-saga-test-plan';
+import { expectSaga } from 'redux-saga-test-plan';
 
 import networkConnectivitySaga from '../store/sagas/networkConnectivity.sagas';
 import networkConnectivityReducer from '../store/reducers/networkConnectivity.reducer';
