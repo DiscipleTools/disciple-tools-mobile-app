@@ -2,7 +2,7 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "./node_modules/.bin/expo start",
-    "postinstall": "if ! test \"$NODE_ENV\" = \"production\" ; then mkdir -p .git/hooks && cp -f git-hooks/pre-commit .git/hooks/ && chmod 755 .git/hooks/pre-commit ; fi",
+    "postinstall": "./node_modules/.bin/shx  mkdir -p .git/hooks && ./node_modules/.bin/shx cp -f git-hooks/pre-commit .git/hooks/ && ./node_modules/.bin/shx chmod 755 .git/hooks/pre-commit",
     "android": "./node_modules/.bin/expo start --android",
     "ios": "./node_modules/.bin/expo start --ios",
     "lint": "./node_modules/.bin/eslint --ext .jsx,.js ./ --fix",
@@ -47,10 +47,11 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.12.4",
-    "jest-expo": "^32.0.0",
     "jest": "^24.6.0",
+    "jest-expo": "^32.0.0",
     "jest-fetch-mock": "^2.1.2",
-    "redux-saga-test-plan": "4.0.0-beta.2"
+    "redux-saga-test-plan": "4.0.0-beta.2",
+    "shx": "^0.3.2"
   },
   "private": true
 }
