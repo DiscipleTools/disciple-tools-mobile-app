@@ -113,7 +113,8 @@ class LoginScreen extends React.Component {
       username,
       password,
     } = this.state;
-    this.props.loginDispatch(domain, username, password);
+    const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
+    this.props.loginDispatch(cleanedDomain, username, password);
   };
 
   /* eslint-disable class-methods-use-this, no-console */
