@@ -2,7 +2,7 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "./node_modules/.bin/expo start",
-    "postinstall": "./node_modules/.bin/shx  mkdir -p .git/hooks && ./node_modules/.bin/shx cp -f git-hooks/pre-commit .git/hooks/ && ./node_modules/.bin/shx chmod 755 .git/hooks/pre-commit",
+    "postinstall": "npx shx  mkdir -p .git/hooks && npx shx cp -f git-hooks/pre-commit .git/hooks/ && npx shx chmod 755 .git/hooks/pre-commit",
     "android": "./node_modules/.bin/expo start --android",
     "ios": "./node_modules/.bin/expo start --ios",
     "lint": "./node_modules/.bin/eslint --ext .jsx,.js ./ --fix",
