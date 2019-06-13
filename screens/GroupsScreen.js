@@ -16,10 +16,10 @@ import PropTypes from 'prop-types';
 import Colors from '../constants/Colors';
 import {
   getAll,
-  CONTACTS_GETALL_START,
-  CONTACTS_GETALL_SUCCESS,
-  CONTACTS_GETALL_FAILURE,
-} from '../store/actions/contacts.actions';
+  GROUPS_GETALL_START,
+  GROUPS_GETALL_FAILURE,
+  GROUPS_GETALL_SUCCESS,
+} from '../store/actions/groups.actions';
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 20,
   },
-  contactSubtitle: {
+  groupSubtitle: {
     paddingTop: 6,
     fontWeight: '200',
     color: 'rgba(0,0,0,0.6)',
@@ -43,52 +43,48 @@ const styles = StyleSheet.create({
 
 let toastError;
 
-class ContactsScreen extends React.Component {
+class GroupsScreen extends React.Component {
   static navigationOptions = {
-    title: 'Contacts',
+    title: 'Groups',
     headerLeft: null,
   };
 
   state = {
-    contactsReducerResponse: '',
+    responseMessage: '',
     refreshing: false,
-    contacts: [],
+    groups: [],
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   componentDidMount() {
     this.onRefresh();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const { contactsReducerResponse } = nextProps;
+    const { type, groups } = nextProps;
     const { responseMessage } = prevState;
     let newState = {
       ...prevState,
-      contactsReducerResponse,
     };
 
     // Detect new message incomming
-    switch (contactsReducerResponse) {
-      case CONTACTS_GETALL_START:
+    if (type !== responseMessage) {
+      const newResponseMessage = type;
+      newState = {
+        ...newState,
+        responseMessage,
+      };
+      if (newResponseMessage === GROUPS_GETALL_START) {
         newState = {
           ...newState,
           refreshing: true,
         };
-        break;
-      case CONTACTS_GETALL_SUCCESS:
-        const { contacts } = nextProps;
+      } else if (newResponseMessage === GROUPS_GETALL_SUCCESS) {
         newState = {
           ...newState,
-          contacts,
+          groups,
           refreshing: false,
         };
-        break;
-      case CONTACTS_GETALL_FAILURE:
-        const { error } = nextProps;
+      } else if (newResponseMessage === GROUPS_GETALL_FAILURE) {
         newState = {
           ...newState,
           refreshing: false,
@@ -96,13 +92,13 @@ class ContactsScreen extends React.Component {
         toastError.show(
           <View>
             <Text style={{ fontWeight: 'bold' }}>Code: </Text>
-            <Text>{error.code}</Text>
+            <Text>{nextProps.error.code}</Text>
             <Text style={{ fontWeight: 'bold' }}>Message: </Text>
-            <Text>{error.message}</Text>
+            <Text>{nextProps.error.message}</Text>
           </View>,
           3000,
         );
-        break;
+      }
     }
 
     return newState;
@@ -110,17 +106,15 @@ class ContactsScreen extends React.Component {
 
   renderRow = item => (
     <TouchableHighlight
-      onPress={() => this.goToContactDetailScreen(item)}
+      onPress={() => this.goToGroupDetailScreen(item)}
       style={styles.flatListItem}
       activeOpacity={0.5}
       key={item.toString()}
     >
       <View>
         <Text style={{ fontWeight: 'bold' }}>{item.post_title}</Text>
-        <Text style={styles.contactSubtitle}>
-          {`${item.overall_status.label} • ${item.seeker_path.label} • ${
-            item.assigned_to.display
-          } • ${item.assigned_to.display}`}
+        <Text style={styles.groupSubtitle}>
+          {`${item.group_status} • ${item.group_type} • ${item.member_count}`}
         </Text>
       </View>
     </TouchableHighlight>
@@ -137,19 +131,19 @@ class ContactsScreen extends React.Component {
   );
 
   onRefresh = () => {
-    this.props.getAllContacts(this.props.user.domain, this.props.user.token);
+    this.props.getAllGroups(this.props.user.domain, this.props.user.token);
   };
 
-  goToContactDetailScreen = (contactData = null) => {
-    if (contactData) {
+  goToGroupDetailScreen = (groupData = null) => {
+    if (groupData) {
       // Detail
-      this.props.navigation.push('ContactDetail', {
-        contactId: contactData.ID,
+      this.props.navigation.push('GroupDetail', {
+        groupId: groupData.ID,
         onlyView: true,
       });
     } else {
       // Create
-      this.props.navigation.push('ContactDetail');
+      this.props.navigation.push('GroupDetail');
     }
   };
 
@@ -158,7 +152,7 @@ class ContactsScreen extends React.Component {
       <View style={styles.container}>
         <View>
           <FlatList
-            data={this.state.contacts}
+            data={this.state.groups}
             renderItem={item => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
             refreshControl={(
@@ -172,7 +166,7 @@ class ContactsScreen extends React.Component {
           <Fab
             style={{ backgroundColor: Colors.tintColor }}
             position="bottomRight"
-            onPress={() => this.goToContactDetailScreen()}
+            onPress={() => this.goToGroupDetailScreen()}
           >
             <Icon name="md-add" />
           </Fab>
@@ -189,7 +183,7 @@ class ContactsScreen extends React.Component {
   }
 }
 
-ContactsScreen.propTypes = {
+GroupsScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
@@ -198,30 +192,34 @@ ContactsScreen.propTypes = {
     domain: PropTypes.string,
     token: PropTypes.string,
   }).isRequired,
-  contacts: PropTypes.arrayOf(
+  /* eslint-disable */
+  groups: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.number,
     }),
   ).isRequired,
+  /* eslint-enable */
   error: PropTypes.shape({
     message: PropTypes.string,
   }),
-  getAllContacts: PropTypes.func.isRequired,
-  contactsReducerResponse: PropTypes.string,
+  getAllGroups: PropTypes.func.isRequired,
+  /* eslint-disable */
+  type: PropTypes.string,
+  /* eslint-enable */
 };
-ContactsScreen.defaultProps = {
+GroupsScreen.defaultProps = {
   error: null,
-  contactsReducerResponse: null,
+  type: null,
 };
 
 const mapStateToProps = state => ({
-  contacts: state.contactsReducer.contacts,
-  error: state.contactsReducer.error,
+  groups: state.groupsReducer.groups,
+  error: state.groupsReducer.error,
   user: state.userReducer,
-  contactsReducerResponse: state.contactsReducer.type,
+  type: state.groupsReducer.type,
 });
 const mapDispatchToProps = dispatch => ({
-  getAllContacts: (domain, token) => {
+  getAllGroups: (domain, token) => {
     dispatch(getAll(domain, token));
   },
 });
@@ -229,4 +227,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(ContactsScreen);
+)(GroupsScreen);

@@ -7,13 +7,17 @@ export const CONTACTS_GETALL_SUCCESS = 'CONTACTS_GETALL_SUCCESS';
 export const CONTACTS_GETALL_RESPONSE = 'CONTACTS_GETALL_RESPONSE';
 export const CONTACTS_GETALL_FAILURE = 'CONTACTS_GETALL_FAILURE';
 
-export const CONTACTS_SAVECONTACT = 'CONTACTS_SAVECONTACT';
-export const CONTACTS_SAVECONTACT_START = 'CONTACTS_SAVECONTACT_START';
-export const CONTACTS_SAVECONTACT_SUCCESS = 'CONTACTS_SAVECONTACT_SUCCESS';
-export const CONTACTS_SAVECONTACT_RESPONSE = 'CONTACTS_SAVECONTACT_RESPONSE';
-export const CONTACTS_SAVECONTACT_FAILURE = 'CONTACTS_SAVECONTACT_FAILURE';
+export const CONTACTS_SAVE = 'CONTACTS_SAVE';
+export const CONTACTS_SAVE_START = 'CONTACTS_SAVE_START';
+export const CONTACTS_SAVE_SUCCESS = 'CONTACTS_SAVE_SUCCESS';
+export const CONTACTS_SAVE_RESPONSE = 'CONTACTS_SAVE_RESPONSE';
+export const CONTACTS_SAVE_FAILURE = 'CONTACTS_SAVE_FAILURE';
 
-export const CONTACTS_DELETECONTACT = 'CONTACTS_DELETECONTACT';
+export const CONTACTS_GETBYID = 'CONTACTS_GETBYID';
+export const CONTACTS_GETBYID_START = 'CONTACTS_GETBYID_START';
+export const CONTACTS_GETBYID_SUCCESS = 'CONTACTS_GETBYID_SUCCESS';
+export const CONTACTS_GETBYID_RESPONSE = 'CONTACTS_GETBYID_RESPONSE';
+export const CONTACTS_GETBYID_FAILURE = 'CONTACTS_GETBYID_FAILURE';
 
 /*
  * Action Creators
@@ -26,18 +30,11 @@ export function getAll(domain, token) {
   };
 }
 
-export function saveContact(user, contact) {
+export function save(domain, token, contact) {
   return {
-    type: CONTACTS_SAVECONTACT,
-    user,
-    contact,
-  };
-}
-
-export function deleteContact(user, contact) {
-  return {
-    type: CONTACTS_DELETECONTACT,
-    user,
+    type: CONTACTS_SAVE,
+    domain,
+    token,
     contact,
   };
 }

@@ -7,6 +7,7 @@ import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import ContactsScreen from '../screens/ContactsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import GroupsScreen from '../screens/GroupsScreen';
 
 import Colors from '../constants/Colors';
 
@@ -51,6 +52,26 @@ ContactsStack.navigationOptions = {
   tabBarOptions: { activeTintColor: Colors.tabIconSelected },
 };
 
+const GroupsStack = createStackNavigator({
+  Groups: GroupsScreen,
+});
+function GroupsIcon({ focused }) {
+  return (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === 'ios' ? 'ios-people' : 'md-people'}
+    />
+  );
+}
+GroupsIcon.propTypes = {
+  focused: PropTypes.bool.isRequired,
+};
+GroupsStack.navigationOptions = {
+  tabBarLabel: 'Groups',
+  tabBarIcon: GroupsIcon,
+  tabBarOptions: { activeTintColor: Colors.tabIconSelected },
+};
+
 const SettingsStack = createStackNavigator({
   Settings: SettingsScreen,
 });
@@ -74,5 +95,6 @@ SettingsStack.navigationOptions = {
 export default createBottomTabNavigator({
   HomeStack,
   ContactsStack,
+  GroupsStack,
   SettingsStack,
 });

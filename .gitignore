@@ -19,7 +19,8 @@ bower_components
 build/Release
 
 # Dependency directories
-node_modules/
+**/node_modules/*
+!**/node_modules/react-native-multiple-tags
 jspm_packages/
 
 # TypeScript v1 declaration files
@@ -87,3 +88,4 @@ fabric.properties
 
 # Expo
 .expo
+.expo-shared

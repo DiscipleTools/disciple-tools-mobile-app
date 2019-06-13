@@ -3,17 +3,17 @@ import { createAppContainer, createSwitchNavigator, createStackNavigator } from 
 import MainTabNavigator from './MainTabNavigator';
 import LoginScreen from '../screens/LoginScreen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
-import NewEditContactScreen from '../screens/NewEditContactScreen';
-import ContactDetailsScreen from '../screens/ContactDetailsScreen';
+import ContactDetailScreen from '../screens/ContactDetailScreen';
+import GroupDetailScreen from '../screens/GroupDetailScreen';
 
 const AuthStack = createStackNavigator({ Login: LoginScreen });
-const NewEditContactStack = createStackNavigator({
+const ContactDetailStack = createStackNavigator({
   Main: MainTabNavigator,
-  NewEditContact: NewEditContactScreen,
+  ContactDetail: ContactDetailScreen,
 });
-const ContactDetailsStack = createStackNavigator({
+const GroupDetailStack = createStackNavigator({
   Main: MainTabNavigator,
-  ContactDetails: ContactDetailsScreen,
+  GroupDetail: GroupDetailScreen,
 });
 
 export default createAppContainer(createSwitchNavigator(
@@ -23,8 +23,8 @@ export default createAppContainer(createSwitchNavigator(
     AuthLoading: AuthLoadingScreen,
     Auth: AuthStack,
     Main: MainTabNavigator,
-    NewEditContact: NewEditContactStack,
-    ContactDetails: ContactDetailsStack,
+    ContactDetail: ContactDetailStack,
+    GroupDetail: GroupDetailStack,
   },
   {
     initialRouteName: 'AuthLoading',
