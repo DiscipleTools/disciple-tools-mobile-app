@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   ScrollView,
   Keyboard,
@@ -9,8 +9,8 @@ import {
   StyleSheet,
   Dimensions,
   FlatList,
-  TextInput,
-} from 'react-native';
+  TextInput
+} from "react-native";
 import {
   Label,
   Icon,
@@ -26,14 +26,14 @@ import {
   ListItem,
   Left,
   Right,
-  Body,
-} from 'native-base';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import Toast from 'react-native-easy-toast';
-import { Col, Row, Grid } from 'react-native-easy-grid';
-import MultipleTags from 'react-native-multiple-tags';
-import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
+  Body
+} from "native-base";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import Toast from "react-native-easy-toast";
+import { Col, Row, Grid } from "react-native-easy-grid";
+import MultipleTags from "react-native-multiple-tags";
+import KeyboardAccessory from "react-native-sticky-keyboard-accessory";
 // import ModalFilterPicker from "react-native-modal-filter-picker";
 import {
   saveGroup,
@@ -51,132 +51,132 @@ import {
   getPeopleGroups,
   GROUPS_GET_PEOPLE_GROUPS_SUCCESS,
   getActivitiesByGroup,
-  GROUPS_GET_ACTIVITIES_SUCCESS,
-} from '../store/actions/groups.actions';
-import { getUsers, GET_USERS_SUCCESS } from '../store/actions/users.actions';
-import Colors from '../constants/Colors';
+  GROUPS_GET_ACTIVITIES_SUCCESS
+} from "../store/actions/groups.actions";
+import { getUsers, GET_USERS_SUCCESS } from "../store/actions/users.actions";
+import Colors from "../constants/Colors";
 
-import baptismIcon from '../assets/icons/baptism.png';
-import bibleStudyIcon from '../assets/icons/word.png';
-import communionIcon from '../assets/icons/communion.png';
-import fellowShipIcon from '../assets/icons/fellowship.png'; // Missing icon!!!
-import givingIcon from '../assets/icons/giving.png';
-import prayerIcon from '../assets/icons/prayer.png';
-import praiseIcon from '../assets/icons/praise.png';
-import sharingTheGospelIcon from '../assets/icons/evangelism.png';
-import leadersIcon from '../assets/icons/leadership.png';
-import churchCommitmentIcon from '../assets/icons/covenant.png';
+import baptismIcon from "../assets/icons/baptism.png";
+import bibleStudyIcon from "../assets/icons/word.png";
+import communionIcon from "../assets/icons/communion.png";
+import fellowShipIcon from "../assets/icons/fellowship.png"; // Missing icon!!!
+import givingIcon from "../assets/icons/giving.png";
+import prayerIcon from "../assets/icons/prayer.png";
+import praiseIcon from "../assets/icons/praise.png";
+import sharingTheGospelIcon from "../assets/icons/evangelism.png";
+import leadersIcon from "../assets/icons/leadership.png";
+import churchCommitmentIcon from "../assets/icons/covenant.png";
 
 const styles = StyleSheet.create({
   toggleButton: {
     borderRadius: 5,
-    height: '100%',
-    margin: 5,
+    height: "100%",
+    margin: 5
   },
   inputContactAddress: {
     borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#D9D5DC',
-    margin: 5,
+    borderStyle: "solid",
+    borderColor: "#D9D5DC",
+    margin: 5
   },
   activeImage: {
     opacity: 1,
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%"
   },
   inactiveImage: {
     opacity: 0.4,
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%"
   },
   activeToggleText: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    color: '#000000',
-    fontSize: 9,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    color: "#000000",
+    fontSize: 9
   },
   inactiveToggleText: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    color: '#D9D5DC',
-    fontSize: 9,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    color: "#D9D5DC",
+    fontSize: 9
   },
   tabBarUnderlineStyle: {
     borderBottomWidth: 2,
-    borderBottomColor: Colors.tintColor,
+    borderBottomColor: Colors.tintColor
   },
-  tabStyle: { backgroundColor: '#FFFFFF' },
-  textStyle: { color: 'gray' },
-  activeTabStyle: { backgroundColor: '#FFFFFF' },
-  activeTextStyle: { color: Colors.tintColor, fontWeight: 'bold' },
+  tabStyle: { backgroundColor: "#FFFFFF" },
+  textStyle: { color: "gray" },
+  activeTabStyle: { backgroundColor: "#FFFFFF" },
+  activeTextStyle: { color: Colors.tintColor, fontWeight: "bold" },
   label: {
     color: Colors.tintColor,
-    fontSize: 15,
+    fontSize: 15
   },
   addRemoveIcons: {
     fontSize: 30,
-    color: 'black',
+    color: "black"
   },
   icons: {
-    color: Colors.tintColor,
+    color: Colors.tintColor
   },
   // Comments Section
   root: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     flex: 1,
-    marginBottom: 60,
+    marginBottom: 60
   },
   container: {
     paddingLeft: 19,
     paddingRight: 16,
     paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start"
   },
   image: {
     height: 16,
     marginTop: 10,
-    width: 16,
+    width: 16
   },
   content: {
-    backgroundColor: '#F3F3F3',
+    backgroundColor: "#F3F3F3",
     borderRadius: 5,
     flex: 1,
     marginLeft: 16,
-    padding: 10,
+    padding: 10
   },
   contentHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 6,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 6
   },
   name: {
     color: Colors.tintColor,
     fontSize: 13,
-    fontWeight: 'bold',
+    fontWeight: "bold"
   },
   time: {
     color: Colors.tintColor,
-    fontSize: 10,
+    fontSize: 10
   },
   separator: {
     height: 1,
-    backgroundColor: '#CCCCCC',
+    backgroundColor: "#CCCCCC"
   },
   commentMessage: {
     paddingLeft: 10,
-    paddingRight: 10,
+    paddingRight: 10
   },
   activityMessage: {
     paddingLeft: 10,
     paddingRight: 10,
-    color: '#B4B4B4',
-    fontStyle: 'italic',
-  },
+    color: "#B4B4B4",
+    fontStyle: "italic"
+  }
 });
-const windowWidth = Dimensions.get('window').width;
+const windowWidth = Dimensions.get("window").width;
 const spacing = windowWidth * 0.025;
 const sideSize = windowWidth - 2 * spacing;
 let toastSuccess;
@@ -204,8 +204,8 @@ function formatDateToBackEnd(dateObject) {
 
 class GroupDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
-    const groupId = navigation.getParam('groupId');
-    const onlyView = navigation.getParam('onlyView');
+    const groupId = navigation.getParam("groupId");
+    const onlyView = navigation.getParam("onlyView");
     // Disable button when form its not valid
     let headerRight;
 
@@ -214,12 +214,12 @@ class GroupDetailScreen extends React.Component {
         <Icon
           android="md-create"
           ios="ios-create"
-          onPress={navigation.getParam('onEnableEdit')}
+          onPress={navigation.getParam("onEnableEdit")}
           style={[
             {
               paddingRight: 16,
-              color: '#FFFFFF',
-            },
+              color: "#FFFFFF"
+            }
           ]}
         />
       );
@@ -228,46 +228,46 @@ class GroupDetailScreen extends React.Component {
         <Icon
           android="md-checkmark"
           ios="ios-checkmark"
-          onPress={navigation.getParam('onSaveGroup')}
+          onPress={navigation.getParam("onSaveGroup")}
           style={[
             {
               paddingRight: 16,
-              color: '#FFFFFF',
-            },
+              color: "#FFFFFF"
+            }
           ]}
         />
       );
     }
     return {
-      title: groupId ? 'Group Details' : 'Add New Group',
+      title: groupId ? "Group Details" : "Add New Group",
       headerLeft: (
         <Icon
           android="md-arrow-back"
           ios="ios-arrow-back"
-          onPress={() => navigation.push('Groups')}
-          style={[{ paddingLeft: 16, color: '#FFFFFF' }]}
+          onPress={() => navigation.push("Groups")}
+          style={[{ paddingLeft: 16, color: "#FFFFFF" }]}
         />
       ),
       headerRight,
       headerStyle: {
-        backgroundColor: Colors.tintColor,
+        backgroundColor: Colors.tintColor
       },
-      headerTintColor: '#FFFFFF',
+      headerTintColor: "#FFFFFF",
       headerTitleStyle: {
-        fontWeight: 'bold',
-      },
+        fontWeight: "bold"
+      }
     };
   };
 
   state = {
     group: {
-      contact_address: [],
+      contact_address: []
     },
     onlyView: false,
     renderView: false,
-    groupsReducerResponse: '',
-    usersReducerResponse: '',
-    comment: '',
+    groupsReducerResponse: "",
+    usersReducerResponse: "",
+    comment: "",
     users: [],
     usersContacts: [],
     geonames: [],
@@ -276,7 +276,7 @@ class GroupDetailScreen extends React.Component {
     showAssignedToModal: false,
     currentCoaches: [],
     currentGeonames: [],
-    currentPeopleGroups: [],
+    currentPeopleGroups: []
   };
 
   constructor(props) {
@@ -287,30 +287,30 @@ class GroupDetailScreen extends React.Component {
   componentDidMount() {
     this.props.navigation.setParams({ onSaveGroup: this.onSaveGroup });
     this.props.navigation.setParams({ onEnableEdit: this.onEnableEdit });
-    const groupId = this.props.navigation.getParam('groupId');
-    const onlyView = this.props.navigation.getParam('onlyView');
+    const groupId = this.props.navigation.getParam("groupId");
+    const onlyView = this.props.navigation.getParam("onlyView");
     // GetById
     if (groupId) {
       this.setState({
         group: {
-          ID: groupId,
-        },
+          ID: groupId
+        }
       });
       // First end-point to call
       this.getUsers();
     } else {
       this.setState({
         group: {
-          ID: null,
-        },
+          ID: null
+        }
       });
-      this.setGroupType('pre-group');
+      this.setGroupType("pre-group");
     }
 
     if (onlyView) {
       this.setState(prevState => ({
         ...prevState,
-        onlyView,
+        onlyView
       }));
     }
   }
@@ -328,12 +328,12 @@ class GroupDetailScreen extends React.Component {
       activities,
       comment,
       error,
-      users,
+      users
     } = nextProps;
     let newState = {
       ...prevState,
       groupsReducerResponse,
-      usersReducerResponse,
+      usersReducerResponse
     };
 
     // Detect new message incomming
@@ -346,34 +346,34 @@ class GroupDetailScreen extends React.Component {
           newState = {
             ...newState,
             group: {
-              ID: group.ID,
-            },
+              ID: group.ID
+            }
           };
         }
-        toastSuccess.show('Group Saved!', 2000);
+        toastSuccess.show("Group Saved!", 2000);
         break;
       case GROUPS_GET_USERS_CONTACTS_SUCCESS:
         newState = {
           ...newState,
-          usersContacts,
+          usersContacts
         };
         break;
       case GROUPS_GET_LOCATIONS_SUCCESS:
         newState = {
           ...newState,
-          geonames,
+          geonames
         };
         break;
       case GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
         newState = {
           ...newState,
-          peopleGroups,
+          peopleGroups
         };
         break;
       case GROUPS_GETBYID_SUCCESS:
         if (group.church_start_date) {
           group.church_start_date = formatDateToPickerValue(
-            group.church_start_date,
+            group.church_start_date
           );
         }
         if (group.end_date) {
@@ -387,25 +387,25 @@ class GroupDetailScreen extends React.Component {
           group,
           currentCoaches: group.coaches.values,
           currentGeonames: group.geonames.values,
-          currentPeopleGroups: group.people_groups.values,
+          currentPeopleGroups: group.people_groups.values
         };
         break;
       case GROUPS_GET_COMMENTS_SUCCESS:
         newState = {
           ...newState,
-          commentsOrActivities: comments,
+          commentsOrActivities: comments
         };
         break;
       case GROUPS_GET_ACTIVITIES_SUCCESS: {
         const commentsAndActivities = newState.commentsOrActivities
           .concat(activities)
           .sort(
-            (a, b) => new Date(a.date).getTime() > new Date(b.date).getTime(),
+            (a, b) => new Date(a.date).getTime() > new Date(b.date).getTime()
           );
         newState = {
           ...newState,
           commentsOrActivities: commentsAndActivities,
-          renderView: true,
+          renderView: true
         };
         break;
       }
@@ -413,12 +413,12 @@ class GroupDetailScreen extends React.Component {
         const newCommentsOrActivities = newState.commentsOrActivities;
         newCommentsOrActivities.push(comment);
         newCommentsOrActivities.sort(
-          (a, b) => new Date(a.date).getTime() > new Date(b.date).getTime(),
+          (a, b) => new Date(a.date).getTime() > new Date(b.date).getTime()
         );
         newState = {
           ...newState,
           commentsOrActivities: newCommentsOrActivities,
-          comment: '',
+          comment: ""
         };
         Keyboard.dismiss();
         break;
@@ -427,12 +427,12 @@ class GroupDetailScreen extends React.Component {
         if (error) {
           toastError.show(
             <View>
-              <Text style={{ fontWeight: 'bold' }}>Code: </Text>
+              <Text style={{ fontWeight: "bold" }}>Code: </Text>
               <Text>{error.code}</Text>
-              <Text style={{ fontWeight: 'bold' }}>Message: </Text>
+              <Text style={{ fontWeight: "bold" }}>Message: </Text>
               <Text>{error.message}</Text>
             </View>,
-            3000,
+            3000
           );
         }
         break;
@@ -442,19 +442,19 @@ class GroupDetailScreen extends React.Component {
       case GET_USERS_SUCCESS:
         newState = {
           ...newState,
-          users,
+          users
         };
         break;
       default:
         if (error) {
           toastError.show(
             <View>
-              <Text style={{ fontWeight: 'bold' }}>Code: </Text>
+              <Text style={{ fontWeight: "bold" }}>Code: </Text>
               <Text>{error.code}</Text>
-              <Text style={{ fontWeight: 'bold' }}>Message: </Text>
+              <Text style={{ fontWeight: "bold" }}>Message: </Text>
               <Text>{error.message}</Text>
             </View>,
-            3000,
+            3000
           );
         }
         break;
@@ -470,7 +470,7 @@ class GroupDetailScreen extends React.Component {
     if (groupsReducerResponse === this.state.groupsReducerResponse) {
       switch (groupsReducerResponse) {
         case GROUPS_SAVE_SUCCESS:
-          // Creation
+          // After creation
           if (users.length === 0) {
             this.getUsers();
           }
@@ -510,7 +510,7 @@ class GroupDetailScreen extends React.Component {
   getUsersContacts() {
     this.props.getUsersAndContacts(
       this.props.user.domain,
-      this.props.user.token,
+      this.props.user.token
     );
   }
 
@@ -530,7 +530,7 @@ class GroupDetailScreen extends React.Component {
     this.props.getComments(
       this.props.user.domain,
       this.props.user.token,
-      groupId,
+      groupId
     );
   }
 
@@ -538,85 +538,85 @@ class GroupDetailScreen extends React.Component {
     this.props.getActivities(
       this.props.user.domain,
       this.props.user.token,
-      groupId,
+      groupId
     );
   }
 
-  setGroupName = (value) => {
+  setGroupName = value => {
     this.setState(prevState => ({
       ...prevState,
       group: {
         ...prevState.group,
-        title: value,
-      },
+        title: value
+      }
     }));
   };
 
-  setGroupType = (value) => {
+  setGroupType = value => {
     this.setState(prevState => ({
       ...prevState,
       group: {
         ...prevState.group,
-        group_type: value,
-      },
+        group_type: value
+      }
     }));
   };
 
-  setGroupStatus = (value) => {
+  setGroupStatus = value => {
     this.setState(prevState => ({
       ...prevState,
       group: {
         ...prevState.group,
-        group_status: value,
-      },
+        group_status: value
+      }
     }));
   };
 
   onEnableEdit = () => {
     this.setState(prevState => ({
       ...prevState,
-      onlyView: false,
+      onlyView: false
     }));
     this.props.navigation.setParams({ onlyView: false });
   };
 
-  updateShowAssignedToModal = (value) => {
+  updateShowAssignedToModal = value => {
     this.setState(prevState => ({
       ...prevState,
-      showAssignedToModal: value,
+      showAssignedToModal: value
     }));
   };
 
-  onSelectAssignedTo = (selectedUser) => {
+  onSelectAssignedTo = selectedUser => {
     this.setState(prevState => ({
       ...prevState,
       group: {
         ...prevState.group,
-        assigned_to: selectedUser.ID,
+        assigned_to: selectedUser.ID
       },
-      showAssignedToModal: false,
+      showAssignedToModal: false
     }));
   };
 
   onCancelAssignedTo = () => {
     this.setState(prevState => ({
       ...prevState,
-      showAssignedToModal: false,
+      showAssignedToModal: false
     }));
   };
 
   onAddAddressField = () => {
     const contactAddress = this.state.group.contact_address;
     contactAddress.push({
-      value: '',
+      value: ""
     });
 
     this.setState(prevState => ({
       ...prevState,
       group: {
         ...prevState.group,
-        contact_address: contactAddress,
-      },
+        contact_address: contactAddress
+      }
     }));
   };
 
@@ -629,7 +629,7 @@ class GroupDetailScreen extends React.Component {
               <Input
                 multiline
                 value={address.value}
-                onChangeText={(value) => {
+                onChangeText={value => {
                   this.onContactAddressChange(value, index, address.key, this);
                 }}
                 style={styles.inputContactAddress}
@@ -648,7 +648,7 @@ class GroupDetailScreen extends React.Component {
           </ListItem>
         );
       }
-      return '';
+      return "";
     });
   };
 
@@ -662,7 +662,7 @@ class GroupDetailScreen extends React.Component {
         <View style={styles.contentHeader}>
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
-            'content',
+            "content"
           ) && (
             <Grid>
               <Row>
@@ -679,7 +679,7 @@ class GroupDetailScreen extends React.Component {
           )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
-            'object_note',
+            "object_note"
           ) && (
             <Grid>
               <Row>
@@ -702,7 +702,7 @@ class GroupDetailScreen extends React.Component {
               : styles.activityMessage
           }
         >
-          {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
+          {Object.prototype.hasOwnProperty.call(commentOrActivity, "content")
             ? commentOrActivity.content
             : commentOrActivity.object_note}
         </Text>
@@ -721,8 +721,8 @@ class GroupDetailScreen extends React.Component {
       ...prevState,
       group: {
         ...prevState.group,
-        contact_address: contactAddressList,
-      },
+        contact_address: contactAddressList
+      }
     }));
   };
 
@@ -732,7 +732,7 @@ class GroupDetailScreen extends React.Component {
     if (contactAddress.key) {
       contactAddress = {
         key: contactAddress.key,
-        delete: true,
+        delete: true
       };
       contactAddressList[index] = contactAddress;
     } else {
@@ -742,30 +742,30 @@ class GroupDetailScreen extends React.Component {
       ...prevState,
       group: {
         ...prevState.group,
-        contact_address: contactAddressList,
-      },
+        contact_address: contactAddressList
+      }
     }));
   };
 
-  onCheckExistingHealthMetric = (metricName) => {
+  onCheckExistingHealthMetric = metricName => {
     const healthMetrics = this.state.group.health_metrics.values;
     const foundhealthMetric = healthMetrics.some(
-      metric => metric.value === metricName,
+      metric => metric.value === metricName
     );
     return foundhealthMetric;
   };
 
-  onHealthMetricChange = (metricName) => {
+  onHealthMetricChange = metricName => {
     const healthMetrics2 = this.state.group.health_metrics.values;
     const foundhealthMetric = healthMetrics2.find(
-      metric => metric.value === metricName,
+      metric => metric.value === metricName
     );
     if (foundhealthMetric) {
       const healthMetricIndex = healthMetrics2.indexOf(foundhealthMetric);
       healthMetrics2.splice(healthMetricIndex, 1);
     } else {
       healthMetrics2.push({
-        value: metricName,
+        value: metricName
       });
     }
     this.setState(prevState => ({
@@ -773,10 +773,9 @@ class GroupDetailScreen extends React.Component {
       group: {
         ...prevState.group,
         health_metrics: {
-          values: healthMetrics2,
-          force_values: true,
-        },
-      },
+          values: healthMetrics2
+        }
+      }
     }));
   };
 
@@ -785,18 +784,18 @@ class GroupDetailScreen extends React.Component {
     const localCoaches = [...this.state.currentCoaches];
 
     const coachesToSave = localCoaches.map(localCoach => ({
-      value: localCoach.value,
+      value: localCoach.value
     }));
 
     // add coaches to delete it in db
-    dbCoaches.forEach((dbCoach) => {
+    dbCoaches.forEach(dbCoach => {
       const foundDbCoachInLocalCoach = localCoaches.find(
-        localCoach => dbCoach.value === localCoach.value,
+        localCoach => dbCoach.value === localCoach.value
       );
       if (!foundDbCoachInLocalCoach) {
         coachesToSave.push({
           value: dbCoach.value,
-          delete: true,
+          delete: true
         });
       }
     });
@@ -809,18 +808,18 @@ class GroupDetailScreen extends React.Component {
     const localGeonames = [...this.state.currentGeonames];
 
     const geonamesToSave = localGeonames.map(localGeoname => ({
-      value: localGeoname.value,
+      value: localGeoname.value
     }));
 
     // add geonames to delete it in db
-    dbGeonames.forEach((dbGeoname) => {
+    dbGeonames.forEach(dbGeoname => {
       const foundDbGeonameInLocalGeoname = localGeonames.find(
-        localGeoname => dbGeoname.value === localGeoname.value,
+        localGeoname => dbGeoname.value === localGeoname.value
       );
       if (!foundDbGeonameInLocalGeoname) {
         geonamesToSave.push({
           value: dbGeoname.value,
-          delete: true,
+          delete: true
         });
       }
     });
@@ -833,18 +832,17 @@ class GroupDetailScreen extends React.Component {
     const localPeopleGroups = [...this.state.currentPeopleGroups];
 
     const peopleGroupsToSave = localPeopleGroups.map(localPeopleGroup => ({
-      value: localPeopleGroup.value,
+      value: localPeopleGroup.value
     }));
 
-    // add geonames to delete it in db
-    dbPeopleGroups.forEach((dbPeopleGroup) => {
+    dbPeopleGroups.forEach(dbPeopleGroup => {
       const foundDbPeopleGroupInLocalPeopleGroup = localPeopleGroups.find(
-        localPeopleGroup => dbPeopleGroup.value === localPeopleGroup.value,
+        localPeopleGroup => dbPeopleGroup.value === localPeopleGroup.value
       );
       if (!foundDbPeopleGroupInLocalPeopleGroup) {
         peopleGroupsToSave.push({
           value: dbPeopleGroup.value,
-          delete: true,
+          delete: true
         });
       }
     });
@@ -856,54 +854,54 @@ class GroupDetailScreen extends React.Component {
     Keyboard.dismiss();
 
     const groupToSave = Object.assign({}, this.state.group);
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'start_date')) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, "start_date")) {
       groupToSave.start_date = formatDateToBackEnd(groupToSave.start_date);
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'end_date')) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, "end_date")) {
       groupToSave.end_date = formatDateToBackEnd(groupToSave.end_date);
     }
     if (
-      Object.prototype.hasOwnProperty.call(groupToSave, 'church_start_date')
+      Object.prototype.hasOwnProperty.call(groupToSave, "church_start_date")
     ) {
       groupToSave.church_start_date = formatDateToBackEnd(
-        groupToSave.church_start_date,
+        groupToSave.church_start_date
       );
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'coaches')) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, "coaches")) {
       groupToSave.coaches.values = this.setCoaches();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'geonames')) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, "geonames")) {
       groupToSave.geonames.values = this.setGeonames();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'people_groups')) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, "people_groups")) {
       groupToSave.people_groups.values = this.setPeopleGroups();
     }
     this.props.saveGroup(
       this.props.user.domain,
       this.props.user.token,
-      groupToSave,
+      groupToSave
     );
   };
 
-  onFormatDateToView = (date) => {
+  onFormatDateToView = date => {
     const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
     ];
     const newDate = new Date(date);
     let hours = newDate.getHours();
     let minutes = newDate.getMinutes();
-    const ampm = hours >= 12 ? 'pm' : 'am';
+    const ampm = hours >= 12 ? "pm" : "am";
     hours %= 12;
     hours = hours || 12; // the hour '0' should be '12'
     minutes = minutes < 10 ? `0${minutes}` : minutes;
@@ -911,10 +909,10 @@ class GroupDetailScreen extends React.Component {
     return `${monthNames[newDate.getMonth()]} ${newDate.getDate()}, ${strTime}`;
   };
 
-  setComment = (value) => {
+  setComment = value => {
     this.setState(prevState => ({
       ...prevState,
-      comment: value,
+      comment: value
     }));
   };
 
@@ -927,8 +925,8 @@ class GroupDetailScreen extends React.Component {
         this.props.user.token,
         this.state.group.ID,
         {
-          comment,
-        },
+          comment
+        }
       );
     }
   };
@@ -938,19 +936,19 @@ class GroupDetailScreen extends React.Component {
 
     const successToast = (
       <Toast
-        ref={(toast) => {
+        ref={toast => {
           toastSuccess = toast;
         }}
-        style={{ backgroundColor: 'green' }}
+        style={{ backgroundColor: "green" }}
         position="center"
       />
     );
     const errorToast = (
       <Toast
-        ref={(toast) => {
+        ref={toast => {
           toastError = toast;
         }}
-        style={{ backgroundColor: 'red' }}
+        style={{ backgroundColor: "red" }}
         position="center"
       />
     );
@@ -1054,10 +1052,10 @@ class GroupDetailScreen extends React.Component {
                           objectKeyIdentifier="value"
                           objectValueIdentifier="name"
                           search
-                          onChangeItem={(coaches) => {
+                          onChangeItem={coaches => {
                             this.setState(prevState => ({
                               ...prevState,
-                              currentCoaches: coaches,
+                              currentCoaches: coaches
                             }));
                           }}
                           title="Group Coach / Church Planter"
@@ -1073,10 +1071,10 @@ class GroupDetailScreen extends React.Component {
                           objectKeyIdentifier="value"
                           objectValueIdentifier="name"
                           search
-                          onChangeItem={(geonames) => {
+                          onChangeItem={geonames => {
                             this.setState(prevState => ({
                               ...prevState,
-                              currentGeonames: geonames,
+                              currentGeonames: geonames
                             }));
                           }}
                           title="Locations"
@@ -1092,10 +1090,10 @@ class GroupDetailScreen extends React.Component {
                           objectKeyIdentifier="value"
                           objectValueIdentifier="name"
                           search
-                          onChangeItem={(peopleGroups) => {
+                          onChangeItem={peopleGroups => {
                             this.setState(prevState => ({
                               ...prevState,
-                              currentPeopleGroups: peopleGroups,
+                              currentPeopleGroups: peopleGroups
                             }));
                           }}
                           title="People Groups"
@@ -1136,13 +1134,13 @@ class GroupDetailScreen extends React.Component {
                         <DatePicker
                           defaultDate={this.state.group.start_date}
                           disabled={this.state.onlyView}
-                          onDateChange={(value) => {
+                          onDateChange={value => {
                             this.setState(prevState => ({
                               ...prevState,
                               group: {
                                 ...prevState.group,
-                                start_date: value,
-                              },
+                                start_date: value
+                              }
                             }));
                           }}
                         />
@@ -1163,13 +1161,13 @@ class GroupDetailScreen extends React.Component {
                         <DatePicker
                           defaultDate={this.state.group.church_start_date}
                           disabled={this.state.onlyView}
-                          onDateChange={(value) => {
+                          onDateChange={value => {
                             this.setState(prevState => ({
                               ...prevState,
                               group: {
                                 ...prevState.group,
-                                church_start_date: value,
-                              },
+                                church_start_date: value
+                              }
                             }));
                           }}
                         />
@@ -1190,13 +1188,13 @@ class GroupDetailScreen extends React.Component {
                         <DatePicker
                           defaultDate={this.state.group.end_date}
                           disabled={this.state.onlyView}
-                          onDateChange={(value) => {
+                          onDateChange={value => {
                             this.setState(prevState => ({
                               ...prevState,
                               group: {
                                 ...prevState.group,
-                                end_date: value,
-                              },
+                                end_date: value
+                              }
                             }));
                           }}
                         />
@@ -1248,12 +1246,12 @@ class GroupDetailScreen extends React.Component {
                         <Image
                           source={churchCommitmentIcon}
                           style={{
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            alignSelf: 'center',
-                            position: 'absolute',
-                            height: '100%',
-                            width: '100%',
+                            justifyContent: "center",
+                            alignItems: "center",
+                            alignSelf: "center",
+                            position: "absolute",
+                            height: "100%",
+                            width: "100%"
                           }}
                         />
                         <Row style={{ height: sideSize * 0.1 }} />
@@ -1272,7 +1270,7 @@ class GroupDetailScreen extends React.Component {
                                           <TouchableOpacity
                                             onPress={() => {
                                               this.onHealthMetricChange(
-                                                'church_giving',
+                                                "church_giving"
                                               );
                                             }}
                                             activeOpacity={1}
@@ -1281,7 +1279,7 @@ class GroupDetailScreen extends React.Component {
                                               source={givingIcon}
                                               style={
                                                 this.onCheckExistingHealthMetric(
-                                                  'church_giving',
+                                                  "church_giving"
                                                 )
                                                   ? styles.activeImage
                                                   : styles.inactiveImage
@@ -1294,7 +1292,7 @@ class GroupDetailScreen extends React.Component {
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
-                                              'church_giving',
+                                              "church_giving"
                                             )
                                               ? styles.activeToggleText
                                               : styles.inactiveToggleText
@@ -1315,7 +1313,7 @@ class GroupDetailScreen extends React.Component {
                                           <TouchableOpacity
                                             onPress={() => {
                                               this.onHealthMetricChange(
-                                                'church_fellowship',
+                                                "church_fellowship"
                                               );
                                             }}
                                             activeOpacity={1}
@@ -1324,7 +1322,7 @@ class GroupDetailScreen extends React.Component {
                                               source={fellowShipIcon}
                                               style={
                                                 this.onCheckExistingHealthMetric(
-                                                  'church_fellowship',
+                                                  "church_fellowship"
                                                 )
                                                   ? styles.activeImage
                                                   : styles.inactiveImage
@@ -1337,7 +1335,7 @@ class GroupDetailScreen extends React.Component {
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
-                                              'church_fellowship',
+                                              "church_fellowship"
                                             )
                                               ? styles.activeToggleText
                                               : styles.inactiveToggleText
@@ -1360,7 +1358,7 @@ class GroupDetailScreen extends React.Component {
                                           <TouchableOpacity
                                             onPress={() => {
                                               this.onHealthMetricChange(
-                                                'church_communion',
+                                                "church_communion"
                                               );
                                             }}
                                             activeOpacity={1}
@@ -1369,7 +1367,7 @@ class GroupDetailScreen extends React.Component {
                                               source={communionIcon}
                                               style={
                                                 this.onCheckExistingHealthMetric(
-                                                  'church_communion',
+                                                  "church_communion"
                                                 )
                                                   ? styles.activeImage
                                                   : styles.inactiveImage
@@ -1382,7 +1380,7 @@ class GroupDetailScreen extends React.Component {
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
-                                              'church_communion',
+                                              "church_communion"
                                             )
                                               ? styles.activeToggleText
                                               : styles.inactiveToggleText
@@ -1399,12 +1397,12 @@ class GroupDetailScreen extends React.Component {
 
                               <Row
                                 size={7}
-                                style={{ backgroundColor: 'white' }}
+                                style={{ backgroundColor: "white" }}
                               >
                                 <Col size={3}>
                                   <Row
                                     size={2}
-                                    style={{ backgroundColor: 'white' }}
+                                    style={{ backgroundColor: "white" }}
                                   />
                                   <Row size={6}>
                                     <Col>
@@ -1413,7 +1411,7 @@ class GroupDetailScreen extends React.Component {
                                           <TouchableOpacity
                                             onPress={() => {
                                               this.onHealthMetricChange(
-                                                'church_baptism',
+                                                "church_baptism"
                                               );
                                             }}
                                             activeOpacity={1}
@@ -1422,7 +1420,7 @@ class GroupDetailScreen extends React.Component {
                                               source={baptismIcon}
                                               style={
                                                 this.onCheckExistingHealthMetric(
-                                                  'church_baptism',
+                                                  "church_baptism"
                                                 )
                                                   ? styles.activeImage
                                                   : styles.inactiveImage
@@ -1435,7 +1433,7 @@ class GroupDetailScreen extends React.Component {
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
-                                              'church_baptism',
+                                              "church_baptism"
                                             )
                                               ? styles.activeToggleText
                                               : styles.inactiveToggleText
@@ -1458,7 +1456,7 @@ class GroupDetailScreen extends React.Component {
                                           <TouchableOpacity
                                             onPress={() => {
                                               this.onHealthMetricChange(
-                                                'church_prayer',
+                                                "church_prayer"
                                               );
                                             }}
                                             activeOpacity={1}
@@ -1467,7 +1465,7 @@ class GroupDetailScreen extends React.Component {
                                               source={prayerIcon}
                                               style={
                                                 this.onCheckExistingHealthMetric(
-                                                  'church_prayer',
+                                                  "church_prayer"
                                                 )
                                                   ? styles.activeImage
                                                   : styles.inactiveImage
@@ -1480,7 +1478,7 @@ class GroupDetailScreen extends React.Component {
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
-                                              'church_prayer',
+                                              "church_prayer"
                                             )
                                               ? styles.activeToggleText
                                               : styles.inactiveToggleText
@@ -1503,7 +1501,7 @@ class GroupDetailScreen extends React.Component {
                                           <TouchableOpacity
                                             onPress={() => {
                                               this.onHealthMetricChange(
-                                                'church_leaders',
+                                                "church_leaders"
                                               );
                                             }}
                                             activeOpacity={1}
@@ -1512,7 +1510,7 @@ class GroupDetailScreen extends React.Component {
                                               source={leadersIcon}
                                               style={
                                                 this.onCheckExistingHealthMetric(
-                                                  'church_leaders',
+                                                  "church_leaders"
                                                 )
                                                   ? styles.activeImage
                                                   : styles.inactiveImage
@@ -1525,7 +1523,7 @@ class GroupDetailScreen extends React.Component {
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
-                                              'church_leaders',
+                                              "church_leaders"
                                             )
                                               ? styles.activeToggleText
                                               : styles.inactiveToggleText
@@ -1550,7 +1548,7 @@ class GroupDetailScreen extends React.Component {
                                           <TouchableOpacity
                                             onPress={() => {
                                               this.onHealthMetricChange(
-                                                'church_bible',
+                                                "church_bible"
                                               );
                                             }}
                                             activeOpacity={1}
@@ -1559,7 +1557,7 @@ class GroupDetailScreen extends React.Component {
                                               source={bibleStudyIcon}
                                               style={
                                                 this.onCheckExistingHealthMetric(
-                                                  'church_bible',
+                                                  "church_bible"
                                                 )
                                                   ? styles.activeImage
                                                   : styles.inactiveImage
@@ -1572,7 +1570,7 @@ class GroupDetailScreen extends React.Component {
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
-                                              'church_bible',
+                                              "church_bible"
                                             )
                                               ? styles.activeToggleText
                                               : styles.inactiveToggleText
@@ -1595,7 +1593,7 @@ class GroupDetailScreen extends React.Component {
                                           <TouchableOpacity
                                             onPress={() => {
                                               this.onHealthMetricChange(
-                                                'church_praise',
+                                                "church_praise"
                                               );
                                             }}
                                             activeOpacity={1}
@@ -1604,7 +1602,7 @@ class GroupDetailScreen extends React.Component {
                                               source={praiseIcon}
                                               style={
                                                 this.onCheckExistingHealthMetric(
-                                                  'church_praise',
+                                                  "church_praise"
                                                 )
                                                   ? styles.activeImage
                                                   : styles.inactiveImage
@@ -1617,7 +1615,7 @@ class GroupDetailScreen extends React.Component {
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
-                                              'church_praise',
+                                              "church_praise"
                                             )
                                               ? styles.activeToggleText
                                               : styles.inactiveToggleText
@@ -1638,7 +1636,7 @@ class GroupDetailScreen extends React.Component {
                                           <TouchableOpacity
                                             onPress={() => {
                                               this.onHealthMetricChange(
-                                                'church_sharing',
+                                                "church_sharing"
                                               );
                                             }}
                                             activeOpacity={1}
@@ -1647,7 +1645,7 @@ class GroupDetailScreen extends React.Component {
                                               source={sharingTheGospelIcon}
                                               style={
                                                 this.onCheckExistingHealthMetric(
-                                                  'church_sharing',
+                                                  "church_sharing"
                                                 )
                                                   ? styles.activeImage
                                                   : styles.inactiveImage
@@ -1660,7 +1658,7 @@ class GroupDetailScreen extends React.Component {
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
-                                              'church_sharing',
+                                              "church_sharing"
                                             )
                                               ? styles.activeToggleText
                                               : styles.inactiveToggleText
@@ -1696,16 +1694,17 @@ class GroupDetailScreen extends React.Component {
               >
                 {Object.prototype.hasOwnProperty.call(
                   this.state,
-                  'commentsOrActivities',
-                )
-                  && this.state.commentsOrActivities && (
+                  "commentsOrActivities"
+                ) &&
+                  this.state.commentsOrActivities && (
                     <View style={{ flex: 1 }}>
                       <FlatList
                         style={styles.root}
-                        ref={(flatList) => {
+                        ref={flatList => {
                           commentsFlatList = flatList;
                         }}
-                        onContentSizeChange={() => commentsFlatList.scrollToEnd()
+                        onContentSizeChange={() =>
+                          commentsFlatList.scrollToEnd()
                         }
                         data={this.state.commentsOrActivities}
                         extraData={this.state.commentsOrActivities}
@@ -1713,18 +1712,18 @@ class GroupDetailScreen extends React.Component {
                           <View style={styles.separator} />
                         )}
                         keyExtractor={item => item.ID.toString()}
-                        renderItem={(item) => {
+                        renderItem={item => {
                           const commentOrActivity = item.item;
                           return this.renderActivityOrCommentRow(
-                            commentOrActivity,
+                            commentOrActivity
                           );
                         }}
                       />
                       <KeyboardAccessory>
                         <View
                           style={{
-                            backgroundColor: 'white',
-                            flexDirection: 'row',
+                            backgroundColor: "white",
+                            flexDirection: "row"
                           }}
                         >
                           <TextInput
@@ -1732,13 +1731,13 @@ class GroupDetailScreen extends React.Component {
                             value={this.state.comment}
                             onChangeText={this.setComment}
                             style={{
-                              borderColor: '#B4B4B4',
+                              borderColor: "#B4B4B4",
                               borderRadius: 5,
                               borderWidth: 1,
                               flex: 1,
                               margin: 10,
                               paddingLeft: 5,
-                              paddingRight: 5,
+                              paddingRight: 5
                             }}
                           />
                           <TouchableOpacity
@@ -1750,19 +1749,19 @@ class GroupDetailScreen extends React.Component {
                               margin: 10,
                               paddingTop: 7,
                               paddingLeft: 10,
-                              width: 40,
+                              width: 40
                             }}
                           >
                             <Icon
                               android="md-send"
                               ios="ios-send"
-                              style={{ color: 'white', fontSize: 25 }}
+                              style={{ color: "white", fontSize: 25 }}
                             />
                           </TouchableOpacity>
                         </View>
                       </KeyboardAccessory>
                     </View>
-                )}
+                  )}
               </Tab>
               <Tab
                 heading="Members"
@@ -1846,19 +1845,19 @@ class GroupDetailScreen extends React.Component {
 GroupDetailScreen.propTypes = {
   user: PropTypes.shape({
     domain: PropTypes.string,
-    token: PropTypes.string,
+    token: PropTypes.string
   }).isRequired,
   error: PropTypes.shape({
     code: PropTypes.string,
-    message: PropTypes.string,
+    message: PropTypes.string
   }),
   group: PropTypes.shape({
-    key: PropTypes.number,
+    key: PropTypes.number
   }),
   navigation: PropTypes.shape({
     getParam: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
-    setParams: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired
   }).isRequired,
   getById: PropTypes.func.isRequired,
   saveGroup: PropTypes.func.isRequired,
@@ -1870,13 +1869,13 @@ GroupDetailScreen.propTypes = {
   getPeopleGroups: PropTypes.func.isRequired,
   getActivities: PropTypes.func.isRequired,
   getUsers: PropTypes.func.isRequired,
-  usersReducerResponse: PropTypes.string,
+  usersReducerResponse: PropTypes.string
 };
 GroupDetailScreen.defaultProps = {
   error: null,
   group: null,
   groupsReducerResponse: null,
-  usersReducerResponse: null,
+  usersReducerResponse: null
 };
 const mapStateToProps = state => ({
   user: state.userReducer,
@@ -1890,7 +1889,7 @@ const mapStateToProps = state => ({
   peopleGroups: state.groupsReducer.peopleGroups,
   activities: state.groupsReducer.activities,
   users: state.usersReducer.users,
-  usersReducerResponse: state.usersReducer.type,
+  usersReducerResponse: state.usersReducer.type
 });
 const mapDispatchToProps = dispatch => ({
   saveGroup: (domain, token, groupData) => {
@@ -1919,10 +1918,10 @@ const mapDispatchToProps = dispatch => ({
   },
   getUsers: (domain, token) => {
     dispatch(getUsers(domain, token));
-  },
+  }
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(GroupDetailScreen);

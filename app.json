@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Disciple Tools Test HD",
-    "slug": "discipletoolsapptesthd",
+    "name": "Disciple Tools",
+    "slug": "discipletoolsapp",
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": [

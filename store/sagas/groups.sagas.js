@@ -1,24 +1,22 @@
-import {
-  put, take, all, takeLatest, takeEvery,
-} from 'redux-saga/effects';
-import * as actions from '../actions/groups.actions';
+import { put, take, all, takeLatest, takeEvery } from "redux-saga/effects";
+import * as actions from "../actions/groups.actions";
 
 export function* getAll({ domain, token }) {
   yield put({ type: actions.GROUPS_GETALL_START });
 
   yield put({
-    type: 'REQUEST',
+    type: "REQUEST",
     payload: {
       url: `https://${domain}/wp-json/dt/v1/groups`,
       data: {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
       },
-      action: actions.GROUPS_GETALL_RESPONSE,
-    },
+      action: actions.GROUPS_GETALL_RESPONSE
+    }
   });
 
   try {
@@ -30,12 +28,12 @@ export function* getAll({ domain, token }) {
         if (jsonData.groups) {
           yield put({
             type: actions.GROUPS_GETALL_SUCCESS,
-            groups: jsonData.groups,
+            groups: jsonData.groups
           });
         } else {
           yield put({
             type: actions.GROUPS_GETALL_SUCCESS,
-            groups: [],
+            groups: []
           });
         }
       } else {
@@ -43,8 +41,8 @@ export function* getAll({ domain, token }) {
           type: actions.GROUPS_GETALL_FAILURE,
           error: {
             code: jsonData.code,
-            message: jsonData.message,
-          },
+            message: jsonData.message
+          }
         });
       }
     }
@@ -52,9 +50,9 @@ export function* getAll({ domain, token }) {
     yield put({
       type: actions.GROUPS_GETALL_FAILURE,
       error: {
-        code: '400',
-        message: '(400) Unable to process the request. Please try again later.',
-      },
+        code: "400",
+        message: error.toString()
+      }
     });
   }
 }
@@ -62,22 +60,22 @@ export function* getAll({ domain, token }) {
 export function* saveGroup({ domain, token, groupData }) {
   yield put({ type: actions.GROUPS_SAVE_START });
   let group = groupData;
-  const urlPart = group.ID ? group.ID : '';
+  const urlPart = group.ID ? group.ID : "";
   delete group.ID;
   yield put({
-    type: 'REQUEST',
+    type: "REQUEST",
     payload: {
       url: `https://${domain}/wp-json/dt-posts/v2/groups/${urlPart}`,
       data: {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json;charset=UTF-8",
+          Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(group),
+        body: JSON.stringify(group)
       },
-      action: actions.GROUPS_SAVE_RESPONSE,
-    },
+      action: actions.GROUPS_SAVE_RESPONSE
+    }
   });
 
   try {
@@ -101,40 +99,40 @@ export function* saveGroup({ domain, token, groupData }) {
             coaches: {
               values: group.coaches
                 ? group.coaches.map(coach => ({
-                  value: coach.ID.toString(),
-                  name: coach.post_title,
-                }))
-                : [],
+                    value: coach.ID.toString(),
+                    name: coach.post_title
+                  }))
+                : []
             },
             geonames: {
               values: group.geonames
                 ? group.geonames.map(geoname => ({
-                  value: geoname.id.toString(),
-                  name: geoname.label,
-                }))
-                : [],
+                    value: geoname.id.toString(),
+                    name: geoname.label
+                  }))
+                : []
             },
             people_groups: {
               values: group.people_groups
                 ? group.people_groups.map(peopleGroup => ({
-                  value: peopleGroup.ID.toString(),
-                  name: peopleGroup.post_title,
-                }))
-                : [],
+                    value: peopleGroup.ID.toString(),
+                    name: peopleGroup.post_title
+                  }))
+                : []
             },
             contact_address: group.contact_address
               ? group.contact_address.map(contact => ({
-                key: contact.key,
-                value: contact.value,
-              }))
+                  key: contact.key,
+                  value: contact.value
+                }))
               : [],
             start_date:
               group.start_date && group.start_date.formatted.length > 0
                 ? group.start_date.formatted
                 : null,
             church_start_date:
-              group.church_start_date
-              && group.church_start_date.formatted.length > 0
+              group.church_start_date &&
+              group.church_start_date.formatted.length > 0
                 ? group.church_start_date.formatted
                 : null,
             end_date:
@@ -145,19 +143,19 @@ export function* saveGroup({ domain, token, groupData }) {
             health_metrics: {
               values: group.health_metrics
                 ? group.health_metrics.map(healthMetric => ({
-                  value: healthMetric,
-                }))
-                : [],
-            },
-          },
+                    value: healthMetric
+                  }))
+                : []
+            }
+          }
         });
       } else {
         yield put({
           type: actions.GROUPS_SAVE_FAILURE,
           error: {
             code: jsonData.code,
-            message: jsonData.message,
-          },
+            message: jsonData.message
+          }
         });
       }
     }
@@ -165,9 +163,9 @@ export function* saveGroup({ domain, token, groupData }) {
     yield put({
       type: actions.GROUPS_SAVE_FAILURE,
       error: {
-        code: '400',
-        message: '(400) Unable to process the request. Please try again later.',
-      },
+        code: "400",
+        message: error.toString()
+      }
     });
   }
 }
@@ -176,18 +174,18 @@ export function* getById({ domain, token, groupId }) {
   yield put({ type: actions.GROUPS_GETBYID_START });
 
   yield put({
-    type: 'REQUEST',
+    type: "REQUEST",
     payload: {
       url: `https://${domain}/wp-json/dt/v1/group/${groupId}`,
       data: {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
       },
-      action: actions.GROUPS_GETBYID_RESPONSE,
-    },
+      action: actions.GROUPS_GETBYID_RESPONSE
+    }
   });
 
   try {
@@ -210,40 +208,40 @@ export function* getById({ domain, token, groupId }) {
             coaches: {
               values: group.coaches
                 ? group.coaches.map(coach => ({
-                  value: coach.ID.toString(),
-                  name: coach.post_title,
-                }))
-                : [],
+                    value: coach.ID.toString(),
+                    name: coach.post_title
+                  }))
+                : []
             },
             geonames: {
               values: group.geonames
                 ? group.geonames.map(geoname => ({
-                  value: geoname.id.toString(),
-                  name: geoname.label,
-                }))
-                : [],
+                    value: geoname.id.toString(),
+                    name: geoname.label
+                  }))
+                : []
             },
             people_groups: {
               values: group.people_groups
                 ? group.people_groups.map(peopleGroup => ({
-                  value: peopleGroup.ID.toString(),
-                  name: peopleGroup.post_title,
-                }))
-                : [],
+                    value: peopleGroup.ID.toString(),
+                    name: peopleGroup.post_title
+                  }))
+                : []
             },
             contact_address: group.contact_address
               ? group.contact_address.map(contact => ({
-                key: contact.key,
-                value: contact.value,
-              }))
+                  key: contact.key,
+                  value: contact.value
+                }))
               : [],
             start_date:
               group.start_date && group.start_date.formatted.length > 0
                 ? group.start_date.formatted
                 : null,
             church_start_date:
-              group.church_start_date
-              && group.church_start_date.formatted.length > 0
+              group.church_start_date &&
+              group.church_start_date.formatted.length > 0
                 ? group.church_start_date.formatted
                 : null,
             end_date:
@@ -254,11 +252,11 @@ export function* getById({ domain, token, groupId }) {
             health_metrics: {
               values: group.health_metrics
                 ? group.health_metrics.map(healthMetric => ({
-                  value: healthMetric,
-                }))
-                : [],
-            },
-          },
+                    value: healthMetric
+                  }))
+                : []
+            }
+          }
         });
       } else {
         yield put({
@@ -266,8 +264,8 @@ export function* getById({ domain, token, groupId }) {
           error: {
             code: jsonData.code,
             message: jsonData.message,
-            data: jsonData.data,
-          },
+            data: jsonData.data
+          }
         });
       }
     }
@@ -275,9 +273,9 @@ export function* getById({ domain, token, groupId }) {
     yield put({
       type: actions.GROUPS_GETBYID_FAILURE,
       error: {
-        code: '400',
-        message: '(400) Unable to process the request. Please try again later.',
-      },
+        code: "400",
+        message: error.toString()
+      }
     });
   }
 }
@@ -286,18 +284,18 @@ export function* getUsersAndContacts({ domain, token }) {
   yield put({ type: actions.GROUPS_GET_USERS_CONTACTS_START });
   // get all groups
   yield put({
-    type: 'REQUEST',
+    type: "REQUEST",
     payload: {
       url: `https://${domain}/wp-json/dt/v1/contacts/compact?s=`,
       data: {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
       },
-      action: actions.GROUPS_GET_USERS_CONTACTS_RESPONSE,
-    },
+      action: actions.GROUPS_GET_USERS_CONTACTS_RESPONSE
+    }
   });
 
   try {
@@ -311,13 +309,13 @@ export function* getUsersAndContacts({ domain, token }) {
             type: actions.GROUPS_GET_USERS_CONTACTS_SUCCESS,
             usersContacts: jsonData.posts.map(user => ({
               value: user.ID,
-              name: user.name,
-            })),
+              name: user.name
+            }))
           });
         } else {
           yield put({
             type: actions.GROUPS_GET_USERS_CONTACTS_SUCCESS,
-            usersContacts: [],
+            usersContacts: []
           });
         }
       } else {
@@ -326,8 +324,8 @@ export function* getUsersAndContacts({ domain, token }) {
           error: {
             code: jsonData.code,
             message: jsonData.message,
-            data: jsonData.data,
-          },
+            data: jsonData.data
+          }
         });
       }
     }
@@ -335,9 +333,9 @@ export function* getUsersAndContacts({ domain, token }) {
     yield put({
       type: actions.GROUPS_GET_USERS_CONTACTS_FAILURE,
       error: {
-        code: '400',
-        message: '(400) Unable to process the request. Please try again later.',
-      },
+        code: "400",
+        message: error.toString()
+      }
     });
   }
 }
@@ -347,18 +345,18 @@ export function* getCommentsByGroup({ domain, token, groupId }) {
 
   // get all groups
   yield put({
-    type: 'REQUEST',
+    type: "REQUEST",
     payload: {
       url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments`,
       data: {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
       },
-      action: actions.GROUPS_GET_COMMENTS_RESPONSE,
-    },
+      action: actions.GROUPS_GET_COMMENTS_RESPONSE
+    }
   });
 
   try {
@@ -371,11 +369,11 @@ export function* getCommentsByGroup({ domain, token, groupId }) {
           type: actions.GROUPS_GET_COMMENTS_SUCCESS,
           comments: jsonData.map(comment => ({
             ID: comment.comment_ID,
-            date: `${comment.comment_date.replace(' ', 'T')}Z`,
+            date: `${comment.comment_date.replace(" ", "T")}Z`,
             author: comment.comment_author,
             content: comment.comment_content,
-            gravatar: comment.gravatar,
-          })),
+            gravatar: comment.gravatar
+          }))
         });
       } else {
         yield put({
@@ -383,8 +381,8 @@ export function* getCommentsByGroup({ domain, token, groupId }) {
           error: {
             code: jsonData.code,
             message: jsonData.message,
-            data: jsonData.data,
-          },
+            data: jsonData.data
+          }
         });
       }
     }
@@ -392,32 +390,30 @@ export function* getCommentsByGroup({ domain, token, groupId }) {
     yield put({
       type: actions.GROUPS_GET_COMMENTS_FAILURE,
       error: {
-        code: '400',
-        message: '(400) Unable to process the request. Please try again later.',
-      },
+        code: "400",
+        message: error.toString()
+      }
     });
   }
 }
 
-export function* saveComment({
-  domain, token, groupId, commentData,
-}) {
+export function* saveComment({ domain, token, groupId, commentData }) {
   yield put({ type: actions.GROUPS_SAVE_COMMENT_START });
 
   yield put({
-    type: 'REQUEST',
+    type: "REQUEST",
     payload: {
       url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments`,
       data: {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json;charset=UTF-8",
+          Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(commentData),
+        body: JSON.stringify(commentData)
       },
-      action: actions.GROUPS_SAVE_COMMENT_RESPONSE,
-    },
+      action: actions.GROUPS_SAVE_COMMENT_RESPONSE
+    }
   });
 
   try {
@@ -431,10 +427,10 @@ export function* saveComment({
           comment: {
             ID: jsonData.comment_ID,
             author: jsonData.comment_author,
-            date: `${jsonData.comment_date.replace(' ', 'T')}Z`,
+            date: `${jsonData.comment_date.replace(" ", "T")}Z`,
             content: jsonData.comment_content,
-            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
-          },
+            gravatar: "https://secure.gravatar.com/avatar/?s=16&d=mm&r=g"
+          }
         });
       } else {
         yield put({
@@ -442,8 +438,8 @@ export function* saveComment({
           error: {
             code: jsonData.code,
             message: jsonData.message,
-            data: jsonData.data,
-          },
+            data: jsonData.data
+          }
         });
       }
     }
@@ -451,9 +447,9 @@ export function* saveComment({
     yield put({
       type: actions.GROUPS_SAVE_COMMENT_FAILURE,
       error: {
-        code: '400',
-        message: '(400) Unable to process the request. Please try again later.',
-      },
+        code: "400",
+        message: error.toString()
+      }
     });
   }
 }
@@ -462,18 +458,18 @@ export function* getLocations({ domain, token }) {
   yield put({ type: actions.GROUPS_GET_LOCATIONS_START });
 
   yield put({
-    type: 'REQUEST',
+    type: "REQUEST",
     payload: {
       url: `https://${domain}/wp-json/dt/v1/mapping_module/search_geonames_by_name?filter=all`,
       data: {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
       },
-      action: actions.GROUPS_GET_LOCATIONS_RESPONSE,
-    },
+      action: actions.GROUPS_GET_LOCATIONS_RESPONSE
+    }
   });
 
   try {
@@ -486,8 +482,8 @@ export function* getLocations({ domain, token }) {
           type: actions.GROUPS_GET_LOCATIONS_SUCCESS,
           geonames: jsonData.geonames.map(geoname => ({
             value: geoname.ID,
-            name: geoname.name,
-          })),
+            name: geoname.name
+          }))
         });
       }
     }
@@ -495,9 +491,9 @@ export function* getLocations({ domain, token }) {
     yield put({
       type: actions.GROUPS_GET_LOCATIONS_FAILURE,
       error: {
-        code: '400',
-        message: '(400) Unable to process the request. Please try again later.',
-      },
+        code: "400",
+        message: error.toString()
+      }
     });
   }
 }
@@ -506,18 +502,18 @@ export function* getPeopleGroups({ domain, token }) {
   yield put({ type: actions.GROUPS_GET_PEOPLE_GROUPS_START });
 
   yield put({
-    type: 'REQUEST',
+    type: "REQUEST",
     payload: {
       url: `https://${domain}/wp-json/dt/v1/people-groups/compact/?s=`,
       data: {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
       },
-      action: actions.GROUPS_GET_PEOPLE_GROUPS_RESPONSE,
-    },
+      action: actions.GROUPS_GET_PEOPLE_GROUPS_RESPONSE
+    }
   });
 
   try {
@@ -530,8 +526,8 @@ export function* getPeopleGroups({ domain, token }) {
           type: actions.GROUPS_GET_PEOPLE_GROUPS_SUCCESS,
           peopleGroups: jsonData.posts.map(peopleGroup => ({
             value: peopleGroup.ID.toString(),
-            name: peopleGroup.name,
-          })),
+            name: peopleGroup.name
+          }))
         });
       }
     }
@@ -539,9 +535,9 @@ export function* getPeopleGroups({ domain, token }) {
     yield put({
       type: actions.GROUPS_GET_PEOPLE_GROUPS_FAILURE,
       error: {
-        code: '400',
-        message: '(400) Unable to process the request. Please try again later.',
-      },
+        code: "400",
+        message: error.toString()
+      }
     });
   }
 }
@@ -551,18 +547,18 @@ export function* getActivitiesByGroup({ domain, token, groupId }) {
 
   // get all groups
   yield put({
-    type: 'REQUEST',
+    type: "REQUEST",
     payload: {
       url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/activity`,
       data: {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
       },
-      action: actions.GROUPS_GET_ACTIVITIES_RESPONSE,
-    },
+      action: actions.GROUPS_GET_ACTIVITIES_RESPONSE
+    }
   });
 
   try {
@@ -576,17 +572,17 @@ export function* getActivitiesByGroup({ domain, token, groupId }) {
           activities: jsonData.map(activity => ({
             ID: activity.histid,
             date: new Date(
-              parseInt(activity.hist_time, 10) + 1000,
+              parseInt(activity.hist_time, 10) * 1000
             ).toISOString(),
             object_note: activity.object_note,
             gravatar:
-              activity.gravatar === ''
-                ? 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g'
+              activity.gravatar === ""
+                ? "https://secure.gravatar.com/avatar/?s=16&d=mm&r=g"
                 : activity.gravatar,
             meta_id: activity.meta_id,
             meta_key: activity.meta_key,
-            name: activity.name,
-          })),
+            name: activity.name
+          }))
         });
       } else {
         yield put({
@@ -594,8 +590,8 @@ export function* getActivitiesByGroup({ domain, token, groupId }) {
           error: {
             code: jsonData.code,
             message: jsonData.message,
-            data: jsonData.data,
-          },
+            data: jsonData.data
+          }
         });
       }
     }
@@ -603,9 +599,53 @@ export function* getActivitiesByGroup({ domain, token, groupId }) {
     yield put({
       type: actions.GROUPS_GET_ACTIVITIES_FAILURE,
       error: {
-        code: '400',
-        message: '(400) Unable to process the request. Please try again later.',
+        code: "400",
+        message: error.toString()
+      }
+    });
+  }
+}
+
+export function* search({ domain, token }) {
+  yield put({ type: actions.GROUPS_SEARCH_START });
+
+  yield put({
+    type: "REQUEST",
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/compact/?s=`,
+      data: {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
       },
+      action: actions.GROUPS_SEARCH_RESPONSE
+    }
+  });
+
+  try {
+    const res = yield take(actions.GROUPS_SEARCH_RESPONSE);
+    if (res) {
+      const response = res.payload;
+      const jsonData = yield response.json();
+      if (response.status === 200) {
+        yield put({
+          type: actions.GROUPS_SEARCH_SUCCESS,
+          search: jsonData.posts.map(group => ({
+            name: group.name,
+            value: group.ID
+          }))
+        });
+      }
+    }
+  } catch (error) {
+    yield put({
+      type: actions.GROUPS_SEARCH_FAILURE,
+      error: {
+        code: "400",
+        message: error.toString()
+      }
     });
   }
 }
@@ -621,5 +661,6 @@ export default function* groupsSaga() {
     takeEvery(actions.GROUPS_GET_LOCATIONS, getLocations),
     takeEvery(actions.GROUPS_GET_PEOPLE_GROUPS, getPeopleGroups),
     takeEvery(actions.GROUPS_GET_ACTIVITIES, getActivitiesByGroup),
+    takeEvery(actions.GROUPS_SEARCH, search)
   ]);
 }
