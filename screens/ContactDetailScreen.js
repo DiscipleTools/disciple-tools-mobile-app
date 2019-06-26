@@ -55,10 +55,15 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import KeyboardAccessory from "react-native-sticky-keyboard-accessory";
 import ProgressBarAnimated from "react-native-progress-bar-animated";
 
-import statesBeliefIcon from "../assets/icons/communion.png"; //replace
-import baptismIcon from "../assets/icons/baptism.png";
-import bibleStudyIcon from "../assets/icons/word.png";
+import hasBibleIcon from "../assets/icons/book-bookmark.png";
+import readingBibleIcon from "../assets/icons/word.png";
+import statesBeliefIcon from "../assets/icons/language.png";
+import canShareGospelIcon from "../assets/icons/b-chat.png";
 import sharingTheGospelIcon from "../assets/icons/evangelism.png";
+import baptizedIcon from "../assets/icons/baptism.png";
+import baptizingIcon from "../assets/icons/water-aerobics.png";
+import inChurchIcon from "../assets/icons/multiple-11.png";
+import startingChurchesIcon from "../assets/icons/symbol-213-7.png";
 
 let toastSuccess,
   toastError,
@@ -465,7 +470,6 @@ class ContactDetailScreen extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-
     const { contactsReducerResponse, groupsReducerResponse } = this.props;
     const { contact, contacts, renderView } = this.state;
     console.log("componentDidUpdate()");
@@ -1394,7 +1398,7 @@ class ContactDetailScreen extends React.Component {
                             <Col>
                               <Row size={3}>
                                 <Image
-                                  source={statesBeliefIcon}
+                                  source={hasBibleIcon}
                                   style={[
                                     styles.progressIcon,
                                     this.onCheckExistingMilestone(
@@ -1441,7 +1445,7 @@ class ContactDetailScreen extends React.Component {
                             <Col>
                               <Row size={3}>
                                 <Image
-                                  source={bibleStudyIcon}
+                                  source={readingBibleIcon}
                                   style={[
                                     styles.progressIcon,
                                     this.onCheckExistingMilestone(
@@ -1538,7 +1542,7 @@ class ContactDetailScreen extends React.Component {
                             <Col>
                               <Row size={3}>
                                 <Image
-                                  source={statesBeliefIcon}
+                                  source={canShareGospelIcon}
                                   style={[
                                     styles.progressIcon,
                                     this.onCheckExistingMilestone(
@@ -1632,7 +1636,7 @@ class ContactDetailScreen extends React.Component {
                             <Col>
                               <Row size={3}>
                                 <Image
-                                  source={baptismIcon}
+                                  source={baptizedIcon}
                                   style={[
                                     styles.progressIcon,
                                     this.onCheckExistingMilestone(
@@ -1682,7 +1686,7 @@ class ContactDetailScreen extends React.Component {
                             <Col>
                               <Row size={3}>
                                 <Image
-                                  source={statesBeliefIcon}
+                                  source={baptizingIcon}
                                   style={[
                                     styles.progressIcon,
                                     this.onCheckExistingMilestone(
@@ -1729,7 +1733,7 @@ class ContactDetailScreen extends React.Component {
                             <Col>
                               <Row size={3}>
                                 <Image
-                                  source={statesBeliefIcon}
+                                  source={inChurchIcon}
                                   style={[
                                     styles.progressIcon,
                                     this.onCheckExistingMilestone(
@@ -1776,7 +1780,7 @@ class ContactDetailScreen extends React.Component {
                             <Col>
                               <Row size={3}>
                                 <Image
-                                  source={statesBeliefIcon}
+                                  source={startingChurchesIcon}
                                   style={[
                                     styles.progressIcon,
                                     this.onCheckExistingMilestone(

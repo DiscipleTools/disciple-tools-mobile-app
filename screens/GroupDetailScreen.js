@@ -34,7 +34,8 @@ import Toast from "react-native-easy-toast";
 import { Col, Row, Grid } from "react-native-easy-grid";
 import MultipleTags from "react-native-multiple-tags";
 import KeyboardAccessory from "react-native-sticky-keyboard-accessory";
-// import ModalFilterPicker from "react-native-modal-filter-picker";
+import KeyboardShift from "../components/KeyboardShift";
+import ModalFilterPicker from "react-native-modal-filter-picker";
 import {
   saveGroup,
   GROUPS_SAVE_SUCCESS,
@@ -59,7 +60,7 @@ import Colors from "../constants/Colors";
 import baptismIcon from "../assets/icons/baptism.png";
 import bibleStudyIcon from "../assets/icons/word.png";
 import communionIcon from "../assets/icons/communion.png";
-import fellowShipIcon from "../assets/icons/fellowship.png"; // Missing icon!!!
+import fellowShipIcon from "../assets/icons/fellowship.png";
 import givingIcon from "../assets/icons/giving.png";
 import prayerIcon from "../assets/icons/prayer.png";
 import praiseIcon from "../assets/icons/praise.png";
@@ -67,6 +68,13 @@ import sharingTheGospelIcon from "../assets/icons/evangelism.png";
 import leadersIcon from "../assets/icons/leadership.png";
 import churchCommitmentIcon from "../assets/icons/covenant.png";
 
+let toastSuccess,
+  toastError,
+  containerPadding = 35,
+  windowWidth = Dimensions.get("window").width,
+  spacing = windowWidth * 0.025,
+  sideSize = windowWidth - 2 * spacing,
+  commentsFlatList;
 const styles = StyleSheet.create({
   toggleButton: {
     borderRadius: 5,
@@ -90,16 +98,12 @@ const styles = StyleSheet.create({
     width: "100%"
   },
   activeToggleText: {
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
+    textAlign: "center",
     color: "#000000",
     fontSize: 9
   },
   inactiveToggleText: {
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
+    textAlign: "center",
     color: "#D9D5DC",
     fontSize: 9
   },
@@ -174,14 +178,35 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     color: "#B4B4B4",
     fontStyle: "italic"
+  },
+  //Form
+  formContainer: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: containerPadding,
+    paddingRight: containerPadding
+  },
+  formRow: {
+    borderBottomColor: "#CCCCCC",
+    borderBottomWidth: 1,
+    paddingTop: 10,
+    paddingBottom: 10
+  },
+  formIconLabel: { width: "auto" },
+  formIcon: {
+    color: Colors.tintColor,
+    fontSize: 25,
+    marginTop: "auto",
+    marginBottom: "auto",
+    marginRight: 10
+  },
+  formLabel: {
+    color: Colors.tintColor,
+    fontSize: 12,
+    marginTop: "auto",
+    marginBottom: "auto"
   }
 });
-const windowWidth = Dimensions.get("window").width;
-const spacing = windowWidth * 0.025;
-const sideSize = windowWidth - 2 * spacing;
-let toastSuccess;
-let toastError;
-let commentsFlatList;
 
 function formatDateToPickerValue(formatted) {
   const newDate = new Date(new Date(formatted).setUTCHours(0, 0, 0, 0));
@@ -276,12 +301,12 @@ class GroupDetailScreen extends React.Component {
     showAssignedToModal: false,
     currentCoaches: [],
     currentGeonames: [],
-    currentPeopleGroups: []
+    currentPeopleGroups: [],
+    overallStatusBackgroundColor: ""
   };
 
   constructor(props) {
     super(props);
-    this.renderAddressRow = this.renderAddressRow.bind(this);
   }
 
   componentDidMount() {
@@ -291,19 +316,23 @@ class GroupDetailScreen extends React.Component {
     const onlyView = this.props.navigation.getParam("onlyView");
     // GetById
     if (groupId) {
-      this.setState({
+      this.setState(prevState => ({
+        ...prevState,
         group: {
+          ...prevState.group,
           ID: groupId
         }
-      });
+      }));
       // First end-point to call
       this.getUsers();
     } else {
-      this.setState({
+      this.setState(prevState => ({
+        ...prevState,
         group: {
+          ...prevState.group,
           ID: null
         }
-      });
+      }));
       this.setGroupType("pre-group");
     }
 
@@ -371,11 +400,6 @@ class GroupDetailScreen extends React.Component {
         };
         break;
       case GROUPS_GETBYID_SUCCESS:
-        if (group.church_start_date) {
-          group.church_start_date = formatDateToPickerValue(
-            group.church_start_date
-          );
-        }
         if (group.end_date) {
           group.end_date = formatDateToPickerValue(group.end_date);
         }
@@ -440,9 +464,15 @@ class GroupDetailScreen extends React.Component {
 
     switch (usersReducerResponse) {
       case GET_USERS_SUCCESS:
+        console.log("GET_USERS_SUCCESS", users);
         newState = {
           ...newState,
-          users
+          users: users.map(user => {
+            return {
+              key: user.ID,
+              label: user.name
+            };
+          })
         };
         break;
       default:
@@ -485,6 +515,7 @@ class GroupDetailScreen extends React.Component {
           this.getGroupById(group.ID);
           break;
         case GROUPS_GETBYID_SUCCESS:
+          this.setGroupStatus(group.group_status);
           this.getGroupComments(group.ID);
           break;
         case GROUPS_GET_COMMENTS_SUCCESS:
@@ -563,11 +594,51 @@ class GroupDetailScreen extends React.Component {
   };
 
   setGroupStatus = value => {
+    var newColor = "";
+
+    if (value == "inactive") {
+      newColor = "#d9534f";
+    } else if (value == "active") {
+      newColor = "#5cb85c";
+    }
+
     this.setState(prevState => ({
       ...prevState,
       group: {
         ...prevState.group,
         group_status: value
+      },
+      overallStatusBackgroundColor: newColor
+    }));
+  };
+
+  setCurrentCoaches = value => {
+    this.setState(prevState => ({
+      ...prevState,
+      currentCoaches: value
+    }));
+  };
+
+  setCurrentGeonames = values => {
+    this.setState(prevState => ({
+      ...prevState,
+      currentGeonames: values
+    }));
+  };
+
+  setCurrentPeopleGroups = values => {
+    this.setState(prevState => ({
+      ...prevState,
+      currentPeopleGroups: values
+    }));
+  };
+
+  setEndDate = value => {
+    this.setState(prevState => ({
+      ...prevState,
+      group: {
+        ...prevState.group,
+        end_date: value
       }
     }));
   };
@@ -588,11 +659,13 @@ class GroupDetailScreen extends React.Component {
   };
 
   onSelectAssignedTo = selectedUser => {
+    console.log("this.state.users", this.state.users);
+    console.log("onSelectAssignedTo", selectedUser);
     this.setState(prevState => ({
       ...prevState,
       group: {
         ...prevState.group,
-        assigned_to: selectedUser.ID
+        assigned_to: selectedUser.key
       },
       showAssignedToModal: false
     }));
@@ -610,7 +683,6 @@ class GroupDetailScreen extends React.Component {
     contactAddress.push({
       value: ""
     });
-
     this.setState(prevState => ({
       ...prevState,
       group: {
@@ -618,38 +690,6 @@ class GroupDetailScreen extends React.Component {
         contact_address: contactAddress
       }
     }));
-  };
-
-  renderAddressRow = () => {
-    this.state.group.contact_address.map((address, index) => {
-      if (!address.delete) {
-        return (
-          <ListItem key={index.toString()} icon>
-            <Body>
-              <Input
-                multiline
-                value={address.value}
-                onChangeText={value => {
-                  this.onContactAddressChange(value, index, address.key, this);
-                }}
-                style={styles.inputContactAddress}
-              />
-            </Body>
-            <Right>
-              <Icon
-                android="md-remove"
-                ios="ios-remove"
-                onPress={() => {
-                  this.onRemoveAddressField(index, this);
-                }}
-                style={styles.addRemoveIcons}
-              />
-            </Right>
-          </ListItem>
-        );
-      }
-      return "";
-    });
   };
 
   renderActivityOrCommentRow = commentOrActivity => (
@@ -860,13 +900,13 @@ class GroupDetailScreen extends React.Component {
     if (Object.prototype.hasOwnProperty.call(groupToSave, "end_date")) {
       groupToSave.end_date = formatDateToBackEnd(groupToSave.end_date);
     }
-    if (
+    /*if (
       Object.prototype.hasOwnProperty.call(groupToSave, "church_start_date")
     ) {
       groupToSave.church_start_date = formatDateToBackEnd(
         groupToSave.church_start_date
       );
-    }
+    }*/
     if (Object.prototype.hasOwnProperty.call(groupToSave, "coaches")) {
       groupToSave.coaches.values = this.setCoaches();
     }
@@ -955,43 +995,6 @@ class GroupDetailScreen extends React.Component {
 
     if (this.state.group.ID) {
       // Validation to render DatePickers with initial value
-
-      /**
-       * <ListItem icon>
-                      <Left>
-                        <Icon
-                          type="MaterialIcons"
-                          name="person"
-                          style={styles.icons}
-                        />
-                      </Left>
-                      <Body>
-                        <TouchableOpacity
-                          onPress={() => {
-                            this.updateShowAssignedToModal(true);
-                          }}
-                        >
-                          <Text>
-                            {
-                              this.state.users.find(user => {
-                                return user.ID === this.state.group.assigned_to;
-                              }).name
-                            }
-                          </Text>
-                        </TouchableOpacity>
-                        <ModalFilterPicker
-                          visible={this.state.showAssignedToModal}
-                          onSelect={this.onSelectAssignedTo}
-                          onCancel={this.onCancelAssignedTo}
-                          options={this.state.users}
-                        />
-                      </Body>
-                      <Right>
-                        <Label style={styles.label}>Assigned to</Label>
-                      </Right>
-                    </ListItem>
-       *
-       */
       return (
         <Container>
           {this.state.renderView && (
@@ -1006,205 +1009,285 @@ class GroupDetailScreen extends React.Component {
                 activeTabStyle={styles.activeTabStyle}
                 activeTextStyle={styles.activeTextStyle}
               >
-                <ScrollView>
-                  <Form>
-                    <ListItem icon>
-                      <Body>
-                        <Picker
-                          selectedValue={this.state.group.group_status}
-                          onValueChange={this.setGroupStatus}
-                          enabled={!this.state.onlyView}
+                <KeyboardShift>
+                  {() => (
+                    <ScrollView>
+                      <View
+                        style={styles.formContainer}
+                        pointerEvents={this.state.onlyView ? "none" : "auto"}
+                      >
+                        <Label
+                          style={[styles.formLabel, { fontWeight: "bold" }]}
                         >
-                          <Picker.Item label="Active" value="active" />
-                          <Picker.Item label="Inactive" value="inactive" />
-                        </Picker>
-                      </Body>
-                      <Right>
-                        <Label style={styles.label}>Status</Label>
-                      </Right>
-                    </ListItem>
-
-                    <ListItem icon>
-                      <Left>
-                        <Icon
-                          type="MaterialIcons"
-                          name="group"
-                          style={styles.icons}
-                        />
-                      </Left>
-                      <Body>
-                        <Input
-                          placeholder="e. g., John Doe's Group"
-                          value={this.state.group.title}
-                          onChangeText={this.setGroupName}
-                          disabled={this.state.onlyView}
-                        />
-                      </Body>
-                      <Right>
-                        <Label style={styles.label}>Name</Label>
-                      </Right>
-                    </ListItem>
-                    <ListItem>
-                      <Body>
-                        <MultipleTags
-                          tags={this.state.usersContacts}
-                          preselectedTags={this.state.currentCoaches}
-                          objectKeyIdentifier="value"
-                          objectValueIdentifier="name"
-                          search
-                          onChangeItem={coaches => {
-                            this.setState(prevState => ({
-                              ...prevState,
-                              currentCoaches: coaches
-                            }));
-                          }}
-                          title="Group Coach / Church Planter"
-                          visibleOnOpen
-                        />
-                      </Body>
-                    </ListItem>
-                    <ListItem>
-                      <Body>
-                        <MultipleTags
-                          tags={this.state.geonames}
-                          preselectedTags={this.state.currentGeonames}
-                          objectKeyIdentifier="value"
-                          objectValueIdentifier="name"
-                          search
-                          onChangeItem={geonames => {
-                            this.setState(prevState => ({
-                              ...prevState,
-                              currentGeonames: geonames
-                            }));
-                          }}
-                          title="Locations"
-                          visibleOnOpen
-                        />
-                      </Body>
-                    </ListItem>
-                    <ListItem>
-                      <Body>
-                        <MultipleTags
-                          tags={this.state.peopleGroups}
-                          preselectedTags={this.state.currentPeopleGroups}
-                          objectKeyIdentifier="value"
-                          objectValueIdentifier="name"
-                          search
-                          onChangeItem={peopleGroups => {
-                            this.setState(prevState => ({
-                              ...prevState,
-                              currentPeopleGroups: peopleGroups
-                            }));
-                          }}
-                          title="People Groups"
-                          visibleOnOpen
-                        />
-                      </Body>
-                    </ListItem>
-                    <ListItem icon>
-                      <Left>
-                        <Icon
-                          android="md-home"
-                          ios="ios-home"
-                          style={styles.icons}
-                        />
-                      </Left>
-                      <Body>
-                        <Text style={styles.label}>Address</Text>
-                      </Body>
-                      <Right>
-                        <Icon
-                          android="md-add"
-                          ios="ios-add"
-                          onPress={this.onAddAddressField}
-                          style={styles.addRemoveIcons}
-                        />
-                      </Right>
-                    </ListItem>
-                    {this.renderAddressRow()}
-                    <ListItem icon>
-                      <Left>
-                        <Icon
-                          android="md-calendar"
-                          ios="ios-calendar"
-                          style={styles.icons}
-                        />
-                      </Left>
-                      <Body>
-                        <DatePicker
-                          defaultDate={this.state.group.start_date}
-                          disabled={this.state.onlyView}
-                          onDateChange={value => {
-                            this.setState(prevState => ({
-                              ...prevState,
-                              group: {
-                                ...prevState.group,
-                                start_date: value
+                          Status
+                        </Label>
+                        <Grid>
+                          <Row
+                            style={[
+                              styles.formRow,
+                              { borderBottomColor: "transparent" }
+                            ]}
+                          >
+                            <Col>
+                              <Picker
+                                selectedValue={this.state.group.group_status}
+                                onValueChange={this.setGroupStatus}
+                                style={{
+                                  color: "#FFFFFF",
+                                  backgroundColor: this.state
+                                    .overallStatusBackgroundColor
+                                }}
+                              >
+                                <Picker.Item label="Active" value="active" />
+                                <Picker.Item
+                                  label="Inactive"
+                                  value="inactive"
+                                />
+                              </Picker>
+                            </Col>
+                          </Row>
+                          <TouchableOpacity
+                            onPress={() => {
+                              this.updateShowAssignedToModal(true);
+                            }}
+                          >
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  android="md-person"
+                                  ios="ios-person"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text>
+                                  {this.state.users.find(user => {
+                                    return (
+                                      user.key === this.state.group.assigned_to
+                                    );
+                                  }) &&
+                                    this.state.users.find(user => {
+                                      return (
+                                        user.key ===
+                                        this.state.group.assigned_to
+                                      );
+                                    }).label}
+                                </Text>
+                                <ModalFilterPicker
+                                  visible={this.state.showAssignedToModal}
+                                  onSelect={this.onSelectAssignedTo}
+                                  onCancel={this.onCancelAssignedTo}
+                                  options={this.state.users}
+                                />
+                              </Col>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>
+                                  Assigned to
+                                </Label>
+                              </Col>
+                            </Row>
+                          </TouchableOpacity>
+                          <Row style={styles.formRow}>
+                            <Col style={styles.formIconLabel}>
+                              <Icon
+                                android="md-people"
+                                ios="ios-people"
+                                style={styles.formIcon}
+                              />
+                            </Col>
+                            <Col>
+                              <MultipleTags
+                                tags={this.state.usersContacts}
+                                preselectedTags={this.state.currentCoaches}
+                                objectKeyIdentifier="value"
+                                objectValueIdentifier="name"
+                                onChangeItem={this.setCurrentCoaches}
+                                search
+                                visibleOnOpen={!this.state.onlyView}
+                                title="Group Coach / Church Planter"
+                                searchHitResponse={""}
+                                defaultInstructionClosed={""}
+                                defaultInstructionOpen={""}
+                              />
+                            </Col>
+                          </Row>
+                          <Row style={styles.formRow}>
+                            <Col style={styles.formIconLabel}>
+                              <Icon
+                                android="md-pin"
+                                ios="ios-pin"
+                                style={styles.formIcon}
+                              />
+                            </Col>
+                            <Col>
+                              <MultipleTags
+                                tags={this.state.geonames}
+                                preselectedTags={this.state.currentGeonames}
+                                objectKeyIdentifier="value"
+                                objectValueIdentifier="name"
+                                onChangeItem={this.setCurrentGeonames}
+                                search
+                                visibleOnOpen={!this.state.onlyView}
+                                title="Locations"
+                                searchHitResponse={""}
+                                defaultInstructionClosed={""}
+                                defaultInstructionOpen={""}
+                              />
+                            </Col>
+                          </Row>
+                          <Row style={styles.formRow}>
+                            <Col style={styles.formIconLabel}>
+                              <Icon
+                                android="md-globe"
+                                ios="ios-globe"
+                                style={styles.formIcon}
+                              />
+                            </Col>
+                            <Col>
+                              <MultipleTags
+                                tags={this.state.peopleGroups}
+                                preselectedTags={this.state.currentPeopleGroups}
+                                objectKeyIdentifier="value"
+                                objectValueIdentifier="name"
+                                onChangeItem={this.setCurrentPeopleGroups}
+                                search
+                                visibleOnOpen={!this.state.onlyView}
+                                title="People Groups"
+                                searchHitResponse={""}
+                                defaultInstructionClosed={""}
+                                defaultInstructionOpen={""}
+                              />
+                            </Col>
+                          </Row>
+                          <Row style={styles.formRow}>
+                            <Col style={styles.formIconLabel}>
+                              <Icon
+                                android="md-home"
+                                ios="ios-home"
+                                style={styles.formIcon}
+                              />
+                            </Col>
+                            <Col>
+                              <Row>
+                                <View style={{ flex: 1 }}>
+                                  <Text
+                                    style={{
+                                      textAlign: "right",
+                                      paddingRight: 10
+                                    }}
+                                  >
+                                    <Icon
+                                      android="md-add"
+                                      ios="ios-add"
+                                      onPress={this.onAddAddressField}
+                                      style={styles.addRemoveIcons}
+                                    />
+                                  </Text>
+                                </View>
+                              </Row>
+                            </Col>
+                            <Col style={styles.formIconLabel}>
+                              <Label style={styles.formLabel}>Address</Label>
+                            </Col>
+                          </Row>
+                          {this.state.group.contact_address.map(
+                            (address, index) => {
+                              if (!address.delete) {
+                                return (
+                                  <Row
+                                    key={index.toString()}
+                                    style={styles.formRow}
+                                  >
+                                    <Col>
+                                      <Input
+                                        multiline
+                                        value={address.value}
+                                        onChangeText={value => {
+                                          this.onContactAddressChange(
+                                            value,
+                                            index,
+                                            address.key,
+                                            this
+                                          );
+                                        }}
+                                        style={styles.inputContactAddress}
+                                      />
+                                    </Col>
+                                    <Col style={styles.formIconLabel}>
+                                      <Icon
+                                        android="md-remove"
+                                        ios="ios-remove"
+                                        onPress={() => {
+                                          this.onRemoveAddressField(
+                                            index,
+                                            this
+                                          );
+                                        }}
+                                        style={[
+                                          styles.addRemoveIcons,
+                                          {
+                                            paddingLeft: 10,
+                                            paddingRight: 10
+                                          }
+                                        ]}
+                                      />
+                                    </Col>
+                                  </Row>
+                                );
                               }
-                            }));
-                          }}
-                        />
-                      </Body>
-                      <Right>
-                        <Label style={styles.label}>Start Date</Label>
-                      </Right>
-                    </ListItem>
-                    <ListItem icon>
-                      <Left>
-                        <Icon
-                          android="md-calendar"
-                          ios="ios-calendar"
-                          style={styles.icons}
-                        />
-                      </Left>
-                      <Body>
-                        <DatePicker
-                          defaultDate={this.state.group.church_start_date}
-                          disabled={this.state.onlyView}
-                          onDateChange={value => {
-                            this.setState(prevState => ({
-                              ...prevState,
-                              group: {
-                                ...prevState.group,
-                                church_start_date: value
-                              }
-                            }));
-                          }}
-                        />
-                      </Body>
-                      <Right>
-                        <Label style={styles.label}>Church Start Date</Label>
-                      </Right>
-                    </ListItem>
-                    <ListItem icon>
-                      <Left>
-                        <Icon
-                          android="md-calendar"
-                          ios="ios-calendar"
-                          style={styles.icons}
-                        />
-                      </Left>
-                      <Body>
-                        <DatePicker
-                          defaultDate={this.state.group.end_date}
-                          disabled={this.state.onlyView}
-                          onDateChange={value => {
-                            this.setState(prevState => ({
-                              ...prevState,
-                              group: {
-                                ...prevState.group,
-                                end_date: value
-                              }
-                            }));
-                          }}
-                        />
-                      </Body>
-                      <Right>
-                        <Label style={styles.label}>End Date</Label>
-                      </Right>
-                    </ListItem>
-                  </Form>
-                </ScrollView>
+                            }
+                          )}
+                          <Row style={styles.formRow}>
+                            <Col style={styles.formIconLabel}>
+                              <Icon
+                                android="md-calendar"
+                                ios="ios-calendar"
+                                style={styles.formIcon}
+                              />
+                            </Col>
+                            <Col>
+                              <DatePicker
+                                defaultDate={this.state.group.start_date}
+                                disabled={this.state.onlyView}
+                                onDateChange={value => {
+                                  this.setState(prevState => ({
+                                    ...prevState,
+                                    group: {
+                                      ...prevState.group,
+                                      start_date: value
+                                    }
+                                  }));
+                                }}
+                              />
+                            </Col>
+                            <Col style={styles.formIconLabel}>
+                              <Label style={styles.formLabel}>Start Date</Label>
+                            </Col>
+                          </Row>
+                          <Row style={styles.formRow}>
+                            <Col style={styles.formIconLabel}>
+                              <Icon
+                                android="md-calendar"
+                                ios="ios-calendar"
+                                style={styles.formIcon}
+                              />
+                            </Col>
+                            <Col>
+                              <DatePicker
+                                defaultDate={this.state.group.end_date}
+                                disabled={this.state.onlyView}
+                                onDateChange={this.setEndDate}
+                              />
+                            </Col>
+                            <Col style={styles.formIconLabel}>
+                              <Label style={styles.formLabel}>End Date</Label>
+                            </Col>
+                          </Row>
+                        </Grid>
+                      </View>
+                    </ScrollView>
+                  )}
+                </KeyboardShift>
               </Tab>
               <Tab
                 heading="Progress"
@@ -1214,30 +1297,37 @@ class GroupDetailScreen extends React.Component {
                 activeTextStyle={styles.activeTextStyle}
               >
                 <ScrollView>
-                  <ListItem icon>
-                    <Left>
-                      <Icon
-                        android="md-people"
-                        ios="ios-people"
-                        style={styles.icons}
-                      />
-                    </Left>
-                    <Body>
-                      <Picker
-                        mode="dropdown"
-                        selectedValue={this.state.group.group_type}
-                        onValueChange={this.setGroupType}
-                      >
-                        <Picker.Item label="Pre-Group" value="pre-group" />
-                        <Picker.Item label="Group" value="group" />
-                        <Picker.Item label="Church" value="church" />
-                        <Picker.Item label="Team" value="team" />
-                      </Picker>
-                    </Body>
-                    <Right>
-                      <Label style={styles.label}>Group Type</Label>
-                    </Right>
-                  </ListItem>
+                  <View
+                    style={styles.formContainer}
+                    pointerEvents={this.state.onlyView ? "none" : "auto"}
+                  >
+                    <Grid>
+                      <Row style={styles.formRow}>
+                        <Col style={styles.formIconLabel}>
+                          <Icon
+                            android="md-people"
+                            ios="ios-people"
+                            style={styles.formIcon}
+                          />
+                        </Col>
+                        <Col>
+                          <Picker
+                            mode="dropdown"
+                            selectedValue={this.state.group.group_type}
+                            onValueChange={this.setGroupType}
+                          >
+                            <Picker.Item label="Pre-Group" value="pre-group" />
+                            <Picker.Item label="Group" value="group" />
+                            <Picker.Item label="Church" value="church" />
+                            <Picker.Item label="Team" value="team" />
+                          </Picker>
+                        </Col>
+                        <Col style={styles.formIconLabel}>
+                          <Label style={styles.formLabel}>Group Type</Label>
+                        </Col>
+                      </Row>
+                    </Grid>
+                  </View>
                   <Grid>
                     <Row style={{ height: spacing }} />
                     <Row style={{ height: sideSize }}>
@@ -1288,7 +1378,13 @@ class GroupDetailScreen extends React.Component {
                                           </TouchableOpacity>
                                         </Col>
                                       </Row>
-                                      <Row size={40}>
+                                      <Row
+                                        size={40}
+                                        style={{
+                                          justifyContent: "center",
+                                          alignItems: "center"
+                                        }}
+                                      >
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
@@ -1331,7 +1427,13 @@ class GroupDetailScreen extends React.Component {
                                           </TouchableOpacity>
                                         </Col>
                                       </Row>
-                                      <Row size={40}>
+                                      <Row
+                                        size={40}
+                                        style={{
+                                          justifyContent: "center",
+                                          alignItems: "center"
+                                        }}
+                                      >
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
@@ -1376,7 +1478,13 @@ class GroupDetailScreen extends React.Component {
                                           </TouchableOpacity>
                                         </Col>
                                       </Row>
-                                      <Row size={40}>
+                                      <Row
+                                        size={40}
+                                        style={{
+                                          justifyContent: "center",
+                                          alignItems: "center"
+                                        }}
+                                      >
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
@@ -1429,7 +1537,13 @@ class GroupDetailScreen extends React.Component {
                                           </TouchableOpacity>
                                         </Col>
                                       </Row>
-                                      <Row size={40}>
+                                      <Row
+                                        size={40}
+                                        style={{
+                                          justifyContent: "center",
+                                          alignItems: "center"
+                                        }}
+                                      >
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
@@ -1474,7 +1588,13 @@ class GroupDetailScreen extends React.Component {
                                           </TouchableOpacity>
                                         </Col>
                                       </Row>
-                                      <Row size={40}>
+                                      <Row
+                                        size={40}
+                                        style={{
+                                          justifyContent: "center",
+                                          alignItems: "center"
+                                        }}
+                                      >
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
@@ -1519,7 +1639,13 @@ class GroupDetailScreen extends React.Component {
                                           </TouchableOpacity>
                                         </Col>
                                       </Row>
-                                      <Row size={40}>
+                                      <Row
+                                        size={40}
+                                        style={{
+                                          justifyContent: "center",
+                                          alignItems: "center"
+                                        }}
+                                      >
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
@@ -1566,7 +1692,13 @@ class GroupDetailScreen extends React.Component {
                                           </TouchableOpacity>
                                         </Col>
                                       </Row>
-                                      <Row size={40}>
+                                      <Row
+                                        size={40}
+                                        style={{
+                                          justifyContent: "center",
+                                          alignItems: "center"
+                                        }}
+                                      >
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
@@ -1611,7 +1743,13 @@ class GroupDetailScreen extends React.Component {
                                           </TouchableOpacity>
                                         </Col>
                                       </Row>
-                                      <Row size={40}>
+                                      <Row
+                                        size={40}
+                                        style={{
+                                          justifyContent: "center",
+                                          alignItems: "center"
+                                        }}
+                                      >
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(
@@ -1654,7 +1792,13 @@ class GroupDetailScreen extends React.Component {
                                           </TouchableOpacity>
                                         </Col>
                                       </Row>
-                                      <Row size={40}>
+                                      <Row
+                                        size={40}
+                                        style={{
+                                          justifyContent: "center",
+                                          alignItems: "center"
+                                        }}
+                                      >
                                         <Text
                                           style={
                                             this.onCheckExistingHealthMetric(

@@ -17,7 +17,6 @@ export default function userReducer(state = initialState, action) {
         error: null
       });
     case actions.USER_LOGIN_SUCCESS:
-      console.log("token", action.user.token);
       return Object.assign({}, state, {
         isLoading: false,
         domain: action.domain,

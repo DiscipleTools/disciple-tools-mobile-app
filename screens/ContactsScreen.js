@@ -142,7 +142,7 @@ class ContactsScreen extends React.Component {
       this.props.navigation.push("ContactDetail", {
         contactId: contactData.ID,
         onlyView: true,
-        contactName: contactData.title
+        contactName: contactData.post_title
       });
     } else {
       // Create

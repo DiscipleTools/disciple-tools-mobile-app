@@ -130,11 +130,11 @@ export function* saveGroup({ domain, token, groupData }) {
               group.start_date && group.start_date.formatted.length > 0
                 ? group.start_date.formatted
                 : null,
-            church_start_date:
+            /*church_start_date:
               group.church_start_date &&
               group.church_start_date.formatted.length > 0
                 ? group.church_start_date.formatted
-                : null,
+                : null,*/
             end_date:
               group.end_date && group.end_date.formatted.length > 0
                 ? group.end_date.formatted
@@ -239,11 +239,11 @@ export function* getById({ domain, token, groupId }) {
               group.start_date && group.start_date.formatted.length > 0
                 ? group.start_date.formatted
                 : null,
-            church_start_date:
+            /*church_start_date:
               group.church_start_date &&
               group.church_start_date.formatted.length > 0
                 ? group.church_start_date.formatted
-                : null,
+                : null,*/
             end_date:
               group.end_date && group.end_date.formatted.length > 0
                 ? group.end_date.formatted
