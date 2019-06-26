@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Text
 } from "react-native";
-import { Fab } from "native-base";
+import { Fab, Container } from "native-base";
 import Icon from "react-native-vector-icons/Ionicons";
 import Toast from "react-native-easy-toast";
 
@@ -152,8 +152,8 @@ class ContactsScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <View>
+      <Container>
+        <View style={{ flex: 1 }}>
           <FlatList
             data={this.state.contacts}
             renderItem={item => this.renderRow(item.item)}
@@ -173,15 +173,15 @@ class ContactsScreen extends React.Component {
           >
             <Icon name="md-add" />
           </Fab>
+          <Toast
+            ref={toast => {
+              toastError = toast;
+            }}
+            style={{ backgroundColor: "red" }}
+            position="center"
+          />
         </View>
-        <Toast
-          ref={toast => {
-            toastError = toast;
-          }}
-          style={{ backgroundColor: "red" }}
-          position="center"
-        />
-      </View>
+      </Container>
     );
   }
 }

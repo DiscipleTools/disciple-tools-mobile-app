@@ -14,19 +14,13 @@ import {
 import {
   Label,
   Icon,
-  Form,
   Input,
   Container,
-  Content,
   Picker,
   Tabs,
   Tab,
   ScrollableTab,
-  DatePicker,
-  ListItem,
-  Left,
-  Right,
-  Body
+  DatePicker
 } from "native-base";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -187,8 +181,6 @@ const styles = StyleSheet.create({
     paddingRight: containerPadding
   },
   formRow: {
-    borderBottomColor: "#CCCCCC",
-    borderBottomWidth: 1,
     paddingTop: 10,
     paddingBottom: 10
   },
@@ -205,6 +197,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: "auto",
     marginBottom: "auto"
+  },
+  formDivider: {
+    borderBottomColor: "#CCCCCC",
+    borderBottomWidth: 1,
+    marginLeft: 5,
+    marginRight: 5
   }
 });
 
@@ -229,46 +227,46 @@ function formatDateToBackEnd(dateObject) {
 
 class GroupDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
-    const groupId = navigation.getParam("groupId");
-    const onlyView = navigation.getParam("onlyView");
-    // Disable button when form its not valid
-    let headerRight;
+    const { params } = navigation.state;
 
-    if (onlyView) {
+    let navigationTitle = "Add New Group",
       headerRight = (
         <Icon
-          android="md-create"
-          ios="ios-create"
-          onPress={navigation.getParam("onEnableEdit")}
-          style={[
-            {
-              paddingRight: 16,
-              color: "#FFFFFF"
-            }
-          ]}
-        />
-      );
-    } else {
-      headerRight = (
-        <Icon
-          android="md-checkmark"
-          ios="ios-checkmark"
+          type="MaterialCommunityIcons"
+          name="account-check"
           onPress={navigation.getParam("onSaveGroup")}
-          style={[
-            {
-              paddingRight: 16,
-              color: "#FFFFFF"
-            }
-          ]}
+          style={{
+            paddingRight: 16,
+            color: "#FFFFFF"
+          }}
         />
       );
+
+    if (params) {
+      if (params.groupName) {
+        navigationTitle = params.groupName;
+      }
+      if (params.onlyView) {
+        headerRight = (
+          <Icon
+            type="MaterialIcons"
+            name="create"
+            onPress={navigation.getParam("onEnableEdit")}
+            style={{
+              paddingRight: 16,
+              color: "#FFFFFF"
+            }}
+          />
+        );
+      }
     }
+
     return {
-      title: groupId ? "Group Details" : "Add New Group",
+      title: navigationTitle,
       headerLeft: (
         <Icon
-          android="md-arrow-back"
-          ios="ios-arrow-back"
+          type="MaterialIcons"
+          name="arrow-back"
           onPress={() => navigation.push("Groups")}
           style={[{ paddingLeft: 16, color: "#FFFFFF" }]}
         />
@@ -286,6 +284,7 @@ class GroupDetailScreen extends React.Component {
 
   state = {
     group: {
+      ID: null,
       contact_address: []
     },
     onlyView: false,
@@ -314,33 +313,27 @@ class GroupDetailScreen extends React.Component {
     this.props.navigation.setParams({ onEnableEdit: this.onEnableEdit });
     const groupId = this.props.navigation.getParam("groupId");
     const onlyView = this.props.navigation.getParam("onlyView");
-    // GetById
+    const groupName = this.props.navigation.getParam("groupName");
+
     if (groupId) {
       this.setState(prevState => ({
-        ...prevState,
         group: {
           ...prevState.group,
           ID: groupId
         }
       }));
-      // First end-point to call
+      this.props.navigation.setParams({ groupName: groupName });
       this.getUsers();
     } else {
-      this.setState(prevState => ({
-        ...prevState,
-        group: {
-          ...prevState.group,
-          ID: null
-        }
-      }));
-      this.setGroupType("pre-group");
+      this.setState({
+        renderView: true
+      });
     }
 
     if (onlyView) {
-      this.setState(prevState => ({
-        ...prevState,
+      this.setState({
         onlyView
-      }));
+      });
     }
   }
 
@@ -365,143 +358,132 @@ class GroupDetailScreen extends React.Component {
       usersReducerResponse
     };
 
-    // Detect new message incomming
-
-    switch (groupsReducerResponse) {
-      case GROUPS_SAVE_SUCCESS:
-        // Creation
-        if (group.ID != null && prevState.group.ID === null) {
-          navigation.setParams({ groupId: group.ID });
+    //New response incomming
+    if (groupsReducerResponse != prevState.groupsReducerResponse) {
+      switch (groupsReducerResponse) {
+        case GROUPS_SAVE_SUCCESS:
+          toastSuccess.show("Group Saved!", 2000);
+          // Creation
+          if (group.ID != null && prevState.group.ID === null) {
+            navigation.setParams({
+              groupName: group.title
+            });
+            newState = {
+              ...newState,
+              group,
+              renderView: false
+            };
+          }
+          break;
+        case GROUPS_GET_USERS_CONTACTS_SUCCESS:
           newState = {
             ...newState,
-            group: {
-              ID: group.ID
-            }
+            usersContacts
           };
+          break;
+        case GROUPS_GET_LOCATIONS_SUCCESS:
+          newState = {
+            ...newState,
+            geonames
+          };
+          break;
+        case GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
+          newState = {
+            ...newState,
+            peopleGroups
+          };
+          break;
+        case GROUPS_GETBYID_SUCCESS:
+          if (group.end_date) {
+            group.end_date = formatDateToPickerValue(group.end_date);
+          }
+          if (group.start_date) {
+            group.start_date = formatDateToPickerValue(group.start_date);
+          }
+          newState = {
+            ...newState,
+            group,
+            currentCoaches: group.coaches.values,
+            currentGeonames: group.geonames.values,
+            currentPeopleGroups: group.people_groups.values
+          };
+          break;
+        case GROUPS_GET_COMMENTS_SUCCESS:
+          newState = {
+            ...newState,
+            commentsOrActivities: comments
+          };
+          break;
+        case GROUPS_GET_ACTIVITIES_SUCCESS: {
+          const commentsAndActivities = newState.commentsOrActivities
+            .concat(activities)
+            .sort(
+              (a, b) => new Date(a.date).getTime() > new Date(b.date).getTime()
+            );
+          newState = {
+            ...newState,
+            commentsOrActivities: commentsAndActivities,
+            renderView: true
+          };
+          break;
         }
-        toastSuccess.show("Group Saved!", 2000);
-        break;
-      case GROUPS_GET_USERS_CONTACTS_SUCCESS:
-        newState = {
-          ...newState,
-          usersContacts
-        };
-        break;
-      case GROUPS_GET_LOCATIONS_SUCCESS:
-        newState = {
-          ...newState,
-          geonames
-        };
-        break;
-      case GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
-        newState = {
-          ...newState,
-          peopleGroups
-        };
-        break;
-      case GROUPS_GETBYID_SUCCESS:
-        if (group.end_date) {
-          group.end_date = formatDateToPickerValue(group.end_date);
-        }
-        if (group.start_date) {
-          group.start_date = formatDateToPickerValue(group.start_date);
-        }
-        newState = {
-          ...newState,
-          group,
-          currentCoaches: group.coaches.values,
-          currentGeonames: group.geonames.values,
-          currentPeopleGroups: group.people_groups.values
-        };
-        break;
-      case GROUPS_GET_COMMENTS_SUCCESS:
-        newState = {
-          ...newState,
-          commentsOrActivities: comments
-        };
-        break;
-      case GROUPS_GET_ACTIVITIES_SUCCESS: {
-        const commentsAndActivities = newState.commentsOrActivities
-          .concat(activities)
-          .sort(
+        case GROUPS_SAVE_COMMENT_SUCCESS: {
+          const newCommentsOrActivities = newState.commentsOrActivities;
+          newCommentsOrActivities.push(comment);
+          newCommentsOrActivities.sort(
             (a, b) => new Date(a.date).getTime() > new Date(b.date).getTime()
           );
-        newState = {
-          ...newState,
-          commentsOrActivities: commentsAndActivities,
-          renderView: true
-        };
-        break;
-      }
-      case GROUPS_SAVE_COMMENT_SUCCESS: {
-        const newCommentsOrActivities = newState.commentsOrActivities;
-        newCommentsOrActivities.push(comment);
-        newCommentsOrActivities.sort(
-          (a, b) => new Date(a.date).getTime() > new Date(b.date).getTime()
-        );
-        newState = {
-          ...newState,
-          commentsOrActivities: newCommentsOrActivities,
-          comment: ""
-        };
-        Keyboard.dismiss();
-        break;
-      }
-      default:
-        if (error) {
-          toastError.show(
-            <View>
-              <Text style={{ fontWeight: "bold" }}>Code: </Text>
-              <Text>{error.code}</Text>
-              <Text style={{ fontWeight: "bold" }}>Message: </Text>
-              <Text>{error.message}</Text>
-            </View>,
-            3000
-          );
+          newState = {
+            ...newState,
+            commentsOrActivities: newCommentsOrActivities,
+            comment: ""
+          };
+          Keyboard.dismiss();
+          break;
         }
-        break;
+      }
     }
 
-    switch (usersReducerResponse) {
-      case GET_USERS_SUCCESS:
-        console.log("GET_USERS_SUCCESS", users);
-        newState = {
-          ...newState,
-          users: users.map(user => {
-            return {
-              key: user.ID,
-              label: user.name
-            };
-          })
-        };
-        break;
-      default:
-        if (error) {
-          toastError.show(
-            <View>
-              <Text style={{ fontWeight: "bold" }}>Code: </Text>
-              <Text>{error.code}</Text>
-              <Text style={{ fontWeight: "bold" }}>Message: </Text>
-              <Text>{error.message}</Text>
-            </View>,
-            3000
-          );
-        }
-        break;
+    if (usersReducerResponse != prevState.usersReducerResponse) {
+      switch (usersReducerResponse) {
+        case GET_USERS_SUCCESS:
+          newState = {
+            ...newState,
+            users: users.map(user => {
+              return {
+                key: user.ID,
+                label: user.name
+              };
+            })
+          };
+          break;
+      }
+    }
+
+    if (error) {
+      toastError.show(
+        <View>
+          <Text style={{ fontWeight: "bold" }}>Code: </Text>
+          <Text>{error.code}</Text>
+          <Text style={{ fontWeight: "bold" }}>Message: </Text>
+          <Text>{error.message}</Text>
+        </View>,
+        3000
+      );
     }
 
     return newState;
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     const { groupsReducerResponse, usersReducerResponse } = this.props;
-    const { users, group } = this.state;
+    const { group, renderView } = this.state;
 
-    if (groupsReducerResponse === this.state.groupsReducerResponse) {
+    if (prevProps.groupsReducerResponse != groupsReducerResponse) {
       switch (groupsReducerResponse) {
         case GROUPS_SAVE_SUCCESS:
           // After creation
-          if (users.length === 0) {
+          if (!renderView) {
             this.getUsers();
           }
           break;
@@ -521,10 +503,10 @@ class GroupDetailScreen extends React.Component {
         case GROUPS_GET_COMMENTS_SUCCESS:
           this.getGroupActivities(group.ID);
           break;
-        default:
       }
     }
-    if (usersReducerResponse === this.state.usersReducerResponse) {
+
+    if (prevProps.usersReducerResponse != usersReducerResponse) {
       switch (usersReducerResponse) {
         case GET_USERS_SUCCESS:
           this.getUsersContacts();
@@ -572,125 +554,6 @@ class GroupDetailScreen extends React.Component {
       groupId
     );
   }
-
-  setGroupName = value => {
-    this.setState(prevState => ({
-      ...prevState,
-      group: {
-        ...prevState.group,
-        title: value
-      }
-    }));
-  };
-
-  setGroupType = value => {
-    this.setState(prevState => ({
-      ...prevState,
-      group: {
-        ...prevState.group,
-        group_type: value
-      }
-    }));
-  };
-
-  setGroupStatus = value => {
-    var newColor = "";
-
-    if (value == "inactive") {
-      newColor = "#d9534f";
-    } else if (value == "active") {
-      newColor = "#5cb85c";
-    }
-
-    this.setState(prevState => ({
-      ...prevState,
-      group: {
-        ...prevState.group,
-        group_status: value
-      },
-      overallStatusBackgroundColor: newColor
-    }));
-  };
-
-  setCurrentCoaches = value => {
-    this.setState(prevState => ({
-      ...prevState,
-      currentCoaches: value
-    }));
-  };
-
-  setCurrentGeonames = values => {
-    this.setState(prevState => ({
-      ...prevState,
-      currentGeonames: values
-    }));
-  };
-
-  setCurrentPeopleGroups = values => {
-    this.setState(prevState => ({
-      ...prevState,
-      currentPeopleGroups: values
-    }));
-  };
-
-  setEndDate = value => {
-    this.setState(prevState => ({
-      ...prevState,
-      group: {
-        ...prevState.group,
-        end_date: value
-      }
-    }));
-  };
-
-  onEnableEdit = () => {
-    this.setState(prevState => ({
-      ...prevState,
-      onlyView: false
-    }));
-    this.props.navigation.setParams({ onlyView: false });
-  };
-
-  updateShowAssignedToModal = value => {
-    this.setState(prevState => ({
-      ...prevState,
-      showAssignedToModal: value
-    }));
-  };
-
-  onSelectAssignedTo = selectedUser => {
-    console.log("this.state.users", this.state.users);
-    console.log("onSelectAssignedTo", selectedUser);
-    this.setState(prevState => ({
-      ...prevState,
-      group: {
-        ...prevState.group,
-        assigned_to: selectedUser.key
-      },
-      showAssignedToModal: false
-    }));
-  };
-
-  onCancelAssignedTo = () => {
-    this.setState(prevState => ({
-      ...prevState,
-      showAssignedToModal: false
-    }));
-  };
-
-  onAddAddressField = () => {
-    const contactAddress = this.state.group.contact_address;
-    contactAddress.push({
-      value: ""
-    });
-    this.setState(prevState => ({
-      ...prevState,
-      group: {
-        ...prevState.group,
-        contact_address: contactAddress
-      }
-    }));
-  };
 
   renderActivityOrCommentRow = commentOrActivity => (
     <View style={styles.container}>
@@ -750,7 +613,121 @@ class GroupDetailScreen extends React.Component {
     </View>
   );
 
-  onContactAddressChange = (value, index, dbIndex, component) => {
+  onEnableEdit = () => {
+    this.setState({
+      onlyView: false
+    });
+    this.props.navigation.setParams({ onlyView: false });
+  };
+
+  setGroupName = value => {
+    this.setState(prevState => ({
+      group: {
+        ...prevState.group,
+        title: value
+      }
+    }));
+  };
+
+  setGroupType = value => {
+    this.setState(prevState => ({
+      group: {
+        ...prevState.group,
+        group_type: value
+      }
+    }));
+  };
+
+  setGroupStatus = value => {
+    var newColor = "";
+
+    if (value == "inactive") {
+      newColor = "#d9534f";
+    } else if (value == "active") {
+      newColor = "#5cb85c";
+    }
+
+    this.setState(prevState => ({
+      group: {
+        ...prevState.group,
+        group_status: value
+      },
+      overallStatusBackgroundColor: newColor
+    }));
+  };
+
+  setGroupStartDate = value => {
+    this.setState(prevState => ({
+      group: {
+        ...prevState.group,
+        start_date: value
+      }
+    }));
+  };
+
+  setCurrentCoaches = value => {
+    this.setState({
+      currentCoaches: value
+    });
+  };
+
+  setCurrentGeonames = values => {
+    this.setState({
+      currentGeonames: values
+    });
+  };
+
+  setCurrentPeopleGroups = values => {
+    this.setState({
+      currentPeopleGroups: values
+    });
+  };
+
+  setEndDate = value => {
+    this.setState(prevState => ({
+      group: {
+        ...prevState.group,
+        end_date: value
+      }
+    }));
+  };
+
+  updateShowAssignedToModal = value => {
+    this.setState({
+      showAssignedToModal: value
+    });
+  };
+
+  onSelectAssignedTo = selectedUser => {
+    this.setState(prevState => ({
+      group: {
+        ...prevState.group,
+        assigned_to: selectedUser.key
+      },
+      showAssignedToModal: false
+    }));
+  };
+
+  onCancelAssignedTo = () => {
+    this.setState({
+      showAssignedToModal: false
+    });
+  };
+
+  onAddAddressField = () => {
+    const contactAddress = this.state.group.contact_address;
+    contactAddress.push({
+      value: ""
+    });
+    this.setState(prevState => ({
+      group: {
+        ...prevState.group,
+        contact_address: contactAddress
+      }
+    }));
+  };
+
+  onAddressFieldChange = (value, index, dbIndex, component) => {
     const contactAddressList = component.state.group.contact_address;
     const contactAddress = contactAddressList[index];
     contactAddress.value = value;
@@ -809,7 +786,6 @@ class GroupDetailScreen extends React.Component {
       });
     }
     this.setState(prevState => ({
-      ...prevState,
       group: {
         ...prevState.group,
         health_metrics: {
@@ -890,6 +866,12 @@ class GroupDetailScreen extends React.Component {
     return peopleGroupsToSave;
   };
 
+  setComment = value => {
+    this.setState({
+      comment: value
+    });
+  };
+
   onSaveGroup = () => {
     Keyboard.dismiss();
 
@@ -949,13 +931,6 @@ class GroupDetailScreen extends React.Component {
     return `${monthNames[newDate.getMonth()]} ${newDate.getDate()}, ${strTime}`;
   };
 
-  setComment = value => {
-    this.setState(prevState => ({
-      ...prevState,
-      comment: value
-    }));
-  };
-
   onSaveComment = () => {
     const { comment } = this.state;
 
@@ -972,8 +947,6 @@ class GroupDetailScreen extends React.Component {
   };
 
   render() {
-    // Required fields: name
-
     const successToast = (
       <Toast
         ref={toast => {
@@ -993,974 +966,964 @@ class GroupDetailScreen extends React.Component {
       />
     );
 
-    if (this.state.group.ID) {
-      // Validation to render DatePickers with initial value
-      return (
-        <Container>
-          {this.state.renderView && (
-            <Tabs
-              renderTabBar={() => <ScrollableTab />}
-              tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
+    // Validation to render DatePickers with initial value
+    return (
+      <Container>
+        {this.state.group.ID && this.state.renderView && (
+          <Tabs
+            renderTabBar={() => <ScrollableTab />}
+            tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
+          >
+            <Tab
+              heading="Details"
+              tabStyle={styles.tabStyle}
+              textStyle={styles.textStyle}
+              activeTabStyle={styles.activeTabStyle}
+              activeTextStyle={styles.activeTextStyle}
             >
-              <Tab
-                heading="Details"
-                tabStyle={styles.tabStyle}
-                textStyle={styles.textStyle}
-                activeTabStyle={styles.activeTabStyle}
-                activeTextStyle={styles.activeTextStyle}
-              >
-                <KeyboardShift>
-                  {() => (
-                    <ScrollView>
-                      <View
-                        style={styles.formContainer}
-                        pointerEvents={this.state.onlyView ? "none" : "auto"}
-                      >
-                        <Label
-                          style={[styles.formLabel, { fontWeight: "bold" }]}
-                        >
-                          Status
-                        </Label>
-                        <Grid>
-                          <Row
-                            style={[
-                              styles.formRow,
-                              { borderBottomColor: "transparent" }
-                            ]}
-                          >
-                            <Col>
-                              <Picker
-                                selectedValue={this.state.group.group_status}
-                                onValueChange={this.setGroupStatus}
-                                style={{
-                                  color: "#FFFFFF",
-                                  backgroundColor: this.state
-                                    .overallStatusBackgroundColor
-                                }}
-                              >
-                                <Picker.Item label="Active" value="active" />
-                                <Picker.Item
-                                  label="Inactive"
-                                  value="inactive"
-                                />
-                              </Picker>
-                            </Col>
-                          </Row>
-                          <TouchableOpacity
-                            onPress={() => {
-                              this.updateShowAssignedToModal(true);
+              <KeyboardShift>
+                {() => (
+                  <ScrollView>
+                    <View
+                      style={{
+                        paddingLeft: containerPadding - 15,
+                        paddingRight: containerPadding - 15,
+                        marginTop: 20
+                      }}
+                    >
+                      <Label style={[styles.formLabel, { fontWeight: "bold" }]}>
+                        Status
+                      </Label>
+                      <Row style={styles.formRow}>
+                        <Col>
+                          <Picker
+                            selectedValue={this.state.group.group_status}
+                            onValueChange={this.setGroupStatus}
+                            style={{
+                              color: "#FFFFFF",
+                              backgroundColor: this.state
+                                .overallStatusBackgroundColor
                             }}
                           >
-                            <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
-                                <Icon
-                                  android="md-person"
-                                  ios="ios-person"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text>
-                                  {this.state.users.find(user => {
+                            <Picker.Item label="Active" value="active" />
+                            <Picker.Item label="Inactive" value="inactive" />
+                          </Picker>
+                        </Col>
+                      </Row>
+                    </View>
+                    <View
+                      style={styles.formContainer}
+                      pointerEvents={this.state.onlyView ? "none" : "auto"}
+                    >
+                      <Grid>
+                        <TouchableOpacity
+                          onPress={() => {
+                            this.updateShowAssignedToModal(true);
+                          }}
+                        >
+                          <Row style={styles.formRow}>
+                            <Col style={styles.formIconLabel}>
+                              <Icon
+                                type="Ionicons"
+                                name="contact"
+                                style={styles.formIcon}
+                              />
+                            </Col>
+                            <Col>
+                              <Text>
+                                {this.state.users.find(user => {
+                                  return (
+                                    user.key === this.state.group.assigned_to
+                                  );
+                                }) &&
+                                  this.state.users.find(user => {
                                     return (
                                       user.key === this.state.group.assigned_to
                                     );
-                                  }) &&
-                                    this.state.users.find(user => {
-                                      return (
-                                        user.key ===
-                                        this.state.group.assigned_to
-                                      );
-                                    }).label}
-                                </Text>
-                                <ModalFilterPicker
-                                  visible={this.state.showAssignedToModal}
-                                  onSelect={this.onSelectAssignedTo}
-                                  onCancel={this.onCancelAssignedTo}
-                                  options={this.state.users}
-                                />
-                              </Col>
-                              <Col style={styles.formIconLabel}>
-                                <Label style={styles.formLabel}>
-                                  Assigned to
-                                </Label>
-                              </Col>
-                            </Row>
-                          </TouchableOpacity>
-                          <Row style={styles.formRow}>
-                            <Col style={styles.formIconLabel}>
-                              <Icon
-                                android="md-people"
-                                ios="ios-people"
-                                style={styles.formIcon}
+                                  }).label}
+                              </Text>
+                              <ModalFilterPicker
+                                visible={this.state.showAssignedToModal}
+                                onSelect={this.onSelectAssignedTo}
+                                onCancel={this.onCancelAssignedTo}
+                                options={this.state.users}
                               />
                             </Col>
-                            <Col>
-                              <MultipleTags
-                                tags={this.state.usersContacts}
-                                preselectedTags={this.state.currentCoaches}
-                                objectKeyIdentifier="value"
-                                objectValueIdentifier="name"
-                                onChangeItem={this.setCurrentCoaches}
-                                search
-                                visibleOnOpen={!this.state.onlyView}
-                                title="Group Coach / Church Planter"
-                                searchHitResponse={""}
-                                defaultInstructionClosed={""}
-                                defaultInstructionOpen={""}
-                              />
+                            <Col style={styles.formIconLabel}>
+                              <Label style={styles.formLabel}>
+                                Assigned to
+                              </Label>
                             </Col>
                           </Row>
-                          <Row style={styles.formRow}>
-                            <Col style={styles.formIconLabel}>
-                              <Icon
-                                android="md-pin"
-                                ios="ios-pin"
-                                style={styles.formIcon}
-                              />
-                            </Col>
-                            <Col>
-                              <MultipleTags
-                                tags={this.state.geonames}
-                                preselectedTags={this.state.currentGeonames}
-                                objectKeyIdentifier="value"
-                                objectValueIdentifier="name"
-                                onChangeItem={this.setCurrentGeonames}
-                                search
-                                visibleOnOpen={!this.state.onlyView}
-                                title="Locations"
-                                searchHitResponse={""}
-                                defaultInstructionClosed={""}
-                                defaultInstructionOpen={""}
-                              />
-                            </Col>
-                          </Row>
-                          <Row style={styles.formRow}>
-                            <Col style={styles.formIconLabel}>
-                              <Icon
-                                android="md-globe"
-                                ios="ios-globe"
-                                style={styles.formIcon}
-                              />
-                            </Col>
-                            <Col>
-                              <MultipleTags
-                                tags={this.state.peopleGroups}
-                                preselectedTags={this.state.currentPeopleGroups}
-                                objectKeyIdentifier="value"
-                                objectValueIdentifier="name"
-                                onChangeItem={this.setCurrentPeopleGroups}
-                                search
-                                visibleOnOpen={!this.state.onlyView}
-                                title="People Groups"
-                                searchHitResponse={""}
-                                defaultInstructionClosed={""}
-                                defaultInstructionOpen={""}
-                              />
-                            </Col>
-                          </Row>
-                          <Row style={styles.formRow}>
-                            <Col style={styles.formIconLabel}>
-                              <Icon
-                                android="md-home"
-                                ios="ios-home"
-                                style={styles.formIcon}
-                              />
-                            </Col>
-                            <Col>
-                              <Row>
-                                <View style={{ flex: 1 }}>
-                                  <Text
-                                    style={{
-                                      textAlign: "right",
-                                      paddingRight: 10
-                                    }}
-                                  >
-                                    <Icon
-                                      android="md-add"
-                                      ios="ios-add"
-                                      onPress={this.onAddAddressField}
-                                      style={styles.addRemoveIcons}
-                                    />
-                                  </Text>
-                                </View>
-                              </Row>
-                            </Col>
-                            <Col style={styles.formIconLabel}>
-                              <Label style={styles.formLabel}>Address</Label>
-                            </Col>
-                          </Row>
-                          {this.state.group.contact_address.map(
-                            (address, index) => {
-                              if (!address.delete) {
-                                return (
-                                  <Row
-                                    key={index.toString()}
-                                    style={styles.formRow}
-                                  >
-                                    <Col>
-                                      <Input
-                                        multiline
-                                        value={address.value}
-                                        onChangeText={value => {
-                                          this.onContactAddressChange(
-                                            value,
-                                            index,
-                                            address.key,
-                                            this
-                                          );
-                                        }}
-                                        style={styles.inputContactAddress}
-                                      />
-                                    </Col>
-                                    <Col style={styles.formIconLabel}>
-                                      <Icon
-                                        android="md-remove"
-                                        ios="ios-remove"
-                                        onPress={() => {
-                                          this.onRemoveAddressField(
-                                            index,
-                                            this
-                                          );
-                                        }}
-                                        style={[
-                                          styles.addRemoveIcons,
-                                          {
-                                            paddingLeft: 10,
-                                            paddingRight: 10
-                                          }
-                                        ]}
-                                      />
-                                    </Col>
-                                  </Row>
-                                );
-                              }
-                            }
-                          )}
-                          <Row style={styles.formRow}>
-                            <Col style={styles.formIconLabel}>
-                              <Icon
-                                android="md-calendar"
-                                ios="ios-calendar"
-                                style={styles.formIcon}
-                              />
-                            </Col>
-                            <Col>
-                              <DatePicker
-                                defaultDate={this.state.group.start_date}
-                                disabled={this.state.onlyView}
-                                onDateChange={value => {
-                                  this.setState(prevState => ({
-                                    ...prevState,
-                                    group: {
-                                      ...prevState.group,
-                                      start_date: value
-                                    }
-                                  }));
-                                }}
-                              />
-                            </Col>
-                            <Col style={styles.formIconLabel}>
-                              <Label style={styles.formLabel}>Start Date</Label>
-                            </Col>
-                          </Row>
-                          <Row style={styles.formRow}>
-                            <Col style={styles.formIconLabel}>
-                              <Icon
-                                android="md-calendar"
-                                ios="ios-calendar"
-                                style={styles.formIcon}
-                              />
-                            </Col>
-                            <Col>
-                              <DatePicker
-                                defaultDate={this.state.group.end_date}
-                                disabled={this.state.onlyView}
-                                onDateChange={this.setEndDate}
-                              />
-                            </Col>
-                            <Col style={styles.formIconLabel}>
-                              <Label style={styles.formLabel}>End Date</Label>
-                            </Col>
-                          </Row>
-                        </Grid>
-                      </View>
-                    </ScrollView>
-                  )}
-                </KeyboardShift>
-              </Tab>
-              <Tab
-                heading="Progress"
-                tabStyle={styles.tabStyle}
-                textStyle={styles.textStyle}
-                activeTabStyle={styles.activeTabStyle}
-                activeTextStyle={styles.activeTextStyle}
-              >
-                <ScrollView>
-                  <View
-                    style={styles.formContainer}
-                    pointerEvents={this.state.onlyView ? "none" : "auto"}
-                  >
-                    <Grid>
-                      <Row style={styles.formRow}>
-                        <Col style={styles.formIconLabel}>
-                          <Icon
-                            android="md-people"
-                            ios="ios-people"
-                            style={styles.formIcon}
-                          />
-                        </Col>
-                        <Col>
-                          <Picker
-                            mode="dropdown"
-                            selectedValue={this.state.group.group_type}
-                            onValueChange={this.setGroupType}
-                          >
-                            <Picker.Item label="Pre-Group" value="pre-group" />
-                            <Picker.Item label="Group" value="group" />
-                            <Picker.Item label="Church" value="church" />
-                            <Picker.Item label="Team" value="team" />
-                          </Picker>
-                        </Col>
-                        <Col style={styles.formIconLabel}>
-                          <Label style={styles.formLabel}>Group Type</Label>
-                        </Col>
-                      </Row>
-                    </Grid>
-                  </View>
-                  <Grid>
-                    <Row style={{ height: spacing }} />
-                    <Row style={{ height: sideSize }}>
-                      <Col style={{ width: spacing }} />
-                      <Col style={{ width: sideSize }}>
-                        <Image
-                          source={churchCommitmentIcon}
-                          style={{
-                            justifyContent: "center",
-                            alignItems: "center",
-                            alignSelf: "center",
-                            position: "absolute",
-                            height: "100%",
-                            width: "100%"
-                          }}
-                        />
-                        <Row style={{ height: sideSize * 0.1 }} />
-                        <Row style={{ height: sideSize * 0.8 }}>
-                          <Row style={{ height: sideSize * 0.8 }}>
-                            <Col style={{ width: sideSize * 0.1 }} />
-                            <Col style={{ width: sideSize * 0.8 }}>
-                              <Row size={5}>
-                                <Col size={2} />
-                                <Col size={3}>
-                                  <Row size={1} />
-                                  <Row size={4}>
-                                    <Col>
-                                      <Row size={60}>
-                                        <Col>
-                                          <TouchableOpacity
-                                            onPress={() => {
-                                              this.onHealthMetricChange(
-                                                "church_giving"
-                                              );
-                                            }}
-                                            activeOpacity={1}
-                                          >
-                                            <Image
-                                              source={givingIcon}
-                                              style={
-                                                this.onCheckExistingHealthMetric(
-                                                  "church_giving"
-                                                )
-                                                  ? styles.activeImage
-                                                  : styles.inactiveImage
-                                              }
-                                            />
-                                          </TouchableOpacity>
-                                        </Col>
-                                      </Row>
-                                      <Row
-                                        size={40}
-                                        style={{
-                                          justifyContent: "center",
-                                          alignItems: "center"
-                                        }}
-                                      >
-                                        <Text
-                                          style={
-                                            this.onCheckExistingHealthMetric(
-                                              "church_giving"
-                                            )
-                                              ? styles.activeToggleText
-                                              : styles.inactiveToggleText
-                                          }
-                                        >
-                                          Giving
-                                        </Text>
-                                      </Row>
-                                    </Col>
-                                  </Row>
-                                </Col>
-                                <Col size={2} />
-                                <Col size={3}>
-                                  <Row size={4}>
-                                    <Col size={100}>
-                                      <Row size={60}>
-                                        <Col>
-                                          <TouchableOpacity
-                                            onPress={() => {
-                                              this.onHealthMetricChange(
-                                                "church_fellowship"
-                                              );
-                                            }}
-                                            activeOpacity={1}
-                                          >
-                                            <Image
-                                              source={fellowShipIcon}
-                                              style={
-                                                this.onCheckExistingHealthMetric(
-                                                  "church_fellowship"
-                                                )
-                                                  ? styles.activeImage
-                                                  : styles.inactiveImage
-                                              }
-                                            />
-                                          </TouchableOpacity>
-                                        </Col>
-                                      </Row>
-                                      <Row
-                                        size={40}
-                                        style={{
-                                          justifyContent: "center",
-                                          alignItems: "center"
-                                        }}
-                                      >
-                                        <Text
-                                          style={
-                                            this.onCheckExistingHealthMetric(
-                                              "church_fellowship"
-                                            )
-                                              ? styles.activeToggleText
-                                              : styles.inactiveToggleText
-                                          }
-                                        >
-                                          Fellowship
-                                        </Text>
-                                      </Row>
-                                    </Col>
-                                  </Row>
-                                  <Row size={1} />
-                                </Col>
-                                <Col size={2} />
-                                <Col size={3}>
-                                  <Row size={1} />
-                                  <Row size={4}>
-                                    <Col>
-                                      <Row size={60}>
-                                        <Col>
-                                          <TouchableOpacity
-                                            onPress={() => {
-                                              this.onHealthMetricChange(
-                                                "church_communion"
-                                              );
-                                            }}
-                                            activeOpacity={1}
-                                          >
-                                            <Image
-                                              source={communionIcon}
-                                              style={
-                                                this.onCheckExistingHealthMetric(
-                                                  "church_communion"
-                                                )
-                                                  ? styles.activeImage
-                                                  : styles.inactiveImage
-                                              }
-                                            />
-                                          </TouchableOpacity>
-                                        </Col>
-                                      </Row>
-                                      <Row
-                                        size={40}
-                                        style={{
-                                          justifyContent: "center",
-                                          alignItems: "center"
-                                        }}
-                                      >
-                                        <Text
-                                          style={
-                                            this.onCheckExistingHealthMetric(
-                                              "church_communion"
-                                            )
-                                              ? styles.activeToggleText
-                                              : styles.inactiveToggleText
-                                          }
-                                        >
-                                          Communion
-                                        </Text>
-                                      </Row>
-                                    </Col>
-                                  </Row>
-                                </Col>
-                                <Col size={2} />
-                              </Row>
-
-                              <Row
-                                size={7}
-                                style={{ backgroundColor: "white" }}
-                              >
-                                <Col size={3}>
-                                  <Row
-                                    size={2}
-                                    style={{ backgroundColor: "white" }}
-                                  />
-                                  <Row size={6}>
-                                    <Col>
-                                      <Row size={60}>
-                                        <Col>
-                                          <TouchableOpacity
-                                            onPress={() => {
-                                              this.onHealthMetricChange(
-                                                "church_baptism"
-                                              );
-                                            }}
-                                            activeOpacity={1}
-                                          >
-                                            <Image
-                                              source={baptismIcon}
-                                              style={
-                                                this.onCheckExistingHealthMetric(
-                                                  "church_baptism"
-                                                )
-                                                  ? styles.activeImage
-                                                  : styles.inactiveImage
-                                              }
-                                            />
-                                          </TouchableOpacity>
-                                        </Col>
-                                      </Row>
-                                      <Row
-                                        size={40}
-                                        style={{
-                                          justifyContent: "center",
-                                          alignItems: "center"
-                                        }}
-                                      >
-                                        <Text
-                                          style={
-                                            this.onCheckExistingHealthMetric(
-                                              "church_baptism"
-                                            )
-                                              ? styles.activeToggleText
-                                              : styles.inactiveToggleText
-                                          }
-                                        >
-                                          Baptism
-                                        </Text>
-                                      </Row>
-                                    </Col>
-                                  </Row>
-                                  <Row size={2} />
-                                </Col>
-                                <Col size={4} />
-                                <Col size={3}>
-                                  <Row size={2} />
-                                  <Row size={6}>
-                                    <Col>
-                                      <Row size={60}>
-                                        <Col>
-                                          <TouchableOpacity
-                                            onPress={() => {
-                                              this.onHealthMetricChange(
-                                                "church_prayer"
-                                              );
-                                            }}
-                                            activeOpacity={1}
-                                          >
-                                            <Image
-                                              source={prayerIcon}
-                                              style={
-                                                this.onCheckExistingHealthMetric(
-                                                  "church_prayer"
-                                                )
-                                                  ? styles.activeImage
-                                                  : styles.inactiveImage
-                                              }
-                                            />
-                                          </TouchableOpacity>
-                                        </Col>
-                                      </Row>
-                                      <Row
-                                        size={40}
-                                        style={{
-                                          justifyContent: "center",
-                                          alignItems: "center"
-                                        }}
-                                      >
-                                        <Text
-                                          style={
-                                            this.onCheckExistingHealthMetric(
-                                              "church_prayer"
-                                            )
-                                              ? styles.activeToggleText
-                                              : styles.inactiveToggleText
-                                          }
-                                        >
-                                          Prayer
-                                        </Text>
-                                      </Row>
-                                    </Col>
-                                  </Row>
-                                  <Row size={2} />
-                                </Col>
-                                <Col size={4} />
-                                <Col size={3}>
-                                  <Row size={2} />
-                                  <Row size={6}>
-                                    <Col>
-                                      <Row size={60}>
-                                        <Col>
-                                          <TouchableOpacity
-                                            onPress={() => {
-                                              this.onHealthMetricChange(
-                                                "church_leaders"
-                                              );
-                                            }}
-                                            activeOpacity={1}
-                                          >
-                                            <Image
-                                              source={leadersIcon}
-                                              style={
-                                                this.onCheckExistingHealthMetric(
-                                                  "church_leaders"
-                                                )
-                                                  ? styles.activeImage
-                                                  : styles.inactiveImage
-                                              }
-                                            />
-                                          </TouchableOpacity>
-                                        </Col>
-                                      </Row>
-                                      <Row
-                                        size={40}
-                                        style={{
-                                          justifyContent: "center",
-                                          alignItems: "center"
-                                        }}
-                                      >
-                                        <Text
-                                          style={
-                                            this.onCheckExistingHealthMetric(
-                                              "church_leaders"
-                                            )
-                                              ? styles.activeToggleText
-                                              : styles.inactiveToggleText
-                                          }
-                                        >
-                                          Leaders
-                                        </Text>
-                                      </Row>
-                                    </Col>
-                                  </Row>
-                                  <Row size={2} />
-                                </Col>
-                              </Row>
-
-                              <Row size={5}>
-                                <Col size={2} />
-                                <Col size={3}>
-                                  <Row size={4}>
-                                    <Col>
-                                      <Row size={60}>
-                                        <Col>
-                                          <TouchableOpacity
-                                            onPress={() => {
-                                              this.onHealthMetricChange(
-                                                "church_bible"
-                                              );
-                                            }}
-                                            activeOpacity={1}
-                                          >
-                                            <Image
-                                              source={bibleStudyIcon}
-                                              style={
-                                                this.onCheckExistingHealthMetric(
-                                                  "church_bible"
-                                                )
-                                                  ? styles.activeImage
-                                                  : styles.inactiveImage
-                                              }
-                                            />
-                                          </TouchableOpacity>
-                                        </Col>
-                                      </Row>
-                                      <Row
-                                        size={40}
-                                        style={{
-                                          justifyContent: "center",
-                                          alignItems: "center"
-                                        }}
-                                      >
-                                        <Text
-                                          style={
-                                            this.onCheckExistingHealthMetric(
-                                              "church_bible"
-                                            )
-                                              ? styles.activeToggleText
-                                              : styles.inactiveToggleText
-                                          }
-                                        >
-                                          Bible Study
-                                        </Text>
-                                      </Row>
-                                    </Col>
-                                  </Row>
-                                  <Row size={1} />
-                                </Col>
-                                <Col size={2} />
-                                <Col size={3}>
-                                  <Row size={1} />
-                                  <Row size={4}>
-                                    <Col>
-                                      <Row size={60}>
-                                        <Col>
-                                          <TouchableOpacity
-                                            onPress={() => {
-                                              this.onHealthMetricChange(
-                                                "church_praise"
-                                              );
-                                            }}
-                                            activeOpacity={1}
-                                          >
-                                            <Image
-                                              source={praiseIcon}
-                                              style={
-                                                this.onCheckExistingHealthMetric(
-                                                  "church_praise"
-                                                )
-                                                  ? styles.activeImage
-                                                  : styles.inactiveImage
-                                              }
-                                            />
-                                          </TouchableOpacity>
-                                        </Col>
-                                      </Row>
-                                      <Row
-                                        size={40}
-                                        style={{
-                                          justifyContent: "center",
-                                          alignItems: "center"
-                                        }}
-                                      >
-                                        <Text
-                                          style={
-                                            this.onCheckExistingHealthMetric(
-                                              "church_praise"
-                                            )
-                                              ? styles.activeToggleText
-                                              : styles.inactiveToggleText
-                                          }
-                                        >
-                                          Praise
-                                        </Text>
-                                      </Row>
-                                    </Col>
-                                  </Row>
-                                </Col>
-                                <Col size={2} />
-                                <Col size={3}>
-                                  <Row size={4}>
-                                    <Col>
-                                      <Row size={60}>
-                                        <Col>
-                                          <TouchableOpacity
-                                            onPress={() => {
-                                              this.onHealthMetricChange(
-                                                "church_sharing"
-                                              );
-                                            }}
-                                            activeOpacity={1}
-                                          >
-                                            <Image
-                                              source={sharingTheGospelIcon}
-                                              style={
-                                                this.onCheckExistingHealthMetric(
-                                                  "church_sharing"
-                                                )
-                                                  ? styles.activeImage
-                                                  : styles.inactiveImage
-                                              }
-                                            />
-                                          </TouchableOpacity>
-                                        </Col>
-                                      </Row>
-                                      <Row
-                                        size={40}
-                                        style={{
-                                          justifyContent: "center",
-                                          alignItems: "center"
-                                        }}
-                                      >
-                                        <Text
-                                          style={
-                                            this.onCheckExistingHealthMetric(
-                                              "church_sharing"
-                                            )
-                                              ? styles.activeToggleText
-                                              : styles.inactiveToggleText
-                                          }
-                                        >
-                                          Sharing the Gospel
-                                        </Text>
-                                      </Row>
-                                    </Col>
-                                  </Row>
-                                  <Row size={1} />
-                                </Col>
-                                <Col size={2} />
-                              </Row>
-                            </Col>
-                            <Col style={{ width: sideSize * 0.1 }} />
-                          </Row>
+                          <View style={styles.formDivider} />
+                        </TouchableOpacity>
+                        <Row style={styles.formRow}>
+                          <Col style={styles.formIconLabel}>
+                            <Icon
+                              android="md-people"
+                              ios="ios-people"
+                              style={styles.formIcon}
+                            />
+                          </Col>
+                          <Col>
+                            <MultipleTags
+                              tags={this.state.usersContacts}
+                              preselectedTags={this.state.currentCoaches}
+                              objectKeyIdentifier="value"
+                              objectValueIdentifier="name"
+                              onChangeItem={this.setCurrentCoaches}
+                              search
+                              visibleOnOpen={!this.state.onlyView}
+                              title="Group Coach / Church Planter"
+                              searchHitResponse={""}
+                              defaultInstructionClosed={""}
+                              defaultInstructionOpen={""}
+                            />
+                          </Col>
                         </Row>
-                        <Row style={{ height: sideSize * 0.1 }} />
-                      </Col>
-                      <Col style={{ width: spacing }} />
-                    </Row>
-                    <Row style={{ height: spacing }} />
-                  </Grid>
-                </ScrollView>
-              </Tab>
-              <Tab
-                heading="Comments / Activity"
-                tabStyle={[styles.tabStyle]}
-                textStyle={styles.textStyle}
-                activeTabStyle={styles.activeTabStyle}
-                activeTextStyle={styles.activeTextStyle}
-              >
-                {Object.prototype.hasOwnProperty.call(
-                  this.state,
-                  "commentsOrActivities"
-                ) &&
-                  this.state.commentsOrActivities && (
-                    <View style={{ flex: 1 }}>
-                      <FlatList
-                        style={styles.root}
-                        ref={flatList => {
-                          commentsFlatList = flatList;
-                        }}
-                        onContentSizeChange={() =>
-                          commentsFlatList.scrollToEnd()
-                        }
-                        data={this.state.commentsOrActivities}
-                        extraData={this.state.commentsOrActivities}
-                        ItemSeparatorComponent={() => (
-                          <View style={styles.separator} />
+                        <View style={styles.formDivider} />
+                        <Row style={styles.formRow}>
+                          <Col style={styles.formIconLabel}>
+                            <Icon
+                              android="md-pin"
+                              ios="ios-pin"
+                              style={styles.formIcon}
+                            />
+                          </Col>
+                          <Col>
+                            <MultipleTags
+                              tags={this.state.geonames}
+                              preselectedTags={this.state.currentGeonames}
+                              objectKeyIdentifier="value"
+                              objectValueIdentifier="name"
+                              onChangeItem={this.setCurrentGeonames}
+                              search
+                              visibleOnOpen={!this.state.onlyView}
+                              title="Locations"
+                              searchHitResponse={""}
+                              defaultInstructionClosed={""}
+                              defaultInstructionOpen={""}
+                            />
+                          </Col>
+                        </Row>
+                        <View style={styles.formDivider} />
+                        <Row style={styles.formRow}>
+                          <Col style={styles.formIconLabel}>
+                            <Icon
+                              android="md-globe"
+                              ios="ios-globe"
+                              style={styles.formIcon}
+                            />
+                          </Col>
+                          <Col>
+                            <MultipleTags
+                              tags={this.state.peopleGroups}
+                              preselectedTags={this.state.currentPeopleGroups}
+                              objectKeyIdentifier="value"
+                              objectValueIdentifier="name"
+                              onChangeItem={this.setCurrentPeopleGroups}
+                              search
+                              visibleOnOpen={!this.state.onlyView}
+                              title="People Groups"
+                              searchHitResponse={""}
+                              defaultInstructionClosed={""}
+                              defaultInstructionOpen={""}
+                            />
+                          </Col>
+                        </Row>
+                        <View style={styles.formDivider} />
+                        <Row style={styles.formRow}>
+                          <Col style={styles.formIconLabel}>
+                            <Icon
+                              android="md-home"
+                              ios="ios-home"
+                              style={styles.formIcon}
+                            />
+                          </Col>
+                          <Col>
+                            <Row>
+                              <View style={{ flex: 1 }}>
+                                <Text
+                                  style={{
+                                    textAlign: "right",
+                                    paddingRight: 10
+                                  }}
+                                >
+                                  <Icon
+                                    android="md-add"
+                                    ios="ios-add"
+                                    onPress={this.onAddAddressField}
+                                    style={styles.addRemoveIcons}
+                                  />
+                                </Text>
+                              </View>
+                            </Row>
+                          </Col>
+                          <Col style={styles.formIconLabel}>
+                            <Label style={styles.formLabel}>Address</Label>
+                          </Col>
+                        </Row>
+                        {this.state.group.contact_address.map(
+                          (address, index) => {
+                            if (!address.delete) {
+                              return (
+                                <Row
+                                  key={index.toString()}
+                                  style={styles.formRow}
+                                >
+                                  <Col>
+                                    <Input
+                                      multiline
+                                      value={address.value}
+                                      onChangeText={value => {
+                                        this.onAddressFieldChange(
+                                          value,
+                                          index,
+                                          address.key,
+                                          this
+                                        );
+                                      }}
+                                      style={styles.inputContactAddress}
+                                    />
+                                  </Col>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      android="md-remove"
+                                      ios="ios-remove"
+                                      onPress={() => {
+                                        this.onRemoveAddressField(index, this);
+                                      }}
+                                      style={[
+                                        styles.addRemoveIcons,
+                                        {
+                                          paddingLeft: 10,
+                                          paddingRight: 10
+                                        }
+                                      ]}
+                                    />
+                                  </Col>
+                                </Row>
+                              );
+                            }
+                          }
                         )}
-                        keyExtractor={item => item.ID.toString()}
-                        renderItem={item => {
-                          const commentOrActivity = item.item;
-                          return this.renderActivityOrCommentRow(
-                            commentOrActivity
-                          );
+                        <View style={styles.formDivider} />
+                        <Row style={styles.formRow}>
+                          <Col style={styles.formIconLabel}>
+                            <Icon
+                              android="md-calendar"
+                              ios="ios-calendar"
+                              style={styles.formIcon}
+                            />
+                          </Col>
+                          <Col>
+                            <DatePicker
+                              defaultDate={this.state.group.start_date}
+                              disabled={this.state.onlyView}
+                              onDateChange={this.setGroupStartDate}
+                            />
+                          </Col>
+                          <Col style={styles.formIconLabel}>
+                            <Label style={styles.formLabel}>Start Date</Label>
+                          </Col>
+                        </Row>
+                        <View style={styles.formDivider} />
+                        <Row style={styles.formRow}>
+                          <Col style={styles.formIconLabel}>
+                            <Icon
+                              android="md-calendar"
+                              ios="ios-calendar"
+                              style={styles.formIcon}
+                            />
+                          </Col>
+                          <Col>
+                            <DatePicker
+                              defaultDate={this.state.group.end_date}
+                              disabled={this.state.onlyView}
+                              onDateChange={this.setEndDate}
+                            />
+                          </Col>
+                          <Col style={styles.formIconLabel}>
+                            <Label style={styles.formLabel}>End Date</Label>
+                          </Col>
+                        </Row>
+                        <View style={styles.formDivider} />
+                      </Grid>
+                    </View>
+                  </ScrollView>
+                )}
+              </KeyboardShift>
+            </Tab>
+            <Tab
+              heading="Progress"
+              tabStyle={styles.tabStyle}
+              textStyle={styles.textStyle}
+              activeTabStyle={styles.activeTabStyle}
+              activeTextStyle={styles.activeTextStyle}
+            >
+              <ScrollView>
+                <View
+                  style={styles.formContainer}
+                  pointerEvents={this.state.onlyView ? "none" : "auto"}
+                >
+                  <Grid>
+                    <Row style={styles.formRow}>
+                      <Col style={styles.formIconLabel}>
+                        <Icon
+                          android="md-people"
+                          ios="ios-people"
+                          style={styles.formIcon}
+                        />
+                      </Col>
+                      <Col>
+                        <Picker
+                          mode="dropdown"
+                          selectedValue={this.state.group.group_type}
+                          onValueChange={this.setGroupType}
+                        >
+                          <Picker.Item label="Pre-Group" value="pre-group" />
+                          <Picker.Item label="Group" value="group" />
+                          <Picker.Item label="Church" value="church" />
+                          <Picker.Item label="Team" value="team" />
+                        </Picker>
+                      </Col>
+                      <Col style={styles.formIconLabel}>
+                        <Label style={styles.formLabel}>Group Type</Label>
+                      </Col>
+                    </Row>
+                    <View style={styles.formDivider} />
+                  </Grid>
+                </View>
+                <Grid>
+                  <Row style={{ height: spacing }} />
+                  <Row style={{ height: sideSize }}>
+                    <Col style={{ width: spacing }} />
+                    <Col style={{ width: sideSize }}>
+                      <Image
+                        source={churchCommitmentIcon}
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                          alignSelf: "center",
+                          position: "absolute",
+                          height: "100%",
+                          width: "100%"
                         }}
                       />
-                      <KeyboardAccessory>
-                        <View
+                      <Row style={{ height: sideSize * 0.1 }} />
+                      <Row style={{ height: sideSize * 0.8 }}>
+                        <Row style={{ height: sideSize * 0.8 }}>
+                          <Col style={{ width: sideSize * 0.1 }} />
+                          <Col style={{ width: sideSize * 0.8 }}>
+                            <Row size={5}>
+                              <Col size={2} />
+                              <Col size={3}>
+                                <Row size={1} />
+                                <Row size={4}>
+                                  <Col>
+                                    <Row size={60}>
+                                      <Col>
+                                        <TouchableOpacity
+                                          onPress={() => {
+                                            this.onHealthMetricChange(
+                                              "church_giving"
+                                            );
+                                          }}
+                                          activeOpacity={1}
+                                        >
+                                          <Image
+                                            source={givingIcon}
+                                            style={
+                                              this.onCheckExistingHealthMetric(
+                                                "church_giving"
+                                              )
+                                                ? styles.activeImage
+                                                : styles.inactiveImage
+                                            }
+                                          />
+                                        </TouchableOpacity>
+                                      </Col>
+                                    </Row>
+                                    <Row
+                                      size={40}
+                                      style={{
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                      }}
+                                    >
+                                      <Text
+                                        style={
+                                          this.onCheckExistingHealthMetric(
+                                            "church_giving"
+                                          )
+                                            ? styles.activeToggleText
+                                            : styles.inactiveToggleText
+                                        }
+                                      >
+                                        Giving
+                                      </Text>
+                                    </Row>
+                                  </Col>
+                                </Row>
+                              </Col>
+                              <Col size={2} />
+                              <Col size={3}>
+                                <Row size={4}>
+                                  <Col size={100}>
+                                    <Row size={60}>
+                                      <Col>
+                                        <TouchableOpacity
+                                          onPress={() => {
+                                            this.onHealthMetricChange(
+                                              "church_fellowship"
+                                            );
+                                          }}
+                                          activeOpacity={1}
+                                        >
+                                          <Image
+                                            source={fellowShipIcon}
+                                            style={
+                                              this.onCheckExistingHealthMetric(
+                                                "church_fellowship"
+                                              )
+                                                ? styles.activeImage
+                                                : styles.inactiveImage
+                                            }
+                                          />
+                                        </TouchableOpacity>
+                                      </Col>
+                                    </Row>
+                                    <Row
+                                      size={40}
+                                      style={{
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                      }}
+                                    >
+                                      <Text
+                                        style={
+                                          this.onCheckExistingHealthMetric(
+                                            "church_fellowship"
+                                          )
+                                            ? styles.activeToggleText
+                                            : styles.inactiveToggleText
+                                        }
+                                      >
+                                        Fellowship
+                                      </Text>
+                                    </Row>
+                                  </Col>
+                                </Row>
+                                <Row size={1} />
+                              </Col>
+                              <Col size={2} />
+                              <Col size={3}>
+                                <Row size={1} />
+                                <Row size={4}>
+                                  <Col>
+                                    <Row size={60}>
+                                      <Col>
+                                        <TouchableOpacity
+                                          onPress={() => {
+                                            this.onHealthMetricChange(
+                                              "church_communion"
+                                            );
+                                          }}
+                                          activeOpacity={1}
+                                        >
+                                          <Image
+                                            source={communionIcon}
+                                            style={
+                                              this.onCheckExistingHealthMetric(
+                                                "church_communion"
+                                              )
+                                                ? styles.activeImage
+                                                : styles.inactiveImage
+                                            }
+                                          />
+                                        </TouchableOpacity>
+                                      </Col>
+                                    </Row>
+                                    <Row
+                                      size={40}
+                                      style={{
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                      }}
+                                    >
+                                      <Text
+                                        style={
+                                          this.onCheckExistingHealthMetric(
+                                            "church_communion"
+                                          )
+                                            ? styles.activeToggleText
+                                            : styles.inactiveToggleText
+                                        }
+                                      >
+                                        Communion
+                                      </Text>
+                                    </Row>
+                                  </Col>
+                                </Row>
+                              </Col>
+                              <Col size={2} />
+                            </Row>
+
+                            <Row size={7} style={{ backgroundColor: "white" }}>
+                              <Col size={3}>
+                                <Row
+                                  size={2}
+                                  style={{ backgroundColor: "white" }}
+                                />
+                                <Row size={6}>
+                                  <Col>
+                                    <Row size={60}>
+                                      <Col>
+                                        <TouchableOpacity
+                                          onPress={() => {
+                                            this.onHealthMetricChange(
+                                              "church_baptism"
+                                            );
+                                          }}
+                                          activeOpacity={1}
+                                        >
+                                          <Image
+                                            source={baptismIcon}
+                                            style={
+                                              this.onCheckExistingHealthMetric(
+                                                "church_baptism"
+                                              )
+                                                ? styles.activeImage
+                                                : styles.inactiveImage
+                                            }
+                                          />
+                                        </TouchableOpacity>
+                                      </Col>
+                                    </Row>
+                                    <Row
+                                      size={40}
+                                      style={{
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                      }}
+                                    >
+                                      <Text
+                                        style={
+                                          this.onCheckExistingHealthMetric(
+                                            "church_baptism"
+                                          )
+                                            ? styles.activeToggleText
+                                            : styles.inactiveToggleText
+                                        }
+                                      >
+                                        Baptism
+                                      </Text>
+                                    </Row>
+                                  </Col>
+                                </Row>
+                                <Row size={2} />
+                              </Col>
+                              <Col size={4} />
+                              <Col size={3}>
+                                <Row size={2} />
+                                <Row size={6}>
+                                  <Col>
+                                    <Row size={60}>
+                                      <Col>
+                                        <TouchableOpacity
+                                          onPress={() => {
+                                            this.onHealthMetricChange(
+                                              "church_prayer"
+                                            );
+                                          }}
+                                          activeOpacity={1}
+                                        >
+                                          <Image
+                                            source={prayerIcon}
+                                            style={
+                                              this.onCheckExistingHealthMetric(
+                                                "church_prayer"
+                                              )
+                                                ? styles.activeImage
+                                                : styles.inactiveImage
+                                            }
+                                          />
+                                        </TouchableOpacity>
+                                      </Col>
+                                    </Row>
+                                    <Row
+                                      size={40}
+                                      style={{
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                      }}
+                                    >
+                                      <Text
+                                        style={
+                                          this.onCheckExistingHealthMetric(
+                                            "church_prayer"
+                                          )
+                                            ? styles.activeToggleText
+                                            : styles.inactiveToggleText
+                                        }
+                                      >
+                                        Prayer
+                                      </Text>
+                                    </Row>
+                                  </Col>
+                                </Row>
+                                <Row size={2} />
+                              </Col>
+                              <Col size={4} />
+                              <Col size={3}>
+                                <Row size={2} />
+                                <Row size={6}>
+                                  <Col>
+                                    <Row size={60}>
+                                      <Col>
+                                        <TouchableOpacity
+                                          onPress={() => {
+                                            this.onHealthMetricChange(
+                                              "church_leaders"
+                                            );
+                                          }}
+                                          activeOpacity={1}
+                                        >
+                                          <Image
+                                            source={leadersIcon}
+                                            style={
+                                              this.onCheckExistingHealthMetric(
+                                                "church_leaders"
+                                              )
+                                                ? styles.activeImage
+                                                : styles.inactiveImage
+                                            }
+                                          />
+                                        </TouchableOpacity>
+                                      </Col>
+                                    </Row>
+                                    <Row
+                                      size={40}
+                                      style={{
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                      }}
+                                    >
+                                      <Text
+                                        style={
+                                          this.onCheckExistingHealthMetric(
+                                            "church_leaders"
+                                          )
+                                            ? styles.activeToggleText
+                                            : styles.inactiveToggleText
+                                        }
+                                      >
+                                        Leaders
+                                      </Text>
+                                    </Row>
+                                  </Col>
+                                </Row>
+                                <Row size={2} />
+                              </Col>
+                            </Row>
+
+                            <Row size={5}>
+                              <Col size={2} />
+                              <Col size={3}>
+                                <Row size={4}>
+                                  <Col>
+                                    <Row size={60}>
+                                      <Col>
+                                        <TouchableOpacity
+                                          onPress={() => {
+                                            this.onHealthMetricChange(
+                                              "church_bible"
+                                            );
+                                          }}
+                                          activeOpacity={1}
+                                        >
+                                          <Image
+                                            source={bibleStudyIcon}
+                                            style={
+                                              this.onCheckExistingHealthMetric(
+                                                "church_bible"
+                                              )
+                                                ? styles.activeImage
+                                                : styles.inactiveImage
+                                            }
+                                          />
+                                        </TouchableOpacity>
+                                      </Col>
+                                    </Row>
+                                    <Row
+                                      size={40}
+                                      style={{
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                      }}
+                                    >
+                                      <Text
+                                        style={
+                                          this.onCheckExistingHealthMetric(
+                                            "church_bible"
+                                          )
+                                            ? styles.activeToggleText
+                                            : styles.inactiveToggleText
+                                        }
+                                      >
+                                        Bible Study
+                                      </Text>
+                                    </Row>
+                                  </Col>
+                                </Row>
+                                <Row size={1} />
+                              </Col>
+                              <Col size={2} />
+                              <Col size={3}>
+                                <Row size={1} />
+                                <Row size={4}>
+                                  <Col>
+                                    <Row size={60}>
+                                      <Col>
+                                        <TouchableOpacity
+                                          onPress={() => {
+                                            this.onHealthMetricChange(
+                                              "church_praise"
+                                            );
+                                          }}
+                                          activeOpacity={1}
+                                        >
+                                          <Image
+                                            source={praiseIcon}
+                                            style={
+                                              this.onCheckExistingHealthMetric(
+                                                "church_praise"
+                                              )
+                                                ? styles.activeImage
+                                                : styles.inactiveImage
+                                            }
+                                          />
+                                        </TouchableOpacity>
+                                      </Col>
+                                    </Row>
+                                    <Row
+                                      size={40}
+                                      style={{
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                      }}
+                                    >
+                                      <Text
+                                        style={
+                                          this.onCheckExistingHealthMetric(
+                                            "church_praise"
+                                          )
+                                            ? styles.activeToggleText
+                                            : styles.inactiveToggleText
+                                        }
+                                      >
+                                        Praise
+                                      </Text>
+                                    </Row>
+                                  </Col>
+                                </Row>
+                              </Col>
+                              <Col size={2} />
+                              <Col size={3}>
+                                <Row size={4}>
+                                  <Col>
+                                    <Row size={60}>
+                                      <Col>
+                                        <TouchableOpacity
+                                          onPress={() => {
+                                            this.onHealthMetricChange(
+                                              "church_sharing"
+                                            );
+                                          }}
+                                          activeOpacity={1}
+                                        >
+                                          <Image
+                                            source={sharingTheGospelIcon}
+                                            style={
+                                              this.onCheckExistingHealthMetric(
+                                                "church_sharing"
+                                              )
+                                                ? styles.activeImage
+                                                : styles.inactiveImage
+                                            }
+                                          />
+                                        </TouchableOpacity>
+                                      </Col>
+                                    </Row>
+                                    <Row
+                                      size={40}
+                                      style={{
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                      }}
+                                    >
+                                      <Text
+                                        style={
+                                          this.onCheckExistingHealthMetric(
+                                            "church_sharing"
+                                          )
+                                            ? styles.activeToggleText
+                                            : styles.inactiveToggleText
+                                        }
+                                      >
+                                        Sharing the Gospel
+                                      </Text>
+                                    </Row>
+                                  </Col>
+                                </Row>
+                                <Row size={1} />
+                              </Col>
+                              <Col size={2} />
+                            </Row>
+                          </Col>
+                          <Col style={{ width: sideSize * 0.1 }} />
+                        </Row>
+                      </Row>
+                      <Row style={{ height: sideSize * 0.1 }} />
+                    </Col>
+                    <Col style={{ width: spacing }} />
+                  </Row>
+                  <Row style={{ height: spacing }} />
+                </Grid>
+              </ScrollView>
+            </Tab>
+            <Tab
+              heading="Comments / Activity"
+              tabStyle={[styles.tabStyle]}
+              textStyle={styles.textStyle}
+              activeTabStyle={styles.activeTabStyle}
+              activeTextStyle={styles.activeTextStyle}
+            >
+              {Object.prototype.hasOwnProperty.call(
+                this.state,
+                "commentsOrActivities"
+              ) &&
+                this.state.commentsOrActivities && (
+                  <View style={{ flex: 1 }}>
+                    <FlatList
+                      style={styles.root}
+                      ref={flatList => {
+                        commentsFlatList = flatList;
+                      }}
+                      onContentSizeChange={() => commentsFlatList.scrollToEnd()}
+                      data={this.state.commentsOrActivities}
+                      extraData={this.state.commentsOrActivities}
+                      ItemSeparatorComponent={() => (
+                        <View style={styles.separator} />
+                      )}
+                      keyExtractor={item => item.ID.toString()}
+                      renderItem={item => {
+                        const commentOrActivity = item.item;
+                        return this.renderActivityOrCommentRow(
+                          commentOrActivity
+                        );
+                      }}
+                    />
+                    <KeyboardAccessory>
+                      <View
+                        style={{
+                          backgroundColor: "white",
+                          flexDirection: "row"
+                        }}
+                      >
+                        <TextInput
+                          placeholder="Write your comment or note here"
+                          value={this.state.comment}
+                          onChangeText={this.setComment}
                           style={{
-                            backgroundColor: "white",
-                            flexDirection: "row"
+                            borderColor: "#B4B4B4",
+                            borderRadius: 5,
+                            borderWidth: 1,
+                            flex: 1,
+                            margin: 10,
+                            paddingLeft: 5,
+                            paddingRight: 5
+                          }}
+                        />
+                        <TouchableOpacity
+                          onPress={() => this.onSaveComment()}
+                          style={{
+                            backgroundColor: Colors.tintColor,
+                            borderRadius: 80,
+                            height: 40,
+                            margin: 10,
+                            paddingTop: 7,
+                            paddingLeft: 10,
+                            width: 40
                           }}
                         >
-                          <TextInput
-                            placeholder="Write your comment or note here"
-                            value={this.state.comment}
-                            onChangeText={this.setComment}
-                            style={{
-                              borderColor: "#B4B4B4",
-                              borderRadius: 5,
-                              borderWidth: 1,
-                              flex: 1,
-                              margin: 10,
-                              paddingLeft: 5,
-                              paddingRight: 5
-                            }}
+                          <Icon
+                            android="md-send"
+                            ios="ios-send"
+                            style={{ color: "white", fontSize: 25 }}
                           />
-                          <TouchableOpacity
-                            onPress={() => this.onSaveComment()}
-                            style={{
-                              backgroundColor: Colors.tintColor,
-                              borderRadius: 80,
-                              height: 40,
-                              margin: 10,
-                              paddingTop: 7,
-                              paddingLeft: 10,
-                              width: 40
-                            }}
-                          >
-                            <Icon
-                              android="md-send"
-                              ios="ios-send"
-                              style={{ color: "white", fontSize: 25 }}
-                            />
-                          </TouchableOpacity>
-                        </View>
-                      </KeyboardAccessory>
-                    </View>
-                  )}
-              </Tab>
-              <Tab
-                heading="Members"
-                tabStyle={styles.tabStyle}
-                textStyle={styles.textStyle}
-                activeTabStyle={styles.activeTabStyle}
-                activeTextStyle={styles.activeTextStyle}
-              />
-              <Tab
-                heading="Groups"
-                tabStyle={styles.tabStyle}
-                textStyle={styles.textStyle}
-                activeTabStyle={styles.activeTabStyle}
-                activeTextStyle={styles.activeTextStyle}
-              />
-            </Tabs>
-          )}
-          {successToast}
-          {errorToast}
-        </Container>
-      );
-    }
-    return (
-      <ScrollView>
-        <Container>
-          <Content>
-            <Form>
-              <ListItem icon>
-                <Left>
-                  <Icon
-                    type="MaterialIcons"
-                    name="group"
-                    style={styles.icons}
-                  />
-                </Left>
-                <Body>
+                        </TouchableOpacity>
+                      </View>
+                    </KeyboardAccessory>
+                  </View>
+                )}
+            </Tab>
+            <Tab
+              heading="Members"
+              tabStyle={styles.tabStyle}
+              textStyle={styles.textStyle}
+              activeTabStyle={styles.activeTabStyle}
+              activeTextStyle={styles.activeTextStyle}
+            />
+            <Tab
+              heading="Groups"
+              tabStyle={styles.tabStyle}
+              textStyle={styles.textStyle}
+              activeTabStyle={styles.activeTabStyle}
+              activeTextStyle={styles.activeTextStyle}
+            />
+          </Tabs>
+        )}
+        {!this.state.group.ID && this.state.renderView && (
+          <ScrollView>
+            <View style={styles.formContainer}>
+              <Grid>
+                <Row>
+                  <Label
+                    style={[
+                      styles.formLabel,
+                      { marginTop: 10, marginBottom: 5 }
+                    ]}
+                  >
+                    Group Name
+                  </Label>
+                </Row>
+                <Row>
                   <Input
-                    placeholder="Required Field"
+                    placeholder="Required field"
                     value={this.state.group.title}
                     onChangeText={this.setGroupName}
+                    style={{
+                      borderColor: "#B4B4B4",
+                      borderWidth: 1,
+                      borderRadius: 5,
+                      borderStyle: "solid",
+                      fontSize: 13,
+                      paddingLeft: 15
+                    }}
                   />
-                </Body>
-                <Right>
-                  <Label style={styles.label}>Name</Label>
-                </Right>
-              </ListItem>
-              <ListItem icon>
-                <Left>
-                  <Icon
-                    android="md-people"
-                    ios="ios-people"
-                    style={styles.icons}
-                  />
-                </Left>
-                <Body>
+                </Row>
+                <Row>
+                  <Label
+                    style={[
+                      styles.formLabel,
+                      { marginTop: 10, marginBottom: 5 }
+                    ]}
+                  >
+                    Group Type
+                  </Label>
+                </Row>
+                <Row>
                   <Picker
                     mode="dropdown"
                     selectedValue={this.state.group.group_type}
@@ -1971,17 +1934,14 @@ class GroupDetailScreen extends React.Component {
                     <Picker.Item label="Church" value="church" />
                     <Picker.Item label="Team" value="team" />
                   </Picker>
-                </Body>
-                <Right>
-                  <Label style={styles.label}>Group Type</Label>
-                </Right>
-              </ListItem>
-            </Form>
-          </Content>
-          {successToast}
-          {errorToast}
-        </Container>
-      </ScrollView>
+                </Row>
+              </Grid>
+            </View>
+          </ScrollView>
+        )}
+        {successToast}
+        {errorToast}
+      </Container>
     );
   }
 }

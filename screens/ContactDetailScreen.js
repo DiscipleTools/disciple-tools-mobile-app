@@ -96,8 +96,6 @@ const styles = StyleSheet.create({
     paddingRight: containerPadding
   },
   formRow: {
-    borderBottomColor: "#CCCCCC",
-    borderBottomWidth: 1,
     paddingTop: 10,
     paddingBottom: 10
   },
@@ -114,6 +112,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: "auto",
     marginBottom: "auto"
+  },
+  formDivider: {
+    borderBottomColor: "#CCCCCC",
+    borderBottomWidth: 1,
+    marginLeft: 5,
+    marginRight: 5
   },
   //Progress Section
   progressIcon: { height: "100%", width: "100%" },
@@ -317,20 +321,18 @@ class ContactDetailScreen extends React.Component {
     const contactName = this.props.navigation.getParam("contactName");
 
     if (contactId) {
-      this.setState(state => ({
-        ...state,
+      this.setState(prevState => ({
         contact: {
-          ...state.contact,
+          ...prevState.contact,
           ID: contactId
         }
       }));
       this.props.navigation.setParams({ contactName: contactName });
     }
     if (onlyView) {
-      this.setState(prevState => ({
-        ...prevState,
-        onlyView
-      }));
+      this.setState({
+        onlyView: onlyView
+      });
     }
     this.getLocations();
   }
@@ -350,19 +352,13 @@ class ContactDetailScreen extends React.Component {
       search
     } = nextProps;
     let newState = {
-      ...prevState
-    };
-    console.log("getDerivedStateFromProps()");
-
-    newState = {
-      ...newState,
+      ...prevState,
       groupsReducerResponse,
       contactsReducerResponse
     };
 
     //New response incomming
     if (groupsReducerResponse != prevState.groupsReducerResponse) {
-      console.log("groupsReducerResponse", groupsReducerResponse);
       switch (groupsReducerResponse) {
         case GROUPS_GET_LOCATIONS_SUCCESS:
           newState = {
@@ -388,13 +384,10 @@ class ContactDetailScreen extends React.Component {
 
     //New response incomming
     if (contactsReducerResponse != prevState.contactsReducerResponse) {
-      console.log("contactsReducerResponse", contactsReducerResponse);
       switch (contactsReducerResponse) {
         case CONTACTS_SAVE_SUCCESS:
           //Creation
           toastSuccess.show("Contact Saved!", 2000);
-          console.log("contact", contact);
-          console.log("prevState.contact", prevState.contact);
           if (contact.ID && !prevState.contact.ID) {
             navigation.setParams({ contactName: contact.title });
             newState = {
@@ -454,7 +447,6 @@ class ContactDetailScreen extends React.Component {
     }
 
     if (error) {
-      console.log("error", error);
       toastError.show(
         <View>
           <Text style={{ fontWeight: "bold" }}>Code: </Text>
@@ -472,13 +464,8 @@ class ContactDetailScreen extends React.Component {
   componentDidUpdate(prevProps) {
     const { contactsReducerResponse, groupsReducerResponse } = this.props;
     const { contact, contacts, renderView } = this.state;
-    console.log("componentDidUpdate()");
-    //console.log("prevProps", prevProps);
-    //console.log("this.props", this.props);
-    //console.log("------------------------");
-    //New response incomming
+
     if (prevProps.groupsReducerResponse != groupsReducerResponse) {
-      console.log("groupsReducerResponse", groupsReducerResponse);
       switch (groupsReducerResponse) {
         case GROUPS_GET_LOCATIONS_SUCCESS:
           //After creation / Loading in Get By Id
@@ -495,12 +482,9 @@ class ContactDetailScreen extends React.Component {
       }
     }
 
-    //New response incomming
     if (prevProps.contactsReducerResponse != contactsReducerResponse) {
-      console.log("contactsReducerResponse", contactsReducerResponse);
       switch (contactsReducerResponse) {
         case CONTACTS_SAVE_SUCCESS:
-          // After creation
           if (!renderView) {
             this.getUsersContacts();
           }
@@ -509,14 +493,12 @@ class ContactDetailScreen extends React.Component {
           this.setSeekerPath(contact.seeker_path);
           this.setContactStatus(contact.overall_status);
           this.getContactComments(contact.ID);
-          //DETECT AFTER CREATION
           break;
         case CONTACTS_GET_COMMENTS_SUCCESS:
           this.getContactActivities(contact.ID);
           break;
       }
     }
-    console.log("-----------------------------------------------");
   }
 
   getLocations() {
@@ -667,16 +649,14 @@ class ContactDetailScreen extends React.Component {
   );
 
   onEnableEdit = () => {
-    this.setState(prevState => ({
-      ...prevState,
+    this.setState({
       onlyView: false
-    }));
+    });
     this.props.navigation.setParams({ onlyView: false });
   };
 
   setContactTitle = value => {
     this.setState(prevState => ({
-      ...prevState,
       contact: {
         ...prevState.contact,
         title: value
@@ -686,7 +666,6 @@ class ContactDetailScreen extends React.Component {
 
   setContactPhone = value => {
     this.setState(prevState => ({
-      ...prevState,
       contact: {
         ...prevState.contact,
         contact_phone: [
@@ -700,7 +679,6 @@ class ContactDetailScreen extends React.Component {
 
   setContactEmail = value => {
     this.setState(prevState => ({
-      ...prevState,
       contact: {
         ...prevState.contact,
         contact_email: [
@@ -714,7 +692,6 @@ class ContactDetailScreen extends React.Component {
 
   setContactSource = value => {
     this.setState(prevState => ({
-      ...prevState,
       contact: {
         ...prevState.contact,
         sources: {
@@ -750,15 +727,13 @@ class ContactDetailScreen extends React.Component {
   };
 
   setCurrentGeonames = value => {
-    this.setState(prevState => ({
-      ...prevState,
+    this.setState({
       currentGeonames: value
-    }));
+    });
   };
 
   setContactInitialComment = value => {
     this.setState(prevState => ({
-      ...prevState,
       contact: {
         ...prevState.contact,
         initial_comment: value
@@ -782,7 +757,6 @@ class ContactDetailScreen extends React.Component {
     }
 
     this.setState(prevState => ({
-      ...prevState,
       contact: {
         ...prevState.contact,
         overall_status: value
@@ -818,7 +792,6 @@ class ContactDetailScreen extends React.Component {
         break;
     }
     this.setState(prevState => ({
-      ...prevState,
       contact: {
         ...prevState.contact,
         seeker_path: value
@@ -829,7 +802,6 @@ class ContactDetailScreen extends React.Component {
 
   setBaptismDate = value => {
     this.setState(prevState => ({
-      ...prevState,
       contact: {
         ...prevState.contact,
         baptism_date: value
@@ -881,10 +853,9 @@ class ContactDetailScreen extends React.Component {
   };
 
   setComment = value => {
-    this.setState(prevState => ({
-      ...prevState,
+    this.setState({
       comment: value
-    }));
+    });
   };
 
   onSaveComment = () => {
@@ -924,7 +895,6 @@ class ContactDetailScreen extends React.Component {
       });
     }
     this.setState(prevState => ({
-      ...prevState,
       contact: {
         ...prevState.contact,
         milestones: {
@@ -935,10 +905,9 @@ class ContactDetailScreen extends React.Component {
   };
 
   setCurrentSubassignedContacts = contacts => {
-    this.setState(prevState => ({
-      ...prevState,
+    this.setState({
       currentSubassignedContacts: contacts
-    }));
+    });
   };
 
   setSubassignedContacts = () => {
@@ -965,10 +934,9 @@ class ContactDetailScreen extends React.Component {
   };
 
   setCurrentGroups = groups => {
-    this.setState(prevState => ({
-      ...prevState,
+    this.setState({
       currentGroups: groups
-    }));
+    });
   };
 
   setGroups = () => {
@@ -1008,7 +976,6 @@ class ContactDetailScreen extends React.Component {
 
   setContactAge = value => {
     this.setState(prevState => ({
-      ...prevState,
       contact: {
         ...prevState.contact,
         age: value
@@ -1018,7 +985,6 @@ class ContactDetailScreen extends React.Component {
 
   setContactGender = value => {
     this.setState(prevState => ({
-      ...prevState,
       contact: {
         ...prevState.contact,
         gender: value
@@ -1066,33 +1032,36 @@ class ContactDetailScreen extends React.Component {
                 {() => (
                   <ScrollView>
                     <View
-                      style={styles.formContainer}
-                      pointerEvents={this.state.onlyView ? "none" : "auto"}
+                      style={{
+                        paddingLeft: containerPadding - 15,
+                        paddingRight: containerPadding - 15,
+                        marginTop: 20
+                      }}
                     >
                       <Label style={[styles.formLabel, { fontWeight: "bold" }]}>
                         Status
                       </Label>
+                      <Row style={styles.formRow}>
+                        <Col>
+                          <Picker
+                            selectedValue={this.state.contact.overall_status}
+                            onValueChange={this.setContactStatus}
+                            style={{
+                              color: "#FFFFFF",
+                              backgroundColor: this.state
+                                .overallStatusBackgroundColor
+                            }}
+                          >
+                            {this.renderStatusPickerItems()}
+                          </Picker>
+                        </Col>
+                      </Row>
+                    </View>
+                    <View
+                      style={styles.formContainer}
+                      pointerEvents={this.state.onlyView ? "none" : "auto"}
+                    >
                       <Grid>
-                        <Row
-                          style={[
-                            styles.formRow,
-                            { borderBottomColor: "transparent" }
-                          ]}
-                        >
-                          <Col>
-                            <Picker
-                              selectedValue={this.state.contact.overall_status}
-                              onValueChange={this.setContactStatus}
-                              style={{
-                                color: "#FFFFFF",
-                                backgroundColor: this.state
-                                  .overallStatusBackgroundColor
-                              }}
-                            >
-                              {this.renderStatusPickerItems()}
-                            </Picker>
-                          </Col>
-                        </Row>
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -1122,6 +1091,7 @@ class ContactDetailScreen extends React.Component {
                             <Label style={styles.formLabel} />
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -1137,6 +1107,7 @@ class ContactDetailScreen extends React.Component {
                             <Label style={styles.formLabel}>Mobile</Label>
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -1152,6 +1123,7 @@ class ContactDetailScreen extends React.Component {
                             <Label style={styles.formLabel}>Email</Label>
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -1167,6 +1139,7 @@ class ContactDetailScreen extends React.Component {
                             <Label style={styles.formLabel}>Message</Label>
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -1182,6 +1155,7 @@ class ContactDetailScreen extends React.Component {
                             <Label style={styles.formLabel}>Address</Label>
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -1197,6 +1171,7 @@ class ContactDetailScreen extends React.Component {
                             <Label style={styles.formLabel}>Location</Label>
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -1212,6 +1187,7 @@ class ContactDetailScreen extends React.Component {
                             <Label style={styles.formLabel}>People Group</Label>
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -1249,6 +1225,7 @@ class ContactDetailScreen extends React.Component {
                             <Label style={styles.formLabel}>Age</Label>
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -1272,6 +1249,7 @@ class ContactDetailScreen extends React.Component {
                             <Label style={styles.formLabel}>Gender</Label>
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -1287,6 +1265,7 @@ class ContactDetailScreen extends React.Component {
                             <Label style={styles.formLabel}>Source</Label>
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                       </Grid>
                     </View>
                   </ScrollView>
@@ -1306,12 +1285,7 @@ class ContactDetailScreen extends React.Component {
                   pointerEvents={this.state.onlyView ? "none" : "auto"}
                 >
                   <Grid>
-                    <Row
-                      style={[
-                        styles.formRow,
-                        { borderBottomColor: "transparent" }
-                      ]}
-                    >
+                    <Row style={styles.formRow}>
                       <Col style={styles.formIconLabel}>
                         <Icon
                           android="md-calendar"
@@ -1821,16 +1795,8 @@ class ContactDetailScreen extends React.Component {
                     <Col />
                   </Grid>
                   <Grid style={{ marginTop: 25 }}>
-                    <Row
-                      style={[
-                        styles.formRow,
-                        {
-                          borderBottomColor: "transparent",
-                          borderTopColor: "#CCCCCC",
-                          borderTopWidth: 1
-                        }
-                      ]}
-                    >
+                    <View style={styles.formDivider} />
+                    <Row style={styles.formRow}>
                       <Col style={styles.formIconLabel}>
                         <Icon
                           android="md-calendar"
@@ -1979,6 +1945,7 @@ class ContactDetailScreen extends React.Component {
                             />
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -2004,6 +1971,7 @@ class ContactDetailScreen extends React.Component {
                             />
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -2029,6 +1997,7 @@ class ContactDetailScreen extends React.Component {
                             />
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -2054,6 +2023,7 @@ class ContactDetailScreen extends React.Component {
                             />
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -2079,6 +2049,7 @@ class ContactDetailScreen extends React.Component {
                             />
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
@@ -2104,6 +2075,7 @@ class ContactDetailScreen extends React.Component {
                             />
                           </Col>
                         </Row>
+                        <View style={styles.formDivider} />
                       </Grid>
                     </View>
                   </ScrollView>
@@ -2116,22 +2088,89 @@ class ContactDetailScreen extends React.Component {
           <KeyboardShift>
             {() => (
               <ScrollView>
-                <Content>
-                  <List>
-                    <Item stackedLabel>
-                      <Label>Full Name</Label>
-                      <Input onChangeText={this.setContactTitle} />
-                    </Item>
-                    <Item stackedLabel>
-                      <Label>Phone Number</Label>
-                      <Input onChangeText={this.setContactPhone} />
-                    </Item>
-                    <Item stackedLabel>
-                      <Label>Email</Label>
-                      <Input onChangeText={this.setContactEmail} />
-                    </Item>
-                    <Item picker>
-                      <Label>Source</Label>
+                <View style={styles.formContainer}>
+                  <Grid>
+                    <Row>
+                      <Label
+                        style={[
+                          styles.formLabel,
+                          { marginTop: 10, marginBottom: 5 }
+                        ]}
+                      >
+                        Full Name
+                      </Label>
+                    </Row>
+                    <Row>
+                      <Input
+                        placeholder="Required field"
+                        onChangeText={this.setContactTitle}
+                        style={{
+                          borderColor: "#B4B4B4",
+                          borderWidth: 1,
+                          borderRadius: 5,
+                          borderStyle: "solid",
+                          fontSize: 13,
+                          paddingLeft: 15
+                        }}
+                      />
+                    </Row>
+                    <Row>
+                      <Label
+                        style={[
+                          styles.formLabel,
+                          { marginTop: 10, marginBottom: 5 }
+                        ]}
+                      >
+                        Phone Number
+                      </Label>
+                    </Row>
+                    <Row>
+                      <Input
+                        onChangeText={this.setContactPhone}
+                        style={{
+                          borderColor: "#B4B4B4",
+                          borderWidth: 1,
+                          borderRadius: 5,
+                          borderStyle: "solid",
+                          fontSize: 13,
+                          paddingLeft: 15
+                        }}
+                      />
+                    </Row>
+                    <Row>
+                      <Label
+                        style={[
+                          styles.formLabel,
+                          { marginTop: 10, marginBottom: 5 }
+                        ]}
+                      >
+                        Email
+                      </Label>
+                    </Row>
+                    <Row>
+                      <Input
+                        onChangeText={this.setContactEmail}
+                        style={{
+                          borderColor: "#B4B4B4",
+                          borderWidth: 1,
+                          borderRadius: 5,
+                          borderStyle: "solid",
+                          fontSize: 13,
+                          paddingLeft: 15
+                        }}
+                      />
+                    </Row>
+                    <Row>
+                      <Label
+                        style={[
+                          styles.formLabel,
+                          { marginTop: 10, marginBottom: 5 }
+                        ]}
+                      >
+                        Source
+                      </Label>
+                    </Row>
+                    <Row>
                       <Picker
                         onValueChange={this.setContactSource}
                         selectedValue={
@@ -2140,8 +2179,18 @@ class ContactDetailScreen extends React.Component {
                       >
                         {this.renderSourcePickerItems()}
                       </Picker>
-                    </Item>
-                    <Item>
+                    </Row>
+                    <Row>
+                      <Label
+                        style={[
+                          styles.formLabel,
+                          { marginTop: 10, marginBottom: 5 }
+                        ]}
+                      >
+                        Locations
+                      </Label>
+                    </Row>
+                    <Row>
                       <MultipleTags
                         tags={this.state.geonames}
                         preselectedTags={this.state.currentGeonames}
@@ -2149,19 +2198,39 @@ class ContactDetailScreen extends React.Component {
                         objectValueIdentifier="name"
                         search
                         onChangeItem={this.setCurrentGeonames}
-                        title="Locations"
+                        title=""
                         visibleOnOpen
+                        searchHitResponse={""}
+                        defaultInstructionClosed={""}
+                        defaultInstructionOpen={""}
                       />
-                    </Item>
-                    <Item stackedLabel>
-                      <Label>Initial Comment</Label>
+                    </Row>
+                    <Row>
+                      <Label
+                        style={[
+                          styles.formLabel,
+                          { marginTop: 10, marginBottom: 5 }
+                        ]}
+                      >
+                        Initial Comment
+                      </Label>
+                    </Row>
+                    <Row>
                       <Input
                         multiline
                         onChangeText={this.setContactInitialComment}
+                        style={{
+                          borderColor: "#B4B4B4",
+                          borderWidth: 1,
+                          borderRadius: 5,
+                          borderStyle: "solid",
+                          fontSize: 13,
+                          paddingLeft: 15
+                        }}
                       />
-                    </Item>
-                  </List>
-                </Content>
+                    </Row>
+                  </Grid>
+                </View>
               </ScrollView>
             )}
           </KeyboardShift>
