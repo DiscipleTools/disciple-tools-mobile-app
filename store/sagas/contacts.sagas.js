@@ -107,7 +107,6 @@ export function* save({ domain, token, contactData }) {
     if (responseAction) {
       const response = responseAction.payload;
       const jsonData = yield response.json();
-      // response.status === 200
       if (response.status === 200) {
         contact = jsonData;
         yield put({
@@ -117,11 +116,13 @@ export function* save({ domain, token, contactData }) {
             title: contact.title,
             contact_phone: contact.contact_phone.map(phone => {
               return {
+                key: phone.key,
                 value: phone.value
               };
             }),
             contact_email: contact.contact_email.map(email => {
               return {
+                key: email.key,
                 value: email.value
               };
             }),
@@ -224,6 +225,15 @@ export function* save({ domain, token, contactData }) {
                 ? contact.groups.map(group => ({
                     name: group.post_title,
                     value: group.ID.toString()
+                  }))
+                : []
+            },
+            relation: {
+              values: contact.relation
+                ? contact.relation.map(relationItem => ({
+                    name: relationItem.post_title,
+                    value: relationItem.ID.toString(),
+                    post_date: relationItem.post_date
                   }))
                 : []
             }
@@ -290,11 +300,13 @@ export function* getById({ domain, token, contactId }) {
             title: contact.title,
             contact_phone: contact.contact_phone.map(phone => {
               return {
+                key: phone.key,
                 value: phone.value
               };
             }),
             contact_email: contact.contact_email.map(email => {
               return {
+                key: email.key,
                 value: email.value
               };
             }),
@@ -397,6 +409,15 @@ export function* getById({ domain, token, contactId }) {
                 ? contact.groups.map(group => ({
                     name: group.post_title,
                     value: group.ID.toString()
+                  }))
+                : []
+            },
+            relation: {
+              values: contact.relation
+                ? contact.relation.map(relationItem => ({
+                    name: relationItem.post_title,
+                    value: relationItem.ID.toString(),
+                    post_date: relationItem.post_date
                   }))
                 : []
             }

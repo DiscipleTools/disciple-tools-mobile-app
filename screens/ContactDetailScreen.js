@@ -308,7 +308,8 @@ class ContactDetailScreen extends React.Component {
         value: "closed"
       }
     ],
-    activeFab: false
+    activeFab: false,
+    renderFab: true
   };
 
   constructor(props) {
@@ -389,15 +390,18 @@ class ContactDetailScreen extends React.Component {
       switch (contactsReducerResponse) {
         case CONTACTS_SAVE_SUCCESS:
           //Creation
-          toastSuccess.show("Contact Saved!", 2000);
           if (contact.ID && !prevState.contact.ID) {
             navigation.setParams({ contactName: contact.title });
             newState = {
               ...newState,
-              contact,
               renderView: false
             };
           }
+          newState = {
+            ...newState,
+            contact
+          };
+          toastSuccess.show("Contact Saved!", 2000);
           break;
         case CONTACTS_GETBYID_SUCCESS:
           if (contact.baptism_date) {
@@ -405,11 +409,13 @@ class ContactDetailScreen extends React.Component {
               contact.baptism_date
             );
           }
+          console.log("CONTACTS_GETBYID_SUCCESS", contact);
           newState = {
             ...newState,
             contact,
             currentSubassignedContacts: contact.subassigned.values,
-            currentGroups: contact.groups.values
+            currentGroups: contact.groups.values,
+            currentConnections: contact.relation.values
           };
           break;
         case CONTACTS_GET_COMMENTS_SUCCESS:
@@ -666,7 +672,7 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  setContactPhone = value => {
+  setSingleContactPhone = value => {
     this.setState(prevState => ({
       contact: {
         ...prevState.contact,
@@ -813,7 +819,7 @@ class ContactDetailScreen extends React.Component {
 
   onSaveContact = () => {
     Keyboard.dismiss();
-    const contactToSave = Object.assign({}, this.state.contact);
+    var contactToSave = JSON.parse(JSON.stringify(this.state.contact)); //Object.assign({}, this.state.contact);
     contactToSave.geonames.values = this.setGeonames();
     if (Object.prototype.hasOwnProperty.call(contactToSave, "subassigned")) {
       contactToSave.subassigned.values = this.setSubassignedContacts();
@@ -821,6 +827,8 @@ class ContactDetailScreen extends React.Component {
     if (Object.prototype.hasOwnProperty.call(contactToSave, "groups")) {
       contactToSave.groups.values = this.setGroups();
     }
+    contactToSave.relation.values = this.setConnections();
+    console.log("contactToSave.relation", contactToSave.relation);
     this.props.saveContact(
       this.props.user.domain,
       this.props.user.token,
@@ -962,7 +970,46 @@ class ContactDetailScreen extends React.Component {
     return groupsToSave;
   };
 
-  setCurrentConnections = () => {};
+  setCurrentConnections = connections => {
+    console.log("connections", connections);
+    this.setState({
+      currentConnections: connections
+    });
+  };
+
+  setConnections = () => {
+    const dbConnections = [...this.state.contact.relation.values];
+    const localConnections = [...this.state.currentConnections];
+    console.log("dbConnections", dbConnections);
+    console.log("localConnections", localConnections);
+    const connectionsToSave = localConnections
+      .filter(localConnection => {
+        var foundLocalConnectionInDb = dbConnections.find(
+          dbConnection =>
+            dbConnection.value === localConnection.value &&
+            dbConnection.post_date
+        );
+        console.log("foundLocalConnectionInDb", foundLocalConnectionInDb);
+        return foundLocalConnectionInDb === undefined;
+      })
+      .map(localConnection => ({
+        value: localConnection.value
+      }));
+    console.log("connectionsToSave", connectionsToSave);
+    dbConnections.forEach(dbConnection => {
+      const foundDbConnectionInLocalConnection = localConnections.find(
+        localConnection => dbConnection.value === localConnection.value
+      );
+      if (!foundDbConnectionInLocalConnection) {
+        connectionsToSave.push({
+          value: dbConnection.value,
+          delete: true
+        });
+      }
+    });
+    console.log("connectionsToSave", connectionsToSave);
+    return connectionsToSave;
+  };
 
   setCurrentBaptizedBy = () => {};
 
@@ -1002,6 +1049,12 @@ class ContactDetailScreen extends React.Component {
     });
   };
 
+  onChangeTab = event => {
+    this.setState({
+      renderFab: event.i != 2
+    });
+  };
+
   render() {
     const successToast = (
       <Toast
@@ -1030,6 +1083,7 @@ class ContactDetailScreen extends React.Component {
               <Tabs
                 renderTabBar={() => <ScrollableTab />}
                 tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
+                onChangeTab={this.onChangeTab}
               >
                 <Tab
                   heading="Details"
@@ -1507,7 +1561,7 @@ class ContactDetailScreen extends React.Component {
                           <Col size={1} />
                         </Row>
                         <Row size={1} />
-                        <Row size={6}>
+                        <Row size={7}>
                           <Col size={1} />
                           <Col size={5}>
                             <TouchableOpacity
@@ -1518,7 +1572,7 @@ class ContactDetailScreen extends React.Component {
                               style={styles.progressIcon}
                             >
                               <Col>
-                                <Row size={3}>
+                                <Row size={7}>
                                   <Image
                                     source={canShareGospelIcon}
                                     style={[
@@ -1558,7 +1612,7 @@ class ContactDetailScreen extends React.Component {
                               style={styles.progressIcon}
                             >
                               <Col>
-                                <Row size={3}>
+                                <Row size={7}>
                                   <Image
                                     source={sharingTheGospelIcon}
                                     style={[
@@ -1598,7 +1652,7 @@ class ContactDetailScreen extends React.Component {
                               style={styles.progressIcon}
                             >
                               <Col>
-                                <Row size={3}>
+                                <Row size={7}>
                                   <Image
                                     source={baptizedIcon}
                                     style={[
@@ -1611,7 +1665,7 @@ class ContactDetailScreen extends React.Component {
                                     ]}
                                   />
                                 </Row>
-                                <Row size={1}>
+                                <Row size={3}>
                                   <Text
                                     style={[
                                       styles.progressIconText,
@@ -1695,7 +1749,7 @@ class ContactDetailScreen extends React.Component {
                                     ]}
                                   />
                                 </Row>
-                                <Row size={2}>
+                                <Row size={1}>
                                   <Text
                                     style={[
                                       styles.progressIconText,
@@ -1735,7 +1789,7 @@ class ContactDetailScreen extends React.Component {
                                     ]}
                                   />
                                 </Row>
-                                <Row size={2}>
+                                <Row size={1}>
                                   <Text
                                     style={[
                                       styles.progressIconText,
@@ -1920,7 +1974,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <MultipleTags
-                                  tags={this.state.contacts}
+                                  tags={this.state.usersContacts}
                                   preselectedTags={
                                     this.state.currentConnections
                                   }
@@ -2048,59 +2102,61 @@ class ContactDetailScreen extends React.Component {
                   </KeyboardShift>
                 </Tab>
               </Tabs>
-              <Fab
-                active={this.state.activeFab}
-                onPress={() => this.setToggleFab()}
-                style={{ backgroundColor: Colors.tintColor }}
-              >
-                <Icon
-                  type="MaterialCommunityIcons"
-                  name="comment-plus"
-                  style={{ color: "white" }}
-                />
-                <Button style={{ backgroundColor: Colors.tintColor }}>
+              {this.state.renderFab && (
+                <Fab
+                  active={this.state.activeFab}
+                  onPress={() => this.setToggleFab()}
+                  style={{ backgroundColor: Colors.tintColor }}
+                >
                   <Icon
                     type="MaterialCommunityIcons"
-                    name="phone-classic"
+                    name="comment-plus"
                     style={{ color: "white" }}
                   />
-                </Button>
-                <Button style={{ backgroundColor: Colors.tintColor }}>
-                  <Icon
-                    type="Feather"
-                    name="phone-off"
-                    style={{ color: "white" }}
-                  />
-                </Button>
-                <Button style={{ backgroundColor: Colors.tintColor }}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="phone-in-talk"
-                    style={{ color: "white" }}
-                  />
-                </Button>
-                <Button style={{ backgroundColor: Colors.tintColor }}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-plus"
-                    style={{ color: "white" }}
-                  />
-                </Button>
-                <Button style={{ backgroundColor: Colors.tintColor }}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-check"
-                    style={{ color: "white" }}
-                  />
-                </Button>
-                <Button style={{ backgroundColor: Colors.tintColor }}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-remove"
-                    style={{ color: "white" }}
-                  />
-                </Button>
-              </Fab>
+                  <Button style={{ backgroundColor: Colors.tintColor }}>
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="phone-classic"
+                      style={{ color: "white" }}
+                    />
+                  </Button>
+                  <Button style={{ backgroundColor: Colors.tintColor }}>
+                    <Icon
+                      type="Feather"
+                      name="phone-off"
+                      style={{ color: "white" }}
+                    />
+                  </Button>
+                  <Button style={{ backgroundColor: Colors.tintColor }}>
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="phone-in-talk"
+                      style={{ color: "white" }}
+                    />
+                  </Button>
+                  <Button style={{ backgroundColor: Colors.tintColor }}>
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="calendar-plus"
+                      style={{ color: "white" }}
+                    />
+                  </Button>
+                  <Button style={{ backgroundColor: Colors.tintColor }}>
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="calendar-check"
+                      style={{ color: "white" }}
+                    />
+                  </Button>
+                  <Button style={{ backgroundColor: Colors.tintColor }}>
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="calendar-remove"
+                      style={{ color: "white" }}
+                    />
+                  </Button>
+                </Fab>
+              )}
             </View>
           </Container>
         )}
@@ -2146,7 +2202,7 @@ class ContactDetailScreen extends React.Component {
                     </Row>
                     <Row>
                       <Input
-                        onChangeText={this.setContactPhone}
+                        onChangeText={this.setSingleContactPhone}
                         style={{
                           borderColor: "#B4B4B4",
                           borderWidth: 1,
