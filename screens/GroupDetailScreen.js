@@ -91,13 +91,14 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%"
   },
+  toggleText: {
+    textAlign: "center"
+  },
   activeToggleText: {
-    textAlign: "center",
     color: "#000000",
     fontSize: 9
   },
   inactiveToggleText: {
-    textAlign: "center",
     color: "#D9D5DC",
     fontSize: 9
   },
@@ -961,7 +962,7 @@ class GroupDetailScreen extends React.Component {
         ref={toast => {
           toastError = toast;
         }}
-        style={{ backgroundColor: "red" }}
+        style={{ backgroundColor: Colors.errorBackground }}
         position="center"
       />
     );
@@ -1352,13 +1353,14 @@ class GroupDetailScreen extends React.Component {
                                       }}
                                     >
                                       <Text
-                                        style={
+                                        style={[
+                                          styles.toggleText,
                                           this.onCheckExistingHealthMetric(
                                             "church_giving"
                                           )
                                             ? styles.activeToggleText
                                             : styles.inactiveToggleText
-                                        }
+                                        ]}
                                       >
                                         Giving
                                       </Text>
@@ -1368,7 +1370,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col size={2} />
                               <Col size={3}>
-                                <Row size={4}>
+                                <Row size={6}>
                                   <Col size={100}>
                                     <Row size={60}>
                                       <Col>
@@ -1401,13 +1403,14 @@ class GroupDetailScreen extends React.Component {
                                       }}
                                     >
                                       <Text
-                                        style={
+                                        style={[
+                                          styles.toggleText,
                                           this.onCheckExistingHealthMetric(
                                             "church_fellowship"
                                           )
                                             ? styles.activeToggleText
                                             : styles.inactiveToggleText
-                                        }
+                                        ]}
                                       >
                                         Fellowship
                                       </Text>
@@ -1452,13 +1455,14 @@ class GroupDetailScreen extends React.Component {
                                       }}
                                     >
                                       <Text
-                                        style={
+                                        style={[
+                                          styles.toggleText,
                                           this.onCheckExistingHealthMetric(
                                             "church_communion"
                                           )
                                             ? styles.activeToggleText
                                             : styles.inactiveToggleText
-                                        }
+                                        ]}
                                       >
                                         Communion
                                       </Text>
@@ -1508,13 +1512,14 @@ class GroupDetailScreen extends React.Component {
                                       }}
                                     >
                                       <Text
-                                        style={
+                                        style={[
+                                          styles.toggleText,
                                           this.onCheckExistingHealthMetric(
                                             "church_baptism"
                                           )
                                             ? styles.activeToggleText
                                             : styles.inactiveToggleText
-                                        }
+                                        ]}
                                       >
                                         Baptism
                                       </Text>
@@ -1559,13 +1564,14 @@ class GroupDetailScreen extends React.Component {
                                       }}
                                     >
                                       <Text
-                                        style={
+                                        style={[
+                                          styles.toggleText,
                                           this.onCheckExistingHealthMetric(
                                             "church_prayer"
                                           )
                                             ? styles.activeToggleText
                                             : styles.inactiveToggleText
-                                        }
+                                        ]}
                                       >
                                         Prayer
                                       </Text>
@@ -1610,13 +1616,14 @@ class GroupDetailScreen extends React.Component {
                                       }}
                                     >
                                       <Text
-                                        style={
+                                        style={[
+                                          styles.toggleText,
                                           this.onCheckExistingHealthMetric(
                                             "church_leaders"
                                           )
                                             ? styles.activeToggleText
                                             : styles.inactiveToggleText
-                                        }
+                                        ]}
                                       >
                                         Leaders
                                       </Text>
@@ -1663,13 +1670,14 @@ class GroupDetailScreen extends React.Component {
                                       }}
                                     >
                                       <Text
-                                        style={
+                                        style={[
+                                          styles.toggleText,
                                           this.onCheckExistingHealthMetric(
                                             "church_bible"
                                           )
                                             ? styles.activeToggleText
                                             : styles.inactiveToggleText
-                                        }
+                                        ]}
                                       >
                                         Bible Study
                                       </Text>
@@ -1714,13 +1722,14 @@ class GroupDetailScreen extends React.Component {
                                       }}
                                     >
                                       <Text
-                                        style={
+                                        style={[
+                                          styles.toggleText,
                                           this.onCheckExistingHealthMetric(
                                             "church_praise"
                                           )
                                             ? styles.activeToggleText
                                             : styles.inactiveToggleText
-                                        }
+                                        ]}
                                       >
                                         Praise
                                       </Text>
@@ -1763,13 +1772,14 @@ class GroupDetailScreen extends React.Component {
                                       }}
                                     >
                                       <Text
-                                        style={
+                                        style={[
+                                          styles.toggleText,
                                           this.onCheckExistingHealthMetric(
                                             "church_sharing"
                                           )
                                             ? styles.activeToggleText
                                             : styles.inactiveToggleText
-                                        }
+                                        ]}
                                       >
                                         Sharing the Gospel
                                       </Text>

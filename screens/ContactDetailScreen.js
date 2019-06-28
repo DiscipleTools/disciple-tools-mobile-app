@@ -15,17 +15,16 @@ import {
 import Toast from "react-native-easy-toast";
 import {
   Container,
-  Content,
-  Item,
   Label,
   Input,
   Icon,
-  List,
   Picker,
   Tabs,
   Tab,
   ScrollableTab,
-  DatePicker
+  DatePicker,
+  Fab,
+  Button
 } from "native-base";
 import Colors from "../constants/Colors";
 import {
@@ -70,7 +69,7 @@ let toastSuccess,
   containerPadding = 35,
   windowWidth = Dimensions.get("window").width,
   progressBarWidth = windowWidth - 100,
-  milestonesGridSize = windowWidth - (containerPadding - 5),
+  milestonesGridSize = windowWidth + 5,
   commentsFlatList;
 const styles = StyleSheet.create({
   tabBarUnderlineStyle: {
@@ -128,7 +127,9 @@ const styles = StyleSheet.create({
     opacity: 0.4
   },
   progressIconText: {
-    fontSize: 11
+    fontSize: 9,
+    textAlign: "center",
+    width: "100%"
   },
   // Comments Section
   name: {
@@ -306,7 +307,8 @@ class ContactDetailScreen extends React.Component {
         label: "Closed",
         value: "closed"
       }
-    ]
+    ],
+    activeFab: false
   };
 
   constructor(props) {
@@ -994,6 +996,12 @@ class ContactDetailScreen extends React.Component {
 
   setContactPeopleSources = () => {};
 
+  setToggleFab = () => {
+    this.setState({
+      activeFab: !this.state.activeFab
+    });
+  };
+
   render() {
     const successToast = (
       <Toast
@@ -1009,7 +1017,7 @@ class ContactDetailScreen extends React.Component {
         ref={toast => {
           toastError = toast;
         }}
-        style={{ backgroundColor: "red" }}
+        style={{ backgroundColor: Colors.errorBackground }}
         position="center"
       />
     );
@@ -1017,903 +1025,280 @@ class ContactDetailScreen extends React.Component {
     return (
       <Container>
         {this.state.contact.ID && this.state.renderView && (
-          <Tabs
-            renderTabBar={() => <ScrollableTab />}
-            tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
-          >
-            <Tab
-              heading="Details"
-              tabStyle={styles.tabStyle}
-              textStyle={styles.textStyle}
-              activeTabStyle={styles.activeTabStyle}
-              activeTextStyle={styles.activeTextStyle}
-            >
-              <KeyboardShift>
-                {() => (
-                  <ScrollView>
-                    <View
-                      style={{
-                        paddingLeft: containerPadding - 15,
-                        paddingRight: containerPadding - 15,
-                        marginTop: 20
-                      }}
-                    >
-                      <Label style={[styles.formLabel, { fontWeight: "bold" }]}>
-                        Status
-                      </Label>
-                      <Row style={styles.formRow}>
-                        <Col>
-                          <Picker
-                            selectedValue={this.state.contact.overall_status}
-                            onValueChange={this.setContactStatus}
-                            style={{
-                              color: "#FFFFFF",
-                              backgroundColor: this.state
-                                .overallStatusBackgroundColor
-                            }}
-                          >
-                            {this.renderStatusPickerItems()}
-                          </Picker>
-                        </Col>
-                      </Row>
-                    </View>
-                    <View
-                      style={styles.formContainer}
-                      pointerEvents={this.state.onlyView ? "none" : "auto"}
-                    >
-                      <Grid>
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              android="md-people"
-                              ios="ios-people"
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <MultipleTags
-                              tags={this.state.usersContacts}
-                              preselectedTags={
-                                this.state.currentSubassignedContacts
-                              }
-                              objectKeyIdentifier="value"
-                              objectValueIdentifier="name"
-                              onChangeItem={this.setCurrentSubassignedContacts}
-                              search
-                              visibleOnOpen={!this.state.onlyView}
-                              title="Sub-assigned to"
-                              searchHitResponse={""}
-                              defaultInstructionClosed={""}
-                              defaultInstructionOpen={""}
-                            />
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={styles.formLabel} />
-                          </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              android="md-call"
-                              ios="ios-call"
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <Label style={styles.formLabel}>Mobile</Label>
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={styles.formLabel}>Mobile</Label>
-                          </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              android="md-mail"
-                              ios="ios-mail"
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <Label style={styles.formLabel}>Email</Label>
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={styles.formLabel}>Email</Label>
-                          </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              android="logo-facebook"
-                              ios="logo-facebook"
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <Label style={styles.formLabel}>Message</Label>
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={styles.formLabel}>Message</Label>
-                          </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              android="md-home"
-                              ios="ios-home"
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <Label style={styles.formLabel}>Address</Label>
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={styles.formLabel}>Address</Label>
-                          </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              android="md-pin"
-                              ios="ios-pin"
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <Label style={styles.formLabel}>Location</Label>
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={styles.formLabel}>Location</Label>
-                          </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              android="md-globe"
-                              ios="ios-globe"
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <Label style={styles.formLabel}>People Group</Label>
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={styles.formLabel}>People Group</Label>
-                          </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              android="md-time"
-                              ios="ios-time"
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <Picker
-                              mode="dropdown"
-                              selectedValue={this.state.contact.age}
-                              onValueChange={this.setContactAge}
-                            >
-                              <Picker.Item label="" value="not-set" />
-                              <Picker.Item
-                                label="Under 18 years old"
-                                value="<19"
-                              />
-                              <Picker.Item
-                                label="18-25 years old"
-                                value="<26"
-                              />
-                              <Picker.Item
-                                label="26-40 years old"
-                                value="<41"
-                              />
-                              <Picker.Item
-                                label="Over 40 years old"
-                                value=">41"
-                              />
-                            </Picker>
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={styles.formLabel}>Age</Label>
-                          </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              android="md-male"
-                              ios="ios-male"
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <Picker
-                              mode="dropdown"
-                              selectedValue={this.state.contact.gender}
-                              onValueChange={this.setContactGender}
-                            >
-                              <Picker.Item label="" value="not-set" />
-                              <Picker.Item label="Male" value="male" />
-                              <Picker.Item label="Female" value="female" />
-                            </Picker>
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={styles.formLabel}>Gender</Label>
-                          </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              android="md-arrow-dropright"
-                              ios="ios-arrow-dropright"
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <Label style={styles.formLabel}>Source</Label>
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={styles.formLabel}>Source</Label>
-                          </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
-                      </Grid>
-                    </View>
-                  </ScrollView>
-                )}
-              </KeyboardShift>
-            </Tab>
-            <Tab
-              heading="Progress"
-              tabStyle={styles.tabStyle}
-              textStyle={styles.textStyle}
-              activeTabStyle={styles.activeTabStyle}
-              activeTextStyle={styles.activeTextStyle}
-            >
-              <ScrollView>
-                <View
-                  style={styles.formContainer}
-                  pointerEvents={this.state.onlyView ? "none" : "auto"}
+          <Container>
+            <View style={{ flex: 1 }}>
+              <Tabs
+                renderTabBar={() => <ScrollableTab />}
+                tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
+              >
+                <Tab
+                  heading="Details"
+                  tabStyle={styles.tabStyle}
+                  textStyle={styles.textStyle}
+                  activeTabStyle={styles.activeTabStyle}
+                  activeTextStyle={styles.activeTextStyle}
                 >
-                  <Grid>
-                    <Row style={styles.formRow}>
-                      <Col style={styles.formIconLabel}>
-                        <Icon
-                          android="md-calendar"
-                          ios="ios-calendar"
-                          style={styles.formIcon}
-                        />
-                      </Col>
-                      <Col>
-                        <Picker
-                          mode="dropdown"
-                          selectedValue={this.state.contact.seeker_path}
-                          onValueChange={this.setSeekerPath}
-                          textStyle={{ color: Colors.tintColor }}
-                        >
-                          <Picker.Item
-                            label="Contact Attempt Needed"
-                            value="none"
-                          />
-                          <Picker.Item
-                            label="Contact Attempted"
-                            value="attempted"
-                          />
-                          <Picker.Item
-                            label="Contact Established"
-                            value="established"
-                          />
-                          <Picker.Item
-                            label="First Meeting Scheduled"
-                            value="scheduled"
-                          />
-                          <Picker.Item
-                            label="First Meeting Complete"
-                            value="met"
-                          />
-                          <Picker.Item
-                            label="Ongoing Meetings"
-                            value="ongoing"
-                          />
-                          <Picker.Item label="Being Coached" value="coaching" />
-                        </Picker>
-                      </Col>
-                      <Col style={styles.formIconLabel}>
-                        <Label style={styles.formLabel}>Seeker Path</Label>
-                      </Col>
-                    </Row>
-                  </Grid>
-                  <View
-                    style={{
-                      alignItems: "center",
-                      marginTop: 5,
-                      marginBottom: 25
-                    }}
-                  >
-                    <ProgressBarAnimated
-                      width={progressBarWidth}
-                      value={this.state.progressBarValue}
-                      backgroundColor={Colors.tintColor}
-                    />
-                  </View>
-                  <Label
-                    style={[
-                      styles.formLabel,
-                      { fontWeight: "bold", marginBottom: 10 }
-                    ]}
-                  >
-                    Faith Milestones
-                  </Label>
-                  <Grid>
-                    <Col
-                      style={{
-                        height: milestonesGridSize,
-                        width: milestonesGridSize
-                      }}
-                    >
-                      <Row size={5}>
-                        <Col size={5}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              this.onMilestoneChange("milestone_has_bible");
-                            }}
-                            activeOpacity={1}
-                            style={styles.progressIcon}
-                          >
-                            <Col>
-                              <Row size={3}>
-                                <Image
-                                  source={hasBibleIcon}
-                                  style={[
-                                    styles.progressIcon,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_has_bible"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                />
-                              </Row>
-                              <Row
-                                size={1}
-                                style={{
-                                  flex: 1,
-                                  justifyContent: "center",
-                                  alignItems: "center"
-                                }}
-                              >
-                                <Text
-                                  style={[
-                                    styles.progressIconText,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_has_bible"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                >
-                                  Has Bible
-                                </Text>
-                              </Row>
-                            </Col>
-                          </TouchableOpacity>
-                        </Col>
-                        <Col size={1} />
-                        <Col size={5}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              this.onMilestoneChange("milestone_reading_bible");
-                            }}
-                            activeOpacity={1}
-                            style={styles.progressIcon}
-                          >
-                            <Col>
-                              <Row size={3}>
-                                <Image
-                                  source={readingBibleIcon}
-                                  style={[
-                                    styles.progressIcon,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_reading_bible"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                />
-                              </Row>
-                              <Row
-                                size={1}
-                                style={{
-                                  flex: 1,
-                                  justifyContent: "center",
-                                  alignItems: "center"
-                                }}
-                              >
-                                <Text
-                                  style={[
-                                    styles.progressIconText,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_reading_bible"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                >
-                                  Reading Bible
-                                </Text>
-                              </Row>
-                            </Col>
-                          </TouchableOpacity>
-                        </Col>
-                        <Col size={1} />
-                        <Col size={5}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              this.onMilestoneChange("milestone_belief");
-                            }}
-                            activeOpacity={1}
-                            style={styles.progressIcon}
-                          >
-                            <Col>
-                              <Row size={3}>
-                                <Image
-                                  source={statesBeliefIcon}
-                                  style={[
-                                    styles.progressIcon,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_belief"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                />
-                              </Row>
-                              <Row
-                                size={1}
-                                style={{
-                                  flex: 1,
-                                  justifyContent: "center",
-                                  alignItems: "center"
-                                }}
-                              >
-                                <Text
-                                  style={[
-                                    styles.progressIconText,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_belief"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                >
-                                  States Belief
-                                </Text>
-                              </Row>
-                            </Col>
-                          </TouchableOpacity>
-                        </Col>
-                        <Col size={2} />
-                      </Row>
-                      <Row size={1} />
-                      <Row size={5}>
-                        <Col size={5}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              this.onMilestoneChange("milestone_can_share");
-                            }}
-                            activeOpacity={1}
-                            style={styles.progressIcon}
-                          >
-                            <Col>
-                              <Row size={3}>
-                                <Image
-                                  source={canShareGospelIcon}
-                                  style={[
-                                    styles.progressIcon,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_can_share"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                />
-                              </Row>
-                              <Row
-                                size={1}
-                                style={{
-                                  flex: 1,
-                                  justifyContent: "center",
-                                  alignItems: "center"
-                                }}
-                              >
-                                <Text
-                                  style={[
-                                    styles.progressIconText,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_can_share"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                >
-                                  Can Share Gospel/Testimony
-                                </Text>
-                              </Row>
-                            </Col>
-                          </TouchableOpacity>
-                        </Col>
-                        <Col size={1} />
-                        <Col size={5}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              this.onMilestoneChange("milestone_sharing");
-                            }}
-                            activeOpacity={1}
-                            style={styles.progressIcon}
-                          >
-                            <Col>
-                              <Row size={3}>
-                                <Image
-                                  source={sharingTheGospelIcon}
-                                  style={[
-                                    styles.progressIcon,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_sharing"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                />
-                              </Row>
-                              <Row
-                                size={1}
-                                style={{
-                                  flex: 1,
-                                  justifyContent: "center",
-                                  alignItems: "center"
-                                }}
-                              >
-                                <Text
-                                  style={[
-                                    styles.progressIconText,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_sharing"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                >
-                                  Sharing Gospel/Testimony
-                                </Text>
-                              </Row>
-                            </Col>
-                          </TouchableOpacity>
-                        </Col>
-                        <Col size={1} />
-                        <Col size={5}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              this.onMilestoneChange("milestone_baptized");
-                            }}
-                            activeOpacity={1}
-                            style={styles.progressIcon}
-                          >
-                            <Col>
-                              <Row size={3}>
-                                <Image
-                                  source={baptizedIcon}
-                                  style={[
-                                    styles.progressIcon,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_baptized"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                />
-                              </Row>
-                              <Row
-                                size={1}
-                                style={{
-                                  flex: 1,
-                                  justifyContent: "center",
-                                  alignItems: "center"
-                                }}
-                              >
-                                <Text
-                                  style={[
-                                    styles.progressIconText,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_baptized"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                >
-                                  Baptized
-                                </Text>
-                              </Row>
-                            </Col>
-                          </TouchableOpacity>
-                        </Col>
-                        <Col size={2} />
-                      </Row>
-                      <Row size={1} />
-                      <Row size={5}>
-                        <Col size={5}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              this.onMilestoneChange("milestone_baptizing");
-                            }}
-                            activeOpacity={1}
-                            style={styles.progressIcon}
-                          >
-                            <Col>
-                              <Row size={3}>
-                                <Image
-                                  source={baptizingIcon}
-                                  style={[
-                                    styles.progressIcon,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_baptizing"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                />
-                              </Row>
-                              <Row
-                                size={1}
-                                style={{
-                                  flex: 1,
-                                  justifyContent: "center",
-                                  alignItems: "center"
-                                }}
-                              >
-                                <Text
-                                  style={[
-                                    styles.progressIconText,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_baptizing"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                >
-                                  Baptizing
-                                </Text>
-                              </Row>
-                            </Col>
-                          </TouchableOpacity>
-                        </Col>
-                        <Col size={1} />
-                        <Col size={5}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              this.onMilestoneChange("milestone_in_group");
-                            }}
-                            activeOpacity={1}
-                            style={styles.progressIcon}
-                          >
-                            <Col>
-                              <Row size={3}>
-                                <Image
-                                  source={inChurchIcon}
-                                  style={[
-                                    styles.progressIcon,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_in_group"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                />
-                              </Row>
-                              <Row
-                                size={1}
-                                style={{
-                                  flex: 1,
-                                  justifyContent: "center",
-                                  alignItems: "center"
-                                }}
-                              >
-                                <Text
-                                  style={[
-                                    styles.progressIconText,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_in_group"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                >
-                                  In Church/Group
-                                </Text>
-                              </Row>
-                            </Col>
-                          </TouchableOpacity>
-                        </Col>
-                        <Col size={1} />
-                        <Col size={5}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              this.onMilestoneChange("milestone_planting");
-                            }}
-                            activeOpacity={1}
-                            style={styles.progressIcon}
-                          >
-                            <Col>
-                              <Row size={3}>
-                                <Image
-                                  source={startingChurchesIcon}
-                                  style={[
-                                    styles.progressIcon,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_planting"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                />
-                              </Row>
-                              <Row
-                                size={1}
-                                style={{
-                                  flex: 1,
-                                  justifyContent: "center",
-                                  alignItems: "center"
-                                }}
-                              >
-                                <Text
-                                  style={[
-                                    styles.progressIconText,
-                                    this.onCheckExistingMilestone(
-                                      "milestone_planting"
-                                    )
-                                      ? styles.progressIconActive
-                                      : styles.progressIconInactive
-                                  ]}
-                                >
-                                  Starting Churches
-                                </Text>
-                              </Row>
-                            </Col>
-                          </TouchableOpacity>
-                        </Col>
-                        <Col size={2} />
-                      </Row>
-                    </Col>
-                    <Col />
-                  </Grid>
-                  <Grid style={{ marginTop: 25 }}>
-                    <View style={styles.formDivider} />
-                    <Row style={styles.formRow}>
-                      <Col style={styles.formIconLabel}>
-                        <Icon
-                          android="md-calendar"
-                          ios="ios-calendar"
-                          style={styles.formIcon}
-                        />
-                      </Col>
-                      <Col>
-                        <DatePicker
-                          defaultDate={this.state.contact.baptism_date}
-                          onDateChange={this.setBaptismDate}
-                        />
-                      </Col>
-                      <Col style={styles.formIconLabel}>
-                        <Label style={[styles.label, styles.formLabel]}>
-                          Baptism Date
-                        </Label>
-                      </Col>
-                    </Row>
-                  </Grid>
-                </View>
-              </ScrollView>
-            </Tab>
-            <Tab
-              heading="Comments / Activity"
-              tabStyle={styles.tabStyle}
-              textStyle={styles.textStyle}
-              activeTabStyle={styles.activeTabStyle}
-              activeTextStyle={styles.activeTextStyle}
-            >
-              {Object.prototype.hasOwnProperty.call(
-                this.state,
-                "commentsOrActivities"
-              ) &&
-                this.state.commentsOrActivities && (
-                  <View style={{ flex: 1 }}>
-                    <FlatList
-                      style={{
-                        backgroundColor: "#ffffff",
-                        flex: 1,
-                        marginBottom: 60
-                      }}
-                      ref={flatList => {
-                        commentsFlatList = flatList;
-                      }}
-                      onContentSizeChange={() => commentsFlatList.scrollToEnd()}
-                      data={this.state.commentsOrActivities}
-                      extraData={this.state.commentsOrActivities}
-                      ItemSeparatorComponent={() => (
+                  <KeyboardShift>
+                    {() => (
+                      <ScrollView>
                         <View
                           style={{
-                            height: 1,
-                            backgroundColor: "#CCCCCC"
-                          }}
-                        />
-                      )}
-                      keyExtractor={item => item.ID.toString()}
-                      renderItem={item => {
-                        const commentOrActivity = item.item;
-                        return this.renderActivityOrCommentRow(
-                          commentOrActivity
-                        );
-                      }}
-                    />
-                    <KeyboardAccessory>
-                      <View
-                        style={{
-                          backgroundColor: "white",
-                          flexDirection: "row"
-                        }}
-                      >
-                        <TextInput
-                          placeholder="Write your comment or note here"
-                          value={this.state.comment}
-                          onChangeText={this.setComment}
-                          style={{
-                            borderColor: "#B4B4B4",
-                            borderRadius: 5,
-                            borderWidth: 1,
-                            flex: 1,
-                            margin: 10,
-                            paddingLeft: 5,
-                            paddingRight: 5
-                          }}
-                        />
-                        <TouchableOpacity
-                          onPress={() => this.onSaveComment()}
-                          style={{
-                            backgroundColor: Colors.tintColor,
-                            borderRadius: 80,
-                            height: 40,
-                            margin: 10,
-                            paddingTop: 7,
-                            paddingLeft: 10,
-                            width: 40
+                            paddingLeft: containerPadding - 15,
+                            paddingRight: containerPadding - 15,
+                            marginTop: 20
                           }}
                         >
-                          <Icon
-                            android="md-send"
-                            ios="ios-send"
-                            style={{ color: "white", fontSize: 25 }}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    </KeyboardAccessory>
-                  </View>
-                )}
-            </Tab>
-            <Tab
-              heading="Connections"
-              tabStyle={styles.tabStyle}
-              textStyle={styles.textStyle}
-              activeTabStyle={styles.activeTabStyle}
-              activeTextStyle={styles.activeTextStyle}
-            >
-              <KeyboardShift>
-                {() => (
+                          <Label
+                            style={[styles.formLabel, { fontWeight: "bold" }]}
+                          >
+                            Status
+                          </Label>
+                          <Row style={styles.formRow}>
+                            <Col>
+                              <Picker
+                                selectedValue={
+                                  this.state.contact.overall_status
+                                }
+                                onValueChange={this.setContactStatus}
+                                style={{
+                                  color: "#FFFFFF",
+                                  backgroundColor: this.state
+                                    .overallStatusBackgroundColor
+                                }}
+                              >
+                                {this.renderStatusPickerItems()}
+                              </Picker>
+                            </Col>
+                          </Row>
+                        </View>
+                        <View
+                          style={styles.formContainer}
+                          pointerEvents={this.state.onlyView ? "none" : "auto"}
+                        >
+                          <Grid>
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  android="md-people"
+                                  ios="ios-people"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <MultipleTags
+                                  tags={this.state.usersContacts}
+                                  preselectedTags={
+                                    this.state.currentSubassignedContacts
+                                  }
+                                  objectKeyIdentifier="value"
+                                  objectValueIdentifier="name"
+                                  onChangeItem={
+                                    this.setCurrentSubassignedContacts
+                                  }
+                                  search
+                                  visibleOnOpen={!this.state.onlyView}
+                                  title="Sub-assigned to"
+                                  searchHitResponse={""}
+                                  defaultInstructionClosed={""}
+                                  defaultInstructionOpen={""}
+                                />
+                              </Col>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel} />
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  android="md-call"
+                                  ios="ios-call"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Label style={styles.formLabel}>Mobile</Label>
+                              </Col>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>Mobile</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  android="md-mail"
+                                  ios="ios-mail"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Label style={styles.formLabel}>Email</Label>
+                              </Col>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>Email</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  android="logo-facebook"
+                                  ios="logo-facebook"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Label style={styles.formLabel}>Message</Label>
+                              </Col>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>Message</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  android="md-home"
+                                  ios="ios-home"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Label style={styles.formLabel}>Address</Label>
+                              </Col>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>Address</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  android="md-pin"
+                                  ios="ios-pin"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Label style={styles.formLabel}>Location</Label>
+                              </Col>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>Location</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  android="md-globe"
+                                  ios="ios-globe"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Label style={styles.formLabel}>
+                                  People Group
+                                </Label>
+                              </Col>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>
+                                  People Group
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  android="md-time"
+                                  ios="ios-time"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Picker
+                                  mode="dropdown"
+                                  selectedValue={this.state.contact.age}
+                                  onValueChange={this.setContactAge}
+                                >
+                                  <Picker.Item label="" value="not-set" />
+                                  <Picker.Item
+                                    label="Under 18 years old"
+                                    value="<19"
+                                  />
+                                  <Picker.Item
+                                    label="18-25 years old"
+                                    value="<26"
+                                  />
+                                  <Picker.Item
+                                    label="26-40 years old"
+                                    value="<41"
+                                  />
+                                  <Picker.Item
+                                    label="Over 40 years old"
+                                    value=">41"
+                                  />
+                                </Picker>
+                              </Col>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>Age</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  android="md-male"
+                                  ios="ios-male"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Picker
+                                  mode="dropdown"
+                                  selectedValue={this.state.contact.gender}
+                                  onValueChange={this.setContactGender}
+                                >
+                                  <Picker.Item label="" value="not-set" />
+                                  <Picker.Item label="Male" value="male" />
+                                  <Picker.Item label="Female" value="female" />
+                                </Picker>
+                              </Col>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>Gender</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  android="md-arrow-dropright"
+                                  ios="ios-arrow-dropright"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Label style={styles.formLabel}>Source</Label>
+                              </Col>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>Source</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                          </Grid>
+                        </View>
+                      </ScrollView>
+                    )}
+                  </KeyboardShift>
+                </Tab>
+                <Tab
+                  heading="Progress"
+                  tabStyle={styles.tabStyle}
+                  textStyle={styles.textStyle}
+                  activeTabStyle={styles.activeTabStyle}
+                  activeTextStyle={styles.activeTextStyle}
+                >
                   <ScrollView>
                     <View
                       style={styles.formContainer}
@@ -1923,166 +1308,801 @@ class ContactDetailScreen extends React.Component {
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
-                              active
-                              android={"md-people"}
-                              ios={"ios-people"}
+                              android="md-calendar"
+                              ios="ios-calendar"
                               style={styles.formIcon}
                             />
                           </Col>
                           <Col>
-                            <MultipleTags
-                              tags={this.state.groups}
-                              preselectedTags={this.state.currentGroups}
-                              objectKeyIdentifier="value"
-                              objectValueIdentifier="name"
-                              onChangeItem={this.setCurrentGroups}
-                              search
-                              visibleOnOpen={!this.state.onlyView}
-                              title={"Groups"}
-                              searchHitResponse={""}
-                              defaultInstructionClosed={""}
-                              defaultInstructionOpen={""}
-                            />
+                            <Picker
+                              mode="dropdown"
+                              selectedValue={this.state.contact.seeker_path}
+                              onValueChange={this.setSeekerPath}
+                              textStyle={{ color: Colors.tintColor }}
+                            >
+                              <Picker.Item
+                                label="Contact Attempt Needed"
+                                value="none"
+                              />
+                              <Picker.Item
+                                label="Contact Attempted"
+                                value="attempted"
+                              />
+                              <Picker.Item
+                                label="Contact Established"
+                                value="established"
+                              />
+                              <Picker.Item
+                                label="First Meeting Scheduled"
+                                value="scheduled"
+                              />
+                              <Picker.Item
+                                label="First Meeting Complete"
+                                value="met"
+                              />
+                              <Picker.Item
+                                label="Ongoing Meetings"
+                                value="ongoing"
+                              />
+                              <Picker.Item
+                                label="Being Coached"
+                                value="coaching"
+                              />
+                            </Picker>
+                          </Col>
+                          <Col style={styles.formIconLabel}>
+                            <Label style={styles.formLabel}>Seeker Path</Label>
                           </Col>
                         </Row>
+                      </Grid>
+                      <View
+                        style={{
+                          alignItems: "center",
+                          marginTop: 5,
+                          marginBottom: 25
+                        }}
+                      >
+                        <ProgressBarAnimated
+                          width={progressBarWidth}
+                          value={this.state.progressBarValue}
+                          backgroundColor={Colors.tintColor}
+                        />
+                      </View>
+                      <Label
+                        style={[
+                          styles.formLabel,
+                          { fontWeight: "bold", marginBottom: 10 }
+                        ]}
+                      >
+                        Faith Milestones
+                      </Label>
+                      <Grid
+                        style={{
+                          height: milestonesGridSize
+                        }}
+                      >
+                        <Row size={6}>
+                          <Col size={1} />
+                          <Col size={5}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                this.onMilestoneChange("milestone_has_bible");
+                              }}
+                              activeOpacity={1}
+                              style={styles.progressIcon}
+                            >
+                              <Col>
+                                <Row size={3}>
+                                  <Image
+                                    source={hasBibleIcon}
+                                    style={[
+                                      styles.progressIcon,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_has_bible"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  />
+                                </Row>
+                                <Row size={1}>
+                                  <Text
+                                    style={[
+                                      styles.progressIconText,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_has_bible"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  >
+                                    Has Bible
+                                  </Text>
+                                </Row>
+                              </Col>
+                            </TouchableOpacity>
+                          </Col>
+                          <Col size={1} />
+                          <Col size={5}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                this.onMilestoneChange(
+                                  "milestone_reading_bible"
+                                );
+                              }}
+                              activeOpacity={1}
+                              style={styles.progressIcon}
+                            >
+                              <Col>
+                                <Row size={3}>
+                                  <Image
+                                    source={readingBibleIcon}
+                                    style={[
+                                      styles.progressIcon,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_reading_bible"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  />
+                                </Row>
+                                <Row size={1}>
+                                  <Text
+                                    style={[
+                                      styles.progressIconText,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_reading_bible"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  >
+                                    Reading Bible
+                                  </Text>
+                                </Row>
+                              </Col>
+                            </TouchableOpacity>
+                          </Col>
+                          <Col size={1} />
+                          <Col size={5}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                this.onMilestoneChange("milestone_belief");
+                              }}
+                              activeOpacity={1}
+                              style={styles.progressIcon}
+                            >
+                              <Col>
+                                <Row size={3}>
+                                  <Image
+                                    source={statesBeliefIcon}
+                                    style={[
+                                      styles.progressIcon,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_belief"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  />
+                                </Row>
+                                <Row size={1}>
+                                  <Text
+                                    style={[
+                                      styles.progressIconText,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_belief"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  >
+                                    States Belief
+                                  </Text>
+                                </Row>
+                              </Col>
+                            </TouchableOpacity>
+                          </Col>
+                          <Col size={1} />
+                        </Row>
+                        <Row size={1} />
+                        <Row size={6}>
+                          <Col size={1} />
+                          <Col size={5}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                this.onMilestoneChange("milestone_can_share");
+                              }}
+                              activeOpacity={1}
+                              style={styles.progressIcon}
+                            >
+                              <Col>
+                                <Row size={3}>
+                                  <Image
+                                    source={canShareGospelIcon}
+                                    style={[
+                                      styles.progressIcon,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_can_share"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  />
+                                </Row>
+                                <Row size={3}>
+                                  <Text
+                                    style={[
+                                      styles.progressIconText,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_can_share"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  >
+                                    Can Share Gospel/Testimony
+                                  </Text>
+                                </Row>
+                              </Col>
+                            </TouchableOpacity>
+                          </Col>
+                          <Col size={1} />
+                          <Col size={5}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                this.onMilestoneChange("milestone_sharing");
+                              }}
+                              activeOpacity={1}
+                              style={styles.progressIcon}
+                            >
+                              <Col>
+                                <Row size={3}>
+                                  <Image
+                                    source={sharingTheGospelIcon}
+                                    style={[
+                                      styles.progressIcon,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_sharing"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  />
+                                </Row>
+                                <Row size={3}>
+                                  <Text
+                                    style={[
+                                      styles.progressIconText,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_sharing"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  >
+                                    Sharing Gospel/Testimony
+                                  </Text>
+                                </Row>
+                              </Col>
+                            </TouchableOpacity>
+                          </Col>
+                          <Col size={1} />
+                          <Col size={5}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                this.onMilestoneChange("milestone_baptized");
+                              }}
+                              activeOpacity={1}
+                              style={styles.progressIcon}
+                            >
+                              <Col>
+                                <Row size={3}>
+                                  <Image
+                                    source={baptizedIcon}
+                                    style={[
+                                      styles.progressIcon,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_baptized"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  />
+                                </Row>
+                                <Row size={1}>
+                                  <Text
+                                    style={[
+                                      styles.progressIconText,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_baptized"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  >
+                                    Baptized
+                                  </Text>
+                                </Row>
+                              </Col>
+                            </TouchableOpacity>
+                          </Col>
+                          <Col size={1} />
+                        </Row>
+                        <Row size={1} />
+                        <Row size={6}>
+                          <Col size={1} />
+                          <Col size={5}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                this.onMilestoneChange("milestone_baptizing");
+                              }}
+                              activeOpacity={1}
+                              style={styles.progressIcon}
+                            >
+                              <Col>
+                                <Row size={3}>
+                                  <Image
+                                    source={baptizingIcon}
+                                    style={[
+                                      styles.progressIcon,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_baptizing"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  />
+                                </Row>
+                                <Row size={1}>
+                                  <Text
+                                    style={[
+                                      styles.progressIconText,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_baptizing"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  >
+                                    Baptizing
+                                  </Text>
+                                </Row>
+                              </Col>
+                            </TouchableOpacity>
+                          </Col>
+                          <Col size={1} />
+                          <Col size={5}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                this.onMilestoneChange("milestone_in_group");
+                              }}
+                              activeOpacity={1}
+                              style={styles.progressIcon}
+                            >
+                              <Col>
+                                <Row size={3}>
+                                  <Image
+                                    source={inChurchIcon}
+                                    style={[
+                                      styles.progressIcon,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_in_group"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  />
+                                </Row>
+                                <Row size={2}>
+                                  <Text
+                                    style={[
+                                      styles.progressIconText,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_in_group"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  >
+                                    In Church/Group
+                                  </Text>
+                                </Row>
+                              </Col>
+                            </TouchableOpacity>
+                          </Col>
+                          <Col size={1} />
+                          <Col size={5}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                this.onMilestoneChange("milestone_planting");
+                              }}
+                              activeOpacity={1}
+                              style={styles.progressIcon}
+                            >
+                              <Col>
+                                <Row size={3}>
+                                  <Image
+                                    source={startingChurchesIcon}
+                                    style={[
+                                      styles.progressIcon,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_planting"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  />
+                                </Row>
+                                <Row size={2}>
+                                  <Text
+                                    style={[
+                                      styles.progressIconText,
+                                      this.onCheckExistingMilestone(
+                                        "milestone_planting"
+                                      )
+                                        ? styles.progressIconActive
+                                        : styles.progressIconInactive
+                                    ]}
+                                  >
+                                    Starting Churches
+                                  </Text>
+                                </Row>
+                              </Col>
+                            </TouchableOpacity>
+                          </Col>
+                          <Col size={1} />
+                        </Row>
+                      </Grid>
+                      <Grid style={{ marginTop: 25 }}>
                         <View style={styles.formDivider} />
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
-                              active
-                              android={"md-git-network"}
-                              ios={"ios-git-network"}
+                              android="md-calendar"
+                              ios="ios-calendar"
                               style={styles.formIcon}
                             />
                           </Col>
                           <Col>
-                            <MultipleTags
-                              tags={this.state.contacts}
-                              preselectedTags={this.state.currentConnections}
-                              objectKeyIdentifier="value"
-                              objectValueIdentifier="name"
-                              onChangeItem={this.setCurrentConnections}
-                              search
-                              visibleOnOpen={!this.state.onlyView}
-                              title={"Connection"}
-                              searchHitResponse={""}
-                              defaultInstructionClosed={""}
-                              defaultInstructionOpen={""}
+                            <DatePicker
+                              defaultDate={this.state.contact.baptism_date}
+                              onDateChange={this.setBaptismDate}
                             />
                           </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
-                            <Icon
-                              active
-                              android={"md-water"}
-                              ios={"ios-water"}
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <MultipleTags
-                              tags={this.state.contacts}
-                              preselectedTags={this.state.currentBaptizedBy}
-                              objectKeyIdentifier="value"
-                              objectValueIdentifier="name"
-                              onChangeItem={this.setCurrentBaptizedBy}
-                              search
-                              visibleOnOpen={!this.state.onlyView}
-                              title={"Baptized by"}
-                              searchHitResponse={""}
-                              defaultInstructionClosed={""}
-                              defaultInstructionOpen={""}
-                            />
+                            <Label style={[styles.label, styles.formLabel]}>
+                              Baptism Date
+                            </Label>
                           </Col>
                         </Row>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              active
-                              android={"md-people"}
-                              ios={"ios-people"}
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <MultipleTags
-                              tags={this.state.contacts}
-                              preselectedTags={this.state.currentBaptized}
-                              objectKeyIdentifier="value"
-                              objectValueIdentifier="name"
-                              onChangeItem={this.setCurrentBaptized}
-                              search
-                              visibleOnOpen={!this.state.onlyView}
-                              title={"Baptized"}
-                              searchHitResponse={""}
-                              defaultInstructionClosed={""}
-                              defaultInstructionOpen={""}
-                            />
-                          </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              active
-                              android={"md-people"}
-                              ios={"ios-people"}
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <MultipleTags
-                              tags={this.state.contacts}
-                              preselectedTags={this.state.currentCoachedBy}
-                              objectKeyIdentifier="value"
-                              objectValueIdentifier="name"
-                              onChangeItem={this.setCurrentCoachedBy}
-                              search
-                              visibleOnOpen={!this.state.onlyView}
-                              title={"Coached by"}
-                              searchHitResponse={""}
-                              defaultInstructionClosed={""}
-                              defaultInstructionOpen={""}
-                            />
-                          </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              active
-                              android={"md-people"}
-                              ios={"ios-people"}
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <MultipleTags
-                              tags={this.state.contacts}
-                              preselectedTags={this.state.currentCoaching}
-                              objectKeyIdentifier="value"
-                              objectValueIdentifier="name"
-                              onChangeItem={this.setCurrentCoaching}
-                              search
-                              visibleOnOpen={!this.state.onlyView}
-                              title={"Coaching"}
-                              searchHitResponse={""}
-                              defaultInstructionClosed={""}
-                              defaultInstructionOpen={""}
-                            />
-                          </Col>
-                        </Row>
-                        <View style={styles.formDivider} />
                       </Grid>
                     </View>
                   </ScrollView>
-                )}
-              </KeyboardShift>
-            </Tab>
-          </Tabs>
+                </Tab>
+                <Tab
+                  heading="Comments / Activity"
+                  tabStyle={styles.tabStyle}
+                  textStyle={styles.textStyle}
+                  activeTabStyle={styles.activeTabStyle}
+                  activeTextStyle={styles.activeTextStyle}
+                >
+                  {Object.prototype.hasOwnProperty.call(
+                    this.state,
+                    "commentsOrActivities"
+                  ) &&
+                    this.state.commentsOrActivities && (
+                      <View style={{ flex: 1 }}>
+                        <FlatList
+                          style={{
+                            backgroundColor: "#ffffff",
+                            flex: 1,
+                            marginBottom: 60
+                          }}
+                          ref={flatList => {
+                            commentsFlatList = flatList;
+                          }}
+                          onContentSizeChange={() =>
+                            commentsFlatList.scrollToEnd()
+                          }
+                          data={this.state.commentsOrActivities}
+                          extraData={this.state.commentsOrActivities}
+                          ItemSeparatorComponent={() => (
+                            <View
+                              style={{
+                                height: 1,
+                                backgroundColor: "#CCCCCC"
+                              }}
+                            />
+                          )}
+                          keyExtractor={item => item.ID.toString()}
+                          renderItem={item => {
+                            const commentOrActivity = item.item;
+                            return this.renderActivityOrCommentRow(
+                              commentOrActivity
+                            );
+                          }}
+                        />
+                        <KeyboardAccessory>
+                          <View
+                            style={{
+                              backgroundColor: "white",
+                              flexDirection: "row"
+                            }}
+                          >
+                            <TextInput
+                              placeholder="Write your comment or note here"
+                              value={this.state.comment}
+                              onChangeText={this.setComment}
+                              style={{
+                                borderColor: "#B4B4B4",
+                                borderRadius: 5,
+                                borderWidth: 1,
+                                flex: 1,
+                                margin: 10,
+                                paddingLeft: 5,
+                                paddingRight: 5
+                              }}
+                            />
+                            <TouchableOpacity
+                              onPress={() => this.onSaveComment()}
+                              style={{
+                                backgroundColor: Colors.tintColor,
+                                borderRadius: 80,
+                                height: 40,
+                                margin: 10,
+                                paddingTop: 7,
+                                paddingLeft: 10,
+                                width: 40
+                              }}
+                            >
+                              <Icon
+                                android="md-send"
+                                ios="ios-send"
+                                style={{ color: "white", fontSize: 25 }}
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        </KeyboardAccessory>
+                      </View>
+                    )}
+                </Tab>
+                <Tab
+                  heading="Connections"
+                  tabStyle={styles.tabStyle}
+                  textStyle={styles.textStyle}
+                  activeTabStyle={styles.activeTabStyle}
+                  activeTextStyle={styles.activeTextStyle}
+                >
+                  <KeyboardShift>
+                    {() => (
+                      <ScrollView>
+                        <View
+                          style={styles.formContainer}
+                          pointerEvents={this.state.onlyView ? "none" : "auto"}
+                        >
+                          <Grid>
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  active
+                                  android={"md-people"}
+                                  ios={"ios-people"}
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <MultipleTags
+                                  tags={this.state.groups}
+                                  preselectedTags={this.state.currentGroups}
+                                  objectKeyIdentifier="value"
+                                  objectValueIdentifier="name"
+                                  onChangeItem={this.setCurrentGroups}
+                                  search
+                                  visibleOnOpen={!this.state.onlyView}
+                                  title={"Groups"}
+                                  searchHitResponse={""}
+                                  defaultInstructionClosed={""}
+                                  defaultInstructionOpen={""}
+                                />
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  active
+                                  android={"md-git-network"}
+                                  ios={"ios-git-network"}
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <MultipleTags
+                                  tags={this.state.contacts}
+                                  preselectedTags={
+                                    this.state.currentConnections
+                                  }
+                                  objectKeyIdentifier="value"
+                                  objectValueIdentifier="name"
+                                  onChangeItem={this.setCurrentConnections}
+                                  search
+                                  visibleOnOpen={!this.state.onlyView}
+                                  title={"Connection"}
+                                  searchHitResponse={""}
+                                  defaultInstructionClosed={""}
+                                  defaultInstructionOpen={""}
+                                />
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  active
+                                  android={"md-water"}
+                                  ios={"ios-water"}
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <MultipleTags
+                                  tags={this.state.contacts}
+                                  preselectedTags={this.state.currentBaptizedBy}
+                                  objectKeyIdentifier="value"
+                                  objectValueIdentifier="name"
+                                  onChangeItem={this.setCurrentBaptizedBy}
+                                  search
+                                  visibleOnOpen={!this.state.onlyView}
+                                  title={"Baptized by"}
+                                  searchHitResponse={""}
+                                  defaultInstructionClosed={""}
+                                  defaultInstructionOpen={""}
+                                />
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  active
+                                  android={"md-people"}
+                                  ios={"ios-people"}
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <MultipleTags
+                                  tags={this.state.contacts}
+                                  preselectedTags={this.state.currentBaptized}
+                                  objectKeyIdentifier="value"
+                                  objectValueIdentifier="name"
+                                  onChangeItem={this.setCurrentBaptized}
+                                  search
+                                  visibleOnOpen={!this.state.onlyView}
+                                  title={"Baptized"}
+                                  searchHitResponse={""}
+                                  defaultInstructionClosed={""}
+                                  defaultInstructionOpen={""}
+                                />
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  active
+                                  android={"md-people"}
+                                  ios={"ios-people"}
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <MultipleTags
+                                  tags={this.state.contacts}
+                                  preselectedTags={this.state.currentCoachedBy}
+                                  objectKeyIdentifier="value"
+                                  objectValueIdentifier="name"
+                                  onChangeItem={this.setCurrentCoachedBy}
+                                  search
+                                  visibleOnOpen={!this.state.onlyView}
+                                  title={"Coached by"}
+                                  searchHitResponse={""}
+                                  defaultInstructionClosed={""}
+                                  defaultInstructionOpen={""}
+                                />
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  active
+                                  android={"md-people"}
+                                  ios={"ios-people"}
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <MultipleTags
+                                  tags={this.state.contacts}
+                                  preselectedTags={this.state.currentCoaching}
+                                  objectKeyIdentifier="value"
+                                  objectValueIdentifier="name"
+                                  onChangeItem={this.setCurrentCoaching}
+                                  search
+                                  visibleOnOpen={!this.state.onlyView}
+                                  title={"Coaching"}
+                                  searchHitResponse={""}
+                                  defaultInstructionClosed={""}
+                                  defaultInstructionOpen={""}
+                                />
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                          </Grid>
+                        </View>
+                      </ScrollView>
+                    )}
+                  </KeyboardShift>
+                </Tab>
+              </Tabs>
+              <Fab
+                active={this.state.activeFab}
+                onPress={() => this.setToggleFab()}
+                style={{ backgroundColor: Colors.tintColor }}
+              >
+                <Icon
+                  type="MaterialCommunityIcons"
+                  name="comment-plus"
+                  style={{ color: "white" }}
+                />
+                <Button style={{ backgroundColor: Colors.tintColor }}>
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="phone-classic"
+                    style={{ color: "white" }}
+                  />
+                </Button>
+                <Button style={{ backgroundColor: Colors.tintColor }}>
+                  <Icon
+                    type="Feather"
+                    name="phone-off"
+                    style={{ color: "white" }}
+                  />
+                </Button>
+                <Button style={{ backgroundColor: Colors.tintColor }}>
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="phone-in-talk"
+                    style={{ color: "white" }}
+                  />
+                </Button>
+                <Button style={{ backgroundColor: Colors.tintColor }}>
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="calendar-plus"
+                    style={{ color: "white" }}
+                  />
+                </Button>
+                <Button style={{ backgroundColor: Colors.tintColor }}>
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="calendar-check"
+                    style={{ color: "white" }}
+                  />
+                </Button>
+                <Button style={{ backgroundColor: Colors.tintColor }}>
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="calendar-remove"
+                    style={{ color: "white" }}
+                  />
+                </Button>
+              </Fab>
+            </View>
+          </Container>
         )}
         {!this.state.contact.ID && this.state.renderView && (
           <KeyboardShift>

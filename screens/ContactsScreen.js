@@ -177,7 +177,7 @@ class ContactsScreen extends React.Component {
             ref={toast => {
               toastError = toast;
             }}
-            style={{ backgroundColor: "red" }}
+            style={{ backgroundColor: Colors.errorBackground }}
             position="center"
           />
         </View>
