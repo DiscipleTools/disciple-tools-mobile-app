@@ -127,12 +127,14 @@ export function* save({ domain, token, contactData }) {
               };
             }),
             sources: {
-              values: contact.sources.map(source => {
-                return {
-                  name: source,
-                  value: source
-                };
-              })
+              values: contact.sources
+                ? contact.sources.map(source => {
+                    return {
+                      label: source,
+                      value: source
+                    };
+                  })
+                : []
             },
             geonames: {
               values: contact.geonames
@@ -157,7 +159,7 @@ export function* save({ domain, token, contactData }) {
                 };
               })
             },
-            contact_facebook: {
+            /*contact_facebook: {
               values: contact.contact_facebook
                 ? contact.contact_facebook.map(contact => {
                     return {
@@ -206,7 +208,7 @@ export function* save({ domain, token, contactData }) {
                     };
                   })
                 : []
-            },
+            },*/
             baptism_date:
               contact.baptism_date && contact.baptism_date.formatted.length > 0
                 ? contact.baptism_date.formatted
@@ -263,7 +265,50 @@ export function* save({ domain, token, contactData }) {
                     post_date: coachedItem.post_date
                   }))
                 : []
-            }
+            },
+            coaching: {
+              values: contact.coaching
+                ? contact.coaching.map(coachingItem => ({
+                    name: coachingItem.post_title,
+                    value: coachingItem.ID.toString(),
+                    post_date: coachingItem.post_date
+                  }))
+                : []
+            },
+            contact_address: contact.contact_address
+              ? contact.contact_address.map(address => {
+                  return {
+                    key: address.key,
+                    value: address.value
+                  };
+                })
+              : [],
+            people_groups: {
+              values: contact.people_groups
+                ? contact.people_groups.map(peopleGroup => ({
+                    value: peopleGroup.ID.toString(),
+                    name: peopleGroup.post_title
+                  }))
+                : []
+            },
+            quick_button_no_answer: contact.quick_button_no_answer
+              ? contact.quick_button_no_answer
+              : "0",
+            quick_button_contact_established: contact.quick_button_contact_established
+              ? contact.quick_button_contact_established
+              : "0",
+            quick_button_meeting_scheduled: contact.quick_button_meeting_scheduled
+              ? contact.quick_button_meeting_scheduled
+              : "0",
+            quick_button_meeting_complete: contact.quick_button_meeting_complete
+              ? contact.quick_button_meeting_complete
+              : "0",
+            quick_button_no_show: contact.quick_button_no_show
+              ? contact.quick_button_no_show
+              : "0",
+            /*quick_button_phone_off: contact.quick_button_phone_off
+              ? contact.quick_button_phone_off
+              : "0"*/
           }
         });
         if (contactInitialComment) {
@@ -320,6 +365,7 @@ export function* getById({ domain, token, contactId }) {
       const jsonData = yield response.json();
       if (response.status === 200) {
         const contact = jsonData;
+        console.log("CONTACTS_GETBYID_RESPONSE", contact);
         yield put({
           type: actions.CONTACTS_GETBYID_SUCCESS,
           contact: {
@@ -338,12 +384,14 @@ export function* getById({ domain, token, contactId }) {
               };
             }),
             sources: {
-              values: contact.sources.map(source => {
-                return {
-                  name: source,
-                  value: source
-                };
-              })
+              values: contact.sources
+                ? contact.sources.map(source => {
+                    return {
+                      label: source,
+                      value: source
+                    };
+                  })
+                : []
             },
             geonames: {
               values: contact.geonames
@@ -368,7 +416,7 @@ export function* getById({ domain, token, contactId }) {
                 };
               })
             },
-            contact_facebook: {
+            /*contact_facebook: {
               values: contact.contact_facebook
                 ? contact.contact_facebook.map(contact => {
                     return {
@@ -417,7 +465,7 @@ export function* getById({ domain, token, contactId }) {
                     };
                   })
                 : []
-            },
+            },*/
             baptism_date:
               contact.baptism_date && contact.baptism_date.formatted.length > 0
                 ? contact.baptism_date.formatted
@@ -474,7 +522,50 @@ export function* getById({ domain, token, contactId }) {
                     post_date: coachedItem.post_date
                   }))
                 : []
-            }
+            },
+            coaching: {
+              values: contact.coaching
+                ? contact.coaching.map(coachingItem => ({
+                    name: coachingItem.post_title,
+                    value: coachingItem.ID.toString(),
+                    post_date: coachingItem.post_date
+                  }))
+                : []
+            },
+            contact_address: contact.contact_address
+              ? contact.contact_address.map(address => {
+                  return {
+                    key: address.key,
+                    value: address.value
+                  };
+                })
+              : [],
+            people_groups: {
+              values: contact.people_groups
+                ? contact.people_groups.map(peopleGroup => ({
+                    value: peopleGroup.ID.toString(),
+                    name: peopleGroup.post_title
+                  }))
+                : []
+            },
+            quick_button_no_answer: contact.quick_button_no_answer
+              ? contact.quick_button_no_answer
+              : "0",
+            quick_button_contact_established: contact.quick_button_contact_established
+              ? contact.quick_button_contact_established
+              : "0",
+            quick_button_meeting_scheduled: contact.quick_button_meeting_scheduled
+              ? contact.quick_button_meeting_scheduled
+              : "0",
+            quick_button_meeting_complete: contact.quick_button_meeting_complete
+              ? contact.quick_button_meeting_complete
+              : "0",
+            quick_button_no_show: contact.quick_button_no_show
+              ? contact.quick_button_no_show
+              : "0",
+            /*quick_button_phone_off: contact.quick_button_phone_off
+              ? contact.quick_button_phone_off
+              : "0"*/
           }
         });
       } else {

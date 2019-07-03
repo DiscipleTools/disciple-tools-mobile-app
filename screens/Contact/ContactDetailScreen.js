@@ -33,7 +33,9 @@ import {
   getUsersAndContacts,
   GROUPS_GET_USERS_CONTACTS_SUCCESS,
   search,
-  GROUPS_SEARCH_SUCCESS
+  GROUPS_SEARCH_SUCCESS,
+  getPeopleGroups,
+  GROUPS_GET_PEOPLE_GROUPS_SUCCESS
 } from "../../store/actions/groups.actions";
 import {
   save,
@@ -140,6 +142,12 @@ const styles = StyleSheet.create({
   time: {
     color: Colors.tintColor,
     fontSize: 10
+  },
+  inputContactAddress: {
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "#D9D5DC",
+    margin: 5
   }
 });
 
@@ -223,39 +231,39 @@ class ContactDetailScreen extends React.Component {
     },
     contactSources: [
       {
-        label: "Personal",
+        label: "personal",
         value: "personal"
       },
       {
-        label: "Web",
+        label: "web",
         value: "web"
       },
       {
-        label: "Phone",
+        label: "phone",
         value: "phone"
       },
       {
-        label: "Facebook",
+        label: "facebook",
         value: "facebook"
       },
       {
-        label: "Twitter",
+        label: "twitter",
         value: "twitter"
       },
       {
-        label: "LinkedIn",
+        label: "linkedin",
         value: "linkedin"
       },
       {
-        label: "Referral",
+        label: "referral",
         value: "referral"
       },
       {
-        label: "Advertisement",
+        label: "advertisement",
         value: "advertisement"
       },
       {
-        label: "Transfer",
+        label: "transfer",
         value: "transfer"
       }
     ],
@@ -309,7 +317,11 @@ class ContactDetailScreen extends React.Component {
       }
     ],
     activeFab: false,
-    renderFab: true
+    renderFab: true,
+    peopleGroups: [],
+    currentPeopleGroups: [],
+    currentSources: [],
+    updateCommentsActivities: false
   };
 
   constructor(props) {
@@ -343,7 +355,7 @@ class ContactDetailScreen extends React.Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     const {
       geonames,
-      error,
+      groupsReducerError,
       groupsReducerResponse,
       contact,
       contactsReducerResponse,
@@ -352,7 +364,9 @@ class ContactDetailScreen extends React.Component {
       comment,
       activities,
       usersContacts,
-      search
+      search,
+      contactsReducerError,
+      peopleGroups
     } = nextProps;
     let newState = {
       ...prevState,
@@ -382,6 +396,12 @@ class ContactDetailScreen extends React.Component {
             groups: search
           };
           break;
+        case GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
+          newState = {
+            ...newState,
+            peopleGroups
+          };
+          break;
       }
     }
 
@@ -401,6 +421,12 @@ class ContactDetailScreen extends React.Component {
             ...newState,
             contact
           };
+          if(prevState.updateCommentsActivities) {
+            newState = {
+              ...newState,
+              commentsOrActivities: []
+            };
+          }
           toastSuccess.show("Contact Saved!", 2000);
           break;
         case CONTACTS_GETBYID_SUCCESS:
@@ -409,7 +435,7 @@ class ContactDetailScreen extends React.Component {
               contact.baptism_date
             );
           }
-          console.log("CONTACTS_GETBYID_SUCCESS", contact.coached_by);
+          console.log("CONTACTS_GETBYID_SUCCESS", contact);
           newState = {
             ...newState,
             contact,
@@ -418,13 +444,17 @@ class ContactDetailScreen extends React.Component {
             currentConnections: contact.relation.values,
             currentBaptizedBy: contact.baptized_by.values,
             currentBaptized: contact.baptized.values,
-            currentCoachedBy: contact.coached_by.values
+            currentCoachedBy: contact.coached_by.values,
+            currentCoaching: contact.coaching.values,
+            currentPeopleGroups: contact.people_groups.values,
+            currentSources: contact.sources.values
           };
           break;
         case CONTACTS_GET_COMMENTS_SUCCESS:
           newState = {
             ...newState,
-            commentsOrActivities: comments
+            commentsOrActivities: comments,
+            updateCommentsActivities: false
           };
           break;
         case CONTACTS_GET_ACTIVITIES_SUCCESS: {
@@ -457,7 +487,8 @@ class ContactDetailScreen extends React.Component {
       }
     }
 
-    if (error) {
+    if (groupsReducerError || contactsReducerError) {
+      let error = groupsReducerError || contactsReducerError;
       toastError.show(
         <View>
           <Text style={{ fontWeight: "bold" }}>Code: </Text>
@@ -474,8 +505,8 @@ class ContactDetailScreen extends React.Component {
 
   componentDidUpdate(prevProps) {
     const { contactsReducerResponse, groupsReducerResponse } = this.props;
-    const { contact, contacts, renderView } = this.state;
-
+    const { contact, contacts, renderView, updateCommentsActivities } = this.state;
+    console.log("updateCommentsActivities", updateCommentsActivities);
     if (prevProps.groupsReducerResponse != groupsReducerResponse) {
       switch (groupsReducerResponse) {
         case GROUPS_GET_LOCATIONS_SUCCESS:
@@ -488,6 +519,9 @@ class ContactDetailScreen extends React.Component {
           this.searchGroups();
           break;
         case GROUPS_SEARCH_SUCCESS:
+          this.getPeopleGroups();
+          break;
+        case GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
           this.getContactById(contact.ID);
           break;
       }
@@ -498,6 +532,9 @@ class ContactDetailScreen extends React.Component {
         case CONTACTS_SAVE_SUCCESS:
           if (!renderView) {
             this.getUsersContacts();
+          }
+          if(updateCommentsActivities) {
+            this.getContactComments(contact.ID);
           }
           break;
         case CONTACTS_GETBYID_SUCCESS:
@@ -549,6 +586,10 @@ class ContactDetailScreen extends React.Component {
       this.props.user.token,
       contactId
     );
+  }
+
+  getPeopleGroups() {
+    this.props.getPeopleGroups(this.props.user.domain, this.props.user.token);
   }
 
   renderStatusPickerItems = () => {
@@ -820,20 +861,52 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  onSaveContact = () => {
+  onSaveContact = (quickAction = {}) => {
     Keyboard.dismiss();
-    var contactToSave = JSON.parse(JSON.stringify(this.state.contact)); //Object.assign({}, this.state.contact);
-    contactToSave.geonames.values = this.setGeonames();
-    if (Object.prototype.hasOwnProperty.call(contactToSave, "subassigned")) {
-      contactToSave.subassigned.values = this.setSubassignedContacts();
+
+    if (Object.keys(quickAction).length > 0) {
+      var contactToSave = {
+        ID: this.state.contact.ID,
+        ...quickAction
+      };
+      this.setState({
+        updateCommentsActivities: true
+      });
+    } else {
+      var contactToSave = JSON.parse(JSON.stringify(this.state.contact));
+      contactToSave.geonames.values = this.setGeonames();
+      if (Object.prototype.hasOwnProperty.call(contactToSave, "subassigned")) {
+        contactToSave.subassigned.values = this.setSubassignedContacts();
+      }
+      if (Object.prototype.hasOwnProperty.call(contactToSave, "groups")) {
+        contactToSave.groups.values = this.setGroups();
+      }
+      if (Object.prototype.hasOwnProperty.call(contactToSave, "relation")) {
+        contactToSave.relation.values = this.setConnections();
+      }
+      if (Object.prototype.hasOwnProperty.call(contactToSave, "baptized_by")) {
+        contactToSave.baptized_by.values = this.setBaptizedBy();
+      }
+      if (Object.prototype.hasOwnProperty.call(contactToSave, "baptized")) {
+        contactToSave.baptized.values = this.setBaptized();
+      }
+      if (Object.prototype.hasOwnProperty.call(contactToSave, "coached_by")) {
+        contactToSave.coached_by.values = this.setCoachedBy();
+      }
+      if (Object.prototype.hasOwnProperty.call(contactToSave, "coaching")) {
+        contactToSave.coaching.values = this.setCoaching();
+      }
+      if (
+        Object.prototype.hasOwnProperty.call(contactToSave, "people_groups")
+      ) {
+        contactToSave.people_groups.values = this.setPeopleGroups();
+      }
+      if (Object.prototype.hasOwnProperty.call(contactToSave, "sources")) {
+        contactToSave.sources.values = this.setSources();
+      }
     }
-    if (Object.prototype.hasOwnProperty.call(contactToSave, "groups")) {
-      contactToSave.groups.values = this.setGroups();
-    }
-    contactToSave.relation.values = this.setConnections();
-    contactToSave.baptized_by.values = this.setBaptizedBy();
-    contactToSave.baptized.values = this.setBaptized();
-    contactToSave.coached_by.values = this.setCoachedBy();
+    console.log(contactToSave);
+
     this.props.saveContact(
       this.props.user.domain,
       this.props.user.token,
@@ -1102,7 +1175,7 @@ class ContactDetailScreen extends React.Component {
       .filter(localCoached => {
         var foundLocalCoachedInDb = dbCoachedBy.find(
           dbCoached =>
-          dbCoached.value === localCoached.value && dbCoached.post_date
+            dbCoached.value === localCoached.value && dbCoached.post_date
         );
         return foundLocalCoachedInDb === undefined;
       })
@@ -1110,7 +1183,7 @@ class ContactDetailScreen extends React.Component {
         value: localCoached.value
       }));
 
-      dbCoachedBy.forEach(dbCoached => {
+    dbCoachedBy.forEach(dbCoached => {
       const foundDbCoachedInLocalCoached = localCoachedBy.find(
         localCoached => dbCoached.value === localCoached.value
       );
@@ -1123,9 +1196,45 @@ class ContactDetailScreen extends React.Component {
     });
 
     return coachedByToSave;
-  }
+  };
 
-  setCurrentCoaching = () => {};
+  setCurrentCoaching = coaching => {
+    this.setState({
+      currentCoaching: coaching
+    });
+  };
+
+  setCoaching = () => {
+    const dbCoaching = [...this.state.contact.coaching.values];
+    const localCoaching = [...this.state.currentCoaching];
+
+    const coachingByToSave = localCoaching
+      .filter(localCoachingItem => {
+        var foundLocalCoachingInDb = dbCoaching.find(
+          dbCoachingItem =>
+            dbCoachingItem.value === localCoachingItem.value &&
+            dbCoachingItem.post_date
+        );
+        return foundLocalCoachingInDb === undefined;
+      })
+      .map(localCoachingItem => ({
+        value: localCoachingItem.value
+      }));
+
+    dbCoaching.forEach(dbCoachingItem => {
+      const foundDbCoachingInLocalCoaching = localCoaching.find(
+        localCoachingItem => dbCoachingItem.value === localCoachingItem.value
+      );
+      if (!foundDbCoachingInLocalCoaching) {
+        coachingByToSave.push({
+          value: dbCoachingItem.value,
+          delete: true
+        });
+      }
+    });
+
+    return coachingByToSave;
+  };
 
   setContactLocations = () => {};
 
@@ -1149,8 +1258,6 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  setContactPeopleSources = () => {};
-
   setToggleFab = () => {
     this.setState({
       activeFab: !this.state.activeFab
@@ -1162,6 +1269,211 @@ class ContactDetailScreen extends React.Component {
     this.setState({
       renderFab: !(event.i === 2)
     });
+  };
+
+  onAddPhoneField = () => {
+    const contactPhones = this.state.contact.contact_phone;
+    contactPhones.push({
+      value: ""
+    });
+    this.setState(prevState => ({
+      contact: {
+        ...prevState.contact,
+        contact_phone: contactPhones
+      }
+    }));
+  };
+
+  onPhoneFieldChange = (value, index, dbIndex, component) => {
+    const phoneAddressList = component.state.contact.contact_phone;
+    const contactPhone = phoneAddressList[index];
+    contactPhone.value = value;
+    if (dbIndex) {
+      contactPhone.key = dbIndex;
+    }
+    component.setState(prevState => ({
+      contact: {
+        ...prevState.contact,
+        contact_phone: phoneAddressList
+      }
+    }));
+  };
+
+  onRemovePhoneField = (index, component) => {
+    const contactPhoneList = [...component.state.contact.contact_phone];
+    let contactPhone = contactPhoneList[index];
+    if (contactPhone.key) {
+      contactPhone = {
+        key: contactPhone.key,
+        delete: true
+      };
+      contactPhoneList[index] = contactPhone;
+    } else {
+      contactPhoneList.splice(index, 1);
+    }
+    component.setState(prevState => ({
+      contact: {
+        ...prevState.contact,
+        contact_phone: contactPhoneList
+      }
+    }));
+  };
+
+  onAddEmailField = () => {
+    const contactEmails = this.state.contact.contact_email;
+    contactEmails.push({
+      value: ""
+    });
+    this.setState(prevState => ({
+      contact: {
+        ...prevState.contact,
+        contact_email: contactEmails
+      }
+    }));
+  };
+
+  onEmailFieldChange = (value, index, dbIndex, component) => {
+    const contactEmailList = component.state.contact.contact_email;
+    const contactEmail = contactEmailList[index];
+    contactEmail.value = value;
+    if (dbIndex) {
+      contactEmail.key = dbIndex;
+    }
+    component.setState(prevState => ({
+      ...prevState,
+      contact: {
+        ...prevState.contact,
+        contact_email: contactEmailList
+      }
+    }));
+  };
+
+  onRemoveEmailField = (index, component) => {
+    const contactEmailList = [...component.state.contact.contact_email];
+    let contactEmail = contactEmailList[index];
+    if (contactEmail.key) {
+      contactEmail = {
+        key: contactEmail.key,
+        delete: true
+      };
+      contactEmailList[index] = contactEmail;
+    } else {
+      contactEmailList.splice(index, 1);
+    }
+    component.setState(prevState => ({
+      contact: {
+        ...prevState.contact,
+        contact_email: contactEmailList
+      }
+    }));
+  };
+
+  onAddAddressField = () => {
+    const contactAddress = this.state.contact.contact_address;
+    contactAddress.push({
+      value: ""
+    });
+    this.setState(prevState => ({
+      contact: {
+        ...prevState.contact,
+        contact_address: contactAddress
+      }
+    }));
+  };
+
+  onAddressFieldChange = (value, index, dbIndex, component) => {
+    const contactAddressList = component.state.contact.contact_address;
+    const contactAddress = contactAddressList[index];
+    contactAddress.value = value;
+    if (dbIndex) {
+      contactAddress.key = dbIndex;
+    }
+    component.setState(prevState => ({
+      contact: {
+        ...prevState.contact,
+        contact_address: contactAddressList
+      }
+    }));
+  };
+
+  onRemoveAddressField = (index, component) => {
+    const contactAddressList = [...component.state.contact.contact_address];
+    let contactAddress = contactAddressList[index];
+    if (contactAddress.key) {
+      contactAddress = {
+        key: contactAddress.key,
+        delete: true
+      };
+      contactAddressList[index] = contactAddress;
+    } else {
+      contactAddressList.splice(index, 1);
+    }
+    component.setState(prevState => ({
+      contact: {
+        ...prevState.contact,
+        contact_address: contactAddressList
+      }
+    }));
+  };
+
+  setCurrentPeopleGroups = values => {
+    this.setState({
+      currentPeopleGroups: values
+    });
+  };
+
+  setPeopleGroups = () => {
+    const dbPeopleGroups = [...this.state.contact.people_groups.values];
+    const localPeopleGroups = [...this.state.currentPeopleGroups];
+
+    const peopleGroupsToSave = localPeopleGroups.map(localPeopleGroup => ({
+      value: localPeopleGroup.value
+    }));
+
+    dbPeopleGroups.forEach(dbPeopleGroup => {
+      const foundDbPeopleGroupInLocalPeopleGroup = localPeopleGroups.find(
+        localPeopleGroup => dbPeopleGroup.value === localPeopleGroup.value
+      );
+      if (!foundDbPeopleGroupInLocalPeopleGroup) {
+        peopleGroupsToSave.push({
+          value: dbPeopleGroup.value,
+          delete: true
+        });
+      }
+    });
+
+    return peopleGroupsToSave;
+  };
+
+  setCurrentSources = values => {
+    this.setState({
+      currentSources: values
+    });
+  };
+
+  setSources = () => {
+    const dbSources = [...this.state.contact.sources.values];
+    const localSources = [...this.state.currentSources];
+
+    const sourcesToSave = localSources.filter(localSource => {
+      var foundLocalSourceInDb = dbSources.find(
+        dbSource => dbSource.value === localSource.value
+      );
+      return foundLocalSourceInDb === undefined;
+    });
+
+    dbSources.forEach(dbSourceItem => {
+      const foundDbSourceInLocalSources = localSources.find(
+        localSource => dbSourceItem.value === localSource.value
+      );
+      if (!foundDbSourceInLocalSources) {
+        sourcesToSave.push({
+          value: dbSourceItem.value,
+          delete: true
+        });
+      }
+    });
+    return sourcesToSave;
   };
 
   render() {
@@ -1184,6 +1496,24 @@ class ContactDetailScreen extends React.Component {
       />
     );
 
+    /**
+         * <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  android="logo-facebook"
+                                  ios="logo-facebook"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Label style={styles.formLabel}>Message</Label>
+                              </Col>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>Message</Label>
+                              </Col>
+                            </Row>
+         */
     return (
       <Container>
         {this.state.contact.ID && this.state.renderView && (
@@ -1280,12 +1610,75 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Label style={styles.formLabel}>Mobile</Label>
+                                <Row>
+                                  <View style={{ flex: 1 }}>
+                                    <Text
+                                      style={{
+                                        textAlign: "right",
+                                        paddingRight: 10
+                                      }}
+                                    >
+                                      <Icon
+                                        android="md-add"
+                                        ios="ios-add"
+                                        onPress={this.onAddPhoneField}
+                                        style={styles.addRemoveIcons}
+                                      />
+                                    </Text>
+                                  </View>
+                                </Row>
                               </Col>
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>Mobile</Label>
                               </Col>
                             </Row>
+                            {this.state.contact.contact_phone.map(
+                              (phone, index) => {
+                                if (!phone.delete) {
+                                  return (
+                                    <Row
+                                      key={index.toString()}
+                                      style={styles.formRow}
+                                    >
+                                      <Col>
+                                        <Input
+                                          multiline
+                                          value={phone.value}
+                                          onChangeText={value => {
+                                            this.onPhoneFieldChange(
+                                              value,
+                                              index,
+                                              phone.key,
+                                              this
+                                            );
+                                          }}
+                                          style={styles.inputContactAddress}
+                                        />
+                                      </Col>
+                                      <Col style={styles.formIconLabel}>
+                                        <Icon
+                                          android="md-remove"
+                                          ios="ios-remove"
+                                          onPress={() => {
+                                            this.onRemovePhoneField(
+                                              index,
+                                              this
+                                            );
+                                          }}
+                                          style={[
+                                            styles.addRemoveIcons,
+                                            {
+                                              paddingLeft: 10,
+                                              paddingRight: 10
+                                            }
+                                          ]}
+                                        />
+                                      </Col>
+                                    </Row>
+                                  );
+                                }
+                              }
+                            )}
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
@@ -1296,28 +1689,75 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Label style={styles.formLabel}>Email</Label>
+                                <Row>
+                                  <View style={{ flex: 1 }}>
+                                    <Text
+                                      style={{
+                                        textAlign: "right",
+                                        paddingRight: 10
+                                      }}
+                                    >
+                                      <Icon
+                                        android="md-add"
+                                        ios="ios-add"
+                                        onPress={this.onAddEmailField}
+                                        style={styles.addRemoveIcons}
+                                      />
+                                    </Text>
+                                  </View>
+                                </Row>
                               </Col>
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>Email</Label>
                               </Col>
                             </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
-                                <Icon
-                                  android="logo-facebook"
-                                  ios="logo-facebook"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Label style={styles.formLabel}>Message</Label>
-                              </Col>
-                              <Col style={styles.formIconLabel}>
-                                <Label style={styles.formLabel}>Message</Label>
-                              </Col>
-                            </Row>
+                            {this.state.contact.contact_email.map(
+                              (email, index) => {
+                                if (!email.delete) {
+                                  return (
+                                    <Row
+                                      key={index.toString()}
+                                      style={styles.formRow}
+                                    >
+                                      <Col>
+                                        <Input
+                                          multiline
+                                          value={email.value}
+                                          onChangeText={value => {
+                                            this.onEmailFieldChange(
+                                              value,
+                                              index,
+                                              email.key,
+                                              this
+                                            );
+                                          }}
+                                          style={styles.inputContactAddress}
+                                        />
+                                      </Col>
+                                      <Col style={styles.formIconLabel}>
+                                        <Icon
+                                          android="md-remove"
+                                          ios="ios-remove"
+                                          onPress={() => {
+                                            this.onRemoveEmailField(
+                                              index,
+                                              this
+                                            );
+                                          }}
+                                          style={[
+                                            styles.addRemoveIcons,
+                                            {
+                                              paddingLeft: 10,
+                                              paddingRight: 10
+                                            }
+                                          ]}
+                                        />
+                                      </Col>
+                                    </Row>
+                                  );
+                                }
+                              }
+                            )}
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
@@ -1328,26 +1768,98 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Label style={styles.formLabel}>Address</Label>
+                                <Row>
+                                  <View style={{ flex: 1 }}>
+                                    <Text
+                                      style={{
+                                        textAlign: "right",
+                                        paddingRight: 10
+                                      }}
+                                    >
+                                      <Icon
+                                        android="md-add"
+                                        ios="ios-add"
+                                        onPress={this.onAddAddressField}
+                                        style={styles.addRemoveIcons}
+                                      />
+                                    </Text>
+                                  </View>
+                                </Row>
                               </Col>
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>Address</Label>
                               </Col>
                             </Row>
+                            {this.state.contact.contact_address.map(
+                              (address, index) => {
+                                if (!address.delete) {
+                                  return (
+                                    <Row
+                                      key={index.toString()}
+                                      style={styles.formRow}
+                                    >
+                                      <Col>
+                                        <Input
+                                          multiline
+                                          value={address.value}
+                                          onChangeText={value => {
+                                            this.onAddressFieldChange(
+                                              value,
+                                              index,
+                                              address.key,
+                                              this
+                                            );
+                                          }}
+                                          style={styles.inputContactAddress}
+                                        />
+                                      </Col>
+                                      <Col style={styles.formIconLabel}>
+                                        <Icon
+                                          android="md-remove"
+                                          ios="ios-remove"
+                                          onPress={() => {
+                                            this.onRemoveAddressField(
+                                              index,
+                                              this
+                                            );
+                                          }}
+                                          style={[
+                                            styles.addRemoveIcons,
+                                            {
+                                              paddingLeft: 10,
+                                              paddingRight: 10
+                                            }
+                                          ]}
+                                        />
+                                      </Col>
+                                    </Row>
+                                  );
+                                }
+                              }
+                            )}
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
-                                  android="md-pin"
-                                  ios="ios-pin"
+                                  android={"md-pin"}
+                                  ios={"ios-pin"}
                                   style={styles.formIcon}
                                 />
                               </Col>
                               <Col>
-                                <Label style={styles.formLabel}>Location</Label>
-                              </Col>
-                              <Col style={styles.formIconLabel}>
-                                <Label style={styles.formLabel}>Location</Label>
+                                <MultipleTags
+                                  tags={this.state.geonames}
+                                  preselectedTags={this.state.currentGeonames}
+                                  objectKeyIdentifier="value"
+                                  objectValueIdentifier="name"
+                                  onChangeItem={this.setCurrentGeonames}
+                                  search
+                                  visibleOnOpen={!this.state.onlyView}
+                                  title={"Location"}
+                                  searchHitResponse={""}
+                                  defaultInstructionClosed={""}
+                                  defaultInstructionOpen={""}
+                                />
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
@@ -1360,14 +1872,21 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Label style={styles.formLabel}>
-                                  People Group
-                                </Label>
-                              </Col>
-                              <Col style={styles.formIconLabel}>
-                                <Label style={styles.formLabel}>
-                                  People Group
-                                </Label>
+                                <MultipleTags
+                                  tags={this.state.peopleGroups}
+                                  preselectedTags={
+                                    this.state.currentPeopleGroups
+                                  }
+                                  objectKeyIdentifier="value"
+                                  objectValueIdentifier="name"
+                                  onChangeItem={this.setCurrentPeopleGroups}
+                                  search
+                                  visibleOnOpen={!this.state.onlyView}
+                                  title="People Groups"
+                                  searchHitResponse={""}
+                                  defaultInstructionClosed={""}
+                                  defaultInstructionOpen={""}
+                                />
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
@@ -1442,10 +1961,19 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Label style={styles.formLabel}>Source</Label>
-                              </Col>
-                              <Col style={styles.formIconLabel}>
-                                <Label style={styles.formLabel}>Source</Label>
+                                <MultipleTags
+                                  tags={this.state.contactSources}
+                                  preselectedTags={this.state.currentSources}
+                                  objectKeyIdentifier="value"
+                                  objectValueIdentifier="label"
+                                  onChangeItem={this.setCurrentSources}
+                                  search
+                                  visibleOnOpen={!this.state.onlyView}
+                                  title="Source"
+                                  searchHitResponse={""}
+                                  defaultInstructionClosed={""}
+                                  defaultInstructionOpen={""}
+                                />
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
@@ -2189,7 +2717,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <MultipleTags
-                                  tags={this.state.contacts}
+                                  tags={this.state.usersContacts}
                                   preselectedTags={this.state.currentCoaching}
                                   objectKeyIdentifier="value"
                                   objectValueIdentifier="name"
@@ -2227,6 +2755,14 @@ class ContactDetailScreen extends React.Component {
                       type="MaterialCommunityIcons"
                       name="phone-classic"
                       style={{ color: "white" }}
+                      onPress={() =>
+                        this.onSaveContact({
+                          quick_button_phone_off:
+                            parseInt(
+                              this.state.contact.quick_button_phone_off
+                            ) + 1
+                        })
+                      }
                     />
                   </Button>
                   <Button style={{ backgroundColor: Colors.tintColor }}>
@@ -2234,6 +2770,14 @@ class ContactDetailScreen extends React.Component {
                       type="Feather"
                       name="phone-off"
                       style={{ color: "white" }}
+                      onPress={() =>
+                        this.onSaveContact({
+                          quick_button_no_answer:
+                            parseInt(
+                              this.state.contact.quick_button_no_answer
+                            ) + 1
+                        })
+                      }
                     />
                   </Button>
                   <Button style={{ backgroundColor: Colors.tintColor }}>
@@ -2241,6 +2785,15 @@ class ContactDetailScreen extends React.Component {
                       type="MaterialCommunityIcons"
                       name="phone-in-talk"
                       style={{ color: "white" }}
+                      onPress={() =>
+                        this.onSaveContact({
+                          quick_button_contact_established:
+                            parseInt(
+                              this.state.contact
+                                .quick_button_contact_established
+                            ) + 1
+                        })
+                      }
                     />
                   </Button>
                   <Button style={{ backgroundColor: Colors.tintColor }}>
@@ -2248,6 +2801,14 @@ class ContactDetailScreen extends React.Component {
                       type="MaterialCommunityIcons"
                       name="calendar-plus"
                       style={{ color: "white" }}
+                      onPress={() =>
+                        this.onSaveContact({
+                          quick_button_meeting_scheduled:
+                            parseInt(
+                              this.state.contact.quick_button_meeting_scheduled
+                            ) + 1
+                        })
+                      }
                     />
                   </Button>
                   <Button style={{ backgroundColor: Colors.tintColor }}>
@@ -2255,6 +2816,14 @@ class ContactDetailScreen extends React.Component {
                       type="MaterialCommunityIcons"
                       name="calendar-check"
                       style={{ color: "white" }}
+                      onPress={() =>
+                        this.onSaveContact({
+                          quick_button_meeting_complete:
+                            parseInt(
+                              this.state.contact.quick_button_meeting_complete
+                            ) + 1
+                        })
+                      }
                     />
                   </Button>
                   <Button style={{ backgroundColor: Colors.tintColor }}>
@@ -2262,6 +2831,13 @@ class ContactDetailScreen extends React.Component {
                       type="MaterialCommunityIcons"
                       name="calendar-remove"
                       style={{ color: "white" }}
+                      onPress={() =>
+                        this.onSaveContact({
+                          quick_button_no_show:
+                            parseInt(this.state.contact.quick_button_no_show) +
+                            1
+                        })
+                      }
                     />
                   </Button>
                 </Fab>
@@ -2440,18 +3016,20 @@ ContactDetailScreen.propTypes = {
   contact: PropTypes.shape({
     key: PropTypes.number
   }),
-  contactsReducerResponse: PropTypes.string
+  contactsReducerResponse: PropTypes.string,
+  getPeopleGroups: PropTypes.func.isRequired
 };
 
 ContactDetailScreen.defaultProps = {
-  error: null,
+  groupsReducerError: null,
   groupsReducerResponse: null,
   contact: null,
+  contactsReducerError: null,
   contactsReducerResponse: null
 };
 
 const mapStateToProps = state => ({
-  error: state.groupsReducer.error,
+  groupsReducerError: state.groupsReducer.error,
   geonames: state.groupsReducer.geonames,
   user: state.userReducer,
   groupsReducerResponse: state.groupsReducer.type,
@@ -2461,7 +3039,9 @@ const mapStateToProps = state => ({
   comment: state.contactsReducer.comment,
   activities: state.contactsReducer.activities,
   usersContacts: state.groupsReducer.usersContacts,
-  search: state.groupsReducer.search
+  search: state.groupsReducer.search,
+  contactsReducerError: state.contactsReducer.error,
+  peopleGroups: state.groupsReducer.peopleGroups
 });
 const mapDispatchToProps = dispatch => ({
   getLocations: (domain, token) => {
@@ -2487,6 +3067,9 @@ const mapDispatchToProps = dispatch => ({
   },
   searchGroups: (domain, token) => {
     dispatch(search(domain, token));
+  },
+  getPeopleGroups: (domain, token) => {
+    dispatch(getPeopleGroups(domain, token));
   }
 });
 
