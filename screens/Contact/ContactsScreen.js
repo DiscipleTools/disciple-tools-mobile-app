@@ -13,12 +13,12 @@ import Icon from "react-native-vector-icons/Ionicons";
 import Toast from "react-native-easy-toast";
 
 import PropTypes from "prop-types";
-import Colors from "../constants/Colors";
+import Colors from "../../constants/Colors";
 import {
   getAll,
   CONTACTS_GETALL_START,
   CONTACTS_GETALL_SUCCESS
-} from "../store/actions/contacts.actions";
+} from "../../store/actions/contacts.actions";
 
 const styles = StyleSheet.create({
   flatListItem: {

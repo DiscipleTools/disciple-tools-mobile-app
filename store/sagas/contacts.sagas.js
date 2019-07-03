@@ -236,6 +236,33 @@ export function* save({ domain, token, contactData }) {
                     post_date: relationItem.post_date
                   }))
                 : []
+            },
+            baptized_by: {
+              values: contact.baptized_by
+                ? contact.baptized_by.map(baptizedByItem => ({
+                    name: baptizedByItem.post_title,
+                    value: baptizedByItem.ID.toString(),
+                    post_date: baptizedByItem.post_date
+                  }))
+                : []
+            },
+            baptized: {
+              values: contact.baptized
+                ? contact.baptized.map(baptizedItem => ({
+                    name: baptizedItem.post_title,
+                    value: baptizedItem.ID.toString(),
+                    post_date: baptizedItem.post_date
+                  }))
+                : []
+            },
+            coached_by: {
+              values: contact.coached_by
+                ? contact.coached_by.map(coachedItem => ({
+                    name: coachedItem.post_title,
+                    value: coachedItem.ID.toString(),
+                    post_date: coachedItem.post_date
+                  }))
+                : []
             }
           }
         });
@@ -418,6 +445,33 @@ export function* getById({ domain, token, contactId }) {
                     name: relationItem.post_title,
                     value: relationItem.ID.toString(),
                     post_date: relationItem.post_date
+                  }))
+                : []
+            },
+            baptized_by: {
+              values: contact.baptized_by
+                ? contact.baptized_by.map(baptizedByItem => ({
+                    name: baptizedByItem.post_title,
+                    value: baptizedByItem.ID.toString(),
+                    post_date: baptizedByItem.post_date
+                  }))
+                : []
+            },
+            baptized: {
+              values: contact.baptized
+                ? contact.baptized.map(baptizedItem => ({
+                    name: baptizedItem.post_title,
+                    value: baptizedItem.ID.toString(),
+                    post_date: baptizedItem.post_date
+                  }))
+                : []
+            },
+            coached_by: {
+              values: contact.coached_by
+                ? contact.coached_by.map(coachedItem => ({
+                    name: coachedItem.post_title,
+                    value: coachedItem.ID.toString(),
+                    post_date: coachedItem.post_date
                   }))
                 : []
             }

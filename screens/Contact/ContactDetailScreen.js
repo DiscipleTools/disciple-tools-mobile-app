@@ -26,7 +26,7 @@ import {
   Fab,
   Button
 } from "native-base";
-import Colors from "../constants/Colors";
+import Colors from "../../constants/Colors";
 import {
   getLocations,
   GROUPS_GET_LOCATIONS_SUCCESS,
@@ -34,7 +34,7 @@ import {
   GROUPS_GET_USERS_CONTACTS_SUCCESS,
   search,
   GROUPS_SEARCH_SUCCESS
-} from "../store/actions/groups.actions";
+} from "../../store/actions/groups.actions";
 import {
   save,
   CONTACTS_SAVE_SUCCESS,
@@ -46,23 +46,23 @@ import {
   CONTACTS_GETBYID_SUCCESS,
   getActivitiesByContact,
   CONTACTS_GET_ACTIVITIES_SUCCESS
-} from "../store/actions/contacts.actions";
+} from "../../store/actions/contacts.actions";
 import PropTypes from "prop-types";
 import MultipleTags from "react-native-multiple-tags";
-import KeyboardShift from "../components/KeyboardShift";
+import KeyboardShift from "../../components/KeyboardShift";
 import { Col, Row, Grid } from "react-native-easy-grid";
 import KeyboardAccessory from "react-native-sticky-keyboard-accessory";
 import ProgressBarAnimated from "react-native-progress-bar-animated";
 
-import hasBibleIcon from "../assets/icons/book-bookmark.png";
-import readingBibleIcon from "../assets/icons/word.png";
-import statesBeliefIcon from "../assets/icons/language.png";
-import canShareGospelIcon from "../assets/icons/b-chat.png";
-import sharingTheGospelIcon from "../assets/icons/evangelism.png";
-import baptizedIcon from "../assets/icons/baptism.png";
-import baptizingIcon from "../assets/icons/water-aerobics.png";
-import inChurchIcon from "../assets/icons/multiple-11.png";
-import startingChurchesIcon from "../assets/icons/symbol-213-7.png";
+import hasBibleIcon from "../../assets/icons/book-bookmark.png";
+import readingBibleIcon from "../../assets/icons/word.png";
+import statesBeliefIcon from "../../assets/icons/language.png";
+import canShareGospelIcon from "../../assets/icons/b-chat.png";
+import sharingTheGospelIcon from "../../assets/icons/evangelism.png";
+import baptizedIcon from "../../assets/icons/baptism.png";
+import baptizingIcon from "../../assets/icons/water-aerobics.png";
+import inChurchIcon from "../../assets/icons/multiple-11.png";
+import startingChurchesIcon from "../../assets/icons/symbol-213-7.png";
 
 let toastSuccess,
   toastError,
@@ -191,7 +191,7 @@ class ContactDetailScreen extends React.Component {
         <Icon
           android="md-arrow-back"
           ios="ios-arrow-back"
-          onPress={() => navigation.push("Contacts")}
+          onPress={() => navigation.push("ContactList")}
           style={[{ paddingLeft: 16, color: "#FFFFFF" }]}
         />
       ),
@@ -409,13 +409,16 @@ class ContactDetailScreen extends React.Component {
               contact.baptism_date
             );
           }
-          console.log("CONTACTS_GETBYID_SUCCESS", contact);
+          console.log("CONTACTS_GETBYID_SUCCESS", contact.coached_by);
           newState = {
             ...newState,
             contact,
             currentSubassignedContacts: contact.subassigned.values,
             currentGroups: contact.groups.values,
-            currentConnections: contact.relation.values
+            currentConnections: contact.relation.values,
+            currentBaptizedBy: contact.baptized_by.values,
+            currentBaptized: contact.baptized.values,
+            currentCoachedBy: contact.coached_by.values
           };
           break;
         case CONTACTS_GET_COMMENTS_SUCCESS:
@@ -828,7 +831,9 @@ class ContactDetailScreen extends React.Component {
       contactToSave.groups.values = this.setGroups();
     }
     contactToSave.relation.values = this.setConnections();
-    console.log("contactToSave.relation", contactToSave.relation);
+    contactToSave.baptized_by.values = this.setBaptizedBy();
+    contactToSave.baptized.values = this.setBaptized();
+    contactToSave.coached_by.values = this.setCoachedBy();
     this.props.saveContact(
       this.props.user.domain,
       this.props.user.token,
@@ -971,7 +976,6 @@ class ContactDetailScreen extends React.Component {
   };
 
   setCurrentConnections = connections => {
-    console.log("connections", connections);
     this.setState({
       currentConnections: connections
     });
@@ -980,8 +984,7 @@ class ContactDetailScreen extends React.Component {
   setConnections = () => {
     const dbConnections = [...this.state.contact.relation.values];
     const localConnections = [...this.state.currentConnections];
-    console.log("dbConnections", dbConnections);
-    console.log("localConnections", localConnections);
+
     const connectionsToSave = localConnections
       .filter(localConnection => {
         var foundLocalConnectionInDb = dbConnections.find(
@@ -989,13 +992,12 @@ class ContactDetailScreen extends React.Component {
             dbConnection.value === localConnection.value &&
             dbConnection.post_date
         );
-        console.log("foundLocalConnectionInDb", foundLocalConnectionInDb);
         return foundLocalConnectionInDb === undefined;
       })
       .map(localConnection => ({
         value: localConnection.value
       }));
-    console.log("connectionsToSave", connectionsToSave);
+
     dbConnections.forEach(dbConnection => {
       const foundDbConnectionInLocalConnection = localConnections.find(
         localConnection => dbConnection.value === localConnection.value
@@ -1007,15 +1009,121 @@ class ContactDetailScreen extends React.Component {
         });
       }
     });
-    console.log("connectionsToSave", connectionsToSave);
+
     return connectionsToSave;
   };
 
-  setCurrentBaptizedBy = () => {};
+  setCurrentBaptizedBy = baptizedBy => {
+    this.setState({
+      currentBaptizedBy: baptizedBy
+    });
+  };
 
-  setCurrentBaptized = () => {};
+  setBaptizedBy = () => {
+    const dbBaptizedBy = [...this.state.contact.baptized_by.values];
+    const localBaptizedBy = [...this.state.currentBaptizedBy];
 
-  setCurrentCoachedBy = () => {};
+    const baptizedByToSave = localBaptizedBy
+      .filter(localBaptized => {
+        var foundLocalBaptizedInDb = dbBaptizedBy.find(
+          dbBaptized =>
+            dbBaptized.value === localBaptized.value && dbBaptized.post_date
+        );
+        return foundLocalBaptizedInDb === undefined;
+      })
+      .map(localBaptized => ({
+        value: localBaptized.value
+      }));
+
+    dbBaptizedBy.forEach(dbBaptized => {
+      const foundDbBaptizedInLocalBaptized = localBaptizedBy.find(
+        localBaptized => dbBaptized.value === localBaptized.value
+      );
+      if (!foundDbBaptizedInLocalBaptized) {
+        baptizedByToSave.push({
+          value: dbBaptized.value,
+          delete: true
+        });
+      }
+    });
+
+    return baptizedByToSave;
+  };
+
+  setCurrentBaptized = baptized => {
+    this.setState({
+      currentBaptized: baptized
+    });
+  };
+
+  setBaptized = () => {
+    const dbBaptizedList = [...this.state.contact.baptized.values];
+    const localBaptizedList = [...this.state.currentBaptized];
+
+    const baptizedToSave = localBaptizedList
+      .filter(localBaptizedItem => {
+        var foundLocalBaptizedInDb = dbBaptizedList.find(
+          dbBaptizedItem =>
+            dbBaptizedItem.value === localBaptizedItem.value &&
+            dbBaptizedItem.post_date
+        );
+        return foundLocalBaptizedInDb === undefined;
+      })
+      .map(localBaptizedItem => ({
+        value: localBaptizedItem.value
+      }));
+
+    dbBaptizedList.forEach(dbBaptizedItem => {
+      const foundDbBaptizedInLocalBaptized = localBaptizedList.find(
+        localBaptizedItem => dbBaptizedItem.value === localBaptizedItem.value
+      );
+      if (!foundDbBaptizedInLocalBaptized) {
+        baptizedToSave.push({
+          value: dbBaptizedItem.value,
+          delete: true
+        });
+      }
+    });
+
+    return baptizedToSave;
+  };
+
+  setCurrentCoachedBy = coached => {
+    this.setState({
+      currentCoachedBy: coached
+    });
+  };
+
+  setCoachedBy = () => {
+    const dbCoachedBy = [...this.state.contact.coached_by.values];
+    const localCoachedBy = [...this.state.currentCoachedBy];
+
+    const coachedByToSave = localCoachedBy
+      .filter(localCoached => {
+        var foundLocalCoachedInDb = dbCoachedBy.find(
+          dbCoached =>
+          dbCoached.value === localCoached.value && dbCoached.post_date
+        );
+        return foundLocalCoachedInDb === undefined;
+      })
+      .map(localCoached => ({
+        value: localCoached.value
+      }));
+
+      dbCoachedBy.forEach(dbCoached => {
+      const foundDbCoachedInLocalCoached = localCoachedBy.find(
+        localCoached => dbCoached.value === localCoached.value
+      );
+      if (!foundDbCoachedInLocalCoached) {
+        coachedByToSave.push({
+          value: dbCoached.value,
+          delete: true
+        });
+      }
+    });
+
+    return coachedByToSave;
+  }
 
   setCurrentCoaching = () => {};
 
@@ -1049,9 +1157,10 @@ class ContactDetailScreen extends React.Component {
     });
   };
 
-  onChangeTab = event => {
+  tabChanged = event => {
+    this.props.navigation.setParams({ hideTabBar: event.i === 2 });
     this.setState({
-      renderFab: event.i != 2
+      renderFab: !(event.i === 2)
     });
   };
 
@@ -1083,7 +1192,7 @@ class ContactDetailScreen extends React.Component {
               <Tabs
                 renderTabBar={() => <ScrollableTab />}
                 tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
-                onChangeTab={this.onChangeTab}
+                onChangeTab={this.tabChanged}
               >
                 <Tab
                   heading="Details"
@@ -2002,7 +2111,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <MultipleTags
-                                  tags={this.state.contacts}
+                                  tags={this.state.usersContacts}
                                   preselectedTags={this.state.currentBaptizedBy}
                                   objectKeyIdentifier="value"
                                   objectValueIdentifier="name"
@@ -2028,7 +2137,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <MultipleTags
-                                  tags={this.state.contacts}
+                                  tags={this.state.usersContacts}
                                   preselectedTags={this.state.currentBaptized}
                                   objectKeyIdentifier="value"
                                   objectValueIdentifier="name"
@@ -2054,7 +2163,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <MultipleTags
-                                  tags={this.state.contacts}
+                                  tags={this.state.usersContacts}
                                   preselectedTags={this.state.currentCoachedBy}
                                   objectKeyIdentifier="value"
                                   objectValueIdentifier="name"

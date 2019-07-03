@@ -16,6 +16,7 @@ export default function contactsReducer(state = initialState, action) {
     type: action.type,
     error: null
   };
+  console.log("action.type", action.type);
   switch (action.type) {
     case actions.CONTACTS_GETALL_START:
       return {

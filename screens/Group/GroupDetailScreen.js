@@ -28,7 +28,7 @@ import Toast from "react-native-easy-toast";
 import { Col, Row, Grid } from "react-native-easy-grid";
 import MultipleTags from "react-native-multiple-tags";
 import KeyboardAccessory from "react-native-sticky-keyboard-accessory";
-import KeyboardShift from "../components/KeyboardShift";
+import KeyboardShift from "../../components/KeyboardShift";
 import ModalFilterPicker from "react-native-modal-filter-picker";
 import {
   saveGroup,
@@ -47,20 +47,20 @@ import {
   GROUPS_GET_PEOPLE_GROUPS_SUCCESS,
   getActivitiesByGroup,
   GROUPS_GET_ACTIVITIES_SUCCESS
-} from "../store/actions/groups.actions";
-import { getUsers, GET_USERS_SUCCESS } from "../store/actions/users.actions";
-import Colors from "../constants/Colors";
+} from "../../store/actions/groups.actions";
+import { getUsers, GET_USERS_SUCCESS } from "../../store/actions/users.actions";
+import Colors from "../../constants/Colors";
 
-import baptismIcon from "../assets/icons/baptism.png";
-import bibleStudyIcon from "../assets/icons/word.png";
-import communionIcon from "../assets/icons/communion.png";
-import fellowShipIcon from "../assets/icons/fellowship.png";
-import givingIcon from "../assets/icons/giving.png";
-import prayerIcon from "../assets/icons/prayer.png";
-import praiseIcon from "../assets/icons/praise.png";
-import sharingTheGospelIcon from "../assets/icons/evangelism.png";
-import leadersIcon from "../assets/icons/leadership.png";
-import churchCommitmentIcon from "../assets/icons/covenant.png";
+import baptismIcon from "../../assets/icons/baptism.png";
+import bibleStudyIcon from "../../assets/icons/word.png";
+import communionIcon from "../../assets/icons/communion.png";
+import fellowShipIcon from "../../assets/icons/fellowship.png";
+import givingIcon from "../../assets/icons/giving.png";
+import prayerIcon from "../../assets/icons/prayer.png";
+import praiseIcon from "../../assets/icons/praise.png";
+import sharingTheGospelIcon from "../../assets/icons/evangelism.png";
+import leadersIcon from "../../assets/icons/leadership.png";
+import churchCommitmentIcon from "../../assets/icons/covenant.png";
 
 let toastSuccess,
   toastError,
@@ -268,7 +268,7 @@ class GroupDetailScreen extends React.Component {
         <Icon
           type="MaterialIcons"
           name="arrow-back"
-          onPress={() => navigation.push("Groups")}
+          onPress={() => navigation.push("GroupList")}
           style={[{ paddingLeft: 16, color: "#FFFFFF" }]}
         />
       ),
@@ -947,6 +947,10 @@ class GroupDetailScreen extends React.Component {
     }
   };
 
+  tabChanged = event => {
+    this.props.navigation.setParams({ hideTabBar: event.i === 2 });
+  };
+
   render() {
     const successToast = (
       <Toast
@@ -974,6 +978,7 @@ class GroupDetailScreen extends React.Component {
           <Tabs
             renderTabBar={() => <ScrollableTab />}
             tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
+            onChangeTab={this.tabChanged}
           >
             <Tab
               heading="Details"
