@@ -10,12 +10,7 @@ import ContactsScreen from "./ContactsScreen";
 import ContactDetailScreen from "./ContactDetailScreen";
 
 function ContactsIcon({ focused }) {
-  return (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-contacts" : "md-contacts"}
-    />
-  );
+  return <TabBarIcon type={"FontAwesome"} name={"user"} focused={focused} />;
 }
 ContactsIcon.propTypes = {
   focused: PropTypes.bool.isRequired

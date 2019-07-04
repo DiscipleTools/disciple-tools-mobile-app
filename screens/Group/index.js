@@ -10,12 +10,7 @@ import GroupsScreen from "./GroupsScreen";
 import GroupDetailScreen from "./GroupDetailScreen";
 
 function GroupsIcon({ focused }) {
-  return (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-people" : "md-people"}
-    />
-  );
+  return <TabBarIcon type={"FontAwesome"} name={"users"} focused={focused} />;
 }
 GroupsIcon.propTypes = {
   focused: PropTypes.bool.isRequired

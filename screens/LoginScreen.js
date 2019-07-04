@@ -101,7 +101,7 @@ class LoginScreen extends React.Component {
   componentDidUpdate() {
     if (this.props.user) {
       if (this.props.user.token) {
-        this.props.navigation.navigate('Home');
+        this.props.navigation.navigate('ContactList');
       }
     }
   }

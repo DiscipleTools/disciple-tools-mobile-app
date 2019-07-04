@@ -55,6 +55,7 @@ import KeyboardShift from "../../components/KeyboardShift";
 import { Col, Row, Grid } from "react-native-easy-grid";
 import KeyboardAccessory from "react-native-sticky-keyboard-accessory";
 import ProgressBarAnimated from "react-native-progress-bar-animated";
+import { Chip, Selectize } from "react-native-material-selectize";
 
 import hasBibleIcon from "../../assets/icons/book-bookmark.png";
 import readingBibleIcon from "../../assets/icons/word.png";
@@ -72,7 +73,8 @@ let toastSuccess,
   windowWidth = Dimensions.get("window").width,
   progressBarWidth = windowWidth - 100,
   milestonesGridSize = windowWidth + 5,
-  commentsFlatList;
+  commentsFlatList,
+  selectize;
 const styles = StyleSheet.create({
   tabBarUnderlineStyle: {
     borderBottomWidth: 2,
@@ -421,7 +423,7 @@ class ContactDetailScreen extends React.Component {
             ...newState,
             contact
           };
-          if(prevState.updateCommentsActivities) {
+          if (prevState.updateCommentsActivities) {
             newState = {
               ...newState,
               commentsOrActivities: []
@@ -435,7 +437,7 @@ class ContactDetailScreen extends React.Component {
               contact.baptism_date
             );
           }
-          console.log("CONTACTS_GETBYID_SUCCESS", contact);
+          //console.log("CONTACTS_GETBYID_SUCCESS", contact);
           newState = {
             ...newState,
             contact,
@@ -505,8 +507,13 @@ class ContactDetailScreen extends React.Component {
 
   componentDidUpdate(prevProps) {
     const { contactsReducerResponse, groupsReducerResponse } = this.props;
-    const { contact, contacts, renderView, updateCommentsActivities } = this.state;
-    console.log("updateCommentsActivities", updateCommentsActivities);
+    const {
+      contact,
+      contacts,
+      renderView,
+      updateCommentsActivities
+    } = this.state;
+    //console.log("updateCommentsActivities", updateCommentsActivities);
     if (prevProps.groupsReducerResponse != groupsReducerResponse) {
       switch (groupsReducerResponse) {
         case GROUPS_GET_LOCATIONS_SUCCESS:
@@ -533,7 +540,7 @@ class ContactDetailScreen extends React.Component {
           if (!renderView) {
             this.getUsersContacts();
           }
-          if(updateCommentsActivities) {
+          if (updateCommentsActivities) {
             this.getContactComments(contact.ID);
           }
           break;
@@ -863,8 +870,35 @@ class ContactDetailScreen extends React.Component {
 
   onSaveContact = (quickAction = {}) => {
     Keyboard.dismiss();
+    //console.log("quickAction", quickAction);
+    //console.log("this.state.contact", this.state.contact);
 
-    if (Object.keys(quickAction).length > 0) {
+    if (
+      Object.prototype.hasOwnProperty.call(
+        quickAction,
+        "quick_button_no_answer"
+      ) ||
+      Object.prototype.hasOwnProperty.call(
+        quickAction,
+        "quick_button_contact_established"
+      ) ||
+      Object.prototype.hasOwnProperty.call(
+        quickAction,
+        "quick_button_meeting_scheduled"
+      ) ||
+      Object.prototype.hasOwnProperty.call(
+        quickAction,
+        "quick_button_meeting_complete"
+      ) ||
+      Object.prototype.hasOwnProperty.call(
+        quickAction,
+        "quick_button_no_show"
+      ) ||
+      Object.prototype.hasOwnProperty.call(
+        quickAction,
+        "quick_button_phone_off"
+      )
+    ) {
       var contactToSave = {
         ID: this.state.contact.ID,
         ...quickAction
@@ -905,7 +939,7 @@ class ContactDetailScreen extends React.Component {
         contactToSave.sources.values = this.setSources();
       }
     }
-    console.log(contactToSave);
+    //console.log("contactToSave", contactToSave);
 
     this.props.saveContact(
       this.props.user.domain,
@@ -1513,7 +1547,11 @@ class ContactDetailScreen extends React.Component {
                                 <Label style={styles.formLabel}>Message</Label>
                               </Col>
                             </Row>
+
+                            
+                  selectedItems={[]}
          */
+        
     return (
       <Container>
         {this.state.contact.ID && this.state.renderView && (
@@ -1572,8 +1610,8 @@ class ContactDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
-                                  android="md-people"
-                                  ios="ios-people"
+                                  type={"Ionicons"}
+                                  name={"md-people"}
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -1604,8 +1642,8 @@ class ContactDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
-                                  android="md-call"
-                                  ios="ios-call"
+                                  type={"FontAwesome"}
+                                  name={"phone"}
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -1683,8 +1721,8 @@ class ContactDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
-                                  android="md-mail"
-                                  ios="ios-mail"
+                                  type={"FontAwesome"}
+                                  name={"envelope"}
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -1762,8 +1800,8 @@ class ContactDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
-                                  android="md-home"
-                                  ios="ios-home"
+                                  type={"Entypo"}
+                                  name={"home"}
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -1841,8 +1879,8 @@ class ContactDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
-                                  android={"md-pin"}
-                                  ios={"ios-pin"}
+                                  type={"Fontisto"}
+                                  name={"map-marker-alt"}
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -1866,8 +1904,8 @@ class ContactDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
-                                  android="md-globe"
-                                  ios="ios-globe"
+                                  type={"FontAwesome"}
+                                  name={"globe"}
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -2451,8 +2489,8 @@ class ContactDetailScreen extends React.Component {
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
-                              android="md-calendar"
-                              ios="ios-calendar"
+                              type={"Entypo"}
+                              name={"water"}
                               style={styles.formIcon}
                             />
                           </Col>

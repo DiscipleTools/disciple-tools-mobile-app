@@ -365,7 +365,7 @@ export function* getById({ domain, token, contactId }) {
       const jsonData = yield response.json();
       if (response.status === 200) {
         const contact = jsonData;
-        console.log("CONTACTS_GETBYID_RESPONSE", contact);
+        //console.log("CONTACTS_GETBYID_RESPONSE", contact);
         yield put({
           type: actions.CONTACTS_GETBYID_SUCCESS,
           contact: {

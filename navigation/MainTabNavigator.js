@@ -5,15 +5,15 @@ import {
   createStackNavigator,
   createBottomTabNavigator
 } from "react-navigation";
-
 import TabBarIcon from "../components/TabBarIcon";
-import HomeScreen from "../screens/HomeScreen";
+
+//import HomeScreen from "../screens/HomeScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import ContactStack from "../screens/Contact/index";
 import GroupStack from "../screens/Group/index";
 
 import Colors from "../constants/Colors";
-
+/*
 const HomeStack = createStackNavigator({ Home: HomeScreen });
 function HomeIcon({ focused }) {
   return (
@@ -34,17 +34,12 @@ HomeStack.navigationOptions = {
 HomeStack.propTypes = {
   focused: PropTypes.bool
 };
-
+*/
 const SettingsStack = createStackNavigator({
   Settings: SettingsScreen
 });
 function SettingsIcon({ focused }) {
-  return (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-options" : "md-options"}
-    />
-  );
+  return <TabBarIcon type={"FontAwesome"} name={"cog"} focused={focused} />;
 }
 SettingsIcon.propTypes = {
   focused: PropTypes.bool.isRequired
@@ -56,7 +51,7 @@ SettingsStack.navigationOptions = {
 };
 
 export default createBottomTabNavigator({
-  HomeStack,
+  //HomeStack,
   ContactStack,
   GroupStack,
   SettingsStack
