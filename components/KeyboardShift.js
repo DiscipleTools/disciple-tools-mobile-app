@@ -1,29 +1,39 @@
-import { PropTypes } from "prop-types";
-import React, { Component } from "react";
+import { PropTypes } from 'prop-types';
+import React, { Component } from 'react';
 import {
   Animated,
   Dimensions,
   Keyboard,
   StyleSheet,
   TextInput,
-  UIManager
-} from "react-native";
+  UIManager,
+} from 'react-native';
 
 const { State: TextInputState } = TextInput;
 
+const styles = StyleSheet.create({
+  container: {
+    height: '100%',
+    left: 0,
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+  },
+});
+
 export default class KeyboardShift extends Component {
   state = {
-    shift: new Animated.Value(0)
+    shift: new Animated.Value(0),
   };
 
   componentDidMount() {
     this.keyboardDidShowSub = Keyboard.addListener(
-      "keyboardDidShow",
-      this.handleKeyboardDidShow
+      'keyboardDidShow',
+      this.handleKeyboardDidShow,
     );
     this.keyboardDidHideSub = Keyboard.addListener(
-      "keyboardDidHide",
-      this.handleKeyboardDidHide
+      'keyboardDidHide',
+      this.handleKeyboardDidHide,
     );
   }
 
@@ -32,20 +42,8 @@ export default class KeyboardShift extends Component {
     this.keyboardDidHideSub.remove();
   }
 
-  render() {
-    const { children: renderProp } = this.props;
-    const { shift } = this.state;
-    return (
-      <Animated.View
-        style={[styles.container, { transform: [{ translateY: shift }] }]}
-      >
-        {renderProp()}
-      </Animated.View>
-    );
-  }
-
-  handleKeyboardDidShow = event => {
-    const { height: windowHeight } = Dimensions.get("window");
+  handleKeyboardDidShow = (event) => {
+    const { height: windowHeight } = Dimensions.get('window');
     const keyboardHeight = event.endCoordinates.height;
     const currentlyFocusedField = TextInputState.currentlyFocusedField();
     UIManager.measure(
@@ -60,9 +58,9 @@ export default class KeyboardShift extends Component {
         Animated.timing(this.state.shift, {
           toValue: gap,
           duration: 500,
-          useNativeDriver: true
+          useNativeDriver: true,
         }).start();
-      }
+      },
     );
   };
 
@@ -70,21 +68,23 @@ export default class KeyboardShift extends Component {
     Animated.timing(this.state.shift, {
       toValue: 0,
       duration: 500,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start();
   };
+
+  render() {
+    const { children: renderProp } = this.props;
+    const { shift } = this.state;
+    return (
+      <Animated.View
+        style={[styles.container, { transform: [{ translateY: shift }] }]}
+      >
+        {renderProp()}
+      </Animated.View>
+    );
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    height: "100%",
-    left: 0,
-    position: "absolute",
-    top: 0,
-    width: "100%"
-  }
-});
-
 KeyboardShift.propTypes = {
-  children: PropTypes.func.isRequired
+  children: PropTypes.func.isRequired,
 };

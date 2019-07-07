@@ -1,18 +1,18 @@
-import React from "react";
-import { Platform } from "react-native";
-import PropTypes from "prop-types";
+import React from 'react';
+// import { Platform } from 'react-native';
+import PropTypes from 'prop-types';
 import {
   createStackNavigator,
-  createBottomTabNavigator
-} from "react-navigation";
-import TabBarIcon from "../components/TabBarIcon";
+  createBottomTabNavigator,
+} from 'react-navigation';
+import TabBarIcon from '../components/TabBarIcon';
 
-//import HomeScreen from "../screens/HomeScreen";
-import SettingsScreen from "../screens/SettingsScreen";
-import ContactStack from "../screens/Contact/index";
-import GroupStack from "../screens/Group/index";
+// import HomeScreen from "../screens/HomeScreen";
+import SettingsScreen from '../screens/SettingsScreen';
+import ContactStack from '../screens/Contact/index';
+import GroupStack from '../screens/Group/index';
 
-import Colors from "../constants/Colors";
+import Colors from '../constants/Colors';
 /*
 const HomeStack = createStackNavigator({ Home: HomeScreen });
 function HomeIcon({ focused }) {
@@ -36,23 +36,23 @@ HomeStack.propTypes = {
 };
 */
 const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen
+  Settings: SettingsScreen,
 });
 function SettingsIcon({ focused }) {
-  return <TabBarIcon type={"FontAwesome"} name={"cog"} focused={focused} />;
+  return <TabBarIcon type="FontAwesome" name="cog" focused={focused} />;
 }
 SettingsIcon.propTypes = {
-  focused: PropTypes.bool.isRequired
+  focused: PropTypes.bool.isRequired,
 };
 SettingsStack.navigationOptions = {
-  tabBarLabel: "Settings",
+  tabBarLabel: 'Settings',
   tabBarIcon: SettingsIcon,
-  tabBarOptions: { activeTintColor: Colors.tabIconSelected }
+  tabBarOptions: { activeTintColor: Colors.tabIconSelected },
 };
 
 export default createBottomTabNavigator({
-  //HomeStack,
+  // HomeStack,
   ContactStack,
   GroupStack,
-  SettingsStack
+  SettingsStack,
 });

@@ -54,17 +54,12 @@ class ContactsScreen extends React.Component {
     contacts: []
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     this.onRefresh();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const { contactsReducerResponse, error } = nextProps;
-    const {} = prevState;
+    const { contactsReducerResponse, error, contacts } = nextProps;
     let newState = {
       ...prevState,
       contactsReducerResponse
@@ -79,7 +74,6 @@ class ContactsScreen extends React.Component {
         };
         break;
       case CONTACTS_GETALL_SUCCESS:
-        const { contacts } = nextProps;
         newState = {
           ...newState,
           contacts,
@@ -195,16 +189,20 @@ ContactsScreen.propTypes = {
     domain: PropTypes.string,
     token: PropTypes.string
   }).isRequired,
+  /* eslint-disable */
   contacts: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.number
     })
   ).isRequired,
+  /* eslint-enable */
   error: PropTypes.shape({
     message: PropTypes.string
   }),
   getAllContacts: PropTypes.func.isRequired,
+  /* eslint-disable */
   contactsReducerResponse: PropTypes.string
+  /* eslint-enable */
 };
 ContactsScreen.defaultProps = {
   error: null,

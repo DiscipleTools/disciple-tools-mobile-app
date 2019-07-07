@@ -1,8 +1,8 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Icon } from "native-base";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Icon } from 'native-base';
 
-import Colors from "../constants/Colors";
+import Colors from '../constants/Colors';
 
 function TabBarIcon({ type, name, focused }) {
   return (
@@ -12,7 +12,7 @@ function TabBarIcon({ type, name, focused }) {
       style={{
         marginBottom: -3,
         color: focused ? Colors.tabIconSelected : Colors.tabIconDefault,
-        fontSize: 26
+        fontSize: 26,
       }}
     />
   );
@@ -21,6 +21,6 @@ function TabBarIcon({ type, name, focused }) {
 TabBarIcon.propTypes = {
   type: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  focused: PropTypes.bool.isRequired
+  focused: PropTypes.bool.isRequired,
 };
 export default TabBarIcon;

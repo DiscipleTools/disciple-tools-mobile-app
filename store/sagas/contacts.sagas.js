@@ -1,22 +1,24 @@
-import { put, take, takeEvery, takeLatest, all } from "redux-saga/effects";
-import * as actions from "../actions/contacts.actions";
+import {
+  put, take, takeEvery, takeLatest, all,
+} from 'redux-saga/effects';
+import * as actions from '../actions/contacts.actions';
 
 export function* getAll({ domain, token }) {
   yield put({ type: actions.CONTACTS_GETALL_START });
 
   yield put({
-    type: "REQUEST",
+    type: 'REQUEST',
     payload: {
       url: `https://${domain}/wp-json/dt-posts/v2/contacts`,
       data: {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        }
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-      action: actions.CONTACTS_GETALL_RESPONSE
-    }
+      action: actions.CONTACTS_GETALL_RESPONSE,
+    },
   });
 
   try {
@@ -28,12 +30,12 @@ export function* getAll({ domain, token }) {
         if (jsonData.posts) {
           yield put({
             type: actions.CONTACTS_GETALL_SUCCESS,
-            contacts: jsonData.posts
+            contacts: jsonData.posts,
           });
         } else {
           yield put({
             type: actions.CONTACTS_GETALL_SUCCESS,
-            contacts: []
+            contacts: [],
           });
         }
       } else {
@@ -41,8 +43,8 @@ export function* getAll({ domain, token }) {
           type: actions.CONTACTS_GETALL_FAILURE,
           error: {
             code: jsonData.code,
-            message: jsonData.message
-          }
+            message: jsonData.message,
+          },
         });
       }
     }
@@ -50,56 +52,56 @@ export function* getAll({ domain, token }) {
     yield put({
       type: actions.CONTACTS_GETALL_FAILURE,
       error: {
-        code: "400",
-        message: error.toString()
-      }
+        code: '400',
+        message: error.toString(),
+      },
     });
   }
 }
 
 function* delayPostInitialComment(domain, token, comment, contactId) {
   yield put({
-    type: "REQUEST",
+    type: 'REQUEST',
     payload: {
       url: `https://${domain}/wp-json/dt/v1/contact/${contactId}/comment`,
       data: {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          comment: `${comment}`
-        })
-      }
-    }
+          comment: `${comment}`,
+        }),
+      },
+    },
   });
 }
 
 export function* save({ domain, token, contactData }) {
   yield put({ type: actions.CONTACTS_SAVE_START });
-  let contact = contactData,
-    contactInitialComment;
+  let contact = contactData;
+  let contactInitialComment;
   if (contact.initial_comment) {
     contactInitialComment = contact.initial_comment;
     delete contact.initial_comment;
   }
-  const urlPart = contact.ID ? contact.ID : "";
+  const urlPart = contact.ID ? contact.ID : '';
   delete contact.ID;
   yield put({
-    type: "REQUEST",
+    type: 'REQUEST',
     payload: {
       url: `https://${domain}/wp-json/dt-posts/v2/contacts/${urlPart}`,
       data: {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          Authorization: `Bearer ${token}`
+          'Content-Type': 'application/json;charset=UTF-8',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(contact)
+        body: JSON.stringify(contact),
       },
-      action: actions.CONTACTS_SAVE_RESPONSE
-    }
+      action: actions.CONTACTS_SAVE_RESPONSE,
+    },
   });
 
   try {
@@ -114,52 +116,42 @@ export function* save({ domain, token, contactData }) {
           contact: {
             ID: contact.ID,
             title: contact.title,
-            contact_phone: contact.contact_phone.map(phone => {
-              return {
-                key: phone.key,
-                value: phone.value
-              };
-            }),
-            contact_email: contact.contact_email.map(email => {
-              return {
-                key: email.key,
-                value: email.value
-              };
-            }),
+            contact_phone: contact.contact_phone ? contact.contact_phone.map(phone => ({
+              key: phone.key,
+              value: phone.value,
+            })) : [],
+            contact_email: contact.contact_email ? contact.contact_email.map(email => ({
+              key: email.key,
+              value: email.value,
+            })) : [],
             sources: {
               values: contact.sources
-                ? contact.sources.map(source => {
-                    return {
-                      label: source,
-                      value: source
-                    };
-                  })
-                : []
+                ? contact.sources.map(source => ({
+                  label: source,
+                  value: source,
+                }))
+                : [],
             },
             geonames: {
               values: contact.geonames
-                ? contact.geonames.map(geoname => {
-                    return {
-                      name: geoname.label,
-                      value: geoname.id.toString()
-                    };
-                  })
-                : []
+                ? contact.geonames.map(geoname => ({
+                  name: geoname.label,
+                  value: geoname.id.toString(),
+                }))
+                : [],
             },
             overall_status: contact.overall_status.key,
             assigned_to: contact.assigned_to
-              ? parseInt(contact.assigned_to.id)
+              ? parseInt(contact.assigned_to.id, 10)
               : null,
             seeker_path: contact.seeker_path.key,
             subassigned: {
-              values: contact.subassigned.map(user => {
-                return {
-                  name: user.post_title,
-                  value: user.ID.toString()
-                };
-              })
+              values: contact.subassigned.map(user => ({
+                name: user.post_title,
+                value: user.ID.toString(),
+              })),
             },
-            /*contact_facebook: {
+            /* contact_facebook: {
               values: contact.contact_facebook
                 ? contact.contact_facebook.map(contact => {
                     return {
@@ -208,7 +200,7 @@ export function* save({ domain, token, contactData }) {
                     };
                   })
                 : []
-            },*/
+            }, */
             baptism_date:
               contact.baptism_date && contact.baptism_date.formatted.length > 0
                 ? contact.baptism_date.formatted
@@ -216,107 +208,105 @@ export function* save({ domain, token, contactData }) {
             milestones: {
               values: contact.milestones
                 ? contact.milestones.map(milestone => ({
-                    value: milestone
-                  }))
-                : []
+                  value: milestone,
+                }))
+                : [],
             },
             age: contact.age ? contact.age.key : null,
             gender: contact.gender ? contact.gender.key : null,
             groups: {
               values: contact.groups
                 ? contact.groups.map(group => ({
-                    name: group.post_title,
-                    value: group.ID.toString()
-                  }))
-                : []
+                  name: group.post_title,
+                  value: group.ID.toString(),
+                }))
+                : [],
             },
             relation: {
               values: contact.relation
                 ? contact.relation.map(relationItem => ({
-                    name: relationItem.post_title,
-                    value: relationItem.ID.toString(),
-                    post_date: relationItem.post_date
-                  }))
-                : []
+                  name: relationItem.post_title,
+                  value: relationItem.ID.toString(),
+                  post_date: relationItem.post_date,
+                }))
+                : [],
             },
             baptized_by: {
               values: contact.baptized_by
                 ? contact.baptized_by.map(baptizedByItem => ({
-                    name: baptizedByItem.post_title,
-                    value: baptizedByItem.ID.toString(),
-                    post_date: baptizedByItem.post_date
-                  }))
-                : []
+                  name: baptizedByItem.post_title,
+                  value: baptizedByItem.ID.toString(),
+                  post_date: baptizedByItem.post_date,
+                }))
+                : [],
             },
             baptized: {
               values: contact.baptized
                 ? contact.baptized.map(baptizedItem => ({
-                    name: baptizedItem.post_title,
-                    value: baptizedItem.ID.toString(),
-                    post_date: baptizedItem.post_date
-                  }))
-                : []
+                  name: baptizedItem.post_title,
+                  value: baptizedItem.ID.toString(),
+                  post_date: baptizedItem.post_date,
+                }))
+                : [],
             },
             coached_by: {
               values: contact.coached_by
                 ? contact.coached_by.map(coachedItem => ({
-                    name: coachedItem.post_title,
-                    value: coachedItem.ID.toString(),
-                    post_date: coachedItem.post_date
-                  }))
-                : []
+                  name: coachedItem.post_title,
+                  value: coachedItem.ID.toString(),
+                  post_date: coachedItem.post_date,
+                }))
+                : [],
             },
             coaching: {
               values: contact.coaching
                 ? contact.coaching.map(coachingItem => ({
-                    name: coachingItem.post_title,
-                    value: coachingItem.ID.toString(),
-                    post_date: coachingItem.post_date
-                  }))
-                : []
+                  name: coachingItem.post_title,
+                  value: coachingItem.ID.toString(),
+                  post_date: coachingItem.post_date,
+                }))
+                : [],
             },
             contact_address: contact.contact_address
-              ? contact.contact_address.map(address => {
-                  return {
-                    key: address.key,
-                    value: address.value
-                  };
-                })
+              ? contact.contact_address.map(address => ({
+                key: address.key,
+                value: address.value,
+              }))
               : [],
             people_groups: {
               values: contact.people_groups
                 ? contact.people_groups.map(peopleGroup => ({
-                    value: peopleGroup.ID.toString(),
-                    name: peopleGroup.post_title
-                  }))
-                : []
+                  value: peopleGroup.ID.toString(),
+                  name: peopleGroup.post_title,
+                }))
+                : [],
             },
             quick_button_no_answer: contact.quick_button_no_answer
               ? contact.quick_button_no_answer
-              : "0",
+              : '0',
             quick_button_contact_established: contact.quick_button_contact_established
               ? contact.quick_button_contact_established
-              : "0",
+              : '0',
             quick_button_meeting_scheduled: contact.quick_button_meeting_scheduled
               ? contact.quick_button_meeting_scheduled
-              : "0",
+              : '0',
             quick_button_meeting_complete: contact.quick_button_meeting_complete
               ? contact.quick_button_meeting_complete
-              : "0",
+              : '0',
             quick_button_no_show: contact.quick_button_no_show
               ? contact.quick_button_no_show
-              : "0",
-            /*quick_button_phone_off: contact.quick_button_phone_off
+              : '0',
+            /* quick_button_phone_off: contact.quick_button_phone_off
               ? contact.quick_button_phone_off
-              : "0"*/
-          }
+              : "0" */
+          },
         });
         if (contactInitialComment) {
           delayPostInitialComment(
             domain,
             token,
             contactInitialComment,
-            contact.ID
+            contact.ID,
           );
         }
       } else {
@@ -324,8 +314,8 @@ export function* save({ domain, token, contactData }) {
           type: actions.CONTACTS_SAVE_FAILURE,
           error: {
             code: jsonData.code,
-            message: jsonData.message
-          }
+            message: jsonData.message,
+          },
         });
       }
     }
@@ -333,9 +323,9 @@ export function* save({ domain, token, contactData }) {
     yield put({
       type: actions.CONTACTS_SAVE_FAILURE,
       error: {
-        code: "400",
-        message: error.toString()
-      }
+        code: '400',
+        message: error.toString(),
+      },
     });
   }
 }
@@ -344,18 +334,18 @@ export function* getById({ domain, token, contactId }) {
   yield put({ type: actions.CONTACTS_GETBYID_START });
 
   yield put({
-    type: "REQUEST",
+    type: 'REQUEST',
     payload: {
       url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}`,
       data: {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        }
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-      action: actions.CONTACTS_GETBYID_RESPONSE
-    }
+      action: actions.CONTACTS_GETBYID_RESPONSE,
+    },
   });
 
   try {
@@ -365,58 +355,48 @@ export function* getById({ domain, token, contactId }) {
       const jsonData = yield response.json();
       if (response.status === 200) {
         const contact = jsonData;
-        //console.log("CONTACTS_GETBYID_RESPONSE", contact);
+        // console.log("CONTACTS_GETBYID_RESPONSE", contact);
         yield put({
           type: actions.CONTACTS_GETBYID_SUCCESS,
           contact: {
             ID: contact.ID,
             title: contact.title,
-            contact_phone: contact.contact_phone.map(phone => {
-              return {
-                key: phone.key,
-                value: phone.value
-              };
-            }),
-            contact_email: contact.contact_email.map(email => {
-              return {
-                key: email.key,
-                value: email.value
-              };
-            }),
+            contact_phone: contact.contact_phone ? contact.contact_phone.map(phone => ({
+              key: phone.key,
+              value: phone.value,
+            })) : [],
+            contact_email: contact.contact_email ? contact.contact_email.map(email => ({
+              key: email.key,
+              value: email.value,
+            })) : [],
             sources: {
               values: contact.sources
-                ? contact.sources.map(source => {
-                    return {
-                      label: source,
-                      value: source
-                    };
-                  })
-                : []
+                ? contact.sources.map(source => ({
+                  label: source,
+                  value: source,
+                }))
+                : [],
             },
             geonames: {
               values: contact.geonames
-                ? contact.geonames.map(geoname => {
-                    return {
-                      name: geoname.label,
-                      value: geoname.id.toString()
-                    };
-                  })
-                : []
+                ? contact.geonames.map(geoname => ({
+                  name: geoname.label,
+                  value: geoname.id.toString(),
+                }))
+                : [],
             },
             overall_status: contact.overall_status.key,
             assigned_to: contact.assigned_to
-              ? parseInt(contact.assigned_to.id)
+              ? parseInt(contact.assigned_to.id, 10)
               : null,
             seeker_path: contact.seeker_path.key,
             subassigned: {
-              values: contact.subassigned.map(user => {
-                return {
-                  name: user.post_title,
-                  value: user.ID.toString()
-                };
-              })
+              values: contact.subassigned.map(user => ({
+                name: user.post_title,
+                value: user.ID.toString(),
+              })),
             },
-            /*contact_facebook: {
+            /* contact_facebook: {
               values: contact.contact_facebook
                 ? contact.contact_facebook.map(contact => {
                     return {
@@ -465,7 +445,7 @@ export function* getById({ domain, token, contactId }) {
                     };
                   })
                 : []
-            },*/
+            }, */
             baptism_date:
               contact.baptism_date && contact.baptism_date.formatted.length > 0
                 ? contact.baptism_date.formatted
@@ -473,100 +453,98 @@ export function* getById({ domain, token, contactId }) {
             milestones: {
               values: contact.milestones
                 ? contact.milestones.map(milestone => ({
-                    value: milestone
-                  }))
-                : []
+                  value: milestone,
+                }))
+                : [],
             },
             age: contact.age ? contact.age.key : null,
             gender: contact.gender ? contact.gender.key : null,
             groups: {
               values: contact.groups
                 ? contact.groups.map(group => ({
-                    name: group.post_title,
-                    value: group.ID.toString()
-                  }))
-                : []
+                  name: group.post_title,
+                  value: group.ID.toString(),
+                }))
+                : [],
             },
             relation: {
               values: contact.relation
                 ? contact.relation.map(relationItem => ({
-                    name: relationItem.post_title,
-                    value: relationItem.ID.toString(),
-                    post_date: relationItem.post_date
-                  }))
-                : []
+                  name: relationItem.post_title,
+                  value: relationItem.ID.toString(),
+                  post_date: relationItem.post_date,
+                }))
+                : [],
             },
             baptized_by: {
               values: contact.baptized_by
                 ? contact.baptized_by.map(baptizedByItem => ({
-                    name: baptizedByItem.post_title,
-                    value: baptizedByItem.ID.toString(),
-                    post_date: baptizedByItem.post_date
-                  }))
-                : []
+                  name: baptizedByItem.post_title,
+                  value: baptizedByItem.ID.toString(),
+                  post_date: baptizedByItem.post_date,
+                }))
+                : [],
             },
             baptized: {
               values: contact.baptized
                 ? contact.baptized.map(baptizedItem => ({
-                    name: baptizedItem.post_title,
-                    value: baptizedItem.ID.toString(),
-                    post_date: baptizedItem.post_date
-                  }))
-                : []
+                  name: baptizedItem.post_title,
+                  value: baptizedItem.ID.toString(),
+                  post_date: baptizedItem.post_date,
+                }))
+                : [],
             },
             coached_by: {
               values: contact.coached_by
                 ? contact.coached_by.map(coachedItem => ({
-                    name: coachedItem.post_title,
-                    value: coachedItem.ID.toString(),
-                    post_date: coachedItem.post_date
-                  }))
-                : []
+                  name: coachedItem.post_title,
+                  value: coachedItem.ID.toString(),
+                  post_date: coachedItem.post_date,
+                }))
+                : [],
             },
             coaching: {
               values: contact.coaching
                 ? contact.coaching.map(coachingItem => ({
-                    name: coachingItem.post_title,
-                    value: coachingItem.ID.toString(),
-                    post_date: coachingItem.post_date
-                  }))
-                : []
+                  name: coachingItem.post_title,
+                  value: coachingItem.ID.toString(),
+                  post_date: coachingItem.post_date,
+                }))
+                : [],
             },
             contact_address: contact.contact_address
-              ? contact.contact_address.map(address => {
-                  return {
-                    key: address.key,
-                    value: address.value
-                  };
-                })
+              ? contact.contact_address.map(address => ({
+                key: address.key,
+                value: address.value,
+              }))
               : [],
             people_groups: {
               values: contact.people_groups
                 ? contact.people_groups.map(peopleGroup => ({
-                    value: peopleGroup.ID.toString(),
-                    name: peopleGroup.post_title
-                  }))
-                : []
+                  value: peopleGroup.ID.toString(),
+                  name: peopleGroup.post_title,
+                }))
+                : [],
             },
             quick_button_no_answer: contact.quick_button_no_answer
               ? contact.quick_button_no_answer
-              : "0",
+              : '0',
             quick_button_contact_established: contact.quick_button_contact_established
               ? contact.quick_button_contact_established
-              : "0",
+              : '0',
             quick_button_meeting_scheduled: contact.quick_button_meeting_scheduled
               ? contact.quick_button_meeting_scheduled
-              : "0",
+              : '0',
             quick_button_meeting_complete: contact.quick_button_meeting_complete
               ? contact.quick_button_meeting_complete
-              : "0",
+              : '0',
             quick_button_no_show: contact.quick_button_no_show
               ? contact.quick_button_no_show
-              : "0",
-            /*quick_button_phone_off: contact.quick_button_phone_off
+              : '0',
+            /* quick_button_phone_off: contact.quick_button_phone_off
               ? contact.quick_button_phone_off
-              : "0"*/
-          }
+              : "0" */
+          },
         });
       } else {
         yield put({
@@ -574,8 +552,8 @@ export function* getById({ domain, token, contactId }) {
           error: {
             code: jsonData.code,
             message: jsonData.message,
-            data: jsonData.data
-          }
+            data: jsonData.data,
+          },
         });
       }
     }
@@ -583,9 +561,9 @@ export function* getById({ domain, token, contactId }) {
     yield put({
       type: actions.CONTACTS_GETBYID_FAILURE,
       error: {
-        code: "400",
-        message: error.toString()
-      }
+        code: '400',
+        message: error.toString(),
+      },
     });
   }
 }
@@ -594,18 +572,18 @@ export function* getCommentsByContact({ domain, token, contactId }) {
   yield put({ type: actions.CONTACTS_GET_COMMENTS_START });
 
   yield put({
-    type: "REQUEST",
+    type: 'REQUEST',
     payload: {
       url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments`,
       data: {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        }
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-      action: actions.CONTACTS_GET_COMMENTS_RESPONSE
-    }
+      action: actions.CONTACTS_GET_COMMENTS_RESPONSE,
+    },
   });
 
   try {
@@ -618,11 +596,11 @@ export function* getCommentsByContact({ domain, token, contactId }) {
           type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
           comments: jsonData.map(comment => ({
             ID: comment.comment_ID,
-            date: `${comment.comment_date.replace(" ", "T")}Z`,
+            date: `${comment.comment_date.replace(' ', 'T')}Z`,
             author: comment.comment_author,
             content: comment.comment_content,
-            gravatar: comment.gravatar
-          }))
+            gravatar: comment.gravatar,
+          })),
         });
       } else {
         yield put({
@@ -630,8 +608,8 @@ export function* getCommentsByContact({ domain, token, contactId }) {
           error: {
             code: jsonData.code,
             message: jsonData.message,
-            data: jsonData.data
-          }
+            data: jsonData.data,
+          },
         });
       }
     }
@@ -639,30 +617,32 @@ export function* getCommentsByContact({ domain, token, contactId }) {
     yield put({
       type: actions.CONTACTS_GET_COMMENTS_FAILURE,
       error: {
-        code: "400",
-        message: error.toString()
-      }
+        code: '400',
+        message: error.toString(),
+      },
     });
   }
 }
 
-export function* saveComment({ domain, token, contactId, commentData }) {
+export function* saveComment({
+  domain, token, contactId, commentData,
+}) {
   yield put({ type: actions.CONTACTS_SAVE_COMMENT_START });
 
   yield put({
-    type: "REQUEST",
+    type: 'REQUEST',
     payload: {
       url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments`,
       data: {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          Authorization: `Bearer ${token}`
+          'Content-Type': 'application/json;charset=UTF-8',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(commentData)
+        body: JSON.stringify(commentData),
       },
-      action: actions.CONTACTS_SAVE_COMMENT_RESPONSE
-    }
+      action: actions.CONTACTS_SAVE_COMMENT_RESPONSE,
+    },
   });
 
   try {
@@ -676,10 +656,10 @@ export function* saveComment({ domain, token, contactId, commentData }) {
           comment: {
             ID: jsonData.comment_ID,
             author: jsonData.comment_author,
-            date: `${jsonData.comment_date.replace(" ", "T")}Z`,
+            date: `${jsonData.comment_date.replace(' ', 'T')}Z`,
             content: jsonData.comment_content,
-            gravatar: "https://secure.gravatar.com/avatar/?s=16&d=mm&r=g"
-          }
+            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
+          },
         });
       } else {
         yield put({
@@ -687,8 +667,8 @@ export function* saveComment({ domain, token, contactId, commentData }) {
           error: {
             code: jsonData.code,
             message: jsonData.message,
-            data: jsonData.data
-          }
+            data: jsonData.data,
+          },
         });
       }
     }
@@ -696,9 +676,9 @@ export function* saveComment({ domain, token, contactId, commentData }) {
     yield put({
       type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
       error: {
-        code: "400",
-        message: error.toString()
-      }
+        code: '400',
+        message: error.toString(),
+      },
     });
   }
 }
@@ -707,18 +687,18 @@ export function* getActivitiesByContact({ domain, token, contactId }) {
   yield put({ type: actions.CONTACTS_GET_ACTIVITIES_START });
 
   yield put({
-    type: "REQUEST",
+    type: 'REQUEST',
     payload: {
       url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/activity`,
       data: {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        }
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-      action: actions.CONTACTS_GET_ACTIVITIES_RESPONSE
-    }
+      action: actions.CONTACTS_GET_ACTIVITIES_RESPONSE,
+    },
   });
 
   try {
@@ -732,17 +712,17 @@ export function* getActivitiesByContact({ domain, token, contactId }) {
           activities: jsonData.map(activity => ({
             ID: activity.histid,
             date: new Date(
-              parseInt(activity.hist_time, 10) * 1000
+              parseInt(activity.hist_time, 10) * 1000,
             ).toISOString(),
             object_note: activity.object_note,
             gravatar:
-              activity.gravatar === ""
-                ? "https://secure.gravatar.com/avatar/?s=16&d=mm&r=g"
+              activity.gravatar === ''
+                ? 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g'
                 : activity.gravatar,
             meta_id: activity.meta_id,
             meta_key: activity.meta_key,
-            name: activity.name
-          }))
+            name: activity.name,
+          })),
         });
       } else {
         yield put({
@@ -750,8 +730,8 @@ export function* getActivitiesByContact({ domain, token, contactId }) {
           error: {
             code: jsonData.code,
             message: jsonData.message,
-            data: jsonData.data
-          }
+            data: jsonData.data,
+          },
         });
       }
     }
@@ -759,9 +739,9 @@ export function* getActivitiesByContact({ domain, token, contactId }) {
     yield put({
       type: actions.CONTACTS_GET_ACTIVITIES_FAILURE,
       error: {
-        code: "400",
-        message: error.toString()
-      }
+        code: '400',
+        message: error.toString(),
+      },
     });
   }
 }
@@ -773,6 +753,6 @@ export default function* contactsSaga() {
     takeEvery(actions.CONTACTS_GETBYID, getById),
     takeEvery(actions.CONTACTS_GET_COMMENTS, getCommentsByContact),
     takeEvery(actions.CONTACTS_SAVE_COMMENT, saveComment),
-    takeEvery(actions.CONTACTS_GET_ACTIVITIES, getActivitiesByContact)
+    takeEvery(actions.CONTACTS_GET_ACTIVITIES, getActivitiesByContact),
   ]);
 }

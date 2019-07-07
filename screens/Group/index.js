@@ -1,41 +1,40 @@
-import React from "react";
-import { createStackNavigator } from "react-navigation";
-import PropTypes from "prop-types";
-import { Platform } from "react-native";
+import React from 'react';
+import { createStackNavigator } from 'react-navigation';
+import PropTypes from 'prop-types';
 
-import Colors from "../../constants/Colors";
+import Colors from '../../constants/Colors';
 
-import TabBarIcon from "../../components/TabBarIcon";
-import GroupsScreen from "./GroupsScreen";
-import GroupDetailScreen from "./GroupDetailScreen";
+import TabBarIcon from '../../components/TabBarIcon';
+import GroupsScreen from './GroupsScreen';
+import GroupDetailScreen from './GroupDetailScreen';
 
 function GroupsIcon({ focused }) {
-  return <TabBarIcon type={"FontAwesome"} name={"users"} focused={focused} />;
+  return <TabBarIcon type="FontAwesome" name="users" focused={focused} />;
 }
 GroupsIcon.propTypes = {
-  focused: PropTypes.bool.isRequired
+  focused: PropTypes.bool.isRequired,
 };
 
 const groupStack = createStackNavigator({
   GroupList: {
-    screen: GroupsScreen
+    screen: GroupsScreen,
   },
   GroupDetail: {
-    screen: GroupDetailScreen
-  }
+    screen: GroupDetailScreen,
+  },
 });
 groupStack.navigationOptions = ({ navigation }) => {
-  let tabBarVisible = true,
-    currentView = navigation.state.routes[navigation.state.index],
-    currentViewName = currentView.routeName;
-  if (currentViewName === "GroupDetail") {
+  let tabBarVisible = true;
+  const currentView = navigation.state.routes[navigation.state.index];
+  const currentViewName = currentView.routeName;
+  if (currentViewName === 'GroupDetail') {
     tabBarVisible = !(currentView.params && currentView.params.hideTabBar);
   }
   return {
-    title: "Groups",
+    title: 'Groups',
     tabBarIcon: GroupsIcon,
     tabBarVisible,
-    tabBarOptions: { activeTintColor: Colors.tabIconSelected }
+    tabBarOptions: { activeTintColor: Colors.tabIconSelected },
   };
 };
 
