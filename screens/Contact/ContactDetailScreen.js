@@ -31,6 +31,7 @@ import MultipleTags from 'react-native-multiple-tags';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
+import ModalFilterPicker from 'react-native-modal-filter-picker';
 import KeyboardShift from '../../components/KeyboardShift';
 import {
   save,
@@ -54,6 +55,7 @@ import {
   getPeopleGroups,
   GROUPS_GET_PEOPLE_GROUPS_SUCCESS,
 } from '../../store/actions/groups.actions';
+import { getUsers, GET_USERS_SUCCESS } from '../../store/actions/users.actions';
 import Colors from '../../constants/Colors';
 
 import hasBibleIcon from '../../assets/icons/book-bookmark.png';
@@ -153,7 +155,6 @@ const styles = StyleSheet.create({
 
 function formatDateToPickerValue(formatted) {
   const newDate = new Date(new Date(formatted).setUTCHours(0, 0, 0, 0));
-  // newDate.setDate(newDate.getDate() + 1); //Increment 1 day to show correct date in DatePicker
   return newDate;
 }
 
@@ -321,7 +322,8 @@ class ContactDetailScreen extends React.Component {
     peopleGroups: [],
     currentPeopleGroups: [],
     currentSources: [],
-    updateCommentsActivities: false,
+    users: [],
+    showAssignedToModal: false,
   };
 
   componentDidMount() {
@@ -363,11 +365,15 @@ class ContactDetailScreen extends React.Component {
       search,
       contactsReducerError,
       peopleGroups,
+      usersReducerError,
+      usersReducerResponse,
+      users,
     } = nextProps;
     let newState = {
       ...prevState,
       groupsReducerResponse,
       contactsReducerResponse,
+      usersReducerResponse,
     };
 
     // New response incomming
@@ -418,13 +424,8 @@ class ContactDetailScreen extends React.Component {
           newState = {
             ...newState,
             contact,
+            commentsOrActivities: [],
           };
-          if (prevState.updateCommentsActivities) {
-            newState = {
-              ...newState,
-              commentsOrActivities: [],
-            };
-          }
           toastSuccess.show('Contact Saved!', 2000);
           break;
         case CONTACTS_GETBYID_SUCCESS:
@@ -433,7 +434,7 @@ class ContactDetailScreen extends React.Component {
               contact.baptism_date,
             );
           }
-          // console.log("CONTACTS_GETBYID_SUCCESS", contact);
+
           newState = {
             ...newState,
             contact,
@@ -452,7 +453,6 @@ class ContactDetailScreen extends React.Component {
           newState = {
             ...newState,
             commentsOrActivities: comments,
-            updateCommentsActivities: false,
           };
           break;
         case CONTACTS_GET_ACTIVITIES_SUCCESS: {
@@ -487,8 +487,24 @@ class ContactDetailScreen extends React.Component {
       }
     }
 
-    if (groupsReducerError || contactsReducerError) {
-      const error = groupsReducerError || contactsReducerError;
+    if (usersReducerResponse !== prevState.usersReducerResponse) {
+      switch (usersReducerResponse) {
+        case GET_USERS_SUCCESS:
+          newState = {
+            ...newState,
+            users: users.map(user => ({
+              key: user.ID,
+              label: user.name,
+            })),
+          };
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (groupsReducerError || contactsReducerError || usersReducerError) {
+      const error = groupsReducerError || contactsReducerError || usersReducerError;
       toastError.show(
         <View>
           <Text style={{ fontWeight: 'bold' }}>Code: </Text>
@@ -504,20 +520,19 @@ class ContactDetailScreen extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { contactsReducerResponse, groupsReducerResponse } = this.props;
     const {
-      contact,
-      contacts,
-      renderView,
-      updateCommentsActivities,
-    } = this.state;
-    // console.log("updateCommentsActivities", updateCommentsActivities);
+      contactsReducerResponse,
+      groupsReducerResponse,
+      usersReducerResponse,
+    } = this.props;
+    const { contact, contacts, renderView } = this.state;
+
     if (prevProps.groupsReducerResponse !== groupsReducerResponse) {
       switch (groupsReducerResponse) {
         case GROUPS_GET_LOCATIONS_SUCCESS:
           // After creation / Loading in Get By Id
           if (contact.ID && contacts.length === 0) {
-            this.getUsersContacts();
+            this.getUsers();
           }
           break;
         case GROUPS_GET_USERS_CONTACTS_SUCCESS:
@@ -540,9 +555,7 @@ class ContactDetailScreen extends React.Component {
           if (!renderView) {
             this.getUsersContacts();
           }
-          if (updateCommentsActivities) {
-            this.getContactComments(contact.ID);
-          }
+          this.getContactComments(contact.ID);
           break;
         case CONTACTS_GETBYID_SUCCESS:
           this.setSeekerPath(contact.seeker_path);
@@ -556,10 +569,24 @@ class ContactDetailScreen extends React.Component {
           break;
       }
     }
+
+    if (prevProps.usersReducerResponse !== usersReducerResponse) {
+      switch (usersReducerResponse) {
+        case GET_USERS_SUCCESS:
+          this.getUsersContacts();
+          break;
+        default:
+          break;
+      }
+    }
   }
 
   getLocations() {
     this.props.getLocations(this.props.user.domain, this.props.user.token);
+  }
+
+  getUsers() {
+    this.props.getUsers(this.props.user.domain, this.props.user.token);
   }
 
   getUsersContacts() {
@@ -870,8 +897,6 @@ class ContactDetailScreen extends React.Component {
 
   onSaveContact = (quickAction = {}) => {
     Keyboard.dismiss();
-    // console.log("quickAction", quickAction);
-    // console.log("this.state.contact", this.state.contact);
     let contactToSave = {
       ID: this.state.contact.ID,
     };
@@ -905,9 +930,6 @@ class ContactDetailScreen extends React.Component {
         ...contactToSave,
         ...quickAction,
       };
-      this.setState({
-        updateCommentsActivities: true,
-      });
     } else {
       contactToSave = JSON.parse(JSON.stringify(this.state.contact));
       contactToSave.geonames.values = this.setGeonames();
@@ -941,7 +963,6 @@ class ContactDetailScreen extends React.Component {
         contactToSave.sources.values = this.setSources();
       }
     }
-    // console.log("contactToSave", contactToSave);
 
     this.props.saveContact(
       this.props.user.domain,
@@ -1503,6 +1524,35 @@ class ContactDetailScreen extends React.Component {
     return sourcesToSave;
   };
 
+  updateShowAssignedToModal = (value) => {
+    this.setState({
+      showAssignedToModal: value,
+    });
+  };
+
+  onSelectAssignedTo = (key) => {
+    this.setState(prevState => ({
+      contact: {
+        ...prevState.contact,
+        assigned_to: `user-${key}`,
+      },
+      showAssignedToModal: false,
+    }));
+  };
+
+  onCancelAssignedTo = () => {
+    this.setState({
+      showAssignedToModal: false,
+    });
+  };
+
+  showAssignedUser = () => {
+    const foundUser = this.state.users.find(
+      user => `user-${user.key}` === this.state.contact.assigned_to,
+    );
+    return <Text>{foundUser ? foundUser.label : ''}</Text>;
+  };
+
   searchGroups() {
     this.props.searchGroups(this.props.user.domain, this.props.user.token);
   }
@@ -1575,6 +1625,7 @@ class ContactDetailScreen extends React.Component {
                             paddingRight: containerPadding - 15,
                             marginTop: 20,
                           }}
+                          pointerEvents={this.state.onlyView ? 'none' : 'auto'}
                         >
                           <Label
                             style={[styles.formLabel, { fontWeight: 'bold' }]}
@@ -1604,6 +1655,36 @@ class ContactDetailScreen extends React.Component {
                           pointerEvents={this.state.onlyView ? 'none' : 'auto'}
                         >
                           <Grid>
+                            <TouchableOpacity
+                              onPress={() => {
+                                this.updateShowAssignedToModal(true);
+                              }}
+                            >
+                              <Row style={styles.formRow}>
+                                <Col style={styles.formIconLabel}>
+                                  <Icon
+                                    type="FontAwesome"
+                                    name="user-circle"
+                                    style={styles.formIcon}
+                                  />
+                                </Col>
+                                <Col>
+                                  {this.showAssignedUser()}
+                                  <ModalFilterPicker
+                                    visible={this.state.showAssignedToModal}
+                                    onSelect={this.onSelectAssignedTo}
+                                    onCancel={this.onCancelAssignedTo}
+                                    options={this.state.users}
+                                  />
+                                </Col>
+                                <Col style={styles.formIconLabel}>
+                                  <Label style={styles.formLabel}>
+                                    Assigned to
+                                  </Label>
+                                </Col>
+                              </Row>
+                              <View style={styles.formDivider} />
+                            </TouchableOpacity>
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
@@ -1799,6 +1880,22 @@ class ContactDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
+                                  android="logo-facebook"
+                                  ios="logo-facebook"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text />
+                              </Col>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>Message</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
                                   type="Entypo"
                                   name="home"
                                   style={styles.formIcon}
@@ -1879,8 +1976,8 @@ class ContactDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
-                                  type="Fontisto"
-                                  name="map-marker-alt"
+                                  type="FontAwesome"
+                                  name="map-marker"
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -1931,8 +2028,8 @@ class ContactDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
-                                  android="md-time"
-                                  ios="ios-time"
+                                  type="FontAwesome"
+                                  name="clock-o"
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -2496,6 +2593,7 @@ class ContactDetailScreen extends React.Component {
                           </Col>
                           <Col>
                             <DatePicker
+                              placeHolderText="Add baptism date"
                               defaultDate={this.state.contact.baptism_date}
                               onDateChange={this.setBaptismDate}
                             />
@@ -2615,8 +2713,8 @@ class ContactDetailScreen extends React.Component {
                               <Col style={styles.formIconLabel}>
                                 <Icon
                                   active
-                                  android="md-people"
-                                  ios="ios-people"
+                                  type="FontAwesome"
+                                  name="users"
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -2641,8 +2739,8 @@ class ContactDetailScreen extends React.Component {
                               <Col style={styles.formIconLabel}>
                                 <Icon
                                   active
-                                  android="md-git-network"
-                                  ios="ios-git-network"
+                                  type="Entypo"
+                                  name="network"
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -2669,8 +2767,8 @@ class ContactDetailScreen extends React.Component {
                               <Col style={styles.formIconLabel}>
                                 <Icon
                                   active
-                                  android="md-water"
-                                  ios="ios-water"
+                                  type="Entypo"
+                                  name="water"
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -2695,8 +2793,8 @@ class ContactDetailScreen extends React.Component {
                               <Col style={styles.formIconLabel}>
                                 <Icon
                                   active
-                                  android="md-people"
-                                  ios="ios-people"
+                                  type="Entypo"
+                                  name="water"
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -2721,8 +2819,8 @@ class ContactDetailScreen extends React.Component {
                               <Col style={styles.formIconLabel}>
                                 <Icon
                                   active
-                                  android="md-people"
-                                  ios="ios-people"
+                                  type="FontAwesome"
+                                  name="black-tie"
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -2747,8 +2845,8 @@ class ContactDetailScreen extends React.Component {
                               <Col style={styles.formIconLabel}>
                                 <Icon
                                   active
-                                  android="md-people"
-                                  ios="ios-people"
+                                  type="MaterialCommunityIcons"
+                                  name="presentation"
                                   style={styles.formIcon}
                                 />
                               </Col>
@@ -3073,6 +3171,11 @@ ContactDetailScreen.propTypes = {
     code: PropTypes.string,
     message: PropTypes.string,
   }),
+  usersReducerResponse: PropTypes.string,
+  /* eslint-disable */
+  usersReducerError: PropTypes.string,
+  /* eslint-enable */
+  getUsers: PropTypes.func.isRequired,
 };
 
 ContactDetailScreen.defaultProps = {
@@ -3087,6 +3190,8 @@ ContactDetailScreen.defaultProps = {
     message: null,
   },
   contactsReducerResponse: null,
+  usersReducerResponse: null,
+  usersReducerError: null,
 };
 
 const mapStateToProps = state => ({
@@ -3103,6 +3208,9 @@ const mapStateToProps = state => ({
   search: state.groupsReducer.search,
   contactsReducerError: state.contactsReducer.error,
   peopleGroups: state.groupsReducer.peopleGroups,
+  users: state.usersReducer.users,
+  usersReducerResponse: state.usersReducer.type,
+  usersReducerError: state.usersReducer.error,
 });
 const mapDispatchToProps = dispatch => ({
   getLocations: (domain, token) => {
@@ -3131,6 +3239,9 @@ const mapDispatchToProps = dispatch => ({
   },
   getPeopleGroups: (domain, token) => {
     dispatch(getPeopleGroups(domain, token));
+  },
+  getUsers: (domain, token) => {
+    dispatch(getUsers(domain, token));
   },
 });
 

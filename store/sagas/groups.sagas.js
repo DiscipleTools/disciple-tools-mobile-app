@@ -97,7 +97,9 @@ export function* saveGroup({ domain, token, groupData }) {
               group.group_status && group.group_status.key
                 ? group.group_status.key
                 : null,
-            assigned_to: group.assigned_to ? group.assigned_to.id : null,
+            assigned_to: group.assigned_to
+              ? `user-${group.assigned_to.id}`
+              : null,
             coaches: {
               values: group.coaches
                 ? group.coaches.map(coach => ({
@@ -201,7 +203,9 @@ export function* getById({ domain, token, groupId }) {
               group.group_status && group.group_status.key
                 ? group.group_status.key
                 : null,
-            assigned_to: group.assigned_to ? group.assigned_to.id : null,
+            assigned_to: group.assigned_to
+              ? `user-${group.assigned_to.id}`
+              : null,
             coaches: {
               values: group.coaches
                 ? group.coaches.map(coach => ({

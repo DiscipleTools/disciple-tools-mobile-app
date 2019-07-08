@@ -142,7 +142,7 @@ export function* save({ domain, token, contactData }) {
             },
             overall_status: contact.overall_status.key,
             assigned_to: contact.assigned_to
-              ? parseInt(contact.assigned_to.id, 10)
+              ? `user-${contact.assigned_to.id}`
               : null,
             seeker_path: contact.seeker_path.key,
             subassigned: {
@@ -355,7 +355,6 @@ export function* getById({ domain, token, contactId }) {
       const jsonData = yield response.json();
       if (response.status === 200) {
         const contact = jsonData;
-        // console.log("CONTACTS_GETBYID_RESPONSE", contact);
         yield put({
           type: actions.CONTACTS_GETBYID_SUCCESS,
           contact: {
@@ -387,7 +386,7 @@ export function* getById({ domain, token, contactId }) {
             },
             overall_status: contact.overall_status.key,
             assigned_to: contact.assigned_to
-              ? parseInt(contact.assigned_to.id, 10)
+              ? `user-${contact.assigned_to.id}`
               : null,
             seeker_path: contact.seeker_path.key,
             subassigned: {

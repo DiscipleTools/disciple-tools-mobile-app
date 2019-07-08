@@ -60,7 +60,8 @@ import prayerIcon from '../../assets/icons/prayer.png';
 import praiseIcon from '../../assets/icons/praise.png';
 import sharingTheGospelIcon from '../../assets/icons/evangelism.png';
 import leadersIcon from '../../assets/icons/leadership.png';
-import churchCommitmentIcon from '../../assets/icons/covenant.png';
+import circleIcon from '../../assets/icons/circle.png';
+import dottedCircleIcon from '../../assets/icons/dotted-circle.png';
 
 let toastSuccess;
 let toastError;
@@ -209,19 +210,22 @@ const styles = StyleSheet.create({
 
 function formatDateToPickerValue(formatted) {
   const newDate = new Date(new Date(formatted).setUTCHours(0, 0, 0, 0));
-  // newDate.setDate(newDate.getDate() + 1); //Increment 1 day to show correct date in DatePicker
   return newDate;
 }
 
-function formatDateToBackEnd(dateObject) {
-  if (dateObject) {
-    let date = dateObject;
-    let month = date.getMonth();
-    month = month + 1 < 10 ? `0${month + 1}` : month + 1;
-    let day = date.getDate();
-    day = day < 10 ? `0${day}` : day;
-    date = `${date.getFullYear()}-${month}-${day}`;
-    return date;
+function formatDateToBackEnd(dateValue) {
+  if (dateValue) {
+    if (typeof dateValue.getMonth === 'function') {
+      let date = dateValue;
+      let month = date.getMonth();
+      month = month + 1 < 10 ? `0${month + 1}` : month + 1;
+      let day = date.getDate();
+      day = day < 10 ? `0${day}` : day;
+      date = `${date.getFullYear()}-${month}-${day}`;
+      return date;
+    } if (typeof dateValue === 'string') {
+      return dateValue;
+    }
   }
   return null;
 }
@@ -359,18 +363,28 @@ class GroupDetailScreen extends React.Component {
     if (groupsReducerResponse !== prevState.groupsReducerResponse) {
       switch (groupsReducerResponse) {
         case GROUPS_SAVE_SUCCESS:
-          toastSuccess.show('Group Saved!', 2000);
           // Creation
-          if (group.ID !== null && prevState.group.ID === null) {
+          if (group.ID && !prevState.group.ID) {
             navigation.setParams({
               groupName: group.title,
             });
             newState = {
               ...newState,
-              group,
               renderView: false,
             };
           }
+          if (group.end_date) {
+            group.end_date = formatDateToPickerValue(group.end_date);
+          }
+          if (group.start_date) {
+            group.start_date = formatDateToPickerValue(group.start_date);
+          }
+          newState = {
+            ...newState,
+            group,
+            commentsOrActivities: [],
+          };
+          toastSuccess.show('Group Saved!', 2000);
           break;
         case GROUPS_GET_USERS_CONTACTS_SUCCESS:
           newState = {
@@ -485,6 +499,7 @@ class GroupDetailScreen extends React.Component {
           if (!renderView) {
             this.getUsers();
           }
+          this.getGroupComments(group.ID);
           break;
         case GROUPS_GET_USERS_CONTACTS_SUCCESS:
           this.getLocations();
@@ -700,11 +715,11 @@ class GroupDetailScreen extends React.Component {
     });
   };
 
-  onSelectAssignedTo = (selectedUser) => {
+  onSelectAssignedTo = (key) => {
     this.setState(prevState => ({
       group: {
         ...prevState.group,
-        assigned_to: selectedUser.key,
+        assigned_to: `user-${key}`,
       },
       showAssignedToModal: false,
     }));
@@ -767,7 +782,9 @@ class GroupDetailScreen extends React.Component {
   };
 
   onCheckExistingHealthMetric = (metricName) => {
-    const healthMetrics = this.state.group.health_metrics.values;
+    const healthMetrics = this.state.group.health_metrics
+      ? this.state.group.health_metrics.values
+      : [];
     const foundhealthMetric = healthMetrics.some(
       metric => metric.value === metricName,
     );
@@ -775,7 +792,9 @@ class GroupDetailScreen extends React.Component {
   };
 
   onHealthMetricChange = (metricName) => {
-    const healthMetrics2 = this.state.group.health_metrics.values;
+    const healthMetrics2 = this.state.group.health_metrics
+      ? this.state.group.health_metrics.values
+      : [];
     const foundhealthMetric = healthMetrics2.find(
       metric => metric.value === metricName,
     );
@@ -876,8 +895,7 @@ class GroupDetailScreen extends React.Component {
 
   onSaveGroup = () => {
     Keyboard.dismiss();
-
-    const groupToSave = Object.assign({}, this.state.group);
+    const groupToSave = JSON.parse(JSON.stringify(this.state.group));
     if (Object.prototype.hasOwnProperty.call(groupToSave, 'start_date')) {
       groupToSave.start_date = formatDateToBackEnd(groupToSave.start_date);
     }
@@ -945,6 +963,13 @@ class GroupDetailScreen extends React.Component {
     this.props.navigation.setParams({ hideTabBar: event.i === 2 });
   };
 
+  showAssignedUser = () => {
+    const foundUser = this.state.users.find(
+      user => `user-${user.key}` === this.state.group.assigned_to,
+    );
+    return <Text>{foundUser ? foundUser.label : ''}</Text>;
+  };
+
   render() {
     const successToast = (
       <Toast
@@ -990,6 +1015,7 @@ class GroupDetailScreen extends React.Component {
                         paddingRight: containerPadding - 15,
                         marginTop: 20,
                       }}
+                      pointerEvents={this.state.onlyView ? 'none' : 'auto'}
                     >
                       <Label style={[styles.formLabel, { fontWeight: 'bold' }]}>
                         Status
@@ -1024,20 +1050,13 @@ class GroupDetailScreen extends React.Component {
                           <Row style={styles.formRow}>
                             <Col style={styles.formIconLabel}>
                               <Icon
-                                type="Ionicons"
-                                name="contact"
+                                type="FontAwesome"
+                                name="user-circle"
                                 style={styles.formIcon}
                               />
                             </Col>
                             <Col>
-                              <Text>
-                                {this.state.users.find(
-                                  user => user.key === this.state.group.assigned_to,
-                                )
-                                  && this.state.users.find(
-                                    user => user.key === this.state.group.assigned_to,
-                                  ).label}
-                              </Text>
+                              {this.showAssignedUser()}
                               <ModalFilterPicker
                                 visible={this.state.showAssignedToModal}
                                 onSelect={this.onSelectAssignedTo}
@@ -1056,8 +1075,8 @@ class GroupDetailScreen extends React.Component {
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
-                              android="md-people"
-                              ios="ios-people"
+                              type="FontAwesome"
+                              name="black-tie"
                               style={styles.formIcon}
                             />
                           </Col>
@@ -1081,8 +1100,8 @@ class GroupDetailScreen extends React.Component {
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
-                              android="md-pin"
-                              ios="ios-pin"
+                              type="FontAwesome"
+                              name="map-marker"
                               style={styles.formIcon}
                             />
                           </Col>
@@ -1106,8 +1125,8 @@ class GroupDetailScreen extends React.Component {
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
-                              android="md-globe"
-                              ios="ios-globe"
+                              type="FontAwesome"
+                              name="globe"
                               style={styles.formIcon}
                             />
                           </Col>
@@ -1131,8 +1150,8 @@ class GroupDetailScreen extends React.Component {
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
-                              android="md-home"
-                              ios="ios-home"
+                              type="Entypo"
+                              name="home"
                               style={styles.formIcon}
                             />
                           </Col>
@@ -1208,8 +1227,8 @@ class GroupDetailScreen extends React.Component {
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
-                              android="md-calendar"
-                              ios="ios-calendar"
+                              type="MaterialCommunityIcons"
+                              name="calendar-import"
                               style={styles.formIcon}
                             />
                           </Col>
@@ -1228,8 +1247,8 @@ class GroupDetailScreen extends React.Component {
                         <Row style={styles.formRow}>
                           <Col style={styles.formIconLabel}>
                             <Icon
-                              android="md-calendar"
-                              ios="ios-calendar"
+                              type="MaterialCommunityIcons"
+                              name="calendar-export"
                               style={styles.formIcon}
                             />
                           </Col>
@@ -1297,7 +1316,22 @@ class GroupDetailScreen extends React.Component {
                     <Col style={{ width: spacing }} />
                     <Col style={{ width: sideSize }}>
                       <Image
-                        source={churchCommitmentIcon}
+                        source={circleIcon}
+                        style={{
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          alignSelf: 'center',
+                          position: 'absolute',
+                          height: '95%',
+                          width: '95%',
+                          marginTop: '2%',
+                          marginRight: '2%',
+                          marginBottom: '2%',
+                          marginLeft: '2%',
+                        }}
+                      />
+                      <Image
+                        source={dottedCircleIcon}
                         style={{
                           justifyContent: 'center',
                           alignItems: 'center',
