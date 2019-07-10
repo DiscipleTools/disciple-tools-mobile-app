@@ -10,6 +10,7 @@ import {
   Dimensions,
   FlatList,
   TextInput,
+  AsyncStorage,
 } from 'react-native';
 import {
   Label,
@@ -35,20 +36,13 @@ import {
   GROUPS_SAVE_SUCCESS,
   getById,
   GROUPS_GETBYID_SUCCESS,
-  getUsersAndContacts,
-  GROUPS_GET_USERS_CONTACTS_SUCCESS,
   getCommentsByGroup,
   GROUPS_GET_COMMENTS_SUCCESS,
   saveComment,
   GROUPS_SAVE_COMMENT_SUCCESS,
-  getLocations,
-  GROUPS_GET_LOCATIONS_SUCCESS,
-  getPeopleGroups,
-  GROUPS_GET_PEOPLE_GROUPS_SUCCESS,
   getActivitiesByGroup,
   GROUPS_GET_ACTIVITIES_SUCCESS,
 } from '../../store/actions/groups.actions';
-import { getUsers, GET_USERS_SUCCESS } from '../../store/actions/users.actions';
 import Colors from '../../constants/Colors';
 
 import baptismIcon from '../../assets/icons/baptism.png';
@@ -223,7 +217,8 @@ function formatDateToBackEnd(dateValue) {
       day = day < 10 ? `0${day}` : day;
       date = `${date.getFullYear()}-${month}-${day}`;
       return date;
-    } if (typeof dateValue === 'string') {
+    }
+    if (typeof dateValue === 'string') {
       return dateValue;
     }
   }
@@ -306,16 +301,16 @@ class GroupDetailScreen extends React.Component {
     currentCoaches: [],
     currentGeonames: [],
     currentPeopleGroups: [],
-    overallStatusBackgroundColor: '',
+    overallStatusBackgroundColor: '#ffffff',
   };
 
   componentDidMount() {
+    this.getLists();
     this.props.navigation.setParams({ onSaveGroup: this.onSaveGroup });
     this.props.navigation.setParams({ onEnableEdit: this.onEnableEdit });
     const groupId = this.props.navigation.getParam('groupId');
     const onlyView = this.props.navigation.getParam('onlyView');
     const groupName = this.props.navigation.getParam('groupName');
-
     if (groupId) {
       this.setState(prevState => ({
         group: {
@@ -324,7 +319,8 @@ class GroupDetailScreen extends React.Component {
         },
       }));
       this.props.navigation.setParams({ groupName });
-      this.getUsers();
+      this.getGroupById(groupId);
+      this.getGroupComments(groupId);
     } else {
       this.setState({
         renderView: true,
@@ -344,14 +340,10 @@ class GroupDetailScreen extends React.Component {
       usersReducerResponse,
       group,
       navigation,
-      usersContacts,
-      geonames,
-      peopleGroups,
       comments,
       activities,
       comment,
       error,
-      users,
     } = nextProps;
     let newState = {
       ...prevState,
@@ -368,10 +360,6 @@ class GroupDetailScreen extends React.Component {
             navigation.setParams({
               groupName: group.title,
             });
-            newState = {
-              ...newState,
-              renderView: false,
-            };
           }
           if (group.end_date) {
             group.end_date = formatDateToPickerValue(group.end_date);
@@ -385,24 +373,6 @@ class GroupDetailScreen extends React.Component {
             commentsOrActivities: [],
           };
           toastSuccess.show('Group Saved!', 2000);
-          break;
-        case GROUPS_GET_USERS_CONTACTS_SUCCESS:
-          newState = {
-            ...newState,
-            usersContacts,
-          };
-          break;
-        case GROUPS_GET_LOCATIONS_SUCCESS:
-          newState = {
-            ...newState,
-            geonames,
-          };
-          break;
-        case GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
-          newState = {
-            ...newState,
-            peopleGroups,
-          };
           break;
         case GROUPS_GETBYID_SUCCESS:
           if (group.end_date) {
@@ -434,7 +404,6 @@ class GroupDetailScreen extends React.Component {
           newState = {
             ...newState,
             commentsOrActivities: commentsAndActivities,
-            renderView: true,
           };
           break;
         }
@@ -457,22 +426,6 @@ class GroupDetailScreen extends React.Component {
       }
     }
 
-    if (usersReducerResponse !== prevState.usersReducerResponse) {
-      switch (usersReducerResponse) {
-        case GET_USERS_SUCCESS:
-          newState = {
-            ...newState,
-            users: users.map(user => ({
-              key: user.ID,
-              label: user.name,
-            })),
-          };
-          break;
-        default:
-          break;
-      }
-    }
-
     if (error) {
       toastError.show(
         <View>
@@ -489,30 +442,17 @@ class GroupDetailScreen extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { groupsReducerResponse, usersReducerResponse } = this.props;
-    const { group, renderView } = this.state;
+    const { groupsReducerResponse } = this.props;
+    const { group } = this.state;
 
     if (prevProps.groupsReducerResponse !== groupsReducerResponse) {
       switch (groupsReducerResponse) {
         case GROUPS_SAVE_SUCCESS:
           // After creation
-          if (!renderView) {
-            this.getUsers();
-          }
           this.getGroupComments(group.ID);
-          break;
-        case GROUPS_GET_USERS_CONTACTS_SUCCESS:
-          this.getLocations();
-          break;
-        case GROUPS_GET_LOCATIONS_SUCCESS:
-          this.getPeopleGroups();
-          break;
-        case GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
-          this.getGroupById(group.ID);
           break;
         case GROUPS_GETBYID_SUCCESS:
           this.setGroupStatus(group.group_status);
-          this.getGroupComments(group.ID);
           break;
         case GROUPS_GET_COMMENTS_SUCCESS:
           this.getGroupActivities(group.ID);
@@ -521,36 +461,47 @@ class GroupDetailScreen extends React.Component {
           break;
       }
     }
+  }
 
-    if (prevProps.usersReducerResponse !== usersReducerResponse) {
-      switch (usersReducerResponse) {
-        case GET_USERS_SUCCESS:
-          this.getUsersContacts();
-          break;
-        default:
-          break;
-      }
+  getLists = async () => {
+    let newState = {};
+    const users = await AsyncStorage.getItem('usersList');
+    if (users !== null) {
+      newState = {
+        ...newState,
+        users: JSON.parse(users).map(user => ({
+          key: user.ID,
+          label: user.name,
+        })),
+      };
     }
-  }
-
-  getUsers() {
-    this.props.getUsers(this.props.user.domain, this.props.user.token);
-  }
-
-  getUsersContacts() {
-    this.props.getUsersAndContacts(
-      this.props.user.domain,
-      this.props.user.token,
-    );
-  }
-
-  getLocations() {
-    this.props.getLocations(this.props.user.domain, this.props.user.token);
-  }
-
-  getPeopleGroups() {
-    this.props.getPeopleGroups(this.props.user.domain, this.props.user.token);
-  }
+    const usersContacts = await AsyncStorage.getItem('usersAndContactsList');
+    if (usersContacts !== null) {
+      newState = {
+        ...newState,
+        usersContacts: JSON.parse(usersContacts),
+      };
+    }
+    const peopleGroups = await AsyncStorage.getItem('peopleGroupsList');
+    if (peopleGroups !== null) {
+      newState = {
+        ...newState,
+        peopleGroups: JSON.parse(peopleGroups),
+      };
+    }
+    const geonames = await AsyncStorage.getItem('locationsList');
+    if (geonames !== null) {
+      newState = {
+        ...newState,
+        geonames: JSON.parse(geonames),
+      };
+    }
+    newState = {
+      ...newState,
+      renderView: true,
+    };
+    this.setState(newState);
+  };
 
   getGroupById(groupId) {
     this.props.getById(this.props.user.domain, this.props.user.token, groupId);
@@ -2005,15 +1956,13 @@ GroupDetailScreen.propTypes = {
   }).isRequired,
   getById: PropTypes.func.isRequired,
   saveGroup: PropTypes.func.isRequired,
-  getUsersAndContacts: PropTypes.func.isRequired,
   groupsReducerResponse: PropTypes.string,
   getComments: PropTypes.func.isRequired,
   saveComment: PropTypes.func.isRequired,
-  getLocations: PropTypes.func.isRequired,
-  getPeopleGroups: PropTypes.func.isRequired,
   getActivities: PropTypes.func.isRequired,
-  getUsers: PropTypes.func.isRequired,
+  /* eslint-disable */
   usersReducerResponse: PropTypes.string,
+  /* eslint-enable */
 };
 GroupDetailScreen.defaultProps = {
   error: null,
@@ -2026,13 +1975,11 @@ const mapStateToProps = state => ({
   error: state.groupsReducer.error,
   groupsReducerResponse: state.groupsReducer.type,
   group: state.groupsReducer.group,
-  usersContacts: state.groupsReducer.usersContacts,
   comments: state.groupsReducer.comments,
   comment: state.groupsReducer.comment,
   geonames: state.groupsReducer.geonames,
   peopleGroups: state.groupsReducer.peopleGroups,
   activities: state.groupsReducer.activities,
-  users: state.usersReducer.users,
   usersReducerResponse: state.usersReducer.type,
 });
 const mapDispatchToProps = dispatch => ({
@@ -2042,26 +1989,14 @@ const mapDispatchToProps = dispatch => ({
   getById: (domain, token, groupId) => {
     dispatch(getById(domain, token, groupId));
   },
-  getUsersAndContacts: (domain, token) => {
-    dispatch(getUsersAndContacts(domain, token));
-  },
   getComments: (domain, token, groupId) => {
     dispatch(getCommentsByGroup(domain, token, groupId));
   },
   saveComment: (domain, token, groupId, commentData) => {
     dispatch(saveComment(domain, token, groupId, commentData));
   },
-  getLocations: (domain, token) => {
-    dispatch(getLocations(domain, token));
-  },
-  getPeopleGroups: (domain, token) => {
-    dispatch(getPeopleGroups(domain, token));
-  },
   getActivities: (domain, token, groupId) => {
     dispatch(getActivitiesByGroup(domain, token, groupId));
-  },
-  getUsers: (domain, token) => {
-    dispatch(getUsers(domain, token));
   },
 });
 

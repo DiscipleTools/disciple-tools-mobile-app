@@ -331,6 +331,7 @@ class ContactDetailScreen extends React.Component {
       }));
       this.props.navigation.setParams({ contactName });
       this.getContactById(contactId);
+      this.getContactComments(contactId);
     }
     if (onlyView) {
       this.setState({
@@ -360,10 +361,6 @@ class ContactDetailScreen extends React.Component {
           // Creation
           if (contact.ID && !prevState.contact.ID) {
             navigation.setParams({ contactName: contact.title });
-            /* newState = {
-              ...newState,
-              renderView: false,
-            }; */
           }
           newState = {
             ...newState,
@@ -408,7 +405,6 @@ class ContactDetailScreen extends React.Component {
           newState = {
             ...newState,
             commentsOrActivities: commentsAndActivities,
-            // renderView: true,
           };
           break;
         }
@@ -457,9 +453,8 @@ class ContactDetailScreen extends React.Component {
           this.getContactComments(contact.ID);
           break;
         case CONTACTS_GETBYID_SUCCESS:
-          this.setSeekerPath(contact.seeker_path);
+          this.setContactSeekerPath(contact.seeker_path);
           this.setContactStatus(contact.overall_status);
-          this.getContactComments(contact.ID);
           break;
         case CONTACTS_GET_COMMENTS_SUCCESS:
           this.getContactActivities(contact.ID);
@@ -471,59 +466,50 @@ class ContactDetailScreen extends React.Component {
   }
 
   getLists = async () => {
-    try {
-      let newState = {};
-      // users
-      const users = await AsyncStorage.getItem('usersList');
-      if (users !== null) {
-        newState = {
-          ...newState,
-          users: JSON.parse(users).map(user => ({
-            key: user.ID,
-            label: user.name,
-          })),
-        };
-      }
-      // usersContacts
-      const usersContacts = await AsyncStorage.getItem('usersAndContactsList');
-      if (users !== null) {
-        newState = {
-          ...newState,
-          usersContacts: JSON.parse(usersContacts),
-        };
-      }
-      // groups
-      const groups = await AsyncStorage.getItem('searchGroupsList');
-      if (groups !== null) {
-        newState = {
-          ...newState,
-          groups: JSON.parse(groups),
-        };
-      }
-      // peopleGroups
-      const peopleGroups = await AsyncStorage.getItem('peopleGroupsList');
-      if (peopleGroups !== null) {
-        newState = {
-          ...newState,
-          peopleGroups: JSON.parse(peopleGroups),
-        };
-      }
-      // geonames
-      const geonames = await AsyncStorage.getItem('locationsList');
-      if (geonames !== null) {
-        newState = {
-          ...newState,
-          geonames: JSON.parse(geonames),
-        };
-      }
+    let newState = {};
+    const users = await AsyncStorage.getItem('usersList');
+    if (users !== null) {
       newState = {
         ...newState,
-        renderView: true,
+        users: JSON.parse(users).map(user => ({
+          key: user.ID,
+          label: user.name,
+        })),
       };
-      this.setState(newState);
-    } catch (error) {
-      // console.log('error', error);
     }
+    const usersContacts = await AsyncStorage.getItem('usersAndContactsList');
+    if (usersContacts !== null) {
+      newState = {
+        ...newState,
+        usersContacts: JSON.parse(usersContacts),
+      };
+    }
+    const groups = await AsyncStorage.getItem('searchGroupsList');
+    if (groups !== null) {
+      newState = {
+        ...newState,
+        groups: JSON.parse(groups),
+      };
+    }
+    const peopleGroups = await AsyncStorage.getItem('peopleGroupsList');
+    if (peopleGroups !== null) {
+      newState = {
+        ...newState,
+        peopleGroups: JSON.parse(peopleGroups),
+      };
+    }
+    const geonames = await AsyncStorage.getItem('locationsList');
+    if (geonames !== null) {
+      newState = {
+        ...newState,
+        geonames: JSON.parse(geonames),
+      };
+    }
+    newState = {
+      ...newState,
+      renderView: true,
+    };
+    this.setState(newState);
   };
 
   getContactById(contactId) {
@@ -775,7 +761,7 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  setSeekerPath = (value) => {
+  setContactSeekerPath = (value) => {
     let newProgressValue = 100 / 6;
 
     switch (value) {
@@ -858,7 +844,9 @@ class ContactDetailScreen extends React.Component {
       };
     } else {
       contactToSave = JSON.parse(JSON.stringify(this.state.contact));
-      contactToSave.geonames.values = this.setGeonames();
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'geonames')) {
+        contactToSave.geonames.values = this.setGeonames();
+      }
       if (Object.prototype.hasOwnProperty.call(contactToSave, 'subassigned')) {
         contactToSave.subassigned.values = this.setSubassignedContacts();
       }
@@ -2043,7 +2031,7 @@ class ContactDetailScreen extends React.Component {
                             <Picker
                               mode="dropdown"
                               selectedValue={this.state.contact.seeker_path}
-                              onValueChange={this.setSeekerPath}
+                              onValueChange={this.setContactSeekerPath}
                               textStyle={{ color: Colors.tintColor }}
                             >
                               <Picker.Item
