@@ -2,7 +2,6 @@ import {
   put, take, takeLatest, all,
 } from 'redux-saga/effects';
 import * as actions from '../actions/user.actions';
-// import REQUEST from '../actions/request.actions';
 
 export function* login({ domain, username, password }) {
   yield put({ type: actions.USER_LOGIN_START });
@@ -47,12 +46,16 @@ export function* login({ domain, username, password }) {
       }
     }
   } catch (error) {
-    yield put({ type: actions.USER_LOGIN_FAILURE, error: { code: '400', message: '(400) Unable to process the request. Please try again later.' } });
+    yield put({
+      type: actions.USER_LOGIN_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
   }
 }
 
 export default function* userSaga() {
-  yield all([
-    takeLatest(actions.USER_LOGIN, login),
-  ]);
+  yield all([takeLatest(actions.USER_LOGIN, login)]);
 }

@@ -11,6 +11,7 @@ import {
   Dimensions,
   FlatList,
   TextInput,
+  AsyncStorage,
 } from 'react-native';
 import Toast from 'react-native-easy-toast';
 import {
@@ -32,6 +33,7 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import ModalFilterPicker from 'react-native-modal-filter-picker';
+
 import KeyboardShift from '../../components/KeyboardShift';
 import {
   save,
@@ -45,19 +47,7 @@ import {
   getActivitiesByContact,
   CONTACTS_GET_ACTIVITIES_SUCCESS,
 } from '../../store/actions/contacts.actions';
-import {
-  getLocations,
-  GROUPS_GET_LOCATIONS_SUCCESS,
-  getUsersAndContacts,
-  GROUPS_GET_USERS_CONTACTS_SUCCESS,
-  searchGroups,
-  GROUPS_SEARCH_SUCCESS,
-  getPeopleGroups,
-  GROUPS_GET_PEOPLE_GROUPS_SUCCESS,
-} from '../../store/actions/groups.actions';
-import { getUsers, GET_USERS_SUCCESS } from '../../store/actions/users.actions';
 import Colors from '../../constants/Colors';
-
 import hasBibleIcon from '../../assets/icons/book-bookmark.png';
 import readingBibleIcon from '../../assets/icons/word.png';
 import statesBeliefIcon from '../../assets/icons/language.png';
@@ -161,7 +151,6 @@ function formatDateToPickerValue(formatted) {
 class ContactDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
-
     let navigationTitle = 'Add New Contact';
     let headerRight = (
       <Icon
@@ -217,8 +206,6 @@ class ContactDetailScreen extends React.Component {
 
   state = {
     contact: {
-      ID: null,
-      contact_phone: [],
       sources: {
         values: [
           {
@@ -226,9 +213,12 @@ class ContactDetailScreen extends React.Component {
           },
         ],
       },
-      geonames: {
+      milestones: {
         values: [],
       },
+      contact_phone: [],
+      contact_email: [],
+      contact_address: [],
     },
     contactSources: [
       {
@@ -270,7 +260,6 @@ class ContactDetailScreen extends React.Component {
     ],
     geonames: [],
     currentGeonames: [],
-    groupsReducerResponse: '',
     renderView: false,
     contactsReducerResponse: '',
     commentsOrActivities: [],
@@ -286,7 +275,7 @@ class ContactDetailScreen extends React.Component {
     currentCoaching: [],
     usersContacts: [],
     currentSubassignedContacts: [],
-    overallStatusBackgroundColor: '',
+    overallStatusBackgroundColor: '#ffffff',
     listContactStates: [
       {
         label: 'New Contact',
@@ -327,12 +316,12 @@ class ContactDetailScreen extends React.Component {
   };
 
   componentDidMount() {
+    this.getLists();
     this.props.navigation.setParams({ onSaveContact: this.onSaveContact });
     this.props.navigation.setParams({ onEnableEdit: this.onEnableEdit });
     const onlyView = this.props.navigation.getParam('onlyView');
     const contactId = this.props.navigation.getParam('contactId');
     const contactName = this.props.navigation.getParam('contactName');
-
     if (contactId) {
       this.setState(prevState => ({
         contact: {
@@ -341,73 +330,28 @@ class ContactDetailScreen extends React.Component {
         },
       }));
       this.props.navigation.setParams({ contactName });
+      this.getContactById(contactId);
     }
     if (onlyView) {
       this.setState({
         onlyView,
       });
     }
-    this.getLocations();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const {
-      geonames,
-      groupsReducerError,
-      groupsReducerResponse,
       contact,
       contactsReducerResponse,
       navigation,
       comments,
       comment,
       activities,
-      usersContacts,
-      search,
       contactsReducerError,
-      peopleGroups,
-      usersReducerError,
-      usersReducerResponse,
-      users,
     } = nextProps;
     let newState = {
       ...prevState,
-      groupsReducerResponse,
-      contactsReducerResponse,
-      usersReducerResponse,
     };
-
-    // New response incomming
-    if (groupsReducerResponse !== prevState.groupsReducerResponse) {
-      switch (groupsReducerResponse) {
-        case GROUPS_GET_LOCATIONS_SUCCESS:
-          newState = {
-            ...newState,
-            geonames,
-            renderView: !prevState.contact.ID,
-          };
-          break;
-        case GROUPS_GET_USERS_CONTACTS_SUCCESS:
-          newState = {
-            ...newState,
-            usersContacts,
-          };
-          break;
-        case GROUPS_SEARCH_SUCCESS:
-          newState = {
-            ...newState,
-            groups: search,
-          };
-          break;
-        case GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
-          newState = {
-            ...newState,
-            peopleGroups,
-          };
-          break;
-        default:
-          break;
-      }
-    }
 
     // New response incomming
     if (contactsReducerResponse !== prevState.contactsReducerResponse) {
@@ -416,10 +360,10 @@ class ContactDetailScreen extends React.Component {
           // Creation
           if (contact.ID && !prevState.contact.ID) {
             navigation.setParams({ contactName: contact.title });
-            newState = {
+            /* newState = {
               ...newState,
               renderView: false,
-            };
+            }; */
           }
           newState = {
             ...newState,
@@ -464,7 +408,7 @@ class ContactDetailScreen extends React.Component {
           newState = {
             ...newState,
             commentsOrActivities: commentsAndActivities,
-            renderView: true,
+            // renderView: true,
           };
           break;
         }
@@ -487,24 +431,8 @@ class ContactDetailScreen extends React.Component {
       }
     }
 
-    if (usersReducerResponse !== prevState.usersReducerResponse) {
-      switch (usersReducerResponse) {
-        case GET_USERS_SUCCESS:
-          newState = {
-            ...newState,
-            users: users.map(user => ({
-              key: user.ID,
-              label: user.name,
-            })),
-          };
-          break;
-        default:
-          break;
-      }
-    }
-
-    if (groupsReducerError || contactsReducerError || usersReducerError) {
-      const error = groupsReducerError || contactsReducerError || usersReducerError;
+    if (contactsReducerError) {
+      const error = contactsReducerError;
       toastError.show(
         <View>
           <Text style={{ fontWeight: 'bold' }}>Code: </Text>
@@ -520,41 +448,12 @@ class ContactDetailScreen extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {
-      contactsReducerResponse,
-      groupsReducerResponse,
-      usersReducerResponse,
-    } = this.props;
-    const { contact, contacts, renderView } = this.state;
-
-    if (prevProps.groupsReducerResponse !== groupsReducerResponse) {
-      switch (groupsReducerResponse) {
-        case GROUPS_GET_LOCATIONS_SUCCESS:
-          // After creation / Loading in Get By Id
-          if (contact.ID && contacts.length === 0) {
-            this.getUsers();
-          }
-          break;
-        case GROUPS_GET_USERS_CONTACTS_SUCCESS:
-          this.searchGroups();
-          break;
-        case GROUPS_SEARCH_SUCCESS:
-          this.getPeopleGroups();
-          break;
-        case GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
-          this.getContactById(contact.ID);
-          break;
-        default:
-          break;
-      }
-    }
+    const { contactsReducerResponse } = this.props;
+    const { contact } = this.state;
 
     if (prevProps.contactsReducerResponse !== contactsReducerResponse) {
       switch (contactsReducerResponse) {
         case CONTACTS_SAVE_SUCCESS:
-          if (!renderView) {
-            this.getUsersContacts();
-          }
           this.getContactComments(contact.ID);
           break;
         case CONTACTS_GETBYID_SUCCESS:
@@ -569,32 +468,63 @@ class ContactDetailScreen extends React.Component {
           break;
       }
     }
+  }
 
-    if (prevProps.usersReducerResponse !== usersReducerResponse) {
-      switch (usersReducerResponse) {
-        case GET_USERS_SUCCESS:
-          this.getUsersContacts();
-          break;
-        default:
-          break;
+  getLists = async () => {
+    try {
+      let newState = {};
+      // users
+      const users = await AsyncStorage.getItem('usersList');
+      if (users !== null) {
+        newState = {
+          ...newState,
+          users: JSON.parse(users).map(user => ({
+            key: user.ID,
+            label: user.name,
+          })),
+        };
       }
+      // usersContacts
+      const usersContacts = await AsyncStorage.getItem('usersAndContactsList');
+      if (users !== null) {
+        newState = {
+          ...newState,
+          usersContacts: JSON.parse(usersContacts),
+        };
+      }
+      // groups
+      const groups = await AsyncStorage.getItem('searchGroupsList');
+      if (groups !== null) {
+        newState = {
+          ...newState,
+          groups: JSON.parse(groups),
+        };
+      }
+      // peopleGroups
+      const peopleGroups = await AsyncStorage.getItem('peopleGroupsList');
+      if (peopleGroups !== null) {
+        newState = {
+          ...newState,
+          peopleGroups: JSON.parse(peopleGroups),
+        };
+      }
+      // geonames
+      const geonames = await AsyncStorage.getItem('locationsList');
+      if (geonames !== null) {
+        newState = {
+          ...newState,
+          geonames: JSON.parse(geonames),
+        };
+      }
+      newState = {
+        ...newState,
+        renderView: true,
+      };
+      this.setState(newState);
+    } catch (error) {
+      // console.log('error', error);
     }
-  }
-
-  getLocations() {
-    this.props.getLocations(this.props.user.domain, this.props.user.token);
-  }
-
-  getUsers() {
-    this.props.getUsers(this.props.user.domain, this.props.user.token);
-  }
-
-  getUsersContacts() {
-    this.props.getUsersAndContacts(
-      this.props.user.domain,
-      this.props.user.token,
-    );
-  }
+  };
 
   getContactById(contactId) {
     this.props.getById(
@@ -618,10 +548,6 @@ class ContactDetailScreen extends React.Component {
       this.props.user.token,
       contactId,
     );
-  }
-
-  getPeopleGroups() {
-    this.props.getPeopleGroups(this.props.user.domain, this.props.user.token);
   }
 
   renderStatusPickerItems = () => this.state.listContactStates.map(status => (
@@ -1553,10 +1479,6 @@ class ContactDetailScreen extends React.Component {
     return <Text>{foundUser ? foundUser.label : ''}</Text>;
   };
 
-  searchGroups() {
-    this.props.searchGroups(this.props.user.domain, this.props.user.token);
-  }
-
   render() {
     const successToast = (
       <Toast
@@ -1576,28 +1498,6 @@ class ContactDetailScreen extends React.Component {
         position="center"
       />
     );
-
-    /**
-         * <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
-                                <Icon
-                                  android="logo-facebook"
-                                  ios="logo-facebook"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Label style={styles.formLabel}>Message</Label>
-                              </Col>
-                              <Col style={styles.formIconLabel}>
-                                <Label style={styles.formLabel}>Message</Label>
-                              </Col>
-                            </Row>
-
-
-                  selectedItems={[]}
-         */
 
     return (
       <Container>
@@ -1640,7 +1540,7 @@ class ContactDetailScreen extends React.Component {
                                 }
                                 onValueChange={this.setContactStatus}
                                 style={{
-                                  color: '#FFFFFF',
+                                  color: '#ffffff',
                                   backgroundColor: this.state
                                     .overallStatusBackgroundColor,
                                 }}
@@ -3140,7 +3040,6 @@ class ContactDetailScreen extends React.Component {
 }
 
 ContactDetailScreen.propTypes = {
-  groupsReducerResponse: PropTypes.string,
   user: PropTypes.shape({
     domain: PropTypes.string,
     token: PropTypes.string,
@@ -3149,56 +3048,34 @@ ContactDetailScreen.propTypes = {
     key: PropTypes.number,
   }),
   contactsReducerResponse: PropTypes.string,
-  getPeopleGroups: PropTypes.func.isRequired,
   navigation: PropTypes.shape({
     getParam: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     setParams: PropTypes.func.isRequired,
   }).isRequired,
-  getLocations: PropTypes.func.isRequired,
-  getUsersAndContacts: PropTypes.func.isRequired,
-  searchGroups: PropTypes.func.isRequired,
   getById: PropTypes.func.isRequired,
   getComments: PropTypes.func.isRequired,
   getActivities: PropTypes.func.isRequired,
   saveContact: PropTypes.func.isRequired,
   saveComment: PropTypes.func.isRequired,
-  groupsReducerError: PropTypes.shape({
-    code: PropTypes.string,
-    message: PropTypes.string,
-  }),
   contactsReducerError: PropTypes.shape({
     code: PropTypes.string,
     message: PropTypes.string,
   }),
-  usersReducerResponse: PropTypes.string,
-  /* eslint-disable */
-  usersReducerError: PropTypes.string,
-  /* eslint-enable */
-  getUsers: PropTypes.func.isRequired,
 };
 
 ContactDetailScreen.defaultProps = {
-  groupsReducerError: {
-    code: null,
-    message: null,
-  },
-  groupsReducerResponse: null,
   contact: null,
   contactsReducerError: {
     code: null,
     message: null,
   },
   contactsReducerResponse: null,
-  usersReducerResponse: null,
-  usersReducerError: null,
 };
 
 const mapStateToProps = state => ({
-  groupsReducerError: state.groupsReducer.error,
   geonames: state.groupsReducer.geonames,
   user: state.userReducer,
-  groupsReducerResponse: state.groupsReducer.type,
   contact: state.contactsReducer.contact,
   contactsReducerResponse: state.contactsReducer.type,
   comments: state.contactsReducer.comments,
@@ -3209,13 +3086,8 @@ const mapStateToProps = state => ({
   contactsReducerError: state.contactsReducer.error,
   peopleGroups: state.groupsReducer.peopleGroups,
   users: state.usersReducer.users,
-  usersReducerResponse: state.usersReducer.type,
-  usersReducerError: state.usersReducer.error,
 });
 const mapDispatchToProps = dispatch => ({
-  getLocations: (domain, token) => {
-    dispatch(getLocations(domain, token));
-  },
   saveContact: (domain, token, contactDetail) => {
     dispatch(save(domain, token, contactDetail));
   },
@@ -3230,18 +3102,6 @@ const mapDispatchToProps = dispatch => ({
   },
   getActivities: (domain, token, contactId) => {
     dispatch(getActivitiesByContact(domain, token, contactId));
-  },
-  getUsersAndContacts: (domain, token) => {
-    dispatch(getUsersAndContacts(domain, token));
-  },
-  searchGroups: (domain, token) => {
-    dispatch(searchGroups(domain, token));
-  },
-  getPeopleGroups: (domain, token) => {
-    dispatch(getPeopleGroups(domain, token));
-  },
-  getUsers: (domain, token) => {
-    dispatch(getUsers(domain, token));
   },
 });
 
