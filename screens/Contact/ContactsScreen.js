@@ -1,51 +1,51 @@
-import React from "react";
-import { connect } from "react-redux";
+import React from 'react';
+import { connect } from 'react-redux';
 import {
   View,
   FlatList,
   TouchableHighlight,
   RefreshControl,
   StyleSheet,
-  Text
-} from "react-native";
-import { Fab, Container } from "native-base";
-import Icon from "react-native-vector-icons/Ionicons";
-import Toast from "react-native-easy-toast";
+  Text,
+} from 'react-native';
+import { Fab, Container } from 'native-base';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Toast from 'react-native-easy-toast';
 
-import PropTypes from "prop-types";
-import Colors from "../../constants/Colors";
-import { getAll } from "../../store/actions/contacts.actions";
+import PropTypes from 'prop-types';
+import Colors from '../../constants/Colors';
+import { getAll } from '../../store/actions/contacts.actions';
 
 const styles = StyleSheet.create({
   flatListItem: {
     height: 90,
-    justifyContent: "center",
-    backgroundColor: "white",
-    padding: 20
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    padding: 20,
   },
   contactSubtitle: {
     paddingTop: 6,
-    fontWeight: "200",
-    color: "rgba(0,0,0,0.6)"
+    fontWeight: '200',
+    color: 'rgba(0,0,0,0.6)',
   },
   errorText: {
-    textAlign: "center",
+    textAlign: 'center',
     height: 100,
     padding: 20,
-    color: "rgba(0,0,0,0.4)"
-  }
+    color: 'rgba(0,0,0,0.4)',
+  },
 });
 
 let toastError;
 
 class ContactsScreen extends React.Component {
   static navigationOptions = {
-    title: "Contacts",
-    headerLeft: null
+    title: 'Contacts',
+    headerLeft: null,
   };
 
   state = {
-    contacts: []
+    contacts: [],
   };
 
   componentDidMount() {
@@ -56,7 +56,7 @@ class ContactsScreen extends React.Component {
     const newState = {
       ...prevState,
       loading: nextProps.loading,
-      contacts: nextProps.contacts
+      contacts: nextProps.contacts,
     };
     return newState;
   }
@@ -66,12 +66,12 @@ class ContactsScreen extends React.Component {
     if (prevProps.error !== error && error) {
       toastError.show(
         <View>
-          <Text style={{ fontWeight: "bold" }}>Code: </Text>
+          <Text style={{ fontWeight: 'bold' }}>Code: </Text>
           <Text>{error.code}</Text>
-          <Text style={{ fontWeight: "bold" }}>Message: </Text>
+          <Text style={{ fontWeight: 'bold' }}>Message: </Text>
           <Text>{error.message}</Text>
         </View>,
-        3000
+        3000,
       );
     }
   }
@@ -84,7 +84,7 @@ class ContactsScreen extends React.Component {
       key={item.toString()}
     >
       <View>
-        <Text style={{ fontWeight: "bold" }}>{item.post_title}</Text>
+        <Text style={{ fontWeight: 'bold' }}>{item.post_title}</Text>
         <Text style={styles.contactSubtitle}>
           {`${item.overall_status.label} • ${item.seeker_path.label}`}
         </Text>
@@ -96,8 +96,8 @@ class ContactsScreen extends React.Component {
     <View
       style={{
         height: 1,
-        width: "100%",
-        backgroundColor: "#dddddd"
+        width: '100%',
+        backgroundColor: '#dddddd',
       }}
     />
   );
@@ -109,14 +109,14 @@ class ContactsScreen extends React.Component {
   goToContactDetailScreen = (contactData = null) => {
     if (contactData) {
       // Detail
-      this.props.navigation.push("ContactDetail", {
+      this.props.navigation.push('ContactDetail', {
         contactId: contactData.ID,
         onlyView: true,
-        contactName: contactData.post_title
+        contactName: contactData.post_title,
       });
     } else {
       // Create
-      this.props.navigation.push("ContactDetail");
+      this.props.navigation.push('ContactDetail');
     }
   };
 
@@ -128,12 +128,12 @@ class ContactsScreen extends React.Component {
             data={this.state.contacts}
             renderItem={item => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
-            refreshControl={
+            refreshControl={(
               <RefreshControl
                 refreshing={this.state.loading}
                 onRefresh={this.onRefresh}
               />
-            }
+)}
             keyExtractor={item => item.ID.toString()}
           />
           <Fab
@@ -144,7 +144,7 @@ class ContactsScreen extends React.Component {
             <Icon name="md-add" />
           </Fab>
           <Toast
-            ref={toast => {
+            ref={(toast) => {
               toastError = toast;
             }}
             style={{ backgroundColor: Colors.errorBackground }}
@@ -159,11 +159,11 @@ class ContactsScreen extends React.Component {
 ContactsScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
-    push: PropTypes.func.isRequired
+    push: PropTypes.func.isRequired,
   }).isRequired,
   user: PropTypes.shape({
     domain: PropTypes.string,
-    token: PropTypes.string
+    token: PropTypes.string,
   }).isRequired,
   getAllContacts: PropTypes.func.isRequired,
   /* eslint-disable */
@@ -174,26 +174,26 @@ ContactsScreen.propTypes = {
   ).isRequired,
   /* eslint-enable */
   error: PropTypes.shape({
-    message: PropTypes.string
-  })
+    message: PropTypes.string,
+  }),
 };
 ContactsScreen.defaultProps = {
-  error: null
+  error: null,
 };
 
 const mapStateToProps = state => ({
   user: state.userReducer,
   contacts: state.contactsReducer.contacts,
   loading: state.contactsReducer.loading,
-  error: state.contactsReducer.error
+  error: state.contactsReducer.error,
 });
 const mapDispatchToProps = dispatch => ({
   getAllContacts: (domain, token) => {
     dispatch(getAll(domain, token));
-  }
+  },
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(ContactsScreen);
