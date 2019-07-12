@@ -116,41 +116,42 @@ export function* save({ domain, token, contactData }) {
           contact: {
             ID: contact.ID,
             title: contact.title,
-            contact_phone: contact.contact_phone ? contact.contact_phone.map(phone => ({
-              key: phone.key,
-              value: phone.value,
-            })) : [],
-            contact_email: contact.contact_email ? contact.contact_email.map(email => ({
-              key: email.key,
-              value: email.value,
-            })) : [],
-            sources: {
-              values: contact.sources
-                ? contact.sources.map(source => ({
-                  label: source,
-                  value: source,
+            contact_phone: contact.contact_phone
+              ? contact.contact_phone
+                .filter((obj, pos, arr) => (
+                  arr
+                    .map(mapObj => mapObj.value)
+                    .indexOf(obj.value) === pos
+                ))
+                .map(phone => ({
+                  key: phone.key,
+                  value: phone.value,
                 }))
-                : [],
-            },
-            geonames: {
-              values: contact.geonames
-                ? contact.geonames.map(geoname => ({
-                  name: geoname.label,
-                  value: geoname.id.toString(),
+              : [],
+            contact_email: contact.contact_email
+              ? contact.contact_email
+                .filter((obj, pos, arr) => (
+                  arr
+                    .map(mapObj => mapObj.value)
+                    .indexOf(obj.value) === pos
+                ))
+                .map(email => ({
+                  key: email.key,
+                  value: email.value,
                 }))
-                : [],
-            },
-            overall_status: contact.overall_status.key,
-            assigned_to: contact.assigned_to
-              ? `user-${contact.assigned_to.id}`
-              : null,
-            seeker_path: contact.seeker_path.key,
-            subassigned: {
-              values: contact.subassigned.map(user => ({
-                name: user.post_title,
-                value: user.ID.toString(),
-              })),
-            },
+              : [],
+            contact_address: contact.contact_address
+              ? contact.contact_address
+                .filter((obj, pos, arr) => (
+                  arr
+                    .map(mapObj => mapObj.value)
+                    .indexOf(obj.value) === pos
+                ))
+                .map(address => ({
+                  key: address.key,
+                  value: address.value,
+                }))
+              : [],
             /* contact_facebook: {
               values: contact.contact_facebook
                 ? contact.contact_facebook.map(contact => {
@@ -201,6 +202,33 @@ export function* save({ domain, token, contactData }) {
                   })
                 : []
             }, */
+            sources: {
+              values: contact.sources
+                ? contact.sources.map(source => ({
+                  label: source,
+                  value: source,
+                }))
+                : [],
+            },
+            geonames: {
+              values: contact.geonames
+                ? contact.geonames.map(geoname => ({
+                  name: geoname.label,
+                  value: geoname.id.toString(),
+                }))
+                : [],
+            },
+            overall_status: contact.overall_status.key,
+            assigned_to: contact.assigned_to
+              ? `user-${contact.assigned_to.id}`
+              : null,
+            seeker_path: contact.seeker_path.key,
+            subassigned: {
+              values: contact.subassigned.map(user => ({
+                name: user.post_title,
+                value: user.ID.toString(),
+              })),
+            },
             baptism_date:
               contact.baptism_date && contact.baptism_date.formatted.length > 0
                 ? contact.baptism_date.formatted
@@ -267,12 +295,6 @@ export function* save({ domain, token, contactData }) {
                 }))
                 : [],
             },
-            contact_address: contact.contact_address
-              ? contact.contact_address.map(address => ({
-                key: address.key,
-                value: address.value,
-              }))
-              : [],
             people_groups: {
               values: contact.people_groups
                 ? contact.people_groups.map(peopleGroup => ({
@@ -360,41 +382,42 @@ export function* getById({ domain, token, contactId }) {
           contact: {
             ID: contact.ID,
             title: contact.title,
-            contact_phone: contact.contact_phone ? contact.contact_phone.map(phone => ({
-              key: phone.key,
-              value: phone.value,
-            })) : [],
-            contact_email: contact.contact_email ? contact.contact_email.map(email => ({
-              key: email.key,
-              value: email.value,
-            })) : [],
-            sources: {
-              values: contact.sources
-                ? contact.sources.map(source => ({
-                  label: source,
-                  value: source,
+            contact_phone: contact.contact_phone
+              ? contact.contact_phone
+                .filter((obj, pos, arr) => (
+                  arr
+                    .map(mapObj => mapObj.value)
+                    .indexOf(obj.value) === pos
+                ))
+                .map(phone => ({
+                  key: phone.key,
+                  value: phone.value,
                 }))
-                : [],
-            },
-            geonames: {
-              values: contact.geonames
-                ? contact.geonames.map(geoname => ({
-                  name: geoname.label,
-                  value: geoname.id.toString(),
+              : [],
+            contact_email: contact.contact_email
+              ? contact.contact_email
+                .filter((obj, pos, arr) => (
+                  arr
+                    .map(mapObj => mapObj.value)
+                    .indexOf(obj.value) === pos
+                ))
+                .map(email => ({
+                  key: email.key,
+                  value: email.value,
                 }))
-                : [],
-            },
-            overall_status: contact.overall_status.key,
-            assigned_to: contact.assigned_to
-              ? `user-${contact.assigned_to.id}`
-              : null,
-            seeker_path: contact.seeker_path.key,
-            subassigned: {
-              values: contact.subassigned.map(user => ({
-                name: user.post_title,
-                value: user.ID.toString(),
-              })),
-            },
+              : [],
+            contact_address: contact.contact_address
+              ? contact.contact_address
+                .filter((obj, pos, arr) => (
+                  arr
+                    .map(mapObj => mapObj.value)
+                    .indexOf(obj.value) === pos
+                ))
+                .map(address => ({
+                  key: address.key,
+                  value: address.value,
+                }))
+              : [],
             /* contact_facebook: {
               values: contact.contact_facebook
                 ? contact.contact_facebook.map(contact => {
@@ -445,6 +468,33 @@ export function* getById({ domain, token, contactId }) {
                   })
                 : []
             }, */
+            sources: {
+              values: contact.sources
+                ? contact.sources.map(source => ({
+                  label: source,
+                  value: source,
+                }))
+                : [],
+            },
+            geonames: {
+              values: contact.geonames
+                ? contact.geonames.map(geoname => ({
+                  name: geoname.label,
+                  value: geoname.id.toString(),
+                }))
+                : [],
+            },
+            overall_status: contact.overall_status.key,
+            assigned_to: contact.assigned_to
+              ? `user-${contact.assigned_to.id}`
+              : null,
+            seeker_path: contact.seeker_path.key,
+            subassigned: {
+              values: contact.subassigned.map(user => ({
+                name: user.post_title,
+                value: user.ID.toString(),
+              })),
+            },
             baptism_date:
               contact.baptism_date && contact.baptism_date.formatted.length > 0
                 ? contact.baptism_date.formatted
@@ -511,12 +561,6 @@ export function* getById({ domain, token, contactId }) {
                 }))
                 : [],
             },
-            contact_address: contact.contact_address
-              ? contact.contact_address.map(address => ({
-                key: address.key,
-                value: address.value,
-              }))
-              : [],
             people_groups: {
               values: contact.people_groups
                 ? contact.people_groups.map(peopleGroup => ({
