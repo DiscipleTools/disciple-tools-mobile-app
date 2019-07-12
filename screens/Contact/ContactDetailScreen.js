@@ -33,6 +33,7 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import ModalFilterPicker from 'react-native-modal-filter-picker';
+import { Chip, Selectize } from 'react-native-material-selectize';
 
 import KeyboardShift from '../../components/KeyboardShift';
 import {
@@ -65,6 +66,9 @@ const windowWidth = Dimensions.get('window').width;
 const progressBarWidth = windowWidth - 100;
 const milestonesGridSize = windowWidth + 5;
 let commentsFlatList;
+/* eslint-disable */
+let selectizeRef;
+/* eslint-enable */
 const styles = StyleSheet.create({
   tabBarUnderlineStyle: {
     borderBottomWidth: 2,
@@ -219,6 +223,9 @@ class ContactDetailScreen extends React.Component {
       contact_phone: [],
       contact_email: [],
       contact_address: [],
+      subassigned: {
+        values: [],
+      },
     },
     contactSources: [
       {
@@ -260,7 +267,8 @@ class ContactDetailScreen extends React.Component {
     ],
     geonames: [],
     currentGeonames: [],
-    renderView: false,
+    loadedLocal: false,
+    dataRetrieved: false,
     contactsReducerResponse: '',
     commentsOrActivities: [],
     comment: '',
@@ -274,7 +282,7 @@ class ContactDetailScreen extends React.Component {
     currentCoachedBy: [],
     currentCoaching: [],
     usersContacts: [],
-    currentSubassignedContacts: [],
+    // currentSubassignedContacts: [],
     overallStatusBackgroundColor: '#ffffff',
     listContactStates: [
       {
@@ -379,7 +387,7 @@ class ContactDetailScreen extends React.Component {
           newState = {
             ...newState,
             contact,
-            currentSubassignedContacts: contact.subassigned.values,
+            // currentSubassignedContacts: contact.subassigned.values,
             currentGroups: contact.groups.values,
             currentConnections: contact.relation.values,
             currentBaptizedBy: contact.baptized_by.values,
@@ -388,6 +396,7 @@ class ContactDetailScreen extends React.Component {
             currentCoaching: contact.coaching.values,
             currentPeopleGroups: contact.people_groups.values,
             currentSources: contact.sources.values,
+            dataRetrieved: true,
           };
           break;
         case CONTACTS_GET_COMMENTS_SUCCESS:
@@ -400,8 +409,8 @@ class ContactDetailScreen extends React.Component {
           const commentsAndActivities = newState.commentsOrActivities
             .concat(activities)
             .sort(
-              (a, b) => new Date(a.date).getTime() > new Date(b.date).getTime(),
-            );
+            (a, b) => new Date(a.date).getTime() > new Date(b.date).getTime(),
+          );
           newState = {
             ...newState,
             commentsOrActivities: commentsAndActivities,
@@ -507,7 +516,7 @@ class ContactDetailScreen extends React.Component {
     }
     newState = {
       ...newState,
-      renderView: true,
+      loadedLocal: true,
     };
     this.setState(newState);
   };
@@ -590,36 +599,36 @@ class ContactDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-            <Grid>
-              <Row>
-                <Col>
-                  <Text style={styles.name}>{commentOrActivity.author}</Text>
-                </Col>
-                <Col style={{ width: 80 }}>
-                  <Text style={styles.time}>
-                    {this.onFormatDateToView(commentOrActivity.date)}
-                  </Text>
-                </Col>
-              </Row>
-            </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.author}</Text>
+                  </Col>
+                  <Col style={{ width: 80 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-            <Grid>
-              <Row>
-                <Col>
-                  <Text style={styles.name}>{commentOrActivity.name}</Text>
-                </Col>
-                <Col style={{ width: 80 }}>
-                  <Text style={styles.time}>
-                    {this.onFormatDateToView(commentOrActivity.date)}
-                  </Text>
-                </Col>
-              </Row>
-            </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.name}</Text>
+                  </Col>
+                  <Col style={{ width: 80 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
         </View>
         <Text
           style={
@@ -848,7 +857,7 @@ class ContactDetailScreen extends React.Component {
         contactToSave.geonames.values = this.setGeonames();
       }
       if (Object.prototype.hasOwnProperty.call(contactToSave, 'subassigned')) {
-        contactToSave.subassigned.values = this.setSubassignedContacts();
+        contactToSave.subassigned.values = this.setContactSubassignedContacts();
       }
       if (Object.prototype.hasOwnProperty.call(contactToSave, 'groups')) {
         contactToSave.groups.values = this.setGroups();
@@ -962,16 +971,17 @@ class ContactDetailScreen extends React.Component {
       },
     }));
   };
-
+  /*
   setCurrentSubassignedContacts = (contacts) => {
     this.setState({
       currentSubassignedContacts: contacts,
     });
   };
 
+
   setSubassignedContacts = () => {
     const dbContacts = [...this.state.contact.subassigned.values];
-    const localContacts = [...this.state.currentSubassignedContacts];
+    const localContacts = [...this.state.contact];
 
     const contactsToSave = localContacts.map(localContact => ({
       value: localContact.value,
@@ -991,6 +1001,7 @@ class ContactDetailScreen extends React.Component {
     });
     return contactsToSave;
   };
+  */
 
   setCurrentGroups = (groups) => {
     this.setState({
@@ -1467,6 +1478,31 @@ class ContactDetailScreen extends React.Component {
     return <Text>{foundUser ? foundUser.label : ''}</Text>;
   };
 
+  setContactSubassignedContacts = () => {
+    const dbContacts = [...this.state.contact.subassigned.values];
+
+    const localContacts = [];
+    const selectedValues = this.selectizeRef.getSelectedItems();
+    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
+      const contact = selectedValues.entities.item[itemValue];
+      localContacts.push(contact);
+    });
+
+    const subassignedContactToSave = localContacts.filter((localContact) => {
+      const foundLocalInDb = dbContacts.find(dbContact => dbContact.value === localContact.value);
+      return foundLocalInDb === undefined;
+    }).map(contact => ({ value: contact.value }));
+
+    dbContacts.forEach((dbContact) => {
+      const dbInLocal = localContacts.find(localContact => dbContact.value === localContact.value);
+      if (!dbInLocal) {
+        subassignedContactToSave.push({ value: dbContact.value, delete: true });
+      }
+    });
+
+    return subassignedContactToSave;
+  };
+
   render() {
     const successToast = (
       <Toast
@@ -1487,9 +1523,64 @@ class ContactDetailScreen extends React.Component {
       />
     );
 
+    // console.log('this.state.contact.subassigned', this.state.contact.subassigned);
+
+    /*
     return (
       <Container>
-        {this.state.contact.ID && this.state.renderView && (
+        {this.state.contact.ID && this.state.loadedLocal && this.state.dataRetrieved && (
+          <View style={{ flex: 1 }}>
+            <ScrollView keyboardShouldPersistTaps="handled">
+              <Selectize
+                ref={(selectize) => { this.selectizeRef = selectize; }}
+                itemId="value"
+                items={this.state.usersContacts}
+                selectedItems={this.state.contact.subassigned.values}
+                label="Users Contacts"
+                textInputProps={{
+                  placeholder: 'Select contacts',
+                }}
+                renderRow={(id, onPress, item) => (
+                  <TouchableOpacity
+                    activeOpacity={0.6}
+                    key={id}
+                    onPress={onPress}
+                    style={styles.listRow}
+                  >
+                    <View style={styles.listWrapper}>
+                      <View style={styles.listIcon}>
+                        <Text style={styles.listInitials}>
+                          {item.initials}
+                        </Text>
+                      </View>
+                      <View>
+                        <Text style={styles.listNameText}>{item.name}</Text>
+                        <Text style={styles.listEmailText}>{id}</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                )}
+                renderChip={(id, onClose, item, style, iconStyle) => (
+                  <Chip
+                    key={id}
+                    iconStyle={iconStyle}
+                    onClose={onClose}
+                    text={id}
+                    style={style}
+                  />
+                )}
+                filterOnKey="name"
+                keyboardShouldPersistTaps
+              />
+            </ScrollView>
+          </View>
+        )}
+      </Container>
+    );
+    */
+    return (
+      <Container>
+        {this.state.contact.ID && this.state.loadedLocal && this.state.dataRetrieved && (
           <Container>
             <View style={{ flex: 1 }}>
               <Tabs
@@ -1506,7 +1597,7 @@ class ContactDetailScreen extends React.Component {
                 >
                   <KeyboardShift>
                     {() => (
-                      <ScrollView>
+                      <ScrollView keyboardShouldPersistTaps="handled">
                         <View
                           style={{
                             paddingLeft: containerPadding - 15,
@@ -1581,27 +1672,69 @@ class ContactDetailScreen extends React.Component {
                                   style={styles.formIcon}
                                 />
                               </Col>
-                              <Col>
-                                <MultipleTags
-                                  tags={this.state.usersContacts}
-                                  preselectedTags={
-                                    this.state.currentSubassignedContacts
-                                  }
-                                  objectKeyIdentifier="value"
-                                  objectValueIdentifier="name"
-                                  onChangeItem={
-                                    this.setCurrentSubassignedContacts
-                                  }
-                                  search
-                                  visibleOnOpen={!this.state.onlyView}
-                                  title="Sub-assigned to"
-                                  searchHitResponse=""
-                                  defaultInstructionClosed=""
-                                  defaultInstructionOpen=""
-                                />
-                              </Col>
+                              <Col />
                               <Col style={styles.formIconLabel}>
-                                <Label style={styles.formLabel} />
+                                <Label style={styles.formLabel}>
+                                  Users Contacts
+                                </Label>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col>
+                                <Selectize
+                                  ref={(selectize) => { this.selectizeRef = selectize; }}
+                                  itemId="value"
+                                  items={this.state.usersContacts}
+                                  selectedItems={this.state.contact.subassigned.values}
+                                  textInputProps={{
+                                    placeholder: 'Select contacts',
+                                  }}
+                                  renderRow={(id, onPress, item) => (
+                                    <TouchableOpacity
+                                      activeOpacity={0.6}
+                                      key={id}
+                                      onPress={onPress}
+                                      style={{
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 10,
+                                      }}
+                                    >
+                                      <View style={{
+                                        flexDirection: 'row',
+                                      }}
+                                      >
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.87)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {item.name}
+                                        </Text>
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.54)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {id}
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  )}
+                                  renderChip={(id, onClose, item, style, iconStyle) => (
+                                    <Chip
+                                      key={id}
+                                      iconStyle={iconStyle}
+                                      onClose={onClose}
+                                      text={item.name}
+                                      style={style}
+                                    />
+                                  )}
+                                  filterOnKey="name"
+                                  keyboardShouldPersistTaps
+
+                                />
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
@@ -2580,7 +2713,7 @@ class ContactDetailScreen extends React.Component {
                           </View>
                         </KeyboardAccessory>
                       </View>
-                  )}
+                    )}
                 </Tab>
                 <Tab
                   heading="Connections"
@@ -2780,10 +2913,10 @@ class ContactDetailScreen extends React.Component {
                       style={{ color: 'white' }}
                       onPress={() => this.onSaveContact({
                         quick_button_phone_off:
-                            parseInt(
-                              this.state.contact.quick_button_phone_off,
-                              10,
-                            ) + 1,
+                          parseInt(
+                            this.state.contact.quick_button_phone_off,
+                            10,
+                          ) + 1,
                       })
                       }
                     />
@@ -2795,10 +2928,10 @@ class ContactDetailScreen extends React.Component {
                       style={{ color: 'white' }}
                       onPress={() => this.onSaveContact({
                         quick_button_no_answer:
-                            parseInt(
-                              this.state.contact.quick_button_no_answer,
-                              10,
-                            ) + 1,
+                          parseInt(
+                            this.state.contact.quick_button_no_answer,
+                            10,
+                          ) + 1,
                       })
                       }
                     />
@@ -2810,11 +2943,11 @@ class ContactDetailScreen extends React.Component {
                       style={{ color: 'white' }}
                       onPress={() => this.onSaveContact({
                         quick_button_contact_established:
-                            parseInt(
-                              this.state.contact
-                                .quick_button_contact_established,
-                              10,
-                            ) + 1,
+                          parseInt(
+                            this.state.contact
+                              .quick_button_contact_established,
+                            10,
+                          ) + 1,
                       })
                       }
                     />
@@ -2826,10 +2959,10 @@ class ContactDetailScreen extends React.Component {
                       style={{ color: 'white' }}
                       onPress={() => this.onSaveContact({
                         quick_button_meeting_scheduled:
-                            parseInt(
-                              this.state.contact.quick_button_meeting_scheduled,
-                              10,
-                            ) + 1,
+                          parseInt(
+                            this.state.contact.quick_button_meeting_scheduled,
+                            10,
+                          ) + 1,
                       })
                       }
                     />
@@ -2841,10 +2974,10 @@ class ContactDetailScreen extends React.Component {
                       style={{ color: 'white' }}
                       onPress={() => this.onSaveContact({
                         quick_button_meeting_complete:
-                            parseInt(
-                              this.state.contact.quick_button_meeting_complete,
-                              10,
-                            ) + 1,
+                          parseInt(
+                            this.state.contact.quick_button_meeting_complete,
+                            10,
+                          ) + 1,
                       })
                       }
                     />
@@ -2856,10 +2989,10 @@ class ContactDetailScreen extends React.Component {
                       style={{ color: 'white' }}
                       onPress={() => this.onSaveContact({
                         quick_button_no_show:
-                            parseInt(
-                              this.state.contact.quick_button_no_show,
-                              10,
-                            ) + 1,
+                          parseInt(
+                            this.state.contact.quick_button_no_show,
+                            10,
+                          ) + 1,
                       })
                       }
                     />
@@ -2869,7 +3002,7 @@ class ContactDetailScreen extends React.Component {
             </View>
           </Container>
         )}
-        {!this.state.contact.ID && this.state.renderView && (
+        {!this.state.contact.ID && this.state.loadedLocal && this.state.dataRetrieved && (
           <KeyboardShift>
             {() => (
               <ScrollView>

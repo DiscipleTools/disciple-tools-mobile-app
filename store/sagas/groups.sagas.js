@@ -304,7 +304,7 @@ export function* getUsersAndContacts({ domain, token }) {
           yield put({
             type: actions.GROUPS_GET_USERS_CONTACTS_SUCCESS,
             usersContacts: jsonData.posts.map(user => ({
-              value: user.ID,
+              value: user.ID.toString(),
               name: user.name,
             })),
           });
