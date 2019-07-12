@@ -409,8 +409,8 @@ class ContactDetailScreen extends React.Component {
           const commentsAndActivities = newState.commentsOrActivities
             .concat(activities)
             .sort(
-            (a, b) => new Date(a.date).getTime() > new Date(b.date).getTime(),
-          );
+              (a, b) => new Date(a.date).getTime() > new Date(b.date).getTime(),
+            );
           newState = {
             ...newState,
             commentsOrActivities: commentsAndActivities,
@@ -599,36 +599,36 @@ class ContactDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.author}</Text>
-                  </Col>
-                  <Col style={{ width: 80 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )}
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.author}</Text>
+              </Col>
+              <Col style={{ width: 80 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.name}</Text>
-                  </Col>
-                  <Col style={{ width: 80 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )}
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.name}</Text>
+              </Col>
+              <Col style={{ width: 80 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
         </View>
         <Text
           style={
@@ -2713,7 +2713,7 @@ class ContactDetailScreen extends React.Component {
                           </View>
                         </KeyboardAccessory>
                       </View>
-                    )}
+                  )}
                 </Tab>
                 <Tab
                   heading="Connections"
