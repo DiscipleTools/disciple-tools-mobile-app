@@ -146,6 +146,24 @@ export function* saveGroup({ domain, token, groupData }) {
                 }))
                 : [],
             },
+            parent_groups: {
+              values: group.parent_groups.map(parentGroup => ({
+                name: parentGroup.post_title,
+                value: parentGroup.ID.toString(),
+              })),
+            },
+            peer_groups: {
+              values: group.peer_groups.map(peerGroup => ({
+                name: peerGroup.post_title,
+                value: peerGroup.ID.toString(),
+              })),
+            },
+            child_groups: {
+              values: group.child_groups.map(childGroup => ({
+                name: childGroup.post_title,
+                value: childGroup.ID.toString(),
+              })),
+            },
           },
         });
       } else {
@@ -251,6 +269,24 @@ export function* getById({ domain, token, groupId }) {
                   value: healthMetric,
                 }))
                 : [],
+            },
+            parent_groups: {
+              values: group.parent_groups.map(parentGroup => ({
+                name: parentGroup.post_title,
+                value: parentGroup.ID.toString(),
+              })),
+            },
+            peer_groups: {
+              values: group.peer_groups.map(peerGroup => ({
+                name: peerGroup.post_title,
+                value: peerGroup.ID.toString(),
+              })),
+            },
+            child_groups: {
+              values: group.child_groups.map(childGroup => ({
+                name: childGroup.post_title,
+                value: childGroup.ID.toString(),
+              })),
             },
           },
         });
@@ -364,7 +400,7 @@ export function* getCommentsByGroup({ domain, token, groupId }) {
         yield put({
           type: actions.GROUPS_GET_COMMENTS_SUCCESS,
           comments: jsonData.map(comment => ({
-            ID: comment.comment_ID,
+            ID: `${comment.comment_ID}-c`,
             date: `${comment.comment_date.replace(' ', 'T')}Z`,
             author: comment.comment_author,
             content: comment.comment_content,
@@ -423,7 +459,7 @@ export function* saveComment({
         yield put({
           type: actions.GROUPS_SAVE_COMMENT_SUCCESS,
           comment: {
-            ID: jsonData.comment_ID,
+            ID: `${jsonData.comment_ID}-c`,
             author: jsonData.comment_author,
             date: `${jsonData.comment_date.replace(' ', 'T')}Z`,
             content: jsonData.comment_content,
@@ -568,7 +604,7 @@ export function* getActivitiesByGroup({ domain, token, groupId }) {
         yield put({
           type: actions.GROUPS_GET_ACTIVITIES_SUCCESS,
           activities: jsonData.map(activity => ({
-            ID: activity.histid,
+            ID: `${activity.histid}-a`,
             date: new Date(
               parseInt(activity.hist_time, 10) * 1000,
             ).toISOString(),

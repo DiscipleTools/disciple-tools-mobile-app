@@ -205,7 +205,7 @@ export function* save({ domain, token, contactData }) {
             sources: {
               values: contact.sources
                 ? contact.sources.map(source => ({
-                  label: source,
+                  name: source,
                   value: source,
                 }))
                 : [],
@@ -255,7 +255,6 @@ export function* save({ domain, token, contactData }) {
                 ? contact.relation.map(relationItem => ({
                   name: relationItem.post_title,
                   value: relationItem.ID.toString(),
-                  post_date: relationItem.post_date,
                 }))
                 : [],
             },
@@ -264,7 +263,6 @@ export function* save({ domain, token, contactData }) {
                 ? contact.baptized_by.map(baptizedByItem => ({
                   name: baptizedByItem.post_title,
                   value: baptizedByItem.ID.toString(),
-                  post_date: baptizedByItem.post_date,
                 }))
                 : [],
             },
@@ -273,7 +271,6 @@ export function* save({ domain, token, contactData }) {
                 ? contact.baptized.map(baptizedItem => ({
                   name: baptizedItem.post_title,
                   value: baptizedItem.ID.toString(),
-                  post_date: baptizedItem.post_date,
                 }))
                 : [],
             },
@@ -282,7 +279,6 @@ export function* save({ domain, token, contactData }) {
                 ? contact.coached_by.map(coachedItem => ({
                   name: coachedItem.post_title,
                   value: coachedItem.ID.toString(),
-                  post_date: coachedItem.post_date,
                 }))
                 : [],
             },
@@ -291,7 +287,6 @@ export function* save({ domain, token, contactData }) {
                 ? contact.coaching.map(coachingItem => ({
                   name: coachingItem.post_title,
                   value: coachingItem.ID.toString(),
-                  post_date: coachingItem.post_date,
                 }))
                 : [],
             },
@@ -471,7 +466,7 @@ export function* getById({ domain, token, contactId }) {
             sources: {
               values: contact.sources
                 ? contact.sources.map(source => ({
-                  label: source,
+                  name: source.charAt(0).toUpperCase() + source.slice(1),
                   value: source,
                 }))
                 : [],
@@ -521,7 +516,6 @@ export function* getById({ domain, token, contactId }) {
                 ? contact.relation.map(relationItem => ({
                   name: relationItem.post_title,
                   value: relationItem.ID.toString(),
-                  post_date: relationItem.post_date,
                 }))
                 : [],
             },
@@ -530,7 +524,6 @@ export function* getById({ domain, token, contactId }) {
                 ? contact.baptized_by.map(baptizedByItem => ({
                   name: baptizedByItem.post_title,
                   value: baptizedByItem.ID.toString(),
-                  post_date: baptizedByItem.post_date,
                 }))
                 : [],
             },
@@ -539,7 +532,6 @@ export function* getById({ domain, token, contactId }) {
                 ? contact.baptized.map(baptizedItem => ({
                   name: baptizedItem.post_title,
                   value: baptizedItem.ID.toString(),
-                  post_date: baptizedItem.post_date,
                 }))
                 : [],
             },
@@ -548,7 +540,6 @@ export function* getById({ domain, token, contactId }) {
                 ? contact.coached_by.map(coachedItem => ({
                   name: coachedItem.post_title,
                   value: coachedItem.ID.toString(),
-                  post_date: coachedItem.post_date,
                 }))
                 : [],
             },
@@ -557,7 +548,6 @@ export function* getById({ domain, token, contactId }) {
                 ? contact.coaching.map(coachingItem => ({
                   name: coachingItem.post_title,
                   value: coachingItem.ID.toString(),
-                  post_date: coachingItem.post_date,
                 }))
                 : [],
             },
@@ -638,7 +628,7 @@ export function* getCommentsByContact({ domain, token, contactId }) {
         yield put({
           type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
           comments: jsonData.map(comment => ({
-            ID: comment.comment_ID,
+            ID: `${comment.comment_ID}-c`,
             date: `${comment.comment_date.replace(' ', 'T')}Z`,
             author: comment.comment_author,
             content: comment.comment_content,
@@ -697,7 +687,7 @@ export function* saveComment({
         yield put({
           type: actions.CONTACTS_SAVE_COMMENT_SUCCESS,
           comment: {
-            ID: jsonData.comment_ID,
+            ID: `${jsonData.comment_ID}-c`,
             author: jsonData.comment_author,
             date: `${jsonData.comment_date.replace(' ', 'T')}Z`,
             content: jsonData.comment_content,
@@ -753,7 +743,7 @@ export function* getActivitiesByContact({ domain, token, contactId }) {
         yield put({
           type: actions.CONTACTS_GET_ACTIVITIES_SUCCESS,
           activities: jsonData.map(activity => ({
-            ID: activity.histid,
+            ID: `${activity.histid}-a`,
             date: new Date(
               parseInt(activity.hist_time, 10) * 1000,
             ).toISOString(),

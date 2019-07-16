@@ -28,7 +28,7 @@ import {
   Button,
 } from 'native-base';
 import PropTypes from 'prop-types';
-import MultipleTags from 'react-native-multiple-tags';
+
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
@@ -65,9 +65,18 @@ const containerPadding = 35;
 const windowWidth = Dimensions.get('window').width;
 const progressBarWidth = windowWidth - 100;
 const milestonesGridSize = windowWidth + 5;
-let commentsFlatList;
 /* eslint-disable */
-let selectizeRef;
+let commentsFlatList,
+  subAssignedSelectizeRef,
+  geonamesSelectizeRef,
+  pplGroupsSelectizeRef,
+  sourcesSelectizeRef,
+  groupsSelectizeRef,
+  connectionsSelectizeRef,
+  baptizedBySelectizeRef,
+  coachedSelectizeRef,
+  baptizedSelectizeRef,
+  coachingSelectizeRef;
 /* eslint-enable */
 const styles = StyleSheet.create({
   tabBarUnderlineStyle: {
@@ -223,45 +232,45 @@ class ContactDetailScreen extends React.Component {
       contact_phone: [],
       contact_email: [],
       contact_address: [],
-      subassigned: {
+      geonames: {
         values: [],
       },
     },
     contactSources: [
       {
-        label: 'personal',
+        name: 'Personal',
         value: 'personal',
       },
       {
-        label: 'web',
+        name: 'Web',
         value: 'web',
       },
       {
-        label: 'phone',
+        name: 'Phone',
         value: 'phone',
       },
       {
-        label: 'facebook',
+        name: 'Facebook',
         value: 'facebook',
       },
       {
-        label: 'twitter',
+        name: 'Twitter',
         value: 'twitter',
       },
       {
-        label: 'linkedin',
+        name: 'Linkedin',
         value: 'linkedin',
       },
       {
-        label: 'referral',
+        name: 'Referral',
         value: 'referral',
       },
       {
-        label: 'advertisement',
+        name: 'Advertisement',
         value: 'advertisement',
       },
       {
-        label: 'transfer',
+        name: 'Transfer',
         value: 'transfer',
       },
     ],
@@ -275,14 +284,7 @@ class ContactDetailScreen extends React.Component {
     progressBarValue: 0,
     groups: [],
     contacts: [],
-    currentGroups: [],
-    currentConnections: [],
-    currentBaptizedBy: [],
-    currentBaptized: [],
-    currentCoachedBy: [],
-    currentCoaching: [],
     usersContacts: [],
-    // currentSubassignedContacts: [],
     overallStatusBackgroundColor: '#ffffff',
     listContactStates: [
       {
@@ -317,8 +319,6 @@ class ContactDetailScreen extends React.Component {
     activeFab: false,
     renderFab: true,
     peopleGroups: [],
-    currentPeopleGroups: [],
-    currentSources: [],
     users: [],
     showAssignedToModal: false,
   };
@@ -360,8 +360,8 @@ class ContactDetailScreen extends React.Component {
     } = nextProps;
     let newState = {
       ...prevState,
+      contactsReducerResponse,
     };
-
     // New response incomming
     if (contactsReducerResponse !== prevState.contactsReducerResponse) {
       switch (contactsReducerResponse) {
@@ -369,6 +369,10 @@ class ContactDetailScreen extends React.Component {
           // Creation
           if (contact.ID && !prevState.contact.ID) {
             navigation.setParams({ contactName: contact.title });
+            newState = {
+              ...newState,
+              dataRetrieved: true,
+            };
           }
           newState = {
             ...newState,
@@ -387,15 +391,6 @@ class ContactDetailScreen extends React.Component {
           newState = {
             ...newState,
             contact,
-            // currentSubassignedContacts: contact.subassigned.values,
-            currentGroups: contact.groups.values,
-            currentConnections: contact.relation.values,
-            currentBaptizedBy: contact.baptized_by.values,
-            currentBaptized: contact.baptized.values,
-            currentCoachedBy: contact.coached_by.values,
-            currentCoaching: contact.coaching.values,
-            currentPeopleGroups: contact.people_groups.values,
-            currentSources: contact.sources.values,
             dataRetrieved: true,
           };
           break;
@@ -409,7 +404,7 @@ class ContactDetailScreen extends React.Component {
           const commentsAndActivities = newState.commentsOrActivities
             .concat(activities)
             .sort(
-              (a, b) => new Date(a.date).getTime() > new Date(b.date).getTime(),
+              (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
             );
           newState = {
             ...newState,
@@ -421,7 +416,7 @@ class ContactDetailScreen extends React.Component {
           const newCommentsOrActivities = newState.commentsOrActivities;
           newCommentsOrActivities.push(comment);
           newCommentsOrActivities.sort(
-            (a, b) => new Date(a.date).getTime() > new Date(b.date).getTime(),
+            (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
           );
           newState = {
             ...newState,
@@ -651,7 +646,7 @@ class ContactDetailScreen extends React.Component {
         </Text>
       </View>
     </View>
-  );
+  )
 
   onEnableEdit = () => {
     this.setState({
@@ -712,29 +707,27 @@ class ContactDetailScreen extends React.Component {
 
   setGeonames = () => {
     const dbGeonames = [...this.state.contact.geonames.values];
-    const localGeonames = [...this.state.currentGeonames];
-    const geonamesToSave = localGeonames.map(localGeoname => ({
-      value: localGeoname.value,
-    }));
-    // add geonames to delete it in db
+
+    const localGeonames = [];
+    const selectedValues = this.geonamesSelectizeRef.getSelectedItems();
+    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
+      const geoname = selectedValues.entities.item[itemValue];
+      localGeonames.push(geoname);
+    });
+
+    const geonamesToSave = localGeonames.filter((localGeoname) => {
+      const foundLocalInDb = dbGeonames.find(dbGeoname => dbGeoname.value === localGeoname.value);
+      return foundLocalInDb === undefined;
+    }).map(geoname => ({ value: geoname.value }));
+
     dbGeonames.forEach((dbGeoname) => {
-      const foundDbGeonameInLocalGeoname = localGeonames.find(
-        localGeoname => dbGeoname.value === localGeoname.value,
-      );
-      if (!foundDbGeonameInLocalGeoname) {
-        geonamesToSave.push({
-          value: dbGeoname.value,
-          delete: true,
-        });
+      const dbInLocal = localGeonames.find(localGeoname => dbGeoname.value === localGeoname.value);
+      if (!dbInLocal) {
+        geonamesToSave.push({ value: dbGeoname.value, delete: true });
       }
     });
-    return geonamesToSave;
-  };
 
-  setCurrentGeonames = (value) => {
-    this.setState({
-      currentGeonames: value,
-    });
+    return geonamesToSave;
   };
 
   setContactInitialComment = (value) => {
@@ -971,246 +964,155 @@ class ContactDetailScreen extends React.Component {
       },
     }));
   };
-  /*
-  setCurrentSubassignedContacts = (contacts) => {
-    this.setState({
-      currentSubassignedContacts: contacts,
-    });
-  };
-
-
-  setSubassignedContacts = () => {
-    const dbContacts = [...this.state.contact.subassigned.values];
-    const localContacts = [...this.state.contact];
-
-    const contactsToSave = localContacts.map(localContact => ({
-      value: localContact.value,
-    }));
-
-    // add coaches to delete it in db
-    dbContacts.forEach((dbContact) => {
-      const foundDbContactInLocalContact = localContacts.find(
-        localContact => dbContact.value === localContact.value,
-      );
-      if (!foundDbContactInLocalContact) {
-        contactsToSave.push({
-          value: dbContact.value,
-          delete: true,
-        });
-      }
-    });
-    return contactsToSave;
-  };
-  */
-
-  setCurrentGroups = (groups) => {
-    this.setState({
-      currentGroups: groups,
-    });
-  };
 
   setGroups = () => {
     const dbGroups = [...this.state.contact.groups.values];
-    const localGroups = [...this.state.currentGroups];
-    const groupsToSave = localGroups.map(localGroup => ({
-      value: localGroup.value,
-    }));
+
+    const lclGroups = [];
+    const selectedValues = this.groupsSelectizeRef.getSelectedItems();
+    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
+      const group = selectedValues.entities.item[itemValue];
+      lclGroups.push(group);
+    });
+
+    const groupsToSave = lclGroups.filter((lclGroup) => {
+      const foundLocalInDb = dbGroups.find(dbGroup => dbGroup.value === lclGroup.value);
+      return foundLocalInDb === undefined;
+    }).map(group => ({ value: group.value }));
 
     dbGroups.forEach((dbGroup) => {
-      const foundDbGroupInLocalGroup = localGroups.find(
-        localGroup => dbGroup.value === localGroup.value,
-      );
-      if (!foundDbGroupInLocalGroup) {
-        groupsToSave.push({
-          value: dbGroup.value,
-          delete: true,
-        });
+      const dbInLocal = lclGroups.find(lclGroup => dbGroup.value === lclGroup.value);
+      if (!dbInLocal) {
+        groupsToSave.push({ value: dbGroup.value, delete: true });
       }
     });
-    return groupsToSave;
-  };
 
-  setCurrentConnections = (connections) => {
-    this.setState({
-      currentConnections: connections,
-    });
+    return groupsToSave;
   };
 
   setConnections = () => {
     const dbConnections = [...this.state.contact.relation.values];
-    const localConnections = [...this.state.currentConnections];
 
-    const connectionsToSave = localConnections
-      .filter((localConnection) => {
-        const foundLocalConnectionInDb = dbConnections.find(
-          dbConnection => dbConnection.value === localConnection.value
-            && dbConnection.post_date,
-        );
-        return foundLocalConnectionInDb === undefined;
-      })
-      .map(localConnection => ({
-        value: localConnection.value,
-      }));
+    const lclConnections = [];
+    const selectedValues = this.connectionsSelectizeRef.getSelectedItems();
+    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
+      const connection = selectedValues.entities.item[itemValue];
+      lclConnections.push(connection);
+    });
+
+    const connectionsToSave = lclConnections.filter((lclConnection) => {
+      const foundLocalInDb = dbConnections.find(dbCnt => dbCnt.value === lclConnection.value);
+      return foundLocalInDb === undefined;
+    }).map(connection => ({ value: connection.value }));
 
     dbConnections.forEach((dbConnection) => {
-      const foundDbConnectionInLocalConnection = localConnections.find(
-        localConnection => dbConnection.value === localConnection.value,
-      );
-      if (!foundDbConnectionInLocalConnection) {
-        connectionsToSave.push({
-          value: dbConnection.value,
-          delete: true,
-        });
+      const dbInLocal = lclConnections.find(lclCnt => dbConnection.value === lclCnt.value);
+      if (!dbInLocal) {
+        connectionsToSave.push({ value: dbConnection.value, delete: true });
       }
     });
 
     return connectionsToSave;
   };
 
-  setCurrentBaptizedBy = (baptizedBy) => {
-    this.setState({
-      currentBaptizedBy: baptizedBy,
-    });
-  };
-
   setBaptizedBy = () => {
     const dbBaptizedBy = [...this.state.contact.baptized_by.values];
-    const localBaptizedBy = [...this.state.currentBaptizedBy];
 
-    const baptizedByToSave = localBaptizedBy
-      .filter((localBaptized) => {
-        const foundLocalBaptizedInDb = dbBaptizedBy.find(
-          dbBaptized => dbBaptized.value === localBaptized.value && dbBaptized.post_date,
-        );
-        return foundLocalBaptizedInDb === undefined;
-      })
-      .map(localBaptized => ({
-        value: localBaptized.value,
-      }));
+    const lclBaptizedBy = [];
+    const selectedValues = this.baptizedBySelectizeRef.getSelectedItems();
+    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
+      const baptizedBy = selectedValues.entities.item[itemValue];
+      lclBaptizedBy.push(baptizedBy);
+    });
+
+    const baptizedByToSave = lclBaptizedBy.filter((lclBaptized) => {
+      const foundLocalInDb = dbBaptizedBy.find(dbBpt => dbBpt.value === lclBaptized.value);
+      return foundLocalInDb === undefined;
+    }).map(baptizedBy => ({ value: baptizedBy.value }));
 
     dbBaptizedBy.forEach((dbBaptized) => {
-      const foundDbBaptizedInLocalBaptized = localBaptizedBy.find(
-        localBaptized => dbBaptized.value === localBaptized.value,
-      );
-      if (!foundDbBaptizedInLocalBaptized) {
-        baptizedByToSave.push({
-          value: dbBaptized.value,
-          delete: true,
-        });
+      const dbInLocal = lclBaptizedBy.find(lclBaptized => dbBaptized.value === lclBaptized.value);
+      if (!dbInLocal) {
+        baptizedByToSave.push({ value: dbBaptized.value, delete: true });
       }
     });
 
     return baptizedByToSave;
   };
 
-  setCurrentBaptized = (baptized) => {
-    this.setState({
-      currentBaptized: baptized,
-    });
-  };
-
   setBaptized = () => {
-    const dbBaptizedList = [...this.state.contact.baptized.values];
-    const localBaptizedList = [...this.state.currentBaptized];
+    const dbBaptizeds = [...this.state.contact.baptized.values];
 
-    const baptizedToSave = localBaptizedList
-      .filter((localBaptizedItem) => {
-        const foundLocalBaptizedInDb = dbBaptizedList.find(
-          dbBaptizedItem => dbBaptizedItem.value === localBaptizedItem.value
-            && dbBaptizedItem.post_date,
-        );
-        return foundLocalBaptizedInDb === undefined;
-      })
-      .map(localBaptizedItem => ({
-        value: localBaptizedItem.value,
-      }));
+    const lclBaptizeds = [];
+    const selectedValues = this.baptizedSelectizeRef.getSelectedItems();
+    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
+      const baptized = selectedValues.entities.item[itemValue];
+      lclBaptizeds.push(baptized);
+    });
 
-    dbBaptizedList.forEach((dbBaptizedItem) => {
-      const foundDbBaptizedInLocalBaptized = localBaptizedList.find(
-        localBaptizedItem => dbBaptizedItem.value === localBaptizedItem.value,
-      );
-      if (!foundDbBaptizedInLocalBaptized) {
-        baptizedToSave.push({
-          value: dbBaptizedItem.value,
-          delete: true,
-        });
+    const baptizedToSave = lclBaptizeds.filter((lclBaptized) => {
+      const foundLocalInDb = dbBaptizeds.find(dbBaptized => dbBaptized.value === lclBaptized.value);
+      return foundLocalInDb === undefined;
+    }).map(baptized => ({ value: baptized.value }));
+
+    dbBaptizeds.forEach((dbBaptized) => {
+      const dbInLocal = lclBaptizeds.find(lclBaptized => dbBaptized.value === lclBaptized.value);
+      if (!dbInLocal) {
+        baptizedToSave.push({ value: dbBaptized.value, delete: true });
       }
     });
 
     return baptizedToSave;
   };
 
-  setCurrentCoachedBy = (coached) => {
-    this.setState({
-      currentCoachedBy: coached,
-    });
-  };
-
   setCoachedBy = () => {
     const dbCoachedBy = [...this.state.contact.coached_by.values];
-    const localCoachedBy = [...this.state.currentCoachedBy];
 
-    const coachedByToSave = localCoachedBy
-      .filter((localCoached) => {
-        const foundLocalCoachedInDb = dbCoachedBy.find(
-          dbCoached => dbCoached.value === localCoached.value && dbCoached.post_date,
-        );
-        return foundLocalCoachedInDb === undefined;
-      })
-      .map(localCoached => ({
-        value: localCoached.value,
-      }));
+    const lclCoachedBy = [];
+    const selectedValues = this.coachedSelectizeRef.getSelectedItems();
+    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
+      const coached = selectedValues.entities.item[itemValue];
+      lclCoachedBy.push(coached);
+    });
+
+    const coachedToSave = lclCoachedBy.filter((lclCoached) => {
+      const foundLocalInDb = dbCoachedBy.find(dbCoached => dbCoached.value === lclCoached.value);
+      return foundLocalInDb === undefined;
+    }).map(coached => ({ value: coached.value }));
 
     dbCoachedBy.forEach((dbCoached) => {
-      const foundDbCoachedInLocalCoached = localCoachedBy.find(
-        localCoached => dbCoached.value === localCoached.value,
-      );
-      if (!foundDbCoachedInLocalCoached) {
-        coachedByToSave.push({
-          value: dbCoached.value,
-          delete: true,
-        });
+      const dbInLocal = lclCoachedBy.find(lclCoached => dbCoached.value === lclCoached.value);
+      if (!dbInLocal) {
+        coachedToSave.push({ value: dbCoached.value, delete: true });
       }
     });
 
-    return coachedByToSave;
-  };
-
-  setCurrentCoaching = (coaching) => {
-    this.setState({
-      currentCoaching: coaching,
-    });
+    return coachedToSave;
   };
 
   setCoaching = () => {
     const dbCoaching = [...this.state.contact.coaching.values];
-    const localCoaching = [...this.state.currentCoaching];
 
-    const coachingByToSave = localCoaching
-      .filter((localCoachingItem) => {
-        const foundLocalCoachingInDb = dbCoaching.find(
-          dbCoachingItem => dbCoachingItem.value === localCoachingItem.value
-            && dbCoachingItem.post_date,
-        );
-        return foundLocalCoachingInDb === undefined;
-      })
-      .map(localCoachingItem => ({
-        value: localCoachingItem.value,
-      }));
+    const lclCoaching = [];
+    const selectedValues = this.coachingSelectizeRef.getSelectedItems();
+    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
+      const coaching = selectedValues.entities.item[itemValue];
+      lclCoaching.push(coaching);
+    });
 
-    dbCoaching.forEach((dbCoachingItem) => {
-      const foundDbCoachingInLocalCoaching = localCoaching.find(
-        localCoachingItem => dbCoachingItem.value === localCoachingItem.value,
-      );
-      if (!foundDbCoachingInLocalCoaching) {
-        coachingByToSave.push({
-          value: dbCoachingItem.value,
-          delete: true,
-        });
+    const coachingToSave = lclCoaching.filter((lclCoach) => {
+      const localInDb = dbCoaching.find(dbCoach => dbCoach.value === lclCoach.value);
+      return localInDb === undefined;
+    }).map(coaching => ({ value: coaching.value }));
+
+    dbCoaching.forEach((dbCoach) => {
+      const dbInLocal = lclCoaching.find(lclCoach => dbCoach.value === lclCoach.value);
+      if (!dbInLocal) {
+        coachingToSave.push({ value: dbCoach.value, delete: true });
       }
     });
 
-    return coachingByToSave;
+    return coachingToSave;
   };
 
   setContactAge = (value) => {
@@ -1389,63 +1291,53 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  setCurrentPeopleGroups = (values) => {
-    this.setState({
-      currentPeopleGroups: values,
-    });
-  };
-
   setPeopleGroups = () => {
-    const dbPeopleGroups = [...this.state.contact.people_groups.values];
-    const localPeopleGroups = [...this.state.currentPeopleGroups];
+    const dbPGs = [...this.state.contact.people_groups.values];
 
-    const peopleGroupsToSave = localPeopleGroups.map(localPeopleGroup => ({
-      value: localPeopleGroup.value,
-    }));
+    const lclPGs = [];
+    const selectedValues = this.pplGroupsSelectizeRef.getSelectedItems();
+    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
+      const peopleGroup = selectedValues.entities.item[itemValue];
+      lclPGs.push(peopleGroup);
+    });
 
-    dbPeopleGroups.forEach((dbPeopleGroup) => {
-      const foundDbPeopleGroupInLocalPeopleGroup = localPeopleGroups.find(
-        localPeopleGroup => dbPeopleGroup.value === localPeopleGroup.value,
-      );
-      if (!foundDbPeopleGroupInLocalPeopleGroup) {
-        peopleGroupsToSave.push({
-          value: dbPeopleGroup.value,
-          delete: true,
-        });
+    const peopleGroupsToSave = lclPGs.filter((lclPG) => {
+      const foundLocalInDb = dbPGs.find(dbPG => dbPG.value === lclPG.value);
+      return foundLocalInDb === undefined;
+    }).map(peopleGroup => ({ value: peopleGroup.value }));
+
+    dbPGs.forEach((dbPG) => {
+      const dbInLocal = lclPGs.find(lclPG => dbPG.value === lclPG.value);
+      if (!dbInLocal) {
+        peopleGroupsToSave.push({ value: dbPG.value, delete: true });
       }
     });
 
     return peopleGroupsToSave;
   };
 
-  setCurrentSources = (values) => {
-    this.setState({
-      currentSources: values,
-    });
-  };
-
   setSources = () => {
     const dbSources = [...this.state.contact.sources.values];
-    const localSources = [...this.state.currentSources];
+
+    const localSources = [];
+    const selectedValues = this.sourcesSelectizeRef.getSelectedItems();
+    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
+      const source = selectedValues.entities.item[itemValue];
+      localSources.push(source);
+    });
 
     const sourcesToSave = localSources.filter((localSource) => {
-      const foundLocalSourceInDb = dbSources.find(
-        dbSource => dbSource.value === localSource.value,
-      );
-      return foundLocalSourceInDb === undefined;
-    });
+      const foundLocalInDb = dbSources.find(dbSource => dbSource.value === localSource.value);
+      return foundLocalInDb === undefined;
+    }).map(source => ({ value: source.value }));
 
-    dbSources.forEach((dbSourceItem) => {
-      const foundDbSourceInLocalSources = localSources.find(
-        localSource => dbSourceItem.value === localSource.value,
-      );
-      if (!foundDbSourceInLocalSources) {
-        sourcesToSave.push({
-          value: dbSourceItem.value,
-          delete: true,
-        });
+    dbSources.forEach((dbSource) => {
+      const dbInLocal = localSources.find(localSource => dbSource.value === localSource.value);
+      if (!dbInLocal) {
+        sourcesToSave.push({ value: dbSource.value, delete: true });
       }
     });
+
     return sourcesToSave;
   };
 
@@ -1482,7 +1374,7 @@ class ContactDetailScreen extends React.Component {
     const dbContacts = [...this.state.contact.subassigned.values];
 
     const localContacts = [];
-    const selectedValues = this.selectizeRef.getSelectedItems();
+    const selectedValues = this.subAssignedSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const contact = selectedValues.entities.item[itemValue];
       localContacts.push(contact);
@@ -1523,61 +1415,6 @@ class ContactDetailScreen extends React.Component {
       />
     );
 
-    // console.log('this.state.contact.subassigned', this.state.contact.subassigned);
-
-    /*
-    return (
-      <Container>
-        {this.state.contact.ID && this.state.loadedLocal && this.state.dataRetrieved && (
-          <View style={{ flex: 1 }}>
-            <ScrollView keyboardShouldPersistTaps="handled">
-              <Selectize
-                ref={(selectize) => { this.selectizeRef = selectize; }}
-                itemId="value"
-                items={this.state.usersContacts}
-                selectedItems={this.state.contact.subassigned.values}
-                label="Users Contacts"
-                textInputProps={{
-                  placeholder: 'Select contacts',
-                }}
-                renderRow={(id, onPress, item) => (
-                  <TouchableOpacity
-                    activeOpacity={0.6}
-                    key={id}
-                    onPress={onPress}
-                    style={styles.listRow}
-                  >
-                    <View style={styles.listWrapper}>
-                      <View style={styles.listIcon}>
-                        <Text style={styles.listInitials}>
-                          {item.initials}
-                        </Text>
-                      </View>
-                      <View>
-                        <Text style={styles.listNameText}>{item.name}</Text>
-                        <Text style={styles.listEmailText}>{id}</Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                )}
-                renderChip={(id, onClose, item, style, iconStyle) => (
-                  <Chip
-                    key={id}
-                    iconStyle={iconStyle}
-                    onClose={onClose}
-                    text={id}
-                    style={style}
-                  />
-                )}
-                filterOnKey="name"
-                keyboardShouldPersistTaps
-              />
-            </ScrollView>
-          </View>
-        )}
-      </Container>
-    );
-    */
     return (
       <Container>
         {this.state.contact.ID && this.state.loadedLocal && this.state.dataRetrieved && (
@@ -1682,7 +1519,7 @@ class ContactDetailScreen extends React.Component {
                             <Row>
                               <Col>
                                 <Selectize
-                                  ref={(selectize) => { this.selectizeRef = selectize; }}
+                                  ref={(selectize) => { this.subAssignedSelectizeRef = selectize; }}
                                   itemId="value"
                                   items={this.state.usersContacts}
                                   selectedItems={this.state.contact.subassigned.values}
@@ -2002,19 +1839,59 @@ class ContactDetailScreen extends React.Component {
                                   style={styles.formIcon}
                                 />
                               </Col>
+                              <Col />
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>
+                                  Locations
+                                </Label>
+                              </Col>
+                            </Row>
+                            <Row>
                               <Col>
-                                <MultipleTags
-                                  tags={this.state.geonames}
-                                  preselectedTags={this.state.currentGeonames}
-                                  objectKeyIdentifier="value"
-                                  objectValueIdentifier="name"
-                                  onChangeItem={this.setCurrentGeonames}
-                                  search
-                                  visibleOnOpen={!this.state.onlyView}
-                                  title="Location"
-                                  searchHitResponse=""
-                                  defaultInstructionClosed=""
-                                  defaultInstructionOpen=""
+                                <Selectize
+                                  ref={(selectize) => { this.geonamesSelectizeRef = selectize; }}
+                                  itemId="value"
+                                  items={this.state.geonames}
+                                  selectedItems={this.state.contact.geonames.values}
+                                  textInputProps={{
+                                    placeholder: 'Select locations',
+                                  }}
+                                  renderRow={(id, onPress, item) => (
+                                    <TouchableOpacity
+                                      activeOpacity={0.6}
+                                      key={id}
+                                      onPress={onPress}
+                                      style={{
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 10,
+                                      }}
+                                    >
+                                      <View style={{
+                                        flexDirection: 'row',
+                                      }}
+                                      >
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.87)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {item.name}
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  )}
+                                  renderChip={(id, onClose, item, style, iconStyle) => (
+                                    <Chip
+                                      key={id}
+                                      iconStyle={iconStyle}
+                                      onClose={onClose}
+                                      text={item.name}
+                                      style={style}
+                                    />
+                                  )}
+                                  filterOnKey="name"
+                                  keyboardShouldPersistTaps
                                 />
                               </Col>
                             </Row>
@@ -2027,21 +1904,59 @@ class ContactDetailScreen extends React.Component {
                                   style={styles.formIcon}
                                 />
                               </Col>
+                              <Col />
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>
+                                  People Groups
+                                </Label>
+                              </Col>
+                            </Row>
+                            <Row>
                               <Col>
-                                <MultipleTags
-                                  tags={this.state.peopleGroups}
-                                  preselectedTags={
-                                    this.state.currentPeopleGroups
-                                  }
-                                  objectKeyIdentifier="value"
-                                  objectValueIdentifier="name"
-                                  onChangeItem={this.setCurrentPeopleGroups}
-                                  search
-                                  visibleOnOpen={!this.state.onlyView}
-                                  title="People Groups"
-                                  searchHitResponse=""
-                                  defaultInstructionClosed=""
-                                  defaultInstructionOpen=""
+                                <Selectize
+                                  ref={(selectize) => { this.pplGroupsSelectizeRef = selectize; }}
+                                  itemId="value"
+                                  items={this.state.peopleGroups}
+                                  selectedItems={this.state.contact.people_groups.values}
+                                  textInputProps={{
+                                    placeholder: 'Select People Groups',
+                                  }}
+                                  renderRow={(id, onPress, item) => (
+                                    <TouchableOpacity
+                                      activeOpacity={0.6}
+                                      key={id}
+                                      onPress={onPress}
+                                      style={{
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 10,
+                                      }}
+                                    >
+                                      <View style={{
+                                        flexDirection: 'row',
+                                      }}
+                                      >
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.87)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {item.name}
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  )}
+                                  renderChip={(id, onClose, item, style, iconStyle) => (
+                                    <Chip
+                                      key={id}
+                                      iconStyle={iconStyle}
+                                      onClose={onClose}
+                                      text={item.name}
+                                      style={style}
+                                    />
+                                  )}
+                                  filterOnKey="name"
+                                  keyboardShouldPersistTaps
                                 />
                               </Col>
                             </Row>
@@ -2111,24 +2026,79 @@ class ContactDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
+                                  type="FontAwesome"
+                                  name="globe"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col />
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>
+                                  People Groups
+                                </Label>
+                              </Col>
+                            </Row>
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
                                   android="md-arrow-dropright"
                                   ios="ios-arrow-dropright"
                                   style={styles.formIcon}
                                 />
                               </Col>
+                              <Col />
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>
+                                  Source
+                                </Label>
+                              </Col>
+                            </Row>
+                            <Row>
                               <Col>
-                                <MultipleTags
-                                  tags={this.state.contactSources}
-                                  preselectedTags={this.state.currentSources}
-                                  objectKeyIdentifier="value"
-                                  objectValueIdentifier="label"
-                                  onChangeItem={this.setCurrentSources}
-                                  search
-                                  visibleOnOpen={!this.state.onlyView}
-                                  title="Source"
-                                  searchHitResponse=""
-                                  defaultInstructionClosed=""
-                                  defaultInstructionOpen=""
+                                <Selectize
+                                  ref={(selectize) => { this.sourcesSelectizeRef = selectize; }}
+                                  itemId="value"
+                                  items={this.state.contactSources}
+                                  selectedItems={this.state.contact.sources.values}
+                                  textInputProps={{
+                                    placeholder: 'Select sources',
+                                  }}
+                                  renderRow={(id, onPress, item) => (
+                                    <TouchableOpacity
+                                      activeOpacity={0.6}
+                                      key={id}
+                                      onPress={onPress}
+                                      style={{
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 10,
+                                      }}
+                                    >
+                                      <View style={{
+                                        flexDirection: 'row',
+                                      }}
+                                      >
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.87)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {item.name}
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  )}
+                                  renderChip={(id, onClose, item, style, iconStyle) => (
+                                    <Chip
+                                      key={id}
+                                      iconStyle={iconStyle}
+                                      onClose={onClose}
+                                      text={item.name}
+                                      style={style}
+                                    />
+                                  )}
+                                  filterOnKey="name"
+                                  keyboardShouldPersistTaps
                                 />
                               </Col>
                             </Row>
@@ -2651,8 +2621,6 @@ class ContactDetailScreen extends React.Component {
                           ref={(flatList) => {
                             commentsFlatList = flatList;
                           }}
-                          onContentSizeChange={() => commentsFlatList.scrollToEnd()
-                          }
                           data={this.state.commentsOrActivities}
                           extraData={this.state.commentsOrActivities}
                           ItemSeparatorComponent={() => (
@@ -2663,7 +2631,7 @@ class ContactDetailScreen extends React.Component {
                               }}
                             />
                           )}
-                          keyExtractor={item => item.ID.toString()}
+                          keyExtractor={item => item.ID}
                           renderItem={(item) => {
                             const commentOrActivity = item.item;
                             return this.renderActivityOrCommentRow(
@@ -2724,7 +2692,7 @@ class ContactDetailScreen extends React.Component {
                 >
                   <KeyboardShift>
                     {() => (
-                      <ScrollView>
+                      <ScrollView keyboardShouldPersistTaps="handled">
                         <View
                           style={styles.formContainer}
                           pointerEvents={this.state.onlyView ? 'none' : 'auto'}
@@ -2739,19 +2707,59 @@ class ContactDetailScreen extends React.Component {
                                   style={styles.formIcon}
                                 />
                               </Col>
+                              <Col />
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>
+                                  Groups
+                                </Label>
+                              </Col>
+                            </Row>
+                            <Row>
                               <Col>
-                                <MultipleTags
-                                  tags={this.state.groups}
-                                  preselectedTags={this.state.currentGroups}
-                                  objectKeyIdentifier="value"
-                                  objectValueIdentifier="name"
-                                  onChangeItem={this.setCurrentGroups}
-                                  search
-                                  visibleOnOpen={!this.state.onlyView}
-                                  title="Groups"
-                                  searchHitResponse=""
-                                  defaultInstructionClosed=""
-                                  defaultInstructionOpen=""
+                                <Selectize
+                                  ref={(selectize) => { this.groupsSelectizeRef = selectize; }}
+                                  itemId="value"
+                                  items={this.state.groups}
+                                  selectedItems={this.state.contact.groups.values}
+                                  textInputProps={{
+                                    placeholder: 'Add group',
+                                  }}
+                                  renderRow={(id, onPress, item) => (
+                                    <TouchableOpacity
+                                      activeOpacity={0.6}
+                                      key={id}
+                                      onPress={onPress}
+                                      style={{
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 10,
+                                      }}
+                                    >
+                                      <View style={{
+                                        flexDirection: 'row',
+                                      }}
+                                      >
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.87)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {item.name}
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  )}
+                                  renderChip={(id, onClose, item, style, iconStyle) => (
+                                    <Chip
+                                      key={id}
+                                      iconStyle={iconStyle}
+                                      onClose={onClose}
+                                      text={item.name}
+                                      style={style}
+                                    />
+                                  )}
+                                  filterOnKey="name"
+                                  keyboardShouldPersistTaps
                                 />
                               </Col>
                             </Row>
@@ -2765,21 +2773,67 @@ class ContactDetailScreen extends React.Component {
                                   style={styles.formIcon}
                                 />
                               </Col>
+                              <Col />
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>
+                                  Connection
+                                </Label>
+                              </Col>
+                            </Row>
+                            <Row>
                               <Col>
-                                <MultipleTags
-                                  tags={this.state.usersContacts}
-                                  preselectedTags={
-                                    this.state.currentConnections
-                                  }
-                                  objectKeyIdentifier="value"
-                                  objectValueIdentifier="name"
-                                  onChangeItem={this.setCurrentConnections}
-                                  search
-                                  visibleOnOpen={!this.state.onlyView}
-                                  title="Connection"
-                                  searchHitResponse=""
-                                  defaultInstructionClosed=""
-                                  defaultInstructionOpen=""
+                                <Selectize
+                                  ref={(selectize) => { this.connectionsSelectizeRef = selectize; }}
+                                  itemId="value"
+                                  items={this.state.usersContacts}
+                                  selectedItems={this.state.contact.relation.values}
+                                  textInputProps={{
+                                    placeholder: 'Add connection',
+                                  }}
+                                  renderRow={(id, onPress, item) => (
+                                    <TouchableOpacity
+                                      activeOpacity={0.6}
+                                      key={id}
+                                      onPress={onPress}
+                                      style={{
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 10,
+                                      }}
+                                    >
+                                      <View style={{
+                                        flexDirection: 'row',
+                                      }}
+                                      >
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.87)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {item.name}
+                                        </Text>
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.54)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {id}
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  )}
+                                  renderChip={(id, onClose, item, style, iconStyle) => (
+                                    <Chip
+                                      key={id}
+                                      iconStyle={iconStyle}
+                                      onClose={onClose}
+                                      text={item.name}
+                                      style={style}
+                                    />
+                                  )}
+                                  filterOnKey="name"
+                                  keyboardShouldPersistTaps
                                 />
                               </Col>
                             </Row>
@@ -2793,19 +2847,67 @@ class ContactDetailScreen extends React.Component {
                                   style={styles.formIcon}
                                 />
                               </Col>
+                              <Col />
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>
+                                  Baptized by
+                                </Label>
+                              </Col>
+                            </Row>
+                            <Row>
                               <Col>
-                                <MultipleTags
-                                  tags={this.state.usersContacts}
-                                  preselectedTags={this.state.currentBaptizedBy}
-                                  objectKeyIdentifier="value"
-                                  objectValueIdentifier="name"
-                                  onChangeItem={this.setCurrentBaptizedBy}
-                                  search
-                                  visibleOnOpen={!this.state.onlyView}
-                                  title="Baptized by"
-                                  searchHitResponse=""
-                                  defaultInstructionClosed=""
-                                  defaultInstructionOpen=""
+                                <Selectize
+                                  ref={(selectize) => { this.baptizedBySelectizeRef = selectize; }}
+                                  itemId="value"
+                                  items={this.state.usersContacts}
+                                  selectedItems={this.state.contact.baptized_by.values}
+                                  textInputProps={{
+                                    placeholder: 'Add baptized by',
+                                  }}
+                                  renderRow={(id, onPress, item) => (
+                                    <TouchableOpacity
+                                      activeOpacity={0.6}
+                                      key={id}
+                                      onPress={onPress}
+                                      style={{
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 10,
+                                      }}
+                                    >
+                                      <View style={{
+                                        flexDirection: 'row',
+                                      }}
+                                      >
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.87)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {item.name}
+                                        </Text>
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.54)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {id}
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  )}
+                                  renderChip={(id, onClose, item, style, iconStyle) => (
+                                    <Chip
+                                      key={id}
+                                      iconStyle={iconStyle}
+                                      onClose={onClose}
+                                      text={item.name}
+                                      style={style}
+                                    />
+                                  )}
+                                  filterOnKey="name"
+                                  keyboardShouldPersistTaps
                                 />
                               </Col>
                             </Row>
@@ -2819,19 +2921,67 @@ class ContactDetailScreen extends React.Component {
                                   style={styles.formIcon}
                                 />
                               </Col>
+                              <Col />
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>
+                                  Baptized
+                                </Label>
+                              </Col>
+                            </Row>
+                            <Row>
                               <Col>
-                                <MultipleTags
-                                  tags={this.state.usersContacts}
-                                  preselectedTags={this.state.currentBaptized}
-                                  objectKeyIdentifier="value"
-                                  objectValueIdentifier="name"
-                                  onChangeItem={this.setCurrentBaptized}
-                                  search
-                                  visibleOnOpen={!this.state.onlyView}
-                                  title="Baptized"
-                                  searchHitResponse=""
-                                  defaultInstructionClosed=""
-                                  defaultInstructionOpen=""
+                                <Selectize
+                                  ref={(selectize) => { this.baptizedSelectizeRef = selectize; }}
+                                  itemId="value"
+                                  items={this.state.usersContacts}
+                                  selectedItems={this.state.contact.baptized.values}
+                                  textInputProps={{
+                                    placeholder: 'Add baptized',
+                                  }}
+                                  renderRow={(id, onPress, item) => (
+                                    <TouchableOpacity
+                                      activeOpacity={0.6}
+                                      key={id}
+                                      onPress={onPress}
+                                      style={{
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 10,
+                                      }}
+                                    >
+                                      <View style={{
+                                        flexDirection: 'row',
+                                      }}
+                                      >
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.87)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {item.name}
+                                        </Text>
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.54)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {id}
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  )}
+                                  renderChip={(id, onClose, item, style, iconStyle) => (
+                                    <Chip
+                                      key={id}
+                                      iconStyle={iconStyle}
+                                      onClose={onClose}
+                                      text={item.name}
+                                      style={style}
+                                    />
+                                  )}
+                                  filterOnKey="name"
+                                  keyboardShouldPersistTaps
                                 />
                               </Col>
                             </Row>
@@ -2845,19 +2995,67 @@ class ContactDetailScreen extends React.Component {
                                   style={styles.formIcon}
                                 />
                               </Col>
+                              <Col />
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>
+                                  Coached By
+                                </Label>
+                              </Col>
+                            </Row>
+                            <Row>
                               <Col>
-                                <MultipleTags
-                                  tags={this.state.usersContacts}
-                                  preselectedTags={this.state.currentCoachedBy}
-                                  objectKeyIdentifier="value"
-                                  objectValueIdentifier="name"
-                                  onChangeItem={this.setCurrentCoachedBy}
-                                  search
-                                  visibleOnOpen={!this.state.onlyView}
-                                  title="Coached by"
-                                  searchHitResponse=""
-                                  defaultInstructionClosed=""
-                                  defaultInstructionOpen=""
+                                <Selectize
+                                  ref={(selectize) => { this.coachedSelectizeRef = selectize; }}
+                                  itemId="value"
+                                  items={this.state.usersContacts}
+                                  selectedItems={this.state.contact.coached_by.values}
+                                  textInputProps={{
+                                    placeholder: 'Add coached by',
+                                  }}
+                                  renderRow={(id, onPress, item) => (
+                                    <TouchableOpacity
+                                      activeOpacity={0.6}
+                                      key={id}
+                                      onPress={onPress}
+                                      style={{
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 10,
+                                      }}
+                                    >
+                                      <View style={{
+                                        flexDirection: 'row',
+                                      }}
+                                      >
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.87)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {item.name}
+                                        </Text>
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.54)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {id}
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  )}
+                                  renderChip={(id, onClose, item, style, iconStyle) => (
+                                    <Chip
+                                      key={id}
+                                      iconStyle={iconStyle}
+                                      onClose={onClose}
+                                      text={item.name}
+                                      style={style}
+                                    />
+                                  )}
+                                  filterOnKey="name"
+                                  keyboardShouldPersistTaps
                                 />
                               </Col>
                             </Row>
@@ -2871,19 +3069,67 @@ class ContactDetailScreen extends React.Component {
                                   style={styles.formIcon}
                                 />
                               </Col>
+                              <Col />
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>
+                                  Coaching
+                                </Label>
+                              </Col>
+                            </Row>
+                            <Row>
                               <Col>
-                                <MultipleTags
-                                  tags={this.state.usersContacts}
-                                  preselectedTags={this.state.currentCoaching}
-                                  objectKeyIdentifier="value"
-                                  objectValueIdentifier="name"
-                                  onChangeItem={this.setCurrentCoaching}
-                                  search
-                                  visibleOnOpen={!this.state.onlyView}
-                                  title="Coaching"
-                                  searchHitResponse=""
-                                  defaultInstructionClosed=""
-                                  defaultInstructionOpen=""
+                                <Selectize
+                                  ref={(selectize) => { this.coachingSelectizeRef = selectize; }}
+                                  itemId="value"
+                                  items={this.state.usersContacts}
+                                  selectedItems={this.state.contact.coaching.values}
+                                  textInputProps={{
+                                    placeholder: 'Add coaching',
+                                  }}
+                                  renderRow={(id, onPress, item) => (
+                                    <TouchableOpacity
+                                      activeOpacity={0.6}
+                                      key={id}
+                                      onPress={onPress}
+                                      style={{
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 10,
+                                      }}
+                                    >
+                                      <View style={{
+                                        flexDirection: 'row',
+                                      }}
+                                      >
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.87)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {item.name}
+                                        </Text>
+                                        <Text style={{
+                                          color: 'rgba(0, 0, 0, 0.54)',
+                                          fontSize: 14,
+                                          lineHeight: 21,
+                                        }}
+                                        >
+                                          {id}
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  )}
+                                  renderChip={(id, onClose, item, style, iconStyle) => (
+                                    <Chip
+                                      key={id}
+                                      iconStyle={iconStyle}
+                                      onClose={onClose}
+                                      text={item.name}
+                                      style={style}
+                                    />
+                                  )}
+                                  filterOnKey="name"
+                                  keyboardShouldPersistTaps
                                 />
                               </Col>
                             </Row>
@@ -3002,10 +3248,10 @@ class ContactDetailScreen extends React.Component {
             </View>
           </Container>
         )}
-        {!this.state.contact.ID && this.state.loadedLocal && this.state.dataRetrieved && (
+        {!this.state.contact.ID && this.state.loadedLocal && (
           <KeyboardShift>
             {() => (
-              <ScrollView>
+              <ScrollView keyboardShouldPersistTaps="handled">
                 <View style={styles.formContainer}>
                   <Grid>
                     <Row>
@@ -3109,19 +3355,53 @@ class ContactDetailScreen extends React.Component {
                       </Label>
                     </Row>
                     <Row>
-                      <MultipleTags
-                        tags={this.state.geonames}
-                        preselectedTags={this.state.currentGeonames}
-                        objectKeyIdentifier="value"
-                        objectValueIdentifier="name"
-                        search
-                        onChangeItem={this.setCurrentGeonames}
-                        title=""
-                        visibleOnOpen
-                        searchHitResponse=""
-                        defaultInstructionClosed=""
-                        defaultInstructionOpen=""
-                      />
+                      <Col>
+                        <Selectize
+                          ref={(selectize) => { this.geonamesSelectizeRef = selectize; }}
+                          itemId="value"
+                          items={this.state.geonames}
+                          selectedItems={this.state.contact.geonames.values}
+                          textInputProps={{
+                            placeholder: 'Select locations',
+                          }}
+                          renderRow={(id, onPress, item) => (
+                            <TouchableOpacity
+                              activeOpacity={0.6}
+                              key={id}
+                              onPress={onPress}
+                              style={{
+                                paddingVertical: 8,
+                                paddingHorizontal: 10,
+                              }}
+                            >
+                              <View style={{
+                                flexDirection: 'row',
+                              }}
+                              >
+                                <Text style={{
+                                  color: 'rgba(0, 0, 0, 0.87)',
+                                  fontSize: 14,
+                                  lineHeight: 21,
+                                }}
+                                >
+                                  {item.name}
+                                </Text>
+                              </View>
+                            </TouchableOpacity>
+                          )}
+                          renderChip={(id, onClose, item, style, iconStyle) => (
+                            <Chip
+                              key={id}
+                              iconStyle={iconStyle}
+                              onClose={onClose}
+                              text={item.name}
+                              style={style}
+                            />
+                          )}
+                          filterOnKey="name"
+                          keyboardShouldPersistTaps
+                        />
+                      </Col>
                     </Row>
                     <Row>
                       <Label
