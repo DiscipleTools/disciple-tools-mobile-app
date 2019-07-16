@@ -349,6 +349,21 @@ class ContactDetailScreen extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    /*
+    const { contact } = nextProps;
+    const newState = {
+      ...prevState,
+      contact
+    };
+    if (contact.ID && !prevState.contact.ID) {
+      navigation.setParams({ contactName: contact.title });
+      newState = {
+        ...newState,
+        dataRetrieved: true,
+      };
+    }
+*/
+
     const {
       contact,
       contactsReducerResponse,
@@ -362,6 +377,7 @@ class ContactDetailScreen extends React.Component {
       ...prevState,
       contactsReducerResponse,
     };
+
     // New response incomming
     if (contactsReducerResponse !== prevState.contactsReducerResponse) {
       switch (contactsReducerResponse) {
@@ -404,8 +420,8 @@ class ContactDetailScreen extends React.Component {
           const commentsAndActivities = newState.commentsOrActivities
             .concat(activities)
             .sort(
-              (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
-            );
+            (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
+          );
           newState = {
             ...newState,
             commentsOrActivities: commentsAndActivities,
@@ -448,6 +464,7 @@ class ContactDetailScreen extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+
     const { contactsReducerResponse } = this.props;
     const { contact } = this.state;
 
@@ -467,9 +484,11 @@ class ContactDetailScreen extends React.Component {
           break;
       }
     }
+
   }
 
   getLists = async () => {
+
     let newState = {};
     const users = await AsyncStorage.getItem('usersList');
     if (users !== null) {
@@ -481,6 +500,7 @@ class ContactDetailScreen extends React.Component {
         })),
       };
     }
+
     const usersContacts = await AsyncStorage.getItem('usersAndContactsList');
     if (usersContacts !== null) {
       newState = {
@@ -488,6 +508,7 @@ class ContactDetailScreen extends React.Component {
         usersContacts: JSON.parse(usersContacts),
       };
     }
+
     const groups = await AsyncStorage.getItem('searchGroupsList');
     if (groups !== null) {
       newState = {
@@ -495,6 +516,7 @@ class ContactDetailScreen extends React.Component {
         groups: JSON.parse(groups),
       };
     }
+
     const peopleGroups = await AsyncStorage.getItem('peopleGroupsList');
     if (peopleGroups !== null) {
       newState = {
@@ -502,6 +524,7 @@ class ContactDetailScreen extends React.Component {
         peopleGroups: JSON.parse(peopleGroups),
       };
     }
+
     const geonames = await AsyncStorage.getItem('locationsList');
     if (geonames !== null) {
       newState = {
@@ -509,11 +532,14 @@ class ContactDetailScreen extends React.Component {
         geonames: JSON.parse(geonames),
       };
     }
+
     newState = {
       ...newState,
       loadedLocal: true,
     };
+
     this.setState(newState);
+
   };
 
   getContactById(contactId) {
@@ -551,7 +577,7 @@ class ContactDetailScreen extends React.Component {
   renderSourcePickerItems = () => this.state.contactSources.map(source => (
     <Picker.Item
       key={source.value}
-      label={source.label}
+      label={source.name}
       value={source.value}
     />
   ));
@@ -594,36 +620,36 @@ class ContactDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.author}</Text>
-              </Col>
-              <Col style={{ width: 80 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.author}</Text>
+                  </Col>
+                  <Col style={{ width: 80 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.name}</Text>
-              </Col>
-              <Col style={{ width: 80 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.name}</Text>
+                  </Col>
+                  <Col style={{ width: 80 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
         </View>
         <Text
           style={
@@ -2681,7 +2707,7 @@ class ContactDetailScreen extends React.Component {
                           </View>
                         </KeyboardAccessory>
                       </View>
-                  )}
+                    )}
                 </Tab>
                 <Tab
                   heading="Connections"
