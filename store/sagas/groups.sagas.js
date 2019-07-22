@@ -25,7 +25,9 @@ export function* getAll({ domain, token }) {
     const res = yield take(actions.GROUPS_GETALL_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         if (jsonData.groups) {
           yield put({
@@ -84,7 +86,9 @@ export function* saveGroup({ domain, token, groupData }) {
     const responseAction = yield take(actions.GROUPS_SAVE_RESPONSE);
     if (responseAction) {
       const response = responseAction.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       // response.status === 200
       if (jsonData.ID) {
         group = jsonData;
@@ -209,7 +213,9 @@ export function* getById({ domain, token, groupId }) {
     const res = yield take(actions.GROUPS_GETBYID_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         const group = jsonData;
         yield put({
@@ -334,7 +340,9 @@ export function* getUsersAndContacts({ domain, token }) {
     const res = yield take(actions.GROUPS_GET_USERS_CONTACTS_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         if (jsonData.posts) {
           yield put({
@@ -395,7 +403,9 @@ export function* getCommentsByGroup({ domain, token, groupId }) {
     const res = yield take(actions.GROUPS_GET_COMMENTS_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_GET_COMMENTS_SUCCESS,
@@ -454,7 +464,9 @@ export function* saveComment({
     const res = yield take(actions.GROUPS_SAVE_COMMENT_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_SAVE_COMMENT_SUCCESS,
@@ -510,7 +522,9 @@ export function* getLocations({ domain, token }) {
     const res = yield take(actions.GROUPS_GET_LOCATIONS_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_GET_LOCATIONS_SUCCESS,
@@ -554,7 +568,9 @@ export function* getPeopleGroups({ domain, token }) {
     const res = yield take(actions.GROUPS_GET_PEOPLE_GROUPS_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_GET_PEOPLE_GROUPS_SUCCESS,
@@ -599,7 +615,9 @@ export function* getActivitiesByGroup({ domain, token, groupId }) {
     const res = yield take(actions.GROUPS_GET_ACTIVITIES_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_GET_ACTIVITIES_SUCCESS,
@@ -662,7 +680,9 @@ export function* searchGroups({ domain, token }) {
     const res = yield take(actions.GROUPS_SEARCH_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_SEARCH_SUCCESS,

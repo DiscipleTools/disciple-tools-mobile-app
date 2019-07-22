@@ -32,7 +32,9 @@ export function* login({ domain, username, password }) {
     const res = yield take(actions.USER_LOGIN_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         yield put({ type: actions.USER_LOGIN_SUCCESS, domain, user: jsonData });
       } else {

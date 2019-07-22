@@ -1,19 +1,20 @@
 import * as actions from '../actions/contacts.actions';
 
 const initialState = {
-  type: null,
+  loading: false,
   error: null,
   contacts: [],
   contact: null,
   comments: [],
-  comment: null,
+  newComment: null,
   activities: [],
 };
 
 export default function contactsReducer(state = initialState, action) {
-  const newState = {
+  let newState = {
     ...state,
-    type: action.type,
+    contact: null,
+    newComment: null,
     error: null,
   };
 
@@ -21,20 +22,19 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_GETALL_START:
       return {
         ...newState,
+        loading: true,
       };
     case actions.CONTACTS_GETALL_SUCCESS:
       return {
         ...newState,
         contacts: action.contacts,
+        loading: false,
       };
     case actions.CONTACTS_GETALL_FAILURE:
       return {
         ...newState,
         error: action.error,
-      };
-    case actions.CONTACTS_SAVE_START:
-      return {
-        ...newState,
+        loading: false,
       };
     case actions.CONTACTS_SAVE_SUCCESS:
       return {
@@ -46,23 +46,40 @@ export default function contactsReducer(state = initialState, action) {
         ...newState,
         error: action.error,
       };
-    case actions.CONTACTS_GETBYID_START:
-      return {
-        ...newState,
-      };
-    case actions.CONTACTS_GETBYID_SUCCESS:
-      return {
+    case actions.CONTACTS_GETBYID_SUCCESS: {
+      newState = {
         ...newState,
         contact: action.contact,
       };
+      if (newState.contact.baptism_date) {
+        let newBaptismDate = new Date(newState.contact.baptism_date);
+        const year = newBaptismDate.getFullYear();
+        const month = (newBaptismDate.getMonth() + 1) < 10 ? `0${newBaptismDate.getMonth() + 1}` : (newBaptismDate.getMonth() + 1);
+        const day = (newBaptismDate.getDate() + 1) < 10 ? `0${newBaptismDate.getDate() + 1}` : (newBaptismDate.getDate() + 1);
+        newBaptismDate = `${year}-${month}-${day}`;
+        newState = {
+          ...newState,
+          contact: {
+            ...newState.contact,
+            baptism_date: newBaptismDate,
+          },
+        };
+      } else {
+        newState = {
+          ...newState,
+          contact: {
+            ...newState.contact,
+            baptism_date: '',
+          },
+        };
+      }
+
+      return newState;
+    }
     case actions.CONTACTS_GETBYID_FAILURE:
       return {
         ...newState,
         error: action.error,
-      };
-    case actions.CONTACTS_GET_COMMENTS_START:
-      return {
-        ...newState,
       };
     case actions.CONTACTS_GET_COMMENTS_SUCCESS:
       return {
@@ -74,23 +91,15 @@ export default function contactsReducer(state = initialState, action) {
         ...newState,
         error: action.error,
       };
-    case actions.CONTACTS_SAVE_COMMENT_START:
-      return {
-        ...newState,
-      };
     case actions.CONTACTS_SAVE_COMMENT_SUCCESS:
       return {
         ...newState,
-        comment: action.comment,
+        newComment: action.comment,
       };
     case actions.CONTACTS_SAVE_COMMENT_FAILURE:
       return {
         ...newState,
         error: action.error,
-      };
-    case actions.CONTACTS_GET_ACTIVITIES_START:
-      return {
-        ...newState,
       };
     case actions.CONTACTS_GET_ACTIVITIES_SUCCESS:
       return {
@@ -103,9 +112,6 @@ export default function contactsReducer(state = initialState, action) {
         error: action.error,
       };
     default:
-      return Object.assign({}, state, {
-        error: null,
-        type: null,
-      });
+      return newState;
   }
 }

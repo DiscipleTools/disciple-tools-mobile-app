@@ -26,7 +26,9 @@ export function* getUsers({ domain, token }) {
     const res = yield take(actions.GET_USERS_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         if (jsonData) {
           yield put({

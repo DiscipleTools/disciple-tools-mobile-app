@@ -38,15 +38,10 @@ import { Chip, Selectize } from 'react-native-material-selectize';
 import KeyboardShift from '../../components/KeyboardShift';
 import {
   save,
-  CONTACTS_SAVE_SUCCESS,
   getCommentsByContact,
-  CONTACTS_GET_COMMENTS_SUCCESS,
   saveComment,
-  CONTACTS_SAVE_COMMENT_SUCCESS,
   getById,
-  CONTACTS_GETBYID_SUCCESS,
   getActivitiesByContact,
-  CONTACTS_GET_ACTIVITIES_SUCCESS,
 } from '../../store/actions/contacts.actions';
 import Colors from '../../constants/Colors';
 import hasBibleIcon from '../../assets/icons/book-bookmark.png';
@@ -59,7 +54,7 @@ import baptizingIcon from '../../assets/icons/water-aerobics.png';
 import inChurchIcon from '../../assets/icons/multiple-11.png';
 import startingChurchesIcon from '../../assets/icons/symbol-213-7.png';
 
-let toastSuccess;
+// let toastSuccess;
 let toastError;
 const containerPadding = 35;
 const windowWidth = Dimensions.get('window').width;
@@ -156,11 +151,6 @@ const styles = StyleSheet.create({
   },
 });
 
-function formatDateToPickerValue(formatted) {
-  const newDate = new Date(new Date(formatted).setUTCHours(0, 0, 0, 0));
-  return newDate;
-}
-
 class ContactDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
@@ -235,6 +225,18 @@ class ContactDetailScreen extends React.Component {
       geonames: {
         values: [],
       },
+      subassigned: {
+        values: [],
+      },
+      people_groups: {
+        values: [],
+      },
+      groups: {
+        values: [],
+      },
+      relation: {
+        values: [],
+      },
     },
     contactSources: [
       {
@@ -274,17 +276,16 @@ class ContactDetailScreen extends React.Component {
         value: 'transfer',
       },
     ],
+    users: [],
+    usersContacts: [],
+    groups: [],
+    peopleGroups: [],
     geonames: [],
-    currentGeonames: [],
     loadedLocal: false,
-    dataRetrieved: false,
-    contactsReducerResponse: '',
-    commentsOrActivities: [],
+    comments: [],
+    activities: [],
     comment: '',
     progressBarValue: 0,
-    groups: [],
-    contacts: [],
-    usersContacts: [],
     overallStatusBackgroundColor: '#ffffff',
     listContactStates: [
       {
@@ -318,9 +319,8 @@ class ContactDetailScreen extends React.Component {
     ],
     activeFab: false,
     renderFab: true,
-    peopleGroups: [],
-    users: [],
     showAssignedToModal: false,
+    dataRetrieved: false,
   };
 
   componentDidMount() {
@@ -349,106 +349,49 @@ class ContactDetailScreen extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    /*
-    const { contact } = nextProps;
-    const newState = {
+    const {
+      contact, comments, activities, newComment,
+    } = nextProps;
+    let newState = {
       ...prevState,
-      contact
+      contact: contact || prevState.contact,
+      comments: comments || prevState.comments,
+      activities: activities || prevState.activities,
     };
-    if (contact.ID && !prevState.contact.ID) {
-      navigation.setParams({ contactName: contact.title });
+
+    // NEW COMMENT
+    if (newComment) {
+      const newComments = newState.comments;
+      newComments.push(newComment);
+      newState = {
+        ...newState,
+        comments: newComments,
+        comment: '',
+      };
+    }
+
+    // GET BY ID
+    if (newState.contact && newState.contact.ID && !prevState.dataRetrieved) {
       newState = {
         ...newState,
         dataRetrieved: true,
       };
     }
-*/
 
+    return newState;
+  }
+
+  componentDidUpdate(prevProps) {
     const {
-      contact,
-      contactsReducerResponse,
-      navigation,
-      comments,
-      comment,
-      activities,
-      contactsReducerError,
-    } = nextProps;
-    let newState = {
-      ...prevState,
-      contactsReducerResponse,
-    };
+      userReducerError, contact, navigation, newComment, contactsReducerError,
+    } = this.props;
 
-    // New response incomming
-    if (contactsReducerResponse !== prevState.contactsReducerResponse) {
-      switch (contactsReducerResponse) {
-        case CONTACTS_SAVE_SUCCESS:
-          // Creation
-          if (contact.ID && !prevState.contact.ID) {
-            navigation.setParams({ contactName: contact.title });
-            newState = {
-              ...newState,
-              dataRetrieved: true,
-            };
-          }
-          newState = {
-            ...newState,
-            contact,
-            commentsOrActivities: [],
-          };
-          toastSuccess.show('Contact Saved!', 2000);
-          break;
-        case CONTACTS_GETBYID_SUCCESS:
-          if (contact.baptism_date) {
-            contact.baptism_date = formatDateToPickerValue(
-              contact.baptism_date,
-            );
-          }
-
-          newState = {
-            ...newState,
-            contact,
-            dataRetrieved: true,
-          };
-          break;
-        case CONTACTS_GET_COMMENTS_SUCCESS:
-          newState = {
-            ...newState,
-            commentsOrActivities: comments,
-          };
-          break;
-        case CONTACTS_GET_ACTIVITIES_SUCCESS: {
-          const commentsAndActivities = newState.commentsOrActivities
-            .concat(activities)
-            .sort(
-            (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
-          );
-          newState = {
-            ...newState,
-            commentsOrActivities: commentsAndActivities,
-          };
-          break;
-        }
-        case CONTACTS_SAVE_COMMENT_SUCCESS: {
-          const newCommentsOrActivities = newState.commentsOrActivities;
-          newCommentsOrActivities.push(comment);
-          newCommentsOrActivities.sort(
-            (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
-          );
-          newState = {
-            ...newState,
-            commentsOrActivities: newCommentsOrActivities,
-            comment: '',
-          };
-          Keyboard.dismiss();
-          break;
-        }
-        default:
-          break;
-      }
-    }
-
-    if (contactsReducerError) {
-      const error = contactsReducerError;
+    // ERROR
+    const usersError = (prevProps.userReducerError !== userReducerError && userReducerError);
+    let contactsError = (prevProps.contactsReducerError !== contactsReducerError);
+    contactsError = (contactsError && contactsReducerError);
+    if (usersError || contactsError) {
+      const error = userReducerError || contactsReducerError;
       toastError.show(
         <View>
           <Text style={{ fontWeight: 'bold' }}>Code: </Text>
@@ -460,35 +403,29 @@ class ContactDetailScreen extends React.Component {
       );
     }
 
-    return newState;
-  }
-
-  componentDidUpdate(prevProps) {
-
-    const { contactsReducerResponse } = this.props;
-    const { contact } = this.state;
-
-    if (prevProps.contactsReducerResponse !== contactsReducerResponse) {
-      switch (contactsReducerResponse) {
-        case CONTACTS_SAVE_SUCCESS:
-          this.getContactComments(contact.ID);
-          break;
-        case CONTACTS_GETBYID_SUCCESS:
-          this.setContactSeekerPath(contact.seeker_path);
-          this.setContactStatus(contact.overall_status);
-          break;
-        case CONTACTS_GET_COMMENTS_SUCCESS:
-          this.getContactActivities(contact.ID);
-          break;
-        default:
-          break;
+    // CONTACT SAVE
+    if (contact && prevProps.contact !== contact) {
+      if (contact.ID) {
+        navigation.setParams({ contactName: contact.title });
       }
+      if (contact.seeker_path) {
+        this.setContactSeekerPath(contact.seeker_path);
+      }
+      if (contact.overall_status) {
+        this.setContactStatus(contact.overall_status);
+      }
+      this.getContactComments(contact.ID);
+      this.getContactActivities(contact.ID);
+      // toastSuccess.show('Contact Saved!', 2000);
     }
 
+    // NEW COMMENT
+    if (newComment && prevProps.newComment !== newComment) {
+      Keyboard.dismiss();
+    }
   }
 
   getLists = async () => {
-
     let newState = {};
     const users = await AsyncStorage.getItem('usersList');
     if (users !== null) {
@@ -509,14 +446,6 @@ class ContactDetailScreen extends React.Component {
       };
     }
 
-    const groups = await AsyncStorage.getItem('searchGroupsList');
-    if (groups !== null) {
-      newState = {
-        ...newState,
-        groups: JSON.parse(groups),
-      };
-    }
-
     const peopleGroups = await AsyncStorage.getItem('peopleGroupsList');
     if (peopleGroups !== null) {
       newState = {
@@ -533,13 +462,20 @@ class ContactDetailScreen extends React.Component {
       };
     }
 
+    const groups = await AsyncStorage.getItem('searchGroupsList');
+    if (groups !== null) {
+      newState = {
+        ...newState,
+        groups: JSON.parse(groups),
+      };
+    }
+
     newState = {
       ...newState,
       loadedLocal: true,
     };
 
     this.setState(newState);
-
   };
 
   getContactById(contactId) {
@@ -620,36 +556,36 @@ class ContactDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.author}</Text>
-                  </Col>
-                  <Col style={{ width: 80 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )}
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.author}</Text>
+              </Col>
+              <Col style={{ width: 80 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.name}</Text>
-                  </Col>
-                  <Col style={{ width: 80 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )}
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.name}</Text>
+              </Col>
+              <Col style={{ width: 80 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
         </View>
         <Text
           style={
@@ -872,36 +808,34 @@ class ContactDetailScreen extends React.Component {
       };
     } else {
       contactToSave = JSON.parse(JSON.stringify(this.state.contact));
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'geonames')) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'geonames') && this.geonamesSelectizeRef) {
         contactToSave.geonames.values = this.setGeonames();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'subassigned')) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'subassigned') && this.subAssignedSelectizeRef) {
         contactToSave.subassigned.values = this.setContactSubassignedContacts();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'groups')) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'groups') && this.groupsSelectizeRef) {
         contactToSave.groups.values = this.setGroups();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'relation')) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'relation') && this.connectionsSelectizeRef) {
         contactToSave.relation.values = this.setConnections();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized_by')) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized_by') && this.baptizedBySelectizeRef) {
         contactToSave.baptized_by.values = this.setBaptizedBy();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized')) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized') && this.baptizedSelectizeRef) {
         contactToSave.baptized.values = this.setBaptized();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coached_by')) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coached_by') && this.coachedSelectizeRef) {
         contactToSave.coached_by.values = this.setCoachedBy();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coaching')) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coaching') && this.coachingSelectizeRef) {
         contactToSave.coaching.values = this.setCoaching();
       }
-      if (
-        Object.prototype.hasOwnProperty.call(contactToSave, 'people_groups')
-      ) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'people_groups') && this.pplGroupsSelectizeRef) {
         contactToSave.people_groups.values = this.setPeopleGroups();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'sources')) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'sources') && this.sourcesSelectizeRef) {
         contactToSave.sources.values = this.setSources();
       }
     }
@@ -1422,7 +1356,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   render() {
-    const successToast = (
+    /* const successToast = (
       <Toast
         ref={(toast) => {
           toastSuccess = toast;
@@ -1430,7 +1364,7 @@ class ContactDetailScreen extends React.Component {
         style={{ backgroundColor: 'green' }}
         position="center"
       />
-    );
+    ); */
     const errorToast = (
       <Toast
         ref={(toast) => {
@@ -1538,19 +1472,19 @@ class ContactDetailScreen extends React.Component {
                               <Col />
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>
-                                  Users Contacts
+                                  Sub-assigned to
                                 </Label>
                               </Col>
                             </Row>
                             <Row>
-                              <Col>
+                              <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
                                 <Selectize
                                   ref={(selectize) => { this.subAssignedSelectizeRef = selectize; }}
                                   itemId="value"
                                   items={this.state.usersContacts}
                                   selectedItems={this.state.contact.subassigned.values}
                                   textInputProps={{
-                                    placeholder: 'Select contacts',
+                                    placeholder: 'Sub-assign this contact',
                                   }}
                                   renderRow={(id, onPress, item) => (
                                     <TouchableOpacity
@@ -1596,7 +1530,7 @@ class ContactDetailScreen extends React.Component {
                                   )}
                                   filterOnKey="name"
                                   keyboardShouldPersistTaps
-
+                                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                 />
                               </Col>
                             </Row>
@@ -1868,12 +1802,12 @@ class ContactDetailScreen extends React.Component {
                               <Col />
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>
-                                  Locations
+                                  Location
                                 </Label>
                               </Col>
                             </Row>
                             <Row>
-                              <Col>
+                              <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
                                 <Selectize
                                   ref={(selectize) => { this.geonamesSelectizeRef = selectize; }}
                                   itemId="value"
@@ -1918,6 +1852,7 @@ class ContactDetailScreen extends React.Component {
                                   )}
                                   filterOnKey="name"
                                   keyboardShouldPersistTaps
+                                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                 />
                               </Col>
                             </Row>
@@ -1933,12 +1868,12 @@ class ContactDetailScreen extends React.Component {
                               <Col />
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>
-                                  People Groups
+                                  People Group
                                 </Label>
                               </Col>
                             </Row>
                             <Row>
-                              <Col>
+                              <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
                                 <Selectize
                                   ref={(selectize) => { this.pplGroupsSelectizeRef = selectize; }}
                                   itemId="value"
@@ -1983,6 +1918,7 @@ class ContactDetailScreen extends React.Component {
                                   )}
                                   filterOnKey="name"
                                   keyboardShouldPersistTaps
+                                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                 />
                               </Col>
                             </Row>
@@ -2052,21 +1988,6 @@ class ContactDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
-                                  type="FontAwesome"
-                                  name="globe"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col />
-                              <Col style={styles.formIconLabel}>
-                                <Label style={styles.formLabel}>
-                                  People Groups
-                                </Label>
-                              </Col>
-                            </Row>
-                            <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
-                                <Icon
                                   android="md-arrow-dropright"
                                   ios="ios-arrow-dropright"
                                   style={styles.formIcon}
@@ -2080,7 +2001,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                             </Row>
                             <Row>
-                              <Col>
+                              <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
                                 <Selectize
                                   ref={(selectize) => { this.sourcesSelectizeRef = selectize; }}
                                   itemId="value"
@@ -2125,6 +2046,7 @@ class ContactDetailScreen extends React.Component {
                                   )}
                                   filterOnKey="name"
                                   keyboardShouldPersistTaps
+                                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                 />
                               </Col>
                             </Row>
@@ -2632,82 +2554,80 @@ class ContactDetailScreen extends React.Component {
                   activeTabStyle={styles.activeTabStyle}
                   activeTextStyle={styles.activeTextStyle}
                 >
-                  {Object.prototype.hasOwnProperty.call(
-                    this.state,
-                    'commentsOrActivities',
-                  )
-                    && this.state.commentsOrActivities && (
-                      <View style={{ flex: 1 }}>
-                        <FlatList
+                  <View style={{ flex: 1 }}>
+                    <FlatList
+                      style={{
+                        backgroundColor: '#ffffff',
+                        flex: 1,
+                        marginBottom: 60,
+                      }}
+                      ref={(flatList) => {
+                        commentsFlatList = flatList;
+                      }}
+                      data={this.state.comments.concat(this.state.activities).sort(
+                        (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
+                      )}
+                      extraData={this.state.comments.concat(this.state.activities).sort(
+                        (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
+                      )}
+                      ItemSeparatorComponent={() => (
+                        <View
                           style={{
-                            backgroundColor: '#ffffff',
-                            flex: 1,
-                            marginBottom: 60,
-                          }}
-                          ref={(flatList) => {
-                            commentsFlatList = flatList;
-                          }}
-                          data={this.state.commentsOrActivities}
-                          extraData={this.state.commentsOrActivities}
-                          ItemSeparatorComponent={() => (
-                            <View
-                              style={{
-                                height: 1,
-                                backgroundColor: '#CCCCCC',
-                              }}
-                            />
-                          )}
-                          keyExtractor={item => item.ID}
-                          renderItem={(item) => {
-                            const commentOrActivity = item.item;
-                            return this.renderActivityOrCommentRow(
-                              commentOrActivity,
-                            );
+                            height: 1,
+                            backgroundColor: '#CCCCCC',
                           }}
                         />
-                        <KeyboardAccessory>
-                          <View
-                            style={{
-                              backgroundColor: 'white',
-                              flexDirection: 'row',
-                            }}
-                          >
-                            <TextInput
-                              placeholder="Write your comment or note here"
-                              value={this.state.comment}
-                              onChangeText={this.setComment}
-                              style={{
-                                borderColor: '#B4B4B4',
-                                borderRadius: 5,
-                                borderWidth: 1,
-                                flex: 1,
-                                margin: 10,
-                                paddingLeft: 5,
-                                paddingRight: 5,
-                              }}
-                            />
-                            <TouchableOpacity
-                              onPress={() => this.onSaveComment()}
-                              style={{
-                                backgroundColor: Colors.tintColor,
-                                borderRadius: 80,
-                                height: 40,
-                                margin: 10,
-                                paddingTop: 7,
-                                paddingLeft: 10,
-                                width: 40,
-                              }}
-                            >
-                              <Icon
-                                android="md-send"
-                                ios="ios-send"
-                                style={{ color: 'white', fontSize: 25 }}
-                              />
-                            </TouchableOpacity>
-                          </View>
-                        </KeyboardAccessory>
+                      )}
+                      keyExtractor={item => item.ID}
+                      renderItem={(item) => {
+                        const commentOrActivity = item.item;
+                        return this.renderActivityOrCommentRow(
+                          commentOrActivity,
+                        );
+                      }}
+                    />
+                    <KeyboardAccessory>
+                      <View
+                        style={{
+                          backgroundColor: 'white',
+                          flexDirection: 'row',
+                        }}
+                      >
+                        <TextInput
+                          placeholder="Write your comment or note here"
+                          value={this.state.comment}
+                          onChangeText={this.setComment}
+                          style={{
+                            borderColor: '#B4B4B4',
+                            borderRadius: 5,
+                            borderWidth: 1,
+                            flex: 1,
+                            margin: 10,
+                            paddingLeft: 5,
+                            paddingRight: 5,
+                          }}
+                        />
+                        <TouchableOpacity
+                          onPress={() => this.onSaveComment()}
+                          style={{
+                            backgroundColor: Colors.tintColor,
+                            borderRadius: 80,
+                            height: 40,
+                            margin: 10,
+                            paddingTop: 7,
+                            paddingLeft: 10,
+                            width: 40,
+                          }}
+                        >
+                          <Icon
+                            android="md-send"
+                            ios="ios-send"
+                            style={{ color: 'white', fontSize: 25 }}
+                          />
+                        </TouchableOpacity>
                       </View>
-                    )}
+                    </KeyboardAccessory>
+                  </View>
                 </Tab>
                 <Tab
                   heading="Connections"
@@ -2741,7 +2661,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                             </Row>
                             <Row>
-                              <Col>
+                              <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
                                 <Selectize
                                   ref={(selectize) => { this.groupsSelectizeRef = selectize; }}
                                   itemId="value"
@@ -2786,6 +2706,7 @@ class ContactDetailScreen extends React.Component {
                                   )}
                                   filterOnKey="name"
                                   keyboardShouldPersistTaps
+                                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                 />
                               </Col>
                             </Row>
@@ -2807,7 +2728,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                             </Row>
                             <Row>
-                              <Col>
+                              <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
                                 <Selectize
                                   ref={(selectize) => { this.connectionsSelectizeRef = selectize; }}
                                   itemId="value"
@@ -2860,6 +2781,7 @@ class ContactDetailScreen extends React.Component {
                                   )}
                                   filterOnKey="name"
                                   keyboardShouldPersistTaps
+                                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                 />
                               </Col>
                             </Row>
@@ -2881,7 +2803,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                             </Row>
                             <Row>
-                              <Col>
+                              <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
                                 <Selectize
                                   ref={(selectize) => { this.baptizedBySelectizeRef = selectize; }}
                                   itemId="value"
@@ -2934,6 +2856,7 @@ class ContactDetailScreen extends React.Component {
                                   )}
                                   filterOnKey="name"
                                   keyboardShouldPersistTaps
+                                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                 />
                               </Col>
                             </Row>
@@ -2955,7 +2878,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                             </Row>
                             <Row>
-                              <Col>
+                              <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
                                 <Selectize
                                   ref={(selectize) => { this.baptizedSelectizeRef = selectize; }}
                                   itemId="value"
@@ -3008,6 +2931,7 @@ class ContactDetailScreen extends React.Component {
                                   )}
                                   filterOnKey="name"
                                   keyboardShouldPersistTaps
+                                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                 />
                               </Col>
                             </Row>
@@ -3029,7 +2953,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                             </Row>
                             <Row>
-                              <Col>
+                              <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
                                 <Selectize
                                   ref={(selectize) => { this.coachedSelectizeRef = selectize; }}
                                   itemId="value"
@@ -3082,6 +3006,7 @@ class ContactDetailScreen extends React.Component {
                                   )}
                                   filterOnKey="name"
                                   keyboardShouldPersistTaps
+                                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                 />
                               </Col>
                             </Row>
@@ -3103,7 +3028,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                             </Row>
                             <Row>
-                              <Col>
+                              <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
                                 <Selectize
                                   ref={(selectize) => { this.coachingSelectizeRef = selectize; }}
                                   itemId="value"
@@ -3156,6 +3081,7 @@ class ContactDetailScreen extends React.Component {
                                   )}
                                   filterOnKey="name"
                                   keyboardShouldPersistTaps
+                                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                 />
                               </Col>
                             </Row>
@@ -3381,7 +3307,7 @@ class ContactDetailScreen extends React.Component {
                       </Label>
                     </Row>
                     <Row>
-                      <Col>
+                      <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
                         <Selectize
                           ref={(selectize) => { this.geonamesSelectizeRef = selectize; }}
                           itemId="value"
@@ -3426,6 +3352,7 @@ class ContactDetailScreen extends React.Component {
                           )}
                           filterOnKey="name"
                           keyboardShouldPersistTaps
+                          inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                         />
                       </Col>
                     </Row>
@@ -3459,7 +3386,7 @@ class ContactDetailScreen extends React.Component {
             )}
           </KeyboardShift>
         )}
-        {successToast}
+        {/* successToast */}
         {errorToast}
       </Container>
     );
@@ -3474,45 +3401,49 @@ ContactDetailScreen.propTypes = {
   contact: PropTypes.shape({
     key: PropTypes.number,
   }),
-  contactsReducerResponse: PropTypes.string,
+  userReducerError: PropTypes.shape({
+    code: PropTypes.string,
+    message: PropTypes.string,
+  }),
+  newComment: PropTypes.shape({
+    ID: PropTypes.string,
+    author: PropTypes.string,
+    content: PropTypes.string,
+    date: PropTypes.string,
+    gravatar: PropTypes.string,
+  }),
+  contactsReducerError: PropTypes.shape({
+    code: PropTypes.string,
+    message: PropTypes.string,
+  }),
   navigation: PropTypes.shape({
     getParam: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     setParams: PropTypes.func.isRequired,
   }).isRequired,
+  saveContact: PropTypes.func.isRequired,
   getById: PropTypes.func.isRequired,
   getComments: PropTypes.func.isRequired,
-  getActivities: PropTypes.func.isRequired,
-  saveContact: PropTypes.func.isRequired,
   saveComment: PropTypes.func.isRequired,
-  contactsReducerError: PropTypes.shape({
-    code: PropTypes.string,
-    message: PropTypes.string,
-  }),
+  getActivities: PropTypes.func.isRequired,
 };
 
 ContactDetailScreen.defaultProps = {
   contact: null,
-  contactsReducerError: {
-    code: null,
-    message: null,
-  },
-  contactsReducerResponse: null,
+  userReducerError: null,
+  newComment: null,
+  contactsReducerError: null,
 };
 
+
 const mapStateToProps = state => ({
-  geonames: state.groupsReducer.geonames,
   user: state.userReducer,
+  userReducerError: state.userReducer.error,
   contact: state.contactsReducer.contact,
-  contactsReducerResponse: state.contactsReducer.type,
   comments: state.contactsReducer.comments,
-  comment: state.contactsReducer.comment,
   activities: state.contactsReducer.activities,
-  usersContacts: state.groupsReducer.usersContacts,
-  search: state.groupsReducer.search,
+  newComment: state.contactsReducer.newComment,
   contactsReducerError: state.contactsReducer.error,
-  peopleGroups: state.groupsReducer.peopleGroups,
-  users: state.usersReducer.users,
 });
 const mapDispatchToProps = dispatch => ({
   saveContact: (domain, token, contactDetail) => {

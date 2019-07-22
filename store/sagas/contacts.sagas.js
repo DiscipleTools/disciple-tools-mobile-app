@@ -25,7 +25,9 @@ export function* getAll({ domain, token }) {
     const res = yield take(actions.CONTACTS_GETALL_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         if (jsonData.posts) {
           yield put({
@@ -108,7 +110,9 @@ export function* save({ domain, token, contactData }) {
     const responseAction = yield take(actions.CONTACTS_SAVE_RESPONSE);
     if (responseAction) {
       const response = responseAction.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         contact = jsonData;
         yield put({
@@ -369,7 +373,9 @@ export function* getById({ domain, token, contactId }) {
     const res = yield take(actions.CONTACTS_GETBYID_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         const contact = jsonData;
         yield put({
@@ -623,7 +629,9 @@ export function* getCommentsByContact({ domain, token, contactId }) {
     const res = yield take(actions.CONTACTS_GET_COMMENTS_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
@@ -682,7 +690,9 @@ export function* saveComment({
     const res = yield take(actions.CONTACTS_SAVE_COMMENT_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_SAVE_COMMENT_SUCCESS,
@@ -738,7 +748,9 @@ export function* getActivitiesByContact({ domain, token, contactId }) {
     const res = yield take(actions.CONTACTS_GET_ACTIVITIES_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield response.json();
+      /* eslint-disable */
+      const jsonData = JSON.parse(response._bodyInit);
+      /* eslint-enable */
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_GET_ACTIVITIES_SUCCESS,

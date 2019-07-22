@@ -14,12 +14,7 @@ import Toast from 'react-native-easy-toast';
 
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
-import {
-  getAll,
-  GROUPS_GETALL_START,
-  GROUPS_GETALL_FAILURE,
-  GROUPS_GETALL_SUCCESS,
-} from '../../store/actions/groups.actions';
+import { getAll } from '../../store/actions/groups.actions';
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -50,8 +45,6 @@ class GroupsScreen extends React.Component {
   };
 
   state = {
-    responseMessage: '',
-    refreshing: false,
     groups: [],
   };
 
@@ -60,48 +53,27 @@ class GroupsScreen extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const { type, groups } = nextProps;
-    const { responseMessage } = prevState;
-    let newState = {
+    const newState = {
       ...prevState,
+      loading: nextProps.loading,
+      groups: nextProps.groups,
     };
-
-    // Detect new message incomming
-    if (type !== responseMessage) {
-      const newResponseMessage = type;
-      newState = {
-        ...newState,
-        responseMessage,
-      };
-      if (newResponseMessage === GROUPS_GETALL_START) {
-        newState = {
-          ...newState,
-          refreshing: true,
-        };
-      } else if (newResponseMessage === GROUPS_GETALL_SUCCESS) {
-        newState = {
-          ...newState,
-          groups,
-          refreshing: false,
-        };
-      } else if (newResponseMessage === GROUPS_GETALL_FAILURE) {
-        newState = {
-          ...newState,
-          refreshing: false,
-        };
-        toastError.show(
-          <View>
-            <Text style={{ fontWeight: 'bold' }}>Code: </Text>
-            <Text>{nextProps.error.code}</Text>
-            <Text style={{ fontWeight: 'bold' }}>Message: </Text>
-            <Text>{nextProps.error.message}</Text>
-          </View>,
-          3000,
-        );
-      }
-    }
-
     return newState;
+  }
+
+  componentDidUpdate(prevProps) {
+    const { error } = this.props;
+    if (prevProps.error !== error && error) {
+      toastError.show(
+        <View>
+          <Text style={{ fontWeight: 'bold' }}>Code: </Text>
+          <Text>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold' }}>Message: </Text>
+          <Text>{error.message}</Text>
+        </View>,
+        3000,
+      );
+    }
   }
 
   renderRow = item => (
@@ -158,10 +130,10 @@ class GroupsScreen extends React.Component {
             ItemSeparatorComponent={this.flatListItemSeparator}
             refreshControl={(
               <RefreshControl
-                refreshing={this.state.refreshing}
+                refreshing={this.state.loading}
                 onRefresh={this.onRefresh}
               />
-)}
+            )}
             keyExtractor={item => item.ID.toString()}
           />
           <Fab
@@ -193,6 +165,7 @@ GroupsScreen.propTypes = {
     domain: PropTypes.string,
     token: PropTypes.string,
   }).isRequired,
+  getAllGroups: PropTypes.func.isRequired,
   /* eslint-disable */
   groups: PropTypes.arrayOf(
     PropTypes.shape({
@@ -203,21 +176,16 @@ GroupsScreen.propTypes = {
   error: PropTypes.shape({
     message: PropTypes.string,
   }),
-  getAllGroups: PropTypes.func.isRequired,
-  /* eslint-disable */
-  type: PropTypes.string
-  /* eslint-enable */
 };
 GroupsScreen.defaultProps = {
   error: null,
-  type: null,
 };
 
 const mapStateToProps = state => ({
-  groups: state.groupsReducer.groups,
-  error: state.groupsReducer.error,
   user: state.userReducer,
-  type: state.groupsReducer.type,
+  groups: state.groupsReducer.groups,
+  loading: state.groupsReducer.loading,
+  error: state.groupsReducer.error,
 });
 const mapDispatchToProps = dispatch => ({
   getAllGroups: (domain, token) => {

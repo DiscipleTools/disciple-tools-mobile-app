@@ -80,7 +80,7 @@ class ContactsScreen extends React.Component {
     <TouchableHighlight
       onPress={() => this.goToContactDetailScreen(item)}
       style={styles.flatListItem}
-      activeOpacity={0.5}
+      activeOpacity={1}
       key={item.toString()}
     >
       <View>
@@ -133,7 +133,7 @@ class ContactsScreen extends React.Component {
                 refreshing={this.state.loading}
                 onRefresh={this.onRefresh}
               />
-)}
+            )}
             keyExtractor={item => item.ID.toString()}
           />
           <Fab

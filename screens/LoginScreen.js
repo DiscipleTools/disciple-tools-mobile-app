@@ -233,24 +233,28 @@ class LoginScreen extends React.Component {
     }
     if (prevProps.groupsReducerResponse !== groupsReducerResponse) {
       switch (groupsReducerResponse) {
-        case GROUPS_GET_USERS_CONTACTS_SUCCESS:
+        case GROUPS_GET_USERS_CONTACTS_SUCCESS: {
           AsyncStorage.setItem(
             'usersAndContactsList',
             JSON.stringify(usersContacts),
           );
           break;
-        case GROUPS_GET_LOCATIONS_SUCCESS:
+        }
+        case GROUPS_GET_LOCATIONS_SUCCESS: {
           AsyncStorage.setItem('locationsList', JSON.stringify(geonames));
           break;
-        case GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
+        }
+        case GROUPS_GET_PEOPLE_GROUPS_SUCCESS: {
           AsyncStorage.setItem(
             'peopleGroupsList',
             JSON.stringify(peopleGroups),
           );
           break;
-        case GROUPS_SEARCH_SUCCESS:
+        }
+        case GROUPS_SEARCH_SUCCESS: {
           AsyncStorage.setItem('searchGroupsList', JSON.stringify(search));
           break;
+        }
         default:
           break;
       }
@@ -497,17 +501,17 @@ LoginScreen.defaultProps = {
 };
 const mapStateToProps = state => ({
   user: state.userReducer,
+  userReducerResponse: state.userReducer.type,
+  userReducerError: state.userReducer.error,
+  users: state.usersReducer.users,
+  usersReducerResponse: state.usersReducer.type,
+  usersReducerError: state.usersReducer.error,
   usersContacts: state.groupsReducer.usersContacts,
   geonames: state.groupsReducer.geonames,
   peopleGroups: state.groupsReducer.peopleGroups,
-  users: state.usersReducer.users,
   search: state.groupsReducer.search,
-  userReducerResponse: state.userReducer.type,
-  userReducerError: state.userReducer.error,
   groupsReducerResponse: state.groupsReducer.type,
   groupsReducerError: state.groupsReducer.error,
-  usersReducerResponse: state.usersReducer.type,
-  usersReducerError: state.usersReducer.error,
 });
 const mapDispatchToProps = dispatch => ({
   loginDispatch: (domain, username, password) => {
