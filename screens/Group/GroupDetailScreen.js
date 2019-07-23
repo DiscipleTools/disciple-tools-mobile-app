@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   formDivider2: {
     marginTop: 20,
     marginBottom: 10,
-  }
+  },
 });
 
 function formatDateToBackEnd(dateValue) {
@@ -523,36 +523,36 @@ class GroupDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.author}</Text>
-                  </Col>
-                  <Col style={{ width: 80 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )}
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.author}</Text>
+              </Col>
+              <Col style={{ width: 80 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.name}</Text>
-                  </Col>
-                  <Col style={{ width: 80 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )}
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.name}</Text>
+              </Col>
+              <Col style={{ width: 80 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
         </View>
         <Text
           style={
@@ -2336,22 +2336,22 @@ class GroupDetailScreen extends React.Component {
                                         }}
                                       />
                                     ) : (
-                                        <Image
-                                          source={dottedCircleIcon}
-                                          style={{
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            alignSelf: 'center',
-                                            position: 'absolute',
-                                            height: '95%',
-                                            width: '95%',
-                                            marginTop: '4%',
-                                            marginRight: '4%',
-                                            marginBottom: '4%',
-                                            marginLeft: '4%',
-                                          }}
-                                        />
-                                      )}
+                                      <Image
+                                        source={dottedCircleIcon}
+                                        style={{
+                                          justifyContent: 'center',
+                                          alignItems: 'center',
+                                          alignSelf: 'center',
+                                          position: 'absolute',
+                                          height: '95%',
+                                          width: '95%',
+                                          marginTop: '4%',
+                                          marginRight: '4%',
+                                          marginBottom: '4%',
+                                          marginLeft: '4%',
+                                        }}
+                                      />
+                                    )}
                                     <Image
                                       source={baptismIcon}
                                       style={{
@@ -2425,22 +2425,22 @@ class GroupDetailScreen extends React.Component {
                                         }}
                                       />
                                     ) : (
-                                        <Image
-                                          source={dottedCircleIcon}
-                                          style={{
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            alignSelf: 'center',
-                                            position: 'absolute',
-                                            height: '95%',
-                                            width: '95%',
-                                            marginTop: '4%',
-                                            marginRight: '4%',
-                                            marginBottom: '4%',
-                                            marginLeft: '4%',
-                                          }}
-                                        />
-                                      )}
+                                      <Image
+                                        source={dottedCircleIcon}
+                                        style={{
+                                          justifyContent: 'center',
+                                          alignItems: 'center',
+                                          alignSelf: 'center',
+                                          position: 'absolute',
+                                          height: '95%',
+                                          width: '95%',
+                                          marginTop: '4%',
+                                          marginRight: '4%',
+                                          marginBottom: '4%',
+                                          marginLeft: '4%',
+                                        }}
+                                      />
+                                    )}
                                     <Image
                                       source={baptismIcon}
                                       style={{
@@ -2514,22 +2514,22 @@ class GroupDetailScreen extends React.Component {
                                         }}
                                       />
                                     ) : (
-                                        <Image
-                                          source={dottedCircleIcon}
-                                          style={{
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            alignSelf: 'center',
-                                            position: 'absolute',
-                                            height: '95%',
-                                            width: '95%',
-                                            marginTop: '4%',
-                                            marginRight: '4%',
-                                            marginBottom: '4%',
-                                            marginLeft: '4%',
-                                          }}
-                                        />
-                                      )}
+                                      <Image
+                                        source={dottedCircleIcon}
+                                        style={{
+                                          justifyContent: 'center',
+                                          alignItems: 'center',
+                                          alignSelf: 'center',
+                                          position: 'absolute',
+                                          height: '95%',
+                                          width: '95%',
+                                          marginTop: '4%',
+                                          marginRight: '4%',
+                                          marginBottom: '4%',
+                                          marginLeft: '4%',
+                                        }}
+                                      />
+                                    )}
                                     <Image
                                       source={baptismIcon}
                                       style={{
