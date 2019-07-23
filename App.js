@@ -45,7 +45,7 @@ class App extends React.Component {
     // add network connectivity handler
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
     // initial detection
-    NetInfo.isConnected.fetch().done((isConnected) => {
+    NetInfo.isConnected.fetch().then((isConnected) => {
       store.dispatch(setNetworkConnectivity(isConnected));
     });
   }

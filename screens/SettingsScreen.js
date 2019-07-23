@@ -74,6 +74,15 @@ class SettingsScreen extends React.Component {
           Signed in as:
           {this.props.user.username}
         </Text>
+
+        {__DEV__
+          && (
+          <Button title="Storybook" onPress={() => this.props.navigation.navigate('Storybook')}>
+            Storybook
+          </Button>
+          )
+        }
+
         <Button style={{ padding: 50 }} title="Sign out" onPress={this.signOutAsync} />
         <Fab
           style={{ backgroundColor: '#E74C3C' }}

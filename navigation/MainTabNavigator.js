@@ -7,6 +7,7 @@ import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import ContactsScreen from '../screens/ContactsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import Storybook from '../storybook';
 
 import Colors from '../constants/Colors';
 
@@ -53,6 +54,7 @@ ContactsStack.navigationOptions = {
 
 const SettingsStack = createStackNavigator({
   Settings: SettingsScreen,
+  Storybook,
 });
 function SettingsIcon({ focused }) {
   return (
