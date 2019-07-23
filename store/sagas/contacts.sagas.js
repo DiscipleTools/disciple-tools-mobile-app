@@ -209,7 +209,7 @@ export function* save({ domain, token, contactData }) {
             sources: {
               values: contact.sources
                 ? contact.sources.map(source => ({
-                  name: source,
+                  name: source.charAt(0).toUpperCase() + source.slice(1),
                   value: source,
                 }))
                 : [],

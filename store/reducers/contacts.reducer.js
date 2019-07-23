@@ -46,10 +46,16 @@ export default function contactsReducer(state = initialState, action) {
         ...newState,
         error: action.error,
       };
+    case actions.CONTACTS_GETBYID_START:
+      return {
+        ...newState,
+        loading: true,
+      };
     case actions.CONTACTS_GETBYID_SUCCESS: {
       newState = {
         ...newState,
         contact: action.contact,
+        loading: false,
       };
       if (newState.contact.baptism_date) {
         let newBaptismDate = new Date(newState.contact.baptism_date);
@@ -80,6 +86,7 @@ export default function contactsReducer(state = initialState, action) {
       return {
         ...newState,
         error: action.error,
+        loading: false,
       };
     case actions.CONTACTS_GET_COMMENTS_SUCCESS:
       return {
