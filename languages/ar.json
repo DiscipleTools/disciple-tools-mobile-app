@@ -12,5 +12,13 @@
     },
     "login": "تسجيل الدخول",
     "forgotPassword": "فقدت كلمة المرور الخاصة بك؟"
+  },
+  "settings": {
+    "navigation": {
+      "title": "الإعدادات"
+    },
+    "storybook": "ستوري بوك",
+    "online": "عبر الانترنت",
+    "logout": "خروج"
   }
 }

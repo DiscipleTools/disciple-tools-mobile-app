@@ -12,5 +12,13 @@
     },
     "login": "Log In",
     "forgotPassword": "Lost your password?"
+  },
+  "settings": {
+    "navigation": {
+      "title": "Settings"
+    },
+    "storybook": "Storybook",
+    "online": "Online",
+    "logout": "Sign Out"
   }
 }
