@@ -19,6 +19,7 @@ import {
 import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
 
+import colors from '../constants/Colors';
 import { logout } from '../store/actions/user.actions';
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
 import i18n from '../languages';
@@ -37,10 +38,14 @@ const propTypes = {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.canvas,
+  },
   header: {
     borderBottomWidth: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: colors.tabBar,
     paddingBottom: 10,
+    marginBottom: 10,
 
     shadowColor: '#000',
     shadowOffset: {
@@ -100,7 +105,7 @@ class SettingsScreen extends React.Component {
     /* Go ahead and delete ExpoConfigView and replace it with your
      * content, we just wanted to give you a quick view of your config */
     return (
-      <Container>
+      <Container style={styles.container}>
         <Content>
           <ListItem itemHeader first avatar style={styles.header}>
             <Left>

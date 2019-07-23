@@ -73,9 +73,9 @@ TextField.propTypes = {
   // Styles
   containerStyle: ViewPropTypes.style,
   labelStyle: ViewPropTypes.style,
-  labelTextStyle: ViewPropTypes.style,
-  iconStyle: ViewPropTypes.style,
-  textInputStyle: ViewPropTypes.style,
+  labelTextStyle: Text.propTypes.style,
+  iconStyle: Text.propTypes.style,
+  textInputStyle: Text.propTypes.style,
   // Config
   iconName: PropTypes.string,
   label: PropTypes.string.isRequired,

@@ -1,6 +1,9 @@
 const tintColor = '#365D86';
+const accent = '#a0ce4e';
 
 export default {
+  primary: tintColor,
+  accent,
   tintColor,
   canvas: '#eeeeee',
   tabIconDefault: '#ccc',
