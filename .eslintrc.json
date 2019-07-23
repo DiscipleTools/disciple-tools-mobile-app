@@ -10,6 +10,17 @@
     "__DEV__": "writable"
   },
   "parser": "babel-eslint",
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".android.js",
+          ".ios.js"
+        ]
+      }
+    }
+  },
   "rules": {
     "react/destructuring-assignment": 0,
     "react/jsx-filename-extension": 0,
