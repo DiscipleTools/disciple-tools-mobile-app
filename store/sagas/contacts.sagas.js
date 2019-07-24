@@ -635,13 +635,14 @@ export function* getCommentsByContact({ domain, token, contactId }) {
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
-          comments: jsonData.map(comment => ({
+          comments: jsonData.comments.map(comment => ({
             ID: `${comment.comment_ID}-c`,
             date: `${comment.comment_date.replace(' ', 'T')}Z`,
             author: comment.comment_author,
             content: comment.comment_content,
             gravatar: comment.gravatar,
           })),
+          total: jsonData.total,
         });
       } else {
         yield put({
@@ -754,7 +755,7 @@ export function* getActivitiesByContact({ domain, token, contactId }) {
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_GET_ACTIVITIES_SUCCESS,
-          activities: jsonData.map(activity => ({
+          activities: jsonData.activity.map(activity => ({
             ID: `${activity.histid}-a`,
             date: new Date(
               parseInt(activity.hist_time, 10) * 1000,
@@ -768,6 +769,7 @@ export function* getActivitiesByContact({ domain, token, contactId }) {
             meta_key: activity.meta_key,
             name: activity.name,
           })),
+          total: jsonData.total,
         });
       } else {
         yield put({

@@ -409,13 +409,14 @@ export function* getCommentsByGroup({ domain, token, groupId }) {
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_GET_COMMENTS_SUCCESS,
-          comments: jsonData.map(comment => ({
+          comments: jsonData.comments.map(comment => ({
             ID: `${comment.comment_ID}-c`,
             date: `${comment.comment_date.replace(' ', 'T')}Z`,
             author: comment.comment_author,
             content: comment.comment_content,
             gravatar: comment.gravatar,
           })),
+          total: jsonData.total,
         });
       } else {
         yield put({
@@ -621,7 +622,7 @@ export function* getActivitiesByGroup({ domain, token, groupId }) {
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_GET_ACTIVITIES_SUCCESS,
-          activities: jsonData.map(activity => ({
+          activities: jsonData.activity.map(activity => ({
             ID: `${activity.histid}-a`,
             date: new Date(
               parseInt(activity.hist_time, 10) * 1000,
@@ -635,6 +636,7 @@ export function* getActivitiesByGroup({ domain, token, groupId }) {
             meta_key: activity.meta_key,
             name: activity.name,
           })),
+          total: jsonData.total,
         });
       } else {
         yield put({

@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {
   ScrollView,
   Keyboard,
@@ -13,6 +14,8 @@ import {
   AsyncStorage,
   RefreshControl,
 } from 'react-native';
+import PropTypes from 'prop-types';
+
 import {
   Label,
   Icon,
@@ -24,8 +27,6 @@ import {
   ScrollableTab,
   // DatePicker,
 } from 'native-base';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
@@ -53,6 +54,9 @@ import sharingTheGospelIcon from '../../assets/icons/evangelism.png';
 import leadersIcon from '../../assets/icons/leadership.png';
 import circleIcon from '../../assets/icons/circle.png';
 import dottedCircleIcon from '../../assets/icons/dotted-circle.png';
+import swimmingPoolIcon from '../../assets/icons/swimming-pool.png';
+import groupCircleIcon from '../../assets/icons/group-circle.png';
+import groupDottedCircleIcon from '../../assets/icons/group-dotted-circle.png';
 
 // let toastSuccess;
 let toastError;
@@ -201,8 +205,42 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   formDivider2: {
-    marginTop: 20,
-    marginBottom: 10,
+    marginTop: 25,
+    marginBottom: 15,
+  },
+  // Groups section
+  groupCircle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    position: 'absolute',
+    height: '95%',
+    width: '95%',
+    marginTop: '4%',
+    marginRight: '4%',
+    marginBottom: '4%',
+    marginLeft: '4%',
+  },
+  groupCenterIcon: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    position: 'absolute',
+    height: '45%',
+    width: '45%',
+    marginTop: '22%',
+    resizeMode: 'contain',
+  },
+  groupCircleName: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: '10%',
+    marginLeft: '20%',
+    marginRight: '20%',
+  },
+  groupCircleContainer: {
+    width: circleSideSize,
+    marginRight: 20,
   },
 });
 
@@ -231,8 +269,8 @@ class GroupDetailScreen extends React.Component {
     let navigationTitle = 'Add New Group';
     let headerRight = (
       <Icon
-        type="MaterialCommunityIcons"
-        name="account-check"
+        type="MaterialIcons"
+        name="check"
         onPress={navigation.getParam('onSaveGroup')}
         style={{
           paddingRight: 16,
@@ -523,18 +561,18 @@ class GroupDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.author}</Text>
-              </Col>
-              <Col style={{ width: 80 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
+            <Grid>
+              <Row>
+                <Col>
+                  <Text style={styles.name}>{commentOrActivity.author}</Text>
+                </Col>
+                <Col style={{ width: 80 }}>
+                  <Text style={styles.time}>
+                    {this.onFormatDateToView(commentOrActivity.date)}
+                  </Text>
+                </Col>
+              </Row>
+            </Grid>
           )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
@@ -2318,60 +2356,24 @@ class GroupDetailScreen extends React.Component {
                             <Row style={{ height: circleSideSize, overflowX: 'auto' }}>
                               <ScrollView horizontal>
                                 {this.state.group.parent_groups.values.map((parentGroup, index) => (
-                                  <Col key={index.toString()} style={{ width: circleSideSize }}>
+                                  <Col key={index.toString()} style={styles.groupCircleContainer}>
                                     {(index % 2 === 0) ? (
                                       <Image
-                                        source={circleIcon}
-                                        style={{
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
-                                          alignSelf: 'center',
-                                          position: 'absolute',
-                                          height: '95%',
-                                          width: '95%',
-                                          marginTop: '4%',
-                                          marginRight: '4%',
-                                          marginBottom: '4%',
-                                          marginLeft: '4%',
-                                        }}
+                                        source={groupCircleIcon}
+                                        style={styles.groupCircle}
                                       />
                                     ) : (
                                       <Image
-                                        source={dottedCircleIcon}
-                                        style={{
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
-                                          alignSelf: 'center',
-                                          position: 'absolute',
-                                          height: '95%',
-                                          width: '95%',
-                                          marginTop: '4%',
-                                          marginRight: '4%',
-                                          marginBottom: '4%',
-                                          marginLeft: '4%',
-                                        }}
+                                        source={groupDottedCircleIcon}
+                                        style={styles.groupCircle}
                                       />
                                     )}
                                     <Image
-                                      source={baptismIcon}
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        alignSelf: 'center',
-                                        position: 'absolute',
-                                        height: '50%',
-                                        width: '50%',
-                                        marginTop: '20%',
-                                      }}
+                                      source={swimmingPoolIcon}
+                                      style={styles.groupCenterIcon}
                                     />
                                     <Row
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        marginTop: '10%',
-                                        marginLeft: '20%',
-                                        marginRight: '20%',
-                                      }}
+                                      style={styles.groupCircleName}
                                     >
                                       <Text style={{ fontSize: 13 }}>{parentGroup.name}</Text>
                                     </Row>
@@ -2407,60 +2409,24 @@ class GroupDetailScreen extends React.Component {
                             <Row style={{ height: circleSideSize, overflowX: 'auto' }}>
                               <ScrollView horizontal>
                                 {this.state.group.peer_groups.values.map((peerGroup, index) => (
-                                  <Col key={index.toString()} style={{ width: circleSideSize }}>
+                                  <Col key={index.toString()} style={styles.groupCircleContainer}>
                                     {(index % 2 === 0) ? (
                                       <Image
-                                        source={circleIcon}
-                                        style={{
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
-                                          alignSelf: 'center',
-                                          position: 'absolute',
-                                          height: '95%',
-                                          width: '95%',
-                                          marginTop: '4%',
-                                          marginRight: '4%',
-                                          marginBottom: '4%',
-                                          marginLeft: '4%',
-                                        }}
+                                        source={groupCircleIcon}
+                                        style={styles.groupCircle}
                                       />
                                     ) : (
                                       <Image
-                                        source={dottedCircleIcon}
-                                        style={{
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
-                                          alignSelf: 'center',
-                                          position: 'absolute',
-                                          height: '95%',
-                                          width: '95%',
-                                          marginTop: '4%',
-                                          marginRight: '4%',
-                                          marginBottom: '4%',
-                                          marginLeft: '4%',
-                                        }}
+                                        source={groupDottedCircleIcon}
+                                        style={styles.groupCircle}
                                       />
                                     )}
                                     <Image
-                                      source={baptismIcon}
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        alignSelf: 'center',
-                                        position: 'absolute',
-                                        height: '50%',
-                                        width: '50%',
-                                        marginTop: '20%',
-                                      }}
+                                      source={swimmingPoolIcon}
+                                      style={styles.groupCenterIcon}
                                     />
                                     <Row
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        marginTop: '10%',
-                                        marginLeft: '20%',
-                                        marginRight: '20%',
-                                      }}
+                                      style={styles.groupCircleName}
                                     >
                                       <Text style={{ fontSize: 13 }}>{peerGroup.name}</Text>
                                     </Row>
@@ -2496,60 +2462,24 @@ class GroupDetailScreen extends React.Component {
                             <Row style={{ height: circleSideSize, overflowX: 'auto' }}>
                               <ScrollView horizontal>
                                 {this.state.group.child_groups.values.map((childGroup, index) => (
-                                  <Col key={index.toString()} style={{ width: circleSideSize }}>
+                                  <Col key={index.toString()} style={styles.groupCircleContainer}>
                                     {(index % 2 === 0) ? (
                                       <Image
-                                        source={circleIcon}
-                                        style={{
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
-                                          alignSelf: 'center',
-                                          position: 'absolute',
-                                          height: '95%',
-                                          width: '95%',
-                                          marginTop: '4%',
-                                          marginRight: '4%',
-                                          marginBottom: '4%',
-                                          marginLeft: '4%',
-                                        }}
+                                        source={groupCircleIcon}
+                                        style={styles.groupCircle}
                                       />
                                     ) : (
                                       <Image
-                                        source={dottedCircleIcon}
-                                        style={{
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
-                                          alignSelf: 'center',
-                                          position: 'absolute',
-                                          height: '95%',
-                                          width: '95%',
-                                          marginTop: '4%',
-                                          marginRight: '4%',
-                                          marginBottom: '4%',
-                                          marginLeft: '4%',
-                                        }}
+                                        source={groupDottedCircleIcon}
+                                        style={styles.groupCircle}
                                       />
                                     )}
                                     <Image
-                                      source={baptismIcon}
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        alignSelf: 'center',
-                                        position: 'absolute',
-                                        height: '50%',
-                                        width: '50%',
-                                        marginTop: '20%',
-                                      }}
+                                      source={swimmingPoolIcon}
+                                      style={styles.groupCenterIcon}
                                     />
                                     <Row
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        marginTop: '10%',
-                                        marginLeft: '20%',
-                                        marginRight: '20%',
-                                      }}
+                                      style={styles.groupCircleName}
                                     >
                                       <Text style={{ fontSize: 13 }}>{childGroup.name}</Text>
                                     </Row>

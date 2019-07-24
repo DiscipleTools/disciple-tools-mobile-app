@@ -19,7 +19,6 @@ import { getAll } from '../../store/actions/contacts.actions';
 const styles = StyleSheet.create({
   flatListItem: {
     height: 90,
-    justifyContent: 'center',
     backgroundColor: 'white',
     padding: 20,
   },
@@ -80,14 +79,23 @@ class ContactsScreen extends React.Component {
     <TouchableHighlight
       onPress={() => this.goToContactDetailScreen(item)}
       style={styles.flatListItem}
-      activeOpacity={1}
       key={item.toString()}
     >
-      <View>
-        <Text style={{ fontWeight: 'bold' }}>{item.post_title}</Text>
-        <Text style={styles.contactSubtitle}>
-          {`${item.overall_status.label} • ${item.seeker_path.label}`}
-        </Text>
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, flexDirection: 'row' }}>
+          <Text style={{ fontWeight: 'bold' }}>{item.post_title}</Text>
+        </View>
+        <View style={{ flex: 1, flexDirection: 'row' }}>
+          <Text style={styles.contactSubtitle}>
+            {item.overall_status.label}
+          </Text>
+          <Text style={styles.contactSubtitle}>
+            {' • '}
+          </Text>
+          <Text style={styles.contactSubtitle}>
+            {item.seeker_path.label}
+          </Text>
+        </View>
       </View>
     </TouchableHighlight>
   );

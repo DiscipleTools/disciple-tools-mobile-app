@@ -14,7 +14,8 @@ import {
   AsyncStorage,
   RefreshControl,
 } from 'react-native';
-import Toast from 'react-native-easy-toast';
+import PropTypes from 'prop-types';
+
 import {
   Container,
   Label,
@@ -28,8 +29,7 @@ import {
   Fab,
   Button,
 } from 'native-base';
-import PropTypes from 'prop-types';
-
+import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
@@ -158,8 +158,8 @@ class ContactDetailScreen extends React.Component {
     let navigationTitle = 'Add New Contact';
     let headerRight = (
       <Icon
-        android="md-checkmark"
-        ios="ios-checkmark"
+        type="MaterialIcons"
+        name="check"
         onPress={navigation.getParam('onSaveContact')}
         style={{
           paddingRight: 16,
@@ -175,8 +175,8 @@ class ContactDetailScreen extends React.Component {
       if (params.onlyView) {
         headerRight = (
           <Icon
-            android="md-create"
-            ios="ios-create"
+            type="MaterialIcons"
+            name="create"
             onPress={navigation.getParam('onEnableEdit')}
             style={{
               paddingRight: 16,
@@ -592,18 +592,18 @@ class ContactDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.author}</Text>
-              </Col>
-              <Col style={{ width: 80 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
+            <Grid>
+              <Row>
+                <Col>
+                  <Text style={styles.name}>{commentOrActivity.author}</Text>
+                </Col>
+                <Col style={{ width: 80 }}>
+                  <Text style={styles.time}>
+                    {this.onFormatDateToView(commentOrActivity.date)}
+                  </Text>
+                </Col>
+              </Row>
+            </Grid>
           )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
@@ -1437,7 +1437,7 @@ class ContactDetailScreen extends React.Component {
                             refreshing={this.state.loading}
                             onRefresh={() => this.onRefresh(this.state.contact.ID)}
                           />
-)}
+                        )}
                       >
                         <View
                           style={{
@@ -1461,8 +1461,7 @@ class ContactDetailScreen extends React.Component {
                                 onValueChange={this.setContactStatus}
                                 style={{
                                   color: '#ffffff',
-                                  backgroundColor: this.state
-                                    .overallStatusBackgroundColor,
+                                  backgroundColor: this.state.overallStatusBackgroundColor,
                                 }}
                               >
                                 {this.renderStatusPickerItems()}
@@ -2116,7 +2115,7 @@ class ContactDetailScreen extends React.Component {
                         refreshing={this.state.loading}
                         onRefresh={() => this.onRefresh(this.state.contact.ID)}
                       />
-)}
+                    )}
                   >
                     <View
                       style={styles.formContainer}
@@ -2643,7 +2642,7 @@ class ContactDetailScreen extends React.Component {
                           refreshing={this.state.loading}
                           onRefresh={() => this.onRefresh(this.state.contact.ID)}
                         />
-)}
+                      )}
                     />
                     <KeyboardAccessory>
                       <View
@@ -2704,7 +2703,7 @@ class ContactDetailScreen extends React.Component {
                             refreshing={this.state.loading}
                             onRefresh={() => this.onRefresh(this.state.contact.ID)}
                           />
-)}
+                        )}
                       >
                         {this.state.dataRetrieved && (
                           <View

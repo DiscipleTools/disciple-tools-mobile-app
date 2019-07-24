@@ -19,7 +19,6 @@ import { getAll } from '../../store/actions/groups.actions';
 const styles = StyleSheet.create({
   flatListItem: {
     height: 90,
-    justifyContent: 'center',
     backgroundColor: 'white',
     padding: 20,
   },
@@ -80,14 +79,29 @@ class GroupsScreen extends React.Component {
     <TouchableHighlight
       onPress={() => this.goToGroupDetailScreen(item)}
       style={styles.flatListItem}
-      activeOpacity={0.5}
       key={item.toString()}
     >
-      <View>
-        <Text style={{ fontWeight: 'bold' }}>{item.post_title}</Text>
-        <Text style={styles.groupSubtitle}>
-          {`${item.group_status} • ${item.group_type} • ${item.member_count}`}
-        </Text>
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, flexDirection: 'row' }}>
+          <Text style={{ fontWeight: 'bold' }}>{item.post_title}</Text>
+        </View>
+        <View style={{ flex: 1, flexDirection: 'row' }}>
+          <Text style={styles.groupSubtitle}>
+            {item.group_status}
+          </Text>
+          <Text style={styles.groupSubtitle}>
+            {' • '}
+          </Text>
+          <Text style={styles.groupSubtitle}>
+            {item.group_type}
+          </Text>
+          <Text style={styles.groupSubtitle}>
+            {' • '}
+          </Text>
+          <Text style={styles.groupSubtitle}>
+            {item.member_count}
+          </Text>
+        </View>
       </View>
     </TouchableHighlight>
   );
