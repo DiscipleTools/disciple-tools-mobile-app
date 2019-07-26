@@ -351,7 +351,17 @@ class GroupDetailScreen extends React.Component {
     peopleGroups: [],
     groups: [],
     comments: [],
+    loadingComments: false,
+    loadingMoreComments: false,
+    totalComments: 0,
+    commentsOffset: 0,
+    commentsLimit: 10,
     activities: [],
+    loadingActivities: false,
+    loadingMoreActivities: false,
+    totalActivities: 0,
+    activitiesOffset: 0,
+    activitiesLimit: 10,
     showAssignedToModal: false,
     overallStatusBackgroundColor: '#ffffff',
     loading: false,
@@ -384,17 +394,25 @@ class GroupDetailScreen extends React.Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     const {
       group,
-      comments,
-      activities,
-      newComment,
       loading,
+      comments,
+      totalComments,
+      loadingComments,
+      activities,
+      totalActivities,
+      loadingActivities,
+      newComment,
     } = nextProps;
     let newState = {
       ...prevState,
       group: group || prevState.group,
+      loading,
       comments: comments || prevState.comments,
+      totalComments: totalComments || prevState.totalComments,
+      loadingComments,
       activities: activities || prevState.activities,
-      loading: loading || prevState.loading,
+      totalActivities: totalActivities || prevState.totalActivities,
+      loadingActivities,
     };
 
     // NEW COMMENT
@@ -421,6 +439,40 @@ class GroupDetailScreen extends React.Component {
         ...newState,
         overallStatusBackgroundColor: newColor,
         dataRetrieved: true,
+      };
+    }
+
+    // GET COMMENTS
+    if (comments) {
+      // NEW COMMENTS (PAGINATION)
+      if (prevState.commentsOffset > 0) {
+        newState = {
+          ...newState,
+          comments: prevState.comments.concat(comments),
+          loadingMoreComments: false,
+        };
+      }
+      newState = {
+        // UPDATE OFFSET
+        ...newState,
+        commentsOffset: prevState.commentsOffset + prevState.commentsLimit,
+      };
+    }
+
+    // GET ACTIVITITES
+    if (activities) {
+      // NEW ACTIVITIES (PAGINATION)
+      if (prevState.activitiesOffset > 0) {
+        newState = {
+          ...newState,
+          activities: prevState.activities.concat(activities),
+          loadingMoreActivities: false,
+        };
+      }
+      newState = {
+        // UPDATE OFFSET
+        ...newState,
+        activitiesOffset: prevState.activitiesOffset + prevState.activitiesLimit,
       };
     }
 
@@ -455,8 +507,6 @@ class GroupDetailScreen extends React.Component {
       if (group.ID) {
         navigation.setParams({ groupName: group.title });
       }
-      this.getGroupComments(group.ID);
-      this.getGroupActivities(group.ID);
       // toastSuccess.show('Group Saved!', 2000);
     }
 
@@ -468,6 +518,18 @@ class GroupDetailScreen extends React.Component {
 
   onRefresh(groupId) {
     this.getGroupById(groupId);
+  }
+
+  onRefreshCommentsActivities(groupId) {
+    this.setState({
+      comments: [],
+      activities: [],
+      commentsOffset: 0,
+      activitiesOffset: 0,
+    }, () => {
+      this.getGroupComments(groupId);
+      this.getGroupActivities(groupId);
+    });
   }
 
   getLists = async () => {
@@ -522,6 +584,8 @@ class GroupDetailScreen extends React.Component {
     this.setState(newState, () => {
       if (this.state.group.ID) {
         this.onRefresh(this.state.group.ID);
+        this.getGroupComments(this.state.group.ID);
+        this.getGroupActivities(this.state.group.ID);
       }
     });
   };
@@ -529,8 +593,9 @@ class GroupDetailScreen extends React.Component {
   getGroupById(groupId) {
     this.setState({
       dataRetrieved: false,
+    }, () => {
+      this.props.getById(this.props.user.domain, this.props.user.token, groupId);
     });
-    this.props.getById(this.props.user.domain, this.props.user.token, groupId);
   }
 
   getGroupComments(groupId) {
@@ -538,6 +603,8 @@ class GroupDetailScreen extends React.Component {
       this.props.user.domain,
       this.props.user.token,
       groupId,
+      this.state.commentsOffset,
+      this.state.commentsLimit,
     );
   }
 
@@ -546,6 +613,8 @@ class GroupDetailScreen extends React.Component {
       this.props.user.domain,
       this.props.user.token,
       groupId,
+      this.state.activitiesOffset,
+      this.state.activitiesLimit,
     );
   }
 
@@ -561,18 +630,18 @@ class GroupDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-            <Grid>
-              <Row>
-                <Col>
-                  <Text style={styles.name}>{commentOrActivity.author}</Text>
-                </Col>
-                <Col style={{ width: 80 }}>
-                  <Text style={styles.time}>
-                    {this.onFormatDateToView(commentOrActivity.date)}
-                  </Text>
-                </Col>
-              </Row>
-            </Grid>
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.author}</Text>
+              </Col>
+              <Col style={{ width: 80 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
           )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
@@ -2068,10 +2137,37 @@ class GroupDetailScreen extends React.Component {
                   }}
                   refreshControl={(
                     <RefreshControl
-                      refreshing={this.state.loading}
-                      onRefresh={() => this.onRefresh(this.state.group.ID)}
+                      refreshing={(this.state.loadingComments || this.state.loadingActivities)}
+                      onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID)}
                     />
                   )}
+                  onScroll={({ nativeEvent }) => {
+                    const {
+                      loadingMoreComments, commentsOffset, loadingMoreActivities, activitiesOffset,
+                    } = this.state;
+                    const fL = nativeEvent;
+                    const toEnd = (fL.contentSize.height - fL.contentOffset.y);
+                    if (toEnd < 600) {
+                      if (!loadingMoreComments) {
+                        if (commentsOffset < this.state.totalComments) {
+                          this.setState({
+                            loadingMoreComments: true,
+                          }, () => {
+                            this.getGroupComments(this.state.group.ID);
+                          });
+                        }
+                      }
+                      if (!loadingMoreActivities) {
+                        if (activitiesOffset < this.state.totalActivities) {
+                          this.setState({
+                            loadingMoreActivities: true,
+                          }, () => {
+                            this.getGroupActivities(this.state.group.ID);
+                          });
+                        }
+                      }
+                    }
+                  }}
                 />
                 <KeyboardAccessory>
                   <View
@@ -2621,9 +2717,14 @@ const mapStateToProps = state => ({
   userReducerError: state.userReducer.error,
   group: state.groupsReducer.group,
   comments: state.groupsReducer.comments,
+  totalComments: state.groupsReducer.totalComments,
+  loadingComments: state.groupsReducer.loadingComments,
   activities: state.groupsReducer.activities,
+  totalActivities: state.groupsReducer.totalActivities,
+  loadingActivities: state.groupsReducer.loadingActivities,
   newComment: state.groupsReducer.newComment,
   groupsReducerError: state.groupsReducer.error,
+  loading: state.groupsReducer.loading,
 });
 const mapDispatchToProps = dispatch => ({
   saveGroup: (domain, token, groupData) => {
@@ -2632,14 +2733,14 @@ const mapDispatchToProps = dispatch => ({
   getById: (domain, token, groupId) => {
     dispatch(getById(domain, token, groupId));
   },
-  getComments: (domain, token, groupId) => {
-    dispatch(getCommentsByGroup(domain, token, groupId));
+  getComments: (domain, token, groupId, offset, limit) => {
+    dispatch(getCommentsByGroup(domain, token, groupId, offset, limit));
   },
   saveComment: (domain, token, groupId, commentData) => {
     dispatch(saveComment(domain, token, groupId, commentData));
   },
-  getActivities: (domain, token, groupId) => {
-    dispatch(getActivitiesByGroup(domain, token, groupId));
+  getActivities: (domain, token, groupId, offset, limit) => {
+    dispatch(getActivitiesByGroup(domain, token, groupId, offset, limit));
   },
 });
 

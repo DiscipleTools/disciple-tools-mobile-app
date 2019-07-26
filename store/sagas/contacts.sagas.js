@@ -607,13 +607,15 @@ export function* getById({ domain, token, contactId }) {
   }
 }
 
-export function* getCommentsByContact({ domain, token, contactId }) {
+export function* getCommentsByContact({
+  domain, token, contactId, offset, limit,
+}) {
   yield put({ type: actions.CONTACTS_GET_COMMENTS_START });
 
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments`,
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments?number=${limit}&offset=${offset}`,
       data: {
         method: 'GET',
         headers: {
@@ -727,13 +729,15 @@ export function* saveComment({
   }
 }
 
-export function* getActivitiesByContact({ domain, token, contactId }) {
+export function* getActivitiesByContact({
+  domain, token, contactId, offset, limit,
+}) {
   yield put({ type: actions.CONTACTS_GET_ACTIVITIES_START });
 
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/activity`,
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/activity?number=${limit}&offset=${offset}`,
       data: {
         method: 'GET',
         headers: {

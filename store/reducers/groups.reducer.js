@@ -7,13 +7,16 @@ const initialState = {
   group: null,
   comments: [],
   newComment: null,
-  // comment: null,
   activities: [],
-  type: null, // delete
   usersContacts: [],
   geonames: [],
   peopleGroups: [],
   search: [],
+  totalComments: null,
+  totalActivities: null,
+  loadingComments: false,
+  loadingActivities: false,
+  type: null, // delete
 };
 
 export default function groupsReducer(state = initialState, action) {
@@ -23,6 +26,10 @@ export default function groupsReducer(state = initialState, action) {
     group: null,
     newComment: null,
     error: null,
+    comments: null,
+    totalComments: null,
+    activities: null,
+    totalActivities: null,
   };
 
   switch (action.type) {
@@ -142,10 +149,16 @@ export default function groupsReducer(state = initialState, action) {
         ...newState,
         error: action.error,
       };
+    case actions.GROUPS_GETBYID_START:
+      return {
+        ...newState,
+        loading: true,
+      };
     case actions.GROUPS_GETBYID_SUCCESS: {
       newState = {
         ...newState,
         group: action.group,
+        loading: false,
       };
       if (newState.group.start_date) {
         let newStartDate = new Date(newState.group.start_date);
@@ -198,16 +211,25 @@ export default function groupsReducer(state = initialState, action) {
       return {
         ...newState,
         error: action.error,
+        loading: false,
+      };
+    case actions.GROUPS_GET_COMMENTS_START:
+      return {
+        ...newState,
+        loadingComments: true,
       };
     case actions.GROUPS_GET_COMMENTS_SUCCESS:
       return {
         ...newState,
         comments: action.comments,
+        totalComments: action.total,
+        loadingComments: false,
       };
     case actions.GROUPS_GET_COMMENTS_FAILURE:
       return {
         ...newState,
         error: action.error,
+        loadingComments: false,
       };
     case actions.GROUPS_SAVE_COMMENT_SUCCESS:
       return {
@@ -219,15 +241,23 @@ export default function groupsReducer(state = initialState, action) {
         ...newState,
         error: action.error,
       };
+    case actions.GROUPS_GET_ACTIVITIES_START:
+      return {
+        ...newState,
+        loadingActivities: true,
+      };
     case actions.GROUPS_GET_ACTIVITIES_SUCCESS:
       return {
         ...newState,
         activities: action.activities,
+        totalActivities: action.total,
+        loadingActivities: false,
       };
     case actions.GROUPS_GET_ACTIVITIES_FAILURE:
       return {
         ...newState,
         error: action.error,
+        loadingActivities: false,
       };
     default:
       return newState;

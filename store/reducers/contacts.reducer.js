@@ -8,6 +8,10 @@ const initialState = {
   comments: [],
   newComment: null,
   activities: [],
+  totalComments: null,
+  totalActivities: null,
+  loadingComments: false,
+  loadingActivities: false,
 };
 
 export default function contactsReducer(state = initialState, action) {
@@ -16,6 +20,10 @@ export default function contactsReducer(state = initialState, action) {
     contact: null,
     newComment: null,
     error: null,
+    comments: null,
+    totalComments: null,
+    activities: null,
+    totalActivities: null,
   };
 
   switch (action.type) {
@@ -88,15 +96,23 @@ export default function contactsReducer(state = initialState, action) {
         error: action.error,
         loading: false,
       };
+    case actions.CONTACTS_GET_COMMENTS_START:
+      return {
+        ...newState,
+        loadingComments: true,
+      };
     case actions.CONTACTS_GET_COMMENTS_SUCCESS:
       return {
         ...newState,
         comments: action.comments,
+        totalComments: action.total,
+        loadingComments: false,
       };
     case actions.CONTACTS_GET_COMMENTS_FAILURE:
       return {
         ...newState,
         error: action.error,
+        loadingComments: false,
       };
     case actions.CONTACTS_SAVE_COMMENT_SUCCESS:
       return {
@@ -108,15 +124,23 @@ export default function contactsReducer(state = initialState, action) {
         ...newState,
         error: action.error,
       };
+    case actions.CONTACTS_GET_ACTIVITIES_START:
+      return {
+        ...newState,
+        loadingActivities: true,
+      };
     case actions.CONTACTS_GET_ACTIVITIES_SUCCESS:
       return {
         ...newState,
         activities: action.activities,
+        totalActivities: action.total,
+        loadingActivities: false,
       };
     case actions.CONTACTS_GET_ACTIVITIES_FAILURE:
       return {
         ...newState,
         error: action.error,
+        loadingActivities: false,
       };
     default:
       return newState;

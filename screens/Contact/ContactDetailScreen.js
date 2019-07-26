@@ -296,7 +296,17 @@ class ContactDetailScreen extends React.Component {
     geonames: [],
     loadedLocal: false,
     comments: [],
+    loadingComments: false,
+    loadingMoreComments: false,
+    totalComments: 0,
+    commentsOffset: 0,
+    commentsLimit: 10,
     activities: [],
+    loadingActivities: false,
+    loadingMoreActivities: false,
+    totalActivities: 0,
+    activitiesOffset: 0,
+    activitiesLimit: 10,
     comment: '',
     progressBarValue: 0,
     overallStatusBackgroundColor: '#ffffff',
@@ -362,14 +372,26 @@ class ContactDetailScreen extends React.Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const {
-      contact, comments, activities, newComment, loading,
+      contact,
+      loading,
+      comments,
+      totalComments,
+      loadingComments,
+      activities,
+      totalActivities,
+      loadingActivities,
+      newComment,
     } = nextProps;
     let newState = {
       ...prevState,
       contact: contact || prevState.contact,
-      comments: comments || prevState.comments,
-      activities: activities || prevState.activities,
       loading,
+      comments: comments || prevState.comments,
+      totalComments: totalComments || prevState.totalComments,
+      loadingComments,
+      activities: activities || prevState.activities,
+      totalActivities: totalActivities || prevState.totalActivities,
+      loadingActivities,
     };
 
     // NEW COMMENT
@@ -402,6 +424,40 @@ class ContactDetailScreen extends React.Component {
         ...newState,
         overallStatusBackgroundColor: newColor,
         dataRetrieved: true,
+      };
+    }
+
+    // GET COMMENTS
+    if (comments) {
+      // NEW COMMENTS (PAGINATION)
+      if (prevState.commentsOffset > 0) {
+        newState = {
+          ...newState,
+          comments: prevState.comments.concat(comments),
+          loadingMoreComments: false,
+        };
+      }
+      newState = {
+        // UPDATE OFFSET
+        ...newState,
+        commentsOffset: prevState.commentsOffset + prevState.commentsLimit,
+      };
+    }
+
+    // GET ACTIVITITES
+    if (activities) {
+      // NEW ACTIVITIES (PAGINATION)
+      if (prevState.activitiesOffset > 0) {
+        newState = {
+          ...newState,
+          activities: prevState.activities.concat(activities),
+          loadingMoreActivities: false,
+        };
+      }
+      newState = {
+        // UPDATE OFFSET
+        ...newState,
+        activitiesOffset: prevState.activitiesOffset + prevState.activitiesLimit,
       };
     }
 
@@ -439,9 +495,6 @@ class ContactDetailScreen extends React.Component {
       if (contact.seeker_path) {
         this.setContactSeekerPath(contact.seeker_path);
       }
-      this.getContactComments(contact.ID);
-      this.getContactActivities(contact.ID);
-      // toastSuccess.show('Contact Saved!', 2000);
     }
 
     // NEW COMMENT
@@ -452,6 +505,18 @@ class ContactDetailScreen extends React.Component {
 
   onRefresh(contactId) {
     this.getContactById(contactId);
+  }
+
+  onRefreshCommentsActivities(contactId) {
+    this.setState({
+      comments: [],
+      activities: [],
+      commentsOffset: 0,
+      activitiesOffset: 0,
+    }, () => {
+      this.getContactComments(contactId);
+      this.getContactActivities(contactId);
+    });
   }
 
   getLists = async () => {
@@ -507,6 +572,8 @@ class ContactDetailScreen extends React.Component {
     this.setState(newState, () => {
       if (this.state.contact.ID) {
         this.onRefresh(this.state.contact.ID);
+        this.getContactComments(this.state.contact.ID);
+        this.getContactActivities(this.state.contact.ID);
       }
     });
   };
@@ -514,12 +581,13 @@ class ContactDetailScreen extends React.Component {
   getContactById(contactId) {
     this.setState({
       dataRetrieved: false,
+    }, () => {
+      this.props.getById(
+        this.props.user.domain,
+        this.props.user.token,
+        contactId,
+      );
     });
-    this.props.getById(
-      this.props.user.domain,
-      this.props.user.token,
-      contactId,
-    );
   }
 
   getContactComments(contactId) {
@@ -527,6 +595,8 @@ class ContactDetailScreen extends React.Component {
       this.props.user.domain,
       this.props.user.token,
       contactId,
+      this.state.commentsOffset,
+      this.state.commentsLimit,
     );
   }
 
@@ -535,6 +605,8 @@ class ContactDetailScreen extends React.Component {
       this.props.user.domain,
       this.props.user.token,
       contactId,
+      this.state.activitiesOffset,
+      this.state.activitiesLimit,
     );
   }
 
@@ -592,18 +664,18 @@ class ContactDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-            <Grid>
-              <Row>
-                <Col>
-                  <Text style={styles.name}>{commentOrActivity.author}</Text>
-                </Col>
-                <Col style={{ width: 80 }}>
-                  <Text style={styles.time}>
-                    {this.onFormatDateToView(commentOrActivity.date)}
-                  </Text>
-                </Col>
-              </Row>
-            </Grid>
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.author}</Text>
+              </Col>
+              <Col style={{ width: 80 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
           )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
@@ -2639,10 +2711,37 @@ class ContactDetailScreen extends React.Component {
                       }}
                       refreshControl={(
                         <RefreshControl
-                          refreshing={this.state.loading}
-                          onRefresh={() => this.onRefresh(this.state.contact.ID)}
+                          refreshing={(this.state.loadingComments || this.state.loadingActivities)}
+                          onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID)}
                         />
                       )}
+                      onScroll={({ nativeEvent }) => {
+                        const {
+                          loadingMoreComments, commentsOffset, activitiesOffset,
+                        } = this.state;
+                        const fL = nativeEvent;
+                        const toEnd = (fL.contentSize.height - fL.contentOffset.y);
+                        if (toEnd < 600) {
+                          if (!loadingMoreComments) {
+                            if (commentsOffset < this.state.totalComments) {
+                              this.setState({
+                                loadingMoreComments: true,
+                              }, () => {
+                                this.getContactComments(this.state.contact.ID);
+                              });
+                            }
+                          }
+                          if (!this.state.loadingMoreActivities) {
+                            if (activitiesOffset < this.state.totalActivities) {
+                              this.setState({
+                                loadingMoreActivities: true,
+                              }, () => {
+                                this.getContactActivities(this.state.contact.ID);
+                              });
+                            }
+                          }
+                        }
+                      }}
                     />
                     <KeyboardAccessory>
                       <View
@@ -3509,7 +3608,11 @@ const mapStateToProps = state => ({
   userReducerError: state.userReducer.error,
   contact: state.contactsReducer.contact,
   comments: state.contactsReducer.comments,
+  totalComments: state.contactsReducer.totalComments,
+  loadingComments: state.contactsReducer.loadingComments,
   activities: state.contactsReducer.activities,
+  totalActivities: state.contactsReducer.totalActivities,
+  loadingActivities: state.contactsReducer.loadingActivities,
   newComment: state.contactsReducer.newComment,
   contactsReducerError: state.contactsReducer.error,
   loading: state.contactsReducer.loading,
@@ -3521,14 +3624,14 @@ const mapDispatchToProps = dispatch => ({
   getById: (domain, token, contactId) => {
     dispatch(getById(domain, token, contactId));
   },
-  getComments: (domain, token, contactId) => {
-    dispatch(getCommentsByContact(domain, token, contactId));
+  getComments: (domain, token, contactId, offset, limit) => {
+    dispatch(getCommentsByContact(domain, token, contactId, offset, limit));
   },
   saveComment: (domain, token, contactId, commentData) => {
     dispatch(saveComment(domain, token, contactId, commentData));
   },
-  getActivities: (domain, token, contactId) => {
-    dispatch(getActivitiesByContact(domain, token, contactId));
+  getActivities: (domain, token, contactId, offset, limit) => {
+    dispatch(getActivitiesByContact(domain, token, contactId, offset, limit));
   },
 });
 

@@ -380,14 +380,15 @@ export function* getUsersAndContacts({ domain, token }) {
   }
 }
 
-export function* getCommentsByGroup({ domain, token, groupId }) {
+export function* getCommentsByGroup({
+  domain, token, groupId, offset, limit,
+}) {
   yield put({ type: actions.GROUPS_GET_COMMENTS_START });
 
-  // get all groups
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments`,
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments?number=${limit}&offset=${offset}`,
       data: {
         method: 'GET',
         headers: {
@@ -593,14 +594,15 @@ export function* getPeopleGroups({ domain, token }) {
   }
 }
 
-export function* getActivitiesByGroup({ domain, token, groupId }) {
+export function* getActivitiesByGroup({
+  domain, token, groupId, offset, limit,
+}) {
   yield put({ type: actions.GROUPS_GET_ACTIVITIES_START });
 
-  // get all groups
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/activity`,
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/activity?number=${limit}&offset=${offset}`,
       data: {
         method: 'GET',
         headers: {
