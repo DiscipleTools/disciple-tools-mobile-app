@@ -87,3 +87,4 @@ fabric.properties
 
 # Expo
 .expo
+.expo-shared

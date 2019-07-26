@@ -9,14 +9,31 @@ import {
   Keyboard,
   ActivityIndicator,
   Platform,
+  AsyncStorage,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { Button } from 'native-base';
+import Toast from 'react-native-easy-toast';
 
 import i18n from '../languages';
 import Colors from '../constants/Colors';
-import { login, clearError } from '../store/actions/user.actions';
+import {
+  login,
+  USER_LOGIN_START,
+  USER_LOGIN_SUCCESS,
+} from '../store/actions/user.actions';
 import TextField from '../components/TextField';
+import {
+  getUsersAndContacts,
+  GROUPS_GET_USERS_CONTACTS_SUCCESS,
+  getLocations,
+  GROUPS_GET_LOCATIONS_SUCCESS,
+  getPeopleGroups,
+  GROUPS_GET_PEOPLE_GROUPS_SUCCESS,
+  searchGroups,
+  GROUPS_SEARCH_SUCCESS,
+} from '../store/actions/groups.actions';
+import { getUsers, GET_USERS_SUCCESS } from '../store/actions/users.actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -74,46 +91,230 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
 });
+const listLength = 5;
+let toastError;
 
 class LoginScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
 
+  state = {
+    listsRetrieved: listLength,
+    loading: false,
+  };
+
   constructor(props) {
     super(props);
-
+    // User is authenticated (logged)
     if (props.user && props.user.token) {
-      props.navigation.navigate('Home');
+      this.state = {
+        ...this.state,
+        loading: true,
+      };
+      this.getDataLists();
     }
 
     this.state = {
+      ...this.state,
       username: props.user.username || '',
       password: '',
       domain: props.user.domain || '',
     };
   }
 
-  componentDidMount() {
-    this.props.clearError();
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const {
+      userReducerResponse,
+      userReducerError,
+      groupsReducerResponse,
+      groupsReducerError,
+      usersReducerResponse,
+      usersReducerError,
+    } = nextProps;
+    let newState = {
+      ...prevState,
+    };
+    let error = null;
+
+    switch (userReducerResponse) {
+      case USER_LOGIN_START:
+        newState = {
+          ...newState,
+          loading: true,
+        };
+        break;
+      default:
+        break;
+    }
+    switch (groupsReducerResponse) {
+      case GROUPS_GET_USERS_CONTACTS_SUCCESS:
+        newState = {
+          ...newState,
+          listsRetrieved: --newState.listsRetrieved,
+        };
+        break;
+      case GROUPS_GET_LOCATIONS_SUCCESS:
+        newState = {
+          ...newState,
+          listsRetrieved: --newState.listsRetrieved,
+        };
+        break;
+      case GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
+        newState = {
+          ...newState,
+          listsRetrieved: --newState.listsRetrieved,
+        };
+        break;
+      case GROUPS_SEARCH_SUCCESS:
+        newState = {
+          ...newState,
+          listsRetrieved: --newState.listsRetrieved,
+        };
+        break;
+      default:
+        break;
+    }
+    switch (usersReducerResponse) {
+      case GET_USERS_SUCCESS:
+        newState = {
+          ...newState,
+          listsRetrieved: --newState.listsRetrieved,
+        };
+        break;
+      default:
+        break;
+    }
+
+    if (userReducerError) {
+      error = userReducerError;
+    }
+    if (groupsReducerError) {
+      error = groupsReducerError;
+    }
+    if (usersReducerError) {
+      error = usersReducerError;
+    }
+    if (newState.listsRetrieved === 0 || error) {
+      newState = {
+        ...newState,
+        loading: false,
+      };
+    }
+
+    return newState;
   }
 
-  componentDidUpdate() {
-    if (this.props.user) {
-      if (this.props.user.token) {
-        this.props.navigation.navigate('Home');
+  componentDidUpdate(prevProps) {
+    const {
+      userReducerResponse,
+      groupsReducerResponse,
+      usersReducerResponse,
+      userReducerError,
+      groupsReducerError,
+      usersReducerError,
+      usersContacts,
+      geonames,
+      peopleGroups,
+      search,
+      users,
+    } = this.props;
+    const { listsRetrieved } = this.state;
+    let error = null;
+
+    if (prevProps.userReducerResponse !== userReducerResponse) {
+      switch (userReducerResponse) {
+        case USER_LOGIN_SUCCESS:
+          this.getDataLists();
+          break;
+        default:
+          break;
       }
+    }
+    if (prevProps.groupsReducerResponse !== groupsReducerResponse) {
+      switch (groupsReducerResponse) {
+        case GROUPS_GET_USERS_CONTACTS_SUCCESS: {
+          AsyncStorage.setItem(
+            'usersAndContactsList',
+            JSON.stringify(usersContacts),
+          );
+          break;
+        }
+        case GROUPS_GET_LOCATIONS_SUCCESS: {
+          AsyncStorage.setItem('locationsList', JSON.stringify(geonames));
+          break;
+        }
+        case GROUPS_GET_PEOPLE_GROUPS_SUCCESS: {
+          AsyncStorage.setItem(
+            'peopleGroupsList',
+            JSON.stringify(peopleGroups),
+          );
+          break;
+        }
+        case GROUPS_SEARCH_SUCCESS: {
+          AsyncStorage.setItem('searchGroupsList', JSON.stringify(search));
+          break;
+        }
+        default:
+          break;
+      }
+    }
+    if (prevProps.usersReducerResponse !== usersReducerResponse) {
+      switch (usersReducerResponse) {
+        case GET_USERS_SUCCESS:
+          AsyncStorage.setItem('usersList', JSON.stringify(users));
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (listsRetrieved === 0) {
+      let listsLastUpdate = new Date().toString();
+      listsLastUpdate = new Date(listsLastUpdate);
+      AsyncStorage.setItem('listsLastUpdate', listsLastUpdate);
+      this.props.navigation.navigate('ContactList');
+    }
+
+    if (prevProps.userReducerError !== userReducerError) {
+      error = userReducerError;
+    }
+    if (prevProps.groupsReducerError !== groupsReducerError) {
+      error = groupsReducerError;
+    }
+    if (prevProps.usersReducerError !== usersReducerError) {
+      error = usersReducerError;
+    }
+    if (error) {
+      toastError.show(
+        <View>
+          <Text style={{ fontWeight: 'bold' }}>Code: </Text>
+          <Text>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold' }}>Message: </Text>
+          <Text>{error.message}</Text>
+        </View>,
+        3000,
+      );
     }
   }
 
+  getDataLists = async () => {
+    this.props.getUsersAndContacts(
+      this.props.user.domain,
+      this.props.user.token,
+    );
+    this.props.getLocations(this.props.user.domain, this.props.user.token);
+    this.props.getPeopleGroups(this.props.user.domain, this.props.user.token);
+    this.props.getUsers(this.props.user.domain, this.props.user.token);
+    this.props.searchGroups(this.props.user.domain, this.props.user.token);
+  };
+
   onLoginPress = () => {
     Keyboard.dismiss();
-    const {
-      domain,
-      username,
-      password,
-    } = this.state;
-    const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
+    const { domain, username, password } = this.state;
+    const cleanedDomain = (domain || '')
+      .replace('http://', '')
+      .replace('https://', '');
     this.props.loginDispatch(cleanedDomain, username, password);
   };
 
@@ -125,19 +326,18 @@ class LoginScreen extends React.Component {
 
   // TODO: How to disable iCloud save password feature?
   render() {
-    const { user } = this.props;
-    user.isLoading = false;
-    let errorMessage;
-    if (user && user.error && user.error.message) {
-      errorMessage = (
-        <Text style={{ color: Colors.warningText, marginLeft: 10, marginRight: 10 }}>
-          {user.error.message}
-        </Text>
-      );
-    }
+    const errorToast = (
+      <Toast
+        ref={(toast) => {
+          toastError = toast;
+        }}
+        style={{ backgroundColor: Colors.errorBackground }}
+        position="center"
+      />
+    );
+
     return (
       <View style={styles.container}>
-
         <View style={styles.header}>
           <Image
             source={require('../assets/images/dt-logo2.png')}
@@ -156,7 +356,7 @@ class LoginScreen extends React.Component {
             value={this.state.domain}
             returnKeyType="next"
             textContentType="URL"
-            disabled={user.isLoading}
+            disabled={this.state.loading}
             placeholder={i18n.t('login.domain.placeholder')}
           />
 
@@ -170,7 +370,7 @@ class LoginScreen extends React.Component {
             value={this.state.username}
             returnKeyType="next"
             textContentType="emailAddress"
-            disabled={user.isLoading}
+            disabled={this.state.loading}
           />
 
           <TextField
@@ -187,41 +387,38 @@ class LoginScreen extends React.Component {
             onSubmitEditing={this.signInAsync}
             blurOnSubmit
             textContentType="password"
-            disabled={user.isLoading}
+            disabled={this.state.loading}
           />
 
-          {
-            !user.isLoading && (
-              <Button style={styles.signInButton} onPress={this.onLoginPress} block>
-                <Text style={styles.signInButtonText}>
-                  {i18n.t('login.login')}
-                </Text>
-              </Button>
-            )
-          }
+          {!this.state.loading && (
+            <Button
+              style={styles.signInButton}
+              onPress={this.onLoginPress}
+              block
+            >
+              <Text style={styles.signInButtonText}>
+                {i18n.t('login.login')}
+              </Text>
+            </Button>
+          )}
 
-          {errorMessage}
-
-          {
-            !user.isLoading && (
-              <TouchableOpacity
-                style={styles.forgotButton}
-                onPress={this.goToForgotPassword}
-                disabled={user.isLoading}
-              >
-                <Text style={styles.forgotButtonText}>
-                  {i18n.t('login.forgotPassword')}
-                </Text>
-              </TouchableOpacity>
-            )
-          }
-          {
-            !!user.isLoading
-            && <ActivityIndicator style={{ margin: 20 }} size="small" />
-          }
+          {!this.state.loading && (
+            <TouchableOpacity
+              style={styles.forgotButton}
+              onPress={this.goToForgotPassword}
+              disabled={this.state.loading}
+            >
+              <Text style={styles.forgotButtonText}>
+                {i18n.t('login.forgotPassword')}
+              </Text>
+            </TouchableOpacity>
+          )}
+          {!!this.state.loading && (
+            <ActivityIndicator style={{ margin: 20 }} size="small" />
+          )}
         </View>
+        {errorToast}
       </View>
-
     );
   }
 }
@@ -234,25 +431,109 @@ LoginScreen.propTypes = {
     domain: PropTypes.string,
     username: PropTypes.string,
     token: PropTypes.string,
-    isLoading: PropTypes.bool,
     error: PropTypes.shape({
       code: PropTypes.string,
       message: PropTypes.string,
     }),
   }).isRequired,
   loginDispatch: PropTypes.func.isRequired,
-  clearError: PropTypes.func.isRequired,
+  getUsersAndContacts: PropTypes.func.isRequired,
+  getLocations: PropTypes.func.isRequired,
+  getPeopleGroups: PropTypes.func.isRequired,
+  getUsers: PropTypes.func.isRequired,
+  searchGroups: PropTypes.func.isRequired,
+  userReducerError: PropTypes.shape({
+    code: PropTypes.string,
+    message: PropTypes.string,
+  }),
+  groupsReducerError: PropTypes.shape({
+    code: PropTypes.string,
+    message: PropTypes.string,
+  }),
+  usersReducerError: PropTypes.shape({
+    code: PropTypes.string,
+    message: PropTypes.string,
+  }),
+  /* eslint-disable */
+  userReducerResponse: PropTypes.string,
+  groupsReducerResponse: PropTypes.string,
+  usersReducerResponse: PropTypes.string,
+  /* eslint-enable */
+  usersContacts: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.number,
+    }),
+  ).isRequired,
+  geonames: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.number,
+    }),
+  ).isRequired,
+  peopleGroups: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.number,
+    }),
+  ).isRequired,
+  search: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.number,
+    }),
+  ).isRequired,
+  users: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.number,
+    }),
+  ).isRequired,
 };
-
+LoginScreen.defaultProps = {
+  userReducerError: {
+    code: null,
+    message: null,
+  },
+  groupsReducerError: {
+    code: null,
+    message: null,
+  },
+  usersReducerError: {
+    code: null,
+    message: null,
+  },
+};
 const mapStateToProps = state => ({
   user: state.userReducer,
+  userReducerResponse: state.userReducer.type,
+  userReducerError: state.userReducer.error,
+  users: state.usersReducer.users,
+  usersReducerResponse: state.usersReducer.type,
+  usersReducerError: state.usersReducer.error,
+  usersContacts: state.groupsReducer.usersContacts,
+  geonames: state.groupsReducer.geonames,
+  peopleGroups: state.groupsReducer.peopleGroups,
+  search: state.groupsReducer.search,
+  groupsReducerResponse: state.groupsReducer.type,
+  groupsReducerError: state.groupsReducer.error,
 });
 const mapDispatchToProps = dispatch => ({
   loginDispatch: (domain, username, password) => {
     dispatch(login(domain, username, password));
   },
-  clearError: () => {
-    dispatch(clearError());
+  getUsersAndContacts: (domain, token) => {
+    dispatch(getUsersAndContacts(domain, token));
+  },
+  getLocations: (domain, token) => {
+    dispatch(getLocations(domain, token));
+  },
+  getPeopleGroups: (domain, token) => {
+    dispatch(getPeopleGroups(domain, token));
+  },
+  getUsers: (domain, token) => {
+    dispatch(getUsers(domain, token));
+  },
+  searchGroups: (domain, token) => {
+    dispatch(searchGroups(domain, token));
   },
 });
-export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(LoginScreen);

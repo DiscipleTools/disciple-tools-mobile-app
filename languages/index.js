@@ -14,6 +14,6 @@ i18n.translations = { en, ar };
 i18n.locale = Localization.locale;
 i18n.isRTL = Localization.isRTL;
 
-I18nManager.forceRTL(Localization.isRTL);
+I18nManager.allowRTL(Localization.isRTL);
 
 export default i18n;

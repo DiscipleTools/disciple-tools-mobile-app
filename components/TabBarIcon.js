@@ -1,21 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from 'expo';
+import { Icon } from 'native-base';
 
 import Colors from '../constants/Colors';
 
-function TabBarIcon({ name, focused }) {
+function TabBarIcon({ type, name, focused }) {
   return (
-    <Icon.Ionicons
+    <Icon
+      type={type}
       name={name}
-      size={26}
-      style={{ marginBottom: -3 }}
-      color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+      style={{
+        marginBottom: -3,
+        color: focused ? Colors.tabIconSelected : Colors.tabIconDefault,
+        fontSize: 26,
+      }}
     />
   );
 }
 
 TabBarIcon.propTypes = {
+  type: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   focused: PropTypes.bool.isRequired,
 };
