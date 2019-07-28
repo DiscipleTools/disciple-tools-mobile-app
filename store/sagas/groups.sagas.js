@@ -9,7 +9,7 @@ export function* getAll({ domain, token }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt/v1/groups`,
+      url: `https://${domain}/wp-json/dt-posts/v2/groups`,
       data: {
         method: 'GET',
         headers: {
@@ -29,17 +29,10 @@ export function* getAll({ domain, token }) {
       const jsonData = JSON.parse(response._bodyInit);
       /* eslint-enable */
       if (response.status === 200) {
-        if (jsonData.groups) {
-          yield put({
-            type: actions.GROUPS_GETALL_SUCCESS,
-            groups: jsonData.groups,
-          });
-        } else {
-          yield put({
-            type: actions.GROUPS_GETALL_SUCCESS,
-            groups: [],
-          });
-        }
+        yield put({
+          type: actions.GROUPS_GETALL_SUCCESS,
+          groups: jsonData.posts,
+        });
       } else {
         yield put({
           type: actions.GROUPS_GETALL_FAILURE,
@@ -89,86 +82,11 @@ export function* saveGroup({ domain, token, groupData }) {
       /* eslint-disable */
       const jsonData = JSON.parse(response._bodyInit);
       /* eslint-enable */
-      // response.status === 200
-      if (jsonData.ID) {
+      if (response.status === 200) {
         group = jsonData;
         yield put({
           type: actions.GROUPS_SAVE_SUCCESS,
-          group: {
-            ID: group.ID,
-            title: group.title,
-            group_status:
-              group.group_status && group.group_status.key
-                ? group.group_status.key
-                : null,
-            assigned_to: group.assigned_to
-              ? `user-${group.assigned_to.id}`
-              : null,
-            coaches: {
-              values: group.coaches
-                ? group.coaches.map(coach => ({
-                  value: coach.ID.toString(),
-                  name: coach.post_title,
-                }))
-                : [],
-            },
-            geonames: {
-              values: group.geonames
-                ? group.geonames.map(geoname => ({
-                  value: geoname.id.toString(),
-                  name: geoname.label,
-                }))
-                : [],
-            },
-            people_groups: {
-              values: group.people_groups
-                ? group.people_groups.map(peopleGroup => ({
-                  value: peopleGroup.ID.toString(),
-                  name: peopleGroup.post_title,
-                }))
-                : [],
-            },
-            contact_address: group.contact_address
-              ? group.contact_address.map(contact => ({
-                key: contact.key,
-                value: contact.value,
-              }))
-              : [],
-            start_date:
-              group.start_date && group.start_date.formatted.length > 0
-                ? group.start_date.formatted
-                : null,
-            end_date:
-              group.end_date && group.end_date.formatted.length > 0
-                ? group.end_date.formatted
-                : null,
-            group_type: group.group_type ? group.group_type.key : null,
-            health_metrics: {
-              values: group.health_metrics
-                ? group.health_metrics.map(healthMetric => ({
-                  value: healthMetric,
-                }))
-                : [],
-            },
-            parent_groups: {
-              values: group.parent_groups.map(parentGroup => ({
-                name: parentGroup.post_title,
-                value: parentGroup.ID.toString(),
-              })),
-            },
-            peer_groups: {
-              values: group.peer_groups.map(peerGroup => ({
-                name: peerGroup.post_title,
-                value: peerGroup.ID.toString(),
-              })),
-            },
-            child_groups: {
-              values: group.child_groups.map(childGroup => ({
-                name: childGroup.post_title,
-                value: childGroup.ID.toString(),
-              })),
-            },
-          },
+          group: jsonData,
         });
       } else {
         yield put({
@@ -197,7 +115,7 @@ export function* getById({ domain, token, groupId }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt/v1/group/${groupId}`,
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}`,
       data: {
         method: 'GET',
         headers: {
@@ -217,84 +135,9 @@ export function* getById({ domain, token, groupId }) {
       const jsonData = JSON.parse(response._bodyInit);
       /* eslint-enable */
       if (response.status === 200) {
-        const group = jsonData;
         yield put({
           type: actions.GROUPS_GETBYID_SUCCESS,
-          group: {
-            ID: group.ID,
-            title: group.title,
-            group_status:
-              group.group_status && group.group_status.key
-                ? group.group_status.key
-                : null,
-            assigned_to: group.assigned_to
-              ? `user-${group.assigned_to.id}`
-              : null,
-            coaches: {
-              values: group.coaches
-                ? group.coaches.map(coach => ({
-                  value: coach.ID.toString(),
-                  name: coach.post_title,
-                }))
-                : [],
-            },
-            geonames: {
-              values: group.geonames
-                ? group.geonames.map(geoname => ({
-                  value: geoname.id.toString(),
-                  name: geoname.label,
-                }))
-                : [],
-            },
-            people_groups: {
-              values: group.people_groups
-                ? group.people_groups.map(peopleGroup => ({
-                  value: peopleGroup.ID.toString(),
-                  name: peopleGroup.post_title,
-                }))
-                : [],
-            },
-            contact_address: group.contact_address
-              ? group.contact_address.map(contact => ({
-                key: contact.key,
-                value: contact.value,
-              }))
-              : [],
-            start_date:
-              group.start_date && group.start_date.formatted.length > 0
-                ? group.start_date.formatted
-                : null,
-            end_date:
-              group.end_date && group.end_date.formatted.length > 0
-                ? group.end_date.formatted
-                : null,
-            group_type: group.group_type ? group.group_type.key : null,
-            health_metrics: {
-              values: group.health_metrics
-                ? group.health_metrics.map(healthMetric => ({
-                  value: healthMetric,
-                }))
-                : [],
-            },
-            parent_groups: {
-              values: group.parent_groups.map(parentGroup => ({
-                name: parentGroup.post_title,
-                value: parentGroup.ID.toString(),
-              })),
-            },
-            peer_groups: {
-              values: group.peer_groups.map(peerGroup => ({
-                name: peerGroup.post_title,
-                value: peerGroup.ID.toString(),
-              })),
-            },
-            child_groups: {
-              values: group.child_groups.map(childGroup => ({
-                name: childGroup.post_title,
-                value: childGroup.ID.toString(),
-              })),
-            },
-          },
+          group: jsonData,
         });
       } else {
         yield put({
@@ -324,7 +167,7 @@ export function* getUsersAndContacts({ domain, token }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt/v1/contacts/compact?s=`,
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts/compact`,
       data: {
         method: 'GET',
         headers: {
@@ -344,20 +187,10 @@ export function* getUsersAndContacts({ domain, token }) {
       const jsonData = JSON.parse(response._bodyInit);
       /* eslint-enable */
       if (response.status === 200) {
-        if (jsonData.posts) {
-          yield put({
-            type: actions.GROUPS_GET_USERS_CONTACTS_SUCCESS,
-            usersContacts: jsonData.posts.map(user => ({
-              value: user.ID.toString(),
-              name: user.name,
-            })),
-          });
-        } else {
-          yield put({
-            type: actions.GROUPS_GET_USERS_CONTACTS_SUCCESS,
-            usersContacts: [],
-          });
-        }
+        yield put({
+          type: actions.GROUPS_GET_USERS_CONTACTS_SUCCESS,
+          usersContacts: jsonData.posts,
+        });
       } else {
         yield put({
           type: actions.GROUPS_GET_USERS_CONTACTS_FAILURE,
@@ -410,13 +243,7 @@ export function* getCommentsByGroup({
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_GET_COMMENTS_SUCCESS,
-          comments: jsonData.comments.map(comment => ({
-            ID: `${comment.comment_ID}-c`,
-            date: `${comment.comment_date.replace(' ', 'T')}Z`,
-            author: comment.comment_author,
-            content: comment.comment_content,
-            gravatar: comment.gravatar,
-          })),
+          comments: jsonData.comments,
           total: jsonData.total,
         });
       } else {
@@ -472,13 +299,7 @@ export function* saveComment({
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_SAVE_COMMENT_SUCCESS,
-          comment: {
-            ID: `${jsonData.comment_ID}-c`,
-            author: jsonData.comment_author,
-            date: `${jsonData.comment_date.replace(' ', 'T')}Z`,
-            content: jsonData.comment_content,
-            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
-          },
+          comment: jsonData,
         });
       } else {
         yield put({
@@ -530,10 +351,7 @@ export function* getLocations({ domain, token }) {
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_GET_LOCATIONS_SUCCESS,
-          geonames: jsonData.geonames.map(geoname => ({
-            value: geoname.ID,
-            name: geoname.name,
-          })),
+          geonames: jsonData.geonames,
         });
       }
     }
@@ -576,10 +394,7 @@ export function* getPeopleGroups({ domain, token }) {
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_GET_PEOPLE_GROUPS_SUCCESS,
-          peopleGroups: jsonData.posts.map(peopleGroup => ({
-            value: peopleGroup.ID.toString(),
-            name: peopleGroup.name,
-          })),
+          peopleGroups: jsonData.posts,
         });
       }
     }
@@ -624,20 +439,7 @@ export function* getActivitiesByGroup({
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_GET_ACTIVITIES_SUCCESS,
-          activities: jsonData.activity.map(activity => ({
-            ID: `${activity.histid}-a`,
-            date: new Date(
-              parseInt(activity.hist_time, 10) * 1000,
-            ).toISOString(),
-            object_note: activity.object_note,
-            gravatar:
-              activity.gravatar === ''
-                ? 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g'
-                : activity.gravatar,
-            meta_id: activity.meta_id,
-            meta_key: activity.meta_key,
-            name: activity.name,
-          })),
+          activities: jsonData.activity,
           total: jsonData.total,
         });
       } else {
@@ -690,10 +492,7 @@ export function* searchGroups({ domain, token }) {
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_SEARCH_SUCCESS,
-          search: jsonData.posts.map(group => ({
-            name: group.name,
-            value: group.ID,
-          })),
+          search: jsonData.posts,
         });
       }
     }

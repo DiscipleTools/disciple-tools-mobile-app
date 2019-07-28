@@ -572,8 +572,7 @@ class ContactDetailScreen extends React.Component {
     this.setState(newState, () => {
       if (this.state.contact.ID) {
         this.onRefresh(this.state.contact.ID);
-        this.getContactComments(this.state.contact.ID);
-        this.getContactActivities(this.state.contact.ID);
+        this.onRefreshCommentsActivities(this.state.contact.ID);
       }
     });
   };

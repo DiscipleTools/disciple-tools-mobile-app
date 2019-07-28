@@ -52,10 +52,14 @@ class GroupsScreen extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    const {
+      loading,
+      groups,
+    } = nextProps;
     const newState = {
       ...prevState,
-      loading: nextProps.loading,
-      groups: nextProps.groups,
+      loading,
+      groups: groups || prevState.groups,
     };
     return newState;
   }
@@ -75,31 +79,31 @@ class GroupsScreen extends React.Component {
     }
   }
 
-  renderRow = item => (
+  renderRow = group => (
     <TouchableHighlight
-      onPress={() => this.goToGroupDetailScreen(item)}
+      onPress={() => this.goToGroupDetailScreen(group)}
       style={styles.flatListItem}
-      key={item.toString()}
+      key={group.ID}
     >
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={{ fontWeight: 'bold' }}>{item.post_title}</Text>
+          <Text style={{ fontWeight: 'bold' }}>{group.post_title}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text style={styles.groupSubtitle}>
-            {item.group_status}
+            {group.group_status}
           </Text>
           <Text style={styles.groupSubtitle}>
             {' • '}
           </Text>
           <Text style={styles.groupSubtitle}>
-            {item.group_type}
+            {group.group_type}
           </Text>
           <Text style={styles.groupSubtitle}>
             {' • '}
           </Text>
           <Text style={styles.groupSubtitle}>
-            {item.member_count}
+            {group.member_count}
           </Text>
         </View>
       </View>
@@ -148,7 +152,7 @@ class GroupsScreen extends React.Component {
                 onRefresh={this.onRefresh}
               />
             )}
-            keyExtractor={item => item.ID.toString()}
+            keyExtractor={item => item.ID}
           />
           <Fab
             style={{ backgroundColor: Colors.tintColor }}

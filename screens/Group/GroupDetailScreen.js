@@ -584,8 +584,7 @@ class GroupDetailScreen extends React.Component {
     this.setState(newState, () => {
       if (this.state.group.ID) {
         this.onRefresh(this.state.group.ID);
-        this.getGroupComments(this.state.group.ID);
-        this.getGroupActivities(this.state.group.ID);
+        this.onRefreshCommentsActivities(this.state.group.ID);
       }
     });
   };
