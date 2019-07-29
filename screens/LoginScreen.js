@@ -288,9 +288,9 @@ class LoginScreen extends React.Component {
     if (error) {
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>Code: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
           <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>Message: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
           <Text>{error.message}</Text>
         </View>,
         3000,
@@ -349,7 +349,7 @@ class LoginScreen extends React.Component {
           <TextField
             containerStyle={styles.textField}
             iconName="ios-globe"
-            label={i18n.t('login.domain.label')}
+            label={i18n.t('loginScreen.domain.label')}
             onChangeText={text => this.setState({ domain: text })}
             autoCapitalize="none"
             autoCorrect={false}
@@ -357,13 +357,13 @@ class LoginScreen extends React.Component {
             returnKeyType="next"
             textContentType="URL"
             disabled={this.state.loading}
-            placeholder={i18n.t('login.domain.placeholder')}
+            placeholder={i18n.t('loginScreen.domain.placeholder')}
           />
 
           <TextField
             containerStyle={styles.textField}
             iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
-            label={i18n.t('login.username.label')}
+            label={i18n.t('loginScreen.username')}
             onChangeText={text => this.setState({ username: text })}
             autoCapitalize="none"
             autoCorrect={false}
@@ -376,7 +376,7 @@ class LoginScreen extends React.Component {
           <TextField
             containerStyle={styles.textField}
             iconName={Platform.OS === 'ios' ? 'ios-key' : 'md-key'}
-            label={i18n.t('login.password.label')}
+            label={i18n.t('loginScreen.password')}
             onChangeText={text => this.setState({ password: text })}
             autoCapitalize="none"
             autoCorrect={false}
@@ -397,7 +397,7 @@ class LoginScreen extends React.Component {
               block
             >
               <Text style={styles.signInButtonText}>
-                {i18n.t('login.login')}
+                {i18n.t('loginScreen.logIn')}
               </Text>
             </Button>
           )}
@@ -409,7 +409,7 @@ class LoginScreen extends React.Component {
               disabled={this.state.loading}
             >
               <Text style={styles.forgotButtonText}>
-                {i18n.t('login.forgotPassword')}
+                {i18n.t('loginScreen.forgotPassword')}
               </Text>
             </TouchableOpacity>
           )}

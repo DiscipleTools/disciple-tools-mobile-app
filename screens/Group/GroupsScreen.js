@@ -15,6 +15,7 @@ import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/groups.actions';
+import i18n from '../../languages';
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -39,7 +40,7 @@ let toastError;
 
 class GroupsScreen extends React.Component {
   static navigationOptions = {
-    title: 'Groups',
+    title: i18n.t('global.groups'),
     headerLeft: null,
   };
 
@@ -69,9 +70,9 @@ class GroupsScreen extends React.Component {
     if (prevProps.error !== error && error) {
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>Code: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
           <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>Message: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
           <Text>{error.message}</Text>
         </View>,
         3000,
@@ -91,13 +92,13 @@ class GroupsScreen extends React.Component {
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text style={styles.groupSubtitle}>
-            {group.group_status}
+            {i18n.t(`global.groupStatus.${group.group_status.key}`)}
           </Text>
           <Text style={styles.groupSubtitle}>
             {' • '}
           </Text>
           <Text style={styles.groupSubtitle}>
-            {group.group_type}
+            {i18n.t(`global.groupType.${group.group_type.key}`)}
           </Text>
           <Text style={styles.groupSubtitle}>
             {' • '}

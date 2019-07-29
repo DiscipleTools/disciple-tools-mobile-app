@@ -96,8 +96,8 @@ export default function groupsReducer(state = initialState, action) {
         groups: action.groups.map(group => ({
           ID: group.ID,
           post_title: group.post_title,
-          group_status: group.group_status.label,
-          group_type: group.group_type.label,
+          group_status: group.group_status,
+          group_type: group.group_type,
           member_count: (group.member_count) ? group.member_count : 0,
         })),
         loading: false,

@@ -8,6 +8,8 @@ import TabBarIcon from '../../components/TabBarIcon';
 import ContactsScreen from './ContactsScreen';
 import ContactDetailScreen from './ContactDetailScreen';
 
+import i18n from '../../languages';
+
 function ContactsIcon({ focused }) {
   return <TabBarIcon type="FontAwesome" name="user" focused={focused} />;
 }
@@ -31,7 +33,7 @@ contactStack.navigationOptions = ({ navigation }) => {
     tabBarVisible = !(currentView.params && currentView.params.hideTabBar);
   }
   return {
-    title: 'Contacts',
+    title: i18n.t('contactsScreen.contacts'),
     tabBarIcon: ContactsIcon,
     tabBarVisible,
     tabBarOptions: { activeTintColor: Colors.tabIconSelected },

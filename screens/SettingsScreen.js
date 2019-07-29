@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 
 import { logout } from '../store/actions/user.actions';
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
+import i18n from '../languages';
 
 const propTypes = {
   navigation: PropTypes.shape({
@@ -27,7 +28,7 @@ const propTypes = {
 
 class SettingsScreen extends React.Component {
   static navigationOptions = {
-    title: 'Settings',
+    title: i18n.t('settingsScreen.settings'),
   };
 
   constructor() {
@@ -56,7 +57,7 @@ class SettingsScreen extends React.Component {
 
   onFABPress = () => {
     this.toggleNetworkConnectivityIcon(this.props.isConnected);
-    const toastMsg = this.props.isConnected ? 'Network unavailable. Now in OFFLINE mode' : 'Network detected. Back to ONLINE mode';
+    const toastMsg = this.props.isConnected ? i18n.t('settingsScreen.networkUnavailable') : i18n.t('settingsScreen.networkAvailable');
     this.toast.show(toastMsg);
     this.props.toggleNetworkConnectivity(this.props.isConnected);
   }
@@ -67,14 +68,14 @@ class SettingsScreen extends React.Component {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{ margin: 20, color: 'rgba(0,0,0,0.4)' }}>
-          Domain:
+          {i18n.t('settingsScreen.domain')}
           {this.props.user.domain}
         </Text>
         <Text style={{ margin: 20, color: 'rgba(0,0,0,0.4)' }}>
-          Signed in as:
+          {`${i18n.t('settingsScreen.signedInAs')}:`}
           {this.props.user.username}
         </Text>
-        <Button style={{ padding: 50 }} title="Sign out" onPress={this.signOutAsync} />
+        <Button style={{ padding: 50 }} title={i18n.t('settingsScreen.signOut')} onPress={this.signOutAsync} />
         <Fab
           style={{ backgroundColor: '#E74C3C' }}
           position="bottomRight"

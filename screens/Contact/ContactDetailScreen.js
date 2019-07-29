@@ -55,6 +55,8 @@ import baptizingIcon from '../../assets/icons/water-aerobics.png';
 import inChurchIcon from '../../assets/icons/multiple-11.png';
 import startingChurchesIcon from '../../assets/icons/symbol-213-7.png';
 
+import i18n from '../../languages';
+
 // let toastSuccess;
 let toastError;
 const containerPadding = 35;
@@ -155,7 +157,7 @@ const styles = StyleSheet.create({
 class ContactDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
-    let navigationTitle = 'Add New Contact';
+    let navigationTitle = i18n.t('contactDetailScreen.addNewContact');
     let headerRight = (
       <Icon
         type="MaterialIcons"
@@ -253,39 +255,39 @@ class ContactDetailScreen extends React.Component {
     },
     contactSources: [
       {
-        name: 'Personal',
+        name: i18n.t('contactDetailScreen.contactSources.personal'),
         value: 'personal',
       },
       {
-        name: 'Web',
+        name: i18n.t('contactDetailScreen.contactSources.web'),
         value: 'web',
       },
       {
-        name: 'Phone',
+        name: i18n.t('contactDetailScreen.contactSources.phone'),
         value: 'phone',
       },
       {
-        name: 'Facebook',
+        name: i18n.t('contactDetailScreen.contactSources.facebook'),
         value: 'facebook',
       },
       {
-        name: 'Twitter',
+        name: i18n.t('contactDetailScreen.contactSources.twitter'),
         value: 'twitter',
       },
       {
-        name: 'Linkedin',
+        name: i18n.t('contactDetailScreen.contactSources.linkedin'),
         value: 'linkedin',
       },
       {
-        name: 'Referral',
+        name: i18n.t('contactDetailScreen.contactSources.referral'),
         value: 'referral',
       },
       {
-        name: 'Advertisement',
+        name: i18n.t('contactDetailScreen.contactSources.advertisement'),
         value: 'advertisement',
       },
       {
-        name: 'Transfer',
+        name: i18n.t('contactDetailScreen.contactSources.transfer'),
         value: 'transfer',
       },
     ],
@@ -312,31 +314,31 @@ class ContactDetailScreen extends React.Component {
     overallStatusBackgroundColor: '#ffffff',
     listContactStates: [
       {
-        label: 'New Contact',
+        label: i18n.t('global.contactOverallStatus.new'),
         value: 'new',
       },
       {
-        label: 'Not Ready',
+        label: i18n.t('global.contactOverallStatus.unassignable'),
         value: 'unassignable',
       },
       {
-        label: 'Dispatch Needed',
+        label: i18n.t('global.contactOverallStatus.unassigned'),
         value: 'unassigned',
       },
       {
-        label: 'Waiting to be accepted',
+        label: i18n.t('global.contactOverallStatus.assigned'),
         value: 'assigned',
       },
       {
-        label: 'Active',
+        label: i18n.t('global.contactOverallStatus.active'),
         value: 'active',
       },
       {
-        label: 'Paused',
+        label: i18n.t('global.contactOverallStatus.paused'),
         value: 'paused',
       },
       {
-        label: 'Closed',
+        label: i18n.t('global.contactOverallStatus.closed'),
         value: 'closed',
       },
     ],
@@ -477,9 +479,9 @@ class ContactDetailScreen extends React.Component {
       const error = userReducerError || contactsReducerError;
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>Code: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
           <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>Message: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
           <Text>{error.message}</Text>
         </View>,
         3000,
@@ -663,36 +665,36 @@ class ContactDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.author}</Text>
-              </Col>
-              <Col style={{ width: 80 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.author}</Text>
+                  </Col>
+                  <Col style={{ width: 80 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.name}</Text>
-              </Col>
-              <Col style={{ width: 80 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.name}</Text>
+                  </Col>
+                  <Col style={{ width: 80 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
         </View>
         <Text
           style={
@@ -1493,7 +1495,7 @@ class ContactDetailScreen extends React.Component {
                 onChangeTab={this.tabChanged}
               >
                 <Tab
-                  heading="Details"
+                  heading={i18n.t('contactDetailScreen.details')}
                   tabStyle={styles.tabStyle}
                   textStyle={styles.textStyle}
                   activeTabStyle={styles.activeTabStyle}
@@ -1521,7 +1523,7 @@ class ContactDetailScreen extends React.Component {
                           <Label
                             style={[styles.formLabel, { fontWeight: 'bold' }]}
                           >
-                            Status
+                            {i18n.t('contactDetailScreen.status')}
                           </Label>
                           <Row style={styles.formRow}>
                             <Col>
@@ -1570,7 +1572,7 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col style={styles.formIconLabel}>
                                     <Label style={styles.formLabel}>
-                                      Assigned to
+                                      {i18n.t('contactDetailScreen.assignedTo')}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -1587,7 +1589,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    Sub-assigned to
+                                    {i18n.t('contactDetailScreen.subAssignedTo')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -1599,7 +1601,7 @@ class ContactDetailScreen extends React.Component {
                                     items={this.state.usersContacts}
                                     selectedItems={this.state.contact.subassigned.values}
                                     textInputProps={{
-                                      placeholder: 'Sub-assign this contact',
+                                      placeholder: i18n.t('contactDetailScreen.subAssignThisContact'),
                                     }}
                                     renderRow={(id, onPress, item) => (
                                       <TouchableOpacity
@@ -1678,7 +1680,7 @@ class ContactDetailScreen extends React.Component {
                                   </Row>
                                 </Col>
                                 <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>Mobile</Label>
+                                  <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.mobile')}</Label>
                                 </Col>
                               </Row>
                               {this.state.contact.contact_phone.map(
@@ -1758,7 +1760,7 @@ class ContactDetailScreen extends React.Component {
                                   </Row>
                                 </Col>
                                 <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>Email</Label>
+                                  <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.email')}</Label>
                                 </Col>
                               </Row>
                               {this.state.contact.contact_email.map(
@@ -1822,7 +1824,7 @@ class ContactDetailScreen extends React.Component {
                                   <Text />
                                 </Col>
                                 <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>Message</Label>
+                                  <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.message')}</Label>
                                 </Col>
                               </Row>
                               <View style={styles.formDivider} />
@@ -1854,7 +1856,7 @@ class ContactDetailScreen extends React.Component {
                                   </Row>
                                 </Col>
                                 <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>Address</Label>
+                                  <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.address')}</Label>
                                 </Col>
                               </Row>
                               {this.state.contact.contact_address.map(
@@ -1917,7 +1919,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    Location
+                                    {i18n.t('contactDetailScreen.location')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -1929,7 +1931,7 @@ class ContactDetailScreen extends React.Component {
                                     items={this.state.geonames}
                                     selectedItems={this.state.contact.geonames.values}
                                     textInputProps={{
-                                      placeholder: 'Select locations',
+                                      placeholder: i18n.t('contactDetailScreen.selectLocations'),
                                     }}
                                     renderRow={(id, onPress, item) => (
                                       <TouchableOpacity
@@ -1983,7 +1985,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    People Group
+                                    {i18n.t('contactDetailScreen.peopleGroup')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -1995,7 +1997,7 @@ class ContactDetailScreen extends React.Component {
                                     items={this.state.peopleGroups}
                                     selectedItems={this.state.contact.people_groups.values}
                                     textInputProps={{
-                                      placeholder: 'Select People Groups',
+                                      placeholder: i18n.t('contactDetailScreen.selectPeopleGroups'),
                                     }}
                                     renderRow={(id, onPress, item) => (
                                       <TouchableOpacity
@@ -2054,25 +2056,25 @@ class ContactDetailScreen extends React.Component {
                                   >
                                     <Picker.Item label="" value="not-set" />
                                     <Picker.Item
-                                      label="Under 18 years old"
+                                      label={i18n.t('contactDetailScreen.contactAge.underEighteenYearsOld')}
                                       value="<19"
                                     />
                                     <Picker.Item
-                                      label="18-25 years old"
+                                      label={i18n.t('contactDetailScreen.contactAge.underTwentySixYearsOld')}
                                       value="<26"
                                     />
                                     <Picker.Item
-                                      label="26-40 years old"
+                                      label={i18n.t('contactDetailScreen.contactAge.underFortyOneYearsOld')}
                                       value="<41"
                                     />
                                     <Picker.Item
-                                      label="Over 40 years old"
+                                      label={i18n.t('contactDetailScreen.contactAge.overFortyYearsOld')}
                                       value=">41"
                                     />
                                   </Picker>
                                 </Col>
                                 <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>Age</Label>
+                                  <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.age')}</Label>
                                 </Col>
                               </Row>
                               <View style={styles.formDivider} />
@@ -2091,12 +2093,12 @@ class ContactDetailScreen extends React.Component {
                                     onValueChange={this.setContactGender}
                                   >
                                     <Picker.Item label="" value="not-set" />
-                                    <Picker.Item label="Male" value="male" />
-                                    <Picker.Item label="Female" value="female" />
+                                    <Picker.Item label={i18n.t('contactDetailScreen.male')} value="male" />
+                                    <Picker.Item label={i18n.t('contactDetailScreen.female')} value="female" />
                                   </Picker>
                                 </Col>
                                 <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>Gender</Label>
+                                  <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.gender')}</Label>
                                 </Col>
                               </Row>
                               <View style={styles.formDivider} />
@@ -2111,7 +2113,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    Source
+                                    {i18n.t('contactDetailScreen.source')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -2123,7 +2125,7 @@ class ContactDetailScreen extends React.Component {
                                     items={this.state.contactSources}
                                     selectedItems={this.state.contact.sources.values}
                                     textInputProps={{
-                                      placeholder: 'Select sources',
+                                      placeholder: i18n.t('contactDetailScreen.selectSources'),
                                     }}
                                     renderRow={(id, onPress, item) => (
                                       <TouchableOpacity
@@ -2174,7 +2176,7 @@ class ContactDetailScreen extends React.Component {
                   </KeyboardShift>
                 </Tab>
                 <Tab
-                  heading="Progress"
+                  heading={i18n.t('contactDetailScreen.progress')}
                   tabStyle={styles.tabStyle}
                   textStyle={styles.textStyle}
                   activeTabStyle={styles.activeTabStyle}
@@ -2209,37 +2211,37 @@ class ContactDetailScreen extends React.Component {
                               textStyle={{ color: Colors.tintColor }}
                             >
                               <Picker.Item
-                                label="Contact Attempt Needed"
+                                label={i18n.t('contactDetailScreen.seekerPath.none')}
                                 value="none"
                               />
                               <Picker.Item
-                                label="Contact Attempted"
+                                label={i18n.t('contactDetailScreen.seekerPath.attempted')}
                                 value="attempted"
                               />
                               <Picker.Item
-                                label="Contact Established"
+                                label={i18n.t('contactDetailScreen.seekerPath.established')}
                                 value="established"
                               />
                               <Picker.Item
-                                label="First Meeting Scheduled"
+                                label={i18n.t('contactDetailScreen.seekerPath.scheduled')}
                                 value="scheduled"
                               />
                               <Picker.Item
-                                label="First Meeting Complete"
+                                label={i18n.t('contactDetailScreen.seekerPath.met')}
                                 value="met"
                               />
                               <Picker.Item
-                                label="Ongoing Meetings"
+                                label={i18n.t('contactDetailScreen.seekerPath.ongoing')}
                                 value="ongoing"
                               />
                               <Picker.Item
-                                label="Being Coached"
+                                label={i18n.t('contactDetailScreen.seekerPath.coaching')}
                                 value="coaching"
                               />
                             </Picker>
                           </Col>
                           <Col style={styles.formIconLabel}>
-                            <Label style={styles.formLabel}>Seeker Path</Label>
+                            <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.seekerPath')}</Label>
                           </Col>
                         </Row>
                       </Grid>
@@ -2262,7 +2264,7 @@ class ContactDetailScreen extends React.Component {
                           { fontWeight: 'bold', marginBottom: 10 },
                         ]}
                       >
-                        Faith Milestones
+                        {i18n.t('contactDetailScreen.faithMilestones')}
                       </Label>
                       <Grid
                         style={{
@@ -2304,7 +2306,7 @@ class ContactDetailScreen extends React.Component {
                                         : styles.progressIconInactive,
                                     ]}
                                   >
-                                    Has Bible
+                                    {i18n.t('contactDetailScreen.milestones.hasBible')}
                                   </Text>
                                 </Row>
                               </Col>
@@ -2346,7 +2348,7 @@ class ContactDetailScreen extends React.Component {
                                         : styles.progressIconInactive,
                                     ]}
                                   >
-                                    Reading Bible
+                                    {i18n.t('contactDetailScreen.milestones.readingBible')}
                                   </Text>
                                 </Row>
                               </Col>
@@ -2386,7 +2388,7 @@ class ContactDetailScreen extends React.Component {
                                         : styles.progressIconInactive,
                                     ]}
                                   >
-                                    States Belief
+                                    {i18n.t('contactDetailScreen.milestones.statesBelief')}
                                   </Text>
                                 </Row>
                               </Col>
@@ -2430,7 +2432,7 @@ class ContactDetailScreen extends React.Component {
                                         : styles.progressIconInactive,
                                     ]}
                                   >
-                                    Can Share Gospel/Testimony
+                                    {i18n.t('contactDetailScreen.milestones.shareGospel')}
                                   </Text>
                                 </Row>
                               </Col>
@@ -2470,7 +2472,7 @@ class ContactDetailScreen extends React.Component {
                                         : styles.progressIconInactive,
                                     ]}
                                   >
-                                    Sharing Gospel/Testimony
+                                    {i18n.t('contactDetailScreen.milestones.sharingGospel')}
                                   </Text>
                                 </Row>
                               </Col>
@@ -2510,7 +2512,7 @@ class ContactDetailScreen extends React.Component {
                                         : styles.progressIconInactive,
                                     ]}
                                   >
-                                    Baptized
+                                    {i18n.t('contactDetailScreen.milestones.baptized')}
                                   </Text>
                                 </Row>
                               </Col>
@@ -2554,7 +2556,7 @@ class ContactDetailScreen extends React.Component {
                                         : styles.progressIconInactive,
                                     ]}
                                   >
-                                    Baptizing
+                                    {i18n.t('contactDetailScreen.milestones.baptizing')}
                                   </Text>
                                 </Row>
                               </Col>
@@ -2594,7 +2596,7 @@ class ContactDetailScreen extends React.Component {
                                         : styles.progressIconInactive,
                                     ]}
                                   >
-                                    In Church/Group
+                                    {i18n.t('contactDetailScreen.milestones.inGroup')}
                                   </Text>
                                 </Row>
                               </Col>
@@ -2634,7 +2636,7 @@ class ContactDetailScreen extends React.Component {
                                         : styles.progressIconInactive,
                                     ]}
                                   >
-                                    Starting Churches
+                                    {i18n.t('contactDetailScreen.milestones.startingChurches')}
                                   </Text>
                                 </Row>
                               </Col>
@@ -2655,14 +2657,14 @@ class ContactDetailScreen extends React.Component {
                           </Col>
                           <Col>
                             <DatePicker
-                              placeHolderText="Add baptism date"
+                              placeHolderText={i18n.t('contactDetailScreen.addBaptizmDate')}
                               defaultDate={this.state.contact.baptism_date}
                               onDateChange={this.setBaptismDate}
                             />
                           </Col>
                           <Col style={styles.formIconLabel}>
                             <Label style={[styles.label, styles.formLabel]}>
-                              Baptism Date
+                              {i18n.t('contactDetailScreen.milestones.baptismDate')}
                             </Label>
                           </Col>
                         </Row>
@@ -2671,7 +2673,7 @@ class ContactDetailScreen extends React.Component {
                   </ScrollView>
                 </Tab>
                 <Tab
-                  heading="Comments / Activity"
+                  heading={i18n.t('contactDetailScreen.commentsActivity')}
                   tabStyle={styles.tabStyle}
                   textStyle={styles.textStyle}
                   activeTabStyle={styles.activeTabStyle}
@@ -2750,7 +2752,7 @@ class ContactDetailScreen extends React.Component {
                         }}
                       >
                         <TextInput
-                          placeholder="Write your comment or note here"
+                          placeholder={i18n.t('contactDetailScreen.writeYourCommentNoteHere')}
                           value={this.state.comment}
                           onChangeText={this.setComment}
                           style={{
@@ -2786,7 +2788,7 @@ class ContactDetailScreen extends React.Component {
                   </View>
                 </Tab>
                 <Tab
-                  heading="Connections"
+                  heading={i18n.t('contactDetailScreen.connections')}
                   tabStyle={styles.tabStyle}
                   textStyle={styles.textStyle}
                   activeTabStyle={styles.activeTabStyle}
@@ -2821,7 +2823,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    Groups
+                                    {i18n.t('global.group')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -2833,7 +2835,7 @@ class ContactDetailScreen extends React.Component {
                                     items={this.state.groups}
                                     selectedItems={this.state.contact.groups.values}
                                     textInputProps={{
-                                      placeholder: 'Add group',
+                                      placeholder: i18n.t('global.addGroup'),
                                     }}
                                     renderRow={(id, onPress, item) => (
                                       <TouchableOpacity
@@ -2888,7 +2890,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    Connection
+                                    {i18n.t('global.connection')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -2900,7 +2902,7 @@ class ContactDetailScreen extends React.Component {
                                     items={this.state.usersContacts}
                                     selectedItems={this.state.contact.relation.values}
                                     textInputProps={{
-                                      placeholder: 'Add connection',
+                                      placeholder: i18n.t('global.addConnection'),
                                     }}
                                     renderRow={(id, onPress, item) => (
                                       <TouchableOpacity
@@ -2963,7 +2965,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    Baptized by
+                                    {i18n.t('contactDetailScreen.baptizedBy')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -2975,7 +2977,7 @@ class ContactDetailScreen extends React.Component {
                                     items={this.state.usersContacts}
                                     selectedItems={this.state.contact.baptized_by.values}
                                     textInputProps={{
-                                      placeholder: 'Add baptized by',
+                                      placeholder: i18n.t('contactDetailScreen.addBaptizedBy'),
                                     }}
                                     renderRow={(id, onPress, item) => (
                                       <TouchableOpacity
@@ -3038,7 +3040,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    Baptized
+                                    {i18n.t('contactDetailScreen.baptized')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -3050,7 +3052,7 @@ class ContactDetailScreen extends React.Component {
                                     items={this.state.usersContacts}
                                     selectedItems={this.state.contact.baptized.values}
                                     textInputProps={{
-                                      placeholder: 'Add baptized',
+                                      placeholder: i18n.t('contactDetailScreen.addBaptized'),
                                     }}
                                     renderRow={(id, onPress, item) => (
                                       <TouchableOpacity
@@ -3113,7 +3115,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    Coached By
+                                    {i18n.t('contactDetailScreen.coachedBy')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -3125,7 +3127,7 @@ class ContactDetailScreen extends React.Component {
                                     items={this.state.usersContacts}
                                     selectedItems={this.state.contact.coached_by.values}
                                     textInputProps={{
-                                      placeholder: 'Add coached by',
+                                      placeholder: i18n.t('contactDetailScreen.addCoachedBy'),
                                     }}
                                     renderRow={(id, onPress, item) => (
                                       <TouchableOpacity
@@ -3188,7 +3190,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    Coaching
+                                    {i18n.t('contactDetailScreen.coaching')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -3200,7 +3202,7 @@ class ContactDetailScreen extends React.Component {
                                     items={this.state.usersContacts}
                                     selectedItems={this.state.contact.coaching.values}
                                     textInputProps={{
-                                      placeholder: 'Add coaching',
+                                      placeholder: i18n.t('contactDetailScreen.addCoaching'),
                                     }}
                                     renderRow={(id, onPress, item) => (
                                       <TouchableOpacity
@@ -3379,12 +3381,12 @@ class ContactDetailScreen extends React.Component {
                           { marginTop: 10, marginBottom: 5 },
                         ]}
                       >
-                        Full Name
+                        {i18n.t('contactDetailScreen.fullName')}
                       </Label>
                     </Row>
                     <Row>
                       <Input
-                        placeholder="Required field"
+                        placeholder={i18n.t('contactDetailScreen.requiredField')}
                         onChangeText={this.setContactTitle}
                         style={{
                           borderColor: '#B4B4B4',
@@ -3403,7 +3405,7 @@ class ContactDetailScreen extends React.Component {
                           { marginTop: 10, marginBottom: 5 },
                         ]}
                       >
-                        Phone Number
+                        {i18n.t('contactDetailScreen.phoneNumber')}
                       </Label>
                     </Row>
                     <Row>
@@ -3426,7 +3428,7 @@ class ContactDetailScreen extends React.Component {
                           { marginTop: 10, marginBottom: 5 },
                         ]}
                       >
-                        Email
+                        {i18n.t('contactDetailScreen.email')}
                       </Label>
                     </Row>
                     <Row>
@@ -3449,7 +3451,7 @@ class ContactDetailScreen extends React.Component {
                           { marginTop: 10, marginBottom: 5 },
                         ]}
                       >
-                        Source
+                        {i18n.t('contactDetailScreen.source')}
                       </Label>
                     </Row>
                     <Row>
@@ -3469,7 +3471,7 @@ class ContactDetailScreen extends React.Component {
                           { marginTop: 10, marginBottom: 5 },
                         ]}
                       >
-                        Locations
+                        {i18n.t('contactDetailScreen.location')}
                       </Label>
                     </Row>
                     <Row>
@@ -3480,7 +3482,7 @@ class ContactDetailScreen extends React.Component {
                           items={this.state.geonames}
                           selectedItems={this.state.contact.geonames.values}
                           textInputProps={{
-                            placeholder: 'Select locations',
+                            placeholder: i18n.t('contactDetailScreen.selectLocations'),
                           }}
                           renderRow={(id, onPress, item) => (
                             <TouchableOpacity
@@ -3529,7 +3531,7 @@ class ContactDetailScreen extends React.Component {
                           { marginTop: 10, marginBottom: 5 },
                         ]}
                       >
-                        Initial Comment
+                        {i18n.t('contactDetailScreen.initialComment')}
                       </Label>
                     </Row>
                     <Row>

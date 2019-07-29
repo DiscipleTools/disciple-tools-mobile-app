@@ -1,16 +1,131 @@
 {
-  "login": {
+  "global": {
+    "error": {
+      "code": "Code: ",
+      "message": "Message: "
+    },
+    "contactOverallStatus": {
+      "new": "New Contact",
+      "unassignable": "Not Ready",
+      "unassigned": "Dispatch Needed",
+      "assigned": "Waiting to be accepted",
+      "active": "Active",
+      "paused": "Paused",
+      "closed": "Closed"
+    },
+    "seekerPath": {
+      "none": "Contact Attempt Needed",
+      "attempted": "Contact Attempted",
+      "established": "Contact Established",
+      "scheduled": "First Meeting Scheduled",
+      "met": "First Meeting Complete",
+      "ongoing": "Ongoing Meetings",
+      "coaching": "Being Coached"
+    },
+    "groupStatus": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "groupType": {
+      "pre-group": "Pre-Group",
+      "group": "Group",
+      "church": "Church",
+      "team": "Team"
+    },
+    "groups": "Groups"
+  },
+  "loginScreen": {
     "domain": {
       "label": "Disciple Tools URL",
       "placeholder": "E.g. myteam.disciple.tools"
     },
-    "username": {
-      "label": "Username"
-    },
-    "password": {
-      "label": "Password"
-    },
-    "login": "Log In",
+    "username": "Username",
+    "password": "Password",
+    "logIn": "Log In",
     "forgotPassword": "Lost your password?"
+  },
+  "contactsScreen": {
+    "contacts": "Contacts"
+  },
+  "settingsScreen": {
+    "settings": "Settings",
+    "networkUnavailable": "Network unavailable. Now in OFFLINE mode",
+    "networkAvailable": "Network detected. Back to ONLINE mode",
+    "signOut": "Sign Out",
+    "domain": "Domain",
+    "signedInAs": "Signed in as"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Add New Contact",
+    "contactSources": {
+      "personal": "Personal",
+      "web": "Web",
+      "phone": "Phone",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "referral": "Referral",
+      "advertisement": "Advertisement",
+      "transfer": "Transfer"
+    },
+    "status": "Status",
+    "assignedTo": "Assigned to",
+    "subAssignedTo": "Sub-assigned to",
+    "subAssignThisContact": "Sub-assign this contact",
+    "mobile": "Mobile",
+    "email": "Email",
+    "message": "Message",
+    "address": "Address",
+    "location": "Location",
+    "selectLocations": "Select locations",
+    "peopleGroup": "People Group",
+    "selectPeopleGroups": "Select People Groups",
+    "contactAge": {
+      "underEighteenYearsOld": "Under 18 years old",
+      "underTwentySixYearsOld": "18-25 years old",
+      "underFortyOneYearsOld": "26-40 years old",
+      "overFortyYearsOld": "Over 40 years old"
+    },
+    "age": "Age",
+    "male": "Male",
+    "female": "Female",
+    "gender": "Gender",
+    "source": "Source",
+    "selectSources": "Select sources",
+    "details": "Details",
+    "progress": "Progress",
+    "seekerPath": "Seeker Path",
+    "faithMilestones": "Faith Milestones",
+    "milestones": {
+      "hasBible": "Has Bible",
+      "readingBible": "Reading Bible",
+      "statesBelief": "States Belief",
+      "shareGospel": "Can Share Gospel/Testimony",
+      "sharingGospel": "Sharing Gospel/Testimony",
+      "baptized": "Baptized",
+      "baptizing": "Baptizing",
+      "inGroup": "In Church/Group",
+      "startingChurches": "Starting Churches",
+      "baptismDate": "Baptism Date"
+    },
+    "commentsActivity": "Comments / Activity",
+    "writeYourCommentNoteHere": "Write your comment or note here",
+    "connections": "Connections",
+    "addGroup": "Add Group",
+    "connection": "Connection",
+    "addConnection": "Add Connection",
+    "baptizedBy": "Baptized By",
+    "addBaptizedBy": "Add baptized by",
+    "baptized": "Baptized",
+    "addBaptized": "Add baptized",
+    "coachedBy": "Coached By",
+    "addCoachedBy": "Add coached by",
+    "coaching": "Coaching",
+    "addCoaching": "Add coaching",
+    "fullName": "Full Name",
+    "requiredField": "Required field",
+    "phoneNumber": "Phone Number",
+    "initialComment": "Initial Comment",
+    "addBaptizmDate": "Add baptizm date"
   }
 }

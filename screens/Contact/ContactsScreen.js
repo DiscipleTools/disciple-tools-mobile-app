@@ -15,6 +15,7 @@ import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
+import i18n from '../../languages';
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -39,7 +40,7 @@ let toastError;
 
 class ContactsScreen extends React.Component {
   static navigationOptions = {
-    title: 'Contacts',
+    title: i18n.t('contactsScreen.contacts'),
     headerLeft: null,
   };
 
@@ -65,9 +66,9 @@ class ContactsScreen extends React.Component {
     if (prevProps.error !== error && error) {
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>Code: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
           <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>Message: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
           <Text>{error.message}</Text>
         </View>,
         3000,
@@ -75,25 +76,25 @@ class ContactsScreen extends React.Component {
     }
   }
 
-  renderRow = item => (
+  renderRow = contact => (
     <TouchableHighlight
-      onPress={() => this.goToContactDetailScreen(item)}
+      onPress={() => this.goToContactDetailScreen(contact)}
       style={styles.flatListItem}
-      key={item.toString()}
+      key={contact.toString()}
     >
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={{ fontWeight: 'bold' }}>{item.post_title}</Text>
+          <Text style={{ fontWeight: 'bold' }}>{contact.post_title}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text style={styles.contactSubtitle}>
-            {item.overall_status.label}
+            {i18n.t(`global.contactOverallStatus.${contact.overall_status.key}`)}
           </Text>
           <Text style={styles.contactSubtitle}>
             {' • '}
           </Text>
           <Text style={styles.contactSubtitle}>
-            {item.seeker_path.label}
+            {i18n.t(`global.seekerPath.${contact.seeker_path.key}`)}
           </Text>
         </View>
       </View>

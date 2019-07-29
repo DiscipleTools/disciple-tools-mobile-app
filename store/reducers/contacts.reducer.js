@@ -35,7 +35,12 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_GETALL_SUCCESS:
       return {
         ...newState,
-        contacts: action.contacts,
+        contacts: action.contacts.map(contact => ({
+          ID: contact.ID,
+          post_title: contact.post_title,
+          overall_status: contact.overall_status,
+          seeker_path: contact.seeker_path,
+        })),
         loading: false,
       };
     case actions.CONTACTS_GETALL_FAILURE:

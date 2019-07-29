@@ -1,16 +1,130 @@
 {
-  "login": {
+  "global": {
+    "error": {
+      "code": "",
+      "message": ""
+    },
+    "contactOverallStatus": {
+      "new": "",
+      "unassignable": "",
+      "unassigned": "",
+      "assigned": "",
+      "active": "",
+      "paused": "",
+      "closed": ""
+    },
+    "seekerPath": {
+      "none": "",
+      "attempted": "",
+      "established": "",
+      "scheduled": "",
+      "met": "",
+      "ongoing": "",
+      "coaching": ""
+    },
+    "groupStatus": {
+      "active": "",
+      "inactive": ""
+    },
+    "groupType": {
+      "pre-group": "",
+      "group": "",
+      "church": "",
+      "team": ""
+    },
+    "groups": ""
+  },
+  "loginScreen": {
     "domain": {
       "label": "اسم نطاق أدوات التلمذة",
       "placeholder": "مثلاً: myteam.disciple.tools"
     },
-    "username": {
-      "label": "اسم المستخدم"
-    },
-    "password": {
-      "label": "كلمة المرور"
-    },
-    "login": "تسجيل الدخول",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "logIn": "تسجيل الدخول",
     "forgotPassword": "فقدت كلمة المرور الخاصة بك؟"
+  },
+  "contactsScreen": {
+    "contacts": ""
+  },
+  "settingsScreen": {
+    "settings": " ",
+    "networkUnavailable": "",
+    "networkAvailable": "",
+    "signOut": "",
+    "domain": "",
+    "signedInAs": ""
+  },
+  "contactDetailScreen": {
+    "addNewContact": "",
+    "contactSources": {
+      "personal": "",
+      "web": "",
+      "phone": "",
+      "facebook": "",
+      "twitter": "",
+      "linkedin": "",
+      "referral": "",
+      "advertisement": "",
+      "transfer": ""
+    },
+    "status": "",
+    "assignedTo": "",
+    "subAssignedTo": "",
+    "subAssignThisContact": "",
+    "mobile": "",
+    "email": "",
+    "message": "",
+    "address": "",
+    "location": "",
+    "selectLocations": "",
+    "peopleGroup": "",
+    "selectPeopleGroups": "",
+    "contactAge": {
+      "underEighteenYearsOld": "",
+      "underTwentySixYearsOld": "",
+      "underFortyOneYearsOld": "",
+      "overFortyYearsOld": ""
+    },
+    "age": "",
+    "male": "",
+    "female": "",
+    "gender": "",
+    "source": "",
+    "selectSources": "",
+    "details": "",
+    "progress": "",
+    "seekerPath": "",
+    "faithMilestones": "",
+    "milestones": {
+      "hasBible": "",
+      "readingBible": "",
+      "statesBelief": "",
+      "shareGospel": "",
+      "sharingGospel": "",
+      "baptized": "",
+      "baptizing": "",
+      "inGroup": "",
+      "startingChurches": "",
+      "baptismDate": ""
+    },
+    "commentsActivity": "",
+    "writeYourCommentNoteHere": "",
+    "connections": "",
+    "addGroup": "",
+    "connection": "",
+    "addConnection": "",
+    "baptizedBy": "",
+    "addBaptizedBy": "",
+    "baptized": "",
+    "addBaptized": "",
+    "coachedBy": "",
+    "addCoachedBy": "",
+    "coaching": "",
+    "addCoaching": "",
+    "fullName": "",
+    "requiredField": "",
+    "phoneNumber": "",
+    "initialComment": ""
   }
 }
