@@ -381,27 +381,27 @@ LoginScreen.propTypes = {
     PropTypes.shape({
       key: PropTypes.number,
     }),
-  ).isRequired,
+  ),
   geonames: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.number,
     }),
-  ).isRequired,
+  ),
   peopleGroups: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.number,
     }),
-  ).isRequired,
+  ),
   search: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.number,
     }),
-  ).isRequired,
+  ),
   users: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.number,
     }),
-  ).isRequired,
+  ),
   /* eslint-enable */
   userReducerError: PropTypes.shape({
     code: PropTypes.string,
