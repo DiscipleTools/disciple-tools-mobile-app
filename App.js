@@ -18,7 +18,7 @@ import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 
-//import i18n from 'i18n-js';
+// import i18n from 'i18n-js';
 import AppNavigator from './navigation/AppNavigator';
 import store from './store/store';
 
