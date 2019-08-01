@@ -89,6 +89,16 @@ const styles = StyleSheet.create({
   },
   textField: {
     backgroundColor: '#ffffff',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  validationErrorInput: {
+    backgroundColor: '#FFE6E6',
+    borderWidth: 2,
+    borderColor: Colors.errorBackground,
+  },
+  validationErrorMessage: {
+    color: Colors.errorBackground,
   },
 });
 const listLength = 5;
@@ -120,6 +130,9 @@ class LoginScreen extends React.Component {
       username: props.user.username || '',
       password: '',
       domain: props.user.domain || '',
+      domainIsInvalid: false,
+      userIsInvalid: false,
+      passwordIsInvalid: false,
     };
   }
 
@@ -311,11 +324,21 @@ class LoginScreen extends React.Component {
 
   onLoginPress = () => {
     Keyboard.dismiss();
-    const { domain, username, password } = this.state;
-    const cleanedDomain = (domain || '')
-      .replace('http://', '')
-      .replace('https://', '');
-    this.props.loginDispatch(cleanedDomain, username, password);
+    const {
+      domain, username, password,
+    } = this.state;
+    if (domain && username && password) {
+      const cleanedDomain = (domain || '')
+        .replace('http://', '')
+        .replace('https://', '');
+      this.props.loginDispatch(cleanedDomain, username, password);
+    } else {
+      this.setState({
+        domainValidation: !domain,
+        userValidation: !username,
+        passwordValidation: !password,
+      });
+    }
   };
 
   /* eslint-disable class-methods-use-this, no-console */
@@ -335,6 +358,21 @@ class LoginScreen extends React.Component {
         position="center"
       />
     );
+    const { domainValidation, userValidation, passwordValidation } = this.state;
+
+    const domainStyle = domainValidation
+      ? [styles.textField, styles.validationErrorInput]
+      : styles.textField;
+    const userStyle = userValidation
+      ? [styles.textField, styles.validationErrorInput]
+      : styles.textField;
+    const passwordStyle = passwordValidation
+      ? [styles.textField, styles.validationErrorInput]
+      : styles.textField;
+
+    const domainErrorMessage = domainValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('login.domain.error')}</Text> : null;
+    const userErrorMessage = userValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('login.username.error')}</Text> : null;
+    const passwordErrorMessage = passwordValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('login.password.error')}</Text> : null;
 
     return (
       <View style={styles.container}>
@@ -347,7 +385,7 @@ class LoginScreen extends React.Component {
 
         <View style={styles.formContainer}>
           <TextField
-            containerStyle={styles.textField}
+            containerStyle={domainStyle}
             iconName="ios-globe"
             label={i18n.t('login.domain.label')}
             onChangeText={text => this.setState({ domain: text })}
@@ -359,9 +397,10 @@ class LoginScreen extends React.Component {
             disabled={this.state.loading}
             placeholder={i18n.t('login.domain.placeholder')}
           />
+          {domainErrorMessage}
 
           <TextField
-            containerStyle={styles.textField}
+            containerStyle={userStyle}
             iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
             label={i18n.t('login.username.label')}
             onChangeText={text => this.setState({ username: text })}
@@ -372,9 +411,10 @@ class LoginScreen extends React.Component {
             textContentType="emailAddress"
             disabled={this.state.loading}
           />
+          {userErrorMessage}
 
           <TextField
-            containerStyle={styles.textField}
+            containerStyle={passwordStyle}
             iconName={Platform.OS === 'ios' ? 'ios-key' : 'md-key'}
             label={i18n.t('login.password.label')}
             onChangeText={text => this.setState({ password: text })}
@@ -389,6 +429,7 @@ class LoginScreen extends React.Component {
             textContentType="password"
             disabled={this.state.loading}
           />
+          {passwordErrorMessage}
 
           {!this.state.loading && (
             <Button

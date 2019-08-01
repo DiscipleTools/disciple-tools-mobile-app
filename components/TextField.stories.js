@@ -19,6 +19,12 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: colors.tintColor,
   },
+  errorContainer: {
+    margin: 20,
+    backgroundColor: '#FFE6E6',
+    borderWidth: 2,
+    borderColor: 'red',
+  },
   customIcon: {
     color: colors.accent,
   },
@@ -64,5 +70,13 @@ storiesOf('Text Field', module)
       labelTextStyle={styles.customLabelText}
       textInputStyle={styles.customInput}
       placeholderTextColor="#aaccaa"
+    />
+  ))
+  .add('with Error Styles', () => (
+    <TextField
+      label="Error Styles"
+      placeholder="Enter a value"
+      iconName={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
+      containerStyle={styles.errorContainer}
     />
   ));
