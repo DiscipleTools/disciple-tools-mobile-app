@@ -88,13 +88,13 @@ class ContactsScreen extends React.Component {
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text style={styles.contactSubtitle}>
-            {i18n.t(`global.contactOverallStatus.${contact.overall_status.key}`)}
+            {i18n.t(`global.contactOverallStatus.${contact.overall_status}`)}
           </Text>
           <Text style={styles.contactSubtitle}>
             {' • '}
           </Text>
           <Text style={styles.contactSubtitle}>
-            {i18n.t(`global.seekerPath.${contact.seeker_path.key}`)}
+            {i18n.t(`global.seekerPath.${contact.seeker_path}`)}
           </Text>
         </View>
       </View>

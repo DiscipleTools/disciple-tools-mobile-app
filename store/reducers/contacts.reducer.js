@@ -12,6 +12,7 @@ const initialState = {
   totalActivities: null,
   loadingComments: false,
   loadingActivities: false,
+  saved: false,
 };
 
 export default function contactsReducer(state = initialState, action) {
@@ -24,6 +25,7 @@ export default function contactsReducer(state = initialState, action) {
     totalComments: null,
     activities: null,
     totalActivities: null,
+    saved: false,
   };
 
   switch (action.type) {
@@ -38,8 +40,8 @@ export default function contactsReducer(state = initialState, action) {
         contacts: action.contacts.map(contact => ({
           ID: contact.ID,
           post_title: contact.post_title,
-          overall_status: contact.overall_status,
-          seeker_path: contact.seeker_path,
+          overall_status: contact.overall_status.key,
+          seeker_path: contact.seeker_path.key,
         })),
         loading: false,
       };
@@ -257,7 +259,30 @@ export default function contactsReducer(state = initialState, action) {
             ? contact.quick_button_phone_off
             : "0" */
         },
+        saved: true,
       };
+      if (newState.contact.baptism_date) {
+        let newBaptismDate = new Date(newState.contact.baptism_date);
+        const year = newBaptismDate.getFullYear();
+        const month = (newBaptismDate.getMonth() + 1) < 10 ? `0${newBaptismDate.getMonth() + 1}` : (newBaptismDate.getMonth() + 1);
+        const day = (newBaptismDate.getDate()) < 10 ? `0${newBaptismDate.getDate()}` : (newBaptismDate.getDate());
+        newBaptismDate = `${year}-${month}-${day}`;
+        newState = {
+          ...newState,
+          contact: {
+            ...newState.contact,
+            baptism_date: newBaptismDate,
+          },
+        };
+      } else {
+        newState = {
+          ...newState,
+          contact: {
+            ...newState.contact,
+            baptism_date: '',
+          },
+        };
+      }
       return newState;
     }
     case actions.CONTACTS_SAVE_FAILURE:
@@ -484,7 +509,7 @@ export default function contactsReducer(state = initialState, action) {
         let newBaptismDate = new Date(newState.contact.baptism_date);
         const year = newBaptismDate.getFullYear();
         const month = (newBaptismDate.getMonth() + 1) < 10 ? `0${newBaptismDate.getMonth() + 1}` : (newBaptismDate.getMonth() + 1);
-        const day = (newBaptismDate.getDate() + 1) < 10 ? `0${newBaptismDate.getDate() + 1}` : (newBaptismDate.getDate() + 1);
+        const day = (newBaptismDate.getDate()) < 10 ? `0${newBaptismDate.getDate()}` : (newBaptismDate.getDate());
         newBaptismDate = `${year}-${month}-${day}`;
         newState = {
           ...newState,
@@ -534,6 +559,11 @@ export default function contactsReducer(state = initialState, action) {
         error: action.error,
         loadingComments: false,
       };
+    case actions.CONTACTS_SAVE_COMMENT_START:
+      return {
+        ...newState,
+        loadingComments: true,
+      };
     case actions.CONTACTS_SAVE_COMMENT_SUCCESS: {
       const { comment } = action;
       newState = {
@@ -545,6 +575,7 @@ export default function contactsReducer(state = initialState, action) {
           content: comment.comment_content,
           gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
         },
+        loadingComments: false,
       };
       return newState;
     }
@@ -552,6 +583,7 @@ export default function contactsReducer(state = initialState, action) {
       return {
         ...newState,
         error: action.error,
+        loadingComments: false,
       };
     case actions.CONTACTS_GET_ACTIVITIES_START:
       return {

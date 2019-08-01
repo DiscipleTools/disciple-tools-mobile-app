@@ -25,7 +25,7 @@ import {
   Tabs,
   Tab,
   ScrollableTab,
-  // DatePicker,
+  DatePicker,
 } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
@@ -58,7 +58,9 @@ import swimmingPoolIcon from '../../assets/icons/swimming-pool.png';
 import groupCircleIcon from '../../assets/icons/group-circle.png';
 import groupDottedCircleIcon from '../../assets/icons/group-dotted-circle.png';
 
-// let toastSuccess;
+import i18n from '../../languages';
+
+let toastSuccess;
 let toastError;
 const containerPadding = 35;
 const windowWidth = Dimensions.get('window').width;
@@ -266,7 +268,7 @@ class GroupDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
 
-    let navigationTitle = 'Add New Group';
+    let navigationTitle = i18n.t('groupDetailScreen.addNewGroup');
     let headerRight = (
       <Icon
         type="MaterialIcons"
@@ -481,8 +483,32 @@ class GroupDetailScreen extends React.Component {
 
   componentDidUpdate(prevProps) {
     const {
-      userReducerError, group, navigation, newComment, groupsReducerError,
+      userReducerError, group, navigation, newComment, groupsReducerError, saved,
     } = this.props;
+
+    // NEW COMMENT
+    if (newComment && prevProps.newComment !== newComment) {
+      Keyboard.dismiss();
+      commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
+    }
+
+    // GROUP SAVE / GET BY ID
+    if (group && prevProps.group !== group) {
+      // Highlight Updates -> Compare prevState.contact with contact and show differences
+      if (group.ID) {
+        navigation.setParams({ groupName: group.title });
+      }
+    }
+
+    // GROUP SAVE
+    if (saved) {
+      toastSuccess.show(
+        <View>
+          <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
+        </View>,
+        3000,
+      );
+    }
 
     // ERROR
     const usersError = (prevProps.userReducerError !== userReducerError && userReducerError);
@@ -492,27 +518,13 @@ class GroupDetailScreen extends React.Component {
       const error = userReducerError || groupsReducerError;
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>Code: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
           <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>Message: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
           <Text>{error.message}</Text>
         </View>,
         3000,
       );
-    }
-
-    // GROUP SAVE / GET BY ID
-    if (group && prevProps.group !== group) {
-      // Highlight Updates -> Compare prevState.contact with contact and show differences
-      if (group.ID) {
-        navigation.setParams({ groupName: group.title });
-      }
-      // toastSuccess.show('Group Saved!', 2000);
-    }
-
-    // NEW COMMENT
-    if (newComment && prevProps.newComment !== newComment) {
-      Keyboard.dismiss();
     }
   }
 
@@ -634,7 +646,7 @@ class GroupDetailScreen extends React.Component {
               <Col>
                 <Text style={styles.name}>{commentOrActivity.author}</Text>
               </Col>
-              <Col style={{ width: 80 }}>
+              <Col style={{ width: 110 }}>
                 <Text style={styles.time}>
                   {this.onFormatDateToView(commentOrActivity.date)}
                 </Text>
@@ -651,7 +663,7 @@ class GroupDetailScreen extends React.Component {
               <Col>
                 <Text style={styles.name}>{commentOrActivity.name}</Text>
               </Col>
-              <Col style={{ width: 80 }}>
+              <Col style={{ width: 110 }}>
                 <Text style={styles.time}>
                   {this.onFormatDateToView(commentOrActivity.date)}
                 </Text>
@@ -711,8 +723,8 @@ class GroupDetailScreen extends React.Component {
       group: {
         ...prevState.group,
         group_status: value,
-        overallStatusBackgroundColor: newColor,
       },
+      overallStatusBackgroundColor: newColor,
     }));
   };
 
@@ -1012,7 +1024,7 @@ class GroupDetailScreen extends React.Component {
     if (Object.prototype.hasOwnProperty.call(groupToSave, 'geonames') && this.geonamesSelectizeRef) {
       groupToSave.geonames.values = this.setGeonames();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'people_groups') && this.pplGroupsSelectizeRef) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, 'people_groups') && this.peopleGroupsSelectizeRef) {
       groupToSave.people_groups.values = this.setPeopleGroups();
     }
     if (Object.prototype.hasOwnProperty.call(groupToSave, 'parent_groups') && this.parentGroupSelectizeRef) {
@@ -1050,12 +1062,13 @@ class GroupDetailScreen extends React.Component {
     const newDate = new Date(date);
     let hours = newDate.getHours();
     let minutes = newDate.getMinutes();
+    const age = newDate.getFullYear();
     const ampm = hours >= 12 ? 'pm' : 'am';
     hours %= 12;
     hours = hours || 12; // the hour '0' should be '12'
     minutes = minutes < 10 ? `0${minutes}` : minutes;
     const strTime = `${hours}:${minutes} ${ampm}`;
-    return `${monthNames[newDate.getMonth()]} ${newDate.getDate()}, ${strTime}`;
+    return `${monthNames[newDate.getMonth()]} ${newDate.getDate()}, ${age} ${strTime}`;
   };
 
   onSaveComment = () => {
@@ -1085,7 +1098,7 @@ class GroupDetailScreen extends React.Component {
   };
 
   render() {
-    /* const successToast = (
+    const successToast = (
       <Toast
         ref={(toast) => {
           toastSuccess = toast;
@@ -1093,7 +1106,7 @@ class GroupDetailScreen extends React.Component {
         style={{ backgroundColor: 'green' }}
         position="center"
       />
-    ); */
+    );
     const errorToast = (
       <Toast
         ref={(toast) => {
@@ -1104,33 +1117,6 @@ class GroupDetailScreen extends React.Component {
       />
     );
 
-    /**
-     * <DatePicker
-                              defaultDate={this.state.group.start_date}
-                              disabled={this.state.onlyView}
-                              onDateChange={this.setGroupStartDate}
-                            />
-
-       <DatePicker
-                              defaultDate={this.state.group.end_date}
-                              disabled={this.state.onlyView}
-                              onDateChange={this.setEndDate}
-                            />
-
-
-                            <View>
-                                    <Text>
-                                      {parentGroup.name}
-                                    </Text>
-                                    <Text>
-                                      {parentGroup.value}
-                                    </Text>
-                                  </View>
-
-
-     */
-
-    // Validation to render DatePickers with initial value
     return (
       <Container>
         {this.state.group.ID && this.state.loadedLocal && (
@@ -1140,7 +1126,7 @@ class GroupDetailScreen extends React.Component {
             onChangeTab={this.tabChanged}
           >
             <Tab
-              heading="Details"
+              heading={i18n.t('global.details')}
               tabStyle={styles.tabStyle}
               textStyle={styles.textStyle}
               activeTabStyle={styles.activeTabStyle}
@@ -1166,7 +1152,7 @@ class GroupDetailScreen extends React.Component {
                       pointerEvents={this.state.onlyView ? 'none' : 'auto'}
                     >
                       <Label style={[styles.formLabel, { fontWeight: 'bold' }]}>
-                        Status
+                        {i18n.t('global.status')}
                       </Label>
                       <Row style={styles.formRow}>
                         <Col>
@@ -1179,8 +1165,8 @@ class GroupDetailScreen extends React.Component {
                                 .overallStatusBackgroundColor,
                             }}
                           >
-                            <Picker.Item label="Active" value="active" />
-                            <Picker.Item label="Inactive" value="inactive" />
+                            <Picker.Item label={i18n.t('global.groupStatus.active')} value="active" />
+                            <Picker.Item label={i18n.t('global.groupStatus.inactive')} value="inactive" />
                           </Picker>
                         </Col>
                       </Row>
@@ -1215,7 +1201,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>
-                                  Assigned to
+                                  {i18n.t('global.assignedTo')}
                                 </Label>
                               </Col>
                             </Row>
@@ -1232,7 +1218,7 @@ class GroupDetailScreen extends React.Component {
                             <Col />
                             <Col style={styles.formIconLabel}>
                               <Label style={styles.formLabel}>
-                                Group Coach
+                                {i18n.t('groupDetailScreen.groupCoach')}
                               </Label>
                             </Col>
                           </Row>
@@ -1244,7 +1230,7 @@ class GroupDetailScreen extends React.Component {
                                 items={this.state.usersContacts}
                                 selectedItems={this.state.group.coaches.values}
                                 textInputProps={{
-                                  placeholder: 'Select coaches',
+                                  placeholder: i18n.t('groupDetailScreen.selectCoaches'),
                                 }}
                                 renderRow={(id, onPress, item) => (
                                   <TouchableOpacity
@@ -1298,7 +1284,7 @@ class GroupDetailScreen extends React.Component {
                             <Col />
                             <Col style={styles.formIconLabel}>
                               <Label style={styles.formLabel}>
-                                Locations
+                                {i18n.t('global.location')}
                               </Label>
                             </Col>
                           </Row>
@@ -1310,7 +1296,7 @@ class GroupDetailScreen extends React.Component {
                                 items={this.state.geonames}
                                 selectedItems={this.state.group.geonames.values}
                                 textInputProps={{
-                                  placeholder: 'Select geonames',
+                                  placeholder: i18n.t('groupDetailScreen.selectGeonames'),
                                 }}
                                 renderRow={(id, onPress, item) => (
                                   <TouchableOpacity
@@ -1364,7 +1350,7 @@ class GroupDetailScreen extends React.Component {
                             <Col />
                             <Col style={styles.formIconLabel}>
                               <Label style={styles.formLabel}>
-                                People Groups
+                                {i18n.t('global.peopleGroup')}
                               </Label>
                             </Col>
                           </Row>
@@ -1376,7 +1362,7 @@ class GroupDetailScreen extends React.Component {
                                 items={this.state.peopleGroups}
                                 selectedItems={this.state.group.people_groups.values}
                                 textInputProps={{
-                                  placeholder: 'Select people groups',
+                                  placeholder: i18n.t('global.selectPeopleGroups'),
                                 }}
                                 renderRow={(id, onPress, item) => (
                                   <TouchableOpacity
@@ -1447,7 +1433,7 @@ class GroupDetailScreen extends React.Component {
                               </Row>
                             </Col>
                             <Col style={styles.formIconLabel}>
-                              <Label style={styles.formLabel}>Address</Label>
+                              <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
                             </Col>
                           </Row>
                           {this.state.group.contact_address.map(
@@ -1504,9 +1490,14 @@ class GroupDetailScreen extends React.Component {
                                 style={styles.formIcon}
                               />
                             </Col>
-                            <Col />
+                            <Col>
+                              <DatePicker
+                                onDateChange={this.setGroupStartDate}
+                                defaultDate={(this.state.group.start_date.length > 0) ? new Date(this.state.group.start_date) : ''}
+                              />
+                            </Col>
                             <Col style={styles.formIconLabel}>
-                              <Label style={styles.formLabel}>Start Date</Label>
+                              <Label style={styles.formLabel}>{i18n.t('groupDetailScreen.startDate')}</Label>
                             </Col>
                           </Row>
                           <View style={styles.formDivider} />
@@ -1518,9 +1509,14 @@ class GroupDetailScreen extends React.Component {
                                 style={styles.formIcon}
                               />
                             </Col>
-                            <Col />
+                            <Col>
+                              <DatePicker
+                                onDateChange={this.setEndDate}
+                                defaultDate={(this.state.group.end_date.length > 0) ? new Date(this.state.group.end_date) : ''}
+                              />
+                            </Col>
                             <Col style={styles.formIconLabel}>
-                              <Label style={styles.formLabel}>End Date</Label>
+                              <Label style={styles.formLabel}>{i18n.t('groupDetailScreen.endDate')}</Label>
                             </Col>
                           </Row>
                           <View style={styles.formDivider} />
@@ -1532,7 +1528,7 @@ class GroupDetailScreen extends React.Component {
               </KeyboardShift>
             </Tab>
             <Tab
-              heading="Progress"
+              heading={i18n.t('global.progress')}
               tabStyle={styles.tabStyle}
               textStyle={styles.textStyle}
               activeTabStyle={styles.activeTabStyle}
@@ -1565,14 +1561,14 @@ class GroupDetailScreen extends React.Component {
                           selectedValue={this.state.group.group_type}
                           onValueChange={this.setGroupType}
                         >
-                          <Picker.Item label="Pre-Group" value="pre-group" />
-                          <Picker.Item label="Group" value="group" />
-                          <Picker.Item label="Church" value="church" />
-                          <Picker.Item label="Team" value="team" />
+                          <Picker.Item label={i18n.t('global.groupType.pre-group')} value="pre-group" />
+                          <Picker.Item label={i18n.t('global.groupType.group')} value="group" />
+                          <Picker.Item label={i18n.t('global.groupType.church')} value="church" />
+                          <Picker.Item label={i18n.t('global.groupType.team')} value="team" />
                         </Picker>
                       </Col>
                       <Col style={styles.formIconLabel}>
-                        <Label style={styles.formLabel}>Group Type</Label>
+                        <Label style={styles.formLabel}>{i18n.t('groupDetailScreen.groupType')}</Label>
                       </Col>
                     </Row>
                     <View style={styles.formDivider} />
@@ -1660,7 +1656,7 @@ class GroupDetailScreen extends React.Component {
                                             : styles.inactiveToggleText,
                                         ]}
                                       >
-                                        Giving
+                                        {i18n.t('groupDetailScreen.healthMetrics.giving')}
                                       </Text>
                                     </Row>
                                   </Col>
@@ -1710,7 +1706,7 @@ class GroupDetailScreen extends React.Component {
                                             : styles.inactiveToggleText,
                                         ]}
                                       >
-                                        Fellowship
+                                        {i18n.t('groupDetailScreen.healthMetrics.fellowship')}
                                       </Text>
                                     </Row>
                                   </Col>
@@ -1762,7 +1758,7 @@ class GroupDetailScreen extends React.Component {
                                             : styles.inactiveToggleText,
                                         ]}
                                       >
-                                        Communion
+                                        {i18n.t('groupDetailScreen.healthMetrics.communion')}
                                       </Text>
                                     </Row>
                                   </Col>
@@ -1819,7 +1815,7 @@ class GroupDetailScreen extends React.Component {
                                             : styles.inactiveToggleText,
                                         ]}
                                       >
-                                        Baptism
+                                        {i18n.t('groupDetailScreen.healthMetrics.baptism')}
                                       </Text>
                                     </Row>
                                   </Col>
@@ -1871,7 +1867,7 @@ class GroupDetailScreen extends React.Component {
                                             : styles.inactiveToggleText,
                                         ]}
                                       >
-                                        Prayer
+                                        {i18n.t('groupDetailScreen.healthMetrics.prayer')}
                                       </Text>
                                     </Row>
                                   </Col>
@@ -1923,7 +1919,7 @@ class GroupDetailScreen extends React.Component {
                                             : styles.inactiveToggleText,
                                         ]}
                                       >
-                                        Leaders
+                                        {i18n.t('groupDetailScreen.healthMetrics.leaders')}
                                       </Text>
                                     </Row>
                                   </Col>
@@ -1977,7 +1973,7 @@ class GroupDetailScreen extends React.Component {
                                             : styles.inactiveToggleText,
                                         ]}
                                       >
-                                        Bible Study
+                                        {i18n.t('groupDetailScreen.healthMetrics.bibleStudy')}
                                       </Text>
                                     </Row>
                                   </Col>
@@ -2029,7 +2025,7 @@ class GroupDetailScreen extends React.Component {
                                             : styles.inactiveToggleText,
                                         ]}
                                       >
-                                        Praise
+                                        {i18n.t('groupDetailScreen.healthMetrics.praise')}
                                       </Text>
                                     </Row>
                                   </Col>
@@ -2079,7 +2075,7 @@ class GroupDetailScreen extends React.Component {
                                             : styles.inactiveToggleText,
                                         ]}
                                       >
-                                        Sharing the Gospel
+                                        {i18n.t('groupDetailScreen.healthMetrics.sharingGospel')}
                                       </Text>
                                     </Row>
                                   </Col>
@@ -2101,7 +2097,7 @@ class GroupDetailScreen extends React.Component {
               </ScrollView>
             </Tab>
             <Tab
-              heading="Comments / Activity"
+              heading={i18n.t('global.commentsActivity')}
               tabStyle={[styles.tabStyle]}
               textStyle={styles.textStyle}
               activeTabStyle={styles.activeTabStyle}
@@ -2176,7 +2172,7 @@ class GroupDetailScreen extends React.Component {
                     }}
                   >
                     <TextInput
-                      placeholder="Write your comment or note here"
+                      placeholder={i18n.t('global.writeYourCommentNoteHere')}
                       value={this.state.comment}
                       onChangeText={this.setComment}
                       style={{
@@ -2212,7 +2208,7 @@ class GroupDetailScreen extends React.Component {
               </View>
             </Tab>
             <Tab
-              heading="Groups"
+              heading={i18n.t('global.groups')}
               tabStyle={styles.tabStyle}
               textStyle={styles.textStyle}
               activeTabStyle={styles.activeTabStyle}
@@ -2247,7 +2243,7 @@ class GroupDetailScreen extends React.Component {
                               <Col />
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>
-                                  Parent Group
+                                  {i18n.t('groupDetailScreen.parentGroup')}
                                 </Label>
                               </Col>
                             </Row>
@@ -2259,7 +2255,7 @@ class GroupDetailScreen extends React.Component {
                                   items={this.state.groups}
                                   selectedItems={this.state.group.parent_groups.values}
                                   textInputProps={{
-                                    placeholder: 'Search groups',
+                                    placeholder: i18n.t('groupDetailScreen.searchGroups'),
                                   }}
                                   renderRow={(id, onPress, item) => (
                                     <TouchableOpacity
@@ -2314,7 +2310,7 @@ class GroupDetailScreen extends React.Component {
                               <Col />
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>
-                                  Peer Group
+                                  {i18n.t('groupDetailScreen.peerGroup')}
                                 </Label>
                               </Col>
                             </Row>
@@ -2326,7 +2322,7 @@ class GroupDetailScreen extends React.Component {
                                   items={this.state.groups}
                                   selectedItems={this.state.group.peer_groups.values}
                                   textInputProps={{
-                                    placeholder: 'Search peer groups',
+                                    placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
                                   }}
                                   renderRow={(id, onPress, item) => (
                                     <TouchableOpacity
@@ -2381,7 +2377,7 @@ class GroupDetailScreen extends React.Component {
                               <Col />
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>
-                                  Child Group
+                                  {i18n.t('groupDetailScreen.childGroup')}
                                 </Label>
                               </Col>
                             </Row>
@@ -2393,7 +2389,7 @@ class GroupDetailScreen extends React.Component {
                                   items={this.state.groups}
                                   selectedItems={this.state.group.child_groups.values}
                                   textInputProps={{
-                                    placeholder: 'Search child groups',
+                                    placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
                                   }}
                                   renderRow={(id, onPress, item) => (
                                     <TouchableOpacity
@@ -2443,7 +2439,7 @@ class GroupDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>
-                                  Parent Group
+                                  {i18n.t('groupDetailScreen.parentGroup')}
                                 </Label>
                               </Col>
                               <Col />
@@ -2496,7 +2492,7 @@ class GroupDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>
-                                  Peer Groups
+                                  {i18n.t('groupDetailScreen.peerGroup')}
                                 </Label>
                               </Col>
                               <Col />
@@ -2549,7 +2545,7 @@ class GroupDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>
-                                  Child Group
+                                  {i18n.t('groupDetailScreen.childGroup')}
                                 </Label>
                               </Col>
                               <Col />
@@ -2620,12 +2616,12 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 10, marginBottom: 5 },
                     ]}
                   >
-                    Group Name
+                    {i18n.t('groupDetailScreen.groupName')}
                   </Label>
                 </Row>
                 <Row>
                   <Input
-                    placeholder="Required field"
+                    placeholder={i18n.t('global.requiredField')}
                     value={this.state.group.title}
                     onChangeText={this.setGroupName}
                     style={{
@@ -2645,7 +2641,7 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 10, marginBottom: 5 },
                     ]}
                   >
-                    Group Type
+                    {i18n.t('global.requiredField')}
                   </Label>
                 </Row>
                 <Row>
@@ -2654,17 +2650,17 @@ class GroupDetailScreen extends React.Component {
                     selectedValue={this.state.group.group_type}
                     onValueChange={this.setGroupType}
                   >
-                    <Picker.Item label="Pre-Group" value="pre-group" />
-                    <Picker.Item label="Group" value="group" />
-                    <Picker.Item label="Church" value="church" />
-                    <Picker.Item label="Team" value="team" />
+                    <Picker.Item label={i18n.t('global.groupType.pre-group')} value="pre-group" />
+                    <Picker.Item label={i18n.t('global.groupType.group')} value="group" />
+                    <Picker.Item label={i18n.t('global.groupType.church')} value="church" />
+                    <Picker.Item label={i18n.t('global.groupType.team')} value="team" />
                   </Picker>
                 </Row>
               </Grid>
             </View>
           </ScrollView>
         )}
-        {/* successToast */}
+        {successToast}
         {errorToast}
       </Container>
     );
@@ -2704,13 +2700,17 @@ GroupDetailScreen.propTypes = {
   getComments: PropTypes.func.isRequired,
   saveComment: PropTypes.func.isRequired,
   getActivities: PropTypes.func.isRequired,
+  saved: PropTypes.string,
 };
+
 GroupDetailScreen.defaultProps = {
   group: null,
   userReducerError: null,
   newComment: null,
   groupsReducerError: null,
+  saved: null,
 };
+
 const mapStateToProps = state => ({
   user: state.userReducer,
   userReducerError: state.userReducer.error,
@@ -2724,7 +2724,9 @@ const mapStateToProps = state => ({
   newComment: state.groupsReducer.newComment,
   groupsReducerError: state.groupsReducer.error,
   loading: state.groupsReducer.loading,
+  saved: state.groupsReducer.saved,
 });
+
 const mapDispatchToProps = dispatch => ({
   saveGroup: (domain, token, groupData) => {
     dispatch(saveGroup(domain, token, groupData));

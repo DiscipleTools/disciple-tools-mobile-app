@@ -17,6 +17,7 @@ const initialState = {
   loadingComments: false,
   loadingActivities: false,
   type: null, // delete
+  saved: false,
 };
 
 export default function groupsReducer(state = initialState, action) {
@@ -30,6 +31,7 @@ export default function groupsReducer(state = initialState, action) {
     totalComments: null,
     activities: null,
     totalActivities: null,
+    saved: false,
   };
 
   switch (action.type) {
@@ -187,6 +189,7 @@ export default function groupsReducer(state = initialState, action) {
             })),
           },
         },
+        saved: true,
       };
       if (newState.group.start_date) {
         let newStartDate = new Date(newState.group.start_date);
@@ -330,7 +333,7 @@ export default function groupsReducer(state = initialState, action) {
         let newStartDate = new Date(newState.group.start_date);
         const year = newStartDate.getFullYear();
         const month = (newStartDate.getMonth() + 1) < 10 ? `0${newStartDate.getMonth() + 1}` : (newStartDate.getMonth() + 1);
-        const day = (newStartDate.getDate() + 1) < 10 ? `0${newStartDate.getDate() + 1}` : (newStartDate.getDate() + 1);
+        const day = (newStartDate.getDate()) < 10 ? `0${newStartDate.getDate()}` : (newStartDate.getDate());
         newStartDate = `${year}-${month}-${day}`;
         newState = {
           ...newState,
@@ -348,11 +351,12 @@ export default function groupsReducer(state = initialState, action) {
           },
         };
       }
+
       if (newState.group.end_date) {
         let newEndDate = new Date(newState.group.end_date);
         const year = newEndDate.getFullYear();
         const month = (newEndDate.getMonth() + 1) < 10 ? `0${newEndDate.getMonth() + 1}` : (newEndDate.getMonth() + 1);
-        const day = (newEndDate.getDate() + 1) < 10 ? `0${newEndDate.getDate() + 1}` : (newEndDate.getDate() + 1);
+        const day = (newEndDate.getDate()) < 10 ? `0${newEndDate.getDate()}` : (newEndDate.getDate());
         newEndDate = `${year}-${month}-${day}`;
         newState = {
           ...newState,
@@ -370,6 +374,7 @@ export default function groupsReducer(state = initialState, action) {
           },
         };
       }
+
       return newState;
     }
     case actions.GROUPS_GETBYID_FAILURE:
@@ -402,6 +407,11 @@ export default function groupsReducer(state = initialState, action) {
         error: action.error,
         loadingComments: false,
       };
+    case actions.GROUPS_SAVE_COMMENT_START:
+      return {
+        ...newState,
+        loadingComments: true,
+      };
     case actions.GROUPS_SAVE_COMMENT_SUCCESS: {
       const { comment } = action;
       return {
@@ -413,12 +423,14 @@ export default function groupsReducer(state = initialState, action) {
           content: comment.comment_content,
           gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
         },
+        loadingComments: false,
       };
     }
     case actions.GROUPS_SAVE_COMMENT_FAILURE:
       return {
         ...newState,
         error: action.error,
+        loadingComments: false,
       };
     case actions.GROUPS_GET_ACTIVITIES_START:
       return {

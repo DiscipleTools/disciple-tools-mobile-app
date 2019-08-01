@@ -57,7 +57,7 @@ import startingChurchesIcon from '../../assets/icons/symbol-213-7.png';
 
 import i18n from '../../languages';
 
-// let toastSuccess;
+let toastSuccess;
 let toastError;
 const containerPadding = 35;
 const windowWidth = Dimensions.get('window').width;
@@ -468,8 +468,35 @@ class ContactDetailScreen extends React.Component {
 
   componentDidUpdate(prevProps) {
     const {
-      userReducerError, contact, navigation, newComment, contactsReducerError,
+      userReducerError, contact, navigation, newComment, contactsReducerError, saved,
     } = this.props;
+
+    // NEW COMMENT
+    if (newComment && prevProps.newComment !== newComment) {
+      Keyboard.dismiss();
+      commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
+    }
+
+    // CONTACT SAVE / GET BY ID
+    if (contact && prevProps.contact !== contact) {
+      // Highlight Updates -> Compare prevState.contact with contact and show differences
+      if (contact.ID) {
+        navigation.setParams({ contactName: contact.title });
+      }
+      if (contact.seeker_path) {
+        this.setContactSeekerPath(contact.seeker_path);
+      }
+    }
+
+    // CONTACT SAVE
+    if (saved) {
+      toastSuccess.show(
+        <View>
+          <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
+        </View>,
+        3000,
+      );
+    }
 
     // ERROR
     const usersError = (prevProps.userReducerError !== userReducerError && userReducerError);
@@ -486,22 +513,6 @@ class ContactDetailScreen extends React.Component {
         </View>,
         3000,
       );
-    }
-
-    // CONTACT SAVE / GET BY ID
-    if (contact && prevProps.contact !== contact) {
-      // Highlight Updates -> Compare prevState.contact with contact and show differences
-      if (contact.ID) {
-        navigation.setParams({ contactName: contact.title });
-      }
-      if (contact.seeker_path) {
-        this.setContactSeekerPath(contact.seeker_path);
-      }
-    }
-
-    // NEW COMMENT
-    if (newComment && prevProps.newComment !== newComment) {
-      Keyboard.dismiss();
     }
   }
 
@@ -665,36 +676,36 @@ class ContactDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.author}</Text>
-                  </Col>
-                  <Col style={{ width: 80 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )}
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.author}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.name}</Text>
-                  </Col>
-                  <Col style={{ width: 80 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )}
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.name}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
         </View>
         <Text
           style={
@@ -974,12 +985,13 @@ class ContactDetailScreen extends React.Component {
     const newDate = new Date(date);
     let hours = newDate.getHours();
     let minutes = newDate.getMinutes();
+    const age = newDate.getFullYear();
     const ampm = hours >= 12 ? 'pm' : 'am';
     hours %= 12;
     hours = hours || 12; // the hour '0' should be '12'
     minutes = minutes < 10 ? `0${minutes}` : minutes;
     const strTime = `${hours}:${minutes} ${ampm}`;
-    return `${monthNames[newDate.getMonth()]} ${newDate.getDate()}, ${strTime}`;
+    return `${monthNames[newDate.getMonth()]} ${newDate.getDate()}, ${age} ${strTime}`;
   };
 
   setComment = (value) => {
@@ -1465,7 +1477,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   render() {
-    /* const successToast = (
+    const successToast = (
       <Toast
         ref={(toast) => {
           toastSuccess = toast;
@@ -1473,7 +1485,7 @@ class ContactDetailScreen extends React.Component {
         style={{ backgroundColor: 'green' }}
         position="center"
       />
-    ); */
+    );
     const errorToast = (
       <Toast
         ref={(toast) => {
@@ -1495,7 +1507,7 @@ class ContactDetailScreen extends React.Component {
                 onChangeTab={this.tabChanged}
               >
                 <Tab
-                  heading={i18n.t('contactDetailScreen.details')}
+                  heading={i18n.t('global.details')}
                   tabStyle={styles.tabStyle}
                   textStyle={styles.textStyle}
                   activeTabStyle={styles.activeTabStyle}
@@ -1512,41 +1524,32 @@ class ContactDetailScreen extends React.Component {
                           />
                         )}
                       >
-                        <View
-                          style={{
-                            paddingLeft: containerPadding - 15,
-                            paddingRight: containerPadding - 15,
-                            marginTop: 20,
-                          }}
-                          pointerEvents={this.state.onlyView ? 'none' : 'auto'}
-                        >
-                          <Label
-                            style={[styles.formLabel, { fontWeight: 'bold' }]}
-                          >
-                            {i18n.t('contactDetailScreen.status')}
-                          </Label>
-                          <Row style={styles.formRow}>
-                            <Col>
-                              <Picker
-                                selectedValue={
-                                  this.state.contact.overall_status
-                                }
-                                onValueChange={this.setContactStatus}
-                                style={{
-                                  color: '#ffffff',
-                                  backgroundColor: this.state.overallStatusBackgroundColor,
-                                }}
-                              >
-                                {this.renderStatusPickerItems()}
-                              </Picker>
-                            </Col>
-                          </Row>
-                        </View>
                         {this.state.dataRetrieved && (
                           <View
-                            style={styles.formContainer}
+                            style={[styles.formContainer, { marginTop: 20 }]}
                             pointerEvents={this.state.onlyView ? 'none' : 'auto'}
                           >
+                            <Label
+                              style={[styles.formLabel, { fontWeight: 'bold' }]}
+                            >
+                              {i18n.t('global.status')}
+                            </Label>
+                            <Row style={styles.formRow}>
+                              <Col>
+                                <Picker
+                                  selectedValue={
+                                    this.state.contact.overall_status
+                                  }
+                                  onValueChange={this.setContactStatus}
+                                  style={{
+                                    color: '#ffffff',
+                                    backgroundColor: this.state.overallStatusBackgroundColor,
+                                  }}
+                                >
+                                  {this.renderStatusPickerItems()}
+                                </Picker>
+                              </Col>
+                            </Row>
                             <Grid>
                               <TouchableOpacity
                                 onPress={() => {
@@ -1572,7 +1575,7 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col style={styles.formIconLabel}>
                                     <Label style={styles.formLabel}>
-                                      {i18n.t('contactDetailScreen.assignedTo')}
+                                      {i18n.t('global.assignedTo')}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -1856,7 +1859,7 @@ class ContactDetailScreen extends React.Component {
                                   </Row>
                                 </Col>
                                 <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.address')}</Label>
+                                  <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
                                 </Col>
                               </Row>
                               {this.state.contact.contact_address.map(
@@ -1919,7 +1922,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    {i18n.t('contactDetailScreen.location')}
+                                    {i18n.t('global.location')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -1985,7 +1988,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    {i18n.t('contactDetailScreen.peopleGroup')}
+                                    {i18n.t('global.peopleGroup')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -1997,7 +2000,7 @@ class ContactDetailScreen extends React.Component {
                                     items={this.state.peopleGroups}
                                     selectedItems={this.state.contact.people_groups.values}
                                     textInputProps={{
-                                      placeholder: i18n.t('contactDetailScreen.selectPeopleGroups'),
+                                      placeholder: i18n.t('global.selectPeopleGroups'),
                                     }}
                                     renderRow={(id, onPress, item) => (
                                       <TouchableOpacity
@@ -2176,7 +2179,7 @@ class ContactDetailScreen extends React.Component {
                   </KeyboardShift>
                 </Tab>
                 <Tab
-                  heading={i18n.t('contactDetailScreen.progress')}
+                  heading={i18n.t('global.progress')}
                   tabStyle={styles.tabStyle}
                   textStyle={styles.textStyle}
                   activeTabStyle={styles.activeTabStyle}
@@ -2190,490 +2193,491 @@ class ContactDetailScreen extends React.Component {
                       />
                     )}
                   >
-                    <View
-                      style={styles.formContainer}
-                      pointerEvents={this.state.onlyView ? 'none' : 'auto'}
-                    >
-                      <Grid>
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              android="md-calendar"
-                              ios="ios-calendar"
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <Picker
-                              mode="dropdown"
-                              selectedValue={this.state.contact.seeker_path}
-                              onValueChange={this.setContactSeekerPath}
-                              textStyle={{ color: Colors.tintColor }}
-                            >
-                              <Picker.Item
-                                label={i18n.t('contactDetailScreen.seekerPath.none')}
-                                value="none"
-                              />
-                              <Picker.Item
-                                label={i18n.t('contactDetailScreen.seekerPath.attempted')}
-                                value="attempted"
-                              />
-                              <Picker.Item
-                                label={i18n.t('contactDetailScreen.seekerPath.established')}
-                                value="established"
-                              />
-                              <Picker.Item
-                                label={i18n.t('contactDetailScreen.seekerPath.scheduled')}
-                                value="scheduled"
-                              />
-                              <Picker.Item
-                                label={i18n.t('contactDetailScreen.seekerPath.met')}
-                                value="met"
-                              />
-                              <Picker.Item
-                                label={i18n.t('contactDetailScreen.seekerPath.ongoing')}
-                                value="ongoing"
-                              />
-                              <Picker.Item
-                                label={i18n.t('contactDetailScreen.seekerPath.coaching')}
-                                value="coaching"
-                              />
-                            </Picker>
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.seekerPath')}</Label>
-                          </Col>
-                        </Row>
-                      </Grid>
+                    {this.state.dataRetrieved && (
                       <View
-                        style={{
-                          alignItems: 'center',
-                          marginTop: 5,
-                          marginBottom: 25,
-                        }}
+                        style={styles.formContainer}
+                        pointerEvents={this.state.onlyView ? 'none' : 'auto'}
                       >
-                        <ProgressBarAnimated
-                          width={progressBarWidth}
-                          value={this.state.progressBarValue}
-                          backgroundColor={Colors.tintColor}
-                        />
+                        <Grid>
+                          <Row style={styles.formRow}>
+                            <Col style={styles.formIconLabel}>
+                              <Icon
+                                android="md-calendar"
+                                ios="ios-calendar"
+                                style={styles.formIcon}
+                              />
+                            </Col>
+                            <Col>
+                              <Picker
+                                mode="dropdown"
+                                selectedValue={this.state.contact.seeker_path}
+                                onValueChange={this.setContactSeekerPath}
+                                textStyle={{ color: Colors.tintColor }}
+                              >
+                                <Picker.Item
+                                  label={i18n.t('global.seekerPath.none')}
+                                  value="none"
+                                />
+                                <Picker.Item
+                                  label={i18n.t('global.seekerPath.attempted')}
+                                  value="attempted"
+                                />
+                                <Picker.Item
+                                  label={i18n.t('global.seekerPath.established')}
+                                  value="established"
+                                />
+                                <Picker.Item
+                                  label={i18n.t('global.seekerPath.scheduled')}
+                                  value="scheduled"
+                                />
+                                <Picker.Item
+                                  label={i18n.t('global.seekerPath.met')}
+                                  value="met"
+                                />
+                                <Picker.Item
+                                  label={i18n.t('global.seekerPath.ongoing')}
+                                  value="ongoing"
+                                />
+                                <Picker.Item
+                                  label={i18n.t('global.seekerPath.coaching')}
+                                  value="coaching"
+                                />
+                              </Picker>
+                            </Col>
+                            <Col style={styles.formIconLabel}>
+                              <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.seekerPath')}</Label>
+                            </Col>
+                          </Row>
+                        </Grid>
+                        <View
+                          style={{
+                            alignItems: 'center',
+                            marginTop: 5,
+                            marginBottom: 25,
+                          }}
+                        >
+                          <ProgressBarAnimated
+                            width={progressBarWidth}
+                            value={this.state.progressBarValue}
+                            backgroundColor={Colors.tintColor}
+                          />
+                        </View>
+                        <Label
+                          style={[
+                            styles.formLabel,
+                            { fontWeight: 'bold', marginBottom: 10 },
+                          ]}
+                        >
+                          {i18n.t('contactDetailScreen.faithMilestones')}
+                        </Label>
+                        <Grid
+                          style={{
+                            height: milestonesGridSize,
+                          }}
+                        >
+                          <Row size={6}>
+                            <Col size={1} />
+                            <Col size={5}>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onMilestoneChange('milestone_has_bible');
+                                }}
+                                activeOpacity={1}
+                                style={styles.progressIcon}
+                              >
+                                <Col>
+                                  <Row size={3}>
+                                    <Image
+                                      source={hasBibleIcon}
+                                      style={[
+                                        styles.progressIcon,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_has_bible',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    />
+                                  </Row>
+                                  <Row size={1}>
+                                    <Text
+                                      style={[
+                                        styles.progressIconText,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_has_bible',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    >
+                                      {i18n.t('contactDetailScreen.milestones.hasBible')}
+                                    </Text>
+                                  </Row>
+                                </Col>
+                              </TouchableOpacity>
+                            </Col>
+                            <Col size={1} />
+                            <Col size={5}>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onMilestoneChange(
+                                    'milestone_reading_bible',
+                                  );
+                                }}
+                                activeOpacity={1}
+                                style={styles.progressIcon}
+                              >
+                                <Col>
+                                  <Row size={3}>
+                                    <Image
+                                      source={readingBibleIcon}
+                                      style={[
+                                        styles.progressIcon,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_reading_bible',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    />
+                                  </Row>
+                                  <Row size={1}>
+                                    <Text
+                                      style={[
+                                        styles.progressIconText,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_reading_bible',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    >
+                                      {i18n.t('contactDetailScreen.milestones.readingBible')}
+                                    </Text>
+                                  </Row>
+                                </Col>
+                              </TouchableOpacity>
+                            </Col>
+                            <Col size={1} />
+                            <Col size={5}>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onMilestoneChange('milestone_belief');
+                                }}
+                                activeOpacity={1}
+                                style={styles.progressIcon}
+                              >
+                                <Col>
+                                  <Row size={3}>
+                                    <Image
+                                      source={statesBeliefIcon}
+                                      style={[
+                                        styles.progressIcon,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_belief',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    />
+                                  </Row>
+                                  <Row size={1}>
+                                    <Text
+                                      style={[
+                                        styles.progressIconText,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_belief',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    >
+                                      {i18n.t('contactDetailScreen.milestones.statesBelief')}
+                                    </Text>
+                                  </Row>
+                                </Col>
+                              </TouchableOpacity>
+                            </Col>
+                            <Col size={1} />
+                          </Row>
+                          <Row size={1} />
+                          <Row size={7}>
+                            <Col size={1} />
+                            <Col size={5}>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onMilestoneChange('milestone_can_share');
+                                }}
+                                activeOpacity={1}
+                                style={styles.progressIcon}
+                              >
+                                <Col>
+                                  <Row size={7}>
+                                    <Image
+                                      source={canShareGospelIcon}
+                                      style={[
+                                        styles.progressIcon,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_can_share',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    />
+                                  </Row>
+                                  <Row size={3}>
+                                    <Text
+                                      style={[
+                                        styles.progressIconText,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_can_share',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    >
+                                      {i18n.t('contactDetailScreen.milestones.shareGospel')}
+                                    </Text>
+                                  </Row>
+                                </Col>
+                              </TouchableOpacity>
+                            </Col>
+                            <Col size={1} />
+                            <Col size={5}>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onMilestoneChange('milestone_sharing');
+                                }}
+                                activeOpacity={1}
+                                style={styles.progressIcon}
+                              >
+                                <Col>
+                                  <Row size={7}>
+                                    <Image
+                                      source={sharingTheGospelIcon}
+                                      style={[
+                                        styles.progressIcon,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_sharing',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    />
+                                  </Row>
+                                  <Row size={3}>
+                                    <Text
+                                      style={[
+                                        styles.progressIconText,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_sharing',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    >
+                                      {i18n.t('contactDetailScreen.milestones.sharingGospel')}
+                                    </Text>
+                                  </Row>
+                                </Col>
+                              </TouchableOpacity>
+                            </Col>
+                            <Col size={1} />
+                            <Col size={5}>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onMilestoneChange('milestone_baptized');
+                                }}
+                                activeOpacity={1}
+                                style={styles.progressIcon}
+                              >
+                                <Col>
+                                  <Row size={7}>
+                                    <Image
+                                      source={baptizedIcon}
+                                      style={[
+                                        styles.progressIcon,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_baptized',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    />
+                                  </Row>
+                                  <Row size={3}>
+                                    <Text
+                                      style={[
+                                        styles.progressIconText,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_baptized',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    >
+                                      {i18n.t('contactDetailScreen.milestones.baptized')}
+                                    </Text>
+                                  </Row>
+                                </Col>
+                              </TouchableOpacity>
+                            </Col>
+                            <Col size={1} />
+                          </Row>
+                          <Row size={1} />
+                          <Row size={6}>
+                            <Col size={1} />
+                            <Col size={5}>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onMilestoneChange('milestone_baptizing');
+                                }}
+                                activeOpacity={1}
+                                style={styles.progressIcon}
+                              >
+                                <Col>
+                                  <Row size={3}>
+                                    <Image
+                                      source={baptizingIcon}
+                                      style={[
+                                        styles.progressIcon,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_baptizing',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    />
+                                  </Row>
+                                  <Row size={1}>
+                                    <Text
+                                      style={[
+                                        styles.progressIconText,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_baptizing',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    >
+                                      {i18n.t('contactDetailScreen.milestones.baptizing')}
+                                    </Text>
+                                  </Row>
+                                </Col>
+                              </TouchableOpacity>
+                            </Col>
+                            <Col size={1} />
+                            <Col size={5}>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onMilestoneChange('milestone_in_group');
+                                }}
+                                activeOpacity={1}
+                                style={styles.progressIcon}
+                              >
+                                <Col>
+                                  <Row size={3}>
+                                    <Image
+                                      source={inChurchIcon}
+                                      style={[
+                                        styles.progressIcon,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_in_group',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    />
+                                  </Row>
+                                  <Row size={1}>
+                                    <Text
+                                      style={[
+                                        styles.progressIconText,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_in_group',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    >
+                                      {i18n.t('contactDetailScreen.milestones.inGroup')}
+                                    </Text>
+                                  </Row>
+                                </Col>
+                              </TouchableOpacity>
+                            </Col>
+                            <Col size={1} />
+                            <Col size={5}>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onMilestoneChange('milestone_planting');
+                                }}
+                                activeOpacity={1}
+                                style={styles.progressIcon}
+                              >
+                                <Col>
+                                  <Row size={3}>
+                                    <Image
+                                      source={startingChurchesIcon}
+                                      style={[
+                                        styles.progressIcon,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_planting',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    />
+                                  </Row>
+                                  <Row size={1}>
+                                    <Text
+                                      style={[
+                                        styles.progressIconText,
+                                        this.onCheckExistingMilestone(
+                                          'milestone_planting',
+                                        )
+                                          ? styles.progressIconActive
+                                          : styles.progressIconInactive,
+                                      ]}
+                                    >
+                                      {i18n.t('contactDetailScreen.milestones.startingChurches')}
+                                    </Text>
+                                  </Row>
+                                </Col>
+                              </TouchableOpacity>
+                            </Col>
+                            <Col size={1} />
+                          </Row>
+                        </Grid>
+                        <Grid style={{ marginTop: 25 }}>
+                          <View style={styles.formDivider} />
+                          <Row style={styles.formRow}>
+                            <Col style={styles.formIconLabel}>
+                              <Icon
+                                type="Entypo"
+                                name="water"
+                                style={styles.formIcon}
+                              />
+                            </Col>
+                            <Col>
+                              <DatePicker
+                                onDateChange={this.setBaptismDate}
+                                defaultDate={(this.state.contact.baptism_date.length > 0) ? new Date(this.state.contact.baptism_date) : ''}
+                              />
+                            </Col>
+                            <Col style={styles.formIconLabel}>
+                              <Label style={[styles.label, styles.formLabel]}>
+                                {i18n.t('contactDetailScreen.milestones.baptismDate')}
+                              </Label>
+                            </Col>
+                          </Row>
+                        </Grid>
                       </View>
-                      <Label
-                        style={[
-                          styles.formLabel,
-                          { fontWeight: 'bold', marginBottom: 10 },
-                        ]}
-                      >
-                        {i18n.t('contactDetailScreen.faithMilestones')}
-                      </Label>
-                      <Grid
-                        style={{
-                          height: milestonesGridSize,
-                        }}
-                      >
-                        <Row size={6}>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_has_bible');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={3}>
-                                  <Image
-                                    source={hasBibleIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_has_bible',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={1}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_has_bible',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    {i18n.t('contactDetailScreen.milestones.hasBible')}
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange(
-                                  'milestone_reading_bible',
-                                );
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={3}>
-                                  <Image
-                                    source={readingBibleIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_reading_bible',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={1}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_reading_bible',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    {i18n.t('contactDetailScreen.milestones.readingBible')}
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_belief');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={3}>
-                                  <Image
-                                    source={statesBeliefIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_belief',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={1}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_belief',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    {i18n.t('contactDetailScreen.milestones.statesBelief')}
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                        </Row>
-                        <Row size={1} />
-                        <Row size={7}>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_can_share');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={7}>
-                                  <Image
-                                    source={canShareGospelIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_can_share',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={3}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_can_share',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    {i18n.t('contactDetailScreen.milestones.shareGospel')}
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_sharing');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={7}>
-                                  <Image
-                                    source={sharingTheGospelIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_sharing',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={3}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_sharing',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    {i18n.t('contactDetailScreen.milestones.sharingGospel')}
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_baptized');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={7}>
-                                  <Image
-                                    source={baptizedIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_baptized',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={3}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_baptized',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    {i18n.t('contactDetailScreen.milestones.baptized')}
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                        </Row>
-                        <Row size={1} />
-                        <Row size={6}>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_baptizing');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={3}>
-                                  <Image
-                                    source={baptizingIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_baptizing',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={1}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_baptizing',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    {i18n.t('contactDetailScreen.milestones.baptizing')}
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_in_group');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={3}>
-                                  <Image
-                                    source={inChurchIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_in_group',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={1}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_in_group',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    {i18n.t('contactDetailScreen.milestones.inGroup')}
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_planting');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={3}>
-                                  <Image
-                                    source={startingChurchesIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_planting',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={1}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_planting',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    {i18n.t('contactDetailScreen.milestones.startingChurches')}
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                        </Row>
-                      </Grid>
-                      <Grid style={{ marginTop: 25 }}>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              type="Entypo"
-                              name="water"
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <DatePicker
-                              placeHolderText={i18n.t('contactDetailScreen.addBaptizmDate')}
-                              defaultDate={this.state.contact.baptism_date}
-                              onDateChange={this.setBaptismDate}
-                            />
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={[styles.label, styles.formLabel]}>
-                              {i18n.t('contactDetailScreen.milestones.baptismDate')}
-                            </Label>
-                          </Col>
-                        </Row>
-                      </Grid>
-                    </View>
+                    )}
                   </ScrollView>
                 </Tab>
                 <Tab
-                  heading={i18n.t('contactDetailScreen.commentsActivity')}
+                  heading={i18n.t('global.commentsActivity')}
                   tabStyle={styles.tabStyle}
                   textStyle={styles.textStyle}
                   activeTabStyle={styles.activeTabStyle}
@@ -2752,7 +2756,7 @@ class ContactDetailScreen extends React.Component {
                         }}
                       >
                         <TextInput
-                          placeholder={i18n.t('contactDetailScreen.writeYourCommentNoteHere')}
+                          placeholder={i18n.t('global.writeYourCommentNoteHere')}
                           value={this.state.comment}
                           onChangeText={this.setComment}
                           style={{
@@ -2823,7 +2827,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    {i18n.t('global.group')}
+                                    {i18n.t('contactDetailScreen.group')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -2835,7 +2839,7 @@ class ContactDetailScreen extends React.Component {
                                     items={this.state.groups}
                                     selectedItems={this.state.contact.groups.values}
                                     textInputProps={{
-                                      placeholder: i18n.t('global.addGroup'),
+                                      placeholder: i18n.t('contactDetailScreen.addGroup'),
                                     }}
                                     renderRow={(id, onPress, item) => (
                                       <TouchableOpacity
@@ -2890,7 +2894,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col style={styles.formIconLabel}>
                                   <Label style={styles.formLabel}>
-                                    {i18n.t('global.connection')}
+                                    {i18n.t('contactDetailScreen.connection')}
                                   </Label>
                                 </Col>
                               </Row>
@@ -2902,7 +2906,7 @@ class ContactDetailScreen extends React.Component {
                                     items={this.state.usersContacts}
                                     selectedItems={this.state.contact.relation.values}
                                     textInputProps={{
-                                      placeholder: i18n.t('global.addConnection'),
+                                      placeholder: i18n.t('contactDetailScreen.addConnection'),
                                     }}
                                     renderRow={(id, onPress, item) => (
                                       <TouchableOpacity
@@ -3386,7 +3390,7 @@ class ContactDetailScreen extends React.Component {
                     </Row>
                     <Row>
                       <Input
-                        placeholder={i18n.t('contactDetailScreen.requiredField')}
+                        placeholder={i18n.t('global.requiredField')}
                         onChangeText={this.setContactTitle}
                         style={{
                           borderColor: '#B4B4B4',
@@ -3471,7 +3475,7 @@ class ContactDetailScreen extends React.Component {
                           { marginTop: 10, marginBottom: 5 },
                         ]}
                       >
-                        {i18n.t('contactDetailScreen.location')}
+                        {i18n.t('global.location')}
                       </Label>
                     </Row>
                     <Row>
@@ -3554,7 +3558,7 @@ class ContactDetailScreen extends React.Component {
             )}
           </KeyboardShift>
         )}
-        {/* successToast */}
+        { successToast }
         {errorToast}
       </Container>
     );
@@ -3594,6 +3598,7 @@ ContactDetailScreen.propTypes = {
   getComments: PropTypes.func.isRequired,
   saveComment: PropTypes.func.isRequired,
   getActivities: PropTypes.func.isRequired,
+  saved: PropTypes.string,
 };
 
 ContactDetailScreen.defaultProps = {
@@ -3601,8 +3606,8 @@ ContactDetailScreen.defaultProps = {
   userReducerError: null,
   newComment: null,
   contactsReducerError: null,
+  saved: null,
 };
-
 
 const mapStateToProps = state => ({
   user: state.userReducer,
@@ -3617,7 +3622,9 @@ const mapStateToProps = state => ({
   newComment: state.contactsReducer.newComment,
   contactsReducerError: state.contactsReducer.error,
   loading: state.contactsReducer.loading,
+  saved: state.contactsReducer.saved,
 });
+
 const mapDispatchToProps = dispatch => ({
   saveContact: (domain, token, contactDetail) => {
     dispatch(save(domain, token, contactDetail));

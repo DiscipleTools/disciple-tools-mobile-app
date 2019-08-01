@@ -5,6 +5,7 @@ import {
   StyleSheet,
   View,
   NetInfo,
+  // AsyncStorage
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {
@@ -17,10 +18,12 @@ import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 
+//import i18n from 'i18n-js';
 import AppNavigator from './navigation/AppNavigator';
 import store from './store/store';
 
 import { setNetworkConnectivity } from './store/actions/networkConnectivity.actions';
+
 
 const persistor = persistStore(store);
 
@@ -48,6 +51,7 @@ class App extends React.Component {
     NetInfo.isConnected.fetch().done((isConnected) => {
       store.dispatch(setNetworkConnectivity(isConnected));
     });
+    // this.getLocaleConfig();
   }
 
   componentWillUnmount() {
@@ -85,6 +89,19 @@ class App extends React.Component {
     this.setState({ isLoadingComplete: true });
   };
 
+  /*
+  getLocaleConfig = async () => {
+    try {
+      const value = await AsyncStorage.getItem('appLanguage');
+      console.log("appLanguage", value);
+      if (value !== null) {
+        i18n.locale = value;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+*/
   render() {
     const AppContainer = (
       <View style={styles.container}>

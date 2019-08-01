@@ -1,8 +1,15 @@
 {
   "global": {
+    "locales": {
+      "en-US": "English (United States)",
+      "ar-JO": "Arabic (Jordan)"
+    },
     "error": {
       "code": "Code: ",
       "message": "Message: "
+    },
+    "success": {
+      "save": "Data saved successfully!"
     },
     "contactOverallStatus": {
       "new": "New Contact",
@@ -32,7 +39,18 @@
       "church": "Church",
       "team": "Team"
     },
-    "groups": "Groups"
+    "groups": "Groups",
+    "details": "Details",
+    "status": "Status",
+    "assignedTo": "Assigned to",
+    "location": "Location",
+    "peopleGroup": "People Group",
+    "selectPeopleGroups": "Select People Groups",
+    "address": "Address",
+    "progress": "Progress",
+    "commentsActivity": "Comments / Activity",
+    "writeYourCommentNoteHere": "Write your comment or note here",
+    "requiredField": "Required field"
   },
   "loginScreen": {
     "domain": {
@@ -68,18 +86,12 @@
       "advertisement": "Advertisement",
       "transfer": "Transfer"
     },
-    "status": "Status",
-    "assignedTo": "Assigned to",
     "subAssignedTo": "Sub-assigned to",
     "subAssignThisContact": "Sub-assign this contact",
     "mobile": "Mobile",
     "email": "Email",
     "message": "Message",
-    "address": "Address",
-    "location": "Location",
     "selectLocations": "Select locations",
-    "peopleGroup": "People Group",
-    "selectPeopleGroups": "Select People Groups",
     "contactAge": {
       "underEighteenYearsOld": "Under 18 years old",
       "underTwentySixYearsOld": "18-25 years old",
@@ -92,8 +104,6 @@
     "gender": "Gender",
     "source": "Source",
     "selectSources": "Select sources",
-    "details": "Details",
-    "progress": "Progress",
     "seekerPath": "Seeker Path",
     "faithMilestones": "Faith Milestones",
     "milestones": {
@@ -108,8 +118,6 @@
       "startingChurches": "Starting Churches",
       "baptismDate": "Baptism Date"
     },
-    "commentsActivity": "Comments / Activity",
-    "writeYourCommentNoteHere": "Write your comment or note here",
     "connections": "Connections",
     "addGroup": "Add Group",
     "connection": "Connection",
@@ -123,9 +131,36 @@
     "coaching": "Coaching",
     "addCoaching": "Add coaching",
     "fullName": "Full Name",
-    "requiredField": "Required field",
     "phoneNumber": "Phone Number",
     "initialComment": "Initial Comment",
-    "addBaptizmDate": "Add baptizm date"
+    "addBaptizmDate": "Add baptizm date",
+    "group": "Group"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Add New Group",
+    "groupCoach": "Group Coach",
+    "selectCoaches": "Select coaches",
+    "selectGeonames": "Select geonames",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "groupType": "Group Type",
+    "healthMetrics": {
+      "giving": "Giving",
+      "fellowship": "Fellowship",
+      "communion": "Communion",
+      "baptism": "Baptism",
+      "prayer": "Prayer",
+      "leaders": "Leaders",
+      "bibleStudy": "Bible Study",
+      "praise": "Praise",
+      "sharingGospel": "Sharing the Gospel"
+    },
+    "parentGroup": "Parent Group",
+    "searchGroups": "Search groups",
+    "peerGroup": "Peer Group",
+    "searchPeerGroups": "Search peer groups",
+    "childGroup": "Child Group",
+    "searchChildGroups": "Search child groups",
+    "groupName": "Group Name"
   }
 }

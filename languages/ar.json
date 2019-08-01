@@ -1,8 +1,15 @@
 {
   "global": {
+    "locales": {
+      "en-US": "",
+      "ar-JO": ""
+    },
     "error": {
       "code": "",
       "message": ""
+    },
+    "success": {
+      "save": ""
     },
     "contactOverallStatus": {
       "new": "",
@@ -32,7 +39,18 @@
       "church": "",
       "team": ""
     },
-    "groups": ""
+    "groups": "",
+    "details": "",
+    "status": "",
+    "assignedTo": "",
+    "location": "",
+    "peopleGroup": "",
+    "selectPeopleGroups": "",
+    "address": "",
+    "progress": "",
+    "commentsActivity": "",
+    "writeYourCommentNoteHere": "",
+    "requiredField": ""
   },
   "loginScreen": {
     "domain": {
@@ -68,18 +86,12 @@
       "advertisement": "",
       "transfer": ""
     },
-    "status": "",
-    "assignedTo": "",
     "subAssignedTo": "",
     "subAssignThisContact": "",
     "mobile": "",
     "email": "",
     "message": "",
-    "address": "",
-    "location": "",
     "selectLocations": "",
-    "peopleGroup": "",
-    "selectPeopleGroups": "",
     "contactAge": {
       "underEighteenYearsOld": "",
       "underTwentySixYearsOld": "",
@@ -92,8 +104,6 @@
     "gender": "",
     "source": "",
     "selectSources": "",
-    "details": "",
-    "progress": "",
     "seekerPath": "",
     "faithMilestones": "",
     "milestones": {
@@ -108,8 +118,6 @@
       "startingChurches": "",
       "baptismDate": ""
     },
-    "commentsActivity": "",
-    "writeYourCommentNoteHere": "",
     "connections": "",
     "addGroup": "",
     "connection": "",
@@ -123,8 +131,36 @@
     "coaching": "",
     "addCoaching": "",
     "fullName": "",
-    "requiredField": "",
     "phoneNumber": "",
-    "initialComment": ""
+    "initialComment": "",
+    "addBaptizmDate": "",
+    "group": ""
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "",
+    "groupCoach": "",
+    "selectCoaches": "",
+    "selectGeonames": "",
+    "startDate": "",
+    "endDate": "",
+    "groupType": "",
+    "healthMetrics": {
+      "giving": "",
+      "fellowship": "",
+      "communion": "",
+      "baptism": "",
+      "prayer": "",
+      "leaders": "",
+      "bibleStudy": "",
+      "praise": "",
+      "sharingGospel": ""
+    },
+    "parentGroup": "",
+    "searchGroups": "",
+    "peerGroup": "",
+    "searchPeerGroups": "",
+    "childGroup": "",
+    "searchChildGroups": "",
+    "groupName": ""
   }
 }

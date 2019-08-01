@@ -8,7 +8,6 @@ import {
 import { Fab, Icon } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
-
 import { logout } from '../store/actions/user.actions';
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
 import i18n from '../languages';
@@ -63,19 +62,19 @@ class SettingsScreen extends React.Component {
   }
 
   render() {
-    /* Go ahead and delete ExpoConfigView and replace it with your
-     * content, we just wanted to give you a quick view of your config */
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ margin: 20, color: 'rgba(0,0,0,0.4)' }}>
-          {i18n.t('settingsScreen.domain')}
-          {this.props.user.domain}
-        </Text>
-        <Text style={{ margin: 20, color: 'rgba(0,0,0,0.4)' }}>
-          {`${i18n.t('settingsScreen.signedInAs')}:`}
-          {this.props.user.username}
-        </Text>
-        <Button style={{ padding: 50 }} title={i18n.t('settingsScreen.signOut')} onPress={this.signOutAsync} />
+      <View style={{ flex: 1 }}>
+        <View>
+          <Text style={{ color: 'rgba(0,0,0,0.4)' }}>
+            {i18n.t('settingsScreen.domain')}
+            {this.props.user.domain}
+          </Text>
+          <Text style={{ color: 'rgba(0,0,0,0.4)' }}>
+            {`${i18n.t('settingsScreen.signedInAs')}:`}
+            {this.props.user.username}
+          </Text>
+          <Button title={i18n.t('settingsScreen.signOut')} onPress={this.signOutAsync} />
+        </View>
         <Fab
           style={{ backgroundColor: '#E74C3C' }}
           position="bottomRight"
