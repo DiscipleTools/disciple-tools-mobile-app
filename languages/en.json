@@ -2,13 +2,16 @@
   "login": {
     "domain": {
       "label": "Disciple Tools URL",
-      "placeholder": "E.g. myteam.disciple.tools"
+      "placeholder": "E.g. myteam.disciple.tools",
+      "error": "Domain is required"
     },
     "username": {
-      "label": "Username"
+      "label": "Username",
+      "error": "Username is required"
     },
     "password": {
-      "label": "Password"
+      "label": "Password",
+      "error": "Password is required"
     },
     "login": "Log In",
     "forgotPassword": "Lost your password?"
