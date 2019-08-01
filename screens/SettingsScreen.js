@@ -17,7 +17,7 @@ const propTypes = {
     navigate: PropTypes.func.isRequired,
   }).isRequired,
   isConnected: PropTypes.bool.isRequired,
-  user: PropTypes.shape({
+  userData: PropTypes.shape({
     domain: PropTypes.string,
     username: PropTypes.string,
   }).isRequired,
@@ -67,11 +67,11 @@ class SettingsScreen extends React.Component {
         <View>
           <Text style={{ color: 'rgba(0,0,0,0.4)' }}>
             {i18n.t('settingsScreen.domain')}
-            {this.props.user.domain}
+            {this.props.userData.domain}
           </Text>
           <Text style={{ color: 'rgba(0,0,0,0.4)' }}>
             {`${i18n.t('settingsScreen.signedInAs')}:`}
-            {this.props.user.username}
+            {this.props.userData.username}
           </Text>
           <Button title={i18n.t('settingsScreen.signOut')} onPress={this.signOutAsync} />
         </View>
@@ -92,7 +92,7 @@ SettingsScreen.propTypes = propTypes;
 
 const mapStateToProps = state => ({
   isConnected: state.networkConnectivityReducer.isConnected,
-  user: state.userReducer,
+  userData: state.userReducer.userData,
 });
 const mapDispatchToProps = dispatch => ({
   toggleNetworkConnectivity: (isConnected) => {

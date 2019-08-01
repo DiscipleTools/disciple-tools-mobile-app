@@ -19,21 +19,15 @@ import i18n from '../languages';
 import Colors from '../constants/Colors';
 import {
   login,
-  USER_LOGIN_START,
-  USER_LOGIN_SUCCESS,
 } from '../store/actions/user.actions';
 import TextField from '../components/TextField';
 import {
   getUsersAndContacts,
-  GROUPS_GET_USERS_CONTACTS_SUCCESS,
   getLocations,
-  GROUPS_GET_LOCATIONS_SUCCESS,
   getPeopleGroups,
-  GROUPS_GET_PEOPLE_GROUPS_SUCCESS,
   searchGroups,
-  GROUPS_SEARCH_SUCCESS,
 } from '../store/actions/groups.actions';
-import { getUsers, GET_USERS_SUCCESS } from '../store/actions/users.actions';
+import { getUsers } from '../store/actions/users.actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -102,12 +96,16 @@ class LoginScreen extends React.Component {
   state = {
     listsRetrieved: listLength,
     loading: false,
+    domain: '',
+    username: '',
+    password: '',
   };
 
   constructor(props) {
     super(props);
+
     // User is authenticated (logged)
-    if (props.user && props.user.token) {
+    if (props.userData && props.userData.token) {
       this.state = {
         ...this.state,
         loading: true,
@@ -117,85 +115,41 @@ class LoginScreen extends React.Component {
 
     this.state = {
       ...this.state,
-      username: props.user.username || '',
+      username: props.userData.username || '',
       password: '',
-      domain: props.user.domain || '',
+      domain: props.userData.domain || '',
     };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const {
-      userReducerResponse,
+      userReducerLoading,
+      userData,
+      groupsReducerLoading,
+      usersContacts,
+      geonames,
+      peopleGroups,
+      search,
+      usersReducerLoading,
+      users,
       userReducerError,
-      groupsReducerResponse,
       groupsReducerError,
-      usersReducerResponse,
       usersReducerError,
     } = nextProps;
     let newState = {
       ...prevState,
+      userData,
+      loading: userReducerLoading || groupsReducerLoading || usersReducerLoading,
     };
-    let error = null;
-
-    switch (userReducerResponse) {
-      case USER_LOGIN_START:
-        newState = {
-          ...newState,
-          loading: true,
-        };
-        break;
-      default:
-        break;
-    }
-    switch (groupsReducerResponse) {
-      case GROUPS_GET_USERS_CONTACTS_SUCCESS:
-        newState = {
-          ...newState,
-          listsRetrieved: --newState.listsRetrieved,
-        };
-        break;
-      case GROUPS_GET_LOCATIONS_SUCCESS:
-        newState = {
-          ...newState,
-          listsRetrieved: --newState.listsRetrieved,
-        };
-        break;
-      case GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
-        newState = {
-          ...newState,
-          listsRetrieved: --newState.listsRetrieved,
-        };
-        break;
-      case GROUPS_SEARCH_SUCCESS:
-        newState = {
-          ...newState,
-          listsRetrieved: --newState.listsRetrieved,
-        };
-        break;
-      default:
-        break;
-    }
-    switch (usersReducerResponse) {
-      case GET_USERS_SUCCESS:
-        newState = {
-          ...newState,
-          listsRetrieved: --newState.listsRetrieved,
-        };
-        break;
-      default:
-        break;
+    if (usersContacts || geonames || peopleGroups || search || users) {
+      newState = {
+        ...newState,
+        listsRetrieved: --newState.listsRetrieved,
+      };
     }
 
-    if (userReducerError) {
-      error = userReducerError;
-    }
-    if (groupsReducerError) {
-      error = groupsReducerError;
-    }
-    if (usersReducerError) {
-      error = usersReducerError;
-    }
-    if (newState.listsRetrieved === 0 || error) {
+    const error = (userReducerError || groupsReducerError || usersReducerError);
+    if (error) {
       newState = {
         ...newState,
         loading: false,
@@ -207,66 +161,56 @@ class LoginScreen extends React.Component {
 
   componentDidUpdate(prevProps) {
     const {
-      userReducerResponse,
-      groupsReducerResponse,
-      usersReducerResponse,
-      userReducerError,
-      groupsReducerError,
-      usersReducerError,
-      usersContacts,
-      geonames,
-      peopleGroups,
-      search,
-      users,
+      userData, usersContacts, geonames, peopleGroups, search,
+    } = this.props;
+    const {
+      users, userReducerError, groupsReducerError, usersReducerError,
     } = this.props;
     const { listsRetrieved } = this.state;
-    let error = null;
 
-    if (prevProps.userReducerResponse !== userReducerResponse) {
-      switch (userReducerResponse) {
-        case USER_LOGIN_SUCCESS:
-          this.getDataLists();
-          break;
-        default:
-          break;
-      }
+    // User logged successfully
+    if (userData && prevProps.userData !== userData) {
+      this.getDataLists();
     }
-    if (prevProps.groupsReducerResponse !== groupsReducerResponse) {
-      switch (groupsReducerResponse) {
-        case GROUPS_GET_USERS_CONTACTS_SUCCESS: {
-          AsyncStorage.setItem(
-            'usersAndContactsList',
-            JSON.stringify(usersContacts),
-          );
-          break;
-        }
-        case GROUPS_GET_LOCATIONS_SUCCESS: {
-          AsyncStorage.setItem('locationsList', JSON.stringify(geonames));
-          break;
-        }
-        case GROUPS_GET_PEOPLE_GROUPS_SUCCESS: {
-          AsyncStorage.setItem(
-            'peopleGroupsList',
-            JSON.stringify(peopleGroups),
-          );
-          break;
-        }
-        case GROUPS_SEARCH_SUCCESS: {
-          AsyncStorage.setItem('searchGroupsList', JSON.stringify(search));
-          break;
-        }
-        default:
-          break;
-      }
+
+    // usersContactsList retrieved
+    if (usersContacts && prevProps.usersContacts !== usersContacts) {
+      AsyncStorage.setItem(
+        'usersAndContactsList',
+        JSON.stringify(usersContacts),
+      );
     }
-    if (prevProps.usersReducerResponse !== usersReducerResponse) {
-      switch (usersReducerResponse) {
-        case GET_USERS_SUCCESS:
-          AsyncStorage.setItem('usersList', JSON.stringify(users));
-          break;
-        default:
-          break;
-      }
+
+    // geonamesList retrieved
+    if (geonames && prevProps.geonames !== geonames) {
+      AsyncStorage.setItem(
+        'locationsList',
+        JSON.stringify(geonames),
+      );
+    }
+
+    // peopleGroupsList retrieved
+    if (peopleGroups && prevProps.peopleGroups !== peopleGroups) {
+      AsyncStorage.setItem(
+        'peopleGroupsList',
+        JSON.stringify(peopleGroups),
+      );
+    }
+
+    // peopleGroupsList retrieved
+    if (search && prevProps.search !== search) {
+      AsyncStorage.setItem(
+        'searchGroupsList',
+        JSON.stringify(search),
+      );
+    }
+
+    // usersList retrieved
+    if (users && prevProps.users !== users) {
+      AsyncStorage.setItem(
+        'usersList',
+        JSON.stringify(users),
+      );
     }
 
     if (listsRetrieved === 0) {
@@ -276,16 +220,12 @@ class LoginScreen extends React.Component {
       this.props.navigation.navigate('ContactList');
     }
 
-    if (prevProps.userReducerError !== userReducerError) {
-      error = userReducerError;
-    }
-    if (prevProps.groupsReducerError !== groupsReducerError) {
-      error = groupsReducerError;
-    }
-    if (prevProps.usersReducerError !== usersReducerError) {
-      error = usersReducerError;
-    }
-    if (error) {
+    const userError = (prevProps.userReducerError !== userReducerError && userReducerError);
+    let groupsError = (prevProps.groupsReducerError !== groupsReducerError);
+    groupsError = (groupsError && groupsReducerError);
+    const usersError = (prevProps.usersReducerError !== usersReducerError && usersReducerError);
+    if (userError || groupsError || usersError) {
+      const error = userError || groupsError || usersError;
       toastError.show(
         <View>
           <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
@@ -298,15 +238,15 @@ class LoginScreen extends React.Component {
     }
   }
 
-  getDataLists = async () => {
+  getDataLists = () => {
     this.props.getUsersAndContacts(
-      this.props.user.domain,
-      this.props.user.token,
+      this.props.userData.domain,
+      this.props.userData.token,
     );
-    this.props.getLocations(this.props.user.domain, this.props.user.token);
-    this.props.getPeopleGroups(this.props.user.domain, this.props.user.token);
-    this.props.getUsers(this.props.user.domain, this.props.user.token);
-    this.props.searchGroups(this.props.user.domain, this.props.user.token);
+    this.props.getLocations(this.props.userData.domain, this.props.userData.token);
+    this.props.getPeopleGroups(this.props.userData.domain, this.props.userData.token);
+    this.props.getUsers(this.props.userData.domain, this.props.userData.token);
+    this.props.searchGroups(this.props.userData.domain, this.props.userData.token);
   };
 
   onLoginPress = () => {
@@ -344,7 +284,6 @@ class LoginScreen extends React.Component {
             style={styles.welcomeImage}
           />
         </View>
-
         <View style={styles.formContainer}>
           <TextField
             containerStyle={styles.textField}
@@ -359,7 +298,6 @@ class LoginScreen extends React.Component {
             disabled={this.state.loading}
             placeholder={i18n.t('loginScreen.domain.placeholder')}
           />
-
           <TextField
             containerStyle={styles.textField}
             iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
@@ -372,7 +310,6 @@ class LoginScreen extends React.Component {
             textContentType="emailAddress"
             disabled={this.state.loading}
           />
-
           <TextField
             containerStyle={styles.textField}
             iconName={Platform.OS === 'ios' ? 'ios-key' : 'md-key'}
@@ -389,7 +326,6 @@ class LoginScreen extends React.Component {
             textContentType="password"
             disabled={this.state.loading}
           />
-
           {!this.state.loading && (
             <Button
               style={styles.signInButton}
@@ -401,7 +337,6 @@ class LoginScreen extends React.Component {
               </Text>
             </Button>
           )}
-
           {!this.state.loading && (
             <TouchableOpacity
               style={styles.forgotButton}
@@ -413,7 +348,7 @@ class LoginScreen extends React.Component {
               </Text>
             </TouchableOpacity>
           )}
-          {!!this.state.loading && (
+          {this.state.loading && (
             <ActivityIndicator style={{ margin: 20 }} size="small" />
           )}
         </View>
@@ -424,41 +359,24 @@ class LoginScreen extends React.Component {
 }
 
 LoginScreen.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
-  user: PropTypes.shape({
-    domain: PropTypes.string,
-    username: PropTypes.string,
-    token: PropTypes.string,
-    error: PropTypes.shape({
-      code: PropTypes.string,
-      message: PropTypes.string,
-    }),
-  }).isRequired,
   loginDispatch: PropTypes.func.isRequired,
+  userData: PropTypes.shape({
+    domain: PropTypes.string,
+    token: PropTypes.string,
+    username: PropTypes.string,
+    displayName: PropTypes.string,
+    email: PropTypes.string,
+  }),
   getUsersAndContacts: PropTypes.func.isRequired,
   getLocations: PropTypes.func.isRequired,
   getPeopleGroups: PropTypes.func.isRequired,
-  getUsers: PropTypes.func.isRequired,
   searchGroups: PropTypes.func.isRequired,
-  userReducerError: PropTypes.shape({
-    code: PropTypes.string,
-    message: PropTypes.string,
-  }),
-  groupsReducerError: PropTypes.shape({
-    code: PropTypes.string,
-    message: PropTypes.string,
-  }),
-  usersReducerError: PropTypes.shape({
-    code: PropTypes.string,
-    message: PropTypes.string,
-  }),
+  getUsers: PropTypes.func.isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
+  }).isRequired,
   /* eslint-disable */
-  userReducerResponse: PropTypes.string,
-  groupsReducerResponse: PropTypes.string,
-  usersReducerResponse: PropTypes.string,
-  /* eslint-enable */
   usersContacts: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.number,
@@ -484,34 +402,45 @@ LoginScreen.propTypes = {
       key: PropTypes.number,
     }),
   ).isRequired,
+  /* eslint-enable */
+  userReducerError: PropTypes.shape({
+    code: PropTypes.string,
+    message: PropTypes.string,
+  }),
+  groupsReducerError: PropTypes.shape({
+    code: PropTypes.string,
+    message: PropTypes.string,
+  }),
+  usersReducerError: PropTypes.shape({
+    code: PropTypes.string,
+    message: PropTypes.string,
+  }),
 };
 LoginScreen.defaultProps = {
-  userReducerError: {
-    code: null,
-    message: null,
+  userData: {
+    domain: null,
+    token: null,
+    username: null,
+    displayName: null,
+    email: null,
   },
-  groupsReducerError: {
-    code: null,
-    message: null,
-  },
-  usersReducerError: {
-    code: null,
-    message: null,
-  },
+  userReducerError: null,
+  groupsReducerError: null,
+  usersReducerError: null,
 };
 const mapStateToProps = state => ({
-  user: state.userReducer,
-  userReducerResponse: state.userReducer.type,
+  userData: state.userReducer.userData,
+  userReducerLoading: state.userReducer.loading,
   userReducerError: state.userReducer.error,
-  users: state.usersReducer.users,
-  usersReducerResponse: state.usersReducer.type,
-  usersReducerError: state.usersReducer.error,
+  groupsReducerLoading: state.groupsReducer.loading,
   usersContacts: state.groupsReducer.usersContacts,
   geonames: state.groupsReducer.geonames,
   peopleGroups: state.groupsReducer.peopleGroups,
   search: state.groupsReducer.search,
-  groupsReducerResponse: state.groupsReducer.type,
   groupsReducerError: state.groupsReducer.error,
+  usersReducerLoading: state.usersReducer.loading,
+  users: state.usersReducer.users,
+  usersReducerError: state.usersReducer.error,
 });
 const mapDispatchToProps = dispatch => ({
   loginDispatch: (domain, username, password) => {
@@ -526,11 +455,11 @@ const mapDispatchToProps = dispatch => ({
   getPeopleGroups: (domain, token) => {
     dispatch(getPeopleGroups(domain, token));
   },
-  getUsers: (domain, token) => {
-    dispatch(getUsers(domain, token));
-  },
   searchGroups: (domain, token) => {
     dispatch(searchGroups(domain, token));
+  },
+  getUsers: (domain, token) => {
+    dispatch(getUsers(domain, token));
   },
 });
 export default connect(

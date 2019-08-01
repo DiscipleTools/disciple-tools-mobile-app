@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {
   View,
   FlatList,
-  TouchableHighlight,
+  TouchableOpacity,
   RefreshControl,
   StyleSheet,
   Text,
@@ -81,7 +81,7 @@ class GroupsScreen extends React.Component {
   }
 
   renderRow = group => (
-    <TouchableHighlight
+    <TouchableOpacity
       onPress={() => this.goToGroupDetailScreen(group)}
       style={styles.flatListItem}
       key={group.ID}
@@ -108,7 +108,7 @@ class GroupsScreen extends React.Component {
           </Text>
         </View>
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 
   flatListItemSeparator = () => (
@@ -122,7 +122,7 @@ class GroupsScreen extends React.Component {
   );
 
   onRefresh = () => {
-    this.props.getAllGroups(this.props.user.domain, this.props.user.token);
+    this.props.getAllGroups(this.props.userData.domain, this.props.userData.token);
   };
 
   goToGroupDetailScreen = (groupData = null) => {
@@ -180,7 +180,7 @@ GroupsScreen.propTypes = {
     navigate: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
   }).isRequired,
-  user: PropTypes.shape({
+  userData: PropTypes.shape({
     domain: PropTypes.string,
     token: PropTypes.string,
   }).isRequired,
@@ -190,7 +190,7 @@ GroupsScreen.propTypes = {
     PropTypes.shape({
       key: PropTypes.number
     })
-  ).isRequired,
+  ),
   /* eslint-enable */
   error: PropTypes.shape({
     message: PropTypes.string,
@@ -201,7 +201,7 @@ GroupsScreen.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  user: state.userReducer,
+  userData: state.userReducer.userData,
   groups: state.groupsReducer.groups,
   loading: state.groupsReducer.loading,
   error: state.groupsReducer.error,

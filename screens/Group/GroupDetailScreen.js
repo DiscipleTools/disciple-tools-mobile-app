@@ -368,6 +368,7 @@ class GroupDetailScreen extends React.Component {
     overallStatusBackgroundColor: '#ffffff',
     loading: false,
     dataRetrieved: false,
+    groupsTabActive: false,
   };
 
   componentDidMount() {
@@ -495,9 +496,8 @@ class GroupDetailScreen extends React.Component {
     // GROUP SAVE / GET BY ID
     if (group && prevProps.group !== group) {
       // Highlight Updates -> Compare prevState.contact with contact and show differences
-      if (group.ID) {
-        navigation.setParams({ groupName: group.title });
-      }
+      navigation.setParams({ groupName: group.title });
+      this.onRefreshCommentsActivities(group.ID);
     }
 
     // GROUP SAVE
@@ -596,7 +596,6 @@ class GroupDetailScreen extends React.Component {
     this.setState(newState, () => {
       if (this.state.group.ID) {
         this.onRefresh(this.state.group.ID);
-        this.onRefreshCommentsActivities(this.state.group.ID);
       }
     });
   };
@@ -605,14 +604,14 @@ class GroupDetailScreen extends React.Component {
     this.setState({
       dataRetrieved: false,
     }, () => {
-      this.props.getById(this.props.user.domain, this.props.user.token, groupId);
+      this.props.getById(this.props.userData.domain, this.props.userData.token, groupId);
     });
   }
 
   getGroupComments(groupId) {
     this.props.getComments(
-      this.props.user.domain,
-      this.props.user.token,
+      this.props.userData.domain,
+      this.props.userData.token,
       groupId,
       this.state.commentsOffset,
       this.state.commentsLimit,
@@ -621,8 +620,8 @@ class GroupDetailScreen extends React.Component {
 
   getGroupActivities(groupId) {
     this.props.getActivities(
-      this.props.user.domain,
-      this.props.user.token,
+      this.props.userData.domain,
+      this.props.userData.token,
       groupId,
       this.state.activitiesOffset,
       this.state.activitiesLimit,
@@ -1038,8 +1037,8 @@ class GroupDetailScreen extends React.Component {
     }
 
     this.props.saveGroup(
-      this.props.user.domain,
-      this.props.user.token,
+      this.props.userData.domain,
+      this.props.userData.token,
       groupToSave,
     );
   };
@@ -1076,8 +1075,8 @@ class GroupDetailScreen extends React.Component {
 
     if (comment.length > 0) {
       this.props.saveComment(
-        this.props.user.domain,
-        this.props.user.token,
+        this.props.userData.domain,
+        this.props.userData.token,
         this.state.group.ID,
         {
           comment,
@@ -1088,6 +1087,9 @@ class GroupDetailScreen extends React.Component {
 
   tabChanged = (event) => {
     this.props.navigation.setParams({ hideTabBar: event.i === 2 });
+    this.setState({
+      groupsTabActive: event.i === 3,
+    });
   };
 
   showAssignedUser = () => {
@@ -1116,7 +1118,7 @@ class GroupDetailScreen extends React.Component {
         position="center"
       />
     );
-
+    // locked={}
     return (
       <Container>
         {this.state.group.ID && this.state.loadedLocal && (
@@ -1124,6 +1126,7 @@ class GroupDetailScreen extends React.Component {
             renderTabBar={() => <ScrollableTab />}
             tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
             onChangeTab={this.tabChanged}
+            locked={this.state.groupsTabActive && this.state.onlyView}
           >
             <Tab
               heading={i18n.t('global.details')}
@@ -2668,7 +2671,7 @@ class GroupDetailScreen extends React.Component {
 }
 
 GroupDetailScreen.propTypes = {
-  user: PropTypes.shape({
+  userData: PropTypes.shape({
     domain: PropTypes.string,
     token: PropTypes.string,
   }).isRequired,
@@ -2700,7 +2703,7 @@ GroupDetailScreen.propTypes = {
   getComments: PropTypes.func.isRequired,
   saveComment: PropTypes.func.isRequired,
   getActivities: PropTypes.func.isRequired,
-  saved: PropTypes.string,
+  saved: PropTypes.bool,
 };
 
 GroupDetailScreen.defaultProps = {
@@ -2712,7 +2715,7 @@ GroupDetailScreen.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  user: state.userReducer,
+  userData: state.userReducer.userData,
   userReducerError: state.userReducer.error,
   group: state.groupsReducer.group,
   comments: state.groupsReducer.comments,

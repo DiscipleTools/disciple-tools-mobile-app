@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {
   View,
   FlatList,
-  TouchableHighlight,
+  TouchableOpacity,
   RefreshControl,
   StyleSheet,
   Text,
@@ -77,10 +77,10 @@ class ContactsScreen extends React.Component {
   }
 
   renderRow = contact => (
-    <TouchableHighlight
+    <TouchableOpacity
       onPress={() => this.goToContactDetailScreen(contact)}
       style={styles.flatListItem}
-      key={contact.toString()}
+      key={contact.ID}
     >
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -98,7 +98,7 @@ class ContactsScreen extends React.Component {
           </Text>
         </View>
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 
   flatListItemSeparator = () => (
@@ -112,7 +112,7 @@ class ContactsScreen extends React.Component {
   );
 
   onRefresh = () => {
-    this.props.getAllContacts(this.props.user.domain, this.props.user.token);
+    this.props.getAllContacts(this.props.userData.domain, this.props.userData.token);
   };
 
   goToContactDetailScreen = (contactData = null) => {
@@ -170,7 +170,7 @@ ContactsScreen.propTypes = {
     navigate: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
   }).isRequired,
-  user: PropTypes.shape({
+  userData: PropTypes.shape({
     domain: PropTypes.string,
     token: PropTypes.string,
   }).isRequired,
@@ -191,7 +191,7 @@ ContactsScreen.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  user: state.userReducer,
+  userData: state.userReducer.userData,
   contacts: state.contactsReducer.contacts,
   loading: state.contactsReducer.loading,
   error: state.contactsReducer.error,

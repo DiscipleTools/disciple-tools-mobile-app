@@ -480,12 +480,11 @@ class ContactDetailScreen extends React.Component {
     // CONTACT SAVE / GET BY ID
     if (contact && prevProps.contact !== contact) {
       // Highlight Updates -> Compare prevState.contact with contact and show differences
-      if (contact.ID) {
-        navigation.setParams({ contactName: contact.title });
-      }
+      navigation.setParams({ contactName: contact.title });
       if (contact.seeker_path) {
         this.setContactSeekerPath(contact.seeker_path);
       }
+      this.onRefreshCommentsActivities(contact.ID);
     }
 
     // CONTACT SAVE
@@ -585,7 +584,6 @@ class ContactDetailScreen extends React.Component {
     this.setState(newState, () => {
       if (this.state.contact.ID) {
         this.onRefresh(this.state.contact.ID);
-        this.onRefreshCommentsActivities(this.state.contact.ID);
       }
     });
   };
@@ -595,8 +593,8 @@ class ContactDetailScreen extends React.Component {
       dataRetrieved: false,
     }, () => {
       this.props.getById(
-        this.props.user.domain,
-        this.props.user.token,
+        this.props.userData.domain,
+        this.props.userData.token,
         contactId,
       );
     });
@@ -604,8 +602,8 @@ class ContactDetailScreen extends React.Component {
 
   getContactComments(contactId) {
     this.props.getComments(
-      this.props.user.domain,
-      this.props.user.token,
+      this.props.userData.domain,
+      this.props.userData.token,
       contactId,
       this.state.commentsOffset,
       this.state.commentsLimit,
@@ -614,8 +612,8 @@ class ContactDetailScreen extends React.Component {
 
   getContactActivities(contactId) {
     this.props.getActivities(
-      this.props.user.domain,
-      this.props.user.token,
+      this.props.userData.domain,
+      this.props.userData.token,
       contactId,
       this.state.activitiesOffset,
       this.state.activitiesLimit,
@@ -961,8 +959,8 @@ class ContactDetailScreen extends React.Component {
     }
 
     this.props.saveContact(
-      this.props.user.domain,
-      this.props.user.token,
+      this.props.userData.domain,
+      this.props.userData.token,
       contactToSave,
     );
   };
@@ -1005,8 +1003,8 @@ class ContactDetailScreen extends React.Component {
 
     if (comment.length > 0) {
       this.props.saveComment(
-        this.props.user.domain,
-        this.props.user.token,
+        this.props.userData.domain,
+        this.props.userData.token,
         this.state.contact.ID,
         {
           comment,
@@ -3566,7 +3564,7 @@ class ContactDetailScreen extends React.Component {
 }
 
 ContactDetailScreen.propTypes = {
-  user: PropTypes.shape({
+  userData: PropTypes.shape({
     domain: PropTypes.string,
     token: PropTypes.string,
   }).isRequired,
@@ -3598,7 +3596,7 @@ ContactDetailScreen.propTypes = {
   getComments: PropTypes.func.isRequired,
   saveComment: PropTypes.func.isRequired,
   getActivities: PropTypes.func.isRequired,
-  saved: PropTypes.string,
+  saved: PropTypes.bool,
 };
 
 ContactDetailScreen.defaultProps = {
@@ -3610,7 +3608,7 @@ ContactDetailScreen.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  user: state.userReducer,
+  userData: state.userReducer.userData,
   userReducerError: state.userReducer.error,
   contact: state.contactsReducer.contact,
   comments: state.contactsReducer.comments,

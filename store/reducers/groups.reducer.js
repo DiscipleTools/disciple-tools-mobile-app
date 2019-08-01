@@ -1,29 +1,31 @@
 import * as actions from '../actions/groups.actions';
 
 const initialState = {
-  loading: false,
+  loading: null,
   error: null,
-  groups: [],
+  groups: null,
   group: null,
-  comments: [],
+  comments: null,
   newComment: null,
-  activities: [],
-  usersContacts: [],
-  geonames: [],
-  peopleGroups: [],
-  search: [],
+  activities: null,
+  usersContacts: null,
+  geonames: null,
+  peopleGroups: null,
+  search: null,
   totalComments: null,
   totalActivities: null,
-  loadingComments: false,
-  loadingActivities: false,
-  type: null, // delete
-  saved: false,
+  loadingComments: null,
+  loadingActivities: null,
+  saved: null,
 };
 
 export default function groupsReducer(state = initialState, action) {
   let newState = {
     ...state,
-    type: action.type, // delete
+    usersContacts: null,
+    peopleGroups: null,
+    geonames: null,
+    search: null,
     group: null,
     newComment: null,
     error: null,
@@ -35,6 +37,11 @@ export default function groupsReducer(state = initialState, action) {
   };
 
   switch (action.type) {
+    case actions.GROUPS_GET_USERS_CONTACTS_START:
+      return {
+        ...newState,
+        loading: true,
+      };
     case actions.GROUPS_GET_USERS_CONTACTS_SUCCESS:
       return {
         ...newState,
@@ -42,11 +49,18 @@ export default function groupsReducer(state = initialState, action) {
           value: user.ID.toString(),
           name: user.name,
         })),
+        loading: false,
       };
     case actions.GROUPS_GET_USERS_CONTACTS_FAILURE:
       return {
         ...newState,
         error: action.error,
+        loading: false,
+      };
+    case actions.GROUPS_GET_LOCATIONS_START:
+      return {
+        ...newState,
+        loading: true,
       };
     case actions.GROUPS_GET_LOCATIONS_SUCCESS:
       return {
@@ -55,11 +69,18 @@ export default function groupsReducer(state = initialState, action) {
           value: geoname.ID,
           name: geoname.name,
         })),
+        loading: false,
       };
     case actions.GROUPS_GET_LOCATIONS_FAILURE:
       return {
         ...newState,
         error: action.error,
+        loading: false,
+      };
+    case actions.GROUPS_GET_PEOPLE_GROUPS_START:
+      return {
+        ...newState,
+        loading: true,
       };
     case actions.GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
       return {
@@ -68,11 +89,18 @@ export default function groupsReducer(state = initialState, action) {
           value: peopleGroup.ID.toString(),
           name: peopleGroup.name,
         })),
+        loading: false,
       };
     case actions.GROUPS_GET_PEOPLE_GROUPS_FAILURE:
       return {
         ...newState,
         error: action.error,
+        loading: false,
+      };
+    case actions.GROUPS_SEARCH_START:
+      return {
+        ...newState,
+        loading: true,
       };
     case actions.GROUPS_SEARCH_SUCCESS:
       return {
@@ -81,11 +109,13 @@ export default function groupsReducer(state = initialState, action) {
           name: group.name,
           value: group.ID,
         })),
+        loading: false,
       };
     case actions.GROUPS_SEARCH_FAILURE:
       return {
         ...newState,
         error: action.error,
+        loading: false,
       };
     case actions.GROUPS_GETALL_START:
       return {
