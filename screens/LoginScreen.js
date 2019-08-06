@@ -11,7 +11,7 @@ import {
   Platform,
   AsyncStorage,
   KeyboardAvoidingView,
-  platform,
+  ScrollView,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { Button } from 'native-base';
@@ -36,7 +36,6 @@ import {
   GROUPS_SEARCH_SUCCESS,
 } from '../store/actions/groups.actions';
 import { getUsers, GET_USERS_SUCCESS } from '../store/actions/users.actions';
-import { ScrollView } from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   container: {
@@ -123,7 +122,7 @@ class LoginScreen extends React.Component {
     if (props.user && props.user.token) {
       this.state = {
         ...this.state,
-        //loading: true,
+        // loading: true,
       };
       this.getDataLists();
     }
@@ -378,7 +377,7 @@ class LoginScreen extends React.Component {
     const passwordErrorMessage = passwordValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('login.password.error')}</Text> : null;
 
     return (
-      <KeyboardAvoidingView  behavior='padding'>
+      <KeyboardAvoidingView behavior="padding">
         <ScrollView>
           <View style={styles.container}>
             <View style={styles.header}>
