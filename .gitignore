@@ -88,3 +88,7 @@ fabric.properties
 # Expo
 .expo
 .expo-shared
+
+# Jest / Tests
+## (not sure if these snapshots should be checked in or not)
+__snapshots__
