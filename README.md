@@ -31,3 +31,18 @@ Then open the url https://expo.io/@discipletools/DiscipleToolsApp to view within
 
 ## DataStore
 Information on the redux setup for managing data: [Data Store](https://github.com/DiscipleTools/disciple-tools-mobile-app/tree/master/store)
+
+## Tests
+
+Run all tests:
+```
+npm run test
+```
+
+Run individual tests by search pattern:
+```
+npx jest MySearchQuery
+npx jest TextField
+npx jest components/*
+```
+

@@ -15,6 +15,9 @@
       "node_modules/(?!react-native|react-navigation|@react-navigation|expo|@expo|native-base|prop-types)"
     ],
     "automock": false,
+    "setupFilesAfterEnv": [
+      "./setup-tests.js"
+    ],
     "setupFiles": [
       "./setupJest.js"
     ]
@@ -52,14 +55,18 @@
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.6",
     "babel-preset-expo": "^5.0.0",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
     "eslint": "^5.15.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.12.4",
     "jest": "^24.6.0",
+    "jest-enzyme": "^7.1.0",
     "jest-expo": "^32.0.0",
     "jest-fetch-mock": "^2.1.2",
+    "jsdom": "^15.1.1",
     "react-dom": "^16.5.0",
     "react-test-renderer": "^16.8.4",
     "redux-saga-test-plan": "4.0.0-beta.2",
