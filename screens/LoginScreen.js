@@ -122,7 +122,7 @@ class LoginScreen extends React.Component {
     if (props.user && props.user.token) {
       this.state = {
         ...this.state,
-        // loading: true,
+        loading: true,
       };
       this.getDataLists();
     }
@@ -378,8 +378,7 @@ class LoginScreen extends React.Component {
 
     return (
       <KeyboardAvoidingView behavior="padding">
-        <ScrollView>
-          <View style={styles.container}>
+          <ScrollView>
             <View style={styles.header}>
               <Image
                 source={require('../assets/images/dt-logo2.png')}
@@ -463,8 +462,7 @@ class LoginScreen extends React.Component {
               )}
             </View>
             {errorToast}
-          </View>
-        </ScrollView>
+          </ScrollView>
       </KeyboardAvoidingView>
     );
   }
