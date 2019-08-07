@@ -10,6 +10,8 @@ import {
   ActivityIndicator,
   Platform,
   AsyncStorage,
+  KeyboardAvoidingView,
+  ScrollView,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { Button } from 'native-base';
@@ -375,91 +377,93 @@ class LoginScreen extends React.Component {
     const passwordErrorMessage = passwordValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('login.password.error')}</Text> : null;
 
     return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Image
-            source={require('../assets/images/dt-logo2.png')}
-            style={styles.welcomeImage}
-          />
-        </View>
+      <KeyboardAvoidingView behavior="padding">
+          <ScrollView>
+            <View style={styles.header}>
+              <Image
+                source={require('../assets/images/dt-logo2.png')}
+                style={styles.welcomeImage}
+              />
+            </View>
 
-        <View style={styles.formContainer}>
-          <TextField
-            containerStyle={domainStyle}
-            iconName="ios-globe"
-            label={i18n.t('login.domain.label')}
-            onChangeText={text => this.setState({ domain: text })}
-            autoCapitalize="none"
-            autoCorrect={false}
-            value={this.state.domain}
-            returnKeyType="next"
-            textContentType="URL"
-            disabled={this.state.loading}
-            placeholder={i18n.t('login.domain.placeholder')}
-          />
-          {domainErrorMessage}
+            <View style={styles.formContainer}>
+              <TextField
+                containerStyle={domainStyle}
+                iconName="ios-globe"
+                label={i18n.t('login.domain.label')}
+                onChangeText={text => this.setState({ domain: text })}
+                autoCapitalize="none"
+                autoCorrect={false}
+                value={this.state.domain}
+                returnKeyType="next"
+                textContentType="URL"
+                disabled={this.state.loading}
+                placeholder={i18n.t('login.domain.placeholder')}
+              />
+              {domainErrorMessage}
 
-          <TextField
-            containerStyle={userStyle}
-            iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
-            label={i18n.t('login.username.label')}
-            onChangeText={text => this.setState({ username: text })}
-            autoCapitalize="none"
-            autoCorrect={false}
-            value={this.state.username}
-            returnKeyType="next"
-            textContentType="emailAddress"
-            disabled={this.state.loading}
-          />
-          {userErrorMessage}
+              <TextField
+                containerStyle={userStyle}
+                iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
+                label={i18n.t('login.username.label')}
+                onChangeText={text => this.setState({ username: text })}
+                autoCapitalize="none"
+                autoCorrect={false}
+                value={this.state.username}
+                returnKeyType="next"
+                textContentType="emailAddress"
+                disabled={this.state.loading}
+              />
+              {userErrorMessage}
 
-          <TextField
-            containerStyle={passwordStyle}
-            iconName={Platform.OS === 'ios' ? 'ios-key' : 'md-key'}
-            label={i18n.t('login.password.label')}
-            onChangeText={text => this.setState({ password: text })}
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry
-            value={this.state.password}
-            returnKeyType="go"
-            selectTextOnFocus
-            onSubmitEditing={this.signInAsync}
-            blurOnSubmit
-            textContentType="password"
-            disabled={this.state.loading}
-          />
-          {passwordErrorMessage}
+              <TextField
+                containerStyle={passwordStyle}
+                iconName={Platform.OS === 'ios' ? 'ios-key' : 'md-key'}
+                label={i18n.t('login.password.label')}
+                onChangeText={text => this.setState({ password: text })}
+                autoCapitalize="none"
+                autoCorrect={false}
+                secureTextEntry
+                value={this.state.password}
+                returnKeyType="go"
+                selectTextOnFocus
+                onSubmitEditing={this.signInAsync}
+                blurOnSubmit
+                textContentType="password"
+                disabled={this.state.loading}
+              />
+              {passwordErrorMessage}
 
-          {!this.state.loading && (
-            <Button
-              style={styles.signInButton}
-              onPress={this.onLoginPress}
-              block
-            >
-              <Text style={styles.signInButtonText}>
-                {i18n.t('login.login')}
-              </Text>
-            </Button>
-          )}
+              {!this.state.loading && (
+                <Button
+                  style={styles.signInButton}
+                  onPress={this.onLoginPress}
+                  block
+                >
+                  <Text style={styles.signInButtonText}>
+                    {i18n.t('login.login')}
+                  </Text>
+                </Button>
+              )}
 
-          {!this.state.loading && (
-            <TouchableOpacity
-              style={styles.forgotButton}
-              onPress={this.goToForgotPassword}
-              disabled={this.state.loading}
-            >
-              <Text style={styles.forgotButtonText}>
-                {i18n.t('login.forgotPassword')}
-              </Text>
-            </TouchableOpacity>
-          )}
-          {!!this.state.loading && (
-            <ActivityIndicator style={{ margin: 20 }} size="small" />
-          )}
-        </View>
-        {errorToast}
-      </View>
+              {!this.state.loading && (
+                <TouchableOpacity
+                  style={styles.forgotButton}
+                  onPress={this.goToForgotPassword}
+                  disabled={this.state.loading}
+                >
+                  <Text style={styles.forgotButtonText}>
+                    {i18n.t('login.forgotPassword')}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              {!!this.state.loading && (
+                <ActivityIndicator style={{ margin: 20 }} size="small" />
+              )}
+            </View>
+            {errorToast}
+          </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }
