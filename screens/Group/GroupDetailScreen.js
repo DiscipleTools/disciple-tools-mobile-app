@@ -17,23 +17,27 @@ import {
 import PropTypes from 'prop-types';
 
 import {
-  Label,
-  Icon,
-  Input,
   Container,
+  Content,
+  Footer,
+  FooterTab,
+  Label,
+  Input,
+  Icon,
   Picker,
   Tabs,
   Tab,
   ScrollableTab,
   DatePicker,
+  Button,
 } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import ModalFilterPicker from 'react-native-modal-filter-picker';
 import { Chip, Selectize } from 'react-native-material-selectize';
-import KeyboardShift from '../../components/KeyboardShift';
 
+import KeyboardShift from '../../components/KeyboardShift';
 import {
   saveGroup,
   getById,
@@ -42,7 +46,6 @@ import {
   getActivitiesByGroup,
 } from '../../store/actions/groups.actions';
 import Colors from '../../constants/Colors';
-
 import baptismIcon from '../../assets/icons/baptism.png';
 import bibleStudyIcon from '../../assets/icons/word.png';
 import communionIcon from '../../assets/icons/communion.png';
@@ -68,7 +71,7 @@ const spacing = windowWidth * 0.025;
 const sideSize = windowWidth - 2 * spacing;
 const circleSideSize = windowWidth / 3;
 /* eslint-disable */
-let commentsFlatList, coachSelectizeRef, geonamesSelectizeRef, peopleGroupsSelectizeRef, parentGroupSelectizeRef, peerGroupsSelectizeRef, childGroupsSelectizeRef;
+let commentsFlatList, coachSelectizeRef, geonamSelectizeRef, peopGroupSelectRef, parenGroupSelecRef, peerGrouSelectiRef, childGrouSelectRef;
 /* eslint-enable */
 const styles = StyleSheet.create({
   toggleButton: {
@@ -104,7 +107,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
   },
   tabBarUnderlineStyle: {
-    borderBottomWidth: 2,
+    borderBottomWidth: 3,
     borderBottomColor: Colors.tintColor,
   },
   tabStyle: { backgroundColor: '#FFFFFF' },
@@ -117,7 +120,7 @@ const styles = StyleSheet.create({
   },
   addRemoveIcons: {
     fontSize: 30,
-    color: 'black',
+    marginRight: 0,
   },
   icons: {
     color: Colors.tintColor,
@@ -183,8 +186,9 @@ const styles = StyleSheet.create({
     paddingRight: containerPadding,
   },
   formRow: {
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 20,
+    paddingBottom: 20,
+    width: '100%',
   },
   formIconLabel: { width: 'auto' },
   formIcon: {
@@ -192,7 +196,10 @@ const styles = StyleSheet.create({
     fontSize: 25,
     marginTop: 'auto',
     marginBottom: 'auto',
-    marginRight: 10,
+    marginRight: 20,
+  },
+  formParentLabel: {
+    width: 'auto',
   },
   formLabel: {
     color: Colors.tintColor,
@@ -203,8 +210,8 @@ const styles = StyleSheet.create({
   formDivider: {
     borderBottomColor: '#CCCCCC',
     borderBottomWidth: 1,
-    marginLeft: 5,
-    marginRight: 5,
+    marginLeft: 10,
+    marginRight: 10,
   },
   formDivider2: {
     marginTop: 25,
@@ -244,6 +251,11 @@ const styles = StyleSheet.create({
     width: circleSideSize,
     marginRight: 20,
   },
+  saveButton: {
+    backgroundColor: Colors.tintColor,
+    borderRadius: 5,
+    marginTop: 40,
+  },
 });
 
 function formatDateToBackEnd(dateValue) {
@@ -269,34 +281,10 @@ class GroupDetailScreen extends React.Component {
     const { params } = navigation.state;
 
     let navigationTitle = i18n.t('groupDetailScreen.addNewGroup');
-    let headerRight = (
-      <Icon
-        type="MaterialIcons"
-        name="check"
-        onPress={navigation.getParam('onSaveGroup')}
-        style={{
-          paddingRight: 16,
-          color: '#FFFFFF',
-        }}
-      />
-    );
 
     if (params) {
       if (params.groupName) {
         navigationTitle = params.groupName;
-      }
-      if (params.onlyView) {
-        headerRight = (
-          <Icon
-            type="MaterialIcons"
-            name="create"
-            onPress={navigation.getParam('onEnableEdit')}
-            style={{
-              paddingRight: 16,
-              color: '#FFFFFF',
-            }}
-          />
-        );
       }
     }
 
@@ -306,11 +294,10 @@ class GroupDetailScreen extends React.Component {
         <Icon
           type="MaterialIcons"
           name="arrow-back"
-          onPress={() => navigation.push('GroupList')}
+          onPress={() => navigation.goBack()}
           style={[{ paddingLeft: 16, color: '#FFFFFF' }]}
         />
       ),
-      headerRight,
       headerStyle: {
         backgroundColor: Colors.tintColor,
       },
@@ -353,27 +340,25 @@ class GroupDetailScreen extends React.Component {
     peopleGroups: [],
     groups: [],
     comments: [],
-    loadingComments: false,
-    loadingMoreComments: false,
+    loadComments: false,
+    loadMoreComments: false,
     totalComments: 0,
-    commentsOffset: 0,
+    commeOffset: 0,
     commentsLimit: 10,
     activities: [],
-    loadingActivities: false,
-    loadingMoreActivities: false,
+    loadActivities: false,
+    loadMoreActivities: false,
     totalActivities: 0,
     activitiesOffset: 0,
     activitiesLimit: 10,
     showAssignedToModal: false,
-    overallStatusBackgroundColor: '#ffffff',
+    groupStatusBackgroundColor: '#ffffff',
     loading: false,
-    dataRetrieved: false,
     groupsTabActive: false,
+    currentTabIndex: 0,
   };
 
   componentDidMount() {
-    this.props.navigation.setParams({ onSaveGroup: this.onSaveGroup });
-    this.props.navigation.setParams({ onEnableEdit: this.onEnableEdit });
     const groupId = this.props.navigation.getParam('groupId');
     const onlyView = this.props.navigation.getParam('onlyView');
     const groupName = this.props.navigation.getParam('groupName');
@@ -412,10 +397,10 @@ class GroupDetailScreen extends React.Component {
       loading,
       comments: comments || prevState.comments,
       totalComments: totalComments || prevState.totalComments,
-      loadingComments,
+      loadComments: loadingComments,
       activities: activities || prevState.activities,
       totalActivities: totalActivities || prevState.totalActivities,
-      loadingActivities,
+      loadActivities: loadingActivities,
     };
 
     // NEW COMMENT
@@ -440,25 +425,24 @@ class GroupDetailScreen extends React.Component {
       }
       newState = {
         ...newState,
-        overallStatusBackgroundColor: newColor,
-        dataRetrieved: true,
+        groupStatusBackgroundColor: newColor,
       };
     }
 
     // GET COMMENTS
     if (comments) {
       // NEW COMMENTS (PAGINATION)
-      if (prevState.commentsOffset > 0) {
+      if (prevState.commeOffset > 0) {
         newState = {
           ...newState,
           comments: prevState.comments.concat(comments),
-          loadingMoreComments: false,
+          loadMoreComments: false,
         };
       }
       newState = {
         // UPDATE OFFSET
         ...newState,
-        commentsOffset: prevState.commentsOffset + prevState.commentsLimit,
+        commeOffset: prevState.commeOffset + prevState.commentsLimit,
       };
     }
 
@@ -469,7 +453,7 @@ class GroupDetailScreen extends React.Component {
         newState = {
           ...newState,
           activities: prevState.activities.concat(activities),
-          loadingMoreActivities: false,
+          loadMoreActivities: false,
         };
       }
       newState = {
@@ -497,7 +481,7 @@ class GroupDetailScreen extends React.Component {
     if (group && prevProps.group !== group) {
       // Highlight Updates -> Compare prevState.contact with contact and show differences
       navigation.setParams({ groupName: group.title });
-      this.onRefreshCommentsActivities(group.ID);
+      this.onRefreCommenActivities(group.ID);
     }
 
     // GROUP SAVE
@@ -508,6 +492,7 @@ class GroupDetailScreen extends React.Component {
         </View>,
         3000,
       );
+      this.onDisableEdit();
     }
 
     // ERROR
@@ -532,11 +517,11 @@ class GroupDetailScreen extends React.Component {
     this.getGroupById(groupId);
   }
 
-  onRefreshCommentsActivities(groupId) {
+  onRefreCommenActivities(groupId) {
     this.setState({
       comments: [],
       activities: [],
-      commentsOffset: 0,
+      commeOffset: 0,
       activitiesOffset: 0,
     }, () => {
       this.getGroupComments(groupId);
@@ -601,11 +586,7 @@ class GroupDetailScreen extends React.Component {
   };
 
   getGroupById(groupId) {
-    this.setState({
-      dataRetrieved: false,
-    }, () => {
-      this.props.getById(this.props.userData.domain, this.props.userData.token, groupId);
-    });
+    this.props.getById(this.props.userData.domain, this.props.userData.token, groupId);
   }
 
   getGroupComments(groupId) {
@@ -613,7 +594,7 @@ class GroupDetailScreen extends React.Component {
       this.props.userData.domain,
       this.props.userData.token,
       groupId,
-      this.state.commentsOffset,
+      this.state.commeOffset,
       this.state.commentsLimit,
     );
   }
@@ -690,8 +671,15 @@ class GroupDetailScreen extends React.Component {
     this.setState({
       onlyView: false,
     });
-    this.props.navigation.setParams({ onlyView: false });
+    this.props.navigation.setParams({ hideTabBar: true });
   };
+
+  onDisableEdit = () => {
+    this.setState({
+      onlyView: true,
+    });
+    this.props.navigation.setParams({ hideTabBar: false });
+  }
 
   setGroupName = (value) => {
     this.setState(prevState => ({
@@ -723,7 +711,7 @@ class GroupDetailScreen extends React.Component {
         ...prevState.group,
         group_status: value,
       },
-      overallStatusBackgroundColor: newColor,
+      groupStatusBackgroundColor: newColor,
     }));
   };
 
@@ -881,7 +869,7 @@ class GroupDetailScreen extends React.Component {
     const dbGeonames = [...this.state.group.geonames.values];
 
     const localGeonames = [];
-    const selectedValues = this.geonamesSelectizeRef.getSelectedItems();
+    const selectedValues = this.geonamSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const geoname = selectedValues.entities.item[itemValue];
       localGeonames.push(geoname);
@@ -906,7 +894,7 @@ class GroupDetailScreen extends React.Component {
     const dbPGs = [...this.state.group.people_groups.values];
 
     const lclPGs = [];
-    const selectedValues = this.peopleGroupsSelectizeRef.getSelectedItems();
+    const selectedValues = this.peopGroupSelectRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const peopleGroup = selectedValues.entities.item[itemValue];
       lclPGs.push(peopleGroup);
@@ -937,7 +925,7 @@ class GroupDetailScreen extends React.Component {
     const dbPGs = [...this.state.group.parent_groups.values];
 
     const lclPGs = [];
-    const selectedValues = this.parentGroupSelectizeRef.getSelectedItems();
+    const selectedValues = this.parenGroupSelecRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const parentGroup = selectedValues.entities.item[itemValue];
       lclPGs.push(parentGroup);
@@ -962,7 +950,7 @@ class GroupDetailScreen extends React.Component {
     const dbPGs = [...this.state.group.peer_groups.values];
 
     const lclPGs = [];
-    const selectedValues = this.peerGroupsSelectizeRef.getSelectedItems();
+    const selectedValues = this.peerGrouSelectiRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const peerGroup = selectedValues.entities.item[itemValue];
       lclPGs.push(peerGroup);
@@ -987,7 +975,7 @@ class GroupDetailScreen extends React.Component {
     const dbCGs = [...this.state.group.child_groups.values];
 
     const lclCGs = [];
-    const selectedValues = this.childGroupsSelectizeRef.getSelectedItems();
+    const selectedValues = this.childGrouSelectRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const childGroup = selectedValues.entities.item[itemValue];
       lclCGs.push(childGroup);
@@ -1020,19 +1008,19 @@ class GroupDetailScreen extends React.Component {
     if (Object.prototype.hasOwnProperty.call(groupToSave, 'coaches') && this.coachSelectizeRef) {
       groupToSave.coaches.values = this.setCoaches();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'geonames') && this.geonamesSelectizeRef) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, 'geonames') && this.geonamSelectizeRef) {
       groupToSave.geonames.values = this.setGeonames();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'people_groups') && this.peopleGroupsSelectizeRef) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, 'people_groups') && this.peopGroupSelectRef) {
       groupToSave.people_groups.values = this.setPeopleGroups();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'parent_groups') && this.parentGroupSelectizeRef) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, 'parent_groups') && this.parenGroupSelecRef) {
       groupToSave.parent_groups.values = this.setParentGroups();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'peer_groups') && this.peerGroupsSelectizeRef) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, 'peer_groups') && this.peerGrouSelectiRef) {
       groupToSave.peer_groups.values = this.setPeerGroups();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'child_groups') && this.childGroupsSelectizeRef) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, 'child_groups') && this.childGrouSelectRef) {
       groupToSave.child_groups.values = this.setChildGroups();
     }
 
@@ -1089,6 +1077,7 @@ class GroupDetailScreen extends React.Component {
     this.props.navigation.setParams({ hideTabBar: event.i === 2 });
     this.setState({
       groupsTabActive: event.i === 3,
+      currentTabIndex: event.i,
     });
   };
 
@@ -1096,8 +1085,533 @@ class GroupDetailScreen extends React.Component {
     const foundUser = this.state.users.find(
       user => `user-${user.key}` === this.state.group.assigned_to,
     );
-    return <Text>{foundUser ? foundUser.label : ''}</Text>;
+    return <Text style={{ marginTop: 'auto', marginBottom: 'auto', fontSize: 15 }}>{foundUser ? foundUser.label : ''}</Text>;
   };
+
+  renderHealthMilestones() {
+    return (
+      <Grid pointerEvents={this.state.onlyView ? 'none' : 'auto'}>
+        <Row style={{ height: spacing }} />
+        <Row style={{ height: sideSize }}>
+          <Col style={{ width: spacing }} />
+          <Col style={{ width: sideSize }}>
+            <Image
+              source={circleIcon}
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignSelf: 'center',
+                position: 'absolute',
+                height: '95%',
+                width: '95%',
+                marginTop: '2%',
+                marginRight: '2%',
+                marginBottom: '2%',
+                marginLeft: '2%',
+              }}
+            />
+            <Image
+              source={dottedCircleIcon}
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignSelf: 'center',
+                position: 'absolute',
+                height: '100%',
+                width: '100%',
+              }}
+            />
+            <Row style={{ height: sideSize * 0.1 }} />
+            <Row style={{ height: sideSize * 0.8 }}>
+              <Row style={{ height: sideSize * 0.8 }}>
+                <Col style={{ width: sideSize * 0.1 }} />
+                <Col style={{ width: sideSize * 0.8 }}>
+                  <Row size={5}>
+                    <Col size={2} />
+                    <Col size={3}>
+                      <Row size={1} />
+                      <Row size={4}>
+                        <Col>
+                          <Row size={60}>
+                            <Col>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onHealthMetricChange(
+                                    'church_giving',
+                                  );
+                                }}
+                                activeOpacity={1}
+                              >
+                                <Image
+                                  source={givingIcon}
+                                  style={
+                                    this.onCheckExistingHealthMetric(
+                                      'church_giving',
+                                    )
+                                      ? styles.activeImage
+                                      : styles.inactiveImage
+                                  }
+                                />
+                              </TouchableOpacity>
+                            </Col>
+                          </Row>
+                          <Row
+                            size={40}
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text
+                              style={[
+                                styles.toggleText,
+                                this.onCheckExistingHealthMetric(
+                                  'church_giving',
+                                )
+                                  ? styles.activeToggleText
+                                  : styles.inactiveToggleText,
+                              ]}
+                            >
+                              {i18n.t('groupDetailScreen.healthMetrics.giving')}
+                            </Text>
+                          </Row>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col size={2} />
+                    <Col size={3}>
+                      <Row size={6}>
+                        <Col size={100}>
+                          <Row size={60}>
+                            <Col>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onHealthMetricChange(
+                                    'church_fellowship',
+                                  );
+                                }}
+                                activeOpacity={1}
+                              >
+                                <Image
+                                  source={fellowShipIcon}
+                                  style={
+                                    this.onCheckExistingHealthMetric(
+                                      'church_fellowship',
+                                    )
+                                      ? styles.activeImage
+                                      : styles.inactiveImage
+                                  }
+                                />
+                              </TouchableOpacity>
+                            </Col>
+                          </Row>
+                          <Row
+                            size={40}
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text
+                              style={[
+                                styles.toggleText,
+                                this.onCheckExistingHealthMetric(
+                                  'church_fellowship',
+                                )
+                                  ? styles.activeToggleText
+                                  : styles.inactiveToggleText,
+                              ]}
+                            >
+                              {i18n.t('groupDetailScreen.healthMetrics.fellowship')}
+                            </Text>
+                          </Row>
+                        </Col>
+                      </Row>
+                      <Row size={1} />
+                    </Col>
+                    <Col size={2} />
+                    <Col size={3}>
+                      <Row size={1} />
+                      <Row size={4}>
+                        <Col>
+                          <Row size={60}>
+                            <Col>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onHealthMetricChange(
+                                    'church_communion',
+                                  );
+                                }}
+                                activeOpacity={1}
+                              >
+                                <Image
+                                  source={communionIcon}
+                                  style={
+                                    this.onCheckExistingHealthMetric(
+                                      'church_communion',
+                                    )
+                                      ? styles.activeImage
+                                      : styles.inactiveImage
+                                  }
+                                />
+                              </TouchableOpacity>
+                            </Col>
+                          </Row>
+                          <Row
+                            size={40}
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text
+                              style={[
+                                styles.toggleText,
+                                this.onCheckExistingHealthMetric(
+                                  'church_communion',
+                                )
+                                  ? styles.activeToggleText
+                                  : styles.inactiveToggleText,
+                              ]}
+                            >
+                              {i18n.t('groupDetailScreen.healthMetrics.communion')}
+                            </Text>
+                          </Row>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col size={2} />
+                  </Row>
+
+                  <Row size={7} style={{ backgroundColor: 'white' }}>
+                    <Col size={3}>
+                      <Row
+                        size={2}
+                        style={{ backgroundColor: 'white' }}
+                      />
+                      <Row size={6}>
+                        <Col>
+                          <Row size={60}>
+                            <Col>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onHealthMetricChange(
+                                    'church_baptism',
+                                  );
+                                }}
+                                activeOpacity={1}
+                              >
+                                <Image
+                                  source={baptismIcon}
+                                  style={
+                                    this.onCheckExistingHealthMetric(
+                                      'church_baptism',
+                                    )
+                                      ? styles.activeImage
+                                      : styles.inactiveImage
+                                  }
+                                />
+                              </TouchableOpacity>
+                            </Col>
+                          </Row>
+                          <Row
+                            size={40}
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text
+                              style={[
+                                styles.toggleText,
+                                this.onCheckExistingHealthMetric(
+                                  'church_baptism',
+                                )
+                                  ? styles.activeToggleText
+                                  : styles.inactiveToggleText,
+                              ]}
+                            >
+                              {i18n.t('groupDetailScreen.healthMetrics.baptism')}
+                            </Text>
+                          </Row>
+                        </Col>
+                      </Row>
+                      <Row size={2} />
+                    </Col>
+                    <Col size={4} />
+                    <Col size={3}>
+                      <Row size={2} />
+                      <Row size={6}>
+                        <Col>
+                          <Row size={60}>
+                            <Col>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onHealthMetricChange(
+                                    'church_prayer',
+                                  );
+                                }}
+                                activeOpacity={1}
+                              >
+                                <Image
+                                  source={prayerIcon}
+                                  style={
+                                    this.onCheckExistingHealthMetric(
+                                      'church_prayer',
+                                    )
+                                      ? styles.activeImage
+                                      : styles.inactiveImage
+                                  }
+                                />
+                              </TouchableOpacity>
+                            </Col>
+                          </Row>
+                          <Row
+                            size={40}
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text
+                              style={[
+                                styles.toggleText,
+                                this.onCheckExistingHealthMetric(
+                                  'church_prayer',
+                                )
+                                  ? styles.activeToggleText
+                                  : styles.inactiveToggleText,
+                              ]}
+                            >
+                              {i18n.t('groupDetailScreen.healthMetrics.prayer')}
+                            </Text>
+                          </Row>
+                        </Col>
+                      </Row>
+                      <Row size={2} />
+                    </Col>
+                    <Col size={4} />
+                    <Col size={3}>
+                      <Row size={2} />
+                      <Row size={6}>
+                        <Col>
+                          <Row size={60}>
+                            <Col>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onHealthMetricChange(
+                                    'church_leaders',
+                                  );
+                                }}
+                                activeOpacity={1}
+                              >
+                                <Image
+                                  source={leadersIcon}
+                                  style={
+                                    this.onCheckExistingHealthMetric(
+                                      'church_leaders',
+                                    )
+                                      ? styles.activeImage
+                                      : styles.inactiveImage
+                                  }
+                                />
+                              </TouchableOpacity>
+                            </Col>
+                          </Row>
+                          <Row
+                            size={40}
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text
+                              style={[
+                                styles.toggleText,
+                                this.onCheckExistingHealthMetric(
+                                  'church_leaders',
+                                )
+                                  ? styles.activeToggleText
+                                  : styles.inactiveToggleText,
+                              ]}
+                            >
+                              {i18n.t('groupDetailScreen.healthMetrics.leaders')}
+                            </Text>
+                          </Row>
+                        </Col>
+                      </Row>
+                      <Row size={2} />
+                    </Col>
+                  </Row>
+
+                  <Row size={5}>
+                    <Col size={2} />
+                    <Col size={3}>
+                      <Row size={4}>
+                        <Col>
+                          <Row size={60}>
+                            <Col>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onHealthMetricChange(
+                                    'church_bible',
+                                  );
+                                }}
+                                activeOpacity={1}
+                              >
+                                <Image
+                                  source={bibleStudyIcon}
+                                  style={
+                                    this.onCheckExistingHealthMetric(
+                                      'church_bible',
+                                    )
+                                      ? styles.activeImage
+                                      : styles.inactiveImage
+                                  }
+                                />
+                              </TouchableOpacity>
+                            </Col>
+                          </Row>
+                          <Row
+                            size={40}
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text
+                              style={[
+                                styles.toggleText,
+                                this.onCheckExistingHealthMetric(
+                                  'church_bible',
+                                )
+                                  ? styles.activeToggleText
+                                  : styles.inactiveToggleText,
+                              ]}
+                            >
+                              {i18n.t('groupDetailScreen.healthMetrics.bibleStudy')}
+                            </Text>
+                          </Row>
+                        </Col>
+                      </Row>
+                      <Row size={1} />
+                    </Col>
+                    <Col size={2} />
+                    <Col size={3}>
+                      <Row size={1} />
+                      <Row size={4}>
+                        <Col>
+                          <Row size={60}>
+                            <Col>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onHealthMetricChange(
+                                    'church_praise',
+                                  );
+                                }}
+                                activeOpacity={1}
+                              >
+                                <Image
+                                  source={praiseIcon}
+                                  style={
+                                    this.onCheckExistingHealthMetric(
+                                      'church_praise',
+                                    )
+                                      ? styles.activeImage
+                                      : styles.inactiveImage
+                                  }
+                                />
+                              </TouchableOpacity>
+                            </Col>
+                          </Row>
+                          <Row
+                            size={40}
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text
+                              style={[
+                                styles.toggleText,
+                                this.onCheckExistingHealthMetric(
+                                  'church_praise',
+                                )
+                                  ? styles.activeToggleText
+                                  : styles.inactiveToggleText,
+                              ]}
+                            >
+                              {i18n.t('groupDetailScreen.healthMetrics.praise')}
+                            </Text>
+                          </Row>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col size={2} />
+                    <Col size={3}>
+                      <Row size={4}>
+                        <Col>
+                          <Row size={60}>
+                            <Col>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  this.onHealthMetricChange(
+                                    'church_sharing',
+                                  );
+                                }}
+                                activeOpacity={1}
+                              >
+                                <Image
+                                  source={sharingTheGospelIcon}
+                                  style={
+                                    this.onCheckExistingHealthMetric(
+                                      'church_sharing',
+                                    )
+                                      ? styles.activeImage
+                                      : styles.inactiveImage
+                                  }
+                                />
+                              </TouchableOpacity>
+                            </Col>
+                          </Row>
+                          <Row
+                            size={40}
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text
+                              style={[
+                                styles.toggleText,
+                                this.onCheckExistingHealthMetric(
+                                  'church_sharing',
+                                )
+                                  ? styles.activeToggleText
+                                  : styles.inactiveToggleText,
+                              ]}
+                            >
+                              {i18n.t('groupDetailScreen.healthMetrics.sharingGospel')}
+                            </Text>
+                          </Row>
+                        </Col>
+                      </Row>
+                      <Row size={1} />
+                    </Col>
+                    <Col size={2} />
+                  </Row>
+                </Col>
+                <Col style={{ width: sideSize * 0.1 }} />
+              </Row>
+            </Row>
+            <Row style={{ height: sideSize * 0.1 }} />
+          </Col>
+          <Col style={{ width: spacing }} />
+        </Row>
+        <Row style={{ height: spacing }} />
+      </Grid>
+    );
+  }
 
   render() {
     const successToast = (
@@ -1118,73 +1632,76 @@ class GroupDetailScreen extends React.Component {
         position="center"
       />
     );
-    // locked={}
+
     return (
-      <Container>
-        {this.state.group.ID && this.state.loadedLocal && (
-          <Tabs
-            renderTabBar={() => <ScrollableTab />}
-            tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
-            onChangeTab={this.tabChanged}
-            locked={this.state.groupsTabActive && this.state.onlyView}
-          >
-            <Tab
-              heading={i18n.t('global.details')}
-              tabStyle={styles.tabStyle}
-              textStyle={styles.textStyle}
-              activeTabStyle={styles.activeTabStyle}
-              activeTextStyle={styles.activeTextStyle}
-            >
-              <KeyboardShift>
-                {() => (
-                  <ScrollView
-                    keyboardShouldPersistTaps="handled"
-                    refreshControl={(
-                      <RefreshControl
-                        refreshing={this.state.loading}
-                        onRefresh={() => this.onRefresh(this.state.group.ID)}
-                      />
-                    )}
-                  >
-                    <View
-                      style={{
-                        paddingLeft: containerPadding - 15,
-                        paddingRight: containerPadding - 15,
-                        marginTop: 20,
-                      }}
-                      pointerEvents={this.state.onlyView ? 'none' : 'auto'}
+      <View style={{ flex: 1 }}>
+        {this.state.loadedLocal && (
+          <View style={{ flex: 1 }}>
+            {this.state.group.ID ? (
+              <View style={{ flex: 1 }}>
+                {this.state.onlyView && (
+                  <View style={{ flex: 1 }}>
+                    <Tabs
+                      renderTabBar={() => <ScrollableTab />}
+                      tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
+                      onChangeTab={this.tabChanged}
+                      locked={this.state.groupsTabActive && this.state.onlyView}
+                      page={this.state.currentTabIndex}
                     >
-                      <Label style={[styles.formLabel, { fontWeight: 'bold' }]}>
-                        {i18n.t('global.status')}
-                      </Label>
-                      <Row style={styles.formRow}>
-                        <Col>
-                          <Picker
-                            selectedValue={this.state.group.group_status}
-                            onValueChange={this.setGroupStatus}
-                            style={{
-                              color: '#FFFFFF',
-                              backgroundColor: this.state
-                                .overallStatusBackgroundColor,
-                            }}
+                      <Tab
+                        heading={i18n.t('global.details')}
+                        tabStyle={styles.tabStyle}
+                        textStyle={styles.textStyle}
+                        activeTabStyle={styles.activeTabStyle}
+                        activeTextStyle={styles.activeTextStyle}
+                      >
+                        <ScrollView
+                          keyboardShouldPersistTaps="handled"
+                          refreshControl={(
+                            <RefreshControl
+                              refreshing={this.state.loading}
+                              onRefresh={() => this.onRefresh(this.state.group.ID)}
+                            />
+                          )}
+                        >
+                          <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
+                            <Row>
+                              <Col />
+                              <Col>
+                                <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
+                                  Edit
+                                </Text>
+                              </Col>
+                            </Row>
+                          </Grid>
+                          <View
+                            style={[styles.formContainer, { paddingTop: 0 }]}
+                            pointerEvents="none"
                           >
-                            <Picker.Item label={i18n.t('global.groupStatus.active')} value="active" />
-                            <Picker.Item label={i18n.t('global.groupStatus.inactive')} value="inactive" />
-                          </Picker>
-                        </Col>
-                      </Row>
-                    </View>
-                    <View
-                      style={styles.formContainer}
-                      pointerEvents={this.state.onlyView ? 'none' : 'auto'}
-                    >
-                      {this.state.dataRetrieved && (
-                        <Grid>
-                          <TouchableOpacity
-                            onPress={() => {
-                              this.updateShowAssignedToModal(true);
-                            }}
-                          >
+                            <Label
+                              style={{
+                                color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
+                              }}
+                            >
+                              {i18n.t('global.status')}
+                            </Label>
+                            <Row style={[styles.formRow, { paddingTop: 5 }]}>
+                              <Col>
+                                <Picker
+                                  selectedValue={
+                                    this.state.group.group_status
+                                  }
+                                  onValueChange={this.setGroupStatus}
+                                  style={{
+                                    color: '#ffffff',
+                                    backgroundColor: this.state.groupStatusBackgroundColor,
+                                  }}
+                                >
+                                  <Picker.Item label={i18n.t('global.groupStatus.active')} value="active" />
+                                  <Picker.Item label={i18n.t('global.groupStatus.inactive')} value="inactive" />
+                                </Picker>
+                              </Col>
+                            </Row>
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
@@ -1195,1250 +1712,324 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 {this.showAssignedUser()}
-                                <ModalFilterPicker
-                                  visible={this.state.showAssignedToModal}
-                                  onSelect={this.onSelectAssignedTo}
-                                  onCancel={this.onCancelAssignedTo}
-                                  options={this.state.users}
-                                />
                               </Col>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
                                   {i18n.t('global.assignedTo')}
                                 </Label>
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
-                          </TouchableOpacity>
-                          <Row style={styles.formRow}>
-                            <Col style={styles.formIconLabel}>
-                              <Icon
-                                type="FontAwesome"
-                                name="black-tie"
-                                style={styles.formIcon}
-                              />
-                            </Col>
-                            <Col />
-                            <Col style={styles.formIconLabel}>
-                              <Label style={styles.formLabel}>
-                                {i18n.t('groupDetailScreen.groupCoach')}
-                              </Label>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                              <Selectize
-                                ref={(selectize) => { this.coachSelectizeRef = selectize; }}
-                                itemId="value"
-                                items={this.state.usersContacts}
-                                selectedItems={this.state.group.coaches.values}
-                                textInputProps={{
-                                  placeholder: i18n.t('groupDetailScreen.selectCoaches'),
-                                }}
-                                renderRow={(id, onPress, item) => (
-                                  <TouchableOpacity
-                                    activeOpacity={0.6}
-                                    key={id}
-                                    onPress={onPress}
-                                    style={{
-                                      paddingVertical: 8,
-                                      paddingHorizontal: 10,
-                                    }}
-                                  >
-                                    <View style={{
-                                      flexDirection: 'row',
-                                    }}
-                                    >
-                                      <Text style={{
-                                        color: 'rgba(0, 0, 0, 0.87)',
-                                        fontSize: 14,
-                                        lineHeight: 21,
-                                      }}
-                                      >
-                                        {item.name}
-                                      </Text>
-                                    </View>
-                                  </TouchableOpacity>
-                                )}
-                                renderChip={(id, onClose, item, style, iconStyle) => (
-                                  <Chip
-                                    key={id}
-                                    iconStyle={iconStyle}
-                                    onClose={onClose}
-                                    text={item.name}
-                                    style={style}
-                                  />
-                                )}
-                                filterOnKey="name"
-                                keyboardShouldPersistTaps
-                                inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                              />
-                            </Col>
-                          </Row>
-                          <View style={styles.formDivider} />
-                          <Row style={styles.formRow}>
-                            <Col style={styles.formIconLabel}>
-                              <Icon
-                                type="FontAwesome"
-                                name="map-marker"
-                                style={styles.formIcon}
-                              />
-                            </Col>
-                            <Col />
-                            <Col style={styles.formIconLabel}>
-                              <Label style={styles.formLabel}>
-                                {i18n.t('global.location')}
-                              </Label>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                              <Selectize
-                                ref={(selectize) => { this.geonamesSelectizeRef = selectize; }}
-                                itemId="value"
-                                items={this.state.geonames}
-                                selectedItems={this.state.group.geonames.values}
-                                textInputProps={{
-                                  placeholder: i18n.t('groupDetailScreen.selectGeonames'),
-                                }}
-                                renderRow={(id, onPress, item) => (
-                                  <TouchableOpacity
-                                    activeOpacity={0.6}
-                                    key={id}
-                                    onPress={onPress}
-                                    style={{
-                                      paddingVertical: 8,
-                                      paddingHorizontal: 10,
-                                    }}
-                                  >
-                                    <View style={{
-                                      flexDirection: 'row',
-                                    }}
-                                    >
-                                      <Text style={{
-                                        color: 'rgba(0, 0, 0, 0.87)',
-                                        fontSize: 14,
-                                        lineHeight: 21,
-                                      }}
-                                      >
-                                        {item.name}
-                                      </Text>
-                                    </View>
-                                  </TouchableOpacity>
-                                )}
-                                renderChip={(id, onClose, item, style, iconStyle) => (
-                                  <Chip
-                                    key={id}
-                                    iconStyle={iconStyle}
-                                    onClose={onClose}
-                                    text={item.name}
-                                    style={style}
-                                  />
-                                )}
-                                filterOnKey="name"
-                                keyboardShouldPersistTaps
-                                inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                              />
-                            </Col>
-                          </Row>
-                          <View style={styles.formDivider} />
-                          <Row style={styles.formRow}>
-                            <Col style={styles.formIconLabel}>
-                              <Icon
-                                type="FontAwesome"
-                                name="globe"
-                                style={styles.formIcon}
-                              />
-                            </Col>
-                            <Col />
-                            <Col style={styles.formIconLabel}>
-                              <Label style={styles.formLabel}>
-                                {i18n.t('global.peopleGroup')}
-                              </Label>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                              <Selectize
-                                ref={(selectize) => { this.peopleGroupsSelectizeRef = selectize; }}
-                                itemId="value"
-                                items={this.state.peopleGroups}
-                                selectedItems={this.state.group.people_groups.values}
-                                textInputProps={{
-                                  placeholder: i18n.t('global.selectPeopleGroups'),
-                                }}
-                                renderRow={(id, onPress, item) => (
-                                  <TouchableOpacity
-                                    activeOpacity={0.6}
-                                    key={id}
-                                    onPress={onPress}
-                                    style={{
-                                      paddingVertical: 8,
-                                      paddingHorizontal: 10,
-                                    }}
-                                  >
-                                    <View style={{
-                                      flexDirection: 'row',
-                                    }}
-                                    >
-                                      <Text style={{
-                                        color: 'rgba(0, 0, 0, 0.87)',
-                                        fontSize: 14,
-                                        lineHeight: 21,
-                                      }}
-                                      >
-                                        {item.name}
-                                      </Text>
-                                    </View>
-                                  </TouchableOpacity>
-                                )}
-                                renderChip={(id, onClose, item, style, iconStyle) => (
-                                  <Chip
-                                    key={id}
-                                    iconStyle={iconStyle}
-                                    onClose={onClose}
-                                    text={item.name}
-                                    style={style}
-                                  />
-                                )}
-                                filterOnKey="name"
-                                keyboardShouldPersistTaps
-                                inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                              />
-                            </Col>
-                          </Row>
-                          <View style={styles.formDivider} />
-                          <Row style={styles.formRow}>
-                            <Col style={styles.formIconLabel}>
-                              <Icon
-                                type="Entypo"
-                                name="home"
-                                style={styles.formIcon}
-                              />
-                            </Col>
-                            <Col>
-                              <Row>
-                                <View style={{ flex: 1 }}>
-                                  <Text
-                                    style={{
-                                      textAlign: 'right',
-                                      paddingRight: 10,
-                                    }}
-                                  >
-                                    <Icon
-                                      android="md-add"
-                                      ios="ios-add"
-                                      onPress={this.onAddAddressField}
-                                      style={styles.addRemoveIcons}
-                                    />
-                                  </Text>
-                                </View>
-                              </Row>
-                            </Col>
-                            <Col style={styles.formIconLabel}>
-                              <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
-                            </Col>
-                          </Row>
-                          {this.state.group.contact_address.map(
-                            (address, index) => {
-                              if (!address.delete) {
-                                return (
-                                  <Row
-                                    key={index.toString()}
-                                    style={styles.formRow}
-                                  >
-                                    <Col>
-                                      <Input
-                                        multiline
-                                        value={address.value}
-                                        onChangeText={(value) => {
-                                          this.onAddressFieldChange(
-                                            value,
-                                            index,
-                                            address.key,
-                                            this,
-                                          );
-                                        }}
-                                        style={styles.inputContactAddress}
-                                      />
-                                    </Col>
-                                    <Col style={styles.formIconLabel}>
-                                      <Icon
-                                        android="md-remove"
-                                        ios="ios-remove"
-                                        onPress={() => {
-                                          this.onRemoveAddressField(index, this);
-                                        }}
-                                        style={[
-                                          styles.addRemoveIcons,
-                                          {
-                                            paddingLeft: 10,
-                                            paddingRight: 10,
-                                          },
-                                        ]}
-                                      />
-                                    </Col>
-                                  </Row>
-                                );
-                              }
-                              return '';
-                            },
-                          )}
-                          <View style={styles.formDivider} />
-                          <Row style={styles.formRow}>
-                            <Col style={styles.formIconLabel}>
-                              <Icon
-                                type="MaterialCommunityIcons"
-                                name="calendar-import"
-                                style={styles.formIcon}
-                              />
-                            </Col>
-                            <Col>
-                              <DatePicker
-                                onDateChange={this.setGroupStartDate}
-                                defaultDate={(this.state.group.start_date.length > 0) ? new Date(this.state.group.start_date) : ''}
-                              />
-                            </Col>
-                            <Col style={styles.formIconLabel}>
-                              <Label style={styles.formLabel}>{i18n.t('groupDetailScreen.startDate')}</Label>
-                            </Col>
-                          </Row>
-                          <View style={styles.formDivider} />
-                          <Row style={styles.formRow}>
-                            <Col style={styles.formIconLabel}>
-                              <Icon
-                                type="MaterialCommunityIcons"
-                                name="calendar-export"
-                                style={styles.formIcon}
-                              />
-                            </Col>
-                            <Col>
-                              <DatePicker
-                                onDateChange={this.setEndDate}
-                                defaultDate={(this.state.group.end_date.length > 0) ? new Date(this.state.group.end_date) : ''}
-                              />
-                            </Col>
-                            <Col style={styles.formIconLabel}>
-                              <Label style={styles.formLabel}>{i18n.t('groupDetailScreen.endDate')}</Label>
-                            </Col>
-                          </Row>
-                          <View style={styles.formDivider} />
-                        </Grid>
-                      )}
-                    </View>
-                  </ScrollView>
-                )}
-              </KeyboardShift>
-            </Tab>
-            <Tab
-              heading={i18n.t('global.progress')}
-              tabStyle={styles.tabStyle}
-              textStyle={styles.textStyle}
-              activeTabStyle={styles.activeTabStyle}
-              activeTextStyle={styles.activeTextStyle}
-            >
-              <ScrollView
-                refreshControl={(
-                  <RefreshControl
-                    refreshing={this.state.loading}
-                    onRefresh={() => this.onRefresh(this.state.group.ID)}
-                  />
-                )}
-              >
-                <View
-                  style={styles.formContainer}
-                  pointerEvents={this.state.onlyView ? 'none' : 'auto'}
-                >
-                  <Grid>
-                    <Row style={styles.formRow}>
-                      <Col style={styles.formIconLabel}>
-                        <Icon
-                          android="md-people"
-                          ios="ios-people"
-                          style={styles.formIcon}
-                        />
-                      </Col>
-                      <Col>
-                        <Picker
-                          mode="dropdown"
-                          selectedValue={this.state.group.group_type}
-                          onValueChange={this.setGroupType}
-                        >
-                          <Picker.Item label={i18n.t('global.groupType.pre-group')} value="pre-group" />
-                          <Picker.Item label={i18n.t('global.groupType.group')} value="group" />
-                          <Picker.Item label={i18n.t('global.groupType.church')} value="church" />
-                          <Picker.Item label={i18n.t('global.groupType.team')} value="team" />
-                        </Picker>
-                      </Col>
-                      <Col style={styles.formIconLabel}>
-                        <Label style={styles.formLabel}>{i18n.t('groupDetailScreen.groupType')}</Label>
-                      </Col>
-                    </Row>
-                    <View style={styles.formDivider} />
-                  </Grid>
-                </View>
-                <Grid>
-                  <Row style={{ height: spacing }} />
-                  <Row style={{ height: sideSize }}>
-                    <Col style={{ width: spacing }} />
-                    <Col style={{ width: sideSize }}>
-                      <Image
-                        source={circleIcon}
-                        style={{
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          alignSelf: 'center',
-                          position: 'absolute',
-                          height: '95%',
-                          width: '95%',
-                          marginTop: '2%',
-                          marginRight: '2%',
-                          marginBottom: '2%',
-                          marginLeft: '2%',
-                        }}
-                      />
-                      <Image
-                        source={dottedCircleIcon}
-                        style={{
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          alignSelf: 'center',
-                          position: 'absolute',
-                          height: '100%',
-                          width: '100%',
-                        }}
-                      />
-                      <Row style={{ height: sideSize * 0.1 }} />
-                      <Row style={{ height: sideSize * 0.8 }}>
-                        <Row style={{ height: sideSize * 0.8 }}>
-                          <Col style={{ width: sideSize * 0.1 }} />
-                          <Col style={{ width: sideSize * 0.8 }}>
-                            <Row size={5}>
-                              <Col size={2} />
-                              <Col size={3}>
-                                <Row size={1} />
-                                <Row size={4}>
-                                  <Col>
-                                    <Row size={60}>
-                                      <Col>
-                                        <TouchableOpacity
-                                          onPress={() => {
-                                            this.onHealthMetricChange(
-                                              'church_giving',
-                                            );
-                                          }}
-                                          activeOpacity={1}
-                                        >
-                                          <Image
-                                            source={givingIcon}
-                                            style={
-                                              this.onCheckExistingHealthMetric(
-                                                'church_giving',
-                                              )
-                                                ? styles.activeImage
-                                                : styles.inactiveImage
-                                            }
-                                          />
-                                        </TouchableOpacity>
-                                      </Col>
-                                    </Row>
-                                    <Row
-                                      size={40}
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
-                                    >
-                                      <Text
-                                        style={[
-                                          styles.toggleText,
-                                          this.onCheckExistingHealthMetric(
-                                            'church_giving',
-                                          )
-                                            ? styles.activeToggleText
-                                            : styles.inactiveToggleText,
-                                        ]}
-                                      >
-                                        {i18n.t('groupDetailScreen.healthMetrics.giving')}
-                                      </Text>
-                                    </Row>
-                                  </Col>
-                                </Row>
-                              </Col>
-                              <Col size={2} />
-                              <Col size={3}>
-                                <Row size={6}>
-                                  <Col size={100}>
-                                    <Row size={60}>
-                                      <Col>
-                                        <TouchableOpacity
-                                          onPress={() => {
-                                            this.onHealthMetricChange(
-                                              'church_fellowship',
-                                            );
-                                          }}
-                                          activeOpacity={1}
-                                        >
-                                          <Image
-                                            source={fellowShipIcon}
-                                            style={
-                                              this.onCheckExistingHealthMetric(
-                                                'church_fellowship',
-                                              )
-                                                ? styles.activeImage
-                                                : styles.inactiveImage
-                                            }
-                                          />
-                                        </TouchableOpacity>
-                                      </Col>
-                                    </Row>
-                                    <Row
-                                      size={40}
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
-                                    >
-                                      <Text
-                                        style={[
-                                          styles.toggleText,
-                                          this.onCheckExistingHealthMetric(
-                                            'church_fellowship',
-                                          )
-                                            ? styles.activeToggleText
-                                            : styles.inactiveToggleText,
-                                        ]}
-                                      >
-                                        {i18n.t('groupDetailScreen.healthMetrics.fellowship')}
-                                      </Text>
-                                    </Row>
-                                  </Col>
-                                </Row>
-                                <Row size={1} />
-                              </Col>
-                              <Col size={2} />
-                              <Col size={3}>
-                                <Row size={1} />
-                                <Row size={4}>
-                                  <Col>
-                                    <Row size={60}>
-                                      <Col>
-                                        <TouchableOpacity
-                                          onPress={() => {
-                                            this.onHealthMetricChange(
-                                              'church_communion',
-                                            );
-                                          }}
-                                          activeOpacity={1}
-                                        >
-                                          <Image
-                                            source={communionIcon}
-                                            style={
-                                              this.onCheckExistingHealthMetric(
-                                                'church_communion',
-                                              )
-                                                ? styles.activeImage
-                                                : styles.inactiveImage
-                                            }
-                                          />
-                                        </TouchableOpacity>
-                                      </Col>
-                                    </Row>
-                                    <Row
-                                      size={40}
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
-                                    >
-                                      <Text
-                                        style={[
-                                          styles.toggleText,
-                                          this.onCheckExistingHealthMetric(
-                                            'church_communion',
-                                          )
-                                            ? styles.activeToggleText
-                                            : styles.inactiveToggleText,
-                                        ]}
-                                      >
-                                        {i18n.t('groupDetailScreen.healthMetrics.communion')}
-                                      </Text>
-                                    </Row>
-                                  </Col>
-                                </Row>
-                              </Col>
-                              <Col size={2} />
-                            </Row>
-
-                            <Row size={7} style={{ backgroundColor: 'white' }}>
-                              <Col size={3}>
-                                <Row
-                                  size={2}
-                                  style={{ backgroundColor: 'white' }}
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  type="FontAwesome"
+                                  name="black-tie"
+                                  style={styles.formIcon}
                                 />
-                                <Row size={6}>
-                                  <Col>
-                                    <Row size={60}>
-                                      <Col>
-                                        <TouchableOpacity
-                                          onPress={() => {
-                                            this.onHealthMetricChange(
-                                              'church_baptism',
-                                            );
-                                          }}
-                                          activeOpacity={1}
-                                        >
-                                          <Image
-                                            source={baptismIcon}
-                                            style={
-                                              this.onCheckExistingHealthMetric(
-                                                'church_baptism',
-                                              )
-                                                ? styles.activeImage
-                                                : styles.inactiveImage
-                                            }
-                                          />
-                                        </TouchableOpacity>
-                                      </Col>
-                                    </Row>
-                                    <Row
-                                      size={40}
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
-                                    >
-                                      <Text
-                                        style={[
-                                          styles.toggleText,
-                                          this.onCheckExistingHealthMetric(
-                                            'church_baptism',
-                                          )
-                                            ? styles.activeToggleText
-                                            : styles.inactiveToggleText,
-                                        ]}
-                                      >
-                                        {i18n.t('groupDetailScreen.healthMetrics.baptism')}
-                                      </Text>
-                                    </Row>
-                                  </Col>
-                                </Row>
-                                <Row size={2} />
                               </Col>
-                              <Col size={4} />
-                              <Col size={3}>
-                                <Row size={2} />
-                                <Row size={6}>
-                                  <Col>
-                                    <Row size={60}>
-                                      <Col>
-                                        <TouchableOpacity
-                                          onPress={() => {
-                                            this.onHealthMetricChange(
-                                              'church_prayer',
-                                            );
-                                          }}
-                                          activeOpacity={1}
-                                        >
-                                          <Image
-                                            source={prayerIcon}
-                                            style={
-                                              this.onCheckExistingHealthMetric(
-                                                'church_prayer',
-                                              )
-                                                ? styles.activeImage
-                                                : styles.inactiveImage
-                                            }
-                                          />
-                                        </TouchableOpacity>
-                                      </Col>
-                                    </Row>
-                                    <Row
-                                      size={40}
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
-                                    >
-                                      <Text
-                                        style={[
-                                          styles.toggleText,
-                                          this.onCheckExistingHealthMetric(
-                                            'church_prayer',
-                                          )
-                                            ? styles.activeToggleText
-                                            : styles.inactiveToggleText,
-                                        ]}
-                                      >
-                                        {i18n.t('groupDetailScreen.healthMetrics.prayer')}
-                                      </Text>
-                                    </Row>
-                                  </Col>
-                                </Row>
-                                <Row size={2} />
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.group.coaches.values.map(coach => `${coach.name}, `)}</Text>
                               </Col>
-                              <Col size={4} />
-                              <Col size={3}>
-                                <Row size={2} />
-                                <Row size={6}>
-                                  <Col>
-                                    <Row size={60}>
-                                      <Col>
-                                        <TouchableOpacity
-                                          onPress={() => {
-                                            this.onHealthMetricChange(
-                                              'church_leaders',
-                                            );
-                                          }}
-                                          activeOpacity={1}
-                                        >
-                                          <Image
-                                            source={leadersIcon}
-                                            style={
-                                              this.onCheckExistingHealthMetric(
-                                                'church_leaders',
-                                              )
-                                                ? styles.activeImage
-                                                : styles.inactiveImage
-                                            }
-                                          />
-                                        </TouchableOpacity>
-                                      </Col>
-                                    </Row>
-                                    <Row
-                                      size={40}
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
-                                    >
-                                      <Text
-                                        style={[
-                                          styles.toggleText,
-                                          this.onCheckExistingHealthMetric(
-                                            'church_leaders',
-                                          )
-                                            ? styles.activeToggleText
-                                            : styles.inactiveToggleText,
-                                        ]}
-                                      >
-                                        {i18n.t('groupDetailScreen.healthMetrics.leaders')}
-                                      </Text>
-                                    </Row>
-                                  </Col>
-                                </Row>
-                                <Row size={2} />
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('groupDetailScreen.groupCoach')}
+                                </Label>
                               </Col>
                             </Row>
-
-                            <Row size={5}>
-                              <Col size={2} />
-                              <Col size={3}>
-                                <Row size={4}>
-                                  <Col>
-                                    <Row size={60}>
-                                      <Col>
-                                        <TouchableOpacity
-                                          onPress={() => {
-                                            this.onHealthMetricChange(
-                                              'church_bible',
-                                            );
-                                          }}
-                                          activeOpacity={1}
-                                        >
-                                          <Image
-                                            source={bibleStudyIcon}
-                                            style={
-                                              this.onCheckExistingHealthMetric(
-                                                'church_bible',
-                                              )
-                                                ? styles.activeImage
-                                                : styles.inactiveImage
-                                            }
-                                          />
-                                        </TouchableOpacity>
-                                      </Col>
-                                    </Row>
-                                    <Row
-                                      size={40}
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
-                                    >
-                                      <Text
-                                        style={[
-                                          styles.toggleText,
-                                          this.onCheckExistingHealthMetric(
-                                            'church_bible',
-                                          )
-                                            ? styles.activeToggleText
-                                            : styles.inactiveToggleText,
-                                        ]}
-                                      >
-                                        {i18n.t('groupDetailScreen.healthMetrics.bibleStudy')}
-                                      </Text>
-                                    </Row>
-                                  </Col>
-                                </Row>
-                                <Row size={1} />
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  type="FontAwesome"
+                                  name="map-marker"
+                                  style={styles.formIcon}
+                                />
                               </Col>
-                              <Col size={2} />
-                              <Col size={3}>
-                                <Row size={1} />
-                                <Row size={4}>
-                                  <Col>
-                                    <Row size={60}>
-                                      <Col>
-                                        <TouchableOpacity
-                                          onPress={() => {
-                                            this.onHealthMetricChange(
-                                              'church_praise',
-                                            );
-                                          }}
-                                          activeOpacity={1}
-                                        >
-                                          <Image
-                                            source={praiseIcon}
-                                            style={
-                                              this.onCheckExistingHealthMetric(
-                                                'church_praise',
-                                              )
-                                                ? styles.activeImage
-                                                : styles.inactiveImage
-                                            }
-                                          />
-                                        </TouchableOpacity>
-                                      </Col>
-                                    </Row>
-                                    <Row
-                                      size={40}
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
-                                    >
-                                      <Text
-                                        style={[
-                                          styles.toggleText,
-                                          this.onCheckExistingHealthMetric(
-                                            'church_praise',
-                                          )
-                                            ? styles.activeToggleText
-                                            : styles.inactiveToggleText,
-                                        ]}
-                                      >
-                                        {i18n.t('groupDetailScreen.healthMetrics.praise')}
-                                      </Text>
-                                    </Row>
-                                  </Col>
-                                </Row>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.group.geonames.values.map(geoname => `${geoname.name}, `)}</Text>
                               </Col>
-                              <Col size={2} />
-                              <Col size={3}>
-                                <Row size={4}>
-                                  <Col>
-                                    <Row size={60}>
-                                      <Col>
-                                        <TouchableOpacity
-                                          onPress={() => {
-                                            this.onHealthMetricChange(
-                                              'church_sharing',
-                                            );
-                                          }}
-                                          activeOpacity={1}
-                                        >
-                                          <Image
-                                            source={sharingTheGospelIcon}
-                                            style={
-                                              this.onCheckExistingHealthMetric(
-                                                'church_sharing',
-                                              )
-                                                ? styles.activeImage
-                                                : styles.inactiveImage
-                                            }
-                                          />
-                                        </TouchableOpacity>
-                                      </Col>
-                                    </Row>
-                                    <Row
-                                      size={40}
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
-                                    >
-                                      <Text
-                                        style={[
-                                          styles.toggleText,
-                                          this.onCheckExistingHealthMetric(
-                                            'church_sharing',
-                                          )
-                                            ? styles.activeToggleText
-                                            : styles.inactiveToggleText,
-                                        ]}
-                                      >
-                                        {i18n.t('groupDetailScreen.healthMetrics.sharingGospel')}
-                                      </Text>
-                                    </Row>
-                                  </Col>
-                                </Row>
-                                <Row size={1} />
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('global.location')}
+                                </Label>
                               </Col>
-                              <Col size={2} />
                             </Row>
-                          </Col>
-                          <Col style={{ width: sideSize * 0.1 }} />
-                        </Row>
-                      </Row>
-                      <Row style={{ height: sideSize * 0.1 }} />
-                    </Col>
-                    <Col style={{ width: spacing }} />
-                  </Row>
-                  <Row style={{ height: spacing }} />
-                </Grid>
-              </ScrollView>
-            </Tab>
-            <Tab
-              heading={i18n.t('global.commentsActivity')}
-              tabStyle={[styles.tabStyle]}
-              textStyle={styles.textStyle}
-              activeTabStyle={styles.activeTabStyle}
-              activeTextStyle={styles.activeTextStyle}
-            >
-              <View style={{ flex: 1 }}>
-                <FlatList
-                  style={styles.root}
-                  ref={(flatList) => {
-                    commentsFlatList = flatList;
-                  }}
-                  data={this.state.comments.concat(this.state.activities).sort(
-                    (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
-                  )}
-                  extraData={this.state.comments.concat(this.state.activities).sort(
-                    (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
-                  )}
-                  ItemSeparatorComponent={() => (
-                    <View
-                      style={{
-                        height: 1,
-                        backgroundColor: '#CCCCCC',
-                      }}
-                    />
-                  )}
-                  keyExtractor={item => item.ID}
-                  renderItem={(item) => {
-                    const commentOrActivity = item.item;
-                    return this.renderActivityOrCommentRow(
-                      commentOrActivity,
-                    );
-                  }}
-                  refreshControl={(
-                    <RefreshControl
-                      refreshing={(this.state.loadingComments || this.state.loadingActivities)}
-                      onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID)}
-                    />
-                  )}
-                  onScroll={({ nativeEvent }) => {
-                    const {
-                      loadingMoreComments, commentsOffset, loadingMoreActivities, activitiesOffset,
-                    } = this.state;
-                    const fL = nativeEvent;
-                    const toEnd = (fL.contentSize.height - fL.contentOffset.y);
-                    if (toEnd < 600) {
-                      if (!loadingMoreComments) {
-                        if (commentsOffset < this.state.totalComments) {
-                          this.setState({
-                            loadingMoreComments: true,
-                          }, () => {
-                            this.getGroupComments(this.state.group.ID);
-                          });
-                        }
-                      }
-                      if (!loadingMoreActivities) {
-                        if (activitiesOffset < this.state.totalActivities) {
-                          this.setState({
-                            loadingMoreActivities: true,
-                          }, () => {
-                            this.getGroupActivities(this.state.group.ID);
-                          });
-                        }
-                      }
-                    }
-                  }}
-                />
-                <KeyboardAccessory>
-                  <View
-                    style={{
-                      backgroundColor: 'white',
-                      flexDirection: 'row',
-                    }}
-                  >
-                    <TextInput
-                      placeholder={i18n.t('global.writeYourCommentNoteHere')}
-                      value={this.state.comment}
-                      onChangeText={this.setComment}
-                      style={{
-                        borderColor: '#B4B4B4',
-                        borderRadius: 5,
-                        borderWidth: 1,
-                        flex: 1,
-                        margin: 10,
-                        paddingLeft: 5,
-                        paddingRight: 5,
-                      }}
-                    />
-                    <TouchableOpacity
-                      onPress={() => this.onSaveComment()}
-                      style={{
-                        backgroundColor: Colors.tintColor,
-                        borderRadius: 80,
-                        height: 40,
-                        margin: 10,
-                        paddingTop: 7,
-                        paddingLeft: 10,
-                        width: 40,
-                      }}
-                    >
-                      <Icon
-                        android="md-send"
-                        ios="ios-send"
-                        style={{ color: 'white', fontSize: 25 }}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </KeyboardAccessory>
-              </View>
-            </Tab>
-            <Tab
-              heading={i18n.t('global.groups')}
-              tabStyle={styles.tabStyle}
-              textStyle={styles.textStyle}
-              activeTabStyle={styles.activeTabStyle}
-              activeTextStyle={styles.activeTextStyle}
-            >
-              <KeyboardShift>
-                {() => (
-                  <ScrollView
-                    keyboardShouldPersistTaps="handled"
-                    refreshControl={(
-                      <RefreshControl
-                        refreshing={this.state.loading}
-                        onRefresh={() => this.onRefresh(this.state.group.ID)}
-                      />
-                    )}
-                  >
-                    {this.state.dataRetrieved && (
-                      <View
-                        style={styles.formContainer}
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  type="FontAwesome"
+                                  name="globe"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.group.people_groups.values.map(peopleGroup => `${peopleGroup.name}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('global.peopleGroup')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  type="Entypo"
+                                  name="home"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.group.contact_address.map(contactAddress => `${contactAddress.value}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('global.address')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  type="MaterialCommunityIcons"
+                                  name="calendar-import"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.group.start_date}
+                                </Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('groupDetailScreen.startDate')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Icon
+                                  type="MaterialCommunityIcons"
+                                  name="calendar-import"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.group.end_date}
+                                </Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('groupDetailScreen.endDate')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                          </View>
+                        </ScrollView>
+                      </Tab>
+                      <Tab
+                        heading={i18n.t('global.progress')}
+                        tabStyle={styles.tabStyle}
+                        textStyle={styles.textStyle}
+                        activeTabStyle={styles.activeTabStyle}
+                        activeTextStyle={styles.activeTextStyle}
                       >
-                        {!this.state.onlyView && (
-                          <Grid>
-                            <Row style={styles.formRow}>
+                        <ScrollView
+                          keyboardShouldPersistTaps="handled"
+                          refreshControl={(
+                            <RefreshControl
+                              refreshing={this.state.loading}
+                              onRefresh={() => this.onRefresh(this.state.group.ID)}
+                            />
+                          )}
+                        >
+                          <View
+                            style={[styles.formContainer, { marginTop: 10 }]}
+                          >
+                            <Grid>
+                              <Row>
+                                <Col />
+                                <Col>
+                                  <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
+                                    Edit
+                                  </Text>
+                                </Col>
+                              </Row>
+                            </Grid>
+                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
                               <Col style={styles.formIconLabel}>
                                 <Icon
-                                  active
-                                  type="FontAwesome"
-                                  name="users"
+                                  android="md-people"
+                                  ios="ios-people"
                                   style={styles.formIcon}
                                 />
                               </Col>
-                              <Col />
-                              <Col style={styles.formIconLabel}>
-                                <Label style={styles.formLabel}>
-                                  {i18n.t('groupDetailScreen.parentGroup')}
-                                </Label>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{i18n.t(`global.groupType.${this.state.group.group_type}`)}</Text>
                               </Col>
-                            </Row>
-                            <Row>
-                              <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                                <Selectize
-                                  ref={(selectize) => { this.parentGroupSelectizeRef = selectize; }}
-                                  itemId="value"
-                                  items={this.state.groups}
-                                  selectedItems={this.state.group.parent_groups.values}
-                                  textInputProps={{
-                                    placeholder: i18n.t('groupDetailScreen.searchGroups'),
-                                  }}
-                                  renderRow={(id, onPress, item) => (
-                                    <TouchableOpacity
-                                      activeOpacity={0.6}
-                                      key={id}
-                                      onPress={onPress}
-                                      style={{
-                                        paddingVertical: 8,
-                                        paddingHorizontal: 10,
-                                      }}
-                                    >
-                                      <View style={{
-                                        flexDirection: 'row',
-                                      }}
-                                      >
-                                        <Text style={{
-                                          color: 'rgba(0, 0, 0, 0.87)',
-                                          fontSize: 14,
-                                          lineHeight: 21,
-                                        }}
-                                        >
-                                          {item.name}
-                                        </Text>
-                                      </View>
-                                    </TouchableOpacity>
-                                  )}
-                                  renderChip={(id, onClose, item, style, iconStyle) => (
-                                    <Chip
-                                      key={id}
-                                      iconStyle={iconStyle}
-                                      onClose={onClose}
-                                      text={item.name}
-                                      style={style}
-                                    />
-                                  )}
-                                  filterOnKey="name"
-                                  keyboardShouldPersistTaps
-                                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                />
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>{i18n.t('groupDetailScreen.groupType')}</Label>
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                            <Label
+                              style={[
+                                styles.formLabel,
+                                { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
+                              ]}
+                            >
+                              {i18n.t('groupDetailScreen.churchHealth')}
+                            </Label>
+                          </View>
+                          {this.renderHealthMilestones()}
+                        </ScrollView>
+                      </Tab>
+                      <Tab
+                        heading={i18n.t('global.commentsActivity')}
+                        tabStyle={[styles.tabStyle]}
+                        textStyle={styles.textStyle}
+                        activeTabStyle={styles.activeTabStyle}
+                        activeTextStyle={styles.activeTextStyle}
+                      >
+                        <View style={{ flex: 1 }}>
+                          <FlatList
+                            style={styles.root}
+                            ref={(flatList) => {
+                              commentsFlatList = flatList;
+                            }}
+                            data={this.state.comments.concat(this.state.activities).sort(
+                              (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
+                            )}
+                            extraData={this.state.comments.concat(this.state.activities).sort(
+                              (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
+                            )}
+                            ItemSeparatorComponent={() => (
+                              <View
+                                style={{
+                                  height: 1,
+                                  backgroundColor: '#CCCCCC',
+                                }}
+                              />
+                            )}
+                            keyExtractor={item => item.ID}
+                            renderItem={(item) => {
+                              const commentOrActivity = item.item;
+                              return this.renderActivityOrCommentRow(
+                                commentOrActivity,
+                              );
+                            }}
+                            refreshControl={(
+                              <RefreshControl
+                                refreshing={(this.state.loadComments || this.state.loadActivities)}
+                                onRefresh={() => this.onRefreCommenActivities(this.state.group.ID)}
+                              />
+                            )}
+                            onScroll={({ nativeEvent }) => {
+                              const {
+                                loadMoreComments, commeOffset, loadMoreActivities, activitiesOffset,
+                              } = this.state;
+                              const fL = nativeEvent;
+                              const toEnd = (fL.contentSize.height - fL.contentOffset.y);
+                              if (toEnd < 600) {
+                                if (!loadMoreComments) {
+                                  if (commeOffset < this.state.totalComments) {
+                                    this.setState({
+                                      loadMoreComments: true,
+                                    }, () => {
+                                      this.getGroupComments(this.state.group.ID);
+                                    });
+                                  }
+                                }
+                                if (!loadMoreActivities) {
+                                  if (activitiesOffset < this.state.totalActivities) {
+                                    this.setState({
+                                      loadMoreActivities: true,
+                                    }, () => {
+                                      this.getGroupActivities(this.state.group.ID);
+                                    });
+                                  }
+                                }
+                              }
+                            }}
+                          />
+                          <KeyboardAccessory>
+                            <View
+                              style={{
+                                backgroundColor: 'white',
+                                flexDirection: 'row',
+                              }}
+                            >
+                              <TextInput
+                                placeholder={i18n.t('global.writeYourCommentNoteHere')}
+                                value={this.state.comment}
+                                onChangeText={this.setComment}
+                                style={{
+                                  borderColor: '#B4B4B4',
+                                  borderRadius: 5,
+                                  borderWidth: 1,
+                                  flex: 1,
+                                  margin: 10,
+                                  paddingLeft: 5,
+                                  paddingRight: 5,
+                                }}
+                              />
+                              <TouchableOpacity
+                                onPress={() => this.onSaveComment()}
+                                style={{
+                                  backgroundColor: Colors.tintColor,
+                                  borderRadius: 80,
+                                  height: 40,
+                                  margin: 10,
+                                  paddingTop: 7,
+                                  paddingLeft: 10,
+                                  width: 40,
+                                }}
+                              >
                                 <Icon
-                                  active
-                                  type="FontAwesome"
-                                  name="users"
-                                  style={styles.formIcon}
+                                  android="md-send"
+                                  ios="ios-send"
+                                  style={{ color: 'white', fontSize: 25 }}
                                 />
-                              </Col>
-                              <Col />
-                              <Col style={styles.formIconLabel}>
-                                <Label style={styles.formLabel}>
-                                  {i18n.t('groupDetailScreen.peerGroup')}
-                                </Label>
-                              </Col>
-                            </Row>
+                              </TouchableOpacity>
+                            </View>
+                          </KeyboardAccessory>
+                        </View>
+                      </Tab>
+                      <Tab
+                        heading={i18n.t('global.groups')}
+                        tabStyle={styles.tabStyle}
+                        textStyle={styles.textStyle}
+                        activeTabStyle={styles.activeTabStyle}
+                        activeTextStyle={styles.activeTextStyle}
+                      >
+                        <ScrollView
+                          keyboardShouldPersistTaps="handled"
+                          refreshControl={(
+                            <RefreshControl
+                              refreshing={this.state.loading}
+                              onRefresh={() => this.onRefresh(this.state.group.ID)}
+                            />
+                          )}
+                        >
+                          <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
                             <Row>
-                              <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                                <Selectize
-                                  ref={(selectize) => { this.peerGroupsSelectizeRef = selectize; }}
-                                  itemId="value"
-                                  items={this.state.groups}
-                                  selectedItems={this.state.group.peer_groups.values}
-                                  textInputProps={{
-                                    placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
-                                  }}
-                                  renderRow={(id, onPress, item) => (
-                                    <TouchableOpacity
-                                      activeOpacity={0.6}
-                                      key={id}
-                                      onPress={onPress}
-                                      style={{
-                                        paddingVertical: 8,
-                                        paddingHorizontal: 10,
-                                      }}
-                                    >
-                                      <View style={{
-                                        flexDirection: 'row',
-                                      }}
-                                      >
-                                        <Text style={{
-                                          color: 'rgba(0, 0, 0, 0.87)',
-                                          fontSize: 14,
-                                          lineHeight: 21,
-                                        }}
-                                        >
-                                          {item.name}
-                                        </Text>
-                                      </View>
-                                    </TouchableOpacity>
-                                  )}
-                                  renderChip={(id, onClose, item, style, iconStyle) => (
-                                    <Chip
-                                      key={id}
-                                      iconStyle={iconStyle}
-                                      onClose={onClose}
-                                      text={item.name}
-                                      style={style}
-                                    />
-                                  )}
-                                  filterOnKey="name"
-                                  keyboardShouldPersistTaps
-                                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                />
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
-                                <Icon
-                                  active
-                                  type="FontAwesome"
-                                  name="users"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
                               <Col />
-                              <Col style={styles.formIconLabel}>
-                                <Label style={styles.formLabel}>
-                                  {i18n.t('groupDetailScreen.childGroup')}
-                                </Label>
+                              <Col>
+                                <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
+                                  Edit
+                                </Text>
                               </Col>
                             </Row>
-                            <Row>
-                              <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                                <Selectize
-                                  ref={(selectize) => { this.childGroupsSelectizeRef = selectize; }}
-                                  itemId="value"
-                                  items={this.state.groups}
-                                  selectedItems={this.state.group.child_groups.values}
-                                  textInputProps={{
-                                    placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
-                                  }}
-                                  renderRow={(id, onPress, item) => (
-                                    <TouchableOpacity
-                                      activeOpacity={0.6}
-                                      key={id}
-                                      onPress={onPress}
-                                      style={{
-                                        paddingVertical: 8,
-                                        paddingHorizontal: 10,
-                                      }}
-                                    >
-                                      <View style={{
-                                        flexDirection: 'row',
-                                      }}
-                                      >
-                                        <Text style={{
-                                          color: 'rgba(0, 0, 0, 0.87)',
-                                          fontSize: 14,
-                                          lineHeight: 21,
-                                        }}
-                                        >
-                                          {item.name}
-                                        </Text>
-                                      </View>
-                                    </TouchableOpacity>
-                                  )}
-                                  renderChip={(id, onClose, item, style, iconStyle) => (
-                                    <Chip
-                                      key={id}
-                                      iconStyle={iconStyle}
-                                      onClose={onClose}
-                                      text={item.name}
-                                      style={style}
-                                    />
-                                  )}
-                                  filterOnKey="name"
-                                  keyboardShouldPersistTaps
-                                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                />
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
                           </Grid>
-                        )}
-                        {this.state.onlyView && (
-                          <Grid>
+                          <Grid style={styles.formContainer}>
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>
@@ -2599,73 +2190,776 @@ class GroupDetailScreen extends React.Component {
                             </Row>
                             <View style={[styles.formDivider, styles.formDivider2]} />
                           </Grid>
-                        )}
-                      </View>
-                    )}
-                  </ScrollView>
+                        </ScrollView>
+                      </Tab>
+                    </Tabs>
+                  </View>
                 )}
-              </KeyboardShift>
-            </Tab>
-          </Tabs>
-        )}
-        {!this.state.group.ID && this.state.loadedLocal && (
-          <ScrollView>
-            <View style={styles.formContainer}>
-              <Grid>
-                <Row>
-                  <Label
-                    style={[
-                      styles.formLabel,
-                      { marginTop: 10, marginBottom: 5 },
-                    ]}
-                  >
-                    {i18n.t('groupDetailScreen.groupName')}
-                  </Label>
-                </Row>
-                <Row>
-                  <Input
-                    placeholder={i18n.t('global.requiredField')}
-                    value={this.state.group.title}
-                    onChangeText={this.setGroupName}
-                    style={{
-                      borderColor: '#B4B4B4',
-                      borderWidth: 1,
-                      borderRadius: 5,
-                      borderStyle: 'solid',
-                      fontSize: 13,
-                      paddingLeft: 15,
-                    }}
-                  />
-                </Row>
-                <Row>
-                  <Label
-                    style={[
-                      styles.formLabel,
-                      { marginTop: 10, marginBottom: 5 },
-                    ]}
-                  >
-                    {i18n.t('global.requiredField')}
-                  </Label>
-                </Row>
-                <Row>
-                  <Picker
-                    mode="dropdown"
-                    selectedValue={this.state.group.group_type}
-                    onValueChange={this.setGroupType}
-                  >
-                    <Picker.Item label={i18n.t('global.groupType.pre-group')} value="pre-group" />
-                    <Picker.Item label={i18n.t('global.groupType.group')} value="group" />
-                    <Picker.Item label={i18n.t('global.groupType.church')} value="church" />
-                    <Picker.Item label={i18n.t('global.groupType.team')} value="team" />
-                  </Picker>
-                </Row>
-              </Grid>
-            </View>
-          </ScrollView>
+                {!this.state.onlyView && (
+                  <KeyboardShift>
+                    {() => (
+                      <Container>
+                        <Content>
+                          <ScrollView keyboardShouldPersistTaps="handled">
+                            {this.state.currentTabIndex === 0 && (
+                              <View style={styles.formContainer}>
+                                <TouchableOpacity
+                                  onPress={() => {
+                                    this.updateShowAssignedToModal(true);
+                                  }}
+                                >
+                                  <Row style={{ paddingTop: 30 }}>
+                                    <Col style={styles.formIconLabel}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { marginRight: 10 }]}
+                                      />
+                                    </Col>
+                                    <Col>
+                                      <Label
+                                        style={styles.formLabel}
+                                      >
+                                        {i18n.t('global.assignedTo')}
+                                      </Label>
+                                    </Col>
+                                  </Row>
+                                  <Row>
+                                    <Col style={styles.formIconLabel}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
+                                      />
+                                    </Col>
+                                    <Col>
+                                      {this.showAssignedUser()}
+                                      <ModalFilterPicker
+                                        visible={this.state.showAssignedToModal}
+                                        onSelect={this.onSelectAssignedTo}
+                                        onCancel={this.onCancelAssignedTo}
+                                        options={this.state.users}
+                                      />
+                                    </Col>
+                                  </Row>
+                                </TouchableOpacity>
+                                <Row style={{ paddingTop: 30 }}>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="black-tie"
+                                      style={[styles.formIcon, { marginRight: 10 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('groupDetailScreen.groupCoach')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="black-tie"
+                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { this.coachSelectizeRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.usersContacts}
+                                      selectedItems={this.state.group.coaches.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('groupDetailScreen.selectCoaches'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+                                <Row style={{ paddingTop: 30 }}>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="map-marker"
+                                      style={[styles.formIcon, { marginRight: 10 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('global.location')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="map-marker"
+                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { this.geonamSelectizeRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.geonames}
+                                      selectedItems={this.state.group.geonames.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('groupDetailScreen.selectGeonames'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+                                <Row style={{ paddingTop: 30 }}>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="globe"
+                                      style={[styles.formIcon, { marginRight: 10 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('global.peopleGroup')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="globe"
+                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { this.peopGroupSelectRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.peopleGroups}
+                                      selectedItems={this.state.group.people_groups.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('global.selectPeopleGroups'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+                                <Row style={{ paddingTop: 30 }}>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="Entypo"
+                                      name="home"
+                                      style={[styles.formIcon, { marginRight: 10 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('global.address')}
+                                    </Label>
+                                  </Col>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      android="md-add"
+                                      ios="ios-add"
+                                      style={[styles.formIcon, { fontSize: 30, marginRight: 0 }]}
+                                      onPress={this.onAddAddressField}
+                                    />
+                                  </Col>
+                                </Row>
+                                {this.state.group.contact_address.map(
+                                  (address, index) => (!address.delete ? (
+                                    <Row
+                                      key={index.toString()}
+                                    >
+                                      <Col style={styles.formIconLabel}>
+                                        <Icon
+                                          type="Entypo"
+                                          name="home"
+                                          style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
+                                        />
+                                      </Col>
+                                      <Col>
+                                        <Input
+                                          multiline
+                                          value={address.value}
+                                          onChangeText={(value) => {
+                                            this.onAddressFieldChange(
+                                              value,
+                                              index,
+                                              address.key,
+                                              this,
+                                            );
+                                          }}
+                                          style={styles.inputContactAddress}
+                                        />
+                                      </Col>
+                                      <Col style={styles.formIconLabel}>
+                                        <Icon
+                                          android="md-remove"
+                                          ios="ios-remove"
+                                          style={styles.addRemoveIcons}
+                                          onPress={() => {
+                                            this.onRemoveAddressField(
+                                              index,
+                                              this,
+                                            );
+                                          }}
+                                        />
+                                      </Col>
+                                    </Row>
+                                  ) : null),
+                                )}
+                                <Row style={{ paddingTop: 30 }}>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="MaterialCommunityIcons"
+                                      name="calendar-import"
+                                      style={[styles.formIcon, { marginRight: 10 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('groupDetailScreen.startDate')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="MaterialCommunityIcons"
+                                      name="calendar-import"
+                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <DatePicker
+                                      onDateChange={this.setGroupStartDate}
+                                      defaultDate={(this.state.group.start_date.length > 0) ? new Date(this.state.group.start_date) : ''}
+                                    />
+                                  </Col>
+                                </Row>
+                                <Row style={{ paddingTop: 30 }}>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="MaterialCommunityIcons"
+                                      name="calendar-export"
+                                      style={[styles.formIcon, { marginRight: 10 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('groupDetailScreen.endDate')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="MaterialCommunityIcons"
+                                      name="calendar-export"
+                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <DatePicker
+                                      onDateChange={this.setEndDate}
+                                      defaultDate={(this.state.group.end_date.length > 0) ? new Date(this.state.group.end_date) : ''}
+                                    />
+                                  </Col>
+                                </Row>
+                              </View>
+                            )}
+                            {this.state.currentTabIndex === 1 && (
+                              <View style={styles.formContainer}>
+                                <Row style={{ paddingTop: 30 }}>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      android="md-people"
+                                      ios="ios-people"
+                                      style={[styles.formIcon, { marginRight: 10 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('groupDetailScreen.groupType')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      android="md-people"
+                                      ios="ios-people"
+                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Picker
+                                      mode="dropdown"
+                                      selectedValue={this.state.group.group_type}
+                                      onValueChange={this.setGroupType}
+                                    >
+                                      <Picker.Item label={i18n.t('global.groupType.pre-group')} value="pre-group" />
+                                      <Picker.Item label={i18n.t('global.groupType.group')} value="group" />
+                                      <Picker.Item label={i18n.t('global.groupType.church')} value="church" />
+                                      <Picker.Item label={i18n.t('global.groupType.team')} value="team" />
+                                    </Picker>
+                                  </Col>
+                                </Row>
+                                <Label
+                                  style={[
+                                    styles.formLabel,
+                                    { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
+                                  ]}
+                                >
+                                  {i18n.t('groupDetailScreen.churchHealth')}
+                                </Label>
+                              </View>
+                            )}
+                            {this.state.currentTabIndex === 1 && this.renderHealthMilestones()}
+                            {this.state.currentTabIndex === 3 && (
+                              <View style={styles.formContainer}>
+
+                                <Row style={{ paddingTop: 30 }}>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="users"
+                                      style={[styles.formIcon, { marginRight: 10 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('groupDetailScreen.parentGroup')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="users"
+                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { this.parenGroupSelecRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.groups}
+                                      selectedItems={this.state.group.parent_groups.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('groupDetailScreen.searchGroups'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+
+                                <Row style={{ paddingTop: 30 }}>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="users"
+                                      style={[styles.formIcon, { marginRight: 10 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('groupDetailScreen.peerGroup')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="users"
+                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { this.peerGrouSelectiRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.groups}
+                                      selectedItems={this.state.group.peer_groups.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+
+                                <Row style={{ paddingTop: 30 }}>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="users"
+                                      style={[styles.formIcon, { marginRight: 10 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('groupDetailScreen.childGroup')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="users"
+                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { this.childGrouSelectRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.groups}
+                                      selectedItems={this.state.group.child_groups.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+
+                              </View>
+                            )}
+                          </ScrollView>
+                        </Content>
+                        <Footer>
+                          <FooterTab>
+                            <Button
+                              onPress={() => this.onDisableEdit()}
+                              style={{
+                                height: 60, width: '50%', backgroundColor: '#FFFFFF',
+                              }}
+                            >
+                              <Text style={{ color: Colors.tintColor, fontWeight: 'bold' }}>Cancel</Text>
+                            </Button>
+                            <Button
+                              style={{
+                                height: 60, width: '50%', backgroundColor: Colors.tintColor,
+                              }}
+                              onPress={this.onSaveGroup}
+                            >
+                              <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Save</Text>
+                            </Button>
+                          </FooterTab>
+                        </Footer>
+                      </Container>
+                    )}
+                  </KeyboardShift>
+                )}
+              </View>
+            ) : (
+              <ScrollView>
+                <View style={styles.formContainer}>
+                  <Grid>
+                    <Row>
+                      <Label
+                        style={[
+                          styles.formLabel,
+                          { marginTop: 10, marginBottom: 5 },
+                        ]}
+                      >
+                        {i18n.t('groupDetailScreen.groupName')}
+                      </Label>
+                    </Row>
+                    <Row>
+                      <Input
+                        placeholder={i18n.t('global.requiredField')}
+                        value={this.state.group.title}
+                        onChangeText={this.setGroupName}
+                        style={{
+                          borderColor: '#B4B4B4',
+                          borderWidth: 1,
+                          borderRadius: 5,
+                          borderStyle: 'solid',
+                          fontSize: 13,
+                          paddingLeft: 15,
+                        }}
+                      />
+                    </Row>
+                    <Row>
+                      <Label
+                        style={[
+                          styles.formLabel,
+                          { marginTop: 10, marginBottom: 5 },
+                        ]}
+                      >
+                        {i18n.t('global.requiredField')}
+                      </Label>
+                    </Row>
+                    <Row>
+                      <Picker
+                        mode="dropdown"
+                        selectedValue={this.state.group.group_type}
+                        onValueChange={this.setGroupType}
+                      >
+                        <Picker.Item label={i18n.t('global.groupType.pre-group')} value="pre-group" />
+                        <Picker.Item label={i18n.t('global.groupType.group')} value="group" />
+                        <Picker.Item label={i18n.t('global.groupType.church')} value="church" />
+                        <Picker.Item label={i18n.t('global.groupType.team')} value="team" />
+                      </Picker>
+                    </Row>
+                  </Grid>
+                  <Button block style={styles.saveButton} onPress={this.onSaveGroup}>
+                    <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Save</Text>
+                  </Button>
+                </View>
+              </ScrollView>
+            )}
+          </View>
         )}
         {successToast}
         {errorToast}
-      </Container>
+      </View>
     );
   }
 }

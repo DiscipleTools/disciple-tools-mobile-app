@@ -144,6 +144,7 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "groupType": "Group Type",
+    "churchHealth": "Church Health",
     "healthMetrics": {
       "giving": "Giving",
       "fellowship": "Fellowship",
