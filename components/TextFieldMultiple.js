@@ -84,8 +84,8 @@ class TextFieldMultiple extends Component {
   constructor(props) {
     super(props);
     const { textInputValue } = this.props;
-    const existValues = textInputValue.filter(value => !value.delete);
-    if (existValues[existValues.length - 1]) {
+    const existValues = (textInputValue || []).filter(value => !value.delete);
+    if (!existValues || !existValues.length || existValues[existValues.length - 1].value) {
       textInputValue.push({
         value: '',
       });
@@ -241,7 +241,7 @@ TextFieldMultiple.defaultProps = {
   labelStyle: null,
   iconName: null,
   iconType: null,
-  textInputValue: null,
+  textInputValue: [],
   placeholder: null,
 
 };
