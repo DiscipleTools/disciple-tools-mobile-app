@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   inactiveImage: {
-    opacity: 0.4,
+    opacity: 0.15,
     height: '100%',
     width: '100%',
   },
@@ -1646,7 +1646,6 @@ class GroupDetailScreen extends React.Component {
                       tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
                       onChangeTab={this.tabChanged}
                       locked={this.state.groupsTabActive && this.state.onlyView}
-                      page={this.state.currentTabIndex}
                     >
                       <Tab
                         heading={i18n.t('global.details')}
@@ -1669,7 +1668,7 @@ class GroupDetailScreen extends React.Component {
                               <Col />
                               <Col>
                                 <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
-                                  Edit
+                                  {i18n.t('global.edit')}
                                 </Text>
                               </Col>
                             </Row>
@@ -1859,7 +1858,7 @@ class GroupDetailScreen extends React.Component {
                                 <Col />
                                 <Col>
                                   <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
-                                    Edit
+                                    {i18n.t('global.edit')}
                                   </Text>
                                 </Col>
                               </Row>
@@ -1911,6 +1910,7 @@ class GroupDetailScreen extends React.Component {
                             extraData={this.state.comments.concat(this.state.activities).sort(
                               (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
                             )}
+                            inverted
                             ItemSeparatorComponent={() => (
                               <View
                                 style={{
@@ -1937,8 +1937,13 @@ class GroupDetailScreen extends React.Component {
                                 loadMoreComments, commeOffset, loadMoreActivities, activitiesOffset,
                               } = this.state;
                               const fL = nativeEvent;
-                              const toEnd = (fL.contentSize.height - fL.contentOffset.y);
-                              if (toEnd < 600) {
+                              const contentOffsetY = fL.contentOffset.y;
+                              const layoutMeasurementHeight = fL.layoutMeasurement.height;
+                              const contentSizeHeight = fL.contentSize.height;
+                              const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
+                              const distanceToStart = contentSizeHeight - heightOffsetSum;
+
+                              if (distanceToStart < 100) {
                                 if (!loadMoreComments) {
                                   if (commeOffset < this.state.totalComments) {
                                     this.setState({
@@ -2024,7 +2029,7 @@ class GroupDetailScreen extends React.Component {
                               <Col />
                               <Col>
                                 <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
-                                  Edit
+                                  {i18n.t('global.edit')}
                                 </Text>
                               </Col>
                             </Row>
@@ -2086,59 +2091,6 @@ class GroupDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={styles.formIconLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('groupDetailScreen.peerGroup')}
-                                </Label>
-                              </Col>
-                              <Col />
-                            </Row>
-                            <Row style={{ height: circleSideSize, overflowX: 'auto' }}>
-                              <ScrollView horizontal>
-                                {this.state.group.peer_groups.values.map((peerGroup, index) => (
-                                  <Col key={index.toString()} style={styles.groupCircleContainer}>
-                                    {(index % 2 === 0) ? (
-                                      <Image
-                                        source={groupCircleIcon}
-                                        style={styles.groupCircle}
-                                      />
-                                    ) : (
-                                      <Image
-                                        source={groupDottedCircleIcon}
-                                        style={styles.groupCircle}
-                                      />
-                                    )}
-                                    <Image
-                                      source={swimmingPoolIcon}
-                                      style={styles.groupCenterIcon}
-                                    />
-                                    <Row
-                                      style={styles.groupCircleName}
-                                    >
-                                      <Text style={{ fontSize: 13 }}>{peerGroup.name}</Text>
-                                    </Row>
-                                    <Row
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
-                                    >
-                                      <Text>2</Text>
-                                    </Row>
-                                    <Row
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
-                                    >
-                                      <Text>4</Text>
-                                    </Row>
-                                  </Col>
-                                ))}
-                              </ScrollView>
-                            </Row>
-                            <View style={[styles.formDivider, styles.formDivider2]} />
-                            <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
-                                <Label style={styles.formLabel}>
                                   {i18n.t('groupDetailScreen.childGroup')}
                                 </Label>
                               </Col>
@@ -2167,6 +2119,59 @@ class GroupDetailScreen extends React.Component {
                                       style={styles.groupCircleName}
                                     >
                                       <Text style={{ fontSize: 13 }}>{childGroup.name}</Text>
+                                    </Row>
+                                    <Row
+                                      style={{
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                      }}
+                                    >
+                                      <Text>2</Text>
+                                    </Row>
+                                    <Row
+                                      style={{
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                      }}
+                                    >
+                                      <Text>4</Text>
+                                    </Row>
+                                  </Col>
+                                ))}
+                              </ScrollView>
+                            </Row>
+                            <View style={[styles.formDivider, styles.formDivider2]} />
+                            <Row style={styles.formRow}>
+                              <Col style={styles.formIconLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('groupDetailScreen.peerGroup')}
+                                </Label>
+                              </Col>
+                              <Col />
+                            </Row>
+                            <Row style={{ height: circleSideSize, overflowX: 'auto' }}>
+                              <ScrollView horizontal>
+                                {this.state.group.peer_groups.values.map((peerGroup, index) => (
+                                  <Col key={index.toString()} style={styles.groupCircleContainer}>
+                                    {(index % 2 === 0) ? (
+                                      <Image
+                                        source={groupCircleIcon}
+                                        style={styles.groupCircle}
+                                      />
+                                    ) : (
+                                      <Image
+                                        source={groupDottedCircleIcon}
+                                        style={styles.groupCircle}
+                                      />
+                                    )}
+                                    <Image
+                                      source={swimmingPoolIcon}
+                                      style={styles.groupCenterIcon}
+                                    />
+                                    <Row
+                                      style={styles.groupCircleName}
+                                    >
+                                      <Text style={{ fontSize: 13 }}>{peerGroup.name}</Text>
                                     </Row>
                                     <Row
                                       style={{
@@ -2732,80 +2737,6 @@ class GroupDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('groupDetailScreen.peerGroup')}
-                                    </Label>
-                                  </Col>
-                                </Row>
-                                <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="users"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
-                                  </Col>
-                                  <Col>
-                                    <Selectize
-                                      ref={(selectize) => { this.peerGrouSelectiRef = selectize; }}
-                                      itemId="value"
-                                      items={this.state.groups}
-                                      selectedItems={this.state.group.peer_groups.values}
-                                      textInputProps={{
-                                        placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
-                                      }}
-                                      renderRow={(id, onPress, item) => (
-                                        <TouchableOpacity
-                                          activeOpacity={0.6}
-                                          key={id}
-                                          onPress={onPress}
-                                          style={{
-                                            paddingVertical: 8,
-                                            paddingHorizontal: 10,
-                                          }}
-                                        >
-                                          <View style={{
-                                            flexDirection: 'row',
-                                          }}
-                                          >
-                                            <Text style={{
-                                              color: 'rgba(0, 0, 0, 0.87)',
-                                              fontSize: 14,
-                                              lineHeight: 21,
-                                            }}
-                                            >
-                                              {item.name}
-                                            </Text>
-                                          </View>
-                                        </TouchableOpacity>
-                                      )}
-                                      renderChip={(id, onClose, item, style, iconStyle) => (
-                                        <Chip
-                                          key={id}
-                                          iconStyle={iconStyle}
-                                          onClose={onClose}
-                                          text={item.name}
-                                          style={style}
-                                        />
-                                      )}
-                                      filterOnKey="name"
-                                      keyboardShouldPersistTaps
-                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                    />
-                                  </Col>
-                                </Row>
-
-                                <Row style={{ paddingTop: 30 }}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="users"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
-                                  </Col>
-                                  <Col>
-                                    <Label
-                                      style={styles.formLabel}
-                                    >
                                       {i18n.t('groupDetailScreen.childGroup')}
                                     </Label>
                                   </Col>
@@ -2867,7 +2798,79 @@ class GroupDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-
+                                <Row style={{ paddingTop: 30 }}>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="users"
+                                      style={[styles.formIcon, { marginRight: 10 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('groupDetailScreen.peerGroup')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      type="FontAwesome"
+                                      name="users"
+                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
+                                    />
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { this.peerGrouSelectiRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.groups}
+                                      selectedItems={this.state.group.peer_groups.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
                               </View>
                             )}
                           </ScrollView>
@@ -2880,7 +2883,7 @@ class GroupDetailScreen extends React.Component {
                                 height: 60, width: '50%', backgroundColor: '#FFFFFF',
                               }}
                             >
-                              <Text style={{ color: Colors.tintColor, fontWeight: 'bold' }}>Cancel</Text>
+                              <Text style={{ color: Colors.tintColor, fontWeight: 'bold' }}>{i18n.t('global.cancel')}</Text>
                             </Button>
                             <Button
                               style={{
@@ -2888,7 +2891,7 @@ class GroupDetailScreen extends React.Component {
                               }}
                               onPress={this.onSaveGroup}
                             >
-                              <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Save</Text>
+                              <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
                             </Button>
                           </FooterTab>
                         </Footer>

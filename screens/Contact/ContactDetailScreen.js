@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     opacity: 1,
   },
   progressIconInactive: {
-    opacity: 0.4,
+    opacity: 0.15,
   },
   progressIconText: {
     fontSize: 9,
@@ -655,35 +655,35 @@ class ContactDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-            <Grid>
-              <Row>
-                <Col>
-                  <Text style={styles.name}>{commentOrActivity.author}</Text>
-                </Col>
-                <Col style={{ width: 110 }}>
-                  <Text style={styles.time}>
-                    {this.onFormatDateToView(commentOrActivity.date)}
-                  </Text>
-                </Col>
-              </Row>
-            </Grid>
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.author}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
           )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-            <Grid>
-              <Row>
-                <Col>
-                  <Text style={styles.name}>{commentOrActivity.name}</Text>
-                </Col>
-                <Col style={{ width: 110 }}>
-                  <Text style={styles.time}>
-                    {this.onFormatDateToView(commentOrActivity.date)}
-                  </Text>
-                </Col>
-              </Row>
-            </Grid>
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.name}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
           )}
         </View>
         <Text
@@ -1880,7 +1880,6 @@ class ContactDetailScreen extends React.Component {
                       renderTabBar={() => <ScrollableTab />}
                       tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
                       onChangeTab={this.tabChanged}
-                      page={this.state.currentTabIndex}
                     >
                       <Tab
                         heading={i18n.t('global.details')}
@@ -1902,7 +1901,7 @@ class ContactDetailScreen extends React.Component {
                               <Col />
                               <Col>
                                 <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
-                                  Edit
+                                  {i18n.t('global.edit')}
                                 </Text>
                               </Col>
                             </Row>
@@ -2146,7 +2145,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col>
                                   <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
-                                    Edit
+                                    {i18n.t('global.edit')}
                                   </Text>
                                 </Col>
                               </Row>
@@ -2235,6 +2234,7 @@ class ContactDetailScreen extends React.Component {
                             extraData={this.state.comments.concat(this.state.activities).sort(
                               (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
                             )}
+                            inverted
                             ItemSeparatorComponent={() => (
                               <View
                                 style={{
@@ -2261,8 +2261,13 @@ class ContactDetailScreen extends React.Component {
                                 loadingMoreComments, commentsOffset, activitiesOffset,
                               } = this.state;
                               const fL = nativeEvent;
-                              const toEnd = (fL.contentSize.height - fL.contentOffset.y);
-                              if (toEnd < 600) {
+                              const contentOffsetY = fL.contentOffset.y;
+                              const layoutMeasurementHeight = fL.layoutMeasurement.height;
+                              const contentSizeHeight = fL.contentSize.height;
+                              const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
+                              const distanceToStart = contentSizeHeight - heightOffsetSum;
+
+                              if (distanceToStart < 100) {
                                 if (!loadingMoreComments) {
                                   if (commentsOffset < this.state.totalComments) {
                                     this.setState({
@@ -2351,7 +2356,7 @@ class ContactDetailScreen extends React.Component {
                                 <Col />
                                 <Col>
                                   <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
-                                    Edit
+                                    {i18n.t('global.edit')}
                                   </Text>
                                 </Col>
                               </Row>
@@ -3868,7 +3873,7 @@ class ContactDetailScreen extends React.Component {
                                 height: 60, width: '50%', backgroundColor: '#FFFFFF',
                               }}
                             >
-                              <Text style={{ color: Colors.tintColor, fontWeight: 'bold' }}>Cancel</Text>
+                              <Text style={{ color: Colors.tintColor, fontWeight: 'bold' }}>{i18n.t('global.cancel')}</Text>
                             </Button>
                             <Button
                               style={{
@@ -3876,7 +3881,7 @@ class ContactDetailScreen extends React.Component {
                               }}
                               onPress={this.onSaveContact}
                             >
-                              <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Save</Text>
+                              <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
                             </Button>
                           </FooterTab>
                         </Footer>
@@ -3975,8 +3980,8 @@ class ContactDetailScreen extends React.Component {
                           <Picker
                             onValueChange={this.setContactSource}
                             selectedValue={
-                              this.state.contact.sources.values[0].value
-                            }
+                                this.state.contact.sources.values[0].value
+                              }
                           >
                             {this.renderSourcePickerItems()}
                           </Picker>
@@ -4068,7 +4073,7 @@ class ContactDetailScreen extends React.Component {
                         </Row>
                       </Grid>
                       <Button block style={styles.saveButton} onPress={this.onSaveContact}>
-                        <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Save</Text>
+                        <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
                       </Button>
                     </View>
                   </ScrollView>

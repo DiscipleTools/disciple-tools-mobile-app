@@ -50,7 +50,10 @@
     "progress": "",
     "commentsActivity": "",
     "writeYourCommentNoteHere": "",
-    "requiredField": ""
+    "requiredField": "",
+    "edit": "",
+    "cancel": "",
+    "save": ""
   },
   "loginScreen": {
     "domain": {
