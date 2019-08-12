@@ -286,13 +286,13 @@ class ContactDetailScreen extends React.Component {
     loadedLocal: false,
     comments: [],
     loadComments: false,
-    loadingMoreComments: false,
+    loadingMoreCom: false,
     totalComments: 0,
     commentsOffset: 0,
     commentsLimit: 10,
     activities: [],
     loadActivities: false,
-    loadingMoreActivities: false,
+    loadingMoreActivi: false,
     totalActivities: 0,
     activitiesOffset: 0,
     activitiesLimit: 10,
@@ -420,7 +420,7 @@ class ContactDetailScreen extends React.Component {
         newState = {
           ...newState,
           comments: prevState.comments.concat(comments),
-          loadingMoreComments: false,
+          loadingMoreCom: false,
         };
       }
       newState = {
@@ -437,7 +437,7 @@ class ContactDetailScreen extends React.Component {
         newState = {
           ...newState,
           activities: prevState.activities.concat(activities),
-          loadingMoreActivities: false,
+          loadingMoreActivi: false,
         };
       }
       newState = {
@@ -468,11 +468,11 @@ class ContactDetailScreen extends React.Component {
       if (contact.seeker_path) {
         this.setContactSeekerPath(contact.seeker_path);
       }
-      this.onRefreCommenActiviti(contact.ID);
     }
 
     // CONTACT SAVE
     if (saved) {
+      this.onRefreCommenActiviti(contact.ID);
       toastSuccess.show(
         <View>
           <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
@@ -502,6 +502,7 @@ class ContactDetailScreen extends React.Component {
 
   onRefresh(contactId) {
     this.getContactById(contactId);
+    this.onRefreCommenActiviti(contactId);
   }
 
   onRefreCommenActiviti(contactId) {
@@ -600,114 +601,6 @@ class ContactDetailScreen extends React.Component {
       this.state.activitiesLimit,
     );
   }
-
-  renderStatusPickerItems = () => this.state.listContactStates.map(status => (
-    <Picker.Item
-      key={status.value}
-      label={status.label}
-      value={status.value}
-    />
-  ));
-
-  renderSourcePickerItems = () => this.state.contactSources.map(source => (
-    <Picker.Item
-      key={source.value}
-      label={source.name}
-      value={source.value}
-    />
-  ));
-
-  renderActivityOrCommentRow = commentOrActivity => (
-    <View
-      style={{
-        paddingLeft: 19,
-        paddingRight: 16,
-        paddingVertical: 12,
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-      }}
-    >
-      <Image
-        style={{
-          height: 16,
-          marginTop: 10,
-          width: 16,
-        }}
-        source={{ uri: commentOrActivity.gravatar }}
-      />
-      <View
-        style={{
-          backgroundColor: '#F3F3F3',
-          borderRadius: 5,
-          flex: 1,
-          marginLeft: 16,
-          padding: 10,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 6,
-          }}
-        >
-          {Object.prototype.hasOwnProperty.call(
-            commentOrActivity,
-            'content',
-          ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.author}</Text>
-              </Col>
-              <Col style={{ width: 110 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
-          {Object.prototype.hasOwnProperty.call(
-            commentOrActivity,
-            'object_note',
-          ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.name}</Text>
-              </Col>
-              <Col style={{ width: 110 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
-        </View>
-        <Text
-          style={
-            commentOrActivity.content
-              ? {
-                paddingLeft: 10,
-                paddingRight: 10,
-              }
-              : {
-                paddingLeft: 10,
-                paddingRight: 10,
-                color: '#B4B4B4',
-                fontStyle: 'italic',
-              }
-          }
-        >
-          {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
-            ? commentOrActivity.content
-            : commentOrActivity.object_note}
-        </Text>
-      </View>
-    </View>
-  )
 
   onEnableEdit = () => {
     this.setState({
@@ -903,10 +796,10 @@ class ContactDetailScreen extends React.Component {
         quickAction,
         'quick_button_no_show',
       )
-      || Object.prototype.hasOwnProperty.call(
+      /* || Object.prototype.hasOwnProperty.call(
         quickAction,
         'quick_button_phone_off',
-      )
+      ) */
     ) {
       contactToSave = {
         ...contactToSave,
@@ -1205,6 +1098,122 @@ class ContactDetailScreen extends React.Component {
       activeFab: !prevState.activeFab,
     }));
   };
+
+  getCommentsAndActivities() {
+    const { comments, activities } = this.state;
+    const list = comments.concat(activities);
+    return list.filter((item, index) => list.indexOf(item) === index).sort(
+      (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
+    );
+  }
+
+  renderActivityOrCommentRow = commentOrActivity => (
+    <View
+      style={{
+        paddingLeft: 19,
+        paddingRight: 16,
+        paddingVertical: 12,
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+      }}
+    >
+      <Image
+        style={{
+          height: 16,
+          marginTop: 10,
+          width: 16,
+        }}
+        source={{ uri: commentOrActivity.gravatar }}
+      />
+      <View
+        style={{
+          backgroundColor: '#F3F3F3',
+          borderRadius: 5,
+          flex: 1,
+          marginLeft: 16,
+          padding: 10,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginBottom: 6,
+          }}
+        >
+          {Object.prototype.hasOwnProperty.call(
+            commentOrActivity,
+            'content',
+          ) && (
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.author}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
+          {Object.prototype.hasOwnProperty.call(
+            commentOrActivity,
+            'object_note',
+          ) && (
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.name}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
+        </View>
+        <Text
+          style={
+            commentOrActivity.content
+              ? {
+                paddingLeft: 10,
+                paddingRight: 10,
+              }
+              : {
+                paddingLeft: 10,
+                paddingRight: 10,
+                color: '#B4B4B4',
+                fontStyle: 'italic',
+              }
+          }
+        >
+          {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
+            ? commentOrActivity.content
+            : commentOrActivity.object_note}
+        </Text>
+      </View>
+    </View>
+  )
+
+  renderSourcePickerItems = () => this.state.contactSources.map(source => (
+    <Picker.Item
+      key={source.value}
+      label={source.name}
+      value={source.value}
+    />
+  ));
+
+  renderStatusPickerItems = () => this.state.listContactStates.map(status => (
+    <Picker.Item
+      key={status.value}
+      label={status.label}
+      value={status.value}
+    />
+  ));
 
   tabChanged = (event) => {
     this.props.navigation.setParams({ hideTabBar: event.i === 2 });
@@ -1868,6 +1877,24 @@ class ContactDetailScreen extends React.Component {
       />
     );
 
+    /**
+     * <Button style={{ backgroundColor: Colors.tintColor }}>
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="phone-classic"
+                            style={{ color: 'white' }}
+                            onPress={() => this.onSaveContact({
+                              quick_button_phone_off:
+                                parseInt(
+                                  this.state.contact.quick_button_phone_off,
+                                  10,
+                                ) + 1,
+                            })
+                            }
+                          />
+                        </Button>
+     */
+
     return (
       <View style={{ flex: 1 }}>
         {this.state.loadedLocal && (
@@ -2228,12 +2255,8 @@ class ContactDetailScreen extends React.Component {
                             ref={(flatList) => {
                               commentsFlatList = flatList;
                             }}
-                            data={this.state.comments.concat(this.state.activities).sort(
-                              (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
-                            )}
-                            extraData={this.state.comments.concat(this.state.activities).sort(
-                              (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
-                            )}
+                            data={this.getCommentsAndActivities}
+                            extraData={!this.state.loadingMoreCom || !this.state.loadingMoreActivi}
                             inverted
                             ItemSeparatorComponent={() => (
                               <View
@@ -2243,7 +2266,7 @@ class ContactDetailScreen extends React.Component {
                                 }}
                               />
                             )}
-                            keyExtractor={item => item.ID}
+                            keyExtractor={(item, index) => String(index)}
                             renderItem={(item) => {
                               const commentOrActivity = item.item;
                               return this.renderActivityOrCommentRow(
@@ -2258,7 +2281,7 @@ class ContactDetailScreen extends React.Component {
                             )}
                             onScroll={({ nativeEvent }) => {
                               const {
-                                loadingMoreComments, commentsOffset, activitiesOffset,
+                                loadingMoreCom, commentsOffset, activitiesOffset,
                               } = this.state;
                               const fL = nativeEvent;
                               const contentOffsetY = fL.contentOffset.y;
@@ -2268,19 +2291,19 @@ class ContactDetailScreen extends React.Component {
                               const distanceToStart = contentSizeHeight - heightOffsetSum;
 
                               if (distanceToStart < 100) {
-                                if (!loadingMoreComments) {
+                                if (!loadingMoreCom) {
                                   if (commentsOffset < this.state.totalComments) {
                                     this.setState({
-                                      loadingMoreComments: true,
+                                      loadingMoreCom: true,
                                     }, () => {
                                       this.getContactComments(this.state.contact.ID);
                                     });
                                   }
                                 }
-                                if (!this.state.loadingMoreActivities) {
+                                if (!this.state.loadingMoreActivi) {
                                   if (activitiesOffset < this.state.totalActivities) {
                                     this.setState({
-                                      loadingMoreActivities: true,
+                                      loadingMoreActivi: true,
                                     }, () => {
                                       this.getContactActivities(this.state.contact.ID);
                                     });
@@ -2484,21 +2507,6 @@ class ContactDetailScreen extends React.Component {
                           name="comment-plus"
                           style={{ color: 'white' }}
                         />
-                        <Button style={{ backgroundColor: Colors.tintColor }}>
-                          <Icon
-                            type="MaterialCommunityIcons"
-                            name="phone-classic"
-                            style={{ color: 'white' }}
-                            onPress={() => this.onSaveContact({
-                              quick_button_phone_off:
-                                parseInt(
-                                  this.state.contact.quick_button_phone_off,
-                                  10,
-                                ) + 1,
-                            })
-                            }
-                          />
-                        </Button>
                         <Button style={{ backgroundColor: Colors.tintColor }}>
                           <Icon
                             type="Feather"

@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { WebBrowser } from 'expo';
+import * as WebBrowser from 'expo-web-browser';
 
 import Colors from '../constants/Colors';
 

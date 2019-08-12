@@ -7,7 +7,7 @@ import {
   ViewPropTypes,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { Icon } from 'expo';
+import * as Icon from '@expo/vector-icons';
 
 import i18n from '../languages';
 

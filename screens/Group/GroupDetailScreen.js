@@ -248,8 +248,9 @@ const styles = StyleSheet.create({
     marginRight: '20%',
   },
   groupCircleContainer: {
-    width: circleSideSize,
+    height: '100%',
     marginRight: 20,
+    width: circleSideSize,
   },
   saveButton: {
     backgroundColor: Colors.tintColor,
@@ -341,13 +342,13 @@ class GroupDetailScreen extends React.Component {
     groups: [],
     comments: [],
     loadComments: false,
-    loadMoreComments: false,
+    loadMoreCommen: false,
     totalComments: 0,
     commeOffset: 0,
     commentsLimit: 10,
     activities: [],
     loadActivities: false,
-    loadMoreActivities: false,
+    loadMoreActiviti: false,
     totalActivities: 0,
     activitiesOffset: 0,
     activitiesLimit: 10,
@@ -436,7 +437,7 @@ class GroupDetailScreen extends React.Component {
         newState = {
           ...newState,
           comments: prevState.comments.concat(comments),
-          loadMoreComments: false,
+          loadMoreCommen: false,
         };
       }
       newState = {
@@ -453,7 +454,7 @@ class GroupDetailScreen extends React.Component {
         newState = {
           ...newState,
           activities: prevState.activities.concat(activities),
-          loadMoreActivities: false,
+          loadMoreActiviti: false,
         };
       }
       newState = {
@@ -481,11 +482,11 @@ class GroupDetailScreen extends React.Component {
     if (group && prevProps.group !== group) {
       // Highlight Updates -> Compare prevState.contact with contact and show differences
       navigation.setParams({ groupName: group.title });
-      this.onRefreCommenActivities(group.ID);
     }
 
     // GROUP SAVE
     if (saved) {
+      this.onRefreCommenActivities(group.ID);
       toastSuccess.show(
         <View>
           <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
@@ -515,6 +516,7 @@ class GroupDetailScreen extends React.Component {
 
   onRefresh(groupId) {
     this.getGroupById(groupId);
+    this.onRefreCommenActivities(groupId);
   }
 
   onRefreCommenActivities(groupId) {
@@ -609,64 +611,6 @@ class GroupDetailScreen extends React.Component {
     );
   }
 
-  renderActivityOrCommentRow = commentOrActivity => (
-    <View style={styles.container}>
-      <Image
-        style={styles.image}
-        source={{ uri: commentOrActivity.gravatar }}
-      />
-      <View style={styles.content}>
-        <View style={styles.contentHeader}>
-          {Object.prototype.hasOwnProperty.call(
-            commentOrActivity,
-            'content',
-          ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.author}</Text>
-              </Col>
-              <Col style={{ width: 110 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
-          {Object.prototype.hasOwnProperty.call(
-            commentOrActivity,
-            'object_note',
-          ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.name}</Text>
-              </Col>
-              <Col style={{ width: 110 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
-        </View>
-        <Text
-          style={
-            commentOrActivity.content
-              ? styles.commentMessage
-              : styles.activityMessage
-          }
-        >
-          {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
-            ? commentOrActivity.content
-            : commentOrActivity.object_note}
-        </Text>
-      </View>
-    </View>
-  );
-
   onEnableEdit = () => {
     this.setState({
       onlyView: false,
@@ -732,6 +676,72 @@ class GroupDetailScreen extends React.Component {
       },
     }));
   };
+
+  getCommentsAndActivities() {
+    const { comments, activities } = this.state;
+    const list = comments.concat(activities);
+    return list.filter((item, index) => list.indexOf(item) === index).sort(
+      (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
+    );
+  }
+
+  renderActivityOrCommentRow = commentOrActivity => (
+    <View style={styles.container}>
+      <Image
+        style={styles.image}
+        source={{ uri: commentOrActivity.gravatar }}
+      />
+      <View style={styles.content}>
+        <View style={styles.contentHeader}>
+          {Object.prototype.hasOwnProperty.call(
+            commentOrActivity,
+            'content',
+          ) && (
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.author}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
+          {Object.prototype.hasOwnProperty.call(
+            commentOrActivity,
+            'object_note',
+          ) && (
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.name}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
+        </View>
+        <Text
+          style={
+            commentOrActivity.content
+              ? styles.commentMessage
+              : styles.activityMessage
+          }
+        >
+          {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
+            ? commentOrActivity.content
+            : commentOrActivity.object_note}
+        </Text>
+      </View>
+    </View>
+  );
 
   updateShowAssignedToModal = (value) => {
     this.setState({
@@ -1086,6 +1096,14 @@ class GroupDetailScreen extends React.Component {
       user => `user-${user.key}` === this.state.group.assigned_to,
     );
     return <Text style={{ marginTop: 'auto', marginBottom: 'auto', fontSize: 15 }}>{foundUser ? foundUser.label : ''}</Text>;
+  };
+
+  goToGroupDetailScreen = (groupData) => {
+    this.props.navigation.push('GroupDetail', {
+      groupId: groupData.value,
+      onlyView: true,
+      groupName: groupData.name,
+    });
   };
 
   renderHealthMilestones() {
@@ -1904,12 +1922,8 @@ class GroupDetailScreen extends React.Component {
                             ref={(flatList) => {
                               commentsFlatList = flatList;
                             }}
-                            data={this.state.comments.concat(this.state.activities).sort(
-                              (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
-                            )}
-                            extraData={this.state.comments.concat(this.state.activities).sort(
-                              (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
-                            )}
+                            data={this.getCommentsAndActivities}
+                            extraData={!this.state.loadMoreCommen || !this.state.loadMoreActiviti}
                             inverted
                             ItemSeparatorComponent={() => (
                               <View
@@ -1919,7 +1933,7 @@ class GroupDetailScreen extends React.Component {
                                 }}
                               />
                             )}
-                            keyExtractor={item => item.ID}
+                            keyExtractor={(item, index) => String(index)}
                             renderItem={(item) => {
                               const commentOrActivity = item.item;
                               return this.renderActivityOrCommentRow(
@@ -1934,7 +1948,7 @@ class GroupDetailScreen extends React.Component {
                             )}
                             onScroll={({ nativeEvent }) => {
                               const {
-                                loadMoreComments, commeOffset, loadMoreActivities, activitiesOffset,
+                                loadMoreCommen, commeOffset, loadMoreActiviti, activitiesOffset,
                               } = this.state;
                               const fL = nativeEvent;
                               const contentOffsetY = fL.contentOffset.y;
@@ -1944,19 +1958,19 @@ class GroupDetailScreen extends React.Component {
                               const distanceToStart = contentSizeHeight - heightOffsetSum;
 
                               if (distanceToStart < 100) {
-                                if (!loadMoreComments) {
+                                if (!loadMoreCommen) {
                                   if (commeOffset < this.state.totalComments) {
                                     this.setState({
-                                      loadMoreComments: true,
+                                      loadMoreCommen: true,
                                     }, () => {
                                       this.getGroupComments(this.state.group.ID);
                                     });
                                   }
                                 }
-                                if (!loadMoreActivities) {
+                                if (!loadMoreActiviti) {
                                   if (activitiesOffset < this.state.totalActivities) {
                                     this.setState({
-                                      loadMoreActivities: true,
+                                      loadMoreActiviti: true,
                                     }, () => {
                                       this.getGroupActivities(this.state.group.ID);
                                     });
@@ -2046,7 +2060,11 @@ class GroupDetailScreen extends React.Component {
                             <Row style={{ height: circleSideSize, overflowX: 'auto' }}>
                               <ScrollView horizontal>
                                 {this.state.group.parent_groups.values.map((parentGroup, index) => (
-                                  <Col key={index.toString()} style={styles.groupCircleContainer}>
+                                  <Col
+                                    key={index.toString()}
+                                    style={styles.groupCircleContainer}
+                                    onPress={() => this.goToGroupDetailScreen(parentGroup)}
+                                  >
                                     {(index % 2 === 0) ? (
                                       <Image
                                         source={groupCircleIcon}
@@ -2099,7 +2117,11 @@ class GroupDetailScreen extends React.Component {
                             <Row style={{ height: circleSideSize, overflowX: 'auto' }}>
                               <ScrollView horizontal>
                                 {this.state.group.child_groups.values.map((childGroup, index) => (
-                                  <Col key={index.toString()} style={styles.groupCircleContainer}>
+                                  <Col
+                                    key={index.toString()}
+                                    style={styles.groupCircleContainer}
+                                    onPress={() => this.goToGroupDetailScreen(childGroup)}
+                                  >
                                     {(index % 2 === 0) ? (
                                       <Image
                                         source={groupCircleIcon}
@@ -2152,7 +2174,11 @@ class GroupDetailScreen extends React.Component {
                             <Row style={{ height: circleSideSize, overflowX: 'auto' }}>
                               <ScrollView horizontal>
                                 {this.state.group.peer_groups.values.map((peerGroup, index) => (
-                                  <Col key={index.toString()} style={styles.groupCircleContainer}>
+                                  <Col
+                                    key={index.toString()}
+                                    style={styles.groupCircleContainer}
+                                    onPress={() => this.goToGroupDetailScreen(peerGroup)}
+                                  >
                                     {(index % 2 === 0) ? (
                                       <Image
                                         source={groupCircleIcon}

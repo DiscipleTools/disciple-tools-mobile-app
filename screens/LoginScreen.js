@@ -215,7 +215,7 @@ class LoginScreen extends React.Component {
 
     if (listsRetrieved === 0) {
       let listsLastUpdate = new Date().toString();
-      listsLastUpdate = new Date(listsLastUpdate);
+      listsLastUpdate = new Date(listsLastUpdate).toISOString();
       AsyncStorage.setItem('listsLastUpdate', listsLastUpdate);
       this.props.navigation.navigate('ContactList');
     }

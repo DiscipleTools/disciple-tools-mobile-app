@@ -8,12 +8,10 @@ import {
   // AsyncStorage
 } from 'react-native';
 import PropTypes from 'prop-types';
-import {
-  AppLoading,
-  Asset,
-  Font,
-  Icon,
-} from 'expo';
+import { AppLoading } from 'expo';
+import * as Icon from '@expo/vector-icons';
+import * as Font from 'expo-font';
+import { Asset } from 'expo-asset';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';

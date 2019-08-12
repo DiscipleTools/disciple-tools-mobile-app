@@ -544,7 +544,7 @@ export default function contactsReducer(state = initialState, action) {
       return {
         ...newState,
         comments: action.comments.map(comment => ({
-          ID: `${comment.comment_ID}-c`,
+          ID: comment.comment_ID,
           date: `${comment.comment_date.replace(' ', 'T')}Z`,
           author: comment.comment_author,
           content: comment.comment_content,
@@ -594,7 +594,7 @@ export default function contactsReducer(state = initialState, action) {
       return {
         ...newState,
         activities: action.activities.map(activity => ({
-          ID: `${activity.histid}-a`,
+          ID: activity.histid,
           date: new Date(
             parseInt(activity.hist_time, 10) * 1000,
           ).toISOString(),

@@ -1,5 +1,5 @@
 import {
-  put, take, takeEvery, takeLatest, all,
+  put, take, takeEvery, takeLatest, all, call,
 } from 'redux-saga/effects';
 import * as actions from '../actions/contacts.actions';
 
@@ -25,9 +25,9 @@ export function* getAll({ domain, token }) {
     const res = yield take(actions.CONTACTS_GETALL_RESPONSE);
     if (res) {
       const response = res.payload;
-      /* eslint-disable */
-      const jsonData = JSON.parse(response._bodyInit);
-      /* eslint-enable */
+      const jsonData = yield call(() => new Promise((resolve) => {
+        resolve(response.json());
+      }));
       if (response.status === 200) {
         if (jsonData.posts) {
           yield put({
@@ -69,12 +69,12 @@ export function* save({ domain, token, contactData }) {
     contactInitialComment = contact.initial_comment;
     delete contact.initial_comment;
   }
-  const urlPart = contact.ID ? contact.ID : '';
+  const contactId = contact.ID ? contact.ID : '';
   delete contact.ID;
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${urlPart}`,
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}`,
       data: {
         method: 'POST',
         headers: {
@@ -91,16 +91,16 @@ export function* save({ domain, token, contactData }) {
     const responseAction = yield take(actions.CONTACTS_SAVE_RESPONSE);
     if (responseAction) {
       const response = responseAction.payload;
-      /* eslint-disable */
-      const jsonData = JSON.parse(response._bodyInit);
-      /* eslint-enable */
+      const jsonData = yield call(() => new Promise((resolve) => {
+        resolve(response.json());
+      }));
       if (response.status === 200) {
         if (contactInitialComment) {
           yield put({ type: actions.CONTACTS_SAVE_COMMENT_START });
           yield put({
             type: 'REQUEST',
             payload: {
-              url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contact.ID}/comments`,
+              url: `https://${domain}/wp-json/dt-posts/v2/contacts/${jsonData.ID}/comments`,
               data: {
                 method: 'POST',
                 headers: {
@@ -117,16 +117,16 @@ export function* save({ domain, token, contactData }) {
           const res = yield take(actions.CONTACTS_SAVE_COMMENT_RESPONSE);
           if (res) {
             const responseComment = res.payload;
-            /* eslint-disable */
-            const jsonData = JSON.parse(responseComment._bodyInit);
-            /* eslint-enable */
+            const saveCommentJsonData = yield call(() => new Promise((resolve) => {
+              resolve(response.clone());
+            }));
             if (responseComment.status !== 200) {
               yield put({
                 type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
                 error: {
-                  code: jsonData.code,
-                  message: jsonData.message,
-                  data: jsonData.data,
+                  code: saveCommentJsonData.code,
+                  message: saveCommentJsonData.message,
+                  data: saveCommentJsonData.data,
                 },
               });
             }
@@ -179,9 +179,9 @@ export function* getById({ domain, token, contactId }) {
     const res = yield take(actions.CONTACTS_GETBYID_RESPONSE);
     if (res) {
       const response = res.payload;
-      /* eslint-disable */
-      const jsonData = JSON.parse(response._bodyInit);
-      /* eslint-enable */
+      const jsonData = yield call(() => new Promise((resolve) => {
+        resolve(response.json());
+      }));
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_GETBYID_SUCCESS,
@@ -234,9 +234,9 @@ export function* saveComment({
     const res = yield take(actions.CONTACTS_SAVE_COMMENT_RESPONSE);
     if (res) {
       const response = res.payload;
-      /* eslint-disable */
-      const jsonData = JSON.parse(response._bodyInit);
-      /* eslint-enable */
+      const jsonData = yield call(() => new Promise((resolve) => {
+        resolve(response.json());
+      }));
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_SAVE_COMMENT_SUCCESS,
@@ -288,9 +288,9 @@ export function* getCommentsByContact({
     const res = yield take(actions.CONTACTS_GET_COMMENTS_RESPONSE);
     if (res) {
       const response = res.payload;
-      /* eslint-disable */
-      const jsonData = JSON.parse(response._bodyInit);
-      /* eslint-enable */
+      const jsonData = yield call(() => new Promise((resolve) => {
+        resolve(response.json());
+      }));
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
@@ -343,9 +343,9 @@ export function* getActivitiesByContact({
     const res = yield take(actions.CONTACTS_GET_ACTIVITIES_RESPONSE);
     if (res) {
       const response = res.payload;
-      /* eslint-disable */
-      const jsonData = JSON.parse(response._bodyInit);
-      /* eslint-enable */
+      const jsonData = yield call(() => new Promise((resolve) => {
+        resolve(response.json());
+      }));
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_GET_ACTIVITIES_SUCCESS,

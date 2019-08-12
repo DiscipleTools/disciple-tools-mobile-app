@@ -1,5 +1,5 @@
 import {
-  put, take, all, takeEvery,
+  put, take, all, takeEvery, call,
 } from 'redux-saga/effects';
 import * as actions from '../actions/users.actions';
 
@@ -26,9 +26,9 @@ export function* getUsers({ domain, token }) {
     const res = yield take(actions.GET_USERS_RESPONSE);
     if (res) {
       const response = res.payload;
-      /* eslint-disable */
-      const jsonData = JSON.parse(response._bodyInit);
-      /* eslint-enable */
+      const jsonData = yield call(() => new Promise((resolve) => {
+        resolve(response.json());
+      }));
       if (response.status === 200) {
         if (jsonData) {
           yield put({

@@ -1,5 +1,5 @@
 import {
-  put, take, takeLatest, all,
+  put, take, takeLatest, all, call,
 } from 'redux-saga/effects';
 import * as actions from '../actions/user.actions';
 
@@ -32,9 +32,9 @@ export function* login({ domain, username, password }) {
     const res = yield take(actions.USER_LOGIN_RESPONSE);
     if (res) {
       const response = res.payload;
-      /* eslint-disable */
-      const jsonData = JSON.parse(response._bodyInit);
-      /* eslint-enable */
+      const jsonData = yield call(() => new Promise((resolve) => {
+        resolve(response.json());
+      }));
       if (response.status === 200) {
         yield put({ type: actions.USER_LOGIN_SUCCESS, domain, user: jsonData });
       } else {
