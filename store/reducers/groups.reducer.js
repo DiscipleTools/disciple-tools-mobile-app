@@ -447,7 +447,7 @@ export default function groupsReducer(state = initialState, action) {
       return {
         ...newState,
         newComment: {
-          ID: `${comment.comment_ID}-c`,
+          ID: comment.comment_ID,
           author: comment.comment_author,
           date: `${comment.comment_date.replace(' ', 'T')}Z`,
           content: comment.comment_content,

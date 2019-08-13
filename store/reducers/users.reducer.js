@@ -31,10 +31,6 @@ export default function usersReducer(state = initialState, action) {
         loading: false,
       };
     default:
-      return {
-        ...newState,
-        error: null,
-        type: null,
-      };
+      return newState;
   }
 }

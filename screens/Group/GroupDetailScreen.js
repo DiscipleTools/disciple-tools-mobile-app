@@ -406,12 +406,10 @@ class GroupDetailScreen extends React.Component {
 
     // NEW COMMENT
     if (newComment) {
-      const newComments = newState.comments;
-      newComments.push(newComment);
+      newState.comments.unshift(newComment);
       newState = {
         ...newState,
-        comments: newComments,
-        comment: '',
+        comments: newState.comments,
       };
     }
 
@@ -474,8 +472,8 @@ class GroupDetailScreen extends React.Component {
 
     // NEW COMMENT
     if (newComment && prevProps.newComment !== newComment) {
-      Keyboard.dismiss();
       commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
+      this.setComment('');
     }
 
     // GROUP SAVE / GET BY ID
@@ -1070,8 +1068,8 @@ class GroupDetailScreen extends React.Component {
 
   onSaveComment = () => {
     const { comment } = this.state;
-
     if (comment.length > 0) {
+      Keyboard.dismiss();
       this.props.saveComment(
         this.props.userData.domain,
         this.props.userData.token,
@@ -1922,7 +1920,7 @@ class GroupDetailScreen extends React.Component {
                             ref={(flatList) => {
                               commentsFlatList = flatList;
                             }}
-                            data={this.getCommentsAndActivities}
+                            data={this.getCommentsAndActivities()}
                             extraData={!this.state.loadMoreCommen || !this.state.loadMoreActiviti}
                             inverted
                             ItemSeparatorComponent={() => (
