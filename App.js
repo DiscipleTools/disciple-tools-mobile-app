@@ -16,6 +16,7 @@ import {
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
+import Reactotron from 'reactotron-react-native'
 
 import AppNavigator from './navigation/AppNavigator';
 import store from './store/store';
@@ -48,6 +49,16 @@ class App extends React.Component {
     NetInfo.isConnected.fetch().then((isConnected) => {
       store.dispatch(setNetworkConnectivity(isConnected));
     });
+
+    if(__DEV__) {
+      // Reactotron can be used to see AsyncStorage data and API requests
+      // If Reactotron gets no connection, this is the solution that worked for me (cairocoder01: 2019-08-15)
+      // https://github.com/expo/expo-cli/issues/153#issuecomment-358925525
+      Reactotron
+        .configure() // controls connection & communication settings
+        .useReactNative() // add all built-in react native plugins
+        .connect() // let's connect!
+    }
   }
 
   componentWillUnmount() {
