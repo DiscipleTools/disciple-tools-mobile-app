@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
+  I18nManager,
   StyleSheet,
   Text,
 } from 'react-native';
@@ -12,6 +13,7 @@ import {
   Icon,
   Left,
   ListItem,
+  Picker,
   Right,
   Switch,
   Thumbnail,
@@ -19,14 +21,21 @@ import {
 import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
 
+import { Updates } from 'expo';
 import colors from '../constants/Colors';
+import { setLanguage } from '../store/actions/i18n.actions';
 import { logout } from '../store/actions/user.actions';
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
 import i18n from '../languages';
+import locales from '../languages/locales';
 
 const propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
+  }).isRequired,
+  i18n: PropTypes.shape({
+    locale: PropTypes.string,
+    isRTL: PropTypes.bool,
   }).isRequired,
   isConnected: PropTypes.bool.isRequired,
   user: PropTypes.shape({
@@ -34,6 +43,7 @@ const propTypes = {
     displayName: PropTypes.string,
   }).isRequired,
   logout: PropTypes.func.isRequired,
+  setLanguage: PropTypes.func.isRequired,
   toggleNetworkConnectivity: PropTypes.func.isRequired,
 };
 
@@ -89,6 +99,20 @@ class SettingsScreen extends React.Component {
     this.onFABPress = this.onFABPress.bind(this);
   }
 
+  componentDidUpdate() {
+    // If the RTL value in the store does not match what is
+    // in I18nManager (which controls content flow), call
+    // forceRTL(...) to set it in I18nManager and reload app
+    // so that new RTL value is used for content flow.
+    if (this.props.i18n.isRTL !== I18nManager.isRTL) {
+      I18nManager.forceRTL(this.props.i18n.isRTL);
+      // a bit of a hack to wait and make sure the reducer is persisted to storage
+      setTimeout(() => {
+        Updates.reloadFromCache();
+      }, 500);
+    }
+  }
+
   signOutAsync = async () => {
     this.props.logout();
     // await AsyncStorage.removeItem('@KeyStore:token');
@@ -102,8 +126,10 @@ class SettingsScreen extends React.Component {
   }
 
   render() {
-    /* Go ahead and delete ExpoConfigView and replace it with your
-     * content, we just wanted to give you a quick view of your config */
+    const languagePickerItems = locales.map(locale => (
+      <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
+    ));
+
     return (
       <Container style={styles.container}>
         <Content>
@@ -147,6 +173,36 @@ class SettingsScreen extends React.Component {
               <Switch value={this.props.isConnected} onChange={this.onFABPress} />
             </Right>
           </ListItem>
+          {/* === Language === */}
+          <ListItem icon>
+            <Left>
+              <NbButton onPress={this.onFABPress}>
+                <Icon active type="FontAwesome" name="language" />
+              </NbButton>
+            </Left>
+            <Body style={styles.body}>
+              <Text style={styles.text}>{i18n.t('settings.language')}</Text>
+            </Body>
+            <Right>
+              <Picker
+
+                style={{ width: 120 }}
+                selectedValue={this.props.i18n.locale}
+                onValueChange={(itemValue) => {
+                  const locale = locales.find(item => item.code === itemValue);
+                  if (locale) {
+                    const isRTL = locale.direction === 'rtl';
+                    // store locale/rtl instore for next load of app
+                    this.props.setLanguage(locale.code, isRTL);
+                    // set current locale for all language strings
+                    i18n.setLocale(locale.code, isRTL);
+                  }
+                }}
+              >
+                {languagePickerItems}
+              </Picker>
+            </Right>
+          </ListItem>
           {/* === Logout === */}
           <ListItem icon onPress={this.signOutAsync}>
             <Left>
@@ -172,12 +228,16 @@ class SettingsScreen extends React.Component {
 SettingsScreen.propTypes = propTypes;
 
 const mapStateToProps = state => ({
+  i18n: state.i18nReducer,
   isConnected: state.networkConnectivityReducer.isConnected,
   user: state.userReducer,
 });
 const mapDispatchToProps = dispatch => ({
   toggleNetworkConnectivity: (isConnected) => {
     dispatch(toggleNetworkConnectivity(isConnected));
+  },
+  setLanguage: (locale, isRTL) => {
+    dispatch(setLanguage(locale, isRTL));
   },
   logout: () => {
     dispatch(logout());
