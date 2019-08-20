@@ -33,7 +33,7 @@ export function* login({ domain, username, password }) {
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({ type: actions.USER_LOGIN_SUCCESS, domain, user: jsonData });

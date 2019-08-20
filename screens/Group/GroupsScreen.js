@@ -132,6 +132,7 @@ class GroupsScreen extends React.Component {
         groupId: groupData.ID,
         onlyView: true,
         groupName: groupData.post_title,
+        previousList: [],
       });
     } else {
       // Create

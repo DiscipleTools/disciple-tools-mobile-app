@@ -27,7 +27,7 @@ export function* getUsers({ domain, token }) {
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         if (jsonData) {

@@ -341,18 +341,24 @@ export default function groupsReducer(state = initialState, action) {
           parent_groups: {
             values: group.parent_groups.map(parentGroup => ({
               name: parentGroup.post_title,
+              baptizedCount: parentGroup.baptized_member_count,
+              memberCount: parentGroup.member_count,
               value: parentGroup.ID.toString(),
             })),
           },
           peer_groups: {
             values: group.peer_groups.map(peerGroup => ({
               name: peerGroup.post_title,
+              baptizedCount: peerGroup.baptized_member_count,
+              memberCount: peerGroup.member_count,
               value: peerGroup.ID.toString(),
             })),
           },
           child_groups: {
             values: group.child_groups.map(childGroup => ({
               name: childGroup.post_title,
+              baptizedCount: childGroup.baptized_member_count,
+              memberCount: childGroup.member_count,
               value: childGroup.ID.toString(),
             })),
           },

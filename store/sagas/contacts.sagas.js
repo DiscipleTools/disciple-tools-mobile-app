@@ -26,7 +26,7 @@ export function* getAll({ domain, token }) {
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         if (jsonData.posts) {
@@ -92,7 +92,7 @@ export function* save({ domain, token, contactData }) {
     if (responseAction) {
       const response = responseAction.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         if (contactInitialComment) {
@@ -180,7 +180,7 @@ export function* getById({ domain, token, contactId }) {
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({
@@ -235,7 +235,7 @@ export function* saveComment({
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({
@@ -289,7 +289,7 @@ export function* getCommentsByContact({
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({
@@ -344,7 +344,7 @@ export function* getActivitiesByContact({
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({

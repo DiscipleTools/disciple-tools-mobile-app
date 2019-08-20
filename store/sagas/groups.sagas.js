@@ -26,7 +26,7 @@ export function* getAll({ domain, token }) {
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({
@@ -80,7 +80,7 @@ export function* saveGroup({ domain, token, groupData }) {
     if (responseAction) {
       const response = responseAction.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         group = jsonData;
@@ -132,7 +132,7 @@ export function* getById({ domain, token, groupId }) {
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({
@@ -184,7 +184,7 @@ export function* getUsersAndContacts({ domain, token }) {
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({
@@ -238,7 +238,7 @@ export function* getCommentsByGroup({
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({
@@ -294,7 +294,7 @@ export function* saveComment({
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({
@@ -346,7 +346,7 @@ export function* getLocations({ domain, token }) {
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({
@@ -389,7 +389,7 @@ export function* getPeopleGroups({ domain, token }) {
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({
@@ -434,7 +434,7 @@ export function* getActivitiesByGroup({
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({
@@ -487,7 +487,7 @@ export function* searchGroups({ domain, token }) {
     if (res) {
       const response = res.payload;
       const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.json());
+        resolve(response.clone().json());
       }));
       if (response.status === 200) {
         yield put({

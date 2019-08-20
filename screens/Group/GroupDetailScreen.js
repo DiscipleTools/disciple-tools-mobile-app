@@ -69,7 +69,7 @@ const containerPadding = 35;
 const windowWidth = Dimensions.get('window').width;
 const spacing = windowWidth * 0.025;
 const sideSize = windowWidth - 2 * spacing;
-const circleSideSize = windowWidth / 3;
+const circleSideSize = (windowWidth / 3) + 20;
 /* eslint-disable */
 let commentsFlatList, coachSelectizeRef, geonamSelectizeRef, peopGroupSelectRef, parenGroupSelecRef, peerGrouSelectiRef, childGrouSelectRef;
 /* eslint-enable */
@@ -83,7 +83,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: '#D9D5DC',
-    margin: 5,
+    marginRight: 10,
+    marginBottom: 5,
   },
   activeImage: {
     opacity: 1,
@@ -191,12 +192,19 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   formIconLabel: { width: 'auto' },
+  formIconLabelMarginLeft: {
+    marginLeft: containerPadding + 10,
+  },
+  formIconLabelMargin: {
+    marginRight: containerPadding + 10,
+    marginTop: 25,
+    marginBottom: 15,
+  },
   formIcon: {
     color: Colors.tintColor,
     fontSize: 25,
     marginTop: 'auto',
     marginBottom: 'auto',
-    marginRight: 20,
   },
   formParentLabel: {
     width: 'auto',
@@ -217,40 +225,66 @@ const styles = StyleSheet.create({
     marginTop: 25,
     marginBottom: 15,
   },
+  formDivider2Margin: {
+    marginTop: 25,
+    marginBottom: 15,
+    marginLeft: containerPadding + 10,
+    marginRight: containerPadding + 10,
+  },
+  formIconLabelCol: {
+    width: 35,
+  },
+  formIconLabelView: {
+    alignItems: 'center',
+  },
+  formFieldPadding: {
+    paddingTop: 30,
+  },
+  formContainerNoPadding: {
+    paddingLeft: 0,
+    paddingRight: 0,
+    paddingTop: 0,
+  },
   // Groups section
+  groupCircleParentContainer: {
+    height: circleSideSize,
+  },
+  groupCircleContainer: {
+    height: '100%',
+    width: circleSideSize,
+  },
   groupCircle: {
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
     position: 'absolute',
-    height: '95%',
-    width: '95%',
-    marginTop: '4%',
-    marginRight: '4%',
-    marginBottom: '4%',
-    marginLeft: '4%',
+    height: '85%',
+    width: '85%',
+    marginTop: '7.5%',
+    marginRight: '7.5%',
+    marginBottom: '7.5%',
+    marginLeft: '7.5%',
   },
   groupCenterIcon: {
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
     position: 'absolute',
-    height: '45%',
-    width: '45%',
-    marginTop: '22%',
+    height: '40%',
+    width: '40%',
+    marginTop: '25%',
     resizeMode: 'contain',
   },
   groupCircleName: {
     justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: '10%',
+    marginTop: '20%',
     marginLeft: '20%',
     marginRight: '20%',
   },
-  groupCircleContainer: {
-    height: '100%',
-    marginRight: 20,
-    width: circleSideSize,
+  groupCircleNameText: { fontSize: 11, textAlign: 'center' },
+  groupCircleCounter: {
+    justifyContent: 'center',
+    marginTop: '-5%',
   },
   saveButton: {
     backgroundColor: Colors.tintColor,
@@ -258,6 +292,55 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
 });
+const initialState = {
+  group: {
+    ID: null,
+    contact_address: [],
+    coaches: {
+      values: [],
+    },
+    geonames: {
+      values: [],
+    },
+    people_groups: {
+      values: [],
+    },
+    parent_groups: {
+      values: [],
+    },
+    peer_groups: {
+      values: [],
+    },
+    child_groups: {
+      values: [],
+    },
+  },
+  onlyView: false,
+  loadedLocal: false,
+  comment: '',
+  users: [],
+  usersContacts: [],
+  geonames: [],
+  peopleGroups: [],
+  groups: [],
+  comments: [],
+  loadComments: false,
+  loadMoreCommen: false,
+  totalComments: 0,
+  commeOffset: 0,
+  commentsLimit: 10,
+  activities: [],
+  loadActivities: false,
+  loadMoreActiviti: false,
+  totalActivities: 0,
+  activitiesOffset: 0,
+  activitiesLimit: 10,
+  showAssignedToModal: false,
+  groupStatusBackgroundColor: '#ffffff',
+  loading: false,
+  groupsTabActive: false,
+  currentTabIndex: 0,
+};
 
 function formatDateToBackEnd(dateValue) {
   if (dateValue) {
@@ -295,7 +378,18 @@ class GroupDetailScreen extends React.Component {
         <Icon
           type="MaterialIcons"
           name="arrow-back"
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            if (params.previousList.length > 0) {
+              const newPreviousList = params.previousList;
+              const previousParams = newPreviousList[newPreviousList.length - 1];
+              newPreviousList.pop();
+              navigation.state.params.onBackFromSameScreen({
+                ...previousParams,
+                previousList: newPreviousList,
+              });
+            }
+            navigation.goBack();
+          }}
           style={[{ paddingLeft: 16, color: '#FFFFFF' }]}
         />
       ),
@@ -310,74 +404,11 @@ class GroupDetailScreen extends React.Component {
   };
 
   state = {
-    group: {
-      ID: null,
-      contact_address: [],
-      coaches: {
-        values: [],
-      },
-      geonames: {
-        values: [],
-      },
-      people_groups: {
-        values: [],
-      },
-      parent_groups: {
-        values: [],
-      },
-      peer_groups: {
-        values: [],
-      },
-      child_groups: {
-        values: [],
-      },
-    },
-    onlyView: false,
-    loadedLocal: false,
-    comment: '',
-    users: [],
-    usersContacts: [],
-    geonames: [],
-    peopleGroups: [],
-    groups: [],
-    comments: [],
-    loadComments: false,
-    loadMoreCommen: false,
-    totalComments: 0,
-    commeOffset: 0,
-    commentsLimit: 10,
-    activities: [],
-    loadActivities: false,
-    loadMoreActiviti: false,
-    totalActivities: 0,
-    activitiesOffset: 0,
-    activitiesLimit: 10,
-    showAssignedToModal: false,
-    groupStatusBackgroundColor: '#ffffff',
-    loading: false,
-    groupsTabActive: false,
-    currentTabIndex: 0,
+    ...initialState,
   };
 
   componentDidMount() {
-    const groupId = this.props.navigation.getParam('groupId');
-    const onlyView = this.props.navigation.getParam('onlyView');
-    const groupName = this.props.navigation.getParam('groupName');
-    if (groupId) {
-      this.setState(prevState => ({
-        group: {
-          ...prevState.group,
-          ID: groupId,
-        },
-      }));
-      this.props.navigation.setParams({ groupName });
-    }
-    if (onlyView) {
-      this.setState({
-        onlyView,
-      });
-    }
-    this.getLists();
+    this.onLoad();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -510,6 +541,34 @@ class GroupDetailScreen extends React.Component {
         3000,
       );
     }
+  }
+
+  onLoad() {
+    const { navigation } = this.props;
+    const { groupId, onlyView, groupName } = navigation.state.params;
+    if (groupId) {
+      this.setState(prevState => ({
+        group: {
+          ...prevState.group,
+          ID: groupId,
+        },
+      }));
+      navigation.setParams({ groupName });
+    }
+    if (onlyView) {
+      this.setState({
+        onlyView,
+      });
+    }
+    this.getLists();
+  }
+
+  onBackFromSameScreen(previousData) {
+    const { navigation } = this.props;
+    navigation.setParams(previousData);
+    this.setState(initialState, () => {
+      this.onLoad();
+    });
   }
 
   onRefresh(groupId) {
@@ -695,35 +754,35 @@ class GroupDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.author}</Text>
-              </Col>
-              <Col style={{ width: 110 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
+            <Grid>
+              <Row>
+                <Col>
+                  <Text style={styles.name}>{commentOrActivity.author}</Text>
+                </Col>
+                <Col style={{ width: 110 }}>
+                  <Text style={styles.time}>
+                    {this.onFormatDateToView(commentOrActivity.date)}
+                  </Text>
+                </Col>
+              </Row>
+            </Grid>
           )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.name}</Text>
-              </Col>
-              <Col style={{ width: 110 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
+            <Grid>
+              <Row>
+                <Col>
+                  <Text style={styles.name}>{commentOrActivity.name}</Text>
+                </Col>
+                <Col style={{ width: 110 }}>
+                  <Text style={styles.time}>
+                    {this.onFormatDateToView(commentOrActivity.date)}
+                  </Text>
+                </Col>
+              </Row>
+            </Grid>
           )}
         </View>
         <Text
@@ -1097,10 +1156,20 @@ class GroupDetailScreen extends React.Component {
   };
 
   goToGroupDetailScreen = (groupData) => {
-    this.props.navigation.push('GroupDetail', {
+    const { navigation } = this.props;
+    const { params } = navigation.state;
+    const { ID, title } = this.state.group;
+    params.previousList.push({
+      groupId: ID,
+      onlyView: true,
+      groupName: title,
+    });
+    navigation.push('GroupDetail', {
       groupId: groupData.value,
       onlyView: true,
       groupName: groupData.name,
+      previousList: params.previousList,
+      onBackFromSameScreen: this.onBackFromSameScreen.bind(this),
     });
   };
 
@@ -1718,7 +1787,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                             </Row>
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="FontAwesome"
                                   name="user-circle"
@@ -1736,7 +1805,7 @@ class GroupDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="FontAwesome"
                                   name="black-tie"
@@ -1754,7 +1823,7 @@ class GroupDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="FontAwesome"
                                   name="map-marker"
@@ -1772,7 +1841,7 @@ class GroupDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="FontAwesome"
                                   name="globe"
@@ -1790,7 +1859,7 @@ class GroupDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="Entypo"
                                   name="home"
@@ -1808,7 +1877,7 @@ class GroupDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="MaterialCommunityIcons"
                                   name="calendar-import"
@@ -1828,7 +1897,7 @@ class GroupDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="MaterialCommunityIcons"
                                   name="calendar-import"
@@ -1880,7 +1949,7 @@ class GroupDetailScreen extends React.Component {
                               </Row>
                             </Grid>
                             <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   android="md-people"
                                   ios="ios-people"
@@ -2046,16 +2115,16 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                             </Row>
                           </Grid>
-                          <Grid style={styles.formContainer}>
+                          <Grid style={[styles.formContainer, styles.formContainerNoPadding]}>
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
                                 <Label style={styles.formLabel}>
                                   {i18n.t('groupDetailScreen.parentGroup')}
                                 </Label>
                               </Col>
                               <Col />
                             </Row>
-                            <Row style={{ height: circleSideSize, overflowX: 'auto' }}>
+                            <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
                               <ScrollView horizontal>
                                 {this.state.group.parent_groups.values.map((parentGroup, index) => (
                                   <Col
@@ -2081,38 +2150,34 @@ class GroupDetailScreen extends React.Component {
                                     <Row
                                       style={styles.groupCircleName}
                                     >
-                                      <Text style={{ fontSize: 13 }}>{parentGroup.name}</Text>
+                                      <Text style={styles.groupCircleNameText}>
+                                        {parentGroup.name}
+                                      </Text>
                                     </Row>
                                     <Row
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
+                                      style={styles.groupCircleCounter}
                                     >
-                                      <Text>2</Text>
+                                      <Text>{parentGroup.baptizedCount}</Text>
                                     </Row>
                                     <Row
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
+                                      style={[styles.groupCircleCounter, { marginTop: '5%' }]}
                                     >
-                                      <Text>4</Text>
+                                      <Text>{parentGroup.memberCount}</Text>
                                     </Row>
                                   </Col>
                                 ))}
                               </ScrollView>
                             </Row>
-                            <View style={[styles.formDivider, styles.formDivider2]} />
+                            <View style={[styles.formDivider, styles.formIconLabelMargin]} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
                                 <Label style={styles.formLabel}>
                                   {i18n.t('groupDetailScreen.childGroup')}
                                 </Label>
                               </Col>
                               <Col />
                             </Row>
-                            <Row style={{ height: circleSideSize, overflowX: 'auto' }}>
+                            <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
                               <ScrollView horizontal>
                                 {this.state.group.child_groups.values.map((childGroup, index) => (
                                   <Col
@@ -2138,38 +2203,34 @@ class GroupDetailScreen extends React.Component {
                                     <Row
                                       style={styles.groupCircleName}
                                     >
-                                      <Text style={{ fontSize: 13 }}>{childGroup.name}</Text>
+                                      <Text style={styles.groupCircleNameText}>
+                                        {childGroup.name}
+                                      </Text>
                                     </Row>
                                     <Row
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
+                                      style={styles.groupCircleCounter}
                                     >
-                                      <Text>2</Text>
+                                      <Text>{childGroup.baptizedCount}</Text>
                                     </Row>
                                     <Row
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
+                                      style={[styles.groupCircleCounter, { marginTop: '5%' }]}
                                     >
-                                      <Text>4</Text>
+                                      <Text>{childGroup.memberCount}</Text>
                                     </Row>
                                   </Col>
                                 ))}
                               </ScrollView>
                             </Row>
-                            <View style={[styles.formDivider, styles.formDivider2]} />
+                            <View style={[styles.formDivider, styles.formDivider2Margin]} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
                                 <Label style={styles.formLabel}>
                                   {i18n.t('groupDetailScreen.peerGroup')}
                                 </Label>
                               </Col>
                               <Col />
                             </Row>
-                            <Row style={{ height: circleSideSize, overflowX: 'auto' }}>
+                            <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
                               <ScrollView horizontal>
                                 {this.state.group.peer_groups.values.map((peerGroup, index) => (
                                   <Col
@@ -2195,29 +2256,25 @@ class GroupDetailScreen extends React.Component {
                                     <Row
                                       style={styles.groupCircleName}
                                     >
-                                      <Text style={{ fontSize: 13 }}>{peerGroup.name}</Text>
+                                      <Text style={styles.groupCircleNameText}>
+                                        {peerGroup.name}
+                                      </Text>
                                     </Row>
                                     <Row
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
+                                      style={styles.groupCircleCounter}
                                     >
-                                      <Text>2</Text>
+                                      <Text>{peerGroup.baptizedCount}</Text>
                                     </Row>
                                     <Row
-                                      style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
+                                      style={[styles.groupCircleCounter, { marginTop: '5%' }]}
                                     >
-                                      <Text>4</Text>
+                                      <Text>{peerGroup.memberCount}</Text>
                                     </Row>
                                   </Col>
                                 ))}
                               </ScrollView>
                             </Row>
-                            <View style={[styles.formDivider, styles.formDivider2]} />
+                            <View style={[styles.formDivider, styles.formDivider2Margin]} />
                           </Grid>
                         </ScrollView>
                       </Tab>
@@ -2237,13 +2294,15 @@ class GroupDetailScreen extends React.Component {
                                     this.updateShowAssignedToModal(true);
                                   }}
                                 >
-                                  <Row style={{ paddingTop: 30 }}>
-                                    <Col style={styles.formIconLabel}>
-                                      <Icon
-                                        type="FontAwesome"
-                                        name="user-circle"
-                                        style={[styles.formIcon, { marginRight: 10 }]}
-                                      />
+                                  <Row style={styles.formFieldPadding}>
+                                    <Col style={styles.formIconLabelCol}>
+                                      <View style={styles.formIconLabelView}>
+                                        <Icon
+                                          type="FontAwesome"
+                                          name="user-circle"
+                                          style={styles.formIcon}
+                                        />
+                                      </View>
                                     </Col>
                                     <Col>
                                       <Label
@@ -2254,12 +2313,14 @@ class GroupDetailScreen extends React.Component {
                                     </Col>
                                   </Row>
                                   <Row>
-                                    <Col style={styles.formIconLabel}>
-                                      <Icon
-                                        type="FontAwesome"
-                                        name="user-circle"
-                                        style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                      />
+                                    <Col style={styles.formIconLabelCol}>
+                                      <View style={styles.formIconLabelView}>
+                                        <Icon
+                                          type="FontAwesome"
+                                          name="user-circle"
+                                          style={[styles.formIcon, { opacity: 0 }]}
+                                        />
+                                      </View>
                                     </Col>
                                     <Col>
                                       {this.showAssignedUser()}
@@ -2272,13 +2333,15 @@ class GroupDetailScreen extends React.Component {
                                     </Col>
                                   </Row>
                                 </TouchableOpacity>
-                                <Row style={{ paddingTop: 30 }}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="black-tie"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="black-tie"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -2289,12 +2352,14 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="black-tie"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="black-tie"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Selectize
@@ -2345,13 +2410,15 @@ class GroupDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                <Row style={{ paddingTop: 30 }}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="map-marker"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="map-marker"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -2362,12 +2429,14 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="map-marker"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="map-marker"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Selectize
@@ -2418,13 +2487,15 @@ class GroupDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                <Row style={{ paddingTop: 30 }}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="globe"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="globe"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -2435,12 +2506,14 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="globe"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="globe"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Selectize
@@ -2491,13 +2564,15 @@ class GroupDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                <Row style={{ paddingTop: 30 }}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="Entypo"
-                                      name="home"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Entypo"
+                                        name="home"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -2520,12 +2595,14 @@ class GroupDetailScreen extends React.Component {
                                     <Row
                                       key={index.toString()}
                                     >
-                                      <Col style={styles.formIconLabel}>
-                                        <Icon
-                                          type="Entypo"
-                                          name="home"
-                                          style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                        />
+                                      <Col style={styles.formIconLabelCol}>
+                                        <View style={styles.formIconLabelView}>
+                                          <Icon
+                                            type="Entypo"
+                                            name="home"
+                                            style={[styles.formIcon, { opacity: 0 }]}
+                                          />
+                                        </View>
                                       </Col>
                                       <Col>
                                         <Input
@@ -2558,13 +2635,15 @@ class GroupDetailScreen extends React.Component {
                                     </Row>
                                   ) : null),
                                 )}
-                                <Row style={{ paddingTop: 30 }}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="MaterialCommunityIcons"
-                                      name="calendar-import"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="MaterialCommunityIcons"
+                                        name="calendar-import"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -2575,12 +2654,14 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="MaterialCommunityIcons"
-                                      name="calendar-import"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="MaterialCommunityIcons"
+                                        name="calendar-import"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <DatePicker
@@ -2589,13 +2670,15 @@ class GroupDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                <Row style={{ paddingTop: 30 }}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="MaterialCommunityIcons"
-                                      name="calendar-export"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="MaterialCommunityIcons"
+                                        name="calendar-export"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -2606,12 +2689,14 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="MaterialCommunityIcons"
-                                      name="calendar-export"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="MaterialCommunityIcons"
+                                        name="calendar-export"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <DatePicker
@@ -2624,13 +2709,15 @@ class GroupDetailScreen extends React.Component {
                             )}
                             {this.state.currentTabIndex === 1 && (
                               <View style={styles.formContainer}>
-                                <Row style={{ paddingTop: 30 }}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      android="md-people"
-                                      ios="ios-people"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        android="md-people"
+                                        ios="ios-people"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -2641,12 +2728,14 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      android="md-people"
-                                      ios="ios-people"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        android="md-people"
+                                        ios="ios-people"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Picker
@@ -2674,14 +2763,15 @@ class GroupDetailScreen extends React.Component {
                             {this.state.currentTabIndex === 1 && this.renderHealthMilestones()}
                             {this.state.currentTabIndex === 3 && (
                               <View style={styles.formContainer}>
-
-                                <Row style={{ paddingTop: 30 }}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="users"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="users"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -2692,12 +2782,14 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="users"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="users"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Selectize
@@ -2748,14 +2840,15 @@ class GroupDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-
-                                <Row style={{ paddingTop: 30 }}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="users"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="users"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -2766,12 +2859,14 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="users"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="users"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Selectize
@@ -2822,13 +2917,15 @@ class GroupDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                <Row style={{ paddingTop: 30 }}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="users"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="users"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -2839,12 +2936,14 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="users"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="users"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Selectize

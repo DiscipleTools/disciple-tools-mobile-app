@@ -115,7 +115,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     marginTop: 'auto',
     marginBottom: 'auto',
-    // marginRight: 20,
   },
   formParentLabel: {
     width: 'auto',
@@ -168,7 +167,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: '#D9D5DC',
-    margin: 5,
+    marginRight: 10,
+    marginBottom: 5,
   },
   saveButton: {
     backgroundColor: Colors.tintColor,
@@ -1154,36 +1154,36 @@ class ContactDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-            <Grid>
-              <Row>
-                <Col>
-                  <Text style={styles.name}>{commentOrActivity.author}</Text>
-                </Col>
-                <Col style={{ width: 110 }}>
-                  <Text style={styles.time}>
-                    {this.onFormatDateToView(commentOrActivity.date)}
-                  </Text>
-                </Col>
-              </Row>
-            </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.author}</Text>
+                  </Col>
+                  <Col style={{ width: 110 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-            <Grid>
-              <Row>
-                <Col>
-                  <Text style={styles.name}>{commentOrActivity.name}</Text>
-                </Col>
-                <Col style={{ width: 110 }}>
-                  <Text style={styles.time}>
-                    {this.onFormatDateToView(commentOrActivity.date)}
-                  </Text>
-                </Col>
-              </Row>
-            </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.name}</Text>
+                  </Col>
+                  <Col style={{ width: 110 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
         </View>
         <Text
           style={
@@ -1970,7 +1970,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                             </Row>
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="FontAwesome"
                                   name="user-circle"
@@ -1988,7 +1988,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="Ionicons"
                                   name="md-people"
@@ -2006,7 +2006,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="FontAwesome"
                                   name="phone"
@@ -2022,7 +2022,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="FontAwesome"
                                   name="envelope"
@@ -2038,7 +2038,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   android="logo-facebook"
                                   ios="logo-facebook"
@@ -2054,7 +2054,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="Entypo"
                                   name="home"
@@ -2070,7 +2070,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="FontAwesome"
                                   name="map-marker"
@@ -2088,7 +2088,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="FontAwesome"
                                   name="globe"
@@ -2106,7 +2106,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="FontAwesome"
                                   name="clock-o"
@@ -2122,7 +2122,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   android="md-male"
                                   ios="ios-male"
@@ -2138,7 +2138,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={styles.formRow}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   android="md-arrow-dropright"
                                   ios="ios-arrow-dropright"
@@ -2187,7 +2187,7 @@ class ContactDetailScreen extends React.Component {
                               </Row>
                             </Grid>
                             <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   android="md-calendar"
                                   ios="ios-calendar"
@@ -2227,7 +2227,7 @@ class ContactDetailScreen extends React.Component {
                             <Grid style={{ marginTop: 25 }}>
                               <View style={styles.formDivider} />
                               <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
+                                <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                   <Icon
                                     type="Entypo"
                                     name="water"
@@ -2394,7 +2394,7 @@ class ContactDetailScreen extends React.Component {
                               </Row>
                             </Grid>
                             <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="FontAwesome"
                                   name="users"
@@ -2412,7 +2412,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="Entypo"
                                   name="network"
@@ -2430,7 +2430,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="Entypo"
                                   name="water"
@@ -2448,7 +2448,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="Entypo"
                                   name="water"
@@ -2466,7 +2466,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="FontAwesome"
                                   name="black-tie"
@@ -2484,7 +2484,7 @@ class ContactDetailScreen extends React.Component {
                             </Row>
                             <View style={styles.formDivider} />
                             <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={styles.formIconLabel}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
                                   type="MaterialCommunityIcons"
                                   name="presentation"
@@ -3324,12 +3324,14 @@ class ContactDetailScreen extends React.Component {
                             {this.state.currentTabIndex === 1 && (
                               <View style={styles.formContainer}>
                                 <Row style={styles.formFieldPadding}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      android="md-calendar"
-                                      ios="ios-calendar"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        android="md-calendar"
+                                        ios="ios-calendar"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -3340,12 +3342,14 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="user-circle"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Picker
@@ -3395,12 +3399,14 @@ class ContactDetailScreen extends React.Component {
                                 </Label>
                                 {this.renderfaithMilestones()}
                                 <Row style={styles.formFieldPadding}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="Entypo"
-                                      name="water"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Entypo"
+                                        name="water"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -3411,12 +3417,14 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="user-circle"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Entypo"
+                                        name="water"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <DatePicker
@@ -3430,12 +3438,14 @@ class ContactDetailScreen extends React.Component {
                             {this.state.currentTabIndex === 3 && (
                               <View style={styles.formContainer}>
                                 <Row style={styles.formFieldPadding}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="users"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="users"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -3446,12 +3456,14 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="user-circle"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Selectize
@@ -3503,12 +3515,14 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row style={styles.formFieldPadding}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="Entypo"
-                                      name="network"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Entypo"
+                                        name="network"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -3519,12 +3533,14 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="user-circle"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Selectize
@@ -3587,12 +3603,14 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row style={styles.formFieldPadding}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="Entypo"
-                                      name="water"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Entypo"
+                                        name="water"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -3603,12 +3621,15 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="user-circle"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Selectize
@@ -3671,12 +3692,14 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row style={styles.formFieldPadding}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="Entypo"
-                                      name="water"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Entypo"
+                                        name="water"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -3687,12 +3710,14 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="user-circle"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Selectize
@@ -3755,12 +3780,14 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row style={styles.formFieldPadding}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="black-tie"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="black-tie"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -3771,12 +3798,14 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="user-circle"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Selectize
@@ -3839,12 +3868,15 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row style={styles.formFieldPadding}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="MaterialCommunityIcons"
-                                      name="presentation"
-                                      style={[styles.formIcon, { marginRight: 10 }]}
-                                    />
+
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="MaterialCommunityIcons"
+                                        name="presentation"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Label
@@ -3855,12 +3887,14 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                 </Row>
                                 <Row>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="user-circle"
-                                      style={[styles.formIcon, { marginRight: 10, opacity: 0 }]}
-                                    />
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
                                     <Selectize
