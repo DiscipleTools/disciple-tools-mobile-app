@@ -330,7 +330,7 @@ class LoginScreen extends React.Component {
         position="center"
       />
     );
-    /*const { domainValidation, userValidation, passwordValidation } = this.state;
+    /* const { domainValidation, userValidation, passwordValidation } = this.state;
 
      const domainStyle = domainValidation
       ? [styles.textField, styles.validationErrorInput]
