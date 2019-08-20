@@ -5,15 +5,20 @@ import i18n from 'i18n-js';
 import * as en from './en.json';
 import * as ar from './ar.json';
 
-// Below for debugging RTL only. Do not leave uncommented
-// Localization.locale = 'ar';
-// Localization.isRTL = true;
-
 i18n.fallbacks = true;
 i18n.translations = { en, ar };
 i18n.locale = Localization.locale;
-i18n.isRTL = Localization.isRTL;
+i18n.isRTL = I18nManager.isRTL;
 
-I18nManager.allowRTL(Localization.isRTL);
+I18nManager.allowRTL(true);
+
+// Do not try to set I18nManager.isRTL here as it will have no effect.
+// To change RTL, use I18nManager.forceRTL(bool) and then refresh the app
+// to see the direction changed.
+
+i18n.setLocale = function setLocale(locale) {
+  Localization.locale = locale;
+  this.locale = Localization.locale;
+};
 
 export default i18n;

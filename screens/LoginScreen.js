@@ -12,18 +12,27 @@ import {
   AsyncStorage,
   KeyboardAvoidingView,
   ScrollView,
+  I18nManager,
+  Picker,
+  Dimensions,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { Button } from 'native-base';
+import {
+  Button,
+  Icon,
+} from 'native-base';
 import Toast from 'react-native-easy-toast';
+import { Updates } from 'expo';
 
 import i18n from '../languages';
+import locales from '../languages/locales';
 import Colors from '../constants/Colors';
 import {
   login,
   USER_LOGIN_START,
   USER_LOGIN_SUCCESS,
 } from '../store/actions/user.actions';
+import { setLanguage } from '../store/actions/i18n.actions';
 import TextField from '../components/TextField';
 import {
   getUsersAndContacts,
@@ -39,10 +48,9 @@ import { getUsers, GET_USERS_SUCCESS } from '../store/actions/users.actions';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-end',
     backgroundColor: Colors.canvas,
+    minHeight: Dimensions.get('window').height,
   },
   header: {
     backgroundColor: Colors.tintColor,
@@ -102,6 +110,18 @@ const styles = StyleSheet.create({
   validationErrorMessage: {
     color: Colors.errorBackground,
   },
+  languagePickerContainer: {
+    flexDirection: 'row',
+    backgroundColor: Colors.gray,
+    padding: 5,
+    alignItems: 'center',
+  },
+  languagePicker: {
+    flex: 1,
+  },
+  languageIcon: {
+    marginHorizontal: 20,
+  },
 });
 const listLength = 5;
 let toastError;
@@ -114,6 +134,7 @@ class LoginScreen extends React.Component {
   state = {
     listsRetrieved: listLength,
     loading: false,
+    modalVisible: false,
   };
 
   constructor(props) {
@@ -236,6 +257,18 @@ class LoginScreen extends React.Component {
     } = this.props;
     const { listsRetrieved } = this.state;
     let error = null;
+
+    // If the RTL value in the store does not match what is
+    // in I18nManager (which controls content flow), call
+    // forceRTL(...) to set it in I18nManager and reload app
+    // so that new RTL value is used for content flow.
+    if (this.props.i18n.isRTL !== I18nManager.isRTL) {
+      I18nManager.forceRTL(this.props.i18n.isRTL);
+      // a bit of a hack to wait and make sure the reducer is persisted to storage
+      setTimeout(() => {
+        Updates.reloadFromCache();
+      }, 500);
+    }
 
     if (prevProps.userReducerResponse !== userReducerResponse) {
       switch (userReducerResponse) {
@@ -376,93 +409,117 @@ class LoginScreen extends React.Component {
     const userErrorMessage = userValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('login.username.error')}</Text> : null;
     const passwordErrorMessage = passwordValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('login.password.error')}</Text> : null;
 
+    const languagePickerItems = locales.map(locale => (
+      <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
+    ));
     return (
       <KeyboardAvoidingView behavior="padding">
-          <ScrollView>
-            <View style={styles.header}>
-              <Image
-                source={require('../assets/images/dt-logo2.png')}
-                style={styles.welcomeImage}
-              />
-            </View>
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={styles.header}>
+            <Image
+              source={require('../assets/images/dt-logo2.png')}
+              style={styles.welcomeImage}
+            />
+          </View>
 
-            <View style={styles.formContainer}>
-              <TextField
-                containerStyle={domainStyle}
-                iconName="ios-globe"
-                label={i18n.t('login.domain.label')}
-                onChangeText={text => this.setState({ domain: text })}
-                autoCapitalize="none"
-                autoCorrect={false}
-                value={this.state.domain}
-                returnKeyType="next"
-                textContentType="URL"
-                disabled={this.state.loading}
-                placeholder={i18n.t('login.domain.placeholder')}
-              />
-              {domainErrorMessage}
+          <View style={styles.formContainer}>
+            <TextField
+              containerStyle={domainStyle}
+              iconName="ios-globe"
+              label={i18n.t('login.domain.label')}
+              onChangeText={text => this.setState({ domain: text })}
+              autoCapitalize="none"
+              autoCorrect={false}
+              value={this.state.domain}
+              returnKeyType="next"
+              textContentType="URL"
+              disabled={this.state.loading}
+              placeholder={i18n.t('login.domain.placeholder')}
+            />
+            {domainErrorMessage}
 
-              <TextField
-                containerStyle={userStyle}
-                iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
-                label={i18n.t('login.username.label')}
-                onChangeText={text => this.setState({ username: text })}
-                autoCapitalize="none"
-                autoCorrect={false}
-                value={this.state.username}
-                returnKeyType="next"
-                textContentType="emailAddress"
-                disabled={this.state.loading}
-              />
-              {userErrorMessage}
+            <TextField
+              containerStyle={userStyle}
+              iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
+              label={i18n.t('login.username.label')}
+              onChangeText={text => this.setState({ username: text })}
+              autoCapitalize="none"
+              autoCorrect={false}
+              value={this.state.username}
+              returnKeyType="next"
+              textContentType="emailAddress"
+              disabled={this.state.loading}
+            />
+            {userErrorMessage}
 
-              <TextField
-                containerStyle={passwordStyle}
-                iconName={Platform.OS === 'ios' ? 'ios-key' : 'md-key'}
-                label={i18n.t('login.password.label')}
-                onChangeText={text => this.setState({ password: text })}
-                autoCapitalize="none"
-                autoCorrect={false}
-                secureTextEntry
-                value={this.state.password}
-                returnKeyType="go"
-                selectTextOnFocus
-                onSubmitEditing={this.signInAsync}
-                blurOnSubmit
-                textContentType="password"
-                disabled={this.state.loading}
-              />
-              {passwordErrorMessage}
+            <TextField
+              containerStyle={passwordStyle}
+              iconName={Platform.OS === 'ios' ? 'ios-key' : 'md-key'}
+              label={i18n.t('login.password.label')}
+              onChangeText={text => this.setState({ password: text })}
+              autoCapitalize="none"
+              autoCorrect={false}
+              secureTextEntry
+              value={this.state.password}
+              returnKeyType="go"
+              selectTextOnFocus
+              onSubmitEditing={this.signInAsync}
+              blurOnSubmit
+              textContentType="password"
+              disabled={this.state.loading}
+            />
+            {passwordErrorMessage}
 
-              {!this.state.loading && (
-                <Button
-                  style={styles.signInButton}
-                  onPress={this.onLoginPress}
-                  block
-                >
-                  <Text style={styles.signInButtonText}>
-                    {i18n.t('login.login')}
-                  </Text>
-                </Button>
-              )}
+            {!this.state.loading && (
+            <Button
+              style={styles.signInButton}
+              onPress={this.onLoginPress}
+              block
+            >
+              <Text style={styles.signInButtonText}>
+                {i18n.t('login.login')}
+              </Text>
+            </Button>
+            )}
 
-              {!this.state.loading && (
-                <TouchableOpacity
-                  style={styles.forgotButton}
-                  onPress={this.goToForgotPassword}
-                  disabled={this.state.loading}
-                >
-                  <Text style={styles.forgotButtonText}>
-                    {i18n.t('login.forgotPassword')}
-                  </Text>
-                </TouchableOpacity>
-              )}
-              {!!this.state.loading && (
-                <ActivityIndicator style={{ margin: 20 }} size="small" />
-              )}
-            </View>
-            {errorToast}
-          </ScrollView>
+            {!this.state.loading && (
+            <TouchableOpacity
+              style={styles.forgotButton}
+              onPress={this.goToForgotPassword}
+              disabled={this.state.loading}
+            >
+              <Text style={styles.forgotButtonText}>
+                {i18n.t('login.forgotPassword')}
+              </Text>
+            </TouchableOpacity>
+            )}
+            {!!this.state.loading && (
+            <ActivityIndicator style={{ margin: 20 }} size="small" />
+            )}
+          </View>
+
+          <View style={styles.languagePickerContainer}>
+            <Icon type="FontAwesome" name="language" style={styles.languageIcon} />
+
+            <Picker
+              selectedValue={this.props.i18n.locale}
+              style={styles.languagePicker}
+              onValueChange={(itemValue) => {
+                const locale = locales.find(item => item.code === itemValue);
+                if (locale) {
+                  const isRTL = locale.direction === 'rtl';
+                  // store locale/rtl instore for next load of app
+                  this.props.setLanguage(locale.code, isRTL);
+                  // set current locale for all language strings
+                  i18n.setLocale(locale.code, isRTL);
+                }
+              }}
+            >
+              {languagePickerItems}
+            </Picker>
+          </View>
+          {errorToast}
+        </ScrollView>
       </KeyboardAvoidingView>
     );
   }
@@ -487,6 +544,7 @@ LoginScreen.propTypes = {
   getPeopleGroups: PropTypes.func.isRequired,
   getUsers: PropTypes.func.isRequired,
   searchGroups: PropTypes.func.isRequired,
+  setLanguage: PropTypes.func.isRequired,
   userReducerError: PropTypes.shape({
     code: PropTypes.string,
     message: PropTypes.string,
@@ -529,6 +587,11 @@ LoginScreen.propTypes = {
       key: PropTypes.number,
     }),
   ).isRequired,
+  i18n: PropTypes.shape({
+    locale: PropTypes.string,
+    isRTL: PropTypes.bool,
+    init: PropTypes.func,
+  }).isRequired,
 };
 LoginScreen.defaultProps = {
   userReducerError: {
@@ -557,6 +620,7 @@ const mapStateToProps = state => ({
   search: state.groupsReducer.search,
   groupsReducerResponse: state.groupsReducer.type,
   groupsReducerError: state.groupsReducer.error,
+  i18n: state.i18nReducer,
 });
 const mapDispatchToProps = dispatch => ({
   loginDispatch: (domain, username, password) => {
@@ -576,6 +640,9 @@ const mapDispatchToProps = dispatch => ({
   },
   searchGroups: (domain, token) => {
     dispatch(searchGroups(domain, token));
+  },
+  setLanguage: (locale, isRTL) => {
+    dispatch(setLanguage(locale, isRTL));
   },
 });
 export default connect(
