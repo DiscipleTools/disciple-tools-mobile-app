@@ -120,7 +120,6 @@ class SettingsScreen extends React.Component {
   };
 
   onFABPress = () => {
-    this.toggleNetworkConnectivityIcon(this.props.isConnected);
     const toastMsg = this.props.isConnected ? i18n.t('settingsScreen.networkUnavailable') : i18n.t('settingsScreen.networkAvailable');
     this.toast.show(toastMsg);
     this.props.toggleNetworkConnectivity(this.props.isConnected);
@@ -153,7 +152,7 @@ class SettingsScreen extends React.Component {
                 </NbButton>
               </Left>
               <Body style={styles.body}>
-                <Text style={styles.text}>{i18n.t('settings.storybook')}</Text>
+                <Text style={styles.text}>{i18n.t('settingsScreen.storybook')}</Text>
               </Body>
               <Right>
                 <Icon active name={i18n.isRTL ? 'arrow-back' : 'arrow-forward'} />
@@ -168,7 +167,7 @@ class SettingsScreen extends React.Component {
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{i18n.t('settings.online')}</Text>
+              <Text style={styles.text}>{i18n.t('global.online')}</Text>
             </Body>
             <Right>
               <Switch value={this.props.isConnected} onChange={this.onFABPress} />
@@ -182,7 +181,7 @@ class SettingsScreen extends React.Component {
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{i18n.t('settings.language')}</Text>
+              <Text style={styles.text}>{i18n.t('global.language')}</Text>
             </Body>
             <Right>
               <Picker
@@ -212,15 +211,14 @@ class SettingsScreen extends React.Component {
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{i18n.t('settings.logout')}</Text>
+              <Text style={styles.text}>{i18n.t('settingsScreen.logout')}</Text>
             </Body>
             <Right>
               <Icon active name={i18n.isRTL ? 'arrow-back' : 'arrow-forward'} />
             </Right>
           </ListItem>
-
-          <Toast ref={(c) => { this.toast = c; }} position="center" />
         </Content>
+        <Toast ref={(c) => { this.toast = c; }} position="center" />
       </Container>
     );
   }

@@ -4190,7 +4190,7 @@ ContactDetailScreen.propTypes = {
     token: PropTypes.string,
   }).isRequired,
   contact: PropTypes.shape({
-    ID: PropTypes.string,
+    ID: PropTypes.number,
     title: PropTypes.string,
     seeker_path: PropTypes.string,
   }),

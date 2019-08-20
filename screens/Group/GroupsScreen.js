@@ -136,7 +136,9 @@ class GroupsScreen extends React.Component {
       });
     } else {
       // Create
-      this.props.navigation.push('GroupDetail');
+      this.props.navigation.push('GroupDetail', {
+        previousList: [],
+      });
     }
   };
 
