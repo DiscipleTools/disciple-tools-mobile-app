@@ -1154,36 +1154,36 @@ class ContactDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.author}</Text>
-                  </Col>
-                  <Col style={{ width: 110 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )}
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.author}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.name}</Text>
-                  </Col>
-                  <Col style={{ width: 110 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )}
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.name}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
         </View>
         <Text
           style={
