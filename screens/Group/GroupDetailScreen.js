@@ -756,36 +756,36 @@ class GroupDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.author}</Text>
-                  </Col>
-                  <Col style={{ width: 110 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )}
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.author}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.name}</Text>
-                  </Col>
-                  <Col style={{ width: 110 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )}
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.name}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
         </View>
         <Text
           style={
@@ -2142,11 +2142,11 @@ class GroupDetailScreen extends React.Component {
                                         style={styles.groupCircle}
                                       />
                                     ) : (
-                                        <Image
-                                          source={groupDottedCircleIcon}
-                                          style={styles.groupCircle}
-                                        />
-                                      )}
+                                      <Image
+                                        source={groupDottedCircleIcon}
+                                        style={styles.groupCircle}
+                                      />
+                                    )}
                                     <Image
                                       source={swimmingPoolIcon}
                                       style={styles.groupCenterIcon}
@@ -2195,11 +2195,11 @@ class GroupDetailScreen extends React.Component {
                                         style={styles.groupCircle}
                                       />
                                     ) : (
-                                        <Image
-                                          source={groupDottedCircleIcon}
-                                          style={styles.groupCircle}
-                                        />
-                                      )}
+                                      <Image
+                                        source={groupDottedCircleIcon}
+                                        style={styles.groupCircle}
+                                      />
+                                    )}
                                     <Image
                                       source={swimmingPoolIcon}
                                       style={styles.groupCenterIcon}
@@ -2248,11 +2248,11 @@ class GroupDetailScreen extends React.Component {
                                         style={styles.groupCircle}
                                       />
                                     ) : (
-                                        <Image
-                                          source={groupDottedCircleIcon}
-                                          style={styles.groupCircle}
-                                        />
-                                      )}
+                                      <Image
+                                        source={groupDottedCircleIcon}
+                                        style={styles.groupCircle}
+                                      />
+                                    )}
                                     <Image
                                       source={swimmingPoolIcon}
                                       style={styles.groupCenterIcon}
@@ -3028,63 +3028,63 @@ class GroupDetailScreen extends React.Component {
                 )}
               </View>
             ) : (
-                <ScrollView>
-                  <View style={styles.formContainer}>
-                    <Grid>
-                      <Row>
-                        <Label
-                          style={[
-                            styles.formLabel,
-                            { marginTop: 10, marginBottom: 5 },
-                          ]}
-                        >
-                          {i18n.t('groupDetailScreen.groupName')}
-                        </Label>
-                      </Row>
-                      <Row>
-                        <Input
-                          placeholder={i18n.t('global.requiredField')}
-                          value={this.state.group.title}
-                          onChangeText={this.setGroupName}
-                          style={{
-                            borderColor: '#B4B4B4',
-                            borderWidth: 1,
-                            borderRadius: 5,
-                            borderStyle: 'solid',
-                            fontSize: 13,
-                            paddingLeft: 15,
-                          }}
-                        />
-                      </Row>
-                      <Row>
-                        <Label
-                          style={[
-                            styles.formLabel,
-                            { marginTop: 10, marginBottom: 5 },
-                          ]}
-                        >
-                          {i18n.t('global.requiredField')}
-                        </Label>
-                      </Row>
-                      <Row>
-                        <Picker
-                          mode="dropdown"
-                          selectedValue={this.state.group.group_type}
-                          onValueChange={this.setGroupType}
-                        >
-                          <Picker.Item label={i18n.t('global.groupType.pre-group')} value="pre-group" />
-                          <Picker.Item label={i18n.t('global.groupType.group')} value="group" />
-                          <Picker.Item label={i18n.t('global.groupType.church')} value="church" />
-                          <Picker.Item label={i18n.t('global.groupType.team')} value="team" />
-                        </Picker>
-                      </Row>
-                    </Grid>
-                    <Button block style={styles.saveButton} onPress={this.onSaveGroup}>
-                      <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Save</Text>
-                    </Button>
-                  </View>
-                </ScrollView>
-              )}
+              <ScrollView>
+                <View style={styles.formContainer}>
+                  <Grid>
+                    <Row>
+                      <Label
+                        style={[
+                          styles.formLabel,
+                          { marginTop: 10, marginBottom: 5 },
+                        ]}
+                      >
+                        {i18n.t('groupDetailScreen.groupName')}
+                      </Label>
+                    </Row>
+                    <Row>
+                      <Input
+                        placeholder={i18n.t('global.requiredField')}
+                        value={this.state.group.title}
+                        onChangeText={this.setGroupName}
+                        style={{
+                          borderColor: '#B4B4B4',
+                          borderWidth: 1,
+                          borderRadius: 5,
+                          borderStyle: 'solid',
+                          fontSize: 13,
+                          paddingLeft: 15,
+                        }}
+                      />
+                    </Row>
+                    <Row>
+                      <Label
+                        style={[
+                          styles.formLabel,
+                          { marginTop: 10, marginBottom: 5 },
+                        ]}
+                      >
+                        {i18n.t('global.requiredField')}
+                      </Label>
+                    </Row>
+                    <Row>
+                      <Picker
+                        mode="dropdown"
+                        selectedValue={this.state.group.group_type}
+                        onValueChange={this.setGroupType}
+                      >
+                        <Picker.Item label={i18n.t('global.groupType.pre-group')} value="pre-group" />
+                        <Picker.Item label={i18n.t('global.groupType.group')} value="group" />
+                        <Picker.Item label={i18n.t('global.groupType.church')} value="church" />
+                        <Picker.Item label={i18n.t('global.groupType.team')} value="team" />
+                      </Picker>
+                    </Row>
+                  </Grid>
+                  <Button block style={styles.saveButton} onPress={this.onSaveGroup}>
+                    <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Save</Text>
+                  </Button>
+                </View>
+              </ScrollView>
+            )}
           </View>
         )}
         {successToast}
