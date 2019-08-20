@@ -53,12 +53,15 @@
     "requiredField": "Required field",
     "edit": "Edit",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "online": "Online",
+    "language": "Language"
   },
   "loginScreen": {
     "domain": {
       "label": "Disciple Tools URL",
-      "placeholder": "E.g. myteam.disciple.tools"
+      "placeholder": "E.g. myteam.disciple.tools",
+      "error": "Domain is required"
     },
     "username": "Username",
     "password": "Password",
@@ -74,7 +77,9 @@
     "networkAvailable": "Network detected. Back to ONLINE mode",
     "signOut": "Sign Out",
     "domain": "Domain",
-    "signedInAs": "Signed in as"
+    "signedInAs": "Signed in as",
+    "storybook": "Storybook",
+    "logout": "Sign Out"
   },
   "contactDetailScreen": {
     "addNewContact": "Add New Contact",

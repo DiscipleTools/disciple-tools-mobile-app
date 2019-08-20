@@ -9,6 +9,7 @@ import TabBarIcon from '../components/TabBarIcon';
 
 // import HomeScreen from "../screens/HomeScreen";
 import SettingsScreen from '../screens/SettingsScreen';
+import Storybook from '../storybook';
 import ContactStack from '../screens/Contact/index';
 import GroupStack from '../screens/Group/index';
 
@@ -38,6 +39,7 @@ HomeStack.propTypes = {
 */
 const SettingsStack = createStackNavigator({
   Settings: SettingsScreen,
+  Storybook,
 });
 function SettingsIcon({ focused }) {
   return <TabBarIcon type="FontAwesome" name="cog" focused={focused} />;

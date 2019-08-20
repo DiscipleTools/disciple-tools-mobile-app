@@ -53,7 +53,9 @@
     "requiredField": "",
     "edit": "",
     "cancel": "",
-    "save": ""
+    "save": "",
+    "online": "",
+    "language": ""
   },
   "loginScreen": {
     "domain": {
@@ -69,12 +71,14 @@
     "contacts": ""
   },
   "settingsScreen": {
-    "settings": " ",
+    "settings": "الإعدادات",
     "networkUnavailable": "",
     "networkAvailable": "",
     "signOut": "",
     "domain": "",
-    "signedInAs": ""
+    "signedInAs": "",
+    "storybook": "",
+    "logout": ""
   },
   "contactDetailScreen": {
     "addNewContact": "",

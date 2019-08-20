@@ -10,16 +10,27 @@ import {
   ActivityIndicator,
   Platform,
   AsyncStorage,
+  // KeyboardAvoidingView,
+  // ScrollView,
+  I18nManager,
+  Picker,
+  Dimensions,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { Button } from 'native-base';
+import {
+  Button,
+  Icon,
+} from 'native-base';
 import Toast from 'react-native-easy-toast';
+import { Updates } from 'expo';
 
 import i18n from '../languages';
+import locales from '../languages/locales';
 import Colors from '../constants/Colors';
 import {
   login,
 } from '../store/actions/user.actions';
+import { setLanguage } from '../store/actions/i18n.actions';
 import TextField from '../components/TextField';
 import {
   getUsersAndContacts,
@@ -31,10 +42,9 @@ import { getUsers } from '../store/actions/users.actions';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-end',
     backgroundColor: Colors.canvas,
+    minHeight: Dimensions.get('window').height,
   },
   header: {
     backgroundColor: Colors.tintColor,
@@ -83,6 +93,28 @@ const styles = StyleSheet.create({
   },
   textField: {
     backgroundColor: '#ffffff',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  validationErrorInput: {
+    backgroundColor: '#FFE6E6',
+    borderWidth: 2,
+    borderColor: Colors.errorBackground,
+  },
+  validationErrorMessage: {
+    color: Colors.errorBackground,
+  },
+  languagePickerContainer: {
+    flexDirection: 'row',
+    backgroundColor: Colors.gray,
+    padding: 5,
+    alignItems: 'center',
+  },
+  languagePicker: {
+    flex: 1,
+  },
+  languageIcon: {
+    marginHorizontal: 20,
   },
 });
 const listLength = 5;
@@ -96,9 +128,7 @@ class LoginScreen extends React.Component {
   state = {
     listsRetrieved: listLength,
     loading: false,
-    domain: '',
-    username: '',
-    password: '',
+    modalVisible: false,
   };
 
   constructor(props) {
@@ -118,6 +148,9 @@ class LoginScreen extends React.Component {
       username: props.userData.username || '',
       password: '',
       domain: props.userData.domain || '',
+      domainIsInvalid: false,
+      userIsInvalid: false,
+      passwordIsInvalid: false,
     };
   }
 
@@ -167,6 +200,18 @@ class LoginScreen extends React.Component {
       users, userReducerError, groupsReducerError, usersReducerError,
     } = this.props;
     const { listsRetrieved } = this.state;
+
+    // If the RTL value in the store does not match what is
+    // in I18nManager (which controls content flow), call
+    // forceRTL(...) to set it in I18nManager and reload app
+    // so that new RTL value is used for content flow.
+    if (this.props.i18n.isRTL !== I18nManager.isRTL) {
+      I18nManager.forceRTL(this.props.i18n.isRTL);
+      // a bit of a hack to wait and make sure the reducer is persisted to storage
+      setTimeout(() => {
+        Updates.reloadFromCache();
+      }, 500);
+    }
 
     // User logged successfully
     if (userData && prevProps.userData !== userData) {
@@ -251,11 +296,21 @@ class LoginScreen extends React.Component {
 
   onLoginPress = () => {
     Keyboard.dismiss();
-    const { domain, username, password } = this.state;
-    const cleanedDomain = (domain || '')
-      .replace('http://', '')
-      .replace('https://', '');
-    this.props.loginDispatch(cleanedDomain, username, password);
+    const {
+      domain, username, password,
+    } = this.state;
+    if (domain && username && password) {
+      const cleanedDomain = (domain || '')
+        .replace('http://', '')
+        .replace('https://', '');
+      this.props.loginDispatch(cleanedDomain, username, password);
+    } else {
+      this.setState({
+        domainValidation: !domain,
+        userValidation: !username,
+        passwordValidation: !password,
+      });
+    }
   };
 
   /* eslint-disable class-methods-use-this, no-console */
@@ -275,7 +330,25 @@ class LoginScreen extends React.Component {
         position="center"
       />
     );
+    /*const { domainValidation, userValidation, passwordValidation } = this.state;
 
+     const domainStyle = domainValidation
+      ? [styles.textField, styles.validationErrorInput]
+      : styles.textField;
+    const userStyle = userValidation
+      ? [styles.textField, styles.validationErrorInput]
+      : styles.textField;
+    const passwordStyle = passwordValidation
+      ? [styles.textField, styles.validationErrorInput]
+      : styles.textField;
+
+    const domainErrorMessage = domainValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('login.domain.error')}</Text> : null;
+    const userErrorMessage = userValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('login.username.error')}</Text> : null;
+    const passwordErrorMessage = passwordValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('login.password.error')}</Text> : null;
+*/
+    const languagePickerItems = locales.map(locale => (
+      <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
+    ));
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -352,6 +425,26 @@ class LoginScreen extends React.Component {
             <ActivityIndicator style={{ margin: 20 }} size="small" />
           )}
         </View>
+        <View style={styles.languagePickerContainer}>
+          <Icon type="FontAwesome" name="language" style={styles.languageIcon} />
+
+          <Picker
+            selectedValue={this.props.i18n.locale}
+            style={styles.languagePicker}
+            onValueChange={(itemValue) => {
+              const locale = locales.find(item => item.code === itemValue);
+              if (locale) {
+                const isRTL = locale.direction === 'rtl';
+                // store locale/rtl instore for next load of app
+                this.props.setLanguage(locale.code, isRTL);
+                // set current locale for all language strings
+                i18n.setLocale(locale.code, isRTL);
+              }
+            }}
+          >
+            {languagePickerItems}
+          </Picker>
+        </View>
         {errorToast}
       </View>
     );
@@ -376,6 +469,7 @@ LoginScreen.propTypes = {
     navigate: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
   }).isRequired,
+  setLanguage: PropTypes.func.isRequired,
   /* eslint-disable */
   usersContacts: PropTypes.arrayOf(
     PropTypes.shape({
@@ -415,6 +509,11 @@ LoginScreen.propTypes = {
     code: PropTypes.string,
     message: PropTypes.string,
   }),
+  i18n: PropTypes.shape({
+    locale: PropTypes.string,
+    isRTL: PropTypes.bool,
+    init: PropTypes.func,
+  }).isRequired,
 };
 LoginScreen.defaultProps = {
   userData: {
@@ -441,6 +540,7 @@ const mapStateToProps = state => ({
   usersReducerLoading: state.usersReducer.loading,
   users: state.usersReducer.users,
   usersReducerError: state.usersReducer.error,
+  i18n: state.i18nReducer,
 });
 const mapDispatchToProps = dispatch => ({
   loginDispatch: (domain, username, password) => {
@@ -460,6 +560,9 @@ const mapDispatchToProps = dispatch => ({
   },
   getUsers: (domain, token) => {
     dispatch(getUsers(domain, token));
+  },
+  setLanguage: (locale, isRTL) => {
+    dispatch(setLanguage(locale, isRTL));
   },
 });
 export default connect(

@@ -545,6 +545,7 @@ class GroupDetailScreen extends React.Component {
 
   onLoad() {
     const { navigation } = this.props;
+    /* eslint-disable */
     const { groupId, onlyView, groupName } = navigation.state.params;
     if (groupId) {
       this.setState(prevState => ({
@@ -560,6 +561,7 @@ class GroupDetailScreen extends React.Component {
         onlyView,
       });
     }
+    /* eslint-enable */
     this.getLists();
   }
 
@@ -1157,6 +1159,7 @@ class GroupDetailScreen extends React.Component {
 
   goToGroupDetailScreen = (groupData) => {
     const { navigation } = this.props;
+    /* eslint-disable */
     const { params } = navigation.state;
     const { ID, title } = this.state.group;
     params.previousList.push({
@@ -1171,6 +1174,7 @@ class GroupDetailScreen extends React.Component {
       previousList: params.previousList,
       onBackFromSameScreen: this.onBackFromSameScreen.bind(this),
     });
+    /* eslint-enable */
   };
 
   renderHealthMilestones() {
@@ -3096,7 +3100,8 @@ GroupDetailScreen.propTypes = {
     token: PropTypes.string,
   }).isRequired,
   group: PropTypes.shape({
-    key: PropTypes.number,
+    ID: PropTypes.string,
+    title: PropTypes.string,
   }),
   userReducerError: PropTypes.shape({
     code: PropTypes.string,

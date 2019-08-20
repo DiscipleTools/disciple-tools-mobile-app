@@ -194,6 +194,7 @@ GroupsScreen.propTypes = {
   ),
   /* eslint-enable */
   error: PropTypes.shape({
+    code: PropTypes.string,
     message: PropTypes.string,
   }),
 };

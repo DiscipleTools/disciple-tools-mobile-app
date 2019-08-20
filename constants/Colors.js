@@ -1,9 +1,21 @@
 const tintColor = '#365D86';
+const accent = '#a0ce4e';
+
+const grayLight = '#eeeeee';
+const gray = '#cccccc';
+const grayDark = '#666666';
 
 export default {
+  primary: tintColor,
+  accent,
   tintColor,
-  canvas: '#eeeeee',
-  tabIconDefault: '#ccc',
+
+  grayLight,
+  gray,
+  grayDark,
+
+  canvas: grayLight,
+  tabIconDefault: gray,
   tabIconSelected: tintColor,
   tabBar: '#fefefe',
   errorBackground: 'red',

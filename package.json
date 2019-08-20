@@ -5,7 +5,7 @@
     "postinstall": "npx shx  mkdir -p .git/hooks && npx shx cp -f git-hooks/pre-commit .git/hooks/ && npx shx chmod 755 .git/hooks/pre-commit",
     "android": "./node_modules/.bin/expo start --android",
     "ios": "./node_modules/.bin/expo start --ios",
-    "lint": "./node_modules/.bin/eslint --ext .jsx,.js ./ --fix",
+    "lint": "npx eslint --ext .jsx,.js ./ --fix",
     "eject": "./node_modules/.bin/expo eject",
     "test": "node ./node_modules/jest/bin/jest.js"
   },
@@ -15,12 +15,19 @@
       "node_modules/(?!react-native|react-navigation|@react-navigation|expo|@expo|native-base|prop-types)"
     ],
     "automock": false,
+    "setupFilesAfterEnv": [
+      "./setup-tests.js"
+    ],
     "setupFiles": [
       "./setupJest.js"
     ]
   },
   "dependencies": {
     "@expo/vector-icons": "^10.0.4",
+    "@storybook/addon-actions": "^5.1.9",
+    "@storybook/addon-links": "^5.1.9",
+    "@storybook/addons": "^5.1.9",
+    "@storybook/react-native": "^5.1.9",
     "es6-promise": "^4.2.6",
     "expo": "^33.0.0",
     "expo-asset": "^6.0.0",
@@ -43,23 +50,31 @@
     "react-native-vector-icons": "^6.4.1",
     "react-navigation": "^3.0.9",
     "react-redux": "^6.0.1",
-    "react-test-renderer": "^16.8.4",
+    "reactotron-react-native": "^3.6.4",
     "redux": "^4.0.1",
     "redux-persist": "^5.10.0",
     "redux-saga": "^1.0.2",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.5.5",
     "babel-eslint": "^10.0.1",
+    "babel-loader": "^8.0.6",
     "babel-preset-expo": "^5.0.0",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
     "eslint": "^5.15.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.12.4",
     "jest": "^24.6.0",
+    "jest-enzyme": "^7.1.0",
     "jest-expo": "^32.0.0",
     "jest-fetch-mock": "^2.1.2",
+    "jsdom": "^15.1.1",
+    "react-dom": "^16.5.0",
+    "react-test-renderer": "^16.8.4",
     "redux-saga-test-plan": "4.0.0-beta.2",
     "shx": "^0.3.2"
   },

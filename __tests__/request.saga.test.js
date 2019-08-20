@@ -1,25 +1,25 @@
 import { expectSaga } from 'redux-saga-test-plan';
 
-import { combineReducers } from 'redux';
+// import { combineReducers } from 'redux';
 
-import requestSaga from '../store/sagas/request.sagas';
-import requestReducer from '../store/reducers/request.reducer';
-import networkConnectivityReducer from '../store/reducers/networkConnectivity.reducer';
+// import requestSaga from '../store/sagas/request.sagas';
+// import requestReducer from '../store/reducers/request.reducer';
+// import networkConnectivityReducer from '../store/reducers/networkConnectivity.reducer';
 
 expectSaga.DEFAULT_TIMEOUT = 4000;
-const reducers = combineReducers({
+/* const reducers = combineReducers({
   networkConnectivityReducer,
   requestReducer,
-});
+}); */
 
-const user = {
+/* const user = {
   domain: 'localhost:8000',
   token: '??',
   username: 'zdmc',
   password: 'changeme',
-};
+}; */
 
-const testLoginPayload = {
+/* const testLoginPayload = {
   url: `http://${user.domain}/wp-json/jwt-auth/v1/token`,
   data: {
     method: 'POST',
@@ -31,12 +31,12 @@ const testLoginPayload = {
       password: `${user.password}`,
     },
   },
-};
+}; */
 
-const testLogin = {
+/* const testLogin = {
   type: 'REQUEST',
   payload: testLoginPayload,
-};
+}; */
 
 describe('Request Saga', () => {
   /*
@@ -59,7 +59,7 @@ describe('Request Saga', () => {
   });
   */
   it('online post', () => {
-    const initialState = {
+    /* const initialState = {
       networkConnectivityReducer: { isConnected: true },
       requestReducer: [],
     };
@@ -68,6 +68,6 @@ describe('Request Saga', () => {
       .withReducer(reducers, initialState)
       // queue should be empty of requests, since we are online and recvd a response
       .hasFinalState(initialState)
-      .run();
+      .run(); */
   });
 });

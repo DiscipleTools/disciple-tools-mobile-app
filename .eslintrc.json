@@ -10,10 +10,23 @@
     "__DEV__": "writable"
   },
   "parser": "babel-eslint",
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".android.js",
+          ".ios.js"
+        ]
+      }
+    }
+  },
   "rules": {
     "react/destructuring-assignment": 0,
     "react/jsx-filename-extension": 0,
     "global-require": 0,
+    "import/export": 0,
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*test.js", "setup-tests.js"]}],
     "max-len": ["error", 100, 2, {
       "ignoreUrls": true,
       "ignoreComments": true,
