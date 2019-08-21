@@ -68,16 +68,16 @@ const progressBarWidth = windowWidth - 100;
 const milestonesGridSize = windowWidth + 5;
 /* eslint-disable */
 let commentsFlatList,
-  subAssiSelectizeRef,
-  geonamSelectizeRef,
-  pplGroupsSelectRef,
+  subAssignedSelectizeRef,
+  geonamesSelectizeRef,
+  peopleGroupsSelectizeRef,
   sourcesSelectizeRef,
   groupsSelectizeRef,
-  connectSelectizeRef,
-  baptBySelectizeRef,
+  connectionsSelectizeRef,
+  baptizedBySelectizeRef,
   coachedSelectizeRef,
-  baptSeleRef,
-  coachiSelectizeRef;
+  baptizedSelectizeRef,
+  coachingSelectizeRef;
 /* eslint-enable */
 const styles = StyleSheet.create({
   tabBarUnderlineStyle: {
@@ -297,13 +297,13 @@ class ContactDetailScreen extends React.Component {
     loadedLocal: false,
     comments: [],
     loadComments: false,
-    loadingMoreCom: false,
+    loadingMoreComments: false,
     totalComments: 0,
     commentsOffset: 0,
     commentsLimit: 10,
     activities: [],
     loadActivities: false,
-    loadingMoreActivi: false,
+    loadingMoreActivities: false,
     totalActivities: 0,
     activitiesOffset: 0,
     activitiesLimit: 10,
@@ -429,7 +429,7 @@ class ContactDetailScreen extends React.Component {
         newState = {
           ...newState,
           comments: prevState.comments.concat(comments),
-          loadingMoreCom: false,
+          loadingMoreComments: false,
         };
       }
       newState = {
@@ -446,7 +446,7 @@ class ContactDetailScreen extends React.Component {
         newState = {
           ...newState,
           activities: prevState.activities.concat(activities),
-          loadingMoreActivi: false,
+          loadingMoreActivities: false,
         };
       }
       newState = {
@@ -481,7 +481,7 @@ class ContactDetailScreen extends React.Component {
 
     // CONTACT SAVE
     if (saved) {
-      this.onRefreCommenActiviti(contact.ID);
+      this.onRefreshCommentsActivities(contact.ID);
       toastSuccess.show(
         <View>
           <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
@@ -511,10 +511,10 @@ class ContactDetailScreen extends React.Component {
 
   onRefresh(contactId) {
     this.getContactById(contactId);
-    this.onRefreCommenActiviti(contactId);
+    this.onRefreshCommentsActivities(contactId);
   }
 
-  onRefreCommenActiviti(contactId) {
+  onRefreshCommentsActivities(contactId) {
     this.setState({
       comments: [],
       activities: [],
@@ -679,20 +679,20 @@ class ContactDetailScreen extends React.Component {
     const dbGeonames = [...this.state.contact.geonames.values];
 
     const localGeonames = [];
-    const selectedValues = this.geonamSelectizeRef.getSelectedItems();
+    const selectedValues = geonamesSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const geoname = selectedValues.entities.item[itemValue];
       localGeonames.push(geoname);
     });
 
     const geonamesToSave = localGeonames.filter((localGeoname) => {
-      const foundLocalInDb = dbGeonames.find(dbGeoname => dbGeoname.value === localGeoname.value);
-      return foundLocalInDb === undefined;
+      const foundLocalInDatabase = dbGeonames.find(dbGeoname => dbGeoname.value === localGeoname.value);
+      return foundLocalInDatabase === undefined;
     }).map(geoname => ({ value: geoname.value }));
 
     dbGeonames.forEach((dbGeoname) => {
-      const dbInLocal = localGeonames.find(localGeoname => dbGeoname.value === localGeoname.value);
-      if (!dbInLocal) {
+      const foundDatabaseInLocal = localGeonames.find(localGeoname => dbGeoname.value === localGeoname.value);
+      if (!foundDatabaseInLocal) {
         geonamesToSave.push({ value: dbGeoname.value, delete: true });
       }
     });
@@ -805,10 +805,6 @@ class ContactDetailScreen extends React.Component {
         quickAction,
         'quick_button_no_show',
       )
-      /* || Object.prototype.hasOwnProperty.call(
-        quickAction,
-        'quick_button_phone_off',
-      ) */
     ) {
       contactToSave = {
         ...contactToSave,
@@ -816,34 +812,34 @@ class ContactDetailScreen extends React.Component {
       };
     } else {
       contactToSave = JSON.parse(JSON.stringify(this.state.contact));
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'geonames') && this.geonamSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'geonames') && geonamesSelectizeRef) {
         contactToSave.geonames.values = this.setGeonames();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'subassigned') && this.subAssiSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'subassigned') && subAssignedSelectizeRef) {
         contactToSave.subassigned.values = this.setContactSubassignedContacts();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'groups') && this.groupsSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'groups') && groupsSelectizeRef) {
         contactToSave.groups.values = this.setGroups();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'relation') && this.connectSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'relation') && connectionsSelectizeRef) {
         contactToSave.relation.values = this.setConnections();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized_by') && this.baptBySelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized_by') && baptizedBySelectizeRef) {
         contactToSave.baptized_by.values = this.setBaptizedBy();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized') && this.baptSeleRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized') && baptizedSelectizeRef) {
         contactToSave.baptized.values = this.setBaptized();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coached_by') && this.coachedSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coached_by') && coachedSelectizeRef) {
         contactToSave.coached_by.values = this.setCoachedBy();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coaching') && this.coachiSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coaching') && coachingSelectizeRef) {
         contactToSave.coaching.values = this.setCoaching();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'people_groups') && this.pplGroupsSelectRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'people_groups') && peopleGroupsSelectizeRef) {
         contactToSave.people_groups.values = this.setPeopleGroups();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'sources') && this.sourcesSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'sources') && sourcesSelectizeRef) {
         contactToSave.sources.values = this.setSources();
       }
     }
@@ -935,24 +931,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setGroups = () => {
-    const dbGroups = [...this.state.contact.groups.values];
+    const dataBaseGroups = [...this.state.contact.groups.values];
 
-    const lclGroups = [];
-    const selectedValues = this.groupsSelectizeRef.getSelectedItems();
+    const localGroups = [];
+    const selectedValues = groupsSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const group = selectedValues.entities.item[itemValue];
-      lclGroups.push(group);
+      localGroups.push(group);
     });
 
-    const groupsToSave = lclGroups.filter((lclGroup) => {
-      const foundLocalInDb = dbGroups.find(dbGroup => dbGroup.value === lclGroup.value);
-      return foundLocalInDb === undefined;
+    const groupsToSave = localGroups.filter((localGroup) => {
+      const foundLocalInDatabase = dataBaseGroups.find(dataBaseGroup => dataBaseGroup.value === localGroup.value);
+      return foundLocalInDatabase === undefined;
     }).map(group => ({ value: group.value }));
 
-    dbGroups.forEach((dbGroup) => {
-      const dbInLocal = lclGroups.find(lclGroup => dbGroup.value === lclGroup.value);
-      if (!dbInLocal) {
-        groupsToSave.push({ value: dbGroup.value, delete: true });
+    dataBaseGroups.forEach((dataBaseGroup) => {
+      const foundDatabaseInLocal = localGroups.find(localGroup => dataBaseGroup.value === localGroup.value);
+      if (!foundDatabaseInLocal) {
+        groupsToSave.push({ value: dataBaseGroup.value, delete: true });
       }
     });
 
@@ -960,24 +956,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setConnections = () => {
-    const dbConnections = [...this.state.contact.relation.values];
+    const dataBaseConnections = [...this.state.contact.relation.values];
 
-    const lclConnections = [];
-    const selectedValues = this.connectSelectizeRef.getSelectedItems();
+    const localConnections = [];
+    const selectedValues = connectionsSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const connection = selectedValues.entities.item[itemValue];
-      lclConnections.push(connection);
+      localConnections.push(connection);
     });
 
-    const connectionsToSave = lclConnections.filter((lclConnection) => {
-      const foundLocalInDb = dbConnections.find(dbCnt => dbCnt.value === lclConnection.value);
-      return foundLocalInDb === undefined;
+    const connectionsToSave = localConnections.filter((localConnection) => {
+      const foundLocalInDatabase = dataBaseConnections.find(dataBaseConnection => dataBaseConnection.value === localConnection.value);
+      return foundLocalInDatabase === undefined;
     }).map(connection => ({ value: connection.value }));
 
-    dbConnections.forEach((dbConnection) => {
-      const dbInLocal = lclConnections.find(lclCnt => dbConnection.value === lclCnt.value);
-      if (!dbInLocal) {
-        connectionsToSave.push({ value: dbConnection.value, delete: true });
+    dataBaseConnections.forEach((dataBaseConnection) => {
+      const foundDatabaseInLocal = localConnections.find(localConnection => dataBaseConnection.value === localConnection.value);
+      if (!foundDatabaseInLocal) {
+        connectionsToSave.push({ value: dataBaseConnection.value, delete: true });
       }
     });
 
@@ -985,24 +981,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setBaptizedBy = () => {
-    const dbBaptizedBy = [...this.state.contact.baptized_by.values];
+    const dataBaseBaptizedBy = [...this.state.contact.baptized_by.values];
 
-    const lclBaptizedBy = [];
-    const selectedValues = this.baptBySelectizeRef.getSelectedItems();
+    const localBaptizedBy = [];
+    const selectedValues = baptizedBySelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const baptizedBy = selectedValues.entities.item[itemValue];
-      lclBaptizedBy.push(baptizedBy);
+      localBaptizedBy.push(baptizedBy);
     });
 
-    const baptizedByToSave = lclBaptizedBy.filter((lclBaptized) => {
-      const foundLocalInDb = dbBaptizedBy.find(dbBpt => dbBpt.value === lclBaptized.value);
-      return foundLocalInDb === undefined;
+    const baptizedByToSave = localBaptizedBy.filter((localBaptized) => {
+      const foundLocalInDatabase = dataBaseBaptizedBy.find(dataBaseBaptized => dataBaseBaptized.value === localBaptized.value);
+      return foundLocalInDatabase === undefined;
     }).map(baptizedBy => ({ value: baptizedBy.value }));
 
-    dbBaptizedBy.forEach((dbBaptized) => {
-      const dbInLocal = lclBaptizedBy.find(lclBaptized => dbBaptized.value === lclBaptized.value);
-      if (!dbInLocal) {
-        baptizedByToSave.push({ value: dbBaptized.value, delete: true });
+    dataBaseBaptizedBy.forEach((dataBaseBaptized) => {
+      const foundDatabaseInLocal = localBaptizedBy.find(localBaptized => dataBaseBaptized.value === localBaptized.value);
+      if (!foundDatabaseInLocal) {
+        baptizedByToSave.push({ value: dataBaseBaptized.value, delete: true });
       }
     });
 
@@ -1010,24 +1006,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setBaptized = () => {
-    const dbBaptizeds = [...this.state.contact.baptized.values];
+    const dataBaseBaptizeds = [...this.state.contact.baptized.values];
 
-    const lclBaptizeds = [];
-    const selectedValues = this.baptSeleRef.getSelectedItems();
+    const localBaptizeds = [];
+    const selectedValues = baptizedSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const baptized = selectedValues.entities.item[itemValue];
-      lclBaptizeds.push(baptized);
+      localBaptizeds.push(baptized);
     });
 
-    const baptizedToSave = lclBaptizeds.filter((lclBaptized) => {
-      const foundLocalInDb = dbBaptizeds.find(dbBaptized => dbBaptized.value === lclBaptized.value);
-      return foundLocalInDb === undefined;
+    const baptizedToSave = localBaptizeds.filter((localBaptized) => {
+      const foundLocalInDatabase = dataBaseBaptizeds.find(dataBaseBaptized => dataBaseBaptized.value === localBaptized.value);
+      return foundLocalInDatabase === undefined;
     }).map(baptized => ({ value: baptized.value }));
 
-    dbBaptizeds.forEach((dbBaptized) => {
-      const dbInLocal = lclBaptizeds.find(lclBaptized => dbBaptized.value === lclBaptized.value);
-      if (!dbInLocal) {
-        baptizedToSave.push({ value: dbBaptized.value, delete: true });
+    dataBaseBaptizeds.forEach((dataBaseBaptized) => {
+      const foundDatabaseInLocal = localBaptizeds.find(localBaptized => dataBaseBaptized.value === localBaptized.value);
+      if (!foundDatabaseInLocal) {
+        baptizedToSave.push({ value: dataBaseBaptized.value, delete: true });
       }
     });
 
@@ -1035,24 +1031,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setCoachedBy = () => {
-    const dbCoachedBy = [...this.state.contact.coached_by.values];
+    const dataBaseCoachedBy = [...this.state.contact.coached_by.values];
 
-    const lclCoachedBy = [];
-    const selectedValues = this.coachedSelectizeRef.getSelectedItems();
+    const localCoachedBy = [];
+    const selectedValues = coachedSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const coached = selectedValues.entities.item[itemValue];
-      lclCoachedBy.push(coached);
+      localCoachedBy.push(coached);
     });
 
-    const coachedToSave = lclCoachedBy.filter((lclCoached) => {
-      const foundLocalInDb = dbCoachedBy.find(dbCoached => dbCoached.value === lclCoached.value);
-      return foundLocalInDb === undefined;
+    const coachedToSave = localCoachedBy.filter((localCoached) => {
+      const foundLocalInDatabase = dataBaseCoachedBy.find(dataBaseCoached => dataBaseCoached.value === localCoached.value);
+      return foundLocalInDatabase === undefined;
     }).map(coached => ({ value: coached.value }));
 
-    dbCoachedBy.forEach((dbCoached) => {
-      const dbInLocal = lclCoachedBy.find(lclCoached => dbCoached.value === lclCoached.value);
-      if (!dbInLocal) {
-        coachedToSave.push({ value: dbCoached.value, delete: true });
+    dataBaseCoachedBy.forEach((dataBaseCoached) => {
+      const foundDatabaseInLocal = localCoachedBy.find(localCoached => dataBaseCoached.value === localCoached.value);
+      if (!foundDatabaseInLocal) {
+        coachedToSave.push({ value: dataBaseCoached.value, delete: true });
       }
     });
 
@@ -1060,24 +1056,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setCoaching = () => {
-    const dbCoaching = [...this.state.contact.coaching.values];
+    const dataBaseCoaching = [...this.state.contact.coaching.values];
 
-    const lclCoaching = [];
-    const selectedValues = this.coachiSelectizeRef.getSelectedItems();
+    const localCoaching = [];
+    const selectedValues = coachingSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const coaching = selectedValues.entities.item[itemValue];
-      lclCoaching.push(coaching);
+      localCoaching.push(coaching);
     });
 
-    const coachingToSave = lclCoaching.filter((lclCoach) => {
-      const localInDb = dbCoaching.find(dbCoach => dbCoach.value === lclCoach.value);
-      return localInDb === undefined;
+    const coachingToSave = localCoaching.filter((localCoach) => {
+      const localInDataBase = dataBaseCoaching.find(dataBaseCoach => dataBaseCoach.value === localCoach.value);
+      return localInDataBase === undefined;
     }).map(coaching => ({ value: coaching.value }));
 
-    dbCoaching.forEach((dbCoach) => {
-      const dbInLocal = lclCoaching.find(lclCoach => dbCoach.value === lclCoach.value);
-      if (!dbInLocal) {
-        coachingToSave.push({ value: dbCoach.value, delete: true });
+    dataBaseCoaching.forEach((dataBaseCoach) => {
+      const foundDatabaseInLocal = localCoaching.find(localCoach => dataBaseCoach.value === localCoach.value);
+      if (!foundDatabaseInLocal) {
+        coachingToSave.push({ value: dataBaseCoach.value, delete: true });
       }
     });
 
@@ -1378,24 +1374,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setPeopleGroups = () => {
-    const dbPGs = [...this.state.contact.people_groups.values];
+    const dataBasePeopleGroups = [...this.state.contact.people_groups.values];
 
-    const lclPGs = [];
-    const selectedValues = this.pplGroupsSelectRef.getSelectedItems();
+    const localPeopleGroups = [];
+    const selectedValues = peopleGroupsSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const peopleGroup = selectedValues.entities.item[itemValue];
-      lclPGs.push(peopleGroup);
+      localPeopleGroups.push(peopleGroup);
     });
 
-    const peopleGroupsToSave = lclPGs.filter((lclPG) => {
-      const foundLocalInDb = dbPGs.find(dbPG => dbPG.value === lclPG.value);
-      return foundLocalInDb === undefined;
+    const peopleGroupsToSave = localPeopleGroups.filter((localPeopleGroup) => {
+      const foundLocalInDatabase = dataBasePeopleGroups.find(dataBasePeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
+      return foundLocalInDatabase === undefined;
     }).map(peopleGroup => ({ value: peopleGroup.value }));
 
-    dbPGs.forEach((dbPG) => {
-      const dbInLocal = lclPGs.find(lclPG => dbPG.value === lclPG.value);
-      if (!dbInLocal) {
-        peopleGroupsToSave.push({ value: dbPG.value, delete: true });
+    dataBasePeopleGroups.forEach((dataBasePeopleGroup) => {
+      const foundDatabaseInLocal = localPeopleGroups.find(localPeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
+      if (!foundDatabaseInLocal) {
+        peopleGroupsToSave.push({ value: dataBasePeopleGroup.value, delete: true });
       }
     });
 
@@ -1403,24 +1399,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setSources = () => {
-    const dbSources = [...this.state.contact.sources.values];
+    const dataBaseSources = [...this.state.contact.sources.values];
 
     const localSources = [];
-    const selectedValues = this.sourcesSelectizeRef.getSelectedItems();
+    const selectedValues = sourcesSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const source = selectedValues.entities.item[itemValue];
       localSources.push(source);
     });
 
     const sourcesToSave = localSources.filter((localSource) => {
-      const foundLocalInDb = dbSources.find(dbSource => dbSource.value === localSource.value);
-      return foundLocalInDb === undefined;
+      const foundLocalInDatabase = dataBaseSources.find(dataBaseSource => dataBaseSource.value === localSource.value);
+      return foundLocalInDatabase === undefined;
     }).map(source => ({ value: source.value }));
 
-    dbSources.forEach((dbSource) => {
-      const dbInLocal = localSources.find(localSource => dbSource.value === localSource.value);
-      if (!dbInLocal) {
-        sourcesToSave.push({ value: dbSource.value, delete: true });
+    dataBaseSources.forEach((dataBaseSource) => {
+      const foundDatabaseInLocal = localSources.find(localSource => dataBaseSource.value === localSource.value);
+      if (!foundDatabaseInLocal) {
+        sourcesToSave.push({ value: dataBaseSource.value, delete: true });
       }
     });
 
@@ -1457,24 +1453,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setContactSubassignedContacts = () => {
-    const dbContacts = [...this.state.contact.subassigned.values];
+    const dataBaseContacts = [...this.state.contact.subassigned.values];
 
     const localContacts = [];
-    const selectedValues = this.subAssiSelectizeRef.getSelectedItems();
+    const selectedValues = subAssignedSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const contact = selectedValues.entities.item[itemValue];
       localContacts.push(contact);
     });
 
     const subassignedContactToSave = localContacts.filter((localContact) => {
-      const foundLocalInDb = dbContacts.find(dbContact => dbContact.value === localContact.value);
-      return foundLocalInDb === undefined;
+      const foundLocalInDatabase = dataBaseContacts.find(dataBaseContact => dataBaseContact.value === localContact.value);
+      return foundLocalInDatabase === undefined;
     }).map(contact => ({ value: contact.value }));
 
-    dbContacts.forEach((dbContact) => {
-      const dbInLocal = localContacts.find(localContact => dbContact.value === localContact.value);
-      if (!dbInLocal) {
-        subassignedContactToSave.push({ value: dbContact.value, delete: true });
+    dataBaseContacts.forEach((dataBaseContact) => {
+      const foundDatabaseInLocal = localContacts.find(localContact => dataBaseContact.value === localContact.value);
+      if (!foundDatabaseInLocal) {
+        subassignedContactToSave.push({ value: dataBaseContact.value, delete: true });
       }
     });
 
@@ -1886,24 +1882,6 @@ class ContactDetailScreen extends React.Component {
       />
     );
 
-    /**
-     * <Button style={{ backgroundColor: Colors.tintColor }}>
-                          <Icon
-                            type="MaterialCommunityIcons"
-                            name="phone-classic"
-                            style={{ color: 'white' }}
-                            onPress={() => this.onSaveContact({
-                              quick_button_phone_off:
-                                parseInt(
-                                  this.state.contact.quick_button_phone_off,
-                                  10,
-                                ) + 1,
-                            })
-                            }
-                          />
-                        </Button>
-     */
-
     return (
       <View style={{ flex: 1 }}>
         {this.state.loadedLocal && (
@@ -2265,7 +2243,7 @@ class ContactDetailScreen extends React.Component {
                               commentsFlatList = flatList;
                             }}
                             data={this.getCommentsAndActivities()}
-                            extraData={!this.state.loadingMoreCom || !this.state.loadingMoreActivi}
+                            extraData={!this.state.loadingMoreComments || !this.state.loadingMoreActivities}
                             inverted
                             ItemSeparatorComponent={() => (
                               <View
@@ -2285,34 +2263,34 @@ class ContactDetailScreen extends React.Component {
                             refreshControl={(
                               <RefreshControl
                                 refreshing={(this.state.loadComments || this.state.loadActivities)}
-                                onRefresh={() => this.onRefreCommenActiviti(this.state.contact.ID)}
+                                onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID)}
                               />
                             )}
                             onScroll={({ nativeEvent }) => {
                               const {
-                                loadingMoreCom, commentsOffset, activitiesOffset,
+                                loadingMoreComments, commentsOffset, activitiesOffset,
                               } = this.state;
-                              const fL = nativeEvent;
-                              const contentOffsetY = fL.contentOffset.y;
-                              const layoutMeasurementHeight = fL.layoutMeasurement.height;
-                              const contentSizeHeight = fL.contentSize.height;
+                              const flatList = nativeEvent;
+                              const contentOffsetY = flatList.contentOffset.y;
+                              const layoutMeasurementHeight = flatList.layoutMeasurement.height;
+                              const contentSizeHeight = flatList.contentSize.height;
                               const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
                               const distanceToStart = contentSizeHeight - heightOffsetSum;
 
                               if (distanceToStart < 100) {
-                                if (!loadingMoreCom) {
+                                if (!loadingMoreComments) {
                                   if (commentsOffset < this.state.totalComments) {
                                     this.setState({
-                                      loadingMoreCom: true,
+                                      loadingMoreComments: true,
                                     }, () => {
                                       this.getContactComments(this.state.contact.ID);
                                     });
                                   }
                                 }
-                                if (!this.state.loadingMoreActivi) {
+                                if (!this.state.loadingMoreActivities) {
                                   if (activitiesOffset < this.state.totalActivities) {
                                     this.setState({
-                                      loadingMoreActivi: true,
+                                      loadingMoreActivities: true,
                                     }, () => {
                                       this.getContactActivities(this.state.contact.ID);
                                     });
@@ -2725,7 +2703,7 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.subAssiSelectizeRef = selectize; }}
+                                      ref={(selectize) => { subAssignedSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
                                       selectedItems={this.state.contact.subassigned.values}
@@ -3025,7 +3003,7 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.geonamSelectizeRef = selectize; }}
+                                      ref={(selectize) => { geonamesSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.geonames}
                                       selectedItems={this.state.contact.geonames.values}
@@ -3101,7 +3079,7 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.pplGroupsSelectRef = selectize; }}
+                                      ref={(selectize) => { peopleGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.peopleGroups}
                                       selectedItems={this.state.contact.people_groups.values}
@@ -3272,7 +3250,7 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.sourcesSelectizeRef = selectize; }}
+                                      ref={(selectize) => { sourcesSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.contactSources}
                                       selectedItems={this.state.contact.sources.values}
@@ -3467,7 +3445,7 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.groupsSelectizeRef = selectize; }}
+                                      ref={(selectize) => { groupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
                                       selectedItems={this.state.contact.groups.values}
@@ -3544,7 +3522,7 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.connectSelectizeRef = selectize; }}
+                                      ref={(selectize) => { connectionsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
                                       selectedItems={this.state.contact.relation.values}
@@ -3633,7 +3611,7 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.baptBySelectizeRef = selectize; }}
+                                      ref={(selectize) => { baptizedBySelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
                                       selectedItems={this.state.contact.baptized_by.values}
@@ -3721,7 +3699,7 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.baptSeleRef = selectize; }}
+                                      ref={(selectize) => { baptizedSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
                                       selectedItems={this.state.contact.baptized.values}
@@ -3809,7 +3787,7 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.coachedSelectizeRef = selectize; }}
+                                      ref={(selectize) => { coachedSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
                                       selectedItems={this.state.contact.coached_by.values}
@@ -3898,7 +3876,7 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.coachiSelectizeRef = selectize; }}
+                                      ref={(selectize) => { coachingSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
                                       selectedItems={this.state.contact.coaching.values}
@@ -4094,7 +4072,7 @@ class ContactDetailScreen extends React.Component {
                         <Row>
                           <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
                             <Selectize
-                              ref={(selectize) => { this.geonamSelectizeRef = selectize; }}
+                              ref={(selectize) => { geonamesSelectizeRef = selectize; }}
                               itemId="value"
                               items={this.state.geonames}
                               selectedItems={this.state.contact.geonames.values}

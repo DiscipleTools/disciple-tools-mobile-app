@@ -5,7 +5,6 @@ import {
   StyleSheet,
   View,
   NetInfo,
-  // AsyncStorage
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { AppLoading } from 'expo';
@@ -17,7 +16,6 @@ import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import Reactotron from 'reactotron-react-native';
 
-// import i18n from 'i18n-js';
 import AppNavigator from './navigation/AppNavigator';
 import store from './store/store';
 import i18n from './languages';
@@ -103,19 +101,6 @@ class App extends React.Component {
     i18n.setLocale(state.i18nReducer.locale);
   };
 
-  /*
-  getLocaleConfig = async () => {
-    try {
-      const value = await AsyncStorage.getItem('appLanguage');
-      console.log("appLanguage", value);
-      if (value !== null) {
-        i18n.locale = value;
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }
-*/
   render() {
     const AppContainer = (
       <View style={styles.container}>

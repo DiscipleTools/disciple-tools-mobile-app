@@ -94,56 +94,6 @@ export default function contactsReducer(state = initialState, action) {
                 value: address.value,
               }))
             : [],
-          /* contact_facebook: {
-            values: contact.contact_facebook
-              ? contact.contact_facebook.map(contact => {
-                  return {
-                    name: contact.value,
-                    value: contact.value
-                  };
-                })
-              : []
-          },
-          contact_instagram: {
-            values: contact.contact_instagram
-              ? contact.contact_instagram.map(contact => {
-                  return {
-                    name: contact.value,
-                    value: contact.value
-                  };
-                })
-              : []
-          },
-          contact_other: {
-            values: contact.contact_other
-              ? contact.contact_other.map(contact => {
-                  return {
-                    name: contact.value,
-                    value: contact.value
-                  };
-                })
-              : []
-          },
-          contact_skype: {
-            values: contact.contact_skype
-              ? contact.contact_skype.map(contact => {
-                  return {
-                    name: contact.value,
-                    value: contact.value
-                  };
-                })
-              : []
-          },
-          contact_twitter: {
-            values: contact.contact_twitter
-              ? contact.contact_twitter.map(contact => {
-                  return {
-                    name: contact.value,
-                    value: contact.value
-                  };
-                })
-              : []
-          }, */
           sources: {
             values: contact.sources
               ? contact.sources.map(source => ({
@@ -255,9 +205,6 @@ export default function contactsReducer(state = initialState, action) {
           quick_button_no_show: contact.quick_button_no_show
             ? contact.quick_button_no_show
             : '0',
-          /* quick_button_phone_off: contact.quick_button_phone_off
-            ? contact.quick_button_phone_off
-            : "0" */
         },
         saved: true,
       };
@@ -338,56 +285,6 @@ export default function contactsReducer(state = initialState, action) {
                 value: address.value,
               }))
             : [],
-          /* contact_facebook: {
-            values: contact.contact_facebook
-              ? contact.contact_facebook.map(contact => {
-                  return {
-                    name: contact.value,
-                    value: contact.value
-                  };
-                })
-              : []
-          },
-          contact_instagram: {
-            values: contact.contact_instagram
-              ? contact.contact_instagram.map(contact => {
-                  return {
-                    name: contact.value,
-                    value: contact.value
-                  };
-                })
-              : []
-          },
-          contact_other: {
-            values: contact.contact_other
-              ? contact.contact_other.map(contact => {
-                  return {
-                    name: contact.value,
-                    value: contact.value
-                  };
-                })
-              : []
-          },
-          contact_skype: {
-            values: contact.contact_skype
-              ? contact.contact_skype.map(contact => {
-                  return {
-                    name: contact.value,
-                    value: contact.value
-                  };
-                })
-              : []
-          },
-          contact_twitter: {
-            values: contact.contact_twitter
-              ? contact.contact_twitter.map(contact => {
-                  return {
-                    name: contact.value,
-                    value: contact.value
-                  };
-                })
-              : []
-          }, */
           sources: {
             values: contact.sources
               ? contact.sources.map(source => ({

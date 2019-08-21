@@ -25,9 +25,7 @@ export function* getAll({ domain, token }) {
     const res = yield take(actions.CONTACTS_GETALL_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.clone().json());
-      }));
+      const jsonData = yield response.clone().json();
       if (response.status === 200) {
         if (jsonData.posts) {
           yield put({
@@ -91,9 +89,7 @@ export function* save({ domain, token, contactData }) {
     const responseAction = yield take(actions.CONTACTS_SAVE_RESPONSE);
     if (responseAction) {
       const response = responseAction.payload;
-      const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.clone().json());
-      }));
+      const jsonData = yield response.clone().json();
       if (response.status === 200) {
         if (contactInitialComment) {
           yield put({ type: actions.CONTACTS_SAVE_COMMENT_START });
@@ -179,9 +175,7 @@ export function* getById({ domain, token, contactId }) {
     const res = yield take(actions.CONTACTS_GETBYID_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.clone().json());
-      }));
+      const jsonData = yield response.clone().json();
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_GETBYID_SUCCESS,
@@ -234,9 +228,7 @@ export function* saveComment({
     const res = yield take(actions.CONTACTS_SAVE_COMMENT_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.clone().json());
-      }));
+      const jsonData = yield response.clone().json();
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_SAVE_COMMENT_SUCCESS,
@@ -288,9 +280,7 @@ export function* getCommentsByContact({
     const res = yield take(actions.CONTACTS_GET_COMMENTS_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.clone().json());
-      }));
+      const jsonData = yield response.clone().json();
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
@@ -343,9 +333,7 @@ export function* getActivitiesByContact({
     const res = yield take(actions.CONTACTS_GET_ACTIVITIES_RESPONSE);
     if (res) {
       const response = res.payload;
-      const jsonData = yield call(() => new Promise((resolve) => {
-        resolve(response.clone().json());
-      }));
+      const jsonData = yield response.clone().json();
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_GET_ACTIVITIES_SUCCESS,

@@ -10,8 +10,8 @@ import {
   ActivityIndicator,
   Platform,
   AsyncStorage,
-  // KeyboardAvoidingView,
-  // ScrollView,
+  KeyboardAvoidingView,
+  ScrollView,
   I18nManager,
   Picker,
   Dimensions,
@@ -330,9 +330,9 @@ class LoginScreen extends React.Component {
         position="center"
       />
     );
-    /* const { domainValidation, userValidation, passwordValidation } = this.state;
+    const { domainValidation, userValidation, passwordValidation } = this.state;
 
-     const domainStyle = domainValidation
+    const domainStyle = domainValidation
       ? [styles.textField, styles.validationErrorInput]
       : styles.textField;
     const userStyle = userValidation
@@ -342,111 +342,115 @@ class LoginScreen extends React.Component {
       ? [styles.textField, styles.validationErrorInput]
       : styles.textField;
 
-    const domainErrorMessage = domainValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('login.domain.error')}</Text> : null;
-    const userErrorMessage = userValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('login.username.error')}</Text> : null;
-    const passwordErrorMessage = passwordValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('login.password.error')}</Text> : null;
-*/
+    const domainErrorMessage = domainValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.domain.error')}</Text> : null;
+    const userErrorMessage = userValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.username.error')}</Text> : null;
+    const passwordErrorMessage = passwordValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.password.error')}</Text> : null;
+
     const languagePickerItems = locales.map(locale => (
       <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
     ));
     return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Image
-            source={require('../assets/images/dt-logo2.png')}
-            style={styles.welcomeImage}
-          />
-        </View>
-        <View style={styles.formContainer}>
-          <TextField
-            containerStyle={styles.textField}
-            iconName="ios-globe"
-            label={i18n.t('loginScreen.domain.label')}
-            onChangeText={text => this.setState({ domain: text })}
-            autoCapitalize="none"
-            autoCorrect={false}
-            value={this.state.domain}
-            returnKeyType="next"
-            textContentType="URL"
-            disabled={this.state.loading}
-            placeholder={i18n.t('loginScreen.domain.placeholder')}
-          />
-          <TextField
-            containerStyle={styles.textField}
-            iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
-            label={i18n.t('loginScreen.username')}
-            onChangeText={text => this.setState({ username: text })}
-            autoCapitalize="none"
-            autoCorrect={false}
-            value={this.state.username}
-            returnKeyType="next"
-            textContentType="emailAddress"
-            disabled={this.state.loading}
-          />
-          <TextField
-            containerStyle={styles.textField}
-            iconName={Platform.OS === 'ios' ? 'ios-key' : 'md-key'}
-            label={i18n.t('loginScreen.password')}
-            onChangeText={text => this.setState({ password: text })}
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry
-            value={this.state.password}
-            returnKeyType="go"
-            selectTextOnFocus
-            onSubmitEditing={this.signInAsync}
-            blurOnSubmit
-            textContentType="password"
-            disabled={this.state.loading}
-          />
-          {!this.state.loading && (
-            <Button
-              style={styles.signInButton}
-              onPress={this.onLoginPress}
-              block
-            >
-              <Text style={styles.signInButtonText}>
-                {i18n.t('loginScreen.logIn')}
-              </Text>
-            </Button>
-          )}
-          {!this.state.loading && (
-            <TouchableOpacity
-              style={styles.forgotButton}
-              onPress={this.goToForgotPassword}
+      <KeyboardAvoidingView behavior="padding">
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={styles.header}>
+            <Image
+              source={require('../assets/images/dt-logo2.png')}
+              style={styles.welcomeImage}
+            />
+          </View>
+          <View style={styles.formContainer}>
+            <TextField
+              containerStyle={domainStyle}
+              iconName="ios-globe"
+              label={i18n.t('loginScreen.domain.label')}
+              onChangeText={text => this.setState({ domain: text })}
+              autoCapitalize="none"
+              autoCorrect={false}
+              value={this.state.domain}
+              returnKeyType="next"
+              textContentType="URL"
               disabled={this.state.loading}
+              placeholder={i18n.t('loginScreen.domain.placeholder')}
+            />
+            {domainErrorMessage}
+            <TextField
+              containerStyle={userStyle}
+              iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
+              label={i18n.t('loginScreen.username.label')}
+              onChangeText={text => this.setState({ username: text })}
+              autoCapitalize="none"
+              autoCorrect={false}
+              value={this.state.username}
+              returnKeyType="next"
+              textContentType="emailAddress"
+              disabled={this.state.loading}
+            />
+            {userErrorMessage}
+            <TextField
+              containerStyle={passwordStyle}
+              iconName={Platform.OS === 'ios' ? 'ios-key' : 'md-key'}
+              label={i18n.t('loginScreen.password.label')}
+              onChangeText={text => this.setState({ password: text })}
+              autoCapitalize="none"
+              autoCorrect={false}
+              secureTextEntry
+              value={this.state.password}
+              returnKeyType="go"
+              selectTextOnFocus
+              onSubmitEditing={this.signInAsync}
+              blurOnSubmit
+              textContentType="password"
+              disabled={this.state.loading}
+            />
+            {passwordErrorMessage}
+            {!this.state.loading && (
+              <Button
+                style={styles.signInButton}
+                onPress={this.onLoginPress}
+                block
+              >
+                <Text style={styles.signInButtonText}>
+                  {i18n.t('loginScreen.logIn')}
+                </Text>
+              </Button>
+            )}
+            {!this.state.loading && (
+              <TouchableOpacity
+                style={styles.forgotButton}
+                onPress={this.goToForgotPassword}
+                disabled={this.state.loading}
+              >
+                <Text style={styles.forgotButtonText}>
+                  {i18n.t('loginScreen.forgotPassword')}
+                </Text>
+              </TouchableOpacity>
+            )}
+            {this.state.loading && (
+              <ActivityIndicator style={{ margin: 20 }} size="small" />
+            )}
+          </View>
+          <View style={styles.languagePickerContainer}>
+            <Icon type="FontAwesome" name="language" style={styles.languageIcon} />
+            <Picker
+              selectedValue={this.props.i18n.locale}
+              style={styles.languagePicker}
+              onValueChange={(itemValue) => {
+                const locale = locales.find(item => item.code === itemValue);
+                if (locale) {
+                  const isRTL = locale.direction === 'rtl';
+                  // store locale/rtl instore for next load of app
+                  this.props.setLanguage(locale.code, isRTL);
+                  // set current locale for all language strings
+                  i18n.setLocale(locale.code, isRTL);
+                }
+              }}
             >
-              <Text style={styles.forgotButtonText}>
-                {i18n.t('loginScreen.forgotPassword')}
-              </Text>
-            </TouchableOpacity>
-          )}
-          {this.state.loading && (
-            <ActivityIndicator style={{ margin: 20 }} size="small" />
-          )}
-        </View>
-        <View style={styles.languagePickerContainer}>
-          <Icon type="FontAwesome" name="language" style={styles.languageIcon} />
-
-          <Picker
-            selectedValue={this.props.i18n.locale}
-            style={styles.languagePicker}
-            onValueChange={(itemValue) => {
-              const locale = locales.find(item => item.code === itemValue);
-              if (locale) {
-                const isRTL = locale.direction === 'rtl';
-                // store locale/rtl instore for next load of app
-                this.props.setLanguage(locale.code, isRTL);
-                // set current locale for all language strings
-                i18n.setLocale(locale.code, isRTL);
-              }
-            }}
-          >
-            {languagePickerItems}
-          </Picker>
-        </View>
-        {errorToast}
-      </View>
+              {languagePickerItems}
+            </Picker>
+          </View>
+          {errorToast}
+        </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }

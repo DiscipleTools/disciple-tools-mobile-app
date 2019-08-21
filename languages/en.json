@@ -63,8 +63,14 @@
       "placeholder": "E.g. myteam.disciple.tools",
       "error": "Domain is required"
     },
-    "username": "Username",
-    "password": "Password",
+    "username": {
+      "label": "Username",
+      "error": "Username is required"
+    },
+    "password": {
+      "label": "Password",
+      "error": "Password is required"
+    },
     "logIn": "Log In",
     "forgotPassword": "Lost your password?"
   },

@@ -71,7 +71,7 @@ const spacing = windowWidth * 0.025;
 const sideSize = windowWidth - 2 * spacing;
 const circleSideSize = (windowWidth / 3) + 20;
 /* eslint-disable */
-let commentsFlatList, coachSelectizeRef, geonamSelectizeRef, peopGroupSelectRef, parenGroupSelecRef, peerGrouSelectiRef, childGrouSelectRef;
+let commentsFlatList, coachesSelectizeRef, geonamesSelectizeRef, peopleGroupsSelectizeRef, parentGroupsSelectizeRef, peerGroupsSelectizeRef, childGroupsSelectizeRef;
 /* eslint-enable */
 const styles = StyleSheet.create({
   toggleButton: {
@@ -325,13 +325,13 @@ const initialState = {
   groups: [],
   comments: [],
   loadComments: false,
-  loadMoreCommen: false,
+  loadMoreComments: false,
   totalComments: 0,
-  commeOffset: 0,
+  commentsOffset: 0,
   commentsLimit: 10,
   activities: [],
   loadActivities: false,
-  loadMoreActiviti: false,
+  loadMoreActivities: false,
   totalActivities: 0,
   activitiesOffset: 0,
   activitiesLimit: 10,
@@ -462,17 +462,17 @@ class GroupDetailScreen extends React.Component {
     // GET COMMENTS
     if (comments) {
       // NEW COMMENTS (PAGINATION)
-      if (prevState.commeOffset > 0) {
+      if (prevState.commentsOffset > 0) {
         newState = {
           ...newState,
           comments: prevState.comments.concat(comments),
-          loadMoreCommen: false,
+          loadMoreComments: false,
         };
       }
       newState = {
         // UPDATE OFFSET
         ...newState,
-        commeOffset: prevState.commeOffset + prevState.commentsLimit,
+        commentsOffset: prevState.commentsOffset + prevState.commentsLimit,
       };
     }
 
@@ -483,7 +483,7 @@ class GroupDetailScreen extends React.Component {
         newState = {
           ...newState,
           activities: prevState.activities.concat(activities),
-          loadMoreActiviti: false,
+          loadMoreActivities: false,
         };
       }
       newState = {
@@ -515,7 +515,7 @@ class GroupDetailScreen extends React.Component {
 
     // GROUP SAVE
     if (saved) {
-      this.onRefreCommenActivities(group.ID);
+      this.onRefreshCommentsActivities(group.ID);
       toastSuccess.show(
         <View>
           <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
@@ -575,14 +575,14 @@ class GroupDetailScreen extends React.Component {
 
   onRefresh(groupId) {
     this.getGroupById(groupId);
-    this.onRefreCommenActivities(groupId);
+    this.onRefreshCommentsActivities(groupId);
   }
 
-  onRefreCommenActivities(groupId) {
+  onRefreshCommentsActivities(groupId) {
     this.setState({
       comments: [],
       activities: [],
-      commeOffset: 0,
+      commentsOffset: 0,
       activitiesOffset: 0,
     }, () => {
       this.getGroupComments(groupId);
@@ -655,7 +655,7 @@ class GroupDetailScreen extends React.Component {
       this.props.userData.domain,
       this.props.userData.token,
       groupId,
-      this.state.commeOffset,
+      this.state.commentsOffset,
       this.state.commentsLimit,
     );
   }
@@ -910,24 +910,24 @@ class GroupDetailScreen extends React.Component {
   };
 
   setCoaches = () => {
-    const dbCoaches = [...this.state.group.coaches.values];
+    const dataBaseCoaches = [...this.state.group.coaches.values];
 
-    const lclCoaches = [];
-    const selectedValues = this.coachSelectizeRef.getSelectedItems();
+    const localCoaches = [];
+    const selectedValues = coachesSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const coach = selectedValues.entities.item[itemValue];
-      lclCoaches.push(coach);
+      localCoaches.push(coach);
     });
 
-    const coachToSave = lclCoaches.filter((lclCoach) => {
-      const foundLocalInDb = dbCoaches.find(dbCoach => dbCoach.value === lclCoach.value);
-      return foundLocalInDb === undefined;
+    const coachToSave = localCoaches.filter((localCoach) => {
+      const foundLocalInDataBase = dataBaseCoaches.find(dataBaseCoach => dataBaseCoach.value === localCoach.value);
+      return foundLocalInDataBase === undefined;
     }).map(coach => ({ value: coach.value }));
 
-    dbCoaches.forEach((dbCoach) => {
-      const dbInLocal = lclCoaches.find(lclCoach => dbCoach.value === lclCoach.value);
-      if (!dbInLocal) {
-        coachToSave.push({ value: dbCoach.value, delete: true });
+    dataBaseCoaches.forEach((dataBaseCoach) => {
+      const dataBaseInLocal = localCoaches.find(localCoach => dataBaseCoach.value === localCoach.value);
+      if (!dataBaseInLocal) {
+        coachToSave.push({ value: dataBaseCoach.value, delete: true });
       }
     });
 
@@ -935,24 +935,24 @@ class GroupDetailScreen extends React.Component {
   };
 
   setGeonames = () => {
-    const dbGeonames = [...this.state.group.geonames.values];
+    const dataBaseGeonames = [...this.state.group.geonames.values];
 
     const localGeonames = [];
-    const selectedValues = this.geonamSelectizeRef.getSelectedItems();
+    const selectedValues = geonamesSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const geoname = selectedValues.entities.item[itemValue];
       localGeonames.push(geoname);
     });
 
     const geonamesToSave = localGeonames.filter((localGeoname) => {
-      const foundLocalInDb = dbGeonames.find(dbGeoname => dbGeoname.value === localGeoname.value);
-      return foundLocalInDb === undefined;
+      const foundLocalInDataBase = dataBaseGeonames.find(dataBaseGeoname => dataBaseGeoname.value === localGeoname.value);
+      return foundLocalInDataBase === undefined;
     }).map(geoname => ({ value: geoname.value }));
 
-    dbGeonames.forEach((dbGeoname) => {
-      const dbInLocal = localGeonames.find(localGeoname => dbGeoname.value === localGeoname.value);
-      if (!dbInLocal) {
-        geonamesToSave.push({ value: dbGeoname.value, delete: true });
+    dataBaseGeonames.forEach((dataBaseGeoname) => {
+      const dataBaseInLocal = localGeonames.find(localGeoname => dataBaseGeoname.value === localGeoname.value);
+      if (!dataBaseInLocal) {
+        geonamesToSave.push({ value: dataBaseGeoname.value, delete: true });
       }
     });
 
@@ -960,24 +960,24 @@ class GroupDetailScreen extends React.Component {
   };
 
   setPeopleGroups = () => {
-    const dbPGs = [...this.state.group.people_groups.values];
+    const dataBasePeopleGroups = [...this.state.group.people_groups.values];
 
-    const lclPGs = [];
-    const selectedValues = this.peopGroupSelectRef.getSelectedItems();
+    const localPeopleGroups = [];
+    const selectedValues = peopleGroupsSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const peopleGroup = selectedValues.entities.item[itemValue];
-      lclPGs.push(peopleGroup);
+      localPeopleGroups.push(peopleGroup);
     });
 
-    const peopleGroupsToSave = lclPGs.filter((lclPG) => {
-      const foundLocalInDb = dbPGs.find(dbPG => dbPG.value === lclPG.value);
-      return foundLocalInDb === undefined;
+    const peopleGroupsToSave = localPeopleGroups.filter((localPeopleGroup) => {
+      const foundLocalInDataBase = dataBasePeopleGroups.find(dataBasePeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
+      return foundLocalInDataBase === undefined;
     }).map(peopleGroup => ({ value: peopleGroup.value }));
 
-    dbPGs.forEach((dbPG) => {
-      const dbInLocal = lclPGs.find(lclPG => dbPG.value === lclPG.value);
-      if (!dbInLocal) {
-        peopleGroupsToSave.push({ value: dbPG.value, delete: true });
+    dataBasePeopleGroups.forEach((dataBasePeopleGroup) => {
+      const dataBaseInLocal = localPeopleGroups.find(localPeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
+      if (!dataBaseInLocal) {
+        peopleGroupsToSave.push({ value: dataBasePeopleGroup.value, delete: true });
       }
     });
 
@@ -991,24 +991,24 @@ class GroupDetailScreen extends React.Component {
   };
 
   setParentGroups = () => {
-    const dbPGs = [...this.state.group.parent_groups.values];
+    const dataBasePeopleGroups = [...this.state.group.parent_groups.values];
 
-    const lclPGs = [];
-    const selectedValues = this.parenGroupSelecRef.getSelectedItems();
+    const localPeopleGroups = [];
+    const selectedValues = parentGroupsSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const parentGroup = selectedValues.entities.item[itemValue];
-      lclPGs.push(parentGroup);
+      localPeopleGroups.push(parentGroup);
     });
 
-    const parentGroupsToSave = lclPGs.filter((lclPG) => {
-      const foundLocalInDb = dbPGs.find(dbPG => dbPG.value === lclPG.value);
-      return foundLocalInDb === undefined;
+    const parentGroupsToSave = localPeopleGroups.filter((localPeopleGroup) => {
+      const foundLocalInDataBase = dataBasePeopleGroups.find(dataBasePeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
+      return foundLocalInDataBase === undefined;
     }).map(parentGroup => ({ value: parentGroup.value }));
 
-    dbPGs.forEach((dbPG) => {
-      const dbInLocal = lclPGs.find(lclPG => dbPG.value === lclPG.value);
-      if (!dbInLocal) {
-        parentGroupsToSave.push({ value: dbPG.value, delete: true });
+    dataBasePeopleGroups.forEach((dataBasePeopleGroup) => {
+      const dataBaseInLocal = localPeopleGroups.find(localPeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
+      if (!dataBaseInLocal) {
+        parentGroupsToSave.push({ value: dataBasePeopleGroup.value, delete: true });
       }
     });
 
@@ -1016,24 +1016,24 @@ class GroupDetailScreen extends React.Component {
   }
 
   setPeerGroups = () => {
-    const dbPGs = [...this.state.group.peer_groups.values];
+    const dataBasePeopleGroups = [...this.state.group.peer_groups.values];
 
-    const lclPGs = [];
-    const selectedValues = this.peerGrouSelectiRef.getSelectedItems();
+    const localPeopleGroups = [];
+    const selectedValues = peerGroupsSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const peerGroup = selectedValues.entities.item[itemValue];
-      lclPGs.push(peerGroup);
+      localPeopleGroups.push(peerGroup);
     });
 
-    const peerGroupsToSave = lclPGs.filter((lclPG) => {
-      const foundLocalInDb = dbPGs.find(dbPG => dbPG.value === lclPG.value);
-      return foundLocalInDb === undefined;
+    const peerGroupsToSave = localPeopleGroups.filter((localPeopleGroup) => {
+      const foundLocalInDataBase = dataBasePeopleGroups.find(dataBasePeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
+      return foundLocalInDataBase === undefined;
     }).map(peerGroup => ({ value: peerGroup.value }));
 
-    dbPGs.forEach((dbPG) => {
-      const dbInLocal = lclPGs.find(lclPG => dbPG.value === lclPG.value);
-      if (!dbInLocal) {
-        peerGroupsToSave.push({ value: dbPG.value, delete: true });
+    dataBasePeopleGroups.forEach((dataBasePeopleGroup) => {
+      const dataBaseInLocal = localPeopleGroups.find(localPeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
+      if (!dataBaseInLocal) {
+        peerGroupsToSave.push({ value: dataBasePeopleGroup.value, delete: true });
       }
     });
 
@@ -1041,24 +1041,24 @@ class GroupDetailScreen extends React.Component {
   }
 
   setChildGroups = () => {
-    const dbCGs = [...this.state.group.child_groups.values];
+    const dataBaseChildGroups = [...this.state.group.child_groups.values];
 
-    const lclCGs = [];
-    const selectedValues = this.childGrouSelectRef.getSelectedItems();
+    const localChildGroups = [];
+    const selectedValues = childGroupsSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const childGroup = selectedValues.entities.item[itemValue];
-      lclCGs.push(childGroup);
+      localChildGroups.push(childGroup);
     });
 
-    const childGroupsToSave = lclCGs.filter((lclPG) => {
-      const foundLocalInDb = dbCGs.find(dbPG => dbPG.value === lclPG.value);
-      return foundLocalInDb === undefined;
+    const childGroupsToSave = localChildGroups.filter((localChildGroup) => {
+      const foundLocalInDataBase = dataBaseChildGroups.find(dataBaseChildGroup => dataBaseChildGroup.value === localChildGroup.value);
+      return foundLocalInDataBase === undefined;
     }).map(childGroup => ({ value: childGroup.value }));
 
-    dbCGs.forEach((dbPG) => {
-      const dbInLocal = lclCGs.find(lclPG => dbPG.value === lclPG.value);
-      if (!dbInLocal) {
-        childGroupsToSave.push({ value: dbPG.value, delete: true });
+    dataBaseChildGroups.forEach((dataBaseChildGroup) => {
+      const dataBaseInLocal = localChildGroups.find(localChildGroup => dataBaseChildGroup.value === localChildGroup.value);
+      if (!dataBaseInLocal) {
+        childGroupsToSave.push({ value: dataBaseChildGroup.value, delete: true });
       }
     });
 
@@ -1074,22 +1074,22 @@ class GroupDetailScreen extends React.Component {
     if (Object.prototype.hasOwnProperty.call(groupToSave, 'end_date')) {
       groupToSave.end_date = formatDateToBackEnd(groupToSave.end_date);
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'coaches') && this.coachSelectizeRef) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, 'coaches') && coachesSelectizeRef) {
       groupToSave.coaches.values = this.setCoaches();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'geonames') && this.geonamSelectizeRef) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, 'geonames') && geonamesSelectizeRef) {
       groupToSave.geonames.values = this.setGeonames();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'people_groups') && this.peopGroupSelectRef) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, 'people_groups') && peopleGroupsSelectizeRef) {
       groupToSave.people_groups.values = this.setPeopleGroups();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'parent_groups') && this.parenGroupSelecRef) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, 'parent_groups') && parentGroupsSelectizeRef) {
       groupToSave.parent_groups.values = this.setParentGroups();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'peer_groups') && this.peerGrouSelectiRef) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, 'peer_groups') && peerGroupsSelectizeRef) {
       groupToSave.peer_groups.values = this.setPeerGroups();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'child_groups') && this.childGrouSelectRef) {
+    if (Object.prototype.hasOwnProperty.call(groupToSave, 'child_groups') && childGroupsSelectizeRef) {
       groupToSave.child_groups.values = this.setChildGroups();
     }
 
@@ -1994,7 +1994,7 @@ class GroupDetailScreen extends React.Component {
                               commentsFlatList = flatList;
                             }}
                             data={this.getCommentsAndActivities()}
-                            extraData={!this.state.loadMoreCommen || !this.state.loadMoreActiviti}
+                            extraData={!this.state.loadMoreComments || !this.state.loadMoreActivities}
                             inverted
                             ItemSeparatorComponent={() => (
                               <View
@@ -2014,12 +2014,12 @@ class GroupDetailScreen extends React.Component {
                             refreshControl={(
                               <RefreshControl
                                 refreshing={(this.state.loadComments || this.state.loadActivities)}
-                                onRefresh={() => this.onRefreCommenActivities(this.state.group.ID)}
+                                onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID)}
                               />
                             )}
                             onScroll={({ nativeEvent }) => {
                               const {
-                                loadMoreCommen, commeOffset, loadMoreActiviti, activitiesOffset,
+                                loadMoreComments, commentsOffset, loadMoreActivities, activitiesOffset,
                               } = this.state;
                               const fL = nativeEvent;
                               const contentOffsetY = fL.contentOffset.y;
@@ -2029,19 +2029,19 @@ class GroupDetailScreen extends React.Component {
                               const distanceToStart = contentSizeHeight - heightOffsetSum;
 
                               if (distanceToStart < 100) {
-                                if (!loadMoreCommen) {
-                                  if (commeOffset < this.state.totalComments) {
+                                if (!loadMoreComments) {
+                                  if (commentsOffset < this.state.totalComments) {
                                     this.setState({
-                                      loadMoreCommen: true,
+                                      loadMoreComments: true,
                                     }, () => {
                                       this.getGroupComments(this.state.group.ID);
                                     });
                                   }
                                 }
-                                if (!loadMoreActiviti) {
+                                if (!loadMoreActivities) {
                                   if (activitiesOffset < this.state.totalActivities) {
                                     this.setState({
-                                      loadMoreActiviti: true,
+                                      loadMoreActivities: true,
                                     }, () => {
                                       this.getGroupActivities(this.state.group.ID);
                                     });
@@ -2367,7 +2367,7 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.coachSelectizeRef = selectize; }}
+                                      ref={(selectize) => { coachesSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
                                       selectedItems={this.state.group.coaches.values}
@@ -2444,7 +2444,7 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.geonamSelectizeRef = selectize; }}
+                                      ref={(selectize) => { geonamesSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.geonames}
                                       selectedItems={this.state.group.geonames.values}
@@ -2521,7 +2521,7 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.peopGroupSelectRef = selectize; }}
+                                      ref={(selectize) => { peopleGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.peopleGroups}
                                       selectedItems={this.state.group.people_groups.values}
@@ -2797,7 +2797,7 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.parenGroupSelecRef = selectize; }}
+                                      ref={(selectize) => { parentGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
                                       selectedItems={this.state.group.parent_groups.values}
@@ -2874,7 +2874,7 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.childGrouSelectRef = selectize; }}
+                                      ref={(selectize) => { childGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
                                       selectedItems={this.state.group.child_groups.values}
@@ -2951,7 +2951,7 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { this.peerGrouSelectiRef = selectize; }}
+                                      ref={(selectize) => { peerGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
                                       selectedItems={this.state.group.peer_groups.values}

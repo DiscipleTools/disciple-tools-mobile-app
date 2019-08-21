@@ -60,10 +60,17 @@
   "loginScreen": {
     "domain": {
       "label": "اسم نطاق أدوات التلمذة",
-      "placeholder": "مثلاً: myteam.disciple.tools"
+      "placeholder": "مثلاً: myteam.disciple.tools",
+      "error": ""
     },
-    "username": "اسم المستخدم",
-    "password": "كلمة المرور",
+    "username": {
+      "label": "اسم المستخدم",
+      "error": ""
+    },
+    "password": {
+      "label": "كلمة المرور",
+      "error": ""
+    },
     "logIn": "تسجيل الدخول",
     "forgotPassword": "فقدت كلمة المرور الخاصة بك؟"
   },
