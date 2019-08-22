@@ -38,7 +38,7 @@ const propTypes = {
     isRTL: PropTypes.bool,
   }).isRequired,
   isConnected: PropTypes.bool.isRequired,
-  user: PropTypes.shape({
+  userData: PropTypes.shape({
     domain: PropTypes.string,
     displayName: PropTypes.string,
   }).isRequired,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
 
 class SettingsScreen extends React.Component {
   static navigationOptions = {
-    title: i18n.t('settings.navigation.title'),
+    title: i18n.t('settingsScreen.settings'),
   };
 
   constructor(props) {
@@ -120,7 +120,7 @@ class SettingsScreen extends React.Component {
   };
 
   onFABPress = () => {
-    const toastMsg = this.props.isConnected ? 'Network unavailable. Now in OFFLINE mode' : 'Network detected. Back to ONLINE mode';
+    const toastMsg = this.props.isConnected ? i18n.t('settingsScreen.networkUnavailable') : i18n.t('settingsScreen.networkAvailable');
     this.toast.show(toastMsg);
     this.props.toggleNetworkConnectivity(this.props.isConnected);
   }
@@ -138,8 +138,8 @@ class SettingsScreen extends React.Component {
               <Thumbnail source={require('../assets/images/gravatar-default.png')} />
             </Left>
             <Body style={styles.headerBody}>
-              <Text style={[styles.text, styles.username]}>{this.props.user.displayName}</Text>
-              <Text style={[styles.text, styles.domain]}>{this.props.user.domain}</Text>
+              <Text style={[styles.text, styles.username]}>{this.props.userData.displayName}</Text>
+              <Text style={[styles.text, styles.domain]}>{this.props.userData.domain}</Text>
             </Body>
           </ListItem>
 
@@ -152,7 +152,7 @@ class SettingsScreen extends React.Component {
                 </NbButton>
               </Left>
               <Body style={styles.body}>
-                <Text style={styles.text}>{i18n.t('settings.storybook')}</Text>
+                <Text style={styles.text}>{i18n.t('settingsScreen.storybook')}</Text>
               </Body>
               <Right>
                 <Icon active name={i18n.isRTL ? 'arrow-back' : 'arrow-forward'} />
@@ -167,7 +167,7 @@ class SettingsScreen extends React.Component {
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{i18n.t('settings.online')}</Text>
+              <Text style={styles.text}>{i18n.t('global.online')}</Text>
             </Body>
             <Right>
               <Switch value={this.props.isConnected} onChange={this.onFABPress} />
@@ -181,7 +181,7 @@ class SettingsScreen extends React.Component {
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{i18n.t('settings.language')}</Text>
+              <Text style={styles.text}>{i18n.t('global.language')}</Text>
             </Body>
             <Right>
               <Picker
@@ -211,15 +211,14 @@ class SettingsScreen extends React.Component {
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{i18n.t('settings.logout')}</Text>
+              <Text style={styles.text}>{i18n.t('settingsScreen.logout')}</Text>
             </Body>
             <Right>
               <Icon active name={i18n.isRTL ? 'arrow-back' : 'arrow-forward'} />
             </Right>
           </ListItem>
-
-          <Toast ref={(c) => { this.toast = c; }} position="center" />
         </Content>
+        <Toast ref={(c) => { this.toast = c; }} position="center" />
       </Container>
     );
   }
@@ -230,7 +229,7 @@ SettingsScreen.propTypes = propTypes;
 const mapStateToProps = state => ({
   i18n: state.i18nReducer,
   isConnected: state.networkConnectivityReducer.isConnected,
-  user: state.userReducer,
+  userData: state.userReducer.userData,
 });
 const mapDispatchToProps = dispatch => ({
   toggleNetworkConnectivity: (isConnected) => {

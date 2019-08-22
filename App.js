@@ -7,12 +7,10 @@ import {
   NetInfo,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import {
-  AppLoading,
-  Asset,
-  Font,
-  Icon,
-} from 'expo';
+import { AppLoading } from 'expo';
+import * as Icon from '@expo/vector-icons';
+import * as Font from 'expo-font';
+import { Asset } from 'expo-asset';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -23,6 +21,7 @@ import store from './store/store';
 import i18n from './languages';
 
 import { setNetworkConnectivity } from './store/actions/networkConnectivity.actions';
+
 
 const persistor = persistStore(store);
 

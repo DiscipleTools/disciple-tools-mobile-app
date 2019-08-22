@@ -18,6 +18,9 @@ import PropTypes from 'prop-types';
 
 import {
   Container,
+  Content,
+  Footer,
+  FooterTab,
   Label,
   Input,
   Icon,
@@ -55,7 +58,9 @@ import baptizingIcon from '../../assets/icons/water-aerobics.png';
 import inChurchIcon from '../../assets/icons/multiple-11.png';
 import startingChurchesIcon from '../../assets/icons/symbol-213-7.png';
 
-// let toastSuccess;
+import i18n from '../../languages';
+
+let toastSuccess;
 let toastError;
 const containerPadding = 35;
 const windowWidth = Dimensions.get('window').width;
@@ -63,20 +68,20 @@ const progressBarWidth = windowWidth - 100;
 const milestonesGridSize = windowWidth + 5;
 /* eslint-disable */
 let commentsFlatList,
-  subAssiSelectizeRef,
+  subAssignedSelectizeRef,
   geonamesSelectizeRef,
-  pplGroupsSelectizeRef,
+  peopleGroupsSelectizeRef,
   sourcesSelectizeRef,
   groupsSelectizeRef,
-  connectSelectizeRef,
-  baptBySelectizeRef,
+  connectionsSelectizeRef,
+  baptizedBySelectizeRef,
   coachedSelectizeRef,
   baptizedSelectizeRef,
   coachingSelectizeRef;
 /* eslint-enable */
 const styles = StyleSheet.create({
   tabBarUnderlineStyle: {
-    borderBottomWidth: 2,
+    borderBottomWidth: 3,
     borderBottomColor: Colors.tintColor,
   },
   tabStyle: { backgroundColor: '#FFFFFF' },
@@ -85,7 +90,7 @@ const styles = StyleSheet.create({
   activeTextStyle: { color: Colors.tintColor, fontWeight: 'bold' },
   addRemoveIcons: {
     fontSize: 30,
-    color: 'black',
+    marginRight: 0,
   },
   icon: {
     color: Colors.tintColor,
@@ -98,16 +103,21 @@ const styles = StyleSheet.create({
     paddingRight: containerPadding,
   },
   formRow: {
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 20,
+    paddingBottom: 20,
+    width: '100%',
   },
-  formIconLabel: { width: 'auto' },
+  formIconLabel: {
+    width: 'auto',
+  },
   formIcon: {
     color: Colors.tintColor,
     fontSize: 25,
     marginTop: 'auto',
     marginBottom: 'auto',
-    marginRight: 10,
+  },
+  formParentLabel: {
+    width: 'auto',
   },
   formLabel: {
     color: Colors.tintColor,
@@ -118,8 +128,17 @@ const styles = StyleSheet.create({
   formDivider: {
     borderBottomColor: '#CCCCCC',
     borderBottomWidth: 1,
-    marginLeft: 5,
-    marginRight: 5,
+    marginLeft: 10,
+    marginRight: 10,
+  },
+  formIconLabelCol: {
+    width: 35,
+  },
+  formIconLabelView: {
+    alignItems: 'center',
+  },
+  formFieldPadding: {
+    paddingTop: 30,
   },
   // Progress Section
   progressIcon: { height: '100%', width: '100%' },
@@ -127,7 +146,7 @@ const styles = StyleSheet.create({
     opacity: 1,
   },
   progressIconInactive: {
-    opacity: 0.4,
+    opacity: 0.15,
   },
   progressIconText: {
     fontSize: 9,
@@ -148,42 +167,24 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: '#D9D5DC',
-    margin: 5,
+    marginRight: 10,
+    marginBottom: 5,
+  },
+  saveButton: {
+    backgroundColor: Colors.tintColor,
+    borderRadius: 5,
+    marginTop: 40,
   },
 });
 
 class ContactDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
-    let navigationTitle = 'Add New Contact';
-    let headerRight = (
-      <Icon
-        type="MaterialIcons"
-        name="check"
-        onPress={navigation.getParam('onSaveContact')}
-        style={{
-          paddingRight: 16,
-          color: '#FFFFFF',
-        }}
-      />
-    );
+    let navigationTitle = i18n.t('contactDetailScreen.addNewContact');
 
     if (params) {
       if (params.contactName) {
         navigationTitle = params.contactName;
-      }
-      if (params.onlyView) {
-        headerRight = (
-          <Icon
-            type="MaterialIcons"
-            name="create"
-            onPress={navigation.getParam('onEnableEdit')}
-            style={{
-              paddingRight: 16,
-              color: '#FFFFFF',
-            }}
-          />
-        );
       }
     }
 
@@ -193,11 +194,10 @@ class ContactDetailScreen extends React.Component {
         <Icon
           android="md-arrow-back"
           ios="ios-arrow-back"
-          onPress={() => navigation.push('ContactList')}
+          onPress={() => navigation.goBack()}
           style={[{ paddingLeft: 16, color: '#FFFFFF' }]}
         />
       ),
-      headerRight,
       headerStyle: {
         backgroundColor: Colors.tintColor,
       },
@@ -253,39 +253,39 @@ class ContactDetailScreen extends React.Component {
     },
     contactSources: [
       {
-        name: 'Personal',
+        name: i18n.t('contactDetailScreen.contactSources.personal'),
         value: 'personal',
       },
       {
-        name: 'Web',
+        name: i18n.t('contactDetailScreen.contactSources.web'),
         value: 'web',
       },
       {
-        name: 'Phone',
+        name: i18n.t('contactDetailScreen.contactSources.phone'),
         value: 'phone',
       },
       {
-        name: 'Facebook',
+        name: i18n.t('contactDetailScreen.contactSources.facebook'),
         value: 'facebook',
       },
       {
-        name: 'Twitter',
+        name: i18n.t('contactDetailScreen.contactSources.twitter'),
         value: 'twitter',
       },
       {
-        name: 'Linkedin',
+        name: i18n.t('contactDetailScreen.contactSources.linkedin'),
         value: 'linkedin',
       },
       {
-        name: 'Referral',
+        name: i18n.t('contactDetailScreen.contactSources.referral'),
         value: 'referral',
       },
       {
-        name: 'Advertisement',
+        name: i18n.t('contactDetailScreen.contactSources.advertisement'),
         value: 'advertisement',
       },
       {
-        name: 'Transfer',
+        name: i18n.t('contactDetailScreen.contactSources.transfer'),
         value: 'transfer',
       },
     ],
@@ -296,13 +296,13 @@ class ContactDetailScreen extends React.Component {
     geonames: [],
     loadedLocal: false,
     comments: [],
-    loadingComments: false,
+    loadComments: false,
     loadingMoreComments: false,
     totalComments: 0,
     commentsOffset: 0,
     commentsLimit: 10,
     activities: [],
-    loadingActivities: false,
+    loadActivities: false,
     loadingMoreActivities: false,
     totalActivities: 0,
     activitiesOffset: 0,
@@ -312,31 +312,31 @@ class ContactDetailScreen extends React.Component {
     overallStatusBackgroundColor: '#ffffff',
     listContactStates: [
       {
-        label: 'New Contact',
+        label: i18n.t('global.contactOverallStatus.new'),
         value: 'new',
       },
       {
-        label: 'Not Ready',
+        label: i18n.t('global.contactOverallStatus.unassignable'),
         value: 'unassignable',
       },
       {
-        label: 'Dispatch Needed',
+        label: i18n.t('global.contactOverallStatus.unassigned'),
         value: 'unassigned',
       },
       {
-        label: 'Waiting to be accepted',
+        label: i18n.t('global.contactOverallStatus.assigned'),
         value: 'assigned',
       },
       {
-        label: 'Active',
+        label: i18n.t('global.contactOverallStatus.active'),
         value: 'active',
       },
       {
-        label: 'Paused',
+        label: i18n.t('global.contactOverallStatus.paused'),
         value: 'paused',
       },
       {
-        label: 'Closed',
+        label: i18n.t('global.contactOverallStatus.closed'),
         value: 'closed',
       },
     ],
@@ -344,12 +344,10 @@ class ContactDetailScreen extends React.Component {
     renderFab: true,
     showAssignedToModal: false,
     loading: false,
-    dataRetrieved: false,
+    currentTabIndex: 0,
   };
 
   componentDidMount() {
-    this.props.navigation.setParams({ onSaveContact: this.onSaveContact });
-    this.props.navigation.setParams({ onEnableEdit: this.onEnableEdit });
     const onlyView = this.props.navigation.getParam('onlyView');
     const contactId = this.props.navigation.getParam('contactId');
     const contactName = this.props.navigation.getParam('contactName');
@@ -388,20 +386,18 @@ class ContactDetailScreen extends React.Component {
       loading,
       comments: comments || prevState.comments,
       totalComments: totalComments || prevState.totalComments,
-      loadingComments,
+      loadComments: loadingComments,
       activities: activities || prevState.activities,
       totalActivities: totalActivities || prevState.totalActivities,
-      loadingActivities,
+      loadActivities: loadingActivities,
     };
 
     // NEW COMMENT
     if (newComment) {
-      const newComments = newState.comments;
-      newComments.push(newComment);
+      newState.comments.unshift(newComment);
       newState = {
         ...newState,
-        comments: newComments,
-        comment: '',
+        comments: newState.comments,
       };
     }
 
@@ -423,7 +419,6 @@ class ContactDetailScreen extends React.Component {
       newState = {
         ...newState,
         overallStatusBackgroundColor: newColor,
-        dataRetrieved: true,
       };
     }
 
@@ -466,8 +461,35 @@ class ContactDetailScreen extends React.Component {
 
   componentDidUpdate(prevProps) {
     const {
-      userReducerError, contact, navigation, newComment, contactsReducerError,
+      userReducerError, contact, navigation, newComment, contactsReducerError, saved,
     } = this.props;
+
+    // NEW COMMENT
+    if (newComment && prevProps.newComment !== newComment) {
+      commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
+      this.setComment('');
+    }
+
+    // CONTACT SAVE / GET BY ID
+    if (contact && prevProps.contact !== contact) {
+      // Highlight Updates -> Compare prevState.contact with contact and show differences
+      navigation.setParams({ contactName: contact.title });
+      if (contact.seeker_path) {
+        this.setContactSeekerPath(contact.seeker_path);
+      }
+    }
+
+    // CONTACT SAVE
+    if (saved) {
+      this.onRefreshCommentsActivities(contact.ID);
+      toastSuccess.show(
+        <View>
+          <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
+        </View>,
+        3000,
+      );
+      this.onDisableEdit();
+    }
 
     // ERROR
     const usersError = (prevProps.userReducerError !== userReducerError && userReducerError);
@@ -477,34 +499,19 @@ class ContactDetailScreen extends React.Component {
       const error = userReducerError || contactsReducerError;
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>Code: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
           <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>Message: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
           <Text>{error.message}</Text>
         </View>,
         3000,
       );
     }
-
-    // CONTACT SAVE / GET BY ID
-    if (contact && prevProps.contact !== contact) {
-      // Highlight Updates -> Compare prevState.contact with contact and show differences
-      if (contact.ID) {
-        navigation.setParams({ contactName: contact.title });
-      }
-      if (contact.seeker_path) {
-        this.setContactSeekerPath(contact.seeker_path);
-      }
-    }
-
-    // NEW COMMENT
-    if (newComment && prevProps.newComment !== newComment) {
-      Keyboard.dismiss();
-    }
   }
 
   onRefresh(contactId) {
     this.getContactById(contactId);
+    this.onRefreshCommentsActivities(contactId);
   }
 
   onRefreshCommentsActivities(contactId) {
@@ -572,28 +579,22 @@ class ContactDetailScreen extends React.Component {
     this.setState(newState, () => {
       if (this.state.contact.ID) {
         this.onRefresh(this.state.contact.ID);
-        this.getContactComments(this.state.contact.ID);
-        this.getContactActivities(this.state.contact.ID);
       }
     });
   };
 
   getContactById(contactId) {
-    this.setState({
-      dataRetrieved: false,
-    }, () => {
-      this.props.getById(
-        this.props.user.domain,
-        this.props.user.token,
-        contactId,
-      );
-    });
+    this.props.getById(
+      this.props.userData.domain,
+      this.props.userData.token,
+      contactId,
+    );
   }
 
   getContactComments(contactId) {
     this.props.getComments(
-      this.props.user.domain,
-      this.props.user.token,
+      this.props.userData.domain,
+      this.props.userData.token,
       contactId,
       this.state.commentsOffset,
       this.state.commentsLimit,
@@ -602,128 +603,27 @@ class ContactDetailScreen extends React.Component {
 
   getContactActivities(contactId) {
     this.props.getActivities(
-      this.props.user.domain,
-      this.props.user.token,
+      this.props.userData.domain,
+      this.props.userData.token,
       contactId,
       this.state.activitiesOffset,
       this.state.activitiesLimit,
     );
   }
 
-  renderStatusPickerItems = () => this.state.listContactStates.map(status => (
-    <Picker.Item
-      key={status.value}
-      label={status.label}
-      value={status.value}
-    />
-  ));
-
-  renderSourcePickerItems = () => this.state.contactSources.map(source => (
-    <Picker.Item
-      key={source.value}
-      label={source.name}
-      value={source.value}
-    />
-  ));
-
-  renderActivityOrCommentRow = commentOrActivity => (
-    <View
-      style={{
-        paddingLeft: 19,
-        paddingRight: 16,
-        paddingVertical: 12,
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-      }}
-    >
-      <Image
-        style={{
-          height: 16,
-          marginTop: 10,
-          width: 16,
-        }}
-        source={{ uri: commentOrActivity.gravatar }}
-      />
-      <View
-        style={{
-          backgroundColor: '#F3F3F3',
-          borderRadius: 5,
-          flex: 1,
-          marginLeft: 16,
-          padding: 10,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 6,
-          }}
-        >
-          {Object.prototype.hasOwnProperty.call(
-            commentOrActivity,
-            'content',
-          ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.author}</Text>
-              </Col>
-              <Col style={{ width: 80 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
-          {Object.prototype.hasOwnProperty.call(
-            commentOrActivity,
-            'object_note',
-          ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.name}</Text>
-              </Col>
-              <Col style={{ width: 80 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
-        </View>
-        <Text
-          style={
-            commentOrActivity.content
-              ? {
-                paddingLeft: 10,
-                paddingRight: 10,
-              }
-              : {
-                paddingLeft: 10,
-                paddingRight: 10,
-                color: '#B4B4B4',
-                fontStyle: 'italic',
-              }
-          }
-        >
-          {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
-            ? commentOrActivity.content
-            : commentOrActivity.object_note}
-        </Text>
-      </View>
-    </View>
-  )
-
   onEnableEdit = () => {
     this.setState({
       onlyView: false,
     });
-    this.props.navigation.setParams({ onlyView: false });
+    this.props.navigation.setParams({ hideTabBar: true });
   };
+
+  onDisableEdit = () => {
+    this.setState({
+      onlyView: true,
+    });
+    this.props.navigation.setParams({ hideTabBar: false });
+  }
 
   setContactTitle = (value) => {
     this.setState(prevState => ({
@@ -779,20 +679,20 @@ class ContactDetailScreen extends React.Component {
     const dbGeonames = [...this.state.contact.geonames.values];
 
     const localGeonames = [];
-    const selectedValues = this.geonamesSelectizeRef.getSelectedItems();
+    const selectedValues = geonamesSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const geoname = selectedValues.entities.item[itemValue];
       localGeonames.push(geoname);
     });
 
     const geonamesToSave = localGeonames.filter((localGeoname) => {
-      const foundLocalInDb = dbGeonames.find(dbGeoname => dbGeoname.value === localGeoname.value);
-      return foundLocalInDb === undefined;
+      const foundLocalInDatabase = dbGeonames.find(dbGeoname => dbGeoname.value === localGeoname.value);
+      return foundLocalInDatabase === undefined;
     }).map(geoname => ({ value: geoname.value }));
 
     dbGeonames.forEach((dbGeoname) => {
-      const dbInLocal = localGeonames.find(localGeoname => dbGeoname.value === localGeoname.value);
-      if (!dbInLocal) {
+      const foundDatabaseInLocal = localGeonames.find(localGeoname => dbGeoname.value === localGeoname.value);
+      if (!foundDatabaseInLocal) {
         geonamesToSave.push({ value: dbGeoname.value, delete: true });
       }
     });
@@ -905,10 +805,6 @@ class ContactDetailScreen extends React.Component {
         quickAction,
         'quick_button_no_show',
       )
-      || Object.prototype.hasOwnProperty.call(
-        quickAction,
-        'quick_button_phone_off',
-      )
     ) {
       contactToSave = {
         ...contactToSave,
@@ -916,41 +812,41 @@ class ContactDetailScreen extends React.Component {
       };
     } else {
       contactToSave = JSON.parse(JSON.stringify(this.state.contact));
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'geonames') && this.geonamesSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'geonames') && geonamesSelectizeRef) {
         contactToSave.geonames.values = this.setGeonames();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'subassigned') && this.subAssiSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'subassigned') && subAssignedSelectizeRef) {
         contactToSave.subassigned.values = this.setContactSubassignedContacts();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'groups') && this.groupsSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'groups') && groupsSelectizeRef) {
         contactToSave.groups.values = this.setGroups();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'relation') && this.connectSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'relation') && connectionsSelectizeRef) {
         contactToSave.relation.values = this.setConnections();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized_by') && this.baptBySelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized_by') && baptizedBySelectizeRef) {
         contactToSave.baptized_by.values = this.setBaptizedBy();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized') && this.baptizedSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized') && baptizedSelectizeRef) {
         contactToSave.baptized.values = this.setBaptized();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coached_by') && this.coachedSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coached_by') && coachedSelectizeRef) {
         contactToSave.coached_by.values = this.setCoachedBy();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coaching') && this.coachingSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coaching') && coachingSelectizeRef) {
         contactToSave.coaching.values = this.setCoaching();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'people_groups') && this.pplGroupsSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'people_groups') && peopleGroupsSelectizeRef) {
         contactToSave.people_groups.values = this.setPeopleGroups();
       }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'sources') && this.sourcesSelectizeRef) {
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'sources') && sourcesSelectizeRef) {
         contactToSave.sources.values = this.setSources();
       }
     }
 
     this.props.saveContact(
-      this.props.user.domain,
-      this.props.user.token,
+      this.props.userData.domain,
+      this.props.userData.token,
       contactToSave,
     );
   };
@@ -973,12 +869,13 @@ class ContactDetailScreen extends React.Component {
     const newDate = new Date(date);
     let hours = newDate.getHours();
     let minutes = newDate.getMinutes();
+    const age = newDate.getFullYear();
     const ampm = hours >= 12 ? 'pm' : 'am';
     hours %= 12;
     hours = hours || 12; // the hour '0' should be '12'
     minutes = minutes < 10 ? `0${minutes}` : minutes;
     const strTime = `${hours}:${minutes} ${ampm}`;
-    return `${monthNames[newDate.getMonth()]} ${newDate.getDate()}, ${strTime}`;
+    return `${monthNames[newDate.getMonth()]} ${newDate.getDate()}, ${age} ${strTime}`;
   };
 
   setComment = (value) => {
@@ -989,11 +886,11 @@ class ContactDetailScreen extends React.Component {
 
   onSaveComment = () => {
     const { comment } = this.state;
-
     if (comment.length > 0) {
+      Keyboard.dismiss();
       this.props.saveComment(
-        this.props.user.domain,
-        this.props.user.token,
+        this.props.userData.domain,
+        this.props.userData.token,
         this.state.contact.ID,
         {
           comment,
@@ -1034,24 +931,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setGroups = () => {
-    const dbGroups = [...this.state.contact.groups.values];
+    const dataBaseGroups = [...this.state.contact.groups.values];
 
-    const lclGroups = [];
-    const selectedValues = this.groupsSelectizeRef.getSelectedItems();
+    const localGroups = [];
+    const selectedValues = groupsSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const group = selectedValues.entities.item[itemValue];
-      lclGroups.push(group);
+      localGroups.push(group);
     });
 
-    const groupsToSave = lclGroups.filter((lclGroup) => {
-      const foundLocalInDb = dbGroups.find(dbGroup => dbGroup.value === lclGroup.value);
-      return foundLocalInDb === undefined;
+    const groupsToSave = localGroups.filter((localGroup) => {
+      const foundLocalInDatabase = dataBaseGroups.find(dataBaseGroup => dataBaseGroup.value === localGroup.value);
+      return foundLocalInDatabase === undefined;
     }).map(group => ({ value: group.value }));
 
-    dbGroups.forEach((dbGroup) => {
-      const dbInLocal = lclGroups.find(lclGroup => dbGroup.value === lclGroup.value);
-      if (!dbInLocal) {
-        groupsToSave.push({ value: dbGroup.value, delete: true });
+    dataBaseGroups.forEach((dataBaseGroup) => {
+      const foundDatabaseInLocal = localGroups.find(localGroup => dataBaseGroup.value === localGroup.value);
+      if (!foundDatabaseInLocal) {
+        groupsToSave.push({ value: dataBaseGroup.value, delete: true });
       }
     });
 
@@ -1059,24 +956,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setConnections = () => {
-    const dbConnections = [...this.state.contact.relation.values];
+    const dataBaseConnections = [...this.state.contact.relation.values];
 
-    const lclConnections = [];
-    const selectedValues = this.connectSelectizeRef.getSelectedItems();
+    const localConnections = [];
+    const selectedValues = connectionsSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const connection = selectedValues.entities.item[itemValue];
-      lclConnections.push(connection);
+      localConnections.push(connection);
     });
 
-    const connectionsToSave = lclConnections.filter((lclConnection) => {
-      const foundLocalInDb = dbConnections.find(dbCnt => dbCnt.value === lclConnection.value);
-      return foundLocalInDb === undefined;
+    const connectionsToSave = localConnections.filter((localConnection) => {
+      const foundLocalInDatabase = dataBaseConnections.find(dataBaseConnection => dataBaseConnection.value === localConnection.value);
+      return foundLocalInDatabase === undefined;
     }).map(connection => ({ value: connection.value }));
 
-    dbConnections.forEach((dbConnection) => {
-      const dbInLocal = lclConnections.find(lclCnt => dbConnection.value === lclCnt.value);
-      if (!dbInLocal) {
-        connectionsToSave.push({ value: dbConnection.value, delete: true });
+    dataBaseConnections.forEach((dataBaseConnection) => {
+      const foundDatabaseInLocal = localConnections.find(localConnection => dataBaseConnection.value === localConnection.value);
+      if (!foundDatabaseInLocal) {
+        connectionsToSave.push({ value: dataBaseConnection.value, delete: true });
       }
     });
 
@@ -1084,24 +981,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setBaptizedBy = () => {
-    const dbBaptizedBy = [...this.state.contact.baptized_by.values];
+    const dataBaseBaptizedBy = [...this.state.contact.baptized_by.values];
 
-    const lclBaptizedBy = [];
-    const selectedValues = this.baptBySelectizeRef.getSelectedItems();
+    const localBaptizedBy = [];
+    const selectedValues = baptizedBySelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const baptizedBy = selectedValues.entities.item[itemValue];
-      lclBaptizedBy.push(baptizedBy);
+      localBaptizedBy.push(baptizedBy);
     });
 
-    const baptizedByToSave = lclBaptizedBy.filter((lclBaptized) => {
-      const foundLocalInDb = dbBaptizedBy.find(dbBpt => dbBpt.value === lclBaptized.value);
-      return foundLocalInDb === undefined;
+    const baptizedByToSave = localBaptizedBy.filter((localBaptized) => {
+      const foundLocalInDatabase = dataBaseBaptizedBy.find(dataBaseBaptized => dataBaseBaptized.value === localBaptized.value);
+      return foundLocalInDatabase === undefined;
     }).map(baptizedBy => ({ value: baptizedBy.value }));
 
-    dbBaptizedBy.forEach((dbBaptized) => {
-      const dbInLocal = lclBaptizedBy.find(lclBaptized => dbBaptized.value === lclBaptized.value);
-      if (!dbInLocal) {
-        baptizedByToSave.push({ value: dbBaptized.value, delete: true });
+    dataBaseBaptizedBy.forEach((dataBaseBaptized) => {
+      const foundDatabaseInLocal = localBaptizedBy.find(localBaptized => dataBaseBaptized.value === localBaptized.value);
+      if (!foundDatabaseInLocal) {
+        baptizedByToSave.push({ value: dataBaseBaptized.value, delete: true });
       }
     });
 
@@ -1109,24 +1006,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setBaptized = () => {
-    const dbBaptizeds = [...this.state.contact.baptized.values];
+    const dataBaseBaptizeds = [...this.state.contact.baptized.values];
 
-    const lclBaptizeds = [];
-    const selectedValues = this.baptizedSelectizeRef.getSelectedItems();
+    const localBaptizeds = [];
+    const selectedValues = baptizedSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const baptized = selectedValues.entities.item[itemValue];
-      lclBaptizeds.push(baptized);
+      localBaptizeds.push(baptized);
     });
 
-    const baptizedToSave = lclBaptizeds.filter((lclBaptized) => {
-      const foundLocalInDb = dbBaptizeds.find(dbBaptized => dbBaptized.value === lclBaptized.value);
-      return foundLocalInDb === undefined;
+    const baptizedToSave = localBaptizeds.filter((localBaptized) => {
+      const foundLocalInDatabase = dataBaseBaptizeds.find(dataBaseBaptized => dataBaseBaptized.value === localBaptized.value);
+      return foundLocalInDatabase === undefined;
     }).map(baptized => ({ value: baptized.value }));
 
-    dbBaptizeds.forEach((dbBaptized) => {
-      const dbInLocal = lclBaptizeds.find(lclBaptized => dbBaptized.value === lclBaptized.value);
-      if (!dbInLocal) {
-        baptizedToSave.push({ value: dbBaptized.value, delete: true });
+    dataBaseBaptizeds.forEach((dataBaseBaptized) => {
+      const foundDatabaseInLocal = localBaptizeds.find(localBaptized => dataBaseBaptized.value === localBaptized.value);
+      if (!foundDatabaseInLocal) {
+        baptizedToSave.push({ value: dataBaseBaptized.value, delete: true });
       }
     });
 
@@ -1134,24 +1031,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setCoachedBy = () => {
-    const dbCoachedBy = [...this.state.contact.coached_by.values];
+    const dataBaseCoachedBy = [...this.state.contact.coached_by.values];
 
-    const lclCoachedBy = [];
-    const selectedValues = this.coachedSelectizeRef.getSelectedItems();
+    const localCoachedBy = [];
+    const selectedValues = coachedSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const coached = selectedValues.entities.item[itemValue];
-      lclCoachedBy.push(coached);
+      localCoachedBy.push(coached);
     });
 
-    const coachedToSave = lclCoachedBy.filter((lclCoached) => {
-      const foundLocalInDb = dbCoachedBy.find(dbCoached => dbCoached.value === lclCoached.value);
-      return foundLocalInDb === undefined;
+    const coachedToSave = localCoachedBy.filter((localCoached) => {
+      const foundLocalInDatabase = dataBaseCoachedBy.find(dataBaseCoached => dataBaseCoached.value === localCoached.value);
+      return foundLocalInDatabase === undefined;
     }).map(coached => ({ value: coached.value }));
 
-    dbCoachedBy.forEach((dbCoached) => {
-      const dbInLocal = lclCoachedBy.find(lclCoached => dbCoached.value === lclCoached.value);
-      if (!dbInLocal) {
-        coachedToSave.push({ value: dbCoached.value, delete: true });
+    dataBaseCoachedBy.forEach((dataBaseCoached) => {
+      const foundDatabaseInLocal = localCoachedBy.find(localCoached => dataBaseCoached.value === localCoached.value);
+      if (!foundDatabaseInLocal) {
+        coachedToSave.push({ value: dataBaseCoached.value, delete: true });
       }
     });
 
@@ -1159,24 +1056,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setCoaching = () => {
-    const dbCoaching = [...this.state.contact.coaching.values];
+    const dataBaseCoaching = [...this.state.contact.coaching.values];
 
-    const lclCoaching = [];
-    const selectedValues = this.coachingSelectizeRef.getSelectedItems();
+    const localCoaching = [];
+    const selectedValues = coachingSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const coaching = selectedValues.entities.item[itemValue];
-      lclCoaching.push(coaching);
+      localCoaching.push(coaching);
     });
 
-    const coachingToSave = lclCoaching.filter((lclCoach) => {
-      const localInDb = dbCoaching.find(dbCoach => dbCoach.value === lclCoach.value);
-      return localInDb === undefined;
+    const coachingToSave = localCoaching.filter((localCoach) => {
+      const localInDataBase = dataBaseCoaching.find(dataBaseCoach => dataBaseCoach.value === localCoach.value);
+      return localInDataBase === undefined;
     }).map(coaching => ({ value: coaching.value }));
 
-    dbCoaching.forEach((dbCoach) => {
-      const dbInLocal = lclCoaching.find(lclCoach => dbCoach.value === lclCoach.value);
-      if (!dbInLocal) {
-        coachingToSave.push({ value: dbCoach.value, delete: true });
+    dataBaseCoaching.forEach((dataBaseCoach) => {
+      const foundDatabaseInLocal = localCoaching.find(localCoach => dataBaseCoach.value === localCoach.value);
+      if (!foundDatabaseInLocal) {
+        coachingToSave.push({ value: dataBaseCoach.value, delete: true });
       }
     });
 
@@ -1207,10 +1104,127 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
+  getCommentsAndActivities() {
+    const { comments, activities } = this.state;
+    const list = comments.concat(activities);
+    return list.filter((item, index) => list.indexOf(item) === index).sort(
+      (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
+    );
+  }
+
+  renderActivityOrCommentRow = commentOrActivity => (
+    <View
+      style={{
+        paddingLeft: 19,
+        paddingRight: 16,
+        paddingVertical: 12,
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+      }}
+    >
+      <Image
+        style={{
+          height: 16,
+          marginTop: 10,
+          width: 16,
+        }}
+        source={{ uri: commentOrActivity.gravatar }}
+      />
+      <View
+        style={{
+          backgroundColor: '#F3F3F3',
+          borderRadius: 5,
+          flex: 1,
+          marginLeft: 16,
+          padding: 10,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginBottom: 6,
+          }}
+        >
+          {Object.prototype.hasOwnProperty.call(
+            commentOrActivity,
+            'content',
+          ) && (
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.author}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
+          {Object.prototype.hasOwnProperty.call(
+            commentOrActivity,
+            'object_note',
+          ) && (
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.name}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          )}
+        </View>
+        <Text
+          style={
+            commentOrActivity.content
+              ? {
+                paddingLeft: 10,
+                paddingRight: 10,
+              }
+              : {
+                paddingLeft: 10,
+                paddingRight: 10,
+                color: '#B4B4B4',
+                fontStyle: 'italic',
+              }
+          }
+        >
+          {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
+            ? commentOrActivity.content
+            : commentOrActivity.object_note}
+        </Text>
+      </View>
+    </View>
+  )
+
+  renderSourcePickerItems = () => this.state.contactSources.map(source => (
+    <Picker.Item
+      key={source.value}
+      label={source.name}
+      value={source.value}
+    />
+  ));
+
+  renderStatusPickerItems = () => this.state.listContactStates.map(status => (
+    <Picker.Item
+      key={status.value}
+      label={status.label}
+      value={status.value}
+    />
+  ));
+
   tabChanged = (event) => {
     this.props.navigation.setParams({ hideTabBar: event.i === 2 });
     this.setState({
       renderFab: !(event.i === 2),
+      currentTabIndex: event.i,
     });
   };
 
@@ -1360,24 +1374,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setPeopleGroups = () => {
-    const dbPGs = [...this.state.contact.people_groups.values];
+    const dataBasePeopleGroups = [...this.state.contact.people_groups.values];
 
-    const lclPGs = [];
-    const selectedValues = this.pplGroupsSelectizeRef.getSelectedItems();
+    const localPeopleGroups = [];
+    const selectedValues = peopleGroupsSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const peopleGroup = selectedValues.entities.item[itemValue];
-      lclPGs.push(peopleGroup);
+      localPeopleGroups.push(peopleGroup);
     });
 
-    const peopleGroupsToSave = lclPGs.filter((lclPG) => {
-      const foundLocalInDb = dbPGs.find(dbPG => dbPG.value === lclPG.value);
-      return foundLocalInDb === undefined;
+    const peopleGroupsToSave = localPeopleGroups.filter((localPeopleGroup) => {
+      const foundLocalInDatabase = dataBasePeopleGroups.find(dataBasePeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
+      return foundLocalInDatabase === undefined;
     }).map(peopleGroup => ({ value: peopleGroup.value }));
 
-    dbPGs.forEach((dbPG) => {
-      const dbInLocal = lclPGs.find(lclPG => dbPG.value === lclPG.value);
-      if (!dbInLocal) {
-        peopleGroupsToSave.push({ value: dbPG.value, delete: true });
+    dataBasePeopleGroups.forEach((dataBasePeopleGroup) => {
+      const foundDatabaseInLocal = localPeopleGroups.find(localPeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
+      if (!foundDatabaseInLocal) {
+        peopleGroupsToSave.push({ value: dataBasePeopleGroup.value, delete: true });
       }
     });
 
@@ -1385,24 +1399,24 @@ class ContactDetailScreen extends React.Component {
   };
 
   setSources = () => {
-    const dbSources = [...this.state.contact.sources.values];
+    const dataBaseSources = [...this.state.contact.sources.values];
 
     const localSources = [];
-    const selectedValues = this.sourcesSelectizeRef.getSelectedItems();
+    const selectedValues = sourcesSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const source = selectedValues.entities.item[itemValue];
       localSources.push(source);
     });
 
     const sourcesToSave = localSources.filter((localSource) => {
-      const foundLocalInDb = dbSources.find(dbSource => dbSource.value === localSource.value);
-      return foundLocalInDb === undefined;
+      const foundLocalInDatabase = dataBaseSources.find(dataBaseSource => dataBaseSource.value === localSource.value);
+      return foundLocalInDatabase === undefined;
     }).map(source => ({ value: source.value }));
 
-    dbSources.forEach((dbSource) => {
-      const dbInLocal = localSources.find(localSource => dbSource.value === localSource.value);
-      if (!dbInLocal) {
-        sourcesToSave.push({ value: dbSource.value, delete: true });
+    dataBaseSources.forEach((dataBaseSource) => {
+      const foundDatabaseInLocal = localSources.find(localSource => dataBaseSource.value === localSource.value);
+      if (!foundDatabaseInLocal) {
+        sourcesToSave.push({ value: dataBaseSource.value, delete: true });
       }
     });
 
@@ -1435,36 +1449,421 @@ class ContactDetailScreen extends React.Component {
     const foundUser = this.state.users.find(
       user => `user-${user.key}` === this.state.contact.assigned_to,
     );
-    return <Text>{foundUser ? foundUser.label : ''}</Text>;
+    return <Text style={{ marginTop: 'auto', marginBottom: 'auto', fontSize: 15 }}>{foundUser ? foundUser.label : ''}</Text>;
   };
 
   setContactSubassignedContacts = () => {
-    const dbContacts = [...this.state.contact.subassigned.values];
+    const dataBaseContacts = [...this.state.contact.subassigned.values];
 
     const localContacts = [];
-    const selectedValues = this.subAssiSelectizeRef.getSelectedItems();
+    const selectedValues = subAssignedSelectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const contact = selectedValues.entities.item[itemValue];
       localContacts.push(contact);
     });
 
     const subassignedContactToSave = localContacts.filter((localContact) => {
-      const foundLocalInDb = dbContacts.find(dbContact => dbContact.value === localContact.value);
-      return foundLocalInDb === undefined;
+      const foundLocalInDatabase = dataBaseContacts.find(dataBaseContact => dataBaseContact.value === localContact.value);
+      return foundLocalInDatabase === undefined;
     }).map(contact => ({ value: contact.value }));
 
-    dbContacts.forEach((dbContact) => {
-      const dbInLocal = localContacts.find(localContact => dbContact.value === localContact.value);
-      if (!dbInLocal) {
-        subassignedContactToSave.push({ value: dbContact.value, delete: true });
+    dataBaseContacts.forEach((dataBaseContact) => {
+      const foundDatabaseInLocal = localContacts.find(localContact => dataBaseContact.value === localContact.value);
+      if (!foundDatabaseInLocal) {
+        subassignedContactToSave.push({ value: dataBaseContact.value, delete: true });
       }
     });
 
     return subassignedContactToSave;
   };
 
+  renderfaithMilestones() {
+    return (
+      <Grid
+        pointerEvents={this.state.onlyView ? 'none' : 'auto'}
+        style={{
+          height: milestonesGridSize,
+        }}
+      >
+        <Row size={6}>
+          <Col size={1} />
+          <Col size={5}>
+            <TouchableOpacity
+              onPress={() => {
+                this.onMilestoneChange('milestone_has_bible');
+              }}
+              activeOpacity={1}
+              style={styles.progressIcon}
+            >
+              <Col>
+                <Row size={3}>
+                  <Image
+                    source={hasBibleIcon}
+                    style={[
+                      styles.progressIcon,
+                      this.onCheckExistingMilestone(
+                        'milestone_has_bible',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  />
+                </Row>
+                <Row size={1}>
+                  <Text
+                    style={[
+                      styles.progressIconText,
+                      this.onCheckExistingMilestone(
+                        'milestone_has_bible',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  >
+                    {i18n.t('contactDetailScreen.milestones.hasBible')}
+                  </Text>
+                </Row>
+              </Col>
+            </TouchableOpacity>
+          </Col>
+          <Col size={1} />
+          <Col size={5}>
+            <TouchableOpacity
+              onPress={() => {
+                this.onMilestoneChange(
+                  'milestone_reading_bible',
+                );
+              }}
+              activeOpacity={1}
+              style={styles.progressIcon}
+            >
+              <Col>
+                <Row size={3}>
+                  <Image
+                    source={readingBibleIcon}
+                    style={[
+                      styles.progressIcon,
+                      this.onCheckExistingMilestone(
+                        'milestone_reading_bible',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  />
+                </Row>
+                <Row size={1}>
+                  <Text
+                    style={[
+                      styles.progressIconText,
+                      this.onCheckExistingMilestone(
+                        'milestone_reading_bible',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  >
+                    {i18n.t('contactDetailScreen.milestones.readingBible')}
+                  </Text>
+                </Row>
+              </Col>
+            </TouchableOpacity>
+          </Col>
+          <Col size={1} />
+          <Col size={5}>
+            <TouchableOpacity
+              onPress={() => {
+                this.onMilestoneChange('milestone_belief');
+              }}
+              activeOpacity={1}
+              style={styles.progressIcon}
+            >
+              <Col>
+                <Row size={3}>
+                  <Image
+                    source={statesBeliefIcon}
+                    style={[
+                      styles.progressIcon,
+                      this.onCheckExistingMilestone(
+                        'milestone_belief',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  />
+                </Row>
+                <Row size={1}>
+                  <Text
+                    style={[
+                      styles.progressIconText,
+                      this.onCheckExistingMilestone(
+                        'milestone_belief',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  >
+                    {i18n.t('contactDetailScreen.milestones.statesBelief')}
+                  </Text>
+                </Row>
+              </Col>
+            </TouchableOpacity>
+          </Col>
+          <Col size={1} />
+        </Row>
+        <Row size={1} />
+        <Row size={7}>
+          <Col size={1} />
+          <Col size={5}>
+            <TouchableOpacity
+              onPress={() => {
+                this.onMilestoneChange('milestone_can_share');
+              }}
+              activeOpacity={1}
+              style={styles.progressIcon}
+            >
+              <Col>
+                <Row size={7}>
+                  <Image
+                    source={canShareGospelIcon}
+                    style={[
+                      styles.progressIcon,
+                      this.onCheckExistingMilestone(
+                        'milestone_can_share',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  />
+                </Row>
+                <Row size={3}>
+                  <Text
+                    style={[
+                      styles.progressIconText,
+                      this.onCheckExistingMilestone(
+                        'milestone_can_share',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  >
+                    {i18n.t('contactDetailScreen.milestones.shareGospel')}
+                  </Text>
+                </Row>
+              </Col>
+            </TouchableOpacity>
+          </Col>
+          <Col size={1} />
+          <Col size={5}>
+            <TouchableOpacity
+              onPress={() => {
+                this.onMilestoneChange('milestone_sharing');
+              }}
+              activeOpacity={1}
+              style={styles.progressIcon}
+            >
+              <Col>
+                <Row size={7}>
+                  <Image
+                    source={sharingTheGospelIcon}
+                    style={[
+                      styles.progressIcon,
+                      this.onCheckExistingMilestone(
+                        'milestone_sharing',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  />
+                </Row>
+                <Row size={3}>
+                  <Text
+                    style={[
+                      styles.progressIconText,
+                      this.onCheckExistingMilestone(
+                        'milestone_sharing',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  >
+                    {i18n.t('contactDetailScreen.milestones.sharingGospel')}
+                  </Text>
+                </Row>
+              </Col>
+            </TouchableOpacity>
+          </Col>
+          <Col size={1} />
+          <Col size={5}>
+            <TouchableOpacity
+              onPress={() => {
+                this.onMilestoneChange('milestone_baptized');
+              }}
+              activeOpacity={1}
+              style={styles.progressIcon}
+            >
+              <Col>
+                <Row size={7}>
+                  <Image
+                    source={baptizedIcon}
+                    style={[
+                      styles.progressIcon,
+                      this.onCheckExistingMilestone(
+                        'milestone_baptized',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  />
+                </Row>
+                <Row size={3}>
+                  <Text
+                    style={[
+                      styles.progressIconText,
+                      this.onCheckExistingMilestone(
+                        'milestone_baptized',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  >
+                    {i18n.t('contactDetailScreen.milestones.baptized')}
+                  </Text>
+                </Row>
+              </Col>
+            </TouchableOpacity>
+          </Col>
+          <Col size={1} />
+        </Row>
+        <Row size={1} />
+        <Row size={6}>
+          <Col size={1} />
+          <Col size={5}>
+            <TouchableOpacity
+              onPress={() => {
+                this.onMilestoneChange('milestone_baptizing');
+              }}
+              activeOpacity={1}
+              style={styles.progressIcon}
+            >
+              <Col>
+                <Row size={3}>
+                  <Image
+                    source={baptizingIcon}
+                    style={[
+                      styles.progressIcon,
+                      this.onCheckExistingMilestone(
+                        'milestone_baptizing',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  />
+                </Row>
+                <Row size={1}>
+                  <Text
+                    style={[
+                      styles.progressIconText,
+                      this.onCheckExistingMilestone(
+                        'milestone_baptizing',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  >
+                    {i18n.t('contactDetailScreen.milestones.baptizing')}
+                  </Text>
+                </Row>
+              </Col>
+            </TouchableOpacity>
+          </Col>
+          <Col size={1} />
+          <Col size={5}>
+            <TouchableOpacity
+              onPress={() => {
+                this.onMilestoneChange('milestone_in_group');
+              }}
+              activeOpacity={1}
+              style={styles.progressIcon}
+            >
+              <Col>
+                <Row size={3}>
+                  <Image
+                    source={inChurchIcon}
+                    style={[
+                      styles.progressIcon,
+                      this.onCheckExistingMilestone(
+                        'milestone_in_group',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  />
+                </Row>
+                <Row size={1}>
+                  <Text
+                    style={[
+                      styles.progressIconText,
+                      this.onCheckExistingMilestone(
+                        'milestone_in_group',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  >
+                    {i18n.t('contactDetailScreen.milestones.inGroup')}
+                  </Text>
+                </Row>
+              </Col>
+            </TouchableOpacity>
+          </Col>
+          <Col size={1} />
+          <Col size={5}>
+            <TouchableOpacity
+              onPress={() => {
+                this.onMilestoneChange('milestone_planting');
+              }}
+              activeOpacity={1}
+              style={styles.progressIcon}
+            >
+              <Col>
+                <Row size={3}>
+                  <Image
+                    source={startingChurchesIcon}
+                    style={[
+                      styles.progressIcon,
+                      this.onCheckExistingMilestone(
+                        'milestone_planting',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  />
+                </Row>
+                <Row size={1}>
+                  <Text
+                    style={[
+                      styles.progressIconText,
+                      this.onCheckExistingMilestone(
+                        'milestone_planting',
+                      )
+                        ? styles.progressIconActive
+                        : styles.progressIconInactive,
+                    ]}
+                  >
+                    {i18n.t('contactDetailScreen.milestones.startingChurches')}
+                  </Text>
+                </Row>
+              </Col>
+            </TouchableOpacity>
+          </Col>
+          <Col size={1} />
+        </Row>
+      </Grid>
+    );
+  }
+
   render() {
-    /* const successToast = (
+    const successToast = (
       <Toast
         ref={(toast) => {
           toastSuccess = toast;
@@ -1472,7 +1871,7 @@ class ContactDetailScreen extends React.Component {
         style={{ backgroundColor: 'green' }}
         position="center"
       />
-    ); */
+    );
     const errorToast = (
       <Toast
         ref={(toast) => {
@@ -1484,2089 +1883,2294 @@ class ContactDetailScreen extends React.Component {
     );
 
     return (
-      <Container>
-        {this.state.contact.ID && this.state.loadedLocal && (
-          <Container>
-            <View style={{ flex: 1 }}>
-              <Tabs
-                renderTabBar={() => <ScrollableTab />}
-                tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
-                onChangeTab={this.tabChanged}
-              >
-                <Tab
-                  heading="Details"
-                  tabStyle={styles.tabStyle}
-                  textStyle={styles.textStyle}
-                  activeTabStyle={styles.activeTabStyle}
-                  activeTextStyle={styles.activeTextStyle}
-                >
-                  <KeyboardShift>
-                    {() => (
-                      <ScrollView
-                        keyboardShouldPersistTaps="handled"
-                        refreshControl={(
-                          <RefreshControl
-                            refreshing={this.state.loading}
-                            onRefresh={() => this.onRefresh(this.state.contact.ID)}
-                          />
-                        )}
+      <View style={{ flex: 1 }}>
+        {this.state.loadedLocal && (
+          <View style={{ flex: 1 }}>
+            {this.state.contact.ID ? (
+              <View style={{ flex: 1 }}>
+                {this.state.onlyView && (
+                  <View style={{ flex: 1 }}>
+                    <Tabs
+                      renderTabBar={() => <ScrollableTab />}
+                      tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
+                      onChangeTab={this.tabChanged}
+                    >
+                      <Tab
+                        heading={i18n.t('global.details')}
+                        tabStyle={styles.tabStyle}
+                        textStyle={styles.textStyle}
+                        activeTabStyle={styles.activeTabStyle}
+                        activeTextStyle={styles.activeTextStyle}
                       >
-                        <View
-                          style={{
-                            paddingLeft: containerPadding - 15,
-                            paddingRight: containerPadding - 15,
-                            marginTop: 20,
-                          }}
-                          pointerEvents={this.state.onlyView ? 'none' : 'auto'}
+                        <ScrollView
+                          refreshControl={(
+                            <RefreshControl
+                              refreshing={this.state.loading}
+                              onRefresh={() => this.onRefresh(this.state.contact.ID)}
+                            />
+                          )}
                         >
-                          <Label
-                            style={[styles.formLabel, { fontWeight: 'bold' }]}
-                          >
-                            Status
-                          </Label>
-                          <Row style={styles.formRow}>
-                            <Col>
-                              <Picker
-                                selectedValue={
-                                  this.state.contact.overall_status
-                                }
-                                onValueChange={this.setContactStatus}
-                                style={{
-                                  color: '#ffffff',
-                                  backgroundColor: this.state.overallStatusBackgroundColor,
-                                }}
-                              >
-                                {this.renderStatusPickerItems()}
-                              </Picker>
-                            </Col>
-                          </Row>
-                        </View>
-                        {this.state.dataRetrieved && (
+                          <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
+                            <Row>
+                              <Col />
+                              <Col>
+                                <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
+                                  {i18n.t('global.edit')}
+                                </Text>
+                              </Col>
+                            </Row>
+                          </Grid>
                           <View
-                            style={styles.formContainer}
-                            pointerEvents={this.state.onlyView ? 'none' : 'auto'}
+                            style={[styles.formContainer, { paddingTop: 0 }]}
+                            pointerEvents="none"
+                          >
+                            <Label
+                              style={{
+                                color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
+                              }}
+                            >
+                              {i18n.t('global.status')}
+                            </Label>
+                            <Row style={[styles.formRow, { paddingTop: 5 }]}>
+                              <Col>
+                                <Picker
+                                  selectedValue={
+                                    this.state.contact.overall_status
+                                  }
+                                  onValueChange={this.setContactStatus}
+                                  style={{
+                                    color: '#ffffff',
+                                    backgroundColor: this.state.overallStatusBackgroundColor,
+                                  }}
+                                >
+                                  {this.renderStatusPickerItems()}
+                                </Picker>
+                              </Col>
+                            </Row>
+                            <Row style={styles.formRow}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="FontAwesome"
+                                  name="user-circle"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                {this.showAssignedUser()}
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('global.assignedTo')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="Ionicons"
+                                  name="md-people"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.subassigned.values.map(contact => `${contact.name}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('contactDetailScreen.subAssignedTo')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="FontAwesome"
+                                  name="phone"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.contact_phone.map(phone => `${phone.value}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.mobile')}</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="FontAwesome"
+                                  name="envelope"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.contact_email.map(email => `${email.value}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.email')}</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  android="logo-facebook"
+                                  ios="logo-facebook"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }} />
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.message')}</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="Entypo"
+                                  name="home"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.contact_address.map(address => `${address.value}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="FontAwesome"
+                                  name="map-marker"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.geonames.values.map(geoname => `${geoname.name}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('global.location')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="FontAwesome"
+                                  name="globe"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.people_groups.values.map(peopleGroup => `${peopleGroup.name}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('global.peopleGroup')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="FontAwesome"
+                                  name="clock-o"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.age}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.age')}</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  android="md-male"
+                                  ios="ios-male"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.gender) ? i18n.t(`contactDetailScreen.${this.state.contact.gender}`) : ''}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.gender')}</Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={styles.formRow}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  android="md-arrow-dropright"
+                                  ios="ios-arrow-dropright"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.sources.values.map(source => `${source.name}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('contactDetailScreen.source')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                          </View>
+                        </ScrollView>
+                      </Tab>
+                      <Tab
+                        heading={i18n.t('global.progress')}
+                        tabStyle={styles.tabStyle}
+                        textStyle={styles.textStyle}
+                        activeTabStyle={styles.activeTabStyle}
+                        activeTextStyle={styles.activeTextStyle}
+                      >
+                        <ScrollView
+                          refreshControl={(
+                            <RefreshControl
+                              refreshing={this.state.loading}
+                              onRefresh={() => this.onRefresh(this.state.contact.ID)}
+                            />
+                          )}
+                        >
+                          <View
+                            style={[styles.formContainer, { marginTop: 10 }]}
                           >
                             <Grid>
+                              <Row>
+                                <Col />
+                                <Col>
+                                  <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
+                                    {i18n.t('global.edit')}
+                                  </Text>
+                                </Col>
+                              </Row>
+                            </Grid>
+                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  android="md-calendar"
+                                  ios="ios-calendar"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{i18n.t(`global.seekerPath.${this.state.contact.seeker_path}`)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.seekerPath')}</Label>
+                              </Col>
+                            </Row>
+                            <View
+                              style={{
+                                alignItems: 'center',
+                                marginTop: 5,
+                                marginBottom: 25,
+                              }}
+                            >
+                              <ProgressBarAnimated
+                                width={progressBarWidth}
+                                value={this.state.progressBarValue}
+                                backgroundColor={Colors.tintColor}
+                              />
+                            </View>
+                            <View style={styles.formDivider} />
+                            <Label
+                              style={[
+                                styles.formLabel,
+                                { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
+                              ]}
+                            >
+                              {i18n.t('contactDetailScreen.faithMilestones')}
+                            </Label>
+                            {this.renderfaithMilestones()}
+                            <Grid style={{ marginTop: 25 }}>
+                              <View style={styles.formDivider} />
+                              <Row style={styles.formRow}>
+                                <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                  <Icon
+                                    type="Entypo"
+                                    name="water"
+                                    style={styles.formIcon}
+                                  />
+                                </Col>
+                                <Col>
+                                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.baptism_date}</Text>
+                                </Col>
+                                <Col style={styles.formIconLabel}>
+                                  <Label style={[styles.label, styles.formLabel]}>
+                                    {i18n.t('contactDetailScreen.milestones.baptismDate')}
+                                  </Label>
+                                </Col>
+                              </Row>
+                            </Grid>
+                          </View>
+                        </ScrollView>
+                      </Tab>
+                      <Tab
+                        heading={i18n.t('global.commentsActivity')}
+                        tabStyle={styles.tabStyle}
+                        textStyle={styles.textStyle}
+                        activeTabStyle={styles.activeTabStyle}
+                        activeTextStyle={styles.activeTextStyle}
+                      >
+                        <View style={{ flex: 1 }}>
+                          <FlatList
+                            style={{
+                              backgroundColor: '#ffffff',
+                              flex: 1,
+                              marginBottom: 60,
+                            }}
+                            ref={(flatList) => {
+                              commentsFlatList = flatList;
+                            }}
+                            data={this.getCommentsAndActivities()}
+                            extraData={!this.state.loadingMoreComments || !this.state.loadingMoreActivities}
+                            inverted
+                            ItemSeparatorComponent={() => (
+                              <View
+                                style={{
+                                  height: 1,
+                                  backgroundColor: '#CCCCCC',
+                                }}
+                              />
+                            )}
+                            keyExtractor={(item, index) => String(index)}
+                            renderItem={(item) => {
+                              const commentOrActivity = item.item;
+                              return this.renderActivityOrCommentRow(
+                                commentOrActivity,
+                              );
+                            }}
+                            refreshControl={(
+                              <RefreshControl
+                                refreshing={(this.state.loadComments || this.state.loadActivities)}
+                                onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID)}
+                              />
+                            )}
+                            onScroll={({ nativeEvent }) => {
+                              const {
+                                loadingMoreComments, commentsOffset, activitiesOffset,
+                              } = this.state;
+                              const flatList = nativeEvent;
+                              const contentOffsetY = flatList.contentOffset.y;
+                              const layoutMeasurementHeight = flatList.layoutMeasurement.height;
+                              const contentSizeHeight = flatList.contentSize.height;
+                              const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
+                              const distanceToStart = contentSizeHeight - heightOffsetSum;
+
+                              if (distanceToStart < 100) {
+                                if (!loadingMoreComments) {
+                                  if (commentsOffset < this.state.totalComments) {
+                                    this.setState({
+                                      loadingMoreComments: true,
+                                    }, () => {
+                                      this.getContactComments(this.state.contact.ID);
+                                    });
+                                  }
+                                }
+                                if (!this.state.loadingMoreActivities) {
+                                  if (activitiesOffset < this.state.totalActivities) {
+                                    this.setState({
+                                      loadingMoreActivities: true,
+                                    }, () => {
+                                      this.getContactActivities(this.state.contact.ID);
+                                    });
+                                  }
+                                }
+                              }
+                            }}
+                          />
+                          <KeyboardAccessory>
+                            <View
+                              style={{
+                                backgroundColor: 'white',
+                                flexDirection: 'row',
+                              }}
+                            >
+                              <TextInput
+                                placeholder={i18n.t('global.writeYourCommentNoteHere')}
+                                value={this.state.comment}
+                                onChangeText={this.setComment}
+                                style={{
+                                  borderColor: '#B4B4B4',
+                                  borderRadius: 5,
+                                  borderWidth: 1,
+                                  flex: 1,
+                                  margin: 10,
+                                  paddingLeft: 5,
+                                  paddingRight: 5,
+                                }}
+                              />
                               <TouchableOpacity
-                                onPress={() => {
-                                  this.updateShowAssignedToModal(true);
+                                onPress={() => this.onSaveComment()}
+                                style={{
+                                  backgroundColor: Colors.tintColor,
+                                  borderRadius: 80,
+                                  height: 40,
+                                  margin: 10,
+                                  paddingTop: 7,
+                                  paddingLeft: 10,
+                                  width: 40,
                                 }}
                               >
-                                <Row style={styles.formRow}>
-                                  <Col style={styles.formIconLabel}>
-                                    <Icon
-                                      type="FontAwesome"
-                                      name="user-circle"
-                                      style={styles.formIcon}
-                                    />
+                                <Icon
+                                  android="md-send"
+                                  ios="ios-send"
+                                  style={{ color: 'white', fontSize: 25 }}
+                                />
+                              </TouchableOpacity>
+                            </View>
+                          </KeyboardAccessory>
+                        </View>
+                      </Tab>
+                      <Tab
+                        heading={i18n.t('contactDetailScreen.connections')}
+                        tabStyle={styles.tabStyle}
+                        textStyle={styles.textStyle}
+                        activeTabStyle={styles.activeTabStyle}
+                        activeTextStyle={styles.activeTextStyle}
+                      >
+                        <ScrollView
+                          keyboardShouldPersistTaps="handled"
+                          refreshControl={(
+                            <RefreshControl
+                              refreshing={this.state.loading}
+                              onRefresh={() => this.onRefresh(this.state.contact.ID)}
+                            />
+                          )}
+                        >
+                          <View
+                            style={[styles.formContainer, { marginTop: 10 }]}
+                          >
+                            <Grid>
+                              <Row>
+                                <Col />
+                                <Col>
+                                  <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
+                                    {i18n.t('global.edit')}
+                                  </Text>
+                                </Col>
+                              </Row>
+                            </Grid>
+                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="FontAwesome"
+                                  name="users"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.groups.values.map(group => `${group.name}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('contactDetailScreen.group')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="Entypo"
+                                  name="network"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.relation.values.map(relation => `${relation.name}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('contactDetailScreen.connection')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="Entypo"
+                                  name="water"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.baptized_by.values.map(baptizedBy => `${baptizedBy.name}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('contactDetailScreen.baptizedBy')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="Entypo"
+                                  name="water"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.baptized.values.map(baptized => `${baptized.name}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('contactDetailScreen.baptized')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="FontAwesome"
+                                  name="black-tie"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.coached_by.values.map(coached => `${coached.name}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('contactDetailScreen.coachedBy')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
+                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                                <Icon
+                                  type="MaterialCommunityIcons"
+                                  name="presentation"
+                                  style={styles.formIcon}
+                                />
+                              </Col>
+                              <Col>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.coaching.values.map(coaching => `${coaching.name}, `)}</Text>
+                              </Col>
+                              <Col style={styles.formParentLabel}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('contactDetailScreen.coaching')}
+                                </Label>
+                              </Col>
+                            </Row>
+                            <View style={styles.formDivider} />
+                          </View>
+                        </ScrollView>
+                      </Tab>
+                    </Tabs>
+                    {this.state.renderFab && (
+                      <Fab
+                        active={this.state.activeFab}
+                        onPress={() => this.setToggleFab()}
+                        style={{ backgroundColor: Colors.tintColor }}
+                      >
+                        <Icon
+                          type="MaterialCommunityIcons"
+                          name="comment-plus"
+                          style={{ color: 'white' }}
+                        />
+                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                          <Icon
+                            type="Feather"
+                            name="phone-off"
+                            style={{ color: 'white' }}
+                            onPress={() => this.onSaveContact({
+                              quick_button_no_answer:
+                                parseInt(
+                                  this.state.contact.quick_button_no_answer,
+                                  10,
+                                ) + 1,
+                            })
+                            }
+                          />
+                        </Button>
+                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="phone-in-talk"
+                            style={{ color: 'white' }}
+                            onPress={() => this.onSaveContact({
+                              quick_button_contact_established:
+                                parseInt(
+                                  this.state.contact
+                                    .quick_button_contact_established,
+                                  10,
+                                ) + 1,
+                            })
+                            }
+                          />
+                        </Button>
+                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="calendar-plus"
+                            style={{ color: 'white' }}
+                            onPress={() => this.onSaveContact({
+                              quick_button_meeting_scheduled:
+                                parseInt(
+                                  this.state.contact.quick_button_meeting_scheduled,
+                                  10,
+                                ) + 1,
+                            })
+                            }
+                          />
+                        </Button>
+                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="calendar-check"
+                            style={{ color: 'white' }}
+                            onPress={() => this.onSaveContact({
+                              quick_button_meeting_complete:
+                                parseInt(
+                                  this.state.contact.quick_button_meeting_complete,
+                                  10,
+                                ) + 1,
+                            })
+                            }
+                          />
+                        </Button>
+                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="calendar-remove"
+                            style={{ color: 'white' }}
+                            onPress={() => this.onSaveContact({
+                              quick_button_no_show:
+                                parseInt(
+                                  this.state.contact.quick_button_no_show,
+                                  10,
+                                ) + 1,
+                            })
+                            }
+                          />
+                        </Button>
+                      </Fab>
+                    )}
+                  </View>
+                )}
+                {!this.state.onlyView && (
+                  <KeyboardShift>
+                    {() => (
+                      <Container>
+                        <Content>
+                          <ScrollView keyboardShouldPersistTaps="handled">
+                            {this.state.currentTabIndex === 0 && (
+                              <View style={styles.formContainer}>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
                                   </Col>
                                   <Col>
-                                    {this.showAssignedUser()}
-                                    <ModalFilterPicker
-                                      visible={this.state.showAssignedToModal}
-                                      onSelect={this.onSelectAssignedTo}
-                                      onCancel={this.onCancelAssignedTo}
-                                      options={this.state.users}
-                                    />
-                                  </Col>
-                                  <Col style={styles.formIconLabel}>
-                                    <Label style={styles.formLabel}>
-                                      Assigned to
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.fullName')}
                                     </Label>
                                   </Col>
                                 </Row>
-                                <View style={styles.formDivider} />
-                              </TouchableOpacity>
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    type="Ionicons"
-                                    name="md-people"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col />
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>
-                                    Sub-assigned to
-                                  </Label>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                                  <Selectize
-                                    ref={(selectize) => { this.subAssiSelectizeRef = selectize; }}
-                                    itemId="value"
-                                    items={this.state.usersContacts}
-                                    selectedItems={this.state.contact.subassigned.values}
-                                    textInputProps={{
-                                      placeholder: 'Sub-assign this contact',
-                                    }}
-                                    renderRow={(id, onPress, item) => (
-                                      <TouchableOpacity
-                                        activeOpacity={0.6}
-                                        key={id}
-                                        onPress={onPress}
-                                        style={{
-                                          paddingVertical: 8,
-                                          paddingHorizontal: 10,
-                                        }}
-                                      >
-                                        <View style={{
-                                          flexDirection: 'row',
-                                        }}
-                                        >
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.87)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
-                                          }}
-                                          >
-                                            {item.name}
-                                          </Text>
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.54)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
-                                          }}
-                                          >
-                                            {id}
-                                          </Text>
-                                        </View>
-                                      </TouchableOpacity>
-                                    )}
-                                    renderChip={(id, onClose, item, style, iconStyle) => (
-                                      <Chip
-                                        key={id}
-                                        iconStyle={iconStyle}
-                                        onClose={onClose}
-                                        text={item.name}
-                                        style={style}
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user"
+                                        style={[styles.formIcon, { opacity: 0 }]}
                                       />
-                                    )}
-                                    filterOnKey="name"
-                                    keyboardShouldPersistTaps
-                                    inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                  />
-                                </Col>
-                              </Row>
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    type="FontAwesome"
-                                    name="phone"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col>
-                                  <Row>
-                                    <View style={{ flex: 1 }}>
-                                      <Text
-                                        style={{
-                                          textAlign: 'right',
-                                          paddingRight: 10,
-                                        }}
-                                      >
-                                        <Icon
-                                          android="md-add"
-                                          ios="ios-add"
-                                          onPress={this.onAddPhoneField}
-                                          style={styles.addRemoveIcons}
-                                        />
-                                      </Text>
                                     </View>
-                                  </Row>
-                                </Col>
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>Mobile</Label>
-                                </Col>
-                              </Row>
-                              {this.state.contact.contact_phone.map(
-                                (phone, index) => {
-                                  if (!phone.delete) {
-                                    return (
-                                      <Row
-                                        key={index.toString()}
-                                        style={styles.formRow}
-                                      >
-                                        <Col>
-                                          <Input
-                                            multiline
-                                            value={phone.value}
-                                            onChangeText={(value) => {
-                                              this.onPhoneFieldChange(
-                                                value,
-                                                index,
-                                                phone.key,
-                                                this,
-                                              );
-                                            }}
-                                            style={styles.inputContactAddress}
-                                          />
-                                        </Col>
-                                        <Col style={styles.formIconLabel}>
-                                          <Icon
-                                            android="md-remove"
-                                            ios="ios-remove"
-                                            onPress={() => {
-                                              this.onRemovePhoneField(
-                                                index,
-                                                this,
-                                              );
-                                            }}
-                                            style={[
-                                              styles.addRemoveIcons,
-                                              {
-                                                paddingLeft: 10,
-                                                paddingRight: 10,
-                                              },
-                                            ]}
-                                          />
-                                        </Col>
-                                      </Row>
-                                    );
-                                  }
-                                  return '';
-                                },
-                              )}
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    type="FontAwesome"
-                                    name="envelope"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col>
-                                  <Row>
-                                    <View style={{ flex: 1 }}>
-                                      <Text
-                                        style={{
-                                          textAlign: 'right',
-                                          paddingRight: 10,
-                                        }}
-                                      >
-                                        <Icon
-                                          android="md-add"
-                                          ios="ios-add"
-                                          onPress={this.onAddEmailField}
-                                          style={styles.addRemoveIcons}
-                                        />
-                                      </Text>
+                                  </Col>
+                                  <Col>
+                                    <Input
+                                      value={this.state.contact.title}
+                                      onChangeText={this.setContactTitle}
+                                      style={{
+                                        borderBottomWidth: 1,
+                                        borderStyle: 'solid',
+                                        borderBottomColor: '#D9D5DC',
+                                        fontSize: 15,
+                                        height: 10,
+                                      }}
+                                    />
+                                  </Col>
+                                </Row>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={styles.formIcon}
+                                      />
                                     </View>
-                                  </Row>
-                                </Col>
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>Email</Label>
-                                </Col>
-                              </Row>
-                              {this.state.contact.contact_email.map(
-                                (email, index) => {
-                                  if (!email.delete) {
-                                    return (
-                                      <Row
-                                        key={index.toString()}
-                                        style={styles.formRow}
-                                      >
-                                        <Col>
-                                          <Input
-                                            multiline
-                                            value={email.value}
-                                            onChangeText={(value) => {
-                                              this.onEmailFieldChange(
-                                                value,
-                                                index,
-                                                email.key,
-                                                this,
-                                              );
-                                            }}
-                                            style={styles.inputContactAddress}
-                                          />
-                                        </Col>
-                                        <Col style={styles.formIconLabel}>
-                                          <Icon
-                                            android="md-remove"
-                                            ios="ios-remove"
-                                            onPress={() => {
-                                              this.onRemoveEmailField(
-                                                index,
-                                                this,
-                                              );
-                                            }}
-                                            style={[
-                                              styles.addRemoveIcons,
-                                              {
-                                                paddingLeft: 10,
-                                                paddingRight: 10,
-                                              },
-                                            ]}
-                                          />
-                                        </Col>
-                                      </Row>
-                                    );
-                                  }
-                                  return '';
-                                },
-                              )}
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    android="logo-facebook"
-                                    ios="logo-facebook"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col>
-                                  <Text />
-                                </Col>
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>Message</Label>
-                                </Col>
-                              </Row>
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    type="Entypo"
-                                    name="home"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('global.assignedTo')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <TouchableOpacity
+                                  onPress={() => {
+                                    this.updateShowAssignedToModal(true);
+                                  }}
+                                >
                                   <Row>
-                                    <View style={{ flex: 1 }}>
-                                      <Text
-                                        style={{
-                                          textAlign: 'right',
-                                          paddingRight: 10,
-                                        }}
-                                      >
+                                    <Col style={styles.formIconLabelCol}>
+                                      <View style={styles.formIconLabelView}>
                                         <Icon
-                                          android="md-add"
-                                          ios="ios-add"
-                                          onPress={this.onAddAddressField}
-                                          style={styles.addRemoveIcons}
+                                          type="FontAwesome"
+                                          name="user-circle"
+                                          style={[styles.formIcon, { opacity: 0 }]}
                                         />
-                                      </Text>
-                                    </View>
+                                      </View>
+                                    </Col>
+                                    <Col style={{
+                                      borderBottomWidth: 1,
+                                      borderStyle: 'solid',
+                                      borderBottomColor: '#D9D5DC',
+                                    }}
+                                    >
+                                      {this.showAssignedUser()}
+                                      <ModalFilterPicker
+                                        visible={this.state.showAssignedToModal}
+                                        onSelect={this.onSelectAssignedTo}
+                                        onCancel={this.onCancelAssignedTo}
+                                        options={this.state.users}
+                                      />
+                                    </Col>
                                   </Row>
-                                </Col>
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>Address</Label>
-                                </Col>
-                              </Row>
-                              {this.state.contact.contact_address.map(
-                                (address, index) => {
-                                  if (!address.delete) {
-                                    return (
-                                      <Row
-                                        key={index.toString()}
-                                        style={styles.formRow}
-                                      >
-                                        <Col>
-                                          <Input
-                                            multiline
-                                            value={address.value}
-                                            onChangeText={(value) => {
-                                              this.onAddressFieldChange(
-                                                value,
-                                                index,
-                                                address.key,
-                                                this,
-                                              );
+                                </TouchableOpacity>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Ionicons"
+                                        name="md-people"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.subAssignedTo')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Ionicons"
+                                        name="md-people"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { subAssignedSelectizeRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.usersContacts}
+                                      selectedItems={this.state.contact.subassigned.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('contactDetailScreen.subAssignThisContact'),
+                                      }}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
                                             }}
-                                            style={styles.inputContactAddress}
-                                          />
-                                        </Col>
-                                        <Col style={styles.formIconLabel}>
+                                            >
+                                              {item.name}
+                                            </Text>
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.54)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {' '}
+                                              (#
+                                              {id}
+                                              )
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      filterOnKey="name"
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="phone"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.mobile')}
+                                    </Label>
+                                  </Col>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      android="md-add"
+                                      ios="ios-add"
+                                      style={[styles.formIcon, styles.addRemoveIcons]}
+                                      onPress={this.onAddPhoneField}
+                                    />
+                                  </Col>
+                                </Row>
+                                {this.state.contact.contact_phone.map(
+                                  (phone, index) => (!phone.delete ? (
+                                    <Row
+                                      key={index.toString()}
+                                    >
+                                      <Col style={styles.formIconLabelCol}>
+                                        <View style={styles.formIconLabelView}>
                                           <Icon
-                                            android="md-remove"
-                                            ios="ios-remove"
-                                            onPress={() => {
-                                              this.onRemoveAddressField(
-                                                index,
-                                                this,
-                                              );
-                                            }}
-                                            style={[
-                                              styles.addRemoveIcons,
-                                              {
-                                                paddingLeft: 10,
-                                                paddingRight: 10,
-                                              },
-                                            ]}
+                                            type="FontAwesome"
+                                            name="phone"
+                                            style={[styles.formIcon, { opacity: 0 }]}
                                           />
-                                        </Col>
-                                      </Row>
-                                    );
-                                  }
-                                  return '';
-                                },
-                              )}
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    type="FontAwesome"
-                                    name="map-marker"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col />
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>
-                                    Location
-                                  </Label>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                                  <Selectize
-                                    ref={(selectize) => { this.geonamesSelectizeRef = selectize; }}
-                                    itemId="value"
-                                    items={this.state.geonames}
-                                    selectedItems={this.state.contact.geonames.values}
-                                    textInputProps={{
-                                      placeholder: 'Select locations',
-                                    }}
-                                    renderRow={(id, onPress, item) => (
-                                      <TouchableOpacity
-                                        activeOpacity={0.6}
-                                        key={id}
-                                        onPress={onPress}
-                                        style={{
-                                          paddingVertical: 8,
-                                          paddingHorizontal: 10,
-                                        }}
-                                      >
-                                        <View style={{
-                                          flexDirection: 'row',
-                                        }}
+                                        </View>
+                                      </Col>
+                                      <Col>
+                                        <Input
+                                          multiline
+                                          value={phone.value}
+                                          onChangeText={(value) => {
+                                            this.onPhoneFieldChange(
+                                              value,
+                                              index,
+                                              phone.key,
+                                              this,
+                                            );
+                                          }}
+                                          style={styles.inputContactAddress}
+                                        />
+                                      </Col>
+                                      <Col style={styles.formIconLabel}>
+                                        <Icon
+                                          android="md-remove"
+                                          ios="ios-remove"
+                                          style={[styles.formIcon, styles.addRemoveIcons]}
+                                          onPress={() => {
+                                            this.onRemovePhoneField(
+                                              index,
+                                              this,
+                                            );
+                                          }}
+                                        />
+                                      </Col>
+                                    </Row>
+                                  ) : null),
+                                )}
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="envelope"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.email')}
+                                    </Label>
+                                  </Col>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      android="md-add"
+                                      ios="ios-add"
+                                      style={[styles.formIcon, styles.addRemoveIcons]}
+                                      onPress={this.onAddEmailField}
+                                    />
+                                  </Col>
+                                </Row>
+                                {this.state.contact.contact_email.map(
+                                  (email, index) => (!email.delete ? (
+                                    <Row
+                                      key={index.toString()}
+                                    >
+                                      <Col style={styles.formIconLabelCol}>
+                                        <View style={styles.formIconLabelView}>
+                                          <Icon
+                                            type="FontAwesome"
+                                            name="envelope"
+                                            style={[styles.formIcon, { opacity: 0 }]}
+                                          />
+                                        </View>
+                                      </Col>
+                                      <Col>
+                                        <Input
+                                          multiline
+                                          value={email.value}
+                                          onChangeText={(value) => {
+                                            this.onEmailFieldChange(
+                                              value,
+                                              index,
+                                              email.key,
+                                              this,
+                                            );
+                                          }}
+                                          style={styles.inputContactAddress}
+                                        />
+                                      </Col>
+                                      <Col style={styles.formIconLabel}>
+                                        <Icon
+                                          android="md-remove"
+                                          ios="ios-remove"
+                                          style={[styles.formIcon, styles.addRemoveIcons]}
+                                          onPress={() => {
+                                            this.onRemoveEmailField(
+                                              index,
+                                              this,
+                                            );
+                                          }}
+                                        />
+                                      </Col>
+                                    </Row>
+                                  ) : null),
+                                )}
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Entypo"
+                                        name="home"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('global.address')}
+                                    </Label>
+                                  </Col>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      android="md-add"
+                                      ios="ios-add"
+                                      style={[styles.formIcon, styles.addRemoveIcons]}
+                                      onPress={this.onAddAddressField}
+                                    />
+                                  </Col>
+                                </Row>
+                                {this.state.contact.contact_address.map(
+                                  (address, index) => (!address.delete ? (
+                                    <Row
+                                      key={index.toString()}
+                                    >
+                                      <Col style={styles.formIconLabelCol}>
+                                        <View style={styles.formIconLabelView}>
+                                          <Icon
+                                            type="Entypo"
+                                            name="home"
+                                            style={[styles.formIcon, { opacity: 0 }]}
+                                          />
+                                        </View>
+                                      </Col>
+                                      <Col>
+                                        <Input
+                                          multiline
+                                          value={address.value}
+                                          onChangeText={(value) => {
+                                            this.onAddressFieldChange(
+                                              value,
+                                              index,
+                                              address.key,
+                                              this,
+                                            );
+                                          }}
+                                          style={styles.inputContactAddress}
+                                        />
+                                      </Col>
+                                      <Col style={styles.formIconLabel}>
+                                        <Icon
+                                          android="md-remove"
+                                          ios="ios-remove"
+                                          style={[styles.formIcon, styles.addRemoveIcons]}
+                                          onPress={() => {
+                                            this.onRemoveAddressField(
+                                              index,
+                                              this,
+                                            );
+                                          }}
+                                        />
+                                      </Col>
+                                    </Row>
+                                  ) : null),
+                                )}
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="map-marker"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('global.location')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="map-marker"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { geonamesSelectizeRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.geonames}
+                                      selectedItems={this.state.contact.geonames.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('contactDetailScreen.selectLocations'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
                                         >
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.87)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
+                                          <View style={{
+                                            flexDirection: 'row',
                                           }}
                                           >
-                                            {item.name}
-                                          </Text>
-                                        </View>
-                                      </TouchableOpacity>
-                                    )}
-                                    renderChip={(id, onClose, item, style, iconStyle) => (
-                                      <Chip
-                                        key={id}
-                                        iconStyle={iconStyle}
-                                        onClose={onClose}
-                                        text={item.name}
-                                        style={style}
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="globe"
+                                        style={styles.formIcon}
                                       />
-                                    )}
-                                    filterOnKey="name"
-                                    keyboardShouldPersistTaps
-                                    inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                  />
-                                </Col>
-                              </Row>
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    type="FontAwesome"
-                                    name="globe"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col />
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>
-                                    People Group
-                                  </Label>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                                  <Selectize
-                                    ref={(selectize) => { this.pplGroupsSelectizeRef = selectize; }}
-                                    itemId="value"
-                                    items={this.state.peopleGroups}
-                                    selectedItems={this.state.contact.people_groups.values}
-                                    textInputProps={{
-                                      placeholder: 'Select People Groups',
-                                    }}
-                                    renderRow={(id, onPress, item) => (
-                                      <TouchableOpacity
-                                        activeOpacity={0.6}
-                                        key={id}
-                                        onPress={onPress}
-                                        style={{
-                                          paddingVertical: 8,
-                                          paddingHorizontal: 10,
-                                        }}
-                                      >
-                                        <View style={{
-                                          flexDirection: 'row',
-                                        }}
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('global.peopleGroup')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="globe"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { peopleGroupsSelectizeRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.peopleGroups}
+                                      selectedItems={this.state.contact.people_groups.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('global.selectPeopleGroups'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
                                         >
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.87)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
+                                          <View style={{
+                                            flexDirection: 'row',
                                           }}
                                           >
-                                            {item.name}
-                                          </Text>
-                                        </View>
-                                      </TouchableOpacity>
-                                    )}
-                                    renderChip={(id, onClose, item, style, iconStyle) => (
-                                      <Chip
-                                        key={id}
-                                        iconStyle={iconStyle}
-                                        onClose={onClose}
-                                        text={item.name}
-                                        style={style}
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="clock-o"
+                                        style={styles.formIcon}
                                       />
-                                    )}
-                                    filterOnKey="name"
-                                    keyboardShouldPersistTaps
-                                    inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                  />
-                                </Col>
-                              </Row>
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    type="FontAwesome"
-                                    name="clock-o"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col>
-                                  <Picker
-                                    mode="dropdown"
-                                    selectedValue={this.state.contact.age}
-                                    onValueChange={this.setContactAge}
-                                  >
-                                    <Picker.Item label="" value="not-set" />
-                                    <Picker.Item
-                                      label="Under 18 years old"
-                                      value="<19"
-                                    />
-                                    <Picker.Item
-                                      label="18-25 years old"
-                                      value="<26"
-                                    />
-                                    <Picker.Item
-                                      label="26-40 years old"
-                                      value="<41"
-                                    />
-                                    <Picker.Item
-                                      label="Over 40 years old"
-                                      value=">41"
-                                    />
-                                  </Picker>
-                                </Col>
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>Age</Label>
-                                </Col>
-                              </Row>
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    android="md-male"
-                                    ios="ios-male"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col>
-                                  <Picker
-                                    mode="dropdown"
-                                    selectedValue={this.state.contact.gender}
-                                    onValueChange={this.setContactGender}
-                                  >
-                                    <Picker.Item label="" value="not-set" />
-                                    <Picker.Item label="Male" value="male" />
-                                    <Picker.Item label="Female" value="female" />
-                                  </Picker>
-                                </Col>
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>Gender</Label>
-                                </Col>
-                              </Row>
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    android="md-arrow-dropright"
-                                    ios="ios-arrow-dropright"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col />
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>
-                                    Source
-                                  </Label>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                                  <Selectize
-                                    ref={(selectize) => { this.sourcesSelectizeRef = selectize; }}
-                                    itemId="value"
-                                    items={this.state.contactSources}
-                                    selectedItems={this.state.contact.sources.values}
-                                    textInputProps={{
-                                      placeholder: 'Select sources',
-                                    }}
-                                    renderRow={(id, onPress, item) => (
-                                      <TouchableOpacity
-                                        activeOpacity={0.6}
-                                        key={id}
-                                        onPress={onPress}
-                                        style={{
-                                          paddingVertical: 8,
-                                          paddingHorizontal: 10,
-                                        }}
-                                      >
-                                        <View style={{
-                                          flexDirection: 'row',
-                                        }}
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.age')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="clock-o"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Picker
+                                      mode="dropdown"
+                                      selectedValue={this.state.contact.age}
+                                      onValueChange={this.setContactAge}
+                                    >
+                                      <Picker.Item label="" value="not-set" />
+                                      <Picker.Item
+                                        label={i18n.t('contactDetailScreen.contactAge.underEighteenYearsOld')}
+                                        value="<19"
+                                      />
+                                      <Picker.Item
+                                        label={i18n.t('contactDetailScreen.contactAge.underTwentySixYearsOld')}
+                                        value="<26"
+                                      />
+                                      <Picker.Item
+                                        label={i18n.t('contactDetailScreen.contactAge.underFortyOneYearsOld')}
+                                        value="<41"
+                                      />
+                                      <Picker.Item
+                                        label={i18n.t('contactDetailScreen.contactAge.overFortyYearsOld')}
+                                        value=">41"
+                                      />
+                                    </Picker>
+                                  </Col>
+                                </Row>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        android="md-male"
+                                        ios="ios-male"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.gender')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        android="md-male"
+                                        ios="ios-male"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Picker
+                                      mode="dropdown"
+                                      selectedValue={this.state.contact.gender}
+                                      onValueChange={this.setContactGender}
+                                    >
+                                      <Picker.Item label="" value="not-set" />
+                                      <Picker.Item label={i18n.t('contactDetailScreen.male')} value="male" />
+                                      <Picker.Item label={i18n.t('contactDetailScreen.female')} value="female" />
+                                    </Picker>
+                                  </Col>
+                                </Row>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        android="md-arrow-dropright"
+                                        ios="ios-arrow-dropright"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.source')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        android="md-arrow-dropright"
+                                        ios="ios-arrow-dropright"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { sourcesSelectizeRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.contactSources}
+                                      selectedItems={this.state.contact.sources.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('contactDetailScreen.selectSources'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
                                         >
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.87)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
+                                          <View style={{
+                                            flexDirection: 'row',
                                           }}
                                           >
-                                            {item.name}
-                                          </Text>
-                                        </View>
-                                      </TouchableOpacity>
-                                    )}
-                                    renderChip={(id, onClose, item, style, iconStyle) => (
-                                      <Chip
-                                        key={id}
-                                        iconStyle={iconStyle}
-                                        onClose={onClose}
-                                        text={item.name}
-                                        style={style}
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+                              </View>
+                            )}
+                            {this.state.currentTabIndex === 1 && (
+                              <View style={styles.formContainer}>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        android="md-calendar"
+                                        ios="ios-calendar"
+                                        style={styles.formIcon}
                                       />
-                                    )}
-                                    filterOnKey="name"
-                                    keyboardShouldPersistTaps
-                                    inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                  />
-                                </Col>
-                              </Row>
-                              <View style={styles.formDivider} />
-                            </Grid>
-                          </View>
-                        )}
-                      </ScrollView>
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.seekerPath')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Picker
+                                      mode="dropdown"
+                                      selectedValue={this.state.contact.seeker_path}
+                                      onValueChange={this.setContactSeekerPath}
+                                      textStyle={{ color: Colors.tintColor }}
+                                    >
+                                      <Picker.Item
+                                        label={i18n.t('global.seekerPath.none')}
+                                        value="none"
+                                      />
+                                      <Picker.Item
+                                        label={i18n.t('global.seekerPath.attempted')}
+                                        value="attempted"
+                                      />
+                                      <Picker.Item
+                                        label={i18n.t('global.seekerPath.established')}
+                                        value="established"
+                                      />
+                                      <Picker.Item
+                                        label={i18n.t('global.seekerPath.scheduled')}
+                                        value="scheduled"
+                                      />
+                                      <Picker.Item
+                                        label={i18n.t('global.seekerPath.met')}
+                                        value="met"
+                                      />
+                                      <Picker.Item
+                                        label={i18n.t('global.seekerPath.ongoing')}
+                                        value="ongoing"
+                                      />
+                                      <Picker.Item
+                                        label={i18n.t('global.seekerPath.coaching')}
+                                        value="coaching"
+                                      />
+                                    </Picker>
+                                  </Col>
+                                </Row>
+                                <Label
+                                  style={[
+                                    styles.formLabel,
+                                    { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
+                                  ]}
+                                >
+                                  {i18n.t('contactDetailScreen.faithMilestones')}
+                                </Label>
+                                {this.renderfaithMilestones()}
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Entypo"
+                                        name="water"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.milestones.baptismDate')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Entypo"
+                                        name="water"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <DatePicker
+                                      onDateChange={this.setBaptismDate}
+                                      defaultDate={(this.state.contact.baptism_date.length > 0) ? new Date(this.state.contact.baptism_date) : ''}
+                                    />
+                                  </Col>
+                                </Row>
+                              </View>
+                            )}
+                            {this.state.currentTabIndex === 3 && (
+                              <View style={styles.formContainer}>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="users"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.group')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { groupsSelectizeRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.groups}
+                                      selectedItems={this.state.contact.groups.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('contactDetailScreen.addGroup'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Entypo"
+                                        name="network"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.connection')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { connectionsSelectizeRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.usersContacts}
+                                      selectedItems={this.state.contact.relation.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('contactDetailScreen.addConnection'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.54)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {' '}
+                                              (#
+                                              {id}
+                                              )
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Entypo"
+                                        name="water"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.baptizedBy')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { baptizedBySelectizeRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.usersContacts}
+                                      selectedItems={this.state.contact.baptized_by.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('contactDetailScreen.addBaptizedBy'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.54)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {' '}
+                                              (#
+                                              {id}
+                                              )
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="Entypo"
+                                        name="water"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.baptized')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { baptizedSelectizeRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.usersContacts}
+                                      selectedItems={this.state.contact.baptized.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('contactDetailScreen.addBaptized'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.54)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {' '}
+                                              (#
+                                              {id}
+                                              )
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="black-tie"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.coachedBy')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { coachedSelectizeRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.usersContacts}
+                                      selectedItems={this.state.contact.coached_by.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('contactDetailScreen.addCoachedBy'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.54)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {' '}
+                                              (#
+                                              {id}
+                                              )
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+                                <Row style={styles.formFieldPadding}>
+
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="MaterialCommunityIcons"
+                                        name="presentation"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.coaching')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user-circle"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Selectize
+                                      ref={(selectize) => { coachingSelectizeRef = selectize; }}
+                                      itemId="value"
+                                      items={this.state.usersContacts}
+                                      selectedItems={this.state.contact.coaching.values}
+                                      textInputProps={{
+                                        placeholder: i18n.t('contactDetailScreen.addCoaching'),
+                                      }}
+                                      renderRow={(id, onPress, item) => (
+                                        <TouchableOpacity
+                                          activeOpacity={0.6}
+                                          key={id}
+                                          onPress={onPress}
+                                          style={{
+                                            paddingVertical: 8,
+                                            paddingHorizontal: 10,
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {item.name}
+                                            </Text>
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.54)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
+                                              {' '}
+                                              (#
+                                              {id}
+                                              )
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                                      )}
+                                      renderChip={(id, onClose, item, style, iconStyle) => (
+                                        <Chip
+                                          key={id}
+                                          iconStyle={iconStyle}
+                                          onClose={onClose}
+                                          text={item.name}
+                                          style={style}
+                                        />
+                                      )}
+                                      filterOnKey="name"
+                                      keyboardShouldPersistTaps
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                                    />
+                                  </Col>
+                                </Row>
+                              </View>
+                            )}
+                          </ScrollView>
+                        </Content>
+                        <Footer>
+                          <FooterTab>
+                            <Button
+                              onPress={() => this.onDisableEdit()}
+                              style={{
+                                height: 60, width: '50%', backgroundColor: '#FFFFFF',
+                              }}
+                            >
+                              <Text style={{ color: Colors.tintColor, fontWeight: 'bold' }}>{i18n.t('global.cancel')}</Text>
+                            </Button>
+                            <Button
+                              style={{
+                                height: 60, width: '50%', backgroundColor: Colors.tintColor,
+                              }}
+                              onPress={this.onSaveContact}
+                            >
+                              <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
+                            </Button>
+                          </FooterTab>
+                        </Footer>
+                      </Container>
                     )}
                   </KeyboardShift>
-                </Tab>
-                <Tab
-                  heading="Progress"
-                  tabStyle={styles.tabStyle}
-                  textStyle={styles.textStyle}
-                  activeTabStyle={styles.activeTabStyle}
-                  activeTextStyle={styles.activeTextStyle}
-                >
-                  <ScrollView
-                    refreshControl={(
-                      <RefreshControl
-                        refreshing={this.state.loading}
-                        onRefresh={() => this.onRefresh(this.state.contact.ID)}
-                      />
-                    )}
-                  >
-                    <View
-                      style={styles.formContainer}
-                      pointerEvents={this.state.onlyView ? 'none' : 'auto'}
-                    >
+                )}
+              </View>
+            ) : (
+              <KeyboardShift>
+                {() => (
+                  <ScrollView keyboardShouldPersistTaps="handled">
+                    <View style={styles.formContainer}>
                       <Grid>
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              android="md-calendar"
-                              ios="ios-calendar"
-                              style={styles.formIcon}
+                        <Row>
+                          <Label
+                            style={[
+                              styles.formLabel,
+                              { marginTop: 10, marginBottom: 5 },
+                            ]}
+                          >
+                            {i18n.t('contactDetailScreen.fullName')}
+                          </Label>
+                        </Row>
+                        <Row>
+                          <Input
+                            placeholder={i18n.t('global.requiredField')}
+                            onChangeText={this.setContactTitle}
+                            style={{
+                              borderColor: '#B4B4B4',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              borderStyle: 'solid',
+                              fontSize: 13,
+                              paddingLeft: 15,
+                            }}
+                          />
+                        </Row>
+                        <Row>
+                          <Label
+                            style={[
+                              styles.formLabel,
+                              { marginTop: 10, marginBottom: 5 },
+                            ]}
+                          >
+                            {i18n.t('contactDetailScreen.phoneNumber')}
+                          </Label>
+                        </Row>
+                        <Row>
+                          <Input
+                            onChangeText={this.setSingleContactPhone}
+                            style={{
+                              borderColor: '#B4B4B4',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              borderStyle: 'solid',
+                              fontSize: 13,
+                              paddingLeft: 15,
+                            }}
+                          />
+                        </Row>
+                        <Row>
+                          <Label
+                            style={[
+                              styles.formLabel,
+                              { marginTop: 10, marginBottom: 5 },
+                            ]}
+                          >
+                            {i18n.t('contactDetailScreen.email')}
+                          </Label>
+                        </Row>
+                        <Row>
+                          <Input
+                            onChangeText={this.setContactEmail}
+                            style={{
+                              borderColor: '#B4B4B4',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              borderStyle: 'solid',
+                              fontSize: 13,
+                              paddingLeft: 15,
+                            }}
+                          />
+                        </Row>
+                        <Row>
+                          <Label
+                            style={[
+                              styles.formLabel,
+                              { marginTop: 10, marginBottom: 5 },
+                            ]}
+                          >
+                            {i18n.t('contactDetailScreen.source')}
+                          </Label>
+                        </Row>
+                        <Row>
+                          <Picker
+                            onValueChange={this.setContactSource}
+                            selectedValue={
+                              this.state.contact.sources.values[0].value
+                            }
+                          >
+                            {this.renderSourcePickerItems()}
+                          </Picker>
+                        </Row>
+                        <Row>
+                          <Label
+                            style={[
+                              styles.formLabel,
+                              { marginTop: 10, marginBottom: 5 },
+                            ]}
+                          >
+                            {i18n.t('global.location')}
+                          </Label>
+                        </Row>
+                        <Row>
+                          <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
+                            <Selectize
+                              ref={(selectize) => { geonamesSelectizeRef = selectize; }}
+                              itemId="value"
+                              items={this.state.geonames}
+                              selectedItems={this.state.contact.geonames.values}
+                              textInputProps={{
+                                placeholder: i18n.t('contactDetailScreen.selectLocations'),
+                              }}
+                              renderRow={(id, onPress, item) => (
+                                <TouchableOpacity
+                                  activeOpacity={0.6}
+                                  key={id}
+                                  onPress={onPress}
+                                  style={{
+                                    paddingVertical: 8,
+                                    paddingHorizontal: 10,
+                                  }}
+                                >
+                                  <View
+                                    style={{
+                                      flexDirection: 'row',
+                                    }}
+                                  >
+                                    <Text style={{
+                                      color: 'rgba(0, 0, 0, 0.87)',
+                                      fontSize: 14,
+                                      lineHeight: 21,
+                                    }}
+                                    >
+                                      {item.name}
+                                    </Text>
+                                  </View>
+                                </TouchableOpacity>
+                              )}
+                              renderChip={(id, onClose, item, style, iconStyle) => (
+                                <Chip
+                                  key={id}
+                                  iconStyle={iconStyle}
+                                  onClose={onClose}
+                                  text={item.name}
+                                  style={style}
+                                />
+                              )}
+                              filterOnKey="name"
+                              keyboardShouldPersistTaps
+                              inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                             />
                           </Col>
-                          <Col>
-                            <Picker
-                              mode="dropdown"
-                              selectedValue={this.state.contact.seeker_path}
-                              onValueChange={this.setContactSeekerPath}
-                              textStyle={{ color: Colors.tintColor }}
-                            >
-                              <Picker.Item
-                                label="Contact Attempt Needed"
-                                value="none"
-                              />
-                              <Picker.Item
-                                label="Contact Attempted"
-                                value="attempted"
-                              />
-                              <Picker.Item
-                                label="Contact Established"
-                                value="established"
-                              />
-                              <Picker.Item
-                                label="First Meeting Scheduled"
-                                value="scheduled"
-                              />
-                              <Picker.Item
-                                label="First Meeting Complete"
-                                value="met"
-                              />
-                              <Picker.Item
-                                label="Ongoing Meetings"
-                                value="ongoing"
-                              />
-                              <Picker.Item
-                                label="Being Coached"
-                                value="coaching"
-                              />
-                            </Picker>
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={styles.formLabel}>Seeker Path</Label>
-                          </Col>
+                        </Row>
+                        <Row>
+                          <Label
+                            style={[
+                              styles.formLabel,
+                              { marginTop: 10, marginBottom: 5 },
+                            ]}
+                          >
+                            {i18n.t('contactDetailScreen.initialComment')}
+                          </Label>
+                        </Row>
+                        <Row>
+                          <Input
+                            multiline
+                            onChangeText={this.setContactInitialComment}
+                            style={{
+                              borderColor: '#B4B4B4',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              borderStyle: 'solid',
+                              fontSize: 13,
+                              paddingLeft: 15,
+                            }}
+                          />
                         </Row>
                       </Grid>
-                      <View
-                        style={{
-                          alignItems: 'center',
-                          marginTop: 5,
-                          marginBottom: 25,
-                        }}
-                      >
-                        <ProgressBarAnimated
-                          width={progressBarWidth}
-                          value={this.state.progressBarValue}
-                          backgroundColor={Colors.tintColor}
-                        />
-                      </View>
-                      <Label
-                        style={[
-                          styles.formLabel,
-                          { fontWeight: 'bold', marginBottom: 10 },
-                        ]}
-                      >
-                        Faith Milestones
-                      </Label>
-                      <Grid
-                        style={{
-                          height: milestonesGridSize,
-                        }}
-                      >
-                        <Row size={6}>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_has_bible');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={3}>
-                                  <Image
-                                    source={hasBibleIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_has_bible',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={1}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_has_bible',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    Has Bible
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange(
-                                  'milestone_reading_bible',
-                                );
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={3}>
-                                  <Image
-                                    source={readingBibleIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_reading_bible',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={1}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_reading_bible',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    Reading Bible
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_belief');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={3}>
-                                  <Image
-                                    source={statesBeliefIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_belief',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={1}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_belief',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    States Belief
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                        </Row>
-                        <Row size={1} />
-                        <Row size={7}>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_can_share');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={7}>
-                                  <Image
-                                    source={canShareGospelIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_can_share',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={3}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_can_share',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    Can Share Gospel/Testimony
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_sharing');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={7}>
-                                  <Image
-                                    source={sharingTheGospelIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_sharing',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={3}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_sharing',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    Sharing Gospel/Testimony
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_baptized');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={7}>
-                                  <Image
-                                    source={baptizedIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_baptized',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={3}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_baptized',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    Baptized
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                        </Row>
-                        <Row size={1} />
-                        <Row size={6}>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_baptizing');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={3}>
-                                  <Image
-                                    source={baptizingIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_baptizing',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={1}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_baptizing',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    Baptizing
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_in_group');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={3}>
-                                  <Image
-                                    source={inChurchIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_in_group',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={1}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_in_group',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    In Church/Group
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                          <Col size={5}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.onMilestoneChange('milestone_planting');
-                              }}
-                              activeOpacity={1}
-                              style={styles.progressIcon}
-                            >
-                              <Col>
-                                <Row size={3}>
-                                  <Image
-                                    source={startingChurchesIcon}
-                                    style={[
-                                      styles.progressIcon,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_planting',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  />
-                                </Row>
-                                <Row size={1}>
-                                  <Text
-                                    style={[
-                                      styles.progressIconText,
-                                      this.onCheckExistingMilestone(
-                                        'milestone_planting',
-                                      )
-                                        ? styles.progressIconActive
-                                        : styles.progressIconInactive,
-                                    ]}
-                                  >
-                                    Starting Churches
-                                  </Text>
-                                </Row>
-                              </Col>
-                            </TouchableOpacity>
-                          </Col>
-                          <Col size={1} />
-                        </Row>
-                      </Grid>
-                      <Grid style={{ marginTop: 25 }}>
-                        <View style={styles.formDivider} />
-                        <Row style={styles.formRow}>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              type="Entypo"
-                              name="water"
-                              style={styles.formIcon}
-                            />
-                          </Col>
-                          <Col>
-                            <DatePicker
-                              placeHolderText="Add baptism date"
-                              defaultDate={this.state.contact.baptism_date}
-                              onDateChange={this.setBaptismDate}
-                            />
-                          </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Label style={[styles.label, styles.formLabel]}>
-                              Baptism Date
-                            </Label>
-                          </Col>
-                        </Row>
-                      </Grid>
+                      <Button block style={styles.saveButton} onPress={this.onSaveContact}>
+                        <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
+                      </Button>
                     </View>
                   </ScrollView>
-                </Tab>
-                <Tab
-                  heading="Comments / Activity"
-                  tabStyle={styles.tabStyle}
-                  textStyle={styles.textStyle}
-                  activeTabStyle={styles.activeTabStyle}
-                  activeTextStyle={styles.activeTextStyle}
-                >
-                  <View style={{ flex: 1 }}>
-                    <FlatList
-                      style={{
-                        backgroundColor: '#ffffff',
-                        flex: 1,
-                        marginBottom: 60,
-                      }}
-                      ref={(flatList) => {
-                        commentsFlatList = flatList;
-                      }}
-                      data={this.state.comments.concat(this.state.activities).sort(
-                        (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
-                      )}
-                      extraData={this.state.comments.concat(this.state.activities).sort(
-                        (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
-                      )}
-                      ItemSeparatorComponent={() => (
-                        <View
-                          style={{
-                            height: 1,
-                            backgroundColor: '#CCCCCC',
-                          }}
-                        />
-                      )}
-                      keyExtractor={item => item.ID}
-                      renderItem={(item) => {
-                        const commentOrActivity = item.item;
-                        return this.renderActivityOrCommentRow(
-                          commentOrActivity,
-                        );
-                      }}
-                      refreshControl={(
-                        <RefreshControl
-                          refreshing={(this.state.loadingComments || this.state.loadingActivities)}
-                          onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID)}
-                        />
-                      )}
-                      onScroll={({ nativeEvent }) => {
-                        const {
-                          loadingMoreComments, commentsOffset, activitiesOffset,
-                        } = this.state;
-                        const fL = nativeEvent;
-                        const toEnd = (fL.contentSize.height - fL.contentOffset.y);
-                        if (toEnd < 600) {
-                          if (!loadingMoreComments) {
-                            if (commentsOffset < this.state.totalComments) {
-                              this.setState({
-                                loadingMoreComments: true,
-                              }, () => {
-                                this.getContactComments(this.state.contact.ID);
-                              });
-                            }
-                          }
-                          if (!this.state.loadingMoreActivities) {
-                            if (activitiesOffset < this.state.totalActivities) {
-                              this.setState({
-                                loadingMoreActivities: true,
-                              }, () => {
-                                this.getContactActivities(this.state.contact.ID);
-                              });
-                            }
-                          }
-                        }
-                      }}
-                    />
-                    <KeyboardAccessory>
-                      <View
-                        style={{
-                          backgroundColor: 'white',
-                          flexDirection: 'row',
-                        }}
-                      >
-                        <TextInput
-                          placeholder="Write your comment or note here"
-                          value={this.state.comment}
-                          onChangeText={this.setComment}
-                          style={{
-                            borderColor: '#B4B4B4',
-                            borderRadius: 5,
-                            borderWidth: 1,
-                            flex: 1,
-                            margin: 10,
-                            paddingLeft: 5,
-                            paddingRight: 5,
-                          }}
-                        />
-                        <TouchableOpacity
-                          onPress={() => this.onSaveComment()}
-                          style={{
-                            backgroundColor: Colors.tintColor,
-                            borderRadius: 80,
-                            height: 40,
-                            margin: 10,
-                            paddingTop: 7,
-                            paddingLeft: 10,
-                            width: 40,
-                          }}
-                        >
-                          <Icon
-                            android="md-send"
-                            ios="ios-send"
-                            style={{ color: 'white', fontSize: 25 }}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    </KeyboardAccessory>
-                  </View>
-                </Tab>
-                <Tab
-                  heading="Connections"
-                  tabStyle={styles.tabStyle}
-                  textStyle={styles.textStyle}
-                  activeTabStyle={styles.activeTabStyle}
-                  activeTextStyle={styles.activeTextStyle}
-                >
-                  <KeyboardShift>
-                    {() => (
-                      <ScrollView
-                        keyboardShouldPersistTaps="handled"
-                        refreshControl={(
-                          <RefreshControl
-                            refreshing={this.state.loading}
-                            onRefresh={() => this.onRefresh(this.state.contact.ID)}
-                          />
-                        )}
-                      >
-                        {this.state.dataRetrieved && (
-                          <View
-                            style={styles.formContainer}
-                            pointerEvents={this.state.onlyView ? 'none' : 'auto'}
-                          >
-                            <Grid>
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    active
-                                    type="FontAwesome"
-                                    name="users"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col />
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>
-                                    Groups
-                                  </Label>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                                  <Selectize
-                                    ref={(selectize) => { this.groupsSelectizeRef = selectize; }}
-                                    itemId="value"
-                                    items={this.state.groups}
-                                    selectedItems={this.state.contact.groups.values}
-                                    textInputProps={{
-                                      placeholder: 'Add group',
-                                    }}
-                                    renderRow={(id, onPress, item) => (
-                                      <TouchableOpacity
-                                        activeOpacity={0.6}
-                                        key={id}
-                                        onPress={onPress}
-                                        style={{
-                                          paddingVertical: 8,
-                                          paddingHorizontal: 10,
-                                        }}
-                                      >
-                                        <View style={{
-                                          flexDirection: 'row',
-                                        }}
-                                        >
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.87)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
-                                          }}
-                                          >
-                                            {item.name}
-                                          </Text>
-                                        </View>
-                                      </TouchableOpacity>
-                                    )}
-                                    renderChip={(id, onClose, item, style, iconStyle) => (
-                                      <Chip
-                                        key={id}
-                                        iconStyle={iconStyle}
-                                        onClose={onClose}
-                                        text={item.name}
-                                        style={style}
-                                      />
-                                    )}
-                                    filterOnKey="name"
-                                    keyboardShouldPersistTaps
-                                    inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                  />
-                                </Col>
-                              </Row>
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    active
-                                    type="Entypo"
-                                    name="network"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col />
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>
-                                    Connection
-                                  </Label>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                                  <Selectize
-                                    ref={(selectize) => { this.connectSelectizeRef = selectize; }}
-                                    itemId="value"
-                                    items={this.state.usersContacts}
-                                    selectedItems={this.state.contact.relation.values}
-                                    textInputProps={{
-                                      placeholder: 'Add connection',
-                                    }}
-                                    renderRow={(id, onPress, item) => (
-                                      <TouchableOpacity
-                                        activeOpacity={0.6}
-                                        key={id}
-                                        onPress={onPress}
-                                        style={{
-                                          paddingVertical: 8,
-                                          paddingHorizontal: 10,
-                                        }}
-                                      >
-                                        <View style={{
-                                          flexDirection: 'row',
-                                        }}
-                                        >
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.87)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
-                                          }}
-                                          >
-                                            {item.name}
-                                          </Text>
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.54)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
-                                          }}
-                                          >
-                                            {id}
-                                          </Text>
-                                        </View>
-                                      </TouchableOpacity>
-                                    )}
-                                    renderChip={(id, onClose, item, style, iconStyle) => (
-                                      <Chip
-                                        key={id}
-                                        iconStyle={iconStyle}
-                                        onClose={onClose}
-                                        text={item.name}
-                                        style={style}
-                                      />
-                                    )}
-                                    filterOnKey="name"
-                                    keyboardShouldPersistTaps
-                                    inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                  />
-                                </Col>
-                              </Row>
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    active
-                                    type="Entypo"
-                                    name="water"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col />
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>
-                                    Baptized by
-                                  </Label>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                                  <Selectize
-                                    ref={(selectize) => { this.baptBySelectizeRef = selectize; }}
-                                    itemId="value"
-                                    items={this.state.usersContacts}
-                                    selectedItems={this.state.contact.baptized_by.values}
-                                    textInputProps={{
-                                      placeholder: 'Add baptized by',
-                                    }}
-                                    renderRow={(id, onPress, item) => (
-                                      <TouchableOpacity
-                                        activeOpacity={0.6}
-                                        key={id}
-                                        onPress={onPress}
-                                        style={{
-                                          paddingVertical: 8,
-                                          paddingHorizontal: 10,
-                                        }}
-                                      >
-                                        <View style={{
-                                          flexDirection: 'row',
-                                        }}
-                                        >
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.87)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
-                                          }}
-                                          >
-                                            {item.name}
-                                          </Text>
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.54)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
-                                          }}
-                                          >
-                                            {id}
-                                          </Text>
-                                        </View>
-                                      </TouchableOpacity>
-                                    )}
-                                    renderChip={(id, onClose, item, style, iconStyle) => (
-                                      <Chip
-                                        key={id}
-                                        iconStyle={iconStyle}
-                                        onClose={onClose}
-                                        text={item.name}
-                                        style={style}
-                                      />
-                                    )}
-                                    filterOnKey="name"
-                                    keyboardShouldPersistTaps
-                                    inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                  />
-                                </Col>
-                              </Row>
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    active
-                                    type="Entypo"
-                                    name="water"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col />
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>
-                                    Baptized
-                                  </Label>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                                  <Selectize
-                                    ref={(selectize) => { this.baptizedSelectizeRef = selectize; }}
-                                    itemId="value"
-                                    items={this.state.usersContacts}
-                                    selectedItems={this.state.contact.baptized.values}
-                                    textInputProps={{
-                                      placeholder: 'Add baptized',
-                                    }}
-                                    renderRow={(id, onPress, item) => (
-                                      <TouchableOpacity
-                                        activeOpacity={0.6}
-                                        key={id}
-                                        onPress={onPress}
-                                        style={{
-                                          paddingVertical: 8,
-                                          paddingHorizontal: 10,
-                                        }}
-                                      >
-                                        <View style={{
-                                          flexDirection: 'row',
-                                        }}
-                                        >
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.87)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
-                                          }}
-                                          >
-                                            {item.name}
-                                          </Text>
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.54)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
-                                          }}
-                                          >
-                                            {id}
-                                          </Text>
-                                        </View>
-                                      </TouchableOpacity>
-                                    )}
-                                    renderChip={(id, onClose, item, style, iconStyle) => (
-                                      <Chip
-                                        key={id}
-                                        iconStyle={iconStyle}
-                                        onClose={onClose}
-                                        text={item.name}
-                                        style={style}
-                                      />
-                                    )}
-                                    filterOnKey="name"
-                                    keyboardShouldPersistTaps
-                                    inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                  />
-                                </Col>
-                              </Row>
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    active
-                                    type="FontAwesome"
-                                    name="black-tie"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col />
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>
-                                    Coached By
-                                  </Label>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                                  <Selectize
-                                    ref={(selectize) => { this.coachedSelectizeRef = selectize; }}
-                                    itemId="value"
-                                    items={this.state.usersContacts}
-                                    selectedItems={this.state.contact.coached_by.values}
-                                    textInputProps={{
-                                      placeholder: 'Add coached by',
-                                    }}
-                                    renderRow={(id, onPress, item) => (
-                                      <TouchableOpacity
-                                        activeOpacity={0.6}
-                                        key={id}
-                                        onPress={onPress}
-                                        style={{
-                                          paddingVertical: 8,
-                                          paddingHorizontal: 10,
-                                        }}
-                                      >
-                                        <View style={{
-                                          flexDirection: 'row',
-                                        }}
-                                        >
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.87)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
-                                          }}
-                                          >
-                                            {item.name}
-                                          </Text>
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.54)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
-                                          }}
-                                          >
-                                            {id}
-                                          </Text>
-                                        </View>
-                                      </TouchableOpacity>
-                                    )}
-                                    renderChip={(id, onClose, item, style, iconStyle) => (
-                                      <Chip
-                                        key={id}
-                                        iconStyle={iconStyle}
-                                        onClose={onClose}
-                                        text={item.name}
-                                        style={style}
-                                      />
-                                    )}
-                                    filterOnKey="name"
-                                    keyboardShouldPersistTaps
-                                    inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                  />
-                                </Col>
-                              </Row>
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    active
-                                    type="MaterialCommunityIcons"
-                                    name="presentation"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col />
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={styles.formLabel}>
-                                    Coaching
-                                  </Label>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                                  <Selectize
-                                    ref={(selectize) => { this.coachingSelectizeRef = selectize; }}
-                                    itemId="value"
-                                    items={this.state.usersContacts}
-                                    selectedItems={this.state.contact.coaching.values}
-                                    textInputProps={{
-                                      placeholder: 'Add coaching',
-                                    }}
-                                    renderRow={(id, onPress, item) => (
-                                      <TouchableOpacity
-                                        activeOpacity={0.6}
-                                        key={id}
-                                        onPress={onPress}
-                                        style={{
-                                          paddingVertical: 8,
-                                          paddingHorizontal: 10,
-                                        }}
-                                      >
-                                        <View style={{
-                                          flexDirection: 'row',
-                                        }}
-                                        >
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.87)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
-                                          }}
-                                          >
-                                            {item.name}
-                                          </Text>
-                                          <Text style={{
-                                            color: 'rgba(0, 0, 0, 0.54)',
-                                            fontSize: 14,
-                                            lineHeight: 21,
-                                          }}
-                                          >
-                                            {id}
-                                          </Text>
-                                        </View>
-                                      </TouchableOpacity>
-                                    )}
-                                    renderChip={(id, onClose, item, style, iconStyle) => (
-                                      <Chip
-                                        key={id}
-                                        iconStyle={iconStyle}
-                                        onClose={onClose}
-                                        text={item.name}
-                                        style={style}
-                                      />
-                                    )}
-                                    filterOnKey="name"
-                                    keyboardShouldPersistTaps
-                                    inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                                  />
-                                </Col>
-                              </Row>
-                              <View style={styles.formDivider} />
-                            </Grid>
-                          </View>
-                        )}
-                      </ScrollView>
-                    )}
-                  </KeyboardShift>
-                </Tab>
-              </Tabs>
-              {this.state.renderFab && (
-                <Fab
-                  active={this.state.activeFab}
-                  onPress={() => this.setToggleFab()}
-                  style={{ backgroundColor: Colors.tintColor }}
-                >
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="comment-plus"
-                    style={{ color: 'white' }}
-                  />
-                  <Button style={{ backgroundColor: Colors.tintColor }}>
-                    <Icon
-                      type="MaterialCommunityIcons"
-                      name="phone-classic"
-                      style={{ color: 'white' }}
-                      onPress={() => this.onSaveContact({
-                        quick_button_phone_off:
-                          parseInt(
-                            this.state.contact.quick_button_phone_off,
-                            10,
-                          ) + 1,
-                      })
-                      }
-                    />
-                  </Button>
-                  <Button style={{ backgroundColor: Colors.tintColor }}>
-                    <Icon
-                      type="Feather"
-                      name="phone-off"
-                      style={{ color: 'white' }}
-                      onPress={() => this.onSaveContact({
-                        quick_button_no_answer:
-                          parseInt(
-                            this.state.contact.quick_button_no_answer,
-                            10,
-                          ) + 1,
-                      })
-                      }
-                    />
-                  </Button>
-                  <Button style={{ backgroundColor: Colors.tintColor }}>
-                    <Icon
-                      type="MaterialCommunityIcons"
-                      name="phone-in-talk"
-                      style={{ color: 'white' }}
-                      onPress={() => this.onSaveContact({
-                        quick_button_contact_established:
-                          parseInt(
-                            this.state.contact
-                              .quick_button_contact_established,
-                            10,
-                          ) + 1,
-                      })
-                      }
-                    />
-                  </Button>
-                  <Button style={{ backgroundColor: Colors.tintColor }}>
-                    <Icon
-                      type="MaterialCommunityIcons"
-                      name="calendar-plus"
-                      style={{ color: 'white' }}
-                      onPress={() => this.onSaveContact({
-                        quick_button_meeting_scheduled:
-                          parseInt(
-                            this.state.contact.quick_button_meeting_scheduled,
-                            10,
-                          ) + 1,
-                      })
-                      }
-                    />
-                  </Button>
-                  <Button style={{ backgroundColor: Colors.tintColor }}>
-                    <Icon
-                      type="MaterialCommunityIcons"
-                      name="calendar-check"
-                      style={{ color: 'white' }}
-                      onPress={() => this.onSaveContact({
-                        quick_button_meeting_complete:
-                          parseInt(
-                            this.state.contact.quick_button_meeting_complete,
-                            10,
-                          ) + 1,
-                      })
-                      }
-                    />
-                  </Button>
-                  <Button style={{ backgroundColor: Colors.tintColor }}>
-                    <Icon
-                      type="MaterialCommunityIcons"
-                      name="calendar-remove"
-                      style={{ color: 'white' }}
-                      onPress={() => this.onSaveContact({
-                        quick_button_no_show:
-                          parseInt(
-                            this.state.contact.quick_button_no_show,
-                            10,
-                          ) + 1,
-                      })
-                      }
-                    />
-                  </Button>
-                </Fab>
-              )}
-            </View>
-          </Container>
-        )}
-        {!this.state.contact.ID && this.state.loadedLocal && (
-          <KeyboardShift>
-            {() => (
-              <ScrollView keyboardShouldPersistTaps="handled">
-                <View style={styles.formContainer}>
-                  <Grid>
-                    <Row>
-                      <Label
-                        style={[
-                          styles.formLabel,
-                          { marginTop: 10, marginBottom: 5 },
-                        ]}
-                      >
-                        Full Name
-                      </Label>
-                    </Row>
-                    <Row>
-                      <Input
-                        placeholder="Required field"
-                        onChangeText={this.setContactTitle}
-                        style={{
-                          borderColor: '#B4B4B4',
-                          borderWidth: 1,
-                          borderRadius: 5,
-                          borderStyle: 'solid',
-                          fontSize: 13,
-                          paddingLeft: 15,
-                        }}
-                      />
-                    </Row>
-                    <Row>
-                      <Label
-                        style={[
-                          styles.formLabel,
-                          { marginTop: 10, marginBottom: 5 },
-                        ]}
-                      >
-                        Phone Number
-                      </Label>
-                    </Row>
-                    <Row>
-                      <Input
-                        onChangeText={this.setSingleContactPhone}
-                        style={{
-                          borderColor: '#B4B4B4',
-                          borderWidth: 1,
-                          borderRadius: 5,
-                          borderStyle: 'solid',
-                          fontSize: 13,
-                          paddingLeft: 15,
-                        }}
-                      />
-                    </Row>
-                    <Row>
-                      <Label
-                        style={[
-                          styles.formLabel,
-                          { marginTop: 10, marginBottom: 5 },
-                        ]}
-                      >
-                        Email
-                      </Label>
-                    </Row>
-                    <Row>
-                      <Input
-                        onChangeText={this.setContactEmail}
-                        style={{
-                          borderColor: '#B4B4B4',
-                          borderWidth: 1,
-                          borderRadius: 5,
-                          borderStyle: 'solid',
-                          fontSize: 13,
-                          paddingLeft: 15,
-                        }}
-                      />
-                    </Row>
-                    <Row>
-                      <Label
-                        style={[
-                          styles.formLabel,
-                          { marginTop: 10, marginBottom: 5 },
-                        ]}
-                      >
-                        Source
-                      </Label>
-                    </Row>
-                    <Row>
-                      <Picker
-                        onValueChange={this.setContactSource}
-                        selectedValue={
-                          this.state.contact.sources.values[0].value
-                        }
-                      >
-                        {this.renderSourcePickerItems()}
-                      </Picker>
-                    </Row>
-                    <Row>
-                      <Label
-                        style={[
-                          styles.formLabel,
-                          { marginTop: 10, marginBottom: 5 },
-                        ]}
-                      >
-                        Locations
-                      </Label>
-                    </Row>
-                    <Row>
-                      <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                        <Selectize
-                          ref={(selectize) => { this.geonamesSelectizeRef = selectize; }}
-                          itemId="value"
-                          items={this.state.geonames}
-                          selectedItems={this.state.contact.geonames.values}
-                          textInputProps={{
-                            placeholder: 'Select locations',
-                          }}
-                          renderRow={(id, onPress, item) => (
-                            <TouchableOpacity
-                              activeOpacity={0.6}
-                              key={id}
-                              onPress={onPress}
-                              style={{
-                                paddingVertical: 8,
-                                paddingHorizontal: 10,
-                              }}
-                            >
-                              <View style={{
-                                flexDirection: 'row',
-                              }}
-                              >
-                                <Text style={{
-                                  color: 'rgba(0, 0, 0, 0.87)',
-                                  fontSize: 14,
-                                  lineHeight: 21,
-                                }}
-                                >
-                                  {item.name}
-                                </Text>
-                              </View>
-                            </TouchableOpacity>
-                          )}
-                          renderChip={(id, onClose, item, style, iconStyle) => (
-                            <Chip
-                              key={id}
-                              iconStyle={iconStyle}
-                              onClose={onClose}
-                              text={item.name}
-                              style={style}
-                            />
-                          )}
-                          filterOnKey="name"
-                          keyboardShouldPersistTaps
-                          inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
-                        />
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Label
-                        style={[
-                          styles.formLabel,
-                          { marginTop: 10, marginBottom: 5 },
-                        ]}
-                      >
-                        Initial Comment
-                      </Label>
-                    </Row>
-                    <Row>
-                      <Input
-                        multiline
-                        onChangeText={this.setContactInitialComment}
-                        style={{
-                          borderColor: '#B4B4B4',
-                          borderWidth: 1,
-                          borderRadius: 5,
-                          borderStyle: 'solid',
-                          fontSize: 13,
-                          paddingLeft: 15,
-                        }}
-                      />
-                    </Row>
-                  </Grid>
-                </View>
-              </ScrollView>
+                )}
+              </KeyboardShift>
             )}
-          </KeyboardShift>
+          </View>
         )}
-        {/* successToast */}
+        {successToast}
         {errorToast}
-      </Container>
+      </View>
     );
   }
 }
 
 ContactDetailScreen.propTypes = {
-  user: PropTypes.shape({
+  userData: PropTypes.shape({
     domain: PropTypes.string,
     token: PropTypes.string,
   }).isRequired,
   contact: PropTypes.shape({
-    key: PropTypes.number,
+    ID: PropTypes.number,
+    title: PropTypes.string,
+    seeker_path: PropTypes.string,
   }),
   userReducerError: PropTypes.shape({
     code: PropTypes.string,
@@ -3593,6 +4197,7 @@ ContactDetailScreen.propTypes = {
   getComments: PropTypes.func.isRequired,
   saveComment: PropTypes.func.isRequired,
   getActivities: PropTypes.func.isRequired,
+  saved: PropTypes.bool,
 };
 
 ContactDetailScreen.defaultProps = {
@@ -3600,11 +4205,11 @@ ContactDetailScreen.defaultProps = {
   userReducerError: null,
   newComment: null,
   contactsReducerError: null,
+  saved: null,
 };
 
-
 const mapStateToProps = state => ({
-  user: state.userReducer,
+  userData: state.userReducer.userData,
   userReducerError: state.userReducer.error,
   contact: state.contactsReducer.contact,
   comments: state.contactsReducer.comments,
@@ -3616,7 +4221,9 @@ const mapStateToProps = state => ({
   newComment: state.contactsReducer.newComment,
   contactsReducerError: state.contactsReducer.error,
   loading: state.contactsReducer.loading,
+  saved: state.contactsReducer.saved,
 });
+
 const mapDispatchToProps = dispatch => ({
   saveContact: (domain, token, contactDetail) => {
     dispatch(save(domain, token, contactDetail));

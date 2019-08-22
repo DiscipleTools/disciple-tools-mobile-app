@@ -8,6 +8,8 @@ import TabBarIcon from '../../components/TabBarIcon';
 import GroupsScreen from './GroupsScreen';
 import GroupDetailScreen from './GroupDetailScreen';
 
+import i18n from '../../languages';
+
 function GroupsIcon({ focused }) {
   return <TabBarIcon type="FontAwesome" name="users" focused={focused} />;
 }
@@ -31,7 +33,7 @@ groupStack.navigationOptions = ({ navigation }) => {
     tabBarVisible = !(currentView.params && currentView.params.hideTabBar);
   }
   return {
-    title: 'Groups',
+    title: i18n.t('global.groups'),
     tabBarIcon: GroupsIcon,
     tabBarVisible,
     tabBarOptions: { activeTintColor: Colors.tabIconSelected },
