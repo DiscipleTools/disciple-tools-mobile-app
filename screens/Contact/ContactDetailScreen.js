@@ -526,6 +526,13 @@ class ContactDetailScreen extends React.Component {
     });
   }
 
+  setCurrentTabIndex(index) {
+    // Timeout to resolve the "tab content no rendered" issue
+    setTimeout(() => {
+      this.setState({ currentTabIndex: index });
+    }, 0);
+  }
+
   getLists = async () => {
     let newState = {};
     const users = await AsyncStorage.getItem('usersList');
@@ -621,6 +628,8 @@ class ContactDetailScreen extends React.Component {
   onDisableEdit = () => {
     this.setState({
       onlyView: true,
+    }, () => {
+      this.setCurrentTabIndex(this.state.currentTabIndex);
     });
     this.props.navigation.setParams({ hideTabBar: false });
   }
@@ -1894,6 +1903,7 @@ class ContactDetailScreen extends React.Component {
                       renderTabBar={() => <ScrollableTab />}
                       tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
                       onChangeTab={this.tabChanged}
+                      page={this.state.currentTabIndex}
                     >
                       <Tab
                         heading={i18n.t('global.details')}
@@ -3943,16 +3953,25 @@ class ContactDetailScreen extends React.Component {
                             <Button
                               onPress={() => this.onDisableEdit()}
                               style={{
-                                height: 60, width: '50%', backgroundColor: '#FFFFFF',
+                                height: 60,
+                                width: '50%',
+                                backgroundColor: '#FFFFFF',
+                                shadowColor: 'black',
+                                shadowOpacity: 1,
+                                shadowRadius: 2,
+                                shadowOffset: { width: 1, height: 1 },
                               }}
+                              elevation={10}
                             >
                               <Text style={{ color: Colors.tintColor, fontWeight: 'bold' }}>{i18n.t('global.cancel')}</Text>
                             </Button>
                             <Button
-                              style={{
-                                height: 60, width: '50%', backgroundColor: Colors.tintColor,
-                              }}
                               onPress={this.onSaveContact}
+                              style={{
+                                height: 60,
+                                width: '50%',
+                                backgroundColor: Colors.tintColor,
+                              }}
                             >
                               <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
                             </Button>
@@ -4053,8 +4072,8 @@ class ContactDetailScreen extends React.Component {
                           <Picker
                             onValueChange={this.setContactSource}
                             selectedValue={
-                              this.state.contact.sources.values[0].value
-                            }
+                                this.state.contact.sources.values[0].value
+                              }
                           >
                             {this.renderSourcePickerItems()}
                           </Picker>

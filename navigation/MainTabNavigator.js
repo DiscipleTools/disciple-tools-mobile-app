@@ -38,7 +38,12 @@ HomeStack.propTypes = {
 };
 */
 const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
+  Settings: {
+    screen: SettingsScreen,
+    navigationOptions: () => ({
+      title: i18n.t('settingsScreen.settings'),
+    }),
+  },
   Storybook,
 });
 function SettingsIcon({ focused }) {
@@ -47,11 +52,11 @@ function SettingsIcon({ focused }) {
 SettingsIcon.propTypes = {
   focused: PropTypes.bool.isRequired,
 };
-SettingsStack.navigationOptions = {
-  tabBarLabel: i18n.t('settingsScreen.settings'),
+SettingsStack.navigationOptions = () => ({
+  title: i18n.t('settingsScreen.settings'),
   tabBarIcon: SettingsIcon,
   tabBarOptions: { activeTintColor: Colors.tabIconSelected },
-};
+});
 
 export default createBottomTabNavigator({
   // HomeStack,
