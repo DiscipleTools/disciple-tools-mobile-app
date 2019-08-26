@@ -480,7 +480,7 @@ class ContactDetailScreen extends React.Component {
     }
 
     // CONTACT SAVE
-    if (saved) {
+    if (saved && prevProps.saved !== saved) {
       this.onRefreshCommentsActivities(contact.ID);
       toastSuccess.show(
         <View>
@@ -626,10 +626,12 @@ class ContactDetailScreen extends React.Component {
   };
 
   onDisableEdit = () => {
+    const { currentTabIndex } = this.state;
     this.setState({
       onlyView: true,
+      currentTabIndex: 0,
     }, () => {
-      this.setCurrentTabIndex(this.state.currentTabIndex);
+      this.setCurrentTabIndex(currentTabIndex);
     });
     this.props.navigation.setParams({ hideTabBar: false });
   }

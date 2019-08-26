@@ -514,7 +514,7 @@ class GroupDetailScreen extends React.Component {
     }
 
     // GROUP SAVE
-    if (saved) {
+    if (saved && prevProps.saved !== saved) {
       this.onRefreshCommentsActivities(group.ID);
       toastSuccess.show(
         <View>
@@ -685,10 +685,12 @@ class GroupDetailScreen extends React.Component {
   };
 
   onDisableEdit = () => {
+    const { currentTabIndex } = this.state;
     this.setState({
       onlyView: true,
+      currentTabIndex: 0,
     }, () => {
-      this.setCurrentTabIndex(this.state.currentTabIndex);
+      this.setCurrentTabIndex(currentTabIndex);
     });
     this.props.navigation.setParams({ hideTabBar: false });
   }
