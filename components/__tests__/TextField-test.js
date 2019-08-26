@@ -1,32 +1,10 @@
 /* @jest-environment jsdom */
 
-import { TextInput, Text } from 'react-native';
+import { TextInput } from 'react-native';
 import React from 'react';
 
-import { Icon } from 'expo';
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import TextField from '../TextField';
-
-describe('label', () => {
-  it('sets label', () => {
-    const wrapper = mount(<TextField
-      label="Basic Form Field"
-    />);
-    expect(wrapper.find(Text).text()).toEqual('Basic Form Field');
-  });
-});
-
-describe('icon', () => {
-  it('sets icon name', () => {
-    const wrapper = shallow(<TextField
-      label="Basic Form Field"
-      iconName="ios-contact"
-    />);
-    expect(wrapper
-      .find(Icon.Ionicons)
-      .prop('name')).toEqual('ios-contact');
-  });
-});
 
 describe('text input', () => {
   it('sets value', () => {

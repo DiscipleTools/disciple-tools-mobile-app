@@ -9,6 +9,9 @@ import { View } from 'native-base';
 import colors from '../constants/Colors';
 import CenterView from '../storybook/stories/CenterView';
 import TextFieldMultiple from './TextFieldMultiple';
+import MultiSelect from './MultiSelect';
+import SingleSelect from './SingleSelect';
+import FormField from './FormField';
 
 const styles = StyleSheet.create({
   basicContainer: {
@@ -37,11 +40,6 @@ storiesOf('Text Field Multiple', module)
 
   .add('Basic', () => (
     <TextFieldMultiple
-      label="Assigned to"
-      // placeholder="Enter a value"
-      iconName={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
-      containerStyle={styles.customContainer}
-      iconStyle={styles.customIcon}
       placeholder="Agent name"
       textInputValue={[{
         key: 999,
@@ -51,10 +49,6 @@ storiesOf('Text Field Multiple', module)
         value: 'you should not see this',
         delete: true,
       }]}
-      // labelStyle={styles.customLabel}
-      // labelTextStyle={styles.customLabelText}
-      // textInputStyle={styles.customInput}
-      // placeholderTextColor="#aaccaa"
     />
   ))
   .add('Styled', () => (
@@ -131,4 +125,4 @@ storiesOf('Text Field Multiple', module)
         }]}
       />
     </View>
-  ));
+  ))

@@ -15,24 +15,6 @@ import i18n from '../languages';
 
 const styles = StyleSheet.create({
 
-  inputLabel: {
-    margin: 5,
-  },
-  inputLabelText: {
-    color: '#555555',
-  },
-  inputRow: {
-    alignSelf: 'stretch',
-    flexDirection: 'row',
-  },
-  inputRowIcon: {
-    marginHorizontal: 5,
-  },
-  inputRowTextInput: {
-    textAlign: i18n.isRTL ? 'right' : 'left',
-    padding: 5,
-    flexGrow: 1,
-  },
   removeIcon: {
     fontSize: 30,
     color: 'black',
@@ -40,30 +22,11 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingTop: 10,
   },
-  formIcon: {
-    color: Colors.tintColor,
-    fontSize: 25,
-    marginTop: 'auto',
-    marginBottom: 'auto',
-    marginRight: 10,
-  },
   containerStyle: {
     alignSelf: 'stretch',
     marginVertical: 10,
     padding: 5,
     alignItems: 'flex-start',
-  },
-  formRow: {
-    paddingTop: 10,
-    marginBottom: 20,
-  },
-  formLabel: {
-    color: Colors.tintColor,
-    fontSize: 12,
-    marginTop: 'auto',
-    marginBottom: 'auto',
-    textAlign: 'right',
-    paddingRight: 10,
   },
   formIconLabel: {
     width: 'auto',
@@ -117,6 +80,7 @@ class TextFieldMultiple extends Component {
         prevValues,
       };
     });
+    this.props.onChange(value);
   }
 
   onRemoveField(index) {
@@ -147,19 +111,10 @@ class TextFieldMultiple extends Component {
     render = () => {
       const {
         containerStyle,
-        iconStyle,
-        labelStyle,
         textInputStyle,
         placeholder,
-        iconName,
-        label,
-        iconType,
+
       } = this.props;
-
-      const icon = iconName ? (
-        <Icon name={iconName} type={iconType} size={25} style={[styles.formIcon, iconStyle]} />
-      ) : null;
-
 
       const textInput = this.state.values.map(
         (inputValue, index) => {
@@ -201,18 +156,6 @@ class TextFieldMultiple extends Component {
 
       return (
         <View style={[styles.containerStyle, containerStyle]}>
-          <Row style={styles.formRow}>
-            <Col style={styles.formIconLabel}>
-              {icon}
-            </Col>
-            <Col>
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.formLabel, labelStyle]}>
-                  {label}
-                </Text>
-              </View>
-            </Col>
-          </Row>
           {textInput}
           <View style={styles.formDivider} />
         </View>
@@ -224,23 +167,22 @@ TextFieldMultiple.propTypes = {
   // Styles
   containerStyle: ViewPropTypes.style,
   textInputStyle: Text.propTypes.style,
-  labelStyle: Text.propTypes.style,
-  iconStyle: Text.propTypes.style,
   // Config
-  iconName: PropTypes.string,
-  iconType: PropTypes.string,
-  label: PropTypes.string.isRequired,
-  textInputValue: PropTypes.arrayOf(PropTypes.string),
+  textInputValue: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.number, 
+      value: PropTypes.string, 
+      delete: PropTypes.bool
+    })
+  ),
   placeholder: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+
 };
 
 TextFieldMultiple.defaultProps = {
   containerStyle: null,
   textInputStyle: null,
-  iconStyle: null,
-  labelStyle: null,
-  iconName: null,
-  iconType: null,
   textInputValue: [],
   placeholder: null,
 

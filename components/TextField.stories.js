@@ -79,4 +79,5 @@ storiesOf('Text Field', module)
       iconName={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
       containerStyle={styles.errorContainer}
     />
-  ));
+  ))
+

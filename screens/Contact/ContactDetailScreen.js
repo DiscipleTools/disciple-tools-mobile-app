@@ -522,6 +522,7 @@ class ContactDetailScreen extends React.Component {
   getLists = async () => {
     let newState = {};
     const users = await AsyncStorage.getItem('usersList');
+    console.log(users)
     if (users !== null) {
       newState = {
         ...newState,
@@ -1434,7 +1435,9 @@ class ContactDetailScreen extends React.Component {
   showAssignedUser = () => {
     const foundUser = this.state.users.find(
       user => `user-${user.key}` === this.state.contact.assigned_to,
-    );
+    );    
+    console.log(this.state.users)
+
     return <Text>{foundUser ? foundUser.label : ''}</Text>;
   };
 
