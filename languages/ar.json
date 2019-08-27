@@ -1,181 +1,181 @@
 {
   "global": {
     "locales": {
-      "en-US": "",
-      "ar-JO": ""
+      "en-US": "الإنجليزية",
+      "ar-JO": "العربية"
     },
     "error": {
-      "code": "",
-      "message": ""
+      "code": "الكود: ",
+      "message": "الرسالة: "
     },
     "success": {
-      "save": ""
+      "save": "!تم حفظ البيانات بنجاح"
     },
     "contactOverallStatus": {
-      "new": "",
-      "unassignable": "",
-      "unassigned": "",
-      "assigned": "",
-      "active": "",
-      "paused": "",
-      "closed": ""
+      "new": "متواصل جديد",
+      "unassignable": "غير جاهز",
+      "unassigned": "إيفاد اللازمة",
+      "assigned": "في انتظار أن تكون مقبولة",
+      "active": "مفعّل",
+      "paused": "متوقّف",
+      "closed": "مغلق"
     },
     "seekerPath": {
-      "none": "",
-      "attempted": "",
-      "established": "",
-      "scheduled": "",
-      "met": "",
-      "ongoing": "",
-      "coaching": ""
+      "none": "محاولة ربط الاتصال مطلوبة",
+      "attempted": "تمت محاولة ربط الإتصال",
+      "established": "تم ربط الإتصال",
+      "scheduled": "تم تحديد موعد اللقاء الأول",
+      "met": "تم اللقاء الأول",
+      "ongoing": "في طور اللقاء",
+      "coaching": "في مرحلة التدريب"
     },
     "groupStatus": {
-      "active": "",
-      "inactive": ""
+      "active": "نشيط",
+      "inactive": "مجموعة غير نشطة"
     },
     "groupType": {
-      "pre-group": "",
-      "group": "",
-      "church": "",
-      "team": ""
+      "pre-group": "المجموعة",
+      "group": "المجموعة",
+      "church": "كنيسة",
+      "team": "الفريق"
     },
-    "groups": "",
-    "details": "",
-    "status": "",
-    "assignedTo": "",
-    "location": "",
-    "peopleGroup": "",
-    "selectPeopleGroups": "",
-    "address": "",
-    "progress": "",
-    "commentsActivity": "",
-    "writeYourCommentNoteHere": "",
-    "requiredField": "",
-    "edit": "",
-    "cancel": "",
-    "save": "",
-    "online": "",
-    "language": ""
+    "groups": "المجموعات",
+    "details": "التفاصيل",
+    "status": "الحالة",
+    "assignedTo": "تم تعيينه لِ",
+    "location": "الجهة",
+    "peopleGroup": "أشخاص المجموعة",
+    "selectPeopleGroups": "اختر اشخاص المجموعة",
+    "address": "العنوان",
+    "progress": "التقدم",
+    "commentsActivity": "الأنشطة و التعليقات",
+    "writeYourCommentNoteHere": "اكتب تعليقك أو الملاحظة هنا",
+    "requiredField": "حقل مطلوب",
+    "edit": "إعداد",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "online": "متصل بالأنترنت",
+    "language": "لغة"
   },
   "loginScreen": {
     "domain": {
       "label": "اسم نطاق أدوات التلمذة",
       "placeholder": "مثلاً: myteam.disciple.tools",
-      "error": ""
+      "error": "اسم النطاق مطلوب"
     },
     "username": {
       "label": "اسم المستخدم",
-      "error": ""
+      "error": "اسم الامستخدم مطلوب"
     },
     "password": {
       "label": "كلمة المرور",
-      "error": ""
+      "error": "كلمة المرور مطلوبة"
     },
     "logIn": "تسجيل الدخول",
     "forgotPassword": "فقدت كلمة المرور الخاصة بك؟"
   },
   "contactsScreen": {
-    "contacts": ""
+    "contacts": "المتواصلون"
   },
   "settingsScreen": {
     "settings": "الإعدادات",
-    "networkUnavailable": "",
-    "networkAvailable": "",
-    "signOut": "",
-    "domain": "",
-    "signedInAs": "",
+    "networkUnavailable": "الشبكة غير متاحة الآن في وضع عدم الاتصال بالانترنت",
+    "networkAvailable": "تم العثور علي شبكة. العودة لوضع الاتصال بالانترنت",
+    "signOut": "تسجيل الخروج",
+    "domain": "اسم النطاق",
+    "signedInAs": "تسجيل الدخول ك",
     "storybook": "",
-    "logout": ""
+    "logout": "تسجيل الخروج"
   },
   "contactDetailScreen": {
-    "addNewContact": "",
+    "addNewContact": "إضافة جهة اتصال جديدة",
     "contactSources": {
-      "personal": "",
-      "web": "",
-      "phone": "",
-      "facebook": "",
-      "twitter": "",
-      "linkedin": "",
+      "personal": "الشخصية",
+      "web": "الشبكة",
+      "phone": "الهاتف",
+      "facebook": "فايسبوك",
+      "twitter": "تويتر",
+      "linkedin": "لينكد إن",
       "referral": "",
-      "advertisement": "",
-      "transfer": ""
+      "advertisement": "الإعلانات",
+      "transfer": "نقل"
     },
-    "subAssignedTo": "",
-    "subAssignThisContact": "",
-    "mobile": "",
-    "email": "",
-    "message": "",
-    "selectLocations": "",
+    "subAssignedTo": "تم تعيينه لِ",
+    "subAssignThisContact": "تعيين جهة الاتصال",
+    "mobile": "الهاتف",
+    "email": "الإيميل",
+    "message": "الرسالة",
+    "selectLocations": "تحديد المواقع",
     "contactAge": {
-      "underEighteenYearsOld": "",
-      "underTwentySixYearsOld": "",
-      "underFortyOneYearsOld": "",
-      "overFortyYearsOld": ""
+      "underEighteenYearsOld": "عمر أقل من 18 سنة",
+      "underTwentySixYearsOld": "عمر بين 18-25",
+      "underFortyOneYearsOld": "عمر بين 26-40",
+      "overFortyYearsOld": "عمر أكثر من 40"
     },
-    "age": "",
-    "male": "",
-    "female": "",
-    "gender": "",
-    "source": "",
-    "selectSources": "",
-    "seekerPath": "",
-    "faithMilestones": "",
+    "age": "العمر",
+    "male": "رجل",
+    "female": "إمرأة",
+    "gender": "الجنس",
+    "source": "المصدر",
+    "selectSources": "اختر المصادر",
+    "seekerPath": "طريق الباحث",
+    "faithMilestones": "معلمات الإيمان",
     "milestones": {
-      "hasBible": "",
-      "readingBible": "",
-      "statesBelief": "",
-      "shareGospel": "",
-      "sharingGospel": "",
-      "baptized": "",
-      "baptizing": "",
-      "inGroup": "",
-      "startingChurches": "",
-      "baptismDate": ""
+      "hasBible": "عنده كتاب مقدس",
+      "readingBible": "يقرأ كتاب مقدس",
+      "statesBelief": "يقول أنه مؤمن",
+      "shareGospel": "بإمكانه مشاركة الإنجيل/شهادة الإيمان",
+      "sharingGospel": "يشارك الإنجيل/شهادة الإيمان",
+      "baptized": "مُعمّد",
+      "baptizing": "يُعمّد أخرين",
+      "inGroup": "في مجموعة",
+      "startingChurches": "يُؤسّس كنائس",
+      "baptismDate": "تاريخ المعمودية"
     },
-    "connections": "",
-    "addGroup": "",
-    "connection": "",
-    "addConnection": "",
-    "baptizedBy": "",
+    "connections": "الروابط",
+    "addGroup": "إضافة مجموعة",
+    "connection": "الرابط",
+    "addConnection": "إضافة رابط",
+    "baptizedBy": "مُعمّد من",
     "addBaptizedBy": "",
-    "baptized": "",
-    "addBaptized": "",
-    "coachedBy": "",
+    "baptized": "مُعمّد",
+    "addBaptized": "إضافة مُعمّد",
+    "coachedBy": "في مرحلة التدريب من",
     "addCoachedBy": "",
-    "coaching": "",
+    "coaching": "يُدرّب",
     "addCoaching": "",
-    "fullName": "",
-    "phoneNumber": "",
-    "initialComment": "",
-    "addBaptizmDate": "",
-    "group": ""
+    "fullName": "الاسم الكامل",
+    "phoneNumber": "رقم الهاتف",
+    "initialComment": "تعليق أولي",
+    "addBaptizmDate": "إضافة تاريخ المعمودية",
+    "group": "المجموعة"
   },
   "groupDetailScreen": {
-    "addNewGroup": "",
-    "groupCoach": "",
-    "selectCoaches": "",
-    "selectGeonames": "",
-    "startDate": "",
-    "endDate": "",
-    "groupType": "",
-    "churchHealth": "",
+    "addNewGroup": "إضافة مجموعة جديدة",
+    "groupCoach": "مدرب المجموعة",
+    "selectCoaches": "اختر المدربين",
+    "selectGeonames": "اختر الأسماء الجغرافية",
+    "startDate": "تاريخ البدأ",
+    "endDate": "تاريخ الإنهاء",
+    "groupType": "نوع المجموعة",
+    "churchHealth": "صحة الكنيسة",
     "healthMetrics": {
-      "giving": "",
-      "fellowship": "",
-      "communion": "",
-      "baptism": "",
-      "prayer": "",
-      "leaders": "",
-      "bibleStudy": "",
-      "praise": "",
-      "sharingGospel": ""
+      "giving": "العطاء",
+      "fellowship": "شراكة روحية",
+      "communion": "عشاء الرب",
+      "baptism": "المعمودية",
+      "prayer": "الصلاة",
+      "leaders": "قادة",
+      "bibleStudy": "دراسة الكتاب المقدس",
+      "praise": "التسبيح",
+      "sharingGospel": "يشارك الإنجيل"
     },
-    "parentGroup": "",
-    "searchGroups": "",
-    "peerGroup": "",
-    "searchPeerGroups": "",
-    "childGroup": "",
-    "searchChildGroups": "",
-    "groupName": ""
+    "parentGroup": "ربط المجموعة الأب",
+    "searchGroups": "بحث المجموعات",
+    "peerGroup": "مجموعة الأقران",
+    "searchPeerGroups": "بحث مجموعات الأقران",
+    "childGroup": "ربط المجموعة الإبن",
+    "searchChildGroups": "بحث المجموعة الإبن",
+    "groupName": "اسم المجموعة"
   }
 }
