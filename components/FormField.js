@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
   View,
   Text,
@@ -6,12 +6,10 @@ import {
   ViewPropTypes,
 } from 'react-native';
 
-import { Icon, Input } from 'native-base';
+import { Icon } from 'native-base';
 import { Col, Row } from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 import Colors from '../constants/Colors';
-
-import i18n from '../languages';
 
 const styles = StyleSheet.create({
 
@@ -44,8 +42,8 @@ const styles = StyleSheet.create({
   formText: {
     marginLeft: 10,
     marginRight: 10,
-    alignSelf: 'stretch', 
-    justifyContent:'center',
+    alignSelf: 'stretch',
+    justifyContent: 'center',
   },
   formIconLabel: {
     width: 'auto',
@@ -53,8 +51,7 @@ const styles = StyleSheet.create({
 });
 
 
-class FormField extends Component {
-
+class FormField extends PureComponent {
     render = () => {
       const {
         containerStyle,
@@ -65,17 +62,17 @@ class FormField extends Component {
         label,
         iconType,
       } = this.props;
-      let inlineContent= null;
-      let blockContent= null;
+      let inlineContent = null;
+      let blockContent = null;
 
       const icon = iconName ? (
         <Icon name={iconName} type={iconType} size={25} style={[styles.formIcon, iconStyle]} />
       ) : null;
-        if (inline){
-          inlineContent= this.props.children;
-        } else{
-          blockContent= this.props.children;
-        }
+      if (inline) {
+        inlineContent = this.props.children;
+      } else {
+        blockContent = this.props.children;
+      }
       return (
         <View style={[styles.containerStyle, containerStyle]}>
           <Row style={styles.formRow}>
@@ -83,13 +80,13 @@ class FormField extends Component {
               {icon}
             </Col>
             <Col>
-              <Col style={{ alignSelf: 'stretch', justifyContent:'center' }}>
-                  <View style={styles.formText}>
+              <Col style={{ alignSelf: 'stretch', justifyContent: 'center' }}>
+                <View style={styles.formText}>
                   {inlineContent}
-                  </View>
+                </View>
               </Col>
             </Col>
-            <Col style={{width: 'auto'}}>
+            <Col style={{ width: 'auto' }}>
               <View style={{ flex: 1 }}>
                 <Text style={[styles.formLabel, labelStyle]}>
                   {label}
@@ -97,7 +94,7 @@ class FormField extends Component {
               </View>
             </Col>
           </Row>
-            {blockContent}
+          {blockContent}
           <View style={styles.formDivider} />
         </View>
       );

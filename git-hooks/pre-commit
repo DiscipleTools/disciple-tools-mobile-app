@@ -3,4 +3,4 @@
 # Pre-commit hooks
 
 # ESLint stuff before committing
-#npm run lint
+# npm run lint
