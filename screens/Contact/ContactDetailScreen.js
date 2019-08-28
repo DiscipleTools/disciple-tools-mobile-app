@@ -1906,6 +1906,7 @@ class ContactDetailScreen extends React.Component {
                       tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
                       onChangeTab={this.tabChanged}
                       page={this.state.currentTabIndex}
+                      scrollWithoutAnimation
                     >
                       <Tab
                         heading={i18n.t('global.details')}
@@ -4189,7 +4190,7 @@ ContactDetailScreen.propTypes = {
     token: PropTypes.string,
   }).isRequired,
   contact: PropTypes.shape({
-    ID: PropTypes.number,
+    ID: PropTypes.string,
     title: PropTypes.string,
     seeker_path: PropTypes.string,
   }),

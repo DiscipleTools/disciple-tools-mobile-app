@@ -1747,6 +1747,7 @@ class GroupDetailScreen extends React.Component {
                       onChangeTab={this.tabChanged}
                       locked={this.state.groupsTabActive && this.state.onlyView}
                       page={this.state.currentTabIndex}
+                      scrollWithoutAnimation
                     >
                       <Tab
                         heading={i18n.t('global.details')}

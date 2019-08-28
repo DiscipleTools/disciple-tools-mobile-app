@@ -56,7 +56,7 @@ export default function contactsReducer(state = initialState, action) {
       newState = {
         ...newState,
         contact: {
-          ID: contact.ID,
+          ID: contact.ID.toString(),
           title: contact.title,
           contact_phone: contact.contact_phone
             ? contact.contact_phone

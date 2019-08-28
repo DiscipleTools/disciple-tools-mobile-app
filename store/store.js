@@ -4,7 +4,9 @@ import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import reducer from './reducer';
+/* eslint-disable */
 import rootSaga from './sagas';
+/* eslint-enable */
 
 const persistConfig = {
   key: 'root',

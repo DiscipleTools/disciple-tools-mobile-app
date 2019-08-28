@@ -1,7 +1,10 @@
 import {
-  put, take, takeEvery, takeLatest, all, call,
+  put, take, takeEvery, takeLatest, all, call, select,
 } from 'redux-saga/effects';
 import * as actions from '../actions/contacts.actions';
+/* eslint-disable */
+import store from '../store';
+/* eslint-enable */
 
 export function* getAll({ domain, token }) {
   yield put({ type: actions.CONTACTS_GETALL_START });
@@ -20,7 +23,6 @@ export function* getAll({ domain, token }) {
       action: actions.CONTACTS_GETALL_RESPONSE,
     },
   });
-
   try {
     const res = yield take(actions.CONTACTS_GETALL_RESPONSE);
     if (res) {
@@ -60,6 +62,9 @@ export function* getAll({ domain, token }) {
 }
 
 export function* save({ domain, token, contactData }) {
+  const networkConnectivityReducer = yield select(state => state.networkConnectivityReducer);
+  const { isConnected } = networkConnectivityReducer;
+
   yield put({ type: actions.CONTACTS_SAVE_START });
   const contact = contactData;
   let contactInitialComment;
@@ -67,8 +72,14 @@ export function* save({ domain, token, contactData }) {
     contactInitialComment = contact.initial_comment;
     delete contact.initial_comment;
   }
-  const contactId = contact.ID ? contact.ID : '';
-  delete contact.ID;
+  let contactId = contact.ID ? contact.ID : '';
+  if (isConnected || (!isConnected && !Number.isNaN(contact.ID))) {
+    // Online or Offline and id numeric (db contact)
+    delete contact.ID;
+  } else if (!isConnected && Number.isNaN(contact.ID)) {
+    // Offline and UUID
+    contactId = '';
+  }
   yield put({
     type: 'REQUEST',
     payload: {
@@ -81,64 +92,92 @@ export function* save({ domain, token, contactData }) {
         },
         body: JSON.stringify(contact),
       },
+      isConnected: store.getState().networkConnectivityReducer.isConnected,
       action: actions.CONTACTS_SAVE_RESPONSE,
     },
   });
-
   try {
     const responseAction = yield take(actions.CONTACTS_SAVE_RESPONSE);
     if (responseAction) {
       const response = responseAction.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        if (contactInitialComment) {
-          yield put({ type: actions.CONTACTS_SAVE_COMMENT_START });
-          yield put({
-            type: 'REQUEST',
-            payload: {
-              url: `https://${domain}/wp-json/dt-posts/v2/contacts/${jsonData.ID}/comments`,
-              data: {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`,
+      if (isConnected) {
+        const jsonData = yield response.clone().json();
+        if (response.status === 200) {
+          if (contactInitialComment) {
+            yield put({ type: actions.CONTACTS_SAVE_COMMENT_START });
+            yield put({
+              type: 'REQUEST',
+              payload: {
+                url: `https://${domain}/wp-json/dt-posts/v2/contacts/${jsonData.ID}/comments`,
+                data: {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify({
+                    comment: `${contactInitialComment}`,
+                  }),
                 },
-                body: JSON.stringify({
-                  comment: `${contactInitialComment}`,
-                }),
+                action: actions.CONTACTS_SAVE_COMMENT_RESPONSE,
               },
-              action: actions.CONTACTS_SAVE_COMMENT_RESPONSE,
-            },
-          });
-          const res = yield take(actions.CONTACTS_SAVE_COMMENT_RESPONSE);
-          if (res) {
-            const responseComment = res.payload;
-            const saveCommentJsonData = yield call(() => new Promise((resolve) => {
-              resolve(response.clone());
-            }));
-            if (responseComment.status !== 200) {
-              yield put({
-                type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
-                error: {
-                  code: saveCommentJsonData.code,
-                  message: saveCommentJsonData.message,
-                  data: saveCommentJsonData.data,
-                },
-              });
+            });
+            const res = yield take(actions.CONTACTS_SAVE_COMMENT_RESPONSE);
+            if (res) {
+              const responseComment = res.payload;
+              const saveCommentJsonData = yield call(() => new Promise((resolve) => {
+                resolve(response.clone());
+              }));
+              if (responseComment.status !== 200) {
+                yield put({
+                  type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
+                  error: {
+                    code: saveCommentJsonData.code,
+                    message: saveCommentJsonData.message,
+                    data: saveCommentJsonData.data,
+                  },
+                });
+              }
             }
           }
+          yield put({
+            type: actions.CONTACTS_SAVE_SUCCESS,
+            contact: jsonData,
+          });
+        } else {
+          yield put({
+            type: actions.CONTACTS_SAVE_FAILURE,
+            error: {
+              code: jsonData.code,
+              message: jsonData.message,
+            },
+          });
         }
+      } else {
+        let jsonData = response;
+        jsonData = {
+          ...jsonData,
+          sources: [jsonData.sources.values[0].value],
+          geonames: [], // How to get tag labels in local ???
+          overall_status: {
+            key: '', // get and transform value
+          },
+          seeker_path: {
+            key: '', // get and transform value
+          },
+          subassigned: jsonData.subassigned.values, // transform value
+          milestones: jsonData.milestones.values, // transform value
+          groups: jsonData.groups.values, // transform value
+          relation: jsonData.relation.values, // transform value
+          baptized_by: jsonData.baptized_by.values, // transform value
+          baptized: jsonData.baptized.values, // transform value
+          coached_by: jsonData.coached_by.values, // transform value
+          coaching: jsonData.coaching.values, // transform value
+          people_groups: jsonData.people_groups.values, // transform value
+        };
         yield put({
           type: actions.CONTACTS_SAVE_SUCCESS,
           contact: jsonData,
-        });
-      } else {
-        yield put({
-          type: actions.CONTACTS_SAVE_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-          },
         });
       }
     }

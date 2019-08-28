@@ -28,30 +28,37 @@ function* processRequest(req) { // reqChannel) {
 
 export default function* requestSaga() {
   // buffer all incoming requests
-  const reqChannel = yield actionChannel('REQUEST'); // call(channel);
+  const requestChannel = yield actionChannel('REQUEST'); // call(channel);
   const offlineChannel = yield actionChannel('OFFLINE');
-
   // enqueue when offline, fork when online
   while (true) {
-    const { offline, payload } = yield race({
-      offline: take(offlineChannel), // takeLatest('OFFLINE'),
-      payload: take(reqChannel),
+    const { offline, request } = yield race({
+      offline: take(offlineChannel),
+      request: take(requestChannel),
     });
-    // console.log("*** RACE RESULTS ***", offline === undefined ? "ONLINE. FORK REQUEST!" : "OFFLINE. QUEUE REQUEST")
     if (offline) {
+      const { payload } = yield take(requestChannel);
+      if (payload && payload.data.method === 'POST' && payload.action.includes('SAVE')) {
+        // If entity creation
+        /* eslint-disable */
+        const { payload } = yield select(state => state.requestReducer.currentAction);
+        // get mapped payload
+        yield put({ type: payload.action, payload: JSON.parse(payload.data.body) });
+        /* eslint-enable */
+      }
       // block until we come back online
-      yield take('ONLINE');
+      yield take('OFFLINE');
     } else {
       /*
       NOTE: compare actionChannel request with requests in requestReducer state.
       if the request is present in the requestReducer state, then fork it,
       otherwise skip it (bc it's an offline edit)
       */
-      const reqState = yield select(state => state.requestReducer);
-      for (const req of reqState) {
-        if (req === payload) {
+      const queue = yield select(state => state.requestReducer.queue);
+      for (const action of queue) {
+        if (action === request) {
           // process the request
-          yield fork(processRequest, payload);
+          yield fork(processRequest, request);
         }
       }
     }
