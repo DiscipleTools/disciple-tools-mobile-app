@@ -5,16 +5,14 @@ import {
   StyleSheet,
   ViewPropTypes,
 } from 'react-native';
-import { Picker}  from 'native-base';
+import { Picker } from 'native-base';
 import { Col, Row } from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
-
-import i18n from '../languages';
 
 const styles = StyleSheet.create({
 
   formRow: {
-    flex:1,
+    flex: 1,
     paddingTop: 10,
     paddingBottom: 10,
     backgroundColor: '#fff',
@@ -33,19 +31,19 @@ class SingleSelect extends Component {
     super(props);
 
     this.state = {
-      selectedValue: this.props.selectedItem
+      selectedValue: this.props.selectedItem,
     };
   }
 
   setValue = (value) => {
     this.setState(prevState => ({
-        ...prevState.selectedValue,
-        selectedValue: value,
+      ...prevState.selectedValue,
+      selectedValue: value,
     }));
 
     this.props.onChange(value);
   };
-  
+
     render = () => {
       const {
         containerStyle,
@@ -53,17 +51,18 @@ class SingleSelect extends Component {
         items,
       } = this.props;
 
-      values= items.map((item) => (
-        <Picker.Item 
-        key={item.value}
-        label={item.label}
-        value={item.value} />
-      ))
+      const values = items.map(item => (
+        <Picker.Item
+          key={item.value}
+          label={item.label}
+          value={item.value}
+        />
+      ));
 
       return (
         <View style={[styles.containerStyle, containerStyle]}>
           <Row style={[styles.formRow, formStyle]}>
-            <Col style={{alignSelf: 'center'}}>
+            <Col style={{ alignSelf: 'center' }}>
               <Picker
                 mode="dropdown"
                 selectedValue={this.state.selectedValue}
@@ -86,9 +85,9 @@ SingleSelect.propTypes = {
   selectedItem: PropTypes.string,
   items: PropTypes.arrayOf(
     PropTypes.shape({
-      label: PropTypes.string, 
-      value: PropTypes.string, 
-    })
+      label: PropTypes.string,
+      value: PropTypes.string,
+    }),
   ),
   onChange: PropTypes.func.isRequired,
 };

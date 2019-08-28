@@ -107,6 +107,7 @@ FormField.propTypes = {
   labelStyle: Text.propTypes.style,
   iconStyle: Text.propTypes.style,
   // Config
+  children: PropTypes.node.isRequired,
   inline: PropTypes.bool,
   iconName: PropTypes.string,
   iconType: PropTypes.string,

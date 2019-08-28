@@ -11,9 +11,9 @@ describe('Initialization', () => {
     const wrapper = shallow(<FormField
       label="Basic Form Field"
     />)
-    await eventually(() => expect(wrapper
+    expect(wrapper
       .find(Text).first()
-      .text()).toEqual('Basic Form Field'));
+      .text()).toEqual('Basic Form Field');
   });
 
   it('sets label icon name', () => {

@@ -34,7 +34,8 @@ storiesOf('Single Select With Filter', module)
   .addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
    .add('ًBasic', () => (
     <SingleSelectWithFilter
-    items={[{ key: 4, label: 'Shady Rashad Hakim' }, { key: 3, label: 'Heidi John' }, { key: 2, label: 'Jon Wynveen' }]}
-    selectedItem={`item-4`}
+    containerStyle= {{ backgroundColor: '#fff' }}
+    items= {[{ key: 4, label: 'Shady Rashad Hakim' }, { key: 3, label: 'Heidi John' }, { key: 2, label: 'Jon Wynveen' }]}
+    selectedItem= {`item-4`}
     /> ))
 

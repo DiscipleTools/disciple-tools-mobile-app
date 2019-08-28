@@ -10,26 +10,24 @@ import { Chip, Selectize } from 'react-native-material-selectize';
 import { Col, Row } from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 
-import i18n from '../languages';
-
 const styles = StyleSheet.create({
 
-  container: { 
-    paddingLeft: 10, 
-    paddingRight: 10 
+  container: {
+    paddingLeft: 10,
+    paddingRight: 10,
   },
-  inputContainer: { 
-    borderWidth: 1, 
-    borderColor: '#CCCCCC', 
-    padding: 5 
-  }
+  inputContainer: {
+    borderWidth: 1,
+    borderColor: '#CCCCCC',
+    padding: 5,
+  },
 });
 
 
 class MultiSelect extends Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       selectedItems: this.props.selectedItems,
       items: this.props.items,
@@ -45,61 +43,59 @@ class MultiSelect extends Component {
 
       } = this.props;
 
-        return (
-          <Row>
-            <Col style={[styles.container, containerStyle]}>
-              <Selectize
-                itemId="value"
-                items={this.state.items}
-                selectedItems={this.state.selectedItems}
-                textInputProps={{
-                placeholder: placeholder,
-                }}
-                renderRow={(id, onPress, item) => (
-                  console.log(item.label),
-                  <TouchableOpacity
-                    activeOpacity={0.6}
-                    key={id}
-                    onPress={onPress}
-                    style={{
-                      paddingVertical: 8,
-                      paddingHorizontal: 10,
-                    }}
+      return (
+        <Row>
+          <Col style={[styles.container, containerStyle]}>
+            <Selectize
+              itemId="value"
+              items={this.state.items}
+              selectedItems={this.state.selectedItems}
+              textInputProps={{
+                placeholder,
+              }}
+              renderRow={(id, onPress, item) => (
+                <TouchableOpacity
+                  activeOpacity={0.6}
+                  key={id}
+                  onPress={onPress}
+                  style={{
+                    paddingVertical: 8,
+                    paddingHorizontal: 10,
+                  }}
+                >
+                  <View style={{
+                    flexDirection: 'row',
+                  }}
                   >
-                    <View style={{
-                      flexDirection: 'row',
+                    <Text style={{
+                      color: 'rgba(0, 0, 0, 0.87)',
+                      fontSize: 14,
+                      lineHeight: 21,
                     }}
                     >
-                      <Text style={{
-                        color: 'rgba(0, 0, 0, 0.87)',
-                        fontSize: 14,
-                        lineHeight: 21,
-                      }}
-                      >
-                        {item.label}
-                      </Text>
-                      
-                    </View>
-                  </TouchableOpacity>
-                )}
-                renderChip={(id, onClose, item, style, iconStyle) => (
-                  console.log(item),
-          
-                  <Chip
-                    key={id}
-                    iconStyle={iconStyle}
-                    onClose={onClose}
-                    text={item.label}
-                    style={style}
-                  />
-                )}
-                filterOnKey="name"
-                keyboardShouldPersistTaps
-                inputContainerStyle={[styles.inputContainer, inputContainerStyle]}
-              />
-            </Col>
-          </Row>
-        );
+                      {item.label}
+                    </Text>
+
+                  </View>
+                </TouchableOpacity>
+              )}
+              renderChip={(id, onClose, item, style, iconStyle) => (
+
+                <Chip
+                  key={id}
+                  iconStyle={iconStyle}
+                  onClose={onClose}
+                  text={item.label}
+                  style={style}
+                />
+              )}
+              filterOnKey="name"
+              keyboardShouldPersistTaps
+              inputContainerStyle={[styles.inputContainer, inputContainerStyle]}
+            />
+          </Col>
+        </Row>
+      );
     }
 }
 
@@ -110,15 +106,15 @@ MultiSelect.propTypes = {
   // Config
   items: PropTypes.arrayOf(
     PropTypes.shape({
-      label: PropTypes.string, 
-      value: PropTypes.string,       
-    })
+      label: PropTypes.string,
+      value: PropTypes.string,
+    }),
   ),
   selectedItems: PropTypes.arrayOf(
     PropTypes.shape({
-      label: PropTypes.string, 
-      value: PropTypes.string,       
-    })
+      label: PropTypes.string,
+      value: PropTypes.string,
+    }),
   ),
   placeholder: PropTypes.string,
 };

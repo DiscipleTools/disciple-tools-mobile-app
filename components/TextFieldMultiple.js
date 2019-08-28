@@ -9,9 +9,6 @@ import {
 import { Icon, Input } from 'native-base';
 import { Col, Row } from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
-import Colors from '../constants/Colors';
-
-import i18n from '../languages';
 
 const styles = StyleSheet.create({
 
@@ -170,10 +167,10 @@ TextFieldMultiple.propTypes = {
   // Config
   textInputValue: PropTypes.arrayOf(
     PropTypes.shape({
-      key: PropTypes.number, 
-      value: PropTypes.string, 
-      delete: PropTypes.bool
-    })
+      key: PropTypes.number,
+      value: PropTypes.string,
+      delete: PropTypes.bool,
+    }),
   ),
   placeholder: PropTypes.string,
   onChange: PropTypes.func.isRequired,

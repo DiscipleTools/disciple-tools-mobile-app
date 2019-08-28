@@ -33,16 +33,17 @@ const styles = StyleSheet.create({
 
 storiesOf('Single Select', module)
   .addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
-   .add('ًBasic', () => (
+  .add('ًBasic', () => (
     <SingleSelect
       items={[
-        { label: "", value: "not-set" }, 
-        { label: "Male" , value: "male"} ,
-        { label: "Female", value: "female"}
+        { label: '', value: 'not-set' },
+        { label: 'Male', value: 'male' },
+        { label: 'Female', value: 'female' },
       ]}
-      selectedItem= "male"
-      onChange= {()=>{}}
-    />  ))
+      selectedItem="male"
+      onChange={() => {}}
+    />
+  ))
 
   .add('ًWith form', () => (
     <FormField
@@ -52,14 +53,14 @@ storiesOf('Single Select', module)
       iconStyle={styles.customIcon}
       inline
     >
-    <SingleSelect
-      items={[
-        { label: "", value: "not-set" }, 
-        { label: "Male" , value: "male"} ,
-        { label: "Female", value: "female"}
-      ]}
-      selectedItem= "male"
-      onChange= {()=>{}}
-    />
+      <SingleSelect
+        items={[
+          { label: '', value: 'not-set' },
+          { label: 'Male', value: 'male' },
+          { label: 'Female', value: 'female' },
+        ]}
+        selectedItem="male"
+        onChange={() => {}}
+      />
     </FormField>
-))
+  ));

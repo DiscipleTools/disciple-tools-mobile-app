@@ -70,9 +70,9 @@ describe('onRemoveItem', () => {
   it('removes item 1 of 3', () => {
     const wrapper = shallow(<TextFieldMultiple
       textInputValue={[
-        {value:"432", key:"234"},
-        {value:"2345", key:"213"},
-        {value:"653", key:"323"}
+        {value:"432", key:234},
+        {value:"2345", key:213},
+        {value:"653", key:323}
       ]}
     />);
     const instance = wrapper.instance();
@@ -90,9 +90,9 @@ describe('onRemoveItem', () => {
   it('removes item 3 of 3', () => {
     const wrapper = shallow(<TextFieldMultiple
       textInputValue={[
-        {value:"432", key:"234"},
-        {value:"2345", key:"213"},
-        {value:"653", key:"323"}
+        {value:"432", key:234},
+        {value:"2345", key:213},
+        {value:"653", key:323}
       ]}
     />);
     const instance = wrapper.instance();
@@ -110,7 +110,7 @@ describe('onRemoveItem', () => {
   it('removes item 1 of 1', () => {
     const wrapper = shallow(<TextFieldMultiple
       textInputValue={[
-        {value:"432", key:"234"}
+        {value:"432", key:234}
       ]}
     />);
     const instance = wrapper.instance();
@@ -124,10 +124,10 @@ describe('onRemoveItem', () => {
   it('removes item 1 of 3 with deleted', () => {
     const wrapper = shallow(<TextFieldMultiple
       textInputValue={[
-        {value:"432", key:"234"},
-        {value:"2345", key:"213"},
-        {value:"653", key:"323", delete:true},
-        {value:"653", key:"323"}
+        {value:"432", key:234},
+        {value:"2345", key:213},
+        {value:"653", key:323, delete:true},
+        {value:"653", key:323}
       ]}
     />);
     const instance = wrapper.instance();
@@ -147,10 +147,10 @@ describe('onRemoveItem', () => {
   it('removes item 3 of 3 with deleted', () => {
     const wrapper = shallow(<TextFieldMultiple
       textInputValue={[
-        {value:"432", key:"234"},
-        {value:"2345", key:"213"},
-        {value:"653", key:"323", delete:true},
-        {value:"653", key:"323"}
+        {value:"432", key:234},
+        {value:"2345", key:213},
+        {value:"653", key:323, delete:true},
+        {value:"653", key:323}
       ]}
     />);
     const instance = wrapper.instance();
@@ -170,7 +170,7 @@ describe('onRemoveItem', () => {
   it('removes item 1 of 1 with deleted', () => {
     const wrapper = shallow(<TextFieldMultiple
       textInputValue={[
-        {value:"653", key:"323", delete:true},
+        {value:"653", key:323, delete:true},
       ]}
     />);
     const instance = wrapper.instance();

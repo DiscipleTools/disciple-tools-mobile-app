@@ -6,7 +6,6 @@ import {
 } from 'react-native';
 
 import { storiesOf } from '@storybook/react-native';
-import { View } from 'native-base';
 import colors from '../constants/Colors';
 import CenterView from '../storybook/stories/CenterView';
 import TextFieldMultiple from './TextFieldMultiple';
@@ -71,4 +70,4 @@ storiesOf('Form Field', module)
         textInputStyle={{ color: 'green' }}
       />
     </FormField>
-  ))
+  ));
