@@ -9,9 +9,6 @@ import { View } from 'native-base';
 import colors from '../constants/Colors';
 import CenterView from '../storybook/stories/CenterView';
 import TextFieldMultiple from './TextFieldMultiple';
-import MultiSelect from './MultiSelect';
-import SingleSelect from './SingleSelect';
-import FormField from './FormField';
 
 const styles = StyleSheet.create({
   basicContainer: {
@@ -125,4 +122,4 @@ storiesOf('Text Field Multiple', module)
         }]}
       />
     </View>
-  ))
+  ));

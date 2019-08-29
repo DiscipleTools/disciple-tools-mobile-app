@@ -10,6 +10,7 @@ describe('Initialization', () => {
   it('sets value', () => {
     const wrapper = shallow(<TextFieldMultiple
       textInputValue={[{value:"My test value"}]}
+      onChange= {()=>{}}
     />);
 
     expect(wrapper
@@ -20,6 +21,7 @@ describe('Initialization', () => {
   it('sets placeholder', () => {
     const wrapper = shallow(<TextFieldMultiple
       placeholder="Enter a value"
+      onChange= {()=>{}}
     />);
 
     expect(wrapper
@@ -28,7 +30,9 @@ describe('Initialization', () => {
   });
 
   it('sets default state', () => {
-    const wrapper = shallow(<TextFieldMultiple/>);
+    const wrapper = shallow(<TextFieldMultiple
+      onChange= {()=>{}}
+      />);
     const instance = wrapper.instance();
     expect(instance.state.values.length).toBe(1);
     expect(instance.state.values[0].value).toBe("");
@@ -45,6 +49,7 @@ describe('Initialization', () => {
   it('sets edit state', () => {
     const wrapper = shallow(<TextFieldMultiple
       textInputValue={[{value:"My test value"}]}
+      onChange= {()=>{}}
     />);
     const instance = wrapper.instance();
     expect(instance.state.values.length).toBe(2);
@@ -74,6 +79,7 @@ describe('onRemoveItem', () => {
         {value:"2345", key:213},
         {value:"653", key:323}
       ]}
+      onChange= {()=>{}}
     />);
     const instance = wrapper.instance();
     expect(instance.state.values[0].delete).toBeFalsy();
@@ -94,6 +100,7 @@ describe('onRemoveItem', () => {
         {value:"2345", key:213},
         {value:"653", key:323}
       ]}
+      onChange= {()=>{}}
     />);
     const instance = wrapper.instance();
     expect(instance.state.values[0].delete).toBeFalsy();
@@ -112,6 +119,7 @@ describe('onRemoveItem', () => {
       textInputValue={[
         {value:"432", key:234}
       ]}
+      onChange= {()=>{}}
     />);
     const instance = wrapper.instance();
     expect(instance.state.values[0].delete).toBeFalsy();
@@ -129,6 +137,7 @@ describe('onRemoveItem', () => {
         {value:"653", key:323, delete:true},
         {value:"653", key:323}
       ]}
+      onChange= {()=>{}}
     />);
     const instance = wrapper.instance();
     expect(instance.state.values[0].delete).toBeFalsy();
@@ -152,6 +161,7 @@ describe('onRemoveItem', () => {
         {value:"653", key:323, delete:true},
         {value:"653", key:323}
       ]}
+      onChange= {()=>{}}
     />);
     const instance = wrapper.instance();
     expect(instance.state.values[0].delete).toBeFalsy();
@@ -172,6 +182,7 @@ describe('onRemoveItem', () => {
       textInputValue={[
         {value:"653", key:323, delete:true},
       ]}
+      onChange= {()=>{}}
     />);
     const instance = wrapper.instance();
     expect(instance.state.values[0].delete).toBeTruthy();

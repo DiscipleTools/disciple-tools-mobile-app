@@ -14,6 +14,7 @@ describe('single select', () => {
         { label: 'Female', value: 'female' },
       ]}   
       selectedItem="male" 
+      onChange= {()=>{}}
       />);
 
     expect(wrapper

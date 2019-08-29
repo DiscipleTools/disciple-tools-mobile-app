@@ -55,7 +55,7 @@ class SingleSelectWithFilter extends Component {
     const foundItem = this.state.items.find(
       item => `item-${item.key}` === this.state.selectedItem,
     );
-    return <Text>{foundItem ? foundItem.label : 'none'}</Text>;
+    return <Text style={this.props.selectedItemStyle}>{foundItem ? foundItem.label : ''}</Text>;
   };
 
   onCancelSelectedItem = () => {
@@ -68,7 +68,6 @@ class SingleSelectWithFilter extends Component {
       const {
         containerStyle,
         inputContainerStyle,
-
       } = this.props;
 
       return (
@@ -98,6 +97,7 @@ SingleSelectWithFilter.propTypes = {
   // Styles
   containerStyle: ViewPropTypes.style,
   inputContainerStyle: Text.propTypes.style,
+  selectedItemStyle: Text.propTypes.style,
   // Config
   items: PropTypes.arrayOf(
     PropTypes.shape({
@@ -111,8 +111,9 @@ SingleSelectWithFilter.propTypes = {
 SingleSelectWithFilter.defaultProps = {
   containerStyle: null,
   inputContainerStyle: null,
+  selectedItemStyle: null,
   items: [],
-  selectedItem: [],
+  selectedItem: null,
 
 };
 export default SingleSelectWithFilter;
