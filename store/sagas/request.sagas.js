@@ -48,8 +48,8 @@ function* processRequest(request) {
     timeout: delay(REQUEST_TIMEOUT_MILLIS),
   });
   if (response) {
-    //console.log("2.3 request", request);
-    //console.log("2.4 response", response);
+    // console.log("2.3 request", request);
+    // console.log("2.4 response", response);
     if (request.action) {
       yield put({ type: request.action, payload: response });
     }
@@ -70,11 +70,11 @@ export default function* requestSaga() {
       request: take(requestChannel),
     });
     if (request) {
-      //console.log('2.1 request', request);
+      // console.log('2.1 request', request);
       // ONLINE request
       // Get current queue, compare it whit last request (if exist, fork it)
       const queue = yield select(state => state.requestReducer.queue);
-      //console.log('2.2 queue', queue);
+      // console.log('2.2 queue', queue);
       for (const action of queue) {
         if (action === request.payload) {
           // process the request
@@ -84,7 +84,7 @@ export default function* requestSaga() {
     } else if (offline) {
       // Get last request
       const { payload } = yield select(state => state.requestReducer.currentAction);
-      //console.log('2.1 payload', payload);
+      // console.log('2.1 payload', payload);
       // OFFLINE request
       if (payload && payload.data.method === 'POST' && payload.action.includes('SAVE')) {
         // Offline entity creation (send "last request" as response)

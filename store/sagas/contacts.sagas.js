@@ -78,8 +78,8 @@ export function* save({ domain, token, contactData }) {
       delete contact.ID;
     }
   }
-  //console.log('0.1 isConnected', isConnected);
-  //console.log('0.2 contactId', contactId);
+  // console.log('0.1 isConnected', isConnected);
+  // console.log('0.2 contactId', contactId);
   yield put({
     type: 'REQUEST',
     payload: {
@@ -98,7 +98,7 @@ export function* save({ domain, token, contactData }) {
   });
   try {
     let response = yield take(actions.CONTACTS_SAVE_RESPONSE);
-    //console.log("3.1 CONTACTS_SAVE_RESPONSE", response);
+    // console.log("3.1 CONTACTS_SAVE_RESPONSE", response);
     response = response.payload;
     let jsonData = response.data;
     if (isConnected) {
@@ -124,7 +124,7 @@ export function* save({ domain, token, contactData }) {
           });
           response = yield take(actions.CONTACTS_SAVE_COMMENT_RESPONSE);
           response = response.payload;
-          let jsonDataComment = response.data;
+          const jsonDataComment = response.data;
           if (response.status !== 200) {
             yield put({
               type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
@@ -135,7 +135,7 @@ export function* save({ domain, token, contactData }) {
             });
           }
         }
-        //console.log("3.2 CONTACTS_SAVE_SUCCESS online", jsonData);
+        // console.log("3.2 CONTACTS_SAVE_SUCCESS online", jsonData);
         yield put({
           type: actions.CONTACTS_SAVE_SUCCESS,
           contact: jsonData,
@@ -151,7 +151,7 @@ export function* save({ domain, token, contactData }) {
       }
     } else {
       jsonData = response;
-      //console.log('3.2 jsonData', jsonData);
+      // console.log('3.2 jsonData', jsonData);
       jsonData = {
         ...jsonData,
         sources: [jsonData.sources.values[0].value],
@@ -172,14 +172,14 @@ export function* save({ domain, token, contactData }) {
         coaching: jsonData.coaching.values, // transform value
         people_groups: jsonData.people_groups.values, // transform value
       };
-      //console.log("3.3 CONTACTS_SAVE_SUCCESS offline", jsonData);
+      // console.log("3.3 CONTACTS_SAVE_SUCCESS offline", jsonData);
       yield put({
         type: actions.CONTACTS_SAVE_SUCCESS,
         contact: jsonData,
       });
     }
   } catch (error) {
-    //console.log("3.4 error", error);
+    // console.log("3.4 error", error);
     yield put({
       type: actions.CONTACTS_SAVE_FAILURE,
       error: {
