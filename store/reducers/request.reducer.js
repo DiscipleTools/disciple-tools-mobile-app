@@ -12,19 +12,19 @@ export default function requestReducer(state = initialState, action) {
   };
   let queue = newState.queue.slice(0); // clone array before modifying it
   // console.log("action.type", action.type);
-  let actionToModify = action;
+  let actionToModify = action.payload;
   switch (action.type) {
     case actions.REQUEST:
       // Queue all requests
       if (Object.prototype.hasOwnProperty.call(action.payload, 'isConnected')) {
-        const { isConnected } = actionToModify.payload;
-        delete actionToModify.payload.isConnected;
+        const { isConnected } = actionToModify;
+        delete actionToModify.isConnected;
         if (!isConnected) {
           // If app its in OFFLINE mode, map request.
-          if (actionToModify.payload.data.method === 'POST' && actionToModify.payload.action.includes('SAVE')) {
-            let jsonBody = JSON.parse(actionToModify.payload.data.body);
+          if (actionToModify.data.method === 'POST' && actionToModify.action.includes('SAVE')) {
+            let jsonBody = JSON.parse(actionToModify.data.body);
             if (jsonBody.ID) {
-              const requestIndex = queue.findIndex(request => (actionToModify.payload.url === request.payload.url && JSON.parse(request.payload.data.body).ID === jsonBody.ID));
+              const requestIndex = queue.findIndex(request => (actionToModify.url === request.payload.url && JSON.parse(request.payload.data.body).ID === jsonBody.ID));
               if (requestIndex > -1) {
                 // Existing previous save to same entity (merge it)
                 let requestFromQueue = queue[requestIndex];
@@ -47,18 +47,15 @@ export default function requestReducer(state = initialState, action) {
               /* eslint-enable */
               actionToModify = {
                 ...actionToModify,
-                payload: {
-                  ...actionToModify.payload,
-                  data: {
-                    ...actionToModify.payload.data,
-                    body: JSON.stringify(jsonBody),
-                  },
+                data: {
+                  ...actionToModify.data,
+                  body: JSON.stringify(jsonBody),
                 },
               };
             }
-          } else if (actionToModify.payload.data.method === 'GET') {
+          } else if (actionToModify.data.method === 'GET') {
             // filter out redundant GET requests
-            queue = queue.filter(existing => existing.payload.url !== actionToModify.payload.url);
+            queue = queue.filter(existing => existing.payload.url !== actionToModify.url);
           }
         }
       }
@@ -67,11 +64,11 @@ export default function requestReducer(state = initialState, action) {
         queue: [...queue, actionToModify],
         currentAction: actionToModify,
       };
-      // console.log('adding to queue...'/* , actionToModify */);
+      console.log('1.1 adding to queue...' , actionToModify );
       return newState;
     case actions.RESPONSE:
       // loop through every item in local storage and filter out the successful request
-      // console.log('removing of queue...'/* , action */);
+      console.log('1.2 removing of queue...' , action );
       newState = {
         ...newState,
         queue: queue.filter(request => request === action.payload),

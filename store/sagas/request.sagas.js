@@ -43,16 +43,15 @@ function* sendRequest(url, data) {
 }
 
 function* processRequest(request) {
-  // console.log('request: ', request.payload.url);
   const { response, timeout } = yield race({
-    response: call(sendRequest, request.payload.url, request.payload.data),
+    response: call(sendRequest, request.url, request.data),
     timeout: delay(REQUEST_TIMEOUT_MILLIS),
   });
   if (response) {
-    // console.log(`response: ${request.payload.url}`);
-    if (request.payload.action) {
-      // console.log("response", response);
-      yield put({ type: request.payload.action, payload: response });
+    //console.log("2.3 request", request);
+    //console.log("2.4 response", response);
+    if (request.action) {
+      yield put({ type: request.action, payload: response });
     }
     // Dispatch action 'RESPONSE' to remove request from queue
     yield put({ type: 'RESPONSE', payload: request });
@@ -70,27 +69,27 @@ export default function* requestSaga() {
       offline: take(offlineChannel),
       request: take(requestChannel),
     });
-    // console.log('request', request);
-    // console.log('offline', offline);
     if (request) {
+      //console.log('2.1 request', request);
       // ONLINE request
       // Get current queue, compare it whit last request (if exist, fork it)
       const queue = yield select(state => state.requestReducer.queue);
-      // console.log('queue', queue);
+      //console.log('2.2 queue', queue);
       for (const action of queue) {
-        if (action === request) {
+        if (action === request.payload) {
           // process the request
-          yield fork(processRequest, request);
+          yield fork(processRequest, request.payload);
         }
       }
     } else if (offline) {
       // Get last request
       const { payload } = yield select(state => state.requestReducer.currentAction);
-      // console.log('payload', payload);
+      //console.log('2.1 payload', payload);
       // OFFLINE request
       if (payload && payload.data.method === 'POST' && payload.action.includes('SAVE')) {
         // Offline entity creation (send "last request" as response)
         /* eslint-disable */
+        //console.log('2.2 send custom response', { type: payload.action, payload: JSON.parse(payload.data.body) });
         yield put({ type: payload.action, payload: JSON.parse(payload.data.body) });
 
         //Add new entity to collection
