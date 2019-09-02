@@ -223,7 +223,7 @@ class ContactDetailScreen extends React.Component {
       contact_phone: [],
       contact_email: [],
       contact_address: [],
-      geonames: {
+      location_grid: {
         values: [],
       },
       subassigned: {
@@ -521,8 +521,10 @@ class ContactDetailScreen extends React.Component {
       commentsOffset: 0,
       activitiesOffset: 0,
     }, () => {
-      this.getContactComments(contactId);
-      this.getContactActivities(contactId);
+      if (this.props.isConnected) {
+        this.getContactComments(contactId);
+        this.getContactActivities(contactId);
+      }
     });
   }
 
@@ -687,7 +689,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   setGeonames = () => {
-    const dbGeonames = [...this.state.contact.geonames.values];
+    const dbGeonames = [...this.state.contact.location_grid.values];
 
     const localGeonames = [];
     const selectedValues = geonamesSelectizeRef.getSelectedItems();
@@ -823,8 +825,8 @@ class ContactDetailScreen extends React.Component {
       };
     } else {
       contactToSave = JSON.parse(JSON.stringify(this.state.contact));
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'geonames') && geonamesSelectizeRef) {
-        contactToSave.geonames.values = this.setGeonames();
+      if (Object.prototype.hasOwnProperty.call(contactToSave, 'location_grid') && geonamesSelectizeRef) {
+        contactToSave.location_grid.values = this.setGeonames();
       }
       if (Object.prototype.hasOwnProperty.call(contactToSave, 'subassigned') && subAssignedSelectizeRef) {
         contactToSave.subassigned.values = this.setContactSubassignedContacts();
@@ -2069,7 +2071,7 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.geonames.values.map(geoname => `${geoname.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.location_grid.values.map(geoname => `${geoname.name}, `)}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -3019,7 +3021,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { geonamesSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.geonames}
-                                      selectedItems={this.state.contact.geonames.values}
+                                      selectedItems={this.state.contact.location_grid.values}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.selectLocations'),
                                       }}
@@ -4097,7 +4099,7 @@ class ContactDetailScreen extends React.Component {
                               ref={(selectize) => { geonamesSelectizeRef = selectize; }}
                               itemId="value"
                               items={this.state.geonames}
-                              selectedItems={this.state.contact.geonames.values}
+                              selectedItems={this.state.contact.location_grid.values}
                               textInputProps={{
                                 placeholder: i18n.t('contactDetailScreen.selectLocations'),
                               }}
@@ -4220,6 +4222,7 @@ ContactDetailScreen.propTypes = {
   saveComment: PropTypes.func.isRequired,
   getActivities: PropTypes.func.isRequired,
   saved: PropTypes.bool,
+  isConnected: PropTypes.bool,
 };
 
 ContactDetailScreen.defaultProps = {
@@ -4228,6 +4231,7 @@ ContactDetailScreen.defaultProps = {
   newComment: null,
   contactsReducerError: null,
   saved: null,
+  isConnected: null,
 };
 
 const mapStateToProps = state => ({
@@ -4244,6 +4248,7 @@ const mapStateToProps = state => ({
   contactsReducerError: state.contactsReducer.error,
   loading: state.contactsReducer.loading,
   saved: state.contactsReducer.saved,
+  isConnected: state.networkConnectivityReducer.isConnected,
 });
 
 const mapDispatchToProps = dispatch => ({

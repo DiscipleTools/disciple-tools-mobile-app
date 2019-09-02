@@ -299,7 +299,7 @@ const initialState = {
     coaches: {
       values: [],
     },
-    geonames: {
+    location_grid: {
       values: [],
     },
     people_groups: {
@@ -946,7 +946,7 @@ class GroupDetailScreen extends React.Component {
   };
 
   setGeonames = () => {
-    const dataBaseGeonames = [...this.state.group.geonames.values];
+    const dataBaseGeonames = [...this.state.group.location_grid.values];
 
     const localGeonames = [];
     const selectedValues = geonamesSelectizeRef.getSelectedItems();
@@ -1088,8 +1088,8 @@ class GroupDetailScreen extends React.Component {
     if (Object.prototype.hasOwnProperty.call(groupToSave, 'coaches') && coachesSelectizeRef) {
       groupToSave.coaches.values = this.setCoaches();
     }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'geonames') && geonamesSelectizeRef) {
-      groupToSave.geonames.values = this.setGeonames();
+    if (Object.prototype.hasOwnProperty.call(groupToSave, 'location_grid') && geonamesSelectizeRef) {
+      groupToSave.location_grid.values = this.setGeonames();
     }
     if (Object.prototype.hasOwnProperty.call(groupToSave, 'people_groups') && peopleGroupsSelectizeRef) {
       groupToSave.people_groups.values = this.setPeopleGroups();
@@ -1848,7 +1848,7 @@ class GroupDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.group.geonames.values.map(geoname => `${geoname.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.group.location_grid.values.map(geoname => `${geoname.name}, `)}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2460,7 +2460,7 @@ class GroupDetailScreen extends React.Component {
                                       ref={(selectize) => { geonamesSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.geonames}
-                                      selectedItems={this.state.group.geonames.values}
+                                      selectedItems={this.state.group.location_grid.values}
                                       textInputProps={{
                                         placeholder: i18n.t('groupDetailScreen.selectGeonames'),
                                       }}

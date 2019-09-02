@@ -22,31 +22,29 @@ export function* getAll({ domain, token }) {
   });
 
   try {
-    const res = yield take(actions.GROUPS_GETALL_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        yield put({
-          type: actions.GROUPS_GETALL_SUCCESS,
-          groups: jsonData.posts,
-        });
-      } else {
-        yield put({
-          type: actions.GROUPS_GETALL_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-          },
-        });
-      }
+    let response = yield take(actions.GROUPS_GETALL_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_GETALL_SUCCESS,
+        groups: jsonData.posts,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_GETALL_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({
       type: actions.GROUPS_GETALL_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -54,7 +52,7 @@ export function* getAll({ domain, token }) {
 
 export function* saveGroup({ domain, token, groupData }) {
   yield put({ type: actions.GROUPS_SAVE_START });
-  let group = groupData;
+  const group = groupData;
   const urlPart = group.ID ? group.ID : '';
   delete group.ID;
   yield put({
@@ -64,7 +62,7 @@ export function* saveGroup({ domain, token, groupData }) {
       data: {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(group),
@@ -74,32 +72,29 @@ export function* saveGroup({ domain, token, groupData }) {
   });
 
   try {
-    const responseAction = yield take(actions.GROUPS_SAVE_RESPONSE);
-    if (responseAction) {
-      const response = responseAction.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        group = jsonData;
-        yield put({
-          type: actions.GROUPS_SAVE_SUCCESS,
-          group: jsonData,
-        });
-      } else {
-        yield put({
-          type: actions.GROUPS_SAVE_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-          },
-        });
-      }
+    let response = yield take(actions.GROUPS_SAVE_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_SAVE_SUCCESS,
+        group: jsonData,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_SAVE_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({
       type: actions.GROUPS_SAVE_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -124,32 +119,29 @@ export function* getById({ domain, token, groupId }) {
   });
 
   try {
-    const res = yield take(actions.GROUPS_GETBYID_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        yield put({
-          type: actions.GROUPS_GETBYID_SUCCESS,
-          group: jsonData,
-        });
-      } else {
-        yield put({
-          type: actions.GROUPS_GETBYID_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-            data: jsonData.data,
-          },
-        });
-      }
+    let response = yield take(actions.GROUPS_GETBYID_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_GETBYID_SUCCESS,
+        group: jsonData,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_GETBYID_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({
       type: actions.GROUPS_GETBYID_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -157,7 +149,7 @@ export function* getById({ domain, token, groupId }) {
 
 export function* getUsersAndContacts({ domain, token }) {
   yield put({ type: actions.GROUPS_GET_USERS_CONTACTS_START });
-  // get all groups
+
   yield put({
     type: 'REQUEST',
     payload: {
@@ -174,32 +166,29 @@ export function* getUsersAndContacts({ domain, token }) {
   });
 
   try {
-    const res = yield take(actions.GROUPS_GET_USERS_CONTACTS_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        yield put({
-          type: actions.GROUPS_GET_USERS_CONTACTS_SUCCESS,
-          usersContacts: jsonData.posts,
-        });
-      } else {
-        yield put({
-          type: actions.GROUPS_GET_USERS_CONTACTS_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-            data: jsonData.data,
-          },
-        });
-      }
+    let response = yield take(actions.GROUPS_GET_USERS_CONTACTS_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_GET_USERS_CONTACTS_SUCCESS,
+        usersContacts: jsonData.posts,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_GET_USERS_CONTACTS_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({
       type: actions.GROUPS_GET_USERS_CONTACTS_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -226,33 +215,30 @@ export function* getCommentsByGroup({
   });
 
   try {
-    const res = yield take(actions.GROUPS_GET_COMMENTS_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        yield put({
-          type: actions.GROUPS_GET_COMMENTS_SUCCESS,
-          comments: jsonData.comments,
-          total: jsonData.total,
-        });
-      } else {
-        yield put({
-          type: actions.GROUPS_GET_COMMENTS_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-            data: jsonData.data,
-          },
-        });
-      }
+    let response = yield take(actions.GROUPS_GET_COMMENTS_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_GET_COMMENTS_SUCCESS,
+        comments: jsonData.comments,
+        total: jsonData.total,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_GET_COMMENTS_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({
       type: actions.GROUPS_GET_COMMENTS_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -270,7 +256,7 @@ export function* saveComment({
       data: {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(commentData),
@@ -280,32 +266,29 @@ export function* saveComment({
   });
 
   try {
-    const res = yield take(actions.GROUPS_SAVE_COMMENT_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        yield put({
-          type: actions.GROUPS_SAVE_COMMENT_SUCCESS,
-          comment: jsonData,
-        });
-      } else {
-        yield put({
-          type: actions.GROUPS_SAVE_COMMENT_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-            data: jsonData.data,
-          },
-        });
-      }
+    let response = yield take(actions.GROUPS_SAVE_COMMENT_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_SAVE_COMMENT_SUCCESS,
+        comment: jsonData,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_SAVE_COMMENT_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({
       type: actions.GROUPS_SAVE_COMMENT_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -317,7 +300,7 @@ export function* getLocations({ domain, token }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt/v1/mapping_module/search_geonames_by_name?filter=all`,
+      url: `https://${domain}/wp-json/dt/v1/mapping_module/search_location_grid_by_name?filter=all`,
       data: {
         method: 'GET',
         headers: {
@@ -330,23 +313,29 @@ export function* getLocations({ domain, token }) {
   });
 
   try {
-    const res = yield take(actions.GROUPS_GET_LOCATIONS_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        yield put({
-          type: actions.GROUPS_GET_LOCATIONS_SUCCESS,
-          geonames: jsonData.geonames,
-        });
-      }
+    let response = yield take(actions.GROUPS_GET_LOCATIONS_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_GET_LOCATIONS_SUCCESS,
+        geonames: jsonData.location_grid,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_GET_LOCATIONS_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({
       type: actions.GROUPS_GET_LOCATIONS_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -371,23 +360,29 @@ export function* getPeopleGroups({ domain, token }) {
   });
 
   try {
-    const res = yield take(actions.GROUPS_GET_PEOPLE_GROUPS_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        yield put({
-          type: actions.GROUPS_GET_PEOPLE_GROUPS_SUCCESS,
-          peopleGroups: jsonData.posts,
-        });
-      }
+    let response = yield take(actions.GROUPS_GET_PEOPLE_GROUPS_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_GET_PEOPLE_GROUPS_SUCCESS,
+        peopleGroups: jsonData.posts,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_GET_PEOPLE_GROUPS_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({
       type: actions.GROUPS_GET_PEOPLE_GROUPS_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -414,33 +409,30 @@ export function* getActivitiesByGroup({
   });
 
   try {
-    const res = yield take(actions.GROUPS_GET_ACTIVITIES_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        yield put({
-          type: actions.GROUPS_GET_ACTIVITIES_SUCCESS,
-          activities: jsonData.activity,
-          total: jsonData.total,
-        });
-      } else {
-        yield put({
-          type: actions.GROUPS_GET_ACTIVITIES_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-            data: jsonData.data,
-          },
-        });
-      }
+    let response = yield take(actions.GROUPS_GET_ACTIVITIES_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_GET_ACTIVITIES_SUCCESS,
+        activities: jsonData.activity,
+        total: jsonData.total,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_GET_ACTIVITIES_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({
       type: actions.GROUPS_GET_ACTIVITIES_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -465,23 +457,21 @@ export function* searchGroups({ domain, token }) {
   });
 
   try {
-    const res = yield take(actions.GROUPS_SEARCH_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        yield put({
-          type: actions.GROUPS_SEARCH_SUCCESS,
-          search: jsonData.posts,
-        });
-      }
+    let response = yield take(actions.GROUPS_SEARCH_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_SEARCH_SUCCESS,
+        search: jsonData.posts,
+      });
     }
   } catch (error) {
     yield put({
       type: actions.GROUPS_SEARCH_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }

@@ -162,9 +162,9 @@ export default function groupsReducer(state = initialState, action) {
               }))
               : [],
           },
-          geonames: {
-            values: group.geonames
-              ? group.geonames.map(geoname => ({
+          location_grid: {
+            values: group.location_grid
+              ? group.location_grid.map(geoname => ({
                 value: geoname.id.toString(),
                 name: geoname.label,
               }))
@@ -300,9 +300,9 @@ export default function groupsReducer(state = initialState, action) {
               }))
               : [],
           },
-          geonames: {
-            values: group.geonames
-              ? group.geonames.map(geoname => ({
+          location_grid: {
+            values: group.location_grid
+              ? group.location_grid.map(geoname => ({
                 value: geoname.id.toString(),
                 name: geoname.label,
               }))

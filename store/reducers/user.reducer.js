@@ -3,6 +3,7 @@ import * as actions from '../actions/user.actions';
 const initialState = {
   error: null,
   loading: null,
+  domain: null,
   userData: {
     domain: null,
     token: null,
@@ -17,6 +18,7 @@ export default function userReducer(state = initialState, action) {
     ...state,
     error: null,
   };
+  // console.log("action.type", action.type)
   switch (action.type) {
     case actions.USER_LOGIN_START:
       return {

@@ -102,9 +102,9 @@ export default function contactsReducer(state = initialState, action) {
               }))
               : [],
           },
-          geonames: {
-            values: contact.geonames
-              ? contact.geonames.map(geoname => ({
+          location_grid: {
+            values: contact.location_grid
+              ? contact.location_grid.map(geoname => ({
                 name: geoname.label,
                 value: geoname.id.toString(),
               }))
@@ -247,7 +247,7 @@ export default function contactsReducer(state = initialState, action) {
       newState = {
         ...newState,
         contact: {
-          ID: contact.ID,
+          ID: contact.ID.toString(),
           title: contact.title,
           contact_phone: contact.contact_phone
             ? contact.contact_phone
@@ -293,9 +293,9 @@ export default function contactsReducer(state = initialState, action) {
               }))
               : [],
           },
-          geonames: {
-            values: contact.geonames
-              ? contact.geonames.map(geoname => ({
+          location_grid: {
+            values: contact.location_grid
+              ? contact.location_grid.map(geoname => ({
                 name: geoname.label,
                 value: geoname.id.toString(),
               }))

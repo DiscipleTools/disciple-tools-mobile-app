@@ -8,58 +8,94 @@ import {
 
 const REQUEST_TIMEOUT_MILLIS = 4000;
 
-function* processRequest(req) { // reqChannel) {
-  // race 'fetch' against a timeout
-  const { timeout, res } = yield race({
-    res: call(fetch, req.payload.url, req.payload.data),
+function* sendRequest(url, data) {
+  const request = yield fetch(url, data)
+    .then((response) => {
+      if (response.status >= 200 && response.status < 300) {
+        return response;
+      }
+      throw response;
+    })
+    .then(response => response.json())
+    .then(response => ({
+      status: 200,
+      data: response,
+    }))
+    .catch((error) => {
+      if (typeof error.json === 'function') {
+        return error.json().then(errorJSON => ({
+          status: errorJSON.data.status,
+          data: {
+            code: errorJSON.code,
+            message: errorJSON.message,
+          },
+        }));
+      }
+      return {
+        status: 400,
+        data: {
+          code: 400,
+          message: error.toString(),
+        },
+      };
+    });
+  return request;
+}
+
+function* processRequest(request) {
+  //console.log('request: ', request.payload.url);
+  const { response, timeout } = yield race({
+    response: call(sendRequest, request.payload.url, request.payload.data),
     timeout: delay(REQUEST_TIMEOUT_MILLIS),
   });
-  if (res) {
-    // TODO: replace with channel (to preserve order)?
-    if (req.payload.action) {
-      yield put({ type: req.payload.action, payload: res });
+  if (response) {
+    //console.log(`response: ${request.payload.url}`);
+    if (request.payload.action) {
+      // console.log("response", response);
+      yield put({ type: request.payload.action, payload: response });
     }
-    yield put({ type: 'RESPONSE', payload: { req, res } });
-  }
-  if (timeout) {
+    // Dispatch action 'RESPONSE' to remove request from queue
+    yield put({ type: 'RESPONSE', payload: request });
+  } else if (timeout) {
     yield put({ type: 'OFFLINE' });
   }
 }
 
 export default function* requestSaga() {
   // buffer all incoming requests
-  const requestChannel = yield actionChannel('REQUEST'); // call(channel);
+  const requestChannel = yield actionChannel('REQUEST');
   const offlineChannel = yield actionChannel('OFFLINE');
-  // enqueue when offline, fork when online
   while (true) {
     const { offline, request } = yield race({
       offline: take(offlineChannel),
       request: take(requestChannel),
     });
-    if (offline) {
-      const { payload } = yield take(requestChannel);
-      if (payload && payload.data.method === 'POST' && payload.action.includes('SAVE')) {
-        // If entity creation
-        /* eslint-disable */
-        const { payload } = yield select(state => state.requestReducer.currentAction);
-        // get mapped payload
-        yield put({ type: payload.action, payload: JSON.parse(payload.data.body) });
-        /* eslint-enable */
-      }
-      // block until we come back online
-      yield take('OFFLINE');
-    } else {
-      /*
-      NOTE: compare actionChannel request with requests in requestReducer state.
-      if the request is present in the requestReducer state, then fork it,
-      otherwise skip it (bc it's an offline edit)
-      */
+    //console.log('request', request);
+    //console.log('offline', offline);
+    if (request) {
+      // ONLINE request
+      // Get current queue, compare it whit last request (if exist, fork it)
       const queue = yield select(state => state.requestReducer.queue);
+      //console.log('queue', queue);
       for (const action of queue) {
         if (action === request) {
           // process the request
           yield fork(processRequest, request);
         }
+      }
+    } else if (offline) {
+      // Get last request
+      const { payload } = yield select(state => state.requestReducer.currentAction);
+      //console.log('payload', payload);
+      // OFFLINE request
+      if (payload && payload.data.method === 'POST' && payload.action.includes('SAVE')) {
+        // Offline entity creation (send "last request" as response)
+        /* eslint-disable */
+        yield put({ type: payload.action, payload: JSON.parse(payload.data.body) });
+
+        //Add new entity to collection
+
+        /* eslint-enable */
       }
     }
   }
