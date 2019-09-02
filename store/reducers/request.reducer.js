@@ -64,11 +64,11 @@ export default function requestReducer(state = initialState, action) {
         queue: [...queue, actionToModify],
         currentAction: actionToModify,
       };
-      console.log('1.1 adding to queue...', actionToModify);
+      //console.log('1.1 adding to queue...', actionToModify);
       return newState;
     case actions.RESPONSE:
       // loop through every item in local storage and filter out the successful request
-      console.log('1.2 removing of queue...', action);
+      //console.log('1.2 removing of queue...', action);
       newState = {
         ...newState,
         queue: queue.filter(request => request === action.payload),
