@@ -54,7 +54,7 @@ export default function contactsReducer(state = initialState, action) {
       };
     case actions.CONTACTS_SAVE_SUCCESS: {
       const { contact } = action;
-      //console.log('contact', contact);
+      // console.log('contact', contact);
       newState = {
         ...newState,
         contact: {
