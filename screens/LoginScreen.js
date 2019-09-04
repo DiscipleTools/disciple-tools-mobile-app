@@ -145,9 +145,9 @@ class LoginScreen extends React.Component {
 
     this.state = {
       ...this.state,
-      username: props.userData.username || '',
-      password: '',
-      domain: props.userData.domain || '',
+      username: props.userData.username || 'hansrasch',
+      password: 'Hrasch22...',
+      domain: props.userData.domain || 'dtappdemo.wpengine.com',
       domainIsInvalid: false,
       userIsInvalid: false,
       passwordIsInvalid: false,

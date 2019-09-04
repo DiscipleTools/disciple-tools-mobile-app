@@ -12,6 +12,7 @@ export const CONTACTS_SAVE_START = 'CONTACTS_SAVE_START';
 export const CONTACTS_SAVE_SUCCESS = 'CONTACTS_SAVE_SUCCESS';
 export const CONTACTS_SAVE_RESPONSE = 'CONTACTS_SAVE_RESPONSE';
 export const CONTACTS_SAVE_FAILURE = 'CONTACTS_SAVE_FAILURE';
+export const CONTACTS_SAVE_END = 'CONTACTS_SAVE_END';
 
 export const CONTACTS_GETBYID = 'CONTACTS_GETBYID';
 export const CONTACTS_GETBYID_START = 'CONTACTS_GETBYID_START';
@@ -55,6 +56,12 @@ export function save(domain, token, contactData) {
     domain,
     token,
     contactData,
+  };
+}
+
+export function saveEnd() {
+  return {
+    type: CONTACTS_SAVE_END,
   };
 }
 

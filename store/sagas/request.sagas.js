@@ -9,6 +9,8 @@ import {
 const REQUEST_TIMEOUT_MILLIS = 4000;
 
 function* sendRequest(url, data) {
+  // console.log("url", url);
+  // console.log("data", data);
   const request = yield fetch(url, data)
     .then((response) => {
       if (response.status >= 200 && response.status < 300) {
@@ -43,13 +45,12 @@ function* sendRequest(url, data) {
 }
 
 function* processRequest(request) {
+  // console.log("processRequest", request)
   const { response, timeout } = yield race({
     response: call(sendRequest, request.url, request.data),
     timeout: delay(REQUEST_TIMEOUT_MILLIS),
   });
   if (response) {
-    // console.log("2.3 request", request);
-    // console.log("2.4 response", response);
     if (request.action) {
       yield put({ type: request.action, payload: response });
     }
@@ -63,38 +64,36 @@ function* processRequest(request) {
 export default function* requestSaga() {
   // buffer all incoming requests
   const requestChannel = yield actionChannel('REQUEST');
-  const offlineChannel = yield actionChannel('OFFLINE');
+  // const offlineChannel = yield actionChannel('OFFLINE');
   while (true) {
-    const { offline, request } = yield race({
-      offline: take(offlineChannel),
+    const { /* offline, */ request } = yield race({
+      // offline: take(offlineChannel),
       request: take(requestChannel),
     });
-    if (request) {
-      // console.log('2.1 request', request);
+    const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+    // console.log("isConnected", isConnected);
+    if (!isConnected) {
+      // Get last request
+      const payload = yield select(state => state.requestReducer.currentAction);
+      // console.log('OFFLINE payload', payload);
+      // OFFLINE request
+      if (payload && payload.data.method === 'POST' && payload.action.includes('SAVE')) {
+        // Offline entity creation (send "last request" as response)
+        /* eslint-disable */
+        //console.log('OFFLINE send custom response', { type: payload.action, payload: JSON.parse(payload.data.body) });
+        yield put({ type: payload.action, payload: JSON.parse(payload.data.body) });
+        //Add new entity to collection
+        /* eslint-enable */
+      }
+    } else if (request) {
       // ONLINE request
       // Get current queue, compare it whit last request (if exist, fork it)
       const queue = yield select(state => state.requestReducer.queue);
-      // console.log('2.2 queue', queue);
       for (const action of queue) {
         if (action === request.payload) {
           // process the request
           yield fork(processRequest, request.payload);
         }
-      }
-    } else if (offline) {
-      // Get last request
-      const { payload } = yield select(state => state.requestReducer.currentAction);
-      // console.log('2.1 payload', payload);
-      // OFFLINE request
-      if (payload && payload.data.method === 'POST' && payload.action.includes('SAVE')) {
-        // Offline entity creation (send "last request" as response)
-        /* eslint-disable */
-        //console.log('2.2 send custom response', { type: payload.action, payload: JSON.parse(payload.data.body) });
-        yield put({ type: payload.action, payload: JSON.parse(payload.data.body) });
-
-        //Add new entity to collection
-
-        /* eslint-enable */
       }
     }
   }

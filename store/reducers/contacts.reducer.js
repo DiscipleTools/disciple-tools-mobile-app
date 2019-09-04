@@ -27,7 +27,8 @@ export default function contactsReducer(state = initialState, action) {
     totalActivities: null,
     saved: false,
   };
-
+  // console.log('action.type', action.type);
+  // console.log('newState.saved', newState.saved);
   switch (action.type) {
     case actions.CONTACTS_GETALL_START:
       return {
@@ -53,6 +54,7 @@ export default function contactsReducer(state = initialState, action) {
       };
     case actions.CONTACTS_SAVE_SUCCESS: {
       const { contact } = action;
+      //console.log('contact', contact);
       newState = {
         ...newState,
         contact: {
@@ -230,12 +232,36 @@ export default function contactsReducer(state = initialState, action) {
           },
         };
       }
+      // console.log('newState.contacts', newState.contacts);
+      const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === contact.ID));
+      // console.log('contactIndex', contactIndex);
+      if (contactIndex === -1) {
+        newState.contacts.push({
+          ID: contact.ID,
+          post_title: contact.title,
+          overall_status: contact.overall_status.key,
+          seeker_path: contact.seeker_path.key,
+        });
+      } else {
+        newState.contacts[contactIndex] = {
+          ID: contact.ID,
+          post_title: contact.title,
+          overall_status: contact.overall_status.key,
+          seeker_path: contact.seeker_path.key,
+        };
+      }
+      // Search entity in list (contacts) if not exist, added it to contacts
       return newState;
     }
     case actions.CONTACTS_SAVE_FAILURE:
       return {
         ...newState,
         error: action.error,
+      };
+    case actions.CONTACTS_SAVE_END:
+      return {
+        ...newState,
+        saved: false,
       };
     case actions.CONTACTS_GETBYID_START:
       return {

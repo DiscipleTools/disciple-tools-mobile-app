@@ -46,6 +46,7 @@ import {
   saveComment,
   getById,
   getActivitiesByContact,
+  saveEnd,
 } from '../../store/actions/contacts.actions';
 import Colors from '../../constants/Colors';
 import hasBibleIcon from '../../assets/icons/book-bookmark.png';
@@ -391,7 +392,6 @@ class ContactDetailScreen extends React.Component {
       totalActivities: totalActivities || prevState.totalActivities,
       loadActivities: loadingActivities,
     };
-
     // NEW COMMENT
     if (newComment) {
       newState.comments.unshift(newComment);
@@ -471,6 +471,8 @@ class ContactDetailScreen extends React.Component {
     }
 
     // CONTACT SAVE / GET BY ID
+    // console.log("CONTACT SAVE -> contact", contact);
+    // console.log("(contact && prevProps.contact !== contact)", (contact && prevProps.contact !== contact))
     if (contact && prevProps.contact !== contact) {
       // Highlight Updates -> Compare prevState.contact with contact and show differences
       navigation.setParams({ contactName: contact.title });
@@ -480,6 +482,9 @@ class ContactDetailScreen extends React.Component {
     }
 
     // CONTACT SAVE
+    // console.log("prevProps.saved", prevProps.saved);
+    // console.log('this.props.saved', saved);
+    // console.log("---------------------------------------------");
     if (saved && prevProps.saved !== saved) {
       this.onRefreshCommentsActivities(contact.ID);
       toastSuccess.show(
@@ -489,6 +494,7 @@ class ContactDetailScreen extends React.Component {
         3000,
       );
       this.onDisableEdit();
+      this.props.endSaveContact();
     }
 
     // ERROR
@@ -4223,6 +4229,7 @@ ContactDetailScreen.propTypes = {
   getActivities: PropTypes.func.isRequired,
   saved: PropTypes.bool,
   isConnected: PropTypes.bool,
+  endSaveContact: PropTypes.func.isRequired,
 };
 
 ContactDetailScreen.defaultProps = {
@@ -4266,6 +4273,9 @@ const mapDispatchToProps = dispatch => ({
   },
   getActivities: (domain, token, contactId, offset, limit) => {
     dispatch(getActivitiesByContact(domain, token, contactId, offset, limit));
+  },
+  endSaveContact: () => {
+    dispatch(saveEnd());
   },
 });
 

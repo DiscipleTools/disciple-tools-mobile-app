@@ -1,6 +1,7 @@
 import {
   put, take, takeEvery, takeLatest, all, select,
 } from 'redux-saga/effects';
+
 import * as actions from '../actions/contacts.actions';
 
 export function* getAll({ domain, token }) {
@@ -61,6 +62,7 @@ export function* save({ domain, token, contactData }) {
   const { isConnected } = networkConnectivityReducer;
 
   yield put({ type: actions.CONTACTS_SAVE_START });
+
   const contact = contactData;
   let contactInitialComment;
   if (contact.initial_comment) {
@@ -69,17 +71,11 @@ export function* save({ domain, token, contactData }) {
   }
   let contactId = '';
   if (contact.ID) {
-    if (!isConnected && Number.isNaN(contact.ID)) {
-      // Offline and UUID
-      contactId = '';
-    } else if (!Number.isNaN(contact.ID)) {
-      // Online or Offline and numeric ID (db contact)
+    if (!Number.isNaN(parseFloat(contact.ID))) {
+      // Numeric ID
       contactId = contact.ID;
-      delete contact.ID;
     }
   }
-  // console.log('0.1 isConnected', isConnected);
-  // console.log('0.2 contactId', contactId);
   yield put({
     type: 'REQUEST',
     payload: {
@@ -98,9 +94,10 @@ export function* save({ domain, token, contactData }) {
   });
   try {
     let response = yield take(actions.CONTACTS_SAVE_RESPONSE);
-    // console.log("3.1 CONTACTS_SAVE_RESPONSE", response);
     response = response.payload;
     let jsonData = response.data;
+    // console.log("isConnected", isConnected);
+    // console.log("response", response);
     if (isConnected) {
       if (response.status === 200) {
         if (contactInitialComment) {
@@ -135,7 +132,6 @@ export function* save({ domain, token, contactData }) {
             });
           }
         }
-        // console.log("3.2 CONTACTS_SAVE_SUCCESS online", jsonData);
         yield put({
           type: actions.CONTACTS_SAVE_SUCCESS,
           contact: jsonData,
@@ -151,10 +147,10 @@ export function* save({ domain, token, contactData }) {
       }
     } else {
       jsonData = response;
-      // console.log('3.2 jsonData', jsonData);
+      // console.log("jsonData", jsonData);
       jsonData = {
         ...jsonData,
-        sources: [jsonData.sources.values[0].value],
+        sources: jsonData.sources.values.map(source => source.value),
         location_grid: [], // How to get tag labels in local ???
         overall_status: {
           key: '', // get and transform value
@@ -162,24 +158,23 @@ export function* save({ domain, token, contactData }) {
         seeker_path: {
           key: '', // get and transform value
         },
-        subassigned: jsonData.subassigned.values, // transform value
-        milestones: jsonData.milestones.values, // transform value
-        groups: jsonData.groups.values, // transform value
-        relation: jsonData.relation.values, // transform value
-        baptized_by: jsonData.baptized_by.values, // transform value
-        baptized: jsonData.baptized.values, // transform value
-        coached_by: jsonData.coached_by.values, // transform value
-        coaching: jsonData.coaching.values, // transform value
-        people_groups: jsonData.people_groups.values, // transform value
+        subassigned: [], // jsonData.subassigned.values, // transform value
+        milestones: [], // jsonData.milestones.values, // transform value
+        groups: [], // jsonData.groups.values, // transform value
+        relation: [], // jsonData.relation.values, // transform value
+        baptized_by: [], // jsonData.baptized_by.values, // transform value
+        baptized: [], // jsonData.baptized.values, // transform value
+        coached_by: [], // jsonData.coached_by.values, // transform value
+        coaching: [], // jsonData.coaching.values, // transform value
+        people_groups: [], // jsonData.people_groups.values, // transform value
       };
-      // console.log("3.3 CONTACTS_SAVE_SUCCESS offline", jsonData);
       yield put({
         type: actions.CONTACTS_SAVE_SUCCESS,
         contact: jsonData,
       });
     }
   } catch (error) {
-    // console.log("3.4 error", error);
+    // console.error(error);
     yield put({
       type: actions.CONTACTS_SAVE_FAILURE,
       error: {
