@@ -15,7 +15,6 @@ export default function userReducer(state = initialState, action) {
     type: action.type,
     error: null,
   };
-  console.log('userReducer:' + action.type);
   switch (action.type) {
     case actions.USER_LOGIN_START:
       return {

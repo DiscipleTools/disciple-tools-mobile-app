@@ -29,7 +29,7 @@ describe('Initialization', () => {
       .prop('placeholder')).toEqual('Enter a value');
   });
 
-  it('sets default state', () => {
+  it('sets value to empty string if value prop is undefined', () => {
     const wrapper = shallow(<TextFieldMultiple
       onChange= {()=>{}}
       />);

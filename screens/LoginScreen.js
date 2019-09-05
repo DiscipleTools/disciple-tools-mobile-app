@@ -122,7 +122,7 @@ class LoginScreen extends React.Component {
     if (props.user && props.user.token) {
       this.state = {
         ...this.state,
-        // loading: true,
+        loading: true,
       };
       this.getDataLists();
     }
@@ -156,7 +156,7 @@ class LoginScreen extends React.Component {
       case USER_LOGIN_START:
         newState = {
           ...newState,
-          // loading: true,
+          loading: true,
         };
         break;
       default:
@@ -351,9 +351,7 @@ class LoginScreen extends React.Component {
 
   // TODO: How to disable iCloud save password feature?
   render() {
-    const err = this.props.user.error ? (
-      <Text>{JSON.stringify(this.props.user.error)}</Text>
-    ) : null;
+    
     const errorToast = (
       <Toast
         ref={(toast) => {
@@ -437,7 +435,7 @@ class LoginScreen extends React.Component {
               />
               {passwordErrorMessage}
 
-              
+              {!this.state.loading && (
                 <Button
                   style={styles.signInButton}
                   onPress={this.onLoginPress}
@@ -447,7 +445,7 @@ class LoginScreen extends React.Component {
                     {i18n.t('login.login')}
                   </Text>
                 </Button>
-
+              )}
               {!this.state.loading && (
                 <TouchableOpacity
                   style={styles.forgotButton}
@@ -462,7 +460,6 @@ class LoginScreen extends React.Component {
               {!!this.state.loading && (
                 <ActivityIndicator style={{ margin: 20 }} size="small" />
               )}
-              {err}
             </View>
             {errorToast}
           </ScrollView>

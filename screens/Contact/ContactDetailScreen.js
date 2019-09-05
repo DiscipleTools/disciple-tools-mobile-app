@@ -522,7 +522,6 @@ class ContactDetailScreen extends React.Component {
   getLists = async () => {
     let newState = {};
     const users = await AsyncStorage.getItem('usersList');
-    console.log(users)
     if (users !== null) {
       newState = {
         ...newState,
