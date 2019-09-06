@@ -3,16 +3,16 @@ import createSagaMiddleware from 'redux-saga';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import reducer from './reducer';
+import rootReducer from './reducer';
 /* eslint-disable */
 import rootSaga from './sagas';
 /* eslint-enable */
 
-const persistConfig = {
+const rootPersistConfig = {
   key: 'root',
   storage,
 };
-const persistedReducer = persistReducer(persistConfig, reducer);
+const persistedReducer = persistReducer(rootPersistConfig, rootReducer);
 
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(

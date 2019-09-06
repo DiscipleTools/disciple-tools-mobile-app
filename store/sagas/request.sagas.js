@@ -9,8 +9,6 @@ import {
 const REQUEST_TIMEOUT_MILLIS = 4000;
 
 function* sendRequest(url, data) {
-  // console.log("url", url);
-  // console.log("data", data);
   const request = yield fetch(url, data)
     .then((response) => {
       if (response.status >= 200 && response.status < 300) {
@@ -45,7 +43,6 @@ function* sendRequest(url, data) {
 }
 
 function* processRequest(request) {
-  // console.log("processRequest", request)
   const { response, timeout } = yield race({
     response: call(sendRequest, request.url, request.data),
     timeout: delay(REQUEST_TIMEOUT_MILLIS),
@@ -71,19 +68,32 @@ export default function* requestSaga() {
       request: take(requestChannel),
     });
     const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
-    // console.log("isConnected", isConnected);
-    if (!isConnected) {
+    const localGetById = {
+      value: null,
+      isLocal: false,
+    };
+    if (request.payload.data.method === 'GET' && request.payload.action.includes('GETBYID')) {
+      let id = request.payload.url.split('/');
+      id = id[id.length - 1];
+      /* eslint-disable */
+      if (isNaN(id)) {
+        /* eslint-enable */
+        localGetById.value = id;
+        localGetById.isLocal = true;
+      }
+    }
+    if (!isConnected || localGetById.isLocal) {
       // Get last request
       const payload = yield select(state => state.requestReducer.currentAction);
-      // console.log('OFFLINE payload', payload);
       // OFFLINE request
       if (payload && payload.data.method === 'POST' && payload.action.includes('SAVE')) {
         // Offline entity creation (send "last request" as response)
         /* eslint-disable */
-        //console.log('OFFLINE send custom response', { type: payload.action, payload: JSON.parse(payload.data.body) });
         yield put({ type: payload.action, payload: JSON.parse(payload.data.body) });
         //Add new entity to collection
         /* eslint-enable */
+      } else if (request.payload.data.method === 'GET' && request.payload.action.includes('GETBYID')) {
+        yield put({ type: payload.action, payload: { data: { ID: localGetById.value }, status: 200 } });
       }
     } else if (request) {
       // ONLINE request

@@ -84,17 +84,17 @@ class ContactsScreen extends React.Component {
     >
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={{ fontWeight: 'bold' }}>{contact.post_title}</Text>
+          <Text style={{ fontWeight: 'bold' }}>{contact.title}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text style={styles.contactSubtitle}>
-            {i18n.t(`global.contactOverallStatus.${contact.overall_status}`)}
+            {contact.overall_status ? i18n.t(`global.contactOverallStatus.${contact.overall_status}`) : ''}
           </Text>
           <Text style={styles.contactSubtitle}>
             {' • '}
           </Text>
           <Text style={styles.contactSubtitle}>
-            {i18n.t(`global.seekerPath.${contact.seeker_path}`)}
+            {contact.seeker_path ? i18n.t(`global.seekerPath.${contact.seeker_path}`) : ''}
           </Text>
         </View>
       </View>
@@ -121,7 +121,7 @@ class ContactsScreen extends React.Component {
       this.props.navigation.push('ContactDetail', {
         contactId: contactData.ID,
         onlyView: true,
-        contactName: contactData.post_title,
+        contactName: contactData.title,
       });
     } else {
       // Create

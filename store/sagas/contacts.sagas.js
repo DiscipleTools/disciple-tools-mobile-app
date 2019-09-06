@@ -71,7 +71,9 @@ export function* save({ domain, token, contactData }) {
   }
   let contactId = '';
   if (contact.ID) {
-    if (!Number.isNaN(parseFloat(contact.ID))) {
+    /* eslint-disable */
+    if (!isNaN(contact.ID)) {
+      /* eslint-enable */
       // Numeric ID
       contactId = contact.ID;
     }
@@ -96,8 +98,6 @@ export function* save({ domain, token, contactData }) {
     let response = yield take(actions.CONTACTS_SAVE_RESPONSE);
     response = response.payload;
     let jsonData = response.data;
-    // console.log("isConnected", isConnected);
-    // console.log("response", response);
     if (isConnected) {
       if (response.status === 200) {
         if (contactInitialComment) {
@@ -147,7 +147,6 @@ export function* save({ domain, token, contactData }) {
       }
     } else {
       jsonData = response;
-      // console.log("jsonData", jsonData);
       jsonData = {
         ...jsonData,
         sources: jsonData.sources.values.map(source => source.value),
@@ -174,7 +173,6 @@ export function* save({ domain, token, contactData }) {
       });
     }
   } catch (error) {
-    // console.error(error);
     yield put({
       type: actions.CONTACTS_SAVE_FAILURE,
       error: {
@@ -286,49 +284,58 @@ export function* getCommentsByContact({
   domain, token, contactId, offset, limit,
 }) {
   yield put({ type: actions.CONTACTS_GET_COMMENTS_START });
-
-  yield put({
-    type: 'REQUEST',
-    payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments?number=${limit}&offset=${offset}`,
-      data: {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+/* eslint-disable */
+  if (isNaN(contactId)) {
+    /* eslint-enable */
+    yield put({
+      type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
+      comments: [],
+      total: 0,
+    });
+  } else {
+    yield put({
+      type: 'REQUEST',
+      payload: {
+        url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments?number=${limit}&offset=${offset}`,
+        data: {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         },
+        action: actions.CONTACTS_GET_COMMENTS_RESPONSE,
       },
-      action: actions.CONTACTS_GET_COMMENTS_RESPONSE,
-    },
-  });
+    });
 
-  try {
-    let response = yield take(actions.CONTACTS_GET_COMMENTS_RESPONSE);
-    response = response.payload;
-    const jsonData = response.data;
-    if (response.status === 200) {
-      yield put({
-        type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
-        comments: jsonData.comments,
-        total: jsonData.total,
-      });
-    } else {
+    try {
+      let response = yield take(actions.CONTACTS_GET_COMMENTS_RESPONSE);
+      response = response.payload;
+      const jsonData = response.data;
+      if (response.status === 200) {
+        yield put({
+          type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
+          comments: jsonData.comments,
+          total: jsonData.total,
+        });
+      } else {
+        yield put({
+          type: actions.CONTACTS_GET_COMMENTS_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
+      }
+    } catch (error) {
       yield put({
         type: actions.CONTACTS_GET_COMMENTS_FAILURE,
         error: {
-          code: jsonData.code,
-          message: jsonData.message,
+          code: '400',
+          message: 'Unable to process the request. Please try again later.',
         },
       });
     }
-  } catch (error) {
-    yield put({
-      type: actions.CONTACTS_GET_COMMENTS_FAILURE,
-      error: {
-        code: '400',
-        message: 'Unable to process the request. Please try again later.',
-      },
-    });
   }
 }
 
@@ -336,49 +343,58 @@ export function* getActivitiesByContact({
   domain, token, contactId, offset, limit,
 }) {
   yield put({ type: actions.CONTACTS_GET_ACTIVITIES_START });
-
-  yield put({
-    type: 'REQUEST',
-    payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/activity?number=${limit}&offset=${offset}`,
-      data: {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+/* eslint-disable */
+  if (isNaN(contactId)) {
+    /* eslint-enable */
+    yield put({
+      type: actions.CONTACTS_GET_ACTIVITIES_SUCCESS,
+      activities: [],
+      total: 0,
+    });
+  } else {
+    yield put({
+      type: 'REQUEST',
+      payload: {
+        url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/activity?number=${limit}&offset=${offset}`,
+        data: {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         },
+        action: actions.CONTACTS_GET_ACTIVITIES_RESPONSE,
       },
-      action: actions.CONTACTS_GET_ACTIVITIES_RESPONSE,
-    },
-  });
+    });
 
-  try {
-    let response = yield take(actions.CONTACTS_GET_ACTIVITIES_RESPONSE);
-    response = response.payload;
-    const jsonData = response.data;
-    if (response.status === 200) {
-      yield put({
-        type: actions.CONTACTS_GET_ACTIVITIES_SUCCESS,
-        activities: jsonData.activity,
-        total: jsonData.total,
-      });
-    } else {
+    try {
+      let response = yield take(actions.CONTACTS_GET_ACTIVITIES_RESPONSE);
+      response = response.payload;
+      const jsonData = response.data;
+      if (response.status === 200) {
+        yield put({
+          type: actions.CONTACTS_GET_ACTIVITIES_SUCCESS,
+          activities: jsonData.activity,
+          total: jsonData.total,
+        });
+      } else {
+        yield put({
+          type: actions.CONTACTS_GET_ACTIVITIES_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
+      }
+    } catch (error) {
       yield put({
         type: actions.CONTACTS_GET_ACTIVITIES_FAILURE,
         error: {
-          code: jsonData.code,
-          message: jsonData.message,
+          code: '400',
+          message: 'Unable to process the request. Please try again later.',
         },
       });
     }
-  } catch (error) {
-    yield put({
-      type: actions.CONTACTS_GET_ACTIVITIES_FAILURE,
-      error: {
-        code: '400',
-        message: 'Unable to process the request. Please try again later.',
-      },
-    });
   }
 }
 
