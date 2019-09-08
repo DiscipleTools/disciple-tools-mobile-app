@@ -5,8 +5,7 @@ import { shallow } from 'enzyme';
 import { Selectize } from 'react-native-material-selectize';
 import MultiSelect from '../MultiSelect';
 
-describe('Multi Select', () => {
-  it('Placeholder', () => {
+  it('sets placeholder', () => {
     const wrapper = shallow(<MultiSelect
       placeholder= "Select an item"
       />);
@@ -32,7 +31,7 @@ describe('Multi Select', () => {
       ]);
   });
 
-  it('select item', () => {
+  it('sets selectedItems', () => {
     const wrapper = shallow(<MultiSelect
       items={[
         { value: 'item1', label: 'Item 1' }, 
@@ -47,4 +46,3 @@ describe('Multi Select', () => {
         { value: 'item1', label: 'Item 1' }
       ]);
   });
-});

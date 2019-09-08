@@ -1435,7 +1435,6 @@ class ContactDetailScreen extends React.Component {
     const foundUser = this.state.users.find(
       user => `user-${user.key}` === this.state.contact.assigned_to,
     );    
-    console.log(this.state.users)
 
     return <Text>{foundUser ? foundUser.label : ''}</Text>;
   };

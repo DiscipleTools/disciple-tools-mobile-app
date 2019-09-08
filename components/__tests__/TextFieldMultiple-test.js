@@ -9,7 +9,7 @@ configure({ adapter: new Adapter() });
 describe('Initialization', () => {
   it('sets value', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[{value:"My test value"}]}
+      items={[{value:"My test value"}]}
       onChange= {()=>{}}
     />);
 
@@ -48,7 +48,7 @@ describe('Initialization', () => {
   });
   it('sets edit state', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[{value:"My test value"}]}
+      items={[{value:"My test value"}]}
       onChange= {()=>{}}
     />);
     const instance = wrapper.instance();
@@ -74,7 +74,7 @@ describe('Initialization', () => {
 describe('onRemoveItem', () => {
   it('removes item 1 of 3', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[
+      items={[
         {value:"432", key:234},
         {value:"2345", key:213},
         {value:"653", key:323}
@@ -95,7 +95,7 @@ describe('onRemoveItem', () => {
 
   it('removes item 3 of 3', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[
+      items={[
         {value:"432", key:234},
         {value:"2345", key:213},
         {value:"653", key:323}
@@ -116,7 +116,7 @@ describe('onRemoveItem', () => {
 
   it('removes item 1 of 1', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[
+      items={[
         {value:"432", key:234}
       ]}
       onChange= {()=>{}}
@@ -131,7 +131,7 @@ describe('onRemoveItem', () => {
 
   it('removes item 1 of 3 with deleted', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[
+      items={[
         {value:"432", key:234},
         {value:"2345", key:213},
         {value:"653", key:323, delete:true},
@@ -155,7 +155,7 @@ describe('onRemoveItem', () => {
 
   it('removes item 3 of 3 with deleted', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[
+      items={[
         {value:"432", key:234},
         {value:"2345", key:213},
         {value:"653", key:323, delete:true},
@@ -179,7 +179,7 @@ describe('onRemoveItem', () => {
   
   it('removes item 1 of 1 with deleted', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[
+      items={[
         {value:"653", key:323, delete:true},
       ]}
       onChange= {()=>{}}
@@ -196,7 +196,7 @@ describe('onRemoveItem', () => {
 describe('onFieldChange', ()=>{
   it('change item 1 of 3', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[
+      items={[
         {value:"432", index:0},
         {value:"2345", index:1},
         {value:"653", index:2}
@@ -217,7 +217,7 @@ describe('onFieldChange', ()=>{
 
   it('change item 2 of 3', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[
+      items={[
         {value:"432", index:0},
         {value:"2345", index:1},
         {value:"653", index:2}
@@ -238,7 +238,7 @@ describe('onFieldChange', ()=>{
 
   it('change item 3 of 3', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[
+      items={[
         {value:"432", index:0},
         {value:"2345", index:1},
         {value:"653", index:2}
@@ -259,7 +259,7 @@ describe('onFieldChange', ()=>{
 
   it('changes final empty item', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[
+      items={[
         {value:"432", index:0},
         {value:"2345", index:1},
         {value:"653", index:2}
@@ -281,7 +281,7 @@ describe('onFieldChange', ()=>{
 
   it('adds empty item', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[
+      items={[
         {value:"432", index:0},
         {value:"2345", index:1},
         {value:"653", index:2}
@@ -305,7 +305,7 @@ describe('onFieldChange', ()=>{
 
   it('adds empty item', () => {
     const wrapper = shallow(<TextFieldMultiple
-      textInputValue={[
+      items={[
         {value:"432", index:0},
         {value:"2345", index:1, delete:true},
         {value:"653", index:2},

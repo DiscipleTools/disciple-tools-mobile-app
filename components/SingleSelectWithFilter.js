@@ -46,14 +46,14 @@ class SingleSelectWithFilter extends Component {
   onSelectItem = (key) => {
     this.setState(prevState => ({
       ...prevState.selectedItem,
-      selectedItem: `item-${key}`,
+      selectedItem: `${key}`,
       showSelectedItemModal: false,
     }));
   };
 
   showSelectedItem = () => {
     const foundItem = this.state.items.find(
-      item => `item-${item.key}` === this.state.selectedItem,
+      item => `${item.key}` === this.state.selectedItem,
     );
     return <Text style={this.props.selectedItemStyle}>{foundItem ? foundItem.label : ''}</Text>;
   };

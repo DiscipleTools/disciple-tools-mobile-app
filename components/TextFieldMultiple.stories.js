@@ -3,7 +3,7 @@ import {
   Platform,
   StyleSheet,
 } from 'react-native';
-
+import FormField from './FormField';
 import { storiesOf } from '@storybook/react-native';
 import { View } from 'native-base';
 import colors from '../constants/Colors';
@@ -38,25 +38,31 @@ storiesOf('Text Field Multiple', module)
   .add('Basic', () => (
     <TextFieldMultiple
       placeholder="Agent name"
-      textInputValue={[{
+      items={[{
         key: 999,
-        value: 'my sample value',
+        value: 'Sample value 1',
       }, {
         key: 998,
-        value: 'you should not see this',
-        delete: true,
+        value: 'Sample value 2',
+      }, {
+        key: 998,
+        value: 'Sample value 3',
+      }, {
+        key: 998,
+        value: 'Sample value 4',
       }]}
+      onChange={()=>{}}
     />
   ))
-  .add('Styled', () => (
+
+  .add('Custom Styles', () => (
     <TextFieldMultiple
       label="Assigned to"
-      // placeholder="Enter a value"
       iconName={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
       containerStyle={{ backgroundColor: '#fff', padding: 20 }}
       iconStyle={{ color: 'red' }}
       placeholder="Agent name"
-      textInputValue={[{
+      items={[{
         key: 999,
         value: 'my sample value',
       }, {
@@ -65,17 +71,18 @@ storiesOf('Text Field Multiple', module)
       }]}
       labelStyle={{ color: 'red' }}
       textInputStyle={{ color: 'green' }}
+      onChange={()=>{}}
+
     />
   ))
   .add('ًWith deleted items', () => (
     <TextFieldMultiple
       label="Assigned to"
-      // placeholder="Enter a value"
       iconName={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
       containerStyle={{ backgroundColor: '#fff', padding: 20 }}
       iconStyle={{ color: 'red' }}
       placeholder="Agent name"
-      textInputValue={[{
+      items={[{
         key: 999,
         value: 'my sample value',
         delete: true,
@@ -85,18 +92,45 @@ storiesOf('Text Field Multiple', module)
       }]}
       labelStyle={{ color: 'red' }}
       textInputStyle={{ color: 'green' }}
+      onChange={()=>{}}
+
     />
   ))
+
+  .add('With form field', () => (
+    <FormField
+      label="Phone"
+      iconName={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
+    >
+      <TextFieldMultiple
+        placeholder="Agent name"
+        items={[{
+          key: 999,
+          value: 'Sample value 1',
+        }, {
+          key: 998,
+          value: 'Sample value 2',
+        }, {
+          key: 998,
+          value: 'Sample value 3',
+        }, {
+          key: 998,
+          value: 'Sample value 4',
+        }]}
+        onChange={()=>{}}
+      />
+    </FormField>
+  ))
+
   .add('ًMultiple items', () => (
     <View>
       <TextFieldMultiple
         label="Assigned to"
-      // placeholder="Enter a value"
         iconName={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
         containerStyle={styles.customContainer}
         iconStyle={styles.customIcon}
         placeholder="Agent name"
-        textInputValue={[{
+        items={[{
           key: 999,
           value: 'my sample value',
         }, {
@@ -104,15 +138,16 @@ storiesOf('Text Field Multiple', module)
           value: 'you should not see this',
           delete: true,
         }]}
+        onChange={()=>{}}
+
       />
       <TextFieldMultiple
         label="Assigned to"
-      // placeholder="Enter a value"
         iconName={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
         containerStyle={styles.customContainer}
         iconStyle={styles.customIcon}
         placeholder="Agent name"
-        textInputValue={[{
+        items={[{
           key: 999,
           value: 'my sample value',
         }, {
@@ -120,6 +155,8 @@ storiesOf('Text Field Multiple', module)
           value: 'you should not see this',
           delete: true,
         }]}
+        onChange={()=>{}}
+
       />
     </View>
   ));

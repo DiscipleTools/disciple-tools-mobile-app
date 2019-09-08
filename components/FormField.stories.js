@@ -50,7 +50,28 @@ storiesOf('Form Field', module)
     </FormField>
   ))
 
-  .add('form Field', () => (
+  .add('Block', () => (
+    <FormField
+      label="Assigned to"
+      iconName={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
+    >
+      <TextFieldMultiple
+        placeholder="Agent name"
+        textInputValue={[{
+          key: 999,
+          value: 'my sample value',
+        }, {
+          key: 998,
+          value: 'you should not see this',
+          delete: true,
+        }]}
+        onChange={()=>{}}
+
+      />
+    </FormField>
+  ))
+
+  .add('Block Custom Styles', () => (
     <FormField
       label="Assigned to"
       iconName={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
@@ -68,6 +89,8 @@ storiesOf('Form Field', module)
           delete: true,
         }]}
         textInputStyle={{ color: 'green' }}
+        onChange={()=>{}}
+
       />
     </FormField>
-  ));
+  ))

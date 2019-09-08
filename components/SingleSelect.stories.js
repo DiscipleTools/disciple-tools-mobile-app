@@ -45,6 +45,31 @@ storiesOf('Single Select', module)
     />
   ))
 
+  .add('Unselected', () => (
+    <SingleSelect
+      items={[
+        { label: '', value: 'not-set' },
+        { label: 'Male', value: 'male' },
+        { label: 'Female', value: 'female' },
+      ]}
+      onChange={() => {}}
+    />
+  ))
+
+  .add('Custom Styles', () => (
+    <SingleSelect
+      items={[
+        { label: '', value: 'not-set' },
+        { label: 'Male', value: 'male' },
+        { label: 'Female', value: 'female' },
+      ]}
+      selectedItem="male"
+      containerStyle= {styles.basicContainer}
+      formStyle= {{backgroundColor:'red'}}
+      onChange={() => {}}
+    />
+  ))
+
   .add('ًWith form', () => (
     <FormField
       label="Gender"

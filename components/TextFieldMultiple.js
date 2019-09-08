@@ -43,15 +43,15 @@ const styles = StyleSheet.create({
 class TextFieldMultiple extends Component {
   constructor(props) {
     super(props);
-    const { textInputValue } = this.props;
-    const existValues = (textInputValue || []).filter(value => !value.delete);
+    const { items } = this.props;
+    const existValues = (items || []).filter(value => !value.delete);
     if (!existValues || !existValues.length || existValues[existValues.length - 1].value) {
-      textInputValue.push({
+      items.push({
         value: '',
       });
     }
     this.state = {
-      values: props.textInputValue,
+      values: props.items,
     };
   }
 
@@ -77,7 +77,7 @@ class TextFieldMultiple extends Component {
         prevValues,
       };
     });
-    this.props.onChange(value);
+    this.props.onChange(values);
   }
 
   onRemoveField(index) {
@@ -103,6 +103,8 @@ class TextFieldMultiple extends Component {
     this.setState({
       values,
     });
+    this.props.onChange(values, textField);
+
   }
 
     render = () => {
@@ -165,7 +167,7 @@ TextFieldMultiple.propTypes = {
   containerStyle: ViewPropTypes.style,
   textInputStyle: Text.propTypes.style,
   // Config
-  textInputValue: PropTypes.arrayOf(
+  items: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.number,
       value: PropTypes.string,
@@ -180,7 +182,7 @@ TextFieldMultiple.propTypes = {
 TextFieldMultiple.defaultProps = {
   containerStyle: null,
   textInputStyle: null,
-  textInputValue: [],
+  items: [],
   placeholder: null,
 
 };

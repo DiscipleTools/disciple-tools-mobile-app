@@ -13,7 +13,7 @@ it('sets items', () => {
       { key: 3, label: 'Second test' }, 
       { key: 2, label: 'Third text' }
     ]}
-    selectedItem= {`item-4`}
+    selectedItem= {`4`}
     />);
 
 expect(wrapper
@@ -31,7 +31,7 @@ it('sets selected item', () => {
       { key: 3, label: 'Second test' }, 
       { key: 2, label: 'Third text' }
     ]}
-    selectedItem= {`item-4`}
+    selectedItem= {`4`}
     />);
     
 expect(wrapper
