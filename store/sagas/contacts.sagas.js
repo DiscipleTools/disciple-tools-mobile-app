@@ -150,7 +150,7 @@ export function* save({ domain, token, contactData }) {
       jsonData = {
         ...jsonData,
         sources: jsonData.sources.values.map(source => source.value),
-        location_grid: [], // How to get tag labels in local ???
+        location_grid: [], // get labels in local lists
         overall_status: {
           key: '', // get and transform value
         },
@@ -284,7 +284,7 @@ export function* getCommentsByContact({
   domain, token, contactId, offset, limit,
 }) {
   yield put({ type: actions.CONTACTS_GET_COMMENTS_START });
-/* eslint-disable */
+  /* eslint-disable */
   if (isNaN(contactId)) {
     /* eslint-enable */
     yield put({
@@ -343,7 +343,7 @@ export function* getActivitiesByContact({
   domain, token, contactId, offset, limit,
 }) {
   yield put({ type: actions.CONTACTS_GET_ACTIVITIES_START });
-/* eslint-disable */
+  /* eslint-disable */
   if (isNaN(contactId)) {
     /* eslint-enable */
     yield put({

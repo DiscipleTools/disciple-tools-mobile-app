@@ -134,20 +134,11 @@ class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
 
-    // User is authenticated (logged)
-    if (props.userData && props.userData.token) {
-      this.state = {
-        ...this.state,
-        loading: true,
-      };
-      this.getDataLists();
-    }
-
     this.state = {
       ...this.state,
-      username: props.userData.username || 'hansrasch',
+      username: props.userData.username || '',
       password: 'Hrasch22...',
-      domain: props.userData.domain || 'dtappdemo.wpengine.com',
+      domain: props.userData.domain || '',
       domainIsInvalid: false,
       userIsInvalid: false,
       passwordIsInvalid: false,
@@ -190,6 +181,21 @@ class LoginScreen extends React.Component {
     }
 
     return newState;
+  }
+
+  componentDidMount() {
+    // User is authenticated (logged)
+    if (this.props.userData && this.props.userData.token) {
+      this.state = {
+        ...this.state,
+        loading: true,
+      };
+      if (this.props.isConnected) {
+        this.getDataLists();
+      } else {
+        this.setState({ listsRetrieved: 0 });
+      }
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -518,6 +524,7 @@ LoginScreen.propTypes = {
     isRTL: PropTypes.bool,
     init: PropTypes.func,
   }).isRequired,
+  isConnected: PropTypes.bool,
 };
 LoginScreen.defaultProps = {
   userData: {
@@ -530,6 +537,7 @@ LoginScreen.defaultProps = {
   userReducerError: null,
   groupsReducerError: null,
   usersReducerError: null,
+  isConnected: null,
 };
 const mapStateToProps = state => ({
   userData: state.userReducer.userData,
@@ -545,6 +553,7 @@ const mapStateToProps = state => ({
   users: state.usersReducer.users,
   usersReducerError: state.usersReducer.error,
   i18n: state.i18nReducer,
+  isConnected: state.networkConnectivityReducer.isConnected,
 });
 const mapDispatchToProps = dispatch => ({
   loginDispatch: (domain, username, password) => {

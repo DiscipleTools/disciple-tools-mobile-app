@@ -12,18 +12,15 @@ import * as Icon from '@expo/vector-icons';
 import * as Font from 'expo-font';
 import { Asset } from 'expo-asset';
 import { Provider } from 'react-redux';
-import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import Reactotron from 'reactotron-react-native';
 
 import AppNavigator from './navigation/AppNavigator';
-import store from './store/store';
+import { store, persistor } from './store/store';
 import i18n from './languages';
 
 import { setNetworkConnectivity } from './store/actions/networkConnectivity.actions';
 
-
-const persistor = persistStore(store);
 
 // Styles
 const styles = StyleSheet.create({
