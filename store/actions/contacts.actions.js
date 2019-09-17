@@ -19,6 +19,7 @@ export const CONTACTS_GETBYID_START = 'CONTACTS_GETBYID_START';
 export const CONTACTS_GETBYID_SUCCESS = 'CONTACTS_GETBYID_SUCCESS';
 export const CONTACTS_GETBYID_RESPONSE = 'CONTACTS_GETBYID_RESPONSE';
 export const CONTACTS_GETBYID_FAILURE = 'CONTACTS_GETBYID_FAILURE';
+export const CONTACTS_GETBYID_END = 'CONTACTS_GETBYID_END';
 
 export const CONTACTS_GET_COMMENTS = 'CONTACTS_GET_COMMENTS';
 export const CONTACTS_GET_COMMENTS_START = 'CONTACTS_GET_COMMENTS_START';
@@ -71,6 +72,12 @@ export function getById(domain, token, contactId) {
     domain,
     token,
     contactId,
+  };
+}
+
+export function getByIdEnd() {
+  return {
+    type: CONTACTS_GETBYID_END,
   };
 }
 

@@ -1,7 +1,7 @@
 // Imports: Dependencies
 import { AsyncStorage } from 'react-native';
 import { createStore, applyMiddleware } from 'redux';
-import { persistStore, persistReducer } from 'redux-persist';
+import { persistStore, persistReducer, createTransform } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
 import hardSet from 'redux-persist/es/stateReconciler/hardSet';
 
@@ -13,6 +13,22 @@ const sagaMiddleware = createSagaMiddleware();
 
 // Middleware
 const middleware = [sagaMiddleware];
+
+// Transform (reset loading property from states to false)
+const transformState = createTransform(
+  state => ({ ...state }),
+  (state) => {
+    if (state.loading) {
+      return {
+        ...state,
+        loading: false,
+      };
+    }
+    return {
+      ...state,
+    };
+  },
+);
 
 // Middleware: Redux Persist Config
 const persistConfig = {
@@ -29,6 +45,9 @@ const persistConfig = {
     'counterReducer',
   ], */
   stateReconciler: hardSet,
+  transforms: [
+    transformState,
+  ],
 };
 
 // Middleware: Redux Persist Persisted Reducer

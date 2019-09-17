@@ -384,27 +384,22 @@ export default function contactsReducer(state = initialState, action) {
         };
       }
       const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === contact.ID));
-      if (contactIndex === -1) {
-        newState.contacts.unshift({
-          ...newState.contact,
-        });
-      } else {
+      // Search entity in list (contacts) if exists: updated it, otherwise: added it to contacts list
+      if (contactIndex > -1) {
         newState.contacts[contactIndex] = {
           ...newState.contact,
         };
+      } else {
+        newState.contacts.unshift({
+          ...newState.contact,
+        });
       }
-      // Search entity in list (contacts) if not exist, added it to contacts
       return newState;
     }
     case actions.CONTACTS_SAVE_FAILURE:
       return {
         ...newState,
         error: action.error,
-      };
-    case actions.CONTACTS_SAVE_END:
-      return {
-        ...newState,
-        saved: false,
       };
     case actions.CONTACTS_GETBYID_START:
       return {
@@ -414,7 +409,7 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_GETBYID_SUCCESS: {
       let { contact } = action;
       /* eslint-disable */
-      if (isNaN(contact.ID)) {
+      if (isNaN(contact.ID) || contact.isOffline) {
         /* eslint-enable */
         // Search local contact
         contact = newState.contacts.find(contactItem => (contactItem.ID === contact.ID));
@@ -573,12 +568,17 @@ export default function contactsReducer(state = initialState, action) {
             ? contact.quick_button_phone_off
             : "0" */
         };
+        // Update localContact with dbContact
+        const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === contact.ID));
+        if (contactIndex > -1) {
+          newState.contacts[contactIndex] = {
+            ...contact,
+          };
+        }
       }
       newState = {
         ...newState,
-        contact: {
-          ...contact,
-        },
+        contact,
         loading: false,
       };
       if (newState.contact.baptism_date) {

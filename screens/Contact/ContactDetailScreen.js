@@ -45,6 +45,7 @@ import {
   getCommentsByContact,
   saveComment,
   getById,
+  getByIdEnd,
   getActivitiesByContact,
   saveEnd,
 } from '../../store/actions/contacts.actions';
@@ -352,21 +353,27 @@ class ContactDetailScreen extends React.Component {
     const onlyView = this.props.navigation.getParam('onlyView');
     const contactId = this.props.navigation.getParam('contactId');
     const contactName = this.props.navigation.getParam('contactName');
+    let newState = {};
     if (contactId) {
-      this.setState(prevState => ({
+      newState = {
         contact: {
-          ...prevState.contact,
+          ...this.state.contact,
           ID: contactId,
         },
-      }));
-      this.props.navigation.setParams({ contactName });
+      };
     }
     if (onlyView) {
-      this.setState({
+      newState = {
+        ...newState,
         onlyView,
-      });
+      };
     }
-    this.getLists();
+    this.setState({
+      ...newState,
+    }, () => {
+      this.props.navigation.setParams({ contactName });
+      this.getLists((contactId) || null);
+    });
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -477,6 +484,7 @@ class ContactDetailScreen extends React.Component {
       if (contact.seeker_path) {
         this.setContactSeekerPath(contact.seeker_path);
       }
+      this.getContactByIdEnd();
     }
 
     // CONTACT SAVE
@@ -536,7 +544,7 @@ class ContactDetailScreen extends React.Component {
     }, 0);
   }
 
-  getLists = async () => {
+  getLists = async (contactId) => {
     let newState = {};
     const users = await AsyncStorage.getItem('usersList');
     if (users !== null) {
@@ -585,11 +593,10 @@ class ContactDetailScreen extends React.Component {
       ...newState,
       loadedLocal: true,
     };
-
     this.setState(newState, () => {
       // Only execute in detail mode
-      if (this.state.contact.ID) {
-        this.onRefresh(this.state.contact.ID);
+      if (contactId) {
+        this.onRefresh(contactId);
       }
     });
   };
@@ -600,6 +607,10 @@ class ContactDetailScreen extends React.Component {
       this.props.userData.token,
       contactId,
     );
+  }
+
+  getContactByIdEnd() {
+    this.props.getByIdEnd();
   }
 
   getContactComments(contactId) {
@@ -4226,6 +4237,7 @@ ContactDetailScreen.propTypes = {
   saved: PropTypes.bool,
   isConnected: PropTypes.bool,
   endSaveContact: PropTypes.func.isRequired,
+  getByIdEnd: PropTypes.func.isRequired,
 };
 
 ContactDetailScreen.defaultProps = {
@@ -4260,6 +4272,9 @@ const mapDispatchToProps = dispatch => ({
   },
   getById: (domain, token, contactId) => {
     dispatch(getById(domain, token, contactId));
+  },
+  getByIdEnd: () => {
+    dispatch(getByIdEnd());
   },
   getComments: (domain, token, contactId, offset, limit) => {
     dispatch(getCommentsByContact(domain, token, contactId, offset, limit));

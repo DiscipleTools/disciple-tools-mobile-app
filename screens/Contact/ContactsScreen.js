@@ -44,21 +44,10 @@ class ContactsScreen extends React.Component {
     headerLeft: null,
   };
 
-  state = {
-    contacts: [],
-  };
-
   componentDidMount() {
-    this.onRefresh();
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const newState = {
-      ...prevState,
-      loading: nextProps.loading,
-      contacts: nextProps.contacts,
-    };
-    return newState;
+    if (this.props.isConnected) {
+      this.onRefresh();
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -134,12 +123,12 @@ class ContactsScreen extends React.Component {
       <Container>
         <View style={{ flex: 1 }}>
           <FlatList
-            data={this.state.contacts}
+            data={this.props.contacts}
             renderItem={item => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
             refreshControl={(
               <RefreshControl
-                refreshing={this.state.loading}
+                refreshing={this.props.loading}
                 onRefresh={this.onRefresh}
               />
             )}
@@ -186,9 +175,13 @@ ContactsScreen.propTypes = {
     code: PropTypes.string,
     message: PropTypes.string,
   }),
+  isConnected: PropTypes.bool,
+  loading: PropTypes.bool,
 };
 ContactsScreen.defaultProps = {
   error: null,
+  isConnected: null,
+  loading: false,
 };
 
 const mapStateToProps = state => ({
@@ -196,6 +189,7 @@ const mapStateToProps = state => ({
   contacts: state.contactsReducer.contacts,
   loading: state.contactsReducer.loading,
   error: state.contactsReducer.error,
+  isConnected: state.networkConnectivityReducer.isConnected,
 });
 const mapDispatchToProps = dispatch => ({
   getAllContacts: (domain, token) => {

@@ -75,10 +75,10 @@ export default function* requestSaga() {
     if (request.payload.data.method === 'GET' && request.payload.action.includes('GETBYID')) {
       let id = request.payload.url.split('/');
       id = id[id.length - 1];
+      localGetById.value = id;
       /* eslint-disable */
       if (isNaN(id)) {
         /* eslint-enable */
-        localGetById.value = id;
         localGetById.isLocal = true;
       }
     }
@@ -86,14 +86,17 @@ export default function* requestSaga() {
       // Get last request
       const payload = yield select(state => state.requestReducer.currentAction);
       // OFFLINE request
-      if (payload && payload.data.method === 'POST' && payload.action.includes('SAVE')) {
-        // Offline entity creation (send "last request" as response)
-        /* eslint-disable */
-        yield put({ type: payload.action, payload: JSON.parse(payload.data.body) });
-        //Add new entity to collection
-        /* eslint-enable */
-      } else if (request.payload.data.method === 'GET' && request.payload.action.includes('GETBYID')) {
-        yield put({ type: payload.action, payload: { data: { ID: localGetById.value }, status: 200 } });
+      if (payload) {
+        if (payload.data.method === 'POST' && payload.action.includes('SAVE')) {
+          // Offline entity creation (send "last request" as response)
+          /* eslint-disable */
+          yield put({ type: payload.action, payload: JSON.parse(payload.data.body) });
+          //Add new entity to collection
+          /* eslint-enable */
+        }
+        if (payload.data.method === 'GET' && payload.action.includes('GETBYID')) {
+          yield put({ type: payload.action, payload: { data: { ID: localGetById.value, isOffline: true }, status: 200 } });
+        }
       }
     } else if (request) {
       // ONLINE request

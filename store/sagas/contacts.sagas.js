@@ -2,7 +2,26 @@ import {
   put, take, takeEvery, takeLatest, all, select,
 } from 'redux-saga/effects';
 
+import * as Sentry from 'sentry-expo';
 import * as actions from '../actions/contacts.actions';
+
+function formatDateToBackendResponse(dateString) {
+  const monthNames = [
+    'January', 'February', 'March',
+    'April', 'May', 'June', 'July',
+    'August', 'September', 'October',
+    'November', 'December',
+  ];
+  let date = new Date(dateString);
+  date = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+    date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+  date = new Date(date);
+  const day = date.getDate();
+  const monthIndex = date.getMonth();
+  const year = date.getFullYear();
+
+  return `${monthNames[monthIndex]} ${day}, ${year}`;
+}
 
 export function* getAll({ domain, token }) {
   yield put({ type: actions.CONTACTS_GETALL_START });
@@ -21,6 +40,7 @@ export function* getAll({ domain, token }) {
       action: actions.CONTACTS_GETALL_RESPONSE,
     },
   });
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
   try {
     let response = yield take(actions.CONTACTS_GETALL_RESPONSE);
     response = response.payload;
@@ -37,7 +57,7 @@ export function* getAll({ domain, token }) {
           contacts: [],
         });
       }
-    } else {
+    } else if (isConnected) {
       yield put({
         type: actions.CONTACTS_GETALL_FAILURE,
         error: {
@@ -47,6 +67,9 @@ export function* getAll({ domain, token }) {
       });
     }
   } catch (error) {
+    if (isConnected) {
+      Sentry.captureException(error);
+    }
     yield put({
       type: actions.CONTACTS_GETALL_FAILURE,
       error: {
@@ -58,8 +81,7 @@ export function* getAll({ domain, token }) {
 }
 
 export function* save({ domain, token, contactData }) {
-  const networkConnectivityReducer = yield select(state => state.networkConnectivityReducer);
-  const { isConnected } = networkConnectivityReducer;
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
 
   yield put({ type: actions.CONTACTS_SAVE_START });
 
@@ -123,6 +145,15 @@ export function* save({ domain, token, contactData }) {
           response = response.payload;
           const jsonDataComment = response.data;
           if (response.status !== 200) {
+            if (isConnected) {
+              Sentry.captureException({
+                type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
+                error: {
+                  code: jsonDataComment.code,
+                  message: jsonDataComment.message,
+                },
+              });
+            }
             yield put({
               type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
               error: {
@@ -137,6 +168,15 @@ export function* save({ domain, token, contactData }) {
           contact: jsonData,
         });
       } else {
+        if (isConnected) {
+          Sentry.captureException({
+            type: actions.CONTACTS_SAVE_FAILURE,
+            error: {
+              code: jsonData.code,
+              message: jsonData.message,
+            },
+          });
+        }
         yield put({
           type: actions.CONTACTS_SAVE_FAILURE,
           error: {
@@ -147,25 +187,55 @@ export function* save({ domain, token, contactData }) {
       }
     } else {
       jsonData = response;
+
+      let assignedTo = (jsonData.assigned_to) ? jsonData.assigned_to.split('-') : null;
+      assignedTo = (assignedTo) ? assignedTo[assignedTo.length - 1] : null;
+
+      const baptismDate = (jsonData.baptism_date) ? formatDateToBackendResponse(jsonData.baptism_date) : '';
+
       jsonData = {
-        ...jsonData,
-        sources: jsonData.sources.values.map(source => source.value),
-        location_grid: [], // get labels in local lists
+        ID: jsonData.ID,
+        age: {
+          key: (jsonData.age) ? jsonData.age : 'not-set', // get first value from local list
+        },
+        assigned_to: {
+          id: assignedTo, // if its new contact, get value from logged user (user_nicename)
+        },
+        baptism_date: {
+          formatted: baptismDate,
+        },
+        baptized: jsonData.baptized.values.map(baptizedPerson => ({ ID: baptizedPerson.value, post_title: '' })), // get post_title from local list
+        baptized_by: jsonData.baptized_by.values.map(baptizedByPerson => ({ ID: baptizedByPerson.value, post_title: '' })), // get post_title from local list
+        coached_by: jsonData.coached_by.values.map(coachedByPerson => ({ ID: coachedByPerson.value, post_title: '' })), // get post_title from local list
+        coaching: jsonData.coaching.values.map(coachingPerson => ({ ID: coachingPerson.value, post_title: '' })), // get post_title from local list
+        contact_address: jsonData.contact_address.map(contactAddress => ({ key: (contactAddress.key) ? contactAddress.key : '', value: contactAddress.value })),
+        contact_email: jsonData.contact_email.map(contactEmail => ({ key: (contactEmail.key) ? contactEmail.key : '', value: contactEmail.value })),
+        contact_phone: jsonData.contact_phone.map(contactPhone => ({ key: (contactPhone.key) ? contactPhone.key : '', value: contactPhone.value })),
+        gender: (jsonData.gender) ? {
+          key: jsonData.gender,
+          label: '', // get label from local list
+        } : null,
+        groups: jsonData.groups.values.map(group => ({ ID: group.value, post_title: '' })), // get post_title from local list
+        location_grid: jsonData.location_grid.values.map(location => ({ id: location.value, label: '' })), // get label from local list
+        milestones: jsonData.milestones.values.map(milestone => (milestone.value)),
         overall_status: {
-          key: '', // get and transform value
+          key: (jsonData.overall_status) ? jsonData.overall_status : 'new', // get label from local list
+          label: '', // get label from local list
         },
+        people_groups: jsonData.people_groups.values.map(peopleGroup => ({ ID: peopleGroup.value, post_title: '' })), // get post_title from local list
+        quick_button_contact_established: jsonData.quick_button_contact_established,
+        quick_button_meeting_complete: jsonData.quick_button_meeting_complete,
+        quick_button_meeting_scheduled: jsonData.quick_button_meeting_scheduled,
+        quick_button_no_answer: jsonData.quick_button_no_answer,
+        quick_button_no_show: jsonData.quick_button_no_show,
+        relation: jsonData.relation.values.map(relation => ({ ID: relation.value, post_title: '' })), // get post_title from local list
         seeker_path: {
-          key: '', // get and transform value
+          key: (jsonData.seeker_path) ? jsonData.seeker_path : 'none', // get first value from local list
+          label: '', // get label from local list
         },
-        subassigned: [], // jsonData.subassigned.values, // transform value
-        milestones: [], // jsonData.milestones.values, // transform value
-        groups: [], // jsonData.groups.values, // transform value
-        relation: [], // jsonData.relation.values, // transform value
-        baptized_by: [], // jsonData.baptized_by.values, // transform value
-        baptized: [], // jsonData.baptized.values, // transform value
-        coached_by: [], // jsonData.coached_by.values, // transform value
-        coaching: [], // jsonData.coaching.values, // transform value
-        people_groups: [], // jsonData.people_groups.values, // transform value
+        sources: jsonData.sources.values.map(source => (source.value)),
+        subassigned: jsonData.subassigned.values.map(subassigned => ({ ID: subassigned.value, post_title: '' })), // get post_title from local list
+        title: jsonData.title,
       };
       yield put({
         type: actions.CONTACTS_SAVE_SUCCESS,
@@ -173,6 +243,9 @@ export function* save({ domain, token, contactData }) {
       });
     }
   } catch (error) {
+    if (isConnected) {
+      Sentry.captureException(error);
+    }
     yield put({
       type: actions.CONTACTS_SAVE_FAILURE,
       error: {
@@ -185,7 +258,6 @@ export function* save({ domain, token, contactData }) {
 
 export function* getById({ domain, token, contactId }) {
   yield put({ type: actions.CONTACTS_GETBYID_START });
-
   yield put({
     type: 'REQUEST',
     payload: {
@@ -200,7 +272,7 @@ export function* getById({ domain, token, contactId }) {
       action: actions.CONTACTS_GETBYID_RESPONSE,
     },
   });
-
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
   try {
     let response = yield take(actions.CONTACTS_GETBYID_RESPONSE);
     response = response.payload;
@@ -211,6 +283,15 @@ export function* getById({ domain, token, contactId }) {
         contact: jsonData,
       });
     } else {
+      if (isConnected) {
+        Sentry.captureException({
+          type: actions.CONTACTS_GETBYID_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
+      }
       yield put({
         type: actions.CONTACTS_GETBYID_FAILURE,
         error: {
@@ -220,6 +301,9 @@ export function* getById({ domain, token, contactId }) {
       });
     }
   } catch (error) {
+    if (isConnected) {
+      Sentry.captureException(error);
+    }
     yield put({
       type: actions.CONTACTS_GETBYID_FAILURE,
       error: {
@@ -250,7 +334,7 @@ export function* saveComment({
       action: actions.CONTACTS_SAVE_COMMENT_RESPONSE,
     },
   });
-
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
   try {
     let response = yield take(actions.CONTACTS_SAVE_COMMENT_RESPONSE);
     response = response.payload;
@@ -261,6 +345,15 @@ export function* saveComment({
         comment: jsonData,
       });
     } else {
+      if (isConnected) {
+        Sentry.captureException({
+          type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
+      }
       yield put({
         type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
         error: {
@@ -270,6 +363,9 @@ export function* saveComment({
       });
     }
   } catch (error) {
+    if (isConnected) {
+      Sentry.captureException(error);
+    }
     yield put({
       type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
       error: {
@@ -307,7 +403,7 @@ export function* getCommentsByContact({
         action: actions.CONTACTS_GET_COMMENTS_RESPONSE,
       },
     });
-
+    const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
     try {
       let response = yield take(actions.CONTACTS_GET_COMMENTS_RESPONSE);
       response = response.payload;
@@ -319,6 +415,15 @@ export function* getCommentsByContact({
           total: jsonData.total,
         });
       } else {
+        if (isConnected) {
+          Sentry.captureException({
+            type: actions.CONTACTS_GET_COMMENTS_FAILURE,
+            error: {
+              code: jsonData.code,
+              message: jsonData.message,
+            },
+          });
+        }
         yield put({
           type: actions.CONTACTS_GET_COMMENTS_FAILURE,
           error: {
@@ -328,6 +433,9 @@ export function* getCommentsByContact({
         });
       }
     } catch (error) {
+      if (isConnected) {
+        Sentry.captureException(error);
+      }
       yield put({
         type: actions.CONTACTS_GET_COMMENTS_FAILURE,
         error: {
@@ -366,7 +474,7 @@ export function* getActivitiesByContact({
         action: actions.CONTACTS_GET_ACTIVITIES_RESPONSE,
       },
     });
-
+    const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
     try {
       let response = yield take(actions.CONTACTS_GET_ACTIVITIES_RESPONSE);
       response = response.payload;
@@ -378,6 +486,15 @@ export function* getActivitiesByContact({
           total: jsonData.total,
         });
       } else {
+        if (isConnected) {
+          Sentry.captureException({
+            type: actions.CONTACTS_GET_ACTIVITIES_FAILURE,
+            error: {
+              code: jsonData.code,
+              message: jsonData.message,
+            },
+          });
+        }
         yield put({
           type: actions.CONTACTS_GET_ACTIVITIES_FAILURE,
           error: {
@@ -387,6 +504,9 @@ export function* getActivitiesByContact({
         });
       }
     } catch (error) {
+      if (isConnected) {
+        Sentry.captureException(error);
+      }
       yield put({
         type: actions.CONTACTS_GET_ACTIVITIES_FAILURE,
         error: {

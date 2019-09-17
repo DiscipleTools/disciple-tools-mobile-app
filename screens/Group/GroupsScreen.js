@@ -49,17 +49,17 @@ class GroupsScreen extends React.Component {
   };
 
   componentDidMount() {
-    this.onRefresh();
+    if (this.props.isConnected) {
+      this.onRefresh();
+    }
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const {
-      loading,
       groups,
     } = nextProps;
     const newState = {
       ...prevState,
-      loading,
       groups: groups || prevState.groups,
     };
     return newState;
@@ -152,7 +152,7 @@ class GroupsScreen extends React.Component {
             ItemSeparatorComponent={this.flatListItemSeparator}
             refreshControl={(
               <RefreshControl
-                refreshing={this.state.loading}
+                refreshing={this.props.loading}
                 onRefresh={this.onRefresh}
               />
             )}
@@ -199,9 +199,13 @@ GroupsScreen.propTypes = {
     code: PropTypes.string,
     message: PropTypes.string,
   }),
+  isConnected: PropTypes.bool,
+  loading: PropTypes.bool,
 };
 GroupsScreen.defaultProps = {
   error: null,
+  isConnected: null,
+  loading: false,
 };
 
 const mapStateToProps = state => ({
@@ -209,6 +213,7 @@ const mapStateToProps = state => ({
   groups: state.groupsReducer.groups,
   loading: state.groupsReducer.loading,
   error: state.groupsReducer.error,
+  isConnected: state.networkConnectivityReducer.isConnected,
 });
 const mapDispatchToProps = dispatch => ({
   getAllGroups: (domain, token) => {
