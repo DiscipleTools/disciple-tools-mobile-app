@@ -39,6 +39,11 @@ export const CONTACTS_GET_ACTIVITIES_SUCCESS = 'CONTACTS_GET_ACTIVITIES_SUCCESS'
 export const CONTACTS_GET_ACTIVITIES_RESPONSE = 'CONTACTS_GET_ACTIVITIES_RESPONSE';
 export const CONTACTS_GET_ACTIVITIES_FAILURE = 'CONTACTS_GET_ACTIVITIES_FAILURE';
 
+export const CONTACTS_GET_SETTINGS = 'CONTACTS_GET_SETTINGS';
+export const CONTACTS_GET_SETTINGS_START = 'CONTACTS_GET_SETTINGS_START';
+export const CONTACTS_GET_SETTINGS_SUCCESS = 'CONTACTS_GET_SETTINGS_SUCCESS';
+export const CONTACTS_GET_SETTINGS_RESPONSE = 'CONTACTS_GET_SETTINGS_RESPONSE';
+export const CONTACTS_GET_SETTINGS_FAILURE = 'CONTACTS_GET_SETTINGS_FAILURE';
 
 /*
  * Action Creators
@@ -110,5 +115,13 @@ export function getActivitiesByContact(domain, token, contactId, offset, limit) 
     contactId,
     offset,
     limit,
+  };
+}
+
+export function getContactSettings(domain, token) {
+  return {
+    type: CONTACTS_GET_SETTINGS,
+    domain,
+    token,
   };
 }

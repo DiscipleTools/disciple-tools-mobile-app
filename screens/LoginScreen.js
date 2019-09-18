@@ -39,6 +39,7 @@ import {
   searchGroups,
 } from '../store/actions/groups.actions';
 import { getUsers } from '../store/actions/users.actions';
+import { getContactSettings } from '../store/actions/contacts.actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
 });
-const listLength = 5;
+const listLength = 6;
 let toastError;
 
 class LoginScreen extends React.Component {
@@ -156,23 +157,26 @@ class LoginScreen extends React.Component {
       search,
       usersReducerLoading,
       users,
+      settings,
       userReducerError,
       groupsReducerError,
       usersReducerError,
+      contactsReducerLoading,
+      contactsReducerError,
     } = nextProps;
     let newState = {
       ...prevState,
       userData,
-      loading: userReducerLoading || groupsReducerLoading || usersReducerLoading,
+      loading: userReducerLoading || groupsReducerLoading || usersReducerLoading || contactsReducerLoading,
     };
-    if (usersContacts || geonames || peopleGroups || search || users) {
+    if ((usersContacts || geonames || peopleGroups || search || users || settings) && newState.listsRetrieved > 0) {
       newState = {
         ...newState,
         listsRetrieved: --newState.listsRetrieved,
       };
     }
 
-    const error = (userReducerError || groupsReducerError || usersReducerError);
+    const error = (userReducerError || groupsReducerError || usersReducerError || contactsReducerError);
     if (error) {
       newState = {
         ...newState,
@@ -186,12 +190,10 @@ class LoginScreen extends React.Component {
   componentDidMount() {
     // User is authenticated (logged)
     if (this.props.userData && this.props.userData.token) {
-      this.state = {
-        ...this.state,
-        loading: true,
-      };
       if (this.props.isConnected) {
-        this.getDataLists();
+        this.setState({ loading: true }, () => {
+          this.getDataLists();
+        });
       } else {
         this.setState({ listsRetrieved: 0 });
       }
@@ -200,7 +202,7 @@ class LoginScreen extends React.Component {
 
   componentDidUpdate(prevProps) {
     const {
-      userData, usersContacts, geonames, peopleGroups, search,
+      userData, usersContacts, geonames, peopleGroups, search, settings,
     } = this.props;
     const {
       users, userReducerError, groupsReducerError, usersReducerError,
@@ -264,6 +266,14 @@ class LoginScreen extends React.Component {
       );
     }
 
+    // contactSettings retrieved
+    if (settings && prevProps.settings !== settings) {
+      AsyncStorage.setItem(
+        'contactSettings',
+        JSON.stringify(settings),
+      );
+    }
+
     if (listsRetrieved === 0) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
@@ -298,6 +308,7 @@ class LoginScreen extends React.Component {
     this.props.getPeopleGroups(this.props.userData.domain, this.props.userData.token);
     this.props.getUsers(this.props.userData.domain, this.props.userData.token);
     this.props.searchGroups(this.props.userData.domain, this.props.userData.token);
+    this.props.getContactSettings(this.props.userData.domain, this.props.userData.token);
   };
 
   onLoginPress = () => {
@@ -525,6 +536,12 @@ LoginScreen.propTypes = {
     init: PropTypes.func,
   }).isRequired,
   isConnected: PropTypes.bool,
+  settings: PropTypes.shape({}),
+  contactsReducerError: PropTypes.shape({
+    code: PropTypes.string,
+    message: PropTypes.string,
+  }),
+  getContactSettings: PropTypes.func.isRequired,
 };
 LoginScreen.defaultProps = {
   userData: {
@@ -538,6 +555,8 @@ LoginScreen.defaultProps = {
   groupsReducerError: null,
   usersReducerError: null,
   isConnected: null,
+  contactsReducerError: null,
+  settings: null,
 };
 const mapStateToProps = state => ({
   userData: state.userReducer.userData,
@@ -554,6 +573,9 @@ const mapStateToProps = state => ({
   usersReducerError: state.usersReducer.error,
   i18n: state.i18nReducer,
   isConnected: state.networkConnectivityReducer.isConnected,
+  settings: state.contactsReducer.settings,
+  contactsReducerLoading: state.contactsReducer.loading,
+  contactsReducerError: state.contactsReducer.error,
 });
 const mapDispatchToProps = dispatch => ({
   loginDispatch: (domain, username, password) => {
@@ -576,6 +598,9 @@ const mapDispatchToProps = dispatch => ({
   },
   setLanguage: (locale, isRTL) => {
     dispatch(setLanguage(locale, isRTL));
+  },
+  getContactSettings: (domain, token) => {
+    dispatch(getContactSettings(domain, token));
   },
 });
 export default connect(

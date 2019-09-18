@@ -126,6 +126,14 @@ function* getLocalLists() {
     };
   }
 
+  const contactsSettings = yield AsyncStorage.getItem('contactSettings');
+  if (contactsSettings !== null) {
+    lists = {
+      ...lists,
+      contactsSettings: JSON.parse(contactsSettings),
+    };
+  }
+
   return lists;
 }
 
@@ -237,12 +245,23 @@ export function* save({ domain, token, contactData }) {
     } else {
       jsonData = response;
       const {
-        usersContacts, peopleGroups, geonames, groups,
+        users, usersContacts, peopleGroups, geonames, groups, contactsSettings,
       } = yield getLocalLists();
 
+      const userData = yield select(state => state.userReducer.userData);
+
       let assignedTo = (jsonData.assigned_to) ? jsonData.assigned_to.split('-') : null;
-      assignedTo = (assignedTo) ? assignedTo[assignedTo.length - 1] : assignedTo;
+      if (assignedTo) {
+        assignedTo = assignedTo[assignedTo.length - 1];
+      } else {
+        const userItem = users.find(user => (user.label === userData.username));
+        assignedTo = userItem.key;
+      }
+
       const baptismDate = (jsonData.baptism_date) ? formatDateToBackendResponse(jsonData.baptism_date) : '';
+      const overallStatus = (jsonData.overall_status) ? jsonData.overall_status : 'new';
+      const seekerPath = (jsonData.seeker_path) ? jsonData.seeker_path : 'none';
+
       const subassignedContacts = jsonData.subassigned.values.map((subassigned) => {
         let postTitle = usersContacts.find(userContact => (userContact.value === subassigned.value));
         postTitle = (postTitle) ? postTitle.name : '';
@@ -292,7 +311,7 @@ export function* save({ domain, token, contactData }) {
       jsonData = {
         ID: jsonData.ID,
         age: {
-          key: (jsonData.age) ? jsonData.age : 'not-set', // get first value from local list
+          key: (jsonData.age) ? jsonData.age : 'not-set',
         },
         assigned_to: {
           id: assignedTo, // if its new contact, get value from logged user (user_nicename)
@@ -314,16 +333,16 @@ export function* save({ domain, token, contactData }) {
         contact_phone: jsonData.contact_phone.map(contactPhone => ({ key: (contactPhone.key) ? contactPhone.key : '', value: contactPhone.value })),
         gender: (jsonData.gender) ? {
           key: jsonData.gender,
-          label: '', // get label from local list
+          label: contactsSettings.gender.default[jsonData.gender].label,
         } : null,
         milestones: jsonData.milestones.values.map(milestone => (milestone.value)),
         overall_status: {
-          key: (jsonData.overall_status) ? jsonData.overall_status : 'new', // get label from local list
-          label: '', // get label from local list
+          key: overallStatus,
+          label: contactsSettings.overall_status.default[overallStatus].label,
         },
         seeker_path: {
-          key: (jsonData.seeker_path) ? jsonData.seeker_path : 'none', // get first value from local list
-          label: '', // get label from local list
+          key: seekerPath,
+          label: contactsSettings.seeker_path.default[seekerPath].label,
         },
         sources: jsonData.sources.values.map(source => (source.value)),
         quick_button_contact_established: jsonData.quick_button_contact_established,
@@ -333,6 +352,7 @@ export function* save({ domain, token, contactData }) {
         quick_button_no_show: jsonData.quick_button_no_show,
         title: jsonData.title,
       };
+
       yield put({
         type: actions.CONTACTS_SAVE_SUCCESS,
         contact: jsonData,
@@ -614,6 +634,53 @@ export function* getActivitiesByContact({
   }
 }
 
+export function* getSettings({ domain, token }) {
+  yield put({ type: actions.CONTACTS_GET_SETTINGS_START });
+
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts/settings`,
+      data: {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      action: actions.CONTACTS_GET_SETTINGS_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.CONTACTS_GET_SETTINGS_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.CONTACTS_GET_SETTINGS_SUCCESS,
+        settings: jsonData,
+      });
+    } else {
+      yield put({
+        type: actions.CONTACTS_GET_SETTINGS_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.CONTACTS_GET_SETTINGS_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
 export default function* contactsSaga() {
   yield all([
     takeLatest(actions.CONTACTS_GETALL, getAll),
@@ -622,5 +689,6 @@ export default function* contactsSaga() {
     takeEvery(actions.CONTACTS_GET_COMMENTS, getCommentsByContact),
     takeEvery(actions.CONTACTS_SAVE_COMMENT, saveComment),
     takeEvery(actions.CONTACTS_GET_ACTIVITIES, getActivitiesByContact),
+    takeEvery(actions.CONTACTS_GET_SETTINGS, getSettings),
   ]);
 }

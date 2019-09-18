@@ -13,6 +13,7 @@ const initialState = {
   loadingComments: false,
   loadingActivities: false,
   saved: false,
+  settings: null,
 };
 
 export default function contactsReducer(state = initialState, action) {
@@ -691,6 +692,11 @@ export default function contactsReducer(state = initialState, action) {
         ...newState,
         error: action.error,
         loadingActivities: false,
+      };
+    case actions.CONTACTS_GET_SETTINGS_SUCCESS:
+      return {
+        ...newState,
+        settings: action.settings.fields,
       };
     default:
       return newState;
