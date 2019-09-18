@@ -91,7 +91,6 @@ export default function* requestSaga() {
           // Offline entity creation (send "last request" as response)
           /* eslint-disable */
           yield put({ type: payload.action, payload: JSON.parse(payload.data.body) });
-          //Add new entity to collection
           /* eslint-enable */
         }
         if (payload.data.method === 'GET' && payload.action.includes('GETBYID')) {

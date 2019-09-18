@@ -54,7 +54,13 @@ export default function requestReducer(state = initialState, action) {
               requestFromQueue = {
                 ...actionToModify,
               };
-              requestFromQueue.data.body = JSON.stringify(jsonBody);
+              // Do merge of old request body with new request body
+              const oldRequestBody = JSON.parse(requestFromQueue.data.body);
+              const newRequestBody = {
+                ...oldRequestBody,
+                ...jsonBody,
+              };
+              requestFromQueue.data.body = JSON.stringify(newRequestBody);
               queue[requestIndex] = requestFromQueue;
               newState = {
                 ...newState,

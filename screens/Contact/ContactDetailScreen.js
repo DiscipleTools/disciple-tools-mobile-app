@@ -869,7 +869,6 @@ class ContactDetailScreen extends React.Component {
         contactToSave.sources.values = this.setSources();
       }
     }
-
     this.props.saveContact(
       this.props.userData.domain,
       this.props.userData.token,
