@@ -73,11 +73,11 @@ class TextFieldMultiple extends Component {
           value: '',
         });
       }
+      this.props.onChange(prevState);
       return {
         prevValues,
       };
     });
-    this.props.onChange(values);
   }
 
   onRemoveField(index) {
