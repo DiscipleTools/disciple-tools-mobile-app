@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { WebBrowser } from 'expo';
+import * as WebBrowser from 'expo-web-browser';
 
 import Colors from '../constants/Colors';
 
@@ -17,7 +17,7 @@ const propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
-  user: PropTypes.shape({
+  userData: PropTypes.shape({
     id: PropTypes.number,
   }).isRequired,
 };
@@ -134,7 +134,7 @@ class HomeScreen extends React.Component {
 
       const debugInfo = (
         <Text>
-          {JSON.stringify(this.props.user)}
+          {JSON.stringify(this.props.userData)}
         </Text>
       );
 
@@ -178,7 +178,7 @@ class HomeScreen extends React.Component {
 HomeScreen.propTypes = propTypes;
 // export default HomeScreen;
 const mapStateToProps = state => ({
-  user: state.userReducer,
+  userData: state.userReducer.userData,
 });
 
 export default connect(mapStateToProps, null)(HomeScreen);

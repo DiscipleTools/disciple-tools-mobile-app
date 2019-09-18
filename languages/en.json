@@ -1,5 +1,63 @@
 {
-  "login": {
+  "global": {
+    "locales": {
+      "en-US": "English (United States)",
+      "ar-JO": "Arabic (Jordan)"
+    },
+    "error": {
+      "code": "Code: ",
+      "message": "Message: "
+    },
+    "success": {
+      "save": "Data saved successfully!"
+    },
+    "contactOverallStatus": {
+      "new": "New Contact",
+      "unassignable": "Not Ready",
+      "unassigned": "Dispatch Needed",
+      "assigned": "Waiting to be accepted",
+      "active": "Active",
+      "paused": "Paused",
+      "closed": "Closed"
+    },
+    "seekerPath": {
+      "none": "Contact Attempt Needed",
+      "attempted": "Contact Attempted",
+      "established": "Contact Established",
+      "scheduled": "First Meeting Scheduled",
+      "met": "First Meeting Complete",
+      "ongoing": "Ongoing Meetings",
+      "coaching": "Being Coached"
+    },
+    "groupStatus": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "groupType": {
+      "pre-group": "Pre-Group",
+      "group": "Group",
+      "church": "Church",
+      "team": "Team"
+    },
+    "groups": "Groups",
+    "details": "Details",
+    "status": "Status",
+    "assignedTo": "Assigned to",
+    "location": "Location",
+    "peopleGroup": "People Group",
+    "selectPeopleGroups": "Select People Groups",
+    "address": "Address",
+    "progress": "Progress",
+    "commentsActivity": "Comments / Activity",
+    "writeYourCommentNoteHere": "Write your comment or note here",
+    "requiredField": "Required field",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "online": "Online",
+    "language": "Language"
+  },
+  "loginScreen": {
     "domain": {
       "label": "Disciple Tools URL",
       "placeholder": "E.g. myteam.disciple.tools",
@@ -13,15 +71,111 @@
       "label": "Password",
       "error": "Password is required"
     },
-    "login": "Log In",
+    "logIn": "Log In",
     "forgotPassword": "Lost your password?"
   },
-  "settings": {
-    "navigation": {
-      "title": "Settings"
-    },
+  "contactsScreen": {
+    "contacts": "Contacts"
+  },
+  "settingsScreen": {
+    "settings": "Settings",
+    "networkUnavailable": "Network unavailable. Now in OFFLINE mode",
+    "networkAvailable": "Network detected. Back to ONLINE mode",
+    "signOut": "Sign Out",
+    "domain": "Domain",
+    "signedInAs": "Signed in as",
     "storybook": "Storybook",
-    "online": "Online",
     "logout": "Sign Out"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Add New Contact",
+    "contactSources": {
+      "personal": "Personal",
+      "web": "Web",
+      "phone": "Phone",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "referral": "Referral",
+      "advertisement": "Advertisement",
+      "transfer": "Transfer"
+    },
+    "subAssignedTo": "Sub-assigned to",
+    "subAssignThisContact": "Sub-assign this contact",
+    "mobile": "Mobile",
+    "email": "Email",
+    "message": "Message",
+    "selectLocations": "Select locations",
+    "contactAge": {
+      "underEighteenYearsOld": "Under 18 years old",
+      "underTwentySixYearsOld": "18-25 years old",
+      "underFortyOneYearsOld": "26-40 years old",
+      "overFortyYearsOld": "Over 40 years old"
+    },
+    "age": "Age",
+    "male": "Male",
+    "female": "Female",
+    "gender": "Gender",
+    "source": "Source",
+    "selectSources": "Select sources",
+    "seekerPath": "Seeker Path",
+    "faithMilestones": "Faith Milestones",
+    "milestones": {
+      "hasBible": "Has Bible",
+      "readingBible": "Reading Bible",
+      "statesBelief": "States Belief",
+      "shareGospel": "Can Share Gospel/Testimony",
+      "sharingGospel": "Sharing Gospel/Testimony",
+      "baptized": "Baptized",
+      "baptizing": "Baptizing",
+      "inGroup": "In Church/Group",
+      "startingChurches": "Starting Churches",
+      "baptismDate": "Baptism Date"
+    },
+    "connections": "Connections",
+    "addGroup": "Add Group",
+    "connection": "Connection",
+    "addConnection": "Add Connection",
+    "baptizedBy": "Baptized By",
+    "addBaptizedBy": "Add baptized by",
+    "baptized": "Baptized",
+    "addBaptized": "Add baptized",
+    "coachedBy": "Coached By",
+    "addCoachedBy": "Add coached by",
+    "coaching": "Coaching",
+    "addCoaching": "Add coaching",
+    "fullName": "Full Name",
+    "phoneNumber": "Phone Number",
+    "initialComment": "Initial Comment",
+    "addBaptizmDate": "Add baptizm date",
+    "group": "Group"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Add New Group",
+    "groupCoach": "Group Coach",
+    "selectCoaches": "Select coaches",
+    "selectGeonames": "Select geonames",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "groupType": "Group Type",
+    "churchHealth": "Church Health",
+    "healthMetrics": {
+      "giving": "Giving",
+      "fellowship": "Fellowship",
+      "communion": "Communion",
+      "baptism": "Baptism",
+      "prayer": "Prayer",
+      "leaders": "Leaders",
+      "bibleStudy": "Bible Study",
+      "praise": "Praise",
+      "sharingGospel": "Sharing the Gospel"
+    },
+    "parentGroup": "Parent Group",
+    "searchGroups": "Search groups",
+    "peerGroup": "Peer Group",
+    "searchPeerGroups": "Search peer groups",
+    "childGroup": "Child Group",
+    "searchChildGroups": "Search child groups",
+    "groupName": "Group Name"
   }
 }

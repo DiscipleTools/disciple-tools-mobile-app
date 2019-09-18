@@ -14,6 +14,7 @@ import ContactStack from '../screens/Contact/index';
 import GroupStack from '../screens/Group/index';
 
 import Colors from '../constants/Colors';
+import i18n from '../languages';
 /*
 const HomeStack = createStackNavigator({ Home: HomeScreen });
 function HomeIcon({ focused }) {
@@ -47,7 +48,7 @@ SettingsIcon.propTypes = {
   focused: PropTypes.bool.isRequired,
 };
 SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+  tabBarLabel: i18n.t('settingsScreen.settings'),
   tabBarIcon: SettingsIcon,
   tabBarOptions: { activeTintColor: Colors.tabIconSelected },
 };

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {
   View,
   FlatList,
-  TouchableHighlight,
+  TouchableOpacity,
   RefreshControl,
   StyleSheet,
   Text,
@@ -15,6 +15,7 @@ import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
+import i18n from '../../languages';
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -39,7 +40,7 @@ let toastError;
 
 class ContactsScreen extends React.Component {
   static navigationOptions = {
-    title: 'Contacts',
+    title: i18n.t('contactsScreen.contacts'),
     headerLeft: null,
   };
 
@@ -65,9 +66,9 @@ class ContactsScreen extends React.Component {
     if (prevProps.error !== error && error) {
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>Code: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
           <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>Message: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
           <Text>{error.message}</Text>
         </View>,
         3000,
@@ -75,29 +76,29 @@ class ContactsScreen extends React.Component {
     }
   }
 
-  renderRow = item => (
-    <TouchableHighlight
-      onPress={() => this.goToContactDetailScreen(item)}
+  renderRow = contact => (
+    <TouchableOpacity
+      onPress={() => this.goToContactDetailScreen(contact)}
       style={styles.flatListItem}
-      key={item.toString()}
+      key={contact.ID}
     >
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={{ fontWeight: 'bold' }}>{item.post_title}</Text>
+          <Text style={{ fontWeight: 'bold' }}>{contact.post_title}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text style={styles.contactSubtitle}>
-            {item.overall_status.label}
+            {i18n.t(`global.contactOverallStatus.${contact.overall_status}`)}
           </Text>
           <Text style={styles.contactSubtitle}>
             {' • '}
           </Text>
           <Text style={styles.contactSubtitle}>
-            {item.seeker_path.label}
+            {i18n.t(`global.seekerPath.${contact.seeker_path}`)}
           </Text>
         </View>
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 
   flatListItemSeparator = () => (
@@ -111,7 +112,7 @@ class ContactsScreen extends React.Component {
   );
 
   onRefresh = () => {
-    this.props.getAllContacts(this.props.user.domain, this.props.user.token);
+    this.props.getAllContacts(this.props.userData.domain, this.props.userData.token);
   };
 
   goToContactDetailScreen = (contactData = null) => {
@@ -169,7 +170,7 @@ ContactsScreen.propTypes = {
     navigate: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
   }).isRequired,
-  user: PropTypes.shape({
+  userData: PropTypes.shape({
     domain: PropTypes.string,
     token: PropTypes.string,
   }).isRequired,
@@ -182,6 +183,7 @@ ContactsScreen.propTypes = {
   ).isRequired,
   /* eslint-enable */
   error: PropTypes.shape({
+    code: PropTypes.string,
     message: PropTypes.string,
   }),
 };
@@ -190,7 +192,7 @@ ContactsScreen.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  user: state.userReducer,
+  userData: state.userReducer.userData,
   contacts: state.contactsReducer.contacts,
   loading: state.contactsReducer.loading,
   error: state.contactsReducer.error,

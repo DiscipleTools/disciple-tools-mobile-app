@@ -7,20 +7,21 @@ import {
   NetInfo,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import {
-  AppLoading,
-  Asset,
-  Font,
-  Icon,
-} from 'expo';
+import { AppLoading } from 'expo';
+import * as Icon from '@expo/vector-icons';
+import * as Font from 'expo-font';
+import { Asset } from 'expo-asset';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
+import Reactotron from 'reactotron-react-native';
 
 import AppNavigator from './navigation/AppNavigator';
 import store from './store/store';
+import i18n from './languages';
 
 import { setNetworkConnectivity } from './store/actions/networkConnectivity.actions';
+
 
 const persistor = persistStore(store);
 
@@ -48,6 +49,17 @@ class App extends React.Component {
     NetInfo.isConnected.fetch().then((isConnected) => {
       store.dispatch(setNetworkConnectivity(isConnected));
     });
+
+    if (__DEV__) {
+      // Reactotron can be used to see AsyncStorage data and API requests
+      // If Reactotron gets no connection, this is the solution that worked for me (cairocoder01: 2019-08-15)
+      // https://github.com/expo/expo-cli/issues/153#issuecomment-358925525
+      // May need to then run this before `npm start`: `adb reverse tcp:9090 tcp:9090`
+      Reactotron
+        .configure() // controls connection & communication settings
+        .useReactNative() // add all built-in react native plugins
+        .connect(); // let's connect!
+    }
   }
 
   componentWillUnmount() {
@@ -83,6 +95,10 @@ class App extends React.Component {
 
   handleFinishLoading = () => {
     this.setState({ isLoadingComplete: true });
+
+    // Initialize language from redux store after it has been hydrated
+    const state = store.getState();
+    i18n.setLocale(state.i18nReducer.locale);
   };
 
   render() {

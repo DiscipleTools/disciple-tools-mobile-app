@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {
   View,
   FlatList,
-  TouchableHighlight,
+  TouchableOpacity,
   RefreshControl,
   StyleSheet,
   Text,
@@ -15,6 +15,7 @@ import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/groups.actions';
+import i18n from '../../languages';
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -39,7 +40,7 @@ let toastError;
 
 class GroupsScreen extends React.Component {
   static navigationOptions = {
-    title: 'Groups',
+    title: i18n.t('global.groups'),
     headerLeft: null,
   };
 
@@ -52,10 +53,14 @@ class GroupsScreen extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    const {
+      loading,
+      groups,
+    } = nextProps;
     const newState = {
       ...prevState,
-      loading: nextProps.loading,
-      groups: nextProps.groups,
+      loading,
+      groups: groups || prevState.groups,
     };
     return newState;
   }
@@ -65,9 +70,9 @@ class GroupsScreen extends React.Component {
     if (prevProps.error !== error && error) {
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>Code: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
           <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>Message: </Text>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
           <Text>{error.message}</Text>
         </View>,
         3000,
@@ -75,35 +80,35 @@ class GroupsScreen extends React.Component {
     }
   }
 
-  renderRow = item => (
-    <TouchableHighlight
-      onPress={() => this.goToGroupDetailScreen(item)}
+  renderRow = group => (
+    <TouchableOpacity
+      onPress={() => this.goToGroupDetailScreen(group)}
       style={styles.flatListItem}
-      key={item.toString()}
+      key={group.ID}
     >
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={{ fontWeight: 'bold' }}>{item.post_title}</Text>
+          <Text style={{ fontWeight: 'bold' }}>{group.post_title}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text style={styles.groupSubtitle}>
-            {item.group_status}
+            {i18n.t(`global.groupStatus.${group.group_status.key}`)}
           </Text>
           <Text style={styles.groupSubtitle}>
             {' • '}
           </Text>
           <Text style={styles.groupSubtitle}>
-            {item.group_type}
+            {i18n.t(`global.groupType.${group.group_type.key}`)}
           </Text>
           <Text style={styles.groupSubtitle}>
             {' • '}
           </Text>
           <Text style={styles.groupSubtitle}>
-            {item.member_count}
+            {group.member_count}
           </Text>
         </View>
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 
   flatListItemSeparator = () => (
@@ -117,7 +122,7 @@ class GroupsScreen extends React.Component {
   );
 
   onRefresh = () => {
-    this.props.getAllGroups(this.props.user.domain, this.props.user.token);
+    this.props.getAllGroups(this.props.userData.domain, this.props.userData.token);
   };
 
   goToGroupDetailScreen = (groupData = null) => {
@@ -127,10 +132,13 @@ class GroupsScreen extends React.Component {
         groupId: groupData.ID,
         onlyView: true,
         groupName: groupData.post_title,
+        previousList: [],
       });
     } else {
       // Create
-      this.props.navigation.push('GroupDetail');
+      this.props.navigation.push('GroupDetail', {
+        previousList: [],
+      });
     }
   };
 
@@ -148,7 +156,7 @@ class GroupsScreen extends React.Component {
                 onRefresh={this.onRefresh}
               />
             )}
-            keyExtractor={item => item.ID.toString()}
+            keyExtractor={item => item.ID}
           />
           <Fab
             style={{ backgroundColor: Colors.tintColor }}
@@ -175,7 +183,7 @@ GroupsScreen.propTypes = {
     navigate: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
   }).isRequired,
-  user: PropTypes.shape({
+  userData: PropTypes.shape({
     domain: PropTypes.string,
     token: PropTypes.string,
   }).isRequired,
@@ -185,9 +193,10 @@ GroupsScreen.propTypes = {
     PropTypes.shape({
       key: PropTypes.number
     })
-  ).isRequired,
+  ),
   /* eslint-enable */
   error: PropTypes.shape({
+    code: PropTypes.string,
     message: PropTypes.string,
   }),
 };
@@ -196,7 +205,7 @@ GroupsScreen.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  user: state.userReducer,
+  userData: state.userReducer.userData,
   groups: state.groupsReducer.groups,
   loading: state.groupsReducer.loading,
   error: state.groupsReducer.error,

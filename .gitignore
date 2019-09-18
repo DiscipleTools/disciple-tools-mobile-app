@@ -92,3 +92,6 @@ fabric.properties
 # Jest / Tests
 ## (not sure if these snapshots should be checked in or not)
 __snapshots__
+
+# VSCode
+.vscode

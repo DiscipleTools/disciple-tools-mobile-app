@@ -1,24 +1,181 @@
 {
-  "login": {
+  "global": {
+    "locales": {
+      "en-US": "",
+      "ar-JO": ""
+    },
+    "error": {
+      "code": "",
+      "message": ""
+    },
+    "success": {
+      "save": ""
+    },
+    "contactOverallStatus": {
+      "new": "",
+      "unassignable": "",
+      "unassigned": "",
+      "assigned": "",
+      "active": "",
+      "paused": "",
+      "closed": ""
+    },
+    "seekerPath": {
+      "none": "",
+      "attempted": "",
+      "established": "",
+      "scheduled": "",
+      "met": "",
+      "ongoing": "",
+      "coaching": ""
+    },
+    "groupStatus": {
+      "active": "",
+      "inactive": ""
+    },
+    "groupType": {
+      "pre-group": "",
+      "group": "",
+      "church": "",
+      "team": ""
+    },
+    "groups": "",
+    "details": "",
+    "status": "",
+    "assignedTo": "",
+    "location": "",
+    "peopleGroup": "",
+    "selectPeopleGroups": "",
+    "address": "",
+    "progress": "",
+    "commentsActivity": "",
+    "writeYourCommentNoteHere": "",
+    "requiredField": "",
+    "edit": "",
+    "cancel": "",
+    "save": "",
+    "online": "",
+    "language": ""
+  },
+  "loginScreen": {
     "domain": {
       "label": "اسم نطاق أدوات التلمذة",
-      "placeholder": "مثلاً: myteam.disciple.tools"
+      "placeholder": "مثلاً: myteam.disciple.tools",
+      "error": ""
     },
     "username": {
-      "label": "اسم المستخدم"
+      "label": "اسم المستخدم",
+      "error": ""
     },
     "password": {
-      "label": "كلمة المرور"
+      "label": "كلمة المرور",
+      "error": ""
     },
-    "login": "تسجيل الدخول",
+    "logIn": "تسجيل الدخول",
     "forgotPassword": "فقدت كلمة المرور الخاصة بك؟"
   },
-  "settings": {
-    "navigation": {
-      "title": "الإعدادات"
+  "contactsScreen": {
+    "contacts": ""
+  },
+  "settingsScreen": {
+    "settings": "الإعدادات",
+    "networkUnavailable": "",
+    "networkAvailable": "",
+    "signOut": "",
+    "domain": "",
+    "signedInAs": "",
+    "storybook": "",
+    "logout": ""
+  },
+  "contactDetailScreen": {
+    "addNewContact": "",
+    "contactSources": {
+      "personal": "",
+      "web": "",
+      "phone": "",
+      "facebook": "",
+      "twitter": "",
+      "linkedin": "",
+      "referral": "",
+      "advertisement": "",
+      "transfer": ""
     },
-    "storybook": "ستوري بوك",
-    "online": "عبر الانترنت",
-    "logout": "خروج"
+    "subAssignedTo": "",
+    "subAssignThisContact": "",
+    "mobile": "",
+    "email": "",
+    "message": "",
+    "selectLocations": "",
+    "contactAge": {
+      "underEighteenYearsOld": "",
+      "underTwentySixYearsOld": "",
+      "underFortyOneYearsOld": "",
+      "overFortyYearsOld": ""
+    },
+    "age": "",
+    "male": "",
+    "female": "",
+    "gender": "",
+    "source": "",
+    "selectSources": "",
+    "seekerPath": "",
+    "faithMilestones": "",
+    "milestones": {
+      "hasBible": "",
+      "readingBible": "",
+      "statesBelief": "",
+      "shareGospel": "",
+      "sharingGospel": "",
+      "baptized": "",
+      "baptizing": "",
+      "inGroup": "",
+      "startingChurches": "",
+      "baptismDate": ""
+    },
+    "connections": "",
+    "addGroup": "",
+    "connection": "",
+    "addConnection": "",
+    "baptizedBy": "",
+    "addBaptizedBy": "",
+    "baptized": "",
+    "addBaptized": "",
+    "coachedBy": "",
+    "addCoachedBy": "",
+    "coaching": "",
+    "addCoaching": "",
+    "fullName": "",
+    "phoneNumber": "",
+    "initialComment": "",
+    "addBaptizmDate": "",
+    "group": ""
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "",
+    "groupCoach": "",
+    "selectCoaches": "",
+    "selectGeonames": "",
+    "startDate": "",
+    "endDate": "",
+    "groupType": "",
+    "churchHealth": "",
+    "healthMetrics": {
+      "giving": "",
+      "fellowship": "",
+      "communion": "",
+      "baptism": "",
+      "prayer": "",
+      "leaders": "",
+      "bibleStudy": "",
+      "praise": "",
+      "sharingGospel": ""
+    },
+    "parentGroup": "",
+    "searchGroups": "",
+    "peerGroup": "",
+    "searchPeerGroups": "",
+    "childGroup": "",
+    "searchChildGroups": "",
+    "groupName": ""
   }
 }
