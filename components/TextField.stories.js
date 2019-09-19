@@ -59,7 +59,7 @@ storiesOf('Text Field', module)
       containerStyle={styles.basicContainer}
     />
   ))
-  .add('with Custom Styles', () => (
+  .add('Custom Styles', () => (
     <TextField
       label="Custom Styles"
       placeholder="Enter a value"
