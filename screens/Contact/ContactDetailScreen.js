@@ -14,6 +14,7 @@ import {
   AsyncStorage,
   RefreshControl,
 } from 'react-native';
+
 import PropTypes from 'prop-types';
 
 import {
@@ -351,6 +352,7 @@ class ContactDetailScreen extends React.Component {
     const onlyView = this.props.navigation.getParam('onlyView');
     const contactId = this.props.navigation.getParam('contactId');
     const contactName = this.props.navigation.getParam('contactName');
+    this.props.navigation.setParams({ hideTabBar: true });
     if (contactId) {
       this.setState(prevState => ({
         contact: {
@@ -622,7 +624,7 @@ class ContactDetailScreen extends React.Component {
     this.setState({
       onlyView: true,
     });
-    this.props.navigation.setParams({ hideTabBar: false });
+    this.props.navigation.setParams({ hideTabBar: true });
   }
 
   setContactTitle = (value) => {
@@ -1863,6 +1865,7 @@ class ContactDetailScreen extends React.Component {
   }
 
   render() {
+
     const successToast = (
       <Toast
         ref={(toast) => {

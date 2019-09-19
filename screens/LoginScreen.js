@@ -138,7 +138,7 @@ class LoginScreen extends React.Component {
     if (props.userData && props.userData.token) {
       this.state = {
         ...this.state,
-        loading: true,
+        // loading: true,
       };
       this.getDataLists();
     }
@@ -403,7 +403,6 @@ class LoginScreen extends React.Component {
               disabled={this.state.loading}
             />
             {passwordErrorMessage}
-            {!this.state.loading && (
               <Button
                 style={styles.signInButton}
                 onPress={this.onLoginPress}
@@ -413,7 +412,6 @@ class LoginScreen extends React.Component {
                   {i18n.t('loginScreen.logIn')}
                 </Text>
               </Button>
-            )}
             {!this.state.loading && (
               <TouchableOpacity
                 style={styles.forgotButton}
