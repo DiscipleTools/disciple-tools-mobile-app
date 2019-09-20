@@ -390,6 +390,11 @@ export default function contactsReducer(state = initialState, action) {
         newState.contacts[contactIndex] = {
           ...newState.contact,
         };
+      } else if (contact.oldID) {
+        const oldContactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === contact.oldID));
+        newState.contacts.splice(oldContactIndex, 1).unshift({
+          ...newState.contact,
+        });
       } else {
         newState.contacts.unshift({
           ...newState.contact,

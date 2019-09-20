@@ -44,6 +44,10 @@ class ContactsScreen extends React.Component {
     headerLeft: null,
   };
 
+  state = {
+    refresh: false,
+  }
+
   componentDidMount() {
     if (this.props.isConnected) {
       this.onRefresh();
@@ -104,6 +108,12 @@ class ContactsScreen extends React.Component {
     this.props.getAllContacts(this.props.userData.domain, this.props.userData.token);
   };
 
+  refreshFlatlist = () => {
+    this.setState(prevState => ({
+      refresh: !prevState.refresh,
+    }));
+  }
+
   goToContactDetailScreen = (contactData = null) => {
     if (contactData) {
       // Detail
@@ -111,10 +121,13 @@ class ContactsScreen extends React.Component {
         contactId: contactData.ID,
         onlyView: true,
         contactName: contactData.title,
+        onGoBack: () => this.refreshFlatlist(),
       });
     } else {
       // Create
-      this.props.navigation.push('ContactDetail');
+      this.props.navigation.push('ContactDetail', {
+        onGoBack: () => this.refreshFlatlist(),
+      });
     }
   };
 
@@ -124,6 +137,7 @@ class ContactsScreen extends React.Component {
         <View style={{ flex: 1 }}>
           <FlatList
             data={this.props.contacts}
+            extraData={this.state.refresh}
             renderItem={item => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
             refreshControl={(

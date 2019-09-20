@@ -196,7 +196,10 @@ class ContactDetailScreen extends React.Component {
         <Icon
           android="md-arrow-back"
           ios="ios-arrow-back"
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            params.onGoBack();
+            navigation.goBack();
+          }}
           style={[{ paddingLeft: 16, color: '#FFFFFF' }]}
         />
       ),
