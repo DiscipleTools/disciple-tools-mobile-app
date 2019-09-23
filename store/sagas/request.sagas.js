@@ -113,6 +113,11 @@ export default function* requestSaga() {
         if (payload.data.method === 'GET' && payload.action.includes('GETBYID')) {
           yield put({ type: payload.action, payload: { data: { ID: localGetById.value, isOffline: true }, status: 200 } });
         }
+        if (payload.data.method === 'GET' && payload.action.includes('GETALL')) {
+          const entityName = payload.action.substr(0, payload.action.indexOf('_')).toLowerCase(),
+          list = yield select(state => state[`${entityName}Reducer`][`${entityName}`]);
+          yield put({ type: payload.action, payload: { data: { posts: list }, status: 200 } });
+        }
       }
     } else if (request) {
       // ONLINE request

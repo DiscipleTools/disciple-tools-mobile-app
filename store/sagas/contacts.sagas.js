@@ -1,29 +1,9 @@
-import { AsyncStorage } from 'react-native';
-
 import {
   put, take, takeEvery, takeLatest, all, select,
 } from 'redux-saga/effects';
 
 import * as Sentry from 'sentry-expo';
 import * as actions from '../actions/contacts.actions';
-
-function formatDateToBackendResponse(dateString) {
-  const monthNames = [
-    'January', 'February', 'March',
-    'April', 'May', 'June', 'July',
-    'August', 'September', 'October',
-    'November', 'December',
-  ];
-  let date = new Date(dateString);
-  date = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
-    date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-  date = new Date(date);
-  const day = date.getDate();
-  const monthIndex = date.getMonth();
-  const year = date.getFullYear();
-
-  return `${monthNames[monthIndex]} ${day}, ${year}`;
-}
 
 export function* getAll({ domain, token }) {
   yield put({ type: actions.CONTACTS_GETALL_START });
@@ -49,10 +29,18 @@ export function* getAll({ domain, token }) {
     const jsonData = response.data;
     if (response.status === 200) {
       if (jsonData.posts) {
-        yield put({
-          type: actions.CONTACTS_GETALL_SUCCESS,
-          contacts: jsonData.posts,
-        });
+        if (isConnected) {
+          yield put({
+            type: actions.CONTACTS_GETALL_SUCCESS,
+            contacts: jsonData.posts,
+          });
+        } else {
+          yield put({
+            type: actions.CONTACTS_GETALL_SUCCESS,
+            contacts: jsonData.posts,
+            offline: true,
+          });
+        }
       } else {
         yield put({
           type: actions.CONTACTS_GETALL_SUCCESS,
@@ -82,61 +70,6 @@ export function* getAll({ domain, token }) {
   }
 }
 
-function* getLocalLists() {
-  let lists = {};
-  const users = yield AsyncStorage.getItem('usersList');
-  if (users !== null) {
-    lists = {
-      users: JSON.parse(users).map(user => ({
-        key: user.ID,
-        label: user.name,
-      })),
-    };
-  }
-
-  const usersContacts = yield AsyncStorage.getItem('usersAndContactsList');
-  if (usersContacts !== null) {
-    lists = {
-      ...lists,
-      usersContacts: JSON.parse(usersContacts),
-    };
-  }
-
-  const peopleGroups = yield AsyncStorage.getItem('peopleGroupsList');
-  if (peopleGroups !== null) {
-    lists = {
-      ...lists,
-      peopleGroups: JSON.parse(peopleGroups),
-    };
-  }
-
-  const geonames = yield AsyncStorage.getItem('locationsList');
-  if (geonames !== null) {
-    lists = {
-      ...lists,
-      geonames: JSON.parse(geonames),
-    };
-  }
-
-  const groups = yield AsyncStorage.getItem('searchGroupsList');
-  if (groups !== null) {
-    lists = {
-      ...lists,
-      groups: JSON.parse(groups),
-    };
-  }
-
-  const contactsSettings = yield AsyncStorage.getItem('contactSettings');
-  if (contactsSettings !== null) {
-    lists = {
-      ...lists,
-      contactsSettings: JSON.parse(contactsSettings),
-    };
-  }
-
-  return lists;
-}
-
 export function* save({ domain, token, contactData }) {
   const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
 
@@ -150,12 +83,7 @@ export function* save({ domain, token, contactData }) {
   }
   let contactId = '';
   if (contact.ID) {
-    /* eslint-disable */
-    if (!isNaN(contact.ID)) {
-      /* eslint-enable */
-      // Numeric ID
-      contactId = contact.ID;
-    }
+    contactId = contact.ID;
   }
   yield put({
     type: 'REQUEST',
@@ -243,119 +171,20 @@ export function* save({ domain, token, contactData }) {
         });
       }
     } else {
-      jsonData = response;
-      const {
-        users, usersContacts, peopleGroups, geonames, groups, contactsSettings,
-      } = yield getLocalLists();
-
-      const userData = yield select(state => state.userReducer.userData);
-
-      let assignedTo = (jsonData.assigned_to) ? jsonData.assigned_to.split('-') : null;
-      if (assignedTo) {
-        assignedTo = assignedTo[assignedTo.length - 1];
-      } else {
-        const userItem = users.find(user => (user.label === userData.username));
-        assignedTo = userItem.key;
-      }
-
-      const baptismDate = (jsonData.baptism_date) ? formatDateToBackendResponse(jsonData.baptism_date) : '';
-      const overallStatus = (jsonData.overall_status) ? jsonData.overall_status : 'new';
-      const seekerPath = (jsonData.seeker_path) ? jsonData.seeker_path : 'none';
-
-      const subassignedContacts = jsonData.subassigned.values.map((subassigned) => {
-        let postTitle = usersContacts.find(userContact => (userContact.value === subassigned.value));
-        postTitle = (postTitle) ? postTitle.name : '';
-        return { ID: subassigned.value, post_title: postTitle };
-      });
-      const locationGrid = jsonData.location_grid.values.map((location) => {
-        let postTitle = geonames.find(geoname => (geoname.value === location.value));
-        postTitle = (postTitle) ? postTitle.name : '';
-        return { id: location.value, label: postTitle };
-      });
-      const peopleGroupsMapped = jsonData.people_groups.values.map((peopleGroup) => {
-        let postTitle = peopleGroups.find(group => (group.value === peopleGroup.value));
-        postTitle = (postTitle) ? postTitle.name : '';
-        return { ID: peopleGroup.value, post_title: postTitle };
-      });
-      const groupsMapped = jsonData.groups.values.map((group) => {
-        let postTitle = groups.find(groupItem => (groupItem.value === group.value));
-        postTitle = (postTitle) ? postTitle.name : '';
-        return { ID: group.value, post_title: postTitle };
-      });
-      const relationMapped = jsonData.relation.values.map((relation) => {
-        let postTitle = usersContacts.find(userContact => (userContact.value === relation.value));
-        postTitle = (postTitle) ? postTitle.name : '';
-        return { ID: relation.value, post_title: postTitle };
-      });
-      const baptizedMapped = jsonData.baptized.values.map((baptized) => {
-        let postTitle = usersContacts.find(userContact => (userContact.value === baptized.value));
-        postTitle = (postTitle) ? postTitle.name : '';
-        return { ID: baptized.value, post_title: postTitle };
-      });
-      const baptizedByMapped = jsonData.baptized_by.values.map((baptizedBy) => {
-        let postTitle = usersContacts.find(userContact => (userContact.value === baptizedBy.value));
-        postTitle = (postTitle) ? postTitle.name : '';
-        return { ID: baptizedBy.value, post_title: postTitle };
-      });
-      const coachedByMapped = jsonData.coached_by.values.map((coachedBy) => {
-        let postTitle = usersContacts.find(userContact => (userContact.value === coachedBy.value));
-        postTitle = (postTitle) ? postTitle.name : '';
-        return { ID: coachedBy.value, post_title: postTitle };
-      });
-      const coachingMapped = jsonData.coaching.values.map((coaching) => {
-        let postTitle = usersContacts.find(userContact => (userContact.value === coaching.value));
-        postTitle = (postTitle) ? postTitle.name : '';
-        return { ID: coaching.value, post_title: postTitle };
-      });
-
       jsonData = {
-        ID: jsonData.ID,
-        age: {
-          key: (jsonData.age) ? jsonData.age : 'not-set',
-        },
-        assigned_to: {
-          id: assignedTo, // if its new contact, get value from logged user (user_nicename)
-        },
-        baptism_date: {
-          formatted: baptismDate,
-        },
-        groups: groupsMapped,
-        location_grid: locationGrid,
-        people_groups: peopleGroupsMapped,
-        subassigned: subassignedContacts,
-        relation: relationMapped,
-        baptized: baptizedMapped,
-        baptized_by: baptizedByMapped,
-        coached_by: coachedByMapped,
-        coaching: coachingMapped,
-        contact_address: jsonData.contact_address.map(contactAddress => ({ key: (contactAddress.key) ? contactAddress.key : '', value: contactAddress.value })),
-        contact_email: jsonData.contact_email.map(contactEmail => ({ key: (contactEmail.key) ? contactEmail.key : '', value: contactEmail.value })),
-        contact_phone: jsonData.contact_phone.map(contactPhone => ({ key: (contactPhone.key) ? contactPhone.key : '', value: contactPhone.value })),
-        gender: (jsonData.gender) ? {
-          key: jsonData.gender,
-          label: contactsSettings.gender.default[jsonData.gender].label,
-        } : null,
-        milestones: jsonData.milestones.values.map(milestone => (milestone.value)),
-        overall_status: {
-          key: overallStatus,
-          label: contactsSettings.overall_status.default[overallStatus].label,
-        },
-        seeker_path: {
-          key: seekerPath,
-          label: contactsSettings.seeker_path.default[seekerPath].label,
-        },
-        sources: jsonData.sources.values.map(source => (source.value)),
-        quick_button_contact_established: jsonData.quick_button_contact_established,
-        quick_button_meeting_complete: jsonData.quick_button_meeting_complete,
-        quick_button_meeting_scheduled: jsonData.quick_button_meeting_scheduled,
-        quick_button_no_answer: jsonData.quick_button_no_answer,
-        quick_button_no_show: jsonData.quick_button_no_show,
-        title: jsonData.title,
+        ...response,
       };
+      if (contactId.length > 0) {
+        jsonData = {
+          ...jsonData,
+          ID: contactId,
+        };
+      }
 
       yield put({
         type: actions.CONTACTS_SAVE_SUCCESS,
         contact: jsonData,
+        offline: true,
       });
     }
   } catch (error) {

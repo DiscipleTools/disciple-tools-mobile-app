@@ -178,6 +178,202 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
 });
+const diff = (obj1, obj2) => {
+  // Make sure an object to compare is provided
+  if (!obj2 || Object.prototype.toString.call(obj2) !== '[object Object]') {
+    return obj1;
+  }
+
+  //
+  // Variables
+  //
+
+  const diffs = {};
+  // let key;
+
+
+  //
+  // Methods
+  //
+
+  /**
+   * Check if two arrays are equal
+   * @param  {Array}   arr1 The first array
+   * @param  {Array}   arr2 The second array
+   * @return {Boolean}      If true, both arrays are equal
+   */
+  const arraysMatch = (value, other) => {
+    // Get the value type
+    const type = Object.prototype.toString.call(value);
+
+    // If the two objects are not the same type, return false
+    if (type !== Object.prototype.toString.call(other)) return false;
+
+    // If items are not an object or array, return false
+    if (['[object Array]', '[object Object]'].indexOf(type) < 0) return false;
+
+    // Compare the length of the length of the two items
+    const valueLen = type === '[object Array]' ? value.length : Object.keys(value).length;
+    const otherLen = type === '[object Array]' ? other.length : Object.keys(other).length;
+    if (valueLen !== otherLen) return false;
+
+    // Compare two items
+    const compare = (item1, item2) => {
+      // Get the object type
+      const itemType = Object.prototype.toString.call(item1);
+
+      // If an object or array, compare recursively
+      if (['[object Array]', '[object Object]'].indexOf(itemType) >= 0) {
+        if (!arraysMatch(item1, item2)) return false;
+      } else {
+        // Otherwise, do a simple comparison
+        // If the two items are not the same type, return false
+        if (itemType !== Object.prototype.toString.call(item2)) return false;
+
+        // Else if it's a function, convert to a string and compare
+        // Otherwise, just compare
+        if (itemType === '[object Function]') {
+          if (item1.toString() !== item2.toString()) return false;
+        } else if (item1 !== item2) return false;
+      }
+      return true;
+    };
+
+    // Compare properties
+    if (type === '[object Array]') {
+      for (let i = 0; i < valueLen; i++) {
+        if (compare(value[i], other[i]) === false) return false;
+      }
+    } else {
+      for (const key in value) {
+        if (Object.prototype.hasOwnProperty.call(value, key)) {
+          if (compare(value[key], other[key]) === false) return false;
+        }
+      }
+    }
+
+    // If nothing failed, return true
+    return true;
+  };
+
+  /**
+   * Compare two items and push non-matches to object
+   * @param  {*}      item1 The first item
+   * @param  {*}      item2 The second item
+   * @param  {String} key   The key in our object
+   */
+  const compare = (item1, item2, key) => {
+    // Get the object type
+    const type1 = Object.prototype.toString.call(item1);
+    const type2 = Object.prototype.toString.call(item2);
+
+    // If type2 is undefined it has been removed
+    if (type2 === '[object Undefined]') {
+      diffs[key] = null;
+      return;
+    }
+
+    // If items are different types
+    if (type1 !== type2) {
+      diffs[key] = item2;
+      return;
+    }
+
+    // If an object, compare recursively
+    if (type1 === '[object Object]') {
+      const objDiff = diff(item1, item2);
+      if (Object.keys(objDiff).length > 1) {
+        diffs[key] = objDiff;
+      }
+      return;
+    }
+
+    // If an array, compare
+    if (type1 === '[object Array]') {
+      if (!arraysMatch(item1, item2)) {
+        diffs[key] = item2;
+      }
+      return;
+    }
+
+    // Else if it's a function, convert to a string and compare
+    // Otherwise, just compare
+    if (type1 === '[object Function]') {
+      if (item1.toString() !== item2.toString()) {
+        diffs[key] = item2;
+      }
+    } else if (item1 !== item2) {
+      diffs[key] = item2;
+    }
+  };
+
+
+  //
+  // Compare our objects
+  //
+
+  // Loop through the first object
+  for (const key in obj1) {
+    if (Object.prototype.hasOwnProperty.call(obj1, key)) {
+      compare(obj1[key], obj2[key], key);
+    }
+  }
+
+  // Loop through the second object and find missing items
+  for (const key in obj2) {
+    if (Object.prototype.hasOwnProperty.call(obj2, key)) {
+      if (!obj1[key] && obj1[key] !== obj2[key]) {
+        diffs[key] = obj2[key];
+      }
+    }
+  }
+
+  // Return the object of differences
+  return diffs;
+};
+const contactInitialState = {
+  sources: {
+    values: [
+      {
+        name: 'Personal',
+        value: 'personal',
+      },
+    ],
+  },
+  milestones: {
+    values: [],
+  },
+  contact_phone: [],
+  contact_email: [],
+  contact_address: [],
+  location_grid: {
+    values: [],
+  },
+  subassigned: {
+    values: [],
+  },
+  people_groups: {
+    values: [],
+  },
+  groups: {
+    values: [],
+  },
+  relation: {
+    values: [],
+  },
+  baptized_by: {
+    values: [],
+  },
+  baptized: {
+    values: [],
+  },
+  coached_by: {
+    values: [],
+  },
+  coaching: {
+    values: [],
+  },
+};
 
 class ContactDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -214,48 +410,8 @@ class ContactDetailScreen extends React.Component {
   };
 
   state = {
-    contact: {
-      sources: {
-        values: [
-          {
-            value: 'personal',
-          },
-        ],
-      },
-      milestones: {
-        values: [],
-      },
-      contact_phone: [],
-      contact_email: [],
-      contact_address: [],
-      location_grid: {
-        values: [],
-      },
-      subassigned: {
-        values: [],
-      },
-      people_groups: {
-        values: [],
-      },
-      groups: {
-        values: [],
-      },
-      relation: {
-        values: [],
-      },
-      baptized_by: {
-        values: [],
-      },
-      baptized: {
-        values: [],
-      },
-      coached_by: {
-        values: [],
-      },
-      coaching: {
-        values: [],
-      },
-    },
+    contact: contactInitialState,
+    contactUnmodified: contactInitialState,
     contactSources: [
       {
         name: i18n.t('contactDetailScreen.contactSources.personal'),
@@ -393,7 +549,7 @@ class ContactDetailScreen extends React.Component {
     } = nextProps;
     let newState = {
       ...prevState,
-      contact: contact || prevState.contact,
+      contact: prevState.contact,
       loading,
       comments: comments || prevState.comments,
       totalComments: totalComments || prevState.totalComments,
@@ -413,6 +569,15 @@ class ContactDetailScreen extends React.Component {
 
     // GET BY ID
     if (contact) {
+      newState = {
+        ...newState,
+        contact: {
+          ...contactInitialState,
+          ...prevState.contact,
+          ...contact,
+        },
+      };
+
       // Update contact status select color
       let newColor = '';
       if (contact.overall_status === 'new' || contact.overall_status === 'unassigned' || contact.overall_status === 'closed') {
@@ -426,9 +591,15 @@ class ContactDetailScreen extends React.Component {
       } else if (contact.overall_status === 'active') {
         newColor = '#5cb85c';
       }
+
       newState = {
         ...newState,
         overallStatusBackgroundColor: newColor,
+        contactUnmodified: {
+          ...contactInitialState,
+          ...prevState.contact,
+          ...contact,
+        },
       };
     }
 
@@ -810,9 +981,8 @@ class ContactDetailScreen extends React.Component {
 
   onSaveContact = (quickAction = {}) => {
     Keyboard.dismiss();
-    let contactToSave = {
-      ID: this.state.contact.ID,
-    };
+
+    let contactToSave = JSON.parse(JSON.stringify(this.state.contact));
     if (
       Object.prototype.hasOwnProperty.call(
         quickAction,
@@ -840,7 +1010,6 @@ class ContactDetailScreen extends React.Component {
         ...quickAction,
       };
     } else {
-      contactToSave = JSON.parse(JSON.stringify(this.state.contact));
       if (Object.prototype.hasOwnProperty.call(contactToSave, 'location_grid') && geonamesSelectizeRef) {
         contactToSave.location_grid.values = this.setGeonames();
       }
@@ -872,6 +1041,20 @@ class ContactDetailScreen extends React.Component {
         contactToSave.sources.values = this.setSources();
       }
     }
+
+    contactToSave = diff(this.state.contactUnmodified, contactToSave);
+    contactToSave = {
+      ...contactToSave,
+      title: this.state.contact.title,
+    };
+
+    if (this.state.contact.ID) {
+      contactToSave = {
+        ...contactToSave,
+        ID: this.state.contact.ID,
+      };
+    }
+
     this.props.saveContact(
       this.props.userData.domain,
       this.props.userData.token,
@@ -2530,11 +2713,13 @@ class ContactDetailScreen extends React.Component {
                             name="phone-off"
                             style={{ color: 'white' }}
                             onPress={() => this.onSaveContact({
-                              quick_button_no_answer:
-                                parseInt(
+                              quick_button_no_answer: Object.prototype.hasOwnProperty.call(
+                                this.state.contact,
+                                'quick_button_no_answer',
+                              ) ? parseInt(
                                   this.state.contact.quick_button_no_answer,
                                   10,
-                                ) + 1,
+                                ) + 1 : 0,
                             })
                             }
                           />
@@ -2545,12 +2730,14 @@ class ContactDetailScreen extends React.Component {
                             name="phone-in-talk"
                             style={{ color: 'white' }}
                             onPress={() => this.onSaveContact({
-                              quick_button_contact_established:
-                                parseInt(
+                              quick_button_contact_established: Object.prototype.hasOwnProperty.call(
+                                this.state.contact,
+                                'quick_button_contact_established',
+                              ) ? parseInt(
                                   this.state.contact
                                     .quick_button_contact_established,
                                   10,
-                                ) + 1,
+                                ) + 1 : 0,
                             })
                             }
                           />
@@ -2561,11 +2748,14 @@ class ContactDetailScreen extends React.Component {
                             name="calendar-plus"
                             style={{ color: 'white' }}
                             onPress={() => this.onSaveContact({
-                              quick_button_meeting_scheduled:
-                                parseInt(
-                                  this.state.contact.quick_button_meeting_scheduled,
+                              quick_button_meeting_scheduled: Object.prototype.hasOwnProperty.call(
+                                this.state.contact,
+                                'quick_button_meeting_scheduled',
+                              ) ? parseInt(
+                                  this.state.contact
+                                    .quick_button_meeting_scheduled,
                                   10,
-                                ) + 1,
+                                ) + 1 : 0,
                             })
                             }
                           />
@@ -2576,11 +2766,14 @@ class ContactDetailScreen extends React.Component {
                             name="calendar-check"
                             style={{ color: 'white' }}
                             onPress={() => this.onSaveContact({
-                              quick_button_meeting_complete:
-                                parseInt(
-                                  this.state.contact.quick_button_meeting_complete,
+                              quick_button_meeting_complete: Object.prototype.hasOwnProperty.call(
+                                this.state.contact,
+                                'quick_button_meeting_complete',
+                              ) ? parseInt(
+                                  this.state.contact
+                                    .quick_button_meeting_complete,
                                   10,
-                                ) + 1,
+                                ) + 1 : 0,
                             })
                             }
                           />
@@ -2591,11 +2784,14 @@ class ContactDetailScreen extends React.Component {
                             name="calendar-remove"
                             style={{ color: 'white' }}
                             onPress={() => this.onSaveContact({
-                              quick_button_no_show:
-                                parseInt(
-                                  this.state.contact.quick_button_no_show,
+                              quick_button_no_show: Object.prototype.hasOwnProperty.call(
+                                this.state.contact,
+                                'quick_button_no_show',
+                              ) ? parseInt(
+                                  this.state.contact
+                                    .quick_button_no_show,
                                   10,
-                                ) + 1,
+                                ) + 1 : 0,
                             })
                             }
                           />
@@ -4207,7 +4403,7 @@ ContactDetailScreen.propTypes = {
     token: PropTypes.string,
   }).isRequired,
   contact: PropTypes.shape({
-    ID: PropTypes.string,
+    ID: PropTypes.any,
     title: PropTypes.string,
     seeker_path: PropTypes.string,
   }),

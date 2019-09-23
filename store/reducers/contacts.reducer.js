@@ -35,163 +35,111 @@ export default function contactsReducer(state = initialState, action) {
         loading: true,
       };
     case actions.CONTACTS_GETALL_SUCCESS: {
+      let { contacts } = action;
+      const { offline } = action;
       /* eslint-disable */
-      let dataBaseContacts = [...action.contacts].map(contact => ({
-        ID: contact.ID.toString(),
-        title: contact.post_title,
-        contact_phone: contact.contact_phone
-          ? contact.contact_phone
-            .filter((obj, pos, arr) => (
-              arr
-                .map(mapObj => mapObj.value)
-                .indexOf(obj.value) === pos
-            ))
-            .map(phone => ({
-              key: phone.key,
-              value: phone.value,
-            }))
-          : [],
-        contact_email: contact.contact_email
-          ? contact.contact_email
-            .filter((obj, pos, arr) => (
-              arr
-                .map(mapObj => mapObj.value)
-                .indexOf(obj.value) === pos
-            ))
-            .map(email => ({
-              key: email.key,
-              value: email.value,
-            }))
-          : [],
-        contact_address: contact.contact_address
-          ? contact.contact_address
-            .filter((obj, pos, arr) => (
-              arr
-                .map(mapObj => mapObj.value)
-                .indexOf(obj.value) === pos
-            ))
-            .map(address => ({
-              key: address.key,
-              value: address.value,
-            }))
-          : [],
-        sources: {
-          values: contact.sources
-            ? contact.sources.map(source => ({
-              name: source.charAt(0).toUpperCase() + source.slice(1),
-              value: source,
-            }))
-            : [],
-        },
-        location_grid: {
-          values: contact.location_grid
-            ? contact.location_grid.map(geoname => ({
-              name: geoname.label,
-              value: geoname.id.toString(),
-            }))
-            : [],
-        },
-        overall_status: contact.overall_status.key,
-        assigned_to: contact.assigned_to
-          ? `user-${contact.assigned_to.id}`
-          : null,
-        seeker_path: contact.seeker_path.key,
-        subassigned: {
-          values: contact.subassigned.map(user => ({
-            name: user.post_title,
-            value: user.ID.toString(),
-          })),
-        },
-        baptism_date:
-          contact.baptism_date && contact.baptism_date.formatted.length > 0
-            ? contact.baptism_date.formatted
-            : null,
-        milestones: {
-          values: contact.milestones
-            ? contact.milestones.map(milestone => ({
-              value: milestone,
-            }))
-            : [],
-        },
-        age: contact.age ? contact.age.key : null,
-        gender: contact.gender ? contact.gender.key : null,
-        groups: {
-          values: contact.groups
-            ? contact.groups.map(group => ({
-              name: group.post_title,
-              value: group.ID.toString(),
-            }))
-            : [],
-        },
-        relation: {
-          values: contact.relation
-            ? contact.relation.map(relationItem => ({
-              name: relationItem.post_title,
-              value: relationItem.ID.toString(),
-            }))
-            : [],
-        },
-        baptized_by: {
-          values: contact.baptized_by
-            ? contact.baptized_by.map(baptizedByItem => ({
-              name: baptizedByItem.post_title,
-              value: baptizedByItem.ID.toString(),
-            }))
-            : [],
-        },
-        baptized: {
-          values: contact.baptized
-            ? contact.baptized.map(baptizedItem => ({
-              name: baptizedItem.post_title,
-              value: baptizedItem.ID.toString(),
-            }))
-            : [],
-        },
-        coached_by: {
-          values: contact.coached_by
-            ? contact.coached_by.map(coachedItem => ({
-              name: coachedItem.post_title,
-              value: coachedItem.ID.toString(),
-            }))
-            : [],
-        },
-        coaching: {
-          values: contact.coaching
-            ? contact.coaching.map(coachingItem => ({
-              name: coachingItem.post_title,
-              value: coachingItem.ID.toString(),
-            }))
-            : [],
-        },
-        people_groups: {
-          values: contact.people_groups
-            ? contact.people_groups.map(peopleGroup => ({
-              value: peopleGroup.ID.toString(),
-              name: peopleGroup.post_title,
-            }))
-            : [],
-        },
-        quick_button_no_answer: contact.quick_button_no_answer
-          ? contact.quick_button_no_answer
-          : '0',
-        quick_button_contact_established: contact.quick_button_contact_established
-          ? contact.quick_button_contact_established
-          : '0',
-        quick_button_meeting_scheduled: contact.quick_button_meeting_scheduled
-          ? contact.quick_button_meeting_scheduled
-          : '0',
-        quick_button_meeting_complete: contact.quick_button_meeting_complete
-          ? contact.quick_button_meeting_complete
-          : '0',
-        quick_button_no_show: contact.quick_button_no_show
-          ? contact.quick_button_no_show
-          : '0',
-        /* quick_button_phone_off: contact.quick_button_phone_off
-          ? contact.quick_button_phone_off
-          : "0" */
-      }));
       let localContacts = newState.contacts.filter(localContact => isNaN(localContact.ID));
-      let contacts = localContacts.concat(dataBaseContacts);
+      if (!offline) {
+        let dataBaseContacts = [...action.contacts].map(contact => {
+
+          let mappedContact = {};
+          Object.keys(contact).forEach(key => {
+            //Omit restricted properties
+            if (key !== "_sample" && key !== "geonames" && key !== "created_date" && key !== "permalink" && key !== "last_modified") {
+
+              let value = contact[key];
+              let valueType = Object.prototype.toString.call(value);
+              switch (valueType) {
+                case "[object Boolean]": {
+                  mappedContact[key] = value;
+                  return;
+                }
+                case "[object Number]": {
+                  mappedContact[key] = value;
+                  return;
+                }
+                case "[object String]": {
+                  if (value.includes("quick_button")) {
+                    mappedContact[key] = parseInt(value);
+                  } else if (key == "post_title") {
+                    mappedContact["title"] = value;
+                  } else {
+                    mappedContact[key] = value;
+                  }
+                  return;
+                }
+                case "[object Object]": {
+                  if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                    // key_select
+                    mappedContact[key] = value.key;
+                  } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                    // date
+                    mappedContact[key] = value.formatted;
+                  } else if (key == "assigned_to") {
+                    // assigned-to property
+                    mappedContact[key] = value['assigned-to'];
+                  }
+                  return;
+                }
+                case "[object Array]": {
+                  let mappedValue = value.map(valueTwo => {
+                    let valueTwoType = Object.prototype.toString.call(valueTwo);
+                    switch (valueTwoType) {
+                      case "[object Object]": {
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
+                          // connection
+                          return {
+                            name: valueTwo.post_title,
+                            value: valueTwo.ID.toString(),
+                          };
+                        } else if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                          return {
+                            key: valueTwo.key,
+                            value: valueTwo.value,
+                          };
+                        }
+                      }
+                      case "[object String]": {
+                        if (key === "sources") {
+                          // source
+                          return {
+                            name: valueTwo.charAt(0).toUpperCase() + valueTwo.slice(1),
+                            value: valueTwo,
+                          }
+                        } else if (key === "milestones") {
+                          // milestone
+                          return {
+                            value: valueTwo,
+                          };
+                        } else if (key === "location_grid") {
+                          return {
+                            name: valueTwo.label,
+                            value: valueTwo.id.toString(),
+                          }
+                        } else {
+                          return valueTwo;
+                        }
+                      }
+                    }
+                  });
+                  if (key.includes("contact_")) {
+                    mappedContact[key] = mappedValue;
+                  } else {
+                    mappedContact[key] = {
+                      values: mappedValue
+                    };
+                  }
+                  return;
+                }
+              }
+
+            }
+          });
+          return mappedContact;
+
+        });
+        contacts = localContacts.concat(dataBaseContacts);
+      }
       /* eslint-enable */
       return {
         ...newState,
@@ -206,162 +154,120 @@ export default function contactsReducer(state = initialState, action) {
         loading: false,
       };
     case actions.CONTACTS_SAVE_SUCCESS: {
-      const { contact } = action;
+      const { contact, offline } = action;
+
+      let mappedContact = {};
+      if (offline) {
+        mappedContact = {
+          ...contact,
+        };
+      } else {
+        Object.keys(contact).forEach((key) => {
+          // Omit restricted properties
+          if (key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'last_modified') {
+            const value = contact[key];
+            const valueType = Object.prototype.toString.call(value);
+            switch (valueType) {
+              case '[object Boolean]': {
+                mappedContact[key] = value;
+                return;
+              }
+              case '[object Number]': {
+                mappedContact[key] = value;
+                return;
+              }
+              case '[object String]': {
+                if (value.includes('quick_button')) {
+                  mappedContact[key] = parseInt(value, 10);
+                } else if (key === 'post_title') {
+                  mappedContact.title = value;
+                } else {
+                  mappedContact[key] = value;
+                }
+                return;
+              }
+              case '[object Object]': {
+                if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                  // key_select
+                  mappedContact[key] = value.key;
+                } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                  // date
+                  mappedContact[key] = value.formatted;
+                } else if (key === 'assigned_to') {
+                  // assigned-to property
+                  mappedContact[key] = value['assigned-to'];
+                }
+                return;
+              }
+              case '[object Array]': {
+                const mappedValue = value.map((valueTwo) => {
+                  const valueTwoType = Object.prototype.toString.call(valueTwo);
+                  switch (valueTwoType) {
+                    case '[object Object]': {
+                      if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
+                        // connection
+                        return {
+                          name: valueTwo.post_title,
+                          value: valueTwo.ID.toString(),
+                        };
+                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                        return {
+                          key: valueTwo.key,
+                          value: valueTwo.value,
+                        };
+                      }
+                      break;
+                    }
+                    case '[object String]': {
+                      if (key === 'sources') {
+                        // source
+                        return {
+                          name: valueTwo.charAt(0).toUpperCase() + valueTwo.slice(1),
+                          value: valueTwo,
+                        };
+                      } if (key === 'milestones') {
+                        // milestone
+                        return {
+                          value: valueTwo,
+                        };
+                      } if (key === 'location_grid') {
+                        return {
+                          name: valueTwo.label,
+                          value: valueTwo.id.toString(),
+                        };
+                      }
+                      break;
+                    }
+                    default:
+                  }
+                  return valueTwo;
+                });
+                if (key.includes('contact_')) {
+                  mappedContact[key] = mappedValue;
+                } else {
+                  mappedContact[key] = {
+                    values: mappedValue,
+                  };
+                }
+                break;
+              }
+              default:
+            }
+          }
+        });
+      }
+
+      const oldId = (mappedContact.oldID) ? mappedContact.oldID : null;
+      if (oldId) {
+        delete mappedContact.oldID;
+      }
+
       newState = {
         ...newState,
-        contact: {
-          ID: contact.ID.toString(),
-          title: contact.title,
-          contact_phone: contact.contact_phone
-            ? contact.contact_phone
-              .filter((obj, pos, arr) => (
-                arr
-                  .map(mapObj => mapObj.value)
-                  .indexOf(obj.value) === pos
-              ))
-              .map(phone => ({
-                key: phone.key,
-                value: phone.value,
-              }))
-            : [],
-          contact_email: contact.contact_email
-            ? contact.contact_email
-              .filter((obj, pos, arr) => (
-                arr
-                  .map(mapObj => mapObj.value)
-                  .indexOf(obj.value) === pos
-              ))
-              .map(email => ({
-                key: email.key,
-                value: email.value,
-              }))
-            : [],
-          contact_address: contact.contact_address
-            ? contact.contact_address
-              .filter((obj, pos, arr) => (
-                arr
-                  .map(mapObj => mapObj.value)
-                  .indexOf(obj.value) === pos
-              ))
-              .map(address => ({
-                key: address.key,
-                value: address.value,
-              }))
-            : [],
-          sources: {
-            values: contact.sources
-              ? contact.sources.map(source => ({
-                name: source.charAt(0).toUpperCase() + source.slice(1),
-                value: source,
-              }))
-              : [],
-          },
-          location_grid: {
-            values: contact.location_grid
-              ? contact.location_grid.map(geoname => ({
-                name: geoname.label,
-                value: geoname.id.toString(),
-              }))
-              : [],
-          },
-          overall_status: contact.overall_status.key,
-          assigned_to: contact.assigned_to
-            ? `user-${contact.assigned_to.id}`
-            : null,
-          seeker_path: contact.seeker_path.key,
-          subassigned: {
-            values: contact.subassigned.map(user => ({
-              name: user.post_title,
-              value: user.ID.toString(),
-            })),
-          },
-          baptism_date:
-            contact.baptism_date && contact.baptism_date.formatted.length > 0
-              ? contact.baptism_date.formatted
-              : null,
-          milestones: {
-            values: contact.milestones
-              ? contact.milestones.map(milestone => ({
-                value: milestone,
-              }))
-              : [],
-          },
-          age: contact.age ? contact.age.key : null,
-          gender: contact.gender ? contact.gender.key : null,
-          groups: {
-            values: contact.groups
-              ? contact.groups.map(group => ({
-                name: group.post_title,
-                value: group.ID.toString(),
-              }))
-              : [],
-          },
-          relation: {
-            values: contact.relation
-              ? contact.relation.map(relationItem => ({
-                name: relationItem.post_title,
-                value: relationItem.ID.toString(),
-              }))
-              : [],
-          },
-          baptized_by: {
-            values: contact.baptized_by
-              ? contact.baptized_by.map(baptizedByItem => ({
-                name: baptizedByItem.post_title,
-                value: baptizedByItem.ID.toString(),
-              }))
-              : [],
-          },
-          baptized: {
-            values: contact.baptized
-              ? contact.baptized.map(baptizedItem => ({
-                name: baptizedItem.post_title,
-                value: baptizedItem.ID.toString(),
-              }))
-              : [],
-          },
-          coached_by: {
-            values: contact.coached_by
-              ? contact.coached_by.map(coachedItem => ({
-                name: coachedItem.post_title,
-                value: coachedItem.ID.toString(),
-              }))
-              : [],
-          },
-          coaching: {
-            values: contact.coaching
-              ? contact.coaching.map(coachingItem => ({
-                name: coachingItem.post_title,
-                value: coachingItem.ID.toString(),
-              }))
-              : [],
-          },
-          people_groups: {
-            values: contact.people_groups
-              ? contact.people_groups.map(peopleGroup => ({
-                value: peopleGroup.ID.toString(),
-                name: peopleGroup.post_title,
-              }))
-              : [],
-          },
-          quick_button_no_answer: contact.quick_button_no_answer
-            ? contact.quick_button_no_answer
-            : '0',
-          quick_button_contact_established: contact.quick_button_contact_established
-            ? contact.quick_button_contact_established
-            : '0',
-          quick_button_meeting_scheduled: contact.quick_button_meeting_scheduled
-            ? contact.quick_button_meeting_scheduled
-            : '0',
-          quick_button_meeting_complete: contact.quick_button_meeting_complete
-            ? contact.quick_button_meeting_complete
-            : '0',
-          quick_button_no_show: contact.quick_button_no_show
-            ? contact.quick_button_no_show
-            : '0',
-        },
+        contact: mappedContact,
         saved: true,
       };
+
       if (newState.contact.baptism_date) {
         let newBaptismDate = new Date(newState.contact.baptism_date);
         const year = newBaptismDate.getFullYear();
@@ -388,11 +294,15 @@ export default function contactsReducer(state = initialState, action) {
       // Search entity in list (contacts) if exists: updated it, otherwise: added it to contacts list
       if (contactIndex > -1) {
         newState.contacts[contactIndex] = {
+          ...newState.contacts[contactIndex],
           ...newState.contact,
         };
-      } else if (contact.oldID) {
-        const oldContactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === contact.oldID));
+      } else if (oldId) {
+        // Search entity with oldID, remove it and add updated entity
+        const oldContactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === oldId));
+        const previousContactData = newState.contacts[oldContactIndex];
         newState.contacts.splice(oldContactIndex, 1).unshift({
+          ...previousContactData,
           ...newState.contact,
         });
       } else {
@@ -420,160 +330,101 @@ export default function contactsReducer(state = initialState, action) {
         // Search local contact
         contact = newState.contacts.find(contactItem => (contactItem.ID === contact.ID));
       } else {
-        contact = {
-          ID: contact.ID.toString(),
-          title: contact.title,
-          contact_phone: contact.contact_phone
-            ? contact.contact_phone
-              .filter((obj, pos, arr) => (
-                arr
-                  .map(mapObj => mapObj.value)
-                  .indexOf(obj.value) === pos
-              ))
-              .map(phone => ({
-                key: phone.key,
-                value: phone.value,
-              }))
-            : [],
-          contact_email: contact.contact_email
-            ? contact.contact_email
-              .filter((obj, pos, arr) => (
-                arr
-                  .map(mapObj => mapObj.value)
-                  .indexOf(obj.value) === pos
-              ))
-              .map(email => ({
-                key: email.key,
-                value: email.value,
-              }))
-            : [],
-          contact_address: contact.contact_address
-            ? contact.contact_address
-              .filter((obj, pos, arr) => (
-                arr
-                  .map(mapObj => mapObj.value)
-                  .indexOf(obj.value) === pos
-              ))
-              .map(address => ({
-                key: address.key,
-                value: address.value,
-              }))
-            : [],
-          sources: {
-            values: contact.sources
-              ? contact.sources.map(source => ({
-                name: source.charAt(0).toUpperCase() + source.slice(1),
-                value: source,
-              }))
-              : [],
-          },
-          location_grid: {
-            values: contact.location_grid
-              ? contact.location_grid.map(geoname => ({
-                name: geoname.label,
-                value: geoname.id.toString(),
-              }))
-              : [],
-          },
-          overall_status: contact.overall_status.key,
-          assigned_to: contact.assigned_to
-            ? `user-${contact.assigned_to.id}`
-            : null,
-          seeker_path: contact.seeker_path.key,
-          subassigned: {
-            values: contact.subassigned.map(user => ({
-              name: user.post_title,
-              value: user.ID.toString(),
-            })),
-          },
-          baptism_date:
-            contact.baptism_date && contact.baptism_date.formatted.length > 0
-              ? contact.baptism_date.formatted
-              : null,
-          milestones: {
-            values: contact.milestones
-              ? contact.milestones.map(milestone => ({
-                value: milestone,
-              }))
-              : [],
-          },
-          age: contact.age ? contact.age.key : null,
-          gender: contact.gender ? contact.gender.key : null,
-          groups: {
-            values: contact.groups
-              ? contact.groups.map(group => ({
-                name: group.post_title,
-                value: group.ID.toString(),
-              }))
-              : [],
-          },
-          relation: {
-            values: contact.relation
-              ? contact.relation.map(relationItem => ({
-                name: relationItem.post_title,
-                value: relationItem.ID.toString(),
-              }))
-              : [],
-          },
-          baptized_by: {
-            values: contact.baptized_by
-              ? contact.baptized_by.map(baptizedByItem => ({
-                name: baptizedByItem.post_title,
-                value: baptizedByItem.ID.toString(),
-              }))
-              : [],
-          },
-          baptized: {
-            values: contact.baptized
-              ? contact.baptized.map(baptizedItem => ({
-                name: baptizedItem.post_title,
-                value: baptizedItem.ID.toString(),
-              }))
-              : [],
-          },
-          coached_by: {
-            values: contact.coached_by
-              ? contact.coached_by.map(coachedItem => ({
-                name: coachedItem.post_title,
-                value: coachedItem.ID.toString(),
-              }))
-              : [],
-          },
-          coaching: {
-            values: contact.coaching
-              ? contact.coaching.map(coachingItem => ({
-                name: coachingItem.post_title,
-                value: coachingItem.ID.toString(),
-              }))
-              : [],
-          },
-          people_groups: {
-            values: contact.people_groups
-              ? contact.people_groups.map(peopleGroup => ({
-                value: peopleGroup.ID.toString(),
-                name: peopleGroup.post_title,
-              }))
-              : [],
-          },
-          quick_button_no_answer: contact.quick_button_no_answer
-            ? contact.quick_button_no_answer
-            : '0',
-          quick_button_contact_established: contact.quick_button_contact_established
-            ? contact.quick_button_contact_established
-            : '0',
-          quick_button_meeting_scheduled: contact.quick_button_meeting_scheduled
-            ? contact.quick_button_meeting_scheduled
-            : '0',
-          quick_button_meeting_complete: contact.quick_button_meeting_complete
-            ? contact.quick_button_meeting_complete
-            : '0',
-          quick_button_no_show: contact.quick_button_no_show
-            ? contact.quick_button_no_show
-            : '0',
-          /* quick_button_phone_off: contact.quick_button_phone_off
-            ? contact.quick_button_phone_off
-            : "0" */
-        };
+        const mappedContact = {};
+        Object.keys(contact).forEach((key) => {
+          // Omit restricted properties
+          if (key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'last_modified') {
+            const value = contact[key];
+            const valueType = Object.prototype.toString.call(value);
+            switch (valueType) {
+              case '[object Boolean]': {
+                mappedContact[key] = value;
+                return;
+              }
+              case '[object Number]': {
+                mappedContact[key] = value;
+                return;
+              }
+              case '[object String]': {
+                if (value.includes('quick_button')) {
+                  mappedContact[key] = parseInt(value, 10);
+                } else if (key === 'post_title') {
+                  mappedContact.title = value;
+                } else {
+                  mappedContact[key] = value;
+                }
+                return;
+              }
+              case '[object Object]': {
+                if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                  // key_select
+                  mappedContact[key] = value.key;
+                } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                  // date
+                  mappedContact[key] = value.formatted;
+                } else if (key === 'assigned_to') {
+                  // assigned-to property
+                  mappedContact[key] = value['assigned-to'];
+                }
+                return;
+              }
+              case '[object Array]': {
+                const mappedValue = value.map((valueTwo) => {
+                  const valueTwoType = Object.prototype.toString.call(valueTwo);
+                  switch (valueTwoType) {
+                    case '[object Object]': {
+                      if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
+                        // connection
+                        return {
+                          name: valueTwo.post_title,
+                          value: valueTwo.ID.toString(),
+                        };
+                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                        return {
+                          key: valueTwo.key,
+                          value: valueTwo.value,
+                        };
+                      }
+                      break;
+                    }
+                    case '[object String]': {
+                      if (key === 'sources') {
+                        // source
+                        return {
+                          name: valueTwo.charAt(0).toUpperCase() + valueTwo.slice(1),
+                          value: valueTwo,
+                        };
+                      } if (key === 'milestones') {
+                        // milestone
+                        return {
+                          value: valueTwo,
+                        };
+                      } if (key === 'location_grid') {
+                        return {
+                          name: valueTwo.label,
+                          value: valueTwo.id.toString(),
+                        };
+                      }
+                      return valueTwo;
+                    }
+                    default:
+                  }
+                  return valueTwo;
+                });
+                if (key.includes('contact_')) {
+                  mappedContact[key] = mappedValue;
+                } else {
+                  mappedContact[key] = {
+                    values: mappedValue,
+                  };
+                }
+                break;
+              }
+              default:
+            }
+          }
+        });
+        contact = mappedContact;
         // Update localContact with dbContact
         const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === contact.ID));
         if (contactIndex > -1) {
@@ -609,6 +460,7 @@ export default function contactsReducer(state = initialState, action) {
           },
         };
       }
+
       return newState;
     }
     case actions.CONTACTS_GETBYID_FAILURE:
