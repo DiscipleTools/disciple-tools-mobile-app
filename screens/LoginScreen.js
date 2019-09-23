@@ -414,7 +414,6 @@ class LoginScreen extends React.Component {
                 </Text>
               </Button>
             )}
-
             {!this.state.loading && (
               <TouchableOpacity
                 style={styles.forgotButton}
