@@ -290,6 +290,7 @@ export default function contactsReducer(state = initialState, action) {
           },
         };
       }
+
       const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === contact.ID));
       // Search entity in list (contacts) if exists: updated it, otherwise: added it to contacts list
       if (contactIndex > -1) {
@@ -438,6 +439,7 @@ export default function contactsReducer(state = initialState, action) {
         contact,
         loading: false,
       };
+
       if (newState.contact.baptism_date) {
         let newBaptismDate = new Date(newState.contact.baptism_date);
         const year = newBaptismDate.getFullYear();

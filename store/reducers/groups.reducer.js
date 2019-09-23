@@ -1,9 +1,9 @@
 import * as actions from '../actions/groups.actions';
 
 const initialState = {
-  loading: null,
+  loading: false,
   error: null,
-  groups: null,
+  groups: [],
   group: null,
   comments: null,
   newComment: null,
@@ -14,19 +14,19 @@ const initialState = {
   search: null,
   totalComments: null,
   totalActivities: null,
-  loadingComments: null,
-  loadingActivities: null,
-  saved: null,
+  loadingComments: false,
+  loadingActivities: false,
+  saved: false,
 };
 
 export default function groupsReducer(state = initialState, action) {
   let newState = {
     ...state,
+    group: null,
     usersContacts: null,
     peopleGroups: null,
     geonames: null,
     search: null,
-    group: null,
     newComment: null,
     error: null,
     comments: null,
@@ -122,18 +122,119 @@ export default function groupsReducer(state = initialState, action) {
         ...newState,
         loading: true,
       };
-    case actions.GROUPS_GETALL_SUCCESS:
+    case actions.GROUPS_GETALL_SUCCESS: {
+      let { groups } = action;
+      const { offline } = action;
+      /* eslint-disable */
+      let localGroups = newState.groups.filter(localGroup => isNaN(localGroup.ID));
+      /* eslint-enable */
+      if (!offline) {
+        const dataBaseGroups = [...groups].map((group) => {
+          const mappedGroup = {};
+          Object.keys(group).forEach((key) => {
+            // Omit restricted properties
+            if (key !== 'last_modified' && key !== 'created_from_contact_id' && key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'baptized_member_count') {
+              const value = group[key];
+              const valueType = Object.prototype.toString.call(value);
+              switch (valueType) {
+                case '[object Boolean]': {
+                  mappedGroup[key] = value;
+                  return;
+                }
+                case '[object Number]': {
+                  mappedGroup[key] = value;
+                  return;
+                }
+                case '[object String]': {
+                  if (value.includes('quick_button')) {
+                    mappedGroup[key] = parseInt(value, 10);
+                  } else if (key === 'post_title') {
+                    mappedGroup.title = value;
+                  } else {
+                    mappedGroup[key] = value;
+                  }
+                  return;
+                }
+                case '[object Object]': {
+                  if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                    // key_select
+                    mappedGroup[key] = value.key;
+                  } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                    // date
+                    mappedGroup[key] = value.formatted;
+                  } else if (key === 'assigned_to') {
+                    // assigned-to property
+                    mappedGroup[key] = value['assigned-to'];
+                  }
+                  return;
+                }
+                case '[object Array]': {
+                  const mappedValue = value.map((valueTwo) => {
+                    const valueTwoType = Object.prototype.toString.call(valueTwo);
+                    switch (valueTwoType) {
+                      case '[object Object]': {
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
+                          // connection
+                          return {
+                            name: valueTwo.post_title,
+                            value: valueTwo.ID.toString(),
+                          };
+                        } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                          return {
+                            key: valueTwo.key,
+                            value: valueTwo.value,
+                          };
+                        }
+                        break;
+                      }
+                      case '[object String]': {
+                        if (key === 'sources') {
+                          // source
+                          return {
+                            name: valueTwo.charAt(0).toUpperCase() + valueTwo.slice(1),
+                            value: valueTwo,
+                          };
+                        } if (key === 'milestones') {
+                          // milestone
+                          return {
+                            value: valueTwo,
+                          };
+                        } if (key === 'location_grid') {
+                          return {
+                            name: valueTwo.label,
+                            value: valueTwo.id.toString(),
+                          };
+                        }
+                        break;
+                      }
+                      default:
+                    }
+                    return valueTwo;
+                  });
+                  if (key.includes('contact_')) {
+                    mappedGroup[key] = mappedValue;
+                  } else {
+                    mappedGroup[key] = {
+                      values: mappedValue,
+                    };
+                  }
+                  break;
+                }
+                default:
+              }
+            }
+          });
+          return mappedGroup;
+        });
+        groups = localGroups.concat(dataBaseGroups);
+      }
+
       return {
         ...newState,
-        groups: action.groups.map(group => ({
-          ID: group.ID,
-          post_title: group.post_title,
-          group_status: group.group_status,
-          group_type: group.group_type,
-          member_count: (group.member_count) ? group.member_count : 0,
-        })),
+        groups,
         loading: false,
       };
+    }
     case actions.GROUPS_GETALL_FAILURE:
       return {
         ...newState,
@@ -141,86 +242,120 @@ export default function groupsReducer(state = initialState, action) {
         loading: false,
       };
     case actions.GROUPS_SAVE_SUCCESS: {
-      const { group } = action;
+      const { group, offline } = action;
+
+      let mappedGroup = {};
+      if (offline) {
+        mappedGroup = {
+          ...group,
+        };
+      } else {
+        Object.keys(group).forEach((key) => {
+          // Omit restricted properties
+          if (key !== 'last_modified' && key !== 'created_from_contact_id' && key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'baptized_member_count') {
+            const value = group[key];
+            const valueType = Object.prototype.toString.call(value);
+            switch (valueType) {
+              case '[object Boolean]': {
+                mappedGroup[key] = value;
+                return;
+              }
+              case '[object Number]': {
+                mappedGroup[key] = value;
+                return;
+              }
+              case '[object String]': {
+                if (value.includes('quick_button')) {
+                  mappedGroup[key] = parseInt(value, 10);
+                } else if (key === 'post_title') {
+                  mappedGroup.title = value;
+                } else {
+                  mappedGroup[key] = value;
+                }
+                return;
+              }
+              case '[object Object]': {
+                if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                  // key_select
+                  mappedGroup[key] = value.key;
+                } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                  // date
+                  mappedGroup[key] = value.formatted;
+                } else if (key === 'assigned_to') {
+                  // assigned-to property
+                  mappedGroup[key] = value['assigned-to'];
+                }
+                return;
+              }
+              case '[object Array]': {
+                const mappedValue = value.map((valueTwo) => {
+                  const valueTwoType = Object.prototype.toString.call(valueTwo);
+                  switch (valueTwoType) {
+                    case '[object Object]': {
+                      if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
+                        // connection
+                        return {
+                          name: valueTwo.post_title,
+                          value: valueTwo.ID.toString(),
+                        };
+                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                        return {
+                          key: valueTwo.key,
+                          value: valueTwo.value,
+                        };
+                      }
+                      break;
+                    }
+                    case '[object String]': {
+                      if (key === 'sources') {
+                        // source
+                        return {
+                          name: valueTwo.charAt(0).toUpperCase() + valueTwo.slice(1),
+                          value: valueTwo,
+                        };
+                      } if (key === 'milestones') {
+                        // milestone
+                        return {
+                          value: valueTwo,
+                        };
+                      } if (key === 'location_grid') {
+                        return {
+                          name: valueTwo.label,
+                          value: valueTwo.id.toString(),
+                        };
+                      }
+                      break;
+                    }
+                    default:
+                  }
+                  return valueTwo;
+                });
+                if (key.includes('contact_')) {
+                  mappedGroup[key] = mappedValue;
+                } else {
+                  mappedGroup[key] = {
+                    values: mappedValue,
+                  };
+                }
+                break;
+              }
+              default:
+            }
+          }
+        });
+      }
+
+      const oldId = (mappedGroup.oldID) ? mappedGroup.oldID : null;
+      if (oldId) {
+        delete mappedGroup.oldID;
+      }
+
       newState = {
         ...newState,
-        group: {
-          ID: group.ID,
-          title: group.title,
-          group_status:
-            group.group_status && group.group_status.key
-              ? group.group_status.key
-              : null,
-          assigned_to: group.assigned_to
-            ? `user-${group.assigned_to.id}`
-            : null,
-          coaches: {
-            values: group.coaches
-              ? group.coaches.map(coach => ({
-                value: coach.ID.toString(),
-                name: coach.post_title,
-              }))
-              : [],
-          },
-          location_grid: {
-            values: group.location_grid
-              ? group.location_grid.map(geoname => ({
-                value: geoname.id.toString(),
-                name: geoname.label,
-              }))
-              : [],
-          },
-          people_groups: {
-            values: group.people_groups
-              ? group.people_groups.map(peopleGroup => ({
-                value: peopleGroup.ID.toString(),
-                name: peopleGroup.post_title,
-              }))
-              : [],
-          },
-          contact_address: group.contact_address
-            ? group.contact_address.map(contact => ({
-              key: contact.key,
-              value: contact.value,
-            }))
-            : [],
-          start_date:
-            group.start_date && group.start_date.formatted.length > 0
-              ? group.start_date.formatted
-              : null,
-          end_date:
-            group.end_date && group.end_date.formatted.length > 0
-              ? group.end_date.formatted
-              : null,
-          group_type: group.group_type ? group.group_type.key : null,
-          health_metrics: {
-            values: group.health_metrics
-              ? group.health_metrics.map(healthMetric => ({
-                value: healthMetric,
-              }))
-              : [],
-          },
-          parent_groups: {
-            values: group.parent_groups.map(parentGroup => ({
-              name: parentGroup.post_title,
-              value: parentGroup.ID.toString(),
-            })),
-          },
-          peer_groups: {
-            values: group.peer_groups.map(peerGroup => ({
-              name: peerGroup.post_title,
-              value: peerGroup.ID.toString(),
-            })),
-          },
-          child_groups: {
-            values: group.child_groups.map(childGroup => ({
-              name: childGroup.post_title,
-              value: childGroup.ID.toString(),
-            })),
-          },
-        },
+        group: mappedGroup,
         saved: true,
       };
+
       if (newState.group.start_date) {
         let newStartDate = new Date(newState.group.start_date);
         const year = newStartDate.getFullYear();
@@ -243,7 +378,6 @@ export default function groupsReducer(state = initialState, action) {
           },
         };
       }
-
       if (newState.group.end_date) {
         let newEndDate = new Date(newState.group.end_date);
         const year = newEndDate.getFullYear();
@@ -266,6 +400,28 @@ export default function groupsReducer(state = initialState, action) {
           },
         };
       }
+
+      const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === group.ID));
+      // Search entity in list (groups) if exists: updated it, otherwise: added it to group list
+      if (groupIndex > -1) {
+        newState.groups[groupIndex] = {
+          ...newState.groups[groupIndex],
+          ...newState.group,
+        };
+      } else if (oldId) {
+        // Search entity with oldID, remove it and add updated entity
+        const oldGroupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === oldId));
+        const previousGroupData = newState.groups[oldGroupIndex];
+        newState.groups.splice(oldGroupIndex, 1).unshift({
+          ...previousGroupData,
+          ...newState.group,
+        });
+      } else {
+        newState.groups.unshift({
+          ...newState.group,
+        });
+      }
+
       return newState;
     }
     case actions.GROUPS_SAVE_FAILURE:
@@ -279,92 +435,123 @@ export default function groupsReducer(state = initialState, action) {
         loading: true,
       };
     case actions.GROUPS_GETBYID_SUCCESS: {
-      const { group } = action;
+      let { group } = action;
+
+      /* eslint-disable */
+      if (isNaN(group.ID) || group.isOffline) {
+        /* eslint-enable */
+        // Search local group
+        group = newState.groups.find(groupItem => (groupItem.ID === group.ID));
+      } else {
+        const mappedGroup = {};
+        Object.keys(group).forEach((key) => {
+          // Omit restricted properties
+          if (key !== 'last_modified' && key !== 'created_from_contact_id' && key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'baptized_member_count') {
+            const value = group[key];
+            const valueType = Object.prototype.toString.call(value);
+            switch (valueType) {
+              case '[object Boolean]': {
+                mappedGroup[key] = value;
+                return;
+              }
+              case '[object Number]': {
+                mappedGroup[key] = value;
+                return;
+              }
+              case '[object String]': {
+                if (value.includes('quick_button')) {
+                  mappedGroup[key] = parseInt(value, 10);
+                } else if (key === 'post_title') {
+                  mappedGroup.title = value;
+                } else {
+                  mappedGroup[key] = value;
+                }
+                return;
+              }
+              case '[object Object]': {
+                if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                  // key_select
+                  mappedGroup[key] = value.key;
+                } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                  // date
+                  mappedGroup[key] = value.formatted;
+                } else if (key === 'assigned_to') {
+                  // assigned-to property
+                  mappedGroup[key] = value['assigned-to'];
+                }
+                return;
+              }
+              case '[object Array]': {
+                const mappedValue = value.map((valueTwo) => {
+                  const valueTwoType = Object.prototype.toString.call(valueTwo);
+                  switch (valueTwoType) {
+                    case '[object Object]': {
+                      if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
+                        // connection
+                        return {
+                          name: valueTwo.post_title,
+                          value: valueTwo.ID.toString(),
+                        };
+                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                        return {
+                          key: valueTwo.key,
+                          value: valueTwo.value,
+                        };
+                      }
+                      break;
+                    }
+                    case '[object String]': {
+                      if (key === 'sources') {
+                        // source
+                        return {
+                          name: valueTwo.charAt(0).toUpperCase() + valueTwo.slice(1),
+                          value: valueTwo,
+                        };
+                      } if (key === 'milestones') {
+                        // milestone
+                        return {
+                          value: valueTwo,
+                        };
+                      } if (key === 'location_grid') {
+                        return {
+                          name: valueTwo.label,
+                          value: valueTwo.id.toString(),
+                        };
+                      }
+                      break;
+                    }
+                    default:
+                  }
+                  return valueTwo;
+                });
+                if (key.includes('contact_')) {
+                  mappedGroup[key] = mappedValue;
+                } else {
+                  mappedGroup[key] = {
+                    values: mappedValue,
+                  };
+                }
+                break;
+              }
+              default:
+            }
+          }
+        });
+        group = mappedGroup;
+        // Update localContact with dbContact
+        const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === group.ID));
+        if (groupIndex > -1) {
+          newState.groups[groupIndex] = {
+            ...group,
+          };
+        }
+      }
       newState = {
         ...newState,
-        group: {
-          ID: group.ID,
-          title: group.title,
-          group_status:
-            group.group_status && group.group_status.key
-              ? group.group_status.key
-              : null,
-          assigned_to: group.assigned_to
-            ? `user-${group.assigned_to.id}`
-            : null,
-          coaches: {
-            values: group.coaches
-              ? group.coaches.map(coach => ({
-                value: coach.ID.toString(),
-                name: coach.post_title,
-              }))
-              : [],
-          },
-          location_grid: {
-            values: group.location_grid
-              ? group.location_grid.map(geoname => ({
-                value: geoname.id.toString(),
-                name: geoname.label,
-              }))
-              : [],
-          },
-          people_groups: {
-            values: group.people_groups
-              ? group.people_groups.map(peopleGroup => ({
-                value: peopleGroup.ID.toString(),
-                name: peopleGroup.post_title,
-              }))
-              : [],
-          },
-          contact_address: group.contact_address
-            ? group.contact_address.map(contact => ({
-              key: contact.key,
-              value: contact.value,
-            }))
-            : [],
-          start_date:
-            group.start_date && group.start_date.formatted.length > 0
-              ? group.start_date.formatted
-              : null,
-          end_date:
-            group.end_date && group.end_date.formatted.length > 0
-              ? group.end_date.formatted
-              : null,
-          group_type: group.group_type ? group.group_type.key : null,
-          health_metrics: {
-            values: group.health_metrics
-              ? group.health_metrics.map(healthMetric => ({
-                value: healthMetric,
-              }))
-              : [],
-          },
-          parent_groups: {
-            values: group.parent_groups.map(parentGroup => ({
-              name: parentGroup.post_title,
-              baptizedCount: parentGroup.baptized_member_count,
-              memberCount: parentGroup.member_count,
-              value: parentGroup.ID.toString(),
-            })),
-          },
-          peer_groups: {
-            values: group.peer_groups.map(peerGroup => ({
-              name: peerGroup.post_title,
-              baptizedCount: peerGroup.baptized_member_count,
-              memberCount: peerGroup.member_count,
-              value: peerGroup.ID.toString(),
-            })),
-          },
-          child_groups: {
-            values: group.child_groups.map(childGroup => ({
-              name: childGroup.post_title,
-              baptizedCount: childGroup.baptized_member_count,
-              memberCount: childGroup.member_count,
-              value: childGroup.ID.toString(),
-            })),
-          },
-        },
+        group,
         loading: false,
       };
+
       if (newState.group.start_date) {
         let newStartDate = new Date(newState.group.start_date);
         const year = newStartDate.getFullYear();
@@ -387,7 +574,6 @@ export default function groupsReducer(state = initialState, action) {
           },
         };
       }
-
       if (newState.group.end_date) {
         let newEndDate = new Date(newState.group.end_date);
         const year = newEndDate.getFullYear();

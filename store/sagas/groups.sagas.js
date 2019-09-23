@@ -1,6 +1,7 @@
 import {
-  put, take, all, takeLatest, takeEvery,
+  put, take, all, takeLatest, takeEvery, select,
 } from 'redux-saga/effects';
+
 import * as actions from '../actions/groups.actions';
 
 export function* getAll({ domain, token }) {
@@ -20,16 +21,24 @@ export function* getAll({ domain, token }) {
       action: actions.GROUPS_GETALL_RESPONSE,
     },
   });
-
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
   try {
     let response = yield take(actions.GROUPS_GETALL_RESPONSE);
     response = response.payload;
     const jsonData = response.data;
     if (response.status === 200) {
-      yield put({
-        type: actions.GROUPS_GETALL_SUCCESS,
-        groups: jsonData.posts,
-      });
+      if (isConnected) {
+        yield put({
+          type: actions.GROUPS_GETALL_SUCCESS,
+          groups: jsonData.posts,
+        });
+      } else {
+        yield put({
+          type: actions.GROUPS_GETALL_SUCCESS,
+          groups: jsonData.posts,
+          offline: true,
+        });
+      }
     } else {
       yield put({
         type: actions.GROUPS_GETALL_FAILURE,
@@ -51,14 +60,23 @@ export function* getAll({ domain, token }) {
 }
 
 export function* saveGroup({ domain, token, groupData }) {
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+
   yield put({ type: actions.GROUPS_SAVE_START });
+
   const group = groupData;
-  const urlPart = group.ID ? group.ID : '';
-  delete group.ID;
+  let groupId = '';
+  // Add ID to URL only on D.B. IDs
+  /* eslint-disable */
+  if (group.ID && !isNaN(group.ID)) {
+    /* eslint-enable */
+    groupId = group.ID;
+  }
+
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/groups/${urlPart}`,
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}`,
       data: {
         method: 'POST',
         headers: {
@@ -67,26 +85,46 @@ export function* saveGroup({ domain, token, groupData }) {
         },
         body: JSON.stringify(group),
       },
+      isConnected,
       action: actions.GROUPS_SAVE_RESPONSE,
     },
   });
 
   try {
     let response = yield take(actions.GROUPS_SAVE_RESPONSE);
+
     response = response.payload;
-    const jsonData = response.data;
-    if (response.status === 200) {
+    let jsonData = response.data;
+
+    if (isConnected) {
+      if (response.status === 200) {
+        yield put({
+          type: actions.GROUPS_SAVE_SUCCESS,
+          group: jsonData,
+        });
+      } else {
+        yield put({
+          type: actions.GROUPS_SAVE_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
+      }
+    } else {
+      jsonData = {
+        ...response,
+      };
+      if (groupId.length > 0) {
+        jsonData = {
+          ...jsonData,
+          ID: groupId,
+        };
+      }
       yield put({
         type: actions.GROUPS_SAVE_SUCCESS,
         group: jsonData,
-      });
-    } else {
-      yield put({
-        type: actions.GROUPS_SAVE_FAILURE,
-        error: {
-          code: jsonData.code,
-          message: jsonData.message,
-        },
+        offline: true,
       });
     }
   } catch (error) {

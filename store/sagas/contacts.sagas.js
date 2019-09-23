@@ -5,6 +5,7 @@ import {
 import * as Sentry from 'sentry-expo';
 import * as actions from '../actions/contacts.actions';
 
+
 export function* getAll({ domain, token }) {
   yield put({ type: actions.CONTACTS_GETALL_START });
 

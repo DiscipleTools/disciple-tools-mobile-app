@@ -79,11 +79,11 @@ export default function requestReducer(state = initialState, action) {
             do {
               // Generate ID
               /* eslint-disable */
-               newID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-                 const r = Math.random() * 16 | 0;
-                 const v = c === 'x' ? r : ((r && 0x3) | 0x8);
-                 return v.toString(16);
-               });
+              newID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : ((r && 0x3) | 0x8);
+                return v.toString(16);
+              });
               // Check if generated ID exist in queue
               existingIdInQueue = queue.findIndex(request => (request.data.method === 'POST' && JSON.parse(request.data.body).ID && JSON.parse(request.data.body).ID === newID));
               /* eslint-enable */

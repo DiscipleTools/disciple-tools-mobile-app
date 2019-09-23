@@ -186,7 +186,7 @@ ContactsScreen.propTypes = {
   ).isRequired,
   /* eslint-enable */
   error: PropTypes.shape({
-    code: PropTypes.string,
+    code: PropTypes.number,
     message: PropTypes.string,
   }),
   isConnected: PropTypes.bool,

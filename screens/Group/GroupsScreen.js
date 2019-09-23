@@ -45,24 +45,13 @@ class GroupsScreen extends React.Component {
   };
 
   state = {
-    groups: [],
+    refresh: false,
   };
 
   componentDidMount() {
     if (this.props.isConnected) {
       this.onRefresh();
     }
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const {
-      groups,
-    } = nextProps;
-    const newState = {
-      ...prevState,
-      groups: groups || prevState.groups,
-    };
-    return newState;
   }
 
   componentDidUpdate(prevProps) {
@@ -88,17 +77,17 @@ class GroupsScreen extends React.Component {
     >
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={{ fontWeight: 'bold' }}>{group.post_title}</Text>
+          <Text style={{ fontWeight: 'bold' }}>{group.title}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text style={styles.groupSubtitle}>
-            {i18n.t(`global.groupStatus.${group.group_status.key}`)}
+            {i18n.t(`global.groupStatus.${group.group_status}`)}
           </Text>
           <Text style={styles.groupSubtitle}>
             {' • '}
           </Text>
           <Text style={styles.groupSubtitle}>
-            {i18n.t(`global.groupType.${group.group_type.key}`)}
+            {i18n.t(`global.groupType.${group.group_type}`)}
           </Text>
           <Text style={styles.groupSubtitle}>
             {' • '}
@@ -125,6 +114,12 @@ class GroupsScreen extends React.Component {
     this.props.getAllGroups(this.props.userData.domain, this.props.userData.token);
   };
 
+  refreshFlatlist = () => {
+    this.setState(prevState => ({
+      refresh: !prevState.refresh,
+    }));
+  }
+
   goToGroupDetailScreen = (groupData = null) => {
     if (groupData) {
       // Detail
@@ -133,11 +128,13 @@ class GroupsScreen extends React.Component {
         onlyView: true,
         groupName: groupData.post_title,
         previousList: [],
+        onGoBack: () => this.refreshFlatlist(),
       });
     } else {
       // Create
       this.props.navigation.push('GroupDetail', {
         previousList: [],
+        onGoBack: () => this.refreshFlatlist(),
       });
     }
   };
@@ -147,7 +144,8 @@ class GroupsScreen extends React.Component {
       <Container>
         <View style={{ flex: 1 }}>
           <FlatList
-            data={this.state.groups}
+            data={this.props.groups}
+            extraData={this.state.refresh}
             renderItem={item => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
             refreshControl={(
@@ -156,7 +154,7 @@ class GroupsScreen extends React.Component {
                 onRefresh={this.onRefresh}
               />
             )}
-            keyExtractor={item => item.ID}
+            keyExtractor={item => item.ID.toString()}
           />
           <Fab
             style={{ backgroundColor: Colors.tintColor }}
@@ -196,7 +194,7 @@ GroupsScreen.propTypes = {
   ),
   /* eslint-enable */
   error: PropTypes.shape({
-    code: PropTypes.string,
+    code: PropTypes.number,
     message: PropTypes.string,
   }),
   isConnected: PropTypes.bool,

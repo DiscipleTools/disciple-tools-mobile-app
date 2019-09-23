@@ -38,9 +38,10 @@ export default function* networkConnectivitySaga() {
         }
 
         if (response.status === 200) {
+          const entityName = action.action.substr(0, action.action.indexOf('_') - 1).toLowerCase();
           yield put({
             type: actionMapped.action.replace('RESPONSE', 'SUCCESS'),
-            contact: jsonData,
+            [entityName]: jsonData,
           });
         } else {
           yield put({
