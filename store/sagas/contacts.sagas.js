@@ -82,7 +82,10 @@ export function* save({ domain, token, contactData }) {
     delete contact.initial_comment;
   }
   let contactId = '';
-  if (contact.ID) {
+  // Add ID to URL only on D.B. IDs
+  /* eslint-disable */
+  if (contact.ID && !isNaN(contact.ID)) {
+    /* eslint-enable */
     contactId = contact.ID;
   }
   yield put({

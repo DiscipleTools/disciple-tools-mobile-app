@@ -71,7 +71,7 @@ function* processRequest(request) {
       yield put({ type: requestCopy.action, payload: (oldID) ? { ...response, oldID } : response });
     }
     // Dispatch action 'RESPONSE' to remove request from queue
-    yield put({ type: 'RESPONSE', payload: requestCopy });
+    yield put({ type: 'RESPONSE', payload: request });
   } else if (timeout) {
     yield put({ type: 'OFFLINE' });
   }
