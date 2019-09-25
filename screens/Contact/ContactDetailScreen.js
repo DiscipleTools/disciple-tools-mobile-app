@@ -2187,7 +2187,15 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.subassigned.values.map(contact => `${contact.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.subassigned.values.map((contact, index) => {
+                                    const lastItemIndex = this.state.contact.subassigned.values.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${contact.name}.`;
+                                    }
+                                    return `${contact.name}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2205,7 +2213,15 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.contact_phone.map(phone => `${phone.value}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.contact_phone.map((phone, index) => {
+                                    const lastItemIndex = this.state.contact.contact_phone.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${phone.value}.`;
+                                    }
+                                    return `${phone.value}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.mobile')}</Label>
@@ -2221,7 +2237,15 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.contact_email.map(email => `${email.value}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.contact_email.map((email, index) => {
+                                    const lastItemIndex = this.state.contact.contact_email.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${email.value}.`;
+                                    }
+                                    return `${email.value}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.email')}</Label>
@@ -2253,7 +2277,15 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.contact_address.map(address => `${address.value}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.contact_address.map((address, index) => {
+                                    const lastItemIndex = this.state.contact.contact_address.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${address.value}.`;
+                                    }
+                                    return `${address.value}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
@@ -2269,7 +2301,15 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.location_grid.values.map(geoname => `${geoname.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.location_grid.values.map((location, index) => {
+                                    const lastItemIndex = this.state.contact.location_grid.values.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${location.name}.`;
+                                    }
+                                    return `${location.name}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2287,7 +2327,15 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.people_groups.values.map(peopleGroup => `${peopleGroup.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.people_groups.values.map((peopleGroup, index) => {
+                                    const lastItemIndex = this.state.contact.people_groups.values.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${peopleGroup.name}.`;
+                                    }
+                                    return `${peopleGroup.name}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2337,7 +2385,15 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.sources.values.map(source => `${source.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.sources.values.map((source, index) => {
+                                    const lastItemIndex = this.state.contact.sources.values.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${source.name}.`;
+                                    }
+                                    return `${source.name}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2593,7 +2649,15 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.groups.values.map(group => `${group.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.groups.values.map((group, index) => {
+                                    const lastItemIndex = this.state.contact.groups.values.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${group.name}.`;
+                                    }
+                                    return `${group.name}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2611,7 +2675,15 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.relation.values.map(relation => `${relation.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.relation.values.map((relation, index) => {
+                                    const lastItemIndex = this.state.contact.relation.values.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${relation.name}.`;
+                                    }
+                                    return `${relation.name}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2629,7 +2701,15 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.baptized_by.values.map(baptizedBy => `${baptizedBy.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.baptized_by.values.map((baptizedBy, index) => {
+                                    const lastItemIndex = this.state.contact.baptized_by.values.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${baptizedBy.name}.`;
+                                    }
+                                    return `${baptizedBy.name}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2647,7 +2727,15 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.baptized.values.map(baptized => `${baptized.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.baptized.values.map((baptized, index) => {
+                                    const lastItemIndex = this.state.contact.baptized.values.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${baptized.name}.`;
+                                    }
+                                    return `${baptized.name}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2665,7 +2753,15 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.coached_by.values.map(coached => `${coached.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.coached_by.values.map((coachedBy, index) => {
+                                    const lastItemIndex = this.state.contact.coached_by.values.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${coachedBy.name}.`;
+                                    }
+                                    return `${coachedBy.name}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2683,7 +2779,15 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.coaching.values.map(coaching => `${coaching.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.coaching.values.map((coaching, index) => {
+                                    const lastItemIndex = this.state.contact.coaching.values.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${coaching.name}.`;
+                                    }
+                                    return `${coaching.name}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2808,7 +2912,30 @@ class ContactDetailScreen extends React.Component {
                           <ScrollView keyboardShouldPersistTaps="handled">
                             {this.state.currentTabIndex === 0 && (
                               <View style={styles.formContainer}>
-                                <Row style={styles.formFieldPadding}>
+                                <Label
+                                  style={[{
+                                    color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
+                                  }, styles.formFieldPadding]}
+                                >
+                                  {i18n.t('global.status')}
+                                </Label>
+                                <Row style={{ paddingBottom: 30 }}>
+                                  <Col>
+                                    <Picker
+                                      selectedValue={
+                                        this.state.contact.overall_status
+                                      }
+                                      onValueChange={this.setContactStatus}
+                                      style={{
+                                        color: '#ffffff',
+                                        backgroundColor: this.state.overallStatusBackgroundColor,
+                                      }}
+                                    >
+                                      {this.renderStatusPickerItems()}
+                                    </Picker>
+                                  </Col>
+                                </Row>
+                                <Row>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
                                       <Icon
@@ -4316,38 +4443,38 @@ class ContactDetailScreen extends React.Component {
                               }}
                               renderRow={(id, onPress, item) => (
                                 <TouchableOpacity
-                                  activeOpacity={0.6}
-                                  key={id}
-                                  onPress={onPress}
-                                  style={{
-                                    paddingVertical: 8,
-                                    paddingHorizontal: 10,
-                                  }}
-                                >
-                                  <View
+                                    activeOpacity={0.6}
+                                    key={id}
+                                    onPress={onPress}
                                     style={{
-                                      flexDirection: 'row',
+                                      paddingVertical: 8,
+                                      paddingHorizontal: 10,
                                     }}
                                   >
-                                    <Text style={{
-                                      color: 'rgba(0, 0, 0, 0.87)',
-                                      fontSize: 14,
-                                      lineHeight: 21,
-                                    }}
+                                    <View
+                                      style={{
+                                        flexDirection: 'row',
+                                      }}
                                     >
-                                      {item.name}
-                                    </Text>
-                                  </View>
-                                </TouchableOpacity>
+                                      <Text style={{
+                                        color: 'rgba(0, 0, 0, 0.87)',
+                                        fontSize: 14,
+                                        lineHeight: 21,
+                                      }}
+                                      >
+                                        {item.name}
+                                      </Text>
+                                    </View>
+                                  </TouchableOpacity>
                               )}
                               renderChip={(id, onClose, item, style, iconStyle) => (
                                 <Chip
-                                  key={id}
-                                  iconStyle={iconStyle}
-                                  onClose={onClose}
-                                  text={item.name}
-                                  style={style}
-                                />
+                                    key={id}
+                                    iconStyle={iconStyle}
+                                    onClose={onClose}
+                                    text={item.name}
+                                    style={style}
+                                  />
                               )}
                               filterOnKey="name"
                               keyboardShouldPersistTaps

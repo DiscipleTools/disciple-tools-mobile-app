@@ -1,4 +1,5 @@
 import * as actions from '../actions/groups.actions';
+import * as userActions from '../actions/user.actions';
 
 const initialState = {
   loading: false,
@@ -184,6 +185,11 @@ export default function groupsReducer(state = initialState, action) {
                             key: valueTwo.key,
                             value: valueTwo.value,
                           };
+                        } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                          return {
+                            name: valueTwo.label,
+                            value: valueTwo.id.toString(),
+                          };
                         }
                         break;
                       }
@@ -199,13 +205,8 @@ export default function groupsReducer(state = initialState, action) {
                           return {
                             value: valueTwo,
                           };
-                        } if (key === 'location_grid') {
-                          return {
-                            name: valueTwo.label,
-                            value: valueTwo.id.toString(),
-                          };
                         }
-                        break;
+                        return valueTwo;
                       }
                       default:
                     }
@@ -225,7 +226,7 @@ export default function groupsReducer(state = initialState, action) {
             }
           });
           return mappedGroup;
-        });
+        }).sort((a, b) => parseInt(a.ID, 10) < parseInt(b.ID, 10));
         groups = localGroups.concat(dataBaseGroups);
       }
 
@@ -303,6 +304,11 @@ export default function groupsReducer(state = initialState, action) {
                           key: valueTwo.key,
                           value: valueTwo.value,
                         };
+                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                        return {
+                          name: valueTwo.label,
+                          value: valueTwo.id.toString(),
+                        };
                       }
                       break;
                     }
@@ -318,13 +324,8 @@ export default function groupsReducer(state = initialState, action) {
                         return {
                           value: valueTwo,
                         };
-                      } if (key === 'location_grid') {
-                        return {
-                          name: valueTwo.label,
-                          value: valueTwo.id.toString(),
-                        };
                       }
-                      break;
+                      return valueTwo;
                     }
                     default:
                   }
@@ -401,7 +402,7 @@ export default function groupsReducer(state = initialState, action) {
         };
       }
 
-      const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === group.ID));
+      const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === group.ID.toString()));
       // Search entity in list (groups) if exists: updated it, otherwise: added it to group list
       if (groupIndex > -1) {
         newState.groups[groupIndex] = {
@@ -497,6 +498,11 @@ export default function groupsReducer(state = initialState, action) {
                           key: valueTwo.key,
                           value: valueTwo.value,
                         };
+                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                        return {
+                          name: valueTwo.label,
+                          value: valueTwo.id.toString(),
+                        };
                       }
                       break;
                     }
@@ -512,13 +518,8 @@ export default function groupsReducer(state = initialState, action) {
                         return {
                           value: valueTwo,
                         };
-                      } if (key === 'location_grid') {
-                        return {
-                          name: valueTwo.label,
-                          value: valueTwo.id.toString(),
-                        };
                       }
-                      break;
+                      return valueTwo;
                     }
                     default:
                   }
@@ -684,6 +685,14 @@ export default function groupsReducer(state = initialState, action) {
         ...newState,
         error: action.error,
         loadingActivities: false,
+      };
+    case userActions.USER_LOGOUT:
+      return {
+        ...newState,
+        usersContacts: null,
+        geonames: null,
+        peopleGroups: null,
+        search: null,
       };
     default:
       return newState;

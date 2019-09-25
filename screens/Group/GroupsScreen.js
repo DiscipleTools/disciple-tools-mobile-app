@@ -126,7 +126,7 @@ class GroupsScreen extends React.Component {
       this.props.navigation.push('GroupDetail', {
         groupId: groupData.ID,
         onlyView: true,
-        groupName: groupData.post_title,
+        groupName: groupData.title,
         previousList: [],
         onGoBack: () => this.refreshFlatlist(),
       });

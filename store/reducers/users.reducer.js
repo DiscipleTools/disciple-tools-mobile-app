@@ -30,6 +30,11 @@ export default function usersReducer(state = initialState, action) {
         error: action.error,
         loading: false,
       };
+    case actions.USER_LOGOUT:
+      return {
+        ...newState,
+        users: null,
+      };
     default:
       return newState;
   }

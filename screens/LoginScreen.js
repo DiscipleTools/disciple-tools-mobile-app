@@ -118,7 +118,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
 });
-const listLength = 6;
 let toastError;
 
 class LoginScreen extends React.Component {
@@ -127,9 +126,14 @@ class LoginScreen extends React.Component {
   };
 
   state = {
-    listsRetrieved: listLength,
     loading: false,
     modalVisible: false,
+    usersContactsListRetrieved: false,
+    geonamesListRetrieved: false,
+    peopleGroupsListRetrieved: false,
+    searchListRetrieved: false,
+    usersListRetrieved: false,
+    settingsListRetrieved: false,
   };
 
   constructor(props) {
@@ -169,10 +173,41 @@ class LoginScreen extends React.Component {
       userData,
       loading: userReducerLoading || groupsReducerLoading || usersReducerLoading || contactsReducerLoading,
     };
-    if ((usersContacts || geonames || peopleGroups || search || users || settings) && newState.listsRetrieved > 0) {
+
+    if (usersContacts) {
       newState = {
         ...newState,
-        listsRetrieved: --newState.listsRetrieved,
+        usersContactsListRetrieved: true,
+      };
+    }
+    if (geonames) {
+      newState = {
+        ...newState,
+        geonamesListRetrieved: true,
+      };
+    }
+    if (peopleGroups) {
+      newState = {
+        ...newState,
+        peopleGroupsListRetrieved: true,
+      };
+    }
+    if (search) {
+      newState = {
+        ...newState,
+        searchListRetrieved: true,
+      };
+    }
+    if (users) {
+      newState = {
+        ...newState,
+        usersListRetrieved: true,
+      };
+    }
+    if (settings) {
+      newState = {
+        ...newState,
+        settingsListRetrieved: true,
       };
     }
 
@@ -188,6 +223,18 @@ class LoginScreen extends React.Component {
   }
 
   componentDidMount() {
+    const { navigation } = this.props;
+
+    this.focusListener = navigation.addListener('didFocus', () => {
+      this.setState({
+        usersContactsListRetrieved: false,
+        geonamesListRetrieved: false,
+        peopleGroupsListRetrieved: false,
+        searchListRetrieved: false,
+        usersListRetrieved: false,
+        settingsListRetrieved: false,
+      });
+    });
     // User is authenticated (logged)
     if (this.props.userData && this.props.userData.token) {
       if (this.props.isConnected) {
@@ -195,7 +242,18 @@ class LoginScreen extends React.Component {
           this.getDataLists();
         });
       } else {
-        this.setState({ listsRetrieved: 0 });
+        this.setState({
+          loading: true,
+        }, () => {
+          this.setState({
+            usersContactsListRetrieved: true,
+            geonamesListRetrieved: true,
+            peopleGroupsListRetrieved: true,
+            searchListRetrieved: true,
+            usersListRetrieved: true,
+            settingsListRetrieved: true,
+          });
+        });
       }
     }
   }
@@ -205,10 +263,16 @@ class LoginScreen extends React.Component {
       userData, usersContacts, geonames, peopleGroups, search, settings,
     } = this.props;
     const {
-      users, userReducerError, groupsReducerError, usersReducerError,
+      users, userReducerError, groupsReducerError, usersReducerError, contactsReducerError,
     } = this.props;
-    const { listsRetrieved } = this.state;
-
+    const {
+      usersContactsListRetrieved,
+      geonamesListRetrieved,
+      peopleGroupsListRetrieved,
+      searchListRetrieved,
+      usersListRetrieved,
+      settingsListRetrieved,
+    } = this.state;
     // If the RTL value in the store does not match what is
     // in I18nManager (which controls content flow), call
     // forceRTL(...) to set it in I18nManager and reload app
@@ -274,7 +338,12 @@ class LoginScreen extends React.Component {
       );
     }
 
-    if (listsRetrieved === 0) {
+    if (usersContactsListRetrieved
+      && geonamesListRetrieved
+      && peopleGroupsListRetrieved
+      && searchListRetrieved
+      && usersListRetrieved
+      && settingsListRetrieved) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
       AsyncStorage.setItem('listsLastUpdate', listsLastUpdate);
@@ -285,7 +354,8 @@ class LoginScreen extends React.Component {
     let groupsError = (prevProps.groupsReducerError !== groupsReducerError);
     groupsError = (groupsError && groupsReducerError);
     const usersError = (prevProps.usersReducerError !== usersReducerError && usersReducerError);
-    if (userError || groupsError || usersError) {
+    const contactsError = (prevProps.contactsReducerError !== contactsReducerError && contactsReducerError);
+    if (userError || groupsError || usersError || contactsError) {
       const error = userError || groupsError || usersError;
       toastError.show(
         <View>
@@ -297,6 +367,10 @@ class LoginScreen extends React.Component {
         3000,
       );
     }
+  }
+
+  componentWillUnmount() {
+    this.focusListener.remove();
   }
 
   getDataLists = () => {
@@ -489,6 +563,7 @@ LoginScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
+    addListener: PropTypes.func.isRequired,
   }).isRequired,
   setLanguage: PropTypes.func.isRequired,
   /* eslint-disable */

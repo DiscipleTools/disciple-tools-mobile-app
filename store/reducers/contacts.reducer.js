@@ -1,4 +1,5 @@
 import * as actions from '../actions/contacts.actions';
+import * as userActions from '../actions/user.actions';
 
 const initialState = {
   loading: false,
@@ -43,49 +44,48 @@ export default function contactsReducer(state = initialState, action) {
         let dataBaseContacts = [...action.contacts].map(contact => {
 
           let mappedContact = {};
-          Object.keys(contact).forEach(key => {
-            //Omit restricted properties
-            if (key !== "_sample" && key !== "geonames" && key !== "created_date" && key !== "permalink" && key !== "last_modified") {
-
-              let value = contact[key];
-              let valueType = Object.prototype.toString.call(value);
+          Object.keys(contact).forEach((key) => {
+            // Omit restricted properties
+            if (key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'last_modified') {
+              const value = contact[key];
+              const valueType = Object.prototype.toString.call(value);
               switch (valueType) {
-                case "[object Boolean]": {
+                case '[object Boolean]': {
                   mappedContact[key] = value;
                   return;
                 }
-                case "[object Number]": {
+                case '[object Number]': {
                   mappedContact[key] = value;
                   return;
                 }
-                case "[object String]": {
-                  if (value.includes("quick_button")) {
-                    mappedContact[key] = parseInt(value);
-                  } else if (key == "post_title") {
-                    mappedContact["title"] = value;
+                case '[object String]': {
+                  if (value.includes('quick_button')) {
+                    mappedContact[key] = parseInt(value, 10);
+                  } else if (key === 'post_title') {
+                    mappedContact.title = value;
                   } else {
                     mappedContact[key] = value;
                   }
                   return;
                 }
-                case "[object Object]": {
+                case '[object Object]': {
                   if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
                     // key_select
                     mappedContact[key] = value.key;
                   } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
                     // date
                     mappedContact[key] = value.formatted;
-                  } else if (key == "assigned_to") {
+                  } else if (key === 'assigned_to') {
                     // assigned-to property
                     mappedContact[key] = value['assigned-to'];
                   }
                   return;
                 }
-                case "[object Array]": {
-                  let mappedValue = value.map(valueTwo => {
-                    let valueTwoType = Object.prototype.toString.call(valueTwo);
+                case '[object Array]': {
+                  const mappedValue = value.map((valueTwo) => {
+                    const valueTwoType = Object.prototype.toString.call(valueTwo);
                     switch (valueTwoType) {
-                      case "[object Object]": {
+                      case '[object Object]': {
                         if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                           // connection
                           return {
@@ -97,47 +97,49 @@ export default function contactsReducer(state = initialState, action) {
                             key: valueTwo.key,
                             value: valueTwo.value,
                           };
+                        } else if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                          return {
+                            name: valueTwo.label,
+                            value: valueTwo.id.toString(),
+                          };
                         }
+                        break;
                       }
-                      case "[object String]": {
-                        if (key === "sources") {
+                      case '[object String]': {
+                        if (key === 'sources') {
                           // source
                           return {
                             name: valueTwo.charAt(0).toUpperCase() + valueTwo.slice(1),
                             value: valueTwo,
-                          }
-                        } else if (key === "milestones") {
+                          };
+                        } if (key === 'milestones') {
                           // milestone
                           return {
                             value: valueTwo,
                           };
-                        } else if (key === "location_grid") {
-                          return {
-                            name: valueTwo.label,
-                            value: valueTwo.id.toString(),
-                          }
-                        } else {
-                          return valueTwo;
                         }
+                        return valueTwo;
                       }
+                      default:
                     }
+                    return valueTwo;
                   });
-                  if (key.includes("contact_")) {
+                  if (key.includes('contact_')) {
                     mappedContact[key] = mappedValue;
                   } else {
                     mappedContact[key] = {
-                      values: mappedValue
+                      values: mappedValue,
                     };
                   }
-                  return;
+                  break;
                 }
+                default:
               }
-
             }
           });
           return mappedContact;
 
-        });
+        }).sort((a, b) => parseInt(a.ID) < parseInt(b.ID));
         contacts = localContacts.concat(dataBaseContacts);
       }
       /* eslint-enable */
@@ -215,6 +217,11 @@ export default function contactsReducer(state = initialState, action) {
                           key: valueTwo.key,
                           value: valueTwo.value,
                         };
+                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                        return {
+                          name: valueTwo.label,
+                          value: valueTwo.id.toString(),
+                        };
                       }
                       break;
                     }
@@ -230,13 +237,8 @@ export default function contactsReducer(state = initialState, action) {
                         return {
                           value: valueTwo,
                         };
-                      } if (key === 'location_grid') {
-                        return {
-                          name: valueTwo.label,
-                          value: valueTwo.id.toString(),
-                        };
                       }
-                      break;
+                      return valueTwo;
                     }
                     default:
                   }
@@ -290,8 +292,7 @@ export default function contactsReducer(state = initialState, action) {
           },
         };
       }
-
-      const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === contact.ID));
+      const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === contact.ID.toString()));
       // Search entity in list (contacts) if exists: updated it, otherwise: added it to contacts list
       if (contactIndex > -1) {
         newState.contacts[contactIndex] = {
@@ -385,6 +386,11 @@ export default function contactsReducer(state = initialState, action) {
                           key: valueTwo.key,
                           value: valueTwo.value,
                         };
+                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                        return {
+                          name: valueTwo.label,
+                          value: valueTwo.id.toString(),
+                        };
                       }
                       break;
                     }
@@ -399,11 +405,6 @@ export default function contactsReducer(state = initialState, action) {
                         // milestone
                         return {
                           value: valueTwo,
-                        };
-                      } if (key === 'location_grid') {
-                        return {
-                          name: valueTwo.label,
-                          value: valueTwo.id.toString(),
                         };
                       }
                       return valueTwo;
@@ -552,10 +553,54 @@ export default function contactsReducer(state = initialState, action) {
         error: action.error,
         loadingActivities: false,
       };
-    case actions.CONTACTS_GET_SETTINGS_SUCCESS:
+    case actions.CONTACTS_GET_SETTINGS_SUCCESS: {
+      const { settings } = action;
+      let fieldList = {};
+      Object.keys(settings.fields)
+        .filter((fieldName) => {
+          if (settings.fields[fieldName].type === 'key_select'
+            || settings.fields[fieldName].type === 'multi_select') {
+            if (Object.prototype.toString.call(settings.fields[fieldName].default) === '[object Object]') {
+              return true;
+            }
+          }
+          return false;
+        })
+        .forEach((fieldName) => {
+          const fieldData = settings.fields[fieldName];
+          let fieldValues = {};
+          Object.keys(fieldData.default).forEach((value) => {
+            fieldValues = {
+              ...fieldValues,
+              [value]: {
+                label: fieldData.default[value].label,
+              },
+            };
+          });
+          fieldList = {
+            ...fieldList,
+            [fieldName]: {
+              name: fieldData.name,
+              values: fieldValues,
+            },
+          };
+        });
       return {
         ...newState,
-        settings: action.settings.fields,
+        settings: fieldList,
+        loading: false,
+      };
+    }
+    case actions.CONTACTS_GET_SETTINGS_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+        loading: false,
+      };
+    case userActions.USER_LOGOUT:
+      return {
+        ...newState,
+        settings: null,
       };
     default:
       return newState;

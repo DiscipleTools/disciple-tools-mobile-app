@@ -1989,7 +1989,15 @@ class GroupDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.group.coaches.values.map(coach => `${coach.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.group.coaches.values.map((coach, index) => {
+                                    const lastItemIndex = this.state.group.coaches.values.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${coach.name}.`;
+                                    }
+                                    return `${coach.name}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2007,7 +2015,15 @@ class GroupDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.group.location_grid.values.map(geoname => `${geoname.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.group.location_grid.values.map((location, index) => {
+                                    const lastItemIndex = this.state.group.location_grid.values.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${location.name}.`;
+                                    }
+                                    return `${location.name}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2025,7 +2041,15 @@ class GroupDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.group.people_groups.values.map(peopleGroup => `${peopleGroup.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.group.people_groups.values.map((peopleGroup, index) => {
+                                    const lastItemIndex = this.state.group.people_groups.values.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${peopleGroup.name}.`;
+                                    }
+                                    return `${peopleGroup.name}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2043,7 +2067,15 @@ class GroupDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.group.contact_address.map(contactAddress => `${contactAddress.value}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.group.contact_address.map((address, index) => {
+                                    const lastItemIndex = this.state.group.contact_address.length - 1;
+                                    if (lastItemIndex === index) {
+                                      return `${address.value}.`;
+                                    }
+                                    return `${address.value}, `;
+                                  })}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
@@ -2465,6 +2497,30 @@ class GroupDetailScreen extends React.Component {
                           <ScrollView keyboardShouldPersistTaps="handled">
                             {this.state.currentTabIndex === 0 && (
                               <View style={styles.formContainer}>
+                                <Label
+                                  style={{
+                                    color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
+                                  }}
+                                >
+                                  {i18n.t('global.status')}
+                                </Label>
+                                <Row>
+                                  <Col>
+                                    <Picker
+                                      selectedValue={
+                                        this.state.group.group_status
+                                      }
+                                      onValueChange={this.setGroupStatus}
+                                      style={{
+                                        color: '#ffffff',
+                                        backgroundColor: this.state.groupStatusBackgroundColor,
+                                      }}
+                                    >
+                                      <Picker.Item label={i18n.t('global.groupStatus.active')} value="active" />
+                                      <Picker.Item label={i18n.t('global.groupStatus.inactive')} value="inactive" />
+                                    </Picker>
+                                  </Col>
+                                </Row>
                                 <TouchableOpacity
                                   onPress={() => {
                                     this.updateShowAssignedToModal(true);
