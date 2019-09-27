@@ -18,6 +18,7 @@ export const GROUPS_GETBYID_START = 'GROUPS_GETBYID_START';
 export const GROUPS_GETBYID_SUCCESS = 'GROUPS_GETBYID_SUCCESS';
 export const GROUPS_GETBYID_RESPONSE = 'GROUPS_GETBYID_RESPONSE';
 export const GROUPS_GETBYID_FAILURE = 'GROUPS_GETBYID_FAILURE';
+export const GROUPS_GETBYID_END = 'GROUPS_GETBYID_END';
 
 export const GROUPS_GET_USERS_CONTACTS = 'GROUPS_GET_USERS_CONTACTS';
 export const GROUPS_GET_USERS_CONTACTS_START = 'GROUPS_GET_USERS_CONTACTS_START';
@@ -87,6 +88,12 @@ export function getById(domain, token, groupId) {
     domain,
     token,
     groupId,
+  };
+}
+
+export function getByIdEnd() {
+  return {
+    type: GROUPS_GETBYID_END,
   };
 }
 

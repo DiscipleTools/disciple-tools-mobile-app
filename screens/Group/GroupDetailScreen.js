@@ -44,6 +44,7 @@ import {
   getCommentsByGroup,
   saveComment,
   getActivitiesByGroup,
+  getByIdEnd,
 } from '../../store/actions/groups.actions';
 import Colors from '../../constants/Colors';
 import baptismIcon from '../../assets/icons/baptism.png';
@@ -396,7 +397,7 @@ const diff = (obj1, obj2) => {
     // If an object, compare recursively
     if (type1 === '[object Object]') {
       const objDiff = diff(item1, item2);
-      if (Object.keys(objDiff).length > 1) {
+      if (Object.keys(objDiff).length > 0) {
         diffs[key] = objDiff;
       }
       return;
@@ -445,7 +446,7 @@ const diff = (obj1, obj2) => {
   // Return the object of differences
   return diffs;
 };
-const groupInitialState = {
+/* const groupInitialState = {
   ID: null,
   contact_address: [],
   coaches: {
@@ -466,10 +467,28 @@ const groupInitialState = {
   child_groups: {
     values: [],
   },
-};
+}; */
 const initialState = {
-  group: groupInitialState,
-  groupUnmodified: groupInitialState,
+  group: {},
+  unmodifiedGroup: {},
+  groupTypes: [
+    {
+      name: 'Pre-Group',
+      value: 'pre-group',
+    },
+    {
+      name: 'Group',
+      value: 'group',
+    },
+    {
+      name: 'Church',
+      value: 'church',
+    },
+    {
+      name: 'Team',
+      value: 'team',
+    },
+  ],
   onlyView: false,
   loadedLocal: false,
   comment: '',
@@ -524,6 +543,8 @@ class GroupDetailScreen extends React.Component {
                 ...previousParams,
                 previousList: newPreviousList,
               });
+            } else {
+              params.onGoBack();
             }
             navigation.goBack();
           }}
@@ -562,7 +583,6 @@ class GroupDetailScreen extends React.Component {
     } = nextProps;
     let newState = {
       ...prevState,
-      group: prevState.group,
       loading,
       comments: comments || prevState.comments,
       totalComments: totalComments || prevState.totalComments,
@@ -586,12 +606,12 @@ class GroupDetailScreen extends React.Component {
       newState = {
         ...newState,
         group: {
-          ...groupInitialState,
-          ...prevState.group,
+          ...group,
+        },
+        unmodifiedGroup: {
           ...group,
         },
       };
-
       // Update group status select color
       let newColor = '';
       if (group.group_status === 'inactive') {
@@ -602,11 +622,6 @@ class GroupDetailScreen extends React.Component {
       newState = {
         ...newState,
         groupStatusBackgroundColor: newColor,
-        groupUnmodified: {
-          ...groupInitialState,
-          ...prevState.group,
-          ...group,
-        },
       };
     }
 
@@ -662,6 +677,7 @@ class GroupDetailScreen extends React.Component {
     if (group && prevProps.group !== group) {
       // Highlight Updates -> Compare prevState.contact with contact and show differences
       navigation.setParams({ groupName: group.title });
+      this.getGroupByIdEnd();
     }
 
     // GROUP SAVE
@@ -698,22 +714,34 @@ class GroupDetailScreen extends React.Component {
     const { navigation } = this.props;
     /* eslint-disable */
     const { groupId, onlyView, groupName } = navigation.state.params;
+    let newState = {};
     if (groupId) {
-      this.setState(prevState => ({
+      newState = {
         group: {
-          ...prevState.group,
+          ...this.state.group,
           ID: groupId,
         },
-      }));
+      };
       navigation.setParams({ groupName });
+    } else {
+      newState = {
+        group: {
+          group_type: this.state.groupTypes[0].value,
+        },
+      };
     }
     if (onlyView) {
-      this.setState({
+      newState = {
+        ...newState,
         onlyView,
-      });
+      }
     }
+    this.setState({
+      ...newState,
+    }, () => {
+      this.getLists((groupId) || null);
+    });
     /* eslint-enable */
-    this.getLists();
   }
 
   onBackFromSameScreen(previousData) {
@@ -736,8 +764,10 @@ class GroupDetailScreen extends React.Component {
       commentsOffset: 0,
       activitiesOffset: 0,
     }, () => {
-      this.getGroupComments(groupId);
-      this.getGroupActivities(groupId);
+      if (this.props.isConnected) {
+        this.getGroupComments(groupId);
+        this.getGroupActivities(groupId);
+      }
     });
   }
 
@@ -748,7 +778,7 @@ class GroupDetailScreen extends React.Component {
     }, 0);
   }
 
-  getLists = async () => {
+  getLists = async (groupId) => {
     let newState = {};
     const users = await AsyncStorage.getItem('usersList');
     if (users !== null) {
@@ -798,14 +828,19 @@ class GroupDetailScreen extends React.Component {
       loadedLocal: true,
     };
     this.setState(newState, () => {
-      if (this.state.group.ID) {
-        this.onRefresh(this.state.group.ID);
+      // Only execute in detail mode
+      if (groupId) {
+        this.onRefresh(groupId);
       }
     });
   };
 
   getGroupById(groupId) {
     this.props.getById(this.props.userData.domain, this.props.userData.token, groupId);
+  }
+
+  getGroupByIdEnd() {
+    this.props.getByIdEnd();
   }
 
   getGroupComments(groupId) {
@@ -846,7 +881,7 @@ class GroupDetailScreen extends React.Component {
     this.props.navigation.setParams({ hideTabBar: false });
   }
 
-  setGroupName = (value) => {
+  setGroupTitle = (value) => {
     this.setState(prevState => ({
       group: {
         ...prevState.group,
@@ -987,27 +1022,37 @@ class GroupDetailScreen extends React.Component {
   };
 
   onAddAddressField = () => {
-    const contactAddress = this.state.group.contact_address;
-    contactAddress.push({
+    const contactAddressList = (this.state.group.contact_address) ? [...this.state.group.contact_address] : [];
+    contactAddressList.push({
       value: '',
     });
     this.setState(prevState => ({
       group: {
         ...prevState.group,
-        contact_address: contactAddress,
+        contact_address: contactAddressList,
       },
     }));
   };
 
   onAddressFieldChange = (value, index, dbIndex, component) => {
-    const contactAddressList = component.state.group.contact_address;
-    const contactAddress = contactAddressList[index];
-    contactAddress.value = value;
+    const contactAddressList = [...component.state.group.contact_address];
+    let contactAddress = {
+      ...contactAddressList[index],
+    };
+    contactAddress = {
+      ...contactAddress,
+      value,
+    };
     if (dbIndex) {
-      contactAddress.key = dbIndex;
+      contactAddress = {
+        ...contactAddress,
+        key: dbIndex,
+      };
     }
+    contactAddressList[index] = {
+      ...contactAddress,
+    };
     component.setState(prevState => ({
-      ...prevState,
       group: {
         ...prevState.group,
         contact_address: contactAddressList,
@@ -1028,7 +1073,6 @@ class GroupDetailScreen extends React.Component {
       contactAddressList.splice(index, 1);
     }
     component.setState(prevState => ({
-      ...prevState,
       group: {
         ...prevState.group,
         contact_address: contactAddressList,
@@ -1037,27 +1081,31 @@ class GroupDetailScreen extends React.Component {
   };
 
   onCheckExistingHealthMetric = (metricName) => {
-    const healthMetrics = this.state.group.health_metrics
-      ? this.state.group.health_metrics.values
-      : [];
+    const healthMetrics = this.state.group.health_metrics ? [...this.state.group.health_metrics.values] : [];
+    // get healthMetrics that exist in the list and are not deleted
     const foundhealthMetric = healthMetrics.some(
-      metric => metric.value === metricName,
+      healthMetric => (healthMetric.value === metricName && !healthMetric.delete),
     );
     return foundhealthMetric;
   };
 
   onHealthMetricChange = (metricName) => {
-    const healthMetrics2 = this.state.group.health_metrics
-      ? this.state.group.health_metrics.values
-      : [];
-    const foundhealthMetric = healthMetrics2.find(
-      metric => metric.value === metricName,
-    );
+    const healthMetrics = this.state.group.health_metrics ? [...this.state.group.health_metrics.values] : [];
+    const foundhealthMetric = healthMetrics.find(metric => metric.value === metricName);
     if (foundhealthMetric) {
-      const healthMetricIndex = healthMetrics2.indexOf(foundhealthMetric);
-      healthMetrics2.splice(healthMetricIndex, 1);
+      const healthMetricIndex = healthMetrics.indexOf(foundhealthMetric);
+      if (foundhealthMetric.delete) {
+        healthMetrics[healthMetricIndex] = {
+          value: metricName,
+        };
+      } else {
+        healthMetrics[healthMetricIndex] = {
+          value: metricName,
+          delete: true,
+        };
+      }
     } else {
-      healthMetrics2.push({
+      healthMetrics.push({
         value: metricName,
       });
     }
@@ -1065,85 +1113,10 @@ class GroupDetailScreen extends React.Component {
       group: {
         ...prevState.group,
         health_metrics: {
-          values: healthMetrics2,
+          values: healthMetrics,
         },
       },
     }));
-  };
-
-  setCoaches = () => {
-    const dataBaseCoaches = [...this.state.group.coaches.values];
-
-    const localCoaches = [];
-    const selectedValues = coachesSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const coach = selectedValues.entities.item[itemValue];
-      localCoaches.push(coach);
-    });
-
-    const coachToSave = localCoaches.filter((localCoach) => {
-      const foundLocalInDataBase = dataBaseCoaches.find(dataBaseCoach => dataBaseCoach.value === localCoach.value);
-      return foundLocalInDataBase === undefined;
-    }).map(coach => ({ value: coach.value }));
-
-    dataBaseCoaches.forEach((dataBaseCoach) => {
-      const dataBaseInLocal = localCoaches.find(localCoach => dataBaseCoach.value === localCoach.value);
-      if (!dataBaseInLocal) {
-        coachToSave.push({ value: dataBaseCoach.value, delete: true });
-      }
-    });
-
-    return coachToSave;
-  };
-
-  setGeonames = () => {
-    const dataBaseGeonames = [...this.state.group.location_grid.values];
-
-    const localGeonames = [];
-    const selectedValues = geonamesSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const geoname = selectedValues.entities.item[itemValue];
-      localGeonames.push(geoname);
-    });
-
-    const geonamesToSave = localGeonames.filter((localGeoname) => {
-      const foundLocalInDataBase = dataBaseGeonames.find(dataBaseGeoname => dataBaseGeoname.value === localGeoname.value);
-      return foundLocalInDataBase === undefined;
-    }).map(geoname => ({ value: geoname.value }));
-
-    dataBaseGeonames.forEach((dataBaseGeoname) => {
-      const dataBaseInLocal = localGeonames.find(localGeoname => dataBaseGeoname.value === localGeoname.value);
-      if (!dataBaseInLocal) {
-        geonamesToSave.push({ value: dataBaseGeoname.value, delete: true });
-      }
-    });
-
-    return geonamesToSave;
-  };
-
-  setPeopleGroups = () => {
-    const dataBasePeopleGroups = [...this.state.group.people_groups.values];
-
-    const localPeopleGroups = [];
-    const selectedValues = peopleGroupsSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const peopleGroup = selectedValues.entities.item[itemValue];
-      localPeopleGroups.push(peopleGroup);
-    });
-
-    const peopleGroupsToSave = localPeopleGroups.filter((localPeopleGroup) => {
-      const foundLocalInDataBase = dataBasePeopleGroups.find(dataBasePeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
-      return foundLocalInDataBase === undefined;
-    }).map(peopleGroup => ({ value: peopleGroup.value }));
-
-    dataBasePeopleGroups.forEach((dataBasePeopleGroup) => {
-      const dataBaseInLocal = localPeopleGroups.find(localPeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
-      if (!dataBaseInLocal) {
-        peopleGroupsToSave.push({ value: dataBasePeopleGroup.value, delete: true });
-      }
-    });
-
-    return peopleGroupsToSave;
   };
 
   setComment = (value) => {
@@ -1152,117 +1125,108 @@ class GroupDetailScreen extends React.Component {
     });
   };
 
-  setParentGroups = () => {
-    const dataBasePeopleGroups = [...this.state.group.parent_groups.values];
+  getSelectizeValuesToSave = (dbData, selectizeRef) => {
+    const dbItems = [...dbData];
+    const localItems = [];
 
-    const localPeopleGroups = [];
-    const selectedValues = parentGroupsSelectizeRef.getSelectedItems();
+    const selectedValues = selectizeRef.getSelectedItems();
+
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const parentGroup = selectedValues.entities.item[itemValue];
-      localPeopleGroups.push(parentGroup);
+      const item = selectedValues.entities.item[itemValue];
+      localItems.push(item);
     });
 
-    const parentGroupsToSave = localPeopleGroups.filter((localPeopleGroup) => {
-      const foundLocalInDataBase = dataBasePeopleGroups.find(dataBasePeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
-      return foundLocalInDataBase === undefined;
-    }).map(parentGroup => ({ value: parentGroup.value }));
+    const itemsToSave = localItems.filter((localItem) => {
+      const foundLocalInDatabase = dbItems.find(dbItem => dbItem.value === localItem.value);
+      return foundLocalInDatabase === undefined;
+    }).map(localItem => ({ value: localItem.value }));
 
-    dataBasePeopleGroups.forEach((dataBasePeopleGroup) => {
-      const dataBaseInLocal = localPeopleGroups.find(localPeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
-      if (!dataBaseInLocal) {
-        parentGroupsToSave.push({ value: dataBasePeopleGroup.value, delete: true });
+    dbItems.forEach((dbItem) => {
+      const foundDatabaseInLocal = localItems.find(localItem => dbItem.value === localItem.value);
+      if (!foundDatabaseInLocal) {
+        itemsToSave.push({ value: dbItem.value, delete: true });
       }
     });
 
-    return parentGroupsToSave;
-  }
+    return itemsToSave;
+  };
 
-  setPeerGroups = () => {
-    const dataBasePeopleGroups = [...this.state.group.peer_groups.values];
+  transformGroupObject = (group) => {
+    let transformedGroup = {
+      ...group,
+    };
 
-    const localPeopleGroups = [];
-    const selectedValues = peerGroupsSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const peerGroup = selectedValues.entities.item[itemValue];
-      localPeopleGroups.push(peerGroup);
-    });
-
-    const peerGroupsToSave = localPeopleGroups.filter((localPeopleGroup) => {
-      const foundLocalInDataBase = dataBasePeopleGroups.find(dataBasePeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
-      return foundLocalInDataBase === undefined;
-    }).map(peerGroup => ({ value: peerGroup.value }));
-
-    dataBasePeopleGroups.forEach((dataBasePeopleGroup) => {
-      const dataBaseInLocal = localPeopleGroups.find(localPeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
-      if (!dataBaseInLocal) {
-        peerGroupsToSave.push({ value: dataBasePeopleGroup.value, delete: true });
-      }
-    });
-
-    return peerGroupsToSave;
-  }
-
-  setChildGroups = () => {
-    const dataBaseChildGroups = [...this.state.group.child_groups.values];
-
-    const localChildGroups = [];
-    const selectedValues = childGroupsSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const childGroup = selectedValues.entities.item[itemValue];
-      localChildGroups.push(childGroup);
-    });
-
-    const childGroupsToSave = localChildGroups.filter((localChildGroup) => {
-      const foundLocalInDataBase = dataBaseChildGroups.find(dataBaseChildGroup => dataBaseChildGroup.value === localChildGroup.value);
-      return foundLocalInDataBase === undefined;
-    }).map(childGroup => ({ value: childGroup.value }));
-
-    dataBaseChildGroups.forEach((dataBaseChildGroup) => {
-      const dataBaseInLocal = localChildGroups.find(localChildGroup => dataBaseChildGroup.value === localChildGroup.value);
-      if (!dataBaseInLocal) {
-        childGroupsToSave.push({ value: dataBaseChildGroup.value, delete: true });
-      }
-    });
-
-    return childGroupsToSave;
+    // if property exist, get from json, otherwise, send empty array
+    if (coachesSelectizeRef) {
+      transformedGroup = {
+        ...transformedGroup,
+        coaches: {
+          values: this.getSelectizeValuesToSave((transformedGroup.coaches) ? transformedGroup.coaches.values : [], coachesSelectizeRef),
+        },
+      };
+    }
+    if (geonamesSelectizeRef) {
+      transformedGroup = {
+        ...transformedGroup,
+        location_grid: {
+          values: this.getSelectizeValuesToSave((transformedGroup.location_grid) ? transformedGroup.location_grid.values : [], geonamesSelectizeRef),
+        },
+      };
+    }
+    if (peopleGroupsSelectizeRef) {
+      transformedGroup = {
+        ...transformedGroup,
+        people_groups: {
+          values: this.getSelectizeValuesToSave((transformedGroup.people_groups) ? transformedGroup.people_groups.values : [], peopleGroupsSelectizeRef),
+        },
+      };
+    }
+    if (parentGroupsSelectizeRef) {
+      transformedGroup = {
+        ...transformedGroup,
+        parent_groups: {
+          values: this.getSelectizeValuesToSave((transformedGroup.parent_groups) ? transformedGroup.parent_groups.values : [], parentGroupsSelectizeRef),
+        },
+      };
+    }
+    if (peerGroupsSelectizeRef) {
+      transformedGroup = {
+        ...transformedGroup,
+        peer_groups: {
+          values: this.getSelectizeValuesToSave((transformedGroup.peer_groups) ? transformedGroup.peer_groups.values : [], peerGroupsSelectizeRef),
+        },
+      };
+    }
+    if (childGroupsSelectizeRef) {
+      transformedGroup = {
+        ...transformedGroup,
+        child_groups: {
+          values: this.getSelectizeValuesToSave((transformedGroup.child_groups) ? transformedGroup.child_groups.values : [], childGroupsSelectizeRef),
+        },
+      };
+    }
+    return transformedGroup;
   }
 
   onSaveGroup = () => {
     Keyboard.dismiss();
-    let groupToSave = JSON.parse(JSON.stringify(this.state.group));
-
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'coaches') && coachesSelectizeRef) {
-      groupToSave.coaches.values = this.setCoaches();
-    }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'location_grid') && geonamesSelectizeRef) {
-      groupToSave.location_grid.values = this.setGeonames();
-    }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'people_groups') && peopleGroupsSelectizeRef) {
-      groupToSave.people_groups.values = this.setPeopleGroups();
-    }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'parent_groups') && parentGroupsSelectizeRef) {
-      groupToSave.parent_groups.values = this.setParentGroups();
-    }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'peer_groups') && peerGroupsSelectizeRef) {
-      groupToSave.peer_groups.values = this.setPeerGroups();
-    }
-    if (Object.prototype.hasOwnProperty.call(groupToSave, 'child_groups') && childGroupsSelectizeRef) {
-      groupToSave.child_groups.values = this.setChildGroups();
-    }
-
-    groupToSave = diff(this.state.groupUnmodified, groupToSave);
-    groupToSave = {
-      ...groupToSave,
-      title: this.state.group.title,
+    const { unmodifiedGroup } = this.state;
+    const group = this.transformGroupObject(this.state.group);
+    let groupToSave = {
+      ...diff(unmodifiedGroup, group),
     };
-
+    if (this.state.group.title) {
+      groupToSave = {
+        ...groupToSave,
+        title: this.state.group.title,
+      };
+    }
     if (this.state.group.ID) {
       groupToSave = {
         ...groupToSave,
         ID: this.state.group.ID,
       };
     }
-
     this.props.saveGroup(
       this.props.userData.domain,
       this.props.userData.token,
@@ -1321,9 +1285,9 @@ class GroupDetailScreen extends React.Component {
   };
 
   showAssignedUser = () => {
-    const foundUser = this.state.users.find(
+    const foundUser = (this.state.group.assigned_to) ? this.state.users.find(
       user => `user-${user.key}` === this.state.group.assigned_to,
-    );
+    ) : null;
     return <Text style={{ marginTop: 'auto', marginBottom: 'auto', fontSize: 15 }}>{foundUser ? foundUser.label : ''}</Text>;
   };
 
@@ -1990,13 +1954,14 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.group.coaches.values.map((coach, index) => {
+                                  {(this.state.group.coaches) ? this.state.group.coaches.values.map((coach, index) => {
                                     const lastItemIndex = this.state.group.coaches.values.length - 1;
+                                    const coachName = this.state.usersContacts.find(user => user.value === coach.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${coach.name}.`;
+                                      return `${coachName}.`;
                                     }
-                                    return `${coach.name}, `;
-                                  })}
+                                    return `${coachName}, `;
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2016,13 +1981,14 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.group.location_grid.values.map((location, index) => {
+                                  {(this.state.group.location_grid) ? this.state.group.location_grid.values.map((location, index) => {
                                     const lastItemIndex = this.state.group.location_grid.values.length - 1;
+                                    const locationName = this.state.geonames.find(geoname => geoname.value === location.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${location.name}.`;
+                                      return `${locationName}.`;
                                     }
-                                    return `${location.name}, `;
-                                  })}
+                                    return `${locationName}, `;
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2042,13 +2008,14 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.group.people_groups.values.map((peopleGroup, index) => {
+                                  {(this.state.group.people_groups) ? this.state.group.people_groups.values.map((peopleGroup, index) => {
                                     const lastItemIndex = this.state.group.people_groups.values.length - 1;
+                                    const peopleGroupName = this.state.peopleGroups.find(person => person.value === peopleGroup.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${peopleGroup.name}.`;
+                                      return `${peopleGroupName}.`;
                                     }
-                                    return `${peopleGroup.name}, `;
-                                  })}
+                                    return `${peopleGroupName}, `;
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2068,13 +2035,13 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.group.contact_address.map((address, index) => {
+                                  {(this.state.group.contact_address) ? this.state.group.contact_address.map((address, index) => {
                                     const lastItemIndex = this.state.group.contact_address.length - 1;
                                     if (lastItemIndex === index) {
                                       return `${address.value}.`;
                                     }
                                     return `${address.value}, `;
-                                  })}
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2094,7 +2061,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.group.start_date}
+                                  {(this.state.group.start_date) ? this.state.group.start_date : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2114,7 +2081,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.group.end_date}
+                                  {(this.state.group.end_date) ? this.state.group.end_date : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2334,7 +2301,7 @@ class GroupDetailScreen extends React.Component {
                             </Row>
                             <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
                               <ScrollView horizontal>
-                                {this.state.group.parent_groups.values.map((parentGroup, index) => (
+                                {(this.state.group.parent_groups) ? this.state.group.parent_groups.values.map((parentGroup, index) => (
                                   <Col
                                     key={index.toString()}
                                     style={styles.groupCircleContainer}
@@ -2359,21 +2326,21 @@ class GroupDetailScreen extends React.Component {
                                       style={styles.groupCircleName}
                                     >
                                       <Text style={styles.groupCircleNameText}>
-                                        {parentGroup.name}
+                                        {parentGroup.post_title}
                                       </Text>
                                     </Row>
                                     <Row
                                       style={styles.groupCircleCounter}
                                     >
-                                      <Text>{parentGroup.baptizedCount}</Text>
+                                      <Text>{parentGroup.baptized_member_count}</Text>
                                     </Row>
                                     <Row
                                       style={[styles.groupCircleCounter, { marginTop: '5%' }]}
                                     >
-                                      <Text>{parentGroup.memberCount}</Text>
+                                      <Text>{parentGroup.member_count}</Text>
                                     </Row>
                                   </Col>
-                                ))}
+                                )) : ''}
                               </ScrollView>
                             </Row>
                             <View style={[styles.formDivider, styles.formIconLabelMargin]} />
@@ -2387,7 +2354,7 @@ class GroupDetailScreen extends React.Component {
                             </Row>
                             <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
                               <ScrollView horizontal>
-                                {this.state.group.child_groups.values.map((childGroup, index) => (
+                                {(this.state.group.child_groups) ? this.state.group.child_groups.values.map((childGroup, index) => (
                                   <Col
                                     key={index.toString()}
                                     style={styles.groupCircleContainer}
@@ -2412,21 +2379,21 @@ class GroupDetailScreen extends React.Component {
                                       style={styles.groupCircleName}
                                     >
                                       <Text style={styles.groupCircleNameText}>
-                                        {childGroup.name}
+                                        {childGroup.post_title}
                                       </Text>
                                     </Row>
                                     <Row
                                       style={styles.groupCircleCounter}
                                     >
-                                      <Text>{childGroup.baptizedCount}</Text>
+                                      <Text>{childGroup.baptized_member_count}</Text>
                                     </Row>
                                     <Row
                                       style={[styles.groupCircleCounter, { marginTop: '5%' }]}
                                     >
-                                      <Text>{childGroup.memberCount}</Text>
+                                      <Text>{childGroup.member_count}</Text>
                                     </Row>
                                   </Col>
-                                ))}
+                                )) : ''}
                               </ScrollView>
                             </Row>
                             <View style={[styles.formDivider, styles.formDivider2Margin]} />
@@ -2440,7 +2407,7 @@ class GroupDetailScreen extends React.Component {
                             </Row>
                             <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
                               <ScrollView horizontal>
-                                {this.state.group.peer_groups.values.map((peerGroup, index) => (
+                                {(this.state.group.peer_groups) ? this.state.group.peer_groups.values.map((peerGroup, index) => (
                                   <Col
                                     key={index.toString()}
                                     style={styles.groupCircleContainer}
@@ -2465,21 +2432,21 @@ class GroupDetailScreen extends React.Component {
                                       style={styles.groupCircleName}
                                     >
                                       <Text style={styles.groupCircleNameText}>
-                                        {peerGroup.name}
+                                        {peerGroup.post_title}
                                       </Text>
                                     </Row>
                                     <Row
                                       style={styles.groupCircleCounter}
                                     >
-                                      <Text>{peerGroup.baptizedCount}</Text>
+                                      <Text>{peerGroup.baptized_member_count}</Text>
                                     </Row>
                                     <Row
                                       style={[styles.groupCircleCounter, { marginTop: '5%' }]}
                                     >
-                                      <Text>{peerGroup.memberCount}</Text>
+                                      <Text>{peerGroup.member_count}</Text>
                                     </Row>
                                   </Col>
-                                ))}
+                                )) : ''}
                               </ScrollView>
                             </Row>
                             <View style={[styles.formDivider, styles.formDivider2Margin]} />
@@ -2598,7 +2565,7 @@ class GroupDetailScreen extends React.Component {
                                       ref={(selectize) => { coachesSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={this.state.group.coaches.values}
+                                      selectedItems={(this.state.group.coaches) ? this.state.group.coaches.values.map(coach => ({ name: this.state.usersContacts.find(user => user.value === coach.value).name, value: coach.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('groupDetailScreen.selectCoaches'),
                                       }}
@@ -2675,7 +2642,7 @@ class GroupDetailScreen extends React.Component {
                                       ref={(selectize) => { geonamesSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.geonames}
-                                      selectedItems={this.state.group.location_grid.values}
+                                      selectedItems={(this.state.group.location_grid) ? this.state.group.location_grid.values.map(location => ({ name: this.state.geonames.find(geoname => geoname.value === location.value).name, value: location.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('groupDetailScreen.selectGeonames'),
                                       }}
@@ -2752,7 +2719,7 @@ class GroupDetailScreen extends React.Component {
                                       ref={(selectize) => { peopleGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.peopleGroups}
-                                      selectedItems={this.state.group.people_groups.values}
+                                      selectedItems={(this.state.group.people_groups) ? this.state.group.people_groups.values.map(peopleGroup => ({ name: this.state.peopleGroups.find(person => person.value === peopleGroup.value).name, value: peopleGroup.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('global.selectPeopleGroups'),
                                       }}
@@ -2822,7 +2789,7 @@ class GroupDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                {this.state.group.contact_address.map(
+                                {(this.state.group.contact_address) ? this.state.group.contact_address.map(
                                   (address, index) => (!address.delete ? (
                                     <Row
                                       key={index.toString()}
@@ -2866,7 +2833,7 @@ class GroupDetailScreen extends React.Component {
                                       </Col>
                                     </Row>
                                   ) : null),
-                                )}
+                                ) : (<Text />)}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
@@ -2898,7 +2865,7 @@ class GroupDetailScreen extends React.Component {
                                   <Col>
                                     <DatePicker
                                       onDateChange={this.setGroupStartDate}
-                                      defaultDate={(this.state.group.start_date.length > 0) ? new Date(this.state.group.start_date) : ''}
+                                      defaultDate={(this.state.group.start_date) ? new Date(this.state.group.start_date) : ''}
                                     />
                                   </Col>
                                 </Row>
@@ -2933,7 +2900,7 @@ class GroupDetailScreen extends React.Component {
                                   <Col>
                                     <DatePicker
                                       onDateChange={this.setEndDate}
-                                      defaultDate={(this.state.group.end_date.length > 0) ? new Date(this.state.group.end_date) : ''}
+                                      defaultDate={(this.state.group.end_date) ? new Date(this.state.group.end_date) : ''}
                                     />
                                   </Col>
                                 </Row>
@@ -3028,7 +2995,7 @@ class GroupDetailScreen extends React.Component {
                                       ref={(selectize) => { parentGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
-                                      selectedItems={this.state.group.parent_groups.values}
+                                      selectedItems={(this.state.group.parent_groups) ? this.state.group.parent_groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('groupDetailScreen.searchGroups'),
                                       }}
@@ -3105,7 +3072,7 @@ class GroupDetailScreen extends React.Component {
                                       ref={(selectize) => { childGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
-                                      selectedItems={this.state.group.child_groups.values}
+                                      selectedItems={(this.state.group.child_groups) ? this.state.group.child_groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
                                       }}
@@ -3182,7 +3149,7 @@ class GroupDetailScreen extends React.Component {
                                       ref={(selectize) => { peerGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
-                                      selectedItems={this.state.group.peer_groups.values}
+                                      selectedItems={(this.state.group.peer_groups) ? this.state.group.peer_groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
                                       }}
@@ -3281,8 +3248,7 @@ class GroupDetailScreen extends React.Component {
                     <Row>
                       <Input
                         placeholder={i18n.t('global.requiredField')}
-                        value={this.state.group.title}
-                        onChangeText={this.setGroupName}
+                        onChangeText={this.setGroupTitle}
                         style={{
                           borderColor: '#B4B4B4',
                           borderWidth: 1,
@@ -3341,7 +3307,7 @@ GroupDetailScreen.propTypes = {
     title: PropTypes.string,
   }),
   userReducerError: PropTypes.shape({
-    code: PropTypes.string,
+    code: PropTypes.any,
     message: PropTypes.string,
   }),
   newComment: PropTypes.shape({
@@ -3366,6 +3332,8 @@ GroupDetailScreen.propTypes = {
   saveComment: PropTypes.func.isRequired,
   getActivities: PropTypes.func.isRequired,
   saved: PropTypes.bool,
+  getByIdEnd: PropTypes.func.isRequired,
+  isConnected: PropTypes.bool,
 };
 
 GroupDetailScreen.defaultProps = {
@@ -3374,6 +3342,7 @@ GroupDetailScreen.defaultProps = {
   newComment: null,
   groupsReducerError: null,
   saved: null,
+  isConnected: null,
 };
 
 const mapStateToProps = state => ({
@@ -3407,6 +3376,9 @@ const mapDispatchToProps = dispatch => ({
   },
   getActivities: (domain, token, groupId, offset, limit) => {
     dispatch(getActivitiesByGroup(domain, token, groupId, offset, limit));
+  },
+  getByIdEnd: () => {
+    dispatch(getByIdEnd());
   },
 });
 

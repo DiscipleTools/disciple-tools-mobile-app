@@ -176,10 +176,19 @@ export default function groupsReducer(state = initialState, action) {
                       case '[object Object]': {
                         if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                           // connection
-                          return {
-                            name: valueTwo.post_title,
+                          let object = {
                             value: valueTwo.ID.toString(),
                           };
+                          // groups
+                          if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') && Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                            object = {
+                              ...object,
+                              post_title: valueTwo.post_title,
+                              baptized_member_count: valueTwo.baptized_member_count,
+                              member_count: valueTwo.member_count,
+                            };
+                          }
+                          return object;
                         } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
                           return {
                             key: valueTwo.key,
@@ -187,21 +196,14 @@ export default function groupsReducer(state = initialState, action) {
                           };
                         } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
                           return {
-                            name: valueTwo.label,
                             value: valueTwo.id.toString(),
                           };
                         }
                         break;
                       }
                       case '[object String]': {
-                        if (key === 'sources') {
-                          // source
-                          return {
-                            name: valueTwo.charAt(0).toUpperCase() + valueTwo.slice(1),
-                            value: valueTwo,
-                          };
-                        } if (key === 'milestones') {
-                          // milestone
+                        if (key === 'sources' || key === 'health_metrics') {
+                          // source or health_metric
                           return {
                             value: valueTwo,
                           };
@@ -229,7 +231,6 @@ export default function groupsReducer(state = initialState, action) {
         }).sort((a, b) => parseInt(a.ID, 10) < parseInt(b.ID, 10));
         groups = localGroups.concat(dataBaseGroups);
       }
-
       return {
         ...newState,
         groups,
@@ -295,10 +296,19 @@ export default function groupsReducer(state = initialState, action) {
                     case '[object Object]': {
                       if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                         // connection
-                        return {
-                          name: valueTwo.post_title,
+                        let object = {
                           value: valueTwo.ID.toString(),
                         };
+                        // groups
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') && Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                          object = {
+                            ...object,
+                            post_title: valueTwo.post_title,
+                            baptized_member_count: valueTwo.baptized_member_count,
+                            member_count: valueTwo.member_count,
+                          };
+                        }
+                        return object;
                       } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
                         return {
                           key: valueTwo.key,
@@ -306,21 +316,14 @@ export default function groupsReducer(state = initialState, action) {
                         };
                       } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
                         return {
-                          name: valueTwo.label,
                           value: valueTwo.id.toString(),
                         };
                       }
                       break;
                     }
                     case '[object String]': {
-                      if (key === 'sources') {
-                        // source
-                        return {
-                          name: valueTwo.charAt(0).toUpperCase() + valueTwo.slice(1),
-                          value: valueTwo,
-                        };
-                      } if (key === 'milestones') {
-                        // milestone
+                      if (key === 'sources' || key === 'health_metrics') {
+                        // source or health_metric
                         return {
                           value: valueTwo,
                         };
@@ -401,8 +404,7 @@ export default function groupsReducer(state = initialState, action) {
           },
         };
       }
-
-      const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === group.ID.toString()));
+      const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID.toString() === group.ID.toString()));
       // Search entity in list (groups) if exists: updated it, otherwise: added it to group list
       if (groupIndex > -1) {
         newState.groups[groupIndex] = {
@@ -489,10 +491,19 @@ export default function groupsReducer(state = initialState, action) {
                     case '[object Object]': {
                       if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                         // connection
-                        return {
-                          name: valueTwo.post_title,
+                        let object = {
                           value: valueTwo.ID.toString(),
                         };
+                        // groups
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') && Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                          object = {
+                            ...object,
+                            post_title: valueTwo.post_title,
+                            baptized_member_count: valueTwo.baptized_member_count,
+                            member_count: valueTwo.member_count,
+                          };
+                        }
+                        return object;
                       } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
                         return {
                           key: valueTwo.key,
@@ -500,21 +511,14 @@ export default function groupsReducer(state = initialState, action) {
                         };
                       } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
                         return {
-                          name: valueTwo.label,
                           value: valueTwo.id.toString(),
                         };
                       }
                       break;
                     }
                     case '[object String]': {
-                      if (key === 'sources') {
-                        // source
-                        return {
-                          name: valueTwo.charAt(0).toUpperCase() + valueTwo.slice(1),
-                          value: valueTwo,
-                        };
-                      } if (key === 'milestones') {
-                        // milestone
+                      if (key === 'sources' || key === 'health_metrics') {
+                        // source or health_metric
                         return {
                           value: valueTwo,
                         };
@@ -597,7 +601,6 @@ export default function groupsReducer(state = initialState, action) {
           },
         };
       }
-
       return newState;
     }
     case actions.GROUPS_GETBYID_FAILURE:

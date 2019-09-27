@@ -282,7 +282,7 @@ const diff = (obj1, obj2) => {
     // If an object, compare recursively
     if (type1 === '[object Object]') {
       const objDiff = diff(item1, item2);
-      if (Object.keys(objDiff).length > 1) {
+      if (Object.keys(objDiff).length > 0) {
         diffs[key] = objDiff;
       }
       return;
@@ -331,49 +331,6 @@ const diff = (obj1, obj2) => {
   // Return the object of differences
   return diffs;
 };
-const contactInitialState = {
-  sources: {
-    values: [
-      {
-        name: 'Personal',
-        value: 'personal',
-      },
-    ],
-  },
-  milestones: {
-    values: [],
-  },
-  contact_phone: [],
-  contact_email: [],
-  contact_address: [],
-  location_grid: {
-    values: [],
-  },
-  subassigned: {
-    values: [],
-  },
-  people_groups: {
-    values: [],
-  },
-  groups: {
-    values: [],
-  },
-  relation: {
-    values: [],
-  },
-  baptized_by: {
-    values: [],
-  },
-  baptized: {
-    values: [],
-  },
-  coached_by: {
-    values: [],
-  },
-  coaching: {
-    values: [],
-  },
-};
 
 class ContactDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -410,8 +367,8 @@ class ContactDetailScreen extends React.Component {
   };
 
   state = {
-    contact: contactInitialState,
-    contactUnmodified: contactInitialState,
+    contact: {},
+    unmodifiedContact: {},
     contactSources: [
       {
         name: i18n.t('contactDetailScreen.contactSources.personal'),
@@ -450,28 +407,7 @@ class ContactDetailScreen extends React.Component {
         value: 'transfer',
       },
     ],
-    users: [],
-    usersContacts: [],
-    groups: [],
-    peopleGroups: [],
-    geonames: [],
-    loadedLocal: false,
-    comments: [],
-    loadComments: false,
-    loadingMoreComments: false,
-    totalComments: 0,
-    commentsOffset: 0,
-    commentsLimit: 10,
-    activities: [],
-    loadActivities: false,
-    loadingMoreActivities: false,
-    totalActivities: 0,
-    activitiesOffset: 0,
-    activitiesLimit: 10,
-    comment: '',
-    progressBarValue: 0,
-    overallStatusBackgroundColor: '#ffffff',
-    listContactStates: [
+    contactStates: [
       {
         label: i18n.t('global.contactOverallStatus.new'),
         value: 'new',
@@ -501,6 +437,27 @@ class ContactDetailScreen extends React.Component {
         value: 'closed',
       },
     ],
+    users: [],
+    usersContacts: [],
+    groups: [],
+    peopleGroups: [],
+    geonames: [],
+    loadedLocal: false,
+    comments: [],
+    loadComments: false,
+    loadingMoreComments: false,
+    totalComments: 0,
+    commentsOffset: 0,
+    commentsLimit: 10,
+    activities: [],
+    loadActivities: false,
+    loadingMoreActivities: false,
+    totalActivities: 0,
+    activitiesOffset: 0,
+    activitiesLimit: 10,
+    comment: '',
+    progressBarValue: 0,
+    overallStatusBackgroundColor: '#ffffff',
     activeFab: false,
     renderFab: true,
     showAssignedToModal: false,
@@ -509,15 +466,25 @@ class ContactDetailScreen extends React.Component {
   };
 
   componentDidMount() {
-    const onlyView = this.props.navigation.getParam('onlyView');
-    const contactId = this.props.navigation.getParam('contactId');
-    const contactName = this.props.navigation.getParam('contactName');
+    const { navigation } = this.props;
+    const { onlyView, contactId, contactName } = navigation.state.params;
     let newState = {};
     if (contactId) {
       newState = {
         contact: {
           ...this.state.contact,
           ID: contactId,
+        },
+      };
+    } else {
+      newState = {
+        contact: {
+          title: null,
+          sources: {
+            values: [{
+              value: this.state.contactSources[0].value,
+            }],
+          },
         },
       };
     }
@@ -549,7 +516,6 @@ class ContactDetailScreen extends React.Component {
     } = nextProps;
     let newState = {
       ...prevState,
-      contact: prevState.contact,
       loading,
       comments: comments || prevState.comments,
       totalComments: totalComments || prevState.totalComments,
@@ -572,14 +538,24 @@ class ContactDetailScreen extends React.Component {
       newState = {
         ...newState,
         contact: {
-          ...contactInitialState,
-          ...prevState.contact,
+          ...contact,
+        },
+        unmodifiedContact: {
           ...contact,
         },
       };
 
       // Update contact status select color
       let newColor = '';
+      if (!contact.overall_status) {
+        newState = {
+          ...newState,
+          contact: {
+            ...contact,
+            overall_status: (contact.overall_status) ? contact.overall_status : this.state.contactStates[0].value,
+          },
+        };
+      }
       if (contact.overall_status === 'new' || contact.overall_status === 'unassigned' || contact.overall_status === 'closed') {
         newColor = '#d9534f';
       } else if (
@@ -595,11 +571,6 @@ class ContactDetailScreen extends React.Component {
       newState = {
         ...newState,
         overallStatusBackgroundColor: newColor,
-        contactUnmodified: {
-          ...contactInitialState,
-          ...prevState.contact,
-          ...contact,
-        },
       };
     }
 
@@ -875,29 +846,29 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  setGeonames = () => {
-    const dbGeonames = [...this.state.contact.location_grid.values];
+  getSelectizeValuesToSave = (dbData, selectizeRef) => {
+    const dbItems = [...dbData];
+    const localItems = [];
 
-    const localGeonames = [];
-    const selectedValues = geonamesSelectizeRef.getSelectedItems();
+    const selectedValues = selectizeRef.getSelectedItems();
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const geoname = selectedValues.entities.item[itemValue];
-      localGeonames.push(geoname);
+      const item = selectedValues.entities.item[itemValue];
+      localItems.push(item);
     });
 
-    const geonamesToSave = localGeonames.filter((localGeoname) => {
-      const foundLocalInDatabase = dbGeonames.find(dbGeoname => dbGeoname.value === localGeoname.value);
+    const itemsToSave = localItems.filter((localItem) => {
+      const foundLocalInDatabase = dbItems.find(dbItem => dbItem.value === localItem.value);
       return foundLocalInDatabase === undefined;
-    }).map(geoname => ({ value: geoname.value }));
+    }).map(localItem => ({ value: localItem.value }));
 
-    dbGeonames.forEach((dbGeoname) => {
-      const foundDatabaseInLocal = localGeonames.find(localGeoname => dbGeoname.value === localGeoname.value);
+    dbItems.forEach((dbItem) => {
+      const foundDatabaseInLocal = localItems.find(localItem => dbItem.value === localItem.value);
       if (!foundDatabaseInLocal) {
-        geonamesToSave.push({ value: dbGeoname.value, delete: true });
+        itemsToSave.push({ value: dbItem.value, delete: true });
       }
     });
 
-    return geonamesToSave;
+    return itemsToSave;
   };
 
   setContactInitialComment = (value) => {
@@ -981,80 +952,23 @@ class ContactDetailScreen extends React.Component {
 
   onSaveContact = (quickAction = {}) => {
     Keyboard.dismiss();
-
-    let contactToSave = JSON.parse(JSON.stringify(this.state.contact));
-    if (
-      Object.prototype.hasOwnProperty.call(
-        quickAction,
-        'quick_button_no_answer',
-      )
-      || Object.prototype.hasOwnProperty.call(
-        quickAction,
-        'quick_button_contact_established',
-      )
-      || Object.prototype.hasOwnProperty.call(
-        quickAction,
-        'quick_button_meeting_scheduled',
-      )
-      || Object.prototype.hasOwnProperty.call(
-        quickAction,
-        'quick_button_meeting_complete',
-      )
-      || Object.prototype.hasOwnProperty.call(
-        quickAction,
-        'quick_button_no_show',
-      )
-    ) {
+    const { unmodifiedContact } = this.state;
+    const contact = this.transformContactObject(this.state.contact, quickAction);
+    let contactToSave = {
+      ...diff(unmodifiedContact, contact),
+    };
+    if (this.state.contact.title) {
       contactToSave = {
         ...contactToSave,
-        ...quickAction,
+        title: this.state.contact.title,
       };
-    } else {
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'location_grid') && geonamesSelectizeRef) {
-        contactToSave.location_grid.values = this.setGeonames();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'subassigned') && subAssignedSelectizeRef) {
-        contactToSave.subassigned.values = this.setContactSubassignedContacts();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'groups') && groupsSelectizeRef) {
-        contactToSave.groups.values = this.setGroups();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'relation') && connectionsSelectizeRef) {
-        contactToSave.relation.values = this.setConnections();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized_by') && baptizedBySelectizeRef) {
-        contactToSave.baptized_by.values = this.setBaptizedBy();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized') && baptizedSelectizeRef) {
-        contactToSave.baptized.values = this.setBaptized();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coached_by') && coachedSelectizeRef) {
-        contactToSave.coached_by.values = this.setCoachedBy();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coaching') && coachingSelectizeRef) {
-        contactToSave.coaching.values = this.setCoaching();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'people_groups') && peopleGroupsSelectizeRef) {
-        contactToSave.people_groups.values = this.setPeopleGroups();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'sources') && sourcesSelectizeRef) {
-        contactToSave.sources.values = this.setSources();
-      }
     }
-
-    contactToSave = diff(this.state.contactUnmodified, contactToSave);
-    contactToSave = {
-      ...contactToSave,
-      title: this.state.contact.title,
-    };
-
     if (this.state.contact.ID) {
       contactToSave = {
         ...contactToSave,
         ID: this.state.contact.ID,
       };
     }
-
     this.props.saveContact(
       this.props.userData.domain,
       this.props.userData.token,
@@ -1111,23 +1025,31 @@ class ContactDetailScreen extends React.Component {
   };
 
   onCheckExistingMilestone = (milestoneName) => {
-    const milestones = this.state.contact.milestones.values;
+    const milestones = this.state.contact.milestones ? [...this.state.contact.milestones.values] : [];
+    // get milestones that exist in the list and are not deleted
     const foundMilestone = milestones.some(
-      milestone => milestone.value === milestoneName,
+      milestone => (milestone.value === milestoneName && !milestone.delete),
     );
     return foundMilestone;
   };
 
   onMilestoneChange = (milestoneName) => {
-    const milestones2 = this.state.contact.milestones.values;
-    const foundMilestone = milestones2.find(
-      milestone => milestone.value === milestoneName,
-    );
+    const milestonesList = this.state.contact.milestones ? [...this.state.contact.milestones.values] : [];
+    const foundMilestone = milestonesList.find(milestone => milestone.value === milestoneName);
     if (foundMilestone) {
-      const milestoneIndex = milestones2.indexOf(foundMilestone);
-      milestones2.splice(milestoneIndex, 1);
+      const milestoneIndex = milestonesList.indexOf(foundMilestone);
+      if (foundMilestone.delete) {
+        milestonesList[milestoneIndex] = {
+          value: milestoneName,
+        };
+      } else {
+        milestonesList[milestoneIndex] = {
+          value: milestoneName,
+          delete: true,
+        };
+      }
     } else {
-      milestones2.push({
+      milestonesList.push({
         value: milestoneName,
       });
     }
@@ -1135,160 +1057,10 @@ class ContactDetailScreen extends React.Component {
       contact: {
         ...prevState.contact,
         milestones: {
-          values: milestones2,
+          values: milestonesList,
         },
       },
     }));
-  };
-
-  setGroups = () => {
-    const dataBaseGroups = [...this.state.contact.groups.values];
-
-    const localGroups = [];
-    const selectedValues = groupsSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const group = selectedValues.entities.item[itemValue];
-      localGroups.push(group);
-    });
-
-    const groupsToSave = localGroups.filter((localGroup) => {
-      const foundLocalInDatabase = dataBaseGroups.find(dataBaseGroup => dataBaseGroup.value === localGroup.value);
-      return foundLocalInDatabase === undefined;
-    }).map(group => ({ value: group.value }));
-
-    dataBaseGroups.forEach((dataBaseGroup) => {
-      const foundDatabaseInLocal = localGroups.find(localGroup => dataBaseGroup.value === localGroup.value);
-      if (!foundDatabaseInLocal) {
-        groupsToSave.push({ value: dataBaseGroup.value, delete: true });
-      }
-    });
-
-    return groupsToSave;
-  };
-
-  setConnections = () => {
-    const dataBaseConnections = [...this.state.contact.relation.values];
-
-    const localConnections = [];
-    const selectedValues = connectionsSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const connection = selectedValues.entities.item[itemValue];
-      localConnections.push(connection);
-    });
-
-    const connectionsToSave = localConnections.filter((localConnection) => {
-      const foundLocalInDatabase = dataBaseConnections.find(dataBaseConnection => dataBaseConnection.value === localConnection.value);
-      return foundLocalInDatabase === undefined;
-    }).map(connection => ({ value: connection.value }));
-
-    dataBaseConnections.forEach((dataBaseConnection) => {
-      const foundDatabaseInLocal = localConnections.find(localConnection => dataBaseConnection.value === localConnection.value);
-      if (!foundDatabaseInLocal) {
-        connectionsToSave.push({ value: dataBaseConnection.value, delete: true });
-      }
-    });
-
-    return connectionsToSave;
-  };
-
-  setBaptizedBy = () => {
-    const dataBaseBaptizedBy = [...this.state.contact.baptized_by.values];
-
-    const localBaptizedBy = [];
-    const selectedValues = baptizedBySelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const baptizedBy = selectedValues.entities.item[itemValue];
-      localBaptizedBy.push(baptizedBy);
-    });
-
-    const baptizedByToSave = localBaptizedBy.filter((localBaptized) => {
-      const foundLocalInDatabase = dataBaseBaptizedBy.find(dataBaseBaptized => dataBaseBaptized.value === localBaptized.value);
-      return foundLocalInDatabase === undefined;
-    }).map(baptizedBy => ({ value: baptizedBy.value }));
-
-    dataBaseBaptizedBy.forEach((dataBaseBaptized) => {
-      const foundDatabaseInLocal = localBaptizedBy.find(localBaptized => dataBaseBaptized.value === localBaptized.value);
-      if (!foundDatabaseInLocal) {
-        baptizedByToSave.push({ value: dataBaseBaptized.value, delete: true });
-      }
-    });
-
-    return baptizedByToSave;
-  };
-
-  setBaptized = () => {
-    const dataBaseBaptizeds = [...this.state.contact.baptized.values];
-
-    const localBaptizeds = [];
-    const selectedValues = baptizedSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const baptized = selectedValues.entities.item[itemValue];
-      localBaptizeds.push(baptized);
-    });
-
-    const baptizedToSave = localBaptizeds.filter((localBaptized) => {
-      const foundLocalInDatabase = dataBaseBaptizeds.find(dataBaseBaptized => dataBaseBaptized.value === localBaptized.value);
-      return foundLocalInDatabase === undefined;
-    }).map(baptized => ({ value: baptized.value }));
-
-    dataBaseBaptizeds.forEach((dataBaseBaptized) => {
-      const foundDatabaseInLocal = localBaptizeds.find(localBaptized => dataBaseBaptized.value === localBaptized.value);
-      if (!foundDatabaseInLocal) {
-        baptizedToSave.push({ value: dataBaseBaptized.value, delete: true });
-      }
-    });
-
-    return baptizedToSave;
-  };
-
-  setCoachedBy = () => {
-    const dataBaseCoachedBy = [...this.state.contact.coached_by.values];
-
-    const localCoachedBy = [];
-    const selectedValues = coachedSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const coached = selectedValues.entities.item[itemValue];
-      localCoachedBy.push(coached);
-    });
-
-    const coachedToSave = localCoachedBy.filter((localCoached) => {
-      const foundLocalInDatabase = dataBaseCoachedBy.find(dataBaseCoached => dataBaseCoached.value === localCoached.value);
-      return foundLocalInDatabase === undefined;
-    }).map(coached => ({ value: coached.value }));
-
-    dataBaseCoachedBy.forEach((dataBaseCoached) => {
-      const foundDatabaseInLocal = localCoachedBy.find(localCoached => dataBaseCoached.value === localCoached.value);
-      if (!foundDatabaseInLocal) {
-        coachedToSave.push({ value: dataBaseCoached.value, delete: true });
-      }
-    });
-
-    return coachedToSave;
-  };
-
-  setCoaching = () => {
-    const dataBaseCoaching = [...this.state.contact.coaching.values];
-
-    const localCoaching = [];
-    const selectedValues = coachingSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const coaching = selectedValues.entities.item[itemValue];
-      localCoaching.push(coaching);
-    });
-
-    const coachingToSave = localCoaching.filter((localCoach) => {
-      const localInDataBase = dataBaseCoaching.find(dataBaseCoach => dataBaseCoach.value === localCoach.value);
-      return localInDataBase === undefined;
-    }).map(coaching => ({ value: coaching.value }));
-
-    dataBaseCoaching.forEach((dataBaseCoach) => {
-      const foundDatabaseInLocal = localCoaching.find(localCoach => dataBaseCoach.value === localCoach.value);
-      if (!foundDatabaseInLocal) {
-        coachingToSave.push({ value: dataBaseCoach.value, delete: true });
-      }
-    });
-
-    return coachingToSave;
   };
 
   setContactAge = (value) => {
@@ -1321,6 +1093,122 @@ class ContactDetailScreen extends React.Component {
     return list.filter((item, index) => list.indexOf(item) === index).sort(
       (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
     );
+  }
+
+  transformContactObject = (contact, quickAction = {}) => {
+    let transformedContact = {
+      ...contact,
+    };
+    if (
+      Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_no_answer',
+      )
+      || Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_contact_established',
+      )
+      || Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_meeting_scheduled',
+      )
+      || Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_meeting_complete',
+      )
+      || Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_no_show',
+      )
+    ) {
+      transformedContact = {
+        ...transformedContact,
+        ...quickAction,
+      };
+    } else {
+      // if property exist, get from json, otherwise, send empty array
+      if (subAssignedSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          subassigned: {
+            values: this.getSelectizeValuesToSave((transformedContact.subassigned) ? transformedContact.subassigned.values : [], subAssignedSelectizeRef),
+          },
+        };
+      }
+      if (geonamesSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          location_grid: {
+            values: this.getSelectizeValuesToSave((transformedContact.location_grid) ? transformedContact.location_grid.values : [], geonamesSelectizeRef),
+          },
+        };
+      }
+      if (peopleGroupsSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          people_groups: {
+            values: this.getSelectizeValuesToSave((transformedContact.people_groups) ? transformedContact.people_groups.values : [], peopleGroupsSelectizeRef),
+          },
+        };
+      }
+      if (sourcesSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          sources: {
+            values: this.getSelectizeValuesToSave((transformedContact.sources) ? transformedContact.sources.values : [], sourcesSelectizeRef),
+          },
+        };
+      }
+      if (groupsSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          groups: {
+            values: this.getSelectizeValuesToSave((transformedContact.groups) ? transformedContact.groups.values : [], groupsSelectizeRef),
+          },
+        };
+      }
+      if (connectionsSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          relation: {
+            values: this.getSelectizeValuesToSave((transformedContact.relation) ? transformedContact.relation.values : [], connectionsSelectizeRef),
+          },
+        };
+      }
+      if (baptizedBySelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          baptized_by: {
+            values: this.getSelectizeValuesToSave((transformedContact.baptized_by) ? transformedContact.baptized_by.values : [], baptizedBySelectizeRef),
+          },
+        };
+      }
+      if (baptizedSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          baptized: {
+            values: this.getSelectizeValuesToSave((transformedContact.baptized) ? transformedContact.baptized.values : [], baptizedSelectizeRef),
+          },
+        };
+      }
+      if (coachedSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          coached_by: {
+            values: this.getSelectizeValuesToSave((transformedContact.coached_by) ? transformedContact.coached_by.values : [], coachedSelectizeRef),
+          },
+        };
+      }
+      if (coachingSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          coaching: {
+            values: this.getSelectizeValuesToSave((transformedContact.coaching) ? transformedContact.coaching.values : [], coachingSelectizeRef),
+          },
+        };
+      }
+    }
+    return transformedContact;
   }
 
   renderActivityOrCommentRow = commentOrActivity => (
@@ -1423,7 +1311,7 @@ class ContactDetailScreen extends React.Component {
     />
   ));
 
-  renderStatusPickerItems = () => this.state.listContactStates.map(status => (
+  renderStatusPickerItems = () => this.state.contactStates.map(status => (
     <Picker.Item
       key={status.value}
       label={status.label}
@@ -1440,7 +1328,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   onAddPhoneField = () => {
-    const contactPhones = this.state.contact.contact_phone;
+    const contactPhones = (this.state.contact.contact_phone) ? [...this.state.contact.contact_phone] : [];
     contactPhones.push({
       value: '',
     });
@@ -1453,12 +1341,23 @@ class ContactDetailScreen extends React.Component {
   };
 
   onPhoneFieldChange = (value, index, dbIndex, component) => {
-    const phoneAddressList = component.state.contact.contact_phone;
-    const contactPhone = phoneAddressList[index];
-    contactPhone.value = value;
+    const phoneAddressList = [...component.state.contact.contact_phone];
+    let contactPhone = {
+      ...phoneAddressList[index],
+    };
+    contactPhone = {
+      ...contactPhone,
+      value,
+    };
     if (dbIndex) {
-      contactPhone.key = dbIndex;
+      contactPhone = {
+        ...contactPhone,
+        key: dbIndex,
+      };
     }
+    phoneAddressList[index] = {
+      ...contactPhone,
+    };
     component.setState(prevState => ({
       contact: {
         ...prevState.contact,
@@ -1488,7 +1387,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   onAddEmailField = () => {
-    const contactEmails = this.state.contact.contact_email;
+    const contactEmails = (this.state.contact.contact_email) ? this.state.contact.contact_email : [];
     contactEmails.push({
       value: '',
     });
@@ -1501,12 +1400,23 @@ class ContactDetailScreen extends React.Component {
   };
 
   onEmailFieldChange = (value, index, dbIndex, component) => {
-    const contactEmailList = component.state.contact.contact_email;
-    const contactEmail = contactEmailList[index];
-    contactEmail.value = value;
+    const contactEmailList = [...component.state.contact.contact_email];
+    let contactEmail = {
+      ...contactEmailList[index],
+    };
+    contactEmail = {
+      ...contactEmail,
+      value,
+    };
     if (dbIndex) {
-      contactEmail.key = dbIndex;
+      contactEmail = {
+        ...contactEmail,
+        key: dbIndex,
+      };
     }
+    contactEmailList[index] = {
+      ...contactEmail,
+    };
     component.setState(prevState => ({
       ...prevState,
       contact: {
@@ -1537,7 +1447,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   onAddAddressField = () => {
-    const contactAddress = this.state.contact.contact_address;
+    const contactAddress = (this.state.contact.contact_address) ? this.state.contact.contact_address : [];
     contactAddress.push({
       value: '',
     });
@@ -1550,12 +1460,23 @@ class ContactDetailScreen extends React.Component {
   };
 
   onAddressFieldChange = (value, index, dbIndex, component) => {
-    const contactAddressList = component.state.contact.contact_address;
-    const contactAddress = contactAddressList[index];
-    contactAddress.value = value;
+    const contactAddressList = [...component.state.contact.contact_address];
+    let contactAddress = {
+      ...contactAddressList[index],
+    };
+    contactAddress = {
+      ...contactAddress,
+      value,
+    };
     if (dbIndex) {
-      contactAddress.key = dbIndex;
+      contactAddress = {
+        ...contactAddress,
+        key: dbIndex,
+      };
     }
+    contactAddressList[index] = {
+      ...contactAddress,
+    };
     component.setState(prevState => ({
       contact: {
         ...prevState.contact,
@@ -1582,56 +1503,6 @@ class ContactDetailScreen extends React.Component {
         contact_address: contactAddressList,
       },
     }));
-  };
-
-  setPeopleGroups = () => {
-    const dataBasePeopleGroups = [...this.state.contact.people_groups.values];
-
-    const localPeopleGroups = [];
-    const selectedValues = peopleGroupsSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const peopleGroup = selectedValues.entities.item[itemValue];
-      localPeopleGroups.push(peopleGroup);
-    });
-
-    const peopleGroupsToSave = localPeopleGroups.filter((localPeopleGroup) => {
-      const foundLocalInDatabase = dataBasePeopleGroups.find(dataBasePeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
-      return foundLocalInDatabase === undefined;
-    }).map(peopleGroup => ({ value: peopleGroup.value }));
-
-    dataBasePeopleGroups.forEach((dataBasePeopleGroup) => {
-      const foundDatabaseInLocal = localPeopleGroups.find(localPeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
-      if (!foundDatabaseInLocal) {
-        peopleGroupsToSave.push({ value: dataBasePeopleGroup.value, delete: true });
-      }
-    });
-
-    return peopleGroupsToSave;
-  };
-
-  setSources = () => {
-    const dataBaseSources = [...this.state.contact.sources.values];
-
-    const localSources = [];
-    const selectedValues = sourcesSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const source = selectedValues.entities.item[itemValue];
-      localSources.push(source);
-    });
-
-    const sourcesToSave = localSources.filter((localSource) => {
-      const foundLocalInDatabase = dataBaseSources.find(dataBaseSource => dataBaseSource.value === localSource.value);
-      return foundLocalInDatabase === undefined;
-    }).map(source => ({ value: source.value }));
-
-    dataBaseSources.forEach((dataBaseSource) => {
-      const foundDatabaseInLocal = localSources.find(localSource => dataBaseSource.value === localSource.value);
-      if (!foundDatabaseInLocal) {
-        sourcesToSave.push({ value: dataBaseSource.value, delete: true });
-      }
-    });
-
-    return sourcesToSave;
   };
 
   updateShowAssignedToModal = (value) => {
@@ -1661,31 +1532,6 @@ class ContactDetailScreen extends React.Component {
       user => `user-${user.key}` === this.state.contact.assigned_to,
     );
     return <Text style={{ marginTop: 'auto', marginBottom: 'auto', fontSize: 15 }}>{foundUser ? foundUser.label : ''}</Text>;
-  };
-
-  setContactSubassignedContacts = () => {
-    const dataBaseContacts = [...this.state.contact.subassigned.values];
-
-    const localContacts = [];
-    const selectedValues = subAssignedSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const contact = selectedValues.entities.item[itemValue];
-      localContacts.push(contact);
-    });
-
-    const subassignedContactToSave = localContacts.filter((localContact) => {
-      const foundLocalInDatabase = dataBaseContacts.find(dataBaseContact => dataBaseContact.value === localContact.value);
-      return foundLocalInDatabase === undefined;
-    }).map(contact => ({ value: contact.value }));
-
-    dataBaseContacts.forEach((dataBaseContact) => {
-      const foundDatabaseInLocal = localContacts.find(localContact => dataBaseContact.value === localContact.value);
-      if (!foundDatabaseInLocal) {
-        subassignedContactToSave.push({ value: dataBaseContact.value, delete: true });
-      }
-    });
-
-    return subassignedContactToSave;
   };
 
   renderfaithMilestones() {
@@ -2188,13 +2034,14 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.subassigned.values.map((contact, index) => {
+                                  {this.state.contact.subassigned ? this.state.contact.subassigned.values.map((contact, index) => {
                                     const lastItemIndex = this.state.contact.subassigned.values.length - 1;
+                                    const contactName = this.state.usersContacts.find(user => user.value === contact.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${contact.name}.`;
+                                      return `${contactName}.`;
                                     }
-                                    return `${contact.name}, `;
-                                  })}
+                                    return `${contactName}, `;
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2214,13 +2061,13 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.contact_phone.map((phone, index) => {
+                                  {this.state.contact.contact_phone ? this.state.contact.contact_phone.map((phone, index) => {
                                     const lastItemIndex = this.state.contact.contact_phone.length - 1;
                                     if (lastItemIndex === index) {
                                       return `${phone.value}.`;
                                     }
                                     return `${phone.value}, `;
-                                  })}
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2238,13 +2085,13 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.contact_email.map((email, index) => {
+                                  {this.state.contact.contact_email ? this.state.contact.contact_email.map((email, index) => {
                                     const lastItemIndex = this.state.contact.contact_email.length - 1;
                                     if (lastItemIndex === index) {
                                       return `${email.value}.`;
                                     }
                                     return `${email.value}, `;
-                                  })}
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2278,13 +2125,13 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.contact_address.map((address, index) => {
+                                  {this.state.contact.contact_address ? this.state.contact.contact_address.map((address, index) => {
                                     const lastItemIndex = this.state.contact.contact_address.length - 1;
                                     if (lastItemIndex === index) {
                                       return `${address.value}.`;
                                     }
                                     return `${address.value}, `;
-                                  })}
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2302,13 +2149,14 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.location_grid.values.map((location, index) => {
+                                  {this.state.contact.location_grid ? this.state.contact.location_grid.values.map((location, index) => {
                                     const lastItemIndex = this.state.contact.location_grid.values.length - 1;
+                                    const locationName = this.state.geonames.find(geoname => geoname.value === location.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${location.name}.`;
+                                      return `${locationName}.`;
                                     }
-                                    return `${location.name}, `;
-                                  })}
+                                    return `${locationName}, `;
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2328,13 +2176,14 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.people_groups.values.map((peopleGroup, index) => {
+                                  {this.state.contact.people_groups ? this.state.contact.people_groups.values.map((peopleGroup, index) => {
                                     const lastItemIndex = this.state.contact.people_groups.values.length - 1;
+                                    const peopleGroupName = this.state.peopleGroups.find(person => person.value === peopleGroup.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${peopleGroup.name}.`;
+                                      return `${peopleGroupName}.`;
                                     }
-                                    return `${peopleGroup.name}, `;
-                                  })}
+                                    return `${peopleGroupName}, `;
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2353,7 +2202,7 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.age}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.age) ? this.state.contact.age : ''}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.age')}</Label>
@@ -2386,13 +2235,14 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.sources.values.map((source, index) => {
+                                  {this.state.contact.sources ? this.state.contact.sources.values.map((source, index) => {
                                     const lastItemIndex = this.state.contact.sources.values.length - 1;
+                                    const sourceName = this.state.contactSources.find(contactSource => contactSource.value === source.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${source.name}.`;
+                                      return `${sourceName}.`;
                                     }
-                                    return `${source.name}, `;
-                                  })}
+                                    return `${sourceName}, `;
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2442,7 +2292,7 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{i18n.t(`global.seekerPath.${this.state.contact.seeker_path}`)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.seeker_path) ? i18n.t(`global.seekerPath.${this.state.contact.seeker_path}`) : ''}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.seekerPath')}</Label>
@@ -2482,7 +2332,7 @@ class ContactDetailScreen extends React.Component {
                                   />
                                 </Col>
                                 <Col>
-                                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.baptism_date}</Text>
+                                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.baptism_date) ? this.state.contact.baptism_date : ''}</Text>
                                 </Col>
                                 <Col style={styles.formIconLabel}>
                                   <Label style={[styles.label, styles.formLabel]}>
@@ -2650,13 +2500,14 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.groups.values.map((group, index) => {
+                                  {this.state.contact.groups ? this.state.contact.groups.values.map((group, index) => {
                                     const lastItemIndex = this.state.contact.groups.values.length - 1;
+                                    const groupName = this.state.groups.find(groupItem => groupItem.value === group.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${group.name}.`;
+                                      return `${groupName}.`;
                                     }
-                                    return `${group.name}, `;
-                                  })}
+                                    return `${groupName}, `;
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2676,13 +2527,14 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.relation.values.map((relation, index) => {
+                                  {this.state.contact.relation ? this.state.contact.relation.values.map((relation, index) => {
                                     const lastItemIndex = this.state.contact.relation.values.length - 1;
+                                    const contactName = this.state.usersContacts.find(user => user.value === relation.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${relation.name}.`;
+                                      return `${contactName}.`;
                                     }
-                                    return `${relation.name}, `;
-                                  })}
+                                    return `${contactName}, `;
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2702,13 +2554,14 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.baptized_by.values.map((baptizedBy, index) => {
+                                  {this.state.contact.baptized_by ? this.state.contact.baptized_by.values.map((baptizedBy, index) => {
                                     const lastItemIndex = this.state.contact.baptized_by.values.length - 1;
+                                    const contactName = this.state.usersContacts.find(user => user.value === baptizedBy.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${baptizedBy.name}.`;
+                                      return `${contactName}.`;
                                     }
-                                    return `${baptizedBy.name}, `;
-                                  })}
+                                    return `${contactName}, `;
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2728,13 +2581,14 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.baptized.values.map((baptized, index) => {
+                                  {this.state.contact.baptized ? this.state.contact.baptized.values.map((baptized, index) => {
                                     const lastItemIndex = this.state.contact.baptized.values.length - 1;
+                                    const contactName = this.state.usersContacts.find(user => user.value === baptized.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${baptized.name}.`;
+                                      return `${contactName}.`;
                                     }
-                                    return `${baptized.name}, `;
-                                  })}
+                                    return `${contactName}, `;
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2754,13 +2608,14 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.coached_by.values.map((coachedBy, index) => {
+                                  {this.state.contact.coached_by ? this.state.contact.coached_by.values.map((coachedBy, index) => {
                                     const lastItemIndex = this.state.contact.coached_by.values.length - 1;
+                                    const contactName = this.state.usersContacts.find(user => user.value === coachedBy.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${coachedBy.name}.`;
+                                      return `${contactName}.`;
                                     }
-                                    return `${coachedBy.name}, `;
-                                  })}
+                                    return `${contactName}, `;
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2780,13 +2635,14 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.coaching.values.map((coaching, index) => {
+                                  {this.state.contact.coaching ? this.state.contact.coaching.values.map((coaching, index) => {
                                     const lastItemIndex = this.state.contact.coaching.values.length - 1;
+                                    const contactName = this.state.usersContacts.find(user => user.value === coaching.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${coaching.name}.`;
+                                      return `${contactName}.`;
                                     }
-                                    return `${coaching.name}, `;
-                                  })}
+                                    return `${contactName}, `;
+                                  }) : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2817,13 +2673,10 @@ class ContactDetailScreen extends React.Component {
                             name="phone-off"
                             style={{ color: 'white' }}
                             onPress={() => this.onSaveContact({
-                              quick_button_no_answer: Object.prototype.hasOwnProperty.call(
-                                this.state.contact,
-                                'quick_button_no_answer',
-                              ) ? parseInt(
-                                  this.state.contact.quick_button_no_answer,
-                                  10,
-                                ) + 1 : 0,
+                              quick_button_no_answer: this.state.contact.quick_button_no_answer ? parseInt(
+                                this.state.contact.quick_button_no_answer,
+                                10,
+                              ) + 1 : 0,
                             })
                             }
                           />
@@ -3059,7 +2912,12 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { subAssignedSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={this.state.contact.subassigned.values}
+                                      selectedItems={(this.state.contact.subassigned) ? this.state.contact.subassigned.values.map(
+                                        subassigned => ({
+                                          name: this.state.usersContacts.find(user => user.value === subassigned.value).name,
+                                          value: subassigned.value,
+                                        }),
+                                      ) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.subAssignThisContact'),
                                       }}
@@ -3139,7 +2997,7 @@ class ContactDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                {this.state.contact.contact_phone.map(
+                                {(this.state.contact.contact_phone) ? this.state.contact.contact_phone.map(
                                   (phone, index) => (!phone.delete ? (
                                     <Row
                                       key={index.toString()}
@@ -3183,7 +3041,7 @@ class ContactDetailScreen extends React.Component {
                                       </Col>
                                     </Row>
                                   ) : null),
-                                )}
+                                ) : (<Text />)}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
@@ -3210,7 +3068,7 @@ class ContactDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                {this.state.contact.contact_email.map(
+                                {(this.state.contact.contact_email) ? this.state.contact.contact_email.map(
                                   (email, index) => (!email.delete ? (
                                     <Row
                                       key={index.toString()}
@@ -3254,7 +3112,7 @@ class ContactDetailScreen extends React.Component {
                                       </Col>
                                     </Row>
                                   ) : null),
-                                )}
+                                ) : (<Text />)}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
@@ -3281,7 +3139,7 @@ class ContactDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                {this.state.contact.contact_address.map(
+                                {this.state.contact.contact_address ? this.state.contact.contact_address.map(
                                   (address, index) => (!address.delete ? (
                                     <Row
                                       key={index.toString()}
@@ -3325,7 +3183,7 @@ class ContactDetailScreen extends React.Component {
                                       </Col>
                                     </Row>
                                   ) : null),
-                                )}
+                                ) : (<Text />)}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
@@ -3359,7 +3217,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { geonamesSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.geonames}
-                                      selectedItems={this.state.contact.location_grid.values}
+                                      selectedItems={(this.state.contact.location_grid) ? this.state.contact.location_grid.values.map(location => ({ name: this.state.geonames.find(geoname => geoname.value === location.value).name, value: location.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.selectLocations'),
                                       }}
@@ -3435,7 +3293,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { peopleGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.peopleGroups}
-                                      selectedItems={this.state.contact.people_groups.values}
+                                      selectedItems={(this.state.contact.people_groups) ? this.state.contact.people_groups.values.map(peopleGroup => ({ name: this.state.peopleGroups.find(person => person.value === peopleGroup.value).name, value: peopleGroup.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('global.selectPeopleGroups'),
                                       }}
@@ -3606,7 +3464,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { sourcesSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.contactSources}
-                                      selectedItems={this.state.contact.sources.values}
+                                      selectedItems={(this.state.contact.sources) ? this.state.contact.sources.values.map(source => ({ name: this.state.contactSources.find(contactSource => contactSource.value === source.value).name, value: source.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.selectSources'),
                                       }}
@@ -3760,7 +3618,7 @@ class ContactDetailScreen extends React.Component {
                                   <Col>
                                     <DatePicker
                                       onDateChange={this.setBaptismDate}
-                                      defaultDate={(this.state.contact.baptism_date.length > 0) ? new Date(this.state.contact.baptism_date) : ''}
+                                      defaultDate={(this.state.contact.baptism_date) ? new Date(this.state.contact.baptism_date) : ''}
                                     />
                                   </Col>
                                 </Row>
@@ -3801,7 +3659,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { groupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
-                                      selectedItems={this.state.contact.groups.values}
+                                      selectedItems={(this.state.contact.groups) ? this.state.contact.groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addGroup'),
                                       }}
@@ -3878,7 +3736,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { connectionsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={this.state.contact.relation.values}
+                                      selectedItems={(this.state.contact.relation) ? this.state.contact.relation.values.map(relation => ({ name: this.state.usersContacts.find(user => user.value === relation.value).name, value: relation.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addConnection'),
                                       }}
@@ -3967,7 +3825,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { baptizedBySelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={this.state.contact.baptized_by.values}
+                                      selectedItems={(this.state.contact.baptized_by) ? this.state.contact.baptized_by.values.map(contact => ({ name: this.state.usersContacts.find(user => user.value === contact.value).name, value: contact.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addBaptizedBy'),
                                       }}
@@ -4055,7 +3913,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { baptizedSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={this.state.contact.baptized.values}
+                                      selectedItems={(this.state.contact.baptized) ? this.state.contact.baptized.values.map(baptizedItem => ({ name: this.state.usersContacts.find(user => user.value === baptizedItem.value).name, value: baptizedItem.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addBaptized'),
                                       }}
@@ -4143,7 +4001,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { coachedSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={this.state.contact.coached_by.values}
+                                      selectedItems={(this.state.contact.coached_by) ? this.state.contact.coached_by.values.map(contact => ({ name: this.state.usersContacts.find(user => user.value === contact.value).name, value: contact.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addCoachedBy'),
                                       }}
@@ -4232,7 +4090,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { coachingSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={this.state.contact.coaching.values}
+                                      selectedItems={(this.state.contact.coaching) ? this.state.contact.coaching.values.map(contact => ({ name: this.state.usersContacts.find(user => user.value === contact.value).name, value: contact.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addCoaching'),
                                       }}
@@ -4414,9 +4272,7 @@ class ContactDetailScreen extends React.Component {
                         <Row>
                           <Picker
                             onValueChange={this.setContactSource}
-                            selectedValue={
-                                this.state.contact.sources.values[0].value
-                              }
+                            selectedValue={this.state.contact.sources.values[0].value}
                           >
                             {this.renderSourcePickerItems()}
                           </Picker>
@@ -4437,7 +4293,7 @@ class ContactDetailScreen extends React.Component {
                               ref={(selectize) => { geonamesSelectizeRef = selectize; }}
                               itemId="value"
                               items={this.state.geonames}
-                              selectedItems={this.state.contact.location_grid.values}
+                              selectedItems={[]}
                               textInputProps={{
                                 placeholder: i18n.t('contactDetailScreen.selectLocations'),
                               }}
@@ -4535,8 +4391,8 @@ ContactDetailScreen.propTypes = {
     seeker_path: PropTypes.string,
   }),
   userReducerError: PropTypes.shape({
-    code: PropTypes.string,
-    message: PropTypes.string,
+    code: PropTypes.any,
+    message: PropTypes.any,
   }),
   newComment: PropTypes.shape({
     ID: PropTypes.string,
@@ -4546,13 +4402,20 @@ ContactDetailScreen.propTypes = {
     gravatar: PropTypes.string,
   }),
   contactsReducerError: PropTypes.shape({
-    code: PropTypes.string,
-    message: PropTypes.string,
+    code: PropTypes.any,
+    message: PropTypes.any,
   }),
   navigation: PropTypes.shape({
     getParam: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     setParams: PropTypes.func.isRequired,
+    state: PropTypes.shape({
+      params: PropTypes.shape({
+        onlyView: PropTypes.string,
+        contactId: PropTypes.string,
+        contactName: PropTypes.string,
+      }),
+    }),
   }).isRequired,
   saveContact: PropTypes.func.isRequired,
   getById: PropTypes.func.isRequired,

@@ -6,7 +6,7 @@ import {
   take, fork, call, put, race, delay, actionChannel, select,
 } from 'redux-saga/effects';
 
-const REQUEST_TIMEOUT_MILLIS = 4000;
+const REQUEST_TIMEOUT_MILLIS = 10000;
 
 function* sendRequest(url, data) {
   const request = yield fetch(url, data)
@@ -24,7 +24,7 @@ function* sendRequest(url, data) {
     .catch((error) => {
       if (typeof error.json === 'function') {
         return error.json().then(errorJSON => ({
-          status: errorJSON.data.status,
+          status: (errorJSON.data && errorJSON.data.status) ? errorJSON.data.status : '',
           data: {
             code: errorJSON.code,
             message: errorJSON.message,

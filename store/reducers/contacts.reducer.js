@@ -89,31 +89,23 @@ export default function contactsReducer(state = initialState, action) {
                         if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                           // connection
                           return {
-                            name: valueTwo.post_title,
                             value: valueTwo.ID.toString(),
                           };
-                        } else if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                        } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
                           return {
                             key: valueTwo.key,
                             value: valueTwo.value,
                           };
-                        } else if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                        } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
                           return {
-                            name: valueTwo.label,
                             value: valueTwo.id.toString(),
                           };
                         }
                         break;
                       }
                       case '[object String]': {
-                        if (key === 'sources') {
-                          // source
-                          return {
-                            name: valueTwo.charAt(0).toUpperCase() + valueTwo.slice(1),
-                            value: valueTwo,
-                          };
-                        } if (key === 'milestones') {
-                          // milestone
+                        if (key === 'sources' || key === 'milestones') {
+                          // source or milestone
                           return {
                             value: valueTwo,
                           };
@@ -138,7 +130,6 @@ export default function contactsReducer(state = initialState, action) {
             }
           });
           return mappedContact;
-
         }).sort((a, b) => parseInt(a.ID) < parseInt(b.ID));
         contacts = localContacts.concat(dataBaseContacts);
       }
@@ -209,7 +200,6 @@ export default function contactsReducer(state = initialState, action) {
                       if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                         // connection
                         return {
-                          name: valueTwo.post_title,
                           value: valueTwo.ID.toString(),
                         };
                       } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
@@ -219,21 +209,14 @@ export default function contactsReducer(state = initialState, action) {
                         };
                       } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
                         return {
-                          name: valueTwo.label,
                           value: valueTwo.id.toString(),
                         };
                       }
                       break;
                     }
                     case '[object String]': {
-                      if (key === 'sources') {
-                        // source
-                        return {
-                          name: valueTwo.charAt(0).toUpperCase() + valueTwo.slice(1),
-                          value: valueTwo,
-                        };
-                      } if (key === 'milestones') {
-                        // milestone
+                      if (key === 'sources' || key === 'milestones') {
+                        // source or milestone
                         return {
                           value: valueTwo,
                         };
@@ -292,7 +275,7 @@ export default function contactsReducer(state = initialState, action) {
           },
         };
       }
-      const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === contact.ID.toString()));
+      const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID.toString() === contact.ID.toString()));
       // Search entity in list (contacts) if exists: updated it, otherwise: added it to contacts list
       if (contactIndex > -1) {
         newState.contacts[contactIndex] = {
@@ -378,7 +361,6 @@ export default function contactsReducer(state = initialState, action) {
                       if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                         // connection
                         return {
-                          name: valueTwo.post_title,
                           value: valueTwo.ID.toString(),
                         };
                       } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
@@ -388,21 +370,14 @@ export default function contactsReducer(state = initialState, action) {
                         };
                       } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
                         return {
-                          name: valueTwo.label,
                           value: valueTwo.id.toString(),
                         };
                       }
                       break;
                     }
                     case '[object String]': {
-                      if (key === 'sources') {
-                        // source
-                        return {
-                          name: valueTwo.charAt(0).toUpperCase() + valueTwo.slice(1),
-                          value: valueTwo,
-                        };
-                      } if (key === 'milestones') {
-                        // milestone
+                      if (key === 'sources' || key === 'milestones') {
+                        // source or milestone
                         return {
                           value: valueTwo,
                         };
