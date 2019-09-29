@@ -266,31 +266,48 @@ export default function contactsReducer(state = initialState, action) {
             baptism_date: newBaptismDate,
           },
         };
-      } else {
-        newState = {
-          ...newState,
-          contact: {
-            ...newState.contact,
-            baptism_date: '',
-          },
-        };
       }
       const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID.toString() === contact.ID.toString()));
       // Search entity in list (contacts) if exists: updated it, otherwise: added it to contacts list
       if (contactIndex > -1) {
-        newState.contacts[contactIndex] = {
+        const newContactData = {
           ...newState.contacts[contactIndex],
           ...newState.contact,
         };
+        // MERGE FIELDS OF TYPE COLLECTION
+        newState.contacts[contactIndex] = {
+          ...newContactData,
+        };
+        if (offline) {
+          // Return all contact data in response
+          newState = {
+            ...newState,
+            contact: {
+              ...newContactData,
+            },
+          };
+        }
       } else if (oldId) {
         // Search entity with oldID, remove it and add updated entity
         const oldContactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === oldId));
         const previousContactData = newState.contacts[oldContactIndex];
-        newState.contacts.splice(oldContactIndex, 1).unshift({
+        // MERGE FIELDS OF TYPE COLLECTION
+        const newContactData = {
           ...previousContactData,
           ...newState.contact,
-        });
+        };
+        newState.contacts.splice(oldContactIndex, 1).unshift(newContactData);
+        if (offline) {
+          // Return all contact data in response
+          newState = {
+            ...newState,
+            contact: {
+              ...newContactData,
+            },
+          };
+        }
       } else {
+        // Create
         newState.contacts.unshift({
           ...newState.contact,
         });

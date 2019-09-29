@@ -373,14 +373,6 @@ export default function groupsReducer(state = initialState, action) {
             start_date: newStartDate,
           },
         };
-      } else {
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            start_date: '',
-          },
-        };
       }
       if (newState.group.end_date) {
         let newEndDate = new Date(newState.group.end_date);
@@ -395,36 +387,52 @@ export default function groupsReducer(state = initialState, action) {
             end_date: newEndDate,
           },
         };
-      } else {
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            end_date: '',
-          },
-        };
       }
       const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID.toString() === group.ID.toString()));
       // Search entity in list (groups) if exists: updated it, otherwise: added it to group list
       if (groupIndex > -1) {
-        newState.groups[groupIndex] = {
+        const newGroupData = {
           ...newState.groups[groupIndex],
           ...newState.group,
         };
+        // MERGE FIELDS OF TYPE COLLECTION
+        newState.groups[groupIndex] = {
+          ...newGroupData,
+        };
+        if (offline) {
+          // Return all group data in response
+          newState = {
+            ...newState,
+            group: {
+              ...newGroupData,
+            },
+          };
+        }
       } else if (oldId) {
         // Search entity with oldID, remove it and add updated entity
         const oldGroupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === oldId));
         const previousGroupData = newState.groups[oldGroupIndex];
-        newState.groups.splice(oldGroupIndex, 1).unshift({
+        // MERGE FIELDS OF TYPE COLLECTION
+        const newGroupData = {
           ...previousGroupData,
           ...newState.group,
-        });
+        };
+        newState.groups.splice(oldGroupIndex, 1).unshift(newGroupData);
+        if (offline) {
+          // Return all contact data in response
+          newState = {
+            ...newState,
+            group: {
+              ...newGroupData,
+            },
+          };
+        }
       } else {
+        // Create
         newState.groups.unshift({
           ...newState.group,
         });
       }
-
       return newState;
     }
     case actions.GROUPS_SAVE_FAILURE:

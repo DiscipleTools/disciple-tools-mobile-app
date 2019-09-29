@@ -54,16 +54,20 @@ export default function requestReducer(state = initialState, action) {
             });
             if (requestIndex > -1) {
               let requestFromQueue = queue[requestIndex];
-              requestFromQueue = {
-                ...actionToModify,
-              };
               // Do merge of old request body with new request body
               const oldRequestBody = JSON.parse(requestFromQueue.data.body);
+              // MERGE FIELDS OF TYPE COLLECTION
               const newRequestBody = {
                 ...oldRequestBody,
                 ...jsonBody,
               };
-              requestFromQueue.data.body = JSON.stringify(newRequestBody);
+              requestFromQueue = {
+                ...requestFromQueue,
+                data: {
+                  ...requestFromQueue.data,
+                  body: JSON.stringify(newRequestBody),
+                },
+              };
               queue[requestIndex] = requestFromQueue;
               newState = {
                 ...newState,

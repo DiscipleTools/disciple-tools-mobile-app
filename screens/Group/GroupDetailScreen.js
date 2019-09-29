@@ -446,28 +446,7 @@ const diff = (obj1, obj2) => {
   // Return the object of differences
   return diffs;
 };
-/* const groupInitialState = {
-  ID: null,
-  contact_address: [],
-  coaches: {
-    values: [],
-  },
-  location_grid: {
-    values: [],
-  },
-  people_groups: {
-    values: [],
-  },
-  parent_groups: {
-    values: [],
-  },
-  peer_groups: {
-    values: [],
-  },
-  child_groups: {
-    values: [],
-  },
-}; */
+
 const initialState = {
   group: {},
   unmodifiedGroup: {},
@@ -487,6 +466,16 @@ const initialState = {
     {
       name: 'Team',
       value: 'team',
+    },
+  ],
+  groupStates: [
+    {
+      label: i18n.t('global.groupStatus.active'),
+      value: 'active',
+    },
+    {
+      label: i18n.t('global.groupStatus.inactive'),
+      value: 'inactive',
     },
   ],
   onlyView: false,
@@ -614,6 +603,15 @@ class GroupDetailScreen extends React.Component {
       };
       // Update group status select color
       let newColor = '';
+      if (!group.group_status) {
+        newState = {
+          ...newState,
+          group: {
+            ...group,
+            group_status: (group.group_status) ? group.group_status : prevState.groupStates[0].value,
+          },
+        };
+      }
       if (group.group_status === 'inactive') {
         newColor = '#d9534f';
       } else if (group.group_status === 'active') {
@@ -726,7 +724,9 @@ class GroupDetailScreen extends React.Component {
     } else {
       newState = {
         group: {
+          title: null,
           group_type: this.state.groupTypes[0].value,
+          group_status: this.state.groupStates[0].value
         },
       };
     }
@@ -1205,6 +1205,7 @@ class GroupDetailScreen extends React.Component {
         },
       };
     }
+
     return transformedGroup;
   }
 
@@ -1921,8 +1922,9 @@ class GroupDetailScreen extends React.Component {
                                     backgroundColor: this.state.groupStatusBackgroundColor,
                                   }}
                                 >
-                                  <Picker.Item label={i18n.t('global.groupStatus.active')} value="active" />
-                                  <Picker.Item label={i18n.t('global.groupStatus.inactive')} value="inactive" />
+                                  {this.state.groupStates.map((state, index) => (
+                                    <Picker.Item key={index.toString()} label={state.label} value={state.value} />
+                                  ))}
                                 </Picker>
                               </Col>
                             </Row>
@@ -2340,7 +2342,7 @@ class GroupDetailScreen extends React.Component {
                                       <Text>{parentGroup.member_count}</Text>
                                     </Row>
                                   </Col>
-                                )) : ''}
+                                )) : (<Text />)}
                               </ScrollView>
                             </Row>
                             <View style={[styles.formDivider, styles.formIconLabelMargin]} />
@@ -2393,7 +2395,7 @@ class GroupDetailScreen extends React.Component {
                                       <Text>{childGroup.member_count}</Text>
                                     </Row>
                                   </Col>
-                                )) : ''}
+                                )) : (<Text />)}
                               </ScrollView>
                             </Row>
                             <View style={[styles.formDivider, styles.formDivider2Margin]} />
@@ -2446,7 +2448,7 @@ class GroupDetailScreen extends React.Component {
                                       <Text>{peerGroup.member_count}</Text>
                                     </Row>
                                   </Col>
-                                )) : ''}
+                                )) : (<Text />)}
                               </ScrollView>
                             </Row>
                             <View style={[styles.formDivider, styles.formDivider2Margin]} />
@@ -3359,6 +3361,7 @@ const mapStateToProps = state => ({
   groupsReducerError: state.groupsReducer.error,
   loading: state.groupsReducer.loading,
   saved: state.groupsReducer.saved,
+  isConnected: state.networkConnectivityReducer.isConnected,
 });
 
 const mapDispatchToProps = dispatch => ({
