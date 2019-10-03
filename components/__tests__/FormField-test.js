@@ -13,7 +13,8 @@ it('sets label text', () => {
       label="Basic Form Field"
     >
       <Text> Test </Text>
-    </FormField>);
+    </FormField>,
+  );
   expect(wrapper
     .find(Text).first()
     .prop('children')).toEqual('Basic Form Field');
@@ -26,7 +27,8 @@ it('sets label icon name', () => {
       iconName="ios-contact"
     >
       <Text> Test </Text>
-    </FormField>);
+    </FormField>,
+  );
   expect(wrapper
     .find(Icon).first()
     .prop('name')).toEqual('ios-contact');
