@@ -878,7 +878,7 @@ class GroupDetailScreen extends React.Component {
     }, () => {
       this.setCurrentTabIndex(currentTabIndex);
     });
-    this.props.navigation.setParams({ hideTabBar: false });
+    this.props.navigation.setParams({ hideTabBar: true });
   }
 
   setGroupTitle = (value) => {

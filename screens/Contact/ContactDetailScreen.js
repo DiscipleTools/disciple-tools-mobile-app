@@ -14,6 +14,7 @@ import {
   AsyncStorage,
   RefreshControl,
 } from 'react-native';
+
 import PropTypes from 'prop-types';
 
 import {
@@ -400,6 +401,7 @@ class ContactDetailScreen extends React.Component {
   componentDidMount() {
     const { navigation } = this.props;
     const { onlyView, contactId, contactName } = navigation.state.params;
+    this.props.navigation.setParams({ hideTabBar: true });
     let newState = {};
     if (contactId) {
       newState = {
@@ -725,7 +727,7 @@ class ContactDetailScreen extends React.Component {
     }, () => {
       this.setCurrentTabIndex(currentTabIndex);
     });
-    this.props.navigation.setParams({ hideTabBar: false });
+    this.props.navigation.setParams({ hideTabBar: true });
   }
 
   setContactTitle = (value) => {
