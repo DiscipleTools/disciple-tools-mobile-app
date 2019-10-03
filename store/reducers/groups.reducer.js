@@ -391,11 +391,18 @@ export default function groupsReducer(state = initialState, action) {
       const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID.toString() === group.ID.toString()));
       // Search entity in list (groups) if exists: updated it, otherwise: added it to group list
       if (groupIndex > -1) {
-        const newGroupData = {
+        let newGroupData = {
           ...newState.groups[groupIndex],
-          ...newState.group,
         };
-        // MERGE FIELDS OF TYPE COLLECTION
+        /* eslint-disable */
+        if (isNaN(group.ID)) {
+          /* eslint-enable */
+          // Merge all data of OFFLINE entity
+          newGroupData = {
+            ...newGroupData,
+            ...newState.group,
+          };
+        }
         newState.groups[groupIndex] = {
           ...newGroupData,
         };
@@ -412,7 +419,6 @@ export default function groupsReducer(state = initialState, action) {
         // Search entity with oldID, remove it and add updated entity
         const oldGroupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === oldId));
         const previousGroupData = newState.groups[oldGroupIndex];
-        // MERGE FIELDS OF TYPE COLLECTION
         const newGroupData = {
           ...previousGroupData,
           ...newState.group,

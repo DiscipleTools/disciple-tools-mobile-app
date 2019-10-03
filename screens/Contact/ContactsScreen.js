@@ -81,13 +81,13 @@ class ContactsScreen extends React.Component {
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text style={styles.contactSubtitle}>
-            {contact.overall_status ? i18n.t(`global.contactOverallStatus.${contact.overall_status}`) : ''}
+            {contact.overall_status ? this.props.contactSettings.overall_status.values[contact.overall_status].label : ''}
           </Text>
           <Text style={styles.contactSubtitle}>
             {' • '}
           </Text>
           <Text style={styles.contactSubtitle}>
-            {contact.seeker_path ? i18n.t(`global.seekerPath.${contact.seeker_path}`) : ''}
+            {contact.seeker_path ? this.props.contactSettings.seeker_path.values[contact.seeker_path].label : ''}
           </Text>
         </View>
       </View>
@@ -191,11 +191,20 @@ ContactsScreen.propTypes = {
   }),
   isConnected: PropTypes.bool,
   loading: PropTypes.bool,
+  contactSettings: PropTypes.shape({
+    overall_status: PropTypes.shape({
+      values: PropTypes.shape({}),
+    }),
+    seeker_path: PropTypes.shape({
+      values: PropTypes.shape({}),
+    }),
+  }),
 };
 ContactsScreen.defaultProps = {
   error: null,
   isConnected: null,
   loading: false,
+  contactSettings: null,
 };
 
 const mapStateToProps = state => ({
@@ -204,6 +213,7 @@ const mapStateToProps = state => ({
   loading: state.contactsReducer.loading,
   error: state.contactsReducer.error,
   isConnected: state.networkConnectivityReducer.isConnected,
+  contactSettings: state.contactsReducer.settings,
 });
 const mapDispatchToProps = dispatch => ({
   getAllContacts: (domain, token) => {

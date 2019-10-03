@@ -9,6 +9,7 @@ export default function* networkConnectivitySaga() {
     yield take(onlineChannel);
 
     const queue = yield select(state => state.requestReducer.queue);
+
     for (const action of queue) {
       let actionMapped = {
         ...action,
@@ -25,32 +26,32 @@ export default function* networkConnectivitySaga() {
           type: 'REQUEST',
           payload: actionMapped,
         });
-
         let response = yield take(actionMapped.action);
         response = response.payload;
-        let jsonData = response.data;
 
-        if (response.oldID) {
-          jsonData = {
-            ...jsonData,
-            oldID: response.oldID,
-          };
-        }
-
-        if (response.status === 200) {
-          const entityName = action.action.substr(0, action.action.indexOf('_') - 1).toLowerCase();
-          yield put({
-            type: actionMapped.action.replace('RESPONSE', 'SUCCESS'),
-            [entityName]: jsonData,
-          });
-        } else {
-          yield put({
-            type: actionMapped.action.replace('RESPONSE', 'FAILURE'),
-            error: {
-              code: jsonData.code,
-              message: jsonData.message,
-            },
-          });
+        if (Object.prototype.hasOwnProperty.call(response, 'status')) {
+          let jsonData = response.data;
+          if (response.oldID) {
+            jsonData = {
+              ...jsonData,
+              oldID: response.oldID,
+            };
+          }
+          if (response.status === 200) {
+            const entityName = action.action.substr(0, action.action.indexOf('_') - 1).toLowerCase();
+            yield put({
+              type: actionMapped.action.replace('RESPONSE', 'SUCCESS'),
+              [entityName]: jsonData,
+            });
+          } else {
+            yield put({
+              type: actionMapped.action.replace('RESPONSE', 'FAILURE'),
+              error: {
+                code: jsonData.code,
+                message: jsonData.message,
+              },
+            });
+          }
         }
       }
     }

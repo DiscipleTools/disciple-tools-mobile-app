@@ -40,10 +40,10 @@ export default function contactsReducer(state = initialState, action) {
       const { offline } = action;
       /* eslint-disable */
       let localContacts = newState.contacts.filter(localContact => isNaN(localContact.ID));
+      /* eslint-enable */
       if (!offline) {
-        let dataBaseContacts = [...action.contacts].map(contact => {
-
-          let mappedContact = {};
+        const dataBaseContacts = [...action.contacts].map((contact) => {
+          const mappedContact = {};
           Object.keys(contact).forEach((key) => {
             // Omit restricted properties
             if (key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'last_modified') {
@@ -130,10 +130,9 @@ export default function contactsReducer(state = initialState, action) {
             }
           });
           return mappedContact;
-        }).sort((a, b) => parseInt(a.ID) < parseInt(b.ID));
+        }).sort((a, b) => parseInt(a.ID, 10) < parseInt(b.ID, 10));
         contacts = localContacts.concat(dataBaseContacts);
       }
-      /* eslint-enable */
       return {
         ...newState,
         contacts,
@@ -148,7 +147,6 @@ export default function contactsReducer(state = initialState, action) {
       };
     case actions.CONTACTS_SAVE_SUCCESS: {
       const { contact, offline } = action;
-
       let mappedContact = {};
       if (offline) {
         mappedContact = {
@@ -243,6 +241,7 @@ export default function contactsReducer(state = initialState, action) {
       }
 
       const oldId = (mappedContact.oldID) ? mappedContact.oldID : null;
+
       if (oldId) {
         delete mappedContact.oldID;
       }
@@ -270,11 +269,19 @@ export default function contactsReducer(state = initialState, action) {
       const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID.toString() === contact.ID.toString()));
       // Search entity in list (contacts) if exists: updated it, otherwise: added it to contacts list
       if (contactIndex > -1) {
-        const newContactData = {
+        let newContactData = {
           ...newState.contacts[contactIndex],
-          ...newState.contact,
         };
-        // MERGE FIELDS OF TYPE COLLECTION
+        /* eslint-disable */
+        if (isNaN(contact.ID)) {
+          /* eslint-enable */
+          // Merge all data of OFFLINE entity
+          newContactData = {
+            ...newContactData,
+            ...newState.contact,
+          };
+        }
+
         newState.contacts[contactIndex] = {
           ...newContactData,
         };
@@ -289,9 +296,8 @@ export default function contactsReducer(state = initialState, action) {
         }
       } else if (oldId) {
         // Search entity with oldID, remove it and add updated entity
-        const oldContactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === oldId));
+        const oldContactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID.toString() === oldId));
         const previousContactData = newState.contacts[oldContactIndex];
-        // MERGE FIELDS OF TYPE COLLECTION
         const newContactData = {
           ...previousContactData,
           ...newState.contact,
@@ -330,7 +336,7 @@ export default function contactsReducer(state = initialState, action) {
       if (isNaN(contact.ID) || contact.isOffline) {
         /* eslint-enable */
         // Search local contact
-        contact = newState.contacts.find(contactItem => (contactItem.ID === contact.ID));
+        contact = newState.contacts.find(contactItem => (contactItem.ID.toString() === contact.ID));
       } else {
         const mappedContact = {};
         Object.keys(contact).forEach((key) => {
@@ -549,7 +555,7 @@ export default function contactsReducer(state = initialState, action) {
       const { settings } = action;
       let fieldList = {};
       Object.keys(settings.fields)
-        .filter((fieldName) => {
+        /* .filter((fieldName) => {
           if (settings.fields[fieldName].type === 'key_select'
             || settings.fields[fieldName].type === 'multi_select') {
             if (Object.prototype.toString.call(settings.fields[fieldName].default) === '[object Object]') {
@@ -557,25 +563,34 @@ export default function contactsReducer(state = initialState, action) {
             }
           }
           return false;
-        })
+        }) */
         .forEach((fieldName) => {
           const fieldData = settings.fields[fieldName];
-          let fieldValues = {};
-          Object.keys(fieldData.default).forEach((value) => {
-            fieldValues = {
-              ...fieldValues,
-              [value]: {
-                label: fieldData.default[value].label,
+          if (fieldData.type === 'key_select' || fieldData.type === 'multi_select') {
+            let fieldValues = {};
+            Object.keys(fieldData.default).forEach((value) => {
+              fieldValues = {
+                ...fieldValues,
+                [value]: {
+                  label: fieldData.default[value].label,
+                },
+              };
+            });
+            fieldList = {
+              ...fieldList,
+              [fieldName]: {
+                name: fieldData.name,
+                values: fieldValues,
               },
             };
-          });
-          fieldList = {
-            ...fieldList,
-            [fieldName]: {
-              name: fieldData.name,
-              values: fieldValues,
-            },
-          };
+          } else {
+            fieldList = {
+              ...fieldList,
+              [fieldName]: {
+                name: fieldData.name,
+              },
+            };
+          }
         });
       return {
         ...newState,

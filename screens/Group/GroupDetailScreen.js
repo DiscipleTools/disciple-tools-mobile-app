@@ -1095,12 +1095,14 @@ class GroupDetailScreen extends React.Component {
     if (foundhealthMetric) {
       const healthMetricIndex = healthMetrics.indexOf(foundhealthMetric);
       if (foundhealthMetric.delete) {
-        healthMetrics[healthMetricIndex] = {
-          value: metricName,
+        const healthMetricModified = {
+          ...foundhealthMetric,
         };
+        delete healthMetricModified.delete;
+        healthMetrics[healthMetricIndex] = healthMetricModified;
       } else {
         healthMetrics[healthMetricIndex] = {
-          value: metricName,
+          ...foundhealthMetric,
           delete: true,
         };
       }
@@ -1144,7 +1146,10 @@ class GroupDetailScreen extends React.Component {
     dbItems.forEach((dbItem) => {
       const foundDatabaseInLocal = localItems.find(localItem => dbItem.value === localItem.value);
       if (!foundDatabaseInLocal) {
-        itemsToSave.push({ value: dbItem.value, delete: true });
+        itemsToSave.push({
+          ...dbItem,
+          delete: true,
+        });
       }
     });
 

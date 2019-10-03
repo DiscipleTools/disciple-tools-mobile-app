@@ -369,74 +369,6 @@ class ContactDetailScreen extends React.Component {
   state = {
     contact: {},
     unmodifiedContact: {},
-    contactSources: [
-      {
-        name: i18n.t('contactDetailScreen.contactSources.personal'),
-        value: 'personal',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.web'),
-        value: 'web',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.phone'),
-        value: 'phone',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.facebook'),
-        value: 'facebook',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.twitter'),
-        value: 'twitter',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.linkedin'),
-        value: 'linkedin',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.referral'),
-        value: 'referral',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.advertisement'),
-        value: 'advertisement',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.transfer'),
-        value: 'transfer',
-      },
-    ],
-    contactStates: [
-      {
-        label: i18n.t('global.contactOverallStatus.new'),
-        value: 'new',
-      },
-      {
-        label: i18n.t('global.contactOverallStatus.unassignable'),
-        value: 'unassignable',
-      },
-      {
-        label: i18n.t('global.contactOverallStatus.unassigned'),
-        value: 'unassigned',
-      },
-      {
-        label: i18n.t('global.contactOverallStatus.assigned'),
-        value: 'assigned',
-      },
-      {
-        label: i18n.t('global.contactOverallStatus.active'),
-        value: 'active',
-      },
-      {
-        label: i18n.t('global.contactOverallStatus.paused'),
-        value: 'paused',
-      },
-      {
-        label: i18n.t('global.contactOverallStatus.closed'),
-        value: 'closed',
-      },
-    ],
     users: [],
     usersContacts: [],
     groups: [],
@@ -482,7 +414,7 @@ class ContactDetailScreen extends React.Component {
           title: null,
           sources: {
             values: [{
-              value: this.state.contactSources[0].value,
+              value: 'advertisement',
             }],
           },
         },
@@ -552,7 +484,7 @@ class ContactDetailScreen extends React.Component {
           ...newState,
           contact: {
             ...contact,
-            overall_status: (contact.overall_status) ? contact.overall_status : prevState.contactStates[0].value,
+            overall_status: (contact.overall_status) ? contact.overall_status : 'new',
           },
         };
       }
@@ -851,6 +783,7 @@ class ContactDetailScreen extends React.Component {
     const localItems = [];
 
     const selectedValues = selectizeRef.getSelectedItems();
+
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
       const item = selectedValues.entities.item[itemValue];
       localItems.push(item);
@@ -864,7 +797,10 @@ class ContactDetailScreen extends React.Component {
     dbItems.forEach((dbItem) => {
       const foundDatabaseInLocal = localItems.find(localItem => dbItem.value === localItem.value);
       if (!foundDatabaseInLocal) {
-        itemsToSave.push({ value: dbItem.value, delete: true });
+        itemsToSave.push({
+          ...dbItem,
+          delete: true,
+        });
       }
     });
 
@@ -1039,12 +975,14 @@ class ContactDetailScreen extends React.Component {
     if (foundMilestone) {
       const milestoneIndex = milestonesList.indexOf(foundMilestone);
       if (foundMilestone.delete) {
-        milestonesList[milestoneIndex] = {
-          value: milestoneName,
+        const milestoneModified = {
+          ...foundMilestone,
         };
+        delete milestoneModified.delete;
+        milestonesList[milestoneIndex] = milestoneModified;
       } else {
         milestonesList[milestoneIndex] = {
-          value: milestoneName,
+          ...foundMilestone,
           delete: true,
         };
       }
@@ -1303,21 +1241,27 @@ class ContactDetailScreen extends React.Component {
     </View>
   )
 
-  renderSourcePickerItems = () => this.state.contactSources.map(source => (
-    <Picker.Item
-      key={source.value}
-      label={source.name}
-      value={source.value}
-    />
-  ));
+  renderSourcePickerItems = () => Object.keys(this.props.contactSettings.sources.values).map((key) => {
+    const optionData = this.props.contactSettings.sources.values[key];
+    return (
+      <Picker.Item
+        key={key}
+        label={optionData.label}
+        value={key}
+      />
+    );
+  });
 
-  renderStatusPickerItems = () => this.state.contactStates.map(status => (
-    <Picker.Item
-      key={status.value}
-      label={status.label}
-      value={status.value}
-    />
-  ));
+  renderStatusPickerItems = () => Object.keys(this.props.contactSettings.overall_status.values).map((key) => {
+    const optionData = this.props.contactSettings.overall_status.values[key];
+    return (
+      <Picker.Item
+        key={key}
+        label={optionData.label}
+        value={key}
+      />
+    );
+  });
 
   tabChanged = (event) => {
     this.props.navigation.setParams({ hideTabBar: event.i === 2 });
@@ -1577,7 +1521,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.hasBible')}
+                    {this.props.contactSettings.milestones.values.milestone_has_bible.label}
                   </Text>
                 </Row>
               </Col>
@@ -1619,7 +1563,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.readingBible')}
+                    {this.props.contactSettings.milestones.values.milestone_reading_bible.label}
                   </Text>
                 </Row>
               </Col>
@@ -1659,7 +1603,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.statesBelief')}
+                    {this.props.contactSettings.milestones.values.milestone_belief.label}
                   </Text>
                 </Row>
               </Col>
@@ -1703,7 +1647,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.shareGospel')}
+                    {this.props.contactSettings.milestones.values.milestone_can_share.label}
                   </Text>
                 </Row>
               </Col>
@@ -1743,7 +1687,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.sharingGospel')}
+                    {this.props.contactSettings.milestones.values.milestone_sharing.label}
                   </Text>
                 </Row>
               </Col>
@@ -1783,7 +1727,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.baptized')}
+                    {this.props.contactSettings.milestones.values.milestone_baptized.label}
                   </Text>
                 </Row>
               </Col>
@@ -1827,7 +1771,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.baptizing')}
+                    {this.props.contactSettings.milestones.values.milestone_baptizing.label}
                   </Text>
                 </Row>
               </Col>
@@ -1867,7 +1811,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.inGroup')}
+                    {this.props.contactSettings.milestones.values.milestone_in_group.label}
                   </Text>
                 </Row>
               </Col>
@@ -1907,7 +1851,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.startingChurches')}
+                    {this.props.contactSettings.milestones.values.milestone_planting.label}
                   </Text>
                 </Row>
               </Col>
@@ -1988,7 +1932,7 @@ class ContactDetailScreen extends React.Component {
                                 color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
                               }}
                             >
-                              {i18n.t('global.status')}
+                              {this.props.contactSettings.overall_status.name}
                             </Label>
                             <Row style={[styles.formRow, { paddingTop: 5 }]}>
                               <Col>
@@ -2019,7 +1963,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('global.assignedTo')}
+                                  {this.props.contactSettings.assigned_to.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2046,7 +1990,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.subAssignedTo')}
+                                  {this.props.contactSettings.subassigned.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2161,7 +2105,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('global.location')}
+                                  {this.props.contactSettings.location_grid.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2188,7 +2132,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('global.peopleGroup')}
+                                  {this.props.contactSettings.people_groups.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2205,7 +2149,7 @@ class ContactDetailScreen extends React.Component {
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.age) ? this.state.contact.age : ''}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.age')}</Label>
+                                <Label style={styles.formLabel}>{this.props.contactSettings.age.name}</Label>
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
@@ -2218,10 +2162,10 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.gender) ? i18n.t(`contactDetailScreen.${this.state.contact.gender}`) : ''}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.gender) ? this.props.contactSettings.gender.values[this.state.contact.gender] : ''}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.gender')}</Label>
+                                <Label style={styles.formLabel}>{this.props.contactSettings.gender.name}</Label>
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
@@ -2237,7 +2181,7 @@ class ContactDetailScreen extends React.Component {
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                                   {this.state.contact.sources ? this.state.contact.sources.values.map((source, index) => {
                                     const lastItemIndex = this.state.contact.sources.values.length - 1;
-                                    const sourceName = this.state.contactSources.find(contactSource => contactSource.value === source.value).name;
+                                    const sourceName = this.props.contactSettings.sources.values[source.value].label;
                                     if (lastItemIndex === index) {
                                       return `${sourceName}.`;
                                     }
@@ -2247,7 +2191,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.source')}
+                                  {this.props.contactSettings.sources.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2292,10 +2236,10 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.seeker_path) ? i18n.t(`global.seekerPath.${this.state.contact.seeker_path}`) : ''}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.seeker_path) ? this.props.contactSettings.seeker_path.values[this.state.contact.seeker_path].label : ''}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.seekerPath')}</Label>
+                                <Label style={styles.formLabel}>{this.props.contactSettings.seeker_path.name}</Label>
                               </Col>
                             </Row>
                             <View
@@ -2318,7 +2262,7 @@ class ContactDetailScreen extends React.Component {
                                 { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
                               ]}
                             >
-                              {i18n.t('contactDetailScreen.faithMilestones')}
+                              {this.props.contactSettings.milestones.name}
                             </Label>
                             {this.renderfaithMilestones()}
                             <Grid style={{ marginTop: 25 }}>
@@ -2336,7 +2280,7 @@ class ContactDetailScreen extends React.Component {
                                 </Col>
                                 <Col style={styles.formIconLabel}>
                                   <Label style={[styles.label, styles.formLabel]}>
-                                    {i18n.t('contactDetailScreen.milestones.baptismDate')}
+                                    {this.props.contactSettings.baptism_date.name}
                                   </Label>
                                 </Col>
                               </Row>
@@ -2512,7 +2456,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.group')}
+                                  {this.props.contactSettings.groups.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2539,7 +2483,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.connection')}
+                                  {this.props.contactSettings.relation.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2566,7 +2510,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.baptizedBy')}
+                                  {this.props.contactSettings.baptized_by.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2593,7 +2537,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.baptized')}
+                                  {this.props.contactSettings.baptized.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2620,7 +2564,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.coachedBy')}
+                                  {this.props.contactSettings.coached_by.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2647,7 +2591,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.coaching')}
+                                  {this.props.contactSettings.coaching.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2770,7 +2714,7 @@ class ContactDetailScreen extends React.Component {
                                     color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
                                   }, styles.formFieldPadding]}
                                 >
-                                  {i18n.t('global.status')}
+                                  {this.props.contactSettings.overall_status.name}
                                 </Label>
                                 <Row style={{ paddingBottom: 30 }}>
                                   <Col>
@@ -2844,7 +2788,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('global.assignedTo')}
+                                      {this.props.contactSettings.assigned_to.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -2893,7 +2837,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.subAssignedTo')}
+                                      {this.props.contactSettings.subassigned.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3198,7 +3142,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('global.location')}
+                                      {this.props.contactSettings.location_grid.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3274,7 +3218,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('global.peopleGroup')}
+                                      {this.props.contactSettings.people_groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3351,7 +3295,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.age')}
+                                      {this.props.contactSettings.age.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3371,23 +3315,16 @@ class ContactDetailScreen extends React.Component {
                                       selectedValue={this.state.contact.age}
                                       onValueChange={this.setContactAge}
                                     >
-                                      <Picker.Item label="" value="not-set" />
-                                      <Picker.Item
-                                        label={i18n.t('contactDetailScreen.contactAge.underEighteenYearsOld')}
-                                        value="<19"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('contactDetailScreen.contactAge.underTwentySixYearsOld')}
-                                        value="<26"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('contactDetailScreen.contactAge.underFortyOneYearsOld')}
-                                        value="<41"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('contactDetailScreen.contactAge.overFortyYearsOld')}
-                                        value=">41"
-                                      />
+                                      {Object.keys(this.props.contactSettings.age.values).map((key) => {
+                                        const optionData = this.props.contactSettings.age.values[key];
+                                        return (
+                                          <Picker.Item
+                                            key={key}
+                                            label={optionData.label}
+                                            value={key}
+                                          />
+                                        );
+                                      })}
                                     </Picker>
                                   </Col>
                                 </Row>
@@ -3405,7 +3342,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.gender')}
+                                      {this.props.contactSettings.gender.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3425,9 +3362,12 @@ class ContactDetailScreen extends React.Component {
                                       selectedValue={this.state.contact.gender}
                                       onValueChange={this.setContactGender}
                                     >
-                                      <Picker.Item label="" value="not-set" />
-                                      <Picker.Item label={i18n.t('contactDetailScreen.male')} value="male" />
-                                      <Picker.Item label={i18n.t('contactDetailScreen.female')} value="female" />
+                                      {Object.keys(this.props.contactSettings.gender.values).map((key) => {
+                                        const optionData = this.props.contactSettings.gender.values[key];
+                                        return (
+                                          <Picker.Item key={key} label={optionData.label} value={key} />
+                                        );
+                                      })}
                                     </Picker>
                                   </Col>
                                 </Row>
@@ -3445,7 +3385,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.source')}
+                                      {this.props.contactSettings.sources.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3463,8 +3403,8 @@ class ContactDetailScreen extends React.Component {
                                     <Selectize
                                       ref={(selectize) => { sourcesSelectizeRef = selectize; }}
                                       itemId="value"
-                                      items={this.state.contactSources}
-                                      selectedItems={(this.state.contact.sources) ? this.state.contact.sources.values.map(source => ({ name: this.state.contactSources.find(contactSource => contactSource.value === source.value).name, value: source.value })) : []}
+                                      items={Object.keys(this.props.contactSettings.sources.values).map(key => ({ name: this.props.contactSettings.sources.values[key].label, value: key }))}
+                                      selectedItems={(this.state.contact.sources) ? this.state.contact.sources.values.map(source => ({ name: this.props.contactSettings.sources.values[source.value].label, value: source.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.selectSources'),
                                       }}
@@ -3526,7 +3466,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.seekerPath')}
+                                      {this.props.contactSettings.seeker_path.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3547,34 +3487,12 @@ class ContactDetailScreen extends React.Component {
                                       onValueChange={this.setContactSeekerPath}
                                       textStyle={{ color: Colors.tintColor }}
                                     >
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.none')}
-                                        value="none"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.attempted')}
-                                        value="attempted"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.established')}
-                                        value="established"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.scheduled')}
-                                        value="scheduled"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.met')}
-                                        value="met"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.ongoing')}
-                                        value="ongoing"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.coaching')}
-                                        value="coaching"
-                                      />
+                                      {Object.keys(this.props.contactSettings.seeker_path.values).map((key) => {
+                                        const optionData = this.props.contactSettings.seeker_path.values[key];
+                                        return (
+                                          <Picker.Item key={key} label={optionData.label} value={key} />
+                                        );
+                                      })}
                                     </Picker>
                                   </Col>
                                 </Row>
@@ -3584,7 +3502,7 @@ class ContactDetailScreen extends React.Component {
                                     { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
                                   ]}
                                 >
-                                  {i18n.t('contactDetailScreen.faithMilestones')}
+                                  {this.props.contactSettings.milestones.name}
                                 </Label>
                                 {this.renderfaithMilestones()}
                                 <Row style={styles.formFieldPadding}>
@@ -3601,7 +3519,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.milestones.baptismDate')}
+                                      {this.props.contactSettings.baptism_date.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3640,7 +3558,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.group')}
+                                      {this.props.contactSettings.groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3717,7 +3635,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.connection')}
+                                      {this.props.contactSettings.relation.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3805,7 +3723,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.baptizedBy')}
+                                      {this.props.contactSettings.baptized_by.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3894,7 +3812,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.baptized')}
+                                      {this.props.contactSettings.baptized.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3982,7 +3900,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.coachedBy')}
+                                      {this.props.contactSettings.coached_by.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -4071,7 +3989,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.coaching')}
+                                      {this.props.contactSettings.coaching.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -4266,7 +4184,7 @@ class ContactDetailScreen extends React.Component {
                               { marginTop: 10, marginBottom: 5 },
                             ]}
                           >
-                            {i18n.t('contactDetailScreen.source')}
+                            {this.props.contactSettings.sources.name}
                           </Label>
                         </Row>
                         <Row>
@@ -4284,7 +4202,7 @@ class ContactDetailScreen extends React.Component {
                               { marginTop: 10, marginBottom: 5 },
                             ]}
                           >
-                            {i18n.t('global.location')}
+                            {this.props.contactSettings.location_grid.name}
                           </Label>
                         </Row>
                         <Row>
@@ -4412,7 +4330,7 @@ ContactDetailScreen.propTypes = {
     state: PropTypes.shape({
       params: PropTypes.shape({
         onlyView: PropTypes.any,
-        contactId: PropTypes.string,
+        contactId: PropTypes.any,
         contactName: PropTypes.string,
       }),
     }),
@@ -4426,6 +4344,97 @@ ContactDetailScreen.propTypes = {
   isConnected: PropTypes.bool,
   endSaveContact: PropTypes.func.isRequired,
   getByIdEnd: PropTypes.func.isRequired,
+  contactSettings: PropTypes.shape({
+    sources: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    overall_status: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    milestones: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({
+        milestone_has_bible: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_reading_bible: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_belief: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_can_share: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_sharing: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_baptized: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_baptizing: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_in_group: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_planting: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+      }),
+    }),
+    assigned_to: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    subassigned: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    location_grid: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    people_groups: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    age: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    gender: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    seeker_path: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    baptism_date: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    groups: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    relation: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    baptized_by: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    baptized: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    coached_by: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    coaching: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+  }),
 };
 
 ContactDetailScreen.defaultProps = {
@@ -4435,6 +4444,7 @@ ContactDetailScreen.defaultProps = {
   contactsReducerError: null,
   saved: null,
   isConnected: null,
+  contactSettings: null,
 };
 
 const mapStateToProps = state => ({
@@ -4452,6 +4462,7 @@ const mapStateToProps = state => ({
   loading: state.contactsReducer.loading,
   saved: state.contactsReducer.saved,
   isConnected: state.networkConnectivityReducer.isConnected,
+  contactSettings: state.contactsReducer.settings,
 });
 
 const mapDispatchToProps = dispatch => ({
