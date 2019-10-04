@@ -554,44 +554,34 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_GET_SETTINGS_SUCCESS: {
       const { settings } = action;
       let fieldList = {};
-      Object.keys(settings.fields)
-        /* .filter((fieldName) => {
-          if (settings.fields[fieldName].type === 'key_select'
-            || settings.fields[fieldName].type === 'multi_select') {
-            if (Object.prototype.toString.call(settings.fields[fieldName].default) === '[object Object]') {
-              return true;
-            }
-          }
-          return false;
-        }) */
-        .forEach((fieldName) => {
-          const fieldData = settings.fields[fieldName];
-          if (fieldData.type === 'key_select' || fieldData.type === 'multi_select') {
-            let fieldValues = {};
-            Object.keys(fieldData.default).forEach((value) => {
-              fieldValues = {
-                ...fieldValues,
-                [value]: {
-                  label: fieldData.default[value].label,
-                },
-              };
-            });
-            fieldList = {
-              ...fieldList,
-              [fieldName]: {
-                name: fieldData.name,
-                values: fieldValues,
+      Object.keys(settings.fields).forEach((fieldName) => {
+        const fieldData = settings.fields[fieldName];
+        if (fieldData.type === 'key_select' || fieldData.type === 'multi_select') {
+          let fieldValues = {};
+          Object.keys(fieldData.default).forEach((value) => {
+            fieldValues = {
+              ...fieldValues,
+              [value]: {
+                label: fieldData.default[value].label,
               },
             };
-          } else {
-            fieldList = {
-              ...fieldList,
-              [fieldName]: {
-                name: fieldData.name,
-              },
-            };
-          }
-        });
+          });
+          fieldList = {
+            ...fieldList,
+            [fieldName]: {
+              name: fieldData.name,
+              values: fieldValues,
+            },
+          };
+        } else {
+          fieldList = {
+            ...fieldList,
+            [fieldName]: {
+              name: fieldData.name,
+            },
+          };
+        }
+      });
       return {
         ...newState,
         settings: fieldList,

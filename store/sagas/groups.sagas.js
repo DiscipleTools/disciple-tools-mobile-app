@@ -515,6 +515,53 @@ export function* searchGroups({ domain, token }) {
   }
 }
 
+export function* getSettings({ domain, token }) {
+  yield put({ type: actions.GROUPS_GET_SETTINGS_START });
+
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/settings`,
+      data: {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      action: actions.GROUPS_GET_SETTINGS_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.GROUPS_GET_SETTINGS_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_GET_SETTINGS_SUCCESS,
+        settings: jsonData,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_GET_SETTINGS_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.GROUPS_GET_SETTINGS_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
 export default function* groupsSaga() {
   yield all([
     takeEvery(actions.GROUPS_SAVE, saveGroup),
@@ -527,5 +574,6 @@ export default function* groupsSaga() {
     takeEvery(actions.GROUPS_GET_PEOPLE_GROUPS, getPeopleGroups),
     takeEvery(actions.GROUPS_GET_ACTIVITIES, getActivitiesByGroup),
     takeEvery(actions.GROUPS_SEARCH, searchGroups),
+    takeEvery(actions.GROUPS_GET_SETTINGS, getSettings),
   ]);
 }

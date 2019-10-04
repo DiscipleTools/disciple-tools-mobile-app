@@ -18,6 +18,7 @@ const initialState = {
   loadingComments: false,
   loadingActivities: false,
   saved: false,
+  settings: null,
 };
 
 export default function groupsReducer(state = initialState, action) {
@@ -710,6 +711,49 @@ export default function groupsReducer(state = initialState, action) {
         geonames: null,
         peopleGroups: null,
         search: null,
+      };
+    case actions.GROUPS_GET_SETTINGS_SUCCESS: {
+      const { settings } = action;
+      let fieldList = {};
+      Object.keys(settings.fields).forEach((fieldName) => {
+        const fieldData = settings.fields[fieldName];
+        if (fieldData.type === 'key_select' || fieldData.type === 'multi_select') {
+          let fieldValues = {};
+          Object.keys(fieldData.default).forEach((value) => {
+            fieldValues = {
+              ...fieldValues,
+              [value]: {
+                label: fieldData.default[value].label,
+              },
+            };
+          });
+          fieldList = {
+            ...fieldList,
+            [fieldName]: {
+              name: fieldData.name,
+              values: fieldValues,
+            },
+          };
+        } else {
+          fieldList = {
+            ...fieldList,
+            [fieldName]: {
+              name: fieldData.name,
+            },
+          };
+        }
+      });
+      return {
+        ...newState,
+        settings: fieldList,
+        loading: false,
+      };
+    }
+    case actions.GROUPS_GET_SETTINGS_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+        loading: false,
       };
     default:
       return newState;

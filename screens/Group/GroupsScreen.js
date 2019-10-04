@@ -81,14 +81,18 @@ class GroupsScreen extends React.Component {
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text style={styles.groupSubtitle}>
-            {i18n.t(`global.groupStatus.${group.group_status}`)}
+            {this.props.groupSettings.group_status.values[group.group_status].label}
           </Text>
-          <Text style={styles.groupSubtitle}>
-            {' • '}
-          </Text>
-          <Text style={styles.groupSubtitle}>
-            {i18n.t(`global.groupType.${group.group_type}`)}
-          </Text>
+          {(this.props.groupSettings.group_type.values[group.group_type]) ? (
+            <Text style={styles.groupSubtitle}>
+              {' • '}
+            </Text>
+          ) : <Text />}
+          {(this.props.groupSettings.group_type.values[group.group_type]) ? (
+            <Text style={styles.groupSubtitle}>
+              {this.props.groupSettings.group_type.values[group.group_type].label}
+            </Text>
+          ) : <Text />}
           <Text style={styles.groupSubtitle}>
             {' • '}
           </Text>
@@ -199,11 +203,20 @@ GroupsScreen.propTypes = {
   }),
   isConnected: PropTypes.bool,
   loading: PropTypes.bool,
+  groupSettings: PropTypes.shape({
+    group_status: PropTypes.shape({
+      values: PropTypes.shape({}),
+    }),
+    group_type: PropTypes.shape({
+      values: PropTypes.shape({}),
+    }),
+  }),
 };
 GroupsScreen.defaultProps = {
   error: null,
   isConnected: null,
   loading: false,
+  groupSettings: null,
 };
 
 const mapStateToProps = state => ({
@@ -212,6 +225,7 @@ const mapStateToProps = state => ({
   loading: state.groupsReducer.loading,
   error: state.groupsReducer.error,
   isConnected: state.networkConnectivityReducer.isConnected,
+  groupSettings: state.groupsReducer.settings,
 });
 const mapDispatchToProps = dispatch => ({
   getAllGroups: (domain, token) => {

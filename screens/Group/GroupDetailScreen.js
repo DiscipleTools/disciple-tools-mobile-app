@@ -468,16 +468,6 @@ const initialState = {
       value: 'team',
     },
   ],
-  groupStates: [
-    {
-      label: i18n.t('global.groupStatus.active'),
-      value: 'active',
-    },
-    {
-      label: i18n.t('global.groupStatus.inactive'),
-      value: 'inactive',
-    },
-  ],
   onlyView: false,
   loadedLocal: false,
   comment: '',
@@ -608,7 +598,7 @@ class GroupDetailScreen extends React.Component {
           ...newState,
           group: {
             ...group,
-            group_status: (group.group_status) ? group.group_status : prevState.groupStates[0].value,
+            group_status: (group.group_status) ? group.group_status : 'active',
           },
         };
       }
@@ -725,8 +715,8 @@ class GroupDetailScreen extends React.Component {
       newState = {
         group: {
           title: null,
-          group_type: this.state.groupTypes[0].value,
-          group_status: this.state.groupStates[0].value
+          group_type: 'group',
+          group_status: 'active'
         },
       };
     }
@@ -1401,7 +1391,7 @@ class GroupDetailScreen extends React.Component {
                                   : styles.inactiveToggleText,
                               ]}
                             >
-                              {i18n.t('groupDetailScreen.healthMetrics.giving')}
+                              {this.props.groupSettings.health_metrics.values.church_giving.label}
                             </Text>
                           </Row>
                         </Col>
@@ -1451,7 +1441,7 @@ class GroupDetailScreen extends React.Component {
                                   : styles.inactiveToggleText,
                               ]}
                             >
-                              {i18n.t('groupDetailScreen.healthMetrics.fellowship')}
+                              {this.props.groupSettings.health_metrics.values.church_fellowship.label}
                             </Text>
                           </Row>
                         </Col>
@@ -1503,7 +1493,7 @@ class GroupDetailScreen extends React.Component {
                                   : styles.inactiveToggleText,
                               ]}
                             >
-                              {i18n.t('groupDetailScreen.healthMetrics.communion')}
+                              {this.props.groupSettings.health_metrics.values.church_communion.label}
                             </Text>
                           </Row>
                         </Col>
@@ -1560,7 +1550,7 @@ class GroupDetailScreen extends React.Component {
                                   : styles.inactiveToggleText,
                               ]}
                             >
-                              {i18n.t('groupDetailScreen.healthMetrics.baptism')}
+                              {this.props.groupSettings.health_metrics.values.church_baptism.label}
                             </Text>
                           </Row>
                         </Col>
@@ -1612,7 +1602,7 @@ class GroupDetailScreen extends React.Component {
                                   : styles.inactiveToggleText,
                               ]}
                             >
-                              {i18n.t('groupDetailScreen.healthMetrics.prayer')}
+                              {this.props.groupSettings.health_metrics.values.church_prayer.label}
                             </Text>
                           </Row>
                         </Col>
@@ -1664,7 +1654,7 @@ class GroupDetailScreen extends React.Component {
                                   : styles.inactiveToggleText,
                               ]}
                             >
-                              {i18n.t('groupDetailScreen.healthMetrics.leaders')}
+                              {this.props.groupSettings.health_metrics.values.church_leaders.label}
                             </Text>
                           </Row>
                         </Col>
@@ -1718,7 +1708,7 @@ class GroupDetailScreen extends React.Component {
                                   : styles.inactiveToggleText,
                               ]}
                             >
-                              {i18n.t('groupDetailScreen.healthMetrics.bibleStudy')}
+                              {this.props.groupSettings.health_metrics.values.church_bible.label}
                             </Text>
                           </Row>
                         </Col>
@@ -1770,7 +1760,7 @@ class GroupDetailScreen extends React.Component {
                                   : styles.inactiveToggleText,
                               ]}
                             >
-                              {i18n.t('groupDetailScreen.healthMetrics.praise')}
+                              {this.props.groupSettings.health_metrics.values.church_praise.label}
                             </Text>
                           </Row>
                         </Col>
@@ -1820,7 +1810,7 @@ class GroupDetailScreen extends React.Component {
                                   : styles.inactiveToggleText,
                               ]}
                             >
-                              {i18n.t('groupDetailScreen.healthMetrics.sharingGospel')}
+                              {this.props.groupSettings.health_metrics.values.church_sharing.label}
                             </Text>
                           </Row>
                         </Col>
@@ -1913,7 +1903,7 @@ class GroupDetailScreen extends React.Component {
                                 color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
                               }}
                             >
-                              {i18n.t('global.status')}
+                              {this.props.groupSettings.group_status.name}
                             </Label>
                             <Row style={[styles.formRow, { paddingTop: 5 }]}>
                               <Col>
@@ -1927,9 +1917,16 @@ class GroupDetailScreen extends React.Component {
                                     backgroundColor: this.state.groupStatusBackgroundColor,
                                   }}
                                 >
-                                  {this.state.groupStates.map((state, index) => (
-                                    <Picker.Item key={index.toString()} label={state.label} value={state.value} />
-                                  ))}
+                                  {Object.keys(this.props.groupSettings.group_status.values).map((key) => {
+                                    const optionData = this.props.groupSettings.group_status.values[key];
+                                    return (
+                                      <Picker.Item
+                                        key={key}
+                                        label={optionData.label}
+                                        value={key}
+                                      />
+                                    );
+                                  })}
                                 </Picker>
                               </Col>
                             </Row>
@@ -1946,7 +1943,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('global.assignedTo')}
+                                  {this.props.groupSettings.assigned_to.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -1973,7 +1970,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('groupDetailScreen.groupCoach')}
+                                  {this.props.groupSettings.coaches.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2000,7 +1997,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('global.location')}
+                                  {this.props.groupSettings.location_grid.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2027,7 +2024,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('global.peopleGroup')}
+                                  {this.props.groupSettings.people_groups.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2073,7 +2070,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('groupDetailScreen.startDate')}
+                                  {this.props.groupSettings.start_date.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2093,7 +2090,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('groupDetailScreen.endDate')}
+                                  {this.props.groupSettings.end_date.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2139,7 +2136,7 @@ class GroupDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{i18n.t(`global.groupType.${this.state.group.group_type}`)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.group.group_type) ? this.props.groupSettings.group_type.values[this.state.group.group_type].label : ''}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>{i18n.t('groupDetailScreen.groupType')}</Label>
@@ -2301,7 +2298,7 @@ class GroupDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('groupDetailScreen.parentGroup')}
+                                  {this.props.groupSettings.parent_groups.name}
                                 </Label>
                               </Col>
                               <Col />
@@ -2407,7 +2404,7 @@ class GroupDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('groupDetailScreen.peerGroup')}
+                                  {this.props.groupSettings.peer_groups.name}
                                 </Label>
                               </Col>
                               <Col />
@@ -2476,7 +2473,7 @@ class GroupDetailScreen extends React.Component {
                                     color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
                                   }}
                                 >
-                                  {i18n.t('global.status')}
+                                  {this.props.groupSettings.group_status.name}
                                 </Label>
                                 <Row>
                                   <Col>
@@ -2490,8 +2487,16 @@ class GroupDetailScreen extends React.Component {
                                         backgroundColor: this.state.groupStatusBackgroundColor,
                                       }}
                                     >
-                                      <Picker.Item label={i18n.t('global.groupStatus.active')} value="active" />
-                                      <Picker.Item label={i18n.t('global.groupStatus.inactive')} value="inactive" />
+                                      {Object.keys(this.props.groupSettings.group_status.values).map((key) => {
+                                        const optionData = this.props.groupSettings.group_status.values[key];
+                                        return (
+                                          <Picker.Item
+                                            key={key}
+                                            label={optionData.label}
+                                            value={key}
+                                          />
+                                        );
+                                      })}
                                     </Picker>
                                   </Col>
                                 </Row>
@@ -2514,7 +2519,7 @@ class GroupDetailScreen extends React.Component {
                                       <Label
                                         style={styles.formLabel}
                                       >
-                                        {i18n.t('global.assignedTo')}
+                                        {this.props.groupSettings.assigned_to.name}
                                       </Label>
                                     </Col>
                                   </Row>
@@ -2630,7 +2635,7 @@ class GroupDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('global.location')}
+                                      {this.props.groupSettings.location_grid.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -2707,7 +2712,7 @@ class GroupDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('global.peopleGroup')}
+                                      {this.props.groupSettings.people_groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -2855,7 +2860,7 @@ class GroupDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('groupDetailScreen.startDate')}
+                                      {this.props.groupSettings.start_date.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -2890,7 +2895,7 @@ class GroupDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('groupDetailScreen.endDate')}
+                                      {this.props.groupSettings.end_date.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -2929,7 +2934,7 @@ class GroupDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('groupDetailScreen.groupType')}
+                                      {this.props.groupSettings.group_type.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -2949,10 +2954,16 @@ class GroupDetailScreen extends React.Component {
                                       selectedValue={this.state.group.group_type}
                                       onValueChange={this.setGroupType}
                                     >
-                                      <Picker.Item label={i18n.t('global.groupType.pre-group')} value="pre-group" />
-                                      <Picker.Item label={i18n.t('global.groupType.group')} value="group" />
-                                      <Picker.Item label={i18n.t('global.groupType.church')} value="church" />
-                                      <Picker.Item label={i18n.t('global.groupType.team')} value="team" />
+                                      {Object.keys(this.props.groupSettings.group_type.values).map((key) => {
+                                        const optionData = this.props.groupSettings.group_type.values[key];
+                                        return (
+                                          <Picker.Item
+                                            key={key}
+                                            label={optionData.label}
+                                            value={key}
+                                          />
+                                        );
+                                      })}
                                     </Picker>
                                   </Col>
                                 </Row>
@@ -2983,7 +2994,7 @@ class GroupDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('groupDetailScreen.parentGroup')}
+                                      {this.props.groupSettings.parent_groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3060,7 +3071,7 @@ class GroupDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('groupDetailScreen.childGroup')}
+                                      {this.props.groupSettings.child_groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3137,7 +3148,7 @@ class GroupDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('groupDetailScreen.peerGroup')}
+                                      {this.props.groupSettings.peer_groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3273,7 +3284,7 @@ class GroupDetailScreen extends React.Component {
                           { marginTop: 10, marginBottom: 5 },
                         ]}
                       >
-                        {i18n.t('global.requiredField')}
+                        {this.props.groupSettings.group_type.name}
                       </Label>
                     </Row>
                     <Row>
@@ -3282,15 +3293,21 @@ class GroupDetailScreen extends React.Component {
                         selectedValue={this.state.group.group_type}
                         onValueChange={this.setGroupType}
                       >
-                        <Picker.Item label={i18n.t('global.groupType.pre-group')} value="pre-group" />
-                        <Picker.Item label={i18n.t('global.groupType.group')} value="group" />
-                        <Picker.Item label={i18n.t('global.groupType.church')} value="church" />
-                        <Picker.Item label={i18n.t('global.groupType.team')} value="team" />
+                        {Object.keys(this.props.groupSettings.group_type.values).map((key) => {
+                          const optionData = this.props.groupSettings.group_type.values[key];
+                          return (
+                            <Picker.Item
+                              key={key}
+                              label={optionData.label}
+                              value={key}
+                            />
+                          );
+                        })}
                       </Picker>
                     </Row>
                   </Grid>
                   <Button block style={styles.saveButton} onPress={this.onSaveGroup}>
-                    <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Save</Text>
+                    <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
                   </Button>
                 </View>
               </ScrollView>
@@ -3341,6 +3358,74 @@ GroupDetailScreen.propTypes = {
   saved: PropTypes.bool,
   getByIdEnd: PropTypes.func.isRequired,
   isConnected: PropTypes.bool,
+  groupSettings: PropTypes.shape({
+    health_metrics: PropTypes.shape({
+      values: PropTypes.shape({
+        church_giving: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        church_fellowship: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        church_communion: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        church_baptism: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        church_prayer: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        church_leaders: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        church_bible: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        church_praise: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        church_sharing: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+      }),
+    }),
+    group_status: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    assigned_to: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    coaches: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    location_grid: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    people_groups: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    start_date: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    end_date: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    group_type: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    parent_groups: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    peer_groups: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    child_groups: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+  }),
 };
 
 GroupDetailScreen.defaultProps = {
@@ -3350,6 +3435,7 @@ GroupDetailScreen.defaultProps = {
   groupsReducerError: null,
   saved: null,
   isConnected: null,
+  groupSettings: null,
 };
 
 const mapStateToProps = state => ({
@@ -3367,6 +3453,7 @@ const mapStateToProps = state => ({
   loading: state.groupsReducer.loading,
   saved: state.groupsReducer.saved,
   isConnected: state.networkConnectivityReducer.isConnected,
+  groupSettings: state.groupsReducer.settings,
 });
 
 const mapDispatchToProps = dispatch => ({

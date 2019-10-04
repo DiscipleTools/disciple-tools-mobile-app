@@ -62,6 +62,12 @@ export const GROUPS_SEARCH_SUCCESS = 'GROUPS_SEARCH_SUCCESS';
 export const GROUPS_SEARCH_RESPONSE = 'GROUPS_SEARCH_RESPONSE';
 export const GROUPS_SEARCH_FAILURE = 'GROUPS_SEARCH_FAILURE';
 
+export const GROUPS_GET_SETTINGS = 'GROUPS_GET_SETTINGS';
+export const GROUPS_GET_SETTINGS_START = 'GROUPS_GET_SETTINGS_START';
+export const GROUPS_GET_SETTINGS_SUCCESS = 'GROUPS_GET_SETTINGS_SUCCESS';
+export const GROUPS_GET_SETTINGS_RESPONSE = 'GROUPS_GET_SETTINGS_RESPONSE';
+export const GROUPS_GET_SETTINGS_FAILURE = 'GROUPS_GET_SETTINGS_FAILURE';
+
 /**
  * Action Creators
  */
@@ -156,6 +162,14 @@ export function getActivitiesByGroup(domain, token, groupId, offset, limit) {
 export function searchGroups(domain, token) {
   return {
     type: GROUPS_SEARCH,
+    domain,
+    token,
+  };
+}
+
+export function getGroupSettings(domain, token) {
+  return {
+    type: GROUPS_GET_SETTINGS,
     domain,
     token,
   };

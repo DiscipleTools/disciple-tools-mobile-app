@@ -1,0 +1,177 @@
+{
+    "global": {
+        "error": {
+            "code": "",
+            "message": ""
+        },
+        "success": {
+            "save": ""
+        },
+        "contactOverallStatus": {
+            "new": "",
+            "unassignable": "",
+            "unassigned": "",
+            "assigned": "",
+            "active": "",
+            "paused": "",
+            "closed": ""
+        },
+        "seekerPath": {
+            "none": "",
+            "attempted": "",
+            "established": "",
+            "scheduled": "",
+            "met": "",
+            "ongoing": "",
+            "coaching": ""
+        },
+        "groupStatus": {
+            "active": "",
+            "inactive": ""
+        },
+        "groupType": {
+            "pre-group": "",
+            "group": "",
+            "church": "",
+            "team": ""
+        },
+        "groups": "",
+        "details": "",
+        "status": "",
+        "assignedTo": "",
+        "location": "",
+        "peopleGroup": "",
+        "selectPeopleGroups": "",
+        "address": "",
+        "progress": "",
+        "commentsActivity": "",
+        "writeYourCommentNoteHere": "",
+        "requiredField": "",
+        "edit": "",
+        "cancel": "",
+        "save": "",
+        "online": "",
+        "language": ""
+    },
+    "loginScreen": {
+        "domain": {
+            "label": "",
+            "placeholder": "",
+            "error": ""
+        },
+        "username": {
+            "label": "",
+            "error": ""
+        },
+        "password": {
+            "label": "",
+            "error": ""
+        },
+        "logIn": "",
+        "forgotPassword": ""
+    },
+    "contactsScreen": {
+        "contacts": ""
+    },
+    "settingsScreen": {
+        "settings": "",
+        "networkUnavailable": "",
+        "networkAvailable": "",
+        "signOut": "",
+        "domain": "",
+        "signedInAs": "",
+        "storybook": "",
+        "logout": ""
+    },
+    "contactDetailScreen": {
+        "addNewContact": "",
+        "contactSources": {
+            "personal": "",
+            "web": "",
+            "phone": "",
+            "facebook": "",
+            "twitter": "",
+            "linkedin": "",
+            "referral": "",
+            "advertisement": "",
+            "transfer": ""
+        },
+        "subAssignedTo": "",
+        "subAssignThisContact": "",
+        "mobile": "",
+        "email": "",
+        "message": "",
+        "selectLocations": "",
+        "contactAge": {
+            "underEighteenYearsOld": "",
+            "underTwentySixYearsOld": "",
+            "underFortyOneYearsOld": "",
+            "overFortyYearsOld": ""
+        },
+        "age": "",
+        "male": "",
+        "female": "",
+        "gender": "",
+        "source": "",
+        "selectSources": "",
+        "seekerPath": "",
+        "faithMilestones": "",
+        "milestones": {
+            "hasBible": "",
+            "readingBible": "",
+            "statesBelief": "",
+            "shareGospel": "",
+            "sharingGospel": "",
+            "baptized": "",
+            "baptizing": "",
+            "inGroup": "",
+            "startingChurches": "",
+            "baptismDate": ""
+        },
+        "connections": "",
+        "addGroup": "",
+        "connection": "",
+        "addConnection": "",
+        "baptizedBy": "",
+        "addBaptizedBy": "",
+        "baptized": "",
+        "addBaptized": "",
+        "coachedBy": "",
+        "addCoachedBy": "",
+        "coaching": "",
+        "addCoaching": "",
+        "fullName": "",
+        "phoneNumber": "",
+        "initialComment": "",
+        "addBaptizmDate": "",
+        "group": ""
+    },
+    "groupDetailScreen": {
+        "addNewGroup": "",
+        "groupCoach": "",
+        "selectCoaches": "",
+        "selectGeonames": "",
+        "startDate": "",
+        "endDate": "",
+        "groupType": "",
+        "churchHealth": "",
+        "healthMetrics": {
+            "giving": "",
+            "fellowship": "",
+            "communion": "",
+            "baptism": "",
+            "prayer": "",
+            "leaders": "",
+            "bibleStudy": "",
+            "praise": "",
+            "sharingGospel": ""
+        },
+        "parentGroup": "",
+        "searchGroups": "",
+        "peerGroup": "",
+        "searchPeerGroups": "",
+        "childGroup": "",
+        "searchChildGroups": "",
+        "groupName": ""
+    }
+}
