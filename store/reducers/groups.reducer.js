@@ -229,7 +229,7 @@ export default function groupsReducer(state = initialState, action) {
             }
           });
           return mappedGroup;
-        }).sort((a, b) => parseInt(a.ID, 10) < parseInt(b.ID, 10));
+        }).sort((a, b) => parseInt(a.last_modified, 10) - parseInt(b.last_modified, 10)).reverse();
         groups = localGroups.concat(dataBaseGroups);
       }
       return {
@@ -361,34 +361,6 @@ export default function groupsReducer(state = initialState, action) {
         saved: true,
       };
 
-      if (newState.group.start_date) {
-        let newStartDate = new Date(newState.group.start_date);
-        const year = newStartDate.getFullYear();
-        const month = (newStartDate.getMonth() + 1) < 10 ? `0${newStartDate.getMonth() + 1}` : (newStartDate.getMonth() + 1);
-        const day = (newStartDate.getDate() + 1) < 10 ? `0${newStartDate.getDate() + 1}` : (newStartDate.getDate() + 1);
-        newStartDate = `${year}-${month}-${day}`;
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            start_date: newStartDate,
-          },
-        };
-      }
-      if (newState.group.end_date) {
-        let newEndDate = new Date(newState.group.end_date);
-        const year = newEndDate.getFullYear();
-        const month = (newEndDate.getMonth() + 1) < 10 ? `0${newEndDate.getMonth() + 1}` : (newEndDate.getMonth() + 1);
-        const day = (newEndDate.getDate() + 1) < 10 ? `0${newEndDate.getDate() + 1}` : (newEndDate.getDate() + 1);
-        newEndDate = `${year}-${month}-${day}`;
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            end_date: newEndDate,
-          },
-        };
-      }
       const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID.toString() === group.ID.toString()));
       // Search entity in list (groups) if exists: updated it, otherwise: added it to group list
       if (groupIndex > -1) {
@@ -572,50 +544,6 @@ export default function groupsReducer(state = initialState, action) {
         loading: false,
       };
 
-      if (newState.group.start_date) {
-        let newStartDate = new Date(newState.group.start_date);
-        const year = newStartDate.getFullYear();
-        const month = (newStartDate.getMonth() + 1) < 10 ? `0${newStartDate.getMonth() + 1}` : (newStartDate.getMonth() + 1);
-        const day = (newStartDate.getDate()) < 10 ? `0${newStartDate.getDate()}` : (newStartDate.getDate());
-        newStartDate = `${year}-${month}-${day}`;
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            start_date: newStartDate,
-          },
-        };
-      } else {
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            start_date: '',
-          },
-        };
-      }
-      if (newState.group.end_date) {
-        let newEndDate = new Date(newState.group.end_date);
-        const year = newEndDate.getFullYear();
-        const month = (newEndDate.getMonth() + 1) < 10 ? `0${newEndDate.getMonth() + 1}` : (newEndDate.getMonth() + 1);
-        const day = (newEndDate.getDate()) < 10 ? `0${newEndDate.getDate()}` : (newEndDate.getDate());
-        newEndDate = `${year}-${month}-${day}`;
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            end_date: newEndDate,
-          },
-        };
-      } else {
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            end_date: '',
-          },
-        };
-      }
       return newState;
     }
     case actions.GROUPS_GETBYID_FAILURE:

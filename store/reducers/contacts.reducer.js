@@ -130,7 +130,7 @@ export default function contactsReducer(state = initialState, action) {
             }
           });
           return mappedContact;
-        }).sort((a, b) => parseInt(a.ID, 10) < parseInt(b.ID, 10));
+        }).sort((a, b) => parseInt(a.last_modified, 10) - parseInt(b.last_modified, 10)).reverse();
         contacts = localContacts.concat(dataBaseContacts);
       }
       return {
@@ -251,21 +251,6 @@ export default function contactsReducer(state = initialState, action) {
         contact: mappedContact,
         saved: true,
       };
-
-      if (newState.contact.baptism_date) {
-        let newBaptismDate = new Date(newState.contact.baptism_date);
-        const year = newBaptismDate.getFullYear();
-        const month = (newBaptismDate.getMonth() + 1) < 10 ? `0${newBaptismDate.getMonth() + 1}` : (newBaptismDate.getMonth() + 1);
-        const day = (newBaptismDate.getDate()) < 10 ? `0${newBaptismDate.getDate()}` : (newBaptismDate.getDate());
-        newBaptismDate = `${year}-${month}-${day}`;
-        newState = {
-          ...newState,
-          contact: {
-            ...newState.contact,
-            baptism_date: newBaptismDate,
-          },
-        };
-      }
       const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID.toString() === contact.ID.toString()));
       // Search entity in list (contacts) if exists: updated it, otherwise: added it to contacts list
       if (contactIndex > -1) {
@@ -438,29 +423,6 @@ export default function contactsReducer(state = initialState, action) {
         contact,
         loading: false,
       };
-
-      if (newState.contact.baptism_date) {
-        let newBaptismDate = new Date(newState.contact.baptism_date);
-        const year = newBaptismDate.getFullYear();
-        const month = (newBaptismDate.getMonth() + 1) < 10 ? `0${newBaptismDate.getMonth() + 1}` : (newBaptismDate.getMonth() + 1);
-        const day = (newBaptismDate.getDate()) < 10 ? `0${newBaptismDate.getDate()}` : (newBaptismDate.getDate());
-        newBaptismDate = `${year}-${month}-${day}`;
-        newState = {
-          ...newState,
-          contact: {
-            ...newState.contact,
-            baptism_date: newBaptismDate,
-          },
-        };
-      } else {
-        newState = {
-          ...newState,
-          contact: {
-            ...newState.contact,
-            baptism_date: '',
-          },
-        };
-      }
 
       return newState;
     }

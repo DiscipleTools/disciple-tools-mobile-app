@@ -332,6 +332,29 @@ const diff = (obj1, obj2) => {
   // Return the object of differences
   return diffs;
 };
+const formatDateToBackEnd = (dateString) => {
+  const dateObject = new Date(dateString);
+  const year = dateObject.getFullYear();
+  const month = (dateObject.getMonth() + 1) < 10 ? `0${dateObject.getMonth() + 1}` : (dateObject.getMonth() + 1);
+  const day = (dateObject.getDate()) < 10 ? `0${dateObject.getDate()}` : (dateObject.getDate());
+  const newDate = `${year}-${month}-${day}`;
+  return newDate;
+};
+const getOverallStatusSelectorColor = (contactStatus) => {
+  let newColor;
+  if (contactStatus === 'new' || contactStatus === 'unassigned' || contactStatus === 'closed') {
+    newColor = '#d9534f';
+  } else if (
+    contactStatus === 'unassignable'
+      || contactStatus === 'assigned'
+      || contactStatus === 'paused'
+  ) {
+    newColor = '#f0ad4e';
+  } else if (contactStatus === 'active') {
+    newColor = '#5cb85c';
+  }
+  return newColor;
+};
 
 class ContactDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -473,38 +496,15 @@ class ContactDetailScreen extends React.Component {
         ...newState,
         contact: {
           ...contact,
+          overall_status: (contact.overall_status) ? contact.overall_status : 'new',
         },
         unmodifiedContact: {
           ...contact,
         },
       };
-
-      // Update contact status select color
-      let newColor = '';
-      if (!contact.overall_status) {
-        newState = {
-          ...newState,
-          contact: {
-            ...contact,
-            overall_status: (contact.overall_status) ? contact.overall_status : 'new',
-          },
-        };
-      }
-      if (contact.overall_status === 'new' || contact.overall_status === 'unassigned' || contact.overall_status === 'closed') {
-        newColor = '#d9534f';
-      } else if (
-        contact.overall_status === 'unassignable'
-        || contact.overall_status === 'assigned'
-        || contact.overall_status === 'paused'
-      ) {
-        newColor = '#f0ad4e';
-      } else if (contact.overall_status === 'active') {
-        newColor = '#5cb85c';
-      }
-
       newState = {
         ...newState,
-        overallStatusBackgroundColor: newColor,
+        overallStatusBackgroundColor: getOverallStatusSelectorColor(newState.contact.overall_status),
       };
     }
 
@@ -720,10 +720,14 @@ class ContactDetailScreen extends React.Component {
   };
 
   onDisableEdit = () => {
-    const { currentTabIndex } = this.state;
+    const { currentTabIndex, unmodifiedContact } = this.state;
     this.setState({
       onlyView: true,
       currentTabIndex: 0,
+      contact: {
+        ...unmodifiedContact,
+      },
+      overallStatusBackgroundColor: getOverallStatusSelectorColor(unmodifiedContact.overall_status),
     }, () => {
       this.setCurrentTabIndex(currentTabIndex);
     });
@@ -819,57 +823,19 @@ class ContactDetailScreen extends React.Component {
   };
 
   setContactStatus = (value) => {
-    let newColor = '';
-
-    if (value === 'new' || value === 'unassigned' || value === 'closed') {
-      newColor = '#d9534f';
-    } else if (
-      value === 'unassignable'
-      || value === 'assigned'
-      || value === 'paused'
-    ) {
-      newColor = '#f0ad4e';
-    } else if (value === 'active') {
-      newColor = '#5cb85c';
-    }
-
     this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         overall_status: value,
       },
-      overallStatusBackgroundColor: newColor,
+      overallStatusBackgroundColor: getOverallStatusSelectorColor(value),
     }));
   };
 
   setContactSeekerPath = (value) => {
-    let newProgressValue = 100 / 6;
-
-    switch (value) {
-      case 'none':
-        newProgressValue *= 0;
-        break;
-      case 'attempted':
-        newProgressValue *= 1;
-        break;
-      case 'established':
-        newProgressValue *= 2;
-        break;
-      case 'scheduled':
-        newProgressValue *= 3;
-        break;
-      case 'met':
-        newProgressValue *= 4;
-        break;
-      case 'ongoing':
-        newProgressValue *= 5;
-        break;
-      case 'coaching':
-        newProgressValue *= 6;
-        break;
-      default:
-        break;
-    }
+    const optionListValues = Object.keys(this.props.contactSettings.seeker_path.values);
+    const optionIndex = optionListValues.findIndex(key => key === value);
+    const newProgressValue = (100 / (optionListValues.length - 1)) * optionIndex;
     this.setState(prevState => ({
       contact: {
         ...prevState.contact,
@@ -879,11 +845,11 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  setBaptismDate = (value) => {
+  setBaptismDate = (date) => {
     this.setState(prevState => ({
       contact: {
         ...prevState.contact,
-        baptism_date: value,
+        baptism_date: formatDateToBackEnd(date),
       },
     }));
   };
@@ -4219,38 +4185,38 @@ class ContactDetailScreen extends React.Component {
                               }}
                               renderRow={(id, onPress, item) => (
                                 <TouchableOpacity
-                                  activeOpacity={0.6}
-                                  key={id}
-                                  onPress={onPress}
-                                  style={{
-                                    paddingVertical: 8,
-                                    paddingHorizontal: 10,
-                                  }}
-                                >
-                                  <View
+                                    activeOpacity={0.6}
+                                    key={id}
+                                    onPress={onPress}
                                     style={{
-                                      flexDirection: 'row',
+                                      paddingVertical: 8,
+                                      paddingHorizontal: 10,
                                     }}
                                   >
-                                    <Text style={{
-                                      color: 'rgba(0, 0, 0, 0.87)',
-                                      fontSize: 14,
-                                      lineHeight: 21,
-                                    }}
+                                    <View
+                                      style={{
+                                        flexDirection: 'row',
+                                      }}
                                     >
-                                      {item.name}
-                                    </Text>
-                                  </View>
-                                </TouchableOpacity>
+                                      <Text style={{
+                                        color: 'rgba(0, 0, 0, 0.87)',
+                                        fontSize: 14,
+                                        lineHeight: 21,
+                                      }}
+                                      >
+                                        {item.name}
+                                      </Text>
+                                    </View>
+                                  </TouchableOpacity>
                               )}
                               renderChip={(id, onClose, item, style, iconStyle) => (
                                 <Chip
-                                  key={id}
-                                  iconStyle={iconStyle}
-                                  onClose={onClose}
-                                  text={item.name}
-                                  style={style}
-                                />
+                                    key={id}
+                                    iconStyle={iconStyle}
+                                    onClose={onClose}
+                                    text={item.name}
+                                    style={style}
+                                  />
                               )}
                               filterOnKey="name"
                               keyboardShouldPersistTaps

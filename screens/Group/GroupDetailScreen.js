@@ -446,6 +446,23 @@ const diff = (obj1, obj2) => {
   // Return the object of differences
   return diffs;
 };
+const formatDateToBackEnd = (dateString) => {
+  const dateObject = new Date(dateString);
+  const year = dateObject.getFullYear();
+  const month = (dateObject.getMonth() + 1) < 10 ? `0${dateObject.getMonth() + 1}` : (dateObject.getMonth() + 1);
+  const day = (dateObject.getDate()) < 10 ? `0${dateObject.getDate()}` : (dateObject.getDate());
+  const newDate = `${year}-${month}-${day}`;
+  return newDate;
+};
+const getStatusSelectorColor = (groupStatus) => {
+  let newColor;
+  if (groupStatus === 'inactive') {
+    newColor = '#d9534f';
+  } else if (groupStatus === 'active') {
+    newColor = '#5cb85c';
+  }
+  return newColor;
+};
 
 const initialState = {
   group: {},
@@ -586,30 +603,15 @@ class GroupDetailScreen extends React.Component {
         ...newState,
         group: {
           ...group,
+          group_status: (group.group_status) ? group.group_status : 'active',
         },
         unmodifiedGroup: {
           ...group,
         },
       };
-      // Update group status select color
-      let newColor = '';
-      if (!group.group_status) {
-        newState = {
-          ...newState,
-          group: {
-            ...group,
-            group_status: (group.group_status) ? group.group_status : 'active',
-          },
-        };
-      }
-      if (group.group_status === 'inactive') {
-        newColor = '#d9534f';
-      } else if (group.group_status === 'active') {
-        newColor = '#5cb85c';
-      }
       newState = {
         ...newState,
-        groupStatusBackgroundColor: newColor,
+        groupStatusBackgroundColor: getStatusSelectorColor(newState.group.group_status),
       };
     }
 
@@ -861,10 +863,13 @@ class GroupDetailScreen extends React.Component {
   };
 
   onDisableEdit = () => {
-    const { currentTabIndex } = this.state;
+    const { currentTabIndex, unmodifiedGroup } = this.state;
     this.setState({
       onlyView: true,
       currentTabIndex: 0,
+      group: {
+        ...unmodifiedGroup,
+      },
     }, () => {
       this.setCurrentTabIndex(currentTabIndex);
     });
@@ -909,7 +914,7 @@ class GroupDetailScreen extends React.Component {
     this.setState(prevState => ({
       group: {
         ...prevState.group,
-        start_date: value,
+        start_date: formatDateToBackEnd(value),
       },
     }));
   };
@@ -918,7 +923,7 @@ class GroupDetailScreen extends React.Component {
     this.setState(prevState => ({
       group: {
         ...prevState.group,
-        end_date: value,
+        end_date: formatDateToBackEnd(value),
       },
     }));
   };
