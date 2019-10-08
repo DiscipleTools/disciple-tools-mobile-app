@@ -13,6 +13,7 @@ import {
   TextInput,
   AsyncStorage,
   RefreshControl,
+  Platform,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -346,8 +347,8 @@ const getOverallStatusSelectorColor = (contactStatus) => {
     newColor = '#d9534f';
   } else if (
     contactStatus === 'unassignable'
-      || contactStatus === 'assigned'
-      || contactStatus === 'paused'
+    || contactStatus === 'assigned'
+    || contactStatus === 'paused'
   ) {
     newColor = '#f0ad4e';
   } else if (contactStatus === 'active') {
@@ -1909,8 +1910,10 @@ class ContactDetailScreen extends React.Component {
                                     this.state.contact.overall_status
                                   }
                                   onValueChange={this.setContactStatus}
-                                  style={{
+                                  style={Platform.OS === 'android' ? {
                                     color: '#ffffff',
+                                    backgroundColor: this.state.overallStatusBackgroundColor,
+                                  } : {
                                     backgroundColor: this.state.overallStatusBackgroundColor,
                                   }}
                                 >
@@ -2130,7 +2133,7 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.gender) ? this.props.contactSettings.gender.values[this.state.contact.gender] : ''}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.gender) ? this.props.contactSettings.gender.values[this.state.contact.gender].label : ''}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>{this.props.contactSettings.gender.name}</Label>
@@ -2691,8 +2694,10 @@ class ContactDetailScreen extends React.Component {
                                         this.state.contact.overall_status
                                       }
                                       onValueChange={this.setContactStatus}
-                                      style={{
+                                      style={Platform.OS === 'android' ? {
                                         color: '#ffffff',
+                                        backgroundColor: this.state.overallStatusBackgroundColor,
+                                      } : {
                                         backgroundColor: this.state.overallStatusBackgroundColor,
                                       }}
                                     >
@@ -4185,38 +4190,38 @@ class ContactDetailScreen extends React.Component {
                               }}
                               renderRow={(id, onPress, item) => (
                                 <TouchableOpacity
-                                  activeOpacity={0.6}
-                                  key={id}
-                                  onPress={onPress}
-                                  style={{
-                                    paddingVertical: 8,
-                                    paddingHorizontal: 10,
-                                  }}
-                                >
-                                  <View
+                                    activeOpacity={0.6}
+                                    key={id}
+                                    onPress={onPress}
                                     style={{
-                                      flexDirection: 'row',
+                                      paddingVertical: 8,
+                                      paddingHorizontal: 10,
                                     }}
                                   >
-                                    <Text style={{
-                                      color: 'rgba(0, 0, 0, 0.87)',
-                                      fontSize: 14,
-                                      lineHeight: 21,
-                                    }}
+                                    <View
+                                      style={{
+                                        flexDirection: 'row',
+                                      }}
                                     >
-                                      {item.name}
-                                    </Text>
-                                  </View>
-                                </TouchableOpacity>
+                                      <Text style={{
+                                        color: 'rgba(0, 0, 0, 0.87)',
+                                        fontSize: 14,
+                                        lineHeight: 21,
+                                      }}
+                                      >
+                                        {item.name}
+                                      </Text>
+                                    </View>
+                                  </TouchableOpacity>
                               )}
                               renderChip={(id, onClose, item, style, iconStyle) => (
                                 <Chip
-                                  key={id}
-                                  iconStyle={iconStyle}
-                                  onClose={onClose}
-                                  text={item.name}
-                                  style={style}
-                                />
+                                    key={id}
+                                    iconStyle={iconStyle}
+                                    onClose={onClose}
+                                    text={item.name}
+                                    style={style}
+                                  />
                               )}
                               filterOnKey="name"
                               keyboardShouldPersistTaps

@@ -80,25 +80,31 @@ class GroupsScreen extends React.Component {
           <Text style={{ fontWeight: 'bold' }}>{group.title}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={styles.groupSubtitle}>
-            {this.props.groupSettings.group_status.values[group.group_status].label}
-          </Text>
-          {(this.props.groupSettings.group_type.values[group.group_type]) ? (
+          {this.props.groupSettings.group_status.values[group.group_status] ? (
+            <Text style={styles.groupSubtitle}>
+              {this.props.groupSettings.group_status.values[group.group_status].label}
+            </Text>
+          ) : <Text />}
+          {this.props.groupSettings.group_status.values[group.group_status] && this.props.groupSettings.group_type.values[group.group_type] ? (
             <Text style={styles.groupSubtitle}>
               {' • '}
             </Text>
           ) : <Text />}
           {(this.props.groupSettings.group_type.values[group.group_type]) ? (
             <Text style={styles.groupSubtitle}>
-              {this.props.groupSettings.group_type.values[group.group_type].label}
+              {((this.props.groupSettings.group_type.values[group.group_type].label) ? this.props.groupSettings.group_type.values[group.group_type].label : '')}
             </Text>
           ) : <Text />}
-          <Text style={styles.groupSubtitle}>
-            {' • '}
-          </Text>
-          <Text style={styles.groupSubtitle}>
-            {group.member_count}
-          </Text>
+          {this.props.groupSettings.group_type.values[group.group_type] && group.member_count ? (
+            <Text style={styles.groupSubtitle}>
+              {' • '}
+            </Text>
+          ) : <Text />}
+          {group.member_count ? (
+            <Text style={styles.groupSubtitle}>
+              {group.member_count}
+            </Text>
+          ) : <Text />}
         </View>
       </View>
     </TouchableOpacity>

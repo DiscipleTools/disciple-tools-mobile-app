@@ -80,15 +80,21 @@ class ContactsScreen extends React.Component {
           <Text style={{ fontWeight: 'bold' }}>{contact.title}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={styles.contactSubtitle}>
-            {contact.overall_status ? this.props.contactSettings.overall_status.values[contact.overall_status].label : ''}
-          </Text>
-          <Text style={styles.contactSubtitle}>
-            {' • '}
-          </Text>
-          <Text style={styles.contactSubtitle}>
-            {contact.seeker_path ? this.props.contactSettings.seeker_path.values[contact.seeker_path].label : ''}
-          </Text>
+          {this.props.contactSettings.overall_status.values[contact.overall_status] ? (
+            <Text style={styles.contactSubtitle}>
+              {this.props.contactSettings.overall_status.values[contact.overall_status].label}
+            </Text>
+          ) : <Text />}
+          {this.props.contactSettings.overall_status.values[contact.overall_status] && this.props.contactSettings.seeker_path.values[contact.seeker_path] ? (
+            <Text style={styles.contactSubtitle}>
+              {' • '}
+            </Text>
+          ) : <Text />}
+          {this.props.contactSettings.seeker_path.values[contact.seeker_path] ? (
+            <Text style={styles.contactSubtitle}>
+              {this.props.contactSettings.seeker_path.values[contact.seeker_path].label}
+            </Text>
+          ) : <Text />}
         </View>
       </View>
     </TouchableOpacity>

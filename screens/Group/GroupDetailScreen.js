@@ -13,6 +13,7 @@ import {
   TextInput,
   AsyncStorage,
   RefreshControl,
+  Platform,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -1917,8 +1918,10 @@ class GroupDetailScreen extends React.Component {
                                     this.state.group.group_status
                                   }
                                   onValueChange={this.setGroupStatus}
-                                  style={{
+                                  style={Platform.OS === 'android' ? {
                                     color: '#ffffff',
+                                    backgroundColor: this.state.groupStatusBackgroundColor,
+                                  } : {
                                     backgroundColor: this.state.groupStatusBackgroundColor,
                                   }}
                                 >
@@ -2487,8 +2490,10 @@ class GroupDetailScreen extends React.Component {
                                         this.state.group.group_status
                                       }
                                       onValueChange={this.setGroupStatus}
-                                      style={{
+                                      style={Platform.OS === 'android' ? {
                                         color: '#ffffff',
+                                        backgroundColor: this.state.groupStatusBackgroundColor,
+                                      } : {
                                         backgroundColor: this.state.groupStatusBackgroundColor,
                                       }}
                                     >
