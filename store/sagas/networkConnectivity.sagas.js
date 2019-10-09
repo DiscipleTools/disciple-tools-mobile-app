@@ -7,9 +7,7 @@ export default function* networkConnectivitySaga() {
 
   while (true) {
     yield take(onlineChannel);
-
     const queue = yield select(state => state.requestReducer.queue);
-
     for (const action of queue) {
       let actionMapped = {
         ...action,

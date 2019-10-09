@@ -4,8 +4,8 @@ import {
   StatusBar,
   StyleSheet,
   View,
-  NetInfo,
 } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import PropTypes from 'prop-types';
 import { AppLoading } from 'expo';
 import * as Icon from '@expo/vector-icons';
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
 });
 
 // App
+let netInfoSubscribe;
 class App extends React.Component {
   constructor() {
     super();
@@ -41,13 +42,12 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    // add network connectivity handler
-    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
     // initial detection
     NetInfo.isConnected.fetch().then((isConnected) => {
-      store.dispatch(setNetworkConnectivity(isConnected));
+      this.handleConnectivityChange(isConnected);
     });
-
+    // add network connectivity handler
+    netInfoSubscribe = NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
     if (__DEV__) {
       // Reactotron can be used to see AsyncStorage data and API requests
       // If Reactotron gets no connection, this is the solution that worked for me (cairocoder01: 2019-08-15)
@@ -71,12 +71,22 @@ class App extends React.Component {
 
   componentWillUnmount() {
     // remove network connectivity handler
-    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+    netInfoSubscribe.remove();
   }
 
   handleConnectivityChange = (isConnected) => {
-    // dispatch network connectivity action
-    store.dispatch(setNetworkConnectivity(isConnected));
+    // detect conectivity change (This only says if a device has an active connection, not that it is able to reach the internet)
+    if (isConnected) {
+      // Check if the phone has internet
+      fetch('https://8.8.8.8')
+        .then(() => {
+          store.dispatch(setNetworkConnectivity(true));
+        }).catch(() => {
+          store.dispatch(setNetworkConnectivity(false));
+        });
+    } else {
+      store.dispatch(setNetworkConnectivity(false));
+    }
   }
 
   loadResourcesAsync = async () => Promise.all([

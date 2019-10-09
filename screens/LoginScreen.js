@@ -615,15 +615,15 @@ LoginScreen.propTypes = {
   ),
   /* eslint-enable */
   userReducerError: PropTypes.shape({
-    code: PropTypes.string,
+    code: PropTypes.any,
     message: PropTypes.string,
   }),
   groupsReducerError: PropTypes.shape({
-    code: PropTypes.string,
+    code: PropTypes.any,
     message: PropTypes.string,
   }),
   usersReducerError: PropTypes.shape({
-    code: PropTypes.string,
+    code: PropTypes.any,
     message: PropTypes.string,
   }),
   i18n: PropTypes.shape({
@@ -634,7 +634,7 @@ LoginScreen.propTypes = {
   isConnected: PropTypes.bool,
   contactSettings: PropTypes.shape({}),
   contactsReducerError: PropTypes.shape({
-    code: PropTypes.string,
+    code: PropTypes.any,
     message: PropTypes.string,
   }),
   getContactSettings: PropTypes.func.isRequired,

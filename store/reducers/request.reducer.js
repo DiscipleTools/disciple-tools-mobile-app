@@ -33,7 +33,6 @@ export default function requestReducer(state = initialState, action) {
           const { isConnected } = actionToModify;
           delete actionToModify.isConnected;
           if (isConnected) {
-            delete jsonBody.ID;
             // Phone its in ONLINE mode
             if (jsonBodyId) {
               /* eslint-disable */
@@ -105,11 +104,12 @@ export default function requestReducer(state = initialState, action) {
                   queue[requestIndex] = {
                     ...requestFromQueue,
                   };
-
                   newState = {
                     ...newState,
                     queue: [...queue],
-                    currentAction: requestFromQueue,
+                    currentAction: {
+                      ...requestFromQueue,
+                    },
                   };
                   return newState;
                 }
@@ -368,6 +368,7 @@ export default function requestReducer(state = initialState, action) {
         // filter out redundant GET requests
         queue = queue.filter(existing => existing.url !== actionToModify.url);
       }
+
       newState = {
         ...newState,
         queue: [...queue, actionToModify],
@@ -376,11 +377,21 @@ export default function requestReducer(state = initialState, action) {
       return newState;
     case actions.RESPONSE:
       // loop through every item in local storage and filter out the successful request
-      queue = queue.filter(request => JSON.stringify(request) !== JSON.stringify(action.payload));
-      newState = {
-        ...newState,
-        queue,
-      };
+      /* eslint-disable */
+      let requestIndex;
+      /* eslint-enable */
+      if (action.payload.data.method === 'POST') {
+        requestIndex = queue.findIndex(requestQueue => requestQueue.action === action.payload.action && requestQueue.url === action.payload.url && requestQueue.data.method === action.payload.data.method && JSON.parse(requestQueue.data.body).ID === JSON.parse(action.payload.data.body).ID);
+      } else {
+        requestIndex = queue.findIndex(requestQueue => requestQueue.action === action.payload.action && requestQueue.url === action.payload.url && requestQueue.data.method === action.payload.data.method);
+      }
+      if (requestIndex > -1) {
+        queue.splice(requestIndex, 1);
+        newState = {
+          ...newState,
+          queue: [...queue],
+        };
+      }
       return newState;
     default:
       return newState;
