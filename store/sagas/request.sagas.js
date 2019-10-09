@@ -134,7 +134,7 @@ export default function* requestSaga() {
         requestIndex = queue.findIndex(requestQueue => requestQueue.action === request.payload.action && requestQueue.url === request.payload.url && requestQueue.data.method === request.payload.data.method);
       }
       if (requestIndex > -1) {
-        yield fork(processRequest, request.payload);
+        yield fork(processRequest, queue[requestIndex]);
       }
     }
   }
