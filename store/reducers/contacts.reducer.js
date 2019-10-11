@@ -241,7 +241,6 @@ export default function contactsReducer(state = initialState, action) {
       }
 
       const oldId = (mappedContact.oldID) ? mappedContact.oldID : null;
-
       if (oldId) {
         delete mappedContact.oldID;
       }
@@ -254,19 +253,81 @@ export default function contactsReducer(state = initialState, action) {
       const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID.toString() === contact.ID.toString()));
       // Search entity in list (contacts) if exists: updated it, otherwise: added it to contacts list
       if (contactIndex > -1) {
-        let newContactData = {
-          ...newState.contacts[contactIndex],
-        };
+        // Merge all data of request with found entity
+        let newContactData;
         /* eslint-disable */
-        if (isNaN(contact.ID)) {
+        if (offline && !isNaN(contact.ID)) {
           /* eslint-enable */
-          // Merge all data of OFFLINE entity
+          // Editing D.B. entity in OFFLINE mode
           newContactData = {
-            ...newContactData,
+            ...newState.contacts[contactIndex],
+          };
+          // Apply modifications from request (mappedContact) in newContactData
+          Object.keys(mappedContact).forEach((key) => {
+            const value = mappedContact[key];
+            const valueType = Object.prototype.toString.call(value);
+            if (valueType === '[object Array]' || Object.prototype.hasOwnProperty.call(value, 'values')) {
+              let collection; let
+                oldCollection;
+              if (valueType === '[object Array]') {
+                collection = value;
+                oldCollection = (newContactData[key]) ? [...newContactData[key]] : [];
+              } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                collection = value.values;
+                oldCollection = (newContactData[key]) ? [...newContactData[key].values] : [];
+              }
+              // compare newCollection with old and merge differences.
+              collection.forEach((object) => {
+                // search object in newContactData
+                let findObjectInOldRequestIndex;
+                if (valueType === '[object Array]') {
+                  findObjectInOldRequestIndex = oldCollection.findIndex(oldObject => (oldObject.key === object.key));
+                } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                  findObjectInOldRequestIndex = oldCollection.findIndex(oldObject => (oldObject.value === object.value));
+                }
+                if (findObjectInOldRequestIndex > -1) {
+                  // if exist
+                  if (Object.prototype.hasOwnProperty.call(object, 'delete')) {
+                    oldCollection.splice(findObjectInOldRequestIndex, 1);
+                  } else {
+                    // update the object
+                    oldCollection[findObjectInOldRequestIndex] = {
+                      ...object,
+                    };
+                  }
+                } else {
+                  // add the object
+                  oldCollection.push({
+                    ...object,
+                  });
+                }
+              });
+              if (valueType === '[object Array]') {
+                newContactData = {
+                  ...newContactData,
+                  [key]: oldCollection,
+                };
+              } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                newContactData = {
+                  ...newContactData,
+                  [key]: {
+                    values: oldCollection,
+                  },
+                };
+              }
+            } else {
+              newContactData = {
+                ...newContactData,
+                [key]: value,
+              };
+            }
+          });
+        } else {
+          newContactData = {
+            ...newState.contacts[contactIndex],
             ...newState.contact,
           };
         }
-
         newState.contacts[contactIndex] = {
           ...newContactData,
         };
@@ -316,14 +377,18 @@ export default function contactsReducer(state = initialState, action) {
         loading: true,
       };
     case actions.CONTACTS_GETBYID_SUCCESS: {
-      let { contact } = action;
+      let contact = { ...action.contact };
       /* eslint-disable */
       if (isNaN(contact.ID) || contact.isOffline) {
         /* eslint-enable */
         // Search local contact
-        contact = newState.contacts.find(contactItem => (contactItem.ID.toString() === contact.ID));
+        const foundContact = newState.contacts.find(contactItem => (contactItem.ID.toString() === contact.ID));
+        contact = {
+          ...foundContact,
+        };
       } else {
         const mappedContact = {};
+        // MAP CONTACT TO CAN SAVE IT LATER
         Object.keys(contact).forEach((key) => {
           // Omit restricted properties
           if (key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'last_modified') {

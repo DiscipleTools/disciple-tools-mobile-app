@@ -124,12 +124,6 @@ class GroupsScreen extends React.Component {
     this.props.getAllGroups(this.props.userData.domain, this.props.userData.token);
   };
 
-  refreshFlatlist = () => {
-    this.setState(prevState => ({
-      refresh: !prevState.refresh,
-    }));
-  }
-
   goToGroupDetailScreen = (groupData = null) => {
     if (groupData) {
       // Detail
@@ -138,13 +132,13 @@ class GroupsScreen extends React.Component {
         onlyView: true,
         groupName: groupData.title,
         previousList: [],
-        onGoBack: () => this.refreshFlatlist(),
+        onGoBack: () => this.onRefresh(),
       });
     } else {
       // Create
       this.props.navigation.push('GroupDetail', {
         previousList: [],
-        onGoBack: () => this.refreshFlatlist(),
+        onGoBack: () => this.onRefresh(),
       });
     }
   };

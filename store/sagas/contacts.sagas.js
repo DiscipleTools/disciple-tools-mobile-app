@@ -184,7 +184,6 @@ export function* save({ domain, token, contactData }) {
           ID: contactId,
         };
       }
-
       yield put({
         type: actions.CONTACTS_SAVE_SUCCESS,
         contact: jsonData,

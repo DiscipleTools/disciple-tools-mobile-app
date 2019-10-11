@@ -49,9 +49,7 @@ class ContactsScreen extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.isConnected) {
-      this.onRefresh();
-    }
+    this.onRefresh();
   }
 
   componentDidUpdate(prevProps) {
@@ -114,12 +112,6 @@ class ContactsScreen extends React.Component {
     this.props.getAllContacts(this.props.userData.domain, this.props.userData.token);
   };
 
-  refreshFlatlist = () => {
-    this.setState(prevState => ({
-      refresh: !prevState.refresh,
-    }));
-  }
-
   goToContactDetailScreen = (contactData = null) => {
     if (contactData) {
       // Detail
@@ -127,12 +119,12 @@ class ContactsScreen extends React.Component {
         contactId: contactData.ID,
         onlyView: true,
         contactName: contactData.title,
-        onGoBack: () => this.refreshFlatlist(),
+        onGoBack: () => this.onRefresh(),
       });
     } else {
       // Create
       this.props.navigation.push('ContactDetail', {
-        onGoBack: () => this.refreshFlatlist(),
+        onGoBack: () => this.onRefresh(),
       });
     }
   };
@@ -195,7 +187,6 @@ ContactsScreen.propTypes = {
     code: PropTypes.any,
     message: PropTypes.string,
   }),
-  isConnected: PropTypes.bool,
   loading: PropTypes.bool,
   contactSettings: PropTypes.shape({
     overall_status: PropTypes.shape({
@@ -208,7 +199,6 @@ ContactsScreen.propTypes = {
 };
 ContactsScreen.defaultProps = {
   error: null,
-  isConnected: null,
   loading: false,
   contactSettings: null,
 };
@@ -218,7 +208,6 @@ const mapStateToProps = state => ({
   contacts: state.contactsReducer.contacts,
   loading: state.contactsReducer.loading,
   error: state.contactsReducer.error,
-  isConnected: state.networkConnectivityReducer.isConnected,
   contactSettings: state.contactsReducer.settings,
 });
 const mapDispatchToProps = dispatch => ({

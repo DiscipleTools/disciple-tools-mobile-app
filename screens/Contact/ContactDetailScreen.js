@@ -491,7 +491,7 @@ class ContactDetailScreen extends React.Component {
       };
     }
 
-    // GET BY ID
+    // SAVE / GET BY ID
     if (contact) {
       newState = {
         ...newState,
@@ -862,6 +862,14 @@ class ContactDetailScreen extends React.Component {
     let contactToSave = {
       ...diff(unmodifiedContact, contact),
     };
+    // Remove empty arrays
+    Object.keys(contactToSave).forEach((key) => {
+      const value = contactToSave[key];
+      if (Object.prototype.hasOwnProperty.call(value, 'values') && value.values.length === 0) {
+        delete contactToSave[key];
+      }
+    });
+
     if (this.state.contact.title) {
       contactToSave = {
         ...contactToSave,
@@ -1976,7 +1984,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.contact_phone ? this.state.contact.contact_phone.map((phone, index) => {
+                                  {this.state.contact.contact_phone ? this.state.contact.contact_phone.filter(phone => !phone.delete).map((phone, index) => {
                                     const lastItemIndex = this.state.contact.contact_phone.length - 1;
                                     if (lastItemIndex === index) {
                                       return `${phone.value}.`;
@@ -2000,7 +2008,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.contact_email ? this.state.contact.contact_email.map((email, index) => {
+                                  {this.state.contact.contact_email ? this.state.contact.contact_email.filter(email => !email.delete).map((email, index) => {
                                     const lastItemIndex = this.state.contact.contact_email.length - 1;
                                     if (lastItemIndex === index) {
                                       return `${email.value}.`;
@@ -2040,7 +2048,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.contact_address ? this.state.contact.contact_address.map((address, index) => {
+                                  {this.state.contact.contact_address ? this.state.contact.contact_address.filter(address => !address.delete).map((address, index) => {
                                     const lastItemIndex = this.state.contact.contact_address.length - 1;
                                     if (lastItemIndex === index) {
                                       return `${address.value}.`;
