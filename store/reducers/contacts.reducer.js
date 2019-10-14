@@ -241,9 +241,6 @@ export default function contactsReducer(state = initialState, action) {
       }
 
       const oldId = (mappedContact.oldID) ? mappedContact.oldID : null;
-      if (oldId) {
-        delete mappedContact.oldID;
-      }
 
       newState = {
         ...newState,
@@ -343,7 +340,9 @@ export default function contactsReducer(state = initialState, action) {
       } else if (oldId) {
         // Search entity with oldID, remove it and add updated entity
         const oldContactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID.toString() === oldId));
-        const previousContactData = newState.contacts[oldContactIndex];
+        const previousContactData = {
+          ...newState.contacts[oldContactIndex],
+        };
         const newContactData = {
           ...previousContactData,
           ...newState.contact,
@@ -364,7 +363,9 @@ export default function contactsReducer(state = initialState, action) {
           ...newState.contact,
         });
       }
-      return newState;
+      return {
+        ...newState,
+      };
     }
     case actions.CONTACTS_SAVE_FAILURE:
       return {
@@ -488,7 +489,6 @@ export default function contactsReducer(state = initialState, action) {
         contact,
         loading: false,
       };
-
       return newState;
     }
     case actions.CONTACTS_GETBYID_FAILURE:

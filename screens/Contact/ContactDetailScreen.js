@@ -430,10 +430,18 @@ class ContactDetailScreen extends React.Component {
     if (contactId) {
       newState = {
         contact: {
-          ...this.state.contact,
           ID: contactId,
+          title: contactName,
+          sources: {
+            values: [{
+              value: 'advertisement',
+            }],
+          },
+          overall_status: 'new',
+          seeker_path: 'none',
         },
       };
+      navigation.setParams({ contactName });
     } else {
       newState = {
         contact: {
@@ -443,6 +451,8 @@ class ContactDetailScreen extends React.Component {
               value: 'advertisement',
             }],
           },
+          overall_status: 'new',
+          seeker_path: 'none',
         },
       };
     }
@@ -455,7 +465,6 @@ class ContactDetailScreen extends React.Component {
     this.setState({
       ...newState,
     }, () => {
-      this.props.navigation.setParams({ contactName });
       this.getLists((contactId) || null);
     });
   }
@@ -481,7 +490,10 @@ class ContactDetailScreen extends React.Component {
       activities: activities || prevState.activities,
       totalActivities: totalActivities || prevState.totalActivities,
       loadActivities: loadingActivities,
+      contact: prevState.contact,
+      unmodifiedContact: prevState.unmodifiedContact,
     };
+
     // NEW COMMENT
     if (newComment) {
       newState.comments.unshift(newComment);
@@ -493,20 +505,32 @@ class ContactDetailScreen extends React.Component {
 
     // SAVE / GET BY ID
     if (contact) {
-      newState = {
-        ...newState,
-        contact: {
-          ...contact,
-          overall_status: (contact.overall_status) ? contact.overall_status : 'new',
-        },
-        unmodifiedContact: {
-          ...contact,
-        },
-      };
-      newState = {
-        ...newState,
-        overallStatusBackgroundColor: getOverallStatusSelectorColor(newState.contact.overall_status),
-      };
+      // Update contact data only in these conditions:
+      // Same contact created (offline/online)
+      // Same contact updated (offline/online)
+      // Same offline contact created in DB (AutoID to DBID)
+      if ((typeof contact.ID !== 'undefined' && typeof prevState.contact.ID === 'undefined')
+        || contact.ID === prevState.contact.ID
+        || (contact.oldID && contact.oldID === prevState.contact.ID)) {
+        newState = {
+          ...newState,
+          contact: {
+            ...contact,
+          },
+          unmodifiedContact: {
+            ...contact,
+          },
+        };
+        if (newState.contact.oldID) {
+          delete newState.contact.oldID;
+        }
+        if (newState.contact.overall_status) {
+          newState = {
+            ...newState,
+            overallStatusBackgroundColor: getOverallStatusSelectorColor(newState.contact.overall_status),
+          };
+        }
+      }
     }
 
     // GET COMMENTS
@@ -559,25 +583,41 @@ class ContactDetailScreen extends React.Component {
 
     // CONTACT SAVE / GET BY ID
     if (contact && prevProps.contact !== contact) {
-      // Highlight Updates -> Compare prevState.contact with contact and show differences
-      navigation.setParams({ contactName: contact.title });
-      if (contact.seeker_path) {
-        this.setContactSeekerPath(contact.seeker_path);
+      // Update contact data only in these conditions:
+      // Same contact created (offline/online)
+      // Same contact updated (offline/online)
+      // Sane offline contact created in DB (AutoID to DBID)
+      if ((typeof contact.ID !== 'undefined' && typeof this.state.contact.ID === 'undefined')
+        || contact.ID === this.state.contact.ID
+        || (contact.oldID && contact.oldID === this.state.contact.ID)) {
+        // Highlight Updates -> Compare this.state.contact with contact and show differences
+        navigation.setParams({ contactName: contact.title });
+        if (contact.seeker_path) {
+          this.setContactSeekerPath(contact.seeker_path);
+        }
+        this.getContactByIdEnd();
       }
-      this.getContactByIdEnd();
     }
 
     // CONTACT SAVE
     if (saved && prevProps.saved !== saved) {
-      this.onRefreshCommentsActivities(contact.ID);
-      toastSuccess.show(
-        <View>
-          <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
-        </View>,
-        3000,
-      );
-      this.onDisableEdit();
-      this.props.endSaveContact();
+      // Update contact data only in these conditions:
+      // Same contact created (offline/online)
+      // Same contact updated (offline/online)
+      // Sane offline contact created in DB (AutoID to DBID)
+      if ((typeof contact.ID !== 'undefined' && typeof this.state.contact.ID === 'undefined')
+        || contact.ID === this.state.contact.ID
+        || (contact.oldID && contact.oldID === this.state.contact.ID)) {
+        this.onRefreshCommentsActivities(contact.ID);
+        toastSuccess.show(
+          <View>
+            <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
+          </View>,
+          3000,
+        );
+        this.onDisableEdit();
+        this.props.endSaveContact();
+      }
     }
 
     // ERROR
@@ -1961,7 +2001,7 @@ class ContactDetailScreen extends React.Component {
                                     const lastItemIndex = this.state.contact.subassigned.values.length - 1;
                                     const contactName = this.state.usersContacts.find(user => user.value === contact.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${contactName}.`;
+                                      return `${contactName}`;
                                     }
                                     return `${contactName}, `;
                                   }) : ''}
@@ -1987,7 +2027,7 @@ class ContactDetailScreen extends React.Component {
                                   {this.state.contact.contact_phone ? this.state.contact.contact_phone.filter(phone => !phone.delete).map((phone, index) => {
                                     const lastItemIndex = this.state.contact.contact_phone.length - 1;
                                     if (lastItemIndex === index) {
-                                      return `${phone.value}.`;
+                                      return `${phone.value}`;
                                     }
                                     return `${phone.value}, `;
                                   }) : ''}
@@ -2011,7 +2051,7 @@ class ContactDetailScreen extends React.Component {
                                   {this.state.contact.contact_email ? this.state.contact.contact_email.filter(email => !email.delete).map((email, index) => {
                                     const lastItemIndex = this.state.contact.contact_email.length - 1;
                                     if (lastItemIndex === index) {
-                                      return `${email.value}.`;
+                                      return `${email.value}`;
                                     }
                                     return `${email.value}, `;
                                   }) : ''}
@@ -2051,7 +2091,7 @@ class ContactDetailScreen extends React.Component {
                                   {this.state.contact.contact_address ? this.state.contact.contact_address.filter(address => !address.delete).map((address, index) => {
                                     const lastItemIndex = this.state.contact.contact_address.length - 1;
                                     if (lastItemIndex === index) {
-                                      return `${address.value}.`;
+                                      return `${address.value}`;
                                     }
                                     return `${address.value}, `;
                                   }) : ''}
@@ -2076,7 +2116,7 @@ class ContactDetailScreen extends React.Component {
                                     const lastItemIndex = this.state.contact.location_grid.values.length - 1;
                                     const locationName = this.state.geonames.find(geoname => geoname.value === location.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${locationName}.`;
+                                      return `${locationName}`;
                                     }
                                     return `${locationName}, `;
                                   }) : ''}
@@ -2103,7 +2143,7 @@ class ContactDetailScreen extends React.Component {
                                     const lastItemIndex = this.state.contact.people_groups.values.length - 1;
                                     const peopleGroupName = this.state.peopleGroups.find(person => person.value === peopleGroup.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${peopleGroupName}.`;
+                                      return `${peopleGroupName}`;
                                     }
                                     return `${peopleGroupName}, `;
                                   }) : ''}
@@ -2162,7 +2202,7 @@ class ContactDetailScreen extends React.Component {
                                     const lastItemIndex = this.state.contact.sources.values.length - 1;
                                     const sourceName = this.props.contactSettings.sources.values[source.value].label;
                                     if (lastItemIndex === index) {
-                                      return `${sourceName}.`;
+                                      return `${sourceName}`;
                                     }
                                     return `${sourceName}, `;
                                   }) : ''}
@@ -2427,7 +2467,7 @@ class ContactDetailScreen extends React.Component {
                                     const lastItemIndex = this.state.contact.groups.values.length - 1;
                                     const groupName = this.state.groups.find(groupItem => groupItem.value === group.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${groupName}.`;
+                                      return `${groupName}`;
                                     }
                                     return `${groupName}, `;
                                   }) : ''}
@@ -2454,7 +2494,7 @@ class ContactDetailScreen extends React.Component {
                                     const lastItemIndex = this.state.contact.relation.values.length - 1;
                                     const contactName = this.state.usersContacts.find(user => user.value === relation.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${contactName}.`;
+                                      return `${contactName}`;
                                     }
                                     return `${contactName}, `;
                                   }) : ''}
@@ -2481,7 +2521,7 @@ class ContactDetailScreen extends React.Component {
                                     const lastItemIndex = this.state.contact.baptized_by.values.length - 1;
                                     const contactName = this.state.usersContacts.find(user => user.value === baptizedBy.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${contactName}.`;
+                                      return `${contactName}`;
                                     }
                                     return `${contactName}, `;
                                   }) : ''}
@@ -2508,7 +2548,7 @@ class ContactDetailScreen extends React.Component {
                                     const lastItemIndex = this.state.contact.baptized.values.length - 1;
                                     const contactName = this.state.usersContacts.find(user => user.value === baptized.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${contactName}.`;
+                                      return `${contactName}`;
                                     }
                                     return `${contactName}, `;
                                   }) : ''}
@@ -2535,7 +2575,7 @@ class ContactDetailScreen extends React.Component {
                                     const lastItemIndex = this.state.contact.coached_by.values.length - 1;
                                     const contactName = this.state.usersContacts.find(user => user.value === coachedBy.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${contactName}.`;
+                                      return `${contactName}`;
                                     }
                                     return `${contactName}, `;
                                   }) : ''}
@@ -2562,7 +2602,7 @@ class ContactDetailScreen extends React.Component {
                                     const lastItemIndex = this.state.contact.coaching.values.length - 1;
                                     const contactName = this.state.usersContacts.find(user => user.value === coaching.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${contactName}.`;
+                                      return `${contactName}`;
                                     }
                                     return `${contactName}, `;
                                   }) : ''}
@@ -4288,6 +4328,7 @@ ContactDetailScreen.propTypes = {
     ID: PropTypes.any,
     title: PropTypes.string,
     seeker_path: PropTypes.string,
+    oldID: PropTypes.string,
   }),
   userReducerError: PropTypes.shape({
     code: PropTypes.any,

@@ -92,10 +92,8 @@ export function* saveGroup({ domain, token, groupData }) {
 
   try {
     let response = yield take(actions.GROUPS_SAVE_RESPONSE);
-
     response = response.payload;
     let jsonData = response.data;
-
     if (isConnected) {
       if (response.status === 200) {
         yield put({

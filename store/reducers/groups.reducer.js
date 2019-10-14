@@ -246,7 +246,6 @@ export default function groupsReducer(state = initialState, action) {
       };
     case actions.GROUPS_SAVE_SUCCESS: {
       const { group, offline } = action;
-
       let mappedGroup = {};
       if (offline) {
         mappedGroup = {
@@ -351,28 +350,86 @@ export default function groupsReducer(state = initialState, action) {
       }
 
       const oldId = (mappedGroup.oldID) ? mappedGroup.oldID : null;
-      if (oldId) {
-        delete mappedGroup.oldID;
-      }
 
       newState = {
         ...newState,
         group: mappedGroup,
         saved: true,
       };
-
       const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID.toString() === group.ID.toString()));
       // Search entity in list (groups) if exists: updated it, otherwise: added it to group list
       if (groupIndex > -1) {
-        let newGroupData = {
-          ...newState.groups[groupIndex],
-        };
+        let newGroupData;
         /* eslint-disable */
-        if (isNaN(group.ID)) {
+        if (offline && !isNaN(group.ID)) {
           /* eslint-enable */
-          // Merge all data of OFFLINE entity
+          // Editing D.B. entity in OFFLINE mode
           newGroupData = {
-            ...newGroupData,
+            ...newState.groups[groupIndex],
+          };
+          // Apply modifications from request (mappedGroup) in newGroupData
+          Object.keys(mappedGroup).forEach((key) => {
+            const value = mappedGroup[key];
+            const valueType = Object.prototype.toString.call(value);
+            if (valueType === '[object Array]' || Object.prototype.hasOwnProperty.call(value, 'values')) {
+              let collection; let
+                oldCollection;
+              if (valueType === '[object Array]') {
+                collection = value;
+                oldCollection = (newGroupData[key]) ? [...newGroupData[key]] : [];
+              } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                collection = value.values;
+                oldCollection = (newGroupData[key]) ? [...newGroupData[key].values] : [];
+              }
+              // compare newCollection with old and merge differences.
+              collection.forEach((object) => {
+                // search object in newGroupData
+                let findObjectInOldRequestIndex;
+                if (valueType === '[object Array]') {
+                  findObjectInOldRequestIndex = oldCollection.findIndex(oldObject => (oldObject.key === object.key));
+                } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                  findObjectInOldRequestIndex = oldCollection.findIndex(oldObject => (oldObject.value === object.value));
+                }
+                if (findObjectInOldRequestIndex > -1) {
+                  // if exist
+                  if (Object.prototype.hasOwnProperty.call(object, 'delete')) {
+                    oldCollection.splice(findObjectInOldRequestIndex, 1);
+                  } else {
+                    // update the object
+                    oldCollection[findObjectInOldRequestIndex] = {
+                      ...object,
+                    };
+                  }
+                } else {
+                  // add the object
+                  oldCollection.push({
+                    ...object,
+                  });
+                }
+              });
+              if (valueType === '[object Array]') {
+                newGroupData = {
+                  ...newGroupData,
+                  [key]: oldCollection,
+                };
+              } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                newGroupData = {
+                  ...newGroupData,
+                  [key]: {
+                    values: oldCollection,
+                  },
+                };
+              }
+            } else {
+              newGroupData = {
+                ...newGroupData,
+                [key]: value,
+              };
+            }
+          });
+        } else {
+          newGroupData = {
+            ...newState.groups[groupIndex],
             ...newState.group,
           };
         }
@@ -391,14 +448,16 @@ export default function groupsReducer(state = initialState, action) {
       } else if (oldId) {
         // Search entity with oldID, remove it and add updated entity
         const oldGroupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === oldId));
-        const previousGroupData = newState.groups[oldGroupIndex];
+        const previousGroupData = {
+          ...newState.groups[oldGroupIndex],
+        };
         const newGroupData = {
           ...previousGroupData,
           ...newState.group,
         };
         newState.groups.splice(oldGroupIndex, 1).unshift(newGroupData);
         if (offline) {
-          // Return all contact data in response
+          // Return all group data in response
           newState = {
             ...newState,
             group: {
@@ -412,7 +471,9 @@ export default function groupsReducer(state = initialState, action) {
           ...newState.group,
         });
       }
-      return newState;
+      return {
+        ...newState,
+      };
     }
     case actions.GROUPS_SAVE_FAILURE:
       return {
@@ -425,15 +486,18 @@ export default function groupsReducer(state = initialState, action) {
         loading: true,
       };
     case actions.GROUPS_GETBYID_SUCCESS: {
-      let { group } = action;
-
+      let group = { ...action.group };
       /* eslint-disable */
       if (isNaN(group.ID) || group.isOffline) {
         /* eslint-enable */
         // Search local group
-        group = newState.groups.find(groupItem => (groupItem.ID === group.ID));
+        const foundGroup = newState.groups.find(groupItem => (groupItem.ID.toString() === group.ID));
+        group = {
+          ...foundGroup,
+        };
       } else {
         const mappedGroup = {};
+        // MAP GROUP TO CAN SAVE IT LATER
         Object.keys(group).forEach((key) => {
           // Omit restricted properties
           if (key !== 'last_modified' && key !== 'created_from_contact_id' && key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'baptized_member_count') {
@@ -530,7 +594,7 @@ export default function groupsReducer(state = initialState, action) {
           }
         });
         group = mappedGroup;
-        // Update localContact with dbContact
+        // Update localGroup with dbGroup
         const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === group.ID));
         if (groupIndex > -1) {
           newState.groups[groupIndex] = {
@@ -543,7 +607,6 @@ export default function groupsReducer(state = initialState, action) {
         group,
         loading: false,
       };
-
       return newState;
     }
     case actions.GROUPS_GETBYID_FAILURE:

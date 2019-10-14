@@ -49,9 +49,7 @@ class GroupsScreen extends React.Component {
   };
 
   componentDidMount() {
-    if (this.props.isConnected) {
-      this.onRefresh();
-    }
+    this.onRefresh();
   }
 
   componentDidUpdate(prevProps) {
@@ -201,7 +199,6 @@ GroupsScreen.propTypes = {
     code: PropTypes.any,
     message: PropTypes.string,
   }),
-  isConnected: PropTypes.bool,
   loading: PropTypes.bool,
   groupSettings: PropTypes.shape({
     group_status: PropTypes.shape({
@@ -214,7 +211,6 @@ GroupsScreen.propTypes = {
 };
 GroupsScreen.defaultProps = {
   error: null,
-  isConnected: null,
   loading: false,
   groupSettings: null,
 };
@@ -224,7 +220,6 @@ const mapStateToProps = state => ({
   groups: state.groupsReducer.groups,
   loading: state.groupsReducer.loading,
   error: state.groupsReducer.error,
-  isConnected: state.networkConnectivityReducer.isConnected,
   groupSettings: state.groupsReducer.settings,
 });
 const mapDispatchToProps = dispatch => ({

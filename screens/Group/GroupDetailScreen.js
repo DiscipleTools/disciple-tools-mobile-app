@@ -587,6 +587,8 @@ class GroupDetailScreen extends React.Component {
       activities: activities || prevState.activities,
       totalActivities: totalActivities || prevState.totalActivities,
       loadActivities: loadingActivities,
+      group: prevState.group,
+      unmodifiedGroup: prevState.unmodifiedGroup,
     };
 
     // NEW COMMENT
@@ -598,22 +600,34 @@ class GroupDetailScreen extends React.Component {
       };
     }
 
-    // GET BY ID
+    // SAVE / GET BY ID
     if (group) {
-      newState = {
-        ...newState,
-        group: {
-          ...group,
-          group_status: (group.group_status) ? group.group_status : 'active',
-        },
-        unmodifiedGroup: {
-          ...group,
-        },
-      };
-      newState = {
-        ...newState,
-        groupStatusBackgroundColor: getStatusSelectorColor(newState.group.group_status),
-      };
+      // Update group data only in these conditions:
+      // Same group created (offline/online)
+      // Same group updated (offline/online)
+      // Same offline group created in DB (AutoID to DBID)
+      if ((typeof group.ID !== 'undefined' && typeof prevState.group.ID === 'undefined')
+        || (group.ID.toString() === prevState.group.ID.toString())
+        || (group.oldID && group.oldID.toString() === prevState.group.ID.toString())) {
+        newState = {
+          ...newState,
+          group: {
+            ...group,
+          },
+          unmodifiedGroup: {
+            ...group,
+          },
+        };
+        if (newState.group.oldID) {
+          delete newState.group.oldID;
+        }
+        if (newState.group.group_status) {
+          newState = {
+            ...newState,
+            groupStatusBackgroundColor: getStatusSelectorColor(newState.group.group_status),
+          };
+        }
+      }
     }
 
     // GET COMMENTS
@@ -666,21 +680,38 @@ class GroupDetailScreen extends React.Component {
 
     // GROUP SAVE / GET BY ID
     if (group && prevProps.group !== group) {
-      // Highlight Updates -> Compare prevState.contact with contact and show differences
-      navigation.setParams({ groupName: group.title });
-      this.getGroupByIdEnd();
+      // Update group data only in these conditions:
+      // Same group created (offline/online)
+      // Same group updated (offline/online)
+      // Sane offline group created in DB (AutoID to DBID)
+      if ((typeof group.ID !== 'undefined' && typeof this.state.group.ID === 'undefined')
+        || (group.ID.toString() === this.state.group.ID.toString())
+        || (group.oldID && group.oldID.toString() === this.state.group.ID.toString())) {
+        // Highlight Updates -> Compare this.state.group with group and show differences
+        navigation.setParams({ groupName: group.title });
+        this.getGroupByIdEnd();
+      }
     }
 
     // GROUP SAVE
     if (saved && prevProps.saved !== saved) {
-      this.onRefreshCommentsActivities(group.ID);
-      toastSuccess.show(
-        <View>
-          <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
-        </View>,
-        3000,
-      );
-      this.onDisableEdit();
+      // Update group data only in these conditions:
+      // Same group created (offline/online)
+      // Same group updated (offline/online)
+      // Sane offline group created in DB (AutoID to DBID)
+      if ((typeof group.ID !== 'undefined' && typeof this.state.group.ID === 'undefined')
+        || (group.ID.toString() === this.state.group.ID.toString())
+        || (group.oldID && group.oldID.toString() === this.state.group.ID.toString())) {
+        // Highlight Updates -> Compare this.state.contact with contact and show differences
+        this.onRefreshCommentsActivities(group.ID);
+        toastSuccess.show(
+          <View>
+            <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
+          </View>,
+          3000,
+        );
+        this.onDisableEdit();
+      }
     }
 
     // ERROR
@@ -703,7 +734,6 @@ class GroupDetailScreen extends React.Component {
 
   onLoad() {
     const { navigation } = this.props;
-    /* eslint-disable */
     const { groupId, onlyView, groupName } = navigation.state.params;
     let newState = {};
     if (groupId) {
@@ -711,6 +741,9 @@ class GroupDetailScreen extends React.Component {
         group: {
           ...this.state.group,
           ID: groupId,
+          title: groupName,
+          group_type: 'group',
+          group_status: 'active',
         },
       };
       navigation.setParams({ groupName });
@@ -719,7 +752,7 @@ class GroupDetailScreen extends React.Component {
         group: {
           title: null,
           group_type: 'group',
-          group_status: 'active'
+          group_status: 'active',
         },
       };
     }
@@ -727,14 +760,13 @@ class GroupDetailScreen extends React.Component {
       newState = {
         ...newState,
         onlyView,
-      }
+      };
     }
     this.setState({
       ...newState,
     }, () => {
       this.getLists((groupId) || null);
     });
-    /* eslint-enable */
   }
 
   onBackFromSameScreen(previousData) {
@@ -871,6 +903,7 @@ class GroupDetailScreen extends React.Component {
       group: {
         ...unmodifiedGroup,
       },
+      groupStatusBackgroundColor: getStatusSelectorColor(unmodifiedGroup.group_status),
     }, () => {
       this.setCurrentTabIndex(currentTabIndex);
     });
@@ -1970,7 +2003,7 @@ class GroupDetailScreen extends React.Component {
                                     const lastItemIndex = this.state.group.coaches.values.length - 1;
                                     const coachName = this.state.usersContacts.find(user => user.value === coach.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${coachName}.`;
+                                      return `${coachName}`;
                                     }
                                     return `${coachName}, `;
                                   }) : ''}
@@ -1997,7 +2030,7 @@ class GroupDetailScreen extends React.Component {
                                     const lastItemIndex = this.state.group.location_grid.values.length - 1;
                                     const locationName = this.state.geonames.find(geoname => geoname.value === location.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${locationName}.`;
+                                      return `${locationName}`;
                                     }
                                     return `${locationName}, `;
                                   }) : ''}
@@ -2024,7 +2057,7 @@ class GroupDetailScreen extends React.Component {
                                     const lastItemIndex = this.state.group.people_groups.values.length - 1;
                                     const peopleGroupName = this.state.peopleGroups.find(person => person.value === peopleGroup.value).name;
                                     if (lastItemIndex === index) {
-                                      return `${peopleGroupName}.`;
+                                      return `${peopleGroupName}`;
                                     }
                                     return `${peopleGroupName}, `;
                                   }) : ''}
@@ -2050,7 +2083,7 @@ class GroupDetailScreen extends React.Component {
                                   {(this.state.group.contact_address) ? this.state.group.contact_address.map((address, index) => {
                                     const lastItemIndex = this.state.group.contact_address.length - 1;
                                     if (lastItemIndex === index) {
-                                      return `${address.value}.`;
+                                      return `${address.value}`;
                                     }
                                     return `${address.value}, `;
                                   }) : ''}
@@ -2483,7 +2516,7 @@ class GroupDetailScreen extends React.Component {
                                 >
                                   {this.props.groupSettings.group_status.name}
                                 </Label>
-                                <Row>
+                                <Row style={{ paddingBottom: 30 }}>
                                   <Col>
                                     <Picker
                                       selectedValue={
@@ -2508,6 +2541,48 @@ class GroupDetailScreen extends React.Component {
                                         );
                                       })}
                                     </Picker>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('groupDetailScreen.groupName')}
+                                    </Label>
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
+                                        type="FontAwesome"
+                                        name="user"
+                                        style={[styles.formIcon, { opacity: 0 }]}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Input
+                                      value={this.state.group.title}
+                                      onChangeText={this.setGroupTitle}
+                                      style={{
+                                        borderBottomWidth: 1,
+                                        borderStyle: 'solid',
+                                        borderBottomColor: '#D9D5DC',
+                                        fontSize: 15,
+                                        height: 10,
+                                      }}
+                                    />
                                   </Col>
                                 </Row>
                                 <TouchableOpacity
@@ -3339,6 +3414,7 @@ GroupDetailScreen.propTypes = {
   group: PropTypes.shape({
     ID: PropTypes.any,
     title: PropTypes.string,
+    oldID: PropTypes.string,
   }),
   userReducerError: PropTypes.shape({
     code: PropTypes.any,
@@ -3359,6 +3435,13 @@ GroupDetailScreen.propTypes = {
     getParam: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     setParams: PropTypes.func.isRequired,
+    state: PropTypes.shape({
+      params: PropTypes.shape({
+        onlyView: PropTypes.any,
+        groupId: PropTypes.any,
+        groupName: PropTypes.string,
+      }),
+    }),
   }).isRequired,
   getById: PropTypes.func.isRequired,
   saveGroup: PropTypes.func.isRequired,
