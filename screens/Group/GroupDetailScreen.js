@@ -748,6 +748,7 @@ class GroupDetailScreen extends React.Component {
       };
       navigation.setParams({ groupName });
     } else {
+      this.props.navigation.setParams({ hideTabBar: true });
       newState = {
         group: {
           title: null,
@@ -907,7 +908,7 @@ class GroupDetailScreen extends React.Component {
     }, () => {
       this.setCurrentTabIndex(currentTabIndex);
     });
-    this.props.navigation.setParams({ hideTabBar: true });
+    this.props.navigation.setParams({ hideTabBar: false });
   }
 
   setGroupTitle = (value) => {

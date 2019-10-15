@@ -425,7 +425,6 @@ class ContactDetailScreen extends React.Component {
   componentDidMount() {
     const { navigation } = this.props;
     const { onlyView, contactId, contactName } = navigation.state.params;
-    this.props.navigation.setParams({ hideTabBar: true });
     let newState = {};
     if (contactId) {
       newState = {
@@ -443,6 +442,7 @@ class ContactDetailScreen extends React.Component {
       };
       navigation.setParams({ contactName });
     } else {
+      this.props.navigation.setParams({ hideTabBar: true });
       newState = {
         contact: {
           title: null,
@@ -784,7 +784,7 @@ class ContactDetailScreen extends React.Component {
     }, () => {
       this.setCurrentTabIndex(currentTabIndex);
     });
-    this.props.navigation.setParams({ hideTabBar: true });
+    this.props.navigation.setParams({ hideTabBar: false });
   }
 
   setContactTitle = (value) => {
