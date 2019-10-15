@@ -7,7 +7,7 @@ export default function* networkConnectivitySaga() {
 
   while (true) {
     yield take(onlineChannel);
-    const queue = yield select(state => state.requestReducer.queue);
+    let queue = yield select(state => state.requestReducer.queue);
     for (const action of queue) {
       let actionMapped = {
         ...action,
@@ -19,7 +19,6 @@ export default function* networkConnectivitySaga() {
           ...actionMapped,
           isConnected: true,
         };
-
         yield put({
           type: 'REQUEST',
           payload: actionMapped,
@@ -36,11 +35,23 @@ export default function* networkConnectivitySaga() {
             };
           }
           if (response.status === 200) {
-            const entityName = action.action.substr(0, action.action.indexOf('_') - 1).toLowerCase();
-            yield put({
-              type: actionMapped.action.replace('RESPONSE', 'SUCCESS'),
-              [entityName]: jsonData,
-            });
+            if (jsonData.oldID) {
+              const entityListName = action.action.substr(0, action.action.indexOf('_')).toLowerCase();
+              // Map comments requests of entity, update oldID to ID in URL
+              queue = queue.map((request) => {
+                if (request.url.includes(`${entityListName}/${jsonData.oldID}/comments`)) {
+                  request.url = request.url.replace(jsonData.oldID, jsonData.ID);
+                }
+                return request;
+              });
+            }
+            if (!actionMapped.url.includes('/comments')) {
+              const entityName = action.action.substr(0, action.action.indexOf('_') - 1).toLowerCase();
+              yield put({
+                type: actionMapped.action.replace('RESPONSE', 'SUCCESS'),
+                [entityName]: jsonData,
+              });
+            }
           } else {
             yield put({
               type: actionMapped.action.replace('RESPONSE', 'FAILURE'),

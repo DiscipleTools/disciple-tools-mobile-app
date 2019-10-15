@@ -789,8 +789,8 @@ class GroupDetailScreen extends React.Component {
       commentsOffset: 0,
       activitiesOffset: 0,
     }, () => {
+      this.getGroupComments(groupId);
       if (this.props.isConnected) {
-        this.getGroupComments(groupId);
         this.getGroupActivities(groupId);
       }
     });

@@ -620,19 +620,50 @@ export default function groupsReducer(state = initialState, action) {
         ...newState,
         loadingComments: true,
       };
-    case actions.GROUPS_GET_COMMENTS_SUCCESS:
+    case actions.GROUPS_GET_COMMENTS_SUCCESS: {
+      const { comments, total, offline } = action;
+      if (offline) {
+        const date = new Date();
+        const year = date.getUTCFullYear();
+        let day = date.getUTCDate();
+        let month = (date.getUTCMonth() + 1);
+        if (day < 10) day = `0${day}`;
+        if (month < 10) month = `0${month}`;
+        const curDay = `${year}-${month}-${day}`;
+        let hours = date.getUTCHours();
+        let minutes = date.getUTCMinutes();
+        let seconds = date.getUTCSeconds();
+        if (hours < 10) hours = `0${hours}`;
+        if (minutes < 10) minutes = `0${minutes}`;
+        if (seconds < 10) seconds = `0${seconds}`;
+        const currentDate = `${curDay}T${hours}:${minutes}:${seconds}Z`;
+        return {
+          ...newState,
+          comments: comments.map(comment => ({
+            ID: comment.ID,
+            author: comment.author,
+            date: currentDate,
+            content: comment.comment,
+            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
+            contactId: comment.contactId,
+          })),
+          totalComments: total,
+          loadingComments: false,
+        };
+      }
       return {
         ...newState,
-        comments: action.comments.map(comment => ({
+        comments: comments.map(comment => ({
           ID: comment.comment_ID,
           date: `${comment.comment_date.replace(' ', 'T')}Z`,
           author: comment.comment_author,
           content: comment.comment_content,
           gravatar: comment.gravatar,
         })),
-        totalComments: action.total,
+        totalComments: total,
         loadingComments: false,
       };
+    }
     case actions.GROUPS_GET_COMMENTS_FAILURE:
       return {
         ...newState,
@@ -645,18 +676,48 @@ export default function groupsReducer(state = initialState, action) {
         loadingComments: true,
       };
     case actions.GROUPS_SAVE_COMMENT_SUCCESS: {
-      const { comment } = action;
-      return {
-        ...newState,
-        newComment: {
-          ID: comment.comment_ID,
-          author: comment.comment_author,
-          date: `${comment.comment_date.replace(' ', 'T')}Z`,
-          content: comment.comment_content,
-          gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
-        },
-        loadingComments: false,
-      };
+      const { comment, offline } = action;
+      if (offline) {
+        const date = new Date();
+        const year = date.getUTCFullYear();
+        let day = date.getUTCDate();
+        let month = (date.getUTCMonth() + 1);
+        if (day < 10) day = `0${day}`;
+        if (month < 10) month = `0${month}`;
+        const curDay = `${year}-${month}-${day}`;
+        let hours = date.getUTCHours();
+        let minutes = date.getUTCMinutes();
+        let seconds = date.getUTCSeconds();
+        if (hours < 10) hours = `0${hours}`;
+        if (minutes < 10) minutes = `0${minutes}`;
+        if (seconds < 10) seconds = `0${seconds}`;
+        const currentDate = `${curDay}T${hours}:${minutes}:${seconds}Z`;
+        newState = {
+          ...newState,
+          newComment: {
+            ID: comment.ID,
+            author: comment.author,
+            date: currentDate,
+            content: comment.comment,
+            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
+            contactID: comment.contactID,
+          },
+          loadingComments: false,
+        };
+      } else {
+        newState = {
+          ...newState,
+          newComment: {
+            ID: comment.comment_ID,
+            author: comment.comment_author,
+            date: `${comment.comment_date.replace(' ', 'T')}Z`,
+            content: comment.comment_content,
+            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
+          },
+          loadingComments: false,
+        };
+      }
+      return newState;
     }
     case actions.GROUPS_SAVE_COMMENT_FAILURE:
       return {

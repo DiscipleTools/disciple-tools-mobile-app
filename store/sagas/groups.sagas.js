@@ -233,41 +233,64 @@ export function* getUsersAndContacts({ domain, token }) {
 export function* getCommentsByGroup({
   domain, token, groupId, offset, limit,
 }) {
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
   yield put({ type: actions.GROUPS_GET_COMMENTS_START });
 
-  yield put({
-    type: 'REQUEST',
-    payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments?number=${limit}&offset=${offset}`,
-      data: {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      },
-      action: actions.GROUPS_GET_COMMENTS_RESPONSE,
-    },
-  });
-
   try {
-    let response = yield take(actions.GROUPS_GET_COMMENTS_RESPONSE);
-    response = response.payload;
-    const jsonData = response.data;
-    if (response.status === 200) {
+    /* eslint-disable */
+    if (!isConnected || isNaN(groupId)) {
+      /* eslint-enable */
+      let queue = yield select(state => state.requestReducer.queue);
+      const authorName = yield select(state => state.userReducer.userData.username);
+      queue = queue.filter(requestQueue => (requestQueue.data.method === 'POST'
+        && requestQueue.action === 'GROUPS_SAVE_COMMENT_RESPONSE'
+        && requestQueue.url.includes(`groups/${groupId}/comments`)));
       yield put({
         type: actions.GROUPS_GET_COMMENTS_SUCCESS,
-        comments: jsonData.comments,
-        total: jsonData.total,
+        comments: queue.map((request) => {
+          const requestBody = JSON.parse(request.data.body);
+          return {
+            ...requestBody,
+            author: authorName,
+            groupId,
+          };
+        }),
+        total: queue.length,
+        offline: true,
       });
     } else {
       yield put({
-        type: actions.GROUPS_GET_COMMENTS_FAILURE,
-        error: {
-          code: jsonData.code,
-          message: jsonData.message,
+        type: 'REQUEST',
+        payload: {
+          url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments?number=${limit}&offset=${offset}`,
+          data: {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          },
+          action: actions.GROUPS_GET_COMMENTS_RESPONSE,
         },
       });
+      let response = yield take(actions.GROUPS_GET_COMMENTS_RESPONSE);
+      response = response.payload;
+      const jsonData = response.data;
+      if (response.status === 200) {
+        yield put({
+          type: actions.GROUPS_GET_COMMENTS_SUCCESS,
+          comments: jsonData.comments,
+          total: jsonData.total,
+        });
+      } else {
+        yield put({
+          type: actions.GROUPS_GET_COMMENTS_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
+      }
     }
   } catch (error) {
     yield put({
@@ -283,6 +306,8 @@ export function* getCommentsByGroup({
 export function* saveComment({
   domain, token, groupId, commentData,
 }) {
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+
   yield put({ type: actions.GROUPS_SAVE_COMMENT_START });
 
   yield put({
@@ -297,6 +322,7 @@ export function* saveComment({
         },
         body: JSON.stringify(commentData),
       },
+      isConnected,
       action: actions.GROUPS_SAVE_COMMENT_RESPONSE,
     },
   });
@@ -304,19 +330,33 @@ export function* saveComment({
   try {
     let response = yield take(actions.GROUPS_SAVE_COMMENT_RESPONSE);
     response = response.payload;
-    const jsonData = response.data;
-    if (response.status === 200) {
+    let jsonData = response.data;
+    if (isConnected) {
+      if (response.status === 200) {
+        yield put({
+          type: actions.GROUPS_SAVE_COMMENT_SUCCESS,
+          comment: jsonData,
+        });
+      } else {
+        yield put({
+          type: actions.GROUPS_SAVE_COMMENT_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
+      }
+    } else {
+      const authorName = yield select(state => state.userReducer.userData.username);
+      jsonData = {
+        ...response,
+        author: authorName,
+        groupId,
+      };
       yield put({
         type: actions.GROUPS_SAVE_COMMENT_SUCCESS,
         comment: jsonData,
-      });
-    } else {
-      yield put({
-        type: actions.GROUPS_SAVE_COMMENT_FAILURE,
-        error: {
-          code: jsonData.code,
-          message: jsonData.message,
-        },
+        offline: true,
       });
     }
   } catch (error) {

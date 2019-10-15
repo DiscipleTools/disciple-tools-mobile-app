@@ -502,7 +502,6 @@ class ContactDetailScreen extends React.Component {
         comments: newState.comments,
       };
     }
-
     // SAVE / GET BY ID
     if (contact) {
       // Update contact data only in these conditions:
@@ -510,8 +509,8 @@ class ContactDetailScreen extends React.Component {
       // Same contact updated (offline/online)
       // Same offline contact created in DB (AutoID to DBID)
       if ((typeof contact.ID !== 'undefined' && typeof prevState.contact.ID === 'undefined')
-        || contact.ID === prevState.contact.ID
-        || (contact.oldID && contact.oldID === prevState.contact.ID)) {
+        || contact.ID.toString() === prevState.contact.ID.toString()
+        || (contact.oldID && contact.oldID === prevState.contact.ID.toString())) {
         newState = {
           ...newState,
           contact: {
@@ -528,6 +527,12 @@ class ContactDetailScreen extends React.Component {
           newState = {
             ...newState,
             overallStatusBackgroundColor: getOverallStatusSelectorColor(newState.contact.overall_status),
+          };
+        }
+        if (prevState.contact.initial_comment) {
+          newState = {
+            ...newState,
+            comment: prevState.contact.initial_comment,
           };
         }
       }
@@ -577,7 +582,10 @@ class ContactDetailScreen extends React.Component {
 
     // NEW COMMENT
     if (newComment && prevProps.newComment !== newComment) {
-      commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
+      // Only do scroll when element its rendered
+      if (commentsFlatList) {
+        commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
+      }
       this.setComment('');
     }
 
@@ -586,14 +594,18 @@ class ContactDetailScreen extends React.Component {
       // Update contact data only in these conditions:
       // Same contact created (offline/online)
       // Same contact updated (offline/online)
-      // Sane offline contact created in DB (AutoID to DBID)
+      // Same offline contact created in DB (AutoID to DBID)
       if ((typeof contact.ID !== 'undefined' && typeof this.state.contact.ID === 'undefined')
-        || contact.ID === this.state.contact.ID
-        || (contact.oldID && contact.oldID === this.state.contact.ID)) {
+        || contact.ID.toString() === this.state.contact.ID.toString()
+        || (contact.oldID && contact.oldID === this.state.contact.ID.toString())) {
         // Highlight Updates -> Compare this.state.contact with contact and show differences
         navigation.setParams({ contactName: contact.title });
         if (contact.seeker_path) {
           this.setContactSeekerPath(contact.seeker_path);
+        }
+        if (this.state.comment
+          && this.state.comment.length > 0) {
+          this.onSaveComment();
         }
         this.getContactByIdEnd();
       }
@@ -604,10 +616,10 @@ class ContactDetailScreen extends React.Component {
       // Update contact data only in these conditions:
       // Same contact created (offline/online)
       // Same contact updated (offline/online)
-      // Sane offline contact created in DB (AutoID to DBID)
+      // Same offline contact created in DB (AutoID to DBID)
       if ((typeof contact.ID !== 'undefined' && typeof this.state.contact.ID === 'undefined')
-        || contact.ID === this.state.contact.ID
-        || (contact.oldID && contact.oldID === this.state.contact.ID)) {
+        || contact.ID.toString() === this.state.contact.ID.toString()
+        || (contact.oldID && contact.oldID === this.state.contact.ID.toString())) {
         this.onRefreshCommentsActivities(contact.ID);
         toastSuccess.show(
           <View>
@@ -650,8 +662,8 @@ class ContactDetailScreen extends React.Component {
       commentsOffset: 0,
       activitiesOffset: 0,
     }, () => {
+      this.getContactComments(contactId);
       if (this.props.isConnected) {
-        this.getContactComments(contactId);
         this.getContactActivities(contactId);
       }
     });

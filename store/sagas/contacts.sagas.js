@@ -77,9 +77,7 @@ export function* save({ domain, token, contactData }) {
   yield put({ type: actions.CONTACTS_SAVE_START });
 
   const contact = contactData;
-  let contactInitialComment;
   if (contact.initial_comment) {
-    contactInitialComment = contact.initial_comment;
     delete contact.initial_comment;
   }
   let contactId = '';
@@ -111,61 +109,18 @@ export function* save({ domain, token, contactData }) {
     let jsonData = response.data;
     if (isConnected) {
       if (response.status === 200) {
-        if (contactInitialComment) {
-          yield put({ type: actions.CONTACTS_SAVE_COMMENT_START });
-          yield put({
-            type: 'REQUEST',
-            payload: {
-              url: `https://${domain}/wp-json/dt-posts/v2/contacts/${jsonData.ID}/comments`,
-              data: {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                  comment: `${contactInitialComment}`,
-                }),
-              },
-              action: actions.CONTACTS_SAVE_COMMENT_RESPONSE,
-            },
-          });
-          response = yield take(actions.CONTACTS_SAVE_COMMENT_RESPONSE);
-          response = response.payload;
-          const jsonDataComment = response.data;
-          if (response.status !== 200) {
-            if (isConnected) {
-              Sentry.captureException({
-                type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
-                error: {
-                  code: jsonDataComment.code,
-                  message: jsonDataComment.message,
-                },
-              });
-            }
-            yield put({
-              type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
-              error: {
-                code: jsonDataComment.code,
-                message: jsonDataComment.message,
-              },
-            });
-          }
-        }
         yield put({
           type: actions.CONTACTS_SAVE_SUCCESS,
           contact: jsonData,
         });
       } else {
-        if (isConnected) {
-          Sentry.captureException({
-            type: actions.CONTACTS_SAVE_FAILURE,
-            error: {
-              code: jsonData.code,
-              message: jsonData.message,
-            },
-          });
-        }
+        Sentry.captureException({
+          type: actions.CONTACTS_SAVE_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
         yield put({
           type: actions.CONTACTS_SAVE_FAILURE,
           error: {
@@ -265,6 +220,8 @@ export function* getById({ domain, token, contactId }) {
 export function* saveComment({
   domain, token, contactId, commentData,
 }) {
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+
   yield put({ type: actions.CONTACTS_SAVE_COMMENT_START });
 
   yield put({
@@ -279,21 +236,22 @@ export function* saveComment({
         },
         body: JSON.stringify(commentData),
       },
+      isConnected,
       action: actions.CONTACTS_SAVE_COMMENT_RESPONSE,
     },
   });
-  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+
   try {
     let response = yield take(actions.CONTACTS_SAVE_COMMENT_RESPONSE);
     response = response.payload;
-    const jsonData = response.data;
-    if (response.status === 200) {
-      yield put({
-        type: actions.CONTACTS_SAVE_COMMENT_SUCCESS,
-        comment: jsonData,
-      });
-    } else {
-      if (isConnected) {
+    let jsonData = response.data;
+    if (isConnected) {
+      if (response.status === 200) {
+        yield put({
+          type: actions.CONTACTS_SAVE_COMMENT_SUCCESS,
+          comment: jsonData,
+        });
+      } else {
         Sentry.captureException({
           type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
           error: {
@@ -301,13 +259,25 @@ export function* saveComment({
             message: jsonData.message,
           },
         });
+        yield put({
+          type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
       }
+    } else {
+      const authorName = yield select(state => state.userReducer.userData.username);
+      jsonData = {
+        ...response,
+        author: authorName,
+        contactId,
+      };
       yield put({
-        type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
-        error: {
-          code: jsonData.code,
-          message: jsonData.message,
-        },
+        type: actions.CONTACTS_SAVE_COMMENT_SUCCESS,
+        comment: jsonData,
+        offline: true,
       });
     }
   } catch (error) {
@@ -327,32 +297,45 @@ export function* saveComment({
 export function* getCommentsByContact({
   domain, token, contactId, offset, limit,
 }) {
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
   yield put({ type: actions.CONTACTS_GET_COMMENTS_START });
-  /* eslint-disable */
-  if (isNaN(contactId)) {
-    /* eslint-enable */
-    yield put({
-      type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
-      comments: [],
-      total: 0,
-    });
-  } else {
-    yield put({
-      type: 'REQUEST',
-      payload: {
-        url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments?number=${limit}&offset=${offset}`,
-        data: {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+  try {
+    /* eslint-disable */
+    if (!isConnected || isNaN(contactId)) {
+      /* eslint-enable */
+      let queue = yield select(state => state.requestReducer.queue);
+      const authorName = yield select(state => state.userReducer.userData.username);
+      queue = queue.filter(requestQueue => (requestQueue.data.method === 'POST'
+        && requestQueue.action === 'CONTACTS_SAVE_COMMENT_RESPONSE'
+        && requestQueue.url.includes(`contacts/${contactId}/comments`)));
+      yield put({
+        type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
+        comments: queue.map((request) => {
+          const requestBody = JSON.parse(request.data.body);
+          return {
+            ...requestBody,
+            author: authorName,
+            contactId,
+          };
+        }),
+        total: queue.length,
+        offline: true,
+      });
+    } else {
+      yield put({
+        type: 'REQUEST',
+        payload: {
+          url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments?number=${limit}&offset=${offset}`,
+          data: {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
           },
+          action: actions.CONTACTS_GET_COMMENTS_RESPONSE,
         },
-        action: actions.CONTACTS_GET_COMMENTS_RESPONSE,
-      },
-    });
-    const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
-    try {
+      });
       let response = yield take(actions.CONTACTS_GET_COMMENTS_RESPONSE);
       response = response.payload;
       const jsonData = response.data;
@@ -380,18 +363,18 @@ export function* getCommentsByContact({
           },
         });
       }
-    } catch (error) {
-      if (isConnected) {
-        Sentry.captureException(error);
-      }
-      yield put({
-        type: actions.CONTACTS_GET_COMMENTS_FAILURE,
-        error: {
-          code: '400',
-          message: 'Unable to process the request. Please try again later.',
-        },
-      });
     }
+  } catch (error) {
+    if (isConnected) {
+      Sentry.captureException(error);
+    }
+    yield put({
+      type: actions.CONTACTS_GET_COMMENTS_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
   }
 }
 
