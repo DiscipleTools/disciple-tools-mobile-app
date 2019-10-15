@@ -38,9 +38,10 @@ import {
   getPeopleGroups,
   searchGroups,
   getGroupSettings,
+  getAll as getAllGroups,
 } from '../store/actions/groups.actions';
 import { getUsers } from '../store/actions/users.actions';
-import { getContactSettings } from '../store/actions/contacts.actions';
+import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -135,6 +136,8 @@ class LoginScreen extends React.Component {
     searchListRetrieved: false,
     usersListRetrieved: false,
     contactSettingsListRetrieved: false,
+    contactsListRetrieved: false,
+    groupsListRetrieved: false,
   };
 
   constructor(props) {
@@ -169,6 +172,8 @@ class LoginScreen extends React.Component {
       usersReducerError,
       contactsReducerLoading,
       contactsReducerError,
+      contacts,
+      groups,
     } = nextProps;
     let newState = {
       ...prevState,
@@ -218,6 +223,18 @@ class LoginScreen extends React.Component {
         groupSettingsListRetrieved: true,
       };
     }
+    if (contacts) {
+      newState = {
+        ...newState,
+        contactsListRetrieved: true,
+      };
+    }
+    if (groups) {
+      newState = {
+        ...newState,
+        groupsListRetrieved: true,
+      };
+    }
 
     const error = (userReducerError || groupsReducerError || usersReducerError || contactsReducerError);
     if (error) {
@@ -242,6 +259,8 @@ class LoginScreen extends React.Component {
         usersListRetrieved: false,
         contactSettingsListRetrieved: false,
         groupSettingsListRetrieved: false,
+        contactsListRetrieved: false,
+        groupsListRetrieved: false,
       });
     });
     // User is authenticated (logged)
@@ -262,6 +281,8 @@ class LoginScreen extends React.Component {
             usersListRetrieved: true,
             contactSettingsListRetrieved: true,
             groupSettingsListRetrieved: true,
+            contactsListRetrieved: true,
+            groupsListRetrieved: true,
           });
         });
       }
@@ -283,6 +304,8 @@ class LoginScreen extends React.Component {
       usersListRetrieved,
       contactSettingsListRetrieved,
       groupSettingsListRetrieved,
+      groupsListRetrieved,
+      contactsListRetrieved,
     } = this.state;
     // If the RTL value in the store does not match what is
     // in I18nManager (which controls content flow), call
@@ -363,7 +386,9 @@ class LoginScreen extends React.Component {
       && searchListRetrieved
       && usersListRetrieved
       && contactSettingsListRetrieved
-      && groupSettingsListRetrieved) {
+      && groupSettingsListRetrieved
+      && groupsListRetrieved
+      && contactsListRetrieved) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
       AsyncStorage.setItem('listsLastUpdate', listsLastUpdate);
@@ -404,6 +429,8 @@ class LoginScreen extends React.Component {
     this.props.searchGroups(this.props.userData.domain, this.props.userData.token);
     this.props.getContactSettings(this.props.userData.domain, this.props.userData.token);
     this.props.getGroupSettings(this.props.userData.domain, this.props.userData.token);
+    this.props.getContacts(this.props.userData.domain, this.props.userData.token);
+    this.props.getGroups(this.props.userData.domain, this.props.userData.token);
   };
 
   onLoginPress = () => {
@@ -640,6 +667,8 @@ LoginScreen.propTypes = {
   getContactSettings: PropTypes.func.isRequired,
   getGroupSettings: PropTypes.func.isRequired,
   groupSettings: PropTypes.shape({}),
+  getContacts: PropTypes.func.isRequired,
+  getGroups: PropTypes.func.isRequired,
 };
 LoginScreen.defaultProps = {
   userData: {
@@ -676,6 +705,8 @@ const mapStateToProps = state => ({
   contactSettings: state.contactsReducer.settings,
   contactsReducerLoading: state.contactsReducer.loading,
   contactsReducerError: state.contactsReducer.error,
+  contacts: state.contactsReducer.contacts,
+  groups: state.groupsReducer.groups,
 });
 const mapDispatchToProps = dispatch => ({
   loginDispatch: (domain, username, password) => {
@@ -704,6 +735,12 @@ const mapDispatchToProps = dispatch => ({
   },
   getGroupSettings: (domain, token) => {
     dispatch(getGroupSettings(domain, token));
+  },
+  getContacts: (domain, token) => {
+    dispatch(getAllContacts(domain, token));
+  },
+  getGroups: (domain, token) => {
+    dispatch(getAllGroups(domain, token));
   },
 });
 export default connect(

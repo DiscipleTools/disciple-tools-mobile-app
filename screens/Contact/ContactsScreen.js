@@ -48,10 +48,6 @@ class ContactsScreen extends React.Component {
     refresh: false,
   }
 
-  componentDidMount() {
-    this.onRefresh();
-  }
-
   componentDidUpdate(prevProps) {
     const { error } = this.props;
     if (prevProps.error !== error && error) {
