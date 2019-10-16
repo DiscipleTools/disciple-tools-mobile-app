@@ -161,7 +161,7 @@ class HomeScreen extends React.Component {
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
           <View style={styles.welcomeContainer}>
             <Image
-              source={require('../assets/images/dt-logo2.png')}
+              source={require('../assets/images/dt-icon.png')}
               style={styles.welcomeImage}
             />
           </View>

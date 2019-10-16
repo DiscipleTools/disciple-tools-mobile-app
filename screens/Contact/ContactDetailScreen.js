@@ -433,7 +433,7 @@ class ContactDetailScreen extends React.Component {
           title: contactName,
           sources: {
             values: [{
-              value: 'advertisement',
+              value: 'personal',
             }],
           },
           overall_status: 'new',
@@ -448,7 +448,7 @@ class ContactDetailScreen extends React.Component {
           title: null,
           sources: {
             values: [{
-              value: 'advertisement',
+              value: 'personal',
             }],
           },
           overall_status: 'new',
@@ -1921,7 +1921,11 @@ class ContactDetailScreen extends React.Component {
                 {this.state.onlyView && (
                   <View style={{ flex: 1 }}>
                     <Tabs
-                      renderTabBar={() => <ScrollableTab />}
+                      renderTabBar={() => (
+                        <ScrollableTab
+                          tabsContainerStyle={{ backgroundColor: '#FFFFFF' }}
+                        />
+                      )}
                       tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
                       onChangeTab={this.tabChanged}
                       page={this.state.currentTabIndex}
@@ -2807,29 +2811,29 @@ class ContactDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                <Row style={styles.formFieldPadding}>
-                                  <Col style={styles.formIconLabelCol}>
-                                    <View style={styles.formIconLabelView}>
-                                      <Icon
-                                        type="FontAwesome"
-                                        name="user-circle"
-                                        style={styles.formIcon}
-                                      />
-                                    </View>
-                                  </Col>
-                                  <Col>
-                                    <Label
-                                      style={styles.formLabel}
-                                    >
-                                      {this.props.contactSettings.assigned_to.name}
-                                    </Label>
-                                  </Col>
-                                </Row>
                                 <TouchableOpacity
                                   onPress={() => {
                                     this.updateShowAssignedToModal(true);
                                   }}
                                 >
+                                  <Row style={styles.formFieldPadding}>
+                                    <Col style={styles.formIconLabelCol}>
+                                      <View style={styles.formIconLabelView}>
+                                        <Icon
+                                          type="FontAwesome"
+                                          name="user-circle"
+                                          style={styles.formIcon}
+                                        />
+                                      </View>
+                                    </Col>
+                                    <Col>
+                                      <Label
+                                        style={styles.formLabel}
+                                      >
+                                        {this.props.contactSettings.assigned_to.name}
+                                      </Label>
+                                    </Col>
+                                  </Row>
                                   <Row>
                                     <Col style={styles.formIconLabelCol}>
                                       <View style={styles.formIconLabelView}>
@@ -2840,11 +2844,12 @@ class ContactDetailScreen extends React.Component {
                                         />
                                       </View>
                                     </Col>
-                                    <Col style={{
-                                      borderBottomWidth: 1,
-                                      borderStyle: 'solid',
-                                      borderBottomColor: '#D9D5DC',
-                                    }}
+                                    <Col
+                                      style={{
+                                        borderBottomWidth: 1,
+                                        borderStyle: 'solid',
+                                        borderBottomColor: '#D9D5DC',
+                                      }}
                                     >
                                       {this.showAssignedUser()}
                                       <ModalFilterPicker
@@ -4250,38 +4255,38 @@ class ContactDetailScreen extends React.Component {
                               }}
                               renderRow={(id, onPress, item) => (
                                 <TouchableOpacity
-                                  activeOpacity={0.6}
-                                  key={id}
-                                  onPress={onPress}
-                                  style={{
-                                    paddingVertical: 8,
-                                    paddingHorizontal: 10,
-                                  }}
-                                >
-                                  <View
+                                    activeOpacity={0.6}
+                                    key={id}
+                                    onPress={onPress}
                                     style={{
-                                      flexDirection: 'row',
+                                      paddingVertical: 8,
+                                      paddingHorizontal: 10,
                                     }}
                                   >
-                                    <Text style={{
-                                      color: 'rgba(0, 0, 0, 0.87)',
-                                      fontSize: 14,
-                                      lineHeight: 21,
-                                    }}
+                                    <View
+                                      style={{
+                                        flexDirection: 'row',
+                                      }}
                                     >
-                                      {item.name}
-                                    </Text>
-                                  </View>
-                                </TouchableOpacity>
+                                      <Text style={{
+                                        color: 'rgba(0, 0, 0, 0.87)',
+                                        fontSize: 14,
+                                        lineHeight: 21,
+                                      }}
+                                      >
+                                        {item.name}
+                                      </Text>
+                                    </View>
+                                  </TouchableOpacity>
                               )}
                               renderChip={(id, onClose, item, style, iconStyle) => (
                                 <Chip
-                                  key={id}
-                                  iconStyle={iconStyle}
-                                  onClose={onClose}
-                                  text={item.name}
-                                  style={style}
-                                />
+                                    key={id}
+                                    iconStyle={iconStyle}
+                                    onClose={onClose}
+                                    text={item.name}
+                                    style={style}
+                                  />
                               )}
                               filterOnKey="name"
                               keyboardShouldPersistTaps

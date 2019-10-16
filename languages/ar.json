@@ -55,7 +55,7 @@
   },
   "loginScreen": {
     "domain": {
-      "label": "اسم نطاق أدوات التلمذة",
+      "label": "موقع المعلومات العالمي",
       "placeholder": "مثلاً: myteam.disciple.tools",
       "error": "اسم النطاق مطلوب"
     },

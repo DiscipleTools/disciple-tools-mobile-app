@@ -1367,6 +1367,11 @@ class GroupDetailScreen extends React.Component {
                 marginRight: '2%',
                 marginBottom: '2%',
                 marginLeft: '2%',
+                opacity: this.onCheckExistingHealthMetric(
+                  'church_commitment',
+                )
+                  ? 1
+                  : 0.15,
               }}
             />
             <Image
@@ -1378,6 +1383,11 @@ class GroupDetailScreen extends React.Component {
                 position: 'absolute',
                 height: '100%',
                 width: '100%',
+                opacity: this.onCheckExistingHealthMetric(
+                  'church_commitment',
+                )
+                  ? 0.15
+                  : 1,
               }}
             />
             <Row style={{ height: sideSize * 0.1 }} />
@@ -1901,7 +1911,11 @@ class GroupDetailScreen extends React.Component {
                 {this.state.onlyView && (
                   <View style={{ flex: 1 }}>
                     <Tabs
-                      renderTabBar={() => <ScrollableTab />}
+                      renderTabBar={() => (
+                        <ScrollableTab
+                          tabsContainerStyle={{ backgroundColor: '#FFFFFF' }}
+                        />
+                      )}
                       tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
                       onChangeTab={this.tabChanged}
                       locked={this.state.groupsTabActive && this.state.onlyView}
@@ -2389,59 +2403,6 @@ class GroupDetailScreen extends React.Component {
                                 )) : (<Text />)}
                               </ScrollView>
                             </Row>
-                            <View style={[styles.formDivider, styles.formIconLabelMargin]} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
-                                <Label style={styles.formLabel}>
-                                  {i18n.t('groupDetailScreen.childGroup')}
-                                </Label>
-                              </Col>
-                              <Col />
-                            </Row>
-                            <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
-                              <ScrollView horizontal>
-                                {(this.state.group.child_groups) ? this.state.group.child_groups.values.map((childGroup, index) => (
-                                  <Col
-                                    key={index.toString()}
-                                    style={styles.groupCircleContainer}
-                                    onPress={() => this.goToGroupDetailScreen(childGroup)}
-                                  >
-                                    {(index % 2 === 0) ? (
-                                      <Image
-                                        source={groupCircleIcon}
-                                        style={styles.groupCircle}
-                                      />
-                                    ) : (
-                                      <Image
-                                        source={groupDottedCircleIcon}
-                                        style={styles.groupCircle}
-                                      />
-                                    )}
-                                    <Image
-                                      source={swimmingPoolIcon}
-                                      style={styles.groupCenterIcon}
-                                    />
-                                    <Row
-                                      style={styles.groupCircleName}
-                                    >
-                                      <Text style={styles.groupCircleNameText}>
-                                        {childGroup.post_title}
-                                      </Text>
-                                    </Row>
-                                    <Row
-                                      style={styles.groupCircleCounter}
-                                    >
-                                      <Text>{childGroup.baptized_member_count}</Text>
-                                    </Row>
-                                    <Row
-                                      style={[styles.groupCircleCounter, { marginTop: '5%' }]}
-                                    >
-                                      <Text>{childGroup.member_count}</Text>
-                                    </Row>
-                                  </Col>
-                                )) : (<Text />)}
-                              </ScrollView>
-                            </Row>
                             <View style={[styles.formDivider, styles.formDivider2Margin]} />
                             <Row style={styles.formRow}>
                               <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
@@ -2490,6 +2451,59 @@ class GroupDetailScreen extends React.Component {
                                       style={[styles.groupCircleCounter, { marginTop: '5%' }]}
                                     >
                                       <Text>{peerGroup.member_count}</Text>
+                                    </Row>
+                                  </Col>
+                                )) : (<Text />)}
+                              </ScrollView>
+                            </Row>
+                            <View style={[styles.formDivider, styles.formDivider2Margin]} />
+                            <Row style={styles.formRow}>
+                              <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('groupDetailScreen.childGroup')}
+                                </Label>
+                              </Col>
+                              <Col />
+                            </Row>
+                            <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
+                              <ScrollView horizontal>
+                                {(this.state.group.child_groups) ? this.state.group.child_groups.values.map((childGroup, index) => (
+                                  <Col
+                                    key={index.toString()}
+                                    style={styles.groupCircleContainer}
+                                    onPress={() => this.goToGroupDetailScreen(childGroup)}
+                                  >
+                                    {(index % 2 === 0) ? (
+                                      <Image
+                                        source={groupCircleIcon}
+                                        style={styles.groupCircle}
+                                      />
+                                    ) : (
+                                      <Image
+                                        source={groupDottedCircleIcon}
+                                        style={styles.groupCircle}
+                                      />
+                                    )}
+                                    <Image
+                                      source={swimmingPoolIcon}
+                                      style={styles.groupCenterIcon}
+                                    />
+                                    <Row
+                                      style={styles.groupCircleName}
+                                    >
+                                      <Text style={styles.groupCircleNameText}>
+                                        {childGroup.post_title}
+                                      </Text>
+                                    </Row>
+                                    <Row
+                                      style={styles.groupCircleCounter}
+                                    >
+                                      <Text>{childGroup.baptized_member_count}</Text>
+                                    </Row>
+                                    <Row
+                                      style={[styles.groupCircleCounter, { marginTop: '5%' }]}
+                                    >
+                                      <Text>{childGroup.member_count}</Text>
                                     </Row>
                                   </Col>
                                 )) : (<Text />)}
@@ -2619,7 +2633,13 @@ class GroupDetailScreen extends React.Component {
                                         />
                                       </View>
                                     </Col>
-                                    <Col>
+                                    <Col
+                                      style={{
+                                        borderBottomWidth: 1,
+                                        borderStyle: 'solid',
+                                        borderBottomColor: '#D9D5DC',
+                                      }}
+                                    >
                                       {this.showAssignedUser()}
                                       <ModalFilterPicker
                                         visible={this.state.showAssignedToModal}
@@ -3157,7 +3177,7 @@ class GroupDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.groupSettings.child_groups.name}
+                                      {this.props.groupSettings.peer_groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3173,12 +3193,12 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { childGroupsSelectizeRef = selectize; }}
+                                      ref={(selectize) => { peerGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
-                                      selectedItems={(this.state.group.child_groups) ? this.state.group.child_groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
+                                      selectedItems={(this.state.group.peer_groups) ? this.state.group.peer_groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
                                       textInputProps={{
-                                        placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
+                                        placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
                                       }}
                                       renderRow={(id, onPress, item) => (
                                         <TouchableOpacity
@@ -3234,7 +3254,7 @@ class GroupDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.groupSettings.peer_groups.name}
+                                      {this.props.groupSettings.child_groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3250,12 +3270,12 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { peerGroupsSelectizeRef = selectize; }}
+                                      ref={(selectize) => { childGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
-                                      selectedItems={(this.state.group.peer_groups) ? this.state.group.peer_groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
+                                      selectedItems={(this.state.group.child_groups) ? this.state.group.child_groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
                                       textInputProps={{
-                                        placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
+                                        placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
                                       }}
                                       renderRow={(id, onPress, item) => (
                                         <TouchableOpacity

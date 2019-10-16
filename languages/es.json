@@ -55,7 +55,7 @@
     },
     "loginScreen": {
         "domain": {
-            "label": "Disciple Tools URL",
+            "label": "URL",
             "placeholder": "P.ej. myteam.disciple.tools",
             "error": "El dominio es requerido"
         },

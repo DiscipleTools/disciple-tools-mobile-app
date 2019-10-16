@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
     width: 250,
     resizeMode: 'contain',
     padding: 20,
+    marginBottom: 20,
   },
   formContainer: {
     alignSelf: 'stretch',
@@ -493,7 +494,7 @@ class LoginScreen extends React.Component {
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.header}>
             <Image
-              source={require('../assets/images/dt-logo2.png')}
+              source={require('../assets/images/dt-icon.png')}
               style={styles.welcomeImage}
             />
           </View>
