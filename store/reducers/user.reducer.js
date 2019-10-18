@@ -10,6 +10,7 @@ const initialState = {
     username: null,
     displayName: null,
     email: null,
+    locale: null,
   },
 };
 
@@ -33,6 +34,7 @@ export default function userReducer(state = initialState, action) {
           username: action.user.user_nicename,
           displayName: action.user.user_display_name,
           email: action.user.user_email,
+          locale: null,
         },
         loading: false,
       };
@@ -41,6 +43,14 @@ export default function userReducer(state = initialState, action) {
         ...newState,
         error: action.error,
         loading: false,
+      };
+    case actions.GET_MY_USER_INFO_SUCCESS:
+      return {
+        ...newState,
+        userData: {
+          ...newState.userData,
+          locale: action.userInfo.locale,
+        },
       };
     case actions.USER_LOGOUT:
       return {

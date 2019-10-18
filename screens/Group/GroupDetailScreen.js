@@ -14,6 +14,7 @@ import {
   AsyncStorage,
   RefreshControl,
   Platform,
+  TouchableHighlight,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -75,6 +76,17 @@ const circleSideSize = (windowWidth / 3) + 20;
 /* eslint-disable */
 let commentsFlatList, coachesSelectizeRef, geonamesSelectizeRef, peopleGroupsSelectizeRef, parentGroupsSelectizeRef, peerGroupsSelectizeRef, childGroupsSelectizeRef;
 /* eslint-enable */
+const defaultHealthMilestones = [
+  'church_baptism',
+  'church_bible',
+  'church_communion',
+  'church_fellowship',
+  'church_giving',
+  'church_leaders',
+  'church_praise',
+  'church_prayer',
+  'church_sharing',
+];
 const styles = StyleSheet.create({
   toggleButton: {
     borderRadius: 5,
@@ -292,6 +304,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.tintColor,
     borderRadius: 5,
     marginTop: 40,
+  },
+  progressIconText: {
+    fontSize: 9,
+    textAlign: 'center',
+    width: '100%',
   },
 });
 const diff = (obj1, obj2) => {
@@ -1882,6 +1899,90 @@ class GroupDetailScreen extends React.Component {
     );
   }
 
+  renderCustomHealthMilestones() {
+    const customHealthMetrics = Object.keys(this.props.groupSettings.health_metrics.values).filter(defaultMilestone => (this.indexOf(defaultMilestone) < 0),
+      defaultHealthMilestones);
+    const rows = [];
+    let columnsByRow = [];
+    customHealthMetrics.forEach((value, index) => {
+      if ((index + 1) % 3 === 0 || index === customHealthMetrics.length - 1) {
+        // every third milestone or last milestone
+        columnsByRow.push(<Col key={columnsByRow.length} size={1} />);
+        columnsByRow.push(
+          <Col key={columnsByRow.length} size={5}>
+            <TouchableOpacity
+              onPress={() => {
+                this.onHealthMetricChange(value);
+              }}
+              activeOpacity={1}
+              underlayColor={this.onCheckExistingHealthMetric(value) ? Colors.tintColor : Colors.gray}
+              style={{
+                borderRadius: 10,
+                backgroundColor: this.onCheckExistingHealthMetric(value) ? Colors.tintColor : Colors.gray,
+                padding: 10,
+              }}
+            >
+              <Text
+                style={[styles.progressIconText, {
+                  color: this.onCheckExistingHealthMetric(value) ? '#FFFFFF' : '#000000',
+                }]}
+              >
+                {this.props.groupSettings.health_metrics.values[value].label}
+              </Text>
+            </TouchableOpacity>
+          </Col>,
+        );
+        columnsByRow.push(<Col key={columnsByRow.length} size={1} />);
+        rows.push(
+          <Row key={`${index.toString()}-1`} size={1}>
+            <Text> </Text>
+          </Row>,
+        );
+        rows.push(
+          <Row key={index.toString()} size={7}>
+            {columnsByRow}
+          </Row>,
+        );
+        columnsByRow = [];
+      } else if ((index + 1) % 3 !== 0) {
+        columnsByRow.push(<Col key={columnsByRow.length} size={1} />);
+        columnsByRow.push(
+          <Col key={columnsByRow.length} size={5}>
+            <TouchableHighlight
+              onPress={() => {
+                this.onHealthMetricChange(value);
+              }}
+              activeOpacity={1}
+              underlayColor={this.onCheckExistingHealthMetric(value) ? Colors.tintColor : Colors.gray}
+              style={{
+                borderRadius: 10,
+                backgroundColor: this.onCheckExistingHealthMetric(value) ? Colors.tintColor : Colors.gray,
+                padding: 10,
+              }}
+            >
+              <Text
+                style={[styles.progressIconText, {
+                  color: this.onCheckExistingHealthMetric(value) ? '#FFFFFF' : '#000000',
+                }]}
+              >
+                {this.props.groupSettings.health_metrics.values[value].label}
+              </Text>
+            </TouchableHighlight>
+          </Col>,
+        );
+      }
+    });
+
+    return (
+      <Grid
+        pointerEvents={this.state.onlyView ? 'none' : 'auto'}
+        style={{ marginBottom: 50 }}
+      >
+        {rows}
+      </Grid>
+    );
+  }
+
   render() {
     const successToast = (
       <Toast
@@ -2209,6 +2310,7 @@ class GroupDetailScreen extends React.Component {
                             </Label>
                           </View>
                           {this.renderHealthMilestones()}
+                          {this.renderCustomHealthMilestones()}
                         </ScrollView>
                       </Tab>
                       <Tab
@@ -3083,7 +3185,12 @@ class GroupDetailScreen extends React.Component {
                                 </Label>
                               </View>
                             )}
-                            {this.state.currentTabIndex === 1 && this.renderHealthMilestones()}
+                            {this.state.currentTabIndex === 1 && (
+                              this.renderHealthMilestones()
+                            )}
+                            {this.state.currentTabIndex === 1 && (
+                              this.renderCustomHealthMilestones()
+                            )}
                             {this.state.currentTabIndex === 3 && (
                               <View style={styles.formContainer}>
                                 <Row style={styles.formFieldPadding}>

@@ -14,6 +14,7 @@ import {
   AsyncStorage,
   RefreshControl,
   Platform,
+  TouchableHighlight,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -83,6 +84,17 @@ let commentsFlatList,
   baptizedSelectizeRef,
   coachingSelectizeRef;
 /* eslint-enable */
+const defaultFaithMilestones = [
+  'milestone_has_bible',
+  'milestone_reading_bible',
+  'milestone_belief',
+  'milestone_can_share',
+  'milestone_sharing',
+  'milestone_baptized',
+  'milestone_baptizing',
+  'milestone_in_group',
+  'milestone_planting',
+];
 const styles = StyleSheet.create({
   tabBarUnderlineStyle: {
     borderBottomWidth: 3,
@@ -1515,7 +1527,7 @@ class ContactDetailScreen extends React.Component {
           height: milestonesGridSize,
         }}
       >
-        <Row size={6}>
+        <Row size={7}>
           <Col size={1} />
           <Col size={5}>
             <TouchableOpacity
@@ -1765,7 +1777,7 @@ class ContactDetailScreen extends React.Component {
           <Col size={1} />
         </Row>
         <Row size={1} />
-        <Row size={6}>
+        <Row size={7}>
           <Col size={1} />
           <Col size={5}>
             <TouchableOpacity
@@ -1892,6 +1904,87 @@ class ContactDetailScreen extends React.Component {
     );
   }
 
+  renderCustomFaithMilestones() {
+    const customMilestones = Object.keys(this.props.contactSettings.milestones.values).filter(defaultMilestone => (this.indexOf(defaultMilestone) < 0),
+      defaultFaithMilestones);
+    const rows = [];
+    let columnsByRow = [];
+    customMilestones.forEach((value, index) => {
+      if ((index + 1) % 3 === 0 || index === customMilestones.length - 1) {
+        // every third milestone or last milestone
+        columnsByRow.push(<Col key={columnsByRow.length} size={1} />);
+        columnsByRow.push(
+          <Col key={columnsByRow.length} size={5}>
+            <TouchableOpacity
+              onPress={() => {
+                this.onMilestoneChange(value);
+              }}
+              activeOpacity={1}
+              underlayColor={this.onCheckExistingMilestone(value) ? Colors.tintColor : Colors.gray}
+              style={{
+                borderRadius: 10,
+                backgroundColor: this.onCheckExistingMilestone(value) ? Colors.tintColor : Colors.gray,
+                padding: 10,
+              }}
+            >
+              <Text
+                style={[styles.progressIconText, {
+                  color: this.onCheckExistingMilestone(value) ? '#FFFFFF' : '#000000',
+                }]}
+              >
+                {this.props.contactSettings.milestones.values[value].label}
+              </Text>
+            </TouchableOpacity>
+          </Col>,
+        );
+        columnsByRow.push(<Col key={columnsByRow.length} size={1} />);
+        rows.push(
+          <Row key={`${index.toString()}-1`} size={1}>
+            <Text> </Text>
+          </Row>,
+        );
+        rows.push(
+          <Row key={index.toString()} size={7}>
+            {columnsByRow}
+          </Row>,
+        );
+        columnsByRow = [];
+      } else if ((index + 1) % 3 !== 0) {
+        columnsByRow.push(<Col key={columnsByRow.length} size={1} />);
+        columnsByRow.push(
+          <Col key={columnsByRow.length} size={5}>
+            <TouchableHighlight
+              onPress={() => {
+                this.onMilestoneChange(value);
+              }}
+              activeOpacity={1}
+              underlayColor={this.onCheckExistingMilestone(value) ? Colors.tintColor : Colors.gray}
+              style={{
+                borderRadius: 10,
+                backgroundColor: this.onCheckExistingMilestone(value) ? Colors.tintColor : Colors.gray,
+                padding: 10,
+              }}
+            >
+              <Text
+                style={[styles.progressIconText, {
+                  color: this.onCheckExistingMilestone(value) ? '#FFFFFF' : '#000000',
+                }]}
+              >
+                {this.props.contactSettings.milestones.values[value].label}
+              </Text>
+            </TouchableHighlight>
+          </Col>,
+        );
+      }
+    });
+
+    return (
+      <Grid pointerEvents={this.state.onlyView ? 'none' : 'auto'}>
+        {rows}
+      </Grid>
+    );
+  }
+
   render() {
     const successToast = (
       <Toast
@@ -1911,7 +2004,6 @@ class ContactDetailScreen extends React.Component {
         position="center"
       />
     );
-
     return (
       <View style={{ flex: 1 }}>
         {this.state.loadedLocal && (
@@ -2300,6 +2392,7 @@ class ContactDetailScreen extends React.Component {
                               {this.props.contactSettings.milestones.name}
                             </Label>
                             {this.renderfaithMilestones()}
+                            {this.renderCustomFaithMilestones()}
                             <Grid style={{ marginTop: 25 }}>
                               <View style={styles.formDivider} />
                               <Row style={styles.formRow}>
@@ -3543,6 +3636,7 @@ class ContactDetailScreen extends React.Component {
                                   {this.props.contactSettings.milestones.name}
                                 </Label>
                                 {this.renderfaithMilestones()}
+                                {this.renderCustomFaithMilestones()}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>

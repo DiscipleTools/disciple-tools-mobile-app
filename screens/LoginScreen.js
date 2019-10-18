@@ -28,7 +28,7 @@ import i18n from '../languages';
 import locales from '../languages/locales';
 import Colors from '../constants/Colors';
 import {
-  login,
+  login, getUserInfo,
 } from '../store/actions/user.actions';
 import { setLanguage } from '../store/actions/i18n.actions';
 import TextField from '../components/TextField';
@@ -139,6 +139,7 @@ class LoginScreen extends React.Component {
     contactSettingsListRetrieved: false,
     contactsListRetrieved: false,
     groupsListRetrieved: false,
+    appLanguageSet: false,
   };
 
   constructor(props) {
@@ -262,6 +263,7 @@ class LoginScreen extends React.Component {
         groupSettingsListRetrieved: false,
         contactsListRetrieved: false,
         groupsListRetrieved: false,
+        appLanguageSet: false,
       });
     });
     // User is authenticated (logged)
@@ -269,6 +271,7 @@ class LoginScreen extends React.Component {
       if (this.props.isConnected) {
         this.setState({ loading: true }, () => {
           this.getDataLists();
+          this.getUserInfo();
         });
       } else {
         this.setState({
@@ -284,6 +287,7 @@ class LoginScreen extends React.Component {
             groupSettingsListRetrieved: true,
             contactsListRetrieved: true,
             groupsListRetrieved: true,
+            appLanguageSet: true,
           });
         });
       }
@@ -307,6 +311,7 @@ class LoginScreen extends React.Component {
       groupSettingsListRetrieved,
       groupsListRetrieved,
       contactsListRetrieved,
+      appLanguageSet,
     } = this.state;
     // If the RTL value in the store does not match what is
     // in I18nManager (which controls content flow), call
@@ -323,6 +328,11 @@ class LoginScreen extends React.Component {
     // User logged successfully
     if (userData && prevProps.userData !== userData) {
       this.getDataLists();
+      this.getUserInfo();
+      // User locale retrieved
+      if (userData.locale) {
+        this.setAppLanguage();
+      }
     }
 
     // usersContactsList retrieved
@@ -389,7 +399,9 @@ class LoginScreen extends React.Component {
       && contactSettingsListRetrieved
       && groupSettingsListRetrieved
       && groupsListRetrieved
-      && contactsListRetrieved) {
+      && contactsListRetrieved
+      && appLanguageSet
+    ) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
       AsyncStorage.setItem('listsLastUpdate', listsLastUpdate);
@@ -419,6 +431,21 @@ class LoginScreen extends React.Component {
     this.focusListener.remove();
   }
 
+  setAppLanguage = () => {
+    const userLocaleConfig = this.props.userData.locale.substring(0, 2);
+    const locale = locales.find(item => item.code === userLocaleConfig);
+    if (locale) {
+      const isRTL = locale.direction === 'rtl';
+      // store locale/rtl instore for next load of app
+      this.props.setLanguage(locale.code, isRTL);
+      // set current locale for all language strings
+      i18n.setLocale(locale.code, isRTL);
+      this.setState({
+        appLanguageSet: true,
+      });
+    }
+  }
+
   getDataLists = () => {
     this.props.getUsersAndContacts(
       this.props.userData.domain,
@@ -433,6 +460,10 @@ class LoginScreen extends React.Component {
     this.props.getContacts(this.props.userData.domain, this.props.userData.token);
     this.props.getGroups(this.props.userData.domain, this.props.userData.token);
   };
+
+  getUserInfo = () => {
+    this.props.getUserInfo(this.props.userData.domain, this.props.userData.token);
+  }
 
   onLoginPress = () => {
     Keyboard.dismiss();
@@ -603,6 +634,7 @@ LoginScreen.propTypes = {
     username: PropTypes.string,
     displayName: PropTypes.string,
     email: PropTypes.string,
+    locale: PropTypes.string,
   }),
   getUsersAndContacts: PropTypes.func.isRequired,
   getLocations: PropTypes.func.isRequired,
@@ -670,6 +702,7 @@ LoginScreen.propTypes = {
   groupSettings: PropTypes.shape({}),
   getContacts: PropTypes.func.isRequired,
   getGroups: PropTypes.func.isRequired,
+  getUserInfo: PropTypes.func.isRequired,
 };
 LoginScreen.defaultProps = {
   userData: {
@@ -742,6 +775,9 @@ const mapDispatchToProps = dispatch => ({
   },
   getGroups: (domain, token) => {
     dispatch(getAllGroups(domain, token));
+  },
+  getUserInfo: (domain, token) => {
+    dispatch(getUserInfo(domain, token));
   },
 });
 export default connect(
