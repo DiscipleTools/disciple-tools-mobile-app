@@ -1900,8 +1900,8 @@ class GroupDetailScreen extends React.Component {
   }
 
   renderCustomHealthMilestones() {
-    const customHealthMetrics = Object.keys(this.props.groupSettings.health_metrics.values).filter(defaultMilestone => (this.indexOf(defaultMilestone) < 0),
-      defaultHealthMilestones);
+    const healthMetricsList = Object.keys(this.props.groupSettings.health_metrics.values);
+    const customHealthMetrics = healthMetricsList.filter(milestoneItem => defaultHealthMilestones.indexOf(milestoneItem) < 0);
     const rows = [];
     let columnsByRow = [];
     customHealthMetrics.forEach((value, index) => {

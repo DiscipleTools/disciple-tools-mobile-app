@@ -1905,8 +1905,8 @@ class ContactDetailScreen extends React.Component {
   }
 
   renderCustomFaithMilestones() {
-    const customMilestones = Object.keys(this.props.contactSettings.milestones.values).filter(defaultMilestone => (this.indexOf(defaultMilestone) < 0),
-      defaultFaithMilestones);
+    const milestoneList = Object.keys(this.props.contactSettings.milestones.values);
+    const customMilestones = milestoneList.filter(milestoneItem => defaultFaithMilestones.indexOf(milestoneItem) < 0);
     const rows = [];
     let columnsByRow = [];
     customMilestones.forEach((value, index) => {
@@ -1977,7 +1977,6 @@ class ContactDetailScreen extends React.Component {
         );
       }
     });
-
     return (
       <Grid pointerEvents={this.state.onlyView ? 'none' : 'auto'}>
         {rows}
