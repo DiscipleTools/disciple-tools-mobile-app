@@ -1,5 +1,5 @@
 // Imports: Dependencies
-import { AsyncStorage } from 'react-native';
+import ExpoFileSystemStorage from "redux-persist-expo-filesystem"
 import { createStore, applyMiddleware } from 'redux';
 import { persistStore, persistReducer, createTransform } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
@@ -35,7 +35,7 @@ const persistConfig = {
   // Root?
   key: 'root',
   // Storage Method (React Native)
-  storage: AsyncStorage,
+  storage: ExpoFileSystemStorage,
   // Whitelist (Save Specific Reducers)
   /* whitelist: [
     'authReducer',

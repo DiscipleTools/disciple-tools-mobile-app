@@ -54,6 +54,7 @@
     "reactotron-react-native": "^3.6.4",
     "redux": "^4.0.1",
     "redux-persist": "^5.10.0",
+    "redux-persist-expo-filesystem": "^2.0.0",
     "redux-saga": "^1.0.2",
     "sentry-expo": "^2.0.0",
     "whatwg-fetch": "^3.0.0"

@@ -11,13 +11,12 @@ import {
   Dimensions,
   FlatList,
   TextInput,
-  AsyncStorage,
   RefreshControl,
   Platform,
   TouchableHighlight,
 } from 'react-native';
 import PropTypes from 'prop-types';
-
+import ExpoFileSystemStorage from "redux-persist-expo-filesystem"
 import {
   Container,
   Content,
@@ -823,7 +822,7 @@ class GroupDetailScreen extends React.Component {
 
   getLists = async (groupId) => {
     let newState = {};
-    const users = await AsyncStorage.getItem('usersList');
+    const users = await ExpoFileSystemStorage.getItem('usersList');
     if (users !== null) {
       newState = {
         ...newState,
@@ -834,7 +833,7 @@ class GroupDetailScreen extends React.Component {
       };
     }
 
-    const usersContacts = await AsyncStorage.getItem('usersAndContactsList');
+    const usersContacts = await ExpoFileSystemStorage.getItem('usersAndContactsList');
     if (usersContacts !== null) {
       newState = {
         ...newState,
@@ -842,7 +841,7 @@ class GroupDetailScreen extends React.Component {
       };
     }
 
-    const peopleGroups = await AsyncStorage.getItem('peopleGroupsList');
+    const peopleGroups = await ExpoFileSystemStorage.getItem('peopleGroupsList');
     if (peopleGroups !== null) {
       newState = {
         ...newState,
@@ -850,7 +849,7 @@ class GroupDetailScreen extends React.Component {
       };
     }
 
-    const geonames = await AsyncStorage.getItem('locationsList');
+    const geonames = await ExpoFileSystemStorage.getItem('locationsList');
     if (geonames !== null) {
       newState = {
         ...newState,
@@ -858,7 +857,7 @@ class GroupDetailScreen extends React.Component {
       };
     }
 
-    const groups = await AsyncStorage.getItem('searchGroupsList');
+    const groups = await ExpoFileSystemStorage.getItem('searchGroupsList');
     if (groups !== null) {
       newState = {
         ...newState,

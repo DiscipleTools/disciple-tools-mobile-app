@@ -9,7 +9,6 @@ import {
   Keyboard,
   ActivityIndicator,
   Platform,
-  AsyncStorage,
   KeyboardAvoidingView,
   ScrollView,
   I18nManager,
@@ -23,7 +22,7 @@ import {
 } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Updates } from 'expo';
-
+import ExpoFileSystemStorage from "redux-persist-expo-filesystem"
 import i18n from '../languages';
 import locales from '../languages/locales';
 import Colors from '../constants/Colors';
@@ -337,7 +336,7 @@ class LoginScreen extends React.Component {
 
     // usersContactsList retrieved
     if (usersContacts && prevProps.usersContacts !== usersContacts) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'usersAndContactsList',
         JSON.stringify(usersContacts),
       );
@@ -345,7 +344,7 @@ class LoginScreen extends React.Component {
 
     // geonamesList retrieved
     if (geonames && prevProps.geonames !== geonames) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'locationsList',
         JSON.stringify(geonames),
       );
@@ -353,7 +352,7 @@ class LoginScreen extends React.Component {
 
     // peopleGroupsList retrieved
     if (peopleGroups && prevProps.peopleGroups !== peopleGroups) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'peopleGroupsList',
         JSON.stringify(peopleGroups),
       );
@@ -361,7 +360,7 @@ class LoginScreen extends React.Component {
 
     // peopleGroupsList retrieved
     if (search && prevProps.search !== search) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'searchGroupsList',
         JSON.stringify(search),
       );
@@ -369,7 +368,7 @@ class LoginScreen extends React.Component {
 
     // usersList retrieved
     if (users && prevProps.users !== users) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'usersList',
         JSON.stringify(users),
       );
@@ -377,7 +376,7 @@ class LoginScreen extends React.Component {
 
     // contactSettings retrieved
     if (contactSettings && prevProps.contactSettings !== contactSettings) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'contactSettings',
         JSON.stringify(contactSettings),
       );
@@ -385,7 +384,7 @@ class LoginScreen extends React.Component {
 
     // groupSettings retrieved
     if (groupSettings && prevProps.groupSettings !== groupSettings) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'groupSettings',
         JSON.stringify(groupSettings),
       );
@@ -404,7 +403,7 @@ class LoginScreen extends React.Component {
     ) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
-      AsyncStorage.setItem('listsLastUpdate', listsLastUpdate);
+      ExpoFileSystemStorage.setItem('listsLastUpdate', listsLastUpdate);
       this.props.navigation.navigate('ContactList');
     }
 
