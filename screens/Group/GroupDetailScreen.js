@@ -16,7 +16,6 @@ import {
   Platform,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import sharedTools from '../../shared';
 import {
   Container,
   Content,
@@ -37,6 +36,7 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import ModalFilterPicker from 'react-native-modal-filter-picker';
 import { Chip, Selectize } from 'react-native-material-selectize';
+import sharedTools from '../../shared';
 
 import KeyboardShift from '../../components/KeyboardShift';
 import {
