@@ -2,7 +2,6 @@ import {
   put, take, takeEvery, takeLatest, all, select,
 } from 'redux-saga/effects';
 
-import * as Sentry from 'sentry-expo';
 import * as actions from '../actions/contacts.actions';
 
 
@@ -58,9 +57,6 @@ export function* getAll({ domain, token }) {
       });
     }
   } catch (error) {
-    if (isConnected) {
-      Sentry.captureException(error);
-    }
     yield put({
       type: actions.CONTACTS_GETALL_FAILURE,
       error: {
@@ -114,13 +110,6 @@ export function* save({ domain, token, contactData }) {
           contact: jsonData,
         });
       } else {
-        Sentry.captureException({
-          type: actions.CONTACTS_SAVE_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-          },
-        });
         yield put({
           type: actions.CONTACTS_SAVE_FAILURE,
           error: {
@@ -146,9 +135,6 @@ export function* save({ domain, token, contactData }) {
       });
     }
   } catch (error) {
-    if (isConnected) {
-      Sentry.captureException(error);
-    }
     yield put({
       type: actions.CONTACTS_SAVE_FAILURE,
       error: {
@@ -175,7 +161,6 @@ export function* getById({ domain, token, contactId }) {
       action: actions.CONTACTS_GETBYID_RESPONSE,
     },
   });
-  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
   try {
     let response = yield take(actions.CONTACTS_GETBYID_RESPONSE);
     response = response.payload;
@@ -186,15 +171,6 @@ export function* getById({ domain, token, contactId }) {
         contact: jsonData,
       });
     } else {
-      if (isConnected) {
-        Sentry.captureException({
-          type: actions.CONTACTS_GETBYID_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-          },
-        });
-      }
       yield put({
         type: actions.CONTACTS_GETBYID_FAILURE,
         error: {
@@ -204,9 +180,6 @@ export function* getById({ domain, token, contactId }) {
       });
     }
   } catch (error) {
-    if (isConnected) {
-      Sentry.captureException(error);
-    }
     yield put({
       type: actions.CONTACTS_GETBYID_FAILURE,
       error: {
@@ -252,13 +225,6 @@ export function* saveComment({
           comment: jsonData,
         });
       } else {
-        Sentry.captureException({
-          type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-          },
-        });
         yield put({
           type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
           error: {
@@ -281,9 +247,6 @@ export function* saveComment({
       });
     }
   } catch (error) {
-    if (isConnected) {
-      Sentry.captureException(error);
-    }
     yield put({
       type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
       error: {
@@ -346,15 +309,6 @@ export function* getCommentsByContact({
           total: jsonData.total,
         });
       } else {
-        if (isConnected) {
-          Sentry.captureException({
-            type: actions.CONTACTS_GET_COMMENTS_FAILURE,
-            error: {
-              code: jsonData.code,
-              message: jsonData.message,
-            },
-          });
-        }
         yield put({
           type: actions.CONTACTS_GET_COMMENTS_FAILURE,
           error: {
@@ -365,9 +319,6 @@ export function* getCommentsByContact({
       }
     }
   } catch (error) {
-    if (isConnected) {
-      Sentry.captureException(error);
-    }
     yield put({
       type: actions.CONTACTS_GET_COMMENTS_FAILURE,
       error: {
@@ -405,7 +356,6 @@ export function* getActivitiesByContact({
         action: actions.CONTACTS_GET_ACTIVITIES_RESPONSE,
       },
     });
-    const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
     try {
       let response = yield take(actions.CONTACTS_GET_ACTIVITIES_RESPONSE);
       response = response.payload;
@@ -417,15 +367,6 @@ export function* getActivitiesByContact({
           total: jsonData.total,
         });
       } else {
-        if (isConnected) {
-          Sentry.captureException({
-            type: actions.CONTACTS_GET_ACTIVITIES_FAILURE,
-            error: {
-              code: jsonData.code,
-              message: jsonData.message,
-            },
-          });
-        }
         yield put({
           type: actions.CONTACTS_GET_ACTIVITIES_FAILURE,
           error: {
@@ -435,9 +376,6 @@ export function* getActivitiesByContact({
         });
       }
     } catch (error) {
-      if (isConnected) {
-        Sentry.captureException(error);
-      }
       yield put({
         type: actions.CONTACTS_GET_ACTIVITIES_FAILURE,
         error: {

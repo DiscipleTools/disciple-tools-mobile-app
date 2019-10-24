@@ -2000,14 +2000,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {(this.state.group.coaches) ? this.state.group.coaches.values.map((coach, index) => {
-                                    const lastItemIndex = this.state.group.coaches.values.length - 1;
-                                    const coachName = this.state.usersContacts.find(user => user.value === coach.value).name;
-                                    if (lastItemIndex === index) {
-                                      return `${coachName}`;
-                                    }
-                                    return `${coachName}, `;
-                                  }) : ''}
+                                  {this.state.group.coaches ? this.state.group.coaches.values.map(coach => this.state.usersContacts.find(user => user.value === coach.value).name).join(', ') + (this.state.group.coaches.values.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2027,14 +2020,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {(this.state.group.location_grid) ? this.state.group.location_grid.values.map((location, index) => {
-                                    const lastItemIndex = this.state.group.location_grid.values.length - 1;
-                                    const locationName = this.state.geonames.find(geoname => geoname.value === location.value).name;
-                                    if (lastItemIndex === index) {
-                                      return `${locationName}`;
-                                    }
-                                    return `${locationName}, `;
-                                  }) : ''}
+                                  {this.state.group.location_grid ? this.state.group.location_grid.values.map(location => this.state.geonames.find(geoname => geoname.value === location.value).name).join(', ') + (this.state.group.location_grid.values.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2054,14 +2040,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {(this.state.group.people_groups) ? this.state.group.people_groups.values.map((peopleGroup, index) => {
-                                    const lastItemIndex = this.state.group.people_groups.values.length - 1;
-                                    const peopleGroupName = this.state.peopleGroups.find(person => person.value === peopleGroup.value).name;
-                                    if (lastItemIndex === index) {
-                                      return `${peopleGroupName}`;
-                                    }
-                                    return `${peopleGroupName}, `;
-                                  }) : ''}
+                                  {this.state.group.people_groups ? this.state.group.people_groups.values.map(peopleGroup => this.state.peopleGroups.find(person => person.value === peopleGroup.value).name).join(', ') + (this.state.group.people_groups.values.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2081,13 +2060,7 @@ class GroupDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {(this.state.group.contact_address) ? this.state.group.contact_address.map((address, index) => {
-                                    const lastItemIndex = this.state.group.contact_address.length - 1;
-                                    if (lastItemIndex === index) {
-                                      return `${address.value}`;
-                                    }
-                                    return `${address.value}, `;
-                                  }) : ''}
+                                  {this.state.group.contact_address ? this.state.group.contact_address.map(address => address.value).join(', ') + (this.state.group.contact_address.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>

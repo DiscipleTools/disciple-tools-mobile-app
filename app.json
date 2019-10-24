@@ -30,17 +30,5 @@
       "package": "tools.disciple.app"
     },
     "description": "",
-    "hooks": {
-      "postPublish": [
-        {
-          "file": "sentry-expo/upload-sourcemaps",
-          "config": {
-            "organization": "carlos-silva-villamizar",
-            "project": "discipletools-mobile",
-            "authToken": "1315003a8c8d42cfa8b06366628022a72996e04005a94be09af9a41a6c2ffe1f"
-          }
-        }
-      ]
-    }
   }
 }

@@ -1,7 +1,6 @@
 import {
-  put, take, takeLatest, all, select,
+  put, take, takeLatest, all,
 } from 'redux-saga/effects';
-import * as Sentry from 'sentry-expo';
 import * as actions from '../actions/user.actions';
 
 export function* login({ domain, username, password }) {
@@ -24,7 +23,6 @@ export function* login({ domain, username, password }) {
       action: actions.USER_LOGIN_RESPONSE,
     },
   });
-  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
   try {
     let response = yield take(actions.USER_LOGIN_RESPONSE);
     response = response.payload;
@@ -32,15 +30,6 @@ export function* login({ domain, username, password }) {
     if (response.status === 200) {
       yield put({ type: actions.USER_LOGIN_SUCCESS, domain, user: jsonData });
     } else {
-      if (isConnected) {
-        Sentry.captureException({
-          type: actions.USER_LOGIN_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-          },
-        });
-      }
       yield put({
         type: actions.USER_LOGIN_FAILURE,
         error: {
@@ -50,9 +39,6 @@ export function* login({ domain, username, password }) {
       });
     }
   } catch (error) {
-    if (isConnected) {
-      Sentry.captureException(error);
-    }
     yield put({
       type: actions.USER_LOGIN_FAILURE,
       error: {

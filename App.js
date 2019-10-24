@@ -15,7 +15,6 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import Reactotron from 'reactotron-react-native';
 
-import * as Sentry from 'sentry-expo';
 import AppNavigator from './navigation/AppNavigator';
 import { store, persistor } from './store/store';
 import i18n from './languages';
@@ -58,15 +57,6 @@ class App extends React.Component {
         .useReactNative() // add all built-in react native plugins
         .connect(); // let's connect!
     }
-
-    // Sentry.enableInExpoDevelopment = true;
-    // Sentry.config('https://c7abef52843549eabf721f7c4aa7cfc7@sentry.io/1725961').install();
-
-    Sentry.init({
-      dsn: 'https://c7abef52843549eabf721f7c4aa7cfc7@sentry.io/1725961',
-      enableInExpoDevelopment: true,
-      debug: true,
-    });
   }
 
   componentWillUnmount() {

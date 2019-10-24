@@ -2009,14 +2009,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.subassigned ? this.state.contact.subassigned.values.map((contact, index) => {
-                                    const lastItemIndex = this.state.contact.subassigned.values.length - 1;
-                                    const contactName = this.state.usersContacts.find(user => user.value === contact.value).name;
-                                    if (lastItemIndex === index) {
-                                      return `${contactName}`;
-                                    }
-                                    return `${contactName}, `;
-                                  }) : ''}
+                                  {this.state.contact.subassigned ? this.state.contact.subassigned.values.map(contact => this.state.usersContacts.find(user => user.value === contact.value).name).join(', ') + (this.state.contact.subassigned.values.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2036,13 +2029,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.contact_phone ? this.state.contact.contact_phone.filter(phone => !phone.delete).map((phone, index) => {
-                                    const lastItemIndex = this.state.contact.contact_phone.length - 1;
-                                    if (lastItemIndex === index) {
-                                      return `${phone.value}`;
-                                    }
-                                    return `${phone.value}, `;
-                                  }) : ''}
+                                  {this.state.contact.contact_phone ? this.state.contact.contact_phone.filter(phone => !phone.delete).map(phone => phone.value).join(', ') + (this.state.contact.contact_phone.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2060,13 +2047,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.contact_email ? this.state.contact.contact_email.filter(email => !email.delete).map((email, index) => {
-                                    const lastItemIndex = this.state.contact.contact_email.length - 1;
-                                    if (lastItemIndex === index) {
-                                      return `${email.value}`;
-                                    }
-                                    return `${email.value}, `;
-                                  }) : ''}
+                                  {this.state.contact.contact_email ? this.state.contact.contact_email.filter(email => !email.delete).map(email => email.value).join(', ') + (this.state.contact.contact_email.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2100,13 +2081,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.contact_address ? this.state.contact.contact_address.filter(address => !address.delete).map((address, index) => {
-                                    const lastItemIndex = this.state.contact.contact_address.length - 1;
-                                    if (lastItemIndex === index) {
-                                      return `${address.value}`;
-                                    }
-                                    return `${address.value}, `;
-                                  }) : ''}
+                                  {this.state.contact.contact_address ? this.state.contact.contact_address.filter(address => !address.delete).map(address => address.value).join(', ') + (this.state.contact.contact_address.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2124,14 +2099,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.location_grid ? this.state.contact.location_grid.values.map((location, index) => {
-                                    const lastItemIndex = this.state.contact.location_grid.values.length - 1;
-                                    const locationName = this.state.geonames.find(geoname => geoname.value === location.value).name;
-                                    if (lastItemIndex === index) {
-                                      return `${locationName}`;
-                                    }
-                                    return `${locationName}, `;
-                                  }) : ''}
+                                  {this.state.contact.location_grid ? this.state.contact.location_grid.values.map(location => this.state.geonames.find(geoname => geoname.value === location.value).name).join(', ') + (this.state.contact.location_grid.values.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2151,14 +2119,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.people_groups ? this.state.contact.people_groups.values.map((peopleGroup, index) => {
-                                    const lastItemIndex = this.state.contact.people_groups.values.length - 1;
-                                    const peopleGroupName = this.state.peopleGroups.find(person => person.value === peopleGroup.value).name;
-                                    if (lastItemIndex === index) {
-                                      return `${peopleGroupName}`;
-                                    }
-                                    return `${peopleGroupName}, `;
-                                  }) : ''}
+                                  {this.state.contact.people_groups ? this.state.contact.people_groups.values.map(peopleGroup => this.state.peopleGroups.find(person => person.value === peopleGroup.value).name).join(', ') + (this.state.contact.people_groups.values.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2210,14 +2171,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.sources ? this.state.contact.sources.values.map((source, index) => {
-                                    const lastItemIndex = this.state.contact.sources.values.length - 1;
-                                    const sourceName = this.props.contactSettings.sources.values[source.value].label;
-                                    if (lastItemIndex === index) {
-                                      return `${sourceName}`;
-                                    }
-                                    return `${sourceName}, `;
-                                  }) : ''}
+                                  {this.state.contact.sources ? `${this.state.contact.sources.values.map(source => this.props.contactSettings.sources.values[source.value].label).join(', ')}.` : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2475,14 +2429,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.groups ? this.state.contact.groups.values.map((group, index) => {
-                                    const lastItemIndex = this.state.contact.groups.values.length - 1;
-                                    const groupName = this.state.groups.find(groupItem => groupItem.value === group.value).name;
-                                    if (lastItemIndex === index) {
-                                      return `${groupName}`;
-                                    }
-                                    return `${groupName}, `;
-                                  }) : ''}
+                                  {this.state.contact.groups ? this.state.contact.groups.values.map(group => this.state.groups.find(groupItem => groupItem.value === group.value).name).join(', ') + (this.state.contact.groups.values.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2502,14 +2449,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.relation ? this.state.contact.relation.values.map((relation, index) => {
-                                    const lastItemIndex = this.state.contact.relation.values.length - 1;
-                                    const contactName = this.state.usersContacts.find(user => user.value === relation.value).name;
-                                    if (lastItemIndex === index) {
-                                      return `${contactName}`;
-                                    }
-                                    return `${contactName}, `;
-                                  }) : ''}
+                                  {this.state.contact.relation ? this.state.contact.relation.values.map(relation => this.state.usersContacts.find(user => user.value === relation.value).name).join(', ') + (this.state.contact.relation.values.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2529,14 +2469,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.baptized_by ? this.state.contact.baptized_by.values.map((baptizedBy, index) => {
-                                    const lastItemIndex = this.state.contact.baptized_by.values.length - 1;
-                                    const contactName = this.state.usersContacts.find(user => user.value === baptizedBy.value).name;
-                                    if (lastItemIndex === index) {
-                                      return `${contactName}`;
-                                    }
-                                    return `${contactName}, `;
-                                  }) : ''}
+                                  {this.state.contact.baptized_by ? this.state.contact.baptized_by.values.map(baptizedBy => this.state.usersContacts.find(user => user.value === baptizedBy.value).name).join(', ') + (this.state.contact.baptized_by.values.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2556,14 +2489,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.baptized ? this.state.contact.baptized.values.map((baptized, index) => {
-                                    const lastItemIndex = this.state.contact.baptized.values.length - 1;
-                                    const contactName = this.state.usersContacts.find(user => user.value === baptized.value).name;
-                                    if (lastItemIndex === index) {
-                                      return `${contactName}`;
-                                    }
-                                    return `${contactName}, `;
-                                  }) : ''}
+                                  {this.state.contact.baptized ? this.state.contact.baptized.values.map(baptized => this.state.usersContacts.find(user => user.value === baptized.value).name).join(', ') + (this.state.contact.baptized.values.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2583,14 +2509,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.coached_by ? this.state.contact.coached_by.values.map((coachedBy, index) => {
-                                    const lastItemIndex = this.state.contact.coached_by.values.length - 1;
-                                    const contactName = this.state.usersContacts.find(user => user.value === coachedBy.value).name;
-                                    if (lastItemIndex === index) {
-                                      return `${contactName}`;
-                                    }
-                                    return `${contactName}, `;
-                                  }) : ''}
+                                  {this.state.contact.coached_by ? this.state.contact.coached_by.values.map(coachedBy => this.state.usersContacts.find(user => user.value === coachedBy.value).name).join(', ') + (this.state.contact.coached_by.values.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
@@ -2610,14 +2529,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.coaching ? this.state.contact.coaching.values.map((coaching, index) => {
-                                    const lastItemIndex = this.state.contact.coaching.values.length - 1;
-                                    const contactName = this.state.usersContacts.find(user => user.value === coaching.value).name;
-                                    if (lastItemIndex === index) {
-                                      return `${contactName}`;
-                                    }
-                                    return `${contactName}, `;
-                                  }) : ''}
+                                  {this.state.contact.coaching ? this.state.contact.coaching.values.map(coaching => this.state.usersContacts.find(user => user.value === coaching.value).name).join(', ') + (this.state.contact.coaching.values.length > 0 ? '.' : '') : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
