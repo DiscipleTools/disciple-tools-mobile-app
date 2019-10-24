@@ -16,7 +16,7 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import ExpoFileSystemStorage from "redux-persist-expo-filesystem"
+import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import {
   Container,
   Content,

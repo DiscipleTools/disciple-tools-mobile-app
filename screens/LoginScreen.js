@@ -22,7 +22,7 @@ import {
 } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Updates } from 'expo';
-import ExpoFileSystemStorage from "redux-persist-expo-filesystem"
+import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import i18n from '../languages';
 import locales from '../languages/locales';
 import Colors from '../constants/Colors';

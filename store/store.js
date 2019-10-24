@@ -1,5 +1,5 @@
 // Imports: Dependencies
-import ExpoFileSystemStorage from "redux-persist-expo-filesystem"
+import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import { createStore, applyMiddleware } from 'redux';
 import { persistStore, persistReducer, createTransform } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
