@@ -40,7 +40,7 @@ DiscipleTools is a non-profit and does not have a bounty program for the safe di
 
 Enhancement suggestions are tracked as [GitHub issues](https://guides.github.com/features/issues/), including completely new features and minor improvements to existing functionality. Following these guidelines helps maintainers and the community understand your suggestion :memo: and find related suggestions :mag_right:.
 
-Please perform a [cursory search](https://github.com/search?q=+is%3Aissue+user%3Aatom) to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.  Otherwise, please proceed to create an issue on that repository and provide the following information:
+Please perform a [cursory search](https://github.com/DiscipleTools/disciple-tools-mobile-app/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3Aenhancement) to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.  Otherwise, please proceed to create an issue on that repository and provide the following information:
 
 * **Use a clear and descriptive title** for the issue to identify the suggestion.
 * **Provide a step-by-step description of the suggested enhancement** in as many details as possible.
@@ -53,9 +53,9 @@ Please perform a [cursory search](https://github.com/search?q=+is%3Aissue+user%3
 
 ### Your First Code Contribution
 
-Unsure where to begin contributing to DiscipleTools Mobile App? You can start by looking through these `beginner` and `help-wanted` issues:
+Unsure where to begin contributing to DiscipleTools Mobile App? You can start by looking through these `good first issue` and `help wanted` issues:
 
-- [Beginner](https://github.com/DiscipleTools/disciple-tools-mobile-app/issues?q=is%3Aissue+is%3Aopen+label%3A%22beginner%22) - issues which should only require a few lines of code, and a test or two.
+- [Good first issue](https://github.com/DiscipleTools/disciple-tools-mobile-app/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) - issues which should only require a few lines of code, and a test or two.
 - [Help wanted](https://github.com/DiscipleTools/disciple-tools-mobile-app/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) - issues which should be a bit more involved than `beginner` issues.
 
 If you decide to fix an issue, please be sure to check the comment thread in case somebody is already working on a fix. If nobody is working on it at the moment, please leave a comment stating that you intend to work on it so other people don’t accidentally duplicate your effort.
