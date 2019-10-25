@@ -56,7 +56,7 @@ Please perform a [cursory search](https://github.com/DiscipleTools/disciple-tool
 Unsure where to begin contributing to DiscipleTools Mobile App? You can start by looking through these `good first issue` and `help wanted` issues:
 
 - [Good first issue](https://github.com/DiscipleTools/disciple-tools-mobile-app/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) - issues which should only require a few lines of code, and a test or two.
-- [Help wanted](https://github.com/DiscipleTools/disciple-tools-mobile-app/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) - issues which should be a bit more involved than `beginner` issues.
+- [Help wanted](https://github.com/DiscipleTools/disciple-tools-mobile-app/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) - issues which should be a bit more involved than `good first issue` issues.
 
 If you decide to fix an issue, please be sure to check the comment thread in case somebody is already working on a fix. If nobody is working on it at the moment, please leave a comment stating that you intend to work on it so other people don’t accidentally duplicate your effort.
 
