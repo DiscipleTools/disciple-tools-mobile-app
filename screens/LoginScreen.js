@@ -130,14 +130,8 @@ class LoginScreen extends React.Component {
   state = {
     loading: false,
     modalVisible: false,
-    usersContactsListRetrieved: false,
-    geonamesListRetrieved: false,
-    peopleGroupsListRetrieved: false,
-    searchListRetrieved: false,
-    usersListRetrieved: false,
     contactSettingsListRetrieved: false,
-    contactsListRetrieved: false,
-    groupsListRetrieved: false,
+    groupSettingsListRetrieved: false,
   };
 
   constructor(props) {
@@ -159,12 +153,6 @@ class LoginScreen extends React.Component {
       userReducerLoading,
       userData,
       groupsReducerLoading,
-      usersContacts,
-      geonames,
-      peopleGroups,
-      search,
-      usersReducerLoading,
-      users,
       contactSettings,
       groupSettings,
       userReducerError,
@@ -172,45 +160,13 @@ class LoginScreen extends React.Component {
       usersReducerError,
       contactsReducerLoading,
       contactsReducerError,
-      contacts,
-      groups,
     } = nextProps;
     let newState = {
       ...prevState,
       userData,
-      loading: userReducerLoading || groupsReducerLoading || usersReducerLoading || contactsReducerLoading,
+      loading: userReducerLoading || groupsReducerLoading || contactsReducerLoading,
     };
 
-    if (usersContacts) {
-      newState = {
-        ...newState,
-        usersContactsListRetrieved: true,
-      };
-    }
-    if (geonames) {
-      newState = {
-        ...newState,
-        geonamesListRetrieved: true,
-      };
-    }
-    if (peopleGroups) {
-      newState = {
-        ...newState,
-        peopleGroupsListRetrieved: true,
-      };
-    }
-    if (search) {
-      newState = {
-        ...newState,
-        searchListRetrieved: true,
-      };
-    }
-    if (users) {
-      newState = {
-        ...newState,
-        usersListRetrieved: true,
-      };
-    }
     if (contactSettings) {
       newState = {
         ...newState,
@@ -221,18 +177,6 @@ class LoginScreen extends React.Component {
       newState = {
         ...newState,
         groupSettingsListRetrieved: true,
-      };
-    }
-    if (contacts) {
-      newState = {
-        ...newState,
-        contactsListRetrieved: true,
-      };
-    }
-    if (groups) {
-      newState = {
-        ...newState,
-        groupsListRetrieved: true,
       };
     }
 
@@ -252,15 +196,8 @@ class LoginScreen extends React.Component {
 
     this.focusListener = navigation.addListener('didFocus', () => {
       this.setState({
-        usersContactsListRetrieved: false,
-        geonamesListRetrieved: false,
-        peopleGroupsListRetrieved: false,
-        searchListRetrieved: false,
-        usersListRetrieved: false,
         contactSettingsListRetrieved: false,
         groupSettingsListRetrieved: false,
-        contactsListRetrieved: false,
-        groupsListRetrieved: false,
       });
     });
     // User is authenticated (logged)
@@ -274,15 +211,8 @@ class LoginScreen extends React.Component {
           loading: true,
         }, () => {
           this.setState({
-            usersContactsListRetrieved: true,
-            geonamesListRetrieved: true,
-            peopleGroupsListRetrieved: true,
-            searchListRetrieved: true,
-            usersListRetrieved: true,
             contactSettingsListRetrieved: true,
             groupSettingsListRetrieved: true,
-            contactsListRetrieved: true,
-            groupsListRetrieved: true,
           });
         });
       }
@@ -297,15 +227,8 @@ class LoginScreen extends React.Component {
       users, userReducerError, groupsReducerError, usersReducerError, contactsReducerError,
     } = this.props;
     const {
-      usersContactsListRetrieved,
-      geonamesListRetrieved,
-      peopleGroupsListRetrieved,
-      searchListRetrieved,
-      usersListRetrieved,
       contactSettingsListRetrieved,
       groupSettingsListRetrieved,
-      groupsListRetrieved,
-      contactsListRetrieved,
     } = this.state;
     // If the RTL value in the store does not match what is
     // in I18nManager (which controls content flow), call
@@ -380,15 +303,7 @@ class LoginScreen extends React.Component {
       );
     }
 
-    if (usersContactsListRetrieved
-      && geonamesListRetrieved
-      && peopleGroupsListRetrieved
-      && searchListRetrieved
-      && usersListRetrieved
-      && contactSettingsListRetrieved
-      && groupSettingsListRetrieved
-      && groupsListRetrieved
-      && contactsListRetrieved) {
+    if (contactSettingsListRetrieved && groupSettingsListRetrieved) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
       AsyncStorage.setItem('listsLastUpdate', listsLastUpdate);
