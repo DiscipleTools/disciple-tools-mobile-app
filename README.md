@@ -1,6 +1,10 @@
 # Disciple Tools Mobile App
 The React Native code base for the Disciple Tools mobile app.
 
+## Latest status
+
+[![](https://github.com/DiscipleTools/disciple-tools-mobile-app/workflows/Expo%20Publish%20Dev/badge.svg?branch=development)](https://github.com/DiscipleTools/disciple-tools-mobile-app/actions)
+
 ## Team
 * [Mobile App Team](https://github.com/orgs/DiscipleTools/teams/mobile-app-lead-team)
 
