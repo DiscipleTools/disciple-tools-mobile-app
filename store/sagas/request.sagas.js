@@ -52,7 +52,7 @@ function* processRequest(request) {
 
     if (jsonParseBody.ID) {
       /* eslint-disable */
-      if(isNaN(jsonParseBody.ID)) {
+      if(Number.isNaN(jsonParseBody.ID)) {
         /* eslint-enable */
         oldID = jsonParseBody.ID;
       }
@@ -98,7 +98,7 @@ export default function* requestSaga() {
       id = id[id.length - 1];
       localGetById.value = id;
       /* eslint-disable */
-      if (isNaN(id)) {
+      if (Number.isNaN(id)) {
         /* eslint-enable */
         localGetById.isLocal = true;
       }

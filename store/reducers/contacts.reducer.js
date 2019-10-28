@@ -39,7 +39,7 @@ export default function contactsReducer(state = initialState, action) {
       let { contacts } = action;
       const { offline } = action;
       /* eslint-disable */
-      let localContacts = newState.contacts.filter(localContact => isNaN(localContact.ID));
+      let localContacts = newState.contacts.filter(localContact => Number.isNaN(localContact.ID));
       /* eslint-enable */
       if (!offline) {
         const dataBaseContacts = [...action.contacts].map((contact) => {
@@ -253,7 +253,7 @@ export default function contactsReducer(state = initialState, action) {
         // Merge all data of request with found entity
         let newContactData;
         /* eslint-disable */
-        if (offline && !isNaN(contact.ID)) {
+        if (offline && !Number.isNaN(contact.ID)) {
           /* eslint-enable */
           // Editing D.B. entity in OFFLINE mode
           newContactData = {
@@ -380,7 +380,7 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_GETBYID_SUCCESS: {
       let contact = { ...action.contact };
       /* eslint-disable */
-      if (isNaN(contact.ID) || contact.isOffline) {
+      if (Number.isNaN(contact.ID) || contact.isOffline) {
         /* eslint-enable */
         // Search local contact
         const foundContact = newState.contacts.find(contactItem => (contactItem.ID.toString() === contact.ID));
