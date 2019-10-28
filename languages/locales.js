@@ -6,4 +6,8 @@ export default [{
   code: 'ar',
   name: 'عربي',
   direction: 'rtl',
+}, {
+  code: 'tr',
+  name: 'Turkish',
+  direction: 'ltr',
 }];
