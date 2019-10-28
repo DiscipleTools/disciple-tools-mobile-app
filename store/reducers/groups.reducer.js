@@ -127,9 +127,7 @@ export default function groupsReducer(state = initialState, action) {
     case actions.GROUPS_GETALL_SUCCESS: {
       let { groups } = action;
       const { offline } = action;
-      /* eslint-disable */
       let localGroups = newState.groups.filter(localGroup => Number.isNaN(localGroup.ID));
-      /* eslint-enable */
       if (!offline) {
         const dataBaseGroups = [...groups].map((group) => {
           const mappedGroup = {};
@@ -360,9 +358,7 @@ export default function groupsReducer(state = initialState, action) {
       // Search entity in list (groups) if exists: updated it, otherwise: added it to group list
       if (groupIndex > -1) {
         let newGroupData;
-        /* eslint-disable */
         if (offline && !Number.isNaN(group.ID)) {
-          /* eslint-enable */
           // Editing D.B. entity in OFFLINE mode
           newGroupData = {
             ...newState.groups[groupIndex],
@@ -487,9 +483,7 @@ export default function groupsReducer(state = initialState, action) {
       };
     case actions.GROUPS_GETBYID_SUCCESS: {
       let group = { ...action.group };
-      /* eslint-disable */
       if (Number.isNaN(group.ID) || group.isOffline) {
-        /* eslint-enable */
         // Search local group
         const foundGroup = newState.groups.find(groupItem => (groupItem.ID.toString() === group.ID));
         group = {

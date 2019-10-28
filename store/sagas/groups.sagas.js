@@ -67,9 +67,7 @@ export function* saveGroup({ domain, token, groupData }) {
   const group = groupData;
   let groupId = '';
   // Add ID to URL only on D.B. IDs
-  /* eslint-disable */
   if (group.ID && !Number.isNaN(group.ID)) {
-    /* eslint-enable */
     groupId = group.ID;
   }
 
@@ -237,9 +235,7 @@ export function* getCommentsByGroup({
   yield put({ type: actions.GROUPS_GET_COMMENTS_START });
 
   try {
-    /* eslint-disable */
     if (!isConnected || Number.isNaN(groupId)) {
-      /* eslint-enable */
       let queue = yield select(state => state.requestReducer.queue);
       const authorName = yield select(state => state.userReducer.userData.username);
       queue = queue.filter(requestQueue => (requestQueue.data.method === 'POST'
