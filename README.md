@@ -49,4 +49,3 @@ npx jest MySearchQuery
 npx jest TextField
 npx jest components/*
 ```
-

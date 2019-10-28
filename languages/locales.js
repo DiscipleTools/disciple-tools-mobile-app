@@ -7,7 +7,23 @@ export default [{
   name: 'عربي',
   direction: 'rtl',
 }, {
+  code: 'es',
+  name: 'Español',
+  direction: 'ltr',
+}, {
+  code: 'bn',
+  name: 'বাংলা',
+  direction: 'ltr',
+}, {
+  code: 'fr',
+  name: 'Français',
+  direction: 'ltr',
+}, {
   code: 'tr',
-  name: 'Turkish',
+  name: 'Türk',
+  direction: 'ltr',
+}, {
+  code: 'zh-tw',
+  name: '中文-台灣',
   direction: 'ltr',
 }];

@@ -3,6 +3,7 @@ import * as actions from '../actions/user.actions';
 const initialState = {
   error: null,
   loading: null,
+  domain: null,
   userData: {
     domain: null,
     token: null,

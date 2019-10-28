@@ -18,6 +18,7 @@ export const GROUPS_GETBYID_START = 'GROUPS_GETBYID_START';
 export const GROUPS_GETBYID_SUCCESS = 'GROUPS_GETBYID_SUCCESS';
 export const GROUPS_GETBYID_RESPONSE = 'GROUPS_GETBYID_RESPONSE';
 export const GROUPS_GETBYID_FAILURE = 'GROUPS_GETBYID_FAILURE';
+export const GROUPS_GETBYID_END = 'GROUPS_GETBYID_END';
 
 export const GROUPS_GET_USERS_CONTACTS = 'GROUPS_GET_USERS_CONTACTS';
 export const GROUPS_GET_USERS_CONTACTS_START = 'GROUPS_GET_USERS_CONTACTS_START';
@@ -61,6 +62,12 @@ export const GROUPS_SEARCH_SUCCESS = 'GROUPS_SEARCH_SUCCESS';
 export const GROUPS_SEARCH_RESPONSE = 'GROUPS_SEARCH_RESPONSE';
 export const GROUPS_SEARCH_FAILURE = 'GROUPS_SEARCH_FAILURE';
 
+export const GROUPS_GET_SETTINGS = 'GROUPS_GET_SETTINGS';
+export const GROUPS_GET_SETTINGS_START = 'GROUPS_GET_SETTINGS_START';
+export const GROUPS_GET_SETTINGS_SUCCESS = 'GROUPS_GET_SETTINGS_SUCCESS';
+export const GROUPS_GET_SETTINGS_RESPONSE = 'GROUPS_GET_SETTINGS_RESPONSE';
+export const GROUPS_GET_SETTINGS_FAILURE = 'GROUPS_GET_SETTINGS_FAILURE';
+
 /**
  * Action Creators
  */
@@ -87,6 +94,12 @@ export function getById(domain, token, groupId) {
     domain,
     token,
     groupId,
+  };
+}
+
+export function getByIdEnd() {
+  return {
+    type: GROUPS_GETBYID_END,
   };
 }
 
@@ -149,6 +162,14 @@ export function getActivitiesByGroup(domain, token, groupId, offset, limit) {
 export function searchGroups(domain, token) {
   return {
     type: GROUPS_SEARCH,
+    domain,
+    token,
+  };
+}
+
+export function getGroupSettings(domain, token) {
+  return {
+    type: GROUPS_GET_SETTINGS,
     domain,
     token,
   };

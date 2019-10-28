@@ -2,8 +2,8 @@ import React from 'react';
 import {
   Platform,
 } from 'react-native';
-import FormField from './FormField';
 import { storiesOf } from '@storybook/react-native';
+import FormField from './FormField';
 import CenterView from '../storybook/stories/CenterView';
 import TextFieldMultiple from './TextFieldMultiple';
 
@@ -26,7 +26,7 @@ storiesOf('Text Field Multiple', module)
         key: 998,
         value: 'Sample value 4',
       }]}
-      onChange={()=>{}}
+      onChange={() => {}}
     />
   ))
 
@@ -46,7 +46,7 @@ storiesOf('Text Field Multiple', module)
       }]}
       labelStyle={{ color: 'red' }}
       textInputStyle={{ color: 'green' }}
-      onChange={()=>{}}
+      onChange={() => {}}
 
     />
   ))
@@ -67,7 +67,7 @@ storiesOf('Text Field Multiple', module)
       }]}
       labelStyle={{ color: 'red' }}
       textInputStyle={{ color: 'green' }}
-      onChange={()=>{}}
+      onChange={() => {}}
 
     />
   ))
@@ -92,8 +92,7 @@ storiesOf('Text Field Multiple', module)
           key: 998,
           value: 'Sample value 4',
         }]}
-        onChange={()=>{}}
+        onChange={() => {}}
       />
     </FormField>
-  ))
-
+  ));

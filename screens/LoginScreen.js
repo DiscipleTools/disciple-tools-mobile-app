@@ -37,8 +37,11 @@ import {
   getLocations,
   getPeopleGroups,
   searchGroups,
+  getGroupSettings,
+  getAll as getAllGroups,
 } from '../store/actions/groups.actions';
 import { getUsers } from '../store/actions/users.actions';
+import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -117,7 +120,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
 });
-const listLength = 5;
 let toastError;
 
 class LoginScreen extends React.Component {
@@ -126,22 +128,14 @@ class LoginScreen extends React.Component {
   };
 
   state = {
-    listsRetrieved: listLength,
     loading: false,
     modalVisible: false,
+    contactSettingsListRetrieved: false,
+    groupSettingsListRetrieved: false,
   };
 
   constructor(props) {
     super(props);
-
-    // User is authenticated (logged)
-    if (props.userData && props.userData.token) {
-      this.state = {
-        ...this.state,
-        loading: true,
-      };
-      this.getDataLists();
-    }
 
     this.state = {
       ...this.state,
@@ -159,29 +153,34 @@ class LoginScreen extends React.Component {
       userReducerLoading,
       userData,
       groupsReducerLoading,
-      usersContacts,
-      geonames,
-      peopleGroups,
-      search,
-      usersReducerLoading,
-      users,
+      contactSettings,
+      groupSettings,
       userReducerError,
       groupsReducerError,
       usersReducerError,
+      contactsReducerLoading,
+      contactsReducerError,
     } = nextProps;
     let newState = {
       ...prevState,
       userData,
-      loading: userReducerLoading || groupsReducerLoading || usersReducerLoading,
+      loading: userReducerLoading || groupsReducerLoading || contactsReducerLoading,
     };
-    if (usersContacts || geonames || peopleGroups || search || users) {
+
+    if (contactSettings) {
       newState = {
         ...newState,
-        listsRetrieved: --newState.listsRetrieved,
+        contactSettingsListRetrieved: true,
+      };
+    }
+    if (groupSettings) {
+      newState = {
+        ...newState,
+        groupSettingsListRetrieved: true,
       };
     }
 
-    const error = (userReducerError || groupsReducerError || usersReducerError);
+    const error = (userReducerError || groupsReducerError || usersReducerError || contactsReducerError);
     if (error) {
       newState = {
         ...newState,
@@ -192,15 +191,45 @@ class LoginScreen extends React.Component {
     return newState;
   }
 
+  componentDidMount() {
+    const { navigation } = this.props;
+
+    this.focusListener = navigation.addListener('didFocus', () => {
+      this.setState({
+        contactSettingsListRetrieved: false,
+        groupSettingsListRetrieved: false,
+      });
+    });
+    // User is authenticated (logged)
+    if (this.props.userData && this.props.userData.token) {
+      if (this.props.isConnected) {
+        this.setState({ loading: true }, () => {
+          this.getDataLists();
+        });
+      } else {
+        this.setState({
+          loading: true,
+        }, () => {
+          this.setState({
+            contactSettingsListRetrieved: true,
+            groupSettingsListRetrieved: true,
+          });
+        });
+      }
+    }
+  }
+
   componentDidUpdate(prevProps) {
     const {
-      userData, usersContacts, geonames, peopleGroups, search,
+      userData, usersContacts, geonames, peopleGroups, search, contactSettings, groupSettings,
     } = this.props;
     const {
-      users, userReducerError, groupsReducerError, usersReducerError,
+      users, userReducerError, groupsReducerError, usersReducerError, contactsReducerError,
     } = this.props;
-    const { listsRetrieved } = this.state;
-
+    const {
+      contactSettingsListRetrieved,
+      groupSettingsListRetrieved,
+    } = this.state;
     // If the RTL value in the store does not match what is
     // in I18nManager (which controls content flow), call
     // forceRTL(...) to set it in I18nManager and reload app
@@ -258,7 +287,23 @@ class LoginScreen extends React.Component {
       );
     }
 
-    if (listsRetrieved === 0) {
+    // contactSettings retrieved
+    if (contactSettings && prevProps.contactSettings !== contactSettings) {
+      AsyncStorage.setItem(
+        'contactSettings',
+        JSON.stringify(contactSettings),
+      );
+    }
+
+    // groupSettings retrieved
+    if (groupSettings && prevProps.groupSettings !== groupSettings) {
+      AsyncStorage.setItem(
+        'groupSettings',
+        JSON.stringify(groupSettings),
+      );
+    }
+
+    if (contactSettingsListRetrieved && groupSettingsListRetrieved) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
       AsyncStorage.setItem('listsLastUpdate', listsLastUpdate);
@@ -269,7 +314,8 @@ class LoginScreen extends React.Component {
     let groupsError = (prevProps.groupsReducerError !== groupsReducerError);
     groupsError = (groupsError && groupsReducerError);
     const usersError = (prevProps.usersReducerError !== usersReducerError && usersReducerError);
-    if (userError || groupsError || usersError) {
+    const contactsError = (prevProps.contactsReducerError !== contactsReducerError && contactsReducerError);
+    if (userError || groupsError || usersError || contactsError) {
       const error = userError || groupsError || usersError;
       toastError.show(
         <View>
@@ -283,6 +329,10 @@ class LoginScreen extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    this.focusListener.remove();
+  }
+
   getDataLists = () => {
     this.props.getUsersAndContacts(
       this.props.userData.domain,
@@ -292,6 +342,10 @@ class LoginScreen extends React.Component {
     this.props.getPeopleGroups(this.props.userData.domain, this.props.userData.token);
     this.props.getUsers(this.props.userData.domain, this.props.userData.token);
     this.props.searchGroups(this.props.userData.domain, this.props.userData.token);
+    this.props.getContactSettings(this.props.userData.domain, this.props.userData.token);
+    this.props.getGroupSettings(this.props.userData.domain, this.props.userData.token);
+    this.props.getContacts(this.props.userData.domain, this.props.userData.token);
+    this.props.getGroups(this.props.userData.domain, this.props.userData.token);
   };
 
   onLoginPress = () => {
@@ -472,6 +526,7 @@ LoginScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
+    addListener: PropTypes.func.isRequired,
   }).isRequired,
   setLanguage: PropTypes.func.isRequired,
   /* eslint-disable */
@@ -502,15 +557,15 @@ LoginScreen.propTypes = {
   ),
   /* eslint-enable */
   userReducerError: PropTypes.shape({
-    code: PropTypes.string,
+    code: PropTypes.any,
     message: PropTypes.string,
   }),
   groupsReducerError: PropTypes.shape({
-    code: PropTypes.string,
+    code: PropTypes.any,
     message: PropTypes.string,
   }),
   usersReducerError: PropTypes.shape({
-    code: PropTypes.string,
+    code: PropTypes.any,
     message: PropTypes.string,
   }),
   i18n: PropTypes.shape({
@@ -518,6 +573,17 @@ LoginScreen.propTypes = {
     isRTL: PropTypes.bool,
     init: PropTypes.func,
   }).isRequired,
+  isConnected: PropTypes.bool,
+  contactSettings: PropTypes.shape({}),
+  contactsReducerError: PropTypes.shape({
+    code: PropTypes.any,
+    message: PropTypes.string,
+  }),
+  getContactSettings: PropTypes.func.isRequired,
+  getGroupSettings: PropTypes.func.isRequired,
+  groupSettings: PropTypes.shape({}),
+  getContacts: PropTypes.func.isRequired,
+  getGroups: PropTypes.func.isRequired,
 };
 LoginScreen.defaultProps = {
   userData: {
@@ -530,6 +596,10 @@ LoginScreen.defaultProps = {
   userReducerError: null,
   groupsReducerError: null,
   usersReducerError: null,
+  isConnected: null,
+  contactsReducerError: null,
+  contactSettings: null,
+  groupSettings: null,
 };
 const mapStateToProps = state => ({
   userData: state.userReducer.userData,
@@ -540,11 +610,18 @@ const mapStateToProps = state => ({
   geonames: state.groupsReducer.geonames,
   peopleGroups: state.groupsReducer.peopleGroups,
   search: state.groupsReducer.search,
+  groupSettings: state.groupsReducer.settings,
   groupsReducerError: state.groupsReducer.error,
   usersReducerLoading: state.usersReducer.loading,
   users: state.usersReducer.users,
   usersReducerError: state.usersReducer.error,
   i18n: state.i18nReducer,
+  isConnected: state.networkConnectivityReducer.isConnected,
+  contactSettings: state.contactsReducer.settings,
+  contactsReducerLoading: state.contactsReducer.loading,
+  contactsReducerError: state.contactsReducer.error,
+  contacts: state.contactsReducer.contacts,
+  groups: state.groupsReducer.groups,
 });
 const mapDispatchToProps = dispatch => ({
   loginDispatch: (domain, username, password) => {
@@ -567,6 +644,18 @@ const mapDispatchToProps = dispatch => ({
   },
   setLanguage: (locale, isRTL) => {
     dispatch(setLanguage(locale, isRTL));
+  },
+  getContactSettings: (domain, token) => {
+    dispatch(getContactSettings(domain, token));
+  },
+  getGroupSettings: (domain, token) => {
+    dispatch(getGroupSettings(domain, token));
+  },
+  getContacts: (domain, token) => {
+    dispatch(getAllContacts(domain, token));
+  },
+  getGroups: (domain, token) => {
+    dispatch(getAllGroups(domain, token));
   },
 });
 export default connect(

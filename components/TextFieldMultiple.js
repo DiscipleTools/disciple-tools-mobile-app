@@ -104,7 +104,6 @@ class TextFieldMultiple extends Component {
       values,
     });
     this.props.onChange(values, textField);
-
   }
 
     render = () => {

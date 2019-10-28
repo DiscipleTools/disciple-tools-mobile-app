@@ -1,9 +1,10 @@
 import * as actions from '../actions/groups.actions';
+import * as userActions from '../actions/user.actions';
 
 const initialState = {
-  loading: null,
+  loading: false,
   error: null,
-  groups: null,
+  groups: [],
   group: null,
   comments: null,
   newComment: null,
@@ -14,19 +15,20 @@ const initialState = {
   search: null,
   totalComments: null,
   totalActivities: null,
-  loadingComments: null,
-  loadingActivities: null,
-  saved: null,
+  loadingComments: false,
+  loadingActivities: false,
+  saved: false,
+  settings: null,
 };
 
 export default function groupsReducer(state = initialState, action) {
   let newState = {
     ...state,
+    group: null,
     usersContacts: null,
     peopleGroups: null,
     geonames: null,
     search: null,
-    group: null,
     newComment: null,
     error: null,
     comments: null,
@@ -122,18 +124,120 @@ export default function groupsReducer(state = initialState, action) {
         ...newState,
         loading: true,
       };
-    case actions.GROUPS_GETALL_SUCCESS:
+    case actions.GROUPS_GETALL_SUCCESS: {
+      let { groups } = action;
+      const { offline } = action;
+      /* eslint-disable */
+      let localGroups = newState.groups.filter(localGroup => isNaN(localGroup.ID));
+      /* eslint-enable */
+      if (!offline) {
+        const dataBaseGroups = [...groups].map((group) => {
+          const mappedGroup = {};
+          Object.keys(group).forEach((key) => {
+            // Omit restricted properties
+            if (key !== 'last_modified' && key !== 'created_from_contact_id' && key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'baptized_member_count') {
+              const value = group[key];
+              const valueType = Object.prototype.toString.call(value);
+              switch (valueType) {
+                case '[object Boolean]': {
+                  mappedGroup[key] = value;
+                  return;
+                }
+                case '[object Number]': {
+                  mappedGroup[key] = value;
+                  return;
+                }
+                case '[object String]': {
+                  if (value.includes('quick_button')) {
+                    mappedGroup[key] = parseInt(value, 10);
+                  } else if (key === 'post_title') {
+                    mappedGroup.title = value;
+                  } else {
+                    mappedGroup[key] = value;
+                  }
+                  return;
+                }
+                case '[object Object]': {
+                  if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                    // key_select
+                    mappedGroup[key] = value.key;
+                  } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                    // date
+                    mappedGroup[key] = value.formatted;
+                  } else if (key === 'assigned_to') {
+                    // assigned-to property
+                    mappedGroup[key] = value['assigned-to'];
+                  }
+                  return;
+                }
+                case '[object Array]': {
+                  const mappedValue = value.map((valueTwo) => {
+                    const valueTwoType = Object.prototype.toString.call(valueTwo);
+                    switch (valueTwoType) {
+                      case '[object Object]': {
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
+                          // connection
+                          let object = {
+                            value: valueTwo.ID.toString(),
+                          };
+                          // groups
+                          if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') && Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                            object = {
+                              ...object,
+                              post_title: valueTwo.post_title,
+                              baptized_member_count: valueTwo.baptized_member_count,
+                              member_count: valueTwo.member_count,
+                            };
+                          }
+                          return object;
+                        } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                          return {
+                            key: valueTwo.key,
+                            value: valueTwo.value,
+                          };
+                        } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                          return {
+                            value: valueTwo.id.toString(),
+                          };
+                        }
+                        break;
+                      }
+                      case '[object String]': {
+                        if (key === 'sources' || key === 'health_metrics') {
+                          // source or health_metric
+                          return {
+                            value: valueTwo,
+                          };
+                        }
+                        return valueTwo;
+                      }
+                      default:
+                    }
+                    return valueTwo;
+                  });
+                  if (key.includes('contact_')) {
+                    mappedGroup[key] = mappedValue;
+                  } else {
+                    mappedGroup[key] = {
+                      values: mappedValue,
+                    };
+                  }
+                  break;
+                }
+                default:
+              }
+            }
+          });
+          return mappedGroup;
+        }).sort((a, b) => parseInt(a.last_modified, 10) - parseInt(b.last_modified, 10)).reverse();
+        groups = localGroups.concat(dataBaseGroups);
+      }
       return {
         ...newState,
-        groups: action.groups.map(group => ({
-          ID: group.ID,
-          post_title: group.post_title,
-          group_status: group.group_status,
-          group_type: group.group_type,
-          member_count: (group.member_count) ? group.member_count : 0,
-        })),
+        groups,
         loading: false,
       };
+    }
     case actions.GROUPS_GETALL_FAILURE:
       return {
         ...newState,
@@ -141,132 +245,235 @@ export default function groupsReducer(state = initialState, action) {
         loading: false,
       };
     case actions.GROUPS_SAVE_SUCCESS: {
-      const { group } = action;
-      newState = {
-        ...newState,
-        group: {
-          ID: group.ID,
-          title: group.title,
-          group_status:
-            group.group_status && group.group_status.key
-              ? group.group_status.key
-              : null,
-          assigned_to: group.assigned_to
-            ? `user-${group.assigned_to.id}`
-            : null,
-          coaches: {
-            values: group.coaches
-              ? group.coaches.map(coach => ({
-                value: coach.ID.toString(),
-                name: coach.post_title,
-              }))
-              : [],
-          },
-          geonames: {
-            values: group.geonames
-              ? group.geonames.map(geoname => ({
-                value: geoname.id.toString(),
-                name: geoname.label,
-              }))
-              : [],
-          },
-          people_groups: {
-            values: group.people_groups
-              ? group.people_groups.map(peopleGroup => ({
-                value: peopleGroup.ID.toString(),
-                name: peopleGroup.post_title,
-              }))
-              : [],
-          },
-          contact_address: group.contact_address
-            ? group.contact_address.map(contact => ({
-              key: contact.key,
-              value: contact.value,
-            }))
-            : [],
-          start_date:
-            group.start_date && group.start_date.formatted.length > 0
-              ? group.start_date.formatted
-              : null,
-          end_date:
-            group.end_date && group.end_date.formatted.length > 0
-              ? group.end_date.formatted
-              : null,
-          group_type: group.group_type ? group.group_type.key : null,
-          health_metrics: {
-            values: group.health_metrics
-              ? group.health_metrics.map(healthMetric => ({
-                value: healthMetric,
-              }))
-              : [],
-          },
-          parent_groups: {
-            values: group.parent_groups.map(parentGroup => ({
-              name: parentGroup.post_title,
-              value: parentGroup.ID.toString(),
-            })),
-          },
-          peer_groups: {
-            values: group.peer_groups.map(peerGroup => ({
-              name: peerGroup.post_title,
-              value: peerGroup.ID.toString(),
-            })),
-          },
-          child_groups: {
-            values: group.child_groups.map(childGroup => ({
-              name: childGroup.post_title,
-              value: childGroup.ID.toString(),
-            })),
-          },
-        },
-        saved: true,
-      };
-      if (newState.group.start_date) {
-        let newStartDate = new Date(newState.group.start_date);
-        const year = newStartDate.getFullYear();
-        const month = (newStartDate.getMonth() + 1) < 10 ? `0${newStartDate.getMonth() + 1}` : (newStartDate.getMonth() + 1);
-        const day = (newStartDate.getDate() + 1) < 10 ? `0${newStartDate.getDate() + 1}` : (newStartDate.getDate() + 1);
-        newStartDate = `${year}-${month}-${day}`;
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            start_date: newStartDate,
-          },
+      const { group, offline } = action;
+      let mappedGroup = {};
+      if (offline) {
+        mappedGroup = {
+          ...group,
         };
       } else {
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            start_date: '',
-          },
-        };
+        Object.keys(group).forEach((key) => {
+          // Omit restricted properties
+          if (key !== 'last_modified' && key !== 'created_from_contact_id' && key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'baptized_member_count') {
+            const value = group[key];
+            const valueType = Object.prototype.toString.call(value);
+            switch (valueType) {
+              case '[object Boolean]': {
+                mappedGroup[key] = value;
+                return;
+              }
+              case '[object Number]': {
+                mappedGroup[key] = value;
+                return;
+              }
+              case '[object String]': {
+                if (value.includes('quick_button')) {
+                  mappedGroup[key] = parseInt(value, 10);
+                } else if (key === 'post_title') {
+                  mappedGroup.title = value;
+                } else {
+                  mappedGroup[key] = value;
+                }
+                return;
+              }
+              case '[object Object]': {
+                if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                  // key_select
+                  mappedGroup[key] = value.key;
+                } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                  // date
+                  mappedGroup[key] = value.formatted;
+                } else if (key === 'assigned_to') {
+                  // assigned-to property
+                  mappedGroup[key] = value['assigned-to'];
+                }
+                return;
+              }
+              case '[object Array]': {
+                const mappedValue = value.map((valueTwo) => {
+                  const valueTwoType = Object.prototype.toString.call(valueTwo);
+                  switch (valueTwoType) {
+                    case '[object Object]': {
+                      if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
+                        // connection
+                        let object = {
+                          value: valueTwo.ID.toString(),
+                        };
+                        // groups
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') && Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                          object = {
+                            ...object,
+                            post_title: valueTwo.post_title,
+                            baptized_member_count: valueTwo.baptized_member_count,
+                            member_count: valueTwo.member_count,
+                          };
+                        }
+                        return object;
+                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                        return {
+                          key: valueTwo.key,
+                          value: valueTwo.value,
+                        };
+                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                        return {
+                          value: valueTwo.id.toString(),
+                        };
+                      }
+                      break;
+                    }
+                    case '[object String]': {
+                      if (key === 'sources' || key === 'health_metrics') {
+                        // source or health_metric
+                        return {
+                          value: valueTwo,
+                        };
+                      }
+                      return valueTwo;
+                    }
+                    default:
+                  }
+                  return valueTwo;
+                });
+                if (key.includes('contact_')) {
+                  mappedGroup[key] = mappedValue;
+                } else {
+                  mappedGroup[key] = {
+                    values: mappedValue,
+                  };
+                }
+                break;
+              }
+              default:
+            }
+          }
+        });
       }
 
-      if (newState.group.end_date) {
-        let newEndDate = new Date(newState.group.end_date);
-        const year = newEndDate.getFullYear();
-        const month = (newEndDate.getMonth() + 1) < 10 ? `0${newEndDate.getMonth() + 1}` : (newEndDate.getMonth() + 1);
-        const day = (newEndDate.getDate() + 1) < 10 ? `0${newEndDate.getDate() + 1}` : (newEndDate.getDate() + 1);
-        newEndDate = `${year}-${month}-${day}`;
-        newState = {
-          ...newState,
-          group: {
+      const oldId = (mappedGroup.oldID) ? mappedGroup.oldID : null;
+
+      newState = {
+        ...newState,
+        group: mappedGroup,
+        saved: true,
+      };
+      const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID.toString() === group.ID.toString()));
+      // Search entity in list (groups) if exists: updated it, otherwise: added it to group list
+      if (groupIndex > -1) {
+        let newGroupData;
+        /* eslint-disable */
+        if (offline && !isNaN(group.ID)) {
+          /* eslint-enable */
+          // Editing D.B. entity in OFFLINE mode
+          newGroupData = {
+            ...newState.groups[groupIndex],
+          };
+          // Apply modifications from request (mappedGroup) in newGroupData
+          Object.keys(mappedGroup).forEach((key) => {
+            const value = mappedGroup[key];
+            const valueType = Object.prototype.toString.call(value);
+            if (valueType === '[object Array]' || Object.prototype.hasOwnProperty.call(value, 'values')) {
+              let collection; let
+                oldCollection;
+              if (valueType === '[object Array]') {
+                collection = value;
+                oldCollection = (newGroupData[key]) ? [...newGroupData[key]] : [];
+              } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                collection = value.values;
+                oldCollection = (newGroupData[key]) ? [...newGroupData[key].values] : [];
+              }
+              // compare newCollection with old and merge differences.
+              collection.forEach((object) => {
+                // search object in newGroupData
+                let findObjectInOldRequestIndex;
+                if (valueType === '[object Array]') {
+                  findObjectInOldRequestIndex = oldCollection.findIndex(oldObject => (oldObject.key === object.key));
+                } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                  findObjectInOldRequestIndex = oldCollection.findIndex(oldObject => (oldObject.value === object.value));
+                }
+                if (findObjectInOldRequestIndex > -1) {
+                  // if exist
+                  if (Object.prototype.hasOwnProperty.call(object, 'delete')) {
+                    oldCollection.splice(findObjectInOldRequestIndex, 1);
+                  } else {
+                    // update the object
+                    oldCollection[findObjectInOldRequestIndex] = {
+                      ...object,
+                    };
+                  }
+                } else {
+                  // add the object
+                  oldCollection.push({
+                    ...object,
+                  });
+                }
+              });
+              if (valueType === '[object Array]') {
+                newGroupData = {
+                  ...newGroupData,
+                  [key]: oldCollection,
+                };
+              } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                newGroupData = {
+                  ...newGroupData,
+                  [key]: {
+                    values: oldCollection,
+                  },
+                };
+              }
+            } else {
+              newGroupData = {
+                ...newGroupData,
+                [key]: value,
+              };
+            }
+          });
+        } else {
+          newGroupData = {
+            ...newState.groups[groupIndex],
             ...newState.group,
-            end_date: newEndDate,
-          },
+          };
+        }
+        newState.groups[groupIndex] = {
+          ...newGroupData,
         };
+        if (offline) {
+          // Return all group data in response
+          newState = {
+            ...newState,
+            group: {
+              ...newGroupData,
+            },
+          };
+        }
+      } else if (oldId) {
+        // Search entity with oldID, remove it and add updated entity
+        const oldGroupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === oldId));
+        const previousGroupData = {
+          ...newState.groups[oldGroupIndex],
+        };
+        const newGroupData = {
+          ...previousGroupData,
+          ...newState.group,
+        };
+        newState.groups.splice(oldGroupIndex, 1).unshift(newGroupData);
+        if (offline) {
+          // Return all group data in response
+          newState = {
+            ...newState,
+            group: {
+              ...newGroupData,
+            },
+          };
+        }
       } else {
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            end_date: '',
-          },
-        };
+        // Create
+        newState.groups.unshift({
+          ...newState.group,
+        });
       }
-      return newState;
+      return {
+        ...newState,
+      };
     }
     case actions.GROUPS_SAVE_FAILURE:
       return {
@@ -279,138 +486,127 @@ export default function groupsReducer(state = initialState, action) {
         loading: true,
       };
     case actions.GROUPS_GETBYID_SUCCESS: {
-      const { group } = action;
+      let group = { ...action.group };
+      /* eslint-disable */
+      if (isNaN(group.ID) || group.isOffline) {
+        /* eslint-enable */
+        // Search local group
+        const foundGroup = newState.groups.find(groupItem => (groupItem.ID.toString() === group.ID));
+        group = {
+          ...foundGroup,
+        };
+      } else {
+        const mappedGroup = {};
+        // MAP GROUP TO CAN SAVE IT LATER
+        Object.keys(group).forEach((key) => {
+          // Omit restricted properties
+          if (key !== 'last_modified' && key !== 'created_from_contact_id' && key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'baptized_member_count') {
+            const value = group[key];
+            const valueType = Object.prototype.toString.call(value);
+            switch (valueType) {
+              case '[object Boolean]': {
+                mappedGroup[key] = value;
+                return;
+              }
+              case '[object Number]': {
+                mappedGroup[key] = value;
+                return;
+              }
+              case '[object String]': {
+                if (value.includes('quick_button')) {
+                  mappedGroup[key] = parseInt(value, 10);
+                } else if (key === 'post_title') {
+                  mappedGroup.title = value;
+                } else {
+                  mappedGroup[key] = value;
+                }
+                return;
+              }
+              case '[object Object]': {
+                if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                  // key_select
+                  mappedGroup[key] = value.key;
+                } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                  // date
+                  mappedGroup[key] = value.formatted;
+                } else if (key === 'assigned_to') {
+                  // assigned-to property
+                  mappedGroup[key] = value['assigned-to'];
+                }
+                return;
+              }
+              case '[object Array]': {
+                const mappedValue = value.map((valueTwo) => {
+                  const valueTwoType = Object.prototype.toString.call(valueTwo);
+                  switch (valueTwoType) {
+                    case '[object Object]': {
+                      if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
+                        // connection
+                        let object = {
+                          value: valueTwo.ID.toString(),
+                        };
+                        // groups
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') && Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                          object = {
+                            ...object,
+                            post_title: valueTwo.post_title,
+                            baptized_member_count: valueTwo.baptized_member_count,
+                            member_count: valueTwo.member_count,
+                          };
+                        }
+                        return object;
+                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                        return {
+                          key: valueTwo.key,
+                          value: valueTwo.value,
+                        };
+                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                        return {
+                          value: valueTwo.id.toString(),
+                        };
+                      }
+                      break;
+                    }
+                    case '[object String]': {
+                      if (key === 'sources' || key === 'health_metrics') {
+                        // source or health_metric
+                        return {
+                          value: valueTwo,
+                        };
+                      }
+                      return valueTwo;
+                    }
+                    default:
+                  }
+                  return valueTwo;
+                });
+                if (key.includes('contact_')) {
+                  mappedGroup[key] = mappedValue;
+                } else {
+                  mappedGroup[key] = {
+                    values: mappedValue,
+                  };
+                }
+                break;
+              }
+              default:
+            }
+          }
+        });
+        group = mappedGroup;
+        // Update localGroup with dbGroup
+        const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === group.ID));
+        if (groupIndex > -1) {
+          newState.groups[groupIndex] = {
+            ...group,
+          };
+        }
+      }
       newState = {
         ...newState,
-        group: {
-          ID: group.ID,
-          title: group.title,
-          group_status:
-            group.group_status && group.group_status.key
-              ? group.group_status.key
-              : null,
-          assigned_to: group.assigned_to
-            ? `user-${group.assigned_to.id}`
-            : null,
-          coaches: {
-            values: group.coaches
-              ? group.coaches.map(coach => ({
-                value: coach.ID.toString(),
-                name: coach.post_title,
-              }))
-              : [],
-          },
-          geonames: {
-            values: group.geonames
-              ? group.geonames.map(geoname => ({
-                value: geoname.id.toString(),
-                name: geoname.label,
-              }))
-              : [],
-          },
-          people_groups: {
-            values: group.people_groups
-              ? group.people_groups.map(peopleGroup => ({
-                value: peopleGroup.ID.toString(),
-                name: peopleGroup.post_title,
-              }))
-              : [],
-          },
-          contact_address: group.contact_address
-            ? group.contact_address.map(contact => ({
-              key: contact.key,
-              value: contact.value,
-            }))
-            : [],
-          start_date:
-            group.start_date && group.start_date.formatted.length > 0
-              ? group.start_date.formatted
-              : null,
-          end_date:
-            group.end_date && group.end_date.formatted.length > 0
-              ? group.end_date.formatted
-              : null,
-          group_type: group.group_type ? group.group_type.key : null,
-          health_metrics: {
-            values: group.health_metrics
-              ? group.health_metrics.map(healthMetric => ({
-                value: healthMetric,
-              }))
-              : [],
-          },
-          parent_groups: {
-            values: group.parent_groups.map(parentGroup => ({
-              name: parentGroup.post_title,
-              baptizedCount: parentGroup.baptized_member_count,
-              memberCount: parentGroup.member_count,
-              value: parentGroup.ID.toString(),
-            })),
-          },
-          peer_groups: {
-            values: group.peer_groups.map(peerGroup => ({
-              name: peerGroup.post_title,
-              baptizedCount: peerGroup.baptized_member_count,
-              memberCount: peerGroup.member_count,
-              value: peerGroup.ID.toString(),
-            })),
-          },
-          child_groups: {
-            values: group.child_groups.map(childGroup => ({
-              name: childGroup.post_title,
-              baptizedCount: childGroup.baptized_member_count,
-              memberCount: childGroup.member_count,
-              value: childGroup.ID.toString(),
-            })),
-          },
-        },
+        group,
         loading: false,
       };
-      if (newState.group.start_date) {
-        let newStartDate = new Date(newState.group.start_date);
-        const year = newStartDate.getFullYear();
-        const month = (newStartDate.getMonth() + 1) < 10 ? `0${newStartDate.getMonth() + 1}` : (newStartDate.getMonth() + 1);
-        const day = (newStartDate.getDate()) < 10 ? `0${newStartDate.getDate()}` : (newStartDate.getDate());
-        newStartDate = `${year}-${month}-${day}`;
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            start_date: newStartDate,
-          },
-        };
-      } else {
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            start_date: '',
-          },
-        };
-      }
-
-      if (newState.group.end_date) {
-        let newEndDate = new Date(newState.group.end_date);
-        const year = newEndDate.getFullYear();
-        const month = (newEndDate.getMonth() + 1) < 10 ? `0${newEndDate.getMonth() + 1}` : (newEndDate.getMonth() + 1);
-        const day = (newEndDate.getDate()) < 10 ? `0${newEndDate.getDate()}` : (newEndDate.getDate());
-        newEndDate = `${year}-${month}-${day}`;
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            end_date: newEndDate,
-          },
-        };
-      } else {
-        newState = {
-          ...newState,
-          group: {
-            ...newState.group,
-            end_date: '',
-          },
-        };
-      }
-
       return newState;
     }
     case actions.GROUPS_GETBYID_FAILURE:
@@ -424,19 +620,50 @@ export default function groupsReducer(state = initialState, action) {
         ...newState,
         loadingComments: true,
       };
-    case actions.GROUPS_GET_COMMENTS_SUCCESS:
+    case actions.GROUPS_GET_COMMENTS_SUCCESS: {
+      const { comments, total, offline } = action;
+      if (offline) {
+        const date = new Date();
+        const year = date.getUTCFullYear();
+        let day = date.getUTCDate();
+        let month = (date.getUTCMonth() + 1);
+        if (day < 10) day = `0${day}`;
+        if (month < 10) month = `0${month}`;
+        const curDay = `${year}-${month}-${day}`;
+        let hours = date.getUTCHours();
+        let minutes = date.getUTCMinutes();
+        let seconds = date.getUTCSeconds();
+        if (hours < 10) hours = `0${hours}`;
+        if (minutes < 10) minutes = `0${minutes}`;
+        if (seconds < 10) seconds = `0${seconds}`;
+        const currentDate = `${curDay}T${hours}:${minutes}:${seconds}Z`;
+        return {
+          ...newState,
+          comments: comments.map(comment => ({
+            ID: comment.ID,
+            author: comment.author,
+            date: currentDate,
+            content: comment.comment,
+            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
+            contactId: comment.contactId,
+          })),
+          totalComments: total,
+          loadingComments: false,
+        };
+      }
       return {
         ...newState,
-        comments: action.comments.map(comment => ({
+        comments: comments.map(comment => ({
           ID: comment.comment_ID,
           date: `${comment.comment_date.replace(' ', 'T')}Z`,
           author: comment.comment_author,
           content: comment.comment_content,
           gravatar: comment.gravatar,
         })),
-        totalComments: action.total,
+        totalComments: total,
         loadingComments: false,
       };
+    }
     case actions.GROUPS_GET_COMMENTS_FAILURE:
       return {
         ...newState,
@@ -449,18 +676,48 @@ export default function groupsReducer(state = initialState, action) {
         loadingComments: true,
       };
     case actions.GROUPS_SAVE_COMMENT_SUCCESS: {
-      const { comment } = action;
-      return {
-        ...newState,
-        newComment: {
-          ID: comment.comment_ID,
-          author: comment.comment_author,
-          date: `${comment.comment_date.replace(' ', 'T')}Z`,
-          content: comment.comment_content,
-          gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
-        },
-        loadingComments: false,
-      };
+      const { comment, offline } = action;
+      if (offline) {
+        const date = new Date();
+        const year = date.getUTCFullYear();
+        let day = date.getUTCDate();
+        let month = (date.getUTCMonth() + 1);
+        if (day < 10) day = `0${day}`;
+        if (month < 10) month = `0${month}`;
+        const curDay = `${year}-${month}-${day}`;
+        let hours = date.getUTCHours();
+        let minutes = date.getUTCMinutes();
+        let seconds = date.getUTCSeconds();
+        if (hours < 10) hours = `0${hours}`;
+        if (minutes < 10) minutes = `0${minutes}`;
+        if (seconds < 10) seconds = `0${seconds}`;
+        const currentDate = `${curDay}T${hours}:${minutes}:${seconds}Z`;
+        newState = {
+          ...newState,
+          newComment: {
+            ID: comment.ID,
+            author: comment.author,
+            date: currentDate,
+            content: comment.comment,
+            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
+            contactID: comment.contactID,
+          },
+          loadingComments: false,
+        };
+      } else {
+        newState = {
+          ...newState,
+          newComment: {
+            ID: comment.comment_ID,
+            author: comment.comment_author,
+            date: `${comment.comment_date.replace(' ', 'T')}Z`,
+            content: comment.comment_content,
+            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
+          },
+          loadingComments: false,
+        };
+      }
+      return newState;
     }
     case actions.GROUPS_SAVE_COMMENT_FAILURE:
       return {
@@ -498,6 +755,57 @@ export default function groupsReducer(state = initialState, action) {
         ...newState,
         error: action.error,
         loadingActivities: false,
+      };
+    case userActions.USER_LOGOUT:
+      return {
+        ...newState,
+        usersContacts: null,
+        geonames: null,
+        peopleGroups: null,
+        search: null,
+      };
+    case actions.GROUPS_GET_SETTINGS_SUCCESS: {
+      const { settings } = action;
+      let fieldList = {};
+      Object.keys(settings.fields).forEach((fieldName) => {
+        const fieldData = settings.fields[fieldName];
+        if (fieldData.type === 'key_select' || fieldData.type === 'multi_select') {
+          let fieldValues = {};
+          Object.keys(fieldData.default).forEach((value) => {
+            fieldValues = {
+              ...fieldValues,
+              [value]: {
+                label: fieldData.default[value].label,
+              },
+            };
+          });
+          fieldList = {
+            ...fieldList,
+            [fieldName]: {
+              name: fieldData.name,
+              values: fieldValues,
+            },
+          };
+        } else {
+          fieldList = {
+            ...fieldList,
+            [fieldName]: {
+              name: fieldData.name,
+            },
+          };
+        }
+      });
+      return {
+        ...newState,
+        settings: fieldList,
+        loading: false,
+      };
+    }
+    case actions.GROUPS_GET_SETTINGS_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+        loading: false,
       };
     default:
       return newState;

@@ -1,10 +1,5 @@
 {
   "global": {
-    "locales": {
-      "en-US": "English (United States)",
-      "ar-JO": "Arabic (Jordan)",
-      "tr-TR": "Turkish (Turkey)"
-    },
     "error": {
       "code": "Kod: ",
       "message": "Mesaj: "
@@ -179,4 +174,3 @@
     "searchChildGroups": "Alt gruplarda ara",
     "groupName": "Grup Adı"
   }
-}

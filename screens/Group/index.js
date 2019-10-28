@@ -20,6 +20,9 @@ GroupsIcon.propTypes = {
 const groupStack = createStackNavigator({
   GroupList: {
     screen: GroupsScreen,
+    navigationOptions: () => ({
+      title: i18n.t('global.groups'),
+    }),
   },
   GroupDetail: {
     screen: GroupDetailScreen,

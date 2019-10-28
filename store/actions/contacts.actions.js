@@ -12,12 +12,14 @@ export const CONTACTS_SAVE_START = 'CONTACTS_SAVE_START';
 export const CONTACTS_SAVE_SUCCESS = 'CONTACTS_SAVE_SUCCESS';
 export const CONTACTS_SAVE_RESPONSE = 'CONTACTS_SAVE_RESPONSE';
 export const CONTACTS_SAVE_FAILURE = 'CONTACTS_SAVE_FAILURE';
+export const CONTACTS_SAVE_END = 'CONTACTS_SAVE_END';
 
 export const CONTACTS_GETBYID = 'CONTACTS_GETBYID';
 export const CONTACTS_GETBYID_START = 'CONTACTS_GETBYID_START';
 export const CONTACTS_GETBYID_SUCCESS = 'CONTACTS_GETBYID_SUCCESS';
 export const CONTACTS_GETBYID_RESPONSE = 'CONTACTS_GETBYID_RESPONSE';
 export const CONTACTS_GETBYID_FAILURE = 'CONTACTS_GETBYID_FAILURE';
+export const CONTACTS_GETBYID_END = 'CONTACTS_GETBYID_END';
 
 export const CONTACTS_GET_COMMENTS = 'CONTACTS_GET_COMMENTS';
 export const CONTACTS_GET_COMMENTS_START = 'CONTACTS_GET_COMMENTS_START';
@@ -37,6 +39,11 @@ export const CONTACTS_GET_ACTIVITIES_SUCCESS = 'CONTACTS_GET_ACTIVITIES_SUCCESS'
 export const CONTACTS_GET_ACTIVITIES_RESPONSE = 'CONTACTS_GET_ACTIVITIES_RESPONSE';
 export const CONTACTS_GET_ACTIVITIES_FAILURE = 'CONTACTS_GET_ACTIVITIES_FAILURE';
 
+export const CONTACTS_GET_SETTINGS = 'CONTACTS_GET_SETTINGS';
+export const CONTACTS_GET_SETTINGS_START = 'CONTACTS_GET_SETTINGS_START';
+export const CONTACTS_GET_SETTINGS_SUCCESS = 'CONTACTS_GET_SETTINGS_SUCCESS';
+export const CONTACTS_GET_SETTINGS_RESPONSE = 'CONTACTS_GET_SETTINGS_RESPONSE';
+export const CONTACTS_GET_SETTINGS_FAILURE = 'CONTACTS_GET_SETTINGS_FAILURE';
 
 /*
  * Action Creators
@@ -58,12 +65,24 @@ export function save(domain, token, contactData) {
   };
 }
 
+export function saveEnd() {
+  return {
+    type: CONTACTS_SAVE_END,
+  };
+}
+
 export function getById(domain, token, contactId) {
   return {
     type: CONTACTS_GETBYID,
     domain,
     token,
     contactId,
+  };
+}
+
+export function getByIdEnd() {
+  return {
+    type: CONTACTS_GETBYID_END,
   };
 }
 
@@ -96,5 +115,13 @@ export function getActivitiesByContact(domain, token, contactId, offset, limit) 
     contactId,
     offset,
     limit,
+  };
+}
+
+export function getContactSettings(domain, token) {
+  return {
+    type: CONTACTS_GET_SETTINGS,
+    domain,
+    token,
   };
 }

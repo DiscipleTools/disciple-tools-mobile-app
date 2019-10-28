@@ -12,9 +12,9 @@ it('sets values', () => {
       { label: '', value: 'not-set' },
       { label: 'Male', value: 'male' },
       { label: 'Female', value: 'female' },
-    ]}   
-    onChange= {()=>{}}
-    />);
+    ]}
+    onChange={() => {}}
+  />);
 
   expect(wrapper
     .find(Picker.Item).first()
@@ -30,27 +30,26 @@ it('sets values', () => {
     .find(Picker.Item).last()
     .prop('label')).toEqual('Female');
 
-    expect(wrapper
-      .find(Picker.Item).at(1)
-      .prop('value')).toEqual('male');
-    expect(wrapper
-      .find(Picker.Item).at(1)
-      .prop('label')).toEqual('Male');
-})
-  
+  expect(wrapper
+    .find(Picker.Item).at(1)
+    .prop('value')).toEqual('male');
+  expect(wrapper
+    .find(Picker.Item).at(1)
+    .prop('label')).toEqual('Male');
+});
+
 it('sets selectedValue', () => {
   const wrapper = shallow(<SingleSelect
     items={[
       { label: '', value: 'not-set' },
       { label: 'Male', value: 'male' },
       { label: 'Female', value: 'female' },
-    ]}   
-    selectedItem="male" 
-    onChange= {()=>{}}
-    />);
+    ]}
+    selectedItem="male"
+    onChange={() => {}}
+  />);
 
   expect(wrapper
     .find(Picker)
     .prop('selectedValue')).toEqual('male');
 });
-  

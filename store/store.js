@@ -1,22 +1,71 @@
+// Imports: Dependencies
+import { AsyncStorage } from 'react-native';
 import { createStore, applyMiddleware } from 'redux';
+import { persistStore, persistReducer, createTransform } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
-import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import hardSet from 'redux-persist/es/stateReconciler/hardSet';
 
-import reducer from './reducer';
+// Imports: Redux
+import rootReducer from './reducer';
 import rootSaga from './sagas';
 
-const persistConfig = {
-  key: 'root',
-  storage,
-};
-const persistedReducer = persistReducer(persistConfig, reducer);
-
 const sagaMiddleware = createSagaMiddleware();
+
+// Middleware
+const middleware = [sagaMiddleware];
+
+// Transform (reset loading property from states to false)
+const transformState = createTransform(
+  state => ({ ...state }),
+  (state) => {
+    if (state.loading) {
+      return {
+        ...state,
+        loading: false,
+      };
+    }
+    return {
+      ...state,
+    };
+  },
+);
+
+// Middleware: Redux Persist Config
+const persistConfig = {
+  // Root?
+  key: 'root',
+  // Storage Method (React Native)
+  storage: AsyncStorage,
+  // Whitelist (Save Specific Reducers)
+  /* whitelist: [
+    'authReducer',
+  ], */
+  // Blacklist (Don't Save Specific Reducers)
+  /* blacklist: [
+    'counterReducer',
+  ], */
+  stateReconciler: hardSet,
+  transforms: [
+    transformState,
+  ],
+};
+
+// Middleware: Redux Persist Persisted Reducer
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+// Redux: Store
 const store = createStore(
   persistedReducer,
-  applyMiddleware(sagaMiddleware),
+  applyMiddleware(...middleware),
 );
+
 sagaMiddleware.run(rootSaga);
 
-export default store;
+// Middleware: Redux Persist Persister
+const persistor = persistStore(store);
+
+// Exports
+export {
+  store,
+  persistor,
+};

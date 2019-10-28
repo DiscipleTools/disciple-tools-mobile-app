@@ -27,7 +27,7 @@
     "global-require": 0,
     "import/export": 0,
     "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*test.js", "setup-tests.js"]}],
-    "max-len": ["error", 200, 2, {
+    "max-len": ["error", 300, 2, {
       "ignoreUrls": true,
       "ignoreComments": true,
       "ignoreRegExpLiterals": true,

@@ -65,7 +65,7 @@ storiesOf('Form Field', module)
           value: 'you should not see this',
           delete: true,
         }]}
-        onChange={()=>{}}
+        onChange={() => {}}
 
       />
     </FormField>
@@ -89,8 +89,8 @@ storiesOf('Form Field', module)
           delete: true,
         }]}
         textInputStyle={{ color: 'green' }}
-        onChange={()=>{}}
+        onChange={() => {}}
 
       />
     </FormField>
-  ))
+  ));

@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^10.0.4",
+    "@react-native-community/netinfo": "^2.0.10",
     "@storybook/addon-actions": "^5.1.9",
     "@storybook/addon-links": "^5.1.9",
     "@storybook/addons": "^5.1.9",

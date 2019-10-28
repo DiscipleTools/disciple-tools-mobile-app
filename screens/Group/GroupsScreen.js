@@ -45,25 +45,8 @@ class GroupsScreen extends React.Component {
   };
 
   state = {
-    groups: [],
+    refresh: false,
   };
-
-  componentDidMount() {
-    this.onRefresh();
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const {
-      loading,
-      groups,
-    } = nextProps;
-    const newState = {
-      ...prevState,
-      loading,
-      groups: groups || prevState.groups,
-    };
-    return newState;
-  }
 
   componentDidUpdate(prevProps) {
     const { error } = this.props;
@@ -88,24 +71,34 @@ class GroupsScreen extends React.Component {
     >
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={{ fontWeight: 'bold' }}>{group.post_title}</Text>
+          <Text style={{ fontWeight: 'bold' }}>{group.title}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={styles.groupSubtitle}>
-            {i18n.t(`global.groupStatus.${group.group_status.key}`)}
-          </Text>
-          <Text style={styles.groupSubtitle}>
-            {' • '}
-          </Text>
-          <Text style={styles.groupSubtitle}>
-            {i18n.t(`global.groupType.${group.group_type.key}`)}
-          </Text>
-          <Text style={styles.groupSubtitle}>
-            {' • '}
-          </Text>
-          <Text style={styles.groupSubtitle}>
-            {group.member_count}
-          </Text>
+          {this.props.groupSettings.group_status.values[group.group_status] ? (
+            <Text style={styles.groupSubtitle}>
+              {this.props.groupSettings.group_status.values[group.group_status].label}
+            </Text>
+          ) : <Text />}
+          {this.props.groupSettings.group_status.values[group.group_status] && this.props.groupSettings.group_type.values[group.group_type] ? (
+            <Text style={styles.groupSubtitle}>
+              {' • '}
+            </Text>
+          ) : <Text />}
+          {(this.props.groupSettings.group_type.values[group.group_type]) ? (
+            <Text style={styles.groupSubtitle}>
+              {((this.props.groupSettings.group_type.values[group.group_type].label) ? this.props.groupSettings.group_type.values[group.group_type].label : '')}
+            </Text>
+          ) : <Text />}
+          {this.props.groupSettings.group_type.values[group.group_type] && group.member_count ? (
+            <Text style={styles.groupSubtitle}>
+              {' • '}
+            </Text>
+          ) : <Text />}
+          {group.member_count ? (
+            <Text style={styles.groupSubtitle}>
+              {group.member_count}
+            </Text>
+          ) : <Text />}
         </View>
       </View>
     </TouchableOpacity>
@@ -131,13 +124,15 @@ class GroupsScreen extends React.Component {
       this.props.navigation.push('GroupDetail', {
         groupId: groupData.ID,
         onlyView: true,
-        groupName: groupData.post_title,
+        groupName: groupData.title,
         previousList: [],
+        onGoBack: () => this.onRefresh(),
       });
     } else {
       // Create
       this.props.navigation.push('GroupDetail', {
         previousList: [],
+        onGoBack: () => this.onRefresh(),
       });
     }
   };
@@ -147,16 +142,17 @@ class GroupsScreen extends React.Component {
       <Container>
         <View style={{ flex: 1 }}>
           <FlatList
-            data={this.state.groups}
+            data={this.props.groups}
+            extraData={this.state.refresh}
             renderItem={item => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
             refreshControl={(
               <RefreshControl
-                refreshing={this.state.loading}
+                refreshing={this.props.loading}
                 onRefresh={this.onRefresh}
               />
             )}
-            keyExtractor={item => item.ID}
+            keyExtractor={item => item.ID.toString()}
           />
           <Fab
             style={{ backgroundColor: Colors.tintColor }}
@@ -196,12 +192,23 @@ GroupsScreen.propTypes = {
   ),
   /* eslint-enable */
   error: PropTypes.shape({
-    code: PropTypes.string,
+    code: PropTypes.any,
     message: PropTypes.string,
+  }),
+  loading: PropTypes.bool,
+  groupSettings: PropTypes.shape({
+    group_status: PropTypes.shape({
+      values: PropTypes.shape({}),
+    }),
+    group_type: PropTypes.shape({
+      values: PropTypes.shape({}),
+    }),
   }),
 };
 GroupsScreen.defaultProps = {
   error: null,
+  loading: false,
+  groupSettings: null,
 };
 
 const mapStateToProps = state => ({
@@ -209,6 +216,7 @@ const mapStateToProps = state => ({
   groups: state.groupsReducer.groups,
   loading: state.groupsReducer.loading,
   error: state.groupsReducer.error,
+  groupSettings: state.groupsReducer.settings,
 });
 const mapDispatchToProps = dispatch => ({
   getAllGroups: (domain, token) => {

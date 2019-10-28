@@ -13,6 +13,7 @@ import {
   TextInput,
   AsyncStorage,
   RefreshControl,
+  Platform,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -39,14 +40,16 @@ import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import ModalFilterPicker from 'react-native-modal-filter-picker';
 import { Chip, Selectize } from 'react-native-material-selectize';
-
+import sharedTools from '../../shared';
 import KeyboardShift from '../../components/KeyboardShift';
 import {
   save,
   getCommentsByContact,
   saveComment,
   getById,
+  getByIdEnd,
   getActivitiesByContact,
+  saveEnd,
 } from '../../store/actions/contacts.actions';
 import Colors from '../../constants/Colors';
 import hasBibleIcon from '../../assets/icons/book-bookmark.png';
@@ -195,7 +198,10 @@ class ContactDetailScreen extends React.Component {
         <Icon
           android="md-arrow-back"
           ios="ios-arrow-back"
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            params.onGoBack();
+            navigation.goBack();
+          }}
           style={[{ paddingLeft: 16, color: '#FFFFFF' }]}
         />
       ),
@@ -210,86 +216,8 @@ class ContactDetailScreen extends React.Component {
   };
 
   state = {
-    contact: {
-      sources: {
-        values: [
-          {
-            value: 'personal',
-          },
-        ],
-      },
-      milestones: {
-        values: [],
-      },
-      contact_phone: [],
-      contact_email: [],
-      contact_address: [],
-      geonames: {
-        values: [],
-      },
-      subassigned: {
-        values: [],
-      },
-      people_groups: {
-        values: [],
-      },
-      groups: {
-        values: [],
-      },
-      relation: {
-        values: [],
-      },
-      baptized_by: {
-        values: [],
-      },
-      baptized: {
-        values: [],
-      },
-      coached_by: {
-        values: [],
-      },
-      coaching: {
-        values: [],
-      },
-    },
-    contactSources: [
-      {
-        name: i18n.t('contactDetailScreen.contactSources.personal'),
-        value: 'personal',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.web'),
-        value: 'web',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.phone'),
-        value: 'phone',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.facebook'),
-        value: 'facebook',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.twitter'),
-        value: 'twitter',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.linkedin'),
-        value: 'linkedin',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.referral'),
-        value: 'referral',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.advertisement'),
-        value: 'advertisement',
-      },
-      {
-        name: i18n.t('contactDetailScreen.contactSources.transfer'),
-        value: 'transfer',
-      },
-    ],
+    contact: {},
+    unmodifiedContact: {},
     users: [],
     usersContacts: [],
     groups: [],
@@ -311,36 +239,6 @@ class ContactDetailScreen extends React.Component {
     comment: '',
     progressBarValue: 0,
     overallStatusBackgroundColor: '#ffffff',
-    listContactStates: [
-      {
-        label: i18n.t('global.contactOverallStatus.new'),
-        value: 'new',
-      },
-      {
-        label: i18n.t('global.contactOverallStatus.unassignable'),
-        value: 'unassignable',
-      },
-      {
-        label: i18n.t('global.contactOverallStatus.unassigned'),
-        value: 'unassigned',
-      },
-      {
-        label: i18n.t('global.contactOverallStatus.assigned'),
-        value: 'assigned',
-      },
-      {
-        label: i18n.t('global.contactOverallStatus.active'),
-        value: 'active',
-      },
-      {
-        label: i18n.t('global.contactOverallStatus.paused'),
-        value: 'paused',
-      },
-      {
-        label: i18n.t('global.contactOverallStatus.closed'),
-        value: 'closed',
-      },
-    ],
     activeFab: false,
     renderFab: true,
     showAssignedToModal: false,
@@ -349,25 +247,50 @@ class ContactDetailScreen extends React.Component {
   };
 
   componentDidMount() {
-    const onlyView = this.props.navigation.getParam('onlyView');
-    const contactId = this.props.navigation.getParam('contactId');
-    const contactName = this.props.navigation.getParam('contactName');
-    this.props.navigation.setParams({ hideTabBar: true });
+    const { navigation } = this.props;
+    const { onlyView, contactId, contactName } = navigation.state.params;
+    let newState = {};
     if (contactId) {
-      this.setState(prevState => ({
+      newState = {
         contact: {
-          ...prevState.contact,
           ID: contactId,
+          title: contactName,
+          sources: {
+            values: [{
+              value: 'advertisement',
+            }],
+          },
+          overall_status: 'new',
+          seeker_path: 'none',
         },
-      }));
-      this.props.navigation.setParams({ contactName });
+      };
+      navigation.setParams({ contactName });
+    } else {
+      this.props.navigation.setParams({ hideTabBar: true });
+      newState = {
+        contact: {
+          title: null,
+          sources: {
+            values: [{
+              value: 'advertisement',
+            }],
+          },
+          overall_status: 'new',
+          seeker_path: 'none',
+        },
+      };
     }
     if (onlyView) {
-      this.setState({
+      newState = {
+        ...newState,
         onlyView,
-      });
+      };
     }
-    this.getLists();
+    this.setState({
+      ...newState,
+    }, () => {
+      this.getLists((contactId) || null);
+    });
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -384,7 +307,6 @@ class ContactDetailScreen extends React.Component {
     } = nextProps;
     let newState = {
       ...prevState,
-      contact: contact || prevState.contact,
       loading,
       comments: comments || prevState.comments,
       totalComments: totalComments || prevState.totalComments,
@@ -392,6 +314,8 @@ class ContactDetailScreen extends React.Component {
       activities: activities || prevState.activities,
       totalActivities: totalActivities || prevState.totalActivities,
       loadActivities: loadingActivities,
+      contact: prevState.contact,
+      unmodifiedContact: prevState.unmodifiedContact,
     };
 
     // NEW COMMENT
@@ -402,26 +326,40 @@ class ContactDetailScreen extends React.Component {
         comments: newState.comments,
       };
     }
-
-    // GET BY ID
+    // SAVE / GET BY ID
     if (contact) {
-      // Update contact status select color
-      let newColor = '';
-      if (contact.overall_status === 'new' || contact.overall_status === 'unassigned' || contact.overall_status === 'closed') {
-        newColor = '#d9534f';
-      } else if (
-        contact.overall_status === 'unassignable'
-        || contact.overall_status === 'assigned'
-        || contact.overall_status === 'paused'
-      ) {
-        newColor = '#f0ad4e';
-      } else if (contact.overall_status === 'active') {
-        newColor = '#5cb85c';
+      // Update contact data only in these conditions:
+      // Same contact created (offline/online)
+      // Same contact updated (offline/online)
+      // Same offline contact created in DB (AutoID to DBID)
+      if ((typeof contact.ID !== 'undefined' && typeof prevState.contact.ID === 'undefined')
+        || contact.ID.toString() === prevState.contact.ID.toString()
+        || (contact.oldID && contact.oldID === prevState.contact.ID.toString())) {
+        newState = {
+          ...newState,
+          contact: {
+            ...contact,
+          },
+          unmodifiedContact: {
+            ...contact,
+          },
+        };
+        if (newState.contact.oldID) {
+          delete newState.contact.oldID;
+        }
+        if (newState.contact.overall_status) {
+          newState = {
+            ...newState,
+            overallStatusBackgroundColor: sharedTools.getSelectorColor(newState.contact.overall_status),
+          };
+        }
+        if (prevState.contact.initial_comment) {
+          newState = {
+            ...newState,
+            comment: prevState.contact.initial_comment,
+          };
+        }
       }
-      newState = {
-        ...newState,
-        overallStatusBackgroundColor: newColor,
-      };
     }
 
     // GET COMMENTS
@@ -468,29 +406,54 @@ class ContactDetailScreen extends React.Component {
 
     // NEW COMMENT
     if (newComment && prevProps.newComment !== newComment) {
-      commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
+      // Only do scroll when element its rendered
+      if (commentsFlatList) {
+        commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
+      }
       this.setComment('');
     }
 
     // CONTACT SAVE / GET BY ID
     if (contact && prevProps.contact !== contact) {
-      // Highlight Updates -> Compare prevState.contact with contact and show differences
-      navigation.setParams({ contactName: contact.title });
-      if (contact.seeker_path) {
-        this.setContactSeekerPath(contact.seeker_path);
+      // Update contact data only in these conditions:
+      // Same contact created (offline/online)
+      // Same contact updated (offline/online)
+      // Same offline contact created in DB (AutoID to DBID)
+      if ((typeof contact.ID !== 'undefined' && typeof this.state.contact.ID === 'undefined')
+        || contact.ID.toString() === this.state.contact.ID.toString()
+        || (contact.oldID && contact.oldID === this.state.contact.ID.toString())) {
+        // Highlight Updates -> Compare this.state.contact with contact and show differences
+        navigation.setParams({ contactName: contact.title });
+        if (contact.seeker_path) {
+          this.setContactSeekerPath(contact.seeker_path);
+        }
+        if (this.state.comment
+          && this.state.comment.length > 0) {
+          this.onSaveComment();
+        }
+        this.getContactByIdEnd();
       }
     }
 
     // CONTACT SAVE
-    if (saved) {
-      this.onRefreshCommentsActivities(contact.ID);
-      toastSuccess.show(
-        <View>
-          <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
-        </View>,
-        3000,
-      );
-      this.onDisableEdit();
+    if (saved && prevProps.saved !== saved) {
+      // Update contact data only in these conditions:
+      // Same contact created (offline/online)
+      // Same contact updated (offline/online)
+      // Same offline contact created in DB (AutoID to DBID)
+      if ((typeof contact.ID !== 'undefined' && typeof this.state.contact.ID === 'undefined')
+        || contact.ID.toString() === this.state.contact.ID.toString()
+        || (contact.oldID && contact.oldID === this.state.contact.ID.toString())) {
+        this.onRefreshCommentsActivities(contact.ID);
+        toastSuccess.show(
+          <View>
+            <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
+          </View>,
+          3000,
+        );
+        this.onDisableEdit();
+        this.props.endSaveContact();
+      }
     }
 
     // ERROR
@@ -524,11 +487,20 @@ class ContactDetailScreen extends React.Component {
       activitiesOffset: 0,
     }, () => {
       this.getContactComments(contactId);
-      this.getContactActivities(contactId);
+      if (this.props.isConnected) {
+        this.getContactActivities(contactId);
+      }
     });
   }
 
-  getLists = async () => {
+  setCurrentTabIndex(index) {
+    // Timeout to resolve the "tab content no rendered" issue
+    setTimeout(() => {
+      this.setState({ currentTabIndex: index });
+    }, 0);
+  }
+
+  getLists = async (contactId) => {
     let newState = {};
     const users = await AsyncStorage.getItem('usersList');
     if (users !== null) {
@@ -577,10 +549,10 @@ class ContactDetailScreen extends React.Component {
       ...newState,
       loadedLocal: true,
     };
-
     this.setState(newState, () => {
-      if (this.state.contact.ID) {
-        this.onRefresh(this.state.contact.ID);
+      // Only execute in detail mode
+      if (contactId) {
+        this.onRefresh(contactId);
       }
     });
   };
@@ -591,6 +563,10 @@ class ContactDetailScreen extends React.Component {
       this.props.userData.token,
       contactId,
     );
+  }
+
+  getContactByIdEnd() {
+    this.props.getByIdEnd();
   }
 
   getContactComments(contactId) {
@@ -621,10 +597,18 @@ class ContactDetailScreen extends React.Component {
   };
 
   onDisableEdit = () => {
+    const { currentTabIndex, unmodifiedContact } = this.state;
     this.setState({
       onlyView: true,
+      currentTabIndex: 0,
+      contact: {
+        ...unmodifiedContact,
+      },
+      overallStatusBackgroundColor: sharedTools.getSelectorColor(unmodifiedContact.overall_status),
+    }, () => {
+      this.setCurrentTabIndex(currentTabIndex);
     });
-    this.props.navigation.setParams({ hideTabBar: true });
+    this.props.navigation.setParams({ hideTabBar: false });
   }
 
   setContactTitle = (value) => {
@@ -677,29 +661,33 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  setGeonames = () => {
-    const dbGeonames = [...this.state.contact.geonames.values];
+  getSelectizeValuesToSave = (dbData, selectizeRef) => {
+    const dbItems = [...dbData];
+    const localItems = [];
 
-    const localGeonames = [];
-    const selectedValues = geonamesSelectizeRef.getSelectedItems();
+    const selectedValues = selectizeRef.getSelectedItems();
+
     Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const geoname = selectedValues.entities.item[itemValue];
-      localGeonames.push(geoname);
+      const item = selectedValues.entities.item[itemValue];
+      localItems.push(item);
     });
 
-    const geonamesToSave = localGeonames.filter((localGeoname) => {
-      const foundLocalInDatabase = dbGeonames.find(dbGeoname => dbGeoname.value === localGeoname.value);
+    const itemsToSave = localItems.filter((localItem) => {
+      const foundLocalInDatabase = dbItems.find(dbItem => dbItem.value === localItem.value);
       return foundLocalInDatabase === undefined;
-    }).map(geoname => ({ value: geoname.value }));
+    }).map(localItem => ({ value: localItem.value }));
 
-    dbGeonames.forEach((dbGeoname) => {
-      const foundDatabaseInLocal = localGeonames.find(localGeoname => dbGeoname.value === localGeoname.value);
+    dbItems.forEach((dbItem) => {
+      const foundDatabaseInLocal = localItems.find(localItem => dbItem.value === localItem.value);
       if (!foundDatabaseInLocal) {
-        geonamesToSave.push({ value: dbGeoname.value, delete: true });
+        itemsToSave.push({
+          ...dbItem,
+          delete: true,
+        });
       }
     });
 
-    return geonamesToSave;
+    return itemsToSave;
   };
 
   setContactInitialComment = (value) => {
@@ -712,57 +700,19 @@ class ContactDetailScreen extends React.Component {
   };
 
   setContactStatus = (value) => {
-    let newColor = '';
-
-    if (value === 'new' || value === 'unassigned' || value === 'closed') {
-      newColor = '#d9534f';
-    } else if (
-      value === 'unassignable'
-      || value === 'assigned'
-      || value === 'paused'
-    ) {
-      newColor = '#f0ad4e';
-    } else if (value === 'active') {
-      newColor = '#5cb85c';
-    }
-
     this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         overall_status: value,
       },
-      overallStatusBackgroundColor: newColor,
+      overallStatusBackgroundColor: sharedTools.getSelectorColor(value),
     }));
   };
 
   setContactSeekerPath = (value) => {
-    let newProgressValue = 100 / 6;
-
-    switch (value) {
-      case 'none':
-        newProgressValue *= 0;
-        break;
-      case 'attempted':
-        newProgressValue *= 1;
-        break;
-      case 'established':
-        newProgressValue *= 2;
-        break;
-      case 'scheduled':
-        newProgressValue *= 3;
-        break;
-      case 'met':
-        newProgressValue *= 4;
-        break;
-      case 'ongoing':
-        newProgressValue *= 5;
-        break;
-      case 'coaching':
-        newProgressValue *= 6;
-        break;
-      default:
-        break;
-    }
+    const optionListValues = Object.keys(this.props.contactSettings.seeker_path.values);
+    const optionIndex = optionListValues.findIndex(key => key === value);
+    const newProgressValue = (100 / (optionListValues.length - 1)) * optionIndex;
     this.setState(prevState => ({
       contact: {
         ...prevState.contact,
@@ -772,80 +722,42 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  setBaptismDate = (value) => {
+  setBaptismDate = (date) => {
     this.setState(prevState => ({
       contact: {
         ...prevState.contact,
-        baptism_date: value,
+        baptism_date: sharedTools.formatDateToBackEnd(date),
       },
     }));
   };
 
   onSaveContact = (quickAction = {}) => {
     Keyboard.dismiss();
+    const { unmodifiedContact } = this.state;
+    const contact = this.transformContactObject(this.state.contact, quickAction);
     let contactToSave = {
-      ID: this.state.contact.ID,
+      ...sharedTools.diff(unmodifiedContact, contact),
     };
-    if (
-      Object.prototype.hasOwnProperty.call(
-        quickAction,
-        'quick_button_no_answer',
-      )
-      || Object.prototype.hasOwnProperty.call(
-        quickAction,
-        'quick_button_contact_established',
-      )
-      || Object.prototype.hasOwnProperty.call(
-        quickAction,
-        'quick_button_meeting_scheduled',
-      )
-      || Object.prototype.hasOwnProperty.call(
-        quickAction,
-        'quick_button_meeting_complete',
-      )
-      || Object.prototype.hasOwnProperty.call(
-        quickAction,
-        'quick_button_no_show',
-      )
-    ) {
+    // Remove empty arrays
+    Object.keys(contactToSave).forEach((key) => {
+      const value = contactToSave[key];
+      if (Object.prototype.hasOwnProperty.call(value, 'values') && value.values.length === 0) {
+        delete contactToSave[key];
+      }
+    });
+
+    if (this.state.contact.title) {
       contactToSave = {
         ...contactToSave,
-        ...quickAction,
+        title: this.state.contact.title,
       };
-    } else {
-      contactToSave = JSON.parse(JSON.stringify(this.state.contact));
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'geonames') && geonamesSelectizeRef) {
-        contactToSave.geonames.values = this.setGeonames();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'subassigned') && subAssignedSelectizeRef) {
-        contactToSave.subassigned.values = this.setContactSubassignedContacts();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'groups') && groupsSelectizeRef) {
-        contactToSave.groups.values = this.setGroups();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'relation') && connectionsSelectizeRef) {
-        contactToSave.relation.values = this.setConnections();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized_by') && baptizedBySelectizeRef) {
-        contactToSave.baptized_by.values = this.setBaptizedBy();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'baptized') && baptizedSelectizeRef) {
-        contactToSave.baptized.values = this.setBaptized();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coached_by') && coachedSelectizeRef) {
-        contactToSave.coached_by.values = this.setCoachedBy();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'coaching') && coachingSelectizeRef) {
-        contactToSave.coaching.values = this.setCoaching();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'people_groups') && peopleGroupsSelectizeRef) {
-        contactToSave.people_groups.values = this.setPeopleGroups();
-      }
-      if (Object.prototype.hasOwnProperty.call(contactToSave, 'sources') && sourcesSelectizeRef) {
-        contactToSave.sources.values = this.setSources();
-      }
     }
-
+    if (this.state.contact.ID) {
+      contactToSave = {
+        ...contactToSave,
+        ID: this.state.contact.ID,
+      };
+    }
     this.props.saveContact(
       this.props.userData.domain,
       this.props.userData.token,
@@ -902,23 +814,33 @@ class ContactDetailScreen extends React.Component {
   };
 
   onCheckExistingMilestone = (milestoneName) => {
-    const milestones = this.state.contact.milestones.values;
+    const milestones = this.state.contact.milestones ? [...this.state.contact.milestones.values] : [];
+    // get milestones that exist in the list and are not deleted
     const foundMilestone = milestones.some(
-      milestone => milestone.value === milestoneName,
+      milestone => (milestone.value === milestoneName && !milestone.delete),
     );
     return foundMilestone;
   };
 
   onMilestoneChange = (milestoneName) => {
-    const milestones2 = this.state.contact.milestones.values;
-    const foundMilestone = milestones2.find(
-      milestone => milestone.value === milestoneName,
-    );
+    const milestonesList = this.state.contact.milestones ? [...this.state.contact.milestones.values] : [];
+    const foundMilestone = milestonesList.find(milestone => milestone.value === milestoneName);
     if (foundMilestone) {
-      const milestoneIndex = milestones2.indexOf(foundMilestone);
-      milestones2.splice(milestoneIndex, 1);
+      const milestoneIndex = milestonesList.indexOf(foundMilestone);
+      if (foundMilestone.delete) {
+        const milestoneModified = {
+          ...foundMilestone,
+        };
+        delete milestoneModified.delete;
+        milestonesList[milestoneIndex] = milestoneModified;
+      } else {
+        milestonesList[milestoneIndex] = {
+          ...foundMilestone,
+          delete: true,
+        };
+      }
     } else {
-      milestones2.push({
+      milestonesList.push({
         value: milestoneName,
       });
     }
@@ -926,160 +848,10 @@ class ContactDetailScreen extends React.Component {
       contact: {
         ...prevState.contact,
         milestones: {
-          values: milestones2,
+          values: milestonesList,
         },
       },
     }));
-  };
-
-  setGroups = () => {
-    const dataBaseGroups = [...this.state.contact.groups.values];
-
-    const localGroups = [];
-    const selectedValues = groupsSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const group = selectedValues.entities.item[itemValue];
-      localGroups.push(group);
-    });
-
-    const groupsToSave = localGroups.filter((localGroup) => {
-      const foundLocalInDatabase = dataBaseGroups.find(dataBaseGroup => dataBaseGroup.value === localGroup.value);
-      return foundLocalInDatabase === undefined;
-    }).map(group => ({ value: group.value }));
-
-    dataBaseGroups.forEach((dataBaseGroup) => {
-      const foundDatabaseInLocal = localGroups.find(localGroup => dataBaseGroup.value === localGroup.value);
-      if (!foundDatabaseInLocal) {
-        groupsToSave.push({ value: dataBaseGroup.value, delete: true });
-      }
-    });
-
-    return groupsToSave;
-  };
-
-  setConnections = () => {
-    const dataBaseConnections = [...this.state.contact.relation.values];
-
-    const localConnections = [];
-    const selectedValues = connectionsSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const connection = selectedValues.entities.item[itemValue];
-      localConnections.push(connection);
-    });
-
-    const connectionsToSave = localConnections.filter((localConnection) => {
-      const foundLocalInDatabase = dataBaseConnections.find(dataBaseConnection => dataBaseConnection.value === localConnection.value);
-      return foundLocalInDatabase === undefined;
-    }).map(connection => ({ value: connection.value }));
-
-    dataBaseConnections.forEach((dataBaseConnection) => {
-      const foundDatabaseInLocal = localConnections.find(localConnection => dataBaseConnection.value === localConnection.value);
-      if (!foundDatabaseInLocal) {
-        connectionsToSave.push({ value: dataBaseConnection.value, delete: true });
-      }
-    });
-
-    return connectionsToSave;
-  };
-
-  setBaptizedBy = () => {
-    const dataBaseBaptizedBy = [...this.state.contact.baptized_by.values];
-
-    const localBaptizedBy = [];
-    const selectedValues = baptizedBySelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const baptizedBy = selectedValues.entities.item[itemValue];
-      localBaptizedBy.push(baptizedBy);
-    });
-
-    const baptizedByToSave = localBaptizedBy.filter((localBaptized) => {
-      const foundLocalInDatabase = dataBaseBaptizedBy.find(dataBaseBaptized => dataBaseBaptized.value === localBaptized.value);
-      return foundLocalInDatabase === undefined;
-    }).map(baptizedBy => ({ value: baptizedBy.value }));
-
-    dataBaseBaptizedBy.forEach((dataBaseBaptized) => {
-      const foundDatabaseInLocal = localBaptizedBy.find(localBaptized => dataBaseBaptized.value === localBaptized.value);
-      if (!foundDatabaseInLocal) {
-        baptizedByToSave.push({ value: dataBaseBaptized.value, delete: true });
-      }
-    });
-
-    return baptizedByToSave;
-  };
-
-  setBaptized = () => {
-    const dataBaseBaptizeds = [...this.state.contact.baptized.values];
-
-    const localBaptizeds = [];
-    const selectedValues = baptizedSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const baptized = selectedValues.entities.item[itemValue];
-      localBaptizeds.push(baptized);
-    });
-
-    const baptizedToSave = localBaptizeds.filter((localBaptized) => {
-      const foundLocalInDatabase = dataBaseBaptizeds.find(dataBaseBaptized => dataBaseBaptized.value === localBaptized.value);
-      return foundLocalInDatabase === undefined;
-    }).map(baptized => ({ value: baptized.value }));
-
-    dataBaseBaptizeds.forEach((dataBaseBaptized) => {
-      const foundDatabaseInLocal = localBaptizeds.find(localBaptized => dataBaseBaptized.value === localBaptized.value);
-      if (!foundDatabaseInLocal) {
-        baptizedToSave.push({ value: dataBaseBaptized.value, delete: true });
-      }
-    });
-
-    return baptizedToSave;
-  };
-
-  setCoachedBy = () => {
-    const dataBaseCoachedBy = [...this.state.contact.coached_by.values];
-
-    const localCoachedBy = [];
-    const selectedValues = coachedSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const coached = selectedValues.entities.item[itemValue];
-      localCoachedBy.push(coached);
-    });
-
-    const coachedToSave = localCoachedBy.filter((localCoached) => {
-      const foundLocalInDatabase = dataBaseCoachedBy.find(dataBaseCoached => dataBaseCoached.value === localCoached.value);
-      return foundLocalInDatabase === undefined;
-    }).map(coached => ({ value: coached.value }));
-
-    dataBaseCoachedBy.forEach((dataBaseCoached) => {
-      const foundDatabaseInLocal = localCoachedBy.find(localCoached => dataBaseCoached.value === localCoached.value);
-      if (!foundDatabaseInLocal) {
-        coachedToSave.push({ value: dataBaseCoached.value, delete: true });
-      }
-    });
-
-    return coachedToSave;
-  };
-
-  setCoaching = () => {
-    const dataBaseCoaching = [...this.state.contact.coaching.values];
-
-    const localCoaching = [];
-    const selectedValues = coachingSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const coaching = selectedValues.entities.item[itemValue];
-      localCoaching.push(coaching);
-    });
-
-    const coachingToSave = localCoaching.filter((localCoach) => {
-      const localInDataBase = dataBaseCoaching.find(dataBaseCoach => dataBaseCoach.value === localCoach.value);
-      return localInDataBase === undefined;
-    }).map(coaching => ({ value: coaching.value }));
-
-    dataBaseCoaching.forEach((dataBaseCoach) => {
-      const foundDatabaseInLocal = localCoaching.find(localCoach => dataBaseCoach.value === localCoach.value);
-      if (!foundDatabaseInLocal) {
-        coachingToSave.push({ value: dataBaseCoach.value, delete: true });
-      }
-    });
-
-    return coachingToSave;
   };
 
   setContactAge = (value) => {
@@ -1112,6 +884,122 @@ class ContactDetailScreen extends React.Component {
     return list.filter((item, index) => list.indexOf(item) === index).sort(
       (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
     );
+  }
+
+  transformContactObject = (contact, quickAction = {}) => {
+    let transformedContact = {
+      ...contact,
+    };
+    if (
+      Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_no_answer',
+      )
+      || Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_contact_established',
+      )
+      || Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_meeting_scheduled',
+      )
+      || Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_meeting_complete',
+      )
+      || Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_no_show',
+      )
+    ) {
+      transformedContact = {
+        ...transformedContact,
+        ...quickAction,
+      };
+    } else {
+      // if property exist, get from json, otherwise, send empty array
+      if (subAssignedSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          subassigned: {
+            values: this.getSelectizeValuesToSave((transformedContact.subassigned) ? transformedContact.subassigned.values : [], subAssignedSelectizeRef),
+          },
+        };
+      }
+      if (geonamesSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          location_grid: {
+            values: this.getSelectizeValuesToSave((transformedContact.location_grid) ? transformedContact.location_grid.values : [], geonamesSelectizeRef),
+          },
+        };
+      }
+      if (peopleGroupsSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          people_groups: {
+            values: this.getSelectizeValuesToSave((transformedContact.people_groups) ? transformedContact.people_groups.values : [], peopleGroupsSelectizeRef),
+          },
+        };
+      }
+      if (sourcesSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          sources: {
+            values: this.getSelectizeValuesToSave((transformedContact.sources) ? transformedContact.sources.values : [], sourcesSelectizeRef),
+          },
+        };
+      }
+      if (groupsSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          groups: {
+            values: this.getSelectizeValuesToSave((transformedContact.groups) ? transformedContact.groups.values : [], groupsSelectizeRef),
+          },
+        };
+      }
+      if (connectionsSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          relation: {
+            values: this.getSelectizeValuesToSave((transformedContact.relation) ? transformedContact.relation.values : [], connectionsSelectizeRef),
+          },
+        };
+      }
+      if (baptizedBySelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          baptized_by: {
+            values: this.getSelectizeValuesToSave((transformedContact.baptized_by) ? transformedContact.baptized_by.values : [], baptizedBySelectizeRef),
+          },
+        };
+      }
+      if (baptizedSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          baptized: {
+            values: this.getSelectizeValuesToSave((transformedContact.baptized) ? transformedContact.baptized.values : [], baptizedSelectizeRef),
+          },
+        };
+      }
+      if (coachedSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          coached_by: {
+            values: this.getSelectizeValuesToSave((transformedContact.coached_by) ? transformedContact.coached_by.values : [], coachedSelectizeRef),
+          },
+        };
+      }
+      if (coachingSelectizeRef) {
+        transformedContact = {
+          ...transformedContact,
+          coaching: {
+            values: this.getSelectizeValuesToSave((transformedContact.coaching) ? transformedContact.coaching.values : [], coachingSelectizeRef),
+          },
+        };
+      }
+    }
+    return transformedContact;
   }
 
   renderActivityOrCommentRow = commentOrActivity => (
@@ -1206,21 +1094,27 @@ class ContactDetailScreen extends React.Component {
     </View>
   )
 
-  renderSourcePickerItems = () => this.state.contactSources.map(source => (
-    <Picker.Item
-      key={source.value}
-      label={source.name}
-      value={source.value}
-    />
-  ));
+  renderSourcePickerItems = () => Object.keys(this.props.contactSettings.sources.values).map((key) => {
+    const optionData = this.props.contactSettings.sources.values[key];
+    return (
+      <Picker.Item
+        key={key}
+        label={optionData.label}
+        value={key}
+      />
+    );
+  });
 
-  renderStatusPickerItems = () => this.state.listContactStates.map(status => (
-    <Picker.Item
-      key={status.value}
-      label={status.label}
-      value={status.value}
-    />
-  ));
+  renderStatusPickerItems = () => Object.keys(this.props.contactSettings.overall_status.values).map((key) => {
+    const optionData = this.props.contactSettings.overall_status.values[key];
+    return (
+      <Picker.Item
+        key={key}
+        label={optionData.label}
+        value={key}
+      />
+    );
+  });
 
   tabChanged = (event) => {
     this.props.navigation.setParams({ hideTabBar: event.i === 2 });
@@ -1231,7 +1125,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   onAddPhoneField = () => {
-    const contactPhones = this.state.contact.contact_phone;
+    const contactPhones = (this.state.contact.contact_phone) ? [...this.state.contact.contact_phone] : [];
     contactPhones.push({
       value: '',
     });
@@ -1244,12 +1138,23 @@ class ContactDetailScreen extends React.Component {
   };
 
   onPhoneFieldChange = (value, index, dbIndex, component) => {
-    const phoneAddressList = component.state.contact.contact_phone;
-    const contactPhone = phoneAddressList[index];
-    contactPhone.value = value;
+    const phoneAddressList = [...component.state.contact.contact_phone];
+    let contactPhone = {
+      ...phoneAddressList[index],
+    };
+    contactPhone = {
+      ...contactPhone,
+      value,
+    };
     if (dbIndex) {
-      contactPhone.key = dbIndex;
+      contactPhone = {
+        ...contactPhone,
+        key: dbIndex,
+      };
     }
+    phoneAddressList[index] = {
+      ...contactPhone,
+    };
     component.setState(prevState => ({
       contact: {
         ...prevState.contact,
@@ -1279,7 +1184,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   onAddEmailField = () => {
-    const contactEmails = this.state.contact.contact_email;
+    const contactEmails = (this.state.contact.contact_email) ? this.state.contact.contact_email : [];
     contactEmails.push({
       value: '',
     });
@@ -1292,12 +1197,23 @@ class ContactDetailScreen extends React.Component {
   };
 
   onEmailFieldChange = (value, index, dbIndex, component) => {
-    const contactEmailList = component.state.contact.contact_email;
-    const contactEmail = contactEmailList[index];
-    contactEmail.value = value;
+    const contactEmailList = [...component.state.contact.contact_email];
+    let contactEmail = {
+      ...contactEmailList[index],
+    };
+    contactEmail = {
+      ...contactEmail,
+      value,
+    };
     if (dbIndex) {
-      contactEmail.key = dbIndex;
+      contactEmail = {
+        ...contactEmail,
+        key: dbIndex,
+      };
     }
+    contactEmailList[index] = {
+      ...contactEmail,
+    };
     component.setState(prevState => ({
       ...prevState,
       contact: {
@@ -1328,7 +1244,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   onAddAddressField = () => {
-    const contactAddress = this.state.contact.contact_address;
+    const contactAddress = (this.state.contact.contact_address) ? this.state.contact.contact_address : [];
     contactAddress.push({
       value: '',
     });
@@ -1341,12 +1257,23 @@ class ContactDetailScreen extends React.Component {
   };
 
   onAddressFieldChange = (value, index, dbIndex, component) => {
-    const contactAddressList = component.state.contact.contact_address;
-    const contactAddress = contactAddressList[index];
-    contactAddress.value = value;
+    const contactAddressList = [...component.state.contact.contact_address];
+    let contactAddress = {
+      ...contactAddressList[index],
+    };
+    contactAddress = {
+      ...contactAddress,
+      value,
+    };
     if (dbIndex) {
-      contactAddress.key = dbIndex;
+      contactAddress = {
+        ...contactAddress,
+        key: dbIndex,
+      };
     }
+    contactAddressList[index] = {
+      ...contactAddress,
+    };
     component.setState(prevState => ({
       contact: {
         ...prevState.contact,
@@ -1373,56 +1300,6 @@ class ContactDetailScreen extends React.Component {
         contact_address: contactAddressList,
       },
     }));
-  };
-
-  setPeopleGroups = () => {
-    const dataBasePeopleGroups = [...this.state.contact.people_groups.values];
-
-    const localPeopleGroups = [];
-    const selectedValues = peopleGroupsSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const peopleGroup = selectedValues.entities.item[itemValue];
-      localPeopleGroups.push(peopleGroup);
-    });
-
-    const peopleGroupsToSave = localPeopleGroups.filter((localPeopleGroup) => {
-      const foundLocalInDatabase = dataBasePeopleGroups.find(dataBasePeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
-      return foundLocalInDatabase === undefined;
-    }).map(peopleGroup => ({ value: peopleGroup.value }));
-
-    dataBasePeopleGroups.forEach((dataBasePeopleGroup) => {
-      const foundDatabaseInLocal = localPeopleGroups.find(localPeopleGroup => dataBasePeopleGroup.value === localPeopleGroup.value);
-      if (!foundDatabaseInLocal) {
-        peopleGroupsToSave.push({ value: dataBasePeopleGroup.value, delete: true });
-      }
-    });
-
-    return peopleGroupsToSave;
-  };
-
-  setSources = () => {
-    const dataBaseSources = [...this.state.contact.sources.values];
-
-    const localSources = [];
-    const selectedValues = sourcesSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const source = selectedValues.entities.item[itemValue];
-      localSources.push(source);
-    });
-
-    const sourcesToSave = localSources.filter((localSource) => {
-      const foundLocalInDatabase = dataBaseSources.find(dataBaseSource => dataBaseSource.value === localSource.value);
-      return foundLocalInDatabase === undefined;
-    }).map(source => ({ value: source.value }));
-
-    dataBaseSources.forEach((dataBaseSource) => {
-      const foundDatabaseInLocal = localSources.find(localSource => dataBaseSource.value === localSource.value);
-      if (!foundDatabaseInLocal) {
-        sourcesToSave.push({ value: dataBaseSource.value, delete: true });
-      }
-    });
-
-    return sourcesToSave;
   };
 
   updateShowAssignedToModal = (value) => {
@@ -1452,31 +1329,6 @@ class ContactDetailScreen extends React.Component {
       user => `user-${user.key}` === this.state.contact.assigned_to,
     );
     return <Text style={{ marginTop: 'auto', marginBottom: 'auto', fontSize: 15 }}>{foundUser ? foundUser.label : ''}</Text>;
-  };
-
-  setContactSubassignedContacts = () => {
-    const dataBaseContacts = [...this.state.contact.subassigned.values];
-
-    const localContacts = [];
-    const selectedValues = subAssignedSelectizeRef.getSelectedItems();
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const contact = selectedValues.entities.item[itemValue];
-      localContacts.push(contact);
-    });
-
-    const subassignedContactToSave = localContacts.filter((localContact) => {
-      const foundLocalInDatabase = dataBaseContacts.find(dataBaseContact => dataBaseContact.value === localContact.value);
-      return foundLocalInDatabase === undefined;
-    }).map(contact => ({ value: contact.value }));
-
-    dataBaseContacts.forEach((dataBaseContact) => {
-      const foundDatabaseInLocal = localContacts.find(localContact => dataBaseContact.value === localContact.value);
-      if (!foundDatabaseInLocal) {
-        subassignedContactToSave.push({ value: dataBaseContact.value, delete: true });
-      }
-    });
-
-    return subassignedContactToSave;
   };
 
   renderfaithMilestones() {
@@ -1522,7 +1374,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.hasBible')}
+                    {this.props.contactSettings.milestones.values.milestone_has_bible.label}
                   </Text>
                 </Row>
               </Col>
@@ -1564,7 +1416,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.readingBible')}
+                    {this.props.contactSettings.milestones.values.milestone_reading_bible.label}
                   </Text>
                 </Row>
               </Col>
@@ -1604,7 +1456,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.statesBelief')}
+                    {this.props.contactSettings.milestones.values.milestone_belief.label}
                   </Text>
                 </Row>
               </Col>
@@ -1648,7 +1500,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.shareGospel')}
+                    {this.props.contactSettings.milestones.values.milestone_can_share.label}
                   </Text>
                 </Row>
               </Col>
@@ -1688,7 +1540,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.sharingGospel')}
+                    {this.props.contactSettings.milestones.values.milestone_sharing.label}
                   </Text>
                 </Row>
               </Col>
@@ -1728,7 +1580,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.baptized')}
+                    {this.props.contactSettings.milestones.values.milestone_baptized.label}
                   </Text>
                 </Row>
               </Col>
@@ -1772,7 +1624,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.baptizing')}
+                    {this.props.contactSettings.milestones.values.milestone_baptizing.label}
                   </Text>
                 </Row>
               </Col>
@@ -1812,7 +1664,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.inGroup')}
+                    {this.props.contactSettings.milestones.values.milestone_in_group.label}
                   </Text>
                 </Row>
               </Col>
@@ -1852,7 +1704,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {i18n.t('contactDetailScreen.milestones.startingChurches')}
+                    {this.props.contactSettings.milestones.values.milestone_planting.label}
                   </Text>
                 </Row>
               </Col>
@@ -1865,7 +1717,6 @@ class ContactDetailScreen extends React.Component {
   }
 
   render() {
-
     const successToast = (
       <Toast
         ref={(toast) => {
@@ -1897,6 +1748,8 @@ class ContactDetailScreen extends React.Component {
                       renderTabBar={() => <ScrollableTab />}
                       tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
                       onChangeTab={this.tabChanged}
+                      page={this.state.currentTabIndex}
+                      scrollWithoutAnimation
                     >
                       <Tab
                         heading={i18n.t('global.details')}
@@ -1932,7 +1785,7 @@ class ContactDetailScreen extends React.Component {
                                 color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
                               }}
                             >
-                              {i18n.t('global.status')}
+                              {this.props.contactSettings.overall_status.name}
                             </Label>
                             <Row style={[styles.formRow, { paddingTop: 5 }]}>
                               <Col>
@@ -1941,8 +1794,10 @@ class ContactDetailScreen extends React.Component {
                                     this.state.contact.overall_status
                                   }
                                   onValueChange={this.setContactStatus}
-                                  style={{
+                                  style={Platform.OS === 'android' ? {
                                     color: '#ffffff',
+                                    backgroundColor: this.state.overallStatusBackgroundColor,
+                                  } : {
                                     backgroundColor: this.state.overallStatusBackgroundColor,
                                   }}
                                 >
@@ -1963,7 +1818,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('global.assignedTo')}
+                                  {this.props.contactSettings.assigned_to.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -1977,11 +1832,13 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.subassigned.values.map(contact => `${contact.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.subassigned ? this.state.contact.subassigned.values.map(contact => this.state.usersContacts.find(user => user.value === contact.value).name).join(', ') + (this.state.contact.subassigned.values.length > 0 ? '.' : '') : ''}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.subAssignedTo')}
+                                  {this.props.contactSettings.subassigned.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -1995,7 +1852,9 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.contact_phone.map(phone => `${phone.value}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.contact_phone ? this.state.contact.contact_phone.filter(phone => !phone.delete).map(phone => phone.value).join(', ') + (this.state.contact.contact_phone.length > 0 ? '.' : '') : ''}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.mobile')}</Label>
@@ -2011,7 +1870,9 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.contact_email.map(email => `${email.value}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.contact_email ? this.state.contact.contact_email.filter(email => !email.delete).map(email => email.value).join(', ') + (this.state.contact.contact_email.length > 0 ? '.' : '') : ''}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.email')}</Label>
@@ -2043,7 +1904,9 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.contact_address.map(address => `${address.value}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.contact_address ? this.state.contact.contact_address.filter(address => !address.delete).map(address => address.value).join(', ') + (this.state.contact.contact_address.length > 0 ? '.' : '') : ''}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
@@ -2059,11 +1922,13 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.geonames.values.map(geoname => `${geoname.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.location_grid ? this.state.contact.location_grid.values.map(location => this.state.geonames.find(geoname => geoname.value === location.value).name).join(', ') + (this.state.contact.location_grid.values.length > 0 ? '.' : '') : ''}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('global.location')}
+                                  {this.props.contactSettings.location_grid.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2077,11 +1942,13 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.people_groups.values.map(peopleGroup => `${peopleGroup.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.people_groups ? this.state.contact.people_groups.values.map(peopleGroup => this.state.peopleGroups.find(person => person.value === peopleGroup.value).name).join(', ') + (this.state.contact.people_groups.values.length > 0 ? '.' : '') : ''}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('global.peopleGroup')}
+                                  {this.props.contactSettings.people_groups.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2095,10 +1962,10 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.age}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.age) ? this.state.contact.age : ''}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.age')}</Label>
+                                <Label style={styles.formLabel}>{this.props.contactSettings.age.name}</Label>
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
@@ -2111,10 +1978,10 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.gender) ? i18n.t(`contactDetailScreen.${this.state.contact.gender}`) : ''}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.gender) ? this.props.contactSettings.gender.values[this.state.contact.gender].label : ''}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.gender')}</Label>
+                                <Label style={styles.formLabel}>{this.props.contactSettings.gender.name}</Label>
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
@@ -2127,11 +1994,13 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.sources.values.map(source => `${source.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.sources ? `${this.state.contact.sources.values.map(source => this.props.contactSettings.sources.values[source.value].label).join(', ')}.` : ''}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.source')}
+                                  {this.props.contactSettings.sources.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2176,10 +2045,10 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{i18n.t(`global.seekerPath.${this.state.contact.seeker_path}`)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.seeker_path) ? this.props.contactSettings.seeker_path.values[this.state.contact.seeker_path].label : ''}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.seekerPath')}</Label>
+                                <Label style={styles.formLabel}>{this.props.contactSettings.seeker_path.name}</Label>
                               </Col>
                             </Row>
                             <View
@@ -2202,7 +2071,7 @@ class ContactDetailScreen extends React.Component {
                                 { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
                               ]}
                             >
-                              {i18n.t('contactDetailScreen.faithMilestones')}
+                              {this.props.contactSettings.milestones.name}
                             </Label>
                             {this.renderfaithMilestones()}
                             <Grid style={{ marginTop: 25 }}>
@@ -2216,11 +2085,11 @@ class ContactDetailScreen extends React.Component {
                                   />
                                 </Col>
                                 <Col>
-                                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.baptism_date}</Text>
+                                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.baptism_date) ? this.state.contact.baptism_date : ''}</Text>
                                 </Col>
                                 <Col style={styles.formIconLabel}>
                                   <Label style={[styles.label, styles.formLabel]}>
-                                    {i18n.t('contactDetailScreen.milestones.baptismDate')}
+                                    {this.props.contactSettings.baptism_date.name}
                                   </Label>
                                 </Col>
                               </Row>
@@ -2383,11 +2252,13 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.groups.values.map(group => `${group.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.groups ? this.state.contact.groups.values.map(group => this.state.groups.find(groupItem => groupItem.value === group.value).name).join(', ') + (this.state.contact.groups.values.length > 0 ? '.' : '') : ''}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.group')}
+                                  {this.props.contactSettings.groups.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2401,11 +2272,13 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.relation.values.map(relation => `${relation.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.relation ? this.state.contact.relation.values.map(relation => this.state.usersContacts.find(user => user.value === relation.value).name).join(', ') + (this.state.contact.relation.values.length > 0 ? '.' : '') : ''}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.connection')}
+                                  {this.props.contactSettings.relation.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2419,11 +2292,13 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.baptized_by.values.map(baptizedBy => `${baptizedBy.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.baptized_by ? this.state.contact.baptized_by.values.map(baptizedBy => this.state.usersContacts.find(user => user.value === baptizedBy.value).name).join(', ') + (this.state.contact.baptized_by.values.length > 0 ? '.' : '') : ''}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.baptizedBy')}
+                                  {this.props.contactSettings.baptized_by.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2437,11 +2312,13 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.baptized.values.map(baptized => `${baptized.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.baptized ? this.state.contact.baptized.values.map(baptized => this.state.usersContacts.find(user => user.value === baptized.value).name).join(', ') + (this.state.contact.baptized.values.length > 0 ? '.' : '') : ''}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.baptized')}
+                                  {this.props.contactSettings.baptized.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2455,11 +2332,13 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.coached_by.values.map(coached => `${coached.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.coached_by ? this.state.contact.coached_by.values.map(coachedBy => this.state.usersContacts.find(user => user.value === coachedBy.value).name).join(', ') + (this.state.contact.coached_by.values.length > 0 ? '.' : '') : ''}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.coachedBy')}
+                                  {this.props.contactSettings.coached_by.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2473,11 +2352,13 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{this.state.contact.coaching.values.map(coaching => `${coaching.name}, `)}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                  {this.state.contact.coaching ? this.state.contact.coaching.values.map(coaching => this.state.usersContacts.find(user => user.value === coaching.value).name).join(', ') + (this.state.contact.coaching.values.length > 0 ? '.' : '') : ''}
+                                </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {i18n.t('contactDetailScreen.coaching')}
+                                  {this.props.contactSettings.coaching.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2503,11 +2384,10 @@ class ContactDetailScreen extends React.Component {
                             name="phone-off"
                             style={{ color: 'white' }}
                             onPress={() => this.onSaveContact({
-                              quick_button_no_answer:
-                                parseInt(
-                                  this.state.contact.quick_button_no_answer,
-                                  10,
-                                ) + 1,
+                              quick_button_no_answer: this.state.contact.quick_button_no_answer ? parseInt(
+                                this.state.contact.quick_button_no_answer,
+                                10,
+                              ) + 1 : 1,
                             })
                             }
                           />
@@ -2518,12 +2398,14 @@ class ContactDetailScreen extends React.Component {
                             name="phone-in-talk"
                             style={{ color: 'white' }}
                             onPress={() => this.onSaveContact({
-                              quick_button_contact_established:
-                                parseInt(
+                              quick_button_contact_established: Object.prototype.hasOwnProperty.call(
+                                this.state.contact,
+                                'quick_button_contact_established',
+                              ) ? parseInt(
                                   this.state.contact
                                     .quick_button_contact_established,
                                   10,
-                                ) + 1,
+                                ) + 1 : 1,
                             })
                             }
                           />
@@ -2534,11 +2416,14 @@ class ContactDetailScreen extends React.Component {
                             name="calendar-plus"
                             style={{ color: 'white' }}
                             onPress={() => this.onSaveContact({
-                              quick_button_meeting_scheduled:
-                                parseInt(
-                                  this.state.contact.quick_button_meeting_scheduled,
+                              quick_button_meeting_scheduled: Object.prototype.hasOwnProperty.call(
+                                this.state.contact,
+                                'quick_button_meeting_scheduled',
+                              ) ? parseInt(
+                                  this.state.contact
+                                    .quick_button_meeting_scheduled,
                                   10,
-                                ) + 1,
+                                ) + 1 : 1,
                             })
                             }
                           />
@@ -2549,11 +2434,14 @@ class ContactDetailScreen extends React.Component {
                             name="calendar-check"
                             style={{ color: 'white' }}
                             onPress={() => this.onSaveContact({
-                              quick_button_meeting_complete:
-                                parseInt(
-                                  this.state.contact.quick_button_meeting_complete,
+                              quick_button_meeting_complete: Object.prototype.hasOwnProperty.call(
+                                this.state.contact,
+                                'quick_button_meeting_complete',
+                              ) ? parseInt(
+                                  this.state.contact
+                                    .quick_button_meeting_complete,
                                   10,
-                                ) + 1,
+                                ) + 1 : 1,
                             })
                             }
                           />
@@ -2564,11 +2452,14 @@ class ContactDetailScreen extends React.Component {
                             name="calendar-remove"
                             style={{ color: 'white' }}
                             onPress={() => this.onSaveContact({
-                              quick_button_no_show:
-                                parseInt(
-                                  this.state.contact.quick_button_no_show,
+                              quick_button_no_show: Object.prototype.hasOwnProperty.call(
+                                this.state.contact,
+                                'quick_button_no_show',
+                              ) ? parseInt(
+                                  this.state.contact
+                                    .quick_button_no_show,
                                   10,
-                                ) + 1,
+                                ) + 1 : 1,
                             })
                             }
                           />
@@ -2585,7 +2476,32 @@ class ContactDetailScreen extends React.Component {
                           <ScrollView keyboardShouldPersistTaps="handled">
                             {this.state.currentTabIndex === 0 && (
                               <View style={styles.formContainer}>
-                                <Row style={styles.formFieldPadding}>
+                                <Label
+                                  style={[{
+                                    color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
+                                  }, styles.formFieldPadding]}
+                                >
+                                  {this.props.contactSettings.overall_status.name}
+                                </Label>
+                                <Row style={{ paddingBottom: 30 }}>
+                                  <Col>
+                                    <Picker
+                                      selectedValue={
+                                        this.state.contact.overall_status
+                                      }
+                                      onValueChange={this.setContactStatus}
+                                      style={Platform.OS === 'android' ? {
+                                        color: '#ffffff',
+                                        backgroundColor: this.state.overallStatusBackgroundColor,
+                                      } : {
+                                        backgroundColor: this.state.overallStatusBackgroundColor,
+                                      }}
+                                    >
+                                      {this.renderStatusPickerItems()}
+                                    </Picker>
+                                  </Col>
+                                </Row>
+                                <Row>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
                                       <Icon
@@ -2641,7 +2557,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('global.assignedTo')}
+                                      {this.props.contactSettings.assigned_to.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -2690,7 +2606,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.subAssignedTo')}
+                                      {this.props.contactSettings.subassigned.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -2709,7 +2625,12 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { subAssignedSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={this.state.contact.subassigned.values}
+                                      selectedItems={(this.state.contact.subassigned) ? this.state.contact.subassigned.values.map(
+                                        subassigned => ({
+                                          name: this.state.usersContacts.find(user => user.value === subassigned.value).name,
+                                          value: subassigned.value,
+                                        }),
+                                      ) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.subAssignThisContact'),
                                       }}
@@ -2789,7 +2710,7 @@ class ContactDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                {this.state.contact.contact_phone.map(
+                                {(this.state.contact.contact_phone) ? this.state.contact.contact_phone.map(
                                   (phone, index) => (!phone.delete ? (
                                     <Row
                                       key={index.toString()}
@@ -2833,7 +2754,7 @@ class ContactDetailScreen extends React.Component {
                                       </Col>
                                     </Row>
                                   ) : null),
-                                )}
+                                ) : (<Text />)}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
@@ -2860,7 +2781,7 @@ class ContactDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                {this.state.contact.contact_email.map(
+                                {(this.state.contact.contact_email) ? this.state.contact.contact_email.map(
                                   (email, index) => (!email.delete ? (
                                     <Row
                                       key={index.toString()}
@@ -2904,7 +2825,7 @@ class ContactDetailScreen extends React.Component {
                                       </Col>
                                     </Row>
                                   ) : null),
-                                )}
+                                ) : (<Text />)}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
@@ -2931,7 +2852,7 @@ class ContactDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                {this.state.contact.contact_address.map(
+                                {this.state.contact.contact_address ? this.state.contact.contact_address.map(
                                   (address, index) => (!address.delete ? (
                                     <Row
                                       key={index.toString()}
@@ -2975,7 +2896,7 @@ class ContactDetailScreen extends React.Component {
                                       </Col>
                                     </Row>
                                   ) : null),
-                                )}
+                                ) : (<Text />)}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
@@ -2990,7 +2911,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('global.location')}
+                                      {this.props.contactSettings.location_grid.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3009,7 +2930,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { geonamesSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.geonames}
-                                      selectedItems={this.state.contact.geonames.values}
+                                      selectedItems={(this.state.contact.location_grid) ? this.state.contact.location_grid.values.map(location => ({ name: this.state.geonames.find(geoname => geoname.value === location.value).name, value: location.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.selectLocations'),
                                       }}
@@ -3066,7 +2987,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('global.peopleGroup')}
+                                      {this.props.contactSettings.people_groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3085,7 +3006,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { peopleGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.peopleGroups}
-                                      selectedItems={this.state.contact.people_groups.values}
+                                      selectedItems={(this.state.contact.people_groups) ? this.state.contact.people_groups.values.map(peopleGroup => ({ name: this.state.peopleGroups.find(person => person.value === peopleGroup.value).name, value: peopleGroup.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('global.selectPeopleGroups'),
                                       }}
@@ -3143,7 +3064,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.age')}
+                                      {this.props.contactSettings.age.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3163,23 +3084,16 @@ class ContactDetailScreen extends React.Component {
                                       selectedValue={this.state.contact.age}
                                       onValueChange={this.setContactAge}
                                     >
-                                      <Picker.Item label="" value="not-set" />
-                                      <Picker.Item
-                                        label={i18n.t('contactDetailScreen.contactAge.underEighteenYearsOld')}
-                                        value="<19"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('contactDetailScreen.contactAge.underTwentySixYearsOld')}
-                                        value="<26"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('contactDetailScreen.contactAge.underFortyOneYearsOld')}
-                                        value="<41"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('contactDetailScreen.contactAge.overFortyYearsOld')}
-                                        value=">41"
-                                      />
+                                      {Object.keys(this.props.contactSettings.age.values).map((key) => {
+                                        const optionData = this.props.contactSettings.age.values[key];
+                                        return (
+                                          <Picker.Item
+                                            key={key}
+                                            label={optionData.label}
+                                            value={key}
+                                          />
+                                        );
+                                      })}
                                     </Picker>
                                   </Col>
                                 </Row>
@@ -3197,7 +3111,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.gender')}
+                                      {this.props.contactSettings.gender.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3217,9 +3131,12 @@ class ContactDetailScreen extends React.Component {
                                       selectedValue={this.state.contact.gender}
                                       onValueChange={this.setContactGender}
                                     >
-                                      <Picker.Item label="" value="not-set" />
-                                      <Picker.Item label={i18n.t('contactDetailScreen.male')} value="male" />
-                                      <Picker.Item label={i18n.t('contactDetailScreen.female')} value="female" />
+                                      {Object.keys(this.props.contactSettings.gender.values).map((key) => {
+                                        const optionData = this.props.contactSettings.gender.values[key];
+                                        return (
+                                          <Picker.Item key={key} label={optionData.label} value={key} />
+                                        );
+                                      })}
                                     </Picker>
                                   </Col>
                                 </Row>
@@ -3237,7 +3154,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.source')}
+                                      {this.props.contactSettings.sources.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3255,8 +3172,8 @@ class ContactDetailScreen extends React.Component {
                                     <Selectize
                                       ref={(selectize) => { sourcesSelectizeRef = selectize; }}
                                       itemId="value"
-                                      items={this.state.contactSources}
-                                      selectedItems={this.state.contact.sources.values}
+                                      items={Object.keys(this.props.contactSettings.sources.values).map(key => ({ name: this.props.contactSettings.sources.values[key].label, value: key }))}
+                                      selectedItems={(this.state.contact.sources) ? this.state.contact.sources.values.map(source => ({ name: this.props.contactSettings.sources.values[source.value].label, value: source.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.selectSources'),
                                       }}
@@ -3318,7 +3235,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.seekerPath')}
+                                      {this.props.contactSettings.seeker_path.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3339,34 +3256,12 @@ class ContactDetailScreen extends React.Component {
                                       onValueChange={this.setContactSeekerPath}
                                       textStyle={{ color: Colors.tintColor }}
                                     >
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.none')}
-                                        value="none"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.attempted')}
-                                        value="attempted"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.established')}
-                                        value="established"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.scheduled')}
-                                        value="scheduled"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.met')}
-                                        value="met"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.ongoing')}
-                                        value="ongoing"
-                                      />
-                                      <Picker.Item
-                                        label={i18n.t('global.seekerPath.coaching')}
-                                        value="coaching"
-                                      />
+                                      {Object.keys(this.props.contactSettings.seeker_path.values).map((key) => {
+                                        const optionData = this.props.contactSettings.seeker_path.values[key];
+                                        return (
+                                          <Picker.Item key={key} label={optionData.label} value={key} />
+                                        );
+                                      })}
                                     </Picker>
                                   </Col>
                                 </Row>
@@ -3376,7 +3271,7 @@ class ContactDetailScreen extends React.Component {
                                     { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
                                   ]}
                                 >
-                                  {i18n.t('contactDetailScreen.faithMilestones')}
+                                  {this.props.contactSettings.milestones.name}
                                 </Label>
                                 {this.renderfaithMilestones()}
                                 <Row style={styles.formFieldPadding}>
@@ -3393,7 +3288,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.milestones.baptismDate')}
+                                      {this.props.contactSettings.baptism_date.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3410,7 +3305,7 @@ class ContactDetailScreen extends React.Component {
                                   <Col>
                                     <DatePicker
                                       onDateChange={this.setBaptismDate}
-                                      defaultDate={(this.state.contact.baptism_date.length > 0) ? new Date(this.state.contact.baptism_date) : ''}
+                                      defaultDate={(this.state.contact.baptism_date) ? new Date(this.state.contact.baptism_date) : ''}
                                     />
                                   </Col>
                                 </Row>
@@ -3432,7 +3327,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.group')}
+                                      {this.props.contactSettings.groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3451,7 +3346,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { groupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
-                                      selectedItems={this.state.contact.groups.values}
+                                      selectedItems={(this.state.contact.groups) ? this.state.contact.groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addGroup'),
                                       }}
@@ -3509,7 +3404,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.connection')}
+                                      {this.props.contactSettings.relation.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3528,7 +3423,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { connectionsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={this.state.contact.relation.values}
+                                      selectedItems={(this.state.contact.relation) ? this.state.contact.relation.values.map(relation => ({ name: this.state.usersContacts.find(user => user.value === relation.value).name, value: relation.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addConnection'),
                                       }}
@@ -3597,7 +3492,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.baptizedBy')}
+                                      {this.props.contactSettings.baptized_by.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3617,7 +3512,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { baptizedBySelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={this.state.contact.baptized_by.values}
+                                      selectedItems={(this.state.contact.baptized_by) ? this.state.contact.baptized_by.values.map(contact => ({ name: this.state.usersContacts.find(user => user.value === contact.value).name, value: contact.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addBaptizedBy'),
                                       }}
@@ -3686,7 +3581,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.baptized')}
+                                      {this.props.contactSettings.baptized.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3705,7 +3600,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { baptizedSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={this.state.contact.baptized.values}
+                                      selectedItems={(this.state.contact.baptized) ? this.state.contact.baptized.values.map(baptizedItem => ({ name: this.state.usersContacts.find(user => user.value === baptizedItem.value).name, value: baptizedItem.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addBaptized'),
                                       }}
@@ -3774,7 +3669,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.coachedBy')}
+                                      {this.props.contactSettings.coached_by.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3793,7 +3688,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { coachedSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={this.state.contact.coached_by.values}
+                                      selectedItems={(this.state.contact.coached_by) ? this.state.contact.coached_by.values.map(contact => ({ name: this.state.usersContacts.find(user => user.value === contact.value).name, value: contact.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addCoachedBy'),
                                       }}
@@ -3863,7 +3758,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {i18n.t('contactDetailScreen.coaching')}
+                                      {this.props.contactSettings.coaching.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3882,7 +3777,7 @@ class ContactDetailScreen extends React.Component {
                                       ref={(selectize) => { coachingSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={this.state.contact.coaching.values}
+                                      selectedItems={(this.state.contact.coaching) ? this.state.contact.coaching.values.map(contact => ({ name: this.state.usersContacts.find(user => user.value === contact.value).name, value: contact.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addCoaching'),
                                       }}
@@ -3946,16 +3841,25 @@ class ContactDetailScreen extends React.Component {
                             <Button
                               onPress={() => this.onDisableEdit()}
                               style={{
-                                height: 60, width: '50%', backgroundColor: '#FFFFFF',
+                                height: 60,
+                                width: '50%',
+                                backgroundColor: '#FFFFFF',
+                                shadowColor: 'black',
+                                shadowOpacity: 1,
+                                shadowRadius: 2,
+                                shadowOffset: { width: 1, height: 1 },
                               }}
+                              elevation={10}
                             >
                               <Text style={{ color: Colors.tintColor, fontWeight: 'bold' }}>{i18n.t('global.cancel')}</Text>
                             </Button>
                             <Button
-                              style={{
-                                height: 60, width: '50%', backgroundColor: Colors.tintColor,
-                              }}
                               onPress={this.onSaveContact}
+                              style={{
+                                height: 60,
+                                width: '50%',
+                                backgroundColor: Colors.tintColor,
+                              }}
                             >
                               <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
                             </Button>
@@ -4049,15 +3953,13 @@ class ContactDetailScreen extends React.Component {
                               { marginTop: 10, marginBottom: 5 },
                             ]}
                           >
-                            {i18n.t('contactDetailScreen.source')}
+                            {this.props.contactSettings.sources.name}
                           </Label>
                         </Row>
                         <Row>
                           <Picker
                             onValueChange={this.setContactSource}
-                            selectedValue={
-                              this.state.contact.sources.values[0].value
-                            }
+                            selectedValue={this.state.contact.sources.values[0].value}
                           >
                             {this.renderSourcePickerItems()}
                           </Picker>
@@ -4069,7 +3971,7 @@ class ContactDetailScreen extends React.Component {
                               { marginTop: 10, marginBottom: 5 },
                             ]}
                           >
-                            {i18n.t('global.location')}
+                            {this.props.contactSettings.location_grid.name}
                           </Label>
                         </Row>
                         <Row>
@@ -4078,7 +3980,7 @@ class ContactDetailScreen extends React.Component {
                               ref={(selectize) => { geonamesSelectizeRef = selectize; }}
                               itemId="value"
                               items={this.state.geonames}
-                              selectedItems={this.state.contact.geonames.values}
+                              selectedItems={[]}
                               textInputProps={{
                                 placeholder: i18n.t('contactDetailScreen.selectLocations'),
                               }}
@@ -4171,13 +4073,14 @@ ContactDetailScreen.propTypes = {
     token: PropTypes.string,
   }).isRequired,
   contact: PropTypes.shape({
-    ID: PropTypes.number,
+    ID: PropTypes.any,
     title: PropTypes.string,
     seeker_path: PropTypes.string,
+    oldID: PropTypes.string,
   }),
   userReducerError: PropTypes.shape({
-    code: PropTypes.string,
-    message: PropTypes.string,
+    code: PropTypes.any,
+    message: PropTypes.any,
   }),
   newComment: PropTypes.shape({
     ID: PropTypes.string,
@@ -4187,13 +4090,20 @@ ContactDetailScreen.propTypes = {
     gravatar: PropTypes.string,
   }),
   contactsReducerError: PropTypes.shape({
-    code: PropTypes.string,
-    message: PropTypes.string,
+    code: PropTypes.any,
+    message: PropTypes.any,
   }),
   navigation: PropTypes.shape({
     getParam: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     setParams: PropTypes.func.isRequired,
+    state: PropTypes.shape({
+      params: PropTypes.shape({
+        onlyView: PropTypes.any,
+        contactId: PropTypes.any,
+        contactName: PropTypes.string,
+      }),
+    }),
   }).isRequired,
   saveContact: PropTypes.func.isRequired,
   getById: PropTypes.func.isRequired,
@@ -4201,6 +4111,100 @@ ContactDetailScreen.propTypes = {
   saveComment: PropTypes.func.isRequired,
   getActivities: PropTypes.func.isRequired,
   saved: PropTypes.bool,
+  isConnected: PropTypes.bool,
+  endSaveContact: PropTypes.func.isRequired,
+  getByIdEnd: PropTypes.func.isRequired,
+  contactSettings: PropTypes.shape({
+    sources: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    overall_status: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    milestones: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({
+        milestone_has_bible: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_reading_bible: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_belief: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_can_share: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_sharing: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_baptized: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_baptizing: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_in_group: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+        milestone_planting: PropTypes.shape({
+          label: PropTypes.string,
+        }),
+      }),
+    }),
+    assigned_to: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    subassigned: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    location_grid: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    people_groups: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    age: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    gender: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    seeker_path: PropTypes.shape({
+      name: PropTypes.string,
+      values: PropTypes.shape({}),
+    }),
+    baptism_date: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    groups: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    relation: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    baptized_by: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    baptized: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    coached_by: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    coaching: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+  }),
 };
 
 ContactDetailScreen.defaultProps = {
@@ -4209,6 +4213,8 @@ ContactDetailScreen.defaultProps = {
   newComment: null,
   contactsReducerError: null,
   saved: null,
+  isConnected: null,
+  contactSettings: null,
 };
 
 const mapStateToProps = state => ({
@@ -4225,6 +4231,8 @@ const mapStateToProps = state => ({
   contactsReducerError: state.contactsReducer.error,
   loading: state.contactsReducer.loading,
   saved: state.contactsReducer.saved,
+  isConnected: state.networkConnectivityReducer.isConnected,
+  contactSettings: state.contactsReducer.settings,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -4234,6 +4242,9 @@ const mapDispatchToProps = dispatch => ({
   getById: (domain, token, contactId) => {
     dispatch(getById(domain, token, contactId));
   },
+  getByIdEnd: () => {
+    dispatch(getByIdEnd());
+  },
   getComments: (domain, token, contactId, offset, limit) => {
     dispatch(getCommentsByContact(domain, token, contactId, offset, limit));
   },
@@ -4242,6 +4253,9 @@ const mapDispatchToProps = dispatch => ({
   },
   getActivities: (domain, token, contactId, offset, limit) => {
     dispatch(getActivitiesByContact(domain, token, contactId, offset, limit));
+  },
+  endSaveContact: () => {
+    dispatch(saveEnd());
   },
 });
 

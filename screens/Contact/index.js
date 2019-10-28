@@ -20,6 +20,9 @@ ContactsIcon.propTypes = {
 const contactStack = createStackNavigator({
   ContactList: {
     screen: ContactsScreen,
+    navigationOptions: () => ({
+      title: i18n.t('contactsScreen.contacts'),
+    }),
   },
   ContactDetail: {
     screen: ContactDetailScreen,

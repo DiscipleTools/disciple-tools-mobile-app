@@ -12,9 +12,9 @@ storiesOf('Single Select With Filter', module)
     <SingleSelectWithFilter
       containerStyle={{ backgroundColor: '#fff' }}
       items={[
-        { key: 4, label: 'First person name' }, 
-        { key: 3, label: 'Second person name' }, 
-        { key: 2, label: 'Third person name' }
+        { key: 4, label: 'First person name' },
+        { key: 3, label: 'Second person name' },
+        { key: 2, label: 'Third person name' },
       ]}
       selectedItem="4"
     />
@@ -24,9 +24,9 @@ storiesOf('Single Select With Filter', module)
     <SingleSelectWithFilter
       containerStyle={{ backgroundColor: '#fff' }}
       items={[
-        { key: 4, label: 'First person name' }, 
-        { key: 3, label: 'Second person name' }, 
-        { key: 2, label: 'Third person name' }
+        { key: 4, label: 'First person name' },
+        { key: 3, label: 'Second person name' },
+        { key: 2, label: 'Third person name' },
       ]}
     />
   ))
@@ -34,27 +34,27 @@ storiesOf('Single Select With Filter', module)
   .add('Custom Styles', () => (
     <SingleSelectWithFilter
       containerStyle={{ backgroundColor: 'blue' }}
-      selectedItemStyle={{ color:'#fff' }}
+      selectedItemStyle={{ color: '#fff' }}
       items={[
-        { key: 4, label: 'First person name' }, 
-        { key: 3, label: 'Second person name' }, 
-        { key: 2, label: 'Third person name' }
+        { key: 4, label: 'First person name' },
+        { key: 3, label: 'Second person name' },
+        { key: 2, label: 'Third person name' },
       ]}
     />
   ))
 
   .add('With form field', () => (
     <FormField
-    label="Gender"
-    iconName={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
-    inline
-  >
-    <SingleSelectWithFilter
-      items={[
-        { key: 4, label: 'First person name' }, 
-        { key: 3, label: 'Second person name' }, 
-        { key: 2, label: 'Third person name' }
-      ]}
-    />
+      label="Gender"
+      iconName={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
+      inline
+    >
+      <SingleSelectWithFilter
+        items={[
+          { key: 4, label: 'First person name' },
+          { key: 3, label: 'Second person name' },
+          { key: 2, label: 'Third person name' },
+        ]}
+      />
     </FormField>
   ));

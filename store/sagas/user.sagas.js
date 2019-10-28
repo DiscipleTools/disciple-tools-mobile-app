@@ -5,7 +5,6 @@ import * as actions from '../actions/user.actions';
 
 export function* login({ domain, username, password }) {
   yield put({ type: actions.USER_LOGIN_START });
-
   // fetch JWT token
   yield put({
     type: 'REQUEST',
@@ -24,26 +23,20 @@ export function* login({ domain, username, password }) {
       action: actions.USER_LOGIN_RESPONSE,
     },
   });
-
-  // handle response
   try {
-    // TODO: will this block and cause responses to be missed?
-    // use channel instead
-    const res = yield take(actions.USER_LOGIN_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        yield put({ type: actions.USER_LOGIN_SUCCESS, domain, user: jsonData });
-      } else {
-        yield put({
-          type: actions.USER_LOGIN_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-          },
-        });
-      }
+    let response = yield take(actions.USER_LOGIN_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({ type: actions.USER_LOGIN_SUCCESS, domain, user: jsonData });
+    } else {
+      yield put({
+        type: actions.USER_LOGIN_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({

@@ -64,8 +64,8 @@ storiesOf('Single Select', module)
         { label: 'Female', value: 'female' },
       ]}
       selectedItem="male"
-      containerStyle= {styles.basicContainer}
-      formStyle= {{backgroundColor:'red'}}
+      containerStyle={styles.basicContainer}
+      formStyle={{ backgroundColor: 'red' }}
       onChange={() => {}}
     />
   ))

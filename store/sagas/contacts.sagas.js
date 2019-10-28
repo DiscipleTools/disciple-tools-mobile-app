@@ -1,7 +1,9 @@
 import {
-  put, take, takeEvery, takeLatest, all, call,
+  put, take, takeEvery, takeLatest, all, select,
 } from 'redux-saga/effects';
+
 import * as actions from '../actions/contacts.actions';
+
 
 export function* getAll({ domain, token }) {
   yield put({ type: actions.CONTACTS_GETALL_START });
@@ -20,14 +22,14 @@ export function* getAll({ domain, token }) {
       action: actions.CONTACTS_GETALL_RESPONSE,
     },
   });
-
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
   try {
-    const res = yield take(actions.CONTACTS_GETALL_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        if (jsonData.posts) {
+    let response = yield take(actions.CONTACTS_GETALL_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      if (jsonData.posts) {
+        if (isConnected) {
           yield put({
             type: actions.CONTACTS_GETALL_SUCCESS,
             contacts: jsonData.posts,
@@ -35,40 +37,52 @@ export function* getAll({ domain, token }) {
         } else {
           yield put({
             type: actions.CONTACTS_GETALL_SUCCESS,
-            contacts: [],
+            contacts: jsonData.posts,
+            offline: true,
           });
         }
       } else {
         yield put({
-          type: actions.CONTACTS_GETALL_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-          },
+          type: actions.CONTACTS_GETALL_SUCCESS,
+          contacts: [],
         });
       }
+    } else if (isConnected) {
+      yield put({
+        type: actions.CONTACTS_GETALL_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({
       type: actions.CONTACTS_GETALL_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
 }
 
 export function* save({ domain, token, contactData }) {
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+
   yield put({ type: actions.CONTACTS_SAVE_START });
+
   const contact = contactData;
-  let contactInitialComment;
   if (contact.initial_comment) {
-    contactInitialComment = contact.initial_comment;
     delete contact.initial_comment;
   }
-  const contactId = contact.ID ? contact.ID : '';
-  delete contact.ID;
+  let contactId = '';
+  // Add ID to URL only on D.B. IDs
+  /* eslint-disable */
+  if (contact.ID && !isNaN(contact.ID)) {
+    /* eslint-enable */
+    contactId = contact.ID;
+  }
   yield put({
     type: 'REQUEST',
     payload: {
@@ -76,58 +90,21 @@ export function* save({ domain, token, contactData }) {
       data: {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(contact),
       },
+      isConnected,
       action: actions.CONTACTS_SAVE_RESPONSE,
     },
   });
-
   try {
-    const responseAction = yield take(actions.CONTACTS_SAVE_RESPONSE);
-    if (responseAction) {
-      const response = responseAction.payload;
-      const jsonData = yield response.clone().json();
+    let response = yield take(actions.CONTACTS_SAVE_RESPONSE);
+    response = response.payload;
+    let jsonData = response.data;
+    if (isConnected) {
       if (response.status === 200) {
-        if (contactInitialComment) {
-          yield put({ type: actions.CONTACTS_SAVE_COMMENT_START });
-          yield put({
-            type: 'REQUEST',
-            payload: {
-              url: `https://${domain}/wp-json/dt-posts/v2/contacts/${jsonData.ID}/comments`,
-              data: {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                  comment: `${contactInitialComment}`,
-                }),
-              },
-              action: actions.CONTACTS_SAVE_COMMENT_RESPONSE,
-            },
-          });
-          const res = yield take(actions.CONTACTS_SAVE_COMMENT_RESPONSE);
-          if (res) {
-            const responseComment = res.payload;
-            const saveCommentJsonData = yield call(() => new Promise((resolve) => {
-              resolve(response.clone());
-            }));
-            if (responseComment.status !== 200) {
-              yield put({
-                type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
-                error: {
-                  code: saveCommentJsonData.code,
-                  message: saveCommentJsonData.message,
-                  data: saveCommentJsonData.data,
-                },
-              });
-            }
-          }
-        }
         yield put({
           type: actions.CONTACTS_SAVE_SUCCESS,
           contact: jsonData,
@@ -141,13 +118,28 @@ export function* save({ domain, token, contactData }) {
           },
         });
       }
+    } else {
+      jsonData = {
+        ...response,
+      };
+      if (contactId.length > 0) {
+        jsonData = {
+          ...jsonData,
+          ID: contactId,
+        };
+      }
+      yield put({
+        type: actions.CONTACTS_SAVE_SUCCESS,
+        contact: jsonData,
+        offline: true,
+      });
     }
   } catch (error) {
     yield put({
       type: actions.CONTACTS_SAVE_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -155,7 +147,6 @@ export function* save({ domain, token, contactData }) {
 
 export function* getById({ domain, token, contactId }) {
   yield put({ type: actions.CONTACTS_GETBYID_START });
-
   yield put({
     type: 'REQUEST',
     payload: {
@@ -170,34 +161,30 @@ export function* getById({ domain, token, contactId }) {
       action: actions.CONTACTS_GETBYID_RESPONSE,
     },
   });
-
   try {
-    const res = yield take(actions.CONTACTS_GETBYID_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        yield put({
-          type: actions.CONTACTS_GETBYID_SUCCESS,
-          contact: jsonData,
-        });
-      } else {
-        yield put({
-          type: actions.CONTACTS_GETBYID_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-            data: jsonData.data,
-          },
-        });
-      }
+    let response = yield take(actions.CONTACTS_GETBYID_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.CONTACTS_GETBYID_SUCCESS,
+        contact: jsonData,
+      });
+    } else {
+      yield put({
+        type: actions.CONTACTS_GETBYID_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({
       type: actions.CONTACTS_GETBYID_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -206,6 +193,8 @@ export function* getById({ domain, token, contactId }) {
 export function* saveComment({
   domain, token, contactId, commentData,
 }) {
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+
   yield put({ type: actions.CONTACTS_SAVE_COMMENT_START });
 
   yield put({
@@ -215,20 +204,21 @@ export function* saveComment({
       data: {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(commentData),
       },
+      isConnected,
       action: actions.CONTACTS_SAVE_COMMENT_RESPONSE,
     },
   });
 
   try {
-    const res = yield take(actions.CONTACTS_SAVE_COMMENT_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
+    let response = yield take(actions.CONTACTS_SAVE_COMMENT_RESPONSE);
+    response = response.payload;
+    let jsonData = response.data;
+    if (isConnected) {
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_SAVE_COMMENT_SUCCESS,
@@ -240,17 +230,28 @@ export function* saveComment({
           error: {
             code: jsonData.code,
             message: jsonData.message,
-            data: jsonData.data,
           },
         });
       }
+    } else {
+      const authorName = yield select(state => state.userReducer.userData.username);
+      jsonData = {
+        ...response,
+        author: authorName,
+        contactId,
+      };
+      yield put({
+        type: actions.CONTACTS_SAVE_COMMENT_SUCCESS,
+        comment: jsonData,
+        offline: true,
+      });
     }
   } catch (error) {
     yield put({
       type: actions.CONTACTS_SAVE_COMMENT_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -259,28 +260,48 @@ export function* saveComment({
 export function* getCommentsByContact({
   domain, token, contactId, offset, limit,
 }) {
+  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
   yield put({ type: actions.CONTACTS_GET_COMMENTS_START });
-
-  yield put({
-    type: 'REQUEST',
-    payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments?number=${limit}&offset=${offset}`,
-      data: {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      },
-      action: actions.CONTACTS_GET_COMMENTS_RESPONSE,
-    },
-  });
-
   try {
-    const res = yield take(actions.CONTACTS_GET_COMMENTS_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
+    /* eslint-disable */
+    if (!isConnected || isNaN(contactId)) {
+      /* eslint-enable */
+      let queue = yield select(state => state.requestReducer.queue);
+      const authorName = yield select(state => state.userReducer.userData.username);
+      queue = queue.filter(requestQueue => (requestQueue.data.method === 'POST'
+        && requestQueue.action === 'CONTACTS_SAVE_COMMENT_RESPONSE'
+        && requestQueue.url.includes(`contacts/${contactId}/comments`)));
+      yield put({
+        type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
+        comments: queue.map((request) => {
+          const requestBody = JSON.parse(request.data.body);
+          return {
+            ...requestBody,
+            author: authorName,
+            contactId,
+          };
+        }),
+        total: queue.length,
+        offline: true,
+      });
+    } else {
+      yield put({
+        type: 'REQUEST',
+        payload: {
+          url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments?number=${limit}&offset=${offset}`,
+          data: {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          },
+          action: actions.CONTACTS_GET_COMMENTS_RESPONSE,
+        },
+      });
+      let response = yield take(actions.CONTACTS_GET_COMMENTS_RESPONSE);
+      response = response.payload;
+      const jsonData = response.data;
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
@@ -293,7 +314,6 @@ export function* getCommentsByContact({
           error: {
             code: jsonData.code,
             message: jsonData.message,
-            data: jsonData.data,
           },
         });
       }
@@ -303,7 +323,7 @@ export function* getCommentsByContact({
       type: actions.CONTACTS_GET_COMMENTS_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -313,27 +333,33 @@ export function* getActivitiesByContact({
   domain, token, contactId, offset, limit,
 }) {
   yield put({ type: actions.CONTACTS_GET_ACTIVITIES_START });
-
-  yield put({
-    type: 'REQUEST',
-    payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/activity?number=${limit}&offset=${offset}`,
-      data: {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+  /* eslint-disable */
+  if (isNaN(contactId)) {
+    /* eslint-enable */
+    yield put({
+      type: actions.CONTACTS_GET_ACTIVITIES_SUCCESS,
+      activities: [],
+      total: 0,
+    });
+  } else {
+    yield put({
+      type: 'REQUEST',
+      payload: {
+        url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/activity?number=${limit}&offset=${offset}`,
+        data: {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         },
+        action: actions.CONTACTS_GET_ACTIVITIES_RESPONSE,
       },
-      action: actions.CONTACTS_GET_ACTIVITIES_RESPONSE,
-    },
-  });
-
-  try {
-    const res = yield take(actions.CONTACTS_GET_ACTIVITIES_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
+    });
+    try {
+      let response = yield take(actions.CONTACTS_GET_ACTIVITIES_RESPONSE);
+      response = response.payload;
+      const jsonData = response.data;
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_GET_ACTIVITIES_SUCCESS,
@@ -346,17 +372,63 @@ export function* getActivitiesByContact({
           error: {
             code: jsonData.code,
             message: jsonData.message,
-            data: jsonData.data,
           },
         });
       }
+    } catch (error) {
+      yield put({
+        type: actions.CONTACTS_GET_ACTIVITIES_FAILURE,
+        error: {
+          code: '400',
+          message: 'Unable to process the request. Please try again later.',
+        },
+      });
+    }
+  }
+}
+
+export function* getSettings({ domain, token }) {
+  yield put({ type: actions.CONTACTS_GET_SETTINGS_START });
+
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts/settings`,
+      data: {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      action: actions.CONTACTS_GET_SETTINGS_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.CONTACTS_GET_SETTINGS_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.CONTACTS_GET_SETTINGS_SUCCESS,
+        settings: jsonData,
+      });
+    } else {
+      yield put({
+        type: actions.CONTACTS_GET_SETTINGS_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({
-      type: actions.CONTACTS_GET_ACTIVITIES_FAILURE,
+      type: actions.CONTACTS_GET_SETTINGS_FAILURE,
       error: {
         code: '400',
-        message: error.toString(),
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
@@ -370,5 +442,6 @@ export default function* contactsSaga() {
     takeEvery(actions.CONTACTS_GET_COMMENTS, getCommentsByContact),
     takeEvery(actions.CONTACTS_SAVE_COMMENT, saveComment),
     takeEvery(actions.CONTACTS_GET_ACTIVITIES, getActivitiesByContact),
+    takeEvery(actions.CONTACTS_GET_SETTINGS, getSettings),
   ]);
 }

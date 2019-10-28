@@ -45,20 +45,7 @@ class ContactsScreen extends React.Component {
   };
 
   state = {
-    contacts: [],
-  };
-
-  componentDidMount() {
-    this.onRefresh();
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const newState = {
-      ...prevState,
-      loading: nextProps.loading,
-      contacts: nextProps.contacts,
-    };
-    return newState;
+    refresh: false,
   }
 
   componentDidUpdate(prevProps) {
@@ -84,18 +71,24 @@ class ContactsScreen extends React.Component {
     >
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={{ fontWeight: 'bold' }}>{contact.post_title}</Text>
+          <Text style={{ fontWeight: 'bold' }}>{contact.title}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={styles.contactSubtitle}>
-            {i18n.t(`global.contactOverallStatus.${contact.overall_status}`)}
-          </Text>
-          <Text style={styles.contactSubtitle}>
-            {' • '}
-          </Text>
-          <Text style={styles.contactSubtitle}>
-            {i18n.t(`global.seekerPath.${contact.seeker_path}`)}
-          </Text>
+          {this.props.contactSettings.overall_status.values[contact.overall_status] ? (
+            <Text style={styles.contactSubtitle}>
+              {this.props.contactSettings.overall_status.values[contact.overall_status].label}
+            </Text>
+          ) : <Text />}
+          {this.props.contactSettings.overall_status.values[contact.overall_status] && this.props.contactSettings.seeker_path.values[contact.seeker_path] ? (
+            <Text style={styles.contactSubtitle}>
+              {' • '}
+            </Text>
+          ) : <Text />}
+          {this.props.contactSettings.seeker_path.values[contact.seeker_path] ? (
+            <Text style={styles.contactSubtitle}>
+              {this.props.contactSettings.seeker_path.values[contact.seeker_path].label}
+            </Text>
+          ) : <Text />}
         </View>
       </View>
     </TouchableOpacity>
@@ -121,11 +114,14 @@ class ContactsScreen extends React.Component {
       this.props.navigation.push('ContactDetail', {
         contactId: contactData.ID,
         onlyView: true,
-        contactName: contactData.post_title,
+        contactName: contactData.title,
+        onGoBack: () => this.onRefresh(),
       });
     } else {
       // Create
-      this.props.navigation.push('ContactDetail');
+      this.props.navigation.push('ContactDetail', {
+        onGoBack: () => this.onRefresh(),
+      });
     }
   };
 
@@ -134,12 +130,13 @@ class ContactsScreen extends React.Component {
       <Container>
         <View style={{ flex: 1 }}>
           <FlatList
-            data={this.state.contacts}
+            data={this.props.contacts}
+            extraData={this.state.refresh}
             renderItem={item => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
             refreshControl={(
               <RefreshControl
-                refreshing={this.state.loading}
+                refreshing={this.props.loading}
                 onRefresh={this.onRefresh}
               />
             )}
@@ -183,12 +180,23 @@ ContactsScreen.propTypes = {
   ).isRequired,
   /* eslint-enable */
   error: PropTypes.shape({
-    code: PropTypes.string,
+    code: PropTypes.any,
     message: PropTypes.string,
+  }),
+  loading: PropTypes.bool,
+  contactSettings: PropTypes.shape({
+    overall_status: PropTypes.shape({
+      values: PropTypes.shape({}),
+    }),
+    seeker_path: PropTypes.shape({
+      values: PropTypes.shape({}),
+    }),
   }),
 };
 ContactsScreen.defaultProps = {
   error: null,
+  loading: false,
+  contactSettings: null,
 };
 
 const mapStateToProps = state => ({
@@ -196,6 +204,7 @@ const mapStateToProps = state => ({
   contacts: state.contactsReducer.contacts,
   loading: state.contactsReducer.loading,
   error: state.contactsReducer.error,
+  contactSettings: state.contactsReducer.settings,
 });
 const mapDispatchToProps = dispatch => ({
   getAllContacts: (domain, token) => {

@@ -1,9 +1,5 @@
 {
   "global": {
-    "locales": {
-      "en-US": "English (United States)",
-      "ar-JO": "Arabic (Jordan)"
-    },
     "error": {
       "code": "Code: ",
       "message": "Message: "

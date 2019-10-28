@@ -6,7 +6,6 @@ import * as actions from '../actions/users.actions';
 export function* getUsers({ domain, token }) {
   yield put({ type: actions.GET_USERS_START });
 
-  // get all groups
   yield put({
     type: 'REQUEST',
     payload: {
@@ -23,34 +22,31 @@ export function* getUsers({ domain, token }) {
   });
 
   try {
-    const res = yield take(actions.GET_USERS_RESPONSE);
-    if (res) {
-      const response = res.payload;
-      const jsonData = yield response.clone().json();
-      if (response.status === 200) {
-        if (jsonData) {
-          yield put({
-            type: actions.GET_USERS_SUCCESS,
-            users: jsonData,
-          });
-        }
-      } else {
+    let response = yield take(actions.GET_USERS_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      if (jsonData) {
         yield put({
-          type: actions.GET_USERS_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-            data: jsonData.data,
-          },
+          type: actions.GET_USERS_SUCCESS,
+          users: jsonData,
         });
       }
+    } else {
+      yield put({
+        type: actions.GET_USERS_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
     }
   } catch (error) {
     yield put({
       type: actions.GET_USERS_FAILURE,
       error: {
         code: '400',
-        message: '(400) Unable to process the request. Please try again later.',
+        message: 'Unable to process the request. Please try again later.',
       },
     });
   }
