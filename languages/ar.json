@@ -1,74 +1,8 @@
 {
-    "global": {
-        "error": {
-            "code": "الكود: ",
-            "message": "الرسالة: "
-        },
-        "success": {
-            "save": "!تم حفظ البيانات بنجاح"
-        },
-        "contactOverallStatus": {
-            "new": "جهة اتصال جديدة",
-            "unassignable": "غير جاهز",
-            "unassigned": "يحتاج إلى توزيع مهام",
-            "assigned": "في انتظار القبول",
-            "active": "ناشط",
-            "paused": "توقف",
-            "closed": "مغلق"
-        },
-        "seekerPath": {
-            "none": "يحتاج إلى محاولة اتصال",
-            "attempted": "تمت محاولة الاتصال",
-            "established": "تم إنشاء التواصل",
-            "scheduled": "تم تحديد موعد الاجتماع",
-            "met": "اكتمال الاجتماع الاول",
-            "ongoing": "اجتماعات متواصلة",
-            "coaching": "في طور التدريب"
-        },
-        "groupStatus": {
-            "active": "ناشط",
-            "inactive": "غير ناشط"
-        },
-        "groupType": {
-            "pre-group": "قبل المجموعة",
-            "group": "المجموعة",
-            "church": "كنيسة",
-            "team": "فريق"
-        },
-        "groups": "الفرق",
-        "details": "التفاصيل",
-        "status": "الحالة",
-        "assignedTo": "معيّن إلى",
-        "location": "المواقع",
-        "peopleGroup": "مجموعة بشرية",
-        "selectPeopleGroups": "اختر اشخاص المجموعة",
-        "address": "العنوان",
-        "progress": "التقدٌّم",
-        "commentsActivity": "التعليقات والنشاط",
-        "writeYourCommentNoteHere": "اكتب تعليقك أو ملاحظتك هنا",
-        "requiredField": "حقل مطلوب",
-        "edit": "تغيير",
-        "cancel": "إلغاء",
-        "save": "حفظ",
-        "online": "متصل بالأنترنت",
-        "language": "لغة"
-    },
-    "loginScreen": {
-        "domain": {
-            "label": "موقع المعلومات العالمي",
-            "placeholder": "مثلاً: myteam.disciple.tools",
-            "error": "اسم النطاق مطلوب"
-        },
-        "username": {
-            "label": "اسم المستخدم",
-            "error": "اسم الامستخدم مطلوب"
-        },
-        "password": {
-            "label": "كلمة المرور",
-            "error": "كلمة المرور مطلوبة"
-        },
-        "logIn": "تسجيل الدخول",
-        "forgotPassword": "فقدت كلمة المرور الخاصة بك؟"
+  "global": {
+    "error": {
+      "code": "الكود: ",
+      "message": "الرسالة: "
     },
     "contactsScreen": {
         "contacts": "المتواصلون"
