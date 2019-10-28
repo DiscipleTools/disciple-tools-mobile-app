@@ -100,7 +100,6 @@
         "subAssignThisContact": "Sub-asignar este contacto",
         "mobile": "Telefonos",
         "email": "Correos Electrónicos",
-        "message": "Redes Sociales",
         "selectLocations": "Seleccionar ubicaciones",
         "contactAge": {
             "underEighteenYearsOld": "Menor de 18 años de edad",
@@ -144,7 +143,8 @@
         "phoneNumber": "Telefono",
         "initialComment": "Primer Comentario",
         "addBaptizmDate": "Agregar fecha de bautizmo",
-        "group": "Grupo"
+        "group": "Grupo",
+        "socialMedia": "Redes Sociales"
     },
     "groupDetailScreen": {
         "addNewGroup": "Crear un grupo nuevo",
