@@ -127,7 +127,7 @@ export default function groupsReducer(state = initialState, action) {
     case actions.GROUPS_GETALL_SUCCESS: {
       let { groups } = action;
       const { offline } = action;
-      let localGroups = newState.groups.filter(localGroup => Number.isNaN(localGroup.ID));
+      const localGroups = newState.groups.filter(localGroup => Number.isNaN(localGroup.ID));
       if (!offline) {
         const dataBaseGroups = [...groups].map((group) => {
           const mappedGroup = {};

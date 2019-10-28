@@ -38,7 +38,7 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_GETALL_SUCCESS: {
       let { contacts } = action;
       const { offline } = action;
-      let localContacts = newState.contacts.filter(localContact => Number.isNaN(localContact.ID));
+      const localContacts = newState.contacts.filter(localContact => Number.isNaN(localContact.ID));
       if (!offline) {
         const dataBaseContacts = [...action.contacts].map((contact) => {
           const mappedContact = {};
