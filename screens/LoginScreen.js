@@ -233,7 +233,7 @@ class LoginScreen extends React.Component {
     const {
       contactSettingsListRetrieved,
       groupSettingsListRetrieved,
-      appLanguageSet
+      appLanguageSet,
     } = this.state;
     // If the RTL value in the store does not match what is
     // in I18nManager (which controls content flow), call
