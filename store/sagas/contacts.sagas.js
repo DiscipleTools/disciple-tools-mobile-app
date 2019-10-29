@@ -78,9 +78,7 @@ export function* save({ domain, token, contactData }) {
   }
   let contactId = '';
   // Add ID to URL only on D.B. IDs
-  /* eslint-disable */
-  if (contact.ID && !isNaN(contact.ID)) {
-    /* eslint-enable */
+  if (contact.ID && !Number.isNaN(contact.ID)) {
     contactId = contact.ID;
   }
   yield put({
@@ -263,9 +261,7 @@ export function* getCommentsByContact({
   const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
   yield put({ type: actions.CONTACTS_GET_COMMENTS_START });
   try {
-    /* eslint-disable */
-    if (!isConnected || isNaN(contactId)) {
-      /* eslint-enable */
+    if (!isConnected || Number.isNaN(contactId)) {
       let queue = yield select(state => state.requestReducer.queue);
       const authorName = yield select(state => state.userReducer.userData.username);
       queue = queue.filter(requestQueue => (requestQueue.data.method === 'POST'
@@ -333,9 +329,7 @@ export function* getActivitiesByContact({
   domain, token, contactId, offset, limit,
 }) {
   yield put({ type: actions.CONTACTS_GET_ACTIVITIES_START });
-  /* eslint-disable */
-  if (isNaN(contactId)) {
-    /* eslint-enable */
+  if (Number.isNaN(contactId)) {
     yield put({
       type: actions.CONTACTS_GET_ACTIVITIES_SUCCESS,
       activities: [],

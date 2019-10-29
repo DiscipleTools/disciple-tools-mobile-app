@@ -9,7 +9,6 @@ import {
   Keyboard,
   ActivityIndicator,
   Platform,
-  AsyncStorage,
   KeyboardAvoidingView,
   ScrollView,
   I18nManager,
@@ -23,12 +22,12 @@ import {
 } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Updates } from 'expo';
-
+import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import i18n from '../languages';
 import locales from '../languages/locales';
 import Colors from '../constants/Colors';
 import {
-  login,
+  login, getUserInfo,
 } from '../store/actions/user.actions';
 import { setLanguage } from '../store/actions/i18n.actions';
 import TextField from '../components/TextField';
@@ -61,6 +60,7 @@ const styles = StyleSheet.create({
     width: 250,
     resizeMode: 'contain',
     padding: 20,
+    marginBottom: 20,
   },
   formContainer: {
     alignSelf: 'stretch',
@@ -132,6 +132,7 @@ class LoginScreen extends React.Component {
     modalVisible: false,
     contactSettingsListRetrieved: false,
     groupSettingsListRetrieved: false,
+    appLanguageSet: false,
   };
 
   constructor(props) {
@@ -198,6 +199,7 @@ class LoginScreen extends React.Component {
       this.setState({
         contactSettingsListRetrieved: false,
         groupSettingsListRetrieved: false,
+        appLanguageSet: false,
       });
     });
     // User is authenticated (logged)
@@ -205,6 +207,7 @@ class LoginScreen extends React.Component {
       if (this.props.isConnected) {
         this.setState({ loading: true }, () => {
           this.getDataLists();
+          this.getUserInfo();
         });
       } else {
         this.setState({
@@ -213,6 +216,7 @@ class LoginScreen extends React.Component {
           this.setState({
             contactSettingsListRetrieved: true,
             groupSettingsListRetrieved: true,
+            appLanguageSet: true,
           });
         });
       }
@@ -229,6 +233,7 @@ class LoginScreen extends React.Component {
     const {
       contactSettingsListRetrieved,
       groupSettingsListRetrieved,
+      appLanguageSet,
     } = this.state;
     // If the RTL value in the store does not match what is
     // in I18nManager (which controls content flow), call
@@ -245,11 +250,16 @@ class LoginScreen extends React.Component {
     // User logged successfully
     if (userData && prevProps.userData !== userData) {
       this.getDataLists();
+      this.getUserInfo();
+      // User locale retrieved
+      if (userData.locale) {
+        this.setAppLanguage();
+      }
     }
 
     // usersContactsList retrieved
     if (usersContacts && prevProps.usersContacts !== usersContacts) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'usersAndContactsList',
         JSON.stringify(usersContacts),
       );
@@ -257,7 +267,7 @@ class LoginScreen extends React.Component {
 
     // geonamesList retrieved
     if (geonames && prevProps.geonames !== geonames) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'locationsList',
         JSON.stringify(geonames),
       );
@@ -265,7 +275,7 @@ class LoginScreen extends React.Component {
 
     // peopleGroupsList retrieved
     if (peopleGroups && prevProps.peopleGroups !== peopleGroups) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'peopleGroupsList',
         JSON.stringify(peopleGroups),
       );
@@ -273,7 +283,7 @@ class LoginScreen extends React.Component {
 
     // peopleGroupsList retrieved
     if (search && prevProps.search !== search) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'searchGroupsList',
         JSON.stringify(search),
       );
@@ -281,7 +291,7 @@ class LoginScreen extends React.Component {
 
     // usersList retrieved
     if (users && prevProps.users !== users) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'usersList',
         JSON.stringify(users),
       );
@@ -289,7 +299,7 @@ class LoginScreen extends React.Component {
 
     // contactSettings retrieved
     if (contactSettings && prevProps.contactSettings !== contactSettings) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'contactSettings',
         JSON.stringify(contactSettings),
       );
@@ -297,16 +307,16 @@ class LoginScreen extends React.Component {
 
     // groupSettings retrieved
     if (groupSettings && prevProps.groupSettings !== groupSettings) {
-      AsyncStorage.setItem(
+      ExpoFileSystemStorage.setItem(
         'groupSettings',
         JSON.stringify(groupSettings),
       );
     }
 
-    if (contactSettingsListRetrieved && groupSettingsListRetrieved) {
+    if (contactSettingsListRetrieved && groupSettingsListRetrieved && appLanguageSet) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
-      AsyncStorage.setItem('listsLastUpdate', listsLastUpdate);
+      ExpoFileSystemStorage.setItem('listsLastUpdate', listsLastUpdate);
       this.props.navigation.navigate('ContactList');
     }
 
@@ -333,6 +343,21 @@ class LoginScreen extends React.Component {
     this.focusListener.remove();
   }
 
+  setAppLanguage = () => {
+    const userLocaleConfig = this.props.userData.locale.substring(0, 2);
+    const locale = locales.find(item => item.code === userLocaleConfig);
+    if (locale) {
+      const isRTL = locale.direction === 'rtl';
+      // store locale/rtl instore for next load of app
+      this.props.setLanguage(locale.code, isRTL);
+      // set current locale for all language strings
+      i18n.setLocale(locale.code, isRTL);
+      this.setState({
+        appLanguageSet: true,
+      });
+    }
+  }
+
   getDataLists = () => {
     this.props.getUsersAndContacts(
       this.props.userData.domain,
@@ -347,6 +372,10 @@ class LoginScreen extends React.Component {
     this.props.getContacts(this.props.userData.domain, this.props.userData.token);
     this.props.getGroups(this.props.userData.domain, this.props.userData.token);
   };
+
+  getUserInfo = () => {
+    this.props.getUserInfo(this.props.userData.domain, this.props.userData.token);
+  }
 
   onLoginPress = () => {
     Keyboard.dismiss();
@@ -408,7 +437,7 @@ class LoginScreen extends React.Component {
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.header}>
             <Image
-              source={require('../assets/images/dt-logo2.png')}
+              source={require('../assets/images/dt-icon.png')}
               style={styles.welcomeImage}
             />
           </View>
@@ -517,6 +546,7 @@ LoginScreen.propTypes = {
     username: PropTypes.string,
     displayName: PropTypes.string,
     email: PropTypes.string,
+    locale: PropTypes.string,
   }),
   getUsersAndContacts: PropTypes.func.isRequired,
   getLocations: PropTypes.func.isRequired,
@@ -584,6 +614,7 @@ LoginScreen.propTypes = {
   groupSettings: PropTypes.shape({}),
   getContacts: PropTypes.func.isRequired,
   getGroups: PropTypes.func.isRequired,
+  getUserInfo: PropTypes.func.isRequired,
 };
 LoginScreen.defaultProps = {
   userData: {
@@ -656,6 +687,9 @@ const mapDispatchToProps = dispatch => ({
   },
   getGroups: (domain, token) => {
     dispatch(getAllGroups(domain, token));
+  },
+  getUserInfo: (domain, token) => {
+    dispatch(getUserInfo(domain, token));
   },
 });
 export default connect(

@@ -22,7 +22,7 @@ import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
 
 import { Updates } from 'expo';
-import colors from '../constants/Colors';
+import Colors from '../constants/Colors';
 import { setLanguage } from '../store/actions/i18n.actions';
 import { logout } from '../store/actions/user.actions';
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
@@ -49,11 +49,11 @@ const propTypes = {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.canvas,
+    backgroundColor: Colors.canvas,
   },
   header: {
     borderBottomWidth: 1,
-    backgroundColor: colors.tabBar,
+    backgroundColor: Colors.tabBar,
     paddingBottom: 10,
     marginBottom: 10,
 
@@ -91,6 +91,13 @@ const styles = StyleSheet.create({
 class SettingsScreen extends React.Component {
   static navigationOptions = {
     title: i18n.t('settingsScreen.settings'),
+    headerStyle: {
+      backgroundColor: Colors.tintColor,
+    },
+    headerTintColor: '#FFFFFF',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
   };
 
   constructor(props) {
@@ -121,7 +128,7 @@ class SettingsScreen extends React.Component {
 
   onFABPress = () => {
     const toastMsg = this.props.isConnected ? i18n.t('settingsScreen.networkUnavailable') : i18n.t('settingsScreen.networkAvailable');
-    this.toast.show(toastMsg);
+    this.toast.show(toastMsg, 3000);
     this.props.toggleNetworkConnectivity(this.props.isConnected);
   }
 

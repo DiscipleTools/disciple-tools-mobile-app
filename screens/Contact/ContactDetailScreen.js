@@ -11,11 +11,11 @@ import {
   Dimensions,
   FlatList,
   TextInput,
-  AsyncStorage,
   RefreshControl,
   Platform,
+  TouchableHighlight,
 } from 'react-native';
-
+import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
 
 import {
@@ -83,6 +83,17 @@ let commentsFlatList,
   baptizedSelectizeRef,
   coachingSelectizeRef;
 /* eslint-enable */
+const defaultFaithMilestones = [
+  'milestone_has_bible',
+  'milestone_reading_bible',
+  'milestone_belief',
+  'milestone_can_share',
+  'milestone_sharing',
+  'milestone_baptized',
+  'milestone_baptizing',
+  'milestone_in_group',
+  'milestone_planting',
+];
 const styles = StyleSheet.create({
   tabBarUnderlineStyle: {
     borderBottomWidth: 3,
@@ -257,7 +268,7 @@ class ContactDetailScreen extends React.Component {
           title: contactName,
           sources: {
             values: [{
-              value: 'advertisement',
+              value: 'personal',
             }],
           },
           overall_status: 'new',
@@ -272,7 +283,7 @@ class ContactDetailScreen extends React.Component {
           title: null,
           sources: {
             values: [{
-              value: 'advertisement',
+              value: 'personal',
             }],
           },
           overall_status: 'new',
@@ -502,7 +513,7 @@ class ContactDetailScreen extends React.Component {
 
   getLists = async (contactId) => {
     let newState = {};
-    const users = await AsyncStorage.getItem('usersList');
+    const users = await ExpoFileSystemStorage.getItem('usersList');
     if (users !== null) {
       newState = {
         ...newState,
@@ -513,7 +524,7 @@ class ContactDetailScreen extends React.Component {
       };
     }
 
-    const usersContacts = await AsyncStorage.getItem('usersAndContactsList');
+    const usersContacts = await ExpoFileSystemStorage.getItem('usersAndContactsList');
     if (usersContacts !== null) {
       newState = {
         ...newState,
@@ -521,7 +532,7 @@ class ContactDetailScreen extends React.Component {
       };
     }
 
-    const peopleGroups = await AsyncStorage.getItem('peopleGroupsList');
+    const peopleGroups = await ExpoFileSystemStorage.getItem('peopleGroupsList');
     if (peopleGroups !== null) {
       newState = {
         ...newState,
@@ -529,7 +540,7 @@ class ContactDetailScreen extends React.Component {
       };
     }
 
-    const geonames = await AsyncStorage.getItem('locationsList');
+    const geonames = await ExpoFileSystemStorage.getItem('locationsList');
     if (geonames !== null) {
       newState = {
         ...newState,
@@ -537,7 +548,7 @@ class ContactDetailScreen extends React.Component {
       };
     }
 
-    const groups = await AsyncStorage.getItem('searchGroupsList');
+    const groups = await ExpoFileSystemStorage.getItem('searchGroupsList');
     if (groups !== null) {
       newState = {
         ...newState,
@@ -1339,7 +1350,7 @@ class ContactDetailScreen extends React.Component {
           height: milestonesGridSize,
         }}
       >
-        <Row size={6}>
+        <Row size={7}>
           <Col size={1} />
           <Col size={5}>
             <TouchableOpacity
@@ -1589,7 +1600,7 @@ class ContactDetailScreen extends React.Component {
           <Col size={1} />
         </Row>
         <Row size={1} />
-        <Row size={6}>
+        <Row size={7}>
           <Col size={1} />
           <Col size={5}>
             <TouchableOpacity
@@ -1716,6 +1727,86 @@ class ContactDetailScreen extends React.Component {
     );
   }
 
+  renderCustomFaithMilestones() {
+    const milestoneList = Object.keys(this.props.contactSettings.milestones.values);
+    const customMilestones = milestoneList.filter(milestoneItem => defaultFaithMilestones.indexOf(milestoneItem) < 0);
+    const rows = [];
+    let columnsByRow = [];
+    customMilestones.forEach((value, index) => {
+      if ((index + 1) % 3 === 0 || index === customMilestones.length - 1) {
+        // every third milestone or last milestone
+        columnsByRow.push(<Col key={columnsByRow.length} size={1} />);
+        columnsByRow.push(
+          <Col key={columnsByRow.length} size={5}>
+            <TouchableOpacity
+              onPress={() => {
+                this.onMilestoneChange(value);
+              }}
+              activeOpacity={1}
+              underlayColor={this.onCheckExistingMilestone(value) ? Colors.tintColor : Colors.gray}
+              style={{
+                borderRadius: 10,
+                backgroundColor: this.onCheckExistingMilestone(value) ? Colors.tintColor : Colors.gray,
+                padding: 10,
+              }}
+            >
+              <Text
+                style={[styles.progressIconText, {
+                  color: this.onCheckExistingMilestone(value) ? '#FFFFFF' : '#000000',
+                }]}
+              >
+                {this.props.contactSettings.milestones.values[value].label}
+              </Text>
+            </TouchableOpacity>
+          </Col>,
+        );
+        columnsByRow.push(<Col key={columnsByRow.length} size={1} />);
+        rows.push(
+          <Row key={`${index.toString()}-1`} size={1}>
+            <Text> </Text>
+          </Row>,
+        );
+        rows.push(
+          <Row key={index.toString()} size={7}>
+            {columnsByRow}
+          </Row>,
+        );
+        columnsByRow = [];
+      } else if ((index + 1) % 3 !== 0) {
+        columnsByRow.push(<Col key={columnsByRow.length} size={1} />);
+        columnsByRow.push(
+          <Col key={columnsByRow.length} size={5}>
+            <TouchableHighlight
+              onPress={() => {
+                this.onMilestoneChange(value);
+              }}
+              activeOpacity={1}
+              underlayColor={this.onCheckExistingMilestone(value) ? Colors.tintColor : Colors.gray}
+              style={{
+                borderRadius: 10,
+                backgroundColor: this.onCheckExistingMilestone(value) ? Colors.tintColor : Colors.gray,
+                padding: 10,
+              }}
+            >
+              <Text
+                style={[styles.progressIconText, {
+                  color: this.onCheckExistingMilestone(value) ? '#FFFFFF' : '#000000',
+                }]}
+              >
+                {this.props.contactSettings.milestones.values[value].label}
+              </Text>
+            </TouchableHighlight>
+          </Col>,
+        );
+      }
+    });
+    return (
+      <Grid pointerEvents={this.state.onlyView ? 'none' : 'auto'}>
+        {rows}
+      </Grid>
+    );
+  }
+
   render() {
     const successToast = (
       <Toast
@@ -1735,7 +1826,6 @@ class ContactDetailScreen extends React.Component {
         position="center"
       />
     );
-
     return (
       <View style={{ flex: 1 }}>
         {this.state.loadedLocal && (
@@ -1745,7 +1835,11 @@ class ContactDetailScreen extends React.Component {
                 {this.state.onlyView && (
                   <View style={{ flex: 1 }}>
                     <Tabs
-                      renderTabBar={() => <ScrollableTab />}
+                      renderTabBar={() => (
+                        <ScrollableTab
+                          tabsContainerStyle={{ backgroundColor: '#FFFFFF' }}
+                        />
+                      )}
                       tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
                       onChangeTab={this.tabChanged}
                       page={this.state.currentTabIndex}
@@ -2074,6 +2168,7 @@ class ContactDetailScreen extends React.Component {
                               {this.props.contactSettings.milestones.name}
                             </Label>
                             {this.renderfaithMilestones()}
+                            {this.renderCustomFaithMilestones()}
                             <Grid style={{ marginTop: 25 }}>
                               <View style={styles.formDivider} />
                               <Row style={styles.formRow}>
@@ -2543,29 +2638,29 @@ class ContactDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                <Row style={styles.formFieldPadding}>
-                                  <Col style={styles.formIconLabelCol}>
-                                    <View style={styles.formIconLabelView}>
-                                      <Icon
-                                        type="FontAwesome"
-                                        name="user-circle"
-                                        style={styles.formIcon}
-                                      />
-                                    </View>
-                                  </Col>
-                                  <Col>
-                                    <Label
-                                      style={styles.formLabel}
-                                    >
-                                      {this.props.contactSettings.assigned_to.name}
-                                    </Label>
-                                  </Col>
-                                </Row>
                                 <TouchableOpacity
                                   onPress={() => {
                                     this.updateShowAssignedToModal(true);
                                   }}
                                 >
+                                  <Row style={styles.formFieldPadding}>
+                                    <Col style={styles.formIconLabelCol}>
+                                      <View style={styles.formIconLabelView}>
+                                        <Icon
+                                          type="FontAwesome"
+                                          name="user-circle"
+                                          style={styles.formIcon}
+                                        />
+                                      </View>
+                                    </Col>
+                                    <Col>
+                                      <Label
+                                        style={styles.formLabel}
+                                      >
+                                        {this.props.contactSettings.assigned_to.name}
+                                      </Label>
+                                    </Col>
+                                  </Row>
                                   <Row>
                                     <Col style={styles.formIconLabelCol}>
                                       <View style={styles.formIconLabelView}>
@@ -2576,11 +2671,12 @@ class ContactDetailScreen extends React.Component {
                                         />
                                       </View>
                                     </Col>
-                                    <Col style={{
-                                      borderBottomWidth: 1,
-                                      borderStyle: 'solid',
-                                      borderBottomColor: '#D9D5DC',
-                                    }}
+                                    <Col
+                                      style={{
+                                        borderBottomWidth: 1,
+                                        borderStyle: 'solid',
+                                        borderBottomColor: '#D9D5DC',
+                                      }}
                                     >
                                       {this.showAssignedUser()}
                                       <ModalFilterPicker
@@ -3274,6 +3370,7 @@ class ContactDetailScreen extends React.Component {
                                   {this.props.contactSettings.milestones.name}
                                 </Label>
                                 {this.renderfaithMilestones()}
+                                {this.renderCustomFaithMilestones()}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>

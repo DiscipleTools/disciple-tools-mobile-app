@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Disciple Tools",
+    "name": "D.T",
     "slug": "discipletoolsapp",
     "privacy": "public",
     "sdkVersion": "33.0.0",
@@ -8,7 +8,7 @@
       "ios",
       "android"
     ],
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -27,7 +27,8 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "tools.disciple.app"
+      "package": "tools.disciple.app",
+      "versionCode": 2
     },
     "description": "",
   }

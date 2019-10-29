@@ -42,6 +42,13 @@ class ContactsScreen extends React.Component {
   static navigationOptions = {
     title: i18n.t('contactsScreen.contacts'),
     headerLeft: null,
+    headerStyle: {
+      backgroundColor: Colors.tintColor,
+    },
+    headerTintColor: '#FFFFFF',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
   };
 
   state = {

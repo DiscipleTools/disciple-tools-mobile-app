@@ -11,11 +11,12 @@ import {
   Dimensions,
   FlatList,
   TextInput,
-  AsyncStorage,
   RefreshControl,
   Platform,
+  TouchableHighlight,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import {
   Container,
   Content,
@@ -75,6 +76,17 @@ const circleSideSize = (windowWidth / 3) + 20;
 /* eslint-disable */
 let commentsFlatList, coachesSelectizeRef, geonamesSelectizeRef, peopleGroupsSelectizeRef, parentGroupsSelectizeRef, peerGroupsSelectizeRef, childGroupsSelectizeRef;
 /* eslint-enable */
+const defaultHealthMilestones = [
+  'church_baptism',
+  'church_bible',
+  'church_communion',
+  'church_fellowship',
+  'church_giving',
+  'church_leaders',
+  'church_praise',
+  'church_prayer',
+  'church_sharing',
+];
 const styles = StyleSheet.create({
   toggleButton: {
     borderRadius: 5,
@@ -292,6 +304,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.tintColor,
     borderRadius: 5,
     marginTop: 40,
+  },
+  progressIconText: {
+    fontSize: 9,
+    textAlign: 'center',
+    width: '100%',
   },
 });
 
@@ -636,7 +653,7 @@ class GroupDetailScreen extends React.Component {
 
   getLists = async (groupId) => {
     let newState = {};
-    const users = await AsyncStorage.getItem('usersList');
+    const users = await ExpoFileSystemStorage.getItem('usersList');
     if (users !== null) {
       newState = {
         ...newState,
@@ -647,7 +664,7 @@ class GroupDetailScreen extends React.Component {
       };
     }
 
-    const usersContacts = await AsyncStorage.getItem('usersAndContactsList');
+    const usersContacts = await ExpoFileSystemStorage.getItem('usersAndContactsList');
     if (usersContacts !== null) {
       newState = {
         ...newState,
@@ -655,7 +672,7 @@ class GroupDetailScreen extends React.Component {
       };
     }
 
-    const peopleGroups = await AsyncStorage.getItem('peopleGroupsList');
+    const peopleGroups = await ExpoFileSystemStorage.getItem('peopleGroupsList');
     if (peopleGroups !== null) {
       newState = {
         ...newState,
@@ -663,7 +680,7 @@ class GroupDetailScreen extends React.Component {
       };
     }
 
-    const geonames = await AsyncStorage.getItem('locationsList');
+    const geonames = await ExpoFileSystemStorage.getItem('locationsList');
     if (geonames !== null) {
       newState = {
         ...newState,
@@ -671,7 +688,7 @@ class GroupDetailScreen extends React.Component {
       };
     }
 
-    const groups = await AsyncStorage.getItem('searchGroupsList');
+    const groups = await ExpoFileSystemStorage.getItem('searchGroupsList');
     if (groups !== null) {
       newState = {
         ...newState,
@@ -1197,6 +1214,11 @@ class GroupDetailScreen extends React.Component {
                 marginRight: '2%',
                 marginBottom: '2%',
                 marginLeft: '2%',
+                opacity: this.onCheckExistingHealthMetric(
+                  'church_commitment',
+                )
+                  ? 1
+                  : 0.15,
               }}
             />
             <Image
@@ -1208,6 +1230,11 @@ class GroupDetailScreen extends React.Component {
                 position: 'absolute',
                 height: '100%',
                 width: '100%',
+                opacity: this.onCheckExistingHealthMetric(
+                  'church_commitment',
+                )
+                  ? 0.15
+                  : 1,
               }}
             />
             <Row style={{ height: sideSize * 0.1 }} />
@@ -1702,6 +1729,90 @@ class GroupDetailScreen extends React.Component {
     );
   }
 
+  renderCustomHealthMilestones() {
+    const healthMetricsList = Object.keys(this.props.groupSettings.health_metrics.values);
+    const customHealthMetrics = healthMetricsList.filter(milestoneItem => defaultHealthMilestones.indexOf(milestoneItem) < 0);
+    const rows = [];
+    let columnsByRow = [];
+    customHealthMetrics.forEach((value, index) => {
+      if ((index + 1) % 3 === 0 || index === customHealthMetrics.length - 1) {
+        // every third milestone or last milestone
+        columnsByRow.push(<Col key={columnsByRow.length} size={1} />);
+        columnsByRow.push(
+          <Col key={columnsByRow.length} size={5}>
+            <TouchableOpacity
+              onPress={() => {
+                this.onHealthMetricChange(value);
+              }}
+              activeOpacity={1}
+              underlayColor={this.onCheckExistingHealthMetric(value) ? Colors.tintColor : Colors.gray}
+              style={{
+                borderRadius: 10,
+                backgroundColor: this.onCheckExistingHealthMetric(value) ? Colors.tintColor : Colors.gray,
+                padding: 10,
+              }}
+            >
+              <Text
+                style={[styles.progressIconText, {
+                  color: this.onCheckExistingHealthMetric(value) ? '#FFFFFF' : '#000000',
+                }]}
+              >
+                {this.props.groupSettings.health_metrics.values[value].label}
+              </Text>
+            </TouchableOpacity>
+          </Col>,
+        );
+        columnsByRow.push(<Col key={columnsByRow.length} size={1} />);
+        rows.push(
+          <Row key={`${index.toString()}-1`} size={1}>
+            <Text> </Text>
+          </Row>,
+        );
+        rows.push(
+          <Row key={index.toString()} size={7}>
+            {columnsByRow}
+          </Row>,
+        );
+        columnsByRow = [];
+      } else if ((index + 1) % 3 !== 0) {
+        columnsByRow.push(<Col key={columnsByRow.length} size={1} />);
+        columnsByRow.push(
+          <Col key={columnsByRow.length} size={5}>
+            <TouchableHighlight
+              onPress={() => {
+                this.onHealthMetricChange(value);
+              }}
+              activeOpacity={1}
+              underlayColor={this.onCheckExistingHealthMetric(value) ? Colors.tintColor : Colors.gray}
+              style={{
+                borderRadius: 10,
+                backgroundColor: this.onCheckExistingHealthMetric(value) ? Colors.tintColor : Colors.gray,
+                padding: 10,
+              }}
+            >
+              <Text
+                style={[styles.progressIconText, {
+                  color: this.onCheckExistingHealthMetric(value) ? '#FFFFFF' : '#000000',
+                }]}
+              >
+                {this.props.groupSettings.health_metrics.values[value].label}
+              </Text>
+            </TouchableHighlight>
+          </Col>,
+        );
+      }
+    });
+
+    return (
+      <Grid
+        pointerEvents={this.state.onlyView ? 'none' : 'auto'}
+        style={{ marginBottom: 50 }}
+      >
+        {rows}
+      </Grid>
+    );
+  }
+
   render() {
     const successToast = (
       <Toast
@@ -1731,7 +1842,11 @@ class GroupDetailScreen extends React.Component {
                 {this.state.onlyView && (
                   <View style={{ flex: 1 }}>
                     <Tabs
-                      renderTabBar={() => <ScrollableTab />}
+                      renderTabBar={() => (
+                        <ScrollableTab
+                          tabsContainerStyle={{ backgroundColor: '#FFFFFF' }}
+                        />
+                      )}
                       tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
                       onChangeTab={this.tabChanged}
                       locked={this.state.groupsTabActive && this.state.onlyView}
@@ -1998,6 +2113,7 @@ class GroupDetailScreen extends React.Component {
                             </Label>
                           </View>
                           {this.renderHealthMilestones()}
+                          {this.renderCustomHealthMilestones()}
                         </ScrollView>
                       </Tab>
                       <Tab
@@ -2192,59 +2308,6 @@ class GroupDetailScreen extends React.Component {
                                 )) : (<Text />)}
                               </ScrollView>
                             </Row>
-                            <View style={[styles.formDivider, styles.formIconLabelMargin]} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
-                                <Label style={styles.formLabel}>
-                                  {i18n.t('groupDetailScreen.childGroup')}
-                                </Label>
-                              </Col>
-                              <Col />
-                            </Row>
-                            <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
-                              <ScrollView horizontal>
-                                {(this.state.group.child_groups) ? this.state.group.child_groups.values.map((childGroup, index) => (
-                                  <Col
-                                    key={index.toString()}
-                                    style={styles.groupCircleContainer}
-                                    onPress={() => this.goToGroupDetailScreen(childGroup)}
-                                  >
-                                    {(index % 2 === 0) ? (
-                                      <Image
-                                        source={groupCircleIcon}
-                                        style={styles.groupCircle}
-                                      />
-                                    ) : (
-                                      <Image
-                                        source={groupDottedCircleIcon}
-                                        style={styles.groupCircle}
-                                      />
-                                    )}
-                                    <Image
-                                      source={swimmingPoolIcon}
-                                      style={styles.groupCenterIcon}
-                                    />
-                                    <Row
-                                      style={styles.groupCircleName}
-                                    >
-                                      <Text style={styles.groupCircleNameText}>
-                                        {childGroup.post_title}
-                                      </Text>
-                                    </Row>
-                                    <Row
-                                      style={styles.groupCircleCounter}
-                                    >
-                                      <Text>{childGroup.baptized_member_count}</Text>
-                                    </Row>
-                                    <Row
-                                      style={[styles.groupCircleCounter, { marginTop: '5%' }]}
-                                    >
-                                      <Text>{childGroup.member_count}</Text>
-                                    </Row>
-                                  </Col>
-                                )) : (<Text />)}
-                              </ScrollView>
-                            </Row>
                             <View style={[styles.formDivider, styles.formDivider2Margin]} />
                             <Row style={styles.formRow}>
                               <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
@@ -2293,6 +2356,59 @@ class GroupDetailScreen extends React.Component {
                                       style={[styles.groupCircleCounter, { marginTop: '5%' }]}
                                     >
                                       <Text>{peerGroup.member_count}</Text>
+                                    </Row>
+                                  </Col>
+                                )) : (<Text />)}
+                              </ScrollView>
+                            </Row>
+                            <View style={[styles.formDivider, styles.formDivider2Margin]} />
+                            <Row style={styles.formRow}>
+                              <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
+                                <Label style={styles.formLabel}>
+                                  {i18n.t('groupDetailScreen.childGroup')}
+                                </Label>
+                              </Col>
+                              <Col />
+                            </Row>
+                            <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
+                              <ScrollView horizontal>
+                                {(this.state.group.child_groups) ? this.state.group.child_groups.values.map((childGroup, index) => (
+                                  <Col
+                                    key={index.toString()}
+                                    style={styles.groupCircleContainer}
+                                    onPress={() => this.goToGroupDetailScreen(childGroup)}
+                                  >
+                                    {(index % 2 === 0) ? (
+                                      <Image
+                                        source={groupCircleIcon}
+                                        style={styles.groupCircle}
+                                      />
+                                    ) : (
+                                      <Image
+                                        source={groupDottedCircleIcon}
+                                        style={styles.groupCircle}
+                                      />
+                                    )}
+                                    <Image
+                                      source={swimmingPoolIcon}
+                                      style={styles.groupCenterIcon}
+                                    />
+                                    <Row
+                                      style={styles.groupCircleName}
+                                    >
+                                      <Text style={styles.groupCircleNameText}>
+                                        {childGroup.post_title}
+                                      </Text>
+                                    </Row>
+                                    <Row
+                                      style={styles.groupCircleCounter}
+                                    >
+                                      <Text>{childGroup.baptized_member_count}</Text>
+                                    </Row>
+                                    <Row
+                                      style={[styles.groupCircleCounter, { marginTop: '5%' }]}
+                                    >
+                                      <Text>{childGroup.member_count}</Text>
                                     </Row>
                                   </Col>
                                 )) : (<Text />)}
@@ -2422,7 +2538,13 @@ class GroupDetailScreen extends React.Component {
                                         />
                                       </View>
                                     </Col>
-                                    <Col>
+                                    <Col
+                                      style={{
+                                        borderBottomWidth: 1,
+                                        borderStyle: 'solid',
+                                        borderBottomColor: '#D9D5DC',
+                                      }}
+                                    >
                                       {this.showAssignedUser()}
                                       <ModalFilterPicker
                                         visible={this.state.showAssignedToModal}
@@ -2866,7 +2988,12 @@ class GroupDetailScreen extends React.Component {
                                 </Label>
                               </View>
                             )}
-                            {this.state.currentTabIndex === 1 && this.renderHealthMilestones()}
+                            {this.state.currentTabIndex === 1 && (
+                              this.renderHealthMilestones()
+                            )}
+                            {this.state.currentTabIndex === 1 && (
+                              this.renderCustomHealthMilestones()
+                            )}
                             {this.state.currentTabIndex === 3 && (
                               <View style={styles.formContainer}>
                                 <Row style={styles.formFieldPadding}>
@@ -2960,7 +3087,7 @@ class GroupDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.groupSettings.child_groups.name}
+                                      {this.props.groupSettings.peer_groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -2976,12 +3103,12 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { childGroupsSelectizeRef = selectize; }}
+                                      ref={(selectize) => { peerGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
-                                      selectedItems={(this.state.group.child_groups) ? this.state.group.child_groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
+                                      selectedItems={(this.state.group.peer_groups) ? this.state.group.peer_groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
                                       textInputProps={{
-                                        placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
+                                        placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
                                       }}
                                       renderRow={(id, onPress, item) => (
                                         <TouchableOpacity
@@ -3037,7 +3164,7 @@ class GroupDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.groupSettings.peer_groups.name}
+                                      {this.props.groupSettings.child_groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3053,12 +3180,12 @@ class GroupDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => { peerGroupsSelectizeRef = selectize; }}
+                                      ref={(selectize) => { childGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
-                                      selectedItems={(this.state.group.peer_groups) ? this.state.group.peer_groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
+                                      selectedItems={(this.state.group.child_groups) ? this.state.group.child_groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
                                       textInputProps={{
-                                        placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
+                                        placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
                                       }}
                                       renderRow={(id, onPress, item) => (
                                         <TouchableOpacity
