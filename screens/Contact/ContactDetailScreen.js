@@ -377,6 +377,21 @@ class ContactDetailScreen extends React.Component {
             comment: prevState.contact.initial_comment,
           };
         }
+        if (newState.contact.location_grid) {
+          newState.contact.location_grid.values.forEach((location) => {
+            const foundLocation = newState.geonames.find(geoname => geoname.value === location.value);
+            if (!foundLocation) {
+              // Add non existent contact location in the geonames list to avoid null exception
+              newState = {
+                ...newState,
+                geonames: [...newState.geonames, {
+                  name: location.name,
+                  value: location.value,
+                }],
+              };
+            }
+          });
+        }
       }
     }
 
@@ -4310,38 +4325,38 @@ class ContactDetailScreen extends React.Component {
                               }}
                               renderRow={(id, onPress, item) => (
                                 <TouchableOpacity
-                                  activeOpacity={0.6}
-                                  key={id}
-                                  onPress={onPress}
-                                  style={{
-                                    paddingVertical: 8,
-                                    paddingHorizontal: 10,
-                                  }}
-                                >
-                                  <View
+                                    activeOpacity={0.6}
+                                    key={id}
+                                    onPress={onPress}
                                     style={{
-                                      flexDirection: 'row',
+                                      paddingVertical: 8,
+                                      paddingHorizontal: 10,
                                     }}
                                   >
-                                    <Text style={{
-                                      color: 'rgba(0, 0, 0, 0.87)',
-                                      fontSize: 14,
-                                      lineHeight: 21,
-                                    }}
+                                    <View
+                                      style={{
+                                        flexDirection: 'row',
+                                      }}
                                     >
-                                      {item.name}
-                                    </Text>
-                                  </View>
-                                </TouchableOpacity>
+                                      <Text style={{
+                                        color: 'rgba(0, 0, 0, 0.87)',
+                                        fontSize: 14,
+                                        lineHeight: 21,
+                                      }}
+                                      >
+                                        {item.name}
+                                      </Text>
+                                    </View>
+                                  </TouchableOpacity>
                               )}
                               renderChip={(id, onClose, item, style, iconStyle) => (
                                 <Chip
-                                  key={id}
-                                  iconStyle={iconStyle}
-                                  onClose={onClose}
-                                  text={item.name}
-                                  style={style}
-                                />
+                                    key={id}
+                                    iconStyle={iconStyle}
+                                    onClose={onClose}
+                                    text={item.name}
+                                    style={style}
+                                  />
                               )}
                               filterOnKey="name"
                               keyboardShouldPersistTaps
