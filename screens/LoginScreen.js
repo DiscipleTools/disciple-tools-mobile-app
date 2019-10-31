@@ -121,10 +121,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   versionText: {
-    textAlign: "right",
+    textAlign: 'right',
     color: Colors.grayDark,
-    fontSize: 12
-  }
+    fontSize: 12,
+  },
 });
 let toastError;
 class LoginScreen extends React.Component {

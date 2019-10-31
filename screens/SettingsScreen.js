@@ -22,13 +22,13 @@ import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
 
 import { Updates } from 'expo';
+import Constants from 'expo-constants';
 import Colors from '../constants/Colors';
 import { setLanguage } from '../store/actions/i18n.actions';
 import { logout } from '../store/actions/user.actions';
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
 import i18n from '../languages';
 import locales from '../languages/locales';
-import Constants from 'expo-constants';
 
 const propTypes = {
   navigation: PropTypes.shape({
@@ -51,7 +51,7 @@ const propTypes = {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.canvas,
-    height: 100
+    height: 100,
   },
   header: {
     borderBottomWidth: 1,
@@ -93,8 +93,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     position: 'absolute',
     bottom: 15,
-    right: 15
-  }
+    right: 15,
+  },
 });
 
 class SettingsScreen extends React.Component {
