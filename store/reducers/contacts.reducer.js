@@ -635,6 +635,7 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_GET_SETTINGS_SUCCESS: {
       const { settings } = action;
       let fieldList = {};
+      // Get fieldlist
       Object.keys(settings.fields).forEach((fieldName) => {
         const fieldData = settings.fields[fieldName];
         if (fieldData.type === 'key_select' || fieldData.type === 'multi_select') {
@@ -663,9 +664,24 @@ export default function contactsReducer(state = initialState, action) {
           };
         }
       });
+      // Get channels
+      let channels = {};
+      Object.keys(settings.channels).filter(channelName => channelName !== 'phone' && channelName !== 'email' && channelName !== 'address').forEach((channelName) => {
+        const channelData = settings.channels[channelName];
+        channels = {
+          ...channels,
+          [channelName]: {
+            label: channelData.label,
+            value: channelName,
+          },
+        };
+      });
       return {
         ...newState,
-        settings: fieldList,
+        settings: {
+          fields: fieldList,
+          channels,
+        },
         loading: false,
       };
     }
