@@ -32,6 +32,7 @@
     "es6-promise": "^4.2.6",
     "expo": "^33.0.0",
     "expo-asset": "^6.0.0",
+    "expo-constants": "^5.0.1",
     "expo-font": "^5.0.1",
     "expo-localization": "^5.0.1",
     "expo-web-browser": "^5.0.3",

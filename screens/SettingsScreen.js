@@ -28,6 +28,7 @@ import { logout } from '../store/actions/user.actions';
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
 import i18n from '../languages';
 import locales from '../languages/locales';
+import Constants from 'expo-constants';
 
 const propTypes = {
   navigation: PropTypes.shape({
@@ -50,6 +51,7 @@ const propTypes = {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.canvas,
+    height: 100
   },
   header: {
     borderBottomWidth: 1,
@@ -86,6 +88,13 @@ const styles = StyleSheet.create({
   body: {
     alignItems: 'flex-start',
   },
+  versionText: {
+    color: Colors.grayDark,
+    fontSize: 12,
+    position: 'absolute',
+    bottom: 15,
+    right: 15
+  }
 });
 
 class SettingsScreen extends React.Component {
@@ -151,7 +160,7 @@ class SettingsScreen extends React.Component {
           </ListItem>
 
           {/* === Storybook === */}
-          { __DEV__ && (
+          {__DEV__ && (
             <ListItem icon onPress={() => this.props.navigation.navigate('Storybook')}>
               <Left>
                 <NbButton onPress={() => this.props.navigation.navigate('Storybook')}>
@@ -225,6 +234,7 @@ class SettingsScreen extends React.Component {
             </Right>
           </ListItem>
         </Content>
+        <Text style={styles.versionText}>{Constants.manifest.version}</Text>
         <Toast ref={(c) => { this.toast = c; }} position="center" />
       </Container>
     );
