@@ -4,7 +4,7 @@ import {
   I18nManager,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
 import {
   Body,
@@ -24,13 +24,13 @@ import PropTypes from 'prop-types';
 
 import { Updates } from 'expo';
 import Constants from 'expo-constants';
+import * as MailComposer from 'expo-mail-composer';
 import Colors from '../constants/Colors';
 import { setLanguage } from '../store/actions/i18n.actions';
 import { logout } from '../store/actions/user.actions';
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
 import i18n from '../languages';
 import locales from '../languages/locales';
-import * as MailComposer from 'expo-mail-composer';
 
 const propTypes = {
   navigation: PropTypes.shape({
@@ -148,7 +148,7 @@ class SettingsScreen extends React.Component {
       recipients: ['tbd@disciple.tools'],
       subject: `DT App Support: v${Constants.manifest.version}`,
       body: '',
-    }).catch(onrejected => {
+    }).catch((onrejected) => {
       toastError.show(
         <View>
           <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
@@ -156,7 +156,7 @@ class SettingsScreen extends React.Component {
         </View>,
         3000,
       );
-    })
+    });
   }
 
   render() {
