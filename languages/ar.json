@@ -81,7 +81,8 @@
         "domain": "اسم النطاق",
         "signedInAs": "تسجيل الدخول ك",
         "storybook": "",
-        "logout": "تسجيل الخروج"
+        "logout": "تسجيل الخروج",
+        "helpSupport": ""
     },
     "contactDetailScreen": {
         "addNewContact": "إضافة جهة اتصال جديدة",
@@ -89,8 +90,6 @@
             "personal": "الشخصية",
             "web": "الشبكة",
             "phone": "الهاتف",
-            "facebook": "فايسبوك",
-            "twitter": "تويتر",
             "linkedin": "لينكد إن",
             "referral": "",
             "advertisement": "الإعلانات",
@@ -100,7 +99,6 @@
         "subAssignThisContact": "تعيين جهة الاتصال",
         "mobile": "الهاتف",
         "email": "الإيميل",
-        "message": "الرسالة",
         "selectLocations": "تحديد المواقع",
         "contactAge": {
             "underEighteenYearsOld": "عمر أقل من 18 سنة",
@@ -144,7 +142,8 @@
         "phoneNumber": "رقم الهاتف",
         "initialComment": "تعليق أولي",
         "addBaptizmDate": "إضافة تاريخ المعمودية",
-        "group": "المجموعة"
+        "group": "المجموعة",
+        "socialMedia": ""
     },
     "groupDetailScreen": {
         "addNewGroup": "إضافة مجموعة جديدة",

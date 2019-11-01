@@ -4,6 +4,7 @@ import {
   I18nManager,
   StyleSheet,
   Text,
+  View
 } from 'react-native';
 import {
   Body,
@@ -29,6 +30,7 @@ import { logout } from '../store/actions/user.actions';
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
 import i18n from '../languages';
 import locales from '../languages/locales';
+import * as MailComposer from 'expo-mail-composer';
 
 const propTypes = {
   navigation: PropTypes.shape({
@@ -96,7 +98,7 @@ const styles = StyleSheet.create({
     right: 15,
   },
 });
-
+let toastError;
 class SettingsScreen extends React.Component {
   static navigationOptions = {
     title: i18n.t('settingsScreen.settings'),
@@ -139,6 +141,22 @@ class SettingsScreen extends React.Component {
     const toastMsg = this.props.isConnected ? i18n.t('settingsScreen.networkUnavailable') : i18n.t('settingsScreen.networkAvailable');
     this.toast.show(toastMsg, 3000);
     this.props.toggleNetworkConnectivity(this.props.isConnected);
+  }
+
+  draftNewSupportEmail = () => {
+    MailComposer.composeAsync({
+      recipients: ['tbd@disciple.tools'],
+      subject: `DT App Support: v${Constants.manifest.version}`,
+      body: '',
+    }).catch(onrejected => {
+      toastError.show(
+        <View>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
+          <Text>{onrejected.toString()}</Text>
+        </View>,
+        3000,
+      );
+    })
   }
 
   render() {
@@ -219,6 +237,16 @@ class SettingsScreen extends React.Component {
               </Picker>
             </Right>
           </ListItem>
+          <ListItem icon onPress={this.draftNewSupportEmail}>
+            <Left>
+              <NbButton>
+                <Icon active name="help-circle" />
+              </NbButton>
+            </Left>
+            <Body style={styles.body}>
+              <Text style={styles.text}>{i18n.t('settingsScreen.helpSupport')}</Text>
+            </Body>
+          </ListItem>
           {/* === Logout === */}
           <ListItem icon onPress={this.signOutAsync}>
             <Left>
@@ -236,6 +264,13 @@ class SettingsScreen extends React.Component {
         </Content>
         <Text style={styles.versionText}>{Constants.manifest.version}</Text>
         <Toast ref={(c) => { this.toast = c; }} position="center" />
+        <Toast
+          ref={(toast) => {
+            toastError = toast;
+          }}
+          style={{ backgroundColor: Colors.errorBackground }}
+          position="center"
+        />
       </Container>
     );
   }

@@ -81,7 +81,8 @@
 		"domain": "Alan adı",
 		"signedInAs": "Olarak giriş yapıldı",
 		"storybook": "Hikaye kitabı",
-		"logout": "Oturumu kapat"
+        "logout": "Oturumu kapat",
+        "helpSupport": ""
 	},
 	"contactDetailScreen": {
 		"addNewContact": "Yeni bağlantı ekle",
@@ -89,8 +90,6 @@
 			"personal": "Kişi",
 			"web": "Web",
 			"phone": "Telefon",
-			"facebook": "Facebook",
-			"twitter": "Twitter",
 			"linkedin": "LinkedIn",
 			"referral": "Referans",
 			"advertisement": "Tanıtım",
@@ -100,7 +99,6 @@
 		"subAssignThisContact": "Bu bağlantıya alt görev ata",
 		"mobile": "Mobil",
 		"email": "Email",
-		"message": "Mesaj",
 		"selectLocations": "Konumları seç",
 		"contactAge": {
 			"underEighteenYearsOld": "18 Yaşın altında",
@@ -144,7 +142,8 @@
 		"phoneNumber": "Telefon Numarası",
 		"initialComment": "İlk Yorum",
 		"addBaptizmDate": "Vaftiz tarihi ekle",
-		"group": "Grup"
+		"group": "Grup",
+        "socialMedia": ""
 	},
 	"groupDetailScreen": {
 		"addNewGroup": "Grup Ekle",

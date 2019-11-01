@@ -81,7 +81,8 @@
         "domain": "Domain",
         "signedInAs": "Signed in as",
         "storybook": "Storybook",
-        "logout": "Sign Out"
+        "logout": "Sign Out",
+        "helpSupport": "Help / Support"
     },
     "contactDetailScreen": {
         "addNewContact": "Add New Contact",
@@ -142,7 +143,7 @@
         "initialComment": "Initial Comment",
         "addBaptizmDate": "Add baptizm date",
         "group": "Group",
-        "socialMedia": "Social Media",
+        "socialMedia": "Social Media"
     },
     "groupDetailScreen": {
         "addNewGroup": "Add New Group",

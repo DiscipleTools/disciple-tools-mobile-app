@@ -55,7 +55,7 @@
     },
     "loginScreen": {
         "domain": {
-            "label": "Disciple Tools URL",
+            "label": "URL",
             "placeholder": "P.ej. myteam.disciple.tools",
             "error": "El dominio es requerido"
         },
@@ -81,7 +81,8 @@
         "domain": "Dominio",
         "signedInAs": "Conectado como",
         "storybook": "Storybook",
-        "logout": "Desconectarse"
+        "logout": "Desconectarse",
+        "helpSupport": "Ayuda / Soporte"
     },
     "contactDetailScreen": {
         "addNewContact": "Crear nuevo contacto",
@@ -89,8 +90,6 @@
             "personal": "Personal",
             "web": "Web",
             "phone": "Telefónica",
-            "facebook": "Facebook",
-            "twitter": "Twitter",
             "linkedin": "LinkedIn",
             "referral": "Referencia",
             "advertisement": "Anuncio",
