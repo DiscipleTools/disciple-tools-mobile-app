@@ -143,7 +143,12 @@
         "initialComment": "Initial Comment",
         "addBaptizmDate": "Add baptizm date",
         "group": "Group",
-        "socialMedia": "Social Media"
+        "socialMedia": "Social Media",
+        "noAnswer": "No Answer",
+        "contactEstablished": "Contact Established",
+        "meetingScheduled": "Meeting Scheduled",
+        "meetingCompleted": "Meeting Completed",
+        "meetingNoShow": "Meeting No-show"
     },
     "groupDetailScreen": {
         "addNewGroup": "Add New Group",

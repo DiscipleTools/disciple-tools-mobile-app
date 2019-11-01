@@ -143,7 +143,12 @@
         "initialComment": "",
         "addBaptizmDate": "",
         "group": "",
-        "socialMedia": ""
+        "socialMedia": "",
+        "noAnswer": "",
+        "contactEstablished": "",
+        "meetingScheduled": "",
+        "meetingCompleted": "",
+        "meetingNoShow": ""
     },
     "groupDetailScreen": {
         "addNewGroup": "",

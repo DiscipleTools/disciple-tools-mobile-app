@@ -143,7 +143,12 @@
 		"initialComment": "İlk Yorum",
 		"addBaptizmDate": "Vaftiz tarihi ekle",
 		"group": "Grup",
-        "socialMedia": ""
+		"socialMedia": "",
+        "noAnswer": "",
+        "contactEstablished": "",
+        "meetingScheduled": "",
+        "meetingCompleted": "",
+        "meetingNoShow": ""
 	},
 	"groupDetailScreen": {
 		"addNewGroup": "Grup Ekle",

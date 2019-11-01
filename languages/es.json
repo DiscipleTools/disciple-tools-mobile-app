@@ -143,7 +143,12 @@
         "initialComment": "Primer Comentario",
         "addBaptizmDate": "Agregar fecha de bautizmo",
         "group": "Grupo",
-        "socialMedia": "Redes Sociales"
+        "socialMedia": "Redes Sociales",
+        "noAnswer": "Sin Respuesta",
+        "contactEstablished": "Contacto Establecido",
+        "meetingScheduled": "Reunión Programada",
+        "meetingCompleted": "Reunión Completa",
+        "meetingNoShow": "Reunión No Se Presentó"
     },
     "groupDetailScreen": {
         "addNewGroup": "Crear un grupo nuevo",

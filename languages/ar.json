@@ -143,7 +143,12 @@
         "initialComment": "تعليق أولي",
         "addBaptizmDate": "إضافة تاريخ المعمودية",
         "group": "المجموعة",
-        "socialMedia": ""
+        "socialMedia": "",
+        "noAnswer": "",
+        "contactEstablished": "",
+        "meetingScheduled": "",
+        "meetingCompleted": "",
+        "meetingNoShow": ""
     },
     "groupDetailScreen": {
         "addNewGroup": "إضافة مجموعة جديدة",
