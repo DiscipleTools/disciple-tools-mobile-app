@@ -232,7 +232,6 @@ class SettingsScreen extends React.Component {
                     i18n.setLocale(locale.code, isRTL);
                   }
                 }}
-                enabled={false}
               >
                 {languagePickerItems}
               </Picker>
