@@ -26,9 +26,6 @@ import {
   Input,
   Icon,
   Picker,
-  Tabs,
-  Tab,
-  ScrollableTab,
   DatePicker,
   Button,
 } from 'native-base';
@@ -37,8 +34,9 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import ModalFilterPicker from 'react-native-modal-filter-picker';
 import { Chip, Selectize } from 'react-native-material-selectize';
-import sharedTools from '../../shared';
+import { TabView, TabBar } from 'react-native-tab-view';
 
+import sharedTools from '../../shared';
 import KeyboardShift from '../../components/KeyboardShift';
 import {
   saveGroup,
@@ -63,7 +61,6 @@ import dottedCircleIcon from '../../assets/icons/dotted-circle.png';
 import swimmingPoolIcon from '../../assets/icons/swimming-pool.png';
 import groupCircleIcon from '../../assets/icons/group-circle.png';
 import groupDottedCircleIcon from '../../assets/icons/group-dotted-circle.png';
-
 import i18n from '../../languages';
 
 let toastSuccess;
@@ -123,8 +120,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
   },
   tabBarUnderlineStyle: {
-    borderBottomWidth: 3,
-    borderBottomColor: Colors.tintColor,
+    backgroundColor: Colors.tintColor,
   },
   tabStyle: { backgroundColor: '#FFFFFF' },
   textStyle: { color: 'gray' },
@@ -359,6 +355,27 @@ const initialState = {
   loading: false,
   groupsTabActive: false,
   currentTabIndex: 0,
+  tabViewConfig: {
+    index: 0,
+    routes: [
+      {
+        key: 'details',
+        title: i18n.t('global.details'),
+      },
+      {
+        key: 'progress',
+        title: i18n.t('global.progress'),
+      },
+      {
+        key: 'comments',
+        title: i18n.t('global.commentsActivity'),
+      },
+      {
+        key: 'groups',
+        title: i18n.t('global.groups'),
+      },
+    ],
+  },
 };
 
 class GroupDetailScreen extends React.Component {
@@ -760,18 +777,15 @@ class GroupDetailScreen extends React.Component {
   };
 
   onDisableEdit = () => {
-    const { currentTabIndex, unmodifiedGroup } = this.state;
+    const { unmodifiedGroup } = this.state;
+    this.props.navigation.setParams({ hideTabBar: false });
     this.setState({
       onlyView: true,
-      currentTabIndex: 0,
       group: {
         ...unmodifiedGroup,
       },
       groupStatusBackgroundColor: sharedTools.getSelectorColor(unmodifiedGroup.group_status),
-    }, () => {
-      this.setCurrentTabIndex(currentTabIndex);
     });
-    this.props.navigation.setParams({ hideTabBar: false });
   }
 
   setGroupTitle = (value) => {
@@ -846,36 +860,36 @@ class GroupDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.author}</Text>
-              </Col>
-              <Col style={{ width: 110 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.author}</Text>
+                  </Col>
+                  <Col style={{ width: 110 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.name}</Text>
-              </Col>
-              <Col style={{ width: 110 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.name}</Text>
+                  </Col>
+                  <Col style={{ width: 110 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
         </View>
         <Text
           style={
@@ -1209,6 +1223,561 @@ class GroupDetailScreen extends React.Component {
     });
     /* eslint-enable */
   };
+
+  tabChanged = (index) => {
+    this.props.navigation.setParams({ hideTabBar: index === 2 });
+    this.setState(prevState => ({
+      tabViewConfig: {
+        ...prevState.tabViewConfig,
+        index,
+      },
+    }));
+  };
+
+  detailView = () => (
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      refreshControl={(
+        <RefreshControl
+          refreshing={this.state.loading}
+          onRefresh={() => this.onRefresh(this.state.group.ID)}
+        />
+      )}
+    >
+      <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
+        <Row>
+          <Col />
+          <Col>
+            <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
+              {i18n.t('global.edit')}
+            </Text>
+          </Col>
+        </Row>
+      </Grid>
+      <View
+        style={[styles.formContainer, { paddingTop: 0 }]}
+        pointerEvents="none"
+      >
+        <Label
+          style={{
+            color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
+          }}
+        >
+          {this.props.groupSettings.group_status.name}
+        </Label>
+        <Row style={[styles.formRow, { paddingTop: 5 }]}>
+          <Col>
+            <Picker
+              selectedValue={
+                this.state.group.group_status
+              }
+              onValueChange={this.setGroupStatus}
+              style={Platform.OS === 'android' ? {
+                color: '#ffffff',
+                backgroundColor: this.state.groupStatusBackgroundColor,
+              } : {
+                  backgroundColor: this.state.groupStatusBackgroundColor,
+                }}
+            >
+              {Object.keys(this.props.groupSettings.group_status.values).map((key) => {
+                const optionData = this.props.groupSettings.group_status.values[key];
+                return (
+                  <Picker.Item
+                    key={key}
+                    label={optionData.label}
+                    value={key}
+                  />
+                );
+              })}
+            </Picker>
+          </Col>
+        </Row>
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="FontAwesome"
+              name="user-circle"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            {this.showAssignedUser()}
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.groupSettings.assigned_to.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="FontAwesome"
+              name="black-tie"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.group.coaches ? this.state.group.coaches.values.map(coach => this.state.usersContacts.find(user => user.value === coach.value).name).join(', ') + (this.state.group.coaches.values.length > 0 ? '.' : '') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.groupSettings.coaches.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="FontAwesome"
+              name="map-marker"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.group.location_grid ? this.state.group.location_grid.values.map(location => this.state.geonames.find(geoname => geoname.value === location.value).name).join(', ') + (this.state.group.location_grid.values.length > 0 ? '.' : '') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.groupSettings.location_grid.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="FontAwesome"
+              name="globe"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.group.people_groups ? this.state.group.people_groups.values.map(peopleGroup => this.state.peopleGroups.find(person => person.value === peopleGroup.value).name).join(', ') + (this.state.group.people_groups.values.length > 0 ? '.' : '') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.groupSettings.people_groups.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="Entypo"
+              name="home"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.group.contact_address ? this.state.group.contact_address.map(address => address.value).join(', ') + (this.state.group.contact_address.length > 0 ? '.' : '') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {i18n.t('global.address')}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="MaterialCommunityIcons"
+              name="calendar-import"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {(this.state.group.start_date) ? this.state.group.start_date : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.groupSettings.start_date.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="MaterialCommunityIcons"
+              name="calendar-import"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {(this.state.group.end_date) ? this.state.group.end_date : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.groupSettings.end_date.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+      </View>
+    </ScrollView>
+  );
+
+  progressView = () => (
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      refreshControl={(
+        <RefreshControl
+          refreshing={this.state.loading}
+          onRefresh={() => this.onRefresh(this.state.group.ID)}
+        />
+      )}
+    >
+      <View
+        style={[styles.formContainer, { marginTop: 10 }]}
+      >
+        <Grid>
+          <Row>
+            <Col />
+            <Col>
+              <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
+                {i18n.t('global.edit')}
+              </Text>
+            </Col>
+          </Row>
+        </Grid>
+        <Row style={[styles.formRow, { paddingTop: 15 }]}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              android="md-people"
+              ios="ios-people"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.group.group_type) ? this.props.groupSettings.group_type.values[this.state.group.group_type].label : ''}</Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>{i18n.t('groupDetailScreen.groupType')}</Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Label
+          style={[
+            styles.formLabel,
+            { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
+          ]}
+        >
+          {i18n.t('groupDetailScreen.churchHealth')}
+        </Label>
+      </View>
+      {this.renderHealthMilestones()}
+      {this.renderCustomHealthMilestones()}
+    </ScrollView>
+  );
+
+  commentsView = () => (
+    <View style={{ flex: 1 }}>
+      <FlatList
+        style={styles.root}
+        ref={(flatList) => {
+          commentsFlatList = flatList;
+        }}
+        data={this.getCommentsAndActivities()}
+        extraData={!this.state.loadMoreComments || !this.state.loadMoreActivities}
+        inverted
+        ItemSeparatorComponent={() => (
+          <View
+            style={{
+              height: 1,
+              backgroundColor: '#CCCCCC',
+            }}
+          />
+        )}
+        keyExtractor={(item, index) => String(index)}
+        renderItem={(item) => {
+          const commentOrActivity = item.item;
+          return this.renderActivityOrCommentRow(
+            commentOrActivity,
+          );
+        }}
+        refreshControl={(
+          <RefreshControl
+            refreshing={(this.state.loadComments || this.state.loadActivities)}
+            onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID)}
+          />
+        )}
+        onScroll={({ nativeEvent }) => {
+          const {
+            loadMoreComments, commentsOffset, loadMoreActivities, activitiesOffset,
+          } = this.state;
+          const fL = nativeEvent;
+          const contentOffsetY = fL.contentOffset.y;
+          const layoutMeasurementHeight = fL.layoutMeasurement.height;
+          const contentSizeHeight = fL.contentSize.height;
+          const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
+          const distanceToStart = contentSizeHeight - heightOffsetSum;
+
+          if (distanceToStart < 100) {
+            if (!loadMoreComments) {
+              if (commentsOffset < this.state.totalComments) {
+                this.setState({
+                  loadMoreComments: true,
+                }, () => {
+                  this.getGroupComments(this.state.group.ID);
+                });
+              }
+            }
+            if (!loadMoreActivities) {
+              if (activitiesOffset < this.state.totalActivities) {
+                this.setState({
+                  loadMoreActivities: true,
+                }, () => {
+                  this.getGroupActivities(this.state.group.ID);
+                });
+              }
+            }
+          }
+        }}
+      />
+      <KeyboardAccessory>
+        <View
+          style={{
+            backgroundColor: 'white',
+            flexDirection: 'row',
+          }}
+        >
+          <TextInput
+            placeholder={i18n.t('global.writeYourCommentNoteHere')}
+            value={this.state.comment}
+            onChangeText={this.setComment}
+            style={{
+              borderColor: '#B4B4B4',
+              borderRadius: 5,
+              borderWidth: 1,
+              flex: 1,
+              margin: 10,
+              paddingLeft: 5,
+              paddingRight: 5,
+            }}
+          />
+          <TouchableOpacity
+            onPress={() => this.onSaveComment()}
+            style={{
+              backgroundColor: Colors.tintColor,
+              borderRadius: 80,
+              height: 40,
+              margin: 10,
+              paddingTop: 7,
+              paddingLeft: 10,
+              width: 40,
+            }}
+          >
+            <Icon
+              android="md-send"
+              ios="ios-send"
+              style={{ color: 'white', fontSize: 25 }}
+            />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAccessory>
+    </View>
+  );
+
+  groupsView = () => (
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      refreshControl={(
+        <RefreshControl
+          refreshing={this.state.loading}
+          onRefresh={() => this.onRefresh(this.state.group.ID)}
+        />
+      )}
+    >
+      <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
+        <Row>
+          <Col />
+          <Col>
+            <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
+              {i18n.t('global.edit')}
+            </Text>
+          </Col>
+        </Row>
+      </Grid>
+      <Grid style={[styles.formContainer, styles.formContainerNoPadding]}>
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
+            <Label style={styles.formLabel}>
+              {this.props.groupSettings.parent_groups.name}
+            </Label>
+          </Col>
+          <Col />
+        </Row>
+        <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
+          <ScrollView horizontal>
+            {(this.state.group.parent_groups) ? this.state.group.parent_groups.values.map((parentGroup, index) => (
+              <Col
+                key={index.toString()}
+                style={styles.groupCircleContainer}
+                onPress={() => this.goToGroupDetailScreen(parentGroup)}
+              >
+                {(index % 2 === 0) ? (
+                  <Image
+                    source={groupCircleIcon}
+                    style={styles.groupCircle}
+                  />
+                ) : (
+                    <Image
+                      source={groupDottedCircleIcon}
+                      style={styles.groupCircle}
+                    />
+                  )}
+                <Image
+                  source={swimmingPoolIcon}
+                  style={styles.groupCenterIcon}
+                />
+                <Row
+                  style={styles.groupCircleName}
+                >
+                  <Text style={styles.groupCircleNameText}>
+                    {parentGroup.post_title}
+                  </Text>
+                </Row>
+                <Row
+                  style={styles.groupCircleCounter}
+                >
+                  <Text>{parentGroup.baptized_member_count}</Text>
+                </Row>
+                <Row
+                  style={[styles.groupCircleCounter, { marginTop: '5%' }]}
+                >
+                  <Text>{parentGroup.member_count}</Text>
+                </Row>
+              </Col>
+            )) : (<Text />)}
+          </ScrollView>
+        </Row>
+        <View style={[styles.formDivider, styles.formDivider2Margin]} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
+            <Label style={styles.formLabel}>
+              {this.props.groupSettings.peer_groups.name}
+            </Label>
+          </Col>
+          <Col />
+        </Row>
+        <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
+          <ScrollView horizontal>
+            {(this.state.group.peer_groups) ? this.state.group.peer_groups.values.map((peerGroup, index) => (
+              <Col
+                key={index.toString()}
+                style={styles.groupCircleContainer}
+                onPress={() => this.goToGroupDetailScreen(peerGroup)}
+              >
+                {(index % 2 === 0) ? (
+                  <Image
+                    source={groupCircleIcon}
+                    style={styles.groupCircle}
+                  />
+                ) : (
+                    <Image
+                      source={groupDottedCircleIcon}
+                      style={styles.groupCircle}
+                    />
+                  )}
+                <Image
+                  source={swimmingPoolIcon}
+                  style={styles.groupCenterIcon}
+                />
+                <Row
+                  style={styles.groupCircleName}
+                >
+                  <Text style={styles.groupCircleNameText}>
+                    {peerGroup.post_title}
+                  </Text>
+                </Row>
+                <Row
+                  style={styles.groupCircleCounter}
+                >
+                  <Text>{peerGroup.baptized_member_count}</Text>
+                </Row>
+                <Row
+                  style={[styles.groupCircleCounter, { marginTop: '5%' }]}
+                >
+                  <Text>{peerGroup.member_count}</Text>
+                </Row>
+              </Col>
+            )) : (<Text />)}
+          </ScrollView>
+        </Row>
+        <View style={[styles.formDivider, styles.formDivider2Margin]} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
+            <Label style={styles.formLabel}>
+              {i18n.t('groupDetailScreen.childGroup')}
+            </Label>
+          </Col>
+          <Col />
+        </Row>
+        <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
+          <ScrollView horizontal>
+            {(this.state.group.child_groups) ? this.state.group.child_groups.values.map((childGroup, index) => (
+              <Col
+                key={index.toString()}
+                style={styles.groupCircleContainer}
+                onPress={() => this.goToGroupDetailScreen(childGroup)}
+              >
+                {(index % 2 === 0) ? (
+                  <Image
+                    source={groupCircleIcon}
+                    style={styles.groupCircle}
+                  />
+                ) : (
+                    <Image
+                      source={groupDottedCircleIcon}
+                      style={styles.groupCircle}
+                    />
+                  )}
+                <Image
+                  source={swimmingPoolIcon}
+                  style={styles.groupCenterIcon}
+                />
+                <Row
+                  style={styles.groupCircleName}
+                >
+                  <Text style={styles.groupCircleNameText}>
+                    {childGroup.post_title}
+                  </Text>
+                </Row>
+                <Row
+                  style={styles.groupCircleCounter}
+                >
+                  <Text>{childGroup.baptized_member_count}</Text>
+                </Row>
+                <Row
+                  style={[styles.groupCircleCounter, { marginTop: '5%' }]}
+                >
+                  <Text>{childGroup.member_count}</Text>
+                </Row>
+              </Col>
+            )) : (<Text />)}
+          </ScrollView>
+        </Row>
+        <View style={[styles.formDivider, styles.formDivider2Margin]} />
+      </Grid>
+    </ScrollView>
+  );
 
   renderHealthMilestones() {
     return (
@@ -1857,584 +2426,37 @@ class GroupDetailScreen extends React.Component {
               <View style={{ flex: 1 }}>
                 {this.state.onlyView && (
                   <View style={{ flex: 1 }}>
-                    <Tabs
-                      renderTabBar={() => (
-                        <ScrollableTab
-                          tabsContainerStyle={{ backgroundColor: '#FFFFFF' }}
+                    <TabView
+                      navigationState={this.state.tabViewConfig}
+                      renderTabBar={props => (
+                        <TabBar
+                          {...props}
+                          style={styles.tabStyle}
+                          activeColor={Colors.tintColor}
+                          inactiveColor={Colors.gray}
+                          scrollEnabled
+                          tabStyle={{ width: 'auto' }}
+                          indicatorStyle={styles.tabBarUnderlineStyle}
+                          labelStyle={{ fontWeight: 'bold' }}
                         />
                       )}
-                      tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
-                      onChangeTab={this.tabChanged}
-                      locked={this.state.groupsTabActive && this.state.onlyView}
-                      page={this.state.currentTabIndex}
-                      scrollWithoutAnimation
-                    >
-                      <Tab
-                        heading={i18n.t('global.details')}
-                        tabStyle={styles.tabStyle}
-                        textStyle={styles.textStyle}
-                        activeTabStyle={styles.activeTabStyle}
-                        activeTextStyle={styles.activeTextStyle}
-                      >
-                        <ScrollView
-                          keyboardShouldPersistTaps="handled"
-                          refreshControl={(
-                            <RefreshControl
-                              refreshing={this.state.loading}
-                              onRefresh={() => this.onRefresh(this.state.group.ID)}
-                            />
-                          )}
-                        >
-                          <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
-                            <Row>
-                              <Col />
-                              <Col>
-                                <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
-                                  {i18n.t('global.edit')}
-                                </Text>
-                              </Col>
-                            </Row>
-                          </Grid>
-                          <View
-                            style={[styles.formContainer, { paddingTop: 0 }]}
-                            pointerEvents="none"
-                          >
-                            <Label
-                              style={{
-                                color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
-                              }}
-                            >
-                              {this.props.groupSettings.group_status.name}
-                            </Label>
-                            <Row style={[styles.formRow, { paddingTop: 5 }]}>
-                              <Col>
-                                <Picker
-                                  selectedValue={
-                                    this.state.group.group_status
-                                  }
-                                  onValueChange={this.setGroupStatus}
-                                  style={Platform.OS === 'android' ? {
-                                    color: '#ffffff',
-                                    backgroundColor: this.state.groupStatusBackgroundColor,
-                                  } : {
-                                    backgroundColor: this.state.groupStatusBackgroundColor,
-                                  }}
-                                >
-                                  {Object.keys(this.props.groupSettings.group_status.values).map((key) => {
-                                    const optionData = this.props.groupSettings.group_status.values[key];
-                                    return (
-                                      <Picker.Item
-                                        key={key}
-                                        label={optionData.label}
-                                        value={key}
-                                      />
-                                    );
-                                  })}
-                                </Picker>
-                              </Col>
-                            </Row>
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="FontAwesome"
-                                  name="user-circle"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                {this.showAssignedUser()}
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.groupSettings.assigned_to.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="FontAwesome"
-                                  name="black-tie"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.group.coaches ? this.state.group.coaches.values.map(coach => this.state.usersContacts.find(user => user.value === coach.value).name).join(', ') + (this.state.group.coaches.values.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.groupSettings.coaches.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="FontAwesome"
-                                  name="map-marker"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.group.location_grid ? this.state.group.location_grid.values.map(location => this.state.geonames.find(geoname => geoname.value === location.value).name).join(', ') + (this.state.group.location_grid.values.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.groupSettings.location_grid.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="FontAwesome"
-                                  name="globe"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.group.people_groups ? this.state.group.people_groups.values.map(peopleGroup => this.state.peopleGroups.find(person => person.value === peopleGroup.value).name).join(', ') + (this.state.group.people_groups.values.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.groupSettings.people_groups.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="Entypo"
-                                  name="home"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.group.contact_address ? this.state.group.contact_address.map(address => address.value).join(', ') + (this.state.group.contact_address.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {i18n.t('global.address')}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="MaterialCommunityIcons"
-                                  name="calendar-import"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {(this.state.group.start_date) ? this.state.group.start_date : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.groupSettings.start_date.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="MaterialCommunityIcons"
-                                  name="calendar-import"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {(this.state.group.end_date) ? this.state.group.end_date : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.groupSettings.end_date.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                          </View>
-                        </ScrollView>
-                      </Tab>
-                      <Tab
-                        heading={i18n.t('global.progress')}
-                        tabStyle={styles.tabStyle}
-                        textStyle={styles.textStyle}
-                        activeTabStyle={styles.activeTabStyle}
-                        activeTextStyle={styles.activeTextStyle}
-                      >
-                        <ScrollView
-                          keyboardShouldPersistTaps="handled"
-                          refreshControl={(
-                            <RefreshControl
-                              refreshing={this.state.loading}
-                              onRefresh={() => this.onRefresh(this.state.group.ID)}
-                            />
-                          )}
-                        >
-                          <View
-                            style={[styles.formContainer, { marginTop: 10 }]}
-                          >
-                            <Grid>
-                              <Row>
-                                <Col />
-                                <Col>
-                                  <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
-                                    {i18n.t('global.edit')}
-                                  </Text>
-                                </Col>
-                              </Row>
-                            </Grid>
-                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  android="md-people"
-                                  ios="ios-people"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.group.group_type) ? this.props.groupSettings.group_type.values[this.state.group.group_type].label : ''}</Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{i18n.t('groupDetailScreen.groupType')}</Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Label
-                              style={[
-                                styles.formLabel,
-                                { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
-                              ]}
-                            >
-                              {i18n.t('groupDetailScreen.churchHealth')}
-                            </Label>
-                          </View>
-                          {this.renderHealthMilestones()}
-                          {this.renderCustomHealthMilestones()}
-                        </ScrollView>
-                      </Tab>
-                      <Tab
-                        heading={i18n.t('global.commentsActivity')}
-                        tabStyle={[styles.tabStyle]}
-                        textStyle={styles.textStyle}
-                        activeTabStyle={styles.activeTabStyle}
-                        activeTextStyle={styles.activeTextStyle}
-                      >
-                        <View style={{ flex: 1 }}>
-                          <FlatList
-                            style={styles.root}
-                            ref={(flatList) => {
-                              commentsFlatList = flatList;
-                            }}
-                            data={this.getCommentsAndActivities()}
-                            extraData={!this.state.loadMoreComments || !this.state.loadMoreActivities}
-                            inverted
-                            ItemSeparatorComponent={() => (
-                              <View
-                                style={{
-                                  height: 1,
-                                  backgroundColor: '#CCCCCC',
-                                }}
-                              />
-                            )}
-                            keyExtractor={(item, index) => String(index)}
-                            renderItem={(item) => {
-                              const commentOrActivity = item.item;
-                              return this.renderActivityOrCommentRow(
-                                commentOrActivity,
-                              );
-                            }}
-                            refreshControl={(
-                              <RefreshControl
-                                refreshing={(this.state.loadComments || this.state.loadActivities)}
-                                onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID)}
-                              />
-                            )}
-                            onScroll={({ nativeEvent }) => {
-                              const {
-                                loadMoreComments, commentsOffset, loadMoreActivities, activitiesOffset,
-                              } = this.state;
-                              const fL = nativeEvent;
-                              const contentOffsetY = fL.contentOffset.y;
-                              const layoutMeasurementHeight = fL.layoutMeasurement.height;
-                              const contentSizeHeight = fL.contentSize.height;
-                              const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
-                              const distanceToStart = contentSizeHeight - heightOffsetSum;
-
-                              if (distanceToStart < 100) {
-                                if (!loadMoreComments) {
-                                  if (commentsOffset < this.state.totalComments) {
-                                    this.setState({
-                                      loadMoreComments: true,
-                                    }, () => {
-                                      this.getGroupComments(this.state.group.ID);
-                                    });
-                                  }
-                                }
-                                if (!loadMoreActivities) {
-                                  if (activitiesOffset < this.state.totalActivities) {
-                                    this.setState({
-                                      loadMoreActivities: true,
-                                    }, () => {
-                                      this.getGroupActivities(this.state.group.ID);
-                                    });
-                                  }
-                                }
-                              }
-                            }}
-                          />
-                          <KeyboardAccessory>
-                            <View
-                              style={{
-                                backgroundColor: 'white',
-                                flexDirection: 'row',
-                              }}
-                            >
-                              <TextInput
-                                placeholder={i18n.t('global.writeYourCommentNoteHere')}
-                                value={this.state.comment}
-                                onChangeText={this.setComment}
-                                style={{
-                                  borderColor: '#B4B4B4',
-                                  borderRadius: 5,
-                                  borderWidth: 1,
-                                  flex: 1,
-                                  margin: 10,
-                                  paddingLeft: 5,
-                                  paddingRight: 5,
-                                }}
-                              />
-                              <TouchableOpacity
-                                onPress={() => this.onSaveComment()}
-                                style={{
-                                  backgroundColor: Colors.tintColor,
-                                  borderRadius: 80,
-                                  height: 40,
-                                  margin: 10,
-                                  paddingTop: 7,
-                                  paddingLeft: 10,
-                                  width: 40,
-                                }}
-                              >
-                                <Icon
-                                  android="md-send"
-                                  ios="ios-send"
-                                  style={{ color: 'white', fontSize: 25 }}
-                                />
-                              </TouchableOpacity>
-                            </View>
-                          </KeyboardAccessory>
-                        </View>
-                      </Tab>
-                      <Tab
-                        heading={i18n.t('global.groups')}
-                        tabStyle={styles.tabStyle}
-                        textStyle={styles.textStyle}
-                        activeTabStyle={styles.activeTabStyle}
-                        activeTextStyle={styles.activeTextStyle}
-                      >
-                        <ScrollView
-                          keyboardShouldPersistTaps="handled"
-                          refreshControl={(
-                            <RefreshControl
-                              refreshing={this.state.loading}
-                              onRefresh={() => this.onRefresh(this.state.group.ID)}
-                            />
-                          )}
-                        >
-                          <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
-                            <Row>
-                              <Col />
-                              <Col>
-                                <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
-                                  {i18n.t('global.edit')}
-                                </Text>
-                              </Col>
-                            </Row>
-                          </Grid>
-                          <Grid style={[styles.formContainer, styles.formContainerNoPadding]}>
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.groupSettings.parent_groups.name}
-                                </Label>
-                              </Col>
-                              <Col />
-                            </Row>
-                            <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
-                              <ScrollView horizontal>
-                                {(this.state.group.parent_groups) ? this.state.group.parent_groups.values.map((parentGroup, index) => (
-                                  <Col
-                                    key={index.toString()}
-                                    style={styles.groupCircleContainer}
-                                    onPress={() => this.goToGroupDetailScreen(parentGroup)}
-                                  >
-                                    {(index % 2 === 0) ? (
-                                      <Image
-                                        source={groupCircleIcon}
-                                        style={styles.groupCircle}
-                                      />
-                                    ) : (
-                                      <Image
-                                        source={groupDottedCircleIcon}
-                                        style={styles.groupCircle}
-                                      />
-                                    )}
-                                    <Image
-                                      source={swimmingPoolIcon}
-                                      style={styles.groupCenterIcon}
-                                    />
-                                    <Row
-                                      style={styles.groupCircleName}
-                                    >
-                                      <Text style={styles.groupCircleNameText}>
-                                        {parentGroup.post_title}
-                                      </Text>
-                                    </Row>
-                                    <Row
-                                      style={styles.groupCircleCounter}
-                                    >
-                                      <Text>{parentGroup.baptized_member_count}</Text>
-                                    </Row>
-                                    <Row
-                                      style={[styles.groupCircleCounter, { marginTop: '5%' }]}
-                                    >
-                                      <Text>{parentGroup.member_count}</Text>
-                                    </Row>
-                                  </Col>
-                                )) : (<Text />)}
-                              </ScrollView>
-                            </Row>
-                            <View style={[styles.formDivider, styles.formDivider2Margin]} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.groupSettings.peer_groups.name}
-                                </Label>
-                              </Col>
-                              <Col />
-                            </Row>
-                            <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
-                              <ScrollView horizontal>
-                                {(this.state.group.peer_groups) ? this.state.group.peer_groups.values.map((peerGroup, index) => (
-                                  <Col
-                                    key={index.toString()}
-                                    style={styles.groupCircleContainer}
-                                    onPress={() => this.goToGroupDetailScreen(peerGroup)}
-                                  >
-                                    {(index % 2 === 0) ? (
-                                      <Image
-                                        source={groupCircleIcon}
-                                        style={styles.groupCircle}
-                                      />
-                                    ) : (
-                                      <Image
-                                        source={groupDottedCircleIcon}
-                                        style={styles.groupCircle}
-                                      />
-                                    )}
-                                    <Image
-                                      source={swimmingPoolIcon}
-                                      style={styles.groupCenterIcon}
-                                    />
-                                    <Row
-                                      style={styles.groupCircleName}
-                                    >
-                                      <Text style={styles.groupCircleNameText}>
-                                        {peerGroup.post_title}
-                                      </Text>
-                                    </Row>
-                                    <Row
-                                      style={styles.groupCircleCounter}
-                                    >
-                                      <Text>{peerGroup.baptized_member_count}</Text>
-                                    </Row>
-                                    <Row
-                                      style={[styles.groupCircleCounter, { marginTop: '5%' }]}
-                                    >
-                                      <Text>{peerGroup.member_count}</Text>
-                                    </Row>
-                                  </Col>
-                                )) : (<Text />)}
-                              </ScrollView>
-                            </Row>
-                            <View style={[styles.formDivider, styles.formDivider2Margin]} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
-                                <Label style={styles.formLabel}>
-                                  {i18n.t('groupDetailScreen.childGroup')}
-                                </Label>
-                              </Col>
-                              <Col />
-                            </Row>
-                            <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto' }]}>
-                              <ScrollView horizontal>
-                                {(this.state.group.child_groups) ? this.state.group.child_groups.values.map((childGroup, index) => (
-                                  <Col
-                                    key={index.toString()}
-                                    style={styles.groupCircleContainer}
-                                    onPress={() => this.goToGroupDetailScreen(childGroup)}
-                                  >
-                                    {(index % 2 === 0) ? (
-                                      <Image
-                                        source={groupCircleIcon}
-                                        style={styles.groupCircle}
-                                      />
-                                    ) : (
-                                      <Image
-                                        source={groupDottedCircleIcon}
-                                        style={styles.groupCircle}
-                                      />
-                                    )}
-                                    <Image
-                                      source={swimmingPoolIcon}
-                                      style={styles.groupCenterIcon}
-                                    />
-                                    <Row
-                                      style={styles.groupCircleName}
-                                    >
-                                      <Text style={styles.groupCircleNameText}>
-                                        {childGroup.post_title}
-                                      </Text>
-                                    </Row>
-                                    <Row
-                                      style={styles.groupCircleCounter}
-                                    >
-                                      <Text>{childGroup.baptized_member_count}</Text>
-                                    </Row>
-                                    <Row
-                                      style={[styles.groupCircleCounter, { marginTop: '5%' }]}
-                                    >
-                                      <Text>{childGroup.member_count}</Text>
-                                    </Row>
-                                  </Col>
-                                )) : (<Text />)}
-                              </ScrollView>
-                            </Row>
-                            <View style={[styles.formDivider, styles.formDivider2Margin]} />
-                          </Grid>
-                        </ScrollView>
-                      </Tab>
-                    </Tabs>
+                      renderScene={({ route }) => {
+                        switch (route.key) {
+                          case 'details':
+                            return this.detailView();
+                          case 'progress':
+                            return this.progressView();
+                          case 'comments':
+                            return this.commentsView();
+                          case 'groups':
+                            return this.groupsView();
+                          default:
+                            return null;
+                        }
+                      }}
+                      onIndexChange={this.tabChanged}
+                      initialLayout={{ width: windowWidth }}
+                    />
                   </View>
                 )}
                 {!this.state.onlyView && (
@@ -2443,7 +2465,7 @@ class GroupDetailScreen extends React.Component {
                       <Container>
                         <Content>
                           <ScrollView keyboardShouldPersistTaps="handled">
-                            {this.state.currentTabIndex === 0 && (
+                            {this.state.tabViewConfig.index === 0 && (
                               <View style={styles.formContainer}>
                                 <Label
                                   style={{
@@ -2463,8 +2485,8 @@ class GroupDetailScreen extends React.Component {
                                         color: '#ffffff',
                                         backgroundColor: this.state.groupStatusBackgroundColor,
                                       } : {
-                                        backgroundColor: this.state.groupStatusBackgroundColor,
-                                      }}
+                                          backgroundColor: this.state.groupStatusBackgroundColor,
+                                        }}
                                     >
                                       {Object.keys(this.props.groupSettings.group_status.values).map((key) => {
                                         const optionData = this.props.groupSettings.group_status.values[key];
@@ -2945,7 +2967,7 @@ class GroupDetailScreen extends React.Component {
                                 </Row>
                               </View>
                             )}
-                            {this.state.currentTabIndex === 1 && (
+                            {this.state.tabViewConfig.index === 1 && (
                               <View style={styles.formContainer}>
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
@@ -3004,13 +3026,13 @@ class GroupDetailScreen extends React.Component {
                                 </Label>
                               </View>
                             )}
-                            {this.state.currentTabIndex === 1 && (
+                            {this.state.tabViewConfig.index === 1 && (
                               this.renderHealthMilestones()
                             )}
-                            {this.state.currentTabIndex === 1 && (
+                            {this.state.tabViewConfig.index === 1 && (
                               this.renderCustomHealthMilestones()
                             )}
-                            {this.state.currentTabIndex === 3 && (
+                            {this.state.tabViewConfig.index === 3 && (
                               <View style={styles.formContainer}>
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
@@ -3282,68 +3304,68 @@ class GroupDetailScreen extends React.Component {
                 )}
               </View>
             ) : (
-              <ScrollView>
-                <View style={styles.formContainer}>
-                  <Grid>
-                    <Row>
-                      <Label
-                        style={[
-                          styles.formLabel,
-                          { marginTop: 10, marginBottom: 5 },
-                        ]}
-                      >
-                        {i18n.t('groupDetailScreen.groupName')}
-                      </Label>
-                    </Row>
-                    <Row>
-                      <Input
-                        placeholder={i18n.t('global.requiredField')}
-                        onChangeText={this.setGroupTitle}
-                        style={{
-                          borderColor: '#B4B4B4',
-                          borderWidth: 1,
-                          borderRadius: 5,
-                          borderStyle: 'solid',
-                          fontSize: 13,
-                          paddingLeft: 15,
-                        }}
-                      />
-                    </Row>
-                    <Row>
-                      <Label
-                        style={[
-                          styles.formLabel,
-                          { marginTop: 10, marginBottom: 5 },
-                        ]}
-                      >
-                        {this.props.groupSettings.group_type.name}
-                      </Label>
-                    </Row>
-                    <Row>
-                      <Picker
-                        mode="dropdown"
-                        selectedValue={this.state.group.group_type}
-                        onValueChange={this.setGroupType}
-                      >
-                        {Object.keys(this.props.groupSettings.group_type.values).map((key) => {
-                          const optionData = this.props.groupSettings.group_type.values[key];
-                          return (
-                            <Picker.Item
-                              key={key}
-                              label={optionData.label}
-                              value={key}
-                            />
-                          );
-                        })}
-                      </Picker>
-                    </Row>
-                  </Grid>
-                  <Button block style={styles.saveButton} onPress={this.onSaveGroup}>
-                    <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
-                  </Button>
-                </View>
-              </ScrollView>
-            )}
+                <ScrollView>
+                  <View style={styles.formContainer}>
+                    <Grid>
+                      <Row>
+                        <Label
+                          style={[
+                            styles.formLabel,
+                            { marginTop: 10, marginBottom: 5 },
+                          ]}
+                        >
+                          {i18n.t('groupDetailScreen.groupName')}
+                        </Label>
+                      </Row>
+                      <Row>
+                        <Input
+                          placeholder={i18n.t('global.requiredField')}
+                          onChangeText={this.setGroupTitle}
+                          style={{
+                            borderColor: '#B4B4B4',
+                            borderWidth: 1,
+                            borderRadius: 5,
+                            borderStyle: 'solid',
+                            fontSize: 13,
+                            paddingLeft: 15,
+                          }}
+                        />
+                      </Row>
+                      <Row>
+                        <Label
+                          style={[
+                            styles.formLabel,
+                            { marginTop: 10, marginBottom: 5 },
+                          ]}
+                        >
+                          {this.props.groupSettings.group_type.name}
+                        </Label>
+                      </Row>
+                      <Row>
+                        <Picker
+                          mode="dropdown"
+                          selectedValue={this.state.group.group_type}
+                          onValueChange={this.setGroupType}
+                        >
+                          {Object.keys(this.props.groupSettings.group_type.values).map((key) => {
+                            const optionData = this.props.groupSettings.group_type.values[key];
+                            return (
+                              <Picker.Item
+                                key={key}
+                                label={optionData.label}
+                                value={key}
+                              />
+                            );
+                          })}
+                        </Picker>
+                      </Row>
+                    </Grid>
+                    <Button block style={styles.saveButton} onPress={this.onSaveGroup}>
+                      <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
+                    </Button>
+                  </View>
+                </ScrollView>
+              )}
           </View>
         )}
         {successToast}
