@@ -19,4 +19,4 @@ jobs:
           expo-password: ${{ secrets.EXPO_CLI_PASSWORD }}
       - run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
       - run: npm install
-      - run: expo publish --release-channel dev
+      - run: expo publish
