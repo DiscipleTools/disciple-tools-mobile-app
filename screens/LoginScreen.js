@@ -121,9 +121,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   versionText: {
-    textAlign: 'right',
     color: Colors.grayDark,
     fontSize: 12,
+    position: 'absolute',
+    bottom: 15,
+    right: 15,
   },
 });
 let toastError;
