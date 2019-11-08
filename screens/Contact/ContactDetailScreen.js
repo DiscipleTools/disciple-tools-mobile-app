@@ -115,7 +115,6 @@ const styles = StyleSheet.create({
   socialMediaNames: {
     color: Colors.grayDark,
     fontSize: 12,
-    marginBottom: 10,
   },
   // Form
   formContainer: {
@@ -1906,7 +1905,7 @@ class ContactDetailScreen extends React.Component {
   renderSocialMediaField = (socialMediaIndex, socialMedia, propertyName, channelName) => (
     <Row
       key={socialMediaIndex.toString()}
-      style={{ marginTop: 10 }}
+      style={{ marginTop: 10, marginBottom: 10 }}
     >
       <Col style={styles.formIconLabelCol}>
         <View style={styles.formIconLabelView}>
@@ -1930,7 +1929,14 @@ class ContactDetailScreen extends React.Component {
                 this,
               );
             }}
-            style={styles.inputContactAddress}
+            style={{
+              borderBottomWidth: 1,
+              borderStyle: 'solid',
+              borderBottomColor: '#D9D5DC',
+              fontSize: 15,
+              height: 40,
+            }}
+            autoCapitalize="none"
           />
         </Row>
         <Row>
@@ -1938,7 +1944,7 @@ class ContactDetailScreen extends React.Component {
             onValueChange={(value) => {
               this.changeContactSocialMediaType(value, propertyName, socialMediaIndex, this);
             }}
-            selectedValue={socialMedia.key ? socialMedia.key.substring(socialMedia.key.indexOf('_') + 1, socialMedia.key.lastIndexOf('_')) : channelName}
+            selectedValue={socialMedia.key ? socialMedia.key.substring(socialMedia.key.indexOf('') + 1, socialMedia.key.lastIndexOf('')) : channelName}
             enabled={!(socialMedia.key)}
           >
             {this.renderSocialMediaPickerItems()}
@@ -1949,7 +1955,7 @@ class ContactDetailScreen extends React.Component {
         <Icon
           android="md-remove"
           ios="ios-remove"
-          style={[styles.formIcon, styles.addRemoveIcons]}
+          style={[styles.formIcon, styles.addRemoveIcons, { marginTop: 5 }]}
           onPress={() => {
             this.onRemoveSocialMediaField(
               propertyName,
@@ -2133,31 +2139,34 @@ class ContactDetailScreen extends React.Component {
                                 <Icon
                                   type="Ionicons"
                                   name="chatboxes"
-                                  style={styles.formIcon}
+                                  style={[styles.formIcon, { marginTop: 0 }]}
                                 />
                               </Col>
                               <Col>
                                 {
                                   Object.keys(this.props.contactSettings.channels).map((channelName, channelNameIndex) => {
                                     const channel = this.props.contactSettings.channels[channelName];
-                                    return (
-                                      <Col key={channelNameIndex.toString()}>
-                                        {
-                                          this.state.contact[`contact_${channelName}`]
-                                            ? this.state.contact[`contact_${channelName}`].map((socialMedia, socialMediaIndex) => (
-                                              <Text key={socialMediaIndex.toString()}>{socialMedia.value}</Text>
-                                            )) : null
-                                        }
-                                        <Text style={styles.socialMediaNames}>
-                                          {channel.label}
-                                        </Text>
-                                      </Col>
-                                    );
+                                    if (this.state.contact[`contact_${channelName}`] && this.state.contact[`contact_${channelName}`].length > 0) {
+                                      return (
+                                        <Col key={channelNameIndex.toString()}>
+                                          {
+                                            this.state.contact[`contact_${channelName}`]
+                                              ? this.state.contact[`contact_${channelName}`].map((socialMedia, socialMediaIndex) => (
+                                                <Text key={socialMediaIndex.toString()} style={socialMediaIndex === 0 ? { marginTop: 10 } : {}}>{socialMedia.value}</Text>
+                                              )) : null
+                                          }
+                                          <Text style={styles.socialMediaNames}>
+                                            {channel.label}
+                                          </Text>
+                                        </Col>
+                                      );
+                                    }
+                                    return null;
                                   })
                                 }
                               </Col>
                               <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.socialMedia')}</Label>
+                                <Label style={[styles.formLabel, { marginTop: 5 }]}>{i18n.t('contactDetailScreen.socialMedia')}</Label>
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
