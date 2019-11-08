@@ -81,7 +81,8 @@
         "domain": "",
         "signedInAs": "",
         "storybook": "",
-        "logout": ""
+        "logout": "",
+        "helpSupport": ""
     },
     "contactDetailScreen": {
         "addNewContact": "",
@@ -89,8 +90,6 @@
             "personal": "",
             "web": "",
             "phone": "",
-            "facebook": "",
-            "twitter": "",
             "linkedin": "",
             "referral": "",
             "advertisement": "",
@@ -100,7 +99,6 @@
         "subAssignThisContact": "",
         "mobile": "",
         "email": "",
-        "message": "",
         "selectLocations": "",
         "contactAge": {
             "underEighteenYearsOld": "",
@@ -144,7 +142,13 @@
         "phoneNumber": "",
         "initialComment": "",
         "addBaptizmDate": "",
-        "group": ""
+        "group": "",
+        "socialMedia": "",
+        "noAnswer": "",
+        "contactEstablished": "",
+        "meetingScheduled": "",
+        "meetingCompleted": "",
+        "meetingNoShow": ""
     },
     "groupDetailScreen": {
         "addNewGroup": "",

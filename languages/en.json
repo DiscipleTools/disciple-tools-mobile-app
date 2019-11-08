@@ -81,7 +81,8 @@
         "domain": "Domain",
         "signedInAs": "Signed in as",
         "storybook": "Storybook",
-        "logout": "Sign Out"
+        "logout": "Sign Out",
+        "helpSupport": "Help / Support"
     },
     "contactDetailScreen": {
         "addNewContact": "Add New Contact",
@@ -143,6 +144,11 @@
         "addBaptizmDate": "Add baptizm date",
         "group": "Group",
         "socialMedia": "Social Media",
+        "noAnswer": "No Answer",
+        "contactEstablished": "Contact Established",
+        "meetingScheduled": "Meeting Scheduled",
+        "meetingCompleted": "Meeting Completed",
+        "meetingNoShow": "Meeting No-show"
     },
     "groupDetailScreen": {
         "addNewGroup": "Add New Group",

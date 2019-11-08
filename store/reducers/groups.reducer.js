@@ -196,6 +196,7 @@ export default function groupsReducer(state = initialState, action) {
                         } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
                           return {
                             value: valueTwo.id.toString(),
+                            name: valueTwo.label,
                           };
                         }
                         break;
@@ -315,6 +316,7 @@ export default function groupsReducer(state = initialState, action) {
                       } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
                         return {
                           value: valueTwo.id.toString(),
+                          name: valueTwo.label,
                         };
                       }
                       break;
@@ -557,6 +559,7 @@ export default function groupsReducer(state = initialState, action) {
                       } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
                         return {
                           value: valueTwo.id.toString(),
+                          name: valueTwo.label,
                         };
                       }
                       break;
