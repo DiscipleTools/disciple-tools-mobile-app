@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
+
 import {
   Container,
   Content,
@@ -380,21 +381,6 @@ class ContactDetailScreen extends React.Component {
             ...newState,
             comment: prevState.contact.initial_comment,
           };
-        }
-        if (newState.contact.location_grid) {
-          newState.contact.location_grid.values.forEach((location) => {
-            const foundLocation = newState.geonames.find(geoname => geoname.value === location.value);
-            if (!foundLocation) {
-              // Add non existent contact location in the geonames list to avoid null exception
-              newState = {
-                ...newState,
-                geonames: [...newState.geonames, {
-                  name: location.name,
-                  value: location.value,
-                }],
-              };
-            }
-          });
         }
       }
     }
@@ -2666,7 +2652,9 @@ class ContactDetailScreen extends React.Component {
                         ))
                         }
                         degrees={0}
-                        activeOpacity={1}
+                        activeOpacity={0}
+                        bgColor="rgba(0,0,0,0.5)"
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
                       >
                         <ActionButton.Item
                           buttonColor={Colors.primaryRGBA}
@@ -2678,6 +2666,9 @@ class ContactDetailScreen extends React.Component {
                             ) + 1 : 1,
                           })}
                           size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
                         >
                           <Icon
                             type="Feather"
@@ -2699,6 +2690,9 @@ class ContactDetailScreen extends React.Component {
                               ) + 1 : 1,
                           })}
                           size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
                         >
                           <Icon
                             type="MaterialCommunityIcons"
@@ -2721,6 +2715,9 @@ class ContactDetailScreen extends React.Component {
                           })
                           }
                           size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
                         >
                           <Icon
                             type="MaterialCommunityIcons"
@@ -2743,6 +2740,9 @@ class ContactDetailScreen extends React.Component {
                           })
                           }
                           size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
                         >
                           <Icon
                             type="MaterialCommunityIcons"
@@ -2765,6 +2765,9 @@ class ContactDetailScreen extends React.Component {
                           })
                           }
                           size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
                         >
                           <Icon
                             type="MaterialCommunityIcons"
