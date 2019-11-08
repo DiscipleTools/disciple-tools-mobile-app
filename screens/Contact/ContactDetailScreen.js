@@ -220,7 +220,7 @@ class ContactDetailScreen extends React.Component {
             params.onGoBack();
             navigation.goBack();
           }}
-          style={[{ paddingLeft: 16, color: '#FFFFFF' }]}
+          style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16, }]}
         />
       ),
       headerStyle: {
@@ -964,8 +964,8 @@ class ContactDetailScreen extends React.Component {
                 color: '#ffffff',
                 backgroundColor: this.state.overallStatusBackgroundColor,
               } : {
-                backgroundColor: this.state.overallStatusBackgroundColor,
-              }}
+                  backgroundColor: this.state.overallStatusBackgroundColor,
+                }}
             >
               {this.renderStatusPickerItems()}
             </Picker>
@@ -1368,15 +1368,14 @@ class ContactDetailScreen extends React.Component {
           />
           <TouchableOpacity
             onPress={() => this.onSaveComment()}
-            style={{
+            style={[{
               backgroundColor: Colors.tintColor,
               borderRadius: 80,
               height: 40,
               margin: 10,
               paddingTop: 7,
-              paddingLeft: 10,
               width: 40,
-            }}
+            }, i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 }]}
           >
             <Icon
               android="md-send"
@@ -1690,36 +1689,36 @@ class ContactDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.author}</Text>
-              </Col>
-              <Col style={{ width: 110 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.author}</Text>
+                  </Col>
+                  <Col style={{ width: 110 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.name}</Text>
-              </Col>
-              <Col style={{ width: 110 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.name}</Text>
+                  </Col>
+                  <Col style={{ width: 110 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
         </View>
         <Text
           style={
@@ -2636,7 +2635,11 @@ class ContactDetailScreen extends React.Component {
                           scrollEnabled
                           tabStyle={{ width: 'auto' }}
                           indicatorStyle={styles.tabBarUnderlineStyle}
-                          labelStyle={{ fontWeight: 'bold' }}
+                          renderLabel={({ route, color }) => (
+                            <Text style={{ color, fontWeight: 'bold' }}>
+                              {route.title}
+                            </Text>
+                          )}
                         />
                       )}
                       renderScene={({ route }) => {
@@ -2666,12 +2669,12 @@ class ContactDetailScreen extends React.Component {
                             style={{ color: 'white', fontSize: 22 }}
                           />
                         ) : (
-                          <Icon
-                            type="MaterialCommunityIcons"
-                            name="comment-plus"
-                            style={{ color: 'white', fontSize: 25 }}
-                          />
-                        ))
+                            <Icon
+                              type="MaterialCommunityIcons"
+                              name="comment-plus"
+                              style={{ color: 'white', fontSize: 25 }}
+                            />
+                          ))
                         }
                         degrees={0}
                         activeOpacity={1}
@@ -2701,10 +2704,10 @@ class ContactDetailScreen extends React.Component {
                               this.state.contact,
                               'quick_button_contact_established',
                             ) ? parseInt(
-                                this.state.contact
-                                  .quick_button_contact_established,
-                                10,
-                              ) + 1 : 1,
+                              this.state.contact
+                                .quick_button_contact_established,
+                              10,
+                            ) + 1 : 1,
                           })}
                           size={40}
                         >
@@ -2722,10 +2725,10 @@ class ContactDetailScreen extends React.Component {
                               this.state.contact,
                               'quick_button_meeting_scheduled',
                             ) ? parseInt(
-                                this.state.contact
-                                  .quick_button_meeting_scheduled,
-                                10,
-                              ) + 1 : 1,
+                              this.state.contact
+                                .quick_button_meeting_scheduled,
+                              10,
+                            ) + 1 : 1,
                           })
                           }
                           size={40}
@@ -2744,10 +2747,10 @@ class ContactDetailScreen extends React.Component {
                               this.state.contact,
                               'quick_button_meeting_complete',
                             ) ? parseInt(
-                                this.state.contact
-                                  .quick_button_meeting_complete,
-                                10,
-                              ) + 1 : 1,
+                              this.state.contact
+                                .quick_button_meeting_complete,
+                              10,
+                            ) + 1 : 1,
                           })
                           }
                           size={40}
@@ -2766,10 +2769,10 @@ class ContactDetailScreen extends React.Component {
                               this.state.contact,
                               'quick_button_no_show',
                             ) ? parseInt(
-                                this.state.contact
-                                  .quick_button_no_show,
-                                10,
-                              ) + 1 : 1,
+                              this.state.contact
+                                .quick_button_no_show,
+                              10,
+                            ) + 1 : 1,
                           })
                           }
                           size={40}
@@ -2810,8 +2813,8 @@ class ContactDetailScreen extends React.Component {
                                         color: '#ffffff',
                                         backgroundColor: this.state.overallStatusBackgroundColor,
                                       } : {
-                                        backgroundColor: this.state.overallStatusBackgroundColor,
-                                      }}
+                                          backgroundColor: this.state.overallStatusBackgroundColor,
+                                        }}
                                     >
                                       {this.renderStatusPickerItems()}
                                     </Picker>

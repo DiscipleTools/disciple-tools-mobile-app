@@ -312,24 +312,6 @@ const styles = StyleSheet.create({
 const initialState = {
   group: {},
   unmodifiedGroup: {},
-  groupTypes: [
-    {
-      name: 'Pre-Group',
-      value: 'pre-group',
-    },
-    {
-      name: 'Group',
-      value: 'group',
-    },
-    {
-      name: 'Church',
-      value: 'church',
-    },
-    {
-      name: 'Team',
-      value: 'team',
-    },
-  ],
   onlyView: false,
   loadedLocal: false,
   comment: '',
@@ -394,8 +376,8 @@ class GroupDetailScreen extends React.Component {
       title: navigationTitle,
       headerLeft: (
         <Icon
-          type="MaterialIcons"
-          name="arrow-back"
+          android="md-arrow-back"
+          ios="ios-arrow-back"
           onPress={() => {
             if (params.previousList.length > 0) {
               const newPreviousList = params.previousList;
@@ -410,7 +392,7 @@ class GroupDetailScreen extends React.Component {
             }
             navigation.goBack();
           }}
-          style={[{ paddingLeft: 16, color: '#FFFFFF' }]}
+          style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16, }]}
         />
       ),
       headerStyle: {
@@ -860,36 +842,36 @@ class GroupDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.author}</Text>
-              </Col>
-              <Col style={{ width: 110 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.author}</Text>
+                  </Col>
+                  <Col style={{ width: 110 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-          <Grid>
-            <Row>
-              <Col>
-                <Text style={styles.name}>{commentOrActivity.name}</Text>
-              </Col>
-              <Col style={{ width: 110 }}>
-                <Text style={styles.time}>
-                  {this.onFormatDateToView(commentOrActivity.date)}
-                </Text>
-              </Col>
-            </Row>
-          </Grid>
-          )}
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.name}</Text>
+                  </Col>
+                  <Col style={{ width: 110 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
         </View>
         <Text
           style={
@@ -1276,8 +1258,8 @@ class GroupDetailScreen extends React.Component {
                 color: '#ffffff',
                 backgroundColor: this.state.groupStatusBackgroundColor,
               } : {
-                backgroundColor: this.state.groupStatusBackgroundColor,
-              }}
+                  backgroundColor: this.state.groupStatusBackgroundColor,
+                }}
             >
               {Object.keys(this.props.groupSettings.group_status.values).map((key) => {
                 const optionData = this.props.groupSettings.group_status.values[key];
@@ -1574,15 +1556,14 @@ class GroupDetailScreen extends React.Component {
           />
           <TouchableOpacity
             onPress={() => this.onSaveComment()}
-            style={{
+            style={[{
               backgroundColor: Colors.tintColor,
               borderRadius: 80,
               height: 40,
               margin: 10,
               paddingTop: 7,
-              paddingLeft: 10,
               width: 40,
-            }}
+            }, i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 }]}
           >
             <Icon
               android="md-send"
@@ -1638,11 +1619,11 @@ class GroupDetailScreen extends React.Component {
                     style={styles.groupCircle}
                   />
                 ) : (
-                  <Image
-                    source={groupDottedCircleIcon}
-                    style={styles.groupCircle}
-                  />
-                )}
+                    <Image
+                      source={groupDottedCircleIcon}
+                      style={styles.groupCircle}
+                    />
+                  )}
                 <Image
                   source={swimmingPoolIcon}
                   style={styles.groupCenterIcon}
@@ -1691,11 +1672,11 @@ class GroupDetailScreen extends React.Component {
                     style={styles.groupCircle}
                   />
                 ) : (
-                  <Image
-                    source={groupDottedCircleIcon}
-                    style={styles.groupCircle}
-                  />
-                )}
+                    <Image
+                      source={groupDottedCircleIcon}
+                      style={styles.groupCircle}
+                    />
+                  )}
                 <Image
                   source={swimmingPoolIcon}
                   style={styles.groupCenterIcon}
@@ -1744,11 +1725,11 @@ class GroupDetailScreen extends React.Component {
                     style={styles.groupCircle}
                   />
                 ) : (
-                  <Image
-                    source={groupDottedCircleIcon}
-                    style={styles.groupCircle}
-                  />
-                )}
+                    <Image
+                      source={groupDottedCircleIcon}
+                      style={styles.groupCircle}
+                    />
+                  )}
                 <Image
                   source={swimmingPoolIcon}
                   style={styles.groupCenterIcon}
@@ -2437,7 +2418,11 @@ class GroupDetailScreen extends React.Component {
                           scrollEnabled
                           tabStyle={{ width: 'auto' }}
                           indicatorStyle={styles.tabBarUnderlineStyle}
-                          labelStyle={{ fontWeight: 'bold' }}
+                          renderLabel={({ route, color }) => (
+                            <Text style={{ color, fontWeight: 'bold' }}>
+                              {route.title}
+                            </Text>
+                          )}
                         />
                       )}
                       renderScene={({ route }) => {
@@ -2485,8 +2470,8 @@ class GroupDetailScreen extends React.Component {
                                         color: '#ffffff',
                                         backgroundColor: this.state.groupStatusBackgroundColor,
                                       } : {
-                                        backgroundColor: this.state.groupStatusBackgroundColor,
-                                      }}
+                                          backgroundColor: this.state.groupStatusBackgroundColor,
+                                        }}
                                     >
                                       {Object.keys(this.props.groupSettings.group_status.values).map((key) => {
                                         const optionData = this.props.groupSettings.group_status.values[key];
@@ -3304,68 +3289,68 @@ class GroupDetailScreen extends React.Component {
                 )}
               </View>
             ) : (
-              <ScrollView>
-                <View style={styles.formContainer}>
-                  <Grid>
-                    <Row>
-                      <Label
-                        style={[
-                          styles.formLabel,
-                          { marginTop: 10, marginBottom: 5 },
-                        ]}
-                      >
-                        {i18n.t('groupDetailScreen.groupName')}
-                      </Label>
-                    </Row>
-                    <Row>
-                      <Input
-                        placeholder={i18n.t('global.requiredField')}
-                        onChangeText={this.setGroupTitle}
-                        style={{
-                          borderColor: '#B4B4B4',
-                          borderWidth: 1,
-                          borderRadius: 5,
-                          borderStyle: 'solid',
-                          fontSize: 13,
-                          paddingLeft: 15,
-                        }}
-                      />
-                    </Row>
-                    <Row>
-                      <Label
-                        style={[
-                          styles.formLabel,
-                          { marginTop: 10, marginBottom: 5 },
-                        ]}
-                      >
-                        {this.props.groupSettings.group_type.name}
-                      </Label>
-                    </Row>
-                    <Row>
-                      <Picker
-                        mode="dropdown"
-                        selectedValue={this.state.group.group_type}
-                        onValueChange={this.setGroupType}
-                      >
-                        {Object.keys(this.props.groupSettings.group_type.values).map((key) => {
-                          const optionData = this.props.groupSettings.group_type.values[key];
-                          return (
-                            <Picker.Item
-                              key={key}
-                              label={optionData.label}
-                              value={key}
-                            />
-                          );
-                        })}
-                      </Picker>
-                    </Row>
-                  </Grid>
-                  <Button block style={styles.saveButton} onPress={this.onSaveGroup}>
-                    <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
-                  </Button>
-                </View>
-              </ScrollView>
-            )}
+                <ScrollView>
+                  <View style={styles.formContainer}>
+                    <Grid>
+                      <Row>
+                        <Label
+                          style={[
+                            styles.formLabel,
+                            { marginTop: 10, marginBottom: 5 },
+                          ]}
+                        >
+                          {i18n.t('groupDetailScreen.groupName')}
+                        </Label>
+                      </Row>
+                      <Row>
+                        <Input
+                          placeholder={i18n.t('global.requiredField')}
+                          onChangeText={this.setGroupTitle}
+                          style={{
+                            borderColor: '#B4B4B4',
+                            borderWidth: 1,
+                            borderRadius: 5,
+                            borderStyle: 'solid',
+                            fontSize: 13,
+                            paddingLeft: 15,
+                          }}
+                        />
+                      </Row>
+                      <Row>
+                        <Label
+                          style={[
+                            styles.formLabel,
+                            { marginTop: 10, marginBottom: 5 },
+                          ]}
+                        >
+                          {this.props.groupSettings.group_type.name}
+                        </Label>
+                      </Row>
+                      <Row>
+                        <Picker
+                          mode="dropdown"
+                          selectedValue={this.state.group.group_type}
+                          onValueChange={this.setGroupType}
+                        >
+                          {Object.keys(this.props.groupSettings.group_type.values).map((key) => {
+                            const optionData = this.props.groupSettings.group_type.values[key];
+                            return (
+                              <Picker.Item
+                                key={key}
+                                label={optionData.label}
+                                value={key}
+                              />
+                            );
+                          })}
+                        </Picker>
+                      </Row>
+                    </Grid>
+                    <Button block style={styles.saveButton} onPress={this.onSaveGroup}>
+                      <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
+                    </Button>
+                  </View>
+                </ScrollView>
+              )}
           </View>
         )}
         {successToast}
