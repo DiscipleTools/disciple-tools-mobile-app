@@ -44,7 +44,7 @@
         "selectPeopleGroups": "Select People Groups",
         "address": "Address",
         "progress": "Progress",
-        "commentsActivity": "Comments / Activity",
+        "commentsActivity": "Comments and Activity",
         "writeYourCommentNoteHere": "Write your comment or note here",
         "requiredField": "Required field",
         "edit": "Edit",
@@ -55,7 +55,7 @@
     },
     "loginScreen": {
         "domain": {
-            "label": "Disciple Tools URL",
+            "label": "URL",
             "placeholder": "E.g. myteam.disciple.tools",
             "error": "Domain is required"
         },
@@ -89,8 +89,6 @@
             "personal": "Personal",
             "web": "Web",
             "phone": "Phone",
-            "facebook": "Facebook",
-            "twitter": "Twitter",
             "linkedin": "LinkedIn",
             "referral": "Referral",
             "advertisement": "Advertisement",
@@ -100,7 +98,6 @@
         "subAssignThisContact": "Sub-assign this contact",
         "mobile": "Mobile",
         "email": "Email",
-        "message": "Message",
         "selectLocations": "Select locations",
         "contactAge": {
             "underEighteenYearsOld": "Under 18 years old",
@@ -144,7 +141,8 @@
         "phoneNumber": "Phone Number",
         "initialComment": "Initial Comment",
         "addBaptizmDate": "Add baptizm date",
-        "group": "Group"
+        "group": "Group",
+        "socialMedia": "Social Media",
     },
     "groupDetailScreen": {
         "addNewGroup": "Add New Group",

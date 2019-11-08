@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
     borderColor: '#D9D5DC',
     marginRight: 10,
     marginBottom: 5,
+    height: 40,
   },
   activeImage: {
     opacity: 1,
