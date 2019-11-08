@@ -145,7 +145,7 @@ class SettingsScreen extends React.Component {
 
   draftNewSupportEmail = () => {
     MailComposer.composeAsync({
-      recipients: ['tbd@disciple.tools'],
+      recipients: ['appsupport@disciple.tools'],
       subject: `DT App Support: v${Constants.manifest.version}`,
       body: '',
     }).catch((onrejected) => {
