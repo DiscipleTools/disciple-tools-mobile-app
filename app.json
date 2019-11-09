@@ -4,10 +4,7 @@
     "slug": "discipletoolsapp",
     "privacy": "public",
     "sdkVersion": "33.0.0",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -19,17 +16,16 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "tools.disciple.app",
       "supportsTablet": true
     },
     "android": {
       "package": "tools.disciple.app",
+      "googleServicesFile": "./google-services.json",
       "versionCode": 2
     },
-    "description": "",
+    "description": ""
   }
 }
