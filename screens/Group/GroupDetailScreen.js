@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
     borderColor: '#D9D5DC',
     marginRight: 10,
     marginBottom: 5,
+    height: 40,
   },
   activeImage: {
     opacity: 1,
@@ -473,6 +474,21 @@ class GroupDetailScreen extends React.Component {
             ...newState,
             groupStatusBackgroundColor: sharedTools.getSelectorColor(newState.group.group_status),
           };
+        }
+        if (newState.group.location_grid) {
+          newState.group.location_grid.values.forEach((location) => {
+            const foundLocation = newState.geonames.find(geoname => geoname.value === location.value);
+            if (!foundLocation) {
+              // Add non existent group location in the geonames list to avoid null exception
+              newState = {
+                ...newState,
+                geonames: [...newState.geonames, {
+                  name: location.name,
+                  value: location.value,
+                }],
+              };
+            }
+          });
         }
       }
     }

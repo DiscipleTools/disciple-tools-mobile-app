@@ -4,6 +4,7 @@ import {
   I18nManager,
   StyleSheet,
   Text,
+  View,
 } from 'react-native';
 import {
   Body,
@@ -22,6 +23,8 @@ import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
 
 import { Updates } from 'expo';
+import Constants from 'expo-constants';
+import * as MailComposer from 'expo-mail-composer';
 import Colors from '../constants/Colors';
 import { setLanguage } from '../store/actions/i18n.actions';
 import { logout } from '../store/actions/user.actions';
@@ -50,6 +53,7 @@ const propTypes = {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.canvas,
+    height: 100,
   },
   header: {
     borderBottomWidth: 1,
@@ -86,8 +90,15 @@ const styles = StyleSheet.create({
   body: {
     alignItems: 'flex-start',
   },
+  versionText: {
+    color: Colors.grayDark,
+    fontSize: 12,
+    position: 'absolute',
+    bottom: 15,
+    right: 15,
+  },
 });
-
+let toastError;
 class SettingsScreen extends React.Component {
   static navigationOptions = {
     title: i18n.t('settingsScreen.settings'),
@@ -132,6 +143,22 @@ class SettingsScreen extends React.Component {
     this.props.toggleNetworkConnectivity(this.props.isConnected);
   }
 
+  draftNewSupportEmail = () => {
+    MailComposer.composeAsync({
+      recipients: ['appsupport@disciple.tools'],
+      subject: `DT App Support: v${Constants.manifest.version}`,
+      body: '',
+    }).catch((onrejected) => {
+      toastError.show(
+        <View>
+          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
+          <Text>{onrejected.toString()}</Text>
+        </View>,
+        3000,
+      );
+    });
+  }
+
   render() {
     const languagePickerItems = locales.map(locale => (
       <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
@@ -151,7 +178,7 @@ class SettingsScreen extends React.Component {
           </ListItem>
 
           {/* === Storybook === */}
-          { __DEV__ && (
+          {__DEV__ && (
             <ListItem icon onPress={() => this.props.navigation.navigate('Storybook')}>
               <Left>
                 <NbButton onPress={() => this.props.navigation.navigate('Storybook')}>
@@ -210,6 +237,16 @@ class SettingsScreen extends React.Component {
               </Picker>
             </Right>
           </ListItem>
+          <ListItem icon onPress={this.draftNewSupportEmail}>
+            <Left>
+              <NbButton>
+                <Icon active name="help-circle" />
+              </NbButton>
+            </Left>
+            <Body style={styles.body}>
+              <Text style={styles.text}>{i18n.t('settingsScreen.helpSupport')}</Text>
+            </Body>
+          </ListItem>
           {/* === Logout === */}
           <ListItem icon onPress={this.signOutAsync}>
             <Left>
@@ -225,7 +262,15 @@ class SettingsScreen extends React.Component {
             </Right>
           </ListItem>
         </Content>
+        <Text style={styles.versionText}>{Constants.manifest.version}</Text>
         <Toast ref={(c) => { this.toast = c; }} position="center" />
+        <Toast
+          ref={(toast) => {
+            toastError = toast;
+          }}
+          style={{ backgroundColor: Colors.errorBackground }}
+          position="center"
+        />
       </Container>
     );
   }

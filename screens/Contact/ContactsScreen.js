@@ -81,19 +81,19 @@ class ContactsScreen extends React.Component {
           <Text style={{ fontWeight: 'bold' }}>{contact.title}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          {this.props.contactSettings.overall_status.values[contact.overall_status] ? (
+          {this.props.contactSettings.fields.overall_status.values[contact.overall_status] ? (
             <Text style={styles.contactSubtitle}>
-              {this.props.contactSettings.overall_status.values[contact.overall_status].label}
+              {this.props.contactSettings.fields.overall_status.values[contact.overall_status].label}
             </Text>
           ) : <Text />}
-          {this.props.contactSettings.overall_status.values[contact.overall_status] && this.props.contactSettings.seeker_path.values[contact.seeker_path] ? (
+          {this.props.contactSettings.fields.overall_status.values[contact.overall_status] && this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
             <Text style={styles.contactSubtitle}>
               {' • '}
             </Text>
           ) : <Text />}
-          {this.props.contactSettings.seeker_path.values[contact.seeker_path] ? (
+          {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
             <Text style={styles.contactSubtitle}>
-              {this.props.contactSettings.seeker_path.values[contact.seeker_path].label}
+              {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path].label}
             </Text>
           ) : <Text />}
         </View>
@@ -192,11 +192,13 @@ ContactsScreen.propTypes = {
   }),
   loading: PropTypes.bool,
   contactSettings: PropTypes.shape({
-    overall_status: PropTypes.shape({
-      values: PropTypes.shape({}),
-    }),
-    seeker_path: PropTypes.shape({
-      values: PropTypes.shape({}),
+    fields: PropTypes.shape({
+      overall_status: PropTypes.shape({
+        values: PropTypes.shape({}),
+      }),
+      seeker_path: PropTypes.shape({
+        values: PropTypes.shape({}),
+      }),
     }),
   }),
 };
