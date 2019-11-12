@@ -2,10 +2,10 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "./node_modules/.bin/expo start",
-    "postinstall": "npx shx  mkdir -p .git/hooks && npx shx cp -f git-hooks/pre-commit .git/hooks/ && npx shx chmod 755 .git/hooks/pre-commit",
     "android": "./node_modules/.bin/expo start --android",
     "ios": "./node_modules/.bin/expo start --ios",
     "lint": "npx eslint --ext .jsx,.js ./ --fix",
+    "prettify": "npx pretty-quick --pattern '**/*.*(js|jsx)'",
     "eject": "./node_modules/.bin/expo eject",
     "test": "node ./node_modules/jest/bin/jest.js"
   },
@@ -22,6 +22,18 @@
       "./setupJest.js"
     ]
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.{js,jsx}": [
+      "eslint",
+      "pretty-quick --staged",
+      "git add"
+    ]
+  },
   "dependencies": {
     "@expo/vector-icons": "^10.0.4",
     "@react-native-community/netinfo": "^2.0.10",
@@ -32,10 +44,10 @@
     "es6-promise": "^4.2.6",
     "expo": "^33.0.0",
     "expo-asset": "^6.0.0",
-    "expo-constants": "^5.0.1",
+    "expo-constants": "^7.0.1",
     "expo-font": "^5.0.1",
     "expo-localization": "^5.0.1",
-    "expo-mail-composer": "^5.0.1",
+    "expo-mail-composer": "^7.0.0",
     "expo-web-browser": "^5.0.3",
     "i18n-js": "^3.2.1",
     "isomorphic-fetch": "^2.2.1",
@@ -72,14 +84,19 @@
     "enzyme-adapter-react-16": "^1.14.0",
     "eslint": "^5.15.1",
     "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
-    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react": "^7.16.0",
+    "husky": "^3.0.9",
     "jest": "^24.6.0",
     "jest-enzyme": "^7.1.0",
     "jest-expo": "^32.0.0",
     "jest-fetch-mock": "^2.1.2",
     "jsdom": "^15.1.1",
+    "lint-staged": "^9.4.2",
+    "prettier": "^1.18.2",
+    "pretty-quick": "^2.0.0",
     "react-dom": "^16.5.0",
     "react-test-renderer": "^16.8.4",
     "redux-saga-test-plan": "4.0.0-beta.2",

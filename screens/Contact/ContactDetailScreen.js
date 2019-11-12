@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
+
 import {
   Container,
   Content,
@@ -110,7 +111,6 @@ const styles = StyleSheet.create({
   socialMediaNames: {
     color: Colors.grayDark,
     fontSize: 12,
-    marginBottom: 10,
   },
   // Form
   formContainer: {
@@ -396,21 +396,6 @@ class ContactDetailScreen extends React.Component {
             ...newState,
             comment: prevState.contact.initial_comment,
           };
-        }
-        if (newState.contact.location_grid) {
-          newState.contact.location_grid.values.forEach((location) => {
-            const foundLocation = newState.geonames.find(geoname => geoname.value === location.value);
-            if (!foundLocation) {
-              // Add non existent contact location in the geonames list to avoid null exception
-              newState = {
-                ...newState,
-                geonames: [...newState.geonames, {
-                  name: location.name,
-                  value: location.value,
-                }],
-              };
-            }
-          });
         }
       }
     }
@@ -2541,7 +2526,7 @@ class ContactDetailScreen extends React.Component {
   renderSocialMediaField = (socialMediaIndex, socialMedia, propertyName, channelName) => (
     <Row
       key={socialMediaIndex.toString()}
-      style={{ marginTop: 10 }}
+      style={{ marginTop: 10, marginBottom: 10 }}
     >
       <Col style={styles.formIconLabelCol}>
         <View style={styles.formIconLabelView}>
@@ -2565,7 +2550,14 @@ class ContactDetailScreen extends React.Component {
                 this,
               );
             }}
-            style={styles.inputContactAddress}
+            style={{
+              borderBottomWidth: 1,
+              borderStyle: 'solid',
+              borderBottomColor: '#D9D5DC',
+              fontSize: 15,
+              height: 40,
+            }}
+            autoCapitalize="none"
           />
         </Row>
         <Row>
@@ -2573,7 +2565,7 @@ class ContactDetailScreen extends React.Component {
             onValueChange={(value) => {
               this.changeContactSocialMediaType(value, propertyName, socialMediaIndex, this);
             }}
-            selectedValue={socialMedia.key ? socialMedia.key.substring(socialMedia.key.indexOf('_') + 1, socialMedia.key.lastIndexOf('_')) : channelName}
+            selectedValue={socialMedia.key ? socialMedia.key.substring(socialMedia.key.indexOf('') + 1, socialMedia.key.lastIndexOf('')) : channelName}
             enabled={!(socialMedia.key)}
           >
             {this.renderSocialMediaPickerItems()}
@@ -2584,7 +2576,7 @@ class ContactDetailScreen extends React.Component {
         <Icon
           android="md-remove"
           ios="ios-remove"
-          style={[styles.formIcon, styles.addRemoveIcons]}
+          style={[styles.formIcon, styles.addRemoveIcons, { marginTop: 5 }]}
           onPress={() => {
             this.onRemoveSocialMediaField(
               propertyName,
@@ -2677,7 +2669,9 @@ class ContactDetailScreen extends React.Component {
                         ))
                         }
                         degrees={0}
-                        activeOpacity={1}
+                        activeOpacity={0}
+                        bgColor="rgba(0,0,0,0.5)"
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
                       >
                         <ActionButton.Item
                           buttonColor={Colors.primaryRGBA}
@@ -2689,6 +2683,9 @@ class ContactDetailScreen extends React.Component {
                             ) + 1 : 1,
                           })}
                           size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
                         >
                           <Icon
                             type="Feather"
@@ -2710,6 +2707,9 @@ class ContactDetailScreen extends React.Component {
                               ) + 1 : 1,
                           })}
                           size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
                         >
                           <Icon
                             type="MaterialCommunityIcons"
@@ -2732,6 +2732,9 @@ class ContactDetailScreen extends React.Component {
                           })
                           }
                           size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
                         >
                           <Icon
                             type="MaterialCommunityIcons"
@@ -2754,6 +2757,9 @@ class ContactDetailScreen extends React.Component {
                           })
                           }
                           size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
                         >
                           <Icon
                             type="MaterialCommunityIcons"
@@ -2776,6 +2782,9 @@ class ContactDetailScreen extends React.Component {
                           })
                           }
                           size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
                         >
                           <Icon
                             type="MaterialCommunityIcons"

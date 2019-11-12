@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
 });
 let toastError;
 class SettingsScreen extends React.Component {
+  /* eslint-disable react/sort-comp */
   static navigationOptions = {
     title: i18n.t('settingsScreen.settings'),
     headerStyle: {
@@ -110,7 +111,7 @@ class SettingsScreen extends React.Component {
       fontWeight: 'bold',
     },
   };
-
+  /* eslint-enable react/sort-comp */
   constructor(props) {
     super(props);
 
@@ -145,7 +146,7 @@ class SettingsScreen extends React.Component {
 
   draftNewSupportEmail = () => {
     MailComposer.composeAsync({
-      recipients: ['tbd@disciple.tools'],
+      recipients: ['appsupport@disciple.tools'],
       subject: `DT App Support: v${Constants.manifest.version}`,
       body: '',
     }).catch((onrejected) => {
