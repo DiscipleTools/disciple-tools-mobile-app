@@ -1945,7 +1945,7 @@ class ContactDetailScreen extends React.Component {
             onValueChange={(value) => {
               this.changeContactSocialMediaType(value, propertyName, socialMediaIndex, this);
             }}
-            selectedValue={socialMedia.key ? socialMedia.key.substring(socialMedia.key.indexOf('') + 1, socialMedia.key.lastIndexOf('')) : channelName}
+            selectedValue={socialMedia.key ? propertyName.replace('contact_', '') : channelName}
             enabled={!(socialMedia.key)}
           >
             {this.renderSocialMediaPickerItems()}
