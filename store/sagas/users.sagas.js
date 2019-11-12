@@ -9,7 +9,7 @@ export function* getUsers({ domain, token }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt/v1/users/get_users?s=`,
+      url: `https://${domain}/wp-json/dt/v1/users/get_users?get_all=1`,
       data: {
         method: 'GET',
         headers: {

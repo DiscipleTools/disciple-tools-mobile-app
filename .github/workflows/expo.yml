@@ -1,7 +1,8 @@
-name: Expo Publish Dev
+name: Expo Publish
 on:
   push:
     branches:
+      - master
       - development
 jobs:
   publish:
@@ -18,5 +19,17 @@ jobs:
           expo-username: ${{ secrets.EXPO_CLI_USERNAME }}
           expo-password: ${{ secrets.EXPO_CLI_PASSWORD }}
       - run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+      - name: Cache node modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - run: npm install
-      - run: expo publish --release-channel dev
+      - name: Deploy
+        if: github.ref == 'refs/heads/master'
+        run: expo publish --release-channel production
+      - name: Deploy Test
+        if: github.ref == 'refs/heads/development'
+        run: expo publish

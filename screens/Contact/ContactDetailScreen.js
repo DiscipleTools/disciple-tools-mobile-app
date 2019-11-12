@@ -31,7 +31,6 @@ import {
   Tab,
   ScrollableTab,
   DatePicker,
-  Fab,
   Button,
 } from 'native-base';
 import Toast from 'react-native-easy-toast';
@@ -40,6 +39,8 @@ import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import ModalFilterPicker from 'react-native-modal-filter-picker';
 import { Chip, Selectize } from 'react-native-material-selectize';
+import ActionButton from 'react-native-action-button';
+
 import sharedTools from '../../shared';
 import KeyboardShift from '../../components/KeyboardShift';
 import {
@@ -109,6 +110,11 @@ const styles = StyleSheet.create({
   },
   icon: {
     color: Colors.tintColor,
+  },
+  // Social Media Field
+  socialMediaNames: {
+    color: Colors.grayDark,
+    fontSize: 12,
   },
   // Form
   formContainer: {
@@ -184,11 +190,16 @@ const styles = StyleSheet.create({
     borderColor: '#D9D5DC',
     marginRight: 10,
     marginBottom: 5,
+    height: 40,
   },
   saveButton: {
     backgroundColor: Colors.tintColor,
     borderRadius: 5,
     marginTop: 40,
+  },
+  contactFABIcon: {
+    color: 'white',
+    fontSize: 20,
   },
 });
 
@@ -721,7 +732,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   setContactSeekerPath = (value) => {
-    const optionListValues = Object.keys(this.props.contactSettings.seeker_path.values);
+    const optionListValues = Object.keys(this.props.contactSettings.fields.seeker_path.values);
     const optionIndex = optionListValues.findIndex(key => key === value);
     const newProgressValue = (100 / (optionListValues.length - 1)) * optionIndex;
     this.setState(prevState => ({
@@ -880,12 +891,6 @@ class ContactDetailScreen extends React.Component {
         ...prevState.contact,
         gender: value,
       },
-    }));
-  };
-
-  setToggleFab = () => {
-    this.setState(prevState => ({
-      activeFab: !prevState.activeFab,
     }));
   };
 
@@ -1105,8 +1110,8 @@ class ContactDetailScreen extends React.Component {
     </View>
   )
 
-  renderSourcePickerItems = () => Object.keys(this.props.contactSettings.sources.values).map((key) => {
-    const optionData = this.props.contactSettings.sources.values[key];
+  renderSourcePickerItems = () => Object.keys(this.props.contactSettings.fields.sources.values).map((key) => {
+    const optionData = this.props.contactSettings.fields.sources.values[key];
     return (
       <Picker.Item
         key={key}
@@ -1116,8 +1121,8 @@ class ContactDetailScreen extends React.Component {
     );
   });
 
-  renderStatusPickerItems = () => Object.keys(this.props.contactSettings.overall_status.values).map((key) => {
-    const optionData = this.props.contactSettings.overall_status.values[key];
+  renderStatusPickerItems = () => Object.keys(this.props.contactSettings.fields.overall_status.values).map((key) => {
+    const optionData = this.props.contactSettings.fields.overall_status.values[key];
     return (
       <Picker.Item
         key={key}
@@ -1342,6 +1347,88 @@ class ContactDetailScreen extends React.Component {
     return <Text style={{ marginTop: 'auto', marginBottom: 'auto', fontSize: 15 }}>{foundUser ? foundUser.label : ''}</Text>;
   };
 
+  socialMediaKeyIsDB = key => (key)
+
+  changeContactSocialMediaType = (value, fieldName, index, component) => {
+    const oldList = (component.state.contact[fieldName]) ? [...component.state.contact[fieldName]] : [];
+    const newList = (component.state.contact[`contact_${value}`]) ? [...component.state.contact[`contact_${value}`]] : [];
+    // Remove object from oldList
+    const socialMedia = { ...oldList[index] };
+    if (socialMedia.key) {
+      oldList[index] = {
+        key: socialMedia.key,
+        delete: true,
+      };
+      delete socialMedia.key;
+    } else {
+      oldList.splice(index, 1);
+    }
+    newList.unshift(socialMedia);
+    component.setState(prevState => ({
+      contact: {
+        ...prevState.contact,
+        [fieldName]: oldList,
+        [`contact_${value}`]: newList,
+      },
+    }));
+  }
+
+  onRemoveSocialMediaField = (fieldName, index, component) => {
+    const socialMediaList = [...component.state.contact[fieldName]];
+    let socialMedia = socialMediaList[index];
+    if (socialMedia.key) {
+      socialMedia = {
+        key: socialMedia.key,
+        delete: true,
+      };
+      socialMediaList[index] = socialMedia;
+    } else {
+      socialMediaList.splice(index, 1);
+    }
+    component.setState(prevState => ({
+      contact: {
+        ...prevState.contact,
+        [fieldName]: socialMediaList,
+      },
+    }));
+  }
+
+  onSocialMediaFieldChange = (value, fieldName, index, dbIndex, component) => {
+    const socialMediaList = [...component.state.contact[fieldName]];
+    let socialMediaElement = {
+      ...socialMediaList[index],
+      value,
+    };
+    if (dbIndex) {
+      socialMediaElement = {
+        ...socialMediaElement,
+        key: dbIndex,
+      };
+    }
+    socialMediaList[index] = {
+      ...socialMediaElement,
+    };
+    component.setState(prevState => ({
+      contact: {
+        ...prevState.contact,
+        [fieldName]: socialMediaList,
+      },
+    }));
+  }
+
+  onAddSocialMediaField = () => {
+    const contactSocialMediaFacebookList = (this.state.contact.contact_facebook) ? [...this.state.contact.contact_facebook] : [];
+    contactSocialMediaFacebookList.push({
+      value: '',
+    });
+    this.setState(prevState => ({
+      contact: {
+        ...prevState.contact,
+        contact_facebook: contactSocialMediaFacebookList,
+      },
+    }));
+  }
+
   renderfaithMilestones() {
     return (
       <Grid
@@ -1385,7 +1472,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {this.props.contactSettings.milestones.values.milestone_has_bible.label}
+                    {this.props.contactSettings.fields.milestones.values.milestone_has_bible.label}
                   </Text>
                 </Row>
               </Col>
@@ -1427,7 +1514,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {this.props.contactSettings.milestones.values.milestone_reading_bible.label}
+                    {this.props.contactSettings.fields.milestones.values.milestone_reading_bible.label}
                   </Text>
                 </Row>
               </Col>
@@ -1467,7 +1554,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {this.props.contactSettings.milestones.values.milestone_belief.label}
+                    {this.props.contactSettings.fields.milestones.values.milestone_belief.label}
                   </Text>
                 </Row>
               </Col>
@@ -1511,7 +1598,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {this.props.contactSettings.milestones.values.milestone_can_share.label}
+                    {this.props.contactSettings.fields.milestones.values.milestone_can_share.label}
                   </Text>
                 </Row>
               </Col>
@@ -1551,7 +1638,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {this.props.contactSettings.milestones.values.milestone_sharing.label}
+                    {this.props.contactSettings.fields.milestones.values.milestone_sharing.label}
                   </Text>
                 </Row>
               </Col>
@@ -1591,7 +1678,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {this.props.contactSettings.milestones.values.milestone_baptized.label}
+                    {this.props.contactSettings.fields.milestones.values.milestone_baptized.label}
                   </Text>
                 </Row>
               </Col>
@@ -1635,7 +1722,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {this.props.contactSettings.milestones.values.milestone_baptizing.label}
+                    {this.props.contactSettings.fields.milestones.values.milestone_baptizing.label}
                   </Text>
                 </Row>
               </Col>
@@ -1675,7 +1762,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {this.props.contactSettings.milestones.values.milestone_in_group.label}
+                    {this.props.contactSettings.fields.milestones.values.milestone_in_group.label}
                   </Text>
                 </Row>
               </Col>
@@ -1715,7 +1802,7 @@ class ContactDetailScreen extends React.Component {
                         : styles.progressIconInactive,
                     ]}
                   >
-                    {this.props.contactSettings.milestones.values.milestone_planting.label}
+                    {this.props.contactSettings.fields.milestones.values.milestone_planting.label}
                   </Text>
                 </Row>
               </Col>
@@ -1728,7 +1815,7 @@ class ContactDetailScreen extends React.Component {
   }
 
   renderCustomFaithMilestones() {
-    const milestoneList = Object.keys(this.props.contactSettings.milestones.values);
+    const milestoneList = Object.keys(this.props.contactSettings.fields.milestones.values);
     const customMilestones = milestoneList.filter(milestoneItem => defaultFaithMilestones.indexOf(milestoneItem) < 0);
     const rows = [];
     let columnsByRow = [];
@@ -1755,7 +1842,7 @@ class ContactDetailScreen extends React.Component {
                   color: this.onCheckExistingMilestone(value) ? '#FFFFFF' : '#000000',
                 }]}
               >
-                {this.props.contactSettings.milestones.values[value].label}
+                {this.props.contactSettings.fields.milestones.values[value].label}
               </Text>
             </TouchableOpacity>
           </Col>,
@@ -1793,7 +1880,7 @@ class ContactDetailScreen extends React.Component {
                   color: this.onCheckExistingMilestone(value) ? '#FFFFFF' : '#000000',
                 }]}
               >
-                {this.props.contactSettings.milestones.values[value].label}
+                {this.props.contactSettings.fields.milestones.values[value].label}
               </Text>
             </TouchableHighlight>
           </Col>,
@@ -1806,6 +1893,80 @@ class ContactDetailScreen extends React.Component {
       </Grid>
     );
   }
+
+  renderSocialMediaPickerItems = () => Object.keys(this.props.contactSettings.channels).map((channelName, index) => (
+    <Picker.Item
+      key={index.toString()}
+      label={this.props.contactSettings.channels[channelName].label}
+      value={this.props.contactSettings.channels[channelName].value}
+    />
+  ))
+
+  renderSocialMediaField = (socialMediaIndex, socialMedia, propertyName, channelName) => (
+    <Row
+      key={socialMediaIndex.toString()}
+      style={{ marginTop: 10, marginBottom: 10 }}
+    >
+      <Col style={styles.formIconLabelCol}>
+        <View style={styles.formIconLabelView}>
+          <Icon
+            type="Ionicons"
+            name="chatboxes"
+            style={[styles.formIcon, { opacity: 0 }]}
+          />
+        </View>
+      </Col>
+      <Col>
+        <Row>
+          <Input
+            value={socialMedia.value}
+            onChangeText={(value) => {
+              this.onSocialMediaFieldChange(
+                value,
+                propertyName,
+                socialMediaIndex,
+                socialMedia.key,
+                this,
+              );
+            }}
+            style={{
+              borderBottomWidth: 1,
+              borderStyle: 'solid',
+              borderBottomColor: '#D9D5DC',
+              fontSize: 15,
+              height: 40,
+            }}
+            autoCapitalize="none"
+          />
+        </Row>
+        <Row>
+          <Picker
+            onValueChange={(value) => {
+              this.changeContactSocialMediaType(value, propertyName, socialMediaIndex, this);
+            }}
+            selectedValue={socialMedia.key ? socialMedia.key.substring(socialMedia.key.indexOf('') + 1, socialMedia.key.lastIndexOf('')) : channelName}
+            enabled={!(socialMedia.key)}
+          >
+            {this.renderSocialMediaPickerItems()}
+          </Picker>
+        </Row>
+      </Col>
+      <Col style={styles.formIconLabel}>
+        <Icon
+          android="md-remove"
+          ios="ios-remove"
+          style={[styles.formIcon, styles.addRemoveIcons, { marginTop: 5 }]}
+          onPress={() => {
+            this.onRemoveSocialMediaField(
+              propertyName,
+              socialMediaIndex,
+              this,
+            );
+          }}
+        />
+      </Col>
+    </Row>
+  )
 
   render() {
     const successToast = (
@@ -1879,7 +2040,7 @@ class ContactDetailScreen extends React.Component {
                                 color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
                               }}
                             >
-                              {this.props.contactSettings.overall_status.name}
+                              {this.props.contactSettings.fields.overall_status.name}
                             </Label>
                             <Row style={[styles.formRow, { paddingTop: 5 }]}>
                               <Col>
@@ -1912,7 +2073,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.assigned_to.name}
+                                  {this.props.contactSettings.fields.assigned_to.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -1932,7 +2093,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.subassigned.name}
+                                  {this.props.contactSettings.fields.subassigned.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -1976,16 +2137,36 @@ class ContactDetailScreen extends React.Component {
                             <Row style={styles.formRow}>
                               <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                                 <Icon
-                                  android="logo-facebook"
-                                  ios="logo-facebook"
-                                  style={styles.formIcon}
+                                  type="Ionicons"
+                                  name="chatboxes"
+                                  style={[styles.formIcon, { marginTop: 0 }]}
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }} />
+                                {
+                                  Object.keys(this.props.contactSettings.channels).map((channelName, channelNameIndex) => {
+                                    const channel = this.props.contactSettings.channels[channelName];
+                                    if (this.state.contact[`contact_${channelName}`] && this.state.contact[`contact_${channelName}`].length > 0) {
+                                      return (
+                                        <Col key={channelNameIndex.toString()}>
+                                          {
+                                            this.state.contact[`contact_${channelName}`]
+                                              ? this.state.contact[`contact_${channelName}`].map((socialMedia, socialMediaIndex) => (
+                                                <Text key={socialMediaIndex.toString()} style={socialMediaIndex === 0 ? { marginTop: 10 } : {}}>{socialMedia.value}</Text>
+                                              )) : null
+                                          }
+                                          <Text style={styles.socialMediaNames}>
+                                            {channel.label}
+                                          </Text>
+                                        </Col>
+                                      );
+                                    }
+                                    return null;
+                                  })
+                                }
                               </Col>
                               <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.message')}</Label>
+                                <Label style={[styles.formLabel, { marginTop: 5 }]}>{i18n.t('contactDetailScreen.socialMedia')}</Label>
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
@@ -2022,7 +2203,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.location_grid.name}
+                                  {this.props.contactSettings.fields.location_grid.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2042,7 +2223,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.people_groups.name}
+                                  {this.props.contactSettings.fields.people_groups.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2059,7 +2240,7 @@ class ContactDetailScreen extends React.Component {
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.age) ? this.state.contact.age : ''}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{this.props.contactSettings.age.name}</Label>
+                                <Label style={styles.formLabel}>{this.props.contactSettings.fields.age.name}</Label>
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
@@ -2072,10 +2253,10 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.gender) ? this.props.contactSettings.gender.values[this.state.contact.gender].label : ''}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.gender) ? this.props.contactSettings.fields.gender.values[this.state.contact.gender].label : ''}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{this.props.contactSettings.gender.name}</Label>
+                                <Label style={styles.formLabel}>{this.props.contactSettings.fields.gender.name}</Label>
                               </Col>
                             </Row>
                             <View style={styles.formDivider} />
@@ -2089,12 +2270,12 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col>
                                 <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.sources ? `${this.state.contact.sources.values.map(source => this.props.contactSettings.sources.values[source.value].label).join(', ')}.` : ''}
+                                  {this.state.contact.sources ? `${this.state.contact.sources.values.map(source => this.props.contactSettings.fields.sources.values[source.value].label).join(', ')}.` : ''}
                                 </Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.sources.name}
+                                  {this.props.contactSettings.fields.sources.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2139,10 +2320,10 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </Col>
                               <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.seeker_path) ? this.props.contactSettings.seeker_path.values[this.state.contact.seeker_path].label : ''}</Text>
+                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.seeker_path) ? this.props.contactSettings.fields.seeker_path.values[this.state.contact.seeker_path].label : ''}</Text>
                               </Col>
                               <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{this.props.contactSettings.seeker_path.name}</Label>
+                                <Label style={styles.formLabel}>{this.props.contactSettings.fields.seeker_path.name}</Label>
                               </Col>
                             </Row>
                             <View
@@ -2165,7 +2346,7 @@ class ContactDetailScreen extends React.Component {
                                 { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
                               ]}
                             >
-                              {this.props.contactSettings.milestones.name}
+                              {this.props.contactSettings.fields.milestones.name}
                             </Label>
                             {this.renderfaithMilestones()}
                             {this.renderCustomFaithMilestones()}
@@ -2184,7 +2365,7 @@ class ContactDetailScreen extends React.Component {
                                 </Col>
                                 <Col style={styles.formIconLabel}>
                                   <Label style={[styles.label, styles.formLabel]}>
-                                    {this.props.contactSettings.baptism_date.name}
+                                    {this.props.contactSettings.fields.baptism_date.name}
                                   </Label>
                                 </Col>
                               </Row>
@@ -2353,7 +2534,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.groups.name}
+                                  {this.props.contactSettings.fields.groups.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2373,7 +2554,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.relation.name}
+                                  {this.props.contactSettings.fields.relation.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2393,7 +2574,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.baptized_by.name}
+                                  {this.props.contactSettings.fields.baptized_by.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2413,7 +2594,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.baptized.name}
+                                  {this.props.contactSettings.fields.baptized.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2433,7 +2614,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.coached_by.name}
+                                  {this.props.contactSettings.fields.coached_by.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2453,7 +2634,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                               <Col style={styles.formParentLabel}>
                                 <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.coaching.name}
+                                  {this.props.contactSettings.fields.coaching.name}
                                 </Label>
                               </Col>
                             </Row>
@@ -2463,103 +2644,147 @@ class ContactDetailScreen extends React.Component {
                       </Tab>
                     </Tabs>
                     {this.state.renderFab && (
-                      <Fab
-                        active={this.state.activeFab}
-                        onPress={() => this.setToggleFab()}
-                        style={{ backgroundColor: Colors.tintColor }}
+                      <ActionButton
+                        buttonColor={Colors.primaryRGBA}
+                        renderIcon={active => (active ? (
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="close"
+                            style={{ color: 'white', fontSize: 22 }}
+                          />
+                        ) : (
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="comment-plus"
+                            style={{ color: 'white', fontSize: 25 }}
+                          />
+                        ))
+                        }
+                        degrees={0}
+                        activeOpacity={0}
+                        bgColor="rgba(0,0,0,0.5)"
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
                       >
-                        <Icon
-                          type="MaterialCommunityIcons"
-                          name="comment-plus"
-                          style={{ color: 'white' }}
-                        />
-                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                        <ActionButton.Item
+                          buttonColor={Colors.primaryRGBA}
+                          title={i18n.t('contactDetailScreen.noAnswer')}
+                          onPress={() => this.onSaveContact({
+                            quick_button_no_answer: this.state.contact.quick_button_no_answer ? parseInt(
+                              this.state.contact.quick_button_no_answer,
+                              10,
+                            ) + 1 : 1,
+                          })}
+                          size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="Feather"
                             name="phone-off"
-                            style={{ color: 'white' }}
-                            onPress={() => this.onSaveContact({
-                              quick_button_no_answer: this.state.contact.quick_button_no_answer ? parseInt(
-                                this.state.contact.quick_button_no_answer,
+                            style={styles.contactFABIcon}
+                          />
+                        </ActionButton.Item>
+                        <ActionButton.Item
+                          buttonColor={Colors.primaryRGBA}
+                          title={i18n.t('contactDetailScreen.contactEstablished')}
+                          onPress={() => this.onSaveContact({
+                            quick_button_contact_established: Object.prototype.hasOwnProperty.call(
+                              this.state.contact,
+                              'quick_button_contact_established',
+                            ) ? parseInt(
+                                this.state.contact
+                                  .quick_button_contact_established,
                                 10,
                               ) + 1 : 1,
-                            })
-                            }
-                          />
-                        </Button>
-                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                          })}
+                          size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="MaterialCommunityIcons"
                             name="phone-in-talk"
-                            style={{ color: 'white' }}
-                            onPress={() => this.onSaveContact({
-                              quick_button_contact_established: Object.prototype.hasOwnProperty.call(
-                                this.state.contact,
-                                'quick_button_contact_established',
-                              ) ? parseInt(
-                                  this.state.contact
-                                    .quick_button_contact_established,
-                                  10,
-                                ) + 1 : 1,
-                            })
-                            }
+                            style={styles.contactFABIcon}
                           />
-                        </Button>
-                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                        </ActionButton.Item>
+                        <ActionButton.Item
+                          buttonColor={Colors.primaryRGBA}
+                          title={i18n.t('contactDetailScreen.meetingScheduled')}
+                          onPress={() => this.onSaveContact({
+                            quick_button_meeting_scheduled: Object.prototype.hasOwnProperty.call(
+                              this.state.contact,
+                              'quick_button_meeting_scheduled',
+                            ) ? parseInt(
+                                this.state.contact
+                                  .quick_button_meeting_scheduled,
+                                10,
+                              ) + 1 : 1,
+                          })
+                          }
+                          size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="MaterialCommunityIcons"
                             name="calendar-plus"
-                            style={{ color: 'white' }}
-                            onPress={() => this.onSaveContact({
-                              quick_button_meeting_scheduled: Object.prototype.hasOwnProperty.call(
-                                this.state.contact,
-                                'quick_button_meeting_scheduled',
-                              ) ? parseInt(
-                                  this.state.contact
-                                    .quick_button_meeting_scheduled,
-                                  10,
-                                ) + 1 : 1,
-                            })
-                            }
+                            style={styles.contactFABIcon}
                           />
-                        </Button>
-                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                        </ActionButton.Item>
+                        <ActionButton.Item
+                          buttonColor={Colors.primaryRGBA}
+                          title={i18n.t('contactDetailScreen.meetingCompleted')}
+                          onPress={() => this.onSaveContact({
+                            quick_button_meeting_complete: Object.prototype.hasOwnProperty.call(
+                              this.state.contact,
+                              'quick_button_meeting_complete',
+                            ) ? parseInt(
+                                this.state.contact
+                                  .quick_button_meeting_complete,
+                                10,
+                              ) + 1 : 1,
+                          })
+                          }
+                          size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="MaterialCommunityIcons"
                             name="calendar-check"
-                            style={{ color: 'white' }}
-                            onPress={() => this.onSaveContact({
-                              quick_button_meeting_complete: Object.prototype.hasOwnProperty.call(
-                                this.state.contact,
-                                'quick_button_meeting_complete',
-                              ) ? parseInt(
-                                  this.state.contact
-                                    .quick_button_meeting_complete,
-                                  10,
-                                ) + 1 : 1,
-                            })
-                            }
+                            style={styles.contactFABIcon}
                           />
-                        </Button>
-                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                        </ActionButton.Item>
+                        <ActionButton.Item
+                          buttonColor={Colors.primaryRGBA}
+                          title={i18n.t('contactDetailScreen.meetingNoShow')}
+                          onPress={() => this.onSaveContact({
+                            quick_button_no_show: Object.prototype.hasOwnProperty.call(
+                              this.state.contact,
+                              'quick_button_no_show',
+                            ) ? parseInt(
+                                this.state.contact
+                                  .quick_button_no_show,
+                                10,
+                              ) + 1 : 1,
+                          })
+                          }
+                          size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="MaterialCommunityIcons"
                             name="calendar-remove"
-                            style={{ color: 'white' }}
-                            onPress={() => this.onSaveContact({
-                              quick_button_no_show: Object.prototype.hasOwnProperty.call(
-                                this.state.contact,
-                                'quick_button_no_show',
-                              ) ? parseInt(
-                                  this.state.contact
-                                    .quick_button_no_show,
-                                  10,
-                                ) + 1 : 1,
-                            })
-                            }
+                            style={styles.contactFABIcon}
                           />
-                        </Button>
-                      </Fab>
+                        </ActionButton.Item>
+                      </ActionButton>
                     )}
                   </View>
                 )}
@@ -2576,7 +2801,7 @@ class ContactDetailScreen extends React.Component {
                                     color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
                                   }, styles.formFieldPadding]}
                                 >
-                                  {this.props.contactSettings.overall_status.name}
+                                  {this.props.contactSettings.fields.overall_status.name}
                                 </Label>
                                 <Row style={{ paddingBottom: 30 }}>
                                   <Col>
@@ -2657,7 +2882,7 @@ class ContactDetailScreen extends React.Component {
                                       <Label
                                         style={styles.formLabel}
                                       >
-                                        {this.props.contactSettings.assigned_to.name}
+                                        {this.props.contactSettings.fields.assigned_to.name}
                                       </Label>
                                     </Col>
                                   </Row>
@@ -2702,7 +2927,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.subassigned.name}
+                                      {this.props.contactSettings.fields.subassigned.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -2926,6 +3151,60 @@ class ContactDetailScreen extends React.Component {
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
                                       <Icon
+                                        type="Ionicons"
+                                        name="chatboxes"
+                                        style={styles.formIcon}
+                                      />
+                                    </View>
+                                  </Col>
+                                  <Col>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
+                                      {i18n.t('contactDetailScreen.socialMedia')}
+                                    </Label>
+                                  </Col>
+                                  <Col style={styles.formIconLabel}>
+                                    <Icon
+                                      android="md-add"
+                                      ios="ios-add"
+                                      style={[styles.formIcon, styles.addRemoveIcons]}
+                                      onPress={this.onAddSocialMediaField}
+                                    />
+                                  </Col>
+                                </Row>
+                                {
+                                  Object.keys(this.props.contactSettings.channels).map((channelName, channelNameIndex) => {
+                                    const propertyName = `contact_${channelName}`;
+                                    return (
+                                      <Col key={channelNameIndex.toString()}>
+                                        {
+                                          this.state.contact[propertyName] ? this.state.contact[propertyName].map((socialMedia, socialMediaIndex) => (!socialMedia.key ? (
+                                            this.renderSocialMediaField(socialMediaIndex, socialMedia, propertyName, channelName)
+                                          ) : null)) : null
+                                        }
+                                      </Col>
+                                    );
+                                  })
+                                }
+                                {
+                                  Object.keys(this.props.contactSettings.channels).map((channelName, channelNameIndex) => {
+                                    const propertyName = `contact_${channelName}`;
+                                    return (
+                                      <Col key={channelNameIndex.toString()}>
+                                        {
+                                          this.state.contact[propertyName] ? this.state.contact[propertyName].map((socialMedia, socialMediaIndex) => (socialMedia.key && !socialMedia.delete ? (
+                                            this.renderSocialMediaField(socialMediaIndex, socialMedia, propertyName, channelName)
+                                          ) : null)) : null
+                                        }
+                                      </Col>
+                                    );
+                                  })
+                                }
+                                <Row style={styles.formFieldPadding}>
+                                  <Col style={styles.formIconLabelCol}>
+                                    <View style={styles.formIconLabelView}>
+                                      <Icon
                                         type="Entypo"
                                         name="home"
                                         style={styles.formIcon}
@@ -3007,7 +3286,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.location_grid.name}
+                                      {this.props.contactSettings.fields.location_grid.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3083,7 +3362,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.people_groups.name}
+                                      {this.props.contactSettings.fields.people_groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3160,7 +3439,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.age.name}
+                                      {this.props.contactSettings.fields.age.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3180,8 +3459,8 @@ class ContactDetailScreen extends React.Component {
                                       selectedValue={this.state.contact.age}
                                       onValueChange={this.setContactAge}
                                     >
-                                      {Object.keys(this.props.contactSettings.age.values).map((key) => {
-                                        const optionData = this.props.contactSettings.age.values[key];
+                                      {Object.keys(this.props.contactSettings.fields.age.values).map((key) => {
+                                        const optionData = this.props.contactSettings.fields.age.values[key];
                                         return (
                                           <Picker.Item
                                             key={key}
@@ -3207,7 +3486,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.gender.name}
+                                      {this.props.contactSettings.fields.gender.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3227,8 +3506,8 @@ class ContactDetailScreen extends React.Component {
                                       selectedValue={this.state.contact.gender}
                                       onValueChange={this.setContactGender}
                                     >
-                                      {Object.keys(this.props.contactSettings.gender.values).map((key) => {
-                                        const optionData = this.props.contactSettings.gender.values[key];
+                                      {Object.keys(this.props.contactSettings.fields.gender.values).map((key) => {
+                                        const optionData = this.props.contactSettings.fields.gender.values[key];
                                         return (
                                           <Picker.Item key={key} label={optionData.label} value={key} />
                                         );
@@ -3250,7 +3529,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.sources.name}
+                                      {this.props.contactSettings.fields.sources.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3268,8 +3547,8 @@ class ContactDetailScreen extends React.Component {
                                     <Selectize
                                       ref={(selectize) => { sourcesSelectizeRef = selectize; }}
                                       itemId="value"
-                                      items={Object.keys(this.props.contactSettings.sources.values).map(key => ({ name: this.props.contactSettings.sources.values[key].label, value: key }))}
-                                      selectedItems={(this.state.contact.sources) ? this.state.contact.sources.values.map(source => ({ name: this.props.contactSettings.sources.values[source.value].label, value: source.value })) : []}
+                                      items={Object.keys(this.props.contactSettings.fields.sources.values).map(key => ({ name: this.props.contactSettings.fields.sources.values[key].label, value: key }))}
+                                      selectedItems={(this.state.contact.sources) ? this.state.contact.sources.values.map(source => ({ name: this.props.contactSettings.fields.sources.values[source.value].label, value: source.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.selectSources'),
                                       }}
@@ -3331,7 +3610,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.seeker_path.name}
+                                      {this.props.contactSettings.fields.seeker_path.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3352,8 +3631,8 @@ class ContactDetailScreen extends React.Component {
                                       onValueChange={this.setContactSeekerPath}
                                       textStyle={{ color: Colors.tintColor }}
                                     >
-                                      {Object.keys(this.props.contactSettings.seeker_path.values).map((key) => {
-                                        const optionData = this.props.contactSettings.seeker_path.values[key];
+                                      {Object.keys(this.props.contactSettings.fields.seeker_path.values).map((key) => {
+                                        const optionData = this.props.contactSettings.fields.seeker_path.values[key];
                                         return (
                                           <Picker.Item key={key} label={optionData.label} value={key} />
                                         );
@@ -3367,7 +3646,7 @@ class ContactDetailScreen extends React.Component {
                                     { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
                                   ]}
                                 >
-                                  {this.props.contactSettings.milestones.name}
+                                  {this.props.contactSettings.fields.milestones.name}
                                 </Label>
                                 {this.renderfaithMilestones()}
                                 {this.renderCustomFaithMilestones()}
@@ -3385,7 +3664,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.baptism_date.name}
+                                      {this.props.contactSettings.fields.baptism_date.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3424,7 +3703,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.groups.name}
+                                      {this.props.contactSettings.fields.groups.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3501,7 +3780,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.relation.name}
+                                      {this.props.contactSettings.fields.relation.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3589,7 +3868,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.baptized_by.name}
+                                      {this.props.contactSettings.fields.baptized_by.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3678,7 +3957,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.baptized.name}
+                                      {this.props.contactSettings.fields.baptized.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3766,7 +4045,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.coached_by.name}
+                                      {this.props.contactSettings.fields.coached_by.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -3855,7 +4134,7 @@ class ContactDetailScreen extends React.Component {
                                     <Label
                                       style={styles.formLabel}
                                     >
-                                      {this.props.contactSettings.coaching.name}
+                                      {this.props.contactSettings.fields.coaching.name}
                                     </Label>
                                   </Col>
                                 </Row>
@@ -4050,7 +4329,7 @@ class ContactDetailScreen extends React.Component {
                               { marginTop: 10, marginBottom: 5 },
                             ]}
                           >
-                            {this.props.contactSettings.sources.name}
+                            {this.props.contactSettings.fields.sources.name}
                           </Label>
                         </Row>
                         <Row>
@@ -4068,7 +4347,7 @@ class ContactDetailScreen extends React.Component {
                               { marginTop: 10, marginBottom: 5 },
                             ]}
                           >
-                            {this.props.contactSettings.location_grid.name}
+                            {this.props.contactSettings.fields.location_grid.name}
                           </Label>
                         </Row>
                         <Row>
@@ -4212,95 +4491,98 @@ ContactDetailScreen.propTypes = {
   endSaveContact: PropTypes.func.isRequired,
   getByIdEnd: PropTypes.func.isRequired,
   contactSettings: PropTypes.shape({
-    sources: PropTypes.shape({
-      name: PropTypes.string,
-      values: PropTypes.shape({}),
-    }),
-    overall_status: PropTypes.shape({
-      name: PropTypes.string,
-      values: PropTypes.shape({}),
-    }),
-    milestones: PropTypes.shape({
-      name: PropTypes.string,
-      values: PropTypes.shape({
-        milestone_has_bible: PropTypes.shape({
-          label: PropTypes.string,
-        }),
-        milestone_reading_bible: PropTypes.shape({
-          label: PropTypes.string,
-        }),
-        milestone_belief: PropTypes.shape({
-          label: PropTypes.string,
-        }),
-        milestone_can_share: PropTypes.shape({
-          label: PropTypes.string,
-        }),
-        milestone_sharing: PropTypes.shape({
-          label: PropTypes.string,
-        }),
-        milestone_baptized: PropTypes.shape({
-          label: PropTypes.string,
-        }),
-        milestone_baptizing: PropTypes.shape({
-          label: PropTypes.string,
-        }),
-        milestone_in_group: PropTypes.shape({
-          label: PropTypes.string,
-        }),
-        milestone_planting: PropTypes.shape({
-          label: PropTypes.string,
+    fields: PropTypes.shape({
+      sources: PropTypes.shape({
+        name: PropTypes.string,
+        values: PropTypes.shape({}),
+      }),
+      overall_status: PropTypes.shape({
+        name: PropTypes.string,
+        values: PropTypes.shape({}),
+      }),
+      milestones: PropTypes.shape({
+        name: PropTypes.string,
+        values: PropTypes.shape({
+          milestone_has_bible: PropTypes.shape({
+            label: PropTypes.string,
+          }),
+          milestone_reading_bible: PropTypes.shape({
+            label: PropTypes.string,
+          }),
+          milestone_belief: PropTypes.shape({
+            label: PropTypes.string,
+          }),
+          milestone_can_share: PropTypes.shape({
+            label: PropTypes.string,
+          }),
+          milestone_sharing: PropTypes.shape({
+            label: PropTypes.string,
+          }),
+          milestone_baptized: PropTypes.shape({
+            label: PropTypes.string,
+          }),
+          milestone_baptizing: PropTypes.shape({
+            label: PropTypes.string,
+          }),
+          milestone_in_group: PropTypes.shape({
+            label: PropTypes.string,
+          }),
+          milestone_planting: PropTypes.shape({
+            label: PropTypes.string,
+          }),
         }),
       }),
+      assigned_to: PropTypes.shape({
+        name: PropTypes.string,
+        values: PropTypes.shape({}),
+      }),
+      subassigned: PropTypes.shape({
+        name: PropTypes.string,
+        values: PropTypes.shape({}),
+      }),
+      location_grid: PropTypes.shape({
+        name: PropTypes.string,
+        values: PropTypes.shape({}),
+      }),
+      people_groups: PropTypes.shape({
+        name: PropTypes.string,
+        values: PropTypes.shape({}),
+      }),
+      age: PropTypes.shape({
+        name: PropTypes.string,
+        values: PropTypes.shape({}),
+      }),
+      gender: PropTypes.shape({
+        name: PropTypes.string,
+        values: PropTypes.shape({}),
+      }),
+      seeker_path: PropTypes.shape({
+        name: PropTypes.string,
+        values: PropTypes.shape({}),
+      }),
+      baptism_date: PropTypes.shape({
+        name: PropTypes.string,
+      }),
+      groups: PropTypes.shape({
+        name: PropTypes.string,
+      }),
+      relation: PropTypes.shape({
+        name: PropTypes.string,
+      }),
+      baptized_by: PropTypes.shape({
+        name: PropTypes.string,
+      }),
+      baptized: PropTypes.shape({
+        name: PropTypes.string,
+      }),
+      coached_by: PropTypes.shape({
+        name: PropTypes.string,
+      }),
+      coaching: PropTypes.shape({
+        name: PropTypes.string,
+      }),
     }),
-    assigned_to: PropTypes.shape({
-      name: PropTypes.string,
-      values: PropTypes.shape({}),
-    }),
-    subassigned: PropTypes.shape({
-      name: PropTypes.string,
-      values: PropTypes.shape({}),
-    }),
-    location_grid: PropTypes.shape({
-      name: PropTypes.string,
-      values: PropTypes.shape({}),
-    }),
-    people_groups: PropTypes.shape({
-      name: PropTypes.string,
-      values: PropTypes.shape({}),
-    }),
-    age: PropTypes.shape({
-      name: PropTypes.string,
-      values: PropTypes.shape({}),
-    }),
-    gender: PropTypes.shape({
-      name: PropTypes.string,
-      values: PropTypes.shape({}),
-    }),
-    seeker_path: PropTypes.shape({
-      name: PropTypes.string,
-      values: PropTypes.shape({}),
-    }),
-    baptism_date: PropTypes.shape({
-      name: PropTypes.string,
-    }),
-    groups: PropTypes.shape({
-      name: PropTypes.string,
-    }),
-    relation: PropTypes.shape({
-      name: PropTypes.string,
-    }),
-    baptized_by: PropTypes.shape({
-      name: PropTypes.string,
-    }),
-    baptized: PropTypes.shape({
-      name: PropTypes.string,
-    }),
-    coached_by: PropTypes.shape({
-      name: PropTypes.string,
-    }),
-    coaching: PropTypes.shape({
-      name: PropTypes.string,
-    }),
+    channels: PropTypes.shape({}),
   }),
 };
 

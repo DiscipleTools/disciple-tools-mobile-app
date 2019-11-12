@@ -22,6 +22,7 @@ import {
 } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Updates } from 'expo';
+import Constants from 'expo-constants';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import i18n from '../languages';
 import locales from '../languages/locales';
@@ -119,9 +120,15 @@ const styles = StyleSheet.create({
   languageIcon: {
     marginHorizontal: 20,
   },
+  versionText: {
+    color: Colors.grayDark,
+    fontSize: 12,
+    position: 'absolute',
+    bottom: 15,
+    right: 15,
+  },
 });
 let toastError;
-
 class LoginScreen extends React.Component {
   static navigationOptions = {
     header: null,
@@ -137,7 +144,6 @@ class LoginScreen extends React.Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       ...this.state,
       username: props.userData.username || '',
@@ -511,6 +517,7 @@ class LoginScreen extends React.Component {
             {this.state.loading && (
               <ActivityIndicator style={{ margin: 20 }} size="small" />
             )}
+            <Text style={styles.versionText}>{Constants.manifest.version}</Text>
           </View>
           <View style={styles.languagePickerContainer}>
             <Icon type="FontAwesome" name="language" style={styles.languageIcon} />
