@@ -51,6 +51,7 @@ class ContactsScreen extends React.Component {
       fontWeight: 'bold',
     },
   };
+
   /* eslint-enable react/sort-comp */
   state = {
     refresh: false,

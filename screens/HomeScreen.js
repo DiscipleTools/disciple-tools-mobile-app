@@ -120,6 +120,7 @@ class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
+
   /* eslint-enable react/sort-comp */
   handleLearnMorePress = () => {
     WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');

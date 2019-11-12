@@ -134,6 +134,7 @@ class LoginScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
+
   /* eslint-enable react/sort-comp */
   state = {
     loading: false,

@@ -111,6 +111,7 @@ class SettingsScreen extends React.Component {
       fontWeight: 'bold',
     },
   };
+
   /* eslint-enable react/sort-comp */
   constructor(props) {
     super(props);
