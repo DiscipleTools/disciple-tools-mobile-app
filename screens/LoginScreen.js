@@ -130,10 +130,12 @@ const styles = StyleSheet.create({
 });
 let toastError;
 class LoginScreen extends React.Component {
+  /* eslint-disable react/sort-comp */
   static navigationOptions = {
     header: null,
   };
 
+  /* eslint-enable react/sort-comp */
   state = {
     loading: false,
     modalVisible: false,

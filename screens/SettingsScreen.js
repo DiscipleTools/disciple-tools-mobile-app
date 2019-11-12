@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
 });
 let toastError;
 class SettingsScreen extends React.Component {
+  /* eslint-disable react/sort-comp */
   static navigationOptions = {
     title: i18n.t('settingsScreen.settings'),
     headerStyle: {
@@ -111,6 +112,7 @@ class SettingsScreen extends React.Component {
     },
   };
 
+  /* eslint-enable react/sort-comp */
   constructor(props) {
     super(props);
 
@@ -232,6 +234,7 @@ class SettingsScreen extends React.Component {
                     i18n.setLocale(locale.code, isRTL);
                   }
                 }}
+                enabled={false}
               >
                 {languagePickerItems}
               </Picker>
