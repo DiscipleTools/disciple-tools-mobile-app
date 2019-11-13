@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
 let toastError;
 
 class ContactsScreen extends React.Component {
+  /* eslint-disable react/sort-comp */
   static navigationOptions = {
     title: i18n.t('contactsScreen.contacts'),
     headerLeft: null,
@@ -51,6 +52,7 @@ class ContactsScreen extends React.Component {
     },
   };
 
+  /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
   }
@@ -88,7 +90,7 @@ class ContactsScreen extends React.Component {
           ) : <Text />}
           {this.props.contactSettings.fields.overall_status.values[contact.overall_status] && this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
             <Text style={styles.contactSubtitle}>
-              {' • '}
+              •
             </Text>
           ) : <Text />}
           {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
