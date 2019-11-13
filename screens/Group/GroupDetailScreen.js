@@ -61,6 +61,10 @@ import dottedCircleIcon from '../../assets/icons/dotted-circle.png';
 import swimmingPoolIcon from '../../assets/icons/swimming-pool.png';
 import groupCircleIcon from '../../assets/icons/group-circle.png';
 import groupDottedCircleIcon from '../../assets/icons/group-dotted-circle.png';
+import groupChildIcon from '../../assets/icons/group-child.png';
+import groupParentIcon from '../../assets/icons/group-parent.png';
+import groupPeerIcon from '../../assets/icons/group-peer.png';
+import groupTypeIcon from '../../assets/icons/group-type.png';
 import i18n from '../../languages';
 
 let toastSuccess;
@@ -296,6 +300,10 @@ const styles = StyleSheet.create({
   groupCircleCounter: {
     justifyContent: 'center',
     marginTop: '-5%',
+  },
+  groupIcons: {
+    height: 30,
+    width: 32
   },
   saveButton: {
     backgroundColor: Colors.tintColor,
@@ -1441,10 +1449,9 @@ class GroupDetailScreen extends React.Component {
         </Grid>
         <Row style={[styles.formRow, { paddingTop: 15 }]}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon
-              android="md-people"
-              ios="ios-people"
-              style={styles.formIcon}
+            <Image
+              source={groupTypeIcon}
+              style={styles.groupIcons}
             />
           </Col>
           <Col>
@@ -1599,6 +1606,14 @@ class GroupDetailScreen extends React.Component {
       <Grid style={[styles.formContainer, styles.formContainerNoPadding]}>
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
+            <View style={styles.formIconLabelView}>
+              <Image
+                source={groupParentIcon}
+                style={styles.groupIcons}
+              />
+            </View>
+          </Col>
+          <Col style={styles.formIconLabel}>
             <Label style={styles.formLabel}>
               {this.props.groupSettings.parent_groups.name}
             </Label>
@@ -1652,6 +1667,14 @@ class GroupDetailScreen extends React.Component {
         <View style={[styles.formDivider, styles.formDivider2Margin]} />
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
+            <View style={styles.formIconLabelView}>
+              <Image
+                source={groupPeerIcon}
+                style={styles.groupIcons}
+              />
+            </View>
+          </Col>
+          <Col style={styles.formIconLabel}>
             <Label style={styles.formLabel}>
               {this.props.groupSettings.peer_groups.name}
             </Label>
@@ -1705,6 +1728,14 @@ class GroupDetailScreen extends React.Component {
         <View style={[styles.formDivider, styles.formDivider2Margin]} />
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, styles.formIconLabelMarginLeft]}>
+            <View style={styles.formIconLabelView}>
+              <Image
+                source={groupChildIcon}
+                style={styles.groupIcons}
+              />
+            </View>
+          </Col>
+          <Col style={styles.formIconLabel}>
             <Label style={styles.formLabel}>
               {i18n.t('groupDetailScreen.childGroup')}
             </Label>
@@ -2957,10 +2988,9 @@ class GroupDetailScreen extends React.Component {
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
-                                      <Icon
-                                        android="md-people"
-                                        ios="ios-people"
-                                        style={styles.formIcon}
+                                      <Image
+                                        source={groupTypeIcon}
+                                        style={styles.groupIcons}
                                       />
                                     </View>
                                   </Col>
@@ -3022,10 +3052,9 @@ class GroupDetailScreen extends React.Component {
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
-                                      <Icon
-                                        type="FontAwesome"
-                                        name="users"
-                                        style={styles.formIcon}
+                                      <Image
+                                        source={groupParentIcon}
+                                        style={styles.groupIcons}
                                       />
                                     </View>
                                   </Col>
@@ -3099,10 +3128,9 @@ class GroupDetailScreen extends React.Component {
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
-                                      <Icon
-                                        type="FontAwesome"
-                                        name="users"
-                                        style={styles.formIcon}
+                                      <Image
+                                        source={groupPeerIcon}
+                                        style={styles.groupIcons}
                                       />
                                     </View>
                                   </Col>
@@ -3176,10 +3204,9 @@ class GroupDetailScreen extends React.Component {
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
-                                      <Icon
-                                        type="FontAwesome"
-                                        name="users"
-                                        style={styles.formIcon}
+                                      <Image
+                                        source={groupChildIcon}
+                                        style={styles.groupIcons}
                                       />
                                     </View>
                                   </Col>
