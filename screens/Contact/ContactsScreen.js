@@ -1,6 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, FlatList, TouchableOpacity, RefreshControl, StyleSheet, Text } from 'react-native';
+import {
+  View,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl,
+  StyleSheet,
+  Text,
+} from 'react-native';
 import { Fab, Container } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
@@ -32,23 +39,11 @@ const styles = StyleSheet.create({
 let toastError;
 
 class ContactsScreen extends React.Component {
-  /* eslint-disable react/sort-comp */
-  static navigationOptions = {
-    title: i18n.t('contactsScreen.contacts'),
-    headerLeft: null,
-    headerStyle: {
-      backgroundColor: Colors.tintColor,
-    },
-    headerTintColor: '#FFFFFF',
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    },
-  };
 
   /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
-  };
+  }
 
   componentDidUpdate(prevProps) {
     const { error } = this.props;
@@ -69,11 +64,12 @@ class ContactsScreen extends React.Component {
     }
   }
 
-  renderRow = (contact) => (
+  renderRow = contact => (
     <TouchableOpacity
       onPress={() => this.goToContactDetailScreen(contact)}
       style={styles.flatListItem}
-      key={contact.ID}>
+      key={contact.ID}
+    >
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text style={{ fontWeight: 'bold' }}>{contact.title}</Text>
@@ -81,27 +77,19 @@ class ContactsScreen extends React.Component {
         <View style={{ flex: 1, flexDirection: 'row' }}>
           {this.props.contactSettings.fields.overall_status.values[contact.overall_status] ? (
             <Text style={styles.contactSubtitle}>
-              {
-                this.props.contactSettings.fields.overall_status.values[contact.overall_status]
-                  .label
-              }
+              {this.props.contactSettings.fields.overall_status.values[contact.overall_status].label}
             </Text>
-          ) : (
-            <Text />
-          )}
-          {this.props.contactSettings.fields.overall_status.values[contact.overall_status] &&
-          this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
-            <Text style={styles.contactSubtitle}>•</Text>
-          ) : (
-            <Text />
-          )}
+          ) : <Text />}
+          {this.props.contactSettings.fields.overall_status.values[contact.overall_status] && this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
+            <Text style={styles.contactSubtitle}>
+               • 
+            </Text>
+          ) : <Text />}
           {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
             <Text style={styles.contactSubtitle}>
               {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path].label}
             </Text>
-          ) : (
-            <Text />
-          )}
+          ) : <Text />}
         </View>
       </View>
     </TouchableOpacity>
@@ -138,6 +126,19 @@ class ContactsScreen extends React.Component {
     }
   };
 
+
+  static navigationOptions = {
+    title: i18n.t('contactsScreen.contacts'),
+    headerLeft: null,
+    headerStyle: {
+      backgroundColor: Colors.tintColor,
+    },
+    headerTintColor: '#FFFFFF',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  };
+  
   render() {
     return (
       <Container>
@@ -145,17 +146,21 @@ class ContactsScreen extends React.Component {
           <FlatList
             data={this.props.contacts}
             extraData={this.state.refresh}
-            renderItem={(item) => this.renderRow(item.item)}
+            renderItem={item => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
-            refreshControl={
-              <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
-            }
-            keyExtractor={(item) => item.ID.toString()}
+            refreshControl={(
+              <RefreshControl
+                refreshing={this.props.loading}
+                onRefresh={this.onRefresh}
+              />
+            )}
+            keyExtractor={item => item.ID.toString()}
           />
           <Fab
             style={{ backgroundColor: Colors.tintColor }}
             position="bottomRight"
-            onPress={() => this.goToContactDetailScreen()}>
+            onPress={() => this.goToContactDetailScreen()}
+          >
             <Icon name="md-add" />
           </Fab>
           <Toast
@@ -184,8 +189,8 @@ ContactsScreen.propTypes = {
   /* eslint-disable */
   contacts: PropTypes.arrayOf(
     PropTypes.shape({
-      key: PropTypes.number,
-    }),
+      key: PropTypes.number
+    })
   ).isRequired,
   /* eslint-enable */
   error: PropTypes.shape({
@@ -210,17 +215,20 @@ ContactsScreen.defaultProps = {
   contactSettings: null,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   userData: state.userReducer.userData,
   contacts: state.contactsReducer.contacts,
   loading: state.contactsReducer.loading,
   error: state.contactsReducer.error,
   contactSettings: state.contactsReducer.settings,
 });
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   getAllContacts: (domain, token) => {
     dispatch(getAll(domain, token));
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ContactsScreen);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ContactsScreen);

@@ -294,11 +294,9 @@ class ContactDetailScreen extends React.Component {
           ID: contactId,
           title: contactName,
           sources: {
-            values: [
-              {
-                value: 'personal',
-              },
-            ],
+            values: [{
+              value: 'personal',
+            }],
           },
           overall_status: 'new',
           seeker_path: 'none',
@@ -311,11 +309,9 @@ class ContactDetailScreen extends React.Component {
         contact: {
           title: null,
           sources: {
-            values: [
-              {
-                value: 'personal',
-              },
-            ],
+            values: [{
+              value: 'personal',
+            }],
           },
           overall_status: 'new',
           seeker_path: 'none',
@@ -328,14 +324,11 @@ class ContactDetailScreen extends React.Component {
         onlyView,
       };
     }
-    this.setState(
-      {
-        ...newState,
-      },
-      () => {
-        this.getLists(contactId || null);
-      },
-    );
+    this.setState({
+      ...newState,
+    }, () => {
+      this.getLists((contactId) || null);
+    });
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -377,11 +370,9 @@ class ContactDetailScreen extends React.Component {
       // Same contact created (offline/online)
       // Same contact updated (offline/online)
       // Same offline contact created in DB (AutoID to DBID)
-      if (
-        (typeof contact.ID !== 'undefined' && typeof prevState.contact.ID === 'undefined') ||
-        contact.ID.toString() === prevState.contact.ID.toString() ||
-        (contact.oldID && contact.oldID === prevState.contact.ID.toString())
-      ) {
+      if ((typeof contact.ID !== 'undefined' && typeof prevState.contact.ID === 'undefined')
+        || contact.ID.toString() === prevState.contact.ID.toString()
+        || (contact.oldID && contact.oldID === prevState.contact.ID.toString())) {
         newState = {
           ...newState,
           contact: {
@@ -397,9 +388,7 @@ class ContactDetailScreen extends React.Component {
         if (newState.contact.overall_status) {
           newState = {
             ...newState,
-            overallStatusBackgroundColor: sharedTools.getSelectorColor(
-              newState.contact.overall_status,
-            ),
+            overallStatusBackgroundColor: sharedTools.getSelectorColor(newState.contact.overall_status),
           };
         }
         if (prevState.contact.initial_comment) {
@@ -410,20 +399,15 @@ class ContactDetailScreen extends React.Component {
         }
         if (newState.contact.location_grid) {
           newState.contact.location_grid.values.forEach((location) => {
-            const foundLocation = newState.geonames.find(
-              (geoname) => geoname.value === location.value,
-            );
+            const foundLocation = newState.geonames.find(geoname => geoname.value === location.value);
             if (!foundLocation) {
               // Add non existent contact location in the geonames list to avoid null exception
               newState = {
                 ...newState,
-                geonames: [
-                  ...newState.geonames,
-                  {
-                    name: location.name,
-                    value: location.value,
-                  },
-                ],
+                geonames: [...newState.geonames, {
+                  name: location.name,
+                  value: location.value,
+                }],
               };
             }
           });
@@ -470,12 +454,7 @@ class ContactDetailScreen extends React.Component {
 
   componentDidUpdate(prevProps) {
     const {
-      userReducerError,
-      contact,
-      navigation,
-      newComment,
-      contactsReducerError,
-      saved,
+      userReducerError, contact, navigation, newComment, contactsReducerError, saved,
     } = this.props;
 
     // NEW COMMENT
@@ -493,17 +472,16 @@ class ContactDetailScreen extends React.Component {
       // Same contact created (offline/online)
       // Same contact updated (offline/online)
       // Same offline contact created in DB (AutoID to DBID)
-      if (
-        (typeof contact.ID !== 'undefined' && typeof this.state.contact.ID === 'undefined') ||
-        contact.ID.toString() === this.state.contact.ID.toString() ||
-        (contact.oldID && contact.oldID === this.state.contact.ID.toString())
-      ) {
+      if ((typeof contact.ID !== 'undefined' && typeof this.state.contact.ID === 'undefined')
+        || contact.ID.toString() === this.state.contact.ID.toString()
+        || (contact.oldID && contact.oldID === this.state.contact.ID.toString())) {
         // Highlight Updates -> Compare this.state.contact with contact and show differences
         navigation.setParams({ contactName: contact.title });
         if (contact.seeker_path) {
           this.setContactSeekerPath(contact.seeker_path);
         }
-        if (this.state.comment && this.state.comment.length > 0) {
+        if (this.state.comment
+          && this.state.comment.length > 0) {
           this.onSaveComment();
         }
         this.getContactByIdEnd();
@@ -516,17 +494,15 @@ class ContactDetailScreen extends React.Component {
       // Same contact created (offline/online)
       // Same contact updated (offline/online)
       // Same offline contact created in DB (AutoID to DBID)
-      if (
-        (typeof contact.ID !== 'undefined' && typeof this.state.contact.ID === 'undefined') ||
-        contact.ID.toString() === this.state.contact.ID.toString() ||
-        (contact.oldID && contact.oldID === this.state.contact.ID.toString())
-      ) {
+      if ((typeof contact.ID !== 'undefined' && typeof this.state.contact.ID === 'undefined')
+        || contact.ID.toString() === this.state.contact.ID.toString()
+        || (contact.oldID && contact.oldID === this.state.contact.ID.toString())) {
         this.onRefreshCommentsActivities(contact.ID);
         toastSuccess.show(
           <View>
-            <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
-          </View>,
-          3000,
+          <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
+        </View>,
+        3000,
         );
         this.onDisableEdit();
         this.props.endSaveContact();
@@ -534,9 +510,9 @@ class ContactDetailScreen extends React.Component {
     }
 
     // ERROR
-    const usersError = prevProps.userReducerError !== userReducerError && userReducerError;
-    let contactsError = prevProps.contactsReducerError !== contactsReducerError;
-    contactsError = contactsError && contactsReducerError;
+    const usersError = (prevProps.userReducerError !== userReducerError && userReducerError);
+    let contactsError = (prevProps.contactsReducerError !== contactsReducerError);
+    contactsError = (contactsError && contactsReducerError);
     if (usersError || contactsError) {
       const error = userReducerError || contactsReducerError;
       toastError.show(
@@ -561,20 +537,17 @@ class ContactDetailScreen extends React.Component {
   }
 
   onRefreshCommentsActivities(contactId) {
-    this.setState(
-      {
-        comments: [],
-        activities: [],
-        commentsOffset: 0,
-        activitiesOffset: 0,
-      },
-      () => {
-        this.getContactComments(contactId);
-        if (this.props.isConnected) {
-          this.getContactActivities(contactId);
-        }
-      },
-    );
+    this.setState({
+      comments: [],
+      activities: [],
+      commentsOffset: 0,
+      activitiesOffset: 0,
+    }, () => {
+      this.getContactComments(contactId);
+      if (this.props.isConnected) {
+        this.getContactActivities(contactId);
+      }
+    });
   }
 
   getLists = async (contactId) => {
@@ -583,7 +556,7 @@ class ContactDetailScreen extends React.Component {
     if (users !== null) {
       newState = {
         ...newState,
-        users: JSON.parse(users).map((user) => ({
+        users: JSON.parse(users).map(user => ({
           key: user.ID,
           label: user.name,
         })),
@@ -635,7 +608,11 @@ class ContactDetailScreen extends React.Component {
   };
 
   getContactById(contactId) {
-    this.props.getById(this.props.userData.domain, this.props.userData.token, contactId);
+    this.props.getById(
+      this.props.userData.domain,
+      this.props.userData.token,
+      contactId,
+    );
   }
 
   getContactByIdEnd() {
@@ -679,10 +656,10 @@ class ContactDetailScreen extends React.Component {
       overallStatusBackgroundColor: sharedTools.getSelectorColor(unmodifiedContact.overall_status),
     });
     this.props.navigation.setParams({ hideTabBar: false });
-  };
+  }
 
   setContactTitle = (value) => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         title: value,
@@ -691,7 +668,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   setSingleContactPhone = (value) => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         contact_phone: [
@@ -704,7 +681,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   setContactEmail = (value) => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         contact_email: [
@@ -717,7 +694,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   setContactSource = (value) => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         sources: {
@@ -742,15 +719,13 @@ class ContactDetailScreen extends React.Component {
       localItems.push(item);
     });
 
-    const itemsToSave = localItems
-      .filter((localItem) => {
-        const foundLocalInDatabase = dbItems.find((dbItem) => dbItem.value === localItem.value);
-        return foundLocalInDatabase === undefined;
-      })
-      .map((localItem) => ({ value: localItem.value }));
+    const itemsToSave = localItems.filter((localItem) => {
+      const foundLocalInDatabase = dbItems.find(dbItem => dbItem.value === localItem.value);
+      return foundLocalInDatabase === undefined;
+    }).map(localItem => ({ value: localItem.value }));
 
     dbItems.forEach((dbItem) => {
-      const foundDatabaseInLocal = localItems.find((localItem) => dbItem.value === localItem.value);
+      const foundDatabaseInLocal = localItems.find(localItem => dbItem.value === localItem.value);
       if (!foundDatabaseInLocal) {
         itemsToSave.push({
           ...dbItem,
@@ -763,7 +738,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   setContactInitialComment = (value) => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         initial_comment: value,
@@ -772,7 +747,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   setContactStatus = (value) => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         overall_status: value,
@@ -783,9 +758,9 @@ class ContactDetailScreen extends React.Component {
 
   setContactSeekerPath = (value) => {
     const optionListValues = Object.keys(this.props.contactSettings.fields.seeker_path.values);
-    const optionIndex = optionListValues.findIndex((key) => key === value);
+    const optionIndex = optionListValues.findIndex(key => key === value);
     const newProgressValue = (100 / (optionListValues.length - 1)) * optionIndex;
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         seeker_path: value,
@@ -795,7 +770,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   setBaptismDate = (date) => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         baptism_date: sharedTools.formatDateToBackEnd(date),
@@ -830,7 +805,11 @@ class ContactDetailScreen extends React.Component {
         ID: this.state.contact.ID,
       };
     }
-    this.props.saveContact(this.props.userData.domain, this.props.userData.token, contactToSave);
+    this.props.saveContact(
+      this.props.userData.domain,
+      this.props.userData.token,
+      contactToSave,
+    );
   };
 
   onFormatDateToView = (date) => {
@@ -882,21 +861,17 @@ class ContactDetailScreen extends React.Component {
   };
 
   onCheckExistingMilestone = (milestoneName) => {
-    const milestones = this.state.contact.milestones
-      ? [...this.state.contact.milestones.values]
-      : [];
+    const milestones = this.state.contact.milestones ? [...this.state.contact.milestones.values] : [];
     // get milestones that exist in the list and are not deleted
     const foundMilestone = milestones.some(
-      (milestone) => milestone.value === milestoneName && !milestone.delete,
+      milestone => (milestone.value === milestoneName && !milestone.delete),
     );
     return foundMilestone;
   };
 
   onMilestoneChange = (milestoneName) => {
-    const milestonesList = this.state.contact.milestones
-      ? [...this.state.contact.milestones.values]
-      : [];
-    const foundMilestone = milestonesList.find((milestone) => milestone.value === milestoneName);
+    const milestonesList = this.state.contact.milestones ? [...this.state.contact.milestones.values] : [];
+    const foundMilestone = milestonesList.find(milestone => milestone.value === milestoneName);
     if (foundMilestone) {
       const milestoneIndex = milestonesList.indexOf(foundMilestone);
       if (foundMilestone.delete) {
@@ -916,7 +891,7 @@ class ContactDetailScreen extends React.Component {
         value: milestoneName,
       });
     }
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         milestones: {
@@ -927,7 +902,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   setContactAge = (value) => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         age: value,
@@ -936,7 +911,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   setContactGender = (value) => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         gender: value,
@@ -947,65 +922,70 @@ class ContactDetailScreen extends React.Component {
   getCommentsAndActivities() {
     const { comments, activities } = this.state;
     const list = comments.concat(activities);
-    return list
-      .filter((item, index) => list.indexOf(item) === index)
-      .sort((a, b) => new Date(a.date).getTime() < new Date(b.date).getTime());
+    return list.filter((item, index) => list.indexOf(item) === index).sort(
+      (a, b) => new Date(a.date).getTime() < new Date(b.date).getTime(),
+    );
   }
 
   detailView = () => (
     <ScrollView
-      refreshControl={
+      refreshControl={(
         <RefreshControl
           refreshing={this.state.loading}
           onRefresh={() => this.onRefresh(this.state.contact.ID)}
         />
-      }>
+      )}
+    >
       <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
         <Row>
           <Col />
           <Col>
-            <Text
-              style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }}
-              onPress={() => this.onEnableEdit()}>
+            <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
               {i18n.t('global.edit')}
             </Text>
           </Col>
         </Row>
       </Grid>
-      <View style={[styles.formContainer, { paddingTop: 0 }]} pointerEvents="none">
+      <View
+        style={[styles.formContainer, { paddingTop: 0 }]}
+        pointerEvents="none"
+      >
         <Label
           style={{
-            color: Colors.tintColor,
-            fontSize: 12,
-            fontWeight: 'bold',
-            marginTop: 10,
-          }}>
+            color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
+          }}
+        >
           {this.props.contactSettings.fields.overall_status.name}
         </Label>
         <Row style={[styles.formRow, { paddingTop: 5 }]}>
           <Col>
             <Picker
-              selectedValue={this.state.contact.overall_status}
+              selectedValue={
+                this.state.contact.overall_status
+              }
               onValueChange={this.setContactStatus}
-              style={
-                Platform.OS === 'android'
-                  ? {
-                      color: '#ffffff',
-                      backgroundColor: this.state.overallStatusBackgroundColor,
-                    }
-                  : {
-                      backgroundColor: this.state.overallStatusBackgroundColor,
-                    }
-              }>
+              style={Platform.OS === 'android' ? {
+                color: '#ffffff',
+                backgroundColor: this.state.overallStatusBackgroundColor,
+              } : {
+                  backgroundColor: this.state.overallStatusBackgroundColor,
+                }}
+            >
               {this.renderStatusPickerItems()}
             </Picker>
           </Col>
         </Row>
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
+            <Icon
+              type="FontAwesome"
+              name="user-circle"
+              style={styles.formIcon}
+            />
           </Col>
-          <Col>{this.showAssignedUser()}</Col>
+          <Col>
+            {this.showAssignedUser()}
+          </Col>
           <Col style={styles.formParentLabel}>
             <Label style={styles.formLabel}>
               {this.props.contactSettings.fields.assigned_to.name}
@@ -1015,18 +995,15 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="Ionicons" name="md-people" style={styles.formIcon} />
+            <Icon
+              type="Ionicons"
+              name="md-people"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.subassigned
-                ? this.state.contact.subassigned.values
-                    .map(
-                      (contact) =>
-                        this.state.usersContacts.find((user) => user.value === contact.value).name,
-                    )
-                    .join(', ') + (this.state.contact.subassigned.values.length > 0 ? '.' : '')
-                : ''}
+              {this.state.contact.subassigned ? this.state.contact.subassigned.values.map(contact => this.state.usersContacts.find(user => user.value === contact.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1038,16 +1015,15 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="phone" style={styles.formIcon} />
+            <Icon
+              type="FontAwesome"
+              name="phone"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.contact_phone
-                ? this.state.contact.contact_phone
-                    .filter((phone) => !phone.delete)
-                    .map((phone) => phone.value)
-                    .join(', ') + (this.state.contact.contact_phone.length > 0 ? '.' : '')
-                : ''}
+              {this.state.contact.contact_phone ? this.state.contact.contact_phone.filter(phone => !phone.delete).map(phone => phone.value).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1057,16 +1033,15 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="envelope" style={styles.formIcon} />
+            <Icon
+              type="FontAwesome"
+              name="envelope"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.contact_email
-                ? this.state.contact.contact_email
-                    .filter((email) => !email.delete)
-                    .map((email) => email.value)
-                    .join(', ') + (this.state.contact.contact_email.length > 0 ? '.' : '')
-                : ''}
+              {this.state.contact.contact_email ? this.state.contact.contact_email.filter(email => !email.delete).map(email => email.value).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1076,26 +1051,31 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="Ionicons" name="chatboxes" style={styles.formIcon} />
+            <Icon
+              type="Ionicons"
+              name="chatboxes"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
-            {Object.keys(this.props.contactSettings.channels).map(
-              (channelName, channelNameIndex) => {
+            {
+              Object.keys(this.props.contactSettings.channels).map((channelName, channelNameIndex) => {
                 const channel = this.props.contactSettings.channels[channelName];
                 return (
                   <Col key={channelNameIndex.toString()}>
-                    {this.state.contact[`contact_${channelName}`]
-                      ? this.state.contact[
-                          `contact_${channelName}`
-                        ].map((socialMedia, socialMediaIndex) => (
+                    {
+                      this.state.contact[`contact_${channelName}`]
+                        ? this.state.contact[`contact_${channelName}`].map((socialMedia, socialMediaIndex) => (
                           <Text key={socialMediaIndex.toString()}>{socialMedia.value}</Text>
-                        ))
-                      : null}
-                    <Text style={styles.socialMediaNames}>{channel.label}</Text>
+                        )) : null
+                    }
+                    <Text style={styles.socialMediaNames}>
+                      {channel.label}
+                    </Text>
                   </Col>
                 );
-              },
-            )}
+              })
+            }
           </Col>
           <Col style={styles.formParentLabel}>
             <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.socialMedia')}</Label>
@@ -1104,16 +1084,15 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="Entypo" name="home" style={styles.formIcon} />
+            <Icon
+              type="Entypo"
+              name="home"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.contact_address
-                ? this.state.contact.contact_address
-                    .filter((address) => !address.delete)
-                    .map((address) => address.value)
-                    .join(', ') + (this.state.contact.contact_address.length > 0 ? '.' : '')
-                : ''}
+              {this.state.contact.contact_address ? this.state.contact.contact_address.filter(address => !address.delete).map(address => address.value).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1123,19 +1102,15 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="map-marker" style={styles.formIcon} />
+            <Icon
+              type="FontAwesome"
+              name="map-marker"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.location_grid
-                ? this.state.contact.location_grid.values
-                    .map(
-                      (location) =>
-                        this.state.geonames.find((geoname) => geoname.value === location.value)
-                          .name,
-                    )
-                    .join(', ') + (this.state.contact.location_grid.values.length > 0 ? '.' : '')
-                : ''}
+              {this.state.contact.location_grid ? this.state.contact.location_grid.values.map(location => this.state.geonames.find(geoname => geoname.value === location.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1147,19 +1122,15 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="globe" style={styles.formIcon} />
+            <Icon
+              type="FontAwesome"
+              name="globe"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.people_groups
-                ? this.state.contact.people_groups.values
-                    .map(
-                      (peopleGroup) =>
-                        this.state.peopleGroups.find((person) => person.value === peopleGroup.value)
-                          .name,
-                    )
-                    .join(', ') + (this.state.contact.people_groups.values.length > 0 ? '.' : '')
-                : ''}
+              {this.state.contact.people_groups ? this.state.contact.people_groups.values.map(peopleGroup => this.state.peopleGroups.find(person => person.value === peopleGroup.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1171,12 +1142,14 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="clock-o" style={styles.formIcon} />
+            <Icon
+              type="FontAwesome"
+              name="clock-o"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.age ? this.state.contact.age : ''}
-            </Text>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.age) ? this.state.contact.age : ''}</Text>
           </Col>
           <Col style={styles.formParentLabel}>
             <Label style={styles.formLabel}>{this.props.contactSettings.fields.age.name}</Label>
@@ -1185,14 +1158,14 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon android="md-male" ios="ios-male" style={styles.formIcon} />
+            <Icon
+              android="md-male"
+              ios="ios-male"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.gender
-                ? this.props.contactSettings.fields.gender.values[this.state.contact.gender].label
-                : ''}
-            </Text>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.gender) ? this.props.contactSettings.fields.gender.values[this.state.contact.gender].label : ''}</Text>
           </Col>
           <Col style={styles.formParentLabel}>
             <Label style={styles.formLabel}>{this.props.contactSettings.fields.gender.name}</Label>
@@ -1201,22 +1174,21 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon android="md-arrow-dropright" ios="ios-arrow-dropright" style={styles.formIcon} />
+            <Icon
+              android="md-arrow-dropright"
+              ios="ios-arrow-dropright"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.sources
-                ? `${this.state.contact.sources.values
-                    .map(
-                      (source) =>
-                        this.props.contactSettings.fields.sources.values[source.value].label,
-                    )
-                    .join(', ')}.`
-                : ''}
+              {this.state.contact.sources ? `${this.state.contact.sources.values.map(source => this.props.contactSettings.fields.sources.values[source.value].label).join(', ')}.` : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>{this.props.contactSettings.fields.sources.name}</Label>
+            <Label style={styles.formLabel}>
+              {this.props.contactSettings.fields.sources.name}
+            </Label>
           </Col>
         </Row>
         <View style={styles.formDivider} />
@@ -1226,20 +1198,21 @@ class ContactDetailScreen extends React.Component {
 
   progressView = () => (
     <ScrollView
-      refreshControl={
+      refreshControl={(
         <RefreshControl
           refreshing={this.state.loading}
           onRefresh={() => this.onRefresh(this.state.contact.ID)}
         />
-      }>
-      <View style={[styles.formContainer, { marginTop: 10 }]}>
+      )}
+    >
+      <View
+        style={[styles.formContainer, { marginTop: 10 }]}
+      >
         <Grid>
           <Row>
             <Col />
             <Col>
-              <Text
-                style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }}
-                onPress={() => this.onEnableEdit()}>
+              <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
                 {i18n.t('global.edit')}
               </Text>
             </Col>
@@ -1247,21 +1220,17 @@ class ContactDetailScreen extends React.Component {
         </Grid>
         <Row style={[styles.formRow, { paddingTop: 15 }]}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon android="md-calendar" ios="ios-calendar" style={styles.formIcon} />
+            <Icon
+              android="md-calendar"
+              ios="ios-calendar"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.seeker_path
-                ? this.props.contactSettings.fields.seeker_path.values[
-                    this.state.contact.seeker_path
-                  ].label
-                : ''}
-            </Text>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.seeker_path) ? this.props.contactSettings.fields.seeker_path.values[this.state.contact.seeker_path].label : ''}</Text>
           </Col>
           <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>
-              {this.props.contactSettings.fields.seeker_path.name}
-            </Label>
+            <Label style={styles.formLabel}>{this.props.contactSettings.fields.seeker_path.name}</Label>
           </Col>
         </Row>
         <View
@@ -1269,7 +1238,8 @@ class ContactDetailScreen extends React.Component {
             alignItems: 'center',
             marginTop: 5,
             marginBottom: 25,
-          }}>
+          }}
+        >
           <ProgressBarAnimated
             width={progressBarWidth}
             value={this.state.progressBarValue}
@@ -1277,7 +1247,12 @@ class ContactDetailScreen extends React.Component {
           />
         </View>
         <View style={styles.formDivider} />
-        <Label style={[styles.formLabel, { fontWeight: 'bold', marginBottom: 10, marginTop: 20 }]}>
+        <Label
+          style={[
+            styles.formLabel,
+            { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
+          ]}
+        >
           {this.props.contactSettings.fields.milestones.name}
         </Label>
         {this.renderfaithMilestones()}
@@ -1286,12 +1261,14 @@ class ContactDetailScreen extends React.Component {
           <View style={styles.formDivider} />
           <Row style={styles.formRow}>
             <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-              <Icon type="Entypo" name="water" style={styles.formIcon} />
+              <Icon
+                type="Entypo"
+                name="water"
+                style={styles.formIcon}
+              />
             </Col>
             <Col>
-              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                {this.state.contact.baptism_date ? this.state.contact.baptism_date : ''}
-              </Text>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.baptism_date) ? this.state.contact.baptism_date : ''}</Text>
             </Col>
             <Col style={styles.formIconLabel}>
               <Label style={[styles.label, styles.formLabel]}>
@@ -1302,7 +1279,7 @@ class ContactDetailScreen extends React.Component {
         </Grid>
       </View>
     </ScrollView>
-  );
+  )
 
   commentsView = () => (
     <View style={{ flex: 1 }}>
@@ -1329,16 +1306,20 @@ class ContactDetailScreen extends React.Component {
         keyExtractor={(item, index) => String(index)}
         renderItem={(item) => {
           const commentOrActivity = item.item;
-          return this.renderActivityOrCommentRow(commentOrActivity);
+          return this.renderActivityOrCommentRow(
+            commentOrActivity,
+          );
         }}
-        refreshControl={
+        refreshControl={(
           <RefreshControl
-            refreshing={this.state.loadComments || this.state.loadActivities}
+            refreshing={(this.state.loadComments || this.state.loadActivities)}
             onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID)}
           />
-        }
+        )}
         onScroll={({ nativeEvent }) => {
-          const { loadingMoreComments, commentsOffset, activitiesOffset } = this.state;
+          const {
+            loadingMoreComments, commentsOffset, activitiesOffset,
+          } = this.state;
           const flatList = nativeEvent;
           const contentOffsetY = flatList.contentOffset.y;
           const layoutMeasurementHeight = flatList.layoutMeasurement.height;
@@ -1349,26 +1330,20 @@ class ContactDetailScreen extends React.Component {
           if (distanceToStart < 100) {
             if (!loadingMoreComments) {
               if (commentsOffset < this.state.totalComments) {
-                this.setState(
-                  {
-                    loadingMoreComments: true,
-                  },
-                  () => {
-                    this.getContactComments(this.state.contact.ID);
-                  },
-                );
+                this.setState({
+                  loadingMoreComments: true,
+                }, () => {
+                  this.getContactComments(this.state.contact.ID);
+                });
               }
             }
             if (!this.state.loadingMoreActivities) {
               if (activitiesOffset < this.state.totalActivities) {
-                this.setState(
-                  {
-                    loadingMoreActivities: true,
-                  },
-                  () => {
-                    this.getContactActivities(this.state.contact.ID);
-                  },
-                );
+                this.setState({
+                  loadingMoreActivities: true,
+                }, () => {
+                  this.getContactActivities(this.state.contact.ID);
+                });
               }
             }
           }
@@ -1379,7 +1354,8 @@ class ContactDetailScreen extends React.Component {
           style={{
             backgroundColor: 'white',
             flexDirection: 'row',
-          }}>
+          }}
+        >
           <TextInput
             placeholder={i18n.t('global.writeYourCommentNoteHere')}
             value={this.state.comment}
@@ -1396,41 +1372,44 @@ class ContactDetailScreen extends React.Component {
           />
           <TouchableOpacity
             onPress={() => this.onSaveComment()}
-            style={[
-              {
-                backgroundColor: Colors.tintColor,
-                borderRadius: 80,
-                height: 40,
-                margin: 10,
-                paddingTop: 7,
-                width: 40,
-              },
-              i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
-            ]}>
-            <Icon android="md-send" ios="ios-send" style={{ color: 'white', fontSize: 25 }} />
+            style={[{
+              backgroundColor: Colors.tintColor,
+              borderRadius: 80,
+              height: 40,
+              margin: 10,
+              paddingTop: 7,
+              width: 40,
+            }, i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 }]}
+          >
+            <Icon
+              android="md-send"
+              ios="ios-send"
+              style={{ color: 'white', fontSize: 25 }}
+            />
           </TouchableOpacity>
         </View>
       </KeyboardAccessory>
     </View>
-  );
+  )
 
   connectionsView = () => (
     <ScrollView
       keyboardShouldPersistTaps="handled"
-      refreshControl={
+      refreshControl={(
         <RefreshControl
           refreshing={this.state.loading}
           onRefresh={() => this.onRefresh(this.state.contact.ID)}
         />
-      }>
-      <View style={[styles.formContainer, { marginTop: 10 }]}>
+      )}
+    >
+      <View
+        style={[styles.formContainer, { marginTop: 10 }]}
+      >
         <Grid>
           <Row>
             <Col />
             <Col>
-              <Text
-                style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }}
-                onPress={() => this.onEnableEdit()}>
+              <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
                 {i18n.t('global.edit')}
               </Text>
             </Col>
@@ -1438,39 +1417,35 @@ class ContactDetailScreen extends React.Component {
         </Grid>
         <Row style={[styles.formRow, { paddingTop: 15 }]}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="users" style={styles.formIcon} />
+            <Icon
+              type="FontAwesome"
+              name="users"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.groups
-                ? this.state.contact.groups.values
-                    .map(
-                      (group) =>
-                        this.state.groups.find((groupItem) => groupItem.value === group.value).name,
-                    )
-                    .join(', ') + (this.state.contact.groups.values.length > 0 ? '.' : '')
-                : ''}
+              {this.state.contact.groups ? this.state.contact.groups.values.map(group => this.state.groups.find(groupItem => groupItem.value === group.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>{this.props.contactSettings.fields.groups.name}</Label>
+            <Label style={styles.formLabel}>
+              {this.props.contactSettings.fields.groups.name}
+            </Label>
           </Col>
         </Row>
         <View style={styles.formDivider} />
         <Row style={[styles.formRow, { paddingTop: 15 }]}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="Entypo" name="network" style={styles.formIcon} />
+            <Icon
+              type="Entypo"
+              name="network"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.relation
-                ? this.state.contact.relation.values
-                    .map(
-                      (relation) =>
-                        this.state.usersContacts.find((user) => user.value === relation.value).name,
-                    )
-                    .join(', ') + (this.state.contact.relation.values.length > 0 ? '.' : '')
-                : ''}
+              {this.state.contact.relation ? this.state.contact.relation.values.map(relation => this.state.usersContacts.find(user => user.value === relation.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1482,19 +1457,15 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={[styles.formRow, { paddingTop: 15 }]}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="Entypo" name="water" style={styles.formIcon} />
+            <Icon
+              type="Entypo"
+              name="water"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.baptized_by
-                ? this.state.contact.baptized_by.values
-                    .map(
-                      (baptizedBy) =>
-                        this.state.usersContacts.find((user) => user.value === baptizedBy.value)
-                          .name,
-                    )
-                    .join(', ') + (this.state.contact.baptized_by.values.length > 0 ? '.' : '')
-                : ''}
+              {this.state.contact.baptized_by ? this.state.contact.baptized_by.values.map(baptizedBy => this.state.usersContacts.find(user => user.value === baptizedBy.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1506,18 +1477,15 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={[styles.formRow, { paddingTop: 15 }]}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="Entypo" name="water" style={styles.formIcon} />
+            <Icon
+              type="Entypo"
+              name="water"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.baptized
-                ? this.state.contact.baptized.values
-                    .map(
-                      (baptized) =>
-                        this.state.usersContacts.find((user) => user.value === baptized.value).name,
-                    )
-                    .join(', ') + (this.state.contact.baptized.values.length > 0 ? '.' : '')
-                : ''}
+              {this.state.contact.baptized ? this.state.contact.baptized.values.map(baptized => this.state.usersContacts.find(user => user.value === baptized.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1529,19 +1497,15 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={[styles.formRow, { paddingTop: 15 }]}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="black-tie" style={styles.formIcon} />
+            <Icon
+              type="FontAwesome"
+              name="black-tie"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.coached_by
-                ? this.state.contact.coached_by.values
-                    .map(
-                      (coachedBy) =>
-                        this.state.usersContacts.find((user) => user.value === coachedBy.value)
-                          .name,
-                    )
-                    .join(', ') + (this.state.contact.coached_by.values.length > 0 ? '.' : '')
-                : ''}
+              {this.state.contact.coached_by ? this.state.contact.coached_by.values.map(coachedBy => this.state.usersContacts.find(user => user.value === coachedBy.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1553,18 +1517,15 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={[styles.formRow, { paddingTop: 15 }]}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="MaterialCommunityIcons" name="presentation" style={styles.formIcon} />
+            <Icon
+              type="MaterialCommunityIcons"
+              name="presentation"
+              style={styles.formIcon}
+            />
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.coaching
-                ? this.state.contact.coaching.values
-                    .map(
-                      (coaching) =>
-                        this.state.usersContacts.find((user) => user.value === coaching.value).name,
-                    )
-                    .join(', ') + (this.state.contact.coaching.values.length > 0 ? '.' : '')
-                : ''}
+              {this.state.contact.coaching ? this.state.contact.coaching.values.map(coaching => this.state.usersContacts.find(user => user.value === coaching.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1576,18 +1537,33 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
       </View>
     </ScrollView>
-  );
+  )
 
   transformContactObject = (contact, quickAction = {}) => {
     let transformedContact = {
       ...contact,
     };
     if (
-      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_no_answer') ||
-      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_contact_established') ||
-      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_scheduled') ||
-      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_complete') ||
-      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_no_show')
+      Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_no_answer',
+      )
+      || Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_contact_established',
+      )
+      || Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_meeting_scheduled',
+      )
+      || Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_meeting_complete',
+      )
+      || Object.prototype.hasOwnProperty.call(
+        quickAction,
+        'quick_button_no_show',
+      )
     ) {
       transformedContact = {
         ...transformedContact,
@@ -1599,10 +1575,7 @@ class ContactDetailScreen extends React.Component {
         transformedContact = {
           ...transformedContact,
           subassigned: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.subassigned ? transformedContact.subassigned.values : [],
-              subAssignedSelectizeRef,
-            ),
+            values: this.getSelectizeValuesToSave((transformedContact.subassigned) ? transformedContact.subassigned.values : [], subAssignedSelectizeRef),
           },
         };
       }
@@ -1610,10 +1583,7 @@ class ContactDetailScreen extends React.Component {
         transformedContact = {
           ...transformedContact,
           location_grid: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.location_grid ? transformedContact.location_grid.values : [],
-              geonamesSelectizeRef,
-            ),
+            values: this.getSelectizeValuesToSave((transformedContact.location_grid) ? transformedContact.location_grid.values : [], geonamesSelectizeRef),
           },
         };
       }
@@ -1621,10 +1591,7 @@ class ContactDetailScreen extends React.Component {
         transformedContact = {
           ...transformedContact,
           people_groups: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.people_groups ? transformedContact.people_groups.values : [],
-              peopleGroupsSelectizeRef,
-            ),
+            values: this.getSelectizeValuesToSave((transformedContact.people_groups) ? transformedContact.people_groups.values : [], peopleGroupsSelectizeRef),
           },
         };
       }
@@ -1632,10 +1599,7 @@ class ContactDetailScreen extends React.Component {
         transformedContact = {
           ...transformedContact,
           sources: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.sources ? transformedContact.sources.values : [],
-              sourcesSelectizeRef,
-            ),
+            values: this.getSelectizeValuesToSave((transformedContact.sources) ? transformedContact.sources.values : [], sourcesSelectizeRef),
           },
         };
       }
@@ -1643,10 +1607,7 @@ class ContactDetailScreen extends React.Component {
         transformedContact = {
           ...transformedContact,
           groups: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.groups ? transformedContact.groups.values : [],
-              groupsSelectizeRef,
-            ),
+            values: this.getSelectizeValuesToSave((transformedContact.groups) ? transformedContact.groups.values : [], groupsSelectizeRef),
           },
         };
       }
@@ -1654,10 +1615,7 @@ class ContactDetailScreen extends React.Component {
         transformedContact = {
           ...transformedContact,
           relation: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.relation ? transformedContact.relation.values : [],
-              connectionsSelectizeRef,
-            ),
+            values: this.getSelectizeValuesToSave((transformedContact.relation) ? transformedContact.relation.values : [], connectionsSelectizeRef),
           },
         };
       }
@@ -1665,10 +1623,7 @@ class ContactDetailScreen extends React.Component {
         transformedContact = {
           ...transformedContact,
           baptized_by: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.baptized_by ? transformedContact.baptized_by.values : [],
-              baptizedBySelectizeRef,
-            ),
+            values: this.getSelectizeValuesToSave((transformedContact.baptized_by) ? transformedContact.baptized_by.values : [], baptizedBySelectizeRef),
           },
         };
       }
@@ -1676,10 +1631,7 @@ class ContactDetailScreen extends React.Component {
         transformedContact = {
           ...transformedContact,
           baptized: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.baptized ? transformedContact.baptized.values : [],
-              baptizedSelectizeRef,
-            ),
+            values: this.getSelectizeValuesToSave((transformedContact.baptized) ? transformedContact.baptized.values : [], baptizedSelectizeRef),
           },
         };
       }
@@ -1687,10 +1639,7 @@ class ContactDetailScreen extends React.Component {
         transformedContact = {
           ...transformedContact,
           coached_by: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.coached_by ? transformedContact.coached_by.values : [],
-              coachedSelectizeRef,
-            ),
+            values: this.getSelectizeValuesToSave((transformedContact.coached_by) ? transformedContact.coached_by.values : [], coachedSelectizeRef),
           },
         };
       }
@@ -1698,18 +1647,15 @@ class ContactDetailScreen extends React.Component {
         transformedContact = {
           ...transformedContact,
           coaching: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.coaching ? transformedContact.coaching.values : [],
-              coachingSelectizeRef,
-            ),
+            values: this.getSelectizeValuesToSave((transformedContact.coaching) ? transformedContact.coaching.values : [], coachingSelectizeRef),
           },
         };
       }
     }
     return transformedContact;
-  };
+  }
 
-  renderActivityOrCommentRow = (commentOrActivity) => (
+  renderActivityOrCommentRow = commentOrActivity => (
     <View
       style={{
         paddingLeft: 19,
@@ -1717,7 +1663,8 @@ class ContactDetailScreen extends React.Component {
         paddingVertical: 12,
         flexDirection: 'row',
         alignItems: 'flex-start',
-      }}>
+      }}
+    >
       <Image
         style={{
           height: 16,
@@ -1733,75 +1680,98 @@ class ContactDetailScreen extends React.Component {
           flex: 1,
           marginLeft: 16,
           padding: 10,
-        }}>
+        }}
+      >
         <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
             marginBottom: 6,
-          }}>
-          {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') && (
-            <Grid>
-              <Row>
-                <Col>
-                  <Text style={styles.name}>{commentOrActivity.author}</Text>
-                </Col>
-                <Col style={{ width: 110 }}>
-                  <Text style={styles.time}>{this.onFormatDateToView(commentOrActivity.date)}</Text>
-                </Col>
-              </Row>
-            </Grid>
-          )}
-          {Object.prototype.hasOwnProperty.call(commentOrActivity, 'object_note') && (
-            <Grid>
-              <Row>
-                <Col>
-                  <Text style={styles.name}>{commentOrActivity.name}</Text>
-                </Col>
-                <Col style={{ width: 110 }}>
-                  <Text style={styles.time}>{this.onFormatDateToView(commentOrActivity.date)}</Text>
-                </Col>
-              </Row>
-            </Grid>
-          )}
+          }}
+        >
+          {Object.prototype.hasOwnProperty.call(
+            commentOrActivity,
+            'content',
+          ) && (
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.author}</Text>
+                  </Col>
+                  <Col style={{ width: 110 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
+          {Object.prototype.hasOwnProperty.call(
+            commentOrActivity,
+            'object_note',
+          ) && (
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text style={styles.name}>{commentOrActivity.name}</Text>
+                  </Col>
+                  <Col style={{ width: 110 }}>
+                    <Text style={styles.time}>
+                      {this.onFormatDateToView(commentOrActivity.date)}
+                    </Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
         </View>
         <Text
           style={
             commentOrActivity.content
               ? {
-                  paddingLeft: 10,
-                  paddingRight: 10,
-                }
+                paddingLeft: 10,
+                paddingRight: 10,
+              }
               : {
-                  paddingLeft: 10,
-                  paddingRight: 10,
-                  color: '#B4B4B4',
-                  fontStyle: 'italic',
-                }
-          }>
+                paddingLeft: 10,
+                paddingRight: 10,
+                color: '#B4B4B4',
+                fontStyle: 'italic',
+              }
+          }
+        >
           {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
             ? commentOrActivity.content
             : commentOrActivity.object_note}
         </Text>
       </View>
     </View>
-  );
+  )
 
-  renderSourcePickerItems = () =>
-    Object.keys(this.props.contactSettings.fields.sources.values).map((key) => {
-      const optionData = this.props.contactSettings.fields.sources.values[key];
-      return <Picker.Item key={key} label={optionData.label} value={key} />;
-    });
+  renderSourcePickerItems = () => Object.keys(this.props.contactSettings.fields.sources.values).map((key) => {
+    const optionData = this.props.contactSettings.fields.sources.values[key];
+    return (
+      <Picker.Item
+        key={key}
+        label={optionData.label}
+        value={key}
+      />
+    );
+  });
 
-  renderStatusPickerItems = () =>
-    Object.keys(this.props.contactSettings.fields.overall_status.values).map((key) => {
-      const optionData = this.props.contactSettings.fields.overall_status.values[key];
-      return <Picker.Item key={key} label={optionData.label} value={key} />;
-    });
+  renderStatusPickerItems = () => Object.keys(this.props.contactSettings.fields.overall_status.values).map((key) => {
+    const optionData = this.props.contactSettings.fields.overall_status.values[key];
+    return (
+      <Picker.Item
+        key={key}
+        label={optionData.label}
+        value={key}
+      />
+    );
+  });
 
   tabChanged = (index) => {
     this.props.navigation.setParams({ hideTabBar: index === 2 });
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       tabViewConfig: {
         ...prevState.tabViewConfig,
         index,
@@ -1811,13 +1781,11 @@ class ContactDetailScreen extends React.Component {
   };
 
   onAddPhoneField = () => {
-    const contactPhones = this.state.contact.contact_phone
-      ? [...this.state.contact.contact_phone]
-      : [];
+    const contactPhones = (this.state.contact.contact_phone) ? [...this.state.contact.contact_phone] : [];
     contactPhones.push({
       value: '',
     });
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         contact_phone: contactPhones,
@@ -1843,7 +1811,7 @@ class ContactDetailScreen extends React.Component {
     phoneAddressList[index] = {
       ...contactPhone,
     };
-    component.setState((prevState) => ({
+    component.setState(prevState => ({
       contact: {
         ...prevState.contact,
         contact_phone: phoneAddressList,
@@ -1863,7 +1831,7 @@ class ContactDetailScreen extends React.Component {
     } else {
       contactPhoneList.splice(index, 1);
     }
-    component.setState((prevState) => ({
+    component.setState(prevState => ({
       contact: {
         ...prevState.contact,
         contact_phone: contactPhoneList,
@@ -1872,11 +1840,11 @@ class ContactDetailScreen extends React.Component {
   };
 
   onAddEmailField = () => {
-    const contactEmails = this.state.contact.contact_email ? this.state.contact.contact_email : [];
+    const contactEmails = (this.state.contact.contact_email) ? this.state.contact.contact_email : [];
     contactEmails.push({
       value: '',
     });
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         contact_email: contactEmails,
@@ -1902,7 +1870,7 @@ class ContactDetailScreen extends React.Component {
     contactEmailList[index] = {
       ...contactEmail,
     };
-    component.setState((prevState) => ({
+    component.setState(prevState => ({
       ...prevState,
       contact: {
         ...prevState.contact,
@@ -1923,7 +1891,7 @@ class ContactDetailScreen extends React.Component {
     } else {
       contactEmailList.splice(index, 1);
     }
-    component.setState((prevState) => ({
+    component.setState(prevState => ({
       contact: {
         ...prevState.contact,
         contact_email: contactEmailList,
@@ -1932,13 +1900,11 @@ class ContactDetailScreen extends React.Component {
   };
 
   onAddAddressField = () => {
-    const contactAddress = this.state.contact.contact_address
-      ? this.state.contact.contact_address
-      : [];
+    const contactAddress = (this.state.contact.contact_address) ? this.state.contact.contact_address : [];
     contactAddress.push({
       value: '',
     });
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         contact_address: contactAddress,
@@ -1964,7 +1930,7 @@ class ContactDetailScreen extends React.Component {
     contactAddressList[index] = {
       ...contactAddress,
     };
-    component.setState((prevState) => ({
+    component.setState(prevState => ({
       contact: {
         ...prevState.contact,
         contact_address: contactAddressList,
@@ -1984,7 +1950,7 @@ class ContactDetailScreen extends React.Component {
     } else {
       contactAddressList.splice(index, 1);
     }
-    component.setState((prevState) => ({
+    component.setState(prevState => ({
       contact: {
         ...prevState.contact,
         contact_address: contactAddressList,
@@ -1999,7 +1965,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   onSelectAssignedTo = (key) => {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         assigned_to: `user-${key}`,
@@ -2016,24 +1982,16 @@ class ContactDetailScreen extends React.Component {
 
   showAssignedUser = () => {
     const foundUser = this.state.users.find(
-      (user) => `user-${user.key}` === this.state.contact.assigned_to,
+      user => `user-${user.key}` === this.state.contact.assigned_to,
     );
-    return (
-      <Text style={{ marginTop: 'auto', marginBottom: 'auto', fontSize: 15 }}>
-        {foundUser ? foundUser.label : ''}
-      </Text>
-    );
+    return <Text style={{ marginTop: 'auto', marginBottom: 'auto', fontSize: 15 }}>{foundUser ? foundUser.label : ''}</Text>;
   };
 
-  socialMediaKeyIsDB = (key) => key;
+  socialMediaKeyIsDB = key => (key)
 
   changeContactSocialMediaType = (value, fieldName, index, component) => {
-    const oldList = component.state.contact[fieldName]
-      ? [...component.state.contact[fieldName]]
-      : [];
-    const newList = component.state.contact[`contact_${value}`]
-      ? [...component.state.contact[`contact_${value}`]]
-      : [];
+    const oldList = (component.state.contact[fieldName]) ? [...component.state.contact[fieldName]] : [];
+    const newList = (component.state.contact[`contact_${value}`]) ? [...component.state.contact[`contact_${value}`]] : [];
     // Remove object from oldList
     const socialMedia = { ...oldList[index] };
     if (socialMedia.key) {
@@ -2046,14 +2004,14 @@ class ContactDetailScreen extends React.Component {
       oldList.splice(index, 1);
     }
     newList.unshift(socialMedia);
-    component.setState((prevState) => ({
+    component.setState(prevState => ({
       contact: {
         ...prevState.contact,
         [fieldName]: oldList,
         [`contact_${value}`]: newList,
       },
     }));
-  };
+  }
 
   onRemoveSocialMediaField = (fieldName, index, component) => {
     const socialMediaList = [...component.state.contact[fieldName]];
@@ -2067,13 +2025,13 @@ class ContactDetailScreen extends React.Component {
     } else {
       socialMediaList.splice(index, 1);
     }
-    component.setState((prevState) => ({
+    component.setState(prevState => ({
       contact: {
         ...prevState.contact,
         [fieldName]: socialMediaList,
       },
     }));
-  };
+  }
 
   onSocialMediaFieldChange = (value, fieldName, index, dbIndex, component) => {
     const socialMediaList = [...component.state.contact[fieldName]];
@@ -2090,28 +2048,26 @@ class ContactDetailScreen extends React.Component {
     socialMediaList[index] = {
       ...socialMediaElement,
     };
-    component.setState((prevState) => ({
+    component.setState(prevState => ({
       contact: {
         ...prevState.contact,
         [fieldName]: socialMediaList,
       },
     }));
-  };
+  }
 
   onAddSocialMediaField = () => {
-    const contactSocialMediaFacebookList = this.state.contact.contact_facebook
-      ? [...this.state.contact.contact_facebook]
-      : [];
+    const contactSocialMediaFacebookList = (this.state.contact.contact_facebook) ? [...this.state.contact.contact_facebook] : [];
     contactSocialMediaFacebookList.push({
       value: '',
     });
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contact: {
         ...prevState.contact,
         contact_facebook: contactSocialMediaFacebookList,
       },
     }));
-  };
+  }
 
   renderfaithMilestones() {
     return (
@@ -2119,7 +2075,8 @@ class ContactDetailScreen extends React.Component {
         pointerEvents={this.state.onlyView ? 'none' : 'auto'}
         style={{
           height: milestonesGridSize,
-        }}>
+        }}
+      >
         <Row size={7}>
           <Col size={1} />
           <Col size={5}>
@@ -2128,14 +2085,17 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_has_bible');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}>
+              style={styles.progressIcon}
+            >
               <Col>
                 <Row size={3}>
                   <Image
                     source={hasBibleIcon}
                     style={[
                       styles.progressIcon,
-                      this.onCheckExistingMilestone('milestone_has_bible')
+                      this.onCheckExistingMilestone(
+                        'milestone_has_bible',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
                     ]}
@@ -2145,10 +2105,13 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       styles.progressIconText,
-                      this.onCheckExistingMilestone('milestone_has_bible')
+                      this.onCheckExistingMilestone(
+                        'milestone_has_bible',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}>
+                    ]}
+                  >
                     {this.props.contactSettings.fields.milestones.values.milestone_has_bible.label}
                   </Text>
                 </Row>
@@ -2159,17 +2122,22 @@ class ContactDetailScreen extends React.Component {
           <Col size={5}>
             <TouchableOpacity
               onPress={() => {
-                this.onMilestoneChange('milestone_reading_bible');
+                this.onMilestoneChange(
+                  'milestone_reading_bible',
+                );
               }}
               activeOpacity={1}
-              style={styles.progressIcon}>
+              style={styles.progressIcon}
+            >
               <Col>
                 <Row size={3}>
                   <Image
                     source={readingBibleIcon}
                     style={[
                       styles.progressIcon,
-                      this.onCheckExistingMilestone('milestone_reading_bible')
+                      this.onCheckExistingMilestone(
+                        'milestone_reading_bible',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
                     ]}
@@ -2179,14 +2147,14 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       styles.progressIconText,
-                      this.onCheckExistingMilestone('milestone_reading_bible')
+                      this.onCheckExistingMilestone(
+                        'milestone_reading_bible',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}>
-                    {
-                      this.props.contactSettings.fields.milestones.values.milestone_reading_bible
-                        .label
-                    }
+                    ]}
+                  >
+                    {this.props.contactSettings.fields.milestones.values.milestone_reading_bible.label}
                   </Text>
                 </Row>
               </Col>
@@ -2199,14 +2167,17 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_belief');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}>
+              style={styles.progressIcon}
+            >
               <Col>
                 <Row size={3}>
                   <Image
                     source={statesBeliefIcon}
                     style={[
                       styles.progressIcon,
-                      this.onCheckExistingMilestone('milestone_belief')
+                      this.onCheckExistingMilestone(
+                        'milestone_belief',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
                     ]}
@@ -2216,10 +2187,13 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       styles.progressIconText,
-                      this.onCheckExistingMilestone('milestone_belief')
+                      this.onCheckExistingMilestone(
+                        'milestone_belief',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}>
+                    ]}
+                  >
                     {this.props.contactSettings.fields.milestones.values.milestone_belief.label}
                   </Text>
                 </Row>
@@ -2237,14 +2211,17 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_can_share');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}>
+              style={styles.progressIcon}
+            >
               <Col>
                 <Row size={7}>
                   <Image
                     source={canShareGospelIcon}
                     style={[
                       styles.progressIcon,
-                      this.onCheckExistingMilestone('milestone_can_share')
+                      this.onCheckExistingMilestone(
+                        'milestone_can_share',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
                     ]}
@@ -2254,10 +2231,13 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       styles.progressIconText,
-                      this.onCheckExistingMilestone('milestone_can_share')
+                      this.onCheckExistingMilestone(
+                        'milestone_can_share',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}>
+                    ]}
+                  >
                     {this.props.contactSettings.fields.milestones.values.milestone_can_share.label}
                   </Text>
                 </Row>
@@ -2271,14 +2251,17 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_sharing');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}>
+              style={styles.progressIcon}
+            >
               <Col>
                 <Row size={7}>
                   <Image
                     source={sharingTheGospelIcon}
                     style={[
                       styles.progressIcon,
-                      this.onCheckExistingMilestone('milestone_sharing')
+                      this.onCheckExistingMilestone(
+                        'milestone_sharing',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
                     ]}
@@ -2288,10 +2271,13 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       styles.progressIconText,
-                      this.onCheckExistingMilestone('milestone_sharing')
+                      this.onCheckExistingMilestone(
+                        'milestone_sharing',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}>
+                    ]}
+                  >
                     {this.props.contactSettings.fields.milestones.values.milestone_sharing.label}
                   </Text>
                 </Row>
@@ -2305,14 +2291,17 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_baptized');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}>
+              style={styles.progressIcon}
+            >
               <Col>
                 <Row size={7}>
                   <Image
                     source={baptizedIcon}
                     style={[
                       styles.progressIcon,
-                      this.onCheckExistingMilestone('milestone_baptized')
+                      this.onCheckExistingMilestone(
+                        'milestone_baptized',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
                     ]}
@@ -2322,10 +2311,13 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       styles.progressIconText,
-                      this.onCheckExistingMilestone('milestone_baptized')
+                      this.onCheckExistingMilestone(
+                        'milestone_baptized',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}>
+                    ]}
+                  >
                     {this.props.contactSettings.fields.milestones.values.milestone_baptized.label}
                   </Text>
                 </Row>
@@ -2343,14 +2335,17 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_baptizing');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}>
+              style={styles.progressIcon}
+            >
               <Col>
                 <Row size={3}>
                   <Image
                     source={baptizingIcon}
                     style={[
                       styles.progressIcon,
-                      this.onCheckExistingMilestone('milestone_baptizing')
+                      this.onCheckExistingMilestone(
+                        'milestone_baptizing',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
                     ]}
@@ -2360,10 +2355,13 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       styles.progressIconText,
-                      this.onCheckExistingMilestone('milestone_baptizing')
+                      this.onCheckExistingMilestone(
+                        'milestone_baptizing',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}>
+                    ]}
+                  >
                     {this.props.contactSettings.fields.milestones.values.milestone_baptizing.label}
                   </Text>
                 </Row>
@@ -2377,14 +2375,17 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_in_group');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}>
+              style={styles.progressIcon}
+            >
               <Col>
                 <Row size={3}>
                   <Image
                     source={inChurchIcon}
                     style={[
                       styles.progressIcon,
-                      this.onCheckExistingMilestone('milestone_in_group')
+                      this.onCheckExistingMilestone(
+                        'milestone_in_group',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
                     ]}
@@ -2394,10 +2395,13 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       styles.progressIconText,
-                      this.onCheckExistingMilestone('milestone_in_group')
+                      this.onCheckExistingMilestone(
+                        'milestone_in_group',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}>
+                    ]}
+                  >
                     {this.props.contactSettings.fields.milestones.values.milestone_in_group.label}
                   </Text>
                 </Row>
@@ -2411,14 +2415,17 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_planting');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}>
+              style={styles.progressIcon}
+            >
               <Col>
                 <Row size={3}>
                   <Image
                     source={startingChurchesIcon}
                     style={[
                       styles.progressIcon,
-                      this.onCheckExistingMilestone('milestone_planting')
+                      this.onCheckExistingMilestone(
+                        'milestone_planting',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
                     ]}
@@ -2428,10 +2435,13 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       styles.progressIconText,
-                      this.onCheckExistingMilestone('milestone_planting')
+                      this.onCheckExistingMilestone(
+                        'milestone_planting',
+                      )
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}>
+                    ]}
+                  >
                     {this.props.contactSettings.fields.milestones.values.milestone_planting.label}
                   </Text>
                 </Row>
@@ -2446,9 +2456,7 @@ class ContactDetailScreen extends React.Component {
 
   renderCustomFaithMilestones() {
     const milestoneList = Object.keys(this.props.contactSettings.fields.milestones.values);
-    const customMilestones = milestoneList.filter(
-      (milestoneItem) => defaultFaithMilestones.indexOf(milestoneItem) < 0,
-    );
+    const customMilestones = milestoneList.filter(milestoneItem => defaultFaithMilestones.indexOf(milestoneItem) < 0);
     const rows = [];
     let columnsByRow = [];
     customMilestones.forEach((value, index) => {
@@ -2465,18 +2473,15 @@ class ContactDetailScreen extends React.Component {
               underlayColor={this.onCheckExistingMilestone(value) ? Colors.tintColor : Colors.gray}
               style={{
                 borderRadius: 10,
-                backgroundColor: this.onCheckExistingMilestone(value)
-                  ? Colors.tintColor
-                  : Colors.gray,
+                backgroundColor: this.onCheckExistingMilestone(value) ? Colors.tintColor : Colors.gray,
                 padding: 10,
-              }}>
+              }}
+            >
               <Text
-                style={[
-                  styles.progressIconText,
-                  {
-                    color: this.onCheckExistingMilestone(value) ? '#FFFFFF' : '#000000',
-                  },
-                ]}>
+                style={[styles.progressIconText, {
+                  color: this.onCheckExistingMilestone(value) ? '#FFFFFF' : '#000000',
+                }]}
+              >
                 {this.props.contactSettings.fields.milestones.values[value].label}
               </Text>
             </TouchableOpacity>
@@ -2506,18 +2511,15 @@ class ContactDetailScreen extends React.Component {
               underlayColor={this.onCheckExistingMilestone(value) ? Colors.tintColor : Colors.gray}
               style={{
                 borderRadius: 10,
-                backgroundColor: this.onCheckExistingMilestone(value)
-                  ? Colors.tintColor
-                  : Colors.gray,
+                backgroundColor: this.onCheckExistingMilestone(value) ? Colors.tintColor : Colors.gray,
                 padding: 10,
-              }}>
+              }}
+            >
               <Text
-                style={[
-                  styles.progressIconText,
-                  {
-                    color: this.onCheckExistingMilestone(value) ? '#FFFFFF' : '#000000',
-                  },
-                ]}>
+                style={[styles.progressIconText, {
+                  color: this.onCheckExistingMilestone(value) ? '#FFFFFF' : '#000000',
+                }]}
+              >
                 {this.props.contactSettings.fields.milestones.values[value].label}
               </Text>
             </TouchableHighlight>
@@ -2525,23 +2527,33 @@ class ContactDetailScreen extends React.Component {
         );
       }
     });
-    return <Grid pointerEvents={this.state.onlyView ? 'none' : 'auto'}>{rows}</Grid>;
+    return (
+      <Grid pointerEvents={this.state.onlyView ? 'none' : 'auto'}>
+        {rows}
+      </Grid>
+    );
   }
 
-  renderSocialMediaPickerItems = () =>
-    Object.keys(this.props.contactSettings.channels).map((channelName, index) => (
-      <Picker.Item
-        key={index.toString()}
-        label={this.props.contactSettings.channels[channelName].label}
-        value={this.props.contactSettings.channels[channelName].value}
-      />
-    ));
+  renderSocialMediaPickerItems = () => Object.keys(this.props.contactSettings.channels).map((channelName, index) => (
+    <Picker.Item
+      key={index.toString()}
+      label={this.props.contactSettings.channels[channelName].label}
+      value={this.props.contactSettings.channels[channelName].value}
+    />
+  ))
 
   renderSocialMediaField = (socialMediaIndex, socialMedia, propertyName, channelName) => (
-    <Row key={socialMediaIndex.toString()} style={{ marginTop: 10, marginBottom: 10 }}>
+    <Row
+      key={socialMediaIndex.toString()}
+      style={{ marginTop: 10, marginBottom: 10 }}
+    >
       <Col style={styles.formIconLabelCol}>
         <View style={styles.formIconLabelView}>
-          <Icon type="Ionicons" name="chatboxes" style={[styles.formIcon, { opacity: 0 }]} />
+          <Icon
+            type="Ionicons"
+            name="chatboxes"
+            style={[styles.formIcon, { opacity: 0 }]}
+          />
         </View>
       </Col>
       <Col>
@@ -2573,7 +2585,8 @@ class ContactDetailScreen extends React.Component {
               this.changeContactSocialMediaType(value, propertyName, socialMediaIndex, this);
             }}
             selectedValue={socialMedia.key ? propertyName.replace('contact_', '') : channelName}
-            enabled={!socialMedia.key}>
+            enabled={!(socialMedia.key)}
+          >
             {this.renderSocialMediaPickerItems()}
           </Picker>
         </Row>
@@ -2584,12 +2597,16 @@ class ContactDetailScreen extends React.Component {
           ios="ios-remove"
           style={[styles.formIcon, styles.addRemoveIcons, { marginTop: 5 }]}
           onPress={() => {
-            this.onRemoveSocialMediaField(propertyName, socialMediaIndex, this);
+            this.onRemoveSocialMediaField(
+              propertyName,
+              socialMediaIndex,
+              this,
+            );
           }}
         />
       </Col>
     </Row>
-  );
+  )
 
   render() {
     const successToast = (
@@ -2620,7 +2637,7 @@ class ContactDetailScreen extends React.Component {
                   <View style={{ flex: 1 }}>
                     <TabView
                       navigationState={this.state.tabViewConfig}
-                      renderTabBar={(props) => (
+                      renderTabBar={props => (
                         <TabBar
                           {...props}
                           style={styles.tabStyle}
@@ -2630,7 +2647,9 @@ class ContactDetailScreen extends React.Component {
                           tabStyle={{ width: 'auto' }}
                           indicatorStyle={styles.tabBarUnderlineStyle}
                           renderLabel={({ route, color }) => (
-                            <Text style={{ color, fontWeight: 'bold' }}>{route.title}</Text>
+                            <Text style={{ color, fontWeight: 'bold' }}>
+                              {route.title}
+                            </Text>
                           )}
                         />
                       )}
@@ -2654,61 +2673,63 @@ class ContactDetailScreen extends React.Component {
                     {this.state.renderFab && (
                       <ActionButton
                         buttonColor={Colors.primaryRGBA}
-                        renderIcon={(active) =>
-                          active ? (
-                            <Icon
-                              type="MaterialCommunityIcons"
-                              name="close"
-                              style={{ color: 'white', fontSize: 22 }}
-                            />
-                          ) : (
+                        renderIcon={active => (active ? (
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="close"
+                            style={{ color: 'white', fontSize: 22 }}
+                          />
+                        ) : (
                             <Icon
                               type="MaterialCommunityIcons"
                               name="comment-plus"
                               style={{ color: 'white', fontSize: 25 }}
                             />
-                          )
+                          ))
                         }
                         degrees={0}
                         activeOpacity={0}
                         bgColor="rgba(0,0,0,0.5)"
-                        nativeFeedbackRippleColor="rgba(0,0,0,0)">
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                      >
                         <ActionButton.Item
                           buttonColor={Colors.primaryRGBA}
                           title={i18n.t('contactDetailScreen.noAnswer')}
-                          onPress={() =>
-                            this.onSaveContact({
-                              quick_button_no_answer: this.state.contact.quick_button_no_answer
-                                ? parseInt(this.state.contact.quick_button_no_answer, 10) + 1
-                                : 1,
-                            })
-                          }
+                          onPress={() => this.onSaveContact({
+                            quick_button_no_answer: this.state.contact.quick_button_no_answer ? parseInt(
+                              this.state.contact.quick_button_no_answer,
+                              10,
+                            ) + 1 : 1,
+                          })}
                           size={40}
                           nativeFeedbackRippleColor="rgba(0,0,0,0)"
                           textStyle={{ color: Colors.tintColor, fontSize: 15 }}
-                          textContainerStyle={{ height: 'auto' }}>
-                          <Icon type="Feather" name="phone-off" style={styles.contactFABIcon} />
+                          textContainerStyle={{ height: 'auto' }}
+                        >
+                          <Icon
+                            type="Feather"
+                            name="phone-off"
+                            style={styles.contactFABIcon}
+                          />
                         </ActionButton.Item>
                         <ActionButton.Item
                           buttonColor={Colors.primaryRGBA}
                           title={i18n.t('contactDetailScreen.contactEstablished')}
-                          onPress={() =>
-                            this.onSaveContact({
-                              quick_button_contact_established: Object.prototype.hasOwnProperty.call(
-                                this.state.contact,
-                                'quick_button_contact_established',
-                              )
-                                ? parseInt(
-                                    this.state.contact.quick_button_contact_established,
-                                    10,
-                                  ) + 1
-                                : 1,
-                            })
-                          }
+                          onPress={() => this.onSaveContact({
+                            quick_button_contact_established: Object.prototype.hasOwnProperty.call(
+                              this.state.contact,
+                              'quick_button_contact_established',
+                            ) ? parseInt(
+                              this.state.contact
+                                .quick_button_contact_established,
+                              10,
+                            ) + 1 : 1,
+                          })}
                           size={40}
                           nativeFeedbackRippleColor="rgba(0,0,0,0)"
                           textStyle={{ color: Colors.tintColor, fontSize: 15 }}
-                          textContainerStyle={{ height: 'auto' }}>
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="MaterialCommunityIcons"
                             name="phone-in-talk"
@@ -2718,21 +2739,22 @@ class ContactDetailScreen extends React.Component {
                         <ActionButton.Item
                           buttonColor={Colors.primaryRGBA}
                           title={i18n.t('contactDetailScreen.meetingScheduled')}
-                          onPress={() =>
-                            this.onSaveContact({
-                              quick_button_meeting_scheduled: Object.prototype.hasOwnProperty.call(
-                                this.state.contact,
-                                'quick_button_meeting_scheduled',
-                              )
-                                ? parseInt(this.state.contact.quick_button_meeting_scheduled, 10) +
-                                  1
-                                : 1,
-                            })
+                          onPress={() => this.onSaveContact({
+                            quick_button_meeting_scheduled: Object.prototype.hasOwnProperty.call(
+                              this.state.contact,
+                              'quick_button_meeting_scheduled',
+                            ) ? parseInt(
+                              this.state.contact
+                                .quick_button_meeting_scheduled,
+                              10,
+                            ) + 1 : 1,
+                          })
                           }
                           size={40}
                           nativeFeedbackRippleColor="rgba(0,0,0,0)"
                           textStyle={{ color: Colors.tintColor, fontSize: 15 }}
-                          textContainerStyle={{ height: 'auto' }}>
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="MaterialCommunityIcons"
                             name="calendar-plus"
@@ -2742,20 +2764,22 @@ class ContactDetailScreen extends React.Component {
                         <ActionButton.Item
                           buttonColor={Colors.primaryRGBA}
                           title={i18n.t('contactDetailScreen.meetingCompleted')}
-                          onPress={() =>
-                            this.onSaveContact({
-                              quick_button_meeting_complete: Object.prototype.hasOwnProperty.call(
-                                this.state.contact,
-                                'quick_button_meeting_complete',
-                              )
-                                ? parseInt(this.state.contact.quick_button_meeting_complete, 10) + 1
-                                : 1,
-                            })
+                          onPress={() => this.onSaveContact({
+                            quick_button_meeting_complete: Object.prototype.hasOwnProperty.call(
+                              this.state.contact,
+                              'quick_button_meeting_complete',
+                            ) ? parseInt(
+                              this.state.contact
+                                .quick_button_meeting_complete,
+                              10,
+                            ) + 1 : 1,
+                          })
                           }
                           size={40}
                           nativeFeedbackRippleColor="rgba(0,0,0,0)"
                           textStyle={{ color: Colors.tintColor, fontSize: 15 }}
-                          textContainerStyle={{ height: 'auto' }}>
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="MaterialCommunityIcons"
                             name="calendar-check"
@@ -2765,20 +2789,22 @@ class ContactDetailScreen extends React.Component {
                         <ActionButton.Item
                           buttonColor={Colors.primaryRGBA}
                           title={i18n.t('contactDetailScreen.meetingNoShow')}
-                          onPress={() =>
-                            this.onSaveContact({
-                              quick_button_no_show: Object.prototype.hasOwnProperty.call(
-                                this.state.contact,
-                                'quick_button_no_show',
-                              )
-                                ? parseInt(this.state.contact.quick_button_no_show, 10) + 1
-                                : 1,
-                            })
+                          onPress={() => this.onSaveContact({
+                            quick_button_no_show: Object.prototype.hasOwnProperty.call(
+                              this.state.contact,
+                              'quick_button_no_show',
+                            ) ? parseInt(
+                              this.state.contact
+                                .quick_button_no_show,
+                              10,
+                            ) + 1 : 1,
+                          })
                           }
                           size={40}
                           nativeFeedbackRippleColor="rgba(0,0,0,0)"
                           textStyle={{ color: Colors.tintColor, fontSize: 15 }}
-                          textContainerStyle={{ height: 'auto' }}>
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="MaterialCommunityIcons"
                             name="calendar-remove"
@@ -2798,34 +2824,26 @@ class ContactDetailScreen extends React.Component {
                             {this.state.tabViewConfig.index === 0 && (
                               <View style={styles.formContainer}>
                                 <Label
-                                  style={[
-                                    {
-                                      color: Colors.tintColor,
-                                      fontSize: 12,
-                                      fontWeight: 'bold',
-                                      marginTop: 10,
-                                    },
-                                    styles.formFieldPadding,
-                                  ]}>
+                                  style={[{
+                                    color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
+                                  }, styles.formFieldPadding]}
+                                >
                                   {this.props.contactSettings.fields.overall_status.name}
                                 </Label>
                                 <Row style={{ paddingBottom: 30 }}>
                                   <Col>
                                     <Picker
-                                      selectedValue={this.state.contact.overall_status}
+                                      selectedValue={
+                                        this.state.contact.overall_status
+                                      }
                                       onValueChange={this.setContactStatus}
-                                      style={
-                                        Platform.OS === 'android'
-                                          ? {
-                                              color: '#ffffff',
-                                              backgroundColor: this.state
-                                                .overallStatusBackgroundColor,
-                                            }
-                                          : {
-                                              backgroundColor: this.state
-                                                .overallStatusBackgroundColor,
-                                            }
-                                      }>
+                                      style={Platform.OS === 'android' ? {
+                                        color: '#ffffff',
+                                        backgroundColor: this.state.overallStatusBackgroundColor,
+                                      } : {
+                                          backgroundColor: this.state.overallStatusBackgroundColor,
+                                        }}
+                                    >
                                       {this.renderStatusPickerItems()}
                                     </Picker>
                                   </Col>
@@ -2841,7 +2859,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {i18n.t('contactDetailScreen.fullName')}
                                     </Label>
                                   </Col>
@@ -2873,7 +2893,8 @@ class ContactDetailScreen extends React.Component {
                                 <TouchableOpacity
                                   onPress={() => {
                                     this.updateShowAssignedToModal(true);
-                                  }}>
+                                  }}
+                                >
                                   <Row style={styles.formFieldPadding}>
                                     <Col style={styles.formIconLabelCol}>
                                       <View style={styles.formIconLabelView}>
@@ -2885,7 +2906,9 @@ class ContactDetailScreen extends React.Component {
                                       </View>
                                     </Col>
                                     <Col>
-                                      <Label style={styles.formLabel}>
+                                      <Label
+                                        style={styles.formLabel}
+                                      >
                                         {this.props.contactSettings.fields.assigned_to.name}
                                       </Label>
                                     </Col>
@@ -2905,7 +2928,8 @@ class ContactDetailScreen extends React.Component {
                                         borderBottomWidth: 1,
                                         borderStyle: 'solid',
                                         borderBottomColor: '#D9D5DC',
-                                      }}>
+                                      }}
+                                    >
                                       {this.showAssignedUser()}
                                       <ModalFilterPicker
                                         visible={this.state.showAssignedToModal}
@@ -2927,7 +2951,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.subassigned.name}
                                     </Label>
                                   </Col>
@@ -2944,27 +2970,17 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => {
-                                        subAssignedSelectizeRef = selectize;
-                                      }}
+                                      ref={(selectize) => { subAssignedSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={
-                                        this.state.contact.subassigned
-                                          ? this.state.contact.subassigned.values.map(
-                                              (subassigned) => ({
-                                                name: this.state.usersContacts.find(
-                                                  (user) => user.value === subassigned.value,
-                                                ).name,
-                                                value: subassigned.value,
-                                              }),
-                                            )
-                                          : []
-                                      }
+                                      selectedItems={(this.state.contact.subassigned) ? this.state.contact.subassigned.values.map(
+                                        subassigned => ({
+                                          name: this.state.usersContacts.find(user => user.value === subassigned.value).name,
+                                          value: subassigned.value,
+                                        }),
+                                      ) : []}
                                       textInputProps={{
-                                        placeholder: i18n.t(
-                                          'contactDetailScreen.subAssignThisContact',
-                                        ),
+                                        placeholder: i18n.t('contactDetailScreen.subAssignThisContact'),
                                       }}
                                       renderChip={(id, onClose, item, style, iconStyle) => (
                                         <Chip
@@ -2983,38 +2999,36 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}>
-                                          <View
-                                            style={{
-                                              flexDirection: 'row',
-                                            }}>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.87)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {item.name}
                                             </Text>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.54)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.54)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {' '}
                                               (#
-                                              {id})
+                                              {id}
+                                              )
                                             </Text>
                                           </View>
                                         </TouchableOpacity>
                                       )}
                                       filterOnKey="name"
-                                      inputContainerStyle={{
-                                        borderWidth: 1,
-                                        borderColor: '#CCCCCC',
-                                        padding: 5,
-                                      }}
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                     />
                                   </Col>
                                 </Row>
@@ -3029,7 +3043,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {i18n.t('contactDetailScreen.mobile')}
                                     </Label>
                                   </Col>
@@ -3042,50 +3058,51 @@ class ContactDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                {this.state.contact.contact_phone ? (
-                                  this.state.contact.contact_phone.map((phone, index) =>
-                                    !phone.delete ? (
-                                      <Row key={index.toString()}>
-                                        <Col style={styles.formIconLabelCol}>
-                                          <View style={styles.formIconLabelView}>
-                                            <Icon
-                                              type="FontAwesome"
-                                              name="phone"
-                                              style={[styles.formIcon, { opacity: 0 }]}
-                                            />
-                                          </View>
-                                        </Col>
-                                        <Col>
-                                          <Input
-                                            multiline
-                                            value={phone.value}
-                                            onChangeText={(value) => {
-                                              this.onPhoneFieldChange(
-                                                value,
-                                                index,
-                                                phone.key,
-                                                this,
-                                              );
-                                            }}
-                                            style={styles.inputContactAddress}
-                                          />
-                                        </Col>
-                                        <Col style={styles.formIconLabel}>
+                                {(this.state.contact.contact_phone) ? this.state.contact.contact_phone.map(
+                                  (phone, index) => (!phone.delete ? (
+                                    <Row
+                                      key={index.toString()}
+                                    >
+                                      <Col style={styles.formIconLabelCol}>
+                                        <View style={styles.formIconLabelView}>
                                           <Icon
-                                            android="md-remove"
-                                            ios="ios-remove"
-                                            style={[styles.formIcon, styles.addRemoveIcons]}
-                                            onPress={() => {
-                                              this.onRemovePhoneField(index, this);
-                                            }}
+                                            type="FontAwesome"
+                                            name="phone"
+                                            style={[styles.formIcon, { opacity: 0 }]}
                                           />
-                                        </Col>
-                                      </Row>
-                                    ) : null,
-                                  )
-                                ) : (
-                                  <Text />
-                                )}
+                                        </View>
+                                      </Col>
+                                      <Col>
+                                        <Input
+                                          multiline
+                                          value={phone.value}
+                                          onChangeText={(value) => {
+                                            this.onPhoneFieldChange(
+                                              value,
+                                              index,
+                                              phone.key,
+                                              this,
+                                            );
+                                          }}
+                                          style={styles.inputContactAddress}
+                                        />
+                                      </Col>
+                                      <Col style={styles.formIconLabel}>
+                                        <Icon
+                                          android="md-remove"
+                                          ios="ios-remove"
+                                          style={[styles.formIcon, styles.addRemoveIcons]}
+                                          onPress={() => {
+                                            this.onRemovePhoneField(
+                                              index,
+                                              this,
+                                            );
+                                          }}
+                                        />
+                                      </Col>
+                                    </Row>
+                                  ) : null),
+                                ) : (<Text />)}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
@@ -3097,7 +3114,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {i18n.t('contactDetailScreen.email')}
                                     </Label>
                                   </Col>
@@ -3110,50 +3129,51 @@ class ContactDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                {this.state.contact.contact_email ? (
-                                  this.state.contact.contact_email.map((email, index) =>
-                                    !email.delete ? (
-                                      <Row key={index.toString()}>
-                                        <Col style={styles.formIconLabelCol}>
-                                          <View style={styles.formIconLabelView}>
-                                            <Icon
-                                              type="FontAwesome"
-                                              name="envelope"
-                                              style={[styles.formIcon, { opacity: 0 }]}
-                                            />
-                                          </View>
-                                        </Col>
-                                        <Col>
-                                          <Input
-                                            multiline
-                                            value={email.value}
-                                            onChangeText={(value) => {
-                                              this.onEmailFieldChange(
-                                                value,
-                                                index,
-                                                email.key,
-                                                this,
-                                              );
-                                            }}
-                                            style={styles.inputContactAddress}
-                                          />
-                                        </Col>
-                                        <Col style={styles.formIconLabel}>
+                                {(this.state.contact.contact_email) ? this.state.contact.contact_email.map(
+                                  (email, index) => (!email.delete ? (
+                                    <Row
+                                      key={index.toString()}
+                                    >
+                                      <Col style={styles.formIconLabelCol}>
+                                        <View style={styles.formIconLabelView}>
                                           <Icon
-                                            android="md-remove"
-                                            ios="ios-remove"
-                                            style={[styles.formIcon, styles.addRemoveIcons]}
-                                            onPress={() => {
-                                              this.onRemoveEmailField(index, this);
-                                            }}
+                                            type="FontAwesome"
+                                            name="envelope"
+                                            style={[styles.formIcon, { opacity: 0 }]}
                                           />
-                                        </Col>
-                                      </Row>
-                                    ) : null,
-                                  )
-                                ) : (
-                                  <Text />
-                                )}
+                                        </View>
+                                      </Col>
+                                      <Col>
+                                        <Input
+                                          multiline
+                                          value={email.value}
+                                          onChangeText={(value) => {
+                                            this.onEmailFieldChange(
+                                              value,
+                                              index,
+                                              email.key,
+                                              this,
+                                            );
+                                          }}
+                                          style={styles.inputContactAddress}
+                                        />
+                                      </Col>
+                                      <Col style={styles.formIconLabel}>
+                                        <Icon
+                                          android="md-remove"
+                                          ios="ios-remove"
+                                          style={[styles.formIcon, styles.addRemoveIcons]}
+                                          onPress={() => {
+                                            this.onRemoveEmailField(
+                                              index,
+                                              this,
+                                            );
+                                          }}
+                                        />
+                                      </Col>
+                                    </Row>
+                                  ) : null),
+                                ) : (<Text />)}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
@@ -3165,7 +3185,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {i18n.t('contactDetailScreen.socialMedia')}
                                     </Label>
                                   </Col>
@@ -3178,60 +3200,48 @@ class ContactDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                {Object.keys(this.props.contactSettings.channels).map(
-                                  (channelName, channelNameIndex) => {
+                                {
+                                  Object.keys(this.props.contactSettings.channels).map((channelName, channelNameIndex) => {
                                     const propertyName = `contact_${channelName}`;
                                     return (
                                       <Col key={channelNameIndex.toString()}>
-                                        {this.state.contact[propertyName]
-                                          ? this.state.contact[
-                                              propertyName
-                                            ].map((socialMedia, socialMediaIndex) =>
-                                              !socialMedia.key
-                                                ? this.renderSocialMediaField(
-                                                    socialMediaIndex,
-                                                    socialMedia,
-                                                    propertyName,
-                                                    channelName,
-                                                  )
-                                                : null,
-                                            )
-                                          : null}
+                                        {
+                                          this.state.contact[propertyName] ? this.state.contact[propertyName].map((socialMedia, socialMediaIndex) => (!socialMedia.key ? (
+                                            this.renderSocialMediaField(socialMediaIndex, socialMedia, propertyName, channelName)
+                                          ) : null)) : null
+                                        }
                                       </Col>
                                     );
-                                  },
-                                )}
-                                {Object.keys(this.props.contactSettings.channels).map(
-                                  (channelName, channelNameIndex) => {
+                                  })
+                                }
+                                {
+                                  Object.keys(this.props.contactSettings.channels).map((channelName, channelNameIndex) => {
                                     const propertyName = `contact_${channelName}`;
                                     return (
                                       <Col key={channelNameIndex.toString()}>
-                                        {this.state.contact[propertyName]
-                                          ? this.state.contact[
-                                              propertyName
-                                            ].map((socialMedia, socialMediaIndex) =>
-                                              socialMedia.key && !socialMedia.delete
-                                                ? this.renderSocialMediaField(
-                                                    socialMediaIndex,
-                                                    socialMedia,
-                                                    propertyName,
-                                                    channelName,
-                                                  )
-                                                : null,
-                                            )
-                                          : null}
+                                        {
+                                          this.state.contact[propertyName] ? this.state.contact[propertyName].map((socialMedia, socialMediaIndex) => (socialMedia.key && !socialMedia.delete ? (
+                                            this.renderSocialMediaField(socialMediaIndex, socialMedia, propertyName, channelName)
+                                          ) : null)) : null
+                                        }
                                       </Col>
                                     );
-                                  },
-                                )}
+                                  })
+                                }
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
-                                      <Icon type="Entypo" name="home" style={styles.formIcon} />
+                                      <Icon
+                                        type="Entypo"
+                                        name="home"
+                                        style={styles.formIcon}
+                                      />
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {i18n.t('global.address')}
                                     </Label>
                                   </Col>
@@ -3244,50 +3254,51 @@ class ContactDetailScreen extends React.Component {
                                     />
                                   </Col>
                                 </Row>
-                                {this.state.contact.contact_address ? (
-                                  this.state.contact.contact_address.map((address, index) =>
-                                    !address.delete ? (
-                                      <Row key={index.toString()}>
-                                        <Col style={styles.formIconLabelCol}>
-                                          <View style={styles.formIconLabelView}>
-                                            <Icon
-                                              type="Entypo"
-                                              name="home"
-                                              style={[styles.formIcon, { opacity: 0 }]}
-                                            />
-                                          </View>
-                                        </Col>
-                                        <Col>
-                                          <Input
-                                            multiline
-                                            value={address.value}
-                                            onChangeText={(value) => {
-                                              this.onAddressFieldChange(
-                                                value,
-                                                index,
-                                                address.key,
-                                                this,
-                                              );
-                                            }}
-                                            style={styles.inputContactAddress}
-                                          />
-                                        </Col>
-                                        <Col style={styles.formIconLabel}>
+                                {this.state.contact.contact_address ? this.state.contact.contact_address.map(
+                                  (address, index) => (!address.delete ? (
+                                    <Row
+                                      key={index.toString()}
+                                    >
+                                      <Col style={styles.formIconLabelCol}>
+                                        <View style={styles.formIconLabelView}>
                                           <Icon
-                                            android="md-remove"
-                                            ios="ios-remove"
-                                            style={[styles.formIcon, styles.addRemoveIcons]}
-                                            onPress={() => {
-                                              this.onRemoveAddressField(index, this);
-                                            }}
+                                            type="Entypo"
+                                            name="home"
+                                            style={[styles.formIcon, { opacity: 0 }]}
                                           />
-                                        </Col>
-                                      </Row>
-                                    ) : null,
-                                  )
-                                ) : (
-                                  <Text />
-                                )}
+                                        </View>
+                                      </Col>
+                                      <Col>
+                                        <Input
+                                          multiline
+                                          value={address.value}
+                                          onChangeText={(value) => {
+                                            this.onAddressFieldChange(
+                                              value,
+                                              index,
+                                              address.key,
+                                              this,
+                                            );
+                                          }}
+                                          style={styles.inputContactAddress}
+                                        />
+                                      </Col>
+                                      <Col style={styles.formIconLabel}>
+                                        <Icon
+                                          android="md-remove"
+                                          ios="ios-remove"
+                                          style={[styles.formIcon, styles.addRemoveIcons]}
+                                          onPress={() => {
+                                            this.onRemoveAddressField(
+                                              index,
+                                              this,
+                                            );
+                                          }}
+                                        />
+                                      </Col>
+                                    </Row>
+                                  ) : null),
+                                ) : (<Text />)}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
@@ -3299,7 +3310,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.location_grid.name}
                                     </Label>
                                   </Col>
@@ -3316,23 +3329,10 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => {
-                                        geonamesSelectizeRef = selectize;
-                                      }}
+                                      ref={(selectize) => { geonamesSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.geonames}
-                                      selectedItems={
-                                        this.state.contact.location_grid
-                                          ? this.state.contact.location_grid.values.map(
-                                              (location) => ({
-                                                name: this.state.geonames.find(
-                                                  (geoname) => geoname.value === location.value,
-                                                ).name,
-                                                value: location.value,
-                                              }),
-                                            )
-                                          : []
-                                      }
+                                      selectedItems={(this.state.contact.location_grid) ? this.state.contact.location_grid.values.map(location => ({ name: this.state.geonames.find(geoname => geoname.value === location.value).name, value: location.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.selectLocations'),
                                       }}
@@ -3344,17 +3344,18 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}>
-                                          <View
-                                            style={{
-                                              flexDirection: 'row',
-                                            }}>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.87)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {item.name}
                                             </Text>
                                           </View>
@@ -3370,11 +3371,7 @@ class ContactDetailScreen extends React.Component {
                                         />
                                       )}
                                       filterOnKey="name"
-                                      inputContainerStyle={{
-                                        borderWidth: 1,
-                                        borderColor: '#CCCCCC',
-                                        padding: 5,
-                                      }}
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                     />
                                   </Col>
                                 </Row>
@@ -3389,7 +3386,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.people_groups.name}
                                     </Label>
                                   </Col>
@@ -3406,23 +3405,10 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => {
-                                        peopleGroupsSelectizeRef = selectize;
-                                      }}
+                                      ref={(selectize) => { peopleGroupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.peopleGroups}
-                                      selectedItems={
-                                        this.state.contact.people_groups
-                                          ? this.state.contact.people_groups.values.map(
-                                              (peopleGroup) => ({
-                                                name: this.state.peopleGroups.find(
-                                                  (person) => person.value === peopleGroup.value,
-                                                ).name,
-                                                value: peopleGroup.value,
-                                              }),
-                                            )
-                                          : []
-                                      }
+                                      selectedItems={(this.state.contact.people_groups) ? this.state.contact.people_groups.values.map(peopleGroup => ({ name: this.state.peopleGroups.find(person => person.value === peopleGroup.value).name, value: peopleGroup.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('global.selectPeopleGroups'),
                                       }}
@@ -3434,17 +3420,18 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}>
-                                          <View
-                                            style={{
-                                              flexDirection: 'row',
-                                            }}>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.87)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {item.name}
                                             </Text>
                                           </View>
@@ -3461,11 +3448,7 @@ class ContactDetailScreen extends React.Component {
                                       )}
                                       filterOnKey="name"
                                       keyboardShouldPersistTaps
-                                      inputContainerStyle={{
-                                        borderWidth: 1,
-                                        borderColor: '#CCCCCC',
-                                        padding: 5,
-                                      }}
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                     />
                                   </Col>
                                 </Row>
@@ -3480,7 +3463,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.age.name}
                                     </Label>
                                   </Col>
@@ -3499,12 +3484,10 @@ class ContactDetailScreen extends React.Component {
                                     <Picker
                                       mode="dropdown"
                                       selectedValue={this.state.contact.age}
-                                      onValueChange={this.setContactAge}>
-                                      {Object.keys(
-                                        this.props.contactSettings.fields.age.values,
-                                      ).map((key) => {
-                                        const optionData = this.props.contactSettings.fields.age
-                                          .values[key];
+                                      onValueChange={this.setContactAge}
+                                    >
+                                      {Object.keys(this.props.contactSettings.fields.age.values).map((key) => {
+                                        const optionData = this.props.contactSettings.fields.age.values[key];
                                         return (
                                           <Picker.Item
                                             key={key}
@@ -3527,7 +3510,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.gender.name}
                                     </Label>
                                   </Col>
@@ -3546,18 +3531,12 @@ class ContactDetailScreen extends React.Component {
                                     <Picker
                                       mode="dropdown"
                                       selectedValue={this.state.contact.gender}
-                                      onValueChange={this.setContactGender}>
-                                      {Object.keys(
-                                        this.props.contactSettings.fields.gender.values,
-                                      ).map((key) => {
-                                        const optionData = this.props.contactSettings.fields.gender
-                                          .values[key];
+                                      onValueChange={this.setContactGender}
+                                    >
+                                      {Object.keys(this.props.contactSettings.fields.gender.values).map((key) => {
+                                        const optionData = this.props.contactSettings.fields.gender.values[key];
                                         return (
-                                          <Picker.Item
-                                            key={key}
-                                            label={optionData.label}
-                                            value={key}
-                                          />
+                                          <Picker.Item key={key} label={optionData.label} value={key} />
                                         );
                                       })}
                                     </Picker>
@@ -3574,7 +3553,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.sources.name}
                                     </Label>
                                   </Col>
@@ -3591,26 +3572,10 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => {
-                                        sourcesSelectizeRef = selectize;
-                                      }}
+                                      ref={(selectize) => { sourcesSelectizeRef = selectize; }}
                                       itemId="value"
-                                      items={Object.keys(
-                                        this.props.contactSettings.fields.sources.values,
-                                      ).map((key) => ({
-                                        name: this.props.contactSettings.fields.sources.values[key]
-                                          .label,
-                                        value: key,
-                                      }))}
-                                      selectedItems={
-                                        this.state.contact.sources
-                                          ? this.state.contact.sources.values.map((source) => ({
-                                              name: this.props.contactSettings.fields.sources
-                                                .values[source.value].label,
-                                              value: source.value,
-                                            }))
-                                          : []
-                                      }
+                                      items={Object.keys(this.props.contactSettings.fields.sources.values).map(key => ({ name: this.props.contactSettings.fields.sources.values[key].label, value: key }))}
+                                      selectedItems={(this.state.contact.sources) ? this.state.contact.sources.values.map(source => ({ name: this.props.contactSettings.fields.sources.values[source.value].label, value: source.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.selectSources'),
                                       }}
@@ -3622,17 +3587,18 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}>
-                                          <View
-                                            style={{
-                                              flexDirection: 'row',
-                                            }}>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.87)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {item.name}
                                             </Text>
                                           </View>
@@ -3649,11 +3615,7 @@ class ContactDetailScreen extends React.Component {
                                       )}
                                       filterOnKey="name"
                                       keyboardShouldPersistTaps
-                                      inputContainerStyle={{
-                                        borderWidth: 1,
-                                        borderColor: '#CCCCCC',
-                                        padding: 5,
-                                      }}
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                     />
                                   </Col>
                                 </Row>
@@ -3672,7 +3634,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.seeker_path.name}
                                     </Label>
                                   </Col>
@@ -3692,18 +3656,12 @@ class ContactDetailScreen extends React.Component {
                                       mode="dropdown"
                                       selectedValue={this.state.contact.seeker_path}
                                       onValueChange={this.setContactSeekerPath}
-                                      textStyle={{ color: Colors.tintColor }}>
-                                      {Object.keys(
-                                        this.props.contactSettings.fields.seeker_path.values,
-                                      ).map((key) => {
-                                        const optionData = this.props.contactSettings.fields
-                                          .seeker_path.values[key];
+                                      textStyle={{ color: Colors.tintColor }}
+                                    >
+                                      {Object.keys(this.props.contactSettings.fields.seeker_path.values).map((key) => {
+                                        const optionData = this.props.contactSettings.fields.seeker_path.values[key];
                                         return (
-                                          <Picker.Item
-                                            key={key}
-                                            label={optionData.label}
-                                            value={key}
-                                          />
+                                          <Picker.Item key={key} label={optionData.label} value={key} />
                                         );
                                       })}
                                     </Picker>
@@ -3713,7 +3671,8 @@ class ContactDetailScreen extends React.Component {
                                   style={[
                                     styles.formLabel,
                                     { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
-                                  ]}>
+                                  ]}
+                                >
                                   {this.props.contactSettings.fields.milestones.name}
                                 </Label>
                                 {this.renderfaithMilestones()}
@@ -3721,11 +3680,17 @@ class ContactDetailScreen extends React.Component {
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
-                                      <Icon type="Entypo" name="water" style={styles.formIcon} />
+                                      <Icon
+                                        type="Entypo"
+                                        name="water"
+                                        style={styles.formIcon}
+                                      />
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.baptism_date.name}
                                     </Label>
                                   </Col>
@@ -3743,11 +3708,7 @@ class ContactDetailScreen extends React.Component {
                                   <Col>
                                     <DatePicker
                                       onDateChange={this.setBaptismDate}
-                                      defaultDate={
-                                        this.state.contact.baptism_date
-                                          ? new Date(this.state.contact.baptism_date)
-                                          : ''
-                                      }
+                                      defaultDate={(this.state.contact.baptism_date) ? new Date(this.state.contact.baptism_date) : ''}
                                     />
                                   </Col>
                                 </Row>
@@ -3766,7 +3727,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.groups.name}
                                     </Label>
                                   </Col>
@@ -3783,21 +3746,10 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => {
-                                        groupsSelectizeRef = selectize;
-                                      }}
+                                      ref={(selectize) => { groupsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.groups}
-                                      selectedItems={
-                                        this.state.contact.groups
-                                          ? this.state.contact.groups.values.map((group) => ({
-                                              name: this.state.groups.find(
-                                                (groupItem) => groupItem.value === group.value,
-                                              ).name,
-                                              value: group.value,
-                                            }))
-                                          : []
-                                      }
+                                      selectedItems={(this.state.contact.groups) ? this.state.contact.groups.values.map(group => ({ name: this.state.groups.find(groupItem => groupItem.value === group.value).name, value: group.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addGroup'),
                                       }}
@@ -3809,17 +3761,18 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}>
-                                          <View
-                                            style={{
-                                              flexDirection: 'row',
-                                            }}>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.87)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {item.name}
                                             </Text>
                                           </View>
@@ -3836,22 +3789,24 @@ class ContactDetailScreen extends React.Component {
                                       )}
                                       filterOnKey="name"
                                       keyboardShouldPersistTaps
-                                      inputContainerStyle={{
-                                        borderWidth: 1,
-                                        borderColor: '#CCCCCC',
-                                        padding: 5,
-                                      }}
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                     />
                                   </Col>
                                 </Row>
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
-                                      <Icon type="Entypo" name="network" style={styles.formIcon} />
+                                      <Icon
+                                        type="Entypo"
+                                        name="network"
+                                        style={styles.formIcon}
+                                      />
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.relation.name}
                                     </Label>
                                   </Col>
@@ -3868,21 +3823,10 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => {
-                                        connectionsSelectizeRef = selectize;
-                                      }}
+                                      ref={(selectize) => { connectionsSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={
-                                        this.state.contact.relation
-                                          ? this.state.contact.relation.values.map((relation) => ({
-                                              name: this.state.usersContacts.find(
-                                                (user) => user.value === relation.value,
-                                              ).name,
-                                              value: relation.value,
-                                            }))
-                                          : []
-                                      }
+                                      selectedItems={(this.state.contact.relation) ? this.state.contact.relation.values.map(relation => ({ name: this.state.usersContacts.find(user => user.value === relation.value).name, value: relation.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addConnection'),
                                       }}
@@ -3894,28 +3838,30 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}>
-                                          <View
-                                            style={{
-                                              flexDirection: 'row',
-                                            }}>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.87)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {item.name}
                                             </Text>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.54)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.54)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {' '}
                                               (#
-                                              {id})
+                                              {id}
+                                              )
                                             </Text>
                                           </View>
                                         </TouchableOpacity>
@@ -3931,27 +3877,30 @@ class ContactDetailScreen extends React.Component {
                                       )}
                                       filterOnKey="name"
                                       keyboardShouldPersistTaps
-                                      inputContainerStyle={{
-                                        borderWidth: 1,
-                                        borderColor: '#CCCCCC',
-                                        padding: 5,
-                                      }}
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                     />
                                   </Col>
                                 </Row>
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
-                                      <Icon type="Entypo" name="water" style={styles.formIcon} />
+                                      <Icon
+                                        type="Entypo"
+                                        name="water"
+                                        style={styles.formIcon}
+                                      />
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.baptized_by.name}
                                     </Label>
                                   </Col>
                                 </Row>
                                 <Row>
+
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
                                       <Icon
@@ -3963,23 +3912,10 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => {
-                                        baptizedBySelectizeRef = selectize;
-                                      }}
+                                      ref={(selectize) => { baptizedBySelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={
-                                        this.state.contact.baptized_by
-                                          ? this.state.contact.baptized_by.values.map(
-                                              (contact) => ({
-                                                name: this.state.usersContacts.find(
-                                                  (user) => user.value === contact.value,
-                                                ).name,
-                                                value: contact.value,
-                                              }),
-                                            )
-                                          : []
-                                      }
+                                      selectedItems={(this.state.contact.baptized_by) ? this.state.contact.baptized_by.values.map(contact => ({ name: this.state.usersContacts.find(user => user.value === contact.value).name, value: contact.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addBaptizedBy'),
                                       }}
@@ -3991,28 +3927,30 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}>
-                                          <View
-                                            style={{
-                                              flexDirection: 'row',
-                                            }}>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.87)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {item.name}
                                             </Text>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.54)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.54)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {' '}
                                               (#
-                                              {id})
+                                              {id}
+                                              )
                                             </Text>
                                           </View>
                                         </TouchableOpacity>
@@ -4028,22 +3966,24 @@ class ContactDetailScreen extends React.Component {
                                       )}
                                       filterOnKey="name"
                                       keyboardShouldPersistTaps
-                                      inputContainerStyle={{
-                                        borderWidth: 1,
-                                        borderColor: '#CCCCCC',
-                                        padding: 5,
-                                      }}
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                     />
                                   </Col>
                                 </Row>
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
-                                      <Icon type="Entypo" name="water" style={styles.formIcon} />
+                                      <Icon
+                                        type="Entypo"
+                                        name="water"
+                                        style={styles.formIcon}
+                                      />
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.baptized.name}
                                     </Label>
                                   </Col>
@@ -4060,23 +4000,10 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => {
-                                        baptizedSelectizeRef = selectize;
-                                      }}
+                                      ref={(selectize) => { baptizedSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={
-                                        this.state.contact.baptized
-                                          ? this.state.contact.baptized.values.map(
-                                              (baptizedItem) => ({
-                                                name: this.state.usersContacts.find(
-                                                  (user) => user.value === baptizedItem.value,
-                                                ).name,
-                                                value: baptizedItem.value,
-                                              }),
-                                            )
-                                          : []
-                                      }
+                                      selectedItems={(this.state.contact.baptized) ? this.state.contact.baptized.values.map(baptizedItem => ({ name: this.state.usersContacts.find(user => user.value === baptizedItem.value).name, value: baptizedItem.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addBaptized'),
                                       }}
@@ -4088,28 +4015,30 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}>
-                                          <View
-                                            style={{
-                                              flexDirection: 'row',
-                                            }}>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.87)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {item.name}
                                             </Text>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.54)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.54)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {' '}
                                               (#
-                                              {id})
+                                              {id}
+                                              )
                                             </Text>
                                           </View>
                                         </TouchableOpacity>
@@ -4125,11 +4054,7 @@ class ContactDetailScreen extends React.Component {
                                       )}
                                       filterOnKey="name"
                                       keyboardShouldPersistTaps
-                                      inputContainerStyle={{
-                                        borderWidth: 1,
-                                        borderColor: '#CCCCCC',
-                                        padding: 5,
-                                      }}
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                     />
                                   </Col>
                                 </Row>
@@ -4144,7 +4069,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.coached_by.name}
                                     </Label>
                                   </Col>
@@ -4161,21 +4088,10 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => {
-                                        coachedSelectizeRef = selectize;
-                                      }}
+                                      ref={(selectize) => { coachedSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={
-                                        this.state.contact.coached_by
-                                          ? this.state.contact.coached_by.values.map((contact) => ({
-                                              name: this.state.usersContacts.find(
-                                                (user) => user.value === contact.value,
-                                              ).name,
-                                              value: contact.value,
-                                            }))
-                                          : []
-                                      }
+                                      selectedItems={(this.state.contact.coached_by) ? this.state.contact.coached_by.values.map(contact => ({ name: this.state.usersContacts.find(user => user.value === contact.value).name, value: contact.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addCoachedBy'),
                                       }}
@@ -4187,28 +4103,30 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}>
-                                          <View
-                                            style={{
-                                              flexDirection: 'row',
-                                            }}>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.87)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {item.name}
                                             </Text>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.54)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.54)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {' '}
                                               (#
-                                              {id})
+                                              {id}
+                                              )
                                             </Text>
                                           </View>
                                         </TouchableOpacity>
@@ -4224,15 +4142,12 @@ class ContactDetailScreen extends React.Component {
                                       )}
                                       filterOnKey="name"
                                       keyboardShouldPersistTaps
-                                      inputContainerStyle={{
-                                        borderWidth: 1,
-                                        borderColor: '#CCCCCC',
-                                        padding: 5,
-                                      }}
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                     />
                                   </Col>
                                 </Row>
                                 <Row style={styles.formFieldPadding}>
+
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
                                       <Icon
@@ -4243,7 +4158,9 @@ class ContactDetailScreen extends React.Component {
                                     </View>
                                   </Col>
                                   <Col>
-                                    <Label style={styles.formLabel}>
+                                    <Label
+                                      style={styles.formLabel}
+                                    >
                                       {this.props.contactSettings.fields.coaching.name}
                                     </Label>
                                   </Col>
@@ -4260,21 +4177,10 @@ class ContactDetailScreen extends React.Component {
                                   </Col>
                                   <Col>
                                     <Selectize
-                                      ref={(selectize) => {
-                                        coachingSelectizeRef = selectize;
-                                      }}
+                                      ref={(selectize) => { coachingSelectizeRef = selectize; }}
                                       itemId="value"
                                       items={this.state.usersContacts}
-                                      selectedItems={
-                                        this.state.contact.coaching
-                                          ? this.state.contact.coaching.values.map((contact) => ({
-                                              name: this.state.usersContacts.find(
-                                                (user) => user.value === contact.value,
-                                              ).name,
-                                              value: contact.value,
-                                            }))
-                                          : []
-                                      }
+                                      selectedItems={(this.state.contact.coaching) ? this.state.contact.coaching.values.map(contact => ({ name: this.state.usersContacts.find(user => user.value === contact.value).name, value: contact.value })) : []}
                                       textInputProps={{
                                         placeholder: i18n.t('contactDetailScreen.addCoaching'),
                                       }}
@@ -4286,28 +4192,30 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}>
-                                          <View
-                                            style={{
-                                              flexDirection: 'row',
-                                            }}>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.87)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                          }}
+                                        >
+                                          <View style={{
+                                            flexDirection: 'row',
+                                          }}
+                                          >
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.87)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {item.name}
                                             </Text>
-                                            <Text
-                                              style={{
-                                                color: 'rgba(0, 0, 0, 0.54)',
-                                                fontSize: 14,
-                                                lineHeight: 21,
-                                              }}>
+                                            <Text style={{
+                                              color: 'rgba(0, 0, 0, 0.54)',
+                                              fontSize: 14,
+                                              lineHeight: 21,
+                                            }}
+                                            >
                                               {' '}
                                               (#
-                                              {id})
+                                              {id}
+                                              )
                                             </Text>
                                           </View>
                                         </TouchableOpacity>
@@ -4323,11 +4231,7 @@ class ContactDetailScreen extends React.Component {
                                       )}
                                       filterOnKey="name"
                                       keyboardShouldPersistTaps
-                                      inputContainerStyle={{
-                                        borderWidth: 1,
-                                        borderColor: '#CCCCCC',
-                                        padding: 5,
-                                      }}
+                                      inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
                                     />
                                   </Col>
                                 </Row>
@@ -4348,10 +4252,9 @@ class ContactDetailScreen extends React.Component {
                                 shadowRadius: 2,
                                 shadowOffset: { width: 1, height: 1 },
                               }}
-                              elevation={10}>
-                              <Text style={{ color: Colors.tintColor, fontWeight: 'bold' }}>
-                                {i18n.t('global.cancel')}
-                              </Text>
+                              elevation={10}
+                            >
+                              <Text style={{ color: Colors.tintColor, fontWeight: 'bold' }}>{i18n.t('global.cancel')}</Text>
                             </Button>
                             <Button
                               onPress={this.onSaveContact}
@@ -4359,10 +4262,9 @@ class ContactDetailScreen extends React.Component {
                                 height: 60,
                                 width: '50%',
                                 backgroundColor: Colors.tintColor,
-                              }}>
-                              <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-                                {i18n.t('global.save')}
-                              </Text>
+                              }}
+                            >
+                              <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
                             </Button>
                           </FooterTab>
                         </Footer>
@@ -4372,168 +4274,193 @@ class ContactDetailScreen extends React.Component {
                 )}
               </View>
             ) : (
-              <KeyboardShift>
-                {() => (
-                  <ScrollView keyboardShouldPersistTaps="handled">
-                    <View style={styles.formContainer}>
-                      <Grid>
-                        <Row>
-                          <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                            {i18n.t('contactDetailScreen.fullName')}
-                          </Label>
-                        </Row>
-                        <Row>
-                          <Input
-                            placeholder={i18n.t('global.requiredField')}
-                            onChangeText={this.setContactTitle}
-                            style={{
-                              borderColor: '#B4B4B4',
-                              borderWidth: 1,
-                              borderRadius: 5,
-                              borderStyle: 'solid',
-                              fontSize: 13,
-                              paddingLeft: 15,
-                            }}
-                          />
-                        </Row>
-                        <Row>
-                          <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                            {i18n.t('contactDetailScreen.phoneNumber')}
-                          </Label>
-                        </Row>
-                        <Row>
-                          <Input
-                            onChangeText={this.setSingleContactPhone}
-                            style={{
-                              borderColor: '#B4B4B4',
-                              borderWidth: 1,
-                              borderRadius: 5,
-                              borderStyle: 'solid',
-                              fontSize: 13,
-                              paddingLeft: 15,
-                            }}
-                          />
-                        </Row>
-                        <Row>
-                          <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                            {i18n.t('contactDetailScreen.email')}
-                          </Label>
-                        </Row>
-                        <Row>
-                          <Input
-                            onChangeText={this.setContactEmail}
-                            style={{
-                              borderColor: '#B4B4B4',
-                              borderWidth: 1,
-                              borderRadius: 5,
-                              borderStyle: 'solid',
-                              fontSize: 13,
-                              paddingLeft: 15,
-                            }}
-                          />
-                        </Row>
-                        <Row>
-                          <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                            {this.props.contactSettings.fields.sources.name}
-                          </Label>
-                        </Row>
-                        <Row>
-                          <Picker
-                            onValueChange={this.setContactSource}
-                            selectedValue={this.state.contact.sources.values[0].value}>
-                            {this.renderSourcePickerItems()}
-                          </Picker>
-                        </Row>
-                        <Row>
-                          <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                            {this.props.contactSettings.fields.location_grid.name}
-                          </Label>
-                        </Row>
-                        <Row>
-                          <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
-                            <Selectize
-                              ref={(selectize) => {
-                                geonamesSelectizeRef = selectize;
+                <KeyboardShift>
+                  {() => (
+                    <ScrollView keyboardShouldPersistTaps="handled">
+                      <View style={styles.formContainer}>
+                        <Grid>
+                          <Row>
+                            <Label
+                              style={[
+                                styles.formLabel,
+                                { marginTop: 10, marginBottom: 5 },
+                              ]}
+                            >
+                              {i18n.t('contactDetailScreen.fullName')}
+                            </Label>
+                          </Row>
+                          <Row>
+                            <Input
+                              placeholder={i18n.t('global.requiredField')}
+                              onChangeText={this.setContactTitle}
+                              style={{
+                                borderColor: '#B4B4B4',
+                                borderWidth: 1,
+                                borderRadius: 5,
+                                borderStyle: 'solid',
+                                fontSize: 13,
+                                paddingLeft: 15,
                               }}
-                              itemId="value"
-                              items={this.state.geonames}
-                              selectedItems={[]}
-                              textInputProps={{
-                                placeholder: i18n.t('contactDetailScreen.selectLocations'),
+                            />
+                          </Row>
+                          <Row>
+                            <Label
+                              style={[
+                                styles.formLabel,
+                                { marginTop: 10, marginBottom: 5 },
+                              ]}
+                            >
+                              {i18n.t('contactDetailScreen.phoneNumber')}
+                            </Label>
+                          </Row>
+                          <Row>
+                            <Input
+                              onChangeText={this.setSingleContactPhone}
+                              style={{
+                                borderColor: '#B4B4B4',
+                                borderWidth: 1,
+                                borderRadius: 5,
+                                borderStyle: 'solid',
+                                fontSize: 13,
+                                paddingLeft: 15,
                               }}
-                              renderRow={(id, onPress, item) => (
-                                <TouchableOpacity
-                                  activeOpacity={0.6}
-                                  key={id}
-                                  onPress={onPress}
-                                  style={{
-                                    paddingVertical: 8,
-                                    paddingHorizontal: 10,
-                                  }}>
-                                  <View
+                            />
+                          </Row>
+                          <Row>
+                            <Label
+                              style={[
+                                styles.formLabel,
+                                { marginTop: 10, marginBottom: 5 },
+                              ]}
+                            >
+                              {i18n.t('contactDetailScreen.email')}
+                            </Label>
+                          </Row>
+                          <Row>
+                            <Input
+                              onChangeText={this.setContactEmail}
+                              style={{
+                                borderColor: '#B4B4B4',
+                                borderWidth: 1,
+                                borderRadius: 5,
+                                borderStyle: 'solid',
+                                fontSize: 13,
+                                paddingLeft: 15,
+                              }}
+                            />
+                          </Row>
+                          <Row>
+                            <Label
+                              style={[
+                                styles.formLabel,
+                                { marginTop: 10, marginBottom: 5 },
+                              ]}
+                            >
+                              {this.props.contactSettings.fields.sources.name}
+                            </Label>
+                          </Row>
+                          <Row>
+                            <Picker
+                              onValueChange={this.setContactSource}
+                              selectedValue={this.state.contact.sources.values[0].value}
+                            >
+                              {this.renderSourcePickerItems()}
+                            </Picker>
+                          </Row>
+                          <Row>
+                            <Label
+                              style={[
+                                styles.formLabel,
+                                { marginTop: 10, marginBottom: 5 },
+                              ]}
+                            >
+                              {this.props.contactSettings.fields.location_grid.name}
+                            </Label>
+                          </Row>
+                          <Row>
+                            <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
+                              <Selectize
+                                ref={(selectize) => { geonamesSelectizeRef = selectize; }}
+                                itemId="value"
+                                items={this.state.geonames}
+                                selectedItems={[]}
+                                textInputProps={{
+                                  placeholder: i18n.t('contactDetailScreen.selectLocations'),
+                                }}
+                                renderRow={(id, onPress, item) => (
+                                  <TouchableOpacity
+                                    activeOpacity={0.6}
+                                    key={id}
+                                    onPress={onPress}
                                     style={{
-                                      flexDirection: 'row',
-                                    }}>
-                                    <Text
+                                      paddingVertical: 8,
+                                      paddingHorizontal: 10,
+                                    }}
+                                  >
+                                    <View
                                       style={{
+                                        flexDirection: 'row',
+                                      }}
+                                    >
+                                      <Text style={{
                                         color: 'rgba(0, 0, 0, 0.87)',
                                         fontSize: 14,
                                         lineHeight: 21,
-                                      }}>
-                                      {item.name}
-                                    </Text>
-                                  </View>
-                                </TouchableOpacity>
-                              )}
-                              renderChip={(id, onClose, item, style, iconStyle) => (
-                                <Chip
-                                  key={id}
-                                  iconStyle={iconStyle}
-                                  onClose={onClose}
-                                  text={item.name}
-                                  style={style}
-                                />
-                              )}
-                              filterOnKey="name"
-                              keyboardShouldPersistTaps
-                              inputContainerStyle={{
+                                      }}
+                                      >
+                                        {item.name}
+                                      </Text>
+                                    </View>
+                                  </TouchableOpacity>
+                                )}
+                                renderChip={(id, onClose, item, style, iconStyle) => (
+                                  <Chip
+                                    key={id}
+                                    iconStyle={iconStyle}
+                                    onClose={onClose}
+                                    text={item.name}
+                                    style={style}
+                                  />
+                                )}
+                                filterOnKey="name"
+                                keyboardShouldPersistTaps
+                                inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', padding: 5 }}
+                              />
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Label
+                              style={[
+                                styles.formLabel,
+                                { marginTop: 10, marginBottom: 5 },
+                              ]}
+                            >
+                              {i18n.t('contactDetailScreen.initialComment')}
+                            </Label>
+                          </Row>
+                          <Row>
+                            <Input
+                              multiline
+                              onChangeText={this.setContactInitialComment}
+                              style={{
+                                borderColor: '#B4B4B4',
                                 borderWidth: 1,
-                                borderColor: '#CCCCCC',
-                                padding: 5,
+                                borderRadius: 5,
+                                borderStyle: 'solid',
+                                fontSize: 13,
+                                paddingLeft: 15,
                               }}
                             />
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                            {i18n.t('contactDetailScreen.initialComment')}
-                          </Label>
-                        </Row>
-                        <Row>
-                          <Input
-                            multiline
-                            onChangeText={this.setContactInitialComment}
-                            style={{
-                              borderColor: '#B4B4B4',
-                              borderWidth: 1,
-                              borderRadius: 5,
-                              borderStyle: 'solid',
-                              fontSize: 13,
-                              paddingLeft: 15,
-                            }}
-                          />
-                        </Row>
-                      </Grid>
-                      <Button block style={styles.saveButton} onPress={this.onSaveContact}>
-                        <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-                          {i18n.t('global.save')}
-                        </Text>
-                      </Button>
-                    </View>
-                  </ScrollView>
-                )}
-              </KeyboardShift>
-            )}
+                          </Row>
+                        </Grid>
+                        <Button block style={styles.saveButton} onPress={this.onSaveContact}>
+                          <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
+                        </Button>
+                      </View>
+                    </ScrollView>
+                  )}
+                </KeyboardShift>
+              )}
           </View>
         )}
         {successToast}
@@ -4696,7 +4623,7 @@ ContactDetailScreen.defaultProps = {
   contactSettings: null,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   userData: state.userReducer.userData,
   userReducerError: state.userReducer.error,
   contact: state.contactsReducer.contact,
@@ -4714,7 +4641,7 @@ const mapStateToProps = (state) => ({
   contactSettings: state.contactsReducer.settings,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   saveContact: (domain, token, contactDetail) => {
     dispatch(save(domain, token, contactDetail));
   },
@@ -4738,4 +4665,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ContactDetailScreen);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ContactDetailScreen);

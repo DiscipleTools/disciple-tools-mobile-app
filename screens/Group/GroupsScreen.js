@@ -39,18 +39,6 @@ const styles = StyleSheet.create({
 let toastError;
 
 class GroupsScreen extends React.Component {
-  /* eslint-disable react/sort-comp */
-  static navigationOptions = {
-    title: i18n.t('global.groups'),
-    headerLeft: null,
-    headerStyle: {
-      backgroundColor: Colors.tintColor,
-    },
-    headerTintColor: '#FFFFFF',
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    },
-  };
 
   /* eslint-enable react/sort-comp */
   state = {
@@ -62,10 +50,14 @@ class GroupsScreen extends React.Component {
     if (prevProps.error !== error && error) {
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
-          <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
-          <Text>{error.message}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
         </View>,
         3000,
       );
@@ -90,7 +82,7 @@ class GroupsScreen extends React.Component {
           ) : <Text />}
           {this.props.groupSettings.group_status.values[group.group_status] && this.props.groupSettings.group_type.values[group.group_type] ? (
             <Text style={styles.groupSubtitle}>
-              •
+               • 
             </Text>
           ) : <Text />}
           {(this.props.groupSettings.group_type.values[group.group_type]) ? (
@@ -100,7 +92,7 @@ class GroupsScreen extends React.Component {
           ) : <Text />}
           {this.props.groupSettings.group_type.values[group.group_type] && group.member_count ? (
             <Text style={styles.groupSubtitle}>
-              •
+               • 
             </Text>
           ) : <Text />}
           {group.member_count ? (
@@ -146,6 +138,19 @@ class GroupsScreen extends React.Component {
     }
   };
 
+
+  static navigationOptions = {
+    title: i18n.t('global.groups'),
+    headerLeft: null,
+    headerStyle: {
+      backgroundColor: Colors.tintColor,
+    },
+    headerTintColor: '#FFFFFF',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  };
+  
   render() {
     return (
       <Container>
@@ -175,7 +180,7 @@ class GroupsScreen extends React.Component {
               toastError = toast;
             }}
             style={{ backgroundColor: Colors.errorBackground }}
-            position="center"
+            positionValue={180}
           />
         </View>
       </Container>

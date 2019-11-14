@@ -1,6 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { I18nManager, StyleSheet, Text, View } from 'react-native';
+import {
+  I18nManager,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {
   Body,
   Button as NbButton,
@@ -95,17 +100,6 @@ const styles = StyleSheet.create({
 });
 let toastError;
 class SettingsScreen extends React.Component {
-  /* eslint-disable react/sort-comp */
-  static navigationOptions = {
-    title: i18n.t('settingsScreen.settings'),
-    headerStyle: {
-      backgroundColor: Colors.tintColor,
-    },
-    headerTintColor: '#FFFFFF',
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    },
-  };
 
   /* eslint-enable react/sort-comp */
   constructor(props) {
@@ -135,12 +129,10 @@ class SettingsScreen extends React.Component {
   };
 
   onFABPress = () => {
-    const toastMsg = this.props.isConnected
-      ? i18n.t('settingsScreen.networkUnavailable')
-      : i18n.t('settingsScreen.networkAvailable');
+    const toastMsg = this.props.isConnected ? i18n.t('settingsScreen.networkUnavailable') : i18n.t('settingsScreen.networkAvailable');
     this.toast.show(toastMsg, 3000);
     this.props.toggleNetworkConnectivity(this.props.isConnected);
-  };
+  }
 
   draftNewSupportEmail = () => {
     MailComposer.composeAsync({
@@ -158,10 +150,22 @@ class SettingsScreen extends React.Component {
         3000,
       );
     });
+  }
+
+  
+  static navigationOptions = {
+    title: i18n.t('settingsScreen.settings'),
+    headerStyle: {
+      backgroundColor: Colors.tintColor,
+    },
+    headerTintColor: '#FFFFFF',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
   };
 
   render() {
-    const languagePickerItems = locales.map((locale) => (
+    const languagePickerItems = locales.map(locale => (
       <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
     ));
 
@@ -220,10 +224,11 @@ class SettingsScreen extends React.Component {
             </Body>
             <Right>
               <Picker
+
                 style={{ width: 120 }}
                 selectedValue={this.props.i18n.locale}
                 onValueChange={(itemValue) => {
-                  const locale = locales.find((item) => item.code === itemValue);
+                  const locale = locales.find(item => item.code === itemValue);
                   if (locale) {
                     const isRTL = locale.direction === 'rtl';
                     // store locale/rtl instore for next load of app
@@ -232,7 +237,8 @@ class SettingsScreen extends React.Component {
                     i18n.setLocale(locale.code, isRTL);
                   }
                 }}
-                enabled={false}>
+                enabled={false}
+              >
                 {languagePickerItems}
               </Picker>
             </Right>
@@ -263,12 +269,7 @@ class SettingsScreen extends React.Component {
           </ListItem>
         </Content>
         <Text style={styles.versionText}>{Constants.manifest.version}</Text>
-        <Toast
-          ref={(c) => {
-            this.toast = c;
-          }}
-          position="center"
-        />
+        <Toast ref={(c) => { this.toast = c; }} position="center" />
         <Toast
           ref={(toast) => {
             toastError = toast;
@@ -283,12 +284,12 @@ class SettingsScreen extends React.Component {
 
 SettingsScreen.propTypes = propTypes;
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   i18n: state.i18nReducer,
   isConnected: state.networkConnectivityReducer.isConnected,
   userData: state.userReducer.userData,
 });
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   toggleNetworkConnectivity: (isConnected) => {
     dispatch(toggleNetworkConnectivity(isConnected));
   },
