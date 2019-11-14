@@ -31,7 +31,6 @@ import {
   Tab,
   ScrollableTab,
   DatePicker,
-  Fab,
   Button,
 } from 'native-base';
 import Toast from 'react-native-easy-toast';
@@ -40,6 +39,8 @@ import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import ModalFilterPicker from 'react-native-modal-filter-picker';
 import { Chip, Selectize } from 'react-native-material-selectize';
+import ActionButton from 'react-native-action-button';
+
 import sharedTools from '../../shared';
 import KeyboardShift from '../../components/KeyboardShift';
 import {
@@ -195,6 +196,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.tintColor,
     borderRadius: 5,
     marginTop: 40,
+  },
+  contactFABIcon: {
+    color: 'white',
+    fontSize: 20,
   },
 });
 
@@ -886,12 +891,6 @@ class ContactDetailScreen extends React.Component {
         ...prevState.contact,
         gender: value,
       },
-    }));
-  };
-
-  setToggleFab = () => {
-    this.setState(prevState => ({
-      activeFab: !prevState.activeFab,
     }));
   };
 
@@ -2645,103 +2644,147 @@ class ContactDetailScreen extends React.Component {
                       </Tab>
                     </Tabs>
                     {this.state.renderFab && (
-                      <Fab
-                        active={this.state.activeFab}
-                        onPress={() => this.setToggleFab()}
-                        style={{ backgroundColor: Colors.tintColor }}
+                      <ActionButton
+                        buttonColor={Colors.primaryRGBA}
+                        renderIcon={active => (active ? (
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="close"
+                            style={{ color: 'white', fontSize: 22 }}
+                          />
+                        ) : (
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="comment-plus"
+                            style={{ color: 'white', fontSize: 25 }}
+                          />
+                        ))
+                        }
+                        degrees={0}
+                        activeOpacity={0}
+                        bgColor="rgba(0,0,0,0.5)"
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
                       >
-                        <Icon
-                          type="MaterialCommunityIcons"
-                          name="comment-plus"
-                          style={{ color: 'white' }}
-                        />
-                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                        <ActionButton.Item
+                          buttonColor={Colors.primaryRGBA}
+                          title={i18n.t('contactDetailScreen.noAnswer')}
+                          onPress={() => this.onSaveContact({
+                            quick_button_no_answer: this.state.contact.quick_button_no_answer ? parseInt(
+                              this.state.contact.quick_button_no_answer,
+                              10,
+                            ) + 1 : 1,
+                          })}
+                          size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="Feather"
                             name="phone-off"
-                            style={{ color: 'white' }}
-                            onPress={() => this.onSaveContact({
-                              quick_button_no_answer: this.state.contact.quick_button_no_answer ? parseInt(
-                                this.state.contact.quick_button_no_answer,
+                            style={styles.contactFABIcon}
+                          />
+                        </ActionButton.Item>
+                        <ActionButton.Item
+                          buttonColor={Colors.primaryRGBA}
+                          title={i18n.t('contactDetailScreen.contactEstablished')}
+                          onPress={() => this.onSaveContact({
+                            quick_button_contact_established: Object.prototype.hasOwnProperty.call(
+                              this.state.contact,
+                              'quick_button_contact_established',
+                            ) ? parseInt(
+                                this.state.contact
+                                  .quick_button_contact_established,
                                 10,
                               ) + 1 : 1,
-                            })
-                            }
-                          />
-                        </Button>
-                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                          })}
+                          size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="MaterialCommunityIcons"
                             name="phone-in-talk"
-                            style={{ color: 'white' }}
-                            onPress={() => this.onSaveContact({
-                              quick_button_contact_established: Object.prototype.hasOwnProperty.call(
-                                this.state.contact,
-                                'quick_button_contact_established',
-                              ) ? parseInt(
-                                  this.state.contact
-                                    .quick_button_contact_established,
-                                  10,
-                                ) + 1 : 1,
-                            })
-                            }
+                            style={styles.contactFABIcon}
                           />
-                        </Button>
-                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                        </ActionButton.Item>
+                        <ActionButton.Item
+                          buttonColor={Colors.primaryRGBA}
+                          title={i18n.t('contactDetailScreen.meetingScheduled')}
+                          onPress={() => this.onSaveContact({
+                            quick_button_meeting_scheduled: Object.prototype.hasOwnProperty.call(
+                              this.state.contact,
+                              'quick_button_meeting_scheduled',
+                            ) ? parseInt(
+                                this.state.contact
+                                  .quick_button_meeting_scheduled,
+                                10,
+                              ) + 1 : 1,
+                          })
+                          }
+                          size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="MaterialCommunityIcons"
                             name="calendar-plus"
-                            style={{ color: 'white' }}
-                            onPress={() => this.onSaveContact({
-                              quick_button_meeting_scheduled: Object.prototype.hasOwnProperty.call(
-                                this.state.contact,
-                                'quick_button_meeting_scheduled',
-                              ) ? parseInt(
-                                  this.state.contact
-                                    .quick_button_meeting_scheduled,
-                                  10,
-                                ) + 1 : 1,
-                            })
-                            }
+                            style={styles.contactFABIcon}
                           />
-                        </Button>
-                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                        </ActionButton.Item>
+                        <ActionButton.Item
+                          buttonColor={Colors.primaryRGBA}
+                          title={i18n.t('contactDetailScreen.meetingCompleted')}
+                          onPress={() => this.onSaveContact({
+                            quick_button_meeting_complete: Object.prototype.hasOwnProperty.call(
+                              this.state.contact,
+                              'quick_button_meeting_complete',
+                            ) ? parseInt(
+                                this.state.contact
+                                  .quick_button_meeting_complete,
+                                10,
+                              ) + 1 : 1,
+                          })
+                          }
+                          size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="MaterialCommunityIcons"
                             name="calendar-check"
-                            style={{ color: 'white' }}
-                            onPress={() => this.onSaveContact({
-                              quick_button_meeting_complete: Object.prototype.hasOwnProperty.call(
-                                this.state.contact,
-                                'quick_button_meeting_complete',
-                              ) ? parseInt(
-                                  this.state.contact
-                                    .quick_button_meeting_complete,
-                                  10,
-                                ) + 1 : 1,
-                            })
-                            }
+                            style={styles.contactFABIcon}
                           />
-                        </Button>
-                        <Button style={{ backgroundColor: Colors.tintColor }}>
+                        </ActionButton.Item>
+                        <ActionButton.Item
+                          buttonColor={Colors.primaryRGBA}
+                          title={i18n.t('contactDetailScreen.meetingNoShow')}
+                          onPress={() => this.onSaveContact({
+                            quick_button_no_show: Object.prototype.hasOwnProperty.call(
+                              this.state.contact,
+                              'quick_button_no_show',
+                            ) ? parseInt(
+                                this.state.contact
+                                  .quick_button_no_show,
+                                10,
+                              ) + 1 : 1,
+                          })
+                          }
+                          size={40}
+                          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                          textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                          textContainerStyle={{ height: 'auto' }}
+                        >
                           <Icon
                             type="MaterialCommunityIcons"
                             name="calendar-remove"
-                            style={{ color: 'white' }}
-                            onPress={() => this.onSaveContact({
-                              quick_button_no_show: Object.prototype.hasOwnProperty.call(
-                                this.state.contact,
-                                'quick_button_no_show',
-                              ) ? parseInt(
-                                  this.state.contact
-                                    .quick_button_no_show,
-                                  10,
-                                ) + 1 : 1,
-                            })
-                            }
+                            style={styles.contactFABIcon}
                           />
-                        </Button>
-                      </Fab>
+                        </ActionButton.Item>
+                      </ActionButton>
                     )}
                   </View>
                 )}
@@ -4319,38 +4362,38 @@ class ContactDetailScreen extends React.Component {
                               }}
                               renderRow={(id, onPress, item) => (
                                 <TouchableOpacity
-                                    activeOpacity={0.6}
-                                    key={id}
-                                    onPress={onPress}
+                                  activeOpacity={0.6}
+                                  key={id}
+                                  onPress={onPress}
+                                  style={{
+                                    paddingVertical: 8,
+                                    paddingHorizontal: 10,
+                                  }}
+                                >
+                                  <View
                                     style={{
-                                      paddingVertical: 8,
-                                      paddingHorizontal: 10,
+                                      flexDirection: 'row',
                                     }}
                                   >
-                                    <View
-                                      style={{
-                                        flexDirection: 'row',
-                                      }}
+                                    <Text style={{
+                                      color: 'rgba(0, 0, 0, 0.87)',
+                                      fontSize: 14,
+                                      lineHeight: 21,
+                                    }}
                                     >
-                                      <Text style={{
-                                        color: 'rgba(0, 0, 0, 0.87)',
-                                        fontSize: 14,
-                                        lineHeight: 21,
-                                      }}
-                                      >
-                                        {item.name}
-                                      </Text>
-                                    </View>
-                                  </TouchableOpacity>
+                                      {item.name}
+                                    </Text>
+                                  </View>
+                                </TouchableOpacity>
                               )}
                               renderChip={(id, onClose, item, style, iconStyle) => (
                                 <Chip
-                                    key={id}
-                                    iconStyle={iconStyle}
-                                    onClose={onClose}
-                                    text={item.name}
-                                    style={style}
-                                  />
+                                  key={id}
+                                  iconStyle={iconStyle}
+                                  onClose={onClose}
+                                  text={item.name}
+                                  style={style}
+                                />
                               )}
                               filterOnKey="name"
                               keyboardShouldPersistTaps

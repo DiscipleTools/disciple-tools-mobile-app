@@ -116,12 +116,13 @@ const styles = StyleSheet.create({
 });
 
 class HomeScreen extends React.Component {
-  static navigationOptions = {
-    header: null,
-  };
 
   handleLearnMorePress = () => {
     WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
+  };
+
+  static navigationOptions = {
+    header: null,
   };
 
   maybeRenderDevelopmentModeWarning() {
