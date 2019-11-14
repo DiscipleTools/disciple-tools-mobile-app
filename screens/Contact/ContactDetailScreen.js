@@ -27,9 +27,6 @@ import {
   Input,
   Icon,
   Picker,
-  Tabs,
-  Tab,
-  ScrollableTab,
   DatePicker,
   Button,
 } from 'native-base';
@@ -40,6 +37,7 @@ import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import ModalFilterPicker from 'react-native-modal-filter-picker';
 import { Chip, Selectize } from 'react-native-material-selectize';
 import ActionButton from 'react-native-action-button';
+import { TabView, TabBar } from 'react-native-tab-view';
 
 import sharedTools from '../../shared';
 import KeyboardShift from '../../components/KeyboardShift';
@@ -62,7 +60,6 @@ import baptizedIcon from '../../assets/icons/baptism.png';
 import baptizingIcon from '../../assets/icons/water-aerobics.png';
 import inChurchIcon from '../../assets/icons/multiple-11.png';
 import startingChurchesIcon from '../../assets/icons/symbol-213-7.png';
-
 import i18n from '../../languages';
 
 let toastSuccess;
@@ -97,8 +94,7 @@ const defaultFaithMilestones = [
 ];
 const styles = StyleSheet.create({
   tabBarUnderlineStyle: {
-    borderBottomWidth: 3,
-    borderBottomColor: Colors.tintColor,
+    backgroundColor: Colors.tintColor,
   },
   tabStyle: { backgroundColor: '#FFFFFF' },
   textStyle: { color: 'gray' },
@@ -224,7 +220,7 @@ class ContactDetailScreen extends React.Component {
             params.onGoBack();
             navigation.goBack();
           }}
-          style={[{ paddingLeft: 16, color: '#FFFFFF' }]}
+          style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }]}
         />
       ),
       headerStyle: {
@@ -265,7 +261,27 @@ class ContactDetailScreen extends React.Component {
     renderFab: true,
     showAssignedToModal: false,
     loading: false,
-    currentTabIndex: 0,
+    tabViewConfig: {
+      index: 0,
+      routes: [
+        {
+          key: 'details',
+          title: i18n.t('global.details'),
+        },
+        {
+          key: 'progress',
+          title: i18n.t('global.progress'),
+        },
+        {
+          key: 'comments',
+          title: i18n.t('global.commentsActivity'),
+        },
+        {
+          key: 'connections',
+          title: i18n.t('contactDetailScreen.connections'),
+        },
+      ],
+    },
   };
 
   componentDidMount() {
@@ -515,13 +531,6 @@ class ContactDetailScreen extends React.Component {
     });
   }
 
-  setCurrentTabIndex(index) {
-    // Timeout to resolve the "tab content no rendered" issue
-    setTimeout(() => {
-      this.setState({ currentTabIndex: index });
-    }, 0);
-  }
-
   getLists = async (contactId) => {
     let newState = {};
     const users = await ExpoFileSystemStorage.getItem('usersList');
@@ -619,16 +628,13 @@ class ContactDetailScreen extends React.Component {
   };
 
   onDisableEdit = () => {
-    const { currentTabIndex, unmodifiedContact } = this.state;
+    const { unmodifiedContact } = this.state;
     this.setState({
       onlyView: true,
-      currentTabIndex: 0,
       contact: {
         ...unmodifiedContact,
       },
       overallStatusBackgroundColor: sharedTools.getSelectorColor(unmodifiedContact.overall_status),
-    }, () => {
-      this.setCurrentTabIndex(currentTabIndex);
     });
     this.props.navigation.setParams({ hideTabBar: false });
   }
@@ -902,6 +908,618 @@ class ContactDetailScreen extends React.Component {
     );
   }
 
+  detailView = () => (
+    <ScrollView
+      refreshControl={(
+        <RefreshControl
+          refreshing={this.state.loading}
+          onRefresh={() => this.onRefresh(this.state.contact.ID)}
+        />
+      )}
+    >
+      <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
+        <Row>
+          <Col />
+          <Col>
+            <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
+              {i18n.t('global.edit')}
+            </Text>
+          </Col>
+        </Row>
+      </Grid>
+      <View
+        style={[styles.formContainer, { paddingTop: 0 }]}
+        pointerEvents="none"
+      >
+        <Label
+          style={{
+            color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
+          }}
+        >
+          {this.props.contactSettings.fields.overall_status.name}
+        </Label>
+        <Row style={[styles.formRow, { paddingTop: 5 }]}>
+          <Col>
+            <Picker
+              selectedValue={
+                this.state.contact.overall_status
+              }
+              onValueChange={this.setContactStatus}
+              style={Platform.OS === 'android' ? {
+                color: '#ffffff',
+                backgroundColor: this.state.overallStatusBackgroundColor,
+              } : {
+                backgroundColor: this.state.overallStatusBackgroundColor,
+              }}
+            >
+              {this.renderStatusPickerItems()}
+            </Picker>
+          </Col>
+        </Row>
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="FontAwesome"
+              name="user-circle"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            {this.showAssignedUser()}
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.contactSettings.fields.assigned_to.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="Ionicons"
+              name="md-people"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.contact.subassigned ? this.state.contact.subassigned.values.map(contact => this.state.usersContacts.find(user => user.value === contact.value).name).join(', ') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.contactSettings.fields.subassigned.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="FontAwesome"
+              name="phone"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.contact.contact_phone ? this.state.contact.contact_phone.filter(phone => !phone.delete).map(phone => phone.value).join(', ') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.mobile')}</Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="FontAwesome"
+              name="envelope"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.contact.contact_email ? this.state.contact.contact_email.filter(email => !email.delete).map(email => email.value).join(', ') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.email')}</Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="Ionicons"
+              name="chatboxes"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            {
+              Object.keys(this.props.contactSettings.channels).map((channelName, channelNameIndex) => {
+                const channel = this.props.contactSettings.channels[channelName];
+                return (
+                  <Col key={channelNameIndex.toString()}>
+                    {
+                      this.state.contact[`contact_${channelName}`]
+                        ? this.state.contact[`contact_${channelName}`].map((socialMedia, socialMediaIndex) => (
+                          <Text key={socialMediaIndex.toString()}>{socialMedia.value}</Text>
+                        )) : null
+                    }
+                    <Text style={styles.socialMediaNames}>
+                      {channel.label}
+                    </Text>
+                  </Col>
+                );
+              })
+            }
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.socialMedia')}</Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="Entypo"
+              name="home"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.contact.contact_address ? this.state.contact.contact_address.filter(address => !address.delete).map(address => address.value).join(', ') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="FontAwesome"
+              name="map-marker"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.contact.location_grid ? this.state.contact.location_grid.values.map(location => this.state.geonames.find(geoname => geoname.value === location.value).name).join(', ') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.contactSettings.fields.location_grid.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="FontAwesome"
+              name="globe"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.contact.people_groups ? this.state.contact.people_groups.values.map(peopleGroup => this.state.peopleGroups.find(person => person.value === peopleGroup.value).name).join(', ') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.contactSettings.fields.people_groups.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="FontAwesome"
+              name="clock-o"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.age) ? this.state.contact.age : ''}</Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>{this.props.contactSettings.fields.age.name}</Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              android="md-male"
+              ios="ios-male"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.gender) ? this.props.contactSettings.fields.gender.values[this.state.contact.gender].label : ''}</Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>{this.props.contactSettings.fields.gender.name}</Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={styles.formRow}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              android="md-arrow-dropright"
+              ios="ios-arrow-dropright"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.contact.sources ? `${this.state.contact.sources.values.map(source => this.props.contactSettings.fields.sources.values[source.value].label).join(', ')}.` : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.contactSettings.fields.sources.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+      </View>
+    </ScrollView>
+  );
+
+  progressView = () => (
+    <ScrollView
+      refreshControl={(
+        <RefreshControl
+          refreshing={this.state.loading}
+          onRefresh={() => this.onRefresh(this.state.contact.ID)}
+        />
+      )}
+    >
+      <View
+        style={[styles.formContainer, { marginTop: 10 }]}
+      >
+        <Grid>
+          <Row>
+            <Col />
+            <Col>
+              <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
+                {i18n.t('global.edit')}
+              </Text>
+            </Col>
+          </Row>
+        </Grid>
+        <Row style={[styles.formRow, { paddingTop: 15 }]}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              android="md-calendar"
+              ios="ios-calendar"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.seeker_path) ? this.props.contactSettings.fields.seeker_path.values[this.state.contact.seeker_path].label : ''}</Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>{this.props.contactSettings.fields.seeker_path.name}</Label>
+          </Col>
+        </Row>
+        <View
+          style={{
+            alignItems: 'center',
+            marginTop: 5,
+            marginBottom: 25,
+          }}
+        >
+          <ProgressBarAnimated
+            width={progressBarWidth}
+            value={this.state.progressBarValue}
+            backgroundColor={Colors.tintColor}
+          />
+        </View>
+        <View style={styles.formDivider} />
+        <Label
+          style={[
+            styles.formLabel,
+            { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
+          ]}
+        >
+          {this.props.contactSettings.fields.milestones.name}
+        </Label>
+        {this.renderfaithMilestones()}
+        {this.renderCustomFaithMilestones()}
+        <Grid style={{ marginTop: 25 }}>
+          <View style={styles.formDivider} />
+          <Row style={styles.formRow}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon
+                type="Entypo"
+                name="water"
+                style={styles.formIcon}
+              />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.baptism_date) ? this.state.contact.baptism_date : ''}</Text>
+            </Col>
+            <Col style={styles.formIconLabel}>
+              <Label style={[styles.label, styles.formLabel]}>
+                {this.props.contactSettings.fields.baptism_date.name}
+              </Label>
+            </Col>
+          </Row>
+        </Grid>
+      </View>
+    </ScrollView>
+  )
+
+  commentsView = () => (
+    <View style={{ flex: 1 }}>
+      <FlatList
+        style={{
+          backgroundColor: '#ffffff',
+          flex: 1,
+          marginBottom: 60,
+        }}
+        ref={(flatList) => {
+          commentsFlatList = flatList;
+        }}
+        data={this.getCommentsAndActivities()}
+        extraData={!this.state.loadingMoreComments || !this.state.loadingMoreActivities}
+        inverted
+        ItemSeparatorComponent={() => (
+          <View
+            style={{
+              height: 1,
+              backgroundColor: '#CCCCCC',
+            }}
+          />
+        )}
+        keyExtractor={(item, index) => String(index)}
+        renderItem={(item) => {
+          const commentOrActivity = item.item;
+          return this.renderActivityOrCommentRow(
+            commentOrActivity,
+          );
+        }}
+        refreshControl={(
+          <RefreshControl
+            refreshing={(this.state.loadComments || this.state.loadActivities)}
+            onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID)}
+          />
+        )}
+        onScroll={({ nativeEvent }) => {
+          const {
+            loadingMoreComments, commentsOffset, activitiesOffset,
+          } = this.state;
+          const flatList = nativeEvent;
+          const contentOffsetY = flatList.contentOffset.y;
+          const layoutMeasurementHeight = flatList.layoutMeasurement.height;
+          const contentSizeHeight = flatList.contentSize.height;
+          const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
+          const distanceToStart = contentSizeHeight - heightOffsetSum;
+
+          if (distanceToStart < 100) {
+            if (!loadingMoreComments) {
+              if (commentsOffset < this.state.totalComments) {
+                this.setState({
+                  loadingMoreComments: true,
+                }, () => {
+                  this.getContactComments(this.state.contact.ID);
+                });
+              }
+            }
+            if (!this.state.loadingMoreActivities) {
+              if (activitiesOffset < this.state.totalActivities) {
+                this.setState({
+                  loadingMoreActivities: true,
+                }, () => {
+                  this.getContactActivities(this.state.contact.ID);
+                });
+              }
+            }
+          }
+        }}
+      />
+      <KeyboardAccessory>
+        <View
+          style={{
+            backgroundColor: 'white',
+            flexDirection: 'row',
+          }}
+        >
+          <TextInput
+            placeholder={i18n.t('global.writeYourCommentNoteHere')}
+            value={this.state.comment}
+            onChangeText={this.setComment}
+            style={{
+              borderColor: '#B4B4B4',
+              borderRadius: 5,
+              borderWidth: 1,
+              flex: 1,
+              margin: 10,
+              paddingLeft: 5,
+              paddingRight: 5,
+            }}
+          />
+          <TouchableOpacity
+            onPress={() => this.onSaveComment()}
+            style={[{
+              backgroundColor: Colors.tintColor,
+              borderRadius: 80,
+              height: 40,
+              margin: 10,
+              paddingTop: 7,
+              width: 40,
+            }, i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 }]}
+          >
+            <Icon
+              android="md-send"
+              ios="ios-send"
+              style={{ color: 'white', fontSize: 25 }}
+            />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAccessory>
+    </View>
+  )
+
+  connectionsView = () => (
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      refreshControl={(
+        <RefreshControl
+          refreshing={this.state.loading}
+          onRefresh={() => this.onRefresh(this.state.contact.ID)}
+        />
+      )}
+    >
+      <View
+        style={[styles.formContainer, { marginTop: 10 }]}
+      >
+        <Grid>
+          <Row>
+            <Col />
+            <Col>
+              <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
+                {i18n.t('global.edit')}
+              </Text>
+            </Col>
+          </Row>
+        </Grid>
+        <Row style={[styles.formRow, { paddingTop: 15 }]}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="FontAwesome"
+              name="users"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.contact.groups ? this.state.contact.groups.values.map(group => this.state.groups.find(groupItem => groupItem.value === group.value).name).join(', ') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.contactSettings.fields.groups.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={[styles.formRow, { paddingTop: 15 }]}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="Entypo"
+              name="network"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.contact.relation ? this.state.contact.relation.values.map(relation => this.state.usersContacts.find(user => user.value === relation.value).name).join(', ') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.contactSettings.fields.relation.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={[styles.formRow, { paddingTop: 15 }]}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="Entypo"
+              name="water"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.contact.baptized_by ? this.state.contact.baptized_by.values.map(baptizedBy => this.state.usersContacts.find(user => user.value === baptizedBy.value).name).join(', ') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.contactSettings.fields.baptized_by.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={[styles.formRow, { paddingTop: 15 }]}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="Entypo"
+              name="water"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.contact.baptized ? this.state.contact.baptized.values.map(baptized => this.state.usersContacts.find(user => user.value === baptized.value).name).join(', ') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.contactSettings.fields.baptized.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={[styles.formRow, { paddingTop: 15 }]}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="FontAwesome"
+              name="black-tie"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.contact.coached_by ? this.state.contact.coached_by.values.map(coachedBy => this.state.usersContacts.find(user => user.value === coachedBy.value).name).join(', ') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.contactSettings.fields.coached_by.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+        <Row style={[styles.formRow, { paddingTop: 15 }]}>
+          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+            <Icon
+              type="MaterialCommunityIcons"
+              name="presentation"
+              style={styles.formIcon}
+            />
+          </Col>
+          <Col>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              {this.state.contact.coaching ? this.state.contact.coaching.values.map(coaching => this.state.usersContacts.find(user => user.value === coaching.value).name).join(', ') : ''}
+            </Text>
+          </Col>
+          <Col style={styles.formParentLabel}>
+            <Label style={styles.formLabel}>
+              {this.props.contactSettings.fields.coaching.name}
+            </Label>
+          </Col>
+        </Row>
+        <View style={styles.formDivider} />
+      </View>
+    </ScrollView>
+  )
+
   transformContactObject = (contact, quickAction = {}) => {
     let transformedContact = {
       ...contact,
@@ -1132,12 +1750,15 @@ class ContactDetailScreen extends React.Component {
     );
   });
 
-  tabChanged = (event) => {
-    this.props.navigation.setParams({ hideTabBar: event.i === 2 });
-    this.setState({
-      renderFab: !(event.i === 2),
-      currentTabIndex: event.i,
-    });
+  tabChanged = (index) => {
+    this.props.navigation.setParams({ hideTabBar: index === 2 });
+    this.setState(prevState => ({
+      tabViewConfig: {
+        ...prevState.tabViewConfig,
+        index,
+      },
+      renderFab: !(index === 2),
+    }));
   };
 
   onAddPhoneField = () => {
@@ -1995,654 +2616,41 @@ class ContactDetailScreen extends React.Component {
               <View style={{ flex: 1 }}>
                 {this.state.onlyView && (
                   <View style={{ flex: 1 }}>
-                    <Tabs
-                      renderTabBar={() => (
-                        <ScrollableTab
-                          tabsContainerStyle={{ backgroundColor: '#FFFFFF' }}
+                    <TabView
+                      navigationState={this.state.tabViewConfig}
+                      renderTabBar={props => (
+                        <TabBar
+                          {...props}
+                          style={styles.tabStyle}
+                          activeColor={Colors.tintColor}
+                          inactiveColor={Colors.gray}
+                          scrollEnabled
+                          tabStyle={{ width: 'auto' }}
+                          indicatorStyle={styles.tabBarUnderlineStyle}
+                          renderLabel={({ route, color }) => (
+                            <Text style={{ color, fontWeight: 'bold' }}>
+                              {route.title}
+                            </Text>
+                          )}
                         />
                       )}
-                      tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
-                      onChangeTab={this.tabChanged}
-                      page={this.state.currentTabIndex}
-                      scrollWithoutAnimation
-                    >
-                      <Tab
-                        heading={i18n.t('global.details')}
-                        tabStyle={styles.tabStyle}
-                        textStyle={styles.textStyle}
-                        activeTabStyle={styles.activeTabStyle}
-                        activeTextStyle={styles.activeTextStyle}
-                      >
-                        <ScrollView
-                          refreshControl={(
-                            <RefreshControl
-                              refreshing={this.state.loading}
-                              onRefresh={() => this.onRefresh(this.state.contact.ID)}
-                            />
-                          )}
-                        >
-                          <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
-                            <Row>
-                              <Col />
-                              <Col>
-                                <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
-                                  {i18n.t('global.edit')}
-                                </Text>
-                              </Col>
-                            </Row>
-                          </Grid>
-                          <View
-                            style={[styles.formContainer, { paddingTop: 0 }]}
-                            pointerEvents="none"
-                          >
-                            <Label
-                              style={{
-                                color: Colors.tintColor, fontSize: 12, fontWeight: 'bold', marginTop: 10,
-                              }}
-                            >
-                              {this.props.contactSettings.fields.overall_status.name}
-                            </Label>
-                            <Row style={[styles.formRow, { paddingTop: 5 }]}>
-                              <Col>
-                                <Picker
-                                  selectedValue={
-                                    this.state.contact.overall_status
-                                  }
-                                  onValueChange={this.setContactStatus}
-                                  style={Platform.OS === 'android' ? {
-                                    color: '#ffffff',
-                                    backgroundColor: this.state.overallStatusBackgroundColor,
-                                  } : {
-                                    backgroundColor: this.state.overallStatusBackgroundColor,
-                                  }}
-                                >
-                                  {this.renderStatusPickerItems()}
-                                </Picker>
-                              </Col>
-                            </Row>
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="FontAwesome"
-                                  name="user-circle"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                {this.showAssignedUser()}
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.fields.assigned_to.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="Ionicons"
-                                  name="md-people"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.subassigned ? this.state.contact.subassigned.values.map(contact => this.state.usersContacts.find(user => user.value === contact.value).name).join(', ') + (this.state.contact.subassigned.values.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.fields.subassigned.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="FontAwesome"
-                                  name="phone"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.contact_phone ? this.state.contact.contact_phone.filter(phone => !phone.delete).map(phone => phone.value).join(', ') + (this.state.contact.contact_phone.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.mobile')}</Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="FontAwesome"
-                                  name="envelope"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.contact_email ? this.state.contact.contact_email.filter(email => !email.delete).map(email => email.value).join(', ') + (this.state.contact.contact_email.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.email')}</Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="Ionicons"
-                                  name="chatboxes"
-                                  style={[styles.formIcon, { marginTop: 0 }]}
-                                />
-                              </Col>
-                              <Col>
-                                {
-                                  Object.keys(this.props.contactSettings.channels).map((channelName, channelNameIndex) => {
-                                    const channel = this.props.contactSettings.channels[channelName];
-                                    if (this.state.contact[`contact_${channelName}`] && this.state.contact[`contact_${channelName}`].length > 0) {
-                                      return (
-                                        <Col key={channelNameIndex.toString()}>
-                                          {
-                                            this.state.contact[`contact_${channelName}`]
-                                              ? this.state.contact[`contact_${channelName}`].map((socialMedia, socialMediaIndex) => (
-                                                <Text key={socialMediaIndex.toString()} style={socialMediaIndex === 0 ? { marginTop: 10 } : {}}>{socialMedia.value}</Text>
-                                              )) : null
-                                          }
-                                          <Text style={styles.socialMediaNames}>
-                                            {channel.label}
-                                          </Text>
-                                        </Col>
-                                      );
-                                    }
-                                    return null;
-                                  })
-                                }
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={[styles.formLabel, { marginTop: 5 }]}>{i18n.t('contactDetailScreen.socialMedia')}</Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="Entypo"
-                                  name="home"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.contact_address ? this.state.contact.contact_address.filter(address => !address.delete).map(address => address.value).join(', ') + (this.state.contact.contact_address.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="FontAwesome"
-                                  name="map-marker"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.location_grid ? this.state.contact.location_grid.values.map(location => this.state.geonames.find(geoname => geoname.value === location.value).name).join(', ') + (this.state.contact.location_grid.values.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.fields.location_grid.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="FontAwesome"
-                                  name="globe"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.people_groups ? this.state.contact.people_groups.values.map(peopleGroup => this.state.peopleGroups.find(person => person.value === peopleGroup.value).name).join(', ') + (this.state.contact.people_groups.values.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.fields.people_groups.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="FontAwesome"
-                                  name="clock-o"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.age) ? this.state.contact.age : ''}</Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{this.props.contactSettings.fields.age.name}</Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  android="md-male"
-                                  ios="ios-male"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.gender) ? this.props.contactSettings.fields.gender.values[this.state.contact.gender].label : ''}</Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{this.props.contactSettings.fields.gender.name}</Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={styles.formRow}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  android="md-arrow-dropright"
-                                  ios="ios-arrow-dropright"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.sources ? `${this.state.contact.sources.values.map(source => this.props.contactSettings.fields.sources.values[source.value].label).join(', ')}.` : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.fields.sources.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                          </View>
-                        </ScrollView>
-                      </Tab>
-                      <Tab
-                        heading={i18n.t('global.progress')}
-                        tabStyle={styles.tabStyle}
-                        textStyle={styles.textStyle}
-                        activeTabStyle={styles.activeTabStyle}
-                        activeTextStyle={styles.activeTextStyle}
-                      >
-                        <ScrollView
-                          refreshControl={(
-                            <RefreshControl
-                              refreshing={this.state.loading}
-                              onRefresh={() => this.onRefresh(this.state.contact.ID)}
-                            />
-                          )}
-                        >
-                          <View
-                            style={[styles.formContainer, { marginTop: 10 }]}
-                          >
-                            <Grid>
-                              <Row>
-                                <Col />
-                                <Col>
-                                  <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
-                                    {i18n.t('global.edit')}
-                                  </Text>
-                                </Col>
-                              </Row>
-                            </Grid>
-                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  android="md-calendar"
-                                  ios="ios-calendar"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.seeker_path) ? this.props.contactSettings.fields.seeker_path.values[this.state.contact.seeker_path].label : ''}</Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>{this.props.contactSettings.fields.seeker_path.name}</Label>
-                              </Col>
-                            </Row>
-                            <View
-                              style={{
-                                alignItems: 'center',
-                                marginTop: 5,
-                                marginBottom: 25,
-                              }}
-                            >
-                              <ProgressBarAnimated
-                                width={progressBarWidth}
-                                value={this.state.progressBarValue}
-                                backgroundColor={Colors.tintColor}
-                              />
-                            </View>
-                            <View style={styles.formDivider} />
-                            <Label
-                              style={[
-                                styles.formLabel,
-                                { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
-                              ]}
-                            >
-                              {this.props.contactSettings.fields.milestones.name}
-                            </Label>
-                            {this.renderfaithMilestones()}
-                            {this.renderCustomFaithMilestones()}
-                            <Grid style={{ marginTop: 25 }}>
-                              <View style={styles.formDivider} />
-                              <Row style={styles.formRow}>
-                                <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                  <Icon
-                                    type="Entypo"
-                                    name="water"
-                                    style={styles.formIcon}
-                                  />
-                                </Col>
-                                <Col>
-                                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>{(this.state.contact.baptism_date) ? this.state.contact.baptism_date : ''}</Text>
-                                </Col>
-                                <Col style={styles.formIconLabel}>
-                                  <Label style={[styles.label, styles.formLabel]}>
-                                    {this.props.contactSettings.fields.baptism_date.name}
-                                  </Label>
-                                </Col>
-                              </Row>
-                            </Grid>
-                          </View>
-                        </ScrollView>
-                      </Tab>
-                      <Tab
-                        heading={i18n.t('global.commentsActivity')}
-                        tabStyle={styles.tabStyle}
-                        textStyle={styles.textStyle}
-                        activeTabStyle={styles.activeTabStyle}
-                        activeTextStyle={styles.activeTextStyle}
-                      >
-                        <View style={{ flex: 1 }}>
-                          <FlatList
-                            style={{
-                              backgroundColor: '#ffffff',
-                              flex: 1,
-                              marginBottom: 60,
-                            }}
-                            ref={(flatList) => {
-                              commentsFlatList = flatList;
-                            }}
-                            data={this.getCommentsAndActivities()}
-                            extraData={!this.state.loadingMoreComments || !this.state.loadingMoreActivities}
-                            inverted
-                            ItemSeparatorComponent={() => (
-                              <View
-                                style={{
-                                  height: 1,
-                                  backgroundColor: '#CCCCCC',
-                                }}
-                              />
-                            )}
-                            keyExtractor={(item, index) => String(index)}
-                            renderItem={(item) => {
-                              const commentOrActivity = item.item;
-                              return this.renderActivityOrCommentRow(
-                                commentOrActivity,
-                              );
-                            }}
-                            refreshControl={(
-                              <RefreshControl
-                                refreshing={(this.state.loadComments || this.state.loadActivities)}
-                                onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID)}
-                              />
-                            )}
-                            onScroll={({ nativeEvent }) => {
-                              const {
-                                loadingMoreComments, commentsOffset, activitiesOffset,
-                              } = this.state;
-                              const flatList = nativeEvent;
-                              const contentOffsetY = flatList.contentOffset.y;
-                              const layoutMeasurementHeight = flatList.layoutMeasurement.height;
-                              const contentSizeHeight = flatList.contentSize.height;
-                              const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
-                              const distanceToStart = contentSizeHeight - heightOffsetSum;
-
-                              if (distanceToStart < 100) {
-                                if (!loadingMoreComments) {
-                                  if (commentsOffset < this.state.totalComments) {
-                                    this.setState({
-                                      loadingMoreComments: true,
-                                    }, () => {
-                                      this.getContactComments(this.state.contact.ID);
-                                    });
-                                  }
-                                }
-                                if (!this.state.loadingMoreActivities) {
-                                  if (activitiesOffset < this.state.totalActivities) {
-                                    this.setState({
-                                      loadingMoreActivities: true,
-                                    }, () => {
-                                      this.getContactActivities(this.state.contact.ID);
-                                    });
-                                  }
-                                }
-                              }
-                            }}
-                          />
-                          <KeyboardAccessory>
-                            <View
-                              style={{
-                                backgroundColor: 'white',
-                                flexDirection: 'row',
-                              }}
-                            >
-                              <TextInput
-                                placeholder={i18n.t('global.writeYourCommentNoteHere')}
-                                value={this.state.comment}
-                                onChangeText={this.setComment}
-                                style={{
-                                  borderColor: '#B4B4B4',
-                                  borderRadius: 5,
-                                  borderWidth: 1,
-                                  flex: 1,
-                                  margin: 10,
-                                  paddingLeft: 5,
-                                  paddingRight: 5,
-                                }}
-                              />
-                              <TouchableOpacity
-                                onPress={() => this.onSaveComment()}
-                                style={{
-                                  backgroundColor: Colors.tintColor,
-                                  borderRadius: 80,
-                                  height: 40,
-                                  margin: 10,
-                                  paddingTop: 7,
-                                  paddingLeft: 10,
-                                  width: 40,
-                                }}
-                              >
-                                <Icon
-                                  android="md-send"
-                                  ios="ios-send"
-                                  style={{ color: 'white', fontSize: 25 }}
-                                />
-                              </TouchableOpacity>
-                            </View>
-                          </KeyboardAccessory>
-                        </View>
-                      </Tab>
-                      <Tab
-                        heading={i18n.t('contactDetailScreen.connections')}
-                        tabStyle={styles.tabStyle}
-                        textStyle={styles.textStyle}
-                        activeTabStyle={styles.activeTabStyle}
-                        activeTextStyle={styles.activeTextStyle}
-                      >
-                        <ScrollView
-                          keyboardShouldPersistTaps="handled"
-                          refreshControl={(
-                            <RefreshControl
-                              refreshing={this.state.loading}
-                              onRefresh={() => this.onRefresh(this.state.contact.ID)}
-                            />
-                          )}
-                        >
-                          <View
-                            style={[styles.formContainer, { marginTop: 10 }]}
-                          >
-                            <Grid>
-                              <Row>
-                                <Col />
-                                <Col>
-                                  <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }} onPress={() => this.onEnableEdit()}>
-                                    {i18n.t('global.edit')}
-                                  </Text>
-                                </Col>
-                              </Row>
-                            </Grid>
-                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="FontAwesome"
-                                  name="users"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.groups ? this.state.contact.groups.values.map(group => this.state.groups.find(groupItem => groupItem.value === group.value).name).join(', ') + (this.state.contact.groups.values.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.fields.groups.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="Entypo"
-                                  name="network"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.relation ? this.state.contact.relation.values.map(relation => this.state.usersContacts.find(user => user.value === relation.value).name).join(', ') + (this.state.contact.relation.values.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.fields.relation.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="Entypo"
-                                  name="water"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.baptized_by ? this.state.contact.baptized_by.values.map(baptizedBy => this.state.usersContacts.find(user => user.value === baptizedBy.value).name).join(', ') + (this.state.contact.baptized_by.values.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.fields.baptized_by.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="Entypo"
-                                  name="water"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.baptized ? this.state.contact.baptized.values.map(baptized => this.state.usersContacts.find(user => user.value === baptized.value).name).join(', ') + (this.state.contact.baptized.values.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.fields.baptized.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="FontAwesome"
-                                  name="black-tie"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.coached_by ? this.state.contact.coached_by.values.map(coachedBy => this.state.usersContacts.find(user => user.value === coachedBy.value).name).join(', ') + (this.state.contact.coached_by.values.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.fields.coached_by.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                            <Row style={[styles.formRow, { paddingTop: 15 }]}>
-                              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                                <Icon
-                                  type="MaterialCommunityIcons"
-                                  name="presentation"
-                                  style={styles.formIcon}
-                                />
-                              </Col>
-                              <Col>
-                                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                                  {this.state.contact.coaching ? this.state.contact.coaching.values.map(coaching => this.state.usersContacts.find(user => user.value === coaching.value).name).join(', ') + (this.state.contact.coaching.values.length > 0 ? '.' : '') : ''}
-                                </Text>
-                              </Col>
-                              <Col style={styles.formParentLabel}>
-                                <Label style={styles.formLabel}>
-                                  {this.props.contactSettings.fields.coaching.name}
-                                </Label>
-                              </Col>
-                            </Row>
-                            <View style={styles.formDivider} />
-                          </View>
-                        </ScrollView>
-                      </Tab>
-                    </Tabs>
+                      renderScene={({ route }) => {
+                        switch (route.key) {
+                          case 'details':
+                            return this.detailView();
+                          case 'progress':
+                            return this.progressView();
+                          case 'comments':
+                            return this.commentsView();
+                          case 'connections':
+                            return this.connectionsView();
+                          default:
+                            return null;
+                        }
+                      }}
+                      onIndexChange={this.tabChanged}
+                      initialLayout={{ width: windowWidth }}
+                    />
                     {this.state.renderFab && (
                       <ActionButton
                         buttonColor={Colors.primaryRGBA}
@@ -2794,7 +2802,7 @@ class ContactDetailScreen extends React.Component {
                       <Container>
                         <Content>
                           <ScrollView keyboardShouldPersistTaps="handled">
-                            {this.state.currentTabIndex === 0 && (
+                            {this.state.tabViewConfig.index === 0 && (
                               <View style={styles.formContainer}>
                                 <Label
                                   style={[{
@@ -3594,7 +3602,7 @@ class ContactDetailScreen extends React.Component {
                                 </Row>
                               </View>
                             )}
-                            {this.state.currentTabIndex === 1 && (
+                            {this.state.tabViewConfig.index === 1 && (
                               <View style={styles.formContainer}>
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
@@ -3687,7 +3695,7 @@ class ContactDetailScreen extends React.Component {
                                 </Row>
                               </View>
                             )}
-                            {this.state.currentTabIndex === 3 && (
+                            {this.state.tabViewConfig.index === 3 && (
                               <View style={styles.formContainer}>
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>

@@ -40,6 +40,7 @@ let toastError;
 
 class GroupsScreen extends React.Component {
 
+  /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
   };

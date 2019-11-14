@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
 let toastError;
 class LoginScreen extends React.Component {
 
+  /* eslint-enable react/sort-comp */
   state = {
     loading: false,
     modalVisible: false,

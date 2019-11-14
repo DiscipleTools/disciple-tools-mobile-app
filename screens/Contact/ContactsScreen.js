@@ -40,6 +40,7 @@ let toastError;
 
 class ContactsScreen extends React.Component {
 
+  /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
   }
