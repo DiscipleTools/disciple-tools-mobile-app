@@ -39,6 +39,18 @@ const styles = StyleSheet.create({
 let toastError;
 
 class GroupsScreen extends React.Component {
+  /* eslint-disable react/sort-comp */
+  static navigationOptions = {
+    title: i18n.t('global.groups'),
+    headerLeft: null,
+    headerStyle: {
+      backgroundColor: Colors.tintColor,
+    },
+    headerTintColor: '#FFFFFF',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  };
 
   /* eslint-enable react/sort-comp */
   state = {
@@ -78,7 +90,7 @@ class GroupsScreen extends React.Component {
           ) : <Text />}
           {this.props.groupSettings.group_status.values[group.group_status] && this.props.groupSettings.group_type.values[group.group_type] ? (
             <Text style={styles.groupSubtitle}>
-               • 
+              •
             </Text>
           ) : <Text />}
           {(this.props.groupSettings.group_type.values[group.group_type]) ? (
@@ -88,7 +100,7 @@ class GroupsScreen extends React.Component {
           ) : <Text />}
           {this.props.groupSettings.group_type.values[group.group_type] && group.member_count ? (
             <Text style={styles.groupSubtitle}>
-               • 
+              •
             </Text>
           ) : <Text />}
           {group.member_count ? (
@@ -134,19 +146,6 @@ class GroupsScreen extends React.Component {
     }
   };
 
-
-  static navigationOptions = {
-    title: i18n.t('global.groups'),
-    headerLeft: null,
-    headerStyle: {
-      backgroundColor: Colors.tintColor,
-    },
-    headerTintColor: '#FFFFFF',
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    },
-  };
-  
   render() {
     return (
       <Container>

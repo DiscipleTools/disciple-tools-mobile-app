@@ -116,14 +116,14 @@ const styles = StyleSheet.create({
 });
 
 class HomeScreen extends React.Component {
+  /* eslint-disable react/sort-comp */
+  static navigationOptions = {
+    header: null,
+  };
 
   /* eslint-enable react/sort-comp */
   handleLearnMorePress = () => {
     WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
-  };
-
-  static navigationOptions = {
-    header: null,
   };
 
   maybeRenderDevelopmentModeWarning() {

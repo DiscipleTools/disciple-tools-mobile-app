@@ -16,10 +16,7 @@ import {
   Dimensions,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import {
-  Button,
-  Icon,
-} from 'native-base';
+import { Button, Icon } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Updates } from 'expo';
 import Constants from 'expo-constants';
@@ -27,9 +24,7 @@ import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import i18n from '../languages';
 import locales from '../languages/locales';
 import Colors from '../constants/Colors';
-import {
-  login, getUserInfo,
-} from '../store/actions/user.actions';
+import { login, getUserInfo } from '../store/actions/user.actions';
 import { setLanguage } from '../store/actions/i18n.actions';
 import TextField from '../components/TextField';
 import {
@@ -130,6 +125,10 @@ const styles = StyleSheet.create({
 });
 let toastError;
 class LoginScreen extends React.Component {
+  /* eslint-disable react/sort-comp */
+  static navigationOptions = {
+    header: null,
+  };
 
   /* eslint-enable react/sort-comp */
   state = {
@@ -185,7 +184,8 @@ class LoginScreen extends React.Component {
       };
     }
 
-    const error = (userReducerError || groupsReducerError || usersReducerError || contactsReducerError);
+    const error =
+      userReducerError || groupsReducerError || usersReducerError || contactsReducerError;
     if (error) {
       newState = {
         ...newState,
@@ -214,31 +214,40 @@ class LoginScreen extends React.Component {
           this.getUserInfo();
         });
       } else {
-        this.setState({
-          loading: true,
-        }, () => {
-          this.setState({
-            contactSettingsListRetrieved: true,
-            groupSettingsListRetrieved: true,
-            appLanguageSet: true,
-          });
-        });
+        this.setState(
+          {
+            loading: true,
+          },
+          () => {
+            this.setState({
+              contactSettingsListRetrieved: true,
+              groupSettingsListRetrieved: true,
+              appLanguageSet: true,
+            });
+          },
+        );
       }
     }
   }
 
   componentDidUpdate(prevProps) {
     const {
-      userData, usersContacts, geonames, peopleGroups, search, contactSettings, groupSettings,
+      userData,
+      usersContacts,
+      geonames,
+      peopleGroups,
+      search,
+      contactSettings,
+      groupSettings,
     } = this.props;
     const {
-      users, userReducerError, groupsReducerError, usersReducerError, contactsReducerError,
+      users,
+      userReducerError,
+      groupsReducerError,
+      usersReducerError,
+      contactsReducerError,
     } = this.props;
-    const {
-      contactSettingsListRetrieved,
-      groupSettingsListRetrieved,
-      appLanguageSet,
-    } = this.state;
+    const { contactSettingsListRetrieved, groupSettingsListRetrieved, appLanguageSet } = this.state;
     // If the RTL value in the store does not match what is
     // in I18nManager (which controls content flow), call
     // forceRTL(...) to set it in I18nManager and reload app
@@ -263,58 +272,37 @@ class LoginScreen extends React.Component {
 
     // usersContactsList retrieved
     if (usersContacts && prevProps.usersContacts !== usersContacts) {
-      ExpoFileSystemStorage.setItem(
-        'usersAndContactsList',
-        JSON.stringify(usersContacts),
-      );
+      ExpoFileSystemStorage.setItem('usersAndContactsList', JSON.stringify(usersContacts));
     }
 
     // geonamesList retrieved
     if (geonames && prevProps.geonames !== geonames) {
-      ExpoFileSystemStorage.setItem(
-        'locationsList',
-        JSON.stringify(geonames),
-      );
+      ExpoFileSystemStorage.setItem('locationsList', JSON.stringify(geonames));
     }
 
     // peopleGroupsList retrieved
     if (peopleGroups && prevProps.peopleGroups !== peopleGroups) {
-      ExpoFileSystemStorage.setItem(
-        'peopleGroupsList',
-        JSON.stringify(peopleGroups),
-      );
+      ExpoFileSystemStorage.setItem('peopleGroupsList', JSON.stringify(peopleGroups));
     }
 
     // peopleGroupsList retrieved
     if (search && prevProps.search !== search) {
-      ExpoFileSystemStorage.setItem(
-        'searchGroupsList',
-        JSON.stringify(search),
-      );
+      ExpoFileSystemStorage.setItem('searchGroupsList', JSON.stringify(search));
     }
 
     // usersList retrieved
     if (users && prevProps.users !== users) {
-      ExpoFileSystemStorage.setItem(
-        'usersList',
-        JSON.stringify(users),
-      );
+      ExpoFileSystemStorage.setItem('usersList', JSON.stringify(users));
     }
 
     // contactSettings retrieved
     if (contactSettings && prevProps.contactSettings !== contactSettings) {
-      ExpoFileSystemStorage.setItem(
-        'contactSettings',
-        JSON.stringify(contactSettings),
-      );
+      ExpoFileSystemStorage.setItem('contactSettings', JSON.stringify(contactSettings));
     }
 
     // groupSettings retrieved
     if (groupSettings && prevProps.groupSettings !== groupSettings) {
-      ExpoFileSystemStorage.setItem(
-        'groupSettings',
-        JSON.stringify(groupSettings),
-      );
+      ExpoFileSystemStorage.setItem('groupSettings', JSON.stringify(groupSettings));
     }
 
     if (contactSettingsListRetrieved && groupSettingsListRetrieved && appLanguageSet) {
@@ -324,19 +312,24 @@ class LoginScreen extends React.Component {
       this.props.navigation.navigate('ContactList');
     }
 
-    const userError = (prevProps.userReducerError !== userReducerError && userReducerError);
-    let groupsError = (prevProps.groupsReducerError !== groupsReducerError);
-    groupsError = (groupsError && groupsReducerError);
-    const usersError = (prevProps.usersReducerError !== usersReducerError && usersReducerError);
-    const contactsError = (prevProps.contactsReducerError !== contactsReducerError && contactsReducerError);
+    const userError = prevProps.userReducerError !== userReducerError && userReducerError;
+    let groupsError = prevProps.groupsReducerError !== groupsReducerError;
+    groupsError = groupsError && groupsReducerError;
+    const usersError = prevProps.usersReducerError !== usersReducerError && usersReducerError;
+    const contactsError =
+      prevProps.contactsReducerError !== contactsReducerError && contactsReducerError;
     if (userError || groupsError || usersError || contactsError) {
       const error = userError || groupsError || usersError;
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
-          <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
-          <Text>{error.message}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
         </View>,
         3000,
       );
@@ -349,7 +342,7 @@ class LoginScreen extends React.Component {
 
   setAppLanguage = () => {
     const userLocaleConfig = this.props.userData.locale.substring(0, 2);
-    const locale = locales.find(item => item.code === userLocaleConfig);
+    const locale = locales.find((item) => item.code === userLocaleConfig);
     if (locale) {
       const isRTL = locale.direction === 'rtl';
       // store locale/rtl instore for next load of app
@@ -360,13 +353,10 @@ class LoginScreen extends React.Component {
         appLanguageSet: true,
       });
     }
-  }
+  };
 
   getDataLists = () => {
-    this.props.getUsersAndContacts(
-      this.props.userData.domain,
-      this.props.userData.token,
-    );
+    this.props.getUsersAndContacts(this.props.userData.domain, this.props.userData.token);
     this.props.getLocations(this.props.userData.domain, this.props.userData.token);
     this.props.getPeopleGroups(this.props.userData.domain, this.props.userData.token);
     this.props.getUsers(this.props.userData.domain, this.props.userData.token);
@@ -379,17 +369,13 @@ class LoginScreen extends React.Component {
 
   getUserInfo = () => {
     this.props.getUserInfo(this.props.userData.domain, this.props.userData.token);
-  }
+  };
 
   onLoginPress = () => {
     Keyboard.dismiss();
-    const {
-      domain, username, password,
-    } = this.state;
+    const { domain, username, password } = this.state;
     if (domain && username && password) {
-      const cleanedDomain = (domain || '')
-        .replace('http://', '')
-        .replace('https://', '');
+      const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
       this.props.loginDispatch(cleanedDomain, username, password);
     } else {
       this.setState({
@@ -398,11 +384,6 @@ class LoginScreen extends React.Component {
         passwordValidation: !password,
       });
     }
-  };
-
-  
-  static navigationOptions = {
-    header: null,
   };
 
   /* eslint-disable class-methods-use-this, no-console */
@@ -419,7 +400,7 @@ class LoginScreen extends React.Component {
           toastError = toast;
         }}
         style={{ backgroundColor: Colors.errorBackground }}
-        position="center"
+        positionValue={180}
       />
     );
     const { domainValidation, userValidation, passwordValidation } = this.state;
@@ -434,28 +415,31 @@ class LoginScreen extends React.Component {
       ? [styles.textField, styles.validationErrorInput]
       : styles.textField;
 
-    const domainErrorMessage = domainValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.domain.error')}</Text> : null;
-    const userErrorMessage = userValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.username.error')}</Text> : null;
-    const passwordErrorMessage = passwordValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.password.error')}</Text> : null;
+    const domainErrorMessage = domainValidation ? (
+      <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.domain.error')}</Text>
+    ) : null;
+    const userErrorMessage = userValidation ? (
+      <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.username.error')}</Text>
+    ) : null;
+    const passwordErrorMessage = passwordValidation ? (
+      <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.password.error')}</Text>
+    ) : null;
 
-    const languagePickerItems = locales.map(locale => (
+    const languagePickerItems = locales.map((locale) => (
       <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
     ));
     return (
       <KeyboardAvoidingView behavior="padding">
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.header}>
-            <Image
-              source={require('../assets/images/dt-icon.png')}
-              style={styles.welcomeImage}
-            />
+            <Image source={require('../assets/images/dt-icon.png')} style={styles.welcomeImage} />
           </View>
           <View style={styles.formContainer}>
             <TextField
               containerStyle={domainStyle}
               iconName="ios-globe"
               label={i18n.t('loginScreen.domain.label')}
-              onChangeText={text => this.setState({ domain: text })}
+              onChangeText={(text) => this.setState({ domain: text })}
               autoCapitalize="none"
               autoCorrect={false}
               value={this.state.domain}
@@ -469,7 +453,7 @@ class LoginScreen extends React.Component {
               containerStyle={userStyle}
               iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
               label={i18n.t('loginScreen.username.label')}
-              onChangeText={text => this.setState({ username: text })}
+              onChangeText={(text) => this.setState({ username: text })}
               autoCapitalize="none"
               autoCorrect={false}
               value={this.state.username}
@@ -482,7 +466,7 @@ class LoginScreen extends React.Component {
               containerStyle={passwordStyle}
               iconName={Platform.OS === 'ios' ? 'ios-key' : 'md-key'}
               label={i18n.t('loginScreen.password.label')}
-              onChangeText={text => this.setState({ password: text })}
+              onChangeText={(text) => this.setState({ password: text })}
               autoCapitalize="none"
               autoCorrect={false}
               secureTextEntry
@@ -496,30 +480,19 @@ class LoginScreen extends React.Component {
             />
             {passwordErrorMessage}
             {!this.state.loading && (
-              <Button
-                style={styles.signInButton}
-                onPress={this.onLoginPress}
-                block
-              >
-                <Text style={styles.signInButtonText}>
-                  {i18n.t('loginScreen.logIn')}
-                </Text>
+              <Button style={styles.signInButton} onPress={this.onLoginPress} block>
+                <Text style={styles.signInButtonText}>{i18n.t('loginScreen.logIn')}</Text>
               </Button>
             )}
             {!this.state.loading && (
               <TouchableOpacity
                 style={styles.forgotButton}
                 onPress={this.goToForgotPassword}
-                disabled={this.state.loading}
-              >
-                <Text style={styles.forgotButtonText}>
-                  {i18n.t('loginScreen.forgotPassword')}
-                </Text>
+                disabled={this.state.loading}>
+                <Text style={styles.forgotButtonText}>{i18n.t('loginScreen.forgotPassword')}</Text>
               </TouchableOpacity>
             )}
-            {this.state.loading && (
-              <ActivityIndicator style={{ margin: 20 }} size="small" />
-            )}
+            {this.state.loading && <ActivityIndicator style={{ margin: 20 }} size="small" />}
             <Text style={styles.versionText}>{Constants.manifest.version}</Text>
           </View>
           <View style={styles.languagePickerContainer}>
@@ -528,7 +501,7 @@ class LoginScreen extends React.Component {
               selectedValue={this.props.i18n.locale}
               style={styles.languagePicker}
               onValueChange={(itemValue) => {
-                const locale = locales.find(item => item.code === itemValue);
+                const locale = locales.find((item) => item.code === itemValue);
                 if (locale) {
                   const isRTL = locale.direction === 'rtl';
                   // store locale/rtl instore for next load of app
@@ -536,8 +509,7 @@ class LoginScreen extends React.Component {
                   // set current locale for all language strings
                   i18n.setLocale(locale.code, isRTL);
                 }
-              }}
-            >
+              }}>
               {languagePickerItems}
             </Picker>
           </View>
@@ -642,7 +614,7 @@ LoginScreen.defaultProps = {
   contactSettings: null,
   groupSettings: null,
 };
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   userData: state.userReducer.userData,
   userReducerLoading: state.userReducer.loading,
   userReducerError: state.userReducer.error,
@@ -664,7 +636,7 @@ const mapStateToProps = state => ({
   contacts: state.contactsReducer.contacts,
   groups: state.groupsReducer.groups,
 });
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   loginDispatch: (domain, username, password) => {
     dispatch(login(domain, username, password));
   },
@@ -702,7 +674,4 @@ const mapDispatchToProps = dispatch => ({
     dispatch(getUserInfo(domain, token));
   },
 });
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(LoginScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
