@@ -100,17 +100,6 @@ const styles = StyleSheet.create({
 });
 let toastError;
 class SettingsScreen extends React.Component {
-  /* eslint-disable react/sort-comp */
-  static navigationOptions = {
-    title: i18n.t('settingsScreen.settings'),
-    headerStyle: {
-      backgroundColor: Colors.tintColor,
-    },
-    headerTintColor: '#FFFFFF',
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    },
-  };
 
   /* eslint-enable react/sort-comp */
   constructor(props) {
@@ -160,6 +149,18 @@ class SettingsScreen extends React.Component {
       );
     });
   }
+
+  
+  static navigationOptions = {
+    title: i18n.t('settingsScreen.settings'),
+    headerStyle: {
+      backgroundColor: Colors.tintColor,
+    },
+    headerTintColor: '#FFFFFF',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  };
 
   render() {
     const languagePickerItems = locales.map(locale => (
