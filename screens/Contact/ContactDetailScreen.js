@@ -984,7 +984,7 @@ class ContactDetailScreen extends React.Component {
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.subassigned ? this.state.contact.subassigned.values.map(contact => this.state.usersContacts.find(user => user.value === contact.value).name).join(', ') + (this.state.contact.subassigned.values.length > 0 ? '' : '') : ''}
+              {this.state.contact.subassigned ? this.state.contact.subassigned.values.map(contact => this.state.usersContacts.find(user => user.value === contact.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1004,7 +1004,7 @@ class ContactDetailScreen extends React.Component {
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.contact_phone ? this.state.contact.contact_phone.filter(phone => !phone.delete).map(phone => phone.value).join(', ') + (this.state.contact.contact_phone.length > 0 ? '' : '') : ''}
+              {this.state.contact.contact_phone ? this.state.contact.contact_phone.filter(phone => !phone.delete).map(phone => phone.value).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1022,7 +1022,7 @@ class ContactDetailScreen extends React.Component {
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.contact_email ? this.state.contact.contact_email.filter(email => !email.delete).map(email => email.value).join(', ') + (this.state.contact.contact_email.length > 0 ? '' : '') : ''}
+              {this.state.contact.contact_email ? this.state.contact.contact_email.filter(email => !email.delete).map(email => email.value).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1073,7 +1073,7 @@ class ContactDetailScreen extends React.Component {
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.contact_address ? this.state.contact.contact_address.filter(address => !address.delete).map(address => address.value).join(', ') + (this.state.contact.contact_address.length > 0 ? '' : '') : ''}
+              {this.state.contact.contact_address ? this.state.contact.contact_address.filter(address => !address.delete).map(address => address.value).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1091,7 +1091,7 @@ class ContactDetailScreen extends React.Component {
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.location_grid ? this.state.contact.location_grid.values.map(location => this.state.geonames.find(geoname => geoname.value === location.value).name).join(', ') + (this.state.contact.location_grid.values.length > 0 ? '' : '') : ''}
+              {this.state.contact.location_grid ? this.state.contact.location_grid.values.map(location => this.state.geonames.find(geoname => geoname.value === location.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1111,7 +1111,7 @@ class ContactDetailScreen extends React.Component {
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.people_groups ? this.state.contact.people_groups.values.map(peopleGroup => this.state.peopleGroups.find(person => person.value === peopleGroup.value).name).join(', ') + (this.state.contact.people_groups.values.length > 0 ? '' : '') : ''}
+              {this.state.contact.people_groups ? this.state.contact.people_groups.values.map(peopleGroup => this.state.peopleGroups.find(person => person.value === peopleGroup.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1406,7 +1406,7 @@ class ContactDetailScreen extends React.Component {
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.groups ? this.state.contact.groups.values.map(group => this.state.groups.find(groupItem => groupItem.value === group.value).name).join(', ') + (this.state.contact.groups.values.length > 0 ? '' : '') : ''}
+              {this.state.contact.groups ? this.state.contact.groups.values.map(group => this.state.groups.find(groupItem => groupItem.value === group.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1426,7 +1426,7 @@ class ContactDetailScreen extends React.Component {
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.relation ? this.state.contact.relation.values.map(relation => this.state.usersContacts.find(user => user.value === relation.value).name).join(', ') + (this.state.contact.relation.values.length > 0 ? '' : '') : ''}
+              {this.state.contact.relation ? this.state.contact.relation.values.map(relation => this.state.usersContacts.find(user => user.value === relation.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1446,7 +1446,7 @@ class ContactDetailScreen extends React.Component {
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.baptized_by ? this.state.contact.baptized_by.values.map(baptizedBy => this.state.usersContacts.find(user => user.value === baptizedBy.value).name).join(', ') + (this.state.contact.baptized_by.values.length > 0 ? '' : '') : ''}
+              {this.state.contact.baptized_by ? this.state.contact.baptized_by.values.map(baptizedBy => this.state.usersContacts.find(user => user.value === baptizedBy.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1466,7 +1466,7 @@ class ContactDetailScreen extends React.Component {
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.baptized ? this.state.contact.baptized.values.map(baptized => this.state.usersContacts.find(user => user.value === baptized.value).name).join(', ') + (this.state.contact.baptized.values.length > 0 ? '' : '') : ''}
+              {this.state.contact.baptized ? this.state.contact.baptized.values.map(baptized => this.state.usersContacts.find(user => user.value === baptized.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1486,7 +1486,7 @@ class ContactDetailScreen extends React.Component {
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.coached_by ? this.state.contact.coached_by.values.map(coachedBy => this.state.usersContacts.find(user => user.value === coachedBy.value).name).join(', ') + (this.state.contact.coached_by.values.length > 0 ? '' : '') : ''}
+              {this.state.contact.coached_by ? this.state.contact.coached_by.values.map(coachedBy => this.state.usersContacts.find(user => user.value === coachedBy.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
@@ -1506,7 +1506,7 @@ class ContactDetailScreen extends React.Component {
           </Col>
           <Col>
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.coaching ? this.state.contact.coaching.values.map(coaching => this.state.usersContacts.find(user => user.value === coaching.value).name).join(', ') + (this.state.contact.coaching.values.length > 0 ? '' : '') : ''}
+              {this.state.contact.coaching ? this.state.contact.coaching.values.map(coaching => this.state.usersContacts.find(user => user.value === coaching.value).name).join(', ') : ''}
             </Text>
           </Col>
           <Col style={styles.formParentLabel}>
