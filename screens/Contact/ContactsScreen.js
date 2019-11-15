@@ -12,6 +12,8 @@ import { Fab, Container } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
 
+import { SearchBar } from 'react-native-elements';
+
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
@@ -43,6 +45,7 @@ class ContactsScreen extends React.Component {
   /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
+    search: '',
   }
 
   componentDidUpdate(prevProps) {
@@ -82,7 +85,7 @@ class ContactsScreen extends React.Component {
           ) : <Text />}
           {this.props.contactSettings.fields.overall_status.values[contact.overall_status] && this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
             <Text style={styles.contactSubtitle}>
-               • 
+              •
             </Text>
           ) : <Text />}
           {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
@@ -127,6 +130,11 @@ class ContactsScreen extends React.Component {
   };
 
 
+  updateSearch = search => {
+    this.setState({ search });
+  };
+
+
   static navigationOptions = {
     title: i18n.t('contactsScreen.contacts'),
     headerLeft: null,
@@ -138,7 +146,7 @@ class ContactsScreen extends React.Component {
       fontWeight: 'bold',
     },
   };
-  
+
   render() {
     return (
       <Container>
