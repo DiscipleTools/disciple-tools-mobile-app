@@ -130,10 +130,8 @@ const styles = StyleSheet.create({
 });
 let toastError;
 class LoginScreen extends React.Component {
-  static navigationOptions = {
-    header: null,
-  };
 
+  /* eslint-enable react/sort-comp */
   state = {
     loading: false,
     modalVisible: false,
@@ -400,6 +398,11 @@ class LoginScreen extends React.Component {
         passwordValidation: !password,
       });
     }
+  };
+
+  
+  static navigationOptions = {
+    header: null,
   };
 
   /* eslint-disable class-methods-use-this, no-console */
