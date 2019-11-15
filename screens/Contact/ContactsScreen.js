@@ -16,6 +16,8 @@ import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
 import i18n from '../../languages';
 
+import { ListItem, SearchBar } from 'react-native-elements';
+
 const styles = StyleSheet.create({
   flatListItem: {
     height: 90,
@@ -33,6 +35,31 @@ const styles = StyleSheet.create({
     padding: 20,
     color: 'rgba(0,0,0,0.4)',
   },
+  searchBarContainer: {
+    borderBottomWidth: 1,
+    backgroundColor: Colors.tabBar,
+    borderTopColor:'#FFF',
+    borderBottomColor:'#FFF',
+    paddingBottom: 10,
+    marginBottom: 10,
+    shadowColor: '#DDDDDD',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.80,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  searchBarInput:{
+    marginLeft: 10,
+    marginRight: 10,
+    backgroundColor:'white',
+    borderColor:'#DDDDDD',
+    borderBottomWidth: 1,
+    borderWidth:1
+  }
+
 });
 
 let toastError;
@@ -129,6 +156,20 @@ class ContactsScreen extends React.Component {
 
   updateSearch = search => {
     this.setState({ search });
+    console.log(search)
+  };
+
+  renderHeader = () => {
+    return (
+      <SearchBar
+        placeholder= {i18n.t('contactsScreen.contacts')}
+        onChangeText={text => this.updateSearch(text)}
+        autoCorrect={false}
+        value={this.state.search}
+        containerStyle={styles.searchBarContainer}
+        inputContainerStyle={styles.searchBarInput}
+      />
+    );
   };
 
 
@@ -149,6 +190,7 @@ class ContactsScreen extends React.Component {
       <Container>
         <View style={{ flex: 1 }}>
           <FlatList
+            ListHeaderComponent={this.renderHeader}
             data={this.props.contacts}
             extraData={this.state.refresh}
             renderItem={item => this.renderRow(item.item)}
