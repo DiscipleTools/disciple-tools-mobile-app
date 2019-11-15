@@ -11,9 +11,6 @@ import {
 import { Fab, Container } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
-
-import { SearchBar } from 'react-native-elements';
-
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
