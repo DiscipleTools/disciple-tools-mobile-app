@@ -1,13 +1,8 @@
 import React from 'react';
-import {
-  Platform,
-  StatusBar,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import PropTypes from 'prop-types';
-import { AppLoading } from 'expo';
+import { AppLoading, Notifications } from 'expo';
 import * as Icon from '@expo/vector-icons';
 import * as Font from 'expo-font';
 import { Asset } from 'expo-asset';
@@ -15,12 +10,15 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import Reactotron from 'reactotron-react-native';
 
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
 import AppNavigator from './navigation/AppNavigator';
 import { store, persistor } from './store/store';
 import i18n from './languages';
 
-import { setNetworkConnectivity } from './store/actions/networkConnectivity.actions';
+// notifications
 
+import { setNetworkConnectivity } from './store/actions/networkConnectivity.actions';
 
 // Styles
 const styles = StyleSheet.create({
@@ -37,6 +35,8 @@ class App extends React.Component {
     super();
     this.state = {
       isLoadingComplete: false,
+      expoPushToken: '',
+      notification: {},
     };
   }
 
@@ -46,17 +46,28 @@ class App extends React.Component {
       this.handleConnectivityChange(isConnected);
     });
     // add network connectivity handler
-    netInfoSubscribe = NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+    netInfoSubscribe = NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleConnectivityChange,
+    );
     if (__DEV__) {
       // Reactotron can be used to see AsyncStorage data and API requests
       // If Reactotron gets no connection, this is the solution that worked for me (cairocoder01: 2019-08-15)
       // https://github.com/expo/expo-cli/issues/153#issuecomment-358925525
       // May need to then run this before `npm start`: `adb reverse tcp:9090 tcp:9090`
-      Reactotron
-        .configure() // controls connection & communication settings
+      Reactotron.configure() // controls connection & communication settings
         .useReactNative() // add all built-in react native plugins
         .connect(); // let's connect!
     }
+
+    this.registerForPushNotificationsAsync();
+
+    // Handle notifications that are received or selected while the app
+    // is open. If the app was closed and then opened by tapping the
+    // notification (rather than just tapping the app icon to open it),
+    // this function will fire on the next tick after the app starts
+    // with the notification data.
+    this.notificationSubscription = Notifications.addListener(this.handleNotification);
   }
 
   componentWillUnmount() {
@@ -71,27 +82,54 @@ class App extends React.Component {
       fetch('https://8.8.8.8')
         .then(() => {
           store.dispatch(setNetworkConnectivity(true));
-        }).catch(() => {
+        })
+        .catch(() => {
           store.dispatch(setNetworkConnectivity(false));
         });
     } else {
       store.dispatch(setNetworkConnectivity(false));
     }
-  }
+  };
 
-  loadResourcesAsync = async () => Promise.all([
-    Asset.loadAsync([
-      require('./assets/images/robot-dev.png'),
-      require('./assets/images/robot-prod.png'),
-    ]),
-    Font.loadAsync({
-      // This is the font that we are using for our tab bar
-      ...Icon.Ionicons.font,
-      // We include SpaceMono because we use it in HomeScreen.js. Feel free
-      // to remove this if you are not using it in your app
-      'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
-    }),
-  ]);
+  handleNotification = (notification) => {
+    this.setState({ notification });
+    console.log(`received notification: ${JSON.stringify(this.state.notification)}`);
+  };
+
+  registerForPushNotificationsAsync = async () => {
+    if (Constants.isDevice) {
+      const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      const token = await Notifications.getExpoPushTokenAsync();
+      this.setState({ expoPushToken: token });
+      console.log(`Expo push token: ${this.state.expoPushToken}`);
+    } else {
+      console.log('Must use physical device for Push Notifications');
+    }
+  };
+
+  loadResourcesAsync = async () =>
+    Promise.all([
+      Asset.loadAsync([
+        require('./assets/images/robot-dev.png'),
+        require('./assets/images/robot-prod.png'),
+      ]),
+      Font.loadAsync({
+        // This is the font that we are using for our tab bar
+        ...Icon.Ionicons.font,
+        // We include SpaceMono because we use it in HomeScreen.js. Feel free
+        // to remove this if you are not using it in your app
+        'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+      }),
+    ]);
 
   handleLoadingError = (error) => {
     // In this case, you might want to report the error to your error
