@@ -275,7 +275,7 @@ class SettingsScreen extends React.Component {
             toastError = toast;
           }}
           style={{ backgroundColor: Colors.errorBackground }}
-          positionValue={180}
+          positionValue={210}
         />
       </Container>
     );

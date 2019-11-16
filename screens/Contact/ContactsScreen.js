@@ -190,7 +190,7 @@ class ContactsScreen extends React.Component {
       <Container>
         <View style={{ flex: 1 }}>
           <FlatList
-            ListHeaderComponent={this.renderHeader}
+            //ListHeaderComponent={this.renderHeader}
             data={this.props.contacts}
             extraData={this.state.refresh}
             renderItem={item => this.renderRow(item.item)}
@@ -215,7 +215,7 @@ class ContactsScreen extends React.Component {
               toastError = toast;
             }}
             style={{ backgroundColor: Colors.errorBackground }}
-            positionValue={180}
+            positionValue={210}
           />
         </View>
       </Container>

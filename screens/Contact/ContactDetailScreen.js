@@ -2600,7 +2600,7 @@ class ContactDetailScreen extends React.Component {
           toastSuccess = toast;
         }}
         style={{ backgroundColor: Colors.successBackground }}
-        positionValue={180}
+        positionValue={210}
       />
     );
     const errorToast = (
@@ -2609,7 +2609,7 @@ class ContactDetailScreen extends React.Component {
           toastError = toast;
         }}
         style={{ backgroundColor: Colors.errorBackground }}
-        positionValue={180}
+        positionValue={210}
       />
     );
     return (
