@@ -11,11 +11,12 @@ import {
 import { Fab, Container } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
-
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
 import i18n from '../../languages';
+
+import { ListItem, SearchBar } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -34,6 +35,31 @@ const styles = StyleSheet.create({
     padding: 20,
     color: 'rgba(0,0,0,0.4)',
   },
+  searchBarContainer: {
+    borderBottomWidth: 1,
+    backgroundColor: Colors.tabBar,
+    borderTopColor:'#FFF',
+    borderBottomColor:'#FFF',
+    paddingBottom: 10,
+    marginBottom: 10,
+    shadowColor: '#DDDDDD',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.80,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  searchBarInput:{
+    marginLeft: 10,
+    marginRight: 10,
+    backgroundColor:'white',
+    borderColor:'#DDDDDD',
+    borderBottomWidth: 1,
+    borderWidth:1
+  }
+
 });
 
 let toastError;
@@ -43,6 +69,7 @@ class ContactsScreen extends React.Component {
   /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
+    search: '',
   }
 
   componentDidUpdate(prevProps) {
@@ -50,10 +77,14 @@ class ContactsScreen extends React.Component {
     if (prevProps.error !== error && error) {
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
-          <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
-          <Text>{error.message}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
         </View>,
         3000,
       );
@@ -78,7 +109,7 @@ class ContactsScreen extends React.Component {
           ) : <Text />}
           {this.props.contactSettings.fields.overall_status.values[contact.overall_status] && this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
             <Text style={styles.contactSubtitle}>
-               • 
+              •
             </Text>
           ) : <Text />}
           {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
@@ -123,6 +154,25 @@ class ContactsScreen extends React.Component {
   };
 
 
+  updateSearch = search => {
+    this.setState({ search });
+    console.log(search)
+  };
+
+  renderHeader = () => {
+    return (
+      <SearchBar
+        placeholder= {i18n.t('contactsScreen.contacts')}
+        onChangeText={text => this.updateSearch(text)}
+        autoCorrect={false}
+        value={this.state.search}
+        containerStyle={styles.searchBarContainer}
+        inputContainerStyle={styles.searchBarInput}
+      />
+    );
+  };
+
+
   static navigationOptions = {
     title: i18n.t('contactsScreen.contacts'),
     headerLeft: null,
@@ -134,12 +184,13 @@ class ContactsScreen extends React.Component {
       fontWeight: 'bold',
     },
   };
-  
+
   render() {
     return (
       <Container>
         <View style={{ flex: 1 }}>
           <FlatList
+            ListHeaderComponent={this.renderHeader}
             data={this.props.contacts}
             extraData={this.state.refresh}
             renderItem={item => this.renderRow(item.item)}
@@ -164,7 +215,7 @@ class ContactsScreen extends React.Component {
               toastError = toast;
             }}
             style={{ backgroundColor: Colors.errorBackground }}
-            position="center"
+            positionValue={180}
           />
         </View>
       </Container>

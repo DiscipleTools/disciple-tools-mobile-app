@@ -576,7 +576,7 @@ class GroupDetailScreen extends React.Component {
         this.onRefreshCommentsActivities(group.ID);
         toastSuccess.show(
           <View>
-            <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
+            <Text  style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
           </View>,
           3000,
         );
@@ -592,10 +592,14 @@ class GroupDetailScreen extends React.Component {
       const error = userReducerError || groupsReducerError;
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
-          <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
-          <Text>{error.message}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
         </View>,
         3000,
       );
@@ -2416,8 +2420,8 @@ class GroupDetailScreen extends React.Component {
         ref={(toast) => {
           toastSuccess = toast;
         }}
-        style={{ backgroundColor: 'green' }}
-        position="center"
+        style={{ backgroundColor: Colors.successBackground }}
+        positionValue={180}
       />
     );
     const errorToast = (
@@ -2426,7 +2430,7 @@ class GroupDetailScreen extends React.Component {
           toastError = toast;
         }}
         style={{ backgroundColor: Colors.errorBackground }}
-        position="center"
+        positionValue={180}
       />
     );
 

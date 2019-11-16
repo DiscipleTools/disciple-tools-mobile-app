@@ -50,10 +50,14 @@ class GroupsScreen extends React.Component {
     if (prevProps.error !== error && error) {
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
-          <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
-          <Text>{error.message}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
         </View>,
         3000,
       );
@@ -176,7 +180,7 @@ class GroupsScreen extends React.Component {
               toastError = toast;
             }}
             style={{ backgroundColor: Colors.errorBackground }}
-            position="center"
+            positionValue={180}
           />
         </View>
       </Container>

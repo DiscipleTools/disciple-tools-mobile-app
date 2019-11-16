@@ -333,11 +333,15 @@ class LoginScreen extends React.Component {
       const error = userError || groupsError || usersError;
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
-          <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
-          <Text>{error.message}</Text>
-        </View>,
+        <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+          {i18n.t('global.error.code')}
+        </Text>
+        <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+        <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+          {i18n.t('global.error.message')}
+        </Text>
+        <Text style={{ color: Colors.errorText }}>{error.message}</Text>
+      </View>,
         3000,
       );
     }
@@ -419,7 +423,7 @@ class LoginScreen extends React.Component {
           toastError = toast;
         }}
         style={{ backgroundColor: Colors.errorBackground }}
-        position="center"
+        positionValue={180}
       />
     );
     const { domainValidation, userValidation, passwordValidation } = this.state;

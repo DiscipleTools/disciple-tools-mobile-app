@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   // Form
   formContainer: {
     paddingTop: 10,
-    paddingBottom: 10,
+    paddingBottom: 120,
     paddingLeft: containerPadding,
     paddingRight: containerPadding,
   },
@@ -524,7 +524,7 @@ class ContactDetailScreen extends React.Component {
         this.onRefreshCommentsActivities(contact.ID);
         toastSuccess.show(
           <View>
-            <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.success.save')}</Text>
+            <Text style={{ color: Colors.sucessText  }}>{i18n.t('global.success.save')}</Text>
           </View>,
           3000,
         );
@@ -541,10 +541,14 @@ class ContactDetailScreen extends React.Component {
       const error = userReducerError || contactsReducerError;
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
-          <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
-          <Text>{error.message}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
         </View>,
         3000,
       );
@@ -1072,7 +1076,7 @@ class ContactDetailScreen extends React.Component {
         <View style={styles.formDivider} />
         <Row style={styles.formRow}>
           <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="Ionicons" name="chatboxes" style={styles.formIcon} />
+            <Icon type="Ionicons" name="chatboxes" style={[styles.formIcon, { marginTop: 0 }]} />
           </Col>
           <Col>
             {Object.keys(this.props.contactSettings.channels).map(
@@ -1094,7 +1098,9 @@ class ContactDetailScreen extends React.Component {
             )}
           </Col>
           <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.socialMedia')}</Label>
+            <Label style={[styles.formLabel, { marginTop: 5 }]}>
+              {i18n.t('contactDetailScreen.socialMedia')}
+            </Label>
           </Col>
         </Row>
         <View style={styles.formDivider} />
@@ -2593,8 +2599,8 @@ class ContactDetailScreen extends React.Component {
         ref={(toast) => {
           toastSuccess = toast;
         }}
-        style={{ backgroundColor: 'green' }}
-        position="center"
+        style={{ backgroundColor: Colors.successBackground }}
+        positionValue={180}
       />
     );
     const errorToast = (
@@ -2603,7 +2609,7 @@ class ContactDetailScreen extends React.Component {
           toastError = toast;
         }}
         style={{ backgroundColor: Colors.errorBackground }}
-        position="center"
+        positionValue={180}
       />
     );
     return (

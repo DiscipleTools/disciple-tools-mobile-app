@@ -142,8 +142,10 @@ class SettingsScreen extends React.Component {
     }).catch((onrejected) => {
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
-          <Text>{onrejected.toString()}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{onrejected.toString()}</Text>
         </View>,
         3000,
       );
@@ -273,7 +275,7 @@ class SettingsScreen extends React.Component {
             toastError = toast;
           }}
           style={{ backgroundColor: Colors.errorBackground }}
-          position="center"
+          positionValue={180}
         />
       </Container>
     );
