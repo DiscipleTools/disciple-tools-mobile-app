@@ -10,6 +10,6 @@ jobs:
     steps:
     - uses: microsoft/variable-substitution@v1 
       with:
-        files: './google-services.json'
+        files: '**/google-services.json'
       env:
         client.api_key.current_key: "<api-key>"
