@@ -3,7 +3,11 @@ The React Native code base for the Disciple Tools mobile app.
 
 ## Latest status
 
+<<<<<<< HEAD
 | Master | Development |
+=======
+| Production | Development |
+>>>>>>> c0538be8fda2d755a7e98e6fe8fb49593a6861b8
 | - | - |
 | [![](https://github.com/DiscipleTools/disciple-tools-mobile-app/workflows/CI%2FCD/badge.svg)](https://github.com/DiscipleTools/disciple-tools-mobile-app/actions) | [![](https://github.com/DiscipleTools/disciple-tools-mobile-app/workflows/CI%2FCD/badge.svg?branch=development)](https://github.com/DiscipleTools/disciple-tools-mobile-app/actions) |
 
