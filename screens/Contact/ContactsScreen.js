@@ -16,7 +16,7 @@ import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
 import i18n from '../../languages';
 
-import { ListItem, SearchBar } from 'react-native-elements';
+import { SearchBar } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -63,7 +63,6 @@ const styles = StyleSheet.create({
 });
 
 let toastError;
-this.arrayholder = [];
 
 class ContactsScreen extends React.Component {
 
@@ -184,7 +183,7 @@ class ContactsScreen extends React.Component {
   renderHeader = () => {
     return (
       <SearchBar
-        placeholder={i18n.t('contactsScreen.contacts')}
+        placeholder={i18n.t('global.search')}
         onChangeText={text => this.SearchFilterFunction(text)}
         autoCorrect={false}
         value={this.state.search}

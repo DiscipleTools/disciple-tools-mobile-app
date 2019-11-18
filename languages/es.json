@@ -51,7 +51,8 @@
         "cancel": "Cancelar",
         "save": "Guardar",
         "online": "En línea",
-        "language": "Idioma"
+        "language": "Idioma",
+        "search": "Buscar"
     },
     "loginScreen": {
         "domain": {

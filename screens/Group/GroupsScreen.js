@@ -17,6 +17,8 @@ import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/groups.actions';
 import i18n from '../../languages';
 
+import { SearchBar } from 'react-native-elements';
+
 const styles = StyleSheet.create({
   flatListItem: {
     height: 90,
@@ -34,6 +36,30 @@ const styles = StyleSheet.create({
     padding: 20,
     color: 'rgba(0,0,0,0.4)',
   },
+  searchBarContainer: {
+    borderBottomWidth: 1,
+    backgroundColor: Colors.tabBar,
+    borderTopColor: '#FFF',
+    borderBottomColor: '#FFF',
+    paddingBottom: 10,
+    marginBottom: 10,
+    shadowColor: '#DDDDDD',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.80,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  searchBarInput: {
+    marginLeft: 10,
+    marginRight: 10,
+    backgroundColor: 'white',
+    borderColor: '#DDDDDD',
+    borderBottomWidth: 1,
+    borderWidth: 1
+  }
 });
 
 let toastError;
@@ -43,6 +69,8 @@ class GroupsScreen extends React.Component {
   /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
+    search: '',
+    dataSourceGroups: this.props.groups
   };
 
   componentDidUpdate(prevProps) {
@@ -139,6 +167,39 @@ class GroupsScreen extends React.Component {
   };
 
 
+  SearchFilterFunction(text) {
+    let itemsFiltered = []
+    this.props.groups.filter(function (item) {
+      const textData = text.toUpperCase()
+      const itemDataTitle = item.title.toUpperCase()
+      var filterByTitle = itemDataTitle.includes(textData)
+      filterByTitle == true ? itemsFiltered.push(item) : null
+      return itemsFiltered
+    })
+    this.setState({
+        refresh: true,
+      }, () => {
+        this.setState({
+          dataSourceGroups: itemsFiltered,
+          search: text,
+          refresh: false
+        })
+      }) 
+  }
+
+  renderHeader = () => {
+    return (
+      <SearchBar
+        placeholder={i18n.t('global.search')}
+        onChangeText={text => this.SearchFilterFunction(text)}
+        autoCorrect={false}
+        value={this.state.search}
+        containerStyle={styles.searchBarContainer}
+        inputContainerStyle={styles.searchBarInput}
+      />
+    );
+  };
+
   static navigationOptions = {
     title: i18n.t('global.groups'),
     headerLeft: null,
@@ -155,8 +216,9 @@ class GroupsScreen extends React.Component {
     return (
       <Container>
         <View style={{ flex: 1 }}>
-          <FlatList
-            data={this.props.groups}
+        <FlatList
+            ListHeaderComponent={this.renderHeader}
+            data={this.state.dataSourceGroups}
             extraData={this.state.refresh}
             renderItem={item => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
