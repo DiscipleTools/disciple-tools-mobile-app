@@ -885,7 +885,6 @@ class ContactDetailScreen extends React.Component {
     
     try{
       let height 
-      console.log(value.nativeEvent.contentSize.height)
       value != undefined ?  height = value.nativeEvent.contentSize.height + 20 : height = 40
       height <= 40 ? height = 40 : null
       this.setState({      
