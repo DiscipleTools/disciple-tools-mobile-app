@@ -70,9 +70,18 @@ class ContactsScreen extends React.Component {
   state = {
     refresh: false,
     search: '',
-    dataSourceContact: this.props.contacts
   }
 
+  componentDidMount() {
+    this.setState({
+      refresh: true,
+    }, () => {
+      this.setState({
+        dataSourceContact: this.props.contacts,
+        refresh: false
+      })
+    })
+  }
 
   componentDidUpdate(prevProps) {
     const { error } = this.props;
@@ -136,6 +145,14 @@ class ContactsScreen extends React.Component {
 
   onRefresh = () => {
     this.props.getAllContacts(this.props.userData.domain, this.props.userData.token);
+    this.setState({
+      refresh: true,
+    }, () => {
+      this.setState({
+        dataSourceContact: this.props.contacts,
+        refresh: false
+      })
+    })
   };
 
   goToContactDetailScreen = (contactData = null) => {
@@ -161,8 +178,8 @@ class ContactsScreen extends React.Component {
     this.props.contacts.filter(function (item) {
       var filterByPhone = false
       var filterByEmail = false
-      const textData = text.toUpperCase()
-      const itemDataTitle = item.title.toUpperCase()
+      const textData = text.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      const itemDataTitle = item.title.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
       var filterByTitle = itemDataTitle.includes(textData)
 
       if (item.contact_phone != undefined) {

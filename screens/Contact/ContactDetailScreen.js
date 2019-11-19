@@ -349,7 +349,7 @@ class ContactDetailScreen extends React.Component {
       () => {
         this.getLists(contactId || null);
       },
-    );
+    );    
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -1250,7 +1250,7 @@ class ContactDetailScreen extends React.Component {
                       (source) =>
                         this.props.contactSettings.fields.sources.values[source.value].label,
                     )
-                    .join(', ')}.`
+                    .join(', ')}`
                 : ''}
             </Text>
           </Col>

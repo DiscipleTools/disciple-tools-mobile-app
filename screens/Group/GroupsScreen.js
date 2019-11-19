@@ -145,6 +145,14 @@ class GroupsScreen extends React.Component {
 
   onRefresh = () => {
     this.props.getAllGroups(this.props.userData.domain, this.props.userData.token);
+    this.setState({
+      refresh: true,
+    }, () => {
+      this.setState({
+        dataSourceGroups: this.props.groups,
+        refresh: false
+      })
+    })
   };
 
   goToGroupDetailScreen = (groupData = null) => {
@@ -170,8 +178,8 @@ class GroupsScreen extends React.Component {
   SearchFilterFunction(text) {
     let itemsFiltered = []
     this.props.groups.filter(function (item) {
-      const textData = text.toUpperCase()
-      const itemDataTitle = item.title.toUpperCase()
+      const textData = text.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      const itemDataTitle = item.title.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
       var filterByTitle = itemDataTitle.includes(textData)
       filterByTitle == true ? itemsFiltered.push(item) : null
       return itemsFiltered
