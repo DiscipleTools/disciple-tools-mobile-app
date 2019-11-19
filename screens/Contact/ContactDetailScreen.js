@@ -197,6 +197,20 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
   },
+  commentInput:{
+    borderColor: '#B4B4B4',
+    borderRadius: 5,
+    borderWidth: 1,
+    flex: 1,
+    margin: 10,
+    paddingLeft: 5,
+    paddingRight: 5,
+    textAlignVertical: 'center',
+  },
+  commentInputContainer:{
+  backgroundColor: 'white',
+        flexDirection: 'row'
+  }
 });
 
 class ContactDetailScreen extends React.Component {
@@ -485,6 +499,7 @@ class ContactDetailScreen extends React.Component {
         commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
       }
       this.setComment('');
+      this.setHeight(35);
     }
 
     // CONTACT SAVE / GET BY ID
@@ -865,6 +880,28 @@ class ContactDetailScreen extends React.Component {
       comment: value,
     });
   };
+
+  setHeight = (value) =>{
+    
+    try{
+      let height 
+      value != undefined ?  height = value.nativeEvent.contentSize.height + 20 : height = 40
+      height <= 40 ? height = 40 : null
+      this.setState({      
+        height: Math.min(120, height) ,
+        heightContainer:  Math.min(120, height) + 20
+      });
+    }
+    catch(error){
+      this.setState({      
+        height: 40 ,
+        heightContainer:  60
+      });
+    }
+
+
+
+  }
 
   onSaveComment = () => {
     const { comment } = this.state;
@@ -1378,23 +1415,14 @@ class ContactDetailScreen extends React.Component {
       />
       <KeyboardAccessory>
         <View
-          style={{
-            backgroundColor: 'white',
-            flexDirection: 'row',
-          }}>
+          style={[styles.commentInputContainer, {height: this.state.heightContainer}]}>
           <TextInput
             placeholder={i18n.t('global.writeYourCommentNoteHere')}
             value={this.state.comment}
             onChangeText={this.setComment}
-            style={{
-              borderColor: '#B4B4B4',
-              borderRadius: 5,
-              borderWidth: 1,
-              flex: 1,
-              margin: 10,
-              paddingLeft: 5,
-              paddingRight: 5,
-            }}
+            onContentSizeChange={this.setHeight}
+            multiline = {true}
+            style={[styles.commentInput, {height: this.state.height}]}
           />
           <TouchableOpacity
             onPress={() => this.onSaveComment()}
