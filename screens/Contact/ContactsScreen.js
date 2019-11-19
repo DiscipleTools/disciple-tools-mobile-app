@@ -83,6 +83,17 @@ class ContactsScreen extends React.Component {
     })
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const {
+      contacts,
+    } = nextProps;
+    let newState = {
+      ...prevState,
+        dataSourceContact: contacts,
+    }
+    return newState
+  }
+
   componentDidUpdate(prevProps) {
     const { error } = this.props;
     if (prevProps.error !== error && error) {
