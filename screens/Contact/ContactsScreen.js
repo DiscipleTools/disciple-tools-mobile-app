@@ -159,25 +159,39 @@ class ContactsScreen extends React.Component {
   SearchFilterFunction(text) {
     let itemsFiltered = []
     this.props.contacts.filter(function (item) {
-      //let filterByPhone = false
-      //let filterByEmail = false
+      var filterByPhone = false
+      var filterByEmail = false
       const textData = text.toUpperCase()
       const itemDataTitle = item.title.toUpperCase()
       var filterByTitle = itemDataTitle.includes(textData)
-      //item.contact_phone != undefined ? console.log(item.contact_phone) : filterByPhone = false;
-      //item.contact_phone != undefined ? console.log(item.contact_email) : filterByEmail = false;
-      filterByTitle == true ? itemsFiltered.push(item) : null
+
+      if (item.contact_phone != undefined) {
+        item.contact_phone.forEach((elements) => {
+          var itemDataPhone = elements.value.toUpperCase()          
+          filterByPhone == false ? filterByPhone = itemDataPhone.includes(textData) : null
+        })
+      }
+
+      if (item.contact_email != undefined) {
+        item.contact_email.forEach((elements) => {
+          var itemDataEmail = elements.value.toUpperCase()
+          filterByEmail = itemDataEmail.includes(textData)
+          filterByEmail == false ? filterByEmail = itemDataEmail.includes(textData) : null
+        })
+      }
+
+      filterByTitle == true ? itemsFiltered.push(item) : filterByPhone == true ? itemsFiltered.push(item) : filterByEmail == true ? itemsFiltered.push(item) : null
       return itemsFiltered
     })
     this.setState({
-        refresh: true,
-      }, () => {
-        this.setState({
-          dataSourceContact: itemsFiltered,
-          search: text,
-          refresh: false
-        })
-      }) 
+      refresh: true,
+    }, () => {
+      this.setState({
+        dataSourceContact: itemsFiltered,
+        search: text,
+        refresh: false
+      })
+    })
   }
 
   renderHeader = () => {
