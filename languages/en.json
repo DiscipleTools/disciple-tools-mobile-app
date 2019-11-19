@@ -51,7 +51,8 @@
         "cancel": "Cancel",
         "save": "Save",
         "online": "Online",
-        "language": "Language"
+        "language": "Language",
+        "search": "Search"
     },
     "loginScreen": {
         "domain": {

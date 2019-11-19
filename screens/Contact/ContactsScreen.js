@@ -16,7 +16,7 @@ import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
 import i18n from '../../languages';
 
-import { ListItem, SearchBar } from 'react-native-elements';
+import { SearchBar } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
   searchBarContainer: {
     borderBottomWidth: 1,
     backgroundColor: Colors.tabBar,
-    borderTopColor:'#FFF',
-    borderBottomColor:'#FFF',
+    borderTopColor: '#FFF',
+    borderBottomColor: '#FFF',
     paddingBottom: 10,
     marginBottom: 10,
     shadowColor: '#DDDDDD',
@@ -51,13 +51,13 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  searchBarInput:{
+  searchBarInput: {
     marginLeft: 10,
     marginRight: 10,
-    backgroundColor:'white',
-    borderColor:'#DDDDDD',
+    backgroundColor: 'white',
+    borderColor: '#DDDDDD',
     borderBottomWidth: 1,
-    borderWidth:1
+    borderWidth: 1
   }
 
 });
@@ -70,7 +70,9 @@ class ContactsScreen extends React.Component {
   state = {
     refresh: false,
     search: '',
+    dataSourceContact: this.props.contacts
   }
+
 
   componentDidUpdate(prevProps) {
     const { error } = this.props;
@@ -154,16 +156,49 @@ class ContactsScreen extends React.Component {
   };
 
 
-  updateSearch = search => {
-    this.setState({ search });
-    console.log(search)
-  };
+  SearchFilterFunction(text) {
+    let itemsFiltered = []
+    this.props.contacts.filter(function (item) {
+      var filterByPhone = false
+      var filterByEmail = false
+      const textData = text.toUpperCase()
+      const itemDataTitle = item.title.toUpperCase()
+      var filterByTitle = itemDataTitle.includes(textData)
+
+      if (item.contact_phone != undefined) {
+        item.contact_phone.forEach((elements) => {
+          var itemDataPhone = elements.value.toUpperCase()          
+          filterByPhone == false ? filterByPhone = itemDataPhone.includes(textData) : null
+        })
+      }
+
+      if (item.contact_email != undefined) {
+        item.contact_email.forEach((elements) => {
+          var itemDataEmail = elements.value.toUpperCase()
+          filterByEmail = itemDataEmail.includes(textData)
+          filterByEmail == false ? filterByEmail = itemDataEmail.includes(textData) : null
+        })
+      }
+
+      filterByTitle == true ? itemsFiltered.push(item) : filterByPhone == true ? itemsFiltered.push(item) : filterByEmail == true ? itemsFiltered.push(item) : null
+      return itemsFiltered
+    })
+    this.setState({
+      refresh: true,
+    }, () => {
+      this.setState({
+        dataSourceContact: itemsFiltered,
+        search: text,
+        refresh: false
+      })
+    })
+  }
 
   renderHeader = () => {
     return (
       <SearchBar
-        placeholder= {i18n.t('contactsScreen.contacts')}
-        onChangeText={text => this.updateSearch(text)}
+        placeholder={i18n.t('global.search')}
+        onChangeText={text => this.SearchFilterFunction(text)}
         autoCorrect={false}
         value={this.state.search}
         containerStyle={styles.searchBarContainer}
@@ -190,8 +225,8 @@ class ContactsScreen extends React.Component {
       <Container>
         <View style={{ flex: 1 }}>
           <FlatList
-            //ListHeaderComponent={this.renderHeader}
-            data={this.props.contacts}
+            ListHeaderComponent={this.renderHeader}
+            data={this.state.dataSourceContact}
             extraData={this.state.refresh}
             renderItem={item => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
