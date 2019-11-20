@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   }
 
 });
-
+let firstloader = 0
 let toastError;
 
 class ContactsScreen extends React.Component {
@@ -70,9 +70,7 @@ class ContactsScreen extends React.Component {
   state = {
     refresh: false,
     search: '',
-    dataSourceContact: this.props.contacts
   }
-
 
   componentDidUpdate(prevProps) {
     const { error } = this.props;
@@ -90,6 +88,22 @@ class ContactsScreen extends React.Component {
         </View>,
         3000,
       );
+    }
+  }
+
+  
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const {
+      contacts,
+    } = nextProps;
+    let newState = {
+      ...prevState,
+        dataSourceContact: contacts,
+    }
+
+    firstloader =  firstloader + 1
+    if(firstloader < 5){
+      return newState
     }
   }
 
@@ -136,6 +150,14 @@ class ContactsScreen extends React.Component {
 
   onRefresh = () => {
     this.props.getAllContacts(this.props.userData.domain, this.props.userData.token);
+    this.setState({
+      refresh: true,
+    }, () => {
+      this.setState({
+        dataSourceContact: this.props.contacts,
+        refresh: false
+      })
+    })
   };
 
   goToContactDetailScreen = (contactData = null) => {
@@ -161,8 +183,8 @@ class ContactsScreen extends React.Component {
     this.props.contacts.filter(function (item) {
       var filterByPhone = false
       var filterByEmail = false
-      const textData = text.toUpperCase()
-      const itemDataTitle = item.title.toUpperCase()
+      const textData = text.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      const itemDataTitle = item.title.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
       var filterByTitle = itemDataTitle.includes(textData)
 
       if (item.contact_phone != undefined) {
