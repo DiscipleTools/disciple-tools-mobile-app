@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   }
 
 });
-
+let firstloader = 0
 let toastError;
 
 class ContactsScreen extends React.Component {
@@ -70,28 +70,6 @@ class ContactsScreen extends React.Component {
   state = {
     refresh: false,
     search: '',
-  }
-
-  componentDidMount() {
-    this.setState({
-      refresh: true,
-    }, () => {
-      this.setState({
-        dataSourceContact: this.props.contacts,
-        refresh: false
-      })
-    })
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const {
-      contacts,
-    } = nextProps;
-    let newState = {
-      ...prevState,
-        dataSourceContact: contacts,
-    }
-    return newState
   }
 
   componentDidUpdate(prevProps) {
@@ -110,6 +88,22 @@ class ContactsScreen extends React.Component {
         </View>,
         3000,
       );
+    }
+  }
+
+  
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const {
+      contacts,
+    } = nextProps;
+    let newState = {
+      ...prevState,
+        dataSourceContact: contacts,
+    }
+
+    firstloader =  firstloader + 1
+    if(firstloader < 5){
+      return newState
     }
   }
 
