@@ -178,6 +178,7 @@
         "searchPeerGroups": "Buscar grupos",
         "childGroup": "Subsiguientes Grupos",
         "searchChildGroups": "Buscar grupos",
-        "groupName": "Nombre"
+        "groupName": "Nombre",
+        "addMember": "Añadir miembro"
     }
 }

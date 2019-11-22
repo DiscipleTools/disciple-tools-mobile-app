@@ -178,6 +178,7 @@
         "searchPeerGroups": "Search peer groups",
         "childGroup": "Child Group",
         "searchChildGroups": "Search child groups",
-        "groupName": "Group Name"
+        "groupName": "Group Name",
+        "addMember": "Add Member"
     }
 }
