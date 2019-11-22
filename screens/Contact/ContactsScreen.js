@@ -104,6 +104,8 @@ class ContactsScreen extends React.Component {
     firstloader =  firstloader + 1
     if(firstloader < 5){
       return newState
+    }else{
+      return null
     }
   }
 

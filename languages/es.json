@@ -52,7 +52,8 @@
         "save": "Guardar",
         "online": "En línea",
         "language": "Idioma",
-        "search": "Buscar"
+        "search": "Buscar",
+        "membersActivity": "Miembros"
     },
     "loginScreen": {
         "domain": {

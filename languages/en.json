@@ -52,7 +52,8 @@
         "save": "Save",
         "online": "Online",
         "language": "Language",
-        "search": "Search"
+        "search": "Search",
+        "membersActivity": "Members"
     },
     "loginScreen": {
         "domain": {
