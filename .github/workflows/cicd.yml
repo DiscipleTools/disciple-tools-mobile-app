@@ -14,15 +14,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - uses: microsoft/variable-substitution@v1 
-        with:
-          files: './google-services.json'
-        env:
-          project_info.project_number: ${{ secrets.FIREBASE_PROJECT_NUMBER }}
-          client[0].client_info.mobilesdk_app_id: ${{ secrets.FIREBASE_MOBILESDK_APP_ID }}
-          client[0].oauth_client[0].client_id: ${{ secrets.FIREBASE_OAUTH_CLIENT_ID }}
-          client[0].api_key.current_key: ${{ secrets.FIREBASE_API_KEY }}
-          client[0].services.appinvite_service.other_platform_oauth_client[0].client_id: ${{ secrets.FIREBASE_OAUTH_CLIENT_ID }}
       - uses: expo/expo-github-action@v4
         with:
           expo-version: 3.x
