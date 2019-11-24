@@ -1340,7 +1340,7 @@ class GroupDetailScreen extends React.Component {
               {this.state.group.coaches
                 ? this.state.group.coaches.values
                     .map(
-                      function(coach, idx) {
+                      function(coach) {
                         return safeFind(
                           this.state.usersContacts.find((user) => user.value === coach.value),
                           'name',
@@ -1366,7 +1366,7 @@ class GroupDetailScreen extends React.Component {
               {this.state.group.location_grid
                 ? this.state.group.location_grid.values
                     .map(
-                      function(location, idx) {
+                      function(location) {
                         return safeFind(
                           this.state.geonames.find((geoname) => geoname.value === location.value),
                           'name',
@@ -1392,7 +1392,7 @@ class GroupDetailScreen extends React.Component {
               {this.state.group.people_groups
                 ? this.state.group.people_groups.values
                     .map(
-                      function(peopleGroup, idx) {
+                      function(peopleGroup) {
                         return safeFind(
                           this.state.peopleGroups.find(
                             (person) => person.value === peopleGroup.value,

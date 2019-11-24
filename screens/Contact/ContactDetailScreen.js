@@ -1059,7 +1059,7 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.subassigned
                 ? this.state.contact.subassigned.values
                     .map(
-                      function(contact, idx) {
+                      function(contact) {
                         return safeFind(
                           this.state.usersContacts.find((user) => user.value === contact.value),
                           'name',
@@ -1174,7 +1174,7 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.location_grid
                 ? this.state.contact.location_grid.values
                     .map(
-                      function(location, idx) {
+                      function(location) {
                         return safeFind(
                           this.state.geonames.find((geoname) => geoname.value === location.value),
                           'name',
@@ -1202,7 +1202,7 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.people_groups
                 ? this.state.contact.people_groups.values
                     .map(
-                      function(peopleGroup, idx) {
+                      function(peopleGroup) {
                         return safeFind(
                           this.state.peopleGroups.find(
                             (person) => person.value === peopleGroup.value,
@@ -1489,7 +1489,7 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.groups
                 ? this.state.contact.groups.values
                     .map(
-                      function(group, idx) {
+                      function(group) {
                         return safeFind(
                           this.state.groups.find((groupItem) => groupItem.value === group.value),
                           'name',
@@ -1515,7 +1515,7 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.relation
                 ? this.state.contact.relation.values
                     .map(
-                      function(relation, idx) {
+                      function(relation) {
                         return safeFind(
                           this.state.usersContacts.find((user) => user.value === relation.value),
                           'name',
@@ -1543,7 +1543,7 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.baptized_by
                 ? this.state.contact.baptized_by.values
                     .map(
-                      function(baptizedBy, idx) {
+                      function(baptizedBy) {
                         return safeFind(
                           this.state.usersContacts.find((user) => user.value === baptizedBy.value),
                           'name',
@@ -1571,7 +1571,7 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.baptized
                 ? this.state.contact.baptized.values
                     .map(
-                      function(baptized, idx) {
+                      function(baptized) {
                         return safeFind(
                           this.state.usersContacts.find((user) => user.value === baptized.value),
                           'name',
@@ -1599,7 +1599,7 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.coached_by
                 ? this.state.contact.coached_by.values
                     .map(
-                      function(coachedBy, idx) {
+                      function(coachedBy) {
                         return safeFind(
                           this.state.usersContacts.find((user) => user.value === coachedBy.value),
                           'name',
@@ -1627,7 +1627,7 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.coaching
                 ? this.state.contact.coaching.values
                     .map(
-                      function(coaching, idx) {
+                      function(coaching) {
                         return safeFind(
                           this.state.usersContacts.find((user) => user.value === coaching.value),
                           'name',
