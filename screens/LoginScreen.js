@@ -130,10 +130,8 @@ const styles = StyleSheet.create({
 });
 let toastError;
 class LoginScreen extends React.Component {
-  static navigationOptions = {
-    header: null,
-  };
 
+  /* eslint-enable react/sort-comp */
   state = {
     loading: false,
     modalVisible: false,
@@ -335,11 +333,15 @@ class LoginScreen extends React.Component {
       const error = userError || groupsError || usersError;
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
-          <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
-          <Text>{error.message}</Text>
-        </View>,
+        <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+          {i18n.t('global.error.code')}
+        </Text>
+        <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+        <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+          {i18n.t('global.error.message')}
+        </Text>
+        <Text style={{ color: Colors.errorText }}>{error.message}</Text>
+      </View>,
         3000,
       );
     }
@@ -402,6 +404,11 @@ class LoginScreen extends React.Component {
     }
   };
 
+  
+  static navigationOptions = {
+    header: null,
+  };
+
   /* eslint-disable class-methods-use-this, no-console */
   goToForgotPassword() {
     console.log('forgot password');
@@ -416,7 +423,7 @@ class LoginScreen extends React.Component {
           toastError = toast;
         }}
         style={{ backgroundColor: Colors.errorBackground }}
-        position="center"
+        positionValue={210}
       />
     );
     const { domainValidation, userValidation, passwordValidation } = this.state;

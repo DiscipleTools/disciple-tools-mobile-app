@@ -28,7 +28,11 @@
     }
   },
   "lint-staged": {
-    "**/*.{js,jsx}": ["eslint", "pretty-quick --staged", "git add"]
+    "**/*.{js,jsx}": [
+      "eslint",
+      "pretty-quick --staged",
+      "git add"
+    ]
   },
   "dependencies": {
     "@expo/vector-icons": "^10.0.4",
@@ -40,8 +44,10 @@
     "es6-promise": "^4.2.6",
     "expo": "^33.0.0",
     "expo-asset": "^6.0.0",
+    "expo-constants": "^5.0.1",
     "expo-font": "^5.0.1",
     "expo-localization": "^5.0.1",
+    "expo-mail-composer": "^5.0.1",
     "expo-web-browser": "^5.0.3",
     "i18n-js": "^3.2.1",
     "isomorphic-fetch": "^2.2.1",
@@ -52,10 +58,14 @@
     "react-native-action-button": "^2.8.5",
     "react-native-easy-grid": "^0.2.2",
     "react-native-easy-toast": "^1.2.0",
+    "react-native-elements": "^1.2.7",
+    "react-native-gesture-handler": "^1.2.2",
     "react-native-material-selectize": "^1.16.0",
     "react-native-modal-filter-picker": "^1.3.4",
     "react-native-progress-bar-animated": "^1.0.6",
+    "react-native-reanimated": "^1.0.1",
     "react-native-sticky-keyboard-accessory": "^0.1.3",
+    "react-native-tab-view": "^2.10.0",
     "react-native-vector-icons": "^6.4.1",
     "react-navigation": "^3.0.9",
     "react-redux": "^6.0.1",

@@ -11,11 +11,12 @@ import {
 import { Fab, Container } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
-
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
 import i18n from '../../languages';
+
+import { SearchBar } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -34,25 +35,41 @@ const styles = StyleSheet.create({
     padding: 20,
     color: 'rgba(0,0,0,0.4)',
   },
-});
+  searchBarContainer: {
+    borderBottomWidth: 1,
+    backgroundColor: Colors.tabBar,
+    borderTopColor: '#FFF',
+    borderBottomColor: '#FFF',
+    paddingBottom: 10,
+    marginBottom: 10,
+    shadowColor: '#DDDDDD',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.80,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  searchBarInput: {
+    marginLeft: 10,
+    marginRight: 10,
+    backgroundColor: 'white',
+    borderColor: '#DDDDDD',
+    borderBottomWidth: 1,
+    borderWidth: 1
+  }
 
+});
+let firstloader = 0
 let toastError;
 
 class ContactsScreen extends React.Component {
-  static navigationOptions = {
-    title: i18n.t('contactsScreen.contacts'),
-    headerLeft: null,
-    headerStyle: {
-      backgroundColor: Colors.tintColor,
-    },
-    headerTintColor: '#FFFFFF',
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    },
-  };
 
+  /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
+    search: '',
   }
 
   componentDidUpdate(prevProps) {
@@ -60,13 +77,33 @@ class ContactsScreen extends React.Component {
     if (prevProps.error !== error && error) {
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
-          <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
-          <Text>{error.message}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
         </View>,
         3000,
       );
+    }
+  }
+
+  
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const {
+      contacts,
+    } = nextProps;
+    let newState = {
+      ...prevState,
+        dataSourceContact: contacts,
+    }
+
+    firstloader =  firstloader + 1
+    if(firstloader < 5){
+      return newState
     }
   }
 
@@ -88,7 +125,7 @@ class ContactsScreen extends React.Component {
           ) : <Text />}
           {this.props.contactSettings.fields.overall_status.values[contact.overall_status] && this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
             <Text style={styles.contactSubtitle}>
-              {' • '}
+              •
             </Text>
           ) : <Text />}
           {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
@@ -113,6 +150,14 @@ class ContactsScreen extends React.Component {
 
   onRefresh = () => {
     this.props.getAllContacts(this.props.userData.domain, this.props.userData.token);
+    this.setState({
+      refresh: true,
+    }, () => {
+      this.setState({
+        dataSourceContact: this.props.contacts,
+        refresh: false
+      })
+    })
   };
 
   goToContactDetailScreen = (contactData = null) => {
@@ -132,12 +177,78 @@ class ContactsScreen extends React.Component {
     }
   };
 
+
+  SearchFilterFunction(text) {
+    let itemsFiltered = []
+    this.props.contacts.filter(function (item) {
+      var filterByPhone = false
+      var filterByEmail = false
+      const textData = text.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      const itemDataTitle = item.title.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      var filterByTitle = itemDataTitle.includes(textData)
+
+      if (item.contact_phone != undefined) {
+        item.contact_phone.forEach((elements) => {
+          var itemDataPhone = elements.value.toUpperCase()          
+          filterByPhone == false ? filterByPhone = itemDataPhone.includes(textData) : null
+        })
+      }
+
+      if (item.contact_email != undefined) {
+        item.contact_email.forEach((elements) => {
+          var itemDataEmail = elements.value.toUpperCase()
+          filterByEmail = itemDataEmail.includes(textData)
+          filterByEmail == false ? filterByEmail = itemDataEmail.includes(textData) : null
+        })
+      }
+
+      filterByTitle == true ? itemsFiltered.push(item) : filterByPhone == true ? itemsFiltered.push(item) : filterByEmail == true ? itemsFiltered.push(item) : null
+      return itemsFiltered
+    })
+    this.setState({
+      refresh: true,
+    }, () => {
+      this.setState({
+        dataSourceContact: itemsFiltered,
+        search: text,
+        refresh: false
+      })
+    })
+  }
+
+  renderHeader = () => {
+    return (
+      <SearchBar
+        placeholder={i18n.t('global.search')}
+        onChangeText={text => this.SearchFilterFunction(text)}
+        autoCorrect={false}
+        value={this.state.search}
+        containerStyle={styles.searchBarContainer}
+        inputContainerStyle={styles.searchBarInput}
+      />
+    );
+  };
+
+
+  static navigationOptions = {
+    title: i18n.t('contactsScreen.contacts'),
+    headerLeft: null,
+    headerStyle: {
+      backgroundColor: Colors.tintColor,
+    },
+    headerTintColor: '#FFFFFF',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  };
+
   render() {
     return (
       <Container>
         <View style={{ flex: 1 }}>
           <FlatList
-            data={this.props.contacts}
+            ListHeaderComponent={this.renderHeader}
+            data={this.state.dataSourceContact}
             extraData={this.state.refresh}
             renderItem={item => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
@@ -161,7 +272,7 @@ class ContactsScreen extends React.Component {
               toastError = toast;
             }}
             style={{ backgroundColor: Colors.errorBackground }}
-            position="center"
+            positionValue={210}
           />
         </View>
       </Container>

@@ -1,8 +1,9 @@
-name: Expo Publish
+name: CI/CD 
 on:
   push:
     branches:
       - master
+      - release
       - development
 jobs:
   publish:
@@ -30,6 +31,9 @@ jobs:
       - name: Deploy
         if: github.ref == 'refs/heads/master'
         run: expo publish --release-channel production
+      - name: Deploy Release
+        if: github.ref == 'refs/heads/release'
+        run: expo publish --release-channel release
       - name: Deploy Test
         if: github.ref == 'refs/heads/development'
         run: expo publish

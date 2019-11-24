@@ -17,6 +17,8 @@ import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/groups.actions';
 import i18n from '../../languages';
 
+import { SearchBar } from 'react-native-elements';
+
 const styles = StyleSheet.create({
   flatListItem: {
     height: 90,
@@ -34,25 +36,41 @@ const styles = StyleSheet.create({
     padding: 20,
     color: 'rgba(0,0,0,0.4)',
   },
+  searchBarContainer: {
+    borderBottomWidth: 1,
+    backgroundColor: Colors.tabBar,
+    borderTopColor: '#FFF',
+    borderBottomColor: '#FFF',
+    paddingBottom: 10,
+    marginBottom: 10,
+    shadowColor: '#DDDDDD',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.80,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  searchBarInput: {
+    marginLeft: 10,
+    marginRight: 10,
+    backgroundColor: 'white',
+    borderColor: '#DDDDDD',
+    borderBottomWidth: 1,
+    borderWidth: 1
+  }
 });
 
 let toastError;
 
 class GroupsScreen extends React.Component {
-  static navigationOptions = {
-    title: i18n.t('global.groups'),
-    headerLeft: null,
-    headerStyle: {
-      backgroundColor: Colors.tintColor,
-    },
-    headerTintColor: '#FFFFFF',
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    },
-  };
 
+  /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
+    search: '',
+    dataSourceGroups: this.props.groups
   };
 
   componentDidUpdate(prevProps) {
@@ -60,10 +78,14 @@ class GroupsScreen extends React.Component {
     if (prevProps.error !== error && error) {
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.code')}</Text>
-          <Text>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
-          <Text>{error.message}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
         </View>,
         3000,
       );
@@ -88,7 +110,7 @@ class GroupsScreen extends React.Component {
           ) : <Text />}
           {this.props.groupSettings.group_status.values[group.group_status] && this.props.groupSettings.group_type.values[group.group_type] ? (
             <Text style={styles.groupSubtitle}>
-              {' • '}
+               • 
             </Text>
           ) : <Text />}
           {(this.props.groupSettings.group_type.values[group.group_type]) ? (
@@ -98,7 +120,7 @@ class GroupsScreen extends React.Component {
           ) : <Text />}
           {this.props.groupSettings.group_type.values[group.group_type] && group.member_count ? (
             <Text style={styles.groupSubtitle}>
-              {' • '}
+               • 
             </Text>
           ) : <Text />}
           {group.member_count ? (
@@ -123,6 +145,14 @@ class GroupsScreen extends React.Component {
 
   onRefresh = () => {
     this.props.getAllGroups(this.props.userData.domain, this.props.userData.token);
+    this.setState({
+      refresh: true,
+    }, () => {
+      this.setState({
+        dataSourceGroups: this.props.groups,
+        refresh: false
+      })
+    })
   };
 
   goToGroupDetailScreen = (groupData = null) => {
@@ -144,12 +174,59 @@ class GroupsScreen extends React.Component {
     }
   };
 
+
+  SearchFilterFunction(text) {
+    let itemsFiltered = []
+    this.props.groups.filter(function (item) {
+      const textData = text.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      const itemDataTitle = item.title.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      var filterByTitle = itemDataTitle.includes(textData)
+      filterByTitle == true ? itemsFiltered.push(item) : null
+      return itemsFiltered
+    })
+    this.setState({
+        refresh: true,
+      }, () => {
+        this.setState({
+          dataSourceGroups: itemsFiltered,
+          search: text,
+          refresh: false
+        })
+      }) 
+  }
+
+  renderHeader = () => {
+    return (
+      <SearchBar
+        placeholder={i18n.t('global.search')}
+        onChangeText={text => this.SearchFilterFunction(text)}
+        autoCorrect={false}
+        value={this.state.search}
+        containerStyle={styles.searchBarContainer}
+        inputContainerStyle={styles.searchBarInput}
+      />
+    );
+  };
+
+  static navigationOptions = {
+    title: i18n.t('global.groups'),
+    headerLeft: null,
+    headerStyle: {
+      backgroundColor: Colors.tintColor,
+    },
+    headerTintColor: '#FFFFFF',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  };
+  
   render() {
     return (
       <Container>
         <View style={{ flex: 1 }}>
-          <FlatList
-            data={this.props.groups}
+        <FlatList
+            ListHeaderComponent={this.renderHeader}
+            data={this.state.dataSourceGroups}
             extraData={this.state.refresh}
             renderItem={item => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
@@ -173,7 +250,7 @@ class GroupsScreen extends React.Component {
               toastError = toast;
             }}
             style={{ backgroundColor: Colors.errorBackground }}
-            position="center"
+            positionValue={210}
           />
         </View>
       </Container>

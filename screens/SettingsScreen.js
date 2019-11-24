@@ -1,11 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  I18nManager,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { I18nManager, StyleSheet, Text, View } from 'react-native';
 import {
   Body,
   Button as NbButton,
@@ -100,17 +95,7 @@ const styles = StyleSheet.create({
 });
 let toastError;
 class SettingsScreen extends React.Component {
-  static navigationOptions = {
-    title: i18n.t('settingsScreen.settings'),
-    headerStyle: {
-      backgroundColor: Colors.tintColor,
-    },
-    headerTintColor: '#FFFFFF',
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    },
-  };
-
+  /* eslint-enable react/sort-comp */
   constructor(props) {
     super(props);
 
@@ -138,10 +123,12 @@ class SettingsScreen extends React.Component {
   };
 
   onFABPress = () => {
-    const toastMsg = this.props.isConnected ? i18n.t('settingsScreen.networkUnavailable') : i18n.t('settingsScreen.networkAvailable');
+    const toastMsg = this.props.isConnected
+      ? i18n.t('settingsScreen.networkUnavailable')
+      : i18n.t('settingsScreen.networkAvailable');
     this.toast.show(toastMsg, 3000);
     this.props.toggleNetworkConnectivity(this.props.isConnected);
-  }
+  };
 
   draftNewSupportEmail = () => {
     MailComposer.composeAsync({
@@ -151,16 +138,29 @@ class SettingsScreen extends React.Component {
     }).catch((onrejected) => {
       toastError.show(
         <View>
-          <Text style={{ fontWeight: 'bold' }}>{i18n.t('global.error.message')}</Text>
-          <Text>{onrejected.toString()}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{onrejected.toString()}</Text>
         </View>,
         3000,
       );
     });
-  }
+  };
+
+  static navigationOptions = {
+    title: i18n.t('settingsScreen.settings'),
+    headerStyle: {
+      backgroundColor: Colors.tintColor,
+    },
+    headerTintColor: '#FFFFFF',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  };
 
   render() {
-    const languagePickerItems = locales.map(locale => (
+    const languagePickerItems = locales.map((locale) => (
       <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
     ));
 
@@ -194,20 +194,23 @@ class SettingsScreen extends React.Component {
             </ListItem>
           )}
           {/* === Online === */}
-          <ListItem icon onPress={this.onFABPress}>
-            <Left>
-              <NbButton onPress={this.onFABPress}>
-                <Icon active name="ios-flash" />
-              </NbButton>
-            </Left>
-            <Body style={styles.body}>
-              <Text style={styles.text}>{i18n.t('global.online')}</Text>
-            </Body>
-            <Right>
-              <Switch value={this.props.isConnected} onChange={this.onFABPress} />
-            </Right>
-          </ListItem>
+          {__DEV__ && (
+            <ListItem icon onPress={this.onFABPress}>
+              <Left>
+                <NbButton onPress={this.onFABPress}>
+                  <Icon active name="ios-flash" />
+                </NbButton>
+              </Left>
+              <Body style={styles.body}>
+                <Text style={styles.text}>{i18n.t('global.online')}</Text>
+              </Body>
+              <Right>
+                <Switch value={this.props.isConnected} onChange={this.onFABPress} />
+              </Right>
+            </ListItem>
+          )}
           {/* === Language === */}
+          {/*
           <ListItem icon>
             <Left>
               <NbButton onPress={this.onFABPress}>
@@ -232,11 +235,14 @@ class SettingsScreen extends React.Component {
                     i18n.setLocale(locale.code, isRTL);
                   }
                 }}
+                enabled={false}
               >
                 {languagePickerItems}
               </Picker>
             </Right>
           </ListItem>
+          */}
+          {/* === Help / Support === */}
           <ListItem icon onPress={this.draftNewSupportEmail}>
             <Left>
               <NbButton>
@@ -263,13 +269,18 @@ class SettingsScreen extends React.Component {
           </ListItem>
         </Content>
         <Text style={styles.versionText}>{Constants.manifest.version}</Text>
-        <Toast ref={(c) => { this.toast = c; }} position="center" />
+        <Toast
+          ref={(c) => {
+            this.toast = c;
+          }}
+          position="center"
+        />
         <Toast
           ref={(toast) => {
             toastError = toast;
           }}
           style={{ backgroundColor: Colors.errorBackground }}
-          position="center"
+          positionValue={210}
         />
       </Container>
     );
@@ -278,12 +289,12 @@ class SettingsScreen extends React.Component {
 
 SettingsScreen.propTypes = propTypes;
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   i18n: state.i18nReducer,
   isConnected: state.networkConnectivityReducer.isConnected,
   userData: state.userReducer.userData,
 });
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   toggleNetworkConnectivity: (isConnected) => {
     dispatch(toggleNetworkConnectivity(isConnected));
   },
