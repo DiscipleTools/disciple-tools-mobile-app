@@ -1,11 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  I18nManager,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { I18nManager, StyleSheet, Text, View } from 'react-native';
 import {
   Body,
   Button as NbButton,
@@ -100,7 +95,6 @@ const styles = StyleSheet.create({
 });
 let toastError;
 class SettingsScreen extends React.Component {
-
   /* eslint-enable react/sort-comp */
   constructor(props) {
     super(props);
@@ -129,10 +123,12 @@ class SettingsScreen extends React.Component {
   };
 
   onFABPress = () => {
-    const toastMsg = this.props.isConnected ? i18n.t('settingsScreen.networkUnavailable') : i18n.t('settingsScreen.networkAvailable');
+    const toastMsg = this.props.isConnected
+      ? i18n.t('settingsScreen.networkUnavailable')
+      : i18n.t('settingsScreen.networkAvailable');
     this.toast.show(toastMsg, 3000);
     this.props.toggleNetworkConnectivity(this.props.isConnected);
-  }
+  };
 
   draftNewSupportEmail = () => {
     MailComposer.composeAsync({
@@ -150,9 +146,8 @@ class SettingsScreen extends React.Component {
         3000,
       );
     });
-  }
+  };
 
-  
   static navigationOptions = {
     title: i18n.t('settingsScreen.settings'),
     headerStyle: {
@@ -165,7 +160,7 @@ class SettingsScreen extends React.Component {
   };
 
   render() {
-    const languagePickerItems = locales.map(locale => (
+    const languagePickerItems = locales.map((locale) => (
       <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
     ));
 
@@ -199,20 +194,23 @@ class SettingsScreen extends React.Component {
             </ListItem>
           )}
           {/* === Online === */}
-          <ListItem icon onPress={this.onFABPress}>
-            <Left>
-              <NbButton onPress={this.onFABPress}>
-                <Icon active name="ios-flash" />
-              </NbButton>
-            </Left>
-            <Body style={styles.body}>
-              <Text style={styles.text}>{i18n.t('global.online')}</Text>
-            </Body>
-            <Right>
-              <Switch value={this.props.isConnected} onChange={this.onFABPress} />
-            </Right>
-          </ListItem>
+          {__DEV__ && (
+            <ListItem icon onPress={this.onFABPress}>
+              <Left>
+                <NbButton onPress={this.onFABPress}>
+                  <Icon active name="ios-flash" />
+                </NbButton>
+              </Left>
+              <Body style={styles.body}>
+                <Text style={styles.text}>{i18n.t('global.online')}</Text>
+              </Body>
+              <Right>
+                <Switch value={this.props.isConnected} onChange={this.onFABPress} />
+              </Right>
+            </ListItem>
+          )}
           {/* === Language === */}
+          {/*
           <ListItem icon>
             <Left>
               <NbButton onPress={this.onFABPress}>
@@ -243,6 +241,8 @@ class SettingsScreen extends React.Component {
               </Picker>
             </Right>
           </ListItem>
+          */}
+          {/* === Help / Support === */}
           <ListItem icon onPress={this.draftNewSupportEmail}>
             <Left>
               <NbButton>
@@ -269,7 +269,12 @@ class SettingsScreen extends React.Component {
           </ListItem>
         </Content>
         <Text style={styles.versionText}>{Constants.manifest.version}</Text>
-        <Toast ref={(c) => { this.toast = c; }} position="center" />
+        <Toast
+          ref={(c) => {
+            this.toast = c;
+          }}
+          position="center"
+        />
         <Toast
           ref={(toast) => {
             toastError = toast;
@@ -284,12 +289,12 @@ class SettingsScreen extends React.Component {
 
 SettingsScreen.propTypes = propTypes;
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   i18n: state.i18nReducer,
   isConnected: state.networkConnectivityReducer.isConnected,
   userData: state.userReducer.userData,
 });
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   toggleNetworkConnectivity: (isConnected) => {
     dispatch(toggleNetworkConnectivity(isConnected));
   },
