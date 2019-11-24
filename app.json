@@ -24,7 +24,7 @@
     "android": {
       "package": "tools.disciple.app",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 2
+      "versionCode": 110
     },
     "description": ""
   }
