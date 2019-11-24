@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
   },
-  commentInput:{
+  commentInput: {
     borderColor: '#B4B4B4',
     borderRadius: 5,
     borderWidth: 1,
@@ -207,11 +207,16 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     textAlignVertical: 'center',
   },
-  commentInputContainer:{
-  backgroundColor: 'white',
-        flexDirection: 'row'
-  }
+  commentInputContainer: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+  },
 });
+
+const safeFind = (found, prop) => {
+  if (typeof found === 'undefined') return '';
+  return found[prop];
+};
 
 class ContactDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -349,7 +354,7 @@ class ContactDetailScreen extends React.Component {
       () => {
         this.getLists(contactId || null);
       },
-    );    
+    );
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -539,7 +544,7 @@ class ContactDetailScreen extends React.Component {
         this.onRefreshCommentsActivities(contact.ID);
         toastSuccess.show(
           <View>
-            <Text style={{ color: Colors.sucessText  }}>{i18n.t('global.success.save')}</Text>
+            <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
           </View>,
           3000,
         );
@@ -881,27 +886,22 @@ class ContactDetailScreen extends React.Component {
     });
   };
 
-  setHeight = (value) =>{
-    
-    try{
-      let height 
-      value != undefined ?  height = value.nativeEvent.contentSize.height + 20 : height = 40
-      height <= 40 ? height = 40 : null
-      this.setState({      
-        height: Math.min(120, height) ,
-        heightContainer:  Math.min(120, height) + 20
+  setHeight = (value) => {
+    try {
+      let height;
+      value != undefined ? (height = value.nativeEvent.contentSize.height + 20) : (height = 40);
+      height <= 40 ? (height = 40) : null;
+      this.setState({
+        height: Math.min(120, height),
+        heightContainer: Math.min(120, height) + 20,
+      });
+    } catch (error) {
+      this.setState({
+        height: 40,
+        heightContainer: 60,
       });
     }
-    catch(error){
-      this.setState({      
-        height: 40 ,
-        heightContainer:  60
-      });
-    }
-
-
-
-  }
+  };
 
   onSaveComment = () => {
     const { comment } = this.state;
@@ -1059,10 +1059,15 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.subassigned
                 ? this.state.contact.subassigned.values
                     .map(
-                      (contact) =>
-                        this.state.usersContacts.find((user) => user.value === contact.value).name,
+                      function(contact, idx) {
+                        return safeFind(
+                          this.state.usersContacts.find((user) => user.value === contact.value),
+                          'name',
+                        );
+                      }.bind(this),
                     )
-                    .join(', ')
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1169,11 +1174,15 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.location_grid
                 ? this.state.contact.location_grid.values
                     .map(
-                      (location) =>
-                        this.state.geonames.find((geoname) => geoname.value === location.value)
-                          .name,
+                      function(location, idx) {
+                        return safeFind(
+                          this.state.geonames.find((geoname) => geoname.value === location.value),
+                          'name',
+                        );
+                      }.bind(this),
                     )
-                    .join(', ')
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1193,11 +1202,17 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.people_groups
                 ? this.state.contact.people_groups.values
                     .map(
-                      (peopleGroup) =>
-                        this.state.peopleGroups.find((person) => person.value === peopleGroup.value)
-                          .name,
+                      function(peopleGroup, idx) {
+                        return safeFind(
+                          this.state.peopleGroups.find(
+                            (person) => person.value === peopleGroup.value,
+                          ),
+                          'name',
+                        );
+                      }.bind(this),
                     )
-                    .join(', ')
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1414,15 +1429,14 @@ class ContactDetailScreen extends React.Component {
         }}
       />
       <KeyboardAccessory>
-        <View
-          style={[styles.commentInputContainer, {height: this.state.heightContainer}]}>
+        <View style={[styles.commentInputContainer, { height: this.state.heightContainer }]}>
           <TextInput
             placeholder={i18n.t('global.writeYourCommentNoteHere')}
             value={this.state.comment}
             onChangeText={this.setComment}
             onContentSizeChange={this.setHeight}
-            multiline = {true}
-            style={[styles.commentInput, {height: this.state.height}]}
+            multiline={true}
+            style={[styles.commentInput, { height: this.state.height }]}
           />
           <TouchableOpacity
             onPress={() => this.onSaveComment()}
@@ -1475,10 +1489,15 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.groups
                 ? this.state.contact.groups.values
                     .map(
-                      (group) =>
-                        this.state.groups.find((groupItem) => groupItem.value === group.value).name,
+                      function(group, idx) {
+                        return safeFind(
+                          this.state.groups.find((groupItem) => groupItem.value === group.value),
+                          'name',
+                        );
+                      }.bind(this),
                     )
-                    .join(', ')
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1496,10 +1515,15 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.relation
                 ? this.state.contact.relation.values
                     .map(
-                      (relation) =>
-                        this.state.usersContacts.find((user) => user.value === relation.value).name,
+                      function(relation, idx) {
+                        return safeFind(
+                          this.state.usersContacts.find((user) => user.value === relation.value),
+                          'name',
+                        );
+                      }.bind(this),
                     )
-                    .join(', ')
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1519,11 +1543,15 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.baptized_by
                 ? this.state.contact.baptized_by.values
                     .map(
-                      (baptizedBy) =>
-                        this.state.usersContacts.find((user) => user.value === baptizedBy.value)
-                          .name,
+                      function(baptizedBy, idx) {
+                        return safeFind(
+                          this.state.usersContacts.find((user) => user.value === baptizedBy.value),
+                          'name',
+                        );
+                      }.bind(this),
                     )
-                    .join(', ')
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1543,10 +1571,15 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.baptized
                 ? this.state.contact.baptized.values
                     .map(
-                      (baptized) =>
-                        this.state.usersContacts.find((user) => user.value === baptized.value).name,
+                      function(baptized, idx) {
+                        return safeFind(
+                          this.state.usersContacts.find((user) => user.value === baptized.value),
+                          'name',
+                        );
+                      }.bind(this),
                     )
-                    .join(', ')
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1566,11 +1599,15 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.coached_by
                 ? this.state.contact.coached_by.values
                     .map(
-                      (coachedBy) =>
-                        this.state.usersContacts.find((user) => user.value === coachedBy.value)
-                          .name,
+                      function(coachedBy, idx) {
+                        return safeFind(
+                          this.state.usersContacts.find((user) => user.value === coachedBy.value),
+                          'name',
+                        );
+                      }.bind(this),
                     )
-                    .join(', ')
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1590,10 +1627,15 @@ class ContactDetailScreen extends React.Component {
               {this.state.contact.coaching
                 ? this.state.contact.coaching.values
                     .map(
-                      (coaching) =>
-                        this.state.usersContacts.find((user) => user.value === coaching.value).name,
+                      function(coaching, idx) {
+                        return safeFind(
+                          this.state.usersContacts.find((user) => user.value === coaching.value),
+                          'name',
+                        );
+                      }.bind(this),
                     )
-                    .join(', ')
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
