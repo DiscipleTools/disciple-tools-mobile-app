@@ -1220,6 +1220,22 @@ class GroupDetailScreen extends React.Component {
           ]
         }
       }
+      if(this.state.group.leaders.values){
+        if(this.state.group.leaders.values.find(leader => leader.value == membersAction.remove.value)){
+          transformedGroup = {
+            ...transformedGroup,
+            leaders: {
+              values: [
+                ...transformedGroup.leaders.values,
+                {
+                  "value": membersAction.remove.value,
+                  "delete": true
+                }
+              ]
+            }
+          }
+        }
+      }
     }
     else if (Object.prototype.hasOwnProperty.call(membersAction, 'addNewMember')) {
       transformedGroup = {
@@ -1228,8 +1244,7 @@ class GroupDetailScreen extends React.Component {
           values: [
             ...transformedGroup.members.values,
             {
-              "value": membersAction.addNewMember.value,
-              "delete": false
+              "value": membersAction.addNewMember.value
             }
           ]
         }
