@@ -1009,7 +1009,7 @@ class ContactDetailScreen extends React.Component {
       <View style={[styles.offlineBar]}>
         <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
       </View>
-) 
+    ) 
   }
 
   detailView = () => (
