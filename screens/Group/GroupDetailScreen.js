@@ -341,6 +341,16 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
     marginBottom: 'auto',
   },
+  offlineBar:{
+    height: 20,
+    backgroundColor: '#FCAB10',
+  },
+  offlineBarText:{
+    fontSize: 14,
+    color: 'white',
+    textAlignVertical: 'center',
+    textAlign: 'center'
+  }
 });
 
 const initialState = {
@@ -1417,6 +1427,12 @@ class GroupDetailScreen extends React.Component {
     }));
   };
 
+  offlineBarRender = () =>{
+    return <View style={[styles.offlineBar]}>
+      <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+    </View> 
+  }
+
   detailView = () => (
     <ScrollView
       keyboardShouldPersistTaps="handled"
@@ -1425,8 +1441,8 @@ class GroupDetailScreen extends React.Component {
           refreshing={this.state.loading}
           onRefresh={() => this.onRefresh(this.state.group.ID)}
         />
-      )}
-    >
+      )}>
+      {!this.props.isConnected && this.offlineBarRender()}
       <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
         <Row>
           <Col />
@@ -1640,6 +1656,7 @@ class GroupDetailScreen extends React.Component {
         />
       )}
     >
+      {!this.props.isConnected && this.offlineBarRender()}
       <View
         style={[styles.formContainer, { marginTop: 10 }]}
       >
@@ -1684,6 +1701,7 @@ class GroupDetailScreen extends React.Component {
 
   commentsView = () => (
     <View style={{ flex: 1 }}>
+      {!this.props.isConnected && this.offlineBarRender()}
       <FlatList
         style={styles.root}
         ref={(flatList) => {
@@ -1853,6 +1871,8 @@ class GroupDetailScreen extends React.Component {
   )
 
   membersView = () => (
+    <View style= {{ flex: 1 }}>
+    {!this.props.isConnected && this.offlineBarRender()}
     <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
 
       <ScrollView
@@ -1914,6 +1934,7 @@ class GroupDetailScreen extends React.Component {
         </Grid>
       </ScrollView>
     </View>
+    </View>
   );
 
   groupsView = () => (
@@ -1924,8 +1945,8 @@ class GroupDetailScreen extends React.Component {
           refreshing={this.state.loading}
           onRefresh={() => this.onRefresh(this.state.group.ID)}
         />
-      )}
-    >
+      )}>
+      {!this.props.isConnected && this.offlineBarRender()}
       <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
         <Row>
           <Col />

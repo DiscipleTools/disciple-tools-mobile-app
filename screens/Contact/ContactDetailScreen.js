@@ -212,6 +212,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flexDirection: 'row',
   },
+  offlineBar:{
+    height: 20,
+    backgroundColor: '#FCAB10',
+  },
+  offlineBarText:{
+    fontSize: 14,
+    color: 'white',
+    textAlignVertical: 'center',
+    textAlign: 'center'
+  }
 });
 
 const safeFind = (found, prop) => {
@@ -994,6 +1004,12 @@ class ContactDetailScreen extends React.Component {
       .sort((a, b) => new Date(a.date).getTime() < new Date(b.date).getTime());
   }
 
+  offlineBarRender = () =>{
+    return <View style={[styles.offlineBar]}>
+      <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+    </View> 
+  }
+
   detailView = () => (
     <ScrollView
       refreshControl={
@@ -1001,7 +1017,8 @@ class ContactDetailScreen extends React.Component {
           refreshing={this.state.loading}
           onRefresh={() => this.onRefresh(this.state.contact.ID)}
         />
-      }>
+      }> 
+      {!this.props.isConnected && this.offlineBarRender()}
       <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
         <Row>
           <Col />
@@ -1291,6 +1308,7 @@ class ContactDetailScreen extends React.Component {
           onRefresh={() => this.onRefresh(this.state.contact.ID)}
         />
       }>
+      {!this.props.isConnected && this.offlineBarRender()}
       <View style={[styles.formContainer, { marginTop: 10 }]}>
         <Grid>
           <Row>
@@ -1363,8 +1381,9 @@ class ContactDetailScreen extends React.Component {
     </ScrollView>
   );
 
-  commentsView = () => (
+  commentsView = () => (    
     <View style={{ flex: 1 }}>
+      {!this.props.isConnected && this.offlineBarRender()}
       <FlatList
         style={{
           backgroundColor: '#ffffff',
@@ -1477,6 +1496,7 @@ class ContactDetailScreen extends React.Component {
           onRefresh={() => this.onRefresh(this.state.contact.ID)}
         />
       }>
+      {!this.props.isConnected && this.offlineBarRender()}
       <View style={[styles.formContainer, { marginTop: 10 }]}>
         <Grid>
           <Row>
