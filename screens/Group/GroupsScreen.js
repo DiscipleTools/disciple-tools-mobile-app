@@ -13,11 +13,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
 
 import PropTypes from 'prop-types';
+import { SearchBar } from 'react-native-elements';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/groups.actions';
 import i18n from '../../languages';
 
-import { SearchBar } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -176,11 +176,11 @@ class GroupsScreen extends React.Component {
 
 
   SearchFilterFunction(text) {
-    let itemsFiltered = []
+    const itemsFiltered = []
     this.props.groups.filter(function (item) {
       const textData = text.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
       const itemDataTitle = item.title.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      var filterByTitle = itemDataTitle.includes(textData)
+      const filterByTitle = itemDataTitle.includes(textData)
       filterByTitle == true ? itemsFiltered.push(item) : null
       return itemsFiltered
     })
@@ -224,7 +224,7 @@ class GroupsScreen extends React.Component {
     return (
       <Container>
         <View style={{ flex: 1 }}>
-        <FlatList
+          <FlatList
             ListHeaderComponent={this.renderHeader}
             data={this.state.dataSourceGroups}
             extraData={this.state.refresh}

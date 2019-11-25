@@ -914,16 +914,16 @@ class GroupDetailScreen extends React.Component {
   }
 
   getMembers() {
-    let members = []
+    const members = []
     if (this.state.group.members) {
       this.state.group.members.values.forEach(
         (element) => {
-          let member = this.state.usersContacts.find(user => user.value === element.value)
+          const member = this.state.usersContacts.find(user => user.value === element.value)
           members.push(member)
         }
       )
     }
-    return (members) ? members : []
+    return (members) || []
   }
 
   addLeader(member) {
@@ -965,35 +965,35 @@ class GroupDetailScreen extends React.Component {
             commentOrActivity,
             'content',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.author}</Text>
-                  </Col>
-                  <Col style={{ width: 110 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.author}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
             )}
           {Object.prototype.hasOwnProperty.call(
             commentOrActivity,
             'object_note',
           ) && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text style={styles.name}>{commentOrActivity.name}</Text>
-                  </Col>
-                  <Col style={{ width: 110 }}>
-                    <Text style={styles.time}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
+          <Grid>
+            <Row>
+              <Col>
+                <Text style={styles.name}>{commentOrActivity.name}</Text>
+              </Col>
+              <Col style={{ width: 110 }}>
+                <Text style={styles.time}>
+                  {this.onFormatDateToView(commentOrActivity.date)}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
             )}
         </View>
         <Text
@@ -1428,9 +1428,11 @@ class GroupDetailScreen extends React.Component {
   };
 
   offlineBarRender = () =>{
-    return <View style={[styles.offlineBar]}>
-      <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
-    </View> 
+    return (
+      <View style={[styles.offlineBar]}>
+        <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+      </View>
+) 
   }
 
   detailView = () => (
@@ -1441,7 +1443,8 @@ class GroupDetailScreen extends React.Component {
           refreshing={this.state.loading}
           onRefresh={() => this.onRefresh(this.state.group.ID)}
         />
-      )}>
+      )}
+    >
       {!this.props.isConnected && this.offlineBarRender()}
       <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
         <Row>
@@ -1519,7 +1522,7 @@ class GroupDetailScreen extends React.Component {
           </Col>
           <Col>
             
-          <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               {this.state.group.coaches
                 ? this.state.group.coaches.values
                     .map(
@@ -1764,23 +1767,23 @@ class GroupDetailScreen extends React.Component {
           }
         }}
       />
-      <SafeAreaView >
+      <SafeAreaView>
         <View>
-      <KeyboardAccessory>
-        <View
-          style={{
+          <KeyboardAccessory>
+            <View
+              style={{
             backgroundColor: 'white',
             flexDirection: 'row',
             height: this.state.heightContainer
           }}
-        >
-          <TextInput
-            placeholder={i18n.t('global.writeYourCommentNoteHere')}
-            value={this.state.comment}
-            onChangeText={this.setComment}
-            onContentSizeChange={this.setHeight}
-            multiline={true}
-            style={{
+            >
+              <TextInput
+                placeholder={i18n.t('global.writeYourCommentNoteHere')}
+                value={this.state.comment}
+                onChangeText={this.setComment}
+                onContentSizeChange={this.setHeight}
+                multiline
+                style={{
               borderColor: '#B4B4B4',
               borderRadius: 5,
               borderWidth: 1,
@@ -1790,10 +1793,10 @@ class GroupDetailScreen extends React.Component {
               paddingRight: 5,
               height: this.state.height
             }}
-          />
-          <TouchableOpacity
-            onPress={() => this.onSaveComment()}
-            style={[{
+              />
+              <TouchableOpacity
+                onPress={() => this.onSaveComment()}
+                style={[{
               backgroundColor: Colors.tintColor,
               borderRadius: 80,
               height: 40,
@@ -1801,15 +1804,15 @@ class GroupDetailScreen extends React.Component {
               paddingTop: 7,
               width: 40,
             }, i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 }]}
-          >
-            <Icon
-              android="md-send"
-              ios="ios-send"
-              style={{ color: 'white', fontSize: 25 }}
-            />
-          </TouchableOpacity>
-        </View>
-      </KeyboardAccessory>
+              >
+                <Icon
+                  android="md-send"
+                  ios="ios-send"
+                  style={{ color: 'white', fontSize: 25 }}
+                />
+              </TouchableOpacity>
+            </View>
+          </KeyboardAccessory>
         </View>
       </SafeAreaView>
     </View>
@@ -1856,7 +1859,7 @@ class GroupDetailScreen extends React.Component {
             </Text>
           </TouchableOpacity>
         </Col>
-        <Col style={{ width: 20 }} >
+        <Col style={{ width: 20 }}>
 
           <TouchableOpacity
             onPress={() => this.onSaveGroup({ remove: { "value": membersGroup.value } })}
@@ -1871,50 +1874,50 @@ class GroupDetailScreen extends React.Component {
   )
 
   membersView = () => (
-    <View style= {{ flex: 1 }}>
-    {!this.props.isConnected && this.offlineBarRender()}
-    <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
+    <View style={{ flex: 1 }}>
+      {!this.props.isConnected && this.offlineBarRender()}
+      <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
 
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-      >
-        <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'left' }}>
-          {i18n.t('global.membersActivity')}
-        </Text>
-        <FlatList
-          style={styles.root}
-          data={this.getMembers()}
-          extraData={this.state.updateMembersList}
-          renderItem={item => this.membersRow(item.item)}
-          ItemSeparatorComponent={this.flatListItemSeparator}
-        ></FlatList>
-        <Grid>
-          <Row>
-            <Col style={{ width: 40, marginTop: 10, marginLeft: 0 }}>
-              <Icon type="Entypo" name="add-user" style={{ marginTop: 10, color: '#CCCCCC' }} />
-            </Col>
-            <Col style={{ paddingBottom: 200 }}>
-              <Selectize
-                ref={(selectize) => { addMembersSelectizeRed = selectize; }}
-                itemId="value"
-                items={this.state.usersContacts}
-                selectedItems={[]}
-                textInputProps={{ placeholder: i18n.t('groupDetailScreen.addMember'), leftIcon: { type: 'Entypo', name: 'add-user' } }}
-                renderRow={(id, onPress, item) => (
-                  <TouchableOpacity
-                    activeOpacity={0.6}
-                    key={id}
-                    onPress={() => this.onSaveGroup({ addNewMember: { "value": id } })}
-                    style={{
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+        >
+          <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'left' }}>
+            {i18n.t('global.membersActivity')}
+          </Text>
+          <FlatList
+            style={styles.root}
+            data={this.getMembers()}
+            extraData={this.state.updateMembersList}
+            renderItem={item => this.membersRow(item.item)}
+            ItemSeparatorComponent={this.flatListItemSeparator}
+          />
+          <Grid>
+            <Row>
+              <Col style={{ width: 40, marginTop: 10, marginLeft: 0 }}>
+                <Icon type="Entypo" name="add-user" style={{ marginTop: 10, color: '#CCCCCC' }} />
+              </Col>
+              <Col style={{ paddingBottom: 200 }}>
+                <Selectize
+                  ref={(selectize) => { addMembersSelectizeRed = selectize; }}
+                  itemId="value"
+                  items={this.state.usersContacts}
+                  selectedItems={[]}
+                  textInputProps={{ placeholder: i18n.t('groupDetailScreen.addMember'), leftIcon: { type: 'Entypo', name: 'add-user' } }}
+                  renderRow={(id, onPress, item) => (
+                    <TouchableOpacity
+                      activeOpacity={0.6}
+                      key={id}
+                      onPress={() => this.onSaveGroup({ addNewMember: { "value": id } })}
+                      style={{
                       paddingVertical: 8,
                       paddingHorizontal: 10
                     }}
-                  >
-                    <View style={{
+                    >
+                      <View style={{
                       flexDirection: 'row',
                     }}
-                    >
-                      <Text style={{
+                      >
+                        <Text style={{
                         color: 'rgba(0, 0, 0, 0.87)',
                         fontSize: 14,
                         lineHeight: 21,
@@ -1922,18 +1925,18 @@ class GroupDetailScreen extends React.Component {
                       >
                         {item.name}
                       </Text>
-                    </View>
-                  </TouchableOpacity>
+                      </View>
+                    </TouchableOpacity>
                 )}
-                filterOnKey="name"
-                keyboardShouldPersistTaps
-                inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', marginTop: 'auto', marginBottom: 'auto', padding: 5, }}
-              />
-            </Col>
-          </Row>
-        </Grid>
-      </ScrollView>
-    </View>
+                  filterOnKey="name"
+                  keyboardShouldPersistTaps
+                  inputContainerStyle={{ borderWidth: 1, borderColor: '#CCCCCC', marginTop: 'auto', marginBottom: 'auto', padding: 5, }}
+                />
+              </Col>
+            </Row>
+          </Grid>
+        </ScrollView>
+      </View>
     </View>
   );
 
@@ -1945,7 +1948,8 @@ class GroupDetailScreen extends React.Component {
           refreshing={this.state.loading}
           onRefresh={() => this.onRefresh(this.state.group.ID)}
         />
-      )}>
+      )}
+    >
       {!this.props.isConnected && this.offlineBarRender()}
       <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
         <Row>
@@ -1988,10 +1992,10 @@ class GroupDetailScreen extends React.Component {
                     style={styles.groupCircle}
                   />
                 ) : (
-                    <Image
-                      source={groupDottedCircleIcon}
-                      style={styles.groupCircle}
-                    />
+                  <Image
+                    source={groupDottedCircleIcon}
+                    style={styles.groupCircle}
+                  />
                   )}
                 <Image
                   source={swimmingPoolIcon}
@@ -2049,10 +2053,10 @@ class GroupDetailScreen extends React.Component {
                     style={styles.groupCircle}
                   />
                 ) : (
-                    <Image
-                      source={groupDottedCircleIcon}
-                      style={styles.groupCircle}
-                    />
+                  <Image
+                    source={groupDottedCircleIcon}
+                    style={styles.groupCircle}
+                  />
                   )}
                 <Image
                   source={swimmingPoolIcon}
@@ -2110,10 +2114,10 @@ class GroupDetailScreen extends React.Component {
                     style={styles.groupCircle}
                   />
                 ) : (
-                    <Image
-                      source={groupDottedCircleIcon}
-                      style={styles.groupCircle}
-                    />
+                  <Image
+                    source={groupDottedCircleIcon}
+                    style={styles.groupCircle}
+                  />
                   )}
                 <Image
                   source={swimmingPoolIcon}
@@ -3672,24 +3676,24 @@ class GroupDetailScreen extends React.Component {
                 )}
               </View>
             ) : (
-                <ScrollView>
-                  <View style={styles.formContainer}>
-                    <Grid>
-                      <Row>
-                        <Label
-                          style={[
+              <ScrollView>
+                <View style={styles.formContainer}>
+                  <Grid>
+                    <Row>
+                      <Label
+                        style={[
                             styles.formLabel,
                             { marginTop: 10, marginBottom: 5 },
                           ]}
-                        >
-                          {i18n.t('groupDetailScreen.groupName')}
-                        </Label>
-                      </Row>
-                      <Row>
-                        <Input
-                          placeholder={i18n.t('global.requiredField')}
-                          onChangeText={this.setGroupTitle}
-                          style={{
+                      >
+                        {i18n.t('groupDetailScreen.groupName')}
+                      </Label>
+                    </Row>
+                    <Row>
+                      <Input
+                        placeholder={i18n.t('global.requiredField')}
+                        onChangeText={this.setGroupTitle}
+                        style={{
                             borderColor: '#B4B4B4',
                             borderWidth: 1,
                             borderRadius: 5,
@@ -3697,25 +3701,25 @@ class GroupDetailScreen extends React.Component {
                             fontSize: 13,
                             paddingLeft: 15,
                           }}
-                        />
-                      </Row>
-                      <Row>
-                        <Label
-                          style={[
+                      />
+                    </Row>
+                    <Row>
+                      <Label
+                        style={[
                             styles.formLabel,
                             { marginTop: 10, marginBottom: 5 },
                           ]}
-                        >
-                          {this.props.groupSettings.group_type.name}
-                        </Label>
-                      </Row>
-                      <Row>
-                        <Picker
-                          mode="dropdown"
-                          selectedValue={this.state.group.group_type}
-                          onValueChange={this.setGroupType}
-                        >
-                          {Object.keys(this.props.groupSettings.group_type.values).map((key) => {
+                      >
+                        {this.props.groupSettings.group_type.name}
+                      </Label>
+                    </Row>
+                    <Row>
+                      <Picker
+                        mode="dropdown"
+                        selectedValue={this.state.group.group_type}
+                        onValueChange={this.setGroupType}
+                      >
+                        {Object.keys(this.props.groupSettings.group_type.values).map((key) => {
                             const optionData = this.props.groupSettings.group_type.values[key];
                             return (
                               <Picker.Item
@@ -3725,14 +3729,14 @@ class GroupDetailScreen extends React.Component {
                               />
                             );
                           })}
-                        </Picker>
-                      </Row>
-                    </Grid>
-                    <Button block style={styles.saveButton} onPress={this.onSaveGroup}>
-                      <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
-                    </Button>
-                  </View>
-                </ScrollView>
+                      </Picker>
+                    </Row>
+                  </Grid>
+                  <Button block style={styles.saveButton} onPress={this.onSaveGroup}>
+                    <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{i18n.t('global.save')}</Text>
+                  </Button>
+                </View>
+              </ScrollView>
               )}
           </View>
         )}
