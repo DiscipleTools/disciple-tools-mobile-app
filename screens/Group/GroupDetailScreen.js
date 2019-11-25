@@ -14,6 +14,7 @@ import {
   RefreshControl,
   Platform,
   TouchableHighlight,
+  SafeAreaView
 } from 'react-native';
 import PropTypes from 'prop-types';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
@@ -1048,6 +1049,24 @@ class GroupDetailScreen extends React.Component {
     });
   };
 
+  setHeight = (value) => {
+    try {
+      let height
+      value != undefined ? height = value.nativeEvent.contentSize.height + 20 : height = 40
+      height <= 40 ? height = 40 : null
+      this.setState({
+        height: Math.min(120, height),
+        heightContainer: Math.min(120, height) + 20
+      });
+    }
+    catch (error) {
+      this.setState({
+        height: 40,
+        heightContainer: 60
+      });
+    }
+  }
+
   getSelectizeValuesToSave = (dbData, selectizeRef) => {
     const dbItems = [...dbData];
     const localItems = [];
@@ -1577,43 +1596,55 @@ class GroupDetailScreen extends React.Component {
           }
         }}
       />
-      <KeyboardAccessory>
-        <View
-          style={{
-            backgroundColor: 'white',
-            flexDirection: 'row',
-          }}>
-          <TextInput
-            placeholder={i18n.t('global.writeYourCommentNoteHere')}
-            value={this.state.comment}
-            onChangeText={this.setComment}
-            style={{
-              borderColor: '#B4B4B4',
-              borderRadius: 5,
-              borderWidth: 1,
-              flex: 1,
-              margin: 10,
-              paddingLeft: 5,
-              paddingRight: 5,
-            }}
-          />
-          <TouchableOpacity
-            onPress={() => this.onSaveComment()}
-            style={[
-              {
-                backgroundColor: Colors.tintColor,
-                borderRadius: 80,
-                height: 40,
-                margin: 10,
-                paddingTop: 7,
-                width: 40,
-              },
-              i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
-            ]}>
-            <Icon android="md-send" ios="ios-send" style={{ color: 'white', fontSize: 25 }} />
-          </TouchableOpacity>
+      <SafeAreaView >
+        <View>
+          <KeyboardAccessory>
+            <View
+              style={{
+                backgroundColor: 'white',
+                flexDirection: 'row',
+                height: this.state.heightContainer
+              }}
+            >
+              <TextInput
+                placeholder={i18n.t('global.writeYourCommentNoteHere')}
+                value={this.state.comment}
+                onChangeText={this.setComment}
+                onContentSizeChange={this.setHeight}
+                multiline={true}
+                style={{
+                  borderColor: '#B4B4B4',
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  flex: 1,
+                  margin: 10,
+                  paddingLeft: 5,
+                  paddingRight: 5,
+                  height: this.state.height
+                }}
+              />
+              <TouchableOpacity
+                onPress={() => this.onSaveComment()}
+                style={[{
+                  backgroundColor: Colors.tintColor,
+                  borderRadius: 80,
+                  height: 40,
+                  margin: 10,
+                  paddingTop: 7,
+                  width: 40,
+                }, i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 }]}
+              >
+                <Icon
+                  android="md-send"
+                  ios="ios-send"
+                  style={{ color: 'white', fontSize: 25 }}
+                />
+              </TouchableOpacity>
+            </View>
+          </KeyboardAccessory>
         </View>
-      </KeyboardAccessory>
+      </SafeAreaView>
+
     </View>
   );
 
