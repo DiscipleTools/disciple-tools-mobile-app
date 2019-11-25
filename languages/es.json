@@ -53,7 +53,8 @@
         "online": "En línea",
         "language": "Idioma",
         "search": "Buscar",
-        "membersActivity": "Miembros"
+        "membersActivity": "Miembros",
+        "offline": "desconectado"
     },
     "loginScreen": {
         "domain": {

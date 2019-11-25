@@ -53,7 +53,8 @@
         "online": "Online",
         "language": "Language",
         "search": "Search",
-        "membersActivity": "Members"
+        "membersActivity": "Members",
+        "offline": "offline"
     },
     "loginScreen": {
         "domain": {

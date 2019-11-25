@@ -12,11 +12,11 @@ import { Fab, Container } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
+import { SearchBar } from 'react-native-elements';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
 import i18n from '../../languages';
 
-import { SearchBar } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -96,17 +96,17 @@ class ContactsScreen extends React.Component {
     const {
       contacts,
     } = nextProps;
-    let newState = {
+    const newState = {
       ...prevState,
         dataSourceContact: contacts,
     }
 
-    firstloader =  firstloader + 1
+    firstloader += 1
     if(firstloader < 5){
       return newState
-    }else{
-      return null
     }
+      return null
+    
   }
 
   renderRow = contact => (
@@ -181,24 +181,24 @@ class ContactsScreen extends React.Component {
 
 
   SearchFilterFunction(text) {
-    let itemsFiltered = []
+    const itemsFiltered = []
     this.props.contacts.filter(function (item) {
-      var filterByPhone = false
-      var filterByEmail = false
+      let filterByPhone = false
+      let filterByEmail = false
       const textData = text.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
       const itemDataTitle = item.title.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      var filterByTitle = itemDataTitle.includes(textData)
+      const filterByTitle = itemDataTitle.includes(textData)
 
       if (item.contact_phone != undefined) {
         item.contact_phone.forEach((elements) => {
-          var itemDataPhone = elements.value.toUpperCase()          
+          const itemDataPhone = elements.value.toUpperCase()          
           filterByPhone == false ? filterByPhone = itemDataPhone.includes(textData) : null
         })
       }
 
       if (item.contact_email != undefined) {
         item.contact_email.forEach((elements) => {
-          var itemDataEmail = elements.value.toUpperCase()
+          const itemDataEmail = elements.value.toUpperCase()
           filterByEmail = itemDataEmail.includes(textData)
           filterByEmail == false ? filterByEmail = itemDataEmail.includes(textData) : null
         })
