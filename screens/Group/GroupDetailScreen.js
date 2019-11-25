@@ -1922,9 +1922,9 @@ class GroupDetailScreen extends React.Component {
                         fontSize: 14,
                         lineHeight: 21,
                       }}
-                      >
-                        {item.name}
-                      </Text>
+                        >
+                          {item.name}
+                        </Text>
                       </View>
                     </TouchableOpacity>
                 )}
