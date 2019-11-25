@@ -210,9 +210,14 @@ const styles = StyleSheet.create({
   },
   commentInputContainer: {
     backgroundColor: 'white',
-    flexDirection: 'row'
-  }
+    flexDirection: 'row',
+  },
 });
+
+const safeFind = (found, prop) => {
+  if (typeof found === 'undefined') return '';
+  return found[prop];
+};
 
 class ContactDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -884,21 +889,20 @@ class ContactDetailScreen extends React.Component {
 
   setHeight = (value) => {
     try {
-      let height
-      value != undefined ? height = value.nativeEvent.contentSize.height + 20 : height = 40
-      height <= 40 ? height = 40 : null
+      let height;
+      value != undefined ? (height = value.nativeEvent.contentSize.height + 20) : (height = 40);
+      height <= 40 ? (height = 40) : null;
       this.setState({
         height: Math.min(120, height),
-        heightContainer: Math.min(120, height) + 20
+        heightContainer: Math.min(120, height) + 20,
       });
-    }
-    catch (error) {
+    } catch (error) {
       this.setState({
         height: 40,
-        heightContainer: 60
+        heightContainer: 60,
       });
     }
-  }
+  };
 
   onSaveComment = () => {
     const { comment } = this.state;
@@ -1055,11 +1059,16 @@ class ContactDetailScreen extends React.Component {
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               {this.state.contact.subassigned
                 ? this.state.contact.subassigned.values
-                  .map(
-                    (contact) =>
-                      this.state.usersContacts.find((user) => user.value === contact.value).name,
-                  )
-                  .join(', ')
+                    .map(
+                      function(contact) {
+                        return safeFind(
+                          this.state.usersContacts.find((user) => user.value === contact.value),
+                          'name',
+                        );
+                      }.bind(this),
+                    )
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1165,12 +1174,16 @@ class ContactDetailScreen extends React.Component {
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               {this.state.contact.location_grid
                 ? this.state.contact.location_grid.values
-                  .map(
-                    (location) =>
-                      this.state.geonames.find((geoname) => geoname.value === location.value)
-                        .name,
-                  )
-                  .join(', ')
+                    .map(
+                      function(location) {
+                        return safeFind(
+                          this.state.geonames.find((geoname) => geoname.value === location.value),
+                          'name',
+                        );
+                      }.bind(this),
+                    )
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1189,12 +1202,18 @@ class ContactDetailScreen extends React.Component {
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               {this.state.contact.people_groups
                 ? this.state.contact.people_groups.values
-                  .map(
-                    (peopleGroup) =>
-                      this.state.peopleGroups.find((person) => person.value === peopleGroup.value)
-                        .name,
-                  )
-                  .join(', ')
+                    .map(
+                      function(peopleGroup) {
+                        return safeFind(
+                          this.state.peopleGroups.find(
+                            (person) => person.value === peopleGroup.value,
+                          ),
+                          'name',
+                        );
+                      }.bind(this),
+                    )
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1475,11 +1494,16 @@ class ContactDetailScreen extends React.Component {
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               {this.state.contact.groups
                 ? this.state.contact.groups.values
-                  .map(
-                    (group) =>
-                      this.state.groups.find((groupItem) => groupItem.value === group.value).name,
-                  )
-                  .join(', ')
+                    .map(
+                      function(group) {
+                        return safeFind(
+                          this.state.groups.find((groupItem) => groupItem.value === group.value),
+                          'name',
+                        );
+                      }.bind(this),
+                    )
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1496,11 +1520,16 @@ class ContactDetailScreen extends React.Component {
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               {this.state.contact.relation
                 ? this.state.contact.relation.values
-                  .map(
-                    (relation) =>
-                      this.state.usersContacts.find((user) => user.value === relation.value).name,
-                  )
-                  .join(', ')
+                    .map(
+                      function(relation) {
+                        return safeFind(
+                          this.state.usersContacts.find((user) => user.value === relation.value),
+                          'name',
+                        );
+                      }.bind(this),
+                    )
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1519,12 +1548,16 @@ class ContactDetailScreen extends React.Component {
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               {this.state.contact.baptized_by
                 ? this.state.contact.baptized_by.values
-                  .map(
-                    (baptizedBy) =>
-                      this.state.usersContacts.find((user) => user.value === baptizedBy.value)
-                        .name,
-                  )
-                  .join(', ')
+                    .map(
+                      function(baptizedBy) {
+                        return safeFind(
+                          this.state.usersContacts.find((user) => user.value === baptizedBy.value),
+                          'name',
+                        );
+                      }.bind(this),
+                    )
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1543,11 +1576,16 @@ class ContactDetailScreen extends React.Component {
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               {this.state.contact.baptized
                 ? this.state.contact.baptized.values
-                  .map(
-                    (baptized) =>
-                      this.state.usersContacts.find((user) => user.value === baptized.value).name,
-                  )
-                  .join(', ')
+                    .map(
+                      function(baptized) {
+                        return safeFind(
+                          this.state.usersContacts.find((user) => user.value === baptized.value),
+                          'name',
+                        );
+                      }.bind(this),
+                    )
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1566,12 +1604,16 @@ class ContactDetailScreen extends React.Component {
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               {this.state.contact.coached_by
                 ? this.state.contact.coached_by.values
-                  .map(
-                    (coachedBy) =>
-                      this.state.usersContacts.find((user) => user.value === coachedBy.value)
-                        .name,
-                  )
-                  .join(', ')
+                    .map(
+                      function(coachedBy) {
+                        return safeFind(
+                          this.state.usersContacts.find((user) => user.value === coachedBy.value),
+                          'name',
+                        );
+                      }.bind(this),
+                    )
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
@@ -1590,11 +1632,16 @@ class ContactDetailScreen extends React.Component {
             <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               {this.state.contact.coaching
                 ? this.state.contact.coaching.values
-                  .map(
-                    (coaching) =>
-                      this.state.usersContacts.find((user) => user.value === coaching.value).name,
-                  )
-                  .join(', ')
+                    .map(
+                      function(coaching) {
+                        return safeFind(
+                          this.state.usersContacts.find((user) => user.value === coaching.value),
+                          'name',
+                        );
+                      }.bind(this),
+                    )
+                    .filter(String)
+                    .join()
                 : ''}
             </Text>
           </Col>
