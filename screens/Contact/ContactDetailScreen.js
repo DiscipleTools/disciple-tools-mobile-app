@@ -237,8 +237,12 @@ class ContactDetailScreen extends React.Component {
           android="md-arrow-back"
           ios="ios-arrow-back"
           onPress={() => {
-            params.onGoBack();
-            navigation.goBack();
+            if(params.fromGroupDetail){
+              navigation.navigate('GroupDetail')
+            }else{
+              params.onGoBack();
+              navigation.goBack();
+            }
           }}
           style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }]}
         />
