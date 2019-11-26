@@ -1,13 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  View,
-  FlatList,
-  TouchableOpacity,
-  RefreshControl,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import { View, FlatList, TouchableOpacity, RefreshControl, StyleSheet, Text } from 'react-native';
 import { Fab, Container } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
@@ -16,7 +9,6 @@ import { SearchBar } from 'react-native-elements';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
 import i18n from '../../languages';
-
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -51,29 +43,28 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderColor: '#DDDDDD',
     borderBottomWidth: 1,
-    borderWidth: 1
+    borderWidth: 1,
   },
-  offlineBar:{
+  offlineBar: {
     height: 20,
     backgroundColor: '#FCAB10',
   },
-  offlineBarText:{
+  offlineBarText: {
     fontSize: 14,
     color: 'white',
     textAlignVertical: 'center',
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
-let firstloader = 0
+let firstloader = 0;
 let toastError;
 
 class ContactsScreen extends React.Component {
-
   /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
     search: '',
-  }
+  };
 
   componentDidUpdate(prevProps) {
     const { error } = this.props;
@@ -94,30 +85,25 @@ class ContactsScreen extends React.Component {
     }
   }
 
-  
   static getDerivedStateFromProps(nextProps, prevState) {
-    const {
-      contacts,
-    } = nextProps;
+    const { contacts } = nextProps;
     const newState = {
       ...prevState,
-        dataSourceContact: contacts,
-    }
+      dataSourceContact: contacts,
+    };
 
-    firstloader += 1
-    if(firstloader < 5){
-      return newState
+    firstloader += 1;
+    if (firstloader < 5) {
+      return newState;
     }
-      return null
-    
+    return null;
   }
 
-  renderRow = contact => (
+  renderRow = (contact) => (
     <TouchableOpacity
       onPress={() => this.goToContactDetailScreen(contact)}
       style={styles.flatListItem}
-      key={contact.ID}
-    >
+      key={contact.ID}>
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text style={{ fontWeight: 'bold' }}>{contact.title}</Text>
@@ -125,19 +111,27 @@ class ContactsScreen extends React.Component {
         <View style={{ flex: 1, flexDirection: 'row' }}>
           {this.props.contactSettings.fields.overall_status.values[contact.overall_status] ? (
             <Text style={styles.contactSubtitle}>
-              {this.props.contactSettings.fields.overall_status.values[contact.overall_status].label}
+              {
+                this.props.contactSettings.fields.overall_status.values[contact.overall_status]
+                  .label
+              }
             </Text>
-          ) : <Text />}
-          {this.props.contactSettings.fields.overall_status.values[contact.overall_status] && this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
-            <Text style={styles.contactSubtitle}>
-              •
-            </Text>
-          ) : <Text />}
+          ) : (
+            <Text />
+          )}
+          {this.props.contactSettings.fields.overall_status.values[contact.overall_status] &&
+          this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
+            <Text style={styles.contactSubtitle}>•</Text>
+          ) : (
+            <Text />
+          )}
           {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
             <Text style={styles.contactSubtitle}>
               {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path].label}
             </Text>
-          ) : <Text />}
+          ) : (
+            <Text />
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -155,14 +149,17 @@ class ContactsScreen extends React.Component {
 
   onRefresh = () => {
     this.props.getAllContacts(this.props.userData.domain, this.props.userData.token);
-    this.setState({
-      refresh: true,
-    }, () => {
-      this.setState({
-        dataSourceContact: this.props.contacts,
-        refresh: false
-      })
-    })
+    this.setState(
+      {
+        refresh: true,
+      },
+      () => {
+        this.setState({
+          dataSourceContact: this.props.contacts,
+          refresh: false,
+        });
+      },
+    );
   };
 
   goToContactDetailScreen = (contactData = null) => {
@@ -182,67 +179,82 @@ class ContactsScreen extends React.Component {
     }
   };
 
-
-  SearchFilterFunction(text) {
-    const itemsFiltered = []
-    this.props.contacts.filter(function (item) {
-      let filterByPhone = false
-      let filterByEmail = false
-      const textData = text.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      const itemDataTitle = item.title.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      const filterByTitle = itemDataTitle.includes(textData)
-
-      if (item.contact_phone != undefined) {
-        item.contact_phone.forEach((elements) => {
-          const itemDataPhone = elements.value.toUpperCase()          
-          filterByPhone == false ? filterByPhone = itemDataPhone.includes(textData) : null
-        })
-      }
-
-      if (item.contact_email != undefined) {
-        item.contact_email.forEach((elements) => {
-          const itemDataEmail = elements.value.toUpperCase()
-          filterByEmail = itemDataEmail.includes(textData)
-          filterByEmail == false ? filterByEmail = itemDataEmail.includes(textData) : null
-        })
-      }
-
-      filterByTitle == true ? itemsFiltered.push(item) : filterByPhone == true ? itemsFiltered.push(item) : filterByEmail == true ? itemsFiltered.push(item) : null
-      return itemsFiltered
-    })
-    this.setState({
-      refresh: true,
-    }, () => {
-      this.setState({
-        dataSourceContact: itemsFiltered,
-        search: text,
-        refresh: false
-      })
-    })
-  }
-
   renderHeader = () => {
     return (
-      <View>        
+      <View>
         <SearchBar
           placeholder={i18n.t('global.search')}
-          onChangeText={text => this.SearchFilterFunction(text)}
+          onChangeText={(text) => this.SearchFilterFunction(text)}
           autoCorrect={false}
           value={this.state.search}
           containerStyle={styles.searchBarContainer}
           inputContainerStyle={styles.searchBarInput}
         />
-        {!this.props.isConnected && this.offlineBarRender()}
       </View>
     );
   };
 
-  offlineBarRender = () =>{
-    return (
-      <View style={[styles.offlineBar]}>
-        <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
-      </View>
-    ) 
+  offlineBarRender = () => (
+    <View style={[styles.offlineBar]}>
+      <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+    </View>
+  );
+
+  SearchFilterFunction(text) {
+    const itemsFiltered = [];
+    this.props.contacts.filter(function(item) {
+      let filterByPhone = false;
+      let filterByEmail = false;
+      const textData = text
+        .toUpperCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+      const itemDataTitle = item.title
+        .toUpperCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+      const filterByTitle = itemDataTitle.includes(textData);
+
+      if (item.contact_phone !== undefined) {
+        item.contact_phone.forEach((elements) => {
+          const itemDataPhone = elements.value.toUpperCase();
+          if (filterByPhone === false) {
+            filterByPhone = itemDataPhone.includes(textData);
+          }
+        });
+      }
+
+      if (item.contact_email !== undefined) {
+        item.contact_email.forEach((elements) => {
+          const itemDataEmail = elements.value.toUpperCase();
+          if (filterByEmail === false) {
+            filterByEmail = itemDataEmail.includes(textData);
+          }
+        });
+      }
+      if (filterByTitle === true) {
+        itemsFiltered.push(item);
+      } else if (filterByPhone === true) {
+        itemsFiltered.push(item);
+      } else if (filterByEmail === true) {
+        itemsFiltered.push(item);
+      }
+
+      return itemsFiltered;
+    });
+
+    this.setState(
+      {
+        refresh: true,
+      },
+      () => {
+        this.setState({
+          dataSourceContact: itemsFiltered,
+          search: text,
+          refresh: false,
+        });
+      },
+    );
   }
 
   static navigationOptions = {
@@ -261,25 +273,22 @@ class ContactsScreen extends React.Component {
     return (
       <Container>
         <View style={{ flex: 1 }}>
+          {!this.props.isConnected && this.offlineBarRender()}
           <FlatList
             ListHeaderComponent={this.renderHeader}
             data={this.state.dataSourceContact}
             extraData={this.state.refresh}
-            renderItem={item => this.renderRow(item.item)}
+            renderItem={(item) => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
-            refreshControl={(
-              <RefreshControl
-                refreshing={this.props.loading}
-                onRefresh={this.onRefresh}
-              />
-            )}
-            keyExtractor={item => item.ID.toString()}
+            refreshControl={
+              <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
+            }
+            keyExtractor={(item) => item.ID.toString()}
           />
           <Fab
             style={{ backgroundColor: Colors.tintColor }}
             position="bottomRight"
-            onPress={() => this.goToContactDetailScreen()}
-          >
+            onPress={() => this.goToContactDetailScreen()}>
             <Icon name="md-add" />
           </Fab>
           <Toast
@@ -296,6 +305,7 @@ class ContactsScreen extends React.Component {
 }
 
 ContactsScreen.propTypes = {
+  isConnected: PropTypes.bool,
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
@@ -308,8 +318,8 @@ ContactsScreen.propTypes = {
   /* eslint-disable */
   contacts: PropTypes.arrayOf(
     PropTypes.shape({
-      key: PropTypes.number
-    })
+      key: PropTypes.number,
+    }),
   ).isRequired,
   /* eslint-enable */
   error: PropTypes.shape({
@@ -335,7 +345,7 @@ ContactsScreen.defaultProps = {
   isConnected: null,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   userData: state.userReducer.userData,
   contacts: state.contactsReducer.contacts,
   loading: state.contactsReducer.loading,
@@ -343,13 +353,10 @@ const mapStateToProps = state => ({
   contactSettings: state.contactsReducer.settings,
   isConnected: state.networkConnectivityReducer.isConnected,
 });
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   getAllContacts: (domain, token) => {
     dispatch(getAll(domain, token));
   },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ContactsScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(ContactsScreen);

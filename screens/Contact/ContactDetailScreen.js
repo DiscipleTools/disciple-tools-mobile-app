@@ -14,7 +14,7 @@ import {
   RefreshControl,
   Platform,
   TouchableHighlight,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
@@ -64,7 +64,7 @@ import startingChurchesIcon from '../../assets/icons/symbol-213-7.png';
 import i18n from '../../languages';
 
 let toastSuccess;
-let toastError; SafeAreaView
+let toastError;
 const containerPadding = 35;
 const windowWidth = Dimensions.get('window').width;
 const progressBarWidth = windowWidth - 100;
@@ -212,16 +212,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flexDirection: 'row',
   },
-  offlineBar:{
+  offlineBar: {
     height: 20,
     backgroundColor: '#FCAB10',
   },
-  offlineBarText:{
+  offlineBarText: {
     fontSize: 14,
     color: 'white',
     textAlignVertical: 'center',
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
 
 const safeFind = (found, prop) => {
@@ -247,9 +247,9 @@ class ContactDetailScreen extends React.Component {
           android="md-arrow-back"
           ios="ios-arrow-back"
           onPress={() => {
-            if(params.fromGroupDetail){
-              navigation.navigate('GroupDetail')
-            }else{
+            if (params.fromGroupDetail) {
+              navigation.navigate('GroupDetail');
+            } else {
               params.onGoBack();
               navigation.goBack();
             }
@@ -903,9 +903,7 @@ class ContactDetailScreen extends React.Component {
 
   setHeight = (value) => {
     try {
-      let height;
-      value != undefined ? (height = value.nativeEvent.contentSize.height + 20) : (height = 40);
-      height <= 40 ? (height = 40) : null;
+      const height = value !== undefined ? value.nativeEvent.contentSize.height + 20 : 40;
       this.setState({
         height: Math.min(120, height),
         heightContainer: Math.min(120, height) + 20,
@@ -1004,393 +1002,397 @@ class ContactDetailScreen extends React.Component {
       .sort((a, b) => new Date(a.date).getTime() < new Date(b.date).getTime());
   }
 
-  offlineBarRender = () =>{
-    return (
-      <View style={[styles.offlineBar]}>
-        <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
-      </View>
-    ) 
-  }
-
-  detailView = () => (
-    <ScrollView
-      refreshControl={(
-        <RefreshControl
-          refreshing={this.state.loading}
-          onRefresh={() => this.onRefresh(this.state.contact.ID)}
-        />
-      )}
-    > 
-      {!this.props.isConnected && this.offlineBarRender()}
-      <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
-        <Row>
-          <Col />
-          <Col>
-            <Text
-              style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }}
-              onPress={() => this.onEnableEdit()}
-            >
-              {i18n.t('global.edit')}
-            </Text>
-          </Col>
-        </Row>
-      </Grid>
-      <View style={[styles.formContainer, { paddingTop: 0 }]} pointerEvents="none">
-        <Label
-          style={{
-            color: Colors.tintColor,
-            fontSize: 12,
-            fontWeight: 'bold',
-            marginTop: 10,
-          }}
-        >
-          {this.props.contactSettings.fields.overall_status.name}
-        </Label>
-        <Row style={[styles.formRow, { paddingTop: 5 }]}>
-          <Col>
-            <Picker
-              selectedValue={this.state.contact.overall_status}
-              onValueChange={this.setContactStatus}
-              style={
-                Platform.OS === 'android'
-                  ? {
-                    color: '#ffffff',
-                    backgroundColor: this.state.overallStatusBackgroundColor,
-                  }
-                  : {
-                    backgroundColor: this.state.overallStatusBackgroundColor,
-                  }
-              }
-            >
-              {this.renderStatusPickerItems()}
-            </Picker>
-          </Col>
-        </Row>
-        <Row style={styles.formRow}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
-          </Col>
-          <Col>{this.showAssignedUser()}</Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>
-              {this.props.contactSettings.fields.assigned_to.name}
-            </Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={styles.formRow}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="Ionicons" name="md-people" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.subassigned
-                ? this.state.contact.subassigned.values
-                    .map(
-                      function(contact) {
-                        return safeFind(
-                          this.state.usersContacts.find((user) => user.value === contact.value),
-                          'name',
-                        );
-                      }.bind(this),
-                    )
-                    .filter(String)
-                    .join()
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>
-              {this.props.contactSettings.fields.subassigned.name}
-            </Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={styles.formRow}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="phone" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.contact_phone
-                ? this.state.contact.contact_phone
-                  .filter((phone) => !phone.delete)
-                  .map((phone) => phone.value)
-                  .join(', ')
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.mobile')}</Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={styles.formRow}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="envelope" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.contact_email
-                ? this.state.contact.contact_email
-                  .filter((email) => !email.delete)
-                  .map((email) => email.value)
-                  .join(', ')
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.email')}</Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={styles.formRow}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="Ionicons" name="chatboxes" style={[styles.formIcon, { marginTop: 0 }]} />
-          </Col>
-          <Col>
-            {Object.keys(this.props.contactSettings.channels).map(
-              (channelName, channelNameIndex) => {
-                const channel = this.props.contactSettings.channels[channelName];
-                return (
-                  <Col key={channelNameIndex.toString()}>
-                    {this.state.contact[`contact_${channelName}`]
-                      ? this.state.contact[
-                        `contact_${channelName}`
-                      ].map((socialMedia, socialMediaIndex) => (
-                        <Text key={socialMediaIndex.toString()}>{socialMedia.value}</Text>
-                      ))
-                      : null}
-                    <Text style={styles.socialMediaNames}>{channel.label}</Text>
-                  </Col>
-                );
-              },
-            )}
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={[styles.formLabel, { marginTop: 5 }]}>
-              {i18n.t('contactDetailScreen.socialMedia')}
-            </Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={styles.formRow}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="Entypo" name="home" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.contact_address
-                ? this.state.contact.contact_address
-                  .filter((address) => !address.delete)
-                  .map((address) => address.value)
-                  .join(', ')
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={styles.formRow}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="map-marker" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.location_grid
-                ? this.state.contact.location_grid.values
-                    .map(
-                      function(location) {
-                        return safeFind(
-                          this.state.geonames.find((geoname) => geoname.value === location.value),
-                          'name',
-                        );
-                      }.bind(this),
-                    )
-                    .filter(String)
-                    .join()
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>
-              {this.props.contactSettings.fields.location_grid.name}
-            </Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={styles.formRow}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="globe" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.people_groups
-                ? this.state.contact.people_groups.values
-                    .map(
-                      function(peopleGroup) {
-                        return safeFind(
-                          this.state.peopleGroups.find(
-                            (person) => person.value === peopleGroup.value,
-                          ),
-                          'name',
-                        );
-                      }.bind(this),
-                    )
-                    .filter(String)
-                    .join()
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>
-              {this.props.contactSettings.fields.people_groups.name}
-            </Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={styles.formRow}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="clock-o" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.age ? this.state.contact.age : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>{this.props.contactSettings.fields.age.name}</Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={styles.formRow}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon android="md-male" ios="ios-male" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.gender
-                ? this.props.contactSettings.fields.gender.values[this.state.contact.gender].label
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>{this.props.contactSettings.fields.gender.name}</Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={styles.formRow}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon android="md-arrow-dropright" ios="ios-arrow-dropright" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.sources
-                ? `${this.state.contact.sources.values
-                  .map(
-                    (source) =>
-                      this.props.contactSettings.fields.sources.values[source.value].label,
-                  )
-                  .join(', ')}`
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>{this.props.contactSettings.fields.sources.name}</Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-      </View>
-    </ScrollView>
+  offlineBarRender = () => (
+    <View style={[styles.offlineBar]}>
+      <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+    </View>
   );
 
-  progressView = () => (
-    <ScrollView
-      refreshControl={(
-        <RefreshControl
-          refreshing={this.state.loading}
-          onRefresh={() => this.onRefresh(this.state.contact.ID)}
-        />
-      )}
-    >
+  detailView = () => (
+    <View>
       {!this.props.isConnected && this.offlineBarRender()}
-      <View style={[styles.formContainer, { marginTop: 10 }]}>
-        <Grid>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.loading}
+            onRefresh={() => this.onRefresh(this.state.contact.ID)}
+          />
+        }>
+        <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
           <Row>
             <Col />
             <Col>
               <Text
                 style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }}
-                onPress={() => this.onEnableEdit()}
-              >
+                onPress={() => this.onEnableEdit()}>
                 {i18n.t('global.edit')}
               </Text>
             </Col>
           </Row>
         </Grid>
-        <Row style={[styles.formRow, { paddingTop: 15 }]}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon android="md-calendar" ios="ios-calendar" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.seeker_path
-                ? this.props.contactSettings.fields.seeker_path.values[
-                  this.state.contact.seeker_path
-                ].label
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>
-              {this.props.contactSettings.fields.seeker_path.name}
-            </Label>
-          </Col>
-        </Row>
-        <View
-          style={{
-            alignItems: 'center',
-            marginTop: 5,
-            marginBottom: 25,
-          }}
-        >
-          <ProgressBarAnimated
-            width={progressBarWidth}
-            value={this.state.progressBarValue}
-            backgroundColor={Colors.tintColor}
-          />
-        </View>
-        <View style={styles.formDivider} />
-        <Label style={[styles.formLabel, { fontWeight: 'bold', marginBottom: 10, marginTop: 20 }]}>
-          {this.props.contactSettings.fields.milestones.name}
-        </Label>
-        {this.renderfaithMilestones()}
-        {this.renderCustomFaithMilestones()}
-        <Grid style={{ marginTop: 25 }}>
-          <View style={styles.formDivider} />
+        <View style={[styles.formContainer, { paddingTop: 0 }]} pointerEvents="none">
+          <Label
+            style={{
+              color: Colors.tintColor,
+              fontSize: 12,
+              fontWeight: 'bold',
+              marginTop: 10,
+            }}>
+            {this.props.contactSettings.fields.overall_status.name}
+          </Label>
+          <Row style={[styles.formRow, { paddingTop: 5 }]}>
+            <Col>
+              <Picker
+                selectedValue={this.state.contact.overall_status}
+                onValueChange={this.setContactStatus}
+                style={
+                  Platform.OS === 'android'
+                    ? {
+                        color: '#ffffff',
+                        backgroundColor: this.state.overallStatusBackgroundColor,
+                      }
+                    : {
+                        backgroundColor: this.state.overallStatusBackgroundColor,
+                      }
+                }>
+                {this.renderStatusPickerItems()}
+              </Picker>
+            </Col>
+          </Row>
           <Row style={styles.formRow}>
             <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-              <Icon type="Entypo" name="water" style={styles.formIcon} />
+              <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
             </Col>
-            <Col>
-              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                {this.state.contact.baptism_date ? this.state.contact.baptism_date : ''}
-              </Text>
-            </Col>
-            <Col style={styles.formIconLabel}>
-              <Label style={[styles.label, styles.formLabel]}>
-                {this.props.contactSettings.fields.baptism_date.name}
+            <Col>{this.showAssignedUser()}</Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>
+                {this.props.contactSettings.fields.assigned_to.name}
               </Label>
             </Col>
           </Row>
-        </Grid>
-      </View>
-    </ScrollView>
+          <View style={styles.formDivider} />
+          <Row style={styles.formRow}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="Ionicons" name="md-people" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.subassigned
+                  ? this.state.contact.subassigned.values
+                      .map(
+                        function(contact) {
+                          return safeFind(
+                            this.state.usersContacts.find((user) => user.value === contact.value),
+                            'name',
+                          );
+                        }.bind(this),
+                      )
+                      .filter(String)
+                      .join()
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>
+                {this.props.contactSettings.fields.subassigned.name}
+              </Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+          <Row style={styles.formRow}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="FontAwesome" name="phone" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.contact_phone
+                  ? this.state.contact.contact_phone
+                      .filter((phone) => !phone.delete)
+                      .map((phone) => phone.value)
+                      .join(', ')
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.mobile')}</Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+          <Row style={styles.formRow}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="FontAwesome" name="envelope" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.contact_email
+                  ? this.state.contact.contact_email
+                      .filter((email) => !email.delete)
+                      .map((email) => email.value)
+                      .join(', ')
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.email')}</Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+          <Row style={styles.formRow}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="Ionicons" name="chatboxes" style={[styles.formIcon, { marginTop: 0 }]} />
+            </Col>
+            <Col>
+              {Object.keys(this.props.contactSettings.channels).map(
+                (channelName, channelNameIndex) => {
+                  const channel = this.props.contactSettings.channels[channelName];
+                  return (
+                    <Col key={channelNameIndex.toString()}>
+                      {this.state.contact[`contact_${channelName}`]
+                        ? this.state.contact[
+                            `contact_${channelName}`
+                          ].map((socialMedia, socialMediaIndex) => (
+                            <Text key={socialMediaIndex.toString()}>{socialMedia.value}</Text>
+                          ))
+                        : null}
+                      <Text style={styles.socialMediaNames}>{channel.label}</Text>
+                    </Col>
+                  );
+                },
+              )}
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={[styles.formLabel, { marginTop: 5 }]}>
+                {i18n.t('contactDetailScreen.socialMedia')}
+              </Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+          <Row style={styles.formRow}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="Entypo" name="home" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.contact_address
+                  ? this.state.contact.contact_address
+                      .filter((address) => !address.delete)
+                      .map((address) => address.value)
+                      .join(', ')
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+          <Row style={styles.formRow}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="FontAwesome" name="map-marker" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.location_grid
+                  ? this.state.contact.location_grid.values
+                      .map(
+                        function(location) {
+                          return safeFind(
+                            this.state.geonames.find((geoname) => geoname.value === location.value),
+                            'name',
+                          );
+                        }.bind(this),
+                      )
+                      .filter(String)
+                      .join()
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>
+                {this.props.contactSettings.fields.location_grid.name}
+              </Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+          <Row style={styles.formRow}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="FontAwesome" name="globe" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.people_groups
+                  ? this.state.contact.people_groups.values
+                      .map(
+                        function(peopleGroup) {
+                          return safeFind(
+                            this.state.peopleGroups.find(
+                              (person) => person.value === peopleGroup.value,
+                            ),
+                            'name',
+                          );
+                        }.bind(this),
+                      )
+                      .filter(String)
+                      .join()
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>
+                {this.props.contactSettings.fields.people_groups.name}
+              </Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+          <Row style={styles.formRow}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="FontAwesome" name="clock-o" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.age ? this.state.contact.age : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>{this.props.contactSettings.fields.age.name}</Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+          <Row style={styles.formRow}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon android="md-male" ios="ios-male" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.gender
+                  ? this.props.contactSettings.fields.gender.values[this.state.contact.gender].label
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>
+                {this.props.contactSettings.fields.gender.name}
+              </Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+          <Row style={styles.formRow}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon
+                android="md-arrow-dropright"
+                ios="ios-arrow-dropright"
+                style={styles.formIcon}
+              />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.sources
+                  ? `${this.state.contact.sources.values
+                      .map(
+                        (source) =>
+                          this.props.contactSettings.fields.sources.values[source.value].label,
+                      )
+                      .join(', ')}`
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>
+                {this.props.contactSettings.fields.sources.name}
+              </Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+        </View>
+      </ScrollView>
+    </View>
   );
 
-  commentsView = () => (    
+  progressView = () => (
+    <View>
+      {!this.props.isConnected && this.offlineBarRender()}
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.loading}
+            onRefresh={() => this.onRefresh(this.state.contact.ID)}
+          />
+        }>
+        <View style={[styles.formContainer, { marginTop: 10 }]}>
+          <Grid>
+            <Row>
+              <Col />
+              <Col>
+                <Text
+                  style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }}
+                  onPress={() => this.onEnableEdit()}>
+                  {i18n.t('global.edit')}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          <Row style={[styles.formRow, { paddingTop: 15 }]}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon android="md-calendar" ios="ios-calendar" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.seeker_path
+                  ? this.props.contactSettings.fields.seeker_path.values[
+                      this.state.contact.seeker_path
+                    ].label
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>
+                {this.props.contactSettings.fields.seeker_path.name}
+              </Label>
+            </Col>
+          </Row>
+          <View
+            style={{
+              alignItems: 'center',
+              marginTop: 5,
+              marginBottom: 25,
+            }}>
+            <ProgressBarAnimated
+              width={progressBarWidth}
+              value={this.state.progressBarValue}
+              backgroundColor={Colors.tintColor}
+            />
+          </View>
+          <View style={styles.formDivider} />
+          <Label
+            style={[styles.formLabel, { fontWeight: 'bold', marginBottom: 10, marginTop: 20 }]}>
+            {this.props.contactSettings.fields.milestones.name}
+          </Label>
+          {this.renderfaithMilestones()}
+          {this.renderCustomFaithMilestones()}
+          <Grid style={{ marginTop: 25 }}>
+            <View style={styles.formDivider} />
+            <Row style={styles.formRow}>
+              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                <Icon type="Entypo" name="water" style={styles.formIcon} />
+              </Col>
+              <Col>
+                <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  {this.state.contact.baptism_date ? this.state.contact.baptism_date : ''}
+                </Text>
+              </Col>
+              <Col style={styles.formIconLabel}>
+                <Label style={[styles.label, styles.formLabel]}>
+                  {this.props.contactSettings.fields.baptism_date.name}
+                </Label>
+              </Col>
+            </Row>
+          </Grid>
+        </View>
+      </ScrollView>
+    </View>
+  );
+
+  commentsView = () => (
     <View style={{ flex: 1 }}>
       {!this.props.isConnected && this.offlineBarRender()}
       <FlatList
@@ -1418,12 +1420,12 @@ class ContactDetailScreen extends React.Component {
           const commentOrActivity = item.item;
           return this.renderActivityOrCommentRow(commentOrActivity);
         }}
-        refreshControl={(
+        refreshControl={
           <RefreshControl
             refreshing={this.state.loadComments || this.state.loadActivities}
             onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID)}
           />
-        )}
+        }
         onScroll={({ nativeEvent }) => {
           const { loadingMoreComments, commentsOffset, activitiesOffset } = this.state;
           const flatList = nativeEvent;
@@ -1464,9 +1466,7 @@ class ContactDetailScreen extends React.Component {
       <SafeAreaView>
         <View>
           <KeyboardAccessory>
-            <View
-              style={[styles.commentInputContainer, { height: this.state.heightContainer }]}
-            >
+            <View style={[styles.commentInputContainer, { height: this.state.heightContainer }]}>
               <TextInput
                 placeholder={i18n.t('global.writeYourCommentNoteHere')}
                 value={this.state.comment}
@@ -1487,8 +1487,7 @@ class ContactDetailScreen extends React.Component {
                     width: 40,
                   },
                   i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
-                ]}
-              >
+                ]}>
                 <Icon android="md-send" ios="ios-send" style={{ color: 'white', fontSize: 25 }} />
               </TouchableOpacity>
             </View>
@@ -1499,198 +1498,202 @@ class ContactDetailScreen extends React.Component {
   );
 
   connectionsView = () => (
-    <ScrollView
-      keyboardShouldPersistTaps="handled"
-      refreshControl={(
-        <RefreshControl
-          refreshing={this.state.loading}
-          onRefresh={() => this.onRefresh(this.state.contact.ID)}
-        />
-      )}
-    >
+    <View>
       {!this.props.isConnected && this.offlineBarRender()}
-      <View style={[styles.formContainer, { marginTop: 10 }]}>
-        <Grid>
-          <Row>
-            <Col />
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.loading}
+            onRefresh={() => this.onRefresh(this.state.contact.ID)}
+          />
+        }>
+        <View style={[styles.formContainer, { marginTop: 10 }]}>
+          <Grid>
+            <Row>
+              <Col />
+              <Col>
+                <Text
+                  style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }}
+                  onPress={() => this.onEnableEdit()}>
+                  {i18n.t('global.edit')}
+                </Text>
+              </Col>
+            </Row>
+          </Grid>
+          <Row style={[styles.formRow, { paddingTop: 15 }]}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="FontAwesome" name="users" style={styles.formIcon} />
+            </Col>
             <Col>
-              <Text
-                style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }}
-                onPress={() => this.onEnableEdit()}
-              >
-                {i18n.t('global.edit')}
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.groups
+                  ? this.state.contact.groups.values
+                      .map(
+                        function(group) {
+                          return safeFind(
+                            this.state.groups.find((groupItem) => groupItem.value === group.value),
+                            'name',
+                          );
+                        }.bind(this),
+                      )
+                      .filter(String)
+                      .join()
+                  : ''}
               </Text>
             </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>
+                {this.props.contactSettings.fields.groups.name}
+              </Label>
+            </Col>
           </Row>
-        </Grid>
-        <Row style={[styles.formRow, { paddingTop: 15 }]}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="users" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.groups
-                ? this.state.contact.groups.values
-                    .map(
-                      function(group) {
-                        return safeFind(
-                          this.state.groups.find((groupItem) => groupItem.value === group.value),
-                          'name',
-                        );
-                      }.bind(this),
-                    )
-                    .filter(String)
-                    .join()
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>{this.props.contactSettings.fields.groups.name}</Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={[styles.formRow, { paddingTop: 15 }]}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="Entypo" name="network" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.relation
-                ? this.state.contact.relation.values
-                    .map(
-                      function(relation) {
-                        return safeFind(
-                          this.state.usersContacts.find((user) => user.value === relation.value),
-                          'name',
-                        );
-                      }.bind(this),
-                    )
-                    .filter(String)
-                    .join()
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>
-              {this.props.contactSettings.fields.relation.name}
-            </Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={[styles.formRow, { paddingTop: 15 }]}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="Entypo" name="water" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.baptized_by
-                ? this.state.contact.baptized_by.values
-                    .map(
-                      function(baptizedBy) {
-                        return safeFind(
-                          this.state.usersContacts.find((user) => user.value === baptizedBy.value),
-                          'name',
-                        );
-                      }.bind(this),
-                    )
-                    .filter(String)
-                    .join()
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>
-              {this.props.contactSettings.fields.baptized_by.name}
-            </Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={[styles.formRow, { paddingTop: 15 }]}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="Entypo" name="water" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.baptized
-                ? this.state.contact.baptized.values
-                    .map(
-                      function(baptized) {
-                        return safeFind(
-                          this.state.usersContacts.find((user) => user.value === baptized.value),
-                          'name',
-                        );
-                      }.bind(this),
-                    )
-                    .filter(String)
-                    .join()
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>
-              {this.props.contactSettings.fields.baptized.name}
-            </Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={[styles.formRow, { paddingTop: 15 }]}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="FontAwesome" name="black-tie" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.coached_by
-                ? this.state.contact.coached_by.values
-                    .map(
-                      function(coachedBy) {
-                        return safeFind(
-                          this.state.usersContacts.find((user) => user.value === coachedBy.value),
-                          'name',
-                        );
-                      }.bind(this),
-                    )
-                    .filter(String)
-                    .join()
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>
-              {this.props.contactSettings.fields.coached_by.name}
-            </Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-        <Row style={[styles.formRow, { paddingTop: 15 }]}>
-          <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-            <Icon type="MaterialCommunityIcons" name="presentation" style={styles.formIcon} />
-          </Col>
-          <Col>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              {this.state.contact.coaching
-                ? this.state.contact.coaching.values
-                    .map(
-                      function(coaching) {
-                        return safeFind(
-                          this.state.usersContacts.find((user) => user.value === coaching.value),
-                          'name',
-                        );
-                      }.bind(this),
-                    )
-                    .filter(String)
-                    .join()
-                : ''}
-            </Text>
-          </Col>
-          <Col style={styles.formParentLabel}>
-            <Label style={styles.formLabel}>
-              {this.props.contactSettings.fields.coaching.name}
-            </Label>
-          </Col>
-        </Row>
-        <View style={styles.formDivider} />
-      </View>
-    </ScrollView>
+          <View style={styles.formDivider} />
+          <Row style={[styles.formRow, { paddingTop: 15 }]}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="Entypo" name="network" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.relation
+                  ? this.state.contact.relation.values
+                      .map(
+                        function(relation) {
+                          return safeFind(
+                            this.state.usersContacts.find((user) => user.value === relation.value),
+                            'name',
+                          );
+                        }.bind(this),
+                      )
+                      .filter(String)
+                      .join()
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>
+                {this.props.contactSettings.fields.relation.name}
+              </Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+          <Row style={[styles.formRow, { paddingTop: 15 }]}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="Entypo" name="water" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.baptized_by
+                  ? this.state.contact.baptized_by.values
+                      .map(
+                        function(baptizedBy) {
+                          return safeFind(
+                            this.state.usersContacts.find(
+                              (user) => user.value === baptizedBy.value,
+                            ),
+                            'name',
+                          );
+                        }.bind(this),
+                      )
+                      .filter(String)
+                      .join()
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>
+                {this.props.contactSettings.fields.baptized_by.name}
+              </Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+          <Row style={[styles.formRow, { paddingTop: 15 }]}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="Entypo" name="water" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.baptized
+                  ? this.state.contact.baptized.values
+                      .map(
+                        function(baptized) {
+                          return safeFind(
+                            this.state.usersContacts.find((user) => user.value === baptized.value),
+                            'name',
+                          );
+                        }.bind(this),
+                      )
+                      .filter(String)
+                      .join()
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>
+                {this.props.contactSettings.fields.baptized.name}
+              </Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+          <Row style={[styles.formRow, { paddingTop: 15 }]}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="FontAwesome" name="black-tie" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.coached_by
+                  ? this.state.contact.coached_by.values
+                      .map(
+                        function(coachedBy) {
+                          return safeFind(
+                            this.state.usersContacts.find((user) => user.value === coachedBy.value),
+                            'name',
+                          );
+                        }.bind(this),
+                      )
+                      .filter(String)
+                      .join()
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>
+                {this.props.contactSettings.fields.coached_by.name}
+              </Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+          <Row style={[styles.formRow, { paddingTop: 15 }]}>
+            <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+              <Icon type="MaterialCommunityIcons" name="presentation" style={styles.formIcon} />
+            </Col>
+            <Col>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                {this.state.contact.coaching
+                  ? this.state.contact.coaching.values
+                      .map(
+                        function(coaching) {
+                          return safeFind(
+                            this.state.usersContacts.find((user) => user.value === coaching.value),
+                            'name',
+                          );
+                        }.bind(this),
+                      )
+                      .filter(String)
+                      .join()
+                  : ''}
+              </Text>
+            </Col>
+            <Col style={styles.formParentLabel}>
+              <Label style={styles.formLabel}>
+                {this.props.contactSettings.fields.coaching.name}
+              </Label>
+            </Col>
+          </Row>
+          <View style={styles.formDivider} />
+        </View>
+      </ScrollView>
+    </View>
   );
 
   transformContactObject = (contact, quickAction = {}) => {
@@ -1832,8 +1835,7 @@ class ContactDetailScreen extends React.Component {
         paddingVertical: 12,
         flexDirection: 'row',
         alignItems: 'flex-start',
-      }}
-    >
+      }}>
       <Image
         style={{
           height: 16,
@@ -1849,15 +1851,13 @@ class ContactDetailScreen extends React.Component {
           flex: 1,
           marginLeft: 16,
           padding: 10,
-        }}
-      >
+        }}>
         <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
             marginBottom: 6,
-          }}
-        >
+          }}>
           {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') && (
             <Grid>
               <Row>
@@ -1887,17 +1887,16 @@ class ContactDetailScreen extends React.Component {
           style={
             commentOrActivity.content
               ? {
-                paddingLeft: 10,
-                paddingRight: 10,
-              }
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }
               : {
-                paddingLeft: 10,
-                paddingRight: 10,
-                color: '#B4B4B4',
-                fontStyle: 'italic',
-              }
-          }
-        >
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  color: '#B4B4B4',
+                  fontStyle: 'italic',
+                }
+          }>
           {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
             ? commentOrActivity.content
             : commentOrActivity.object_note}
@@ -2238,8 +2237,7 @@ class ContactDetailScreen extends React.Component {
         pointerEvents={this.state.onlyView ? 'none' : 'auto'}
         style={{
           height: milestonesGridSize,
-        }}
-      >
+        }}>
         <Row size={7}>
           <Col size={1} />
           <Col size={5}>
@@ -2248,8 +2246,7 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_has_bible');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}
-            >
+              style={styles.progressIcon}>
               <Col>
                 <Row size={3}>
                   <Image
@@ -2269,8 +2266,7 @@ class ContactDetailScreen extends React.Component {
                       this.onCheckExistingMilestone('milestone_has_bible')
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}
-                  >
+                    ]}>
                     {this.props.contactSettings.fields.milestones.values.milestone_has_bible.label}
                   </Text>
                 </Row>
@@ -2284,8 +2280,7 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_reading_bible');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}
-            >
+              style={styles.progressIcon}>
               <Col>
                 <Row size={3}>
                   <Image
@@ -2305,8 +2300,7 @@ class ContactDetailScreen extends React.Component {
                       this.onCheckExistingMilestone('milestone_reading_bible')
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}
-                  >
+                    ]}>
                     {
                       this.props.contactSettings.fields.milestones.values.milestone_reading_bible
                         .label
@@ -2323,8 +2317,7 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_belief');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}
-            >
+              style={styles.progressIcon}>
               <Col>
                 <Row size={3}>
                   <Image
@@ -2344,8 +2337,7 @@ class ContactDetailScreen extends React.Component {
                       this.onCheckExistingMilestone('milestone_belief')
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}
-                  >
+                    ]}>
                     {this.props.contactSettings.fields.milestones.values.milestone_belief.label}
                   </Text>
                 </Row>
@@ -2363,8 +2355,7 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_can_share');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}
-            >
+              style={styles.progressIcon}>
               <Col>
                 <Row size={7}>
                   <Image
@@ -2384,8 +2375,7 @@ class ContactDetailScreen extends React.Component {
                       this.onCheckExistingMilestone('milestone_can_share')
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}
-                  >
+                    ]}>
                     {this.props.contactSettings.fields.milestones.values.milestone_can_share.label}
                   </Text>
                 </Row>
@@ -2399,8 +2389,7 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_sharing');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}
-            >
+              style={styles.progressIcon}>
               <Col>
                 <Row size={7}>
                   <Image
@@ -2420,8 +2409,7 @@ class ContactDetailScreen extends React.Component {
                       this.onCheckExistingMilestone('milestone_sharing')
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}
-                  >
+                    ]}>
                     {this.props.contactSettings.fields.milestones.values.milestone_sharing.label}
                   </Text>
                 </Row>
@@ -2435,8 +2423,7 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_baptized');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}
-            >
+              style={styles.progressIcon}>
               <Col>
                 <Row size={7}>
                   <Image
@@ -2456,8 +2443,7 @@ class ContactDetailScreen extends React.Component {
                       this.onCheckExistingMilestone('milestone_baptized')
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}
-                  >
+                    ]}>
                     {this.props.contactSettings.fields.milestones.values.milestone_baptized.label}
                   </Text>
                 </Row>
@@ -2475,8 +2461,7 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_baptizing');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}
-            >
+              style={styles.progressIcon}>
               <Col>
                 <Row size={3}>
                   <Image
@@ -2496,8 +2481,7 @@ class ContactDetailScreen extends React.Component {
                       this.onCheckExistingMilestone('milestone_baptizing')
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}
-                  >
+                    ]}>
                     {this.props.contactSettings.fields.milestones.values.milestone_baptizing.label}
                   </Text>
                 </Row>
@@ -2511,8 +2495,7 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_in_group');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}
-            >
+              style={styles.progressIcon}>
               <Col>
                 <Row size={3}>
                   <Image
@@ -2532,8 +2515,7 @@ class ContactDetailScreen extends React.Component {
                       this.onCheckExistingMilestone('milestone_in_group')
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}
-                  >
+                    ]}>
                     {this.props.contactSettings.fields.milestones.values.milestone_in_group.label}
                   </Text>
                 </Row>
@@ -2547,8 +2529,7 @@ class ContactDetailScreen extends React.Component {
                 this.onMilestoneChange('milestone_planting');
               }}
               activeOpacity={1}
-              style={styles.progressIcon}
-            >
+              style={styles.progressIcon}>
               <Col>
                 <Row size={3}>
                   <Image
@@ -2568,8 +2549,7 @@ class ContactDetailScreen extends React.Component {
                       this.onCheckExistingMilestone('milestone_planting')
                         ? styles.progressIconActive
                         : styles.progressIconInactive,
-                    ]}
-                  >
+                    ]}>
                     {this.props.contactSettings.fields.milestones.values.milestone_planting.label}
                   </Text>
                 </Row>
@@ -2607,16 +2587,14 @@ class ContactDetailScreen extends React.Component {
                   ? Colors.tintColor
                   : Colors.gray,
                 padding: 10,
-              }}
-            >
+              }}>
               <Text
                 style={[
                   styles.progressIconText,
                   {
                     color: this.onCheckExistingMilestone(value) ? '#FFFFFF' : '#000000',
                   },
-                ]}
-              >
+                ]}>
                 {this.props.contactSettings.fields.milestones.values[value].label}
               </Text>
             </TouchableOpacity>
@@ -2650,16 +2628,14 @@ class ContactDetailScreen extends React.Component {
                   ? Colors.tintColor
                   : Colors.gray,
                 padding: 10,
-              }}
-            >
+              }}>
               <Text
                 style={[
                   styles.progressIconText,
                   {
                     color: this.onCheckExistingMilestone(value) ? '#FFFFFF' : '#000000',
                   },
-                ]}
-              >
+                ]}>
                 {this.props.contactSettings.fields.milestones.values[value].label}
               </Text>
             </TouchableHighlight>
@@ -2715,8 +2691,7 @@ class ContactDetailScreen extends React.Component {
               this.changeContactSocialMediaType(value, propertyName, socialMediaIndex, this);
             }}
             selectedValue={socialMedia.key ? propertyName.replace('contact_', '') : channelName}
-            enabled={!socialMedia.key}
-          >
+            enabled={!socialMedia.key}>
             {this.renderSocialMediaPickerItems()}
           </Picker>
         </Row>
@@ -2810,13 +2785,12 @@ class ContactDetailScreen extends React.Component {
                               name="comment-plus"
                               style={{ color: 'white', fontSize: 25 }}
                             />
-                            )
+                          )
                         }
                         degrees={0}
                         activeOpacity={0}
                         bgColor="rgba(0,0,0,0.5)"
-                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
-                      >
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)">
                         <ActionButton.Item
                           buttonColor={Colors.primaryRGBA}
                           title={i18n.t('contactDetailScreen.noAnswer')}
@@ -2830,8 +2804,7 @@ class ContactDetailScreen extends React.Component {
                           size={40}
                           nativeFeedbackRippleColor="rgba(0,0,0,0)"
                           textStyle={{ color: Colors.tintColor, fontSize: 15 }}
-                          textContainerStyle={{ height: 'auto' }}
-                        >
+                          textContainerStyle={{ height: 'auto' }}>
                           <Icon type="Feather" name="phone-off" style={styles.contactFABIcon} />
                         </ActionButton.Item>
                         <ActionButton.Item
@@ -2844,17 +2817,16 @@ class ContactDetailScreen extends React.Component {
                                 'quick_button_contact_established',
                               )
                                 ? parseInt(
-                                  this.state.contact.quick_button_contact_established,
-                                  10,
-                                ) + 1
+                                    this.state.contact.quick_button_contact_established,
+                                    10,
+                                  ) + 1
                                 : 1,
                             })
                           }
                           size={40}
                           nativeFeedbackRippleColor="rgba(0,0,0,0)"
                           textStyle={{ color: Colors.tintColor, fontSize: 15 }}
-                          textContainerStyle={{ height: 'auto' }}
-                        >
+                          textContainerStyle={{ height: 'auto' }}>
                           <Icon
                             type="MaterialCommunityIcons"
                             name="phone-in-talk"
@@ -2871,15 +2843,14 @@ class ContactDetailScreen extends React.Component {
                                 'quick_button_meeting_scheduled',
                               )
                                 ? parseInt(this.state.contact.quick_button_meeting_scheduled, 10) +
-                                1
+                                  1
                                 : 1,
                             })
                           }
                           size={40}
                           nativeFeedbackRippleColor="rgba(0,0,0,0)"
                           textStyle={{ color: Colors.tintColor, fontSize: 15 }}
-                          textContainerStyle={{ height: 'auto' }}
-                        >
+                          textContainerStyle={{ height: 'auto' }}>
                           <Icon
                             type="MaterialCommunityIcons"
                             name="calendar-plus"
@@ -2902,8 +2873,7 @@ class ContactDetailScreen extends React.Component {
                           size={40}
                           nativeFeedbackRippleColor="rgba(0,0,0,0)"
                           textStyle={{ color: Colors.tintColor, fontSize: 15 }}
-                          textContainerStyle={{ height: 'auto' }}
-                        >
+                          textContainerStyle={{ height: 'auto' }}>
                           <Icon
                             type="MaterialCommunityIcons"
                             name="calendar-check"
@@ -2926,8 +2896,7 @@ class ContactDetailScreen extends React.Component {
                           size={40}
                           nativeFeedbackRippleColor="rgba(0,0,0,0)"
                           textStyle={{ color: Colors.tintColor, fontSize: 15 }}
-                          textContainerStyle={{ height: 'auto' }}
-                        >
+                          textContainerStyle={{ height: 'auto' }}>
                           <Icon
                             type="MaterialCommunityIcons"
                             name="calendar-remove"
@@ -2955,8 +2924,7 @@ class ContactDetailScreen extends React.Component {
                                       marginTop: 10,
                                     },
                                     styles.formFieldPadding,
-                                  ]}
-                                >
+                                  ]}>
                                   {this.props.contactSettings.fields.overall_status.name}
                                 </Label>
                                 <Row style={{ paddingBottom: 30 }}>
@@ -2967,16 +2935,15 @@ class ContactDetailScreen extends React.Component {
                                       style={
                                         Platform.OS === 'android'
                                           ? {
-                                            color: '#ffffff',
-                                            backgroundColor: this.state
-                                              .overallStatusBackgroundColor,
-                                          }
+                                              color: '#ffffff',
+                                              backgroundColor: this.state
+                                                .overallStatusBackgroundColor,
+                                            }
                                           : {
-                                            backgroundColor: this.state
-                                              .overallStatusBackgroundColor,
-                                          }
-                                      }
-                                    >
+                                              backgroundColor: this.state
+                                                .overallStatusBackgroundColor,
+                                            }
+                                      }>
                                       {this.renderStatusPickerItems()}
                                     </Picker>
                                   </Col>
@@ -3024,8 +2991,7 @@ class ContactDetailScreen extends React.Component {
                                 <TouchableOpacity
                                   onPress={() => {
                                     this.updateShowAssignedToModal(true);
-                                  }}
-                                >
+                                  }}>
                                   <Row style={styles.formFieldPadding}>
                                     <Col style={styles.formIconLabelCol}>
                                       <View style={styles.formIconLabelView}>
@@ -3057,8 +3023,7 @@ class ContactDetailScreen extends React.Component {
                                         borderBottomWidth: 1,
                                         borderStyle: 'solid',
                                         borderBottomColor: '#D9D5DC',
-                                      }}
-                                    >
+                                      }}>
                                       {this.showAssignedUser()}
                                       <ModalFilterPicker
                                         visible={this.state.showAssignedToModal}
@@ -3105,13 +3070,13 @@ class ContactDetailScreen extends React.Component {
                                       selectedItems={
                                         this.state.contact.subassigned
                                           ? this.state.contact.subassigned.values.map(
-                                            (subassigned) => ({
-                                              name: this.state.usersContacts.find(
-                                                (user) => user.value === subassigned.value,
-                                              ).name,
-                                              value: subassigned.value,
-                                            }),
-                                          )
+                                              (subassigned) => ({
+                                                name: this.state.usersContacts.find(
+                                                  (user) => user.value === subassigned.value,
+                                                ).name,
+                                                value: subassigned.value,
+                                              }),
+                                            )
                                           : []
                                       }
                                       textInputProps={{
@@ -3136,20 +3101,17 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}
-                                        >
+                                          }}>
                                           <View
                                             style={{
                                               flexDirection: 'row',
-                                            }}
-                                          >
+                                            }}>
                                             <Text
                                               style={{
                                                 color: 'rgba(0, 0, 0, 0.87)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {item.name}
                                             </Text>
                                             <Text
@@ -3157,12 +3119,10 @@ class ContactDetailScreen extends React.Component {
                                                 color: 'rgba(0, 0, 0, 0.54)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {' '}
                                               (#
-                                              {id}
-)
+                                              {id})
                                             </Text>
                                           </View>
                                         </TouchableOpacity>
@@ -3243,7 +3203,7 @@ class ContactDetailScreen extends React.Component {
                                   )
                                 ) : (
                                   <Text />
-                                  )}
+                                )}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
@@ -3311,7 +3271,7 @@ class ContactDetailScreen extends React.Component {
                                   )
                                 ) : (
                                   <Text />
-                                  )}
+                                )}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
@@ -3343,17 +3303,17 @@ class ContactDetailScreen extends React.Component {
                                       <Col key={channelNameIndex.toString()}>
                                         {this.state.contact[propertyName]
                                           ? this.state.contact[
-                                            propertyName
-                                          ].map((socialMedia, socialMediaIndex) =>
-                                            !socialMedia.key
-                                              ? this.renderSocialMediaField(
-                                                socialMediaIndex,
-                                                socialMedia,
-                                                propertyName,
-                                                channelName,
-                                              )
-                                              : null,
-                                          )
+                                              propertyName
+                                            ].map((socialMedia, socialMediaIndex) =>
+                                              !socialMedia.key
+                                                ? this.renderSocialMediaField(
+                                                    socialMediaIndex,
+                                                    socialMedia,
+                                                    propertyName,
+                                                    channelName,
+                                                  )
+                                                : null,
+                                            )
                                           : null}
                                       </Col>
                                     );
@@ -3366,17 +3326,17 @@ class ContactDetailScreen extends React.Component {
                                       <Col key={channelNameIndex.toString()}>
                                         {this.state.contact[propertyName]
                                           ? this.state.contact[
-                                            propertyName
-                                          ].map((socialMedia, socialMediaIndex) =>
-                                            socialMedia.key && !socialMedia.delete
-                                              ? this.renderSocialMediaField(
-                                                socialMediaIndex,
-                                                socialMedia,
-                                                propertyName,
-                                                channelName,
-                                              )
-                                              : null,
-                                          )
+                                              propertyName
+                                            ].map((socialMedia, socialMediaIndex) =>
+                                              socialMedia.key && !socialMedia.delete
+                                                ? this.renderSocialMediaField(
+                                                    socialMediaIndex,
+                                                    socialMedia,
+                                                    propertyName,
+                                                    channelName,
+                                                  )
+                                                : null,
+                                            )
                                           : null}
                                       </Col>
                                     );
@@ -3445,7 +3405,7 @@ class ContactDetailScreen extends React.Component {
                                   )
                                 ) : (
                                   <Text />
-                                  )}
+                                )}
                                 <Row style={styles.formFieldPadding}>
                                   <Col style={styles.formIconLabelCol}>
                                     <View style={styles.formIconLabelView}>
@@ -3482,13 +3442,13 @@ class ContactDetailScreen extends React.Component {
                                       selectedItems={
                                         this.state.contact.location_grid
                                           ? this.state.contact.location_grid.values.map(
-                                            (location) => ({
-                                              name: this.state.geonames.find(
-                                                (geoname) => geoname.value === location.value,
-                                              ).name,
-                                              value: location.value,
-                                            }),
-                                          )
+                                              (location) => ({
+                                                name: this.state.geonames.find(
+                                                  (geoname) => geoname.value === location.value,
+                                                ).name,
+                                                value: location.value,
+                                              }),
+                                            )
                                           : []
                                       }
                                       textInputProps={{
@@ -3502,20 +3462,17 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}
-                                        >
+                                          }}>
                                           <View
                                             style={{
                                               flexDirection: 'row',
-                                            }}
-                                          >
+                                            }}>
                                             <Text
                                               style={{
                                                 color: 'rgba(0, 0, 0, 0.87)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {item.name}
                                             </Text>
                                           </View>
@@ -3575,13 +3532,13 @@ class ContactDetailScreen extends React.Component {
                                       selectedItems={
                                         this.state.contact.people_groups
                                           ? this.state.contact.people_groups.values.map(
-                                            (peopleGroup) => ({
-                                              name: this.state.peopleGroups.find(
-                                                (person) => person.value === peopleGroup.value,
-                                              ).name,
-                                              value: peopleGroup.value,
-                                            }),
-                                          )
+                                              (peopleGroup) => ({
+                                                name: this.state.peopleGroups.find(
+                                                  (person) => person.value === peopleGroup.value,
+                                                ).name,
+                                                value: peopleGroup.value,
+                                              }),
+                                            )
                                           : []
                                       }
                                       textInputProps={{
@@ -3595,20 +3552,17 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}
-                                        >
+                                          }}>
                                           <View
                                             style={{
                                               flexDirection: 'row',
-                                            }}
-                                          >
+                                            }}>
                                             <Text
                                               style={{
                                                 color: 'rgba(0, 0, 0, 0.87)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {item.name}
                                             </Text>
                                           </View>
@@ -3663,8 +3617,7 @@ class ContactDetailScreen extends React.Component {
                                     <Picker
                                       mode="dropdown"
                                       selectedValue={this.state.contact.age}
-                                      onValueChange={this.setContactAge}
-                                    >
+                                      onValueChange={this.setContactAge}>
                                       {Object.keys(
                                         this.props.contactSettings.fields.age.values,
                                       ).map((key) => {
@@ -3711,8 +3664,7 @@ class ContactDetailScreen extends React.Component {
                                     <Picker
                                       mode="dropdown"
                                       selectedValue={this.state.contact.gender}
-                                      onValueChange={this.setContactGender}
-                                    >
+                                      onValueChange={this.setContactGender}>
                                       {Object.keys(
                                         this.props.contactSettings.fields.gender.values,
                                       ).map((key) => {
@@ -3771,10 +3723,10 @@ class ContactDetailScreen extends React.Component {
                                       selectedItems={
                                         this.state.contact.sources
                                           ? this.state.contact.sources.values.map((source) => ({
-                                            name: this.props.contactSettings.fields.sources
-                                              .values[source.value].label,
-                                            value: source.value,
-                                          }))
+                                              name: this.props.contactSettings.fields.sources
+                                                .values[source.value].label,
+                                              value: source.value,
+                                            }))
                                           : []
                                       }
                                       textInputProps={{
@@ -3788,20 +3740,17 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}
-                                        >
+                                          }}>
                                           <View
                                             style={{
                                               flexDirection: 'row',
-                                            }}
-                                          >
+                                            }}>
                                             <Text
                                               style={{
                                                 color: 'rgba(0, 0, 0, 0.87)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {item.name}
                                             </Text>
                                           </View>
@@ -3861,8 +3810,7 @@ class ContactDetailScreen extends React.Component {
                                       mode="dropdown"
                                       selectedValue={this.state.contact.seeker_path}
                                       onValueChange={this.setContactSeekerPath}
-                                      textStyle={{ color: Colors.tintColor }}
-                                    >
+                                      textStyle={{ color: Colors.tintColor }}>
                                       {Object.keys(
                                         this.props.contactSettings.fields.seeker_path.values,
                                       ).map((key) => {
@@ -3883,8 +3831,7 @@ class ContactDetailScreen extends React.Component {
                                   style={[
                                     styles.formLabel,
                                     { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
-                                  ]}
-                                >
+                                  ]}>
                                   {this.props.contactSettings.fields.milestones.name}
                                 </Label>
                                 {this.renderfaithMilestones()}
@@ -3962,11 +3909,11 @@ class ContactDetailScreen extends React.Component {
                                       selectedItems={
                                         this.state.contact.groups
                                           ? this.state.contact.groups.values.map((group) => ({
-                                            name: this.state.groups.find(
-                                              (groupItem) => groupItem.value === group.value,
-                                            ).name,
-                                            value: group.value,
-                                          }))
+                                              name: this.state.groups.find(
+                                                (groupItem) => groupItem.value === group.value,
+                                              ).name,
+                                              value: group.value,
+                                            }))
                                           : []
                                       }
                                       textInputProps={{
@@ -3980,20 +3927,17 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}
-                                        >
+                                          }}>
                                           <View
                                             style={{
                                               flexDirection: 'row',
-                                            }}
-                                          >
+                                            }}>
                                             <Text
                                               style={{
                                                 color: 'rgba(0, 0, 0, 0.87)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {item.name}
                                             </Text>
                                           </View>
@@ -4050,11 +3994,11 @@ class ContactDetailScreen extends React.Component {
                                       selectedItems={
                                         this.state.contact.relation
                                           ? this.state.contact.relation.values.map((relation) => ({
-                                            name: this.state.usersContacts.find(
-                                              (user) => user.value === relation.value,
-                                            ).name,
-                                            value: relation.value,
-                                          }))
+                                              name: this.state.usersContacts.find(
+                                                (user) => user.value === relation.value,
+                                              ).name,
+                                              value: relation.value,
+                                            }))
                                           : []
                                       }
                                       textInputProps={{
@@ -4068,20 +4012,17 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}
-                                        >
+                                          }}>
                                           <View
                                             style={{
                                               flexDirection: 'row',
-                                            }}
-                                          >
+                                            }}>
                                             <Text
                                               style={{
                                                 color: 'rgba(0, 0, 0, 0.87)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {item.name}
                                             </Text>
                                             <Text
@@ -4089,12 +4030,10 @@ class ContactDetailScreen extends React.Component {
                                                 color: 'rgba(0, 0, 0, 0.54)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {' '}
                                               (#
-                                              {id}
-)
+                                              {id})
                                             </Text>
                                           </View>
                                         </TouchableOpacity>
@@ -4150,13 +4089,13 @@ class ContactDetailScreen extends React.Component {
                                       selectedItems={
                                         this.state.contact.baptized_by
                                           ? this.state.contact.baptized_by.values.map(
-                                            (contact) => ({
-                                              name: this.state.usersContacts.find(
-                                                (user) => user.value === contact.value,
-                                              ).name,
-                                              value: contact.value,
-                                            }),
-                                          )
+                                              (contact) => ({
+                                                name: this.state.usersContacts.find(
+                                                  (user) => user.value === contact.value,
+                                                ).name,
+                                                value: contact.value,
+                                              }),
+                                            )
                                           : []
                                       }
                                       textInputProps={{
@@ -4170,20 +4109,17 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}
-                                        >
+                                          }}>
                                           <View
                                             style={{
                                               flexDirection: 'row',
-                                            }}
-                                          >
+                                            }}>
                                             <Text
                                               style={{
                                                 color: 'rgba(0, 0, 0, 0.87)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {item.name}
                                             </Text>
                                             <Text
@@ -4191,12 +4127,10 @@ class ContactDetailScreen extends React.Component {
                                                 color: 'rgba(0, 0, 0, 0.54)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {' '}
                                               (#
-                                              {id}
-)
+                                              {id})
                                             </Text>
                                           </View>
                                         </TouchableOpacity>
@@ -4252,13 +4186,13 @@ class ContactDetailScreen extends React.Component {
                                       selectedItems={
                                         this.state.contact.baptized
                                           ? this.state.contact.baptized.values.map(
-                                            (baptizedItem) => ({
-                                              name: this.state.usersContacts.find(
-                                                (user) => user.value === baptizedItem.value,
-                                              ).name,
-                                              value: baptizedItem.value,
-                                            }),
-                                          )
+                                              (baptizedItem) => ({
+                                                name: this.state.usersContacts.find(
+                                                  (user) => user.value === baptizedItem.value,
+                                                ).name,
+                                                value: baptizedItem.value,
+                                              }),
+                                            )
                                           : []
                                       }
                                       textInputProps={{
@@ -4272,20 +4206,17 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}
-                                        >
+                                          }}>
                                           <View
                                             style={{
                                               flexDirection: 'row',
-                                            }}
-                                          >
+                                            }}>
                                             <Text
                                               style={{
                                                 color: 'rgba(0, 0, 0, 0.87)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {item.name}
                                             </Text>
                                             <Text
@@ -4293,12 +4224,10 @@ class ContactDetailScreen extends React.Component {
                                                 color: 'rgba(0, 0, 0, 0.54)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {' '}
                                               (#
-                                              {id}
-)
+                                              {id})
                                             </Text>
                                           </View>
                                         </TouchableOpacity>
@@ -4358,11 +4287,11 @@ class ContactDetailScreen extends React.Component {
                                       selectedItems={
                                         this.state.contact.coached_by
                                           ? this.state.contact.coached_by.values.map((contact) => ({
-                                            name: this.state.usersContacts.find(
-                                              (user) => user.value === contact.value,
-                                            ).name,
-                                            value: contact.value,
-                                          }))
+                                              name: this.state.usersContacts.find(
+                                                (user) => user.value === contact.value,
+                                              ).name,
+                                              value: contact.value,
+                                            }))
                                           : []
                                       }
                                       textInputProps={{
@@ -4376,20 +4305,17 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}
-                                        >
+                                          }}>
                                           <View
                                             style={{
                                               flexDirection: 'row',
-                                            }}
-                                          >
+                                            }}>
                                             <Text
                                               style={{
                                                 color: 'rgba(0, 0, 0, 0.87)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {item.name}
                                             </Text>
                                             <Text
@@ -4397,12 +4323,10 @@ class ContactDetailScreen extends React.Component {
                                                 color: 'rgba(0, 0, 0, 0.54)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {' '}
                                               (#
-                                              {id}
-)
+                                              {id})
                                             </Text>
                                           </View>
                                         </TouchableOpacity>
@@ -4462,11 +4386,11 @@ class ContactDetailScreen extends React.Component {
                                       selectedItems={
                                         this.state.contact.coaching
                                           ? this.state.contact.coaching.values.map((contact) => ({
-                                            name: this.state.usersContacts.find(
-                                              (user) => user.value === contact.value,
-                                            ).name,
-                                            value: contact.value,
-                                          }))
+                                              name: this.state.usersContacts.find(
+                                                (user) => user.value === contact.value,
+                                              ).name,
+                                              value: contact.value,
+                                            }))
                                           : []
                                       }
                                       textInputProps={{
@@ -4480,20 +4404,17 @@ class ContactDetailScreen extends React.Component {
                                           style={{
                                             paddingVertical: 8,
                                             paddingHorizontal: 10,
-                                          }}
-                                        >
+                                          }}>
                                           <View
                                             style={{
                                               flexDirection: 'row',
-                                            }}
-                                          >
+                                            }}>
                                             <Text
                                               style={{
                                                 color: 'rgba(0, 0, 0, 0.87)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {item.name}
                                             </Text>
                                             <Text
@@ -4501,12 +4422,10 @@ class ContactDetailScreen extends React.Component {
                                                 color: 'rgba(0, 0, 0, 0.54)',
                                                 fontSize: 14,
                                                 lineHeight: 21,
-                                              }}
-                                            >
+                                              }}>
                                               {' '}
                                               (#
-                                              {id}
-)
+                                              {id})
                                             </Text>
                                           </View>
                                         </TouchableOpacity>
@@ -4547,8 +4466,7 @@ class ContactDetailScreen extends React.Component {
                                 shadowRadius: 2,
                                 shadowOffset: { width: 1, height: 1 },
                               }}
-                              elevation={10}
-                            >
+                              elevation={10}>
                               <Text style={{ color: Colors.tintColor, fontWeight: 'bold' }}>
                                 {i18n.t('global.cancel')}
                               </Text>
@@ -4559,8 +4477,7 @@ class ContactDetailScreen extends React.Component {
                                 height: 60,
                                 width: '50%',
                                 backgroundColor: Colors.tintColor,
-                              }}
-                            >
+                              }}>
                               <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
                                 {i18n.t('global.save')}
                               </Text>
@@ -4588,13 +4505,13 @@ class ContactDetailScreen extends React.Component {
                             placeholder={i18n.t('global.requiredField')}
                             onChangeText={this.setContactTitle}
                             style={{
-                                borderColor: '#B4B4B4',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                borderStyle: 'solid',
-                                fontSize: 13,
-                                paddingLeft: 15,
-                              }}
+                              borderColor: '#B4B4B4',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              borderStyle: 'solid',
+                              fontSize: 13,
+                              paddingLeft: 15,
+                            }}
                           />
                         </Row>
                         <Row>
@@ -4606,13 +4523,13 @@ class ContactDetailScreen extends React.Component {
                           <Input
                             onChangeText={this.setSingleContactPhone}
                             style={{
-                                borderColor: '#B4B4B4',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                borderStyle: 'solid',
-                                fontSize: 13,
-                                paddingLeft: 15,
-                              }}
+                              borderColor: '#B4B4B4',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              borderStyle: 'solid',
+                              fontSize: 13,
+                              paddingLeft: 15,
+                            }}
                           />
                         </Row>
                         <Row>
@@ -4624,13 +4541,13 @@ class ContactDetailScreen extends React.Component {
                           <Input
                             onChangeText={this.setContactEmail}
                             style={{
-                                borderColor: '#B4B4B4',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                borderStyle: 'solid',
-                                fontSize: 13,
-                                paddingLeft: 15,
-                              }}
+                              borderColor: '#B4B4B4',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              borderStyle: 'solid',
+                              fontSize: 13,
+                              paddingLeft: 15,
+                            }}
                           />
                         </Row>
                         <Row>
@@ -4641,8 +4558,7 @@ class ContactDetailScreen extends React.Component {
                         <Row>
                           <Picker
                             onValueChange={this.setContactSource}
-                            selectedValue={this.state.contact.sources.values[0].value}
-                          >
+                            selectedValue={this.state.contact.sources.values[0].value}>
                             {this.renderSourcePickerItems()}
                           </Picker>
                         </Row>
@@ -4655,41 +4571,38 @@ class ContactDetailScreen extends React.Component {
                           <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
                             <Selectize
                               ref={(selectize) => {
-                                  geonamesSelectizeRef = selectize;
-                                }}
+                                geonamesSelectizeRef = selectize;
+                              }}
                               itemId="value"
                               items={this.state.geonames}
                               selectedItems={[]}
                               textInputProps={{
-                                  placeholder: i18n.t('contactDetailScreen.selectLocations'),
-                                }}
+                                placeholder: i18n.t('contactDetailScreen.selectLocations'),
+                              }}
                               renderRow={(id, onPress, item) => (
                                 <TouchableOpacity
                                   activeOpacity={0.6}
                                   key={id}
                                   onPress={onPress}
                                   style={{
-                                      paddingVertical: 8,
-                                      paddingHorizontal: 10,
-                                    }}
-                                >
+                                    paddingVertical: 8,
+                                    paddingHorizontal: 10,
+                                  }}>
                                   <View
                                     style={{
-                                        flexDirection: 'row',
-                                      }}
-                                  >
+                                      flexDirection: 'row',
+                                    }}>
                                     <Text
                                       style={{
-                                          color: 'rgba(0, 0, 0, 0.87)',
-                                          fontSize: 14,
-                                          lineHeight: 21,
-                                        }}
-                                    >
+                                        color: 'rgba(0, 0, 0, 0.87)',
+                                        fontSize: 14,
+                                        lineHeight: 21,
+                                      }}>
                                       {item.name}
                                     </Text>
                                   </View>
                                 </TouchableOpacity>
-                                )}
+                              )}
                               renderChip={(id, onClose, item, style, iconStyle) => (
                                 <Chip
                                   key={id}
@@ -4698,14 +4611,14 @@ class ContactDetailScreen extends React.Component {
                                   text={item.name}
                                   style={style}
                                 />
-                                )}
+                              )}
                               filterOnKey="name"
                               keyboardShouldPersistTaps
                               inputContainerStyle={{
-                                  borderWidth: 1,
-                                  borderColor: '#CCCCCC',
-                                  padding: 5,
-                                }}
+                                borderWidth: 1,
+                                borderColor: '#CCCCCC',
+                                padding: 5,
+                              }}
                             />
                           </Col>
                         </Row>
@@ -4719,13 +4632,13 @@ class ContactDetailScreen extends React.Component {
                             multiline
                             onChangeText={this.setContactInitialComment}
                             style={{
-                                borderColor: '#B4B4B4',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                borderStyle: 'solid',
-                                fontSize: 13,
-                                paddingLeft: 15,
-                              }}
+                              borderColor: '#B4B4B4',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              borderStyle: 'solid',
+                              fontSize: 13,
+                              paddingLeft: 15,
+                            }}
                           />
                         </Row>
                       </Grid>
@@ -4736,9 +4649,9 @@ class ContactDetailScreen extends React.Component {
                       </Button>
                     </View>
                   </ScrollView>
-                  )}
+                )}
               </KeyboardShift>
-              )}
+            )}
           </View>
         )}
         {successToast}
