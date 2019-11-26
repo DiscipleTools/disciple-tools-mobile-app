@@ -1,13 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  View,
-  FlatList,
-  TouchableOpacity,
-  RefreshControl,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import { View, FlatList, TouchableOpacity, RefreshControl, StyleSheet, Text } from 'react-native';
 import { Fab, Container } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
@@ -17,7 +10,6 @@ import { SearchBar } from 'react-native-elements';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/groups.actions';
 import i18n from '../../languages';
-
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -52,29 +44,28 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderColor: '#DDDDDD',
     borderBottomWidth: 1,
-    borderWidth: 1
+    borderWidth: 1,
   },
-  offlineBar:{
+  offlineBar: {
     height: 20,
     backgroundColor: '#FCAB10',
   },
-  offlineBarText:{
+  offlineBarText: {
     fontSize: 14,
     color: 'white',
     textAlignVertical: 'center',
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
 
 let toastError;
 
 class GroupsScreen extends React.Component {
-
   /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
     search: '',
-    dataSourceGroups: this.props.groups
+    dataSourceGroups: this.props.groups,
   };
 
   componentDidUpdate(prevProps) {
@@ -96,12 +87,11 @@ class GroupsScreen extends React.Component {
     }
   }
 
-  renderRow = group => (
+  renderRow = (group) => (
     <TouchableOpacity
       onPress={() => this.goToGroupDetailScreen(group)}
       style={styles.flatListItem}
-      key={group.ID}
-    >
+      key={group.ID}>
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <Text style={{ fontWeight: 'bold' }}>{group.title}</Text>
@@ -111,27 +101,34 @@ class GroupsScreen extends React.Component {
             <Text style={styles.groupSubtitle}>
               {this.props.groupSettings.group_status.values[group.group_status].label}
             </Text>
-          ) : <Text />}
-          {this.props.groupSettings.group_status.values[group.group_status] && this.props.groupSettings.group_type.values[group.group_type] ? (
+          ) : (
+            <Text />
+          )}
+          {this.props.groupSettings.group_status.values[group.group_status] &&
+          this.props.groupSettings.group_type.values[group.group_type] ? (
+            <Text style={styles.groupSubtitle}>•</Text>
+          ) : (
+            <Text />
+          )}
+          {this.props.groupSettings.group_type.values[group.group_type] ? (
             <Text style={styles.groupSubtitle}>
-               • 
+              {this.props.groupSettings.group_type.values[group.group_type].label
+                ? this.props.groupSettings.group_type.values[group.group_type].label
+                : ''}
             </Text>
-          ) : <Text />}
-          {(this.props.groupSettings.group_type.values[group.group_type]) ? (
-            <Text style={styles.groupSubtitle}>
-              {((this.props.groupSettings.group_type.values[group.group_type].label) ? this.props.groupSettings.group_type.values[group.group_type].label : '')}
-            </Text>
-          ) : <Text />}
+          ) : (
+            <Text />
+          )}
           {this.props.groupSettings.group_type.values[group.group_type] && group.member_count ? (
-            <Text style={styles.groupSubtitle}>
-               • 
-            </Text>
-          ) : <Text />}
+            <Text style={styles.groupSubtitle}>•</Text>
+          ) : (
+            <Text />
+          )}
           {group.member_count ? (
-            <Text style={styles.groupSubtitle}>
-              {group.member_count}
-            </Text>
-          ) : <Text />}
+            <Text style={styles.groupSubtitle}>{group.member_count}</Text>
+          ) : (
+            <Text />
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -149,14 +146,17 @@ class GroupsScreen extends React.Component {
 
   onRefresh = () => {
     this.props.getAllGroups(this.props.userData.domain, this.props.userData.token);
-    this.setState({
-      refresh: true,
-    }, () => {
-      this.setState({
-        dataSourceGroups: this.props.groups,
-        refresh: false
-      })
-    })
+    this.setState(
+      {
+        refresh: true,
+      },
+      () => {
+        this.setState({
+          dataSourceGroups: this.props.groups,
+          refresh: false,
+        });
+      },
+    );
   };
 
   goToGroupDetailScreen = (groupData = null) => {
@@ -178,49 +178,56 @@ class GroupsScreen extends React.Component {
     }
   };
 
-
-  SearchFilterFunction(text) {
-    const itemsFiltered = []
-    this.props.groups.filter(function (item) {
-      const textData = text.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      const itemDataTitle = item.title.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      const filterByTitle = itemDataTitle.includes(textData)
-      filterByTitle == true ? itemsFiltered.push(item) : null
-      return itemsFiltered
-    })
-    this.setState({
-        refresh: true,
-      }, () => {
-        this.setState({
-          dataSourceGroups: itemsFiltered,
-          search: text,
-          refresh: false
-        })
-      }) 
-  }
-
   renderHeader = () => {
     return (
-      <View>        
+      <View>
         <SearchBar
           placeholder={i18n.t('global.search')}
-          onChangeText={text => this.SearchFilterFunction(text)}
+          onChangeText={(text) => this.SearchFilterFunction(text)}
           autoCorrect={false}
           value={this.state.search}
           containerStyle={styles.searchBarContainer}
           inputContainerStyle={styles.searchBarInput}
         />
-        {!this.props.isConnected && this.offlineBarRender()}
       </View>
     );
   };
 
-  offlineBarRender = () =>{
-    return (
-      <View style={[styles.offlineBar]}>
-        <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
-      </View>
-    ) 
+  offlineBarRender = () => (
+    <View style={[styles.offlineBar]}>
+      <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+    </View>
+  );
+
+  SearchFilterFunction(text) {
+    const itemsFiltered = [];
+    this.props.groups.filter(function(item) {
+      const textData = text
+        .toUpperCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+      const itemDataTitle = item.title
+        .toUpperCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+      const filterByTitle = itemDataTitle.includes(textData);
+      if (filterByTitle === true) {
+        itemsFiltered.push(item);
+      }
+      return itemsFiltered;
+    });
+    this.setState(
+      {
+        refresh: true,
+      },
+      () => {
+        this.setState({
+          dataSourceGroups: itemsFiltered,
+          search: text,
+          refresh: false,
+        });
+      },
+    );
   }
 
   static navigationOptions = {
@@ -234,30 +241,27 @@ class GroupsScreen extends React.Component {
       fontWeight: 'bold',
     },
   };
-  
+
   render() {
     return (
       <Container>
         <View style={{ flex: 1 }}>
+          {!this.props.isConnected && this.offlineBarRender()}
           <FlatList
             ListHeaderComponent={this.renderHeader}
             data={this.state.dataSourceGroups}
             extraData={this.state.refresh}
-            renderItem={item => this.renderRow(item.item)}
+            renderItem={(item) => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
-            refreshControl={(
-              <RefreshControl
-                refreshing={this.props.loading}
-                onRefresh={this.onRefresh}
-              />
-            )}
-            keyExtractor={item => item.ID.toString()}
+            refreshControl={
+              <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
+            }
+            keyExtractor={(item) => item.ID.toString()}
           />
           <Fab
             style={{ backgroundColor: Colors.tintColor }}
             position="bottomRight"
-            onPress={() => this.goToGroupDetailScreen()}
-          >
+            onPress={() => this.goToGroupDetailScreen()}>
             <Icon name="md-add" />
           </Fab>
           <Toast
@@ -274,6 +278,7 @@ class GroupsScreen extends React.Component {
 }
 
 GroupsScreen.propTypes = {
+  isConnected: PropTypes.bool,
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
@@ -286,8 +291,8 @@ GroupsScreen.propTypes = {
   /* eslint-disable */
   groups: PropTypes.arrayOf(
     PropTypes.shape({
-      key: PropTypes.number
-    })
+      key: PropTypes.number,
+    }),
   ),
   /* eslint-enable */
   error: PropTypes.shape({
@@ -311,7 +316,7 @@ GroupsScreen.defaultProps = {
   isConnected: null,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   userData: state.userReducer.userData,
   groups: state.groupsReducer.groups,
   loading: state.groupsReducer.loading,
@@ -319,13 +324,10 @@ const mapStateToProps = state => ({
   groupSettings: state.groupsReducer.settings,
   isConnected: state.networkConnectivityReducer.isConnected,
 });
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   getAllGroups: (domain, token) => {
     dispatch(getAll(domain, token));
   },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(GroupsScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(GroupsScreen);
