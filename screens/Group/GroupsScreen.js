@@ -41,15 +41,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.tabBar,
     borderTopColor: '#FFF',
     borderBottomColor: '#FFF',
+    borderColor: '#F2F2F2',
     paddingBottom: 10,
-    marginBottom: 10,
-    shadowColor: '#DDDDDD',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.80,
-    shadowRadius: 3.84,
+    marginBottom: 1,
     elevation: 5,
   },
   searchBarInput: {
@@ -59,6 +53,16 @@ const styles = StyleSheet.create({
     borderColor: '#DDDDDD',
     borderBottomWidth: 1,
     borderWidth: 1
+  },
+  offlineBar:{
+    height: 20,
+    backgroundColor: '#FCAB10',
+  },
+  offlineBarText:{
+    fontSize: 14,
+    color: 'white',
+    textAlignVertical: 'center',
+    textAlign: 'center'
   }
 });
 
@@ -197,16 +201,27 @@ class GroupsScreen extends React.Component {
 
   renderHeader = () => {
     return (
-      <SearchBar
-        placeholder={i18n.t('global.search')}
-        onChangeText={text => this.SearchFilterFunction(text)}
-        autoCorrect={false}
-        value={this.state.search}
-        containerStyle={styles.searchBarContainer}
-        inputContainerStyle={styles.searchBarInput}
-      />
+      <View>        
+        <SearchBar
+          placeholder={i18n.t('global.search')}
+          onChangeText={text => this.SearchFilterFunction(text)}
+          autoCorrect={false}
+          value={this.state.search}
+          containerStyle={styles.searchBarContainer}
+          inputContainerStyle={styles.searchBarInput}
+        />
+        {!this.props.isConnected && this.offlineBarRender()}
+      </View>
     );
   };
+
+  offlineBarRender = () =>{
+    return (
+      <View style={[styles.offlineBar]}>
+        <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+      </View>
+    ) 
+  }
 
   static navigationOptions = {
     title: i18n.t('global.groups'),
@@ -293,6 +308,7 @@ GroupsScreen.defaultProps = {
   error: null,
   loading: false,
   groupSettings: null,
+  isConnected: null,
 };
 
 const mapStateToProps = state => ({
@@ -301,6 +317,7 @@ const mapStateToProps = state => ({
   loading: state.groupsReducer.loading,
   error: state.groupsReducer.error,
   groupSettings: state.groupsReducer.settings,
+  isConnected: state.networkConnectivityReducer.isConnected,
 });
 const mapDispatchToProps = dispatch => ({
   getAllGroups: (domain, token) => {
