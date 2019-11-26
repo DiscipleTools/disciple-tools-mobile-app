@@ -1077,19 +1077,9 @@ class ContactDetailScreen extends React.Component {
                 onRefresh={() => this.onRefresh(this.state.contact.ID)}
               />
             }>
-            <Grid style={[styles.formContainer, { marginTop: 10, paddingBottom: 0 }]}>
-              <Row>
-                <Col />
-                <Col>
-                  <Text
-                    style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }}
-                    onPress={() => this.onEnableEdit()}>
-                    {i18n.t('global.edit')}
-                  </Text>
-                </Col>
-              </Row>
-            </Grid>
-            <View style={[styles.formContainer, { paddingTop: 0 }]} pointerEvents="none">
+            <View
+              style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}
+              pointerEvents="none">
               <Label
                 style={{
                   color: Colors.tintColor,
@@ -2166,18 +2156,6 @@ class ContactDetailScreen extends React.Component {
               />
             }>
             <View style={[styles.formContainer, { marginTop: 10 }]}>
-              <Grid>
-                <Row>
-                  <Col />
-                  <Col>
-                    <Text
-                      style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }}
-                      onPress={() => this.onEnableEdit()}>
-                      {i18n.t('global.edit')}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Icon android="md-calendar" ios="ios-calendar" style={styles.formIcon} />
@@ -2446,18 +2424,6 @@ class ContactDetailScreen extends React.Component {
               />
             }>
             <View style={[styles.formContainer, { marginTop: 10 }]}>
-              <Grid>
-                <Row>
-                  <Col />
-                  <Col>
-                    <Text
-                      style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'right' }}
-                      onPress={() => this.onEnableEdit()}>
-                      {i18n.t('global.edit')}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Icon type="FontAwesome" name="users" style={styles.formIcon} />
