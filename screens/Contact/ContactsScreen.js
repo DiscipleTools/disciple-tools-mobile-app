@@ -174,6 +174,7 @@ class ContactsScreen extends React.Component {
     } else {
       // Create
       this.props.navigation.push('ContactDetail', {
+        onlyView: true,
         onGoBack: () => this.onRefresh(),
       });
     }

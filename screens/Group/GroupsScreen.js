@@ -173,6 +173,7 @@ class GroupsScreen extends React.Component {
       // Create
       this.props.navigation.push('GroupDetail', {
         previousList: [],
+        onlyView: true,
         onGoBack: () => this.onRefresh(),
       });
     }

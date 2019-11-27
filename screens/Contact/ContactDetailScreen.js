@@ -221,14 +221,13 @@ const safeFind = (found, prop) => {
 class ContactDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
-    let navigationTitle = i18n.t('contactDetailScreen.addNewContact');
+    let navigationTitle = Object.prototype.hasOwnProperty.call(params, 'contactName')
+      ? params.contactName
+      : i18n.t('contactDetailScreen.addNewContact');
     let headerRight;
     let headerLeft;
 
     if (params) {
-      if (params.contactName) {
-        navigationTitle = params.contactName;
-      }
       if (params.onEnableEdit) {
         headerRight = params.onlyView ? (
           <Row onPress={params.onEnableEdit}>
@@ -920,7 +919,15 @@ class ContactDetailScreen extends React.Component {
     let contactToSave = {
       ...sharedTools.diff(unmodifiedContact, contact),
     };
+
     // Remove empty arrays
+    if (!this.state.contact.title) {
+      contactToSave = {
+        ...contactToSave,
+        title: '',
+      };
+    }
+
     Object.keys(contactToSave).forEach((key) => {
       const value = contactToSave[key];
       if (Object.prototype.hasOwnProperty.call(value, 'values') && value.values.length === 0) {
@@ -934,6 +941,7 @@ class ContactDetailScreen extends React.Component {
         title: this.state.contact.title,
       };
     }
+
     if (this.state.contact.ID) {
       contactToSave = {
         ...contactToSave,
