@@ -427,7 +427,7 @@ class GroupDetailScreen extends React.Component {
             />
           </Row>
         ) : (
-          <Row onPress={params.onSaveContact}>
+          <Row onPress={params.onSaveGroup}>
             <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
               {i18n.t('global.save')}
             </Text>
