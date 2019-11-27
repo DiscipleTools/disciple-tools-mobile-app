@@ -1235,19 +1235,29 @@ class ContactDetailScreen extends React.Component {
                 <Col>
                   {Object.keys(this.props.contactSettings.channels).map(
                     (channelName, channelNameIndex) => {
-                      const channel = this.props.contactSettings.channels[channelName];
-                      return (
-                        <Col key={channelNameIndex.toString()}>
-                          {this.state.contact[`contact_${channelName}`]
-                            ? this.state.contact[
-                                `contact_${channelName}`
-                              ].map((socialMedia, socialMediaIndex) => (
-                                <Text key={socialMediaIndex.toString()}>{socialMedia.value}</Text>
-                              ))
-                            : null}
-                          <Text style={styles.socialMediaNames}>{channel.label}</Text>
-                        </Col>
-                      );
+                      if (
+                        Object.prototype.hasOwnProperty.call(
+                          this.state.contact,
+                          `contact_${channelName}`,
+                        ) &&
+                        this.state.contact[`contact_${channelName}`].length > 0
+                      ) {
+                        return (
+                          <Col key={channelNameIndex.toString()}>
+                            {this.state.contact[`contact_${channelName}`].map(
+                              (socialMedia, socialMediaIndex) => (
+                                <Text
+                                  key={socialMediaIndex.toString()}
+                                  style={socialMediaIndex === 0 ? { marginTop: 10 } : {}}>
+                                  {socialMedia.value}
+                                </Text>
+                              ),
+                            )}
+                            <Text style={styles.socialMediaNames}>{channelName}</Text>
+                          </Col>
+                        );
+                      }
+                      return null;
                     },
                   )}
                 </Col>
