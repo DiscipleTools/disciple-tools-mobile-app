@@ -416,21 +416,32 @@ class GroupDetailScreen extends React.Component {
       }
       if (params.onEnableEdit) {
         headerRight = params.onlyView ? (
-          <Icon
-            type="MaterialCommunityIcons"
-            name="pencil"
-            onPress={params.onEnableEdit}
-            style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }]}
-          />
+          <Row onPress={params.onEnableEdit}>
+            <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+              {i18n.t('global.edit')}
+            </Text>
+            <Icon
+              type="MaterialCommunityIcons"
+              name="pencil"
+              style={[{ color: '#FFFFFF', paddingRight: 16 }]}
+            />
+          </Row>
         ) : (
-          <Icon
-            type="Feather"
-            name="check"
-            onPress={params.onSaveGroup}
-            style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }]}
-          />
+          <Row onPress={params.onSaveContact}>
+            <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+              {i18n.t('global.save')}
+            </Text>
+            <Icon
+              type="Feather"
+              name="check"
+              style={[
+                { color: '#FFFFFF', paddingRight: 16, marginTop: 'auto', marginBottom: 'auto' },
+              ]}
+            />
+          </Row>
         );
       }
+
       if (params.onlyView) {
         headerLeft = (
           <Icon
@@ -454,13 +465,20 @@ class GroupDetailScreen extends React.Component {
           />
         );
       } else {
+        navigationTitle = '';
         headerLeft = (
-          <Icon
-            type="Entypo"
-            name="cross"
-            onPress={params.onDisableEdit}
-            style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }]}
-          />
+          <Row onPress={params.onDisableEdit}>
+            <Icon
+              type="AntDesign"
+              name="close"
+              style={[
+                { paddingLeft: 16, color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+              ]}
+            />
+            <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+              {i18n.t('global.cancel')}
+            </Text>
+          </Row>
         );
       }
     }
