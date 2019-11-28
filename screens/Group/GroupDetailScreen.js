@@ -406,40 +406,43 @@ const safeFind = (found, prop) => {
 class GroupDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
-    let navigationTitle = i18n.t('groupDetailScreen.addNewGroup');
+    let navigationTitle = Object.prototype.hasOwnProperty.call(params, 'groupName')
+      ? params.groupName
+      : i18n.t('contactDetailScreen.addNewGroup');
     let headerRight;
     let headerLeft;
 
     if (params) {
-      if (params.groupName) {
-        navigationTitle = params.groupName;
-      }
       if (params.onEnableEdit) {
-        headerRight = params.onlyView ? (
-          <Row onPress={params.onEnableEdit}>
-            <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
-              {i18n.t('global.edit')}
-            </Text>
-            <Icon
-              type="MaterialCommunityIcons"
-              name="pencil"
-              style={[{ color: '#FFFFFF', paddingRight: 16 }]}
-            />
-          </Row>
-        ) : (
-          <Row onPress={params.onSaveGroup}>
-            <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
-              {i18n.t('global.save')}
-            </Text>
-            <Icon
-              type="Feather"
-              name="check"
-              style={[
-                { color: '#FFFFFF', paddingRight: 16, marginTop: 'auto', marginBottom: 'auto' },
-              ]}
-            />
-          </Row>
-        );
+        if (params.groupId) {
+          headerRight = params.onlyView ? (
+            <Row onPress={params.onEnableEdit}>
+              <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+                {i18n.t('global.edit')}
+              </Text>
+              <Icon
+                type="MaterialCommunityIcons"
+                name="pencil"
+                style={[{ color: '#FFFFFF', paddingRight: 16 }]}
+              />
+            </Row>
+          ) : (
+            <Row onPress={params.onSaveGroup}>
+              <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+                {i18n.t('global.save')}
+              </Text>
+              <Icon
+                type="Feather"
+                name="check"
+                style={[
+                  { color: '#FFFFFF', paddingRight: 16, marginTop: 'auto', marginBottom: 'auto' },
+                ]}
+              />
+            </Row>
+          );
+        } else {
+          headerRight = <Text />;
+        }
       }
 
       if (params.onlyView) {
@@ -1395,6 +1398,11 @@ class GroupDetailScreen extends React.Component {
       groupToSave = {
         ...groupToSave,
         title: this.state.group.title,
+      };
+    } else {
+      groupToSave = {
+        ...groupToSave,
+        title: '',
       };
     }
     if (this.state.group.ID) {
