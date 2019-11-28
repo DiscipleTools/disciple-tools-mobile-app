@@ -1011,15 +1011,12 @@ class GroupDetailScreen extends React.Component {
 
   goToContactDetailScreen = (contactData = null) => {
     if (contactData) {
-      // Detail
       this.props.navigation.navigate('ContactDetail', {
         contactId: contactData.value,
         onlyView: true,
         contactName: contactData.name,
         fromGroupDetail: true,
       });
-    } else {
-      console.log('ERROR');
     }
   };
 
