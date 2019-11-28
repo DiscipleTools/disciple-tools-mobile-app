@@ -3754,7 +3754,7 @@ class ContactDetailScreen extends React.Component {
     const contactSocialMediaFacebookList = this.state.contact.contact_facebook
       ? [...this.state.contact.contact_facebook]
       : [];
-    contactSocialMediaFacebookList.push({
+    contactSocialMediaFacebookList.unshift({
       value: '',
     });
     this.setState((prevState) => ({
