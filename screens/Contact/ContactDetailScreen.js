@@ -1087,11 +1087,21 @@ class ContactDetailScreen extends React.Component {
       .sort((a, b) => new Date(a.date).getTime() < new Date(b.date).getTime());
   }
 
-  offlineBarRender = () => (
-    <View style={[styles.offlineBar]}>
-      <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
-    </View>
-  );
+  getSelectizeItems = (contactList, localList) => {
+    const items = [];
+    if (contactList) {
+      contactList.values.forEach((listItem) => {
+        const foundItem = localList.find((localItem) => localItem.value === listItem.value);
+        if (foundItem) {
+          items.push({
+            name: foundItem.name,
+            value: listItem.value,
+          });
+        }
+      });
+    }
+    return items;
+  };
 
   showMoreFields = () => {
     this.setState((state) => {
@@ -1100,6 +1110,12 @@ class ContactDetailScreen extends React.Component {
       };
     });
   };
+
+  offlineBarRender = () => (
+    <View style={[styles.offlineBar]}>
+      <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+    </View>
+  );
 
   detailView = () => (
     <View style={{ flex: 1 }}>
@@ -1553,16 +1569,10 @@ class ContactDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.usersContacts}
-                      selectedItems={
-                        this.state.contact.subassigned
-                          ? this.state.contact.subassigned.values.map((subassigned) => ({
-                              name: this.state.usersContacts.find(
-                                (user) => user.value === subassigned.value,
-                              ).name,
-                              value: subassigned.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.contact.subassigned,
+                        this.state.usersContacts,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('contactDetailScreen.subAssignThisContact'),
                       }}
@@ -2772,16 +2782,10 @@ class ContactDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.usersContacts}
-                      selectedItems={
-                        this.state.contact.relation
-                          ? this.state.contact.relation.values.map((relation) => ({
-                              name: this.state.usersContacts.find(
-                                (user) => user.value === relation.value,
-                              ).name,
-                              value: relation.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.contact.relation,
+                        this.state.usersContacts,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('contactDetailScreen.addConnection'),
                       }}
@@ -2867,16 +2871,10 @@ class ContactDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.usersContacts}
-                      selectedItems={
-                        this.state.contact.baptized_by
-                          ? this.state.contact.baptized_by.values.map((contact) => ({
-                              name: this.state.usersContacts.find(
-                                (user) => user.value === contact.value,
-                              ).name,
-                              value: contact.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.contact.baptized_by,
+                        this.state.usersContacts,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('contactDetailScreen.addBaptizedBy'),
                       }}
@@ -2962,16 +2960,10 @@ class ContactDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.usersContacts}
-                      selectedItems={
-                        this.state.contact.baptized
-                          ? this.state.contact.baptized.values.map((baptizedItem) => ({
-                              name: this.state.usersContacts.find(
-                                (user) => user.value === baptizedItem.value,
-                              ).name,
-                              value: baptizedItem.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.contact.baptized,
+                        this.state.usersContacts,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('contactDetailScreen.addBaptized'),
                       }}
@@ -3057,16 +3049,10 @@ class ContactDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.usersContacts}
-                      selectedItems={
-                        this.state.contact.coached_by
-                          ? this.state.contact.coached_by.values.map((contact) => ({
-                              name: this.state.usersContacts.find(
-                                (user) => user.value === contact.value,
-                              ).name,
-                              value: contact.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.contact.coached_by,
+                        this.state.usersContacts,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('contactDetailScreen.addCoachedBy'),
                       }}
@@ -3156,16 +3142,10 @@ class ContactDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.usersContacts}
-                      selectedItems={
-                        this.state.contact.coaching
-                          ? this.state.contact.coaching.values.map((contact) => ({
-                              name: this.state.usersContacts.find(
-                                (user) => user.value === contact.value,
-                              ).name,
-                              value: contact.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.contact.coaching,
+                        this.state.usersContacts,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('contactDetailScreen.addCoaching'),
                       }}

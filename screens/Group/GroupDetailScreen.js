@@ -408,7 +408,7 @@ class GroupDetailScreen extends React.Component {
     const { params } = navigation.state;
     let navigationTitle = Object.prototype.hasOwnProperty.call(params, 'groupName')
       ? params.groupName
-      : i18n.t('contactDetailScreen.addNewGroup');
+      : i18n.t('groupDetailScreen.addNewGroup');
     let headerRight;
     let headerLeft;
 
@@ -1001,7 +1001,9 @@ class GroupDetailScreen extends React.Component {
     if (this.state.group.members) {
       this.state.group.members.values.forEach((element) => {
         const member = this.state.usersContacts.find((user) => user.value === element.value);
-        members.push(member);
+        if (member) {
+          members.push(member);
+        }
       });
     }
     return members || [];
@@ -1009,15 +1011,12 @@ class GroupDetailScreen extends React.Component {
 
   goToContactDetailScreen = (contactData = null) => {
     if (contactData) {
-      // Detail
       this.props.navigation.navigate('ContactDetail', {
         contactId: contactData.value,
         onlyView: true,
         contactName: contactData.name,
         fromGroupDetail: true,
       });
-    } else {
-      console.log('ERROR');
     }
   };
 
