@@ -775,7 +775,7 @@ class ContactDetailScreen extends React.Component {
   onDisableEdit = () => {
     const { unmodifiedContact } = this.state;
     this.setState((state) => {
-      const indexFix = state.tabViewConfig.index === 2 ? 3 : state.tabViewConfig.index;
+      const indexFix = state.tabViewConfig.index >= 2 ? 3 : state.tabViewConfig.index;
       return {
         onlyView: true,
         contact: {
@@ -1909,16 +1909,10 @@ class ContactDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.geonames}
-                      selectedItems={
-                        this.state.contact.location_grid
-                          ? this.state.contact.location_grid.values.map((location) => ({
-                              name: this.state.geonames.find(
-                                (geoname) => geoname.value === location.value,
-                              ).name,
-                              value: location.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.contact.location_grid,
+                        this.state.geonames,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('contactDetailScreen.selectLocations'),
                       }}
@@ -1993,16 +1987,10 @@ class ContactDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.peopleGroups}
-                      selectedItems={
-                        this.state.contact.people_groups
-                          ? this.state.contact.people_groups.values.map((peopleGroup) => ({
-                              name: this.state.peopleGroups.find(
-                                (person) => person.value === peopleGroup.value,
-                              ).name,
-                              value: peopleGroup.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.contact.people_groups,
+                        this.state.peopleGroups,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('global.selectPeopleGroups'),
                       }}
@@ -2716,16 +2704,10 @@ class ContactDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.groups}
-                      selectedItems={
-                        this.state.contact.groups
-                          ? this.state.contact.groups.values.map((group) => ({
-                              name: this.state.groups.find(
-                                (groupItem) => groupItem.value === group.value,
-                              ).name,
-                              value: group.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.contact.groups,
+                        this.state.groups,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('contactDetailScreen.addGroup'),
                       }}
@@ -4708,18 +4690,10 @@ class ContactDetailScreen extends React.Component {
                                 }}
                                 itemId="value"
                                 items={this.state.peopleGroups}
-                                selectedItems={
-                                  this.state.contact.people_groups
-                                    ? this.state.contact.people_groups.values.map(
-                                        (peopleGroup) => ({
-                                          name: this.state.peopleGroups.find(
-                                            (person) => person.value === peopleGroup.value,
-                                          ).name,
-                                          value: peopleGroup.value,
-                                        }),
-                                      )
-                                    : []
-                                }
+                                selectedItems={this.getSelectizeItems(
+                                  this.state.contact.people_groups,
+                                  this.state.peopleGroups,
+                                )}
                                 textInputProps={{
                                   placeholder: i18n.t('global.selectPeopleGroups'),
                                 }}

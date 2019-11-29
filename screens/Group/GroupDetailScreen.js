@@ -1047,6 +1047,22 @@ class GroupDetailScreen extends React.Component {
     }
   };
 
+  getSelectizeItems = (groupList, localList) => {
+    const items = [];
+    if (groupList) {
+      groupList.values.forEach((listItem) => {
+        const foundItem = localList.find((localItem) => localItem.value === listItem.value);
+        if (foundItem) {
+          items.push({
+            name: foundItem.name,
+            value: listItem.value,
+          });
+        }
+      });
+    }
+    return items;
+  };
+
   renderActivityOrCommentRow = (commentOrActivity) => (
     <View style={styles.container}>
       <Image style={styles.image} source={{ uri: commentOrActivity.gravatar }} />
@@ -1866,16 +1882,10 @@ class GroupDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.usersContacts}
-                      selectedItems={
-                        this.state.group.coaches
-                          ? this.state.group.coaches.values.map((coach) => ({
-                              name: this.state.usersContacts.find(
-                                (user) => user.value === coach.value,
-                              ).name,
-                              value: coach.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.group.coaches,
+                        this.state.usersContacts,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('groupDetailScreen.selectCoaches'),
                       }}
@@ -1951,16 +1961,10 @@ class GroupDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.geonames}
-                      selectedItems={
-                        this.state.group.location_grid
-                          ? this.state.group.location_grid.values.map((location) => ({
-                              name: this.state.geonames.find(
-                                (geoname) => geoname.value === location.value,
-                              ).name,
-                              value: location.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.group.location_grid,
+                        this.state.geonames,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('groupDetailScreen.selectGeonames'),
                       }}
@@ -2036,16 +2040,10 @@ class GroupDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.peopleGroups}
-                      selectedItems={
-                        this.state.group.people_groups
-                          ? this.state.group.people_groups.values.map((peopleGroup) => ({
-                              name: this.state.peopleGroups.find(
-                                (person) => person.value === peopleGroup.value,
-                              ).name,
-                              value: peopleGroup.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.group.people_groups,
+                        this.state.peopleGroups,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('global.selectPeopleGroups'),
                       }}
@@ -2312,6 +2310,8 @@ class GroupDetailScreen extends React.Component {
                   {i18n.t('groupDetailScreen.churchHealth')}
                 </Label>
               </View>
+              {this.renderHealthMilestones()}
+              {this.renderCustomHealthMilestones()}
             </ScrollView>
           )}
         </KeyboardShift>
@@ -2744,16 +2744,10 @@ class GroupDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.groups}
-                      selectedItems={
-                        this.state.group.parent_groups
-                          ? this.state.group.parent_groups.values.map((group) => ({
-                              name: this.state.groups.find(
-                                (groupItem) => groupItem.value === group.value,
-                              ).name,
-                              value: group.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.group.parent_groups,
+                        this.state.groups,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('groupDetailScreen.searchGroups'),
                       }}
@@ -2829,16 +2823,10 @@ class GroupDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.groups}
-                      selectedItems={
-                        this.state.group.peer_groups
-                          ? this.state.group.peer_groups.values.map((group) => ({
-                              name: this.state.groups.find(
-                                (groupItem) => groupItem.value === group.value,
-                              ).name,
-                              value: group.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.group.peer_groups,
+                        this.state.groups,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
                       }}
@@ -2914,16 +2902,10 @@ class GroupDetailScreen extends React.Component {
                       }}
                       itemId="value"
                       items={this.state.groups}
-                      selectedItems={
-                        this.state.group.child_groups
-                          ? this.state.group.child_groups.values.map((group) => ({
-                              name: this.state.groups.find(
-                                (groupItem) => groupItem.value === group.value,
-                              ).name,
-                              value: group.value,
-                            }))
-                          : []
-                      }
+                      selectedItems={this.getSelectizeItems(
+                        this.state.group.child_groups,
+                        this.state.groups,
+                      )}
                       textInputProps={{
                         placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
                       }}
