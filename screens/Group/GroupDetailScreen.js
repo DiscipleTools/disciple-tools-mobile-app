@@ -2310,6 +2310,8 @@ class GroupDetailScreen extends React.Component {
                   {i18n.t('groupDetailScreen.churchHealth')}
                 </Label>
               </View>
+              {this.renderHealthMilestones()}
+              {this.renderCustomHealthMilestones()}
             </ScrollView>
           )}
         </KeyboardShift>
