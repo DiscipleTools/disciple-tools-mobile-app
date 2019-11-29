@@ -229,8 +229,36 @@ class ContactDetailScreen extends React.Component {
 
     if (params) {
       if (params.onEnableEdit) {
-        headerRight = params.onlyView ? (
-          <Row onPress={params.onEnableEdit}>
+        if (params.contactId) {
+          headerRight = params.onlyView ? (
+            <Row onPress={params.onEnableEdit}>
+              <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+                {i18n.t('global.edit')}
+              </Text>
+              <Icon
+                type="MaterialCommunityIcons"
+                name="pencil"
+                style={[{ color: '#FFFFFF', paddingRight: 16 }]}
+              />
+            </Row>
+          ) : (
+            <Row onPress={params.onSaveContact}>
+              <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+                {i18n.t('global.save')}
+              </Text>
+              <Icon
+                type="Feather"
+                name="check"
+                style={[
+                  { color: '#FFFFFF', paddingRight: 16, marginTop: 'auto', marginBottom: 'auto' },
+                ]}
+              />
+            </Row>
+          );
+        }
+      } else if (params.contactId) {
+        headerRight = (
+          <Row>
             <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
               {i18n.t('global.edit')}
             </Text>
@@ -238,19 +266,6 @@ class ContactDetailScreen extends React.Component {
               type="MaterialCommunityIcons"
               name="pencil"
               style={[{ color: '#FFFFFF', paddingRight: 16 }]}
-            />
-          </Row>
-        ) : (
-          <Row onPress={params.onSaveContact}>
-            <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
-              {i18n.t('global.save')}
-            </Text>
-            <Icon
-              type="Feather"
-              name="check"
-              style={[
-                { color: '#FFFFFF', paddingRight: 16, marginTop: 'auto', marginBottom: 'auto' },
-              ]}
             />
           </Row>
         );
@@ -744,10 +759,12 @@ class ContactDetailScreen extends React.Component {
 
   onEnableEdit = () => {
     this.setState((state) => {
+      const indexFix = state.tabViewConfig.index === 3 ? 2 : state.tabViewConfig.index;
       return {
         onlyView: false,
         tabViewConfig: {
           ...state.tabViewConfig,
+          index: indexFix,
           routes: state.tabViewConfig.routes.filter((route) => route.key !== 'comments'),
         },
       };
@@ -758,6 +775,7 @@ class ContactDetailScreen extends React.Component {
   onDisableEdit = () => {
     const { unmodifiedContact } = this.state;
     this.setState((state) => {
+      const indexFix = state.tabViewConfig.index === 2 ? 3 : state.tabViewConfig.index;
       return {
         onlyView: true,
         contact: {
@@ -768,6 +786,7 @@ class ContactDetailScreen extends React.Component {
         ),
         tabViewConfig: {
           ...state.tabViewConfig,
+          index: indexFix,
           routes: [
             {
               key: 'details',

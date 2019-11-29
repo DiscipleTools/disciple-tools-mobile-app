@@ -443,6 +443,19 @@ class GroupDetailScreen extends React.Component {
         } else {
           headerRight = <Text />;
         }
+      } else if (params.groupId) {
+        headerRight = (
+          <Row>
+            <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+              {i18n.t('global.edit')}
+            </Text>
+            <Icon
+              type="MaterialCommunityIcons"
+              name="pencil"
+              style={[{ color: '#FFFFFF', paddingRight: 16 }]}
+            />
+          </Row>
+        );
       }
 
       if (params.onlyView) {
@@ -886,11 +899,16 @@ class GroupDetailScreen extends React.Component {
 
   onEnableEdit = () => {
     this.setState((state) => {
+      console.log(state.tabViewConfig.index);
+      const indexFix = state.tabViewConfig.index > 2 ? 2 : state.tabViewConfig.index;
       return {
         onlyView: false,
         tabViewConfig: {
           ...state.tabViewConfig,
-          routes: state.tabViewConfig.routes.filter((route) => route.key !== 'comments'),
+          index: indexFix,
+          routes: state.tabViewConfig.routes.filter(
+            (route) => route.key !== 'comments' && route.key !== 'members',
+          ),
         },
       };
     });
@@ -900,6 +918,7 @@ class GroupDetailScreen extends React.Component {
   onDisableEdit = () => {
     const { unmodifiedGroup } = this.state;
     this.setState((state) => {
+      const indexFix = state.tabViewConfig.index === 2 ? 4 : state.tabViewConfig.index;
       return {
         onlyView: true,
         group: {
@@ -908,6 +927,7 @@ class GroupDetailScreen extends React.Component {
         groupStatusBackgroundColor: sharedTools.getSelectorColor(unmodifiedGroup.group_status),
         tabViewConfig: {
           ...state.tabViewConfig,
+          index: indexFix,
           routes: [
             {
               key: 'details',
