@@ -708,7 +708,9 @@ class GroupDetailScreen extends React.Component {
           </View>,
           3000,
         );
-        this.onDisableEdit();
+        if (this.state.tabViewConfig.index !== 2) {
+          this.onDisableEdit();
+        }
       }
     }
 
@@ -899,16 +901,20 @@ class GroupDetailScreen extends React.Component {
 
   onEnableEdit = () => {
     this.setState((state) => {
-      console.log(state.tabViewConfig.index);
-      const indexFix = state.tabViewConfig.index > 2 ? 2 : state.tabViewConfig.index;
+      let indexFix;
+      if (state.tabViewConfig.index === 4) {
+        indexFix = 3;
+      } else if (state.tabViewConfig.index >= 2) {
+        indexFix = 2;
+      } else {
+        indexFix = state.tabViewConfig.index;
+      }
       return {
         onlyView: false,
         tabViewConfig: {
           ...state.tabViewConfig,
           index: indexFix,
-          routes: state.tabViewConfig.routes.filter(
-            (route) => route.key !== 'comments' && route.key !== 'members',
-          ),
+          routes: state.tabViewConfig.routes.filter((route) => route.key !== 'comments'),
         },
       };
     });
@@ -918,7 +924,8 @@ class GroupDetailScreen extends React.Component {
   onDisableEdit = () => {
     const { unmodifiedGroup } = this.state;
     this.setState((state) => {
-      const indexFix = state.tabViewConfig.index === 2 ? 4 : state.tabViewConfig.index;
+      const indexFix =
+        state.tabViewConfig.index >= 2 ? state.tabViewConfig.index + 1 : state.tabViewConfig.index;
       return {
         onlyView: true,
         group: {
