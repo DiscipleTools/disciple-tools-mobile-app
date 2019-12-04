@@ -708,9 +708,7 @@ class GroupDetailScreen extends React.Component {
           </View>,
           3000,
         );
-        if (this.state.tabViewConfig.index !== 2) {
-          this.onDisableEdit();
-        }
+        this.onDisableEdit();
       }
     }
 
@@ -2451,9 +2449,9 @@ class GroupDetailScreen extends React.Component {
 
   membersRow = (membersGroup) => (
     <View style={{ flex: 1 }}>
-      <Grid style={{ marginTop: 10, marginBottom: 10 }}>
-        <Col style={{ width: 20 }}>
-          <TouchableOpacity onPress={() => this.addLeader(membersGroup)} key={membersGroup.value}>
+      {this.state.onlyView ? (
+        <Grid style={{ marginTop: 10, marginBottom: 10 }}>
+          <Col style={{ width: 20 }}>
             <Image
               source={footprint}
               style={[
@@ -2466,100 +2464,158 @@ class GroupDetailScreen extends React.Component {
                   : styles.membersIconInactive,
               ]}
             />
-          </TouchableOpacity>
-        </Col>
-        <Col>
-          <TouchableOpacity
-            onPress={() => this.goToContactDetailScreen(membersGroup)}
-            key={membersGroup.value}
-            style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-            <Text style={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: 15, padding: 5 }}>
-              {membersGroup.name}
-            </Text>
-          </TouchableOpacity>
-        </Col>
-        <Col style={{ width: 20 }}>
-          <TouchableOpacity
-            onPress={() => this.onSaveGroup({ remove: { value: membersGroup.value } })}
-            key={membersGroup.value}>
-            <Icon type="MaterialCommunityIcons" name="close" style={styles.membersCloseIcon} />
-          </TouchableOpacity>
-        </Col>
-      </Grid>
+          </Col>
+          <Col>
+            <TouchableOpacity
+              onPress={() => this.goToContactDetailScreen(membersGroup)}
+              key={membersGroup.value}
+              style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: 15, padding: 5 }}>
+                {membersGroup.name}
+              </Text>
+            </TouchableOpacity>
+          </Col>
+        </Grid>
+      ) : (
+        <Grid style={{ marginTop: 10, marginBottom: 10 }}>
+          <Col style={{ width: 20 }}>
+            <TouchableOpacity onPress={() => this.addLeader(membersGroup)} key={membersGroup.value}>
+              <Image
+                source={footprint}
+                style={[
+                  styles.membersLeaderIcon,
+                  this.state.group.leaders &&
+                  this.state.group.leaders.values.find(
+                    (leader) => leader.value === membersGroup.value,
+                  )
+                    ? styles.membersIconActive
+                    : styles.membersIconInactive,
+                ]}
+              />
+            </TouchableOpacity>
+          </Col>
+          <Col>
+            <TouchableOpacity
+              onPress={() => this.goToContactDetailScreen(membersGroup)}
+              key={membersGroup.value}
+              style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: 15, padding: 5 }}>
+                {membersGroup.name}
+              </Text>
+            </TouchableOpacity>
+          </Col>
+          <Col style={{ width: 20 }}>
+            <TouchableOpacity
+              onPress={() => this.onSaveGroup({ remove: { value: membersGroup.value } })}
+              key={membersGroup.value}>
+              <Icon type="MaterialCommunityIcons" name="close" style={styles.membersCloseIcon} />
+            </TouchableOpacity>
+          </Col>
+        </Grid>
+      )}
     </View>
   );
 
   membersView = () => (
     <View style={{ flex: 1 }}>
       {!this.props.isConnected && this.offlineBarRender()}
-      <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
-        <ScrollView keyboardShouldPersistTaps="handled">
-          <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'left' }}>
-            {i18n.t('global.membersActivity')}
-          </Text>
-          <FlatList
-            style={styles.root}
-            data={this.getMembers()}
-            extraData={this.state.updateMembersList}
-            renderItem={(item) => this.membersRow(item.item)}
-            ItemSeparatorComponent={this.flatListItemSeparator}
-          />
-          <Grid>
-            <Row>
-              <Col style={{ width: 40, marginTop: 10, marginLeft: 0 }}>
-                <Icon type="Entypo" name="add-user" style={{ marginTop: 10, color: '#CCCCCC' }} />
-              </Col>
-              <Col style={{ paddingBottom: 200 }}>
-                <Selectize
-                  ref={(selectize) => {
-                    addMembersSelectizeRed = selectize;
-                  }}
-                  itemId="value"
-                  items={this.state.usersContacts}
-                  selectedItems={[]}
-                  textInputProps={{
-                    placeholder: i18n.t('groupDetailScreen.addMember'),
-                    leftIcon: { type: 'Entypo', name: 'add-user' },
-                  }}
-                  renderRow={(id, onPress, item) => (
-                    <TouchableOpacity
-                      activeOpacity={0.6}
-                      key={id}
-                      onPress={() => this.onSaveGroup({ addNewMember: { value: id } })}
-                      style={{
-                        paddingVertical: 8,
-                        paddingHorizontal: 10,
-                      }}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                        }}>
-                        <Text
-                          style={{
-                            color: 'rgba(0, 0, 0, 0.87)',
-                            fontSize: 14,
-                            lineHeight: 21,
-                          }}>
-                          {item.name}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                  filterOnKey="name"
-                  keyboardShouldPersistTaps
-                  inputContainerStyle={{
-                    borderWidth: 1,
-                    borderColor: '#CCCCCC',
-                    marginTop: 'auto',
-                    marginBottom: 'auto',
-                    padding: 5,
-                  }}
+      {this.state.onlyView ? (
+        <KeyboardShift>
+          {() => (
+            <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
+              <ScrollView keyboardShouldPersistTaps="handled">
+                <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'left' }}>
+                  {i18n.t('global.membersActivity')}
+                </Text>
+                <FlatList
+                  style={styles.root}
+                  data={this.getMembers()}
+                  extraData={this.state.updateMembersList}
+                  renderItem={(item) => this.membersRow(item.item)}
+                  ItemSeparatorComponent={this.flatListItemSeparator}
                 />
-              </Col>
-            </Row>
-          </Grid>
-        </ScrollView>
-      </View>
+              </ScrollView>
+            </View>
+          )}
+        </KeyboardShift>
+      ) : (
+        <KeyboardShift>
+          {() => (
+            <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
+              <ScrollView keyboardShouldPersistTaps="handled">
+                <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'left' }}>
+                  {i18n.t('global.membersActivity')}
+                </Text>
+                <FlatList
+                  style={styles.root}
+                  data={this.getMembers()}
+                  extraData={this.state.updateMembersList}
+                  renderItem={(item) => this.membersRow(item.item)}
+                  ItemSeparatorComponent={this.flatListItemSeparator}
+                />
+                <Grid>
+                  <Row>
+                    <Col style={{ width: 40, marginTop: 10, marginLeft: 0 }}>
+                      <Icon
+                        type="Entypo"
+                        name="add-user"
+                        style={{ marginTop: 10, color: '#CCCCCC' }}
+                      />
+                    </Col>
+                    <Col style={{ paddingBottom: 200 }}>
+                      <Selectize
+                        ref={(selectize) => {
+                          addMembersSelectizeRed = selectize;
+                        }}
+                        itemId="value"
+                        items={this.state.usersContacts}
+                        selectedItems={[]}
+                        textInputProps={{
+                          placeholder: i18n.t('groupDetailScreen.addMember'),
+                          leftIcon: { type: 'Entypo', name: 'add-user' },
+                        }}
+                        renderRow={(id, onPress, item) => (
+                          <TouchableOpacity
+                            activeOpacity={0.6}
+                            key={id}
+                            onPress={() => this.onSaveGroup({ addNewMember: { value: id } })}
+                            style={{
+                              paddingVertical: 8,
+                              paddingHorizontal: 10,
+                            }}>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                              }}>
+                              <Text
+                                style={{
+                                  color: 'rgba(0, 0, 0, 0.87)',
+                                  fontSize: 14,
+                                  lineHeight: 21,
+                                }}>
+                                {item.name}
+                              </Text>
+                            </View>
+                          </TouchableOpacity>
+                        )}
+                        filterOnKey="name"
+                        keyboardShouldPersistTaps
+                        inputContainerStyle={{
+                          borderWidth: 1,
+                          borderColor: '#CCCCCC',
+                          marginTop: 'auto',
+                          marginBottom: 'auto',
+                          padding: 5,
+                        }}
+                      />
+                    </Col>
+                  </Row>
+                </Grid>
+              </ScrollView>
+            </View>
+          )}
+        </KeyboardShift>
+      )}
     </View>
   );
 
