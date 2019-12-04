@@ -370,6 +370,7 @@ const initialState = {
   loading: false,
   groupsTabActive: false,
   currentTabIndex: 0,
+  isMemberEdit: false,
   tabViewConfig: {
     index: 0,
     routes: [
@@ -702,13 +703,15 @@ class GroupDetailScreen extends React.Component {
       ) {
         // Highlight Updates -> Compare this.state.contact with contact and show differences
         this.onRefreshCommentsActivities(group.ID);
-        toastSuccess.show(
-          <View>
-            <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
-          </View>,
-          3000,
-        );
-        this.onDisableEdit();
+        if (!this.state.isMemberEdit) {
+          toastSuccess.show(
+            <View>
+              <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
+            </View>,
+            3000,
+          );
+          this.onDisableEdit();
+        }
       }
     }
 
@@ -1285,6 +1288,7 @@ class GroupDetailScreen extends React.Component {
       ...group,
     };
     if (Object.prototype.hasOwnProperty.call(membersAction, 'members')) {
+      this.setState({ isMemberEdit: true });
       transformedGroup = {
         ...transformedGroup,
         leaders: {
@@ -1297,6 +1301,7 @@ class GroupDetailScreen extends React.Component {
         },
       };
     } else if (Object.prototype.hasOwnProperty.call(membersAction, 'leaders')) {
+      this.setState({ isMemberEdit: true });
       transformedGroup = {
         ...transformedGroup,
         leaders: {
@@ -1310,6 +1315,7 @@ class GroupDetailScreen extends React.Component {
         },
       };
     } else if (Object.prototype.hasOwnProperty.call(membersAction, 'remove')) {
+      this.setState({ isMemberEdit: true });
       transformedGroup = {
         ...transformedGroup,
         members: {
@@ -1343,6 +1349,7 @@ class GroupDetailScreen extends React.Component {
         }
       }
     } else if (Object.prototype.hasOwnProperty.call(membersAction, 'addNewMember')) {
+      this.setState({ isMemberEdit: true });
       transformedGroup = {
         ...transformedGroup,
         members: {
@@ -1354,6 +1361,8 @@ class GroupDetailScreen extends React.Component {
           ],
         },
       };
+    } else {
+      this.setState({ isMemberEdit: false });
     }
     // if property exist, get from json, otherwise, send empty array
     if (coachesSelectizeRef) {
@@ -1430,6 +1439,7 @@ class GroupDetailScreen extends React.Component {
     Keyboard.dismiss();
     const { unmodifiedGroup } = this.state;
     const group = this.transformGroupObject(this.state.group, membersAction);
+
     let groupToSave = {
       ...sharedTools.diff(unmodifiedGroup, group),
     };
