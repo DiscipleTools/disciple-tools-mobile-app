@@ -48,8 +48,8 @@ import canShareGospelIcon from '../../assets/icons/b-chat.png';
 import sharingTheGospelIcon from '../../assets/icons/evangelism.png';
 import baptizedIcon from '../../assets/icons/baptism.png';
 import baptizingIcon from '../../assets/icons/water-aerobics.png';
-import inChurchIcon from '../../assets/icons/multiple-11.png';
-import startingChurchesIcon from '../../assets/icons/symbol-213-7.png';
+import inChurchIcon from '../../assets/icons/group.png';
+import startingChurchesIcon from '../../assets/icons/group-starting.png';
 import i18n from '../../languages';
 
 let toastSuccess;

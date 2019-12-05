@@ -9,7 +9,7 @@ import {
   Icon,
   Left,
   ListItem,
-  Picker,
+  //    Picker,
   Right,
   Switch,
   Thumbnail,
@@ -25,7 +25,7 @@ import { setLanguage } from '../store/actions/i18n.actions';
 import { logout } from '../store/actions/user.actions';
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
 import i18n from '../languages';
-import locales from '../languages/locales';
+//  import locales from '../languages/locales';
 
 const propTypes = {
   navigation: PropTypes.shape({
@@ -41,7 +41,7 @@ const propTypes = {
     displayName: PropTypes.string,
   }).isRequired,
   logout: PropTypes.func.isRequired,
-  setLanguage: PropTypes.func.isRequired,
+  //    setLanguage: PropTypes.func.isRequired,
   toggleNetworkConnectivity: PropTypes.func.isRequired,
 };
 
@@ -160,9 +160,9 @@ class SettingsScreen extends React.Component {
   };
 
   render() {
-    const languagePickerItems = locales.map((locale) => (
-      <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
-    ));
+    // const languagePickerItems = locales.map((locale) => (
+    //   <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
+    // ));
 
     return (
       <Container style={styles.container}>
