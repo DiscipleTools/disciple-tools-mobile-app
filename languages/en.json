@@ -182,5 +182,8 @@
     "searchChildGroups": "Search child groups",
     "groupName": "Group Name",
     "addMember": "Add Member"
+  },
+  "notificationsScreen": {
+    "notifications": "Notifications"
   }
 }
