@@ -15,20 +15,26 @@ const styles = StyleSheet.create({
     color: '#0A0A0A',
     fontSize: 10,
   },
+  notificationReadButton: {},
+  notificationUnreadButton: {},
 });
+
 class NotificationsScreen extends React.Component {
+  state = {
+    notificationsSourceData: [],
+  };
+
   componentDidMount() {
     this.onRefresh();
   }
 
   onRefresh = () => {
-    this.props.getAllNotifications(this.props.userData.domain, this.props.userData.token, 0, 5);
+    this.props.getAllNotifications(this.props.userData.domain, this.props.userData.token, 0, 20);
     this.setState(
       {
         refresh: true,
       },
       () => {
-        // console.log(this.props.notifications)
         this.setState({
           notificationsSourceData: this.props.notifications,
           refresh: false,
@@ -37,12 +43,25 @@ class NotificationsScreen extends React.Component {
     );
   };
 
-  renderRow = (notificaiton) => {
-    // console.log(notificaiton)
+  handleLoadMore = () => {
+    console.log('load More');
+  };
+
+  renderRow = (notification) => {
+    const str1 = notification.notification_note.search('<');
+    const str2 = notification.notification_note.search('>');
+    const str3 = notification.notification_note.length - 4;
+    const newNotificationNoteA = notification.notification_note.substr(0, str1);
+    const newNotificationNoteB = notification.notification_note.substr(str2, str3);
+    const str4 = newNotificationNoteB.search('<') - 1;
+    const newNotificationBoteC = newNotificationNoteB.substr(1, str4);
+
     return (
       <View style={styles.notificationContainer}>
-        <Text>{notificaiton.notification_note}</Text>
-        <Text style={styles.prettyTime}>{notificaiton.pretty_time}</Text>
+        <Text>
+          {newNotificationNoteA} {newNotificationBoteC}{' '}
+        </Text>
+        <Text style={styles.prettyTime}>{notification.pretty_time}</Text>
       </View>
     );
   };
@@ -80,6 +99,7 @@ class NotificationsScreen extends React.Component {
           refreshControl={
             <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
           }
+          onEndReached={this.handleLoadMore}
           // keyExtractor={(item) => item.ID.toString()}
         />
       </View>
@@ -108,12 +128,12 @@ NotificationsScreen.propTypes = {
     token: PropTypes.string,
     username: PropTypes.string,
   }).isRequired,
-  loading: PropTypes.bool,
   notifications: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.id,
     }),
   ).isRequired,
+  loading: PropTypes.bool,
   error: PropTypes.shape({
     code: PropTypes.any,
     message: PropTypes.string,
