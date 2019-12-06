@@ -45,7 +45,7 @@ const NotificationsStack = createStackNavigator({
   Storybook,
 });
 function NotificationsIcon({ focused }) {
-  return <TabBarIcon type="FontAwesome" name="bell-o" focused={focused} />;
+  return <TabBarIcon type="FontAwesome" name="bell" focused={focused} />;
 }
 NotificationsIcon.propTypes = {
   focused: PropTypes.bool.isRequired,

@@ -1,22 +1,47 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { View, Text, FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { Container } from 'native-base';
 import PropTypes from 'prop-types';
+import { Col, Row } from 'react-native-easy-grid';
 import { getAll } from '../store/actions/notifications.actions';
 import Colors from '../constants/Colors';
 import i18n from '../languages';
 
 const styles = StyleSheet.create({
   notificationContainer: {
-    margin: 10,
-    flex: 1,
+    backgroundColor: 'white',
+    padding: 20,
   },
   prettyTime: {
-    color: '#0A0A0A',
+    color: '#8A8A8A',
     fontSize: 10,
   },
-  notificationReadButton: {},
-  notificationUnreadButton: {},
+  loadMoreFooterText: {
+    padding: 10,
+    color: '#3f729b',
+  },
+  buttoContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 25,
+  },
+  notificationReadButton: {
+    borderRadius: 100,
+    width: 25,
+    height: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#3f729b',
+  },
+  notificationUnreadButton: {
+    borderRadius: 100,
+    width: 25,
+    height: 25,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#3f729b',
+  },
 });
 
 class NotificationsScreen extends React.Component {
@@ -58,10 +83,17 @@ class NotificationsScreen extends React.Component {
 
     return (
       <View style={styles.notificationContainer}>
-        <Text>
-          {newNotificationNoteA} {newNotificationBoteC}{' '}
-        </Text>
-        <Text style={styles.prettyTime}>{notification.pretty_time}</Text>
+        <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View style={{ flex: 1, flexDirection: 'column' }}>
+            <Text>
+              {newNotificationNoteA} {newNotificationBoteC}
+            </Text>
+            <Text style={styles.prettyTime}>{notification.pretty_time}</Text>
+          </View>
+          <View style={styles.buttoContainer}>
+            <View style={styles.notificationReadButton} />
+          </View>
+        </View>
       </View>
     );
   };
@@ -76,8 +108,18 @@ class NotificationsScreen extends React.Component {
     />
   );
 
+  renderFooter = () => {
+    // it will show indicator at the bottom of the list when data is loading otherwise it returns null
+
+    return (
+      <View>
+        <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
+      </View>
+    );
+  };
+
   static navigationOptions = {
-    title: i18n.t('contactsScreen.notifications'),
+    title: i18n.t('notificationsScreen.notifications'),
     headerLeft: null,
     headerStyle: {
       backgroundColor: Colors.tintColor,
@@ -90,19 +132,41 @@ class NotificationsScreen extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <FlatList
-          data={this.state.notificationsSourceData}
-          extraData={this.state.refresh}
-          renderItem={(item) => this.renderRow(item.item)}
-          ItemSeparatorComponent={this.flatListItemSeparator}
-          refreshControl={
-            <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
-          }
-          onEndReached={this.handleLoadMore}
-          // keyExtractor={(item) => item.ID.toString()}
-        />
-      </View>
+      <Container>
+        <View style={{ flex: 1 }}>
+          <Row style={{ height: 60 }}>
+            <Col size={1}>
+              <Text>{i18n.t('notificationsScreen.new')}</Text>
+            </Col>
+            <Col size={2}>
+              <View>
+                <Text>{i18n.t('notificationsScreen.all')}</Text>
+              </View>
+            </Col>
+            <Col size={2}>
+              <View>
+                <Text>{i18n.t('notificationsScreen.unread')}</Text>
+              </View>
+            </Col>
+            <Col size={1}>
+              <View>
+                <Text>{i18n.t('notificationsScreen.markAll')}</Text>
+              </View>
+            </Col>
+          </Row>
+          <FlatList
+            data={this.state.notificationsSourceData}
+            extraData={this.state.refresh}
+            renderItem={(item) => this.renderRow(item.item)}
+            ItemSeparatorComponent={this.flatListItemSeparator}
+            refreshControl={
+              <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
+            }
+            ListFooterComponent={this.renderFooter}
+            onEndReached={this.handleLoadMore}
+          />
+        </View>
+      </Container>
     );
   }
 }
