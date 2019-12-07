@@ -79,8 +79,8 @@
   },
   "settingsScreen": {
     "settings": "Configuraciones",
-    "networkUnavailable": "Red NO ESTA DISPONIBLE. Ahora en el modo `Desconectado`.",
-    "networkAvailable": "Red DISPONIBLE. Ahora en el modo `En línea`.",
+    "networkUnavailable": "Red NO DISPONIBLE. Ahora en modo `No en línea`.",
+    "networkAvailable": "Red DISPONIBLE. Ahora en modo `En línea`.",
     "signOut": "Cerrar Sesión",
     "domain": "Dominio",
     "signedInAs": "Conectado como",
