@@ -51,7 +51,7 @@
     "cancel": "Cancelar",
     "save": "Guardar",
     "online": "En línea",
-    "offline": "No en línea",
+    "offline": "Desconectado",
     "language": "Idioma",
     "search": "Buscar",
     "membersActivity": "Miembros",
@@ -79,12 +79,12 @@
   },
   "settingsScreen": {
     "settings": "Configuraciones",
-    "networkUnavailable": "Red NO DISPONIBLE. Ahora en modo `No en línea`.",
+    "networkUnavailable": "Red NO DISPONIBLE. Ahora en modo `Desconectado`.",
     "networkAvailable": "Red DISPONIBLE. Ahora en modo `En línea`.",
     "signOut": "Cerrar Sesión",
     "domain": "Dominio",
     "signedInAs": "Conectado como",
-    "storybook": "Libro de historias",
+    "storybook": "`Storybook`",
     "logout": "Desconectarse",
     "helpSupport": "Ayuda / Soporte"
   },
