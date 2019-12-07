@@ -182,5 +182,13 @@
     "searchChildGroups": "Buscar grupos",
     "groupName": "Nombre",
     "addMember": "Añadir miembro"
+  },
+  "notificationsScreen": {
+    "notifications": "Notificaciones",
+    "loadMore": "Cargar más",
+    "new": "Nuevos",
+    "unRead": "No leído",
+    "all": "Todos",
+    "markAll": "Marcar Todos"
   }
 }

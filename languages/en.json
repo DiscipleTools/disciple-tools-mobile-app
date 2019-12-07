@@ -182,5 +182,13 @@
     "searchChildGroups": "Search child groups",
     "groupName": "Group Name",
     "addMember": "Add Member"
+  },
+  "notificationsScreen": {
+    "notifications": "Notifications",
+    "loadMore": "Load More",
+    "new": "New",
+    "unRead": "Unread",
+    "all": "All",
+    "markAll": "Mark All"
   }
 }

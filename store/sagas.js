@@ -6,6 +6,7 @@ import userSaga from './sagas/user.sagas';
 import contactsSaga from './sagas/contacts.sagas';
 import groupsSaga from './sagas/groups.sagas';
 import usersSaga from './sagas/users.sagas';
+import notificationsSaga from './sagas/notifications.sagas';
 
 // single entry point to start all Sagas at once
 export default function* rootSaga() {
@@ -16,5 +17,6 @@ export default function* rootSaga() {
     contactsSaga(),
     groupsSaga(),
     usersSaga(),
+    notificationsSaga(),
   ]);
 }

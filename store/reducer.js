@@ -7,6 +7,7 @@ import contactsReducer from './reducers/contacts.reducer';
 import groupsReducer from './reducers/groups.reducer';
 import usersReducer from './reducers/users.reducer';
 import i18nReducer from './reducers/i18n.reducer';
+import notificationsReducer from './reducers/notifications.reducer';
 
 const reducers = combineReducers({
   networkConnectivityReducer,
@@ -16,6 +17,7 @@ const reducers = combineReducers({
   groupsReducer,
   usersReducer,
   i18nReducer,
+  notificationsReducer,
 });
 
 export default reducers;
