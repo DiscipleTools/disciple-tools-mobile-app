@@ -184,6 +184,11 @@
     "addMember": "Añadir miembro"
   },
   "notificationsScreen": {
-    "notifications": "Notificaciones"
+    "notifications": "Notificaciones",
+    "loadMore": "Cargar más",
+    "new": "Nuevos",
+    "unRead": "No leído",
+    "all": "Todos",
+    "markAll": "Marcar Todos"
   }
 }
