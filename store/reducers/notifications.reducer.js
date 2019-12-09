@@ -39,6 +39,7 @@ export default function notificationsReducer(state = initialState, action) {
       return {
         ...newState,
         error: action.error,
+        loading: false,
       };
     default:
       return newState;
