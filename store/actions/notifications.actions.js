@@ -17,12 +17,12 @@ export const NOTIFICATIONS_COUNT_BY_USER_FAILURE = 'NOTIFICATIONS_COUNT_BY_USER_
 /*
  * Action Creators
  */
-export function getAll(domain, token, all, offset, limit) {
+export function getAll(domain, token, allNotifications, offset, limit) {
   return {
     type: NOTIFICATIONS_BY_USER,
     domain,
     token,
-    all,
+    allNotifications,
     offset,
     limit,
   };
