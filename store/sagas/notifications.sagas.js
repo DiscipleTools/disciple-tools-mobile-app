@@ -2,7 +2,7 @@ import { put, take, takeLatest, all, select } from 'redux-saga/effects';
 
 import * as actions from '../actions/notifications.actions';
 
-export function* getNotificationsByUser({ domain, token, allNotifcations, offset, limit }) {
+export function* getNotificationsByUser({ domain, token, allNotifications, offset, limit }) {
   yield put({ type: actions.NOTIFICATIONS_BY_USER_START });
   const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
   yield put({
@@ -16,7 +16,7 @@ export function* getNotificationsByUser({ domain, token, allNotifcations, offset
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          all: allNotifcations,
+          all: allNotifications,
           limit,
           page: offset,
         }),
