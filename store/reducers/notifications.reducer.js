@@ -11,6 +11,7 @@ export default function notificationsReducer(state = initialState, action) {
   const newState = {
     ...state,
     error: null,
+    notifications: null,
   };
   switch (action.type) {
     case actions.NOTIFICATIONS_BY_USER_START:

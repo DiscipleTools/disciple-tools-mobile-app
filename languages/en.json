@@ -51,10 +51,10 @@
     "cancel": "Cancel",
     "save": "Save",
     "online": "Online",
-    "offline": "Offline",
     "language": "Language",
     "search": "Search",
     "membersActivity": "Members",
+    "offline": "offline",
     "moreFields": "More Fields"
   },
   "loginScreen": {
@@ -79,8 +79,8 @@
   },
   "settingsScreen": {
     "settings": "Settings",
-    "networkUnavailable": "Network UNAVAILABLE. Now in `Offline` mode.",
-    "networkAvailable": "Network AVAILABLE. Now in `Online` mode.",
+    "networkUnavailable": "Network unavailable. Now in OFFLINE mode",
+    "networkAvailable": "Network detected. Back to ONLINE mode",
     "signOut": "Sign Out",
     "domain": "Domain",
     "signedInAs": "Signed in as",
@@ -189,6 +189,8 @@
     "new": "New",
     "unRead": "Unread",
     "all": "All",
-    "markAll": "Mark All"
+    "markAll": "Mark All",
+    "dontHaveNotificationsUnread": "No notifications unread",
+    "dontHaveNotifications": "No notifications"
   }
 }
