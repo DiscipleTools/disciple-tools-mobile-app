@@ -75,7 +75,10 @@
     "forgotPassword": "Perdiste tu contraseña?"
   },
   "contactsScreen": {
-    "contacts": "Contactos"
+    "contacts": "Contactos",
+    "noContactPlacheHolder": "No hay contactos disponibles actualmente.",
+    "noContactPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
+    "noContactPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener sus contactos."
   },
   "settingsScreen": {
     "settings": "Configuraciones",
@@ -192,5 +195,10 @@
     "markAll": "Marcar Todos",
     "dontHaveNotificationsUnread": "No tienes notificaciones sin leer",
     "dontHaveNotifications": "No tienes notificaciones"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "No hay grupos disponibles actualmente.",
+    "noGroupPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
+    "noGroupPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener sus grupos."
   }
 }
