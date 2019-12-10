@@ -4,7 +4,12 @@ import { View, Text, FlatList, RefreshControl, StyleSheet, TouchableOpacity } fr
 import { Container } from 'native-base';
 import PropTypes from 'prop-types';
 import { Col, Row } from 'react-native-easy-grid';
-import { getAll, getNotificationsCount } from '../store/actions/notifications.actions';
+import {
+  getAll,
+  getNotificationsCount,
+  markViewed,
+  markUnread,
+} from '../store/actions/notifications.actions';
 import Colors from '../constants/Colors';
 import i18n from '../languages';
 
@@ -96,6 +101,16 @@ const styles = StyleSheet.create({
     color: '#3f729b',
     fontSize: 14,
   },
+  offlineBar: {
+    height: 20,
+    backgroundColor: '#FCAB10',
+  },
+  offlineBarText: {
+    fontSize: 14,
+    color: 'white',
+    textAlignVertical: 'center',
+    textAlign: 'center',
+  },
 });
 
 class NotificationsScreen extends React.Component {
@@ -158,6 +173,31 @@ class NotificationsScreen extends React.Component {
     console.log('load More');
   };
 
+  markAsRead = (notification) => {
+    const indexArray = this.state.notificationsSourceData.findIndex(
+      (notificationArray) => notificationArray.id === notification.id,
+    );
+    const saveMark = this.state.notificationsSourceData;
+    if (notification.is_new === '1') {
+      this.props.markViewed(this.props.userData.domain, this.props.userData.token, notification.id);
+      saveMark[indexArray].is_new = '0';
+      if (!this.state.isAll) {
+        saveMark.splice(indexArray, 1);
+      }
+      this.setState({
+        notificationsSourceData: saveMark,
+      });
+      this.props.getNotificationsCount(this.props.userData.domain, this.props.userData.token);
+    } else {
+      this.props.markUnread(this.props.userData.domain, this.props.userData.token, notification.id);
+      saveMark[indexArray].is_new = '1';
+      this.setState({
+        notificationsSourceData: saveMark,
+      });
+      this.props.getNotificationsCount(this.props.userData.domain, this.props.userData.token);
+    }
+  };
+
   renderRow = (notification) => {
     const str1 = notification.notification_note.search('<');
     const str2 = notification.notification_note.search('>');
@@ -181,15 +221,20 @@ class NotificationsScreen extends React.Component {
             </Text>
             <Text style={styles.prettyTime}>{notification.pretty_time}</Text>
           </View>
-          <View style={styles.buttoContainer}>
-            <View
-              style={
-                notification.is_new === '1'
-                  ? styles.notificationUnreadButton
-                  : styles.notificationReadButton
-              }
-            />
-          </View>
+          <TouchableOpacity
+            onPress={() => {
+              this.markAsRead(notification);
+            }}>
+            <View style={styles.buttoContainer}>
+              <View
+                style={
+                  notification.is_new === '1'
+                    ? styles.notificationUnreadButton
+                    : styles.notificationReadButton
+                }
+              />
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -205,11 +250,19 @@ class NotificationsScreen extends React.Component {
     />
   );
 
+  offlineBarRender = () => (
+    <View style={[styles.offlineBar]}>
+      <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+    </View>
+  );
+
   renderFooter = () => {
     // it will show indicator at the bottom of the list when data is loading otherwise it returns null
     return (
-      <View>
-        <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
+      <View style={styles.loadMoreFooterText}>
+        <TouchableOpacity onPress={this.handleLoadMore}>
+          <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -230,6 +283,7 @@ class NotificationsScreen extends React.Component {
     return (
       <Container>
         <View style={{ flex: 1 }}>
+          {!this.props.isConnected && this.offlineBarRender()}
           <Row style={{ height: 50, margin: 15 }}>
             <Col size={2}>
               <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -305,11 +359,20 @@ const mapDispatchToProps = (dispatch) => ({
   getNotificationsCount: (domain, token) => {
     dispatch(getNotificationsCount(domain, token));
   },
+  markViewed: (domain, token, notificaitonId) => {
+    dispatch(markViewed(domain, token, notificaitonId));
+  },
+  markUnread: (domain, token, notificaitonId) => {
+    dispatch(markUnread(domain, token, notificaitonId));
+  },
 });
 
 NotificationsScreen.propTypes = {
+  isConnected: PropTypes.bool,
   getAllNotifications: PropTypes.func.isRequired,
   getNotificationsCount: PropTypes.func.isRequired,
+  markViewed: PropTypes.func.isRequired,
+  markUnread: PropTypes.func.isRequired,
   userData: PropTypes.shape({
     domain: PropTypes.string,
     token: PropTypes.string,
@@ -333,6 +396,7 @@ NotificationsScreen.defaultProps = {
   error: null,
   loading: false,
   notifications: [],
+  isConnected: null,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NotificationsScreen);
