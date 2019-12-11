@@ -3396,7 +3396,13 @@ class ContactDetailScreen extends React.Component {
             <Grid>
               <Row>
                 <Col>
-                  <Text style={styles.name}>{commentOrActivity.author}</Text>
+                  <Text
+                    style={[
+                      styles.name,
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right', flex: 1 },
+                    ]}>
+                    {commentOrActivity.author}
+                  </Text>
                 </Col>
                 <Col style={{ width: 110 }}>
                   <Text style={styles.time}>{this.onFormatDateToView(commentOrActivity.date)}</Text>
@@ -3408,7 +3414,13 @@ class ContactDetailScreen extends React.Component {
             <Grid>
               <Row>
                 <Col>
-                  <Text style={styles.name}>{commentOrActivity.name}</Text>
+                  <Text
+                    style={[
+                      styles.name,
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right', flex: 1 },
+                    ]}>
+                    {commentOrActivity.name}
+                  </Text>
                 </Col>
                 <Col style={{ width: 110 }}>
                   <Text style={styles.time}>{this.onFormatDateToView(commentOrActivity.date)}</Text>
@@ -3418,7 +3430,7 @@ class ContactDetailScreen extends React.Component {
           )}
         </View>
         <Text
-          style={
+          style={[
             commentOrActivity.content
               ? {
                   paddingLeft: 10,
@@ -3429,8 +3441,9 @@ class ContactDetailScreen extends React.Component {
                   paddingRight: 10,
                   color: '#B4B4B4',
                   fontStyle: 'italic',
-                }
-          }>
+                },
+            i18n.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right', flex: 1 },
+          ]}>
           {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
             ? commentOrActivity.content
             : commentOrActivity.object_note}
