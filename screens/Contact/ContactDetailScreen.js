@@ -253,7 +253,8 @@ class ContactDetailScreen extends React.Component {
                 type="Feather"
                 name="check"
                 style={[
-                  { color: '#FFFFFF', paddingRight: 16, marginTop: 'auto', marginBottom: 'auto' },
+                  { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                  i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
                 ]}
               />
             </Row>
@@ -298,7 +299,8 @@ class ContactDetailScreen extends React.Component {
               type="AntDesign"
               name="close"
               style={[
-                { paddingLeft: 16, color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                i18n.isRTL ? { paddingRight: 16 } : { paddingLeft: 16 },
               ]}
             />
             <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>

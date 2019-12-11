@@ -424,7 +424,10 @@ class GroupDetailScreen extends React.Component {
               <Icon
                 type="MaterialCommunityIcons"
                 name="pencil"
-                style={[{ color: '#FFFFFF', paddingRight: 16 }]}
+                style={[
+                  { color: '#FFFFFF' },
+                  i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+                ]}
               />
             </Row>
           ) : (
@@ -436,7 +439,8 @@ class GroupDetailScreen extends React.Component {
                 type="Feather"
                 name="check"
                 style={[
-                  { color: '#FFFFFF', paddingRight: 16, marginTop: 'auto', marginBottom: 'auto' },
+                  { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                  i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
                 ]}
               />
             </Row>
@@ -489,7 +493,8 @@ class GroupDetailScreen extends React.Component {
               type="AntDesign"
               name="close"
               style={[
-                { paddingLeft: 16, color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                i18n.isRTL ? { paddingRight: 16 } : { paddingLeft: 16 },
               ]}
             />
             <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
@@ -1073,10 +1078,14 @@ class GroupDetailScreen extends React.Component {
             <Grid>
               <Row>
                 <Col>
-                  <Text style={styles.name}>{commentOrActivity.author}</Text>
+                  <Text style={[styles.name, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                    {commentOrActivity.author}
+                  </Text>
                 </Col>
                 <Col style={{ width: 110 }}>
-                  <Text style={styles.time}>{this.onFormatDateToView(commentOrActivity.date)}</Text>
+                  <Text style={[styles.time, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                    {this.onFormatDateToView(commentOrActivity.date)}
+                  </Text>
                 </Col>
               </Row>
             </Grid>
@@ -1085,16 +1094,25 @@ class GroupDetailScreen extends React.Component {
             <Grid>
               <Row>
                 <Col>
-                  <Text style={styles.name}>{commentOrActivity.name}</Text>
+                  <Text style={[styles.name, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                    {commentOrActivity.name}
+                  </Text>
                 </Col>
                 <Col style={{ width: 110 }}>
-                  <Text style={styles.time}>{this.onFormatDateToView(commentOrActivity.date)}</Text>
+                  <Text style={[styles.time, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                    {this.onFormatDateToView(commentOrActivity.date)}
+                  </Text>
                 </Col>
               </Row>
             </Grid>
           )}
         </View>
-        <Text style={commentOrActivity.content ? styles.commentMessage : styles.activityMessage}>
+        <Text
+          style={
+            commentOrActivity.content
+              ? [styles.commentMessage, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]
+              : [styles.activityMessage, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]
+          }>
           {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
             ? commentOrActivity.content
             : commentOrActivity.object_note}
@@ -1519,7 +1537,11 @@ class GroupDetailScreen extends React.Component {
       ? this.state.users.find((user) => `user-${user.key}` === this.state.group.assigned_to)
       : null;
     return (
-      <Text style={{ marginTop: 'auto', marginBottom: 'auto', fontSize: 15 }}>
+      <Text
+        style={[
+          { marginTop: 'auto', marginBottom: 'auto', fontSize: 15 },
+          i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+        ]}>
         {foundUser ? foundUser.label : ''}
       </Text>
     );
@@ -1578,12 +1600,15 @@ class GroupDetailScreen extends React.Component {
               style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}
               pointerEvents="none">
               <Label
-                style={{
-                  color: Colors.tintColor,
-                  fontSize: 12,
-                  fontWeight: 'bold',
-                  marginTop: 10,
-                }}>
+                style={[
+                  {
+                    color: Colors.tintColor,
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    marginTop: 10,
+                  },
+                  i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                ]}>
                 {this.props.groupSettings.group_status.name}
               </Label>
               <Row style={[styles.formRow, { paddingTop: 5 }]}>
@@ -1593,13 +1618,19 @@ class GroupDetailScreen extends React.Component {
                     onValueChange={this.setGroupStatus}
                     style={
                       Platform.OS === 'android'
-                        ? {
-                            color: '#ffffff',
-                            backgroundColor: this.state.groupStatusBackgroundColor,
-                          }
-                        : {
-                            backgroundColor: this.state.groupStatusBackgroundColor,
-                          }
+                        ? [
+                            {
+                              color: '#ffffff',
+                              backgroundColor: this.state.groupStatusBackgroundColor,
+                            },
+                            i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                          ]
+                        : [
+                            {
+                              backgroundColor: this.state.groupStatusBackgroundColor,
+                            },
+                            i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                          ]
                     }>
                     {Object.keys(this.props.groupSettings.group_status.values).map((key) => {
                       const optionData = this.props.groupSettings.group_status.values[key];
@@ -1625,7 +1656,11 @@ class GroupDetailScreen extends React.Component {
                   <Icon type="FontAwesome" name="black-tie" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.group.coaches
                       ? this.state.group.coaches.values
                           .map(
@@ -1651,7 +1686,11 @@ class GroupDetailScreen extends React.Component {
                   <Icon type="FontAwesome" name="map-marker" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.group.location_grid
                       ? this.state.group.location_grid.values
                           .map(
@@ -1676,7 +1715,11 @@ class GroupDetailScreen extends React.Component {
                   <Icon type="FontAwesome" name="globe" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.group.people_groups
                       ? this.state.group.people_groups.values
                           .map(
@@ -1701,7 +1744,11 @@ class GroupDetailScreen extends React.Component {
                   <Icon type="Entypo" name="home" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.group.contact_address
                       ? this.state.group.contact_address.map((address) => address.value).join(', ')
                       : ''}
@@ -1721,7 +1768,11 @@ class GroupDetailScreen extends React.Component {
                   />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.group.start_date ? this.state.group.start_date : ''}
                   </Text>
                 </Col>
@@ -1739,7 +1790,11 @@ class GroupDetailScreen extends React.Component {
                   />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.group.end_date ? this.state.group.end_date : ''}
                   </Text>
                 </Col>
@@ -2259,7 +2314,11 @@ class GroupDetailScreen extends React.Component {
                   <Image source={groupTypeIcon} style={styles.groupIcons} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.group.group_type
                       ? this.props.groupSettings.group_type.values[this.state.group.group_type]
                           .label
@@ -2492,7 +2551,11 @@ class GroupDetailScreen extends React.Component {
               onPress={() => this.goToContactDetailScreen(membersGroup)}
               key={membersGroup.value}
               style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              <Text style={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: 15, padding: 5 }}>
+              <Text
+                style={[
+                  { marginTop: 'auto', marginBottom: 'auto', padding: 5 },
+                  i18n.isRTL ? { textAlign: 'left', flex: 1, marginRight: 15 } : { marginLeft: 15 },
+                ]}>
                 {membersGroup.name}
               </Text>
             </TouchableOpacity>
