@@ -1,15 +1,24 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, FlatList, TouchableOpacity, RefreshControl, StyleSheet, Text } from 'react-native';
+import {
+  View,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  Image,
+} from 'react-native';
 import { Fab, Container } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
-
+import { Row } from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 import { SearchBar } from 'react-native-elements';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/groups.actions';
 import i18n from '../../languages';
+import dtIcon from '../../assets/images/dt-icon.png';
 
 const styles = StyleSheet.create({
   flatListItem: {
@@ -56,6 +65,33 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     textAlign: 'center',
   },
+  noGroupsContainer: {
+    padding: 20,
+    paddingTop: 50,
+    textAlignVertical: 'top',
+    textAlign: 'center',
+  },
+  noGroupsImage: {
+    opacity: 0.5,
+    height: 70,
+    width: 70,
+    padding: 10,
+  },
+  noGroupsText: {
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#A8A8A8',
+    padding: 5,
+  },
+  noGroupsTextOffilne: {
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#A8A8A8',
+    backgroundColor: '#fff2ac',
+    padding: 5,
+  },
 });
 
 let toastError;
@@ -66,6 +102,7 @@ class GroupsScreen extends React.Component {
     refresh: false,
     search: '',
     dataSourceGroups: this.props.groups,
+    haveGroups: true,
   };
 
   componentDidUpdate(prevProps) {
@@ -85,6 +122,27 @@ class GroupsScreen extends React.Component {
         3000,
       );
     }
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { groups } = nextProps;
+    let newState;
+    if (groups) {
+      if (groups.length > 0) {
+        newState = {
+          ...prevState,
+          dataSourceGroups: groups,
+          haveGroups: true,
+        };
+      } else {
+        newState = {
+          ...prevState,
+          dataSourceGroups: [],
+          haveGroups: false,
+        };
+      }
+    }
+    return newState;
   }
 
   renderRow = (group) => (
@@ -190,6 +248,7 @@ class GroupsScreen extends React.Component {
           containerStyle={styles.searchBarContainer}
           inputContainerStyle={styles.searchBarInput}
         />
+        {!this.state.haveGroups && this.noContactsRender()}
       </View>
     );
   };
@@ -197,6 +256,21 @@ class GroupsScreen extends React.Component {
   offlineBarRender = () => (
     <View style={[styles.offlineBar]}>
       <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+    </View>
+  );
+
+  noContactsRender = () => (
+    <View style={styles.noGroupsContainer}>
+      <Row style={{ justifyContent: 'center' }}>
+        <Image style={styles.noGroupsImage} source={dtIcon} />
+      </Row>
+      <Text style={styles.noGroupsText}>{i18n.t('groupsScreen.noGroupPlacheHolder')}</Text>
+      <Text style={styles.noGroupsText}>{i18n.t('groupsScreen.noGroupPlacheHolder1')}</Text>
+      {!this.props.isConnected && (
+        <Text style={styles.noGroupsTextOffilne}>
+          {i18n.t('groupsScreen.noGroupPlacheHolderOffline')}
+        </Text>
+      )}
     </View>
   );
 

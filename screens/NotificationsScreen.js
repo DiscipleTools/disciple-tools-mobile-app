@@ -111,6 +111,14 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     textAlign: 'center',
   },
+  dontHaveNotificationsText: {
+    fontSize: 14,
+    color: 'black',
+    fontWeight: 'bold',
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 class NotificationsScreen extends React.Component {
@@ -119,6 +127,9 @@ class NotificationsScreen extends React.Component {
     isAll: false,
     loading: false,
     notificationsCount: 0,
+    limit: 20,
+    offset: 0,
+    haveNotifications: true,
   };
 
   componentDidMount() {
@@ -127,23 +138,68 @@ class NotificationsScreen extends React.Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const { loading, notifications, notificationsCount } = nextProps;
-    const newState = {
+    let newState = {
       ...prevState,
       loading,
-      notificationsSourceData: notifications,
       notificationsCount,
     };
+    if (notifications) {
+      if (newState.offset > 0) {
+        newState = {
+          ...newState,
+          notificationsSourceData: prevState.notificationsSourceData.concat(notifications),
+        };
+      } else if (notifications.length > 0) {
+        newState = {
+          ...newState,
+          notificationsSourceData: notifications,
+          haveNotifications: true,
+        };
+      } else {
+        newState = {
+          ...newState,
+          notificationsSourceData: notifications,
+          haveNotifications: false,
+        };
+      }
+    }
     return newState;
   }
 
-  onRefresh = () => {
-    this.props.getAllNotifications(
-      this.props.userData.domain,
-      this.props.userData.token,
-      this.state.isAll,
-      0,
-      30,
-    );
+  onRefresh = (pagination = false) => {
+    if (pagination) {
+      this.setState(
+        (prevState) => ({
+          offset: prevState.offset + prevState.limit,
+          haveNotifications: true,
+        }),
+        () => {
+          this.props.getAllNotifications(
+            this.props.userData.domain,
+            this.props.userData.token,
+            this.state.isAll,
+            this.state.offset,
+            this.state.limit,
+          );
+        },
+      );
+    } else {
+      this.setState(
+        () => ({
+          offset: 0,
+          haveNotifications: true,
+        }),
+        () => {
+          this.props.getAllNotifications(
+            this.props.userData.domain,
+            this.props.userData.token,
+            this.state.isAll,
+            this.state.offset,
+            this.state.limit,
+          );
+        },
+      );
+    }
     this.props.getNotificationsCount(this.props.userData.domain, this.props.userData.token);
   };
 
@@ -167,10 +223,6 @@ class NotificationsScreen extends React.Component {
         this.onRefresh();
       },
     );
-  };
-
-  handleLoadMore = () => {
-    console.log('load More');
   };
 
   markAsRead = (notification) => {
@@ -256,11 +308,29 @@ class NotificationsScreen extends React.Component {
     </View>
   );
 
+  dontHaveNotifications = () => (
+    <View style={[styles.dontHaveNotificationsText]}>
+      {this.state.isAll && (
+        <Text style={[styles.dontHaveNotificationsText]}>
+          {i18n.t('notificationsScreen.dontHaveNotifications')}
+        </Text>
+      )}
+      {!this.state.isAll && (
+        <Text style={[styles.dontHaveNotificationsText]}>
+          {i18n.t('notificationsScreen.dontHaveNotificationsUnread')}
+        </Text>
+      )}
+    </View>
+  );
+
   renderFooter = () => {
     // it will show indicator at the bottom of the list when data is loading otherwise it returns null
     return (
       <View style={styles.loadMoreFooterText}>
-        <TouchableOpacity onPress={this.handleLoadMore}>
+        <TouchableOpacity
+          onPress={() => {
+            this.onRefresh(true);
+          }}>
           <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
         </TouchableOpacity>
       </View>
@@ -287,7 +357,9 @@ class NotificationsScreen extends React.Component {
           <Row style={{ height: 50, margin: 15 }}>
             <Col size={2}>
               <View style={{ flex: 1, flexDirection: 'row' }}>
-                <Text style={styles.newHeaderNumber}> {this.state.notificationsCount} </Text>
+                {this.state.notificationsCount > 0 && (
+                  <Text style={styles.newHeaderNumber}> {this.state.notificationsCount} </Text>
+                )}
                 <Text style={styles.newHeader}>{i18n.t('notificationsScreen.new')}</Text>
               </View>
             </Col>
@@ -327,6 +399,7 @@ class NotificationsScreen extends React.Component {
               </View>
             </Col>
           </Row>
+          {!this.state.haveNotifications && this.dontHaveNotifications()}
           <FlatList
             data={this.state.notificationsSourceData}
             extraData={this.state.loading}

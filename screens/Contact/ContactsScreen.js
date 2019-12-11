@@ -1,13 +1,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, FlatList, TouchableOpacity, RefreshControl, StyleSheet, Text } from 'react-native';
+import {
+  View,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  Image,
+} from 'react-native';
 import { Fab, Container } from 'native-base';
+import { Row } from 'react-native-easy-grid';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
 import { SearchBar } from 'react-native-elements';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
+import dtIcon from '../../assets/images/dt-icon.png';
 import i18n from '../../languages';
 
 const styles = StyleSheet.create({
@@ -55,6 +65,33 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     textAlign: 'center',
   },
+  noContactsContainer: {
+    padding: 20,
+    paddingTop: 50,
+    textAlignVertical: 'top',
+    textAlign: 'center',
+  },
+  noContactsImage: {
+    opacity: 0.5,
+    height: 70,
+    width: 70,
+    padding: 10,
+  },
+  noContactsText: {
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#A8A8A8',
+    padding: 5,
+  },
+  noContactsTextOffilne: {
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#A8A8A8',
+    backgroundColor: '#fff2ac',
+    padding: 5,
+  },
 });
 let firstloader = 0;
 let toastError;
@@ -64,6 +101,7 @@ class ContactsScreen extends React.Component {
   state = {
     refresh: false,
     search: '',
+    haveContacts: true,
   };
 
   componentDidUpdate(prevProps) {
@@ -87,10 +125,22 @@ class ContactsScreen extends React.Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const { contacts } = nextProps;
-    const newState = {
-      ...prevState,
-      dataSourceContact: contacts,
-    };
+    let newState;
+    if (contacts) {
+      if (contacts.length > 0) {
+        newState = {
+          ...prevState,
+          dataSourceContact: contacts,
+          haveContacts: true,
+        };
+      } else {
+        newState = {
+          ...prevState,
+          dataSourceContact: [],
+          haveContacts: false,
+        };
+      }
+    }
 
     firstloader += 1;
     if (firstloader < 5) {
@@ -191,6 +241,7 @@ class ContactsScreen extends React.Component {
           containerStyle={styles.searchBarContainer}
           inputContainerStyle={styles.searchBarInput}
         />
+        {!this.state.haveContacts && this.noContactsRender()}
       </View>
     );
   };
@@ -198,6 +249,21 @@ class ContactsScreen extends React.Component {
   offlineBarRender = () => (
     <View style={[styles.offlineBar]}>
       <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+    </View>
+  );
+
+  noContactsRender = () => (
+    <View style={styles.noContactsContainer}>
+      <Row style={{ justifyContent: 'center' }}>
+        <Image style={styles.noContactsImage} source={dtIcon} />
+      </Row>
+      <Text style={styles.noContactsText}>{i18n.t('contactsScreen.noContactPlacheHolder')}</Text>
+      <Text style={styles.noContactsText}>{i18n.t('contactsScreen.noContactPlacheHolder1')}</Text>
+      {!this.props.isConnected && (
+        <Text style={styles.noContactsTextOffilne}>
+          {i18n.t('contactsScreen.noContactPlacheHolderOffline')}
+        </Text>
+      )}
     </View>
   );
 

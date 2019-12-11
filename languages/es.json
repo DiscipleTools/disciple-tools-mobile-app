@@ -40,8 +40,8 @@
     "status": "Estado",
     "assignedTo": "Asignado a",
     "location": "Ubicación",
-    "peopleGroup": "Grupo Étnico",
-    "selectPeopleGroups": "Seleccione Grupo Étnico",
+    "peopleGroup": "Grupos de Personas",
+    "selectPeopleGroups": "Seleccione grupos de personas",
     "address": "Dirección",
     "progress": "Progreso",
     "commentsActivity": "Comentarios y Actividad",
@@ -51,10 +51,10 @@
     "cancel": "Cancelar",
     "save": "Guardar",
     "online": "En línea",
-    "offline": "Desconectado",
     "language": "Idioma",
     "search": "Buscar",
     "membersActivity": "Miembros",
+    "offline": "desconectado",
     "moreFields": "Más Campos"
   },
   "loginScreen": {
@@ -75,16 +75,19 @@
     "forgotPassword": "Perdiste tu contraseña?"
   },
   "contactsScreen": {
-    "contacts": "Contactos"
+    "contacts": "Contactos",
+    "noContactPlacheHolder": "No hay contactos disponibles actualmente.",
+    "noContactPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
+    "noContactPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener sus contactos."
   },
   "settingsScreen": {
     "settings": "Configuraciones",
-    "networkUnavailable": "Red NO DISPONIBLE. Ahora en modo `Desconectado`.",
-    "networkAvailable": "Red DISPONIBLE. Ahora en modo `En línea`.",
+    "networkUnavailable": "Red no disponible",
+    "networkAvailable": "Red disponible",
     "signOut": "Cerrar Sesión",
     "domain": "Dominio",
     "signedInAs": "Conectado como",
-    "storybook": "`Storybook`",
+    "storybook": "Storybook",
     "logout": "Desconectarse",
     "helpSupport": "Ayuda / Soporte"
   },
@@ -99,8 +102,8 @@
       "advertisement": "Anuncio",
       "transfer": "Transferencia"
     },
-    "subAssignedTo": "Subasignado a",
-    "subAssignThisContact": "Subasignar este contacto",
+    "subAssignedTo": "Sub-asignado a",
+    "subAssignThisContact": "Sub-asignar este contacto",
     "mobile": "Telefonos",
     "email": "Correos Electrónicos",
     "selectLocations": "Seleccionar ubicaciones",
@@ -116,14 +119,14 @@
     "gender": "Género",
     "source": "Fuente",
     "selectSources": "Seleccionar fuentes",
-    "seekerPath": "Camino del Buscador",
-    "faithMilestones": "Pilares de la fe",
+    "seekerPath": "Seeker Path",
+    "faithMilestones": "Faith Milestones",
     "milestones": {
-      "hasBible": "Tiene Biblia",
-      "readingBible": "Leyendo la Biblia",
+      "hasBible": "Tiene biblia",
+      "readingBible": "Leyendo la biblia",
       "statesBelief": "Declara Creencia",
-      "shareGospel": "Puede compartir el Evangelio / Testimonio",
-      "sharingGospel": "Compartiendo el Evangelio / Testimonio",
+      "shareGospel": "Puede compartir Evangelio / Testimonio",
+      "sharingGospel": "Compartiendo Evangelio / Testimonio",
       "baptized": "Bautizado",
       "baptizing": "Bautizando",
       "inGroup": "En Iglesia / Grupo",
@@ -174,13 +177,13 @@
       "praise": "Alabanza",
       "sharingGospel": "Compartir el Evangelio"
     },
-    "parentGroup": "Grupo Matriz",
+    "parentGroup": "Categoría del Grupo",
     "searchGroups": "Buscar grupos",
-    "peerGroup": "Grupo Paritario",
-    "searchPeerGroups": "Buscar grupos paritarios",
-    "childGroup": "Grupos Subsiguientes",
-    "searchChildGroups": "Buscar grupos subsiguientes",
-    "groupName": "Nombre del Grupo",
+    "peerGroup": "Grupo de pares",
+    "searchPeerGroups": "Buscar grupos",
+    "childGroup": "Subsiguientes Grupos",
+    "searchChildGroups": "Buscar grupos",
+    "groupName": "Nombre",
     "addMember": "Añadir miembro"
   },
   "notificationsScreen": {
@@ -189,6 +192,13 @@
     "new": "Nuevos",
     "unRead": "No leído",
     "all": "Todos",
-    "markAll": "Marcar Todos"
+    "markAll": "Marcar Todos",
+    "dontHaveNotificationsUnread": "No tienes notificaciones sin leer",
+    "dontHaveNotifications": "No tienes notificaciones"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "No hay grupos disponibles actualmente.",
+    "noGroupPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
+    "noGroupPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener sus grupos."
   }
 }
