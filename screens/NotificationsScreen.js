@@ -269,17 +269,10 @@ class NotificationsScreen extends React.Component {
         }>
         <View style={[styles.notificationContainer, { flex: 1, flexDirection: 'row' }]}>
           <View style={{ flex: 1, flexDirection: 'column' }}>
-            <Text
-              style={[
-                i18n.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right', flex: 1 },
-              ]}>
+            <Text style={[i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
               {newNotificationNoteA} {newNotificationBoteC}
             </Text>
-            <Text
-              style={[
-                styles.prettyTime,
-                i18n.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right', flex: 1 },
-              ]}>
+            <Text style={[styles.prettyTime, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
               {notification.pretty_time}
             </Text>
           </View>
