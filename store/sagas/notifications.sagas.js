@@ -207,11 +207,61 @@ export function* markUnread({ domain, token, notificationId }) {
   }
 }
 
+export function* markAllAsRead({ domain, token, userID }) {
+  yield put({ type: actions.NOTIFICATIONS_MARK_ALL_AS_READ_START });
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt/v1/notifications/mark_all_viewed/${userID}`,
+      data: {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      },
+      action: actions.NOTIFICATIONS_MARK_ALL_AS_READ_RESPONSE,
+    },
+  });
+  try {
+    let response = yield take(actions.NOTIFICATIONS_MARK_ALL_AS_READ_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (isConnected) {
+      if (response.status === 200) {
+        yield put({
+          type: actions.NOTIFICATIONS_MARK_ALL_AS_READ_SUCCESS,
+          notificationsCount: jsonData,
+        });
+      } else {
+        yield put({
+          type: actions.NOTIFICATIONS_MARK_ALL_AS_READ_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
+      }
+    }
+  } catch (error) {
+    yield put({
+      type: actions.NOTIFICATIONS_MARK_ALL_AS_READ_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
 export default function* notificationsSaga() {
   yield all([
     takeLatest(actions.NOTIFICATIONS_BY_USER, getNotificationsByUser),
     takeLatest(actions.NOTIFICATIONS_COUNT_BY_USER, getNotificationsCount),
     takeLatest(actions.NOTIFICATIONS_MARK_AS_VIEWED, markViewed),
     takeLatest(actions.NOTIFICATIONS_MARK_AS_UNREAD, markUnread),
+    takeLatest(actions.NOTIFICATIONS_MARK_ALL_AS_READ, markAllAsRead),
   ]);
 }
