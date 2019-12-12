@@ -155,7 +155,10 @@
     "contactEstablished": "Contacto Establecido",
     "meetingScheduled": "Reunión Programada",
     "meetingCompleted": "Reunión Completa",
-    "meetingNoShow": "Reunión No Se Presentó"
+    "meetingNoShow": "Reunión No Se Presentó",
+    "noContactCommentPlacheHolder": "No hay comentarios de contacto disponibles actualmente.",
+    "noContactCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
+    "noContactCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrate de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del contacto."
   },
   "groupDetailScreen": {
     "addNewGroup": "Crear un grupo nuevo",
@@ -184,7 +187,10 @@
     "childGroup": "Subsiguientes Grupos",
     "searchChildGroups": "Buscar grupos",
     "groupName": "Nombre",
-    "addMember": "Añadir miembro"
+    "addMember": "Añadir miembro",
+    "noGroupCommentPlacheHolder": "No hay comentarios del grupo disponibles actualmente.",
+    "noGroupCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
+    "noGroupCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del grupo."
   },
   "notificationsScreen": {
     "notifications": "Notificaciones",

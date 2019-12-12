@@ -56,6 +56,7 @@ import groupParentIcon from '../../assets/icons/group-parent.png';
 import groupPeerIcon from '../../assets/icons/group-peer.png';
 import groupTypeIcon from '../../assets/icons/group-type.png';
 import footprint from '../../assets/icons/footprint.png';
+import dtIcon from '../../assets/images/dt-icon.png';
 import i18n from '../../languages';
 
 let toastSuccess;
@@ -345,6 +346,33 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlignVertical: 'center',
     textAlign: 'center',
+  },
+  noCommentsContainer: {
+    padding: 20,
+    textAlignVertical: 'top',
+    textAlign: 'center',
+    height: 300,
+  },
+  noCommentsImage: {
+    opacity: 0.5,
+    height: 70,
+    width: 70,
+    padding: 10,
+  },
+  noCommentsText: {
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#A8A8A8',
+    padding: 5,
+  },
+  noCommentsTextOffilne: {
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#A8A8A8',
+    backgroundColor: '#fff2ac',
+    padding: 5,
   },
 });
 
@@ -1591,6 +1619,25 @@ class GroupDetailScreen extends React.Component {
     </View>
   );
 
+  noCommentsRender = () => (
+    <View style={styles.noCommentsContainer}>
+      <Row style={{ justifyContent: 'center' }}>
+        <Image style={styles.noCommentsImage} source={dtIcon} />
+      </Row>
+      <Text style={styles.noCommentsText}>
+        {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder')}
+      </Text>
+      <Text style={styles.noCommentsText}>
+        {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder1')}
+      </Text>
+      {!this.props.isConnected && (
+        <Text style={styles.noCommentsTextOffilne}>
+          {i18n.t('groupDetailScreen.noGroupCommentPlacheHolderOffline')}
+        </Text>
+      )}
+    </View>
+  );
+
   detailView = () => (
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
@@ -2409,6 +2456,7 @@ class GroupDetailScreen extends React.Component {
   commentsView = () => (
     <View style={{ flex: 1 }}>
       {!this.props.isConnected && this.offlineBarRender()}
+      {this.state.comments.length <= 0 && this.noCommentsRender()}
       <FlatList
         style={styles.root}
         ref={(flatList) => {
