@@ -238,7 +238,10 @@ class ContactDetailScreen extends React.Component {
               <Icon
                 type="MaterialCommunityIcons"
                 name="pencil"
-                style={[{ color: '#FFFFFF', paddingRight: 16 }]}
+                style={[
+                  { color: '#FFFFFF' },
+                  i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+                ]}
               />
             </Row>
           ) : (
@@ -250,7 +253,8 @@ class ContactDetailScreen extends React.Component {
                 type="Feather"
                 name="check"
                 style={[
-                  { color: '#FFFFFF', paddingRight: 16, marginTop: 'auto', marginBottom: 'auto' },
+                  { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                  i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
                 ]}
               />
             </Row>
@@ -295,7 +299,8 @@ class ContactDetailScreen extends React.Component {
               type="AntDesign"
               name="close"
               style={[
-                { paddingLeft: 16, color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                i18n.isRTL ? { paddingRight: 16 } : { paddingLeft: 16 },
               ]}
             />
             <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
@@ -1196,7 +1201,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="Ionicons" name="md-people" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.subassigned
                       ? this.state.contact.subassigned.values
                           .map(
@@ -1226,7 +1235,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="FontAwesome" name="phone" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.contact_phone
                       ? this.state.contact.contact_phone
                           .filter((phone) => !phone.delete)
@@ -1245,7 +1258,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="FontAwesome" name="envelope" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.contact_email
                       ? this.state.contact.contact_email
                           .filter((email) => !email.delete)
@@ -1283,12 +1300,21 @@ class ContactDetailScreen extends React.Component {
                               (socialMedia, socialMediaIndex) => (
                                 <Text
                                   key={socialMediaIndex.toString()}
-                                  style={socialMediaIndex === 0 ? { marginTop: 10 } : {}}>
+                                  style={[
+                                    socialMediaIndex === 0 ? { marginTop: 10 } : {},
+                                    i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                                  ]}>
                                   {socialMedia.value}
                                 </Text>
                               ),
                             )}
-                            <Text style={styles.socialMediaNames}>{channelName}</Text>
+                            <Text
+                              style={[
+                                styles.socialMediaNames,
+                                i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                              ]}>
+                              {channelName}
+                            </Text>
                           </Col>
                         );
                       }
@@ -1308,7 +1334,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="Entypo" name="home" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.contact_address
                       ? this.state.contact.contact_address
                           .filter((address) => !address.delete)
@@ -1327,7 +1357,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="FontAwesome" name="map-marker" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.location_grid
                       ? this.state.contact.location_grid.values
                           .map(
@@ -1357,7 +1391,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="FontAwesome" name="globe" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.people_groups
                       ? this.state.contact.people_groups.values
                           .map(
@@ -1387,7 +1425,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="FontAwesome" name="clock-o" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.age ? this.state.contact.age : ''}
                   </Text>
                 </Col>
@@ -1403,7 +1445,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon android="md-male" ios="ios-male" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.gender
                       ? this.props.contactSettings.fields.gender.values[this.state.contact.gender]
                           .label
@@ -1426,7 +1472,11 @@ class ContactDetailScreen extends React.Component {
                   />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.sources
                       ? `${this.state.contact.sources.values
                           .map(
@@ -2233,7 +2283,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon android="md-calendar" ios="ios-calendar" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.seeker_path
                       ? this.props.contactSettings.fields.seeker_path.values[
                           this.state.contact.seeker_path
@@ -2261,7 +2315,11 @@ class ContactDetailScreen extends React.Component {
               </View>
               <View style={styles.formDivider} />
               <Label
-                style={[styles.formLabel, { fontWeight: 'bold', marginBottom: 10, marginTop: 20 }]}>
+                style={[
+                  styles.formLabel,
+                  { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
+                  i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                ]}>
                 {this.props.contactSettings.fields.milestones.name}
               </Label>
               {this.renderfaithMilestones()}
@@ -2508,7 +2566,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="FontAwesome" name="users" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.groups
                       ? this.state.contact.groups.values
                           .map(
@@ -2538,7 +2600,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="Entypo" name="network" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.relation
                       ? this.state.contact.relation.values
                           .map(
@@ -2568,7 +2634,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="Entypo" name="water" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.baptized_by
                       ? this.state.contact.baptized_by.values
                           .map(
@@ -2598,7 +2668,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="Entypo" name="water" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.baptized
                       ? this.state.contact.baptized.values
                           .map(
@@ -2628,7 +2702,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="FontAwesome" name="black-tie" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.coached_by
                       ? this.state.contact.coached_by.values
                           .map(
@@ -2658,7 +2736,11 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="MaterialCommunityIcons" name="presentation" style={styles.formIcon} />
                 </Col>
                 <Col>
-                  <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.state.contact.coaching
                       ? this.state.contact.coaching.values
                           .map(
@@ -3396,7 +3478,9 @@ class ContactDetailScreen extends React.Component {
             <Grid>
               <Row>
                 <Col>
-                  <Text style={styles.name}>{commentOrActivity.author}</Text>
+                  <Text style={[styles.name, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                    {commentOrActivity.author}
+                  </Text>
                 </Col>
                 <Col style={{ width: 110 }}>
                   <Text style={styles.time}>{this.onFormatDateToView(commentOrActivity.date)}</Text>
@@ -3408,7 +3492,9 @@ class ContactDetailScreen extends React.Component {
             <Grid>
               <Row>
                 <Col>
-                  <Text style={styles.name}>{commentOrActivity.name}</Text>
+                  <Text style={[styles.name, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                    {commentOrActivity.name}
+                  </Text>
                 </Col>
                 <Col style={{ width: 110 }}>
                   <Text style={styles.time}>{this.onFormatDateToView(commentOrActivity.date)}</Text>
@@ -3418,7 +3504,7 @@ class ContactDetailScreen extends React.Component {
           )}
         </View>
         <Text
-          style={
+          style={[
             commentOrActivity.content
               ? {
                   paddingLeft: 10,
@@ -3429,8 +3515,9 @@ class ContactDetailScreen extends React.Component {
                   paddingRight: 10,
                   color: '#B4B4B4',
                   fontStyle: 'italic',
-                }
-          }>
+                },
+            i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+          ]}>
           {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
             ? commentOrActivity.content
             : commentOrActivity.object_note}
@@ -3671,7 +3758,11 @@ class ContactDetailScreen extends React.Component {
       (user) => `user-${user.key}` === this.state.contact.assigned_to,
     );
     return (
-      <Text style={{ marginTop: 'auto', marginBottom: 'auto', fontSize: 15 }}>
+      <Text
+        style={[
+          { marginTop: 'auto', marginBottom: 'auto', fontSize: 15 },
+          i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+        ]}>
         {foundUser ? foundUser.label : ''}
       </Text>
     );

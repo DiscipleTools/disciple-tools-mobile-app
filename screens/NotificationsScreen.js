@@ -30,7 +30,8 @@ const styles = StyleSheet.create({
   buttoContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 25,
+    width: 35,
+    padding: 5,
   },
   notificationUnreadButton: {
     borderRadius: 100,
@@ -268,10 +269,12 @@ class NotificationsScreen extends React.Component {
         }>
         <View style={[styles.notificationContainer, { flex: 1, flexDirection: 'row' }]}>
           <View style={{ flex: 1, flexDirection: 'column' }}>
-            <Text>
+            <Text style={[i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
               {newNotificationNoteA} {newNotificationBoteC}
             </Text>
-            <Text style={styles.prettyTime}>{notification.pretty_time}</Text>
+            <Text style={[styles.prettyTime, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+              {notification.pretty_time}
+            </Text>
           </View>
           <TouchableOpacity
             onPress={() => {
@@ -354,7 +357,7 @@ class NotificationsScreen extends React.Component {
       <Container>
         <View style={{ flex: 1 }}>
           {!this.props.isConnected && this.offlineBarRender()}
-          <Row style={{ height: 50, margin: 15 }}>
+          <Row style={{ height: 60, margin: 15 }}>
             <Col size={2}>
               <View style={{ flex: 1, flexDirection: 'row' }}>
                 {this.state.notificationsCount > 0 && (
