@@ -183,6 +183,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 40,
   },
+  saveButtonOff: {
+    backgroundColor: Colors.tintColor,
+    opacity: 0.5,
+    borderRadius: 5,
+    marginTop: 40,
+  },
   contactFABIcon: {
     color: 'white',
     fontSize: 20,
@@ -327,6 +333,7 @@ class ContactDetailScreen extends React.Component {
 
   state = {
     contact: {},
+    haveTitle: true,
     unmodifiedContact: {},
     users: [],
     usersContacts: [],
@@ -822,6 +829,7 @@ class ContactDetailScreen extends React.Component {
         ...prevState.contact,
         title: value,
       },
+      haveTitle: false,
     }));
   };
 
@@ -5093,7 +5101,11 @@ class ContactDetailScreen extends React.Component {
                       ) : (
                         <Text />
                       )}
-                      <Button block style={styles.saveButton} onPress={this.onSaveContact}>
+                      <Button
+                        block
+                        style={this.state.contact.title ? styles.saveButton : styles.saveButtonOff}
+                        onPress={this.onSaveContact}
+                        disabled={this.state.haveTitle}>
                         <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
                           {i18n.t('global.save')}
                         </Text>
@@ -5157,6 +5169,7 @@ ContactDetailScreen.propTypes = {
   getActivities: PropTypes.func.isRequired,
   saved: PropTypes.bool,
   isConnected: PropTypes.bool,
+  haveTitle: PropTypes.bool,
   endSaveContact: PropTypes.func.isRequired,
   getByIdEnd: PropTypes.func.isRequired,
   contactSettings: PropTypes.shape({
@@ -5263,6 +5276,7 @@ ContactDetailScreen.defaultProps = {
   saved: null,
   isConnected: null,
   contactSettings: null,
+  haveTitle: false,
 };
 
 const mapStateToProps = (state) => ({

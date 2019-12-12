@@ -308,6 +308,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 40,
   },
+  saveButtonOff: {
+    backgroundColor: Colors.tintColor,
+    opacity: 0.5,
+    borderRadius: 5,
+    marginTop: 40,
+  },
   progressIconText: {
     fontSize: 9,
     textAlign: 'center',
@@ -344,6 +350,7 @@ const styles = StyleSheet.create({
 
 const initialState = {
   group: {},
+  haveTitle: true,
   unmodifiedGroup: {},
   onlyView: false,
   loadedLocal: false,
@@ -975,6 +982,7 @@ class GroupDetailScreen extends React.Component {
         ...prevState.group,
         title: value,
       },
+      haveTitle: false,
     }));
   };
 
@@ -3762,7 +3770,11 @@ class GroupDetailScreen extends React.Component {
                       </Picker>
                     </Row>
                   </Grid>
-                  <Button block style={styles.saveButton} onPress={this.onSaveGroup}>
+                  <Button
+                    block
+                    style={this.state.group.title ? styles.saveButton : styles.saveButtonOff}
+                    onPress={this.onSaveGroup}
+                    disabled={this.state.haveTitle}>
                     <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
                       {i18n.t('global.save')}
                     </Text>
@@ -3825,6 +3837,7 @@ GroupDetailScreen.propTypes = {
   saved: PropTypes.bool,
   getByIdEnd: PropTypes.func.isRequired,
   isConnected: PropTypes.bool,
+  haveTitle: PropTypes.bool,
   groupSettings: PropTypes.shape({
     health_metrics: PropTypes.shape({
       values: PropTypes.shape({
@@ -3906,6 +3919,7 @@ GroupDetailScreen.defaultProps = {
   saved: null,
   isConnected: null,
   groupSettings: null,
+  haveTitle: false,
 };
 
 const mapStateToProps = (state) => ({
