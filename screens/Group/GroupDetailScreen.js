@@ -2456,7 +2456,9 @@ class GroupDetailScreen extends React.Component {
   commentsView = () => (
     <View style={{ flex: 1 }}>
       {!this.props.isConnected && this.offlineBarRender()}
-      {this.state.comments.length <= 0 && this.noCommentsRender()}
+      {this.state.comments.length <= 0 &&
+        this.state.activities.length <= 0 &&
+        this.noCommentsRender()}
       <FlatList
         style={styles.root}
         ref={(flatList) => {
