@@ -9,6 +9,7 @@ import {
   getNotificationsCount,
   markViewed,
   markUnread,
+  markAllAsRead,
 } from '../store/actions/notifications.actions';
 import Colors from '../constants/Colors';
 import i18n from '../languages';
@@ -226,6 +227,24 @@ class NotificationsScreen extends React.Component {
     );
   };
 
+  markAll = () => {
+    this.props.markAllAsRead(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.props.userData.id,
+    );
+    if (this.props.isConnected) {
+      this.onRefresh();
+    } else {
+      this.setState({
+        isAll: false,
+        notificationsCount: 0,
+        notificationsSourceData: [],
+        haveNotifications: false,
+      });
+    }
+  };
+
   markAsRead = (notification) => {
     const indexArray = this.state.notificationsSourceData.findIndex(
       (notificationArray) => notificationArray.id === notification.id,
@@ -395,11 +414,13 @@ class NotificationsScreen extends React.Component {
               </TouchableOpacity>
             </Col>
             <Col size={2}>
-              <View>
-                <Text style={[styles.markAllHeader, { marginRight: 1 }]}>
-                  {i18n.t('notificationsScreen.markAll')}
-                </Text>
-              </View>
+              <TouchableOpacity onPress={this.markAll}>
+                <View>
+                  <Text style={[styles.markAllHeader, { marginRight: 1 }]}>
+                    {i18n.t('notificationsScreen.markAll')}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </Col>
           </Row>
           {!this.state.haveNotifications && this.dontHaveNotifications()}
@@ -441,6 +462,9 @@ const mapDispatchToProps = (dispatch) => ({
   markUnread: (domain, token, notificaitonId) => {
     dispatch(markUnread(domain, token, notificaitonId));
   },
+  markAllAsRead: (domain, token, userId) => {
+    dispatch(markAllAsRead(domain, token, userId));
+  },
 });
 
 NotificationsScreen.propTypes = {
@@ -449,10 +473,12 @@ NotificationsScreen.propTypes = {
   getNotificationsCount: PropTypes.func.isRequired,
   markViewed: PropTypes.func.isRequired,
   markUnread: PropTypes.func.isRequired,
+  markAllAsRead: PropTypes.func.isRequired,
   userData: PropTypes.shape({
     domain: PropTypes.string,
     token: PropTypes.string,
     username: PropTypes.string,
+    id: PropTypes.string,
   }).isRequired,
   /* eslint-disable */
   notifications: PropTypes.arrayOf(

@@ -11,6 +11,7 @@ const initialState = {
     displayName: null,
     email: null,
     locale: null,
+    id: null,
   },
 };
 
@@ -35,6 +36,7 @@ export default function userReducer(state = initialState, action) {
           displayName: action.user.user_display_name,
           email: action.user.user_email,
           locale: null,
+          id: null,
         },
         loading: false,
       };
@@ -50,6 +52,7 @@ export default function userReducer(state = initialState, action) {
         userData: {
           ...newState.userData,
           locale: action.userInfo.locale,
+          id: action.userInfo.ID,
         },
       };
     case actions.USER_LOGOUT:
