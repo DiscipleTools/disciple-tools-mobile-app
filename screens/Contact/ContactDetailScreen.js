@@ -49,6 +49,7 @@ import sharingTheGospelIcon from '../../assets/icons/evangelism.png';
 import baptizedIcon from '../../assets/icons/baptism.png';
 import baptizingIcon from '../../assets/icons/water-aerobics.png';
 import inChurchIcon from '../../assets/icons/group.png';
+import dtIcon from '../../assets/images/dt-icon.png';
 import startingChurchesIcon from '../../assets/icons/group-starting.png';
 import i18n from '../../languages';
 
@@ -183,6 +184,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 40,
   },
+  saveButtonOff: {
+    backgroundColor: Colors.tintColor,
+    opacity: 0.5,
+    borderRadius: 5,
+    marginTop: 40,
+  },
   contactFABIcon: {
     color: 'white',
     fontSize: 20,
@@ -210,6 +217,33 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlignVertical: 'center',
     textAlign: 'center',
+  },
+  noCommentsContainer: {
+    padding: 20,
+    textAlignVertical: 'top',
+    textAlign: 'center',
+    height: 300,
+  },
+  noCommentsImage: {
+    opacity: 0.5,
+    height: 70,
+    width: 70,
+    padding: 10,
+  },
+  noCommentsText: {
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#A8A8A8',
+    padding: 5,
+  },
+  noCommentsTextOffilne: {
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#A8A8A8',
+    backgroundColor: '#fff2ac',
+    padding: 5,
   },
 });
 
@@ -327,6 +361,7 @@ class ContactDetailScreen extends React.Component {
 
   state = {
     contact: {},
+    haveTitle: true,
     unmodifiedContact: {},
     users: [],
     usersContacts: [],
@@ -822,6 +857,7 @@ class ContactDetailScreen extends React.Component {
         ...prevState.contact,
         title: value,
       },
+      haveTitle: false,
     }));
   };
 
@@ -1138,6 +1174,25 @@ class ContactDetailScreen extends React.Component {
   offlineBarRender = () => (
     <View style={[styles.offlineBar]}>
       <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+    </View>
+  );
+
+  noCommentsRender = () => (
+    <View style={styles.noCommentsContainer}>
+      <Row style={{ justifyContent: 'center' }}>
+        <Image style={styles.noCommentsImage} source={dtIcon} />
+      </Row>
+      <Text style={styles.noCommentsText}>
+        {i18n.t('contactDetailScreen.noContactCommentPlacheHolder')}
+      </Text>
+      <Text style={styles.noCommentsText}>
+        {i18n.t('contactDetailScreen.noContactCommentPlacheHolder1')}
+      </Text>
+      {!this.props.isConnected && (
+        <Text style={styles.noCommentsTextOffilne}>
+          {i18n.t('contactDetailScreen.noContactCommentPlacheHolderOffline')}
+        </Text>
+      )}
     </View>
   );
 
@@ -2445,6 +2500,7 @@ class ContactDetailScreen extends React.Component {
   commentsView = () => (
     <View style={{ flex: 1 }}>
       {!this.props.isConnected && this.offlineBarRender()}
+      {this.state.comments.length <= 0 && this.noCommentsRender()}
       <FlatList
         style={{
           backgroundColor: '#ffffff',
@@ -5093,7 +5149,11 @@ class ContactDetailScreen extends React.Component {
                       ) : (
                         <Text />
                       )}
-                      <Button block style={styles.saveButton} onPress={this.onSaveContact}>
+                      <Button
+                        block
+                        style={this.state.contact.title ? styles.saveButton : styles.saveButtonOff}
+                        onPress={this.onSaveContact}
+                        disabled={this.state.haveTitle}>
                         <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
                           {i18n.t('global.save')}
                         </Text>
@@ -5157,6 +5217,7 @@ ContactDetailScreen.propTypes = {
   getActivities: PropTypes.func.isRequired,
   saved: PropTypes.bool,
   isConnected: PropTypes.bool,
+  haveTitle: PropTypes.bool,
   endSaveContact: PropTypes.func.isRequired,
   getByIdEnd: PropTypes.func.isRequired,
   contactSettings: PropTypes.shape({
@@ -5263,6 +5324,7 @@ ContactDetailScreen.defaultProps = {
   saved: null,
   isConnected: null,
   contactSettings: null,
+  haveTitle: false,
 };
 
 const mapStateToProps = (state) => ({

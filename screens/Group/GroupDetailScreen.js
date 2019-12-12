@@ -56,6 +56,7 @@ import groupParentIcon from '../../assets/icons/group-parent.png';
 import groupPeerIcon from '../../assets/icons/group-peer.png';
 import groupTypeIcon from '../../assets/icons/group-type.png';
 import footprint from '../../assets/icons/footprint.png';
+import dtIcon from '../../assets/images/dt-icon.png';
 import i18n from '../../languages';
 
 let toastSuccess;
@@ -308,6 +309,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 40,
   },
+  saveButtonOff: {
+    backgroundColor: Colors.tintColor,
+    opacity: 0.5,
+    borderRadius: 5,
+    marginTop: 40,
+  },
   progressIconText: {
     fontSize: 9,
     textAlign: 'center',
@@ -340,10 +347,38 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     textAlign: 'center',
   },
+  noCommentsContainer: {
+    padding: 20,
+    textAlignVertical: 'top',
+    textAlign: 'center',
+    height: 300,
+  },
+  noCommentsImage: {
+    opacity: 0.5,
+    height: 70,
+    width: 70,
+    padding: 10,
+  },
+  noCommentsText: {
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#A8A8A8',
+    padding: 5,
+  },
+  noCommentsTextOffilne: {
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#A8A8A8',
+    backgroundColor: '#fff2ac',
+    padding: 5,
+  },
 });
 
 const initialState = {
   group: {},
+  haveTitle: true,
   unmodifiedGroup: {},
   onlyView: false,
   loadedLocal: false,
@@ -975,6 +1010,7 @@ class GroupDetailScreen extends React.Component {
         ...prevState.group,
         title: value,
       },
+      haveTitle: false,
     }));
   };
 
@@ -1580,6 +1616,25 @@ class GroupDetailScreen extends React.Component {
   offlineBarRender = () => (
     <View style={[styles.offlineBar]}>
       <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+    </View>
+  );
+
+  noCommentsRender = () => (
+    <View style={styles.noCommentsContainer}>
+      <Row style={{ justifyContent: 'center' }}>
+        <Image style={styles.noCommentsImage} source={dtIcon} />
+      </Row>
+      <Text style={styles.noCommentsText}>
+        {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder')}
+      </Text>
+      <Text style={styles.noCommentsText}>
+        {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder1')}
+      </Text>
+      {!this.props.isConnected && (
+        <Text style={styles.noCommentsTextOffilne}>
+          {i18n.t('groupDetailScreen.noGroupCommentPlacheHolderOffline')}
+        </Text>
+      )}
     </View>
   );
 
@@ -2401,6 +2456,7 @@ class GroupDetailScreen extends React.Component {
   commentsView = () => (
     <View style={{ flex: 1 }}>
       {!this.props.isConnected && this.offlineBarRender()}
+      {this.state.comments.length <= 0 && this.noCommentsRender()}
       <FlatList
         style={styles.root}
         ref={(flatList) => {
@@ -3762,7 +3818,11 @@ class GroupDetailScreen extends React.Component {
                       </Picker>
                     </Row>
                   </Grid>
-                  <Button block style={styles.saveButton} onPress={this.onSaveGroup}>
+                  <Button
+                    block
+                    style={this.state.group.title ? styles.saveButton : styles.saveButtonOff}
+                    onPress={this.onSaveGroup}
+                    disabled={this.state.haveTitle}>
                     <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
                       {i18n.t('global.save')}
                     </Text>
@@ -3825,6 +3885,7 @@ GroupDetailScreen.propTypes = {
   saved: PropTypes.bool,
   getByIdEnd: PropTypes.func.isRequired,
   isConnected: PropTypes.bool,
+  haveTitle: PropTypes.bool,
   groupSettings: PropTypes.shape({
     health_metrics: PropTypes.shape({
       values: PropTypes.shape({
@@ -3906,6 +3967,7 @@ GroupDetailScreen.defaultProps = {
   saved: null,
   isConnected: null,
   groupSettings: null,
+  haveTitle: false,
 };
 
 const mapStateToProps = (state) => ({
