@@ -14,7 +14,7 @@ import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import AppNavigator from './navigation/AppNavigator';
 import { store, persistor } from './store/store';
-import i18n from './languages';
+// import i18n from './languages';
 
 // notifications
 
@@ -142,8 +142,8 @@ class App extends React.Component {
     this.setState({ isLoadingComplete: true });
 
     // Initialize language from redux store after it has been hydrated
-    const state = store.getState();
-    i18n.setLocale(state.i18nReducer.locale);
+    // const state = store.getState();
+    // i18n.setLocale(state.i18nReducer.locale);
   };
 
   render() {

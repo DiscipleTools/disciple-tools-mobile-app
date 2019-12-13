@@ -1,6 +1,4 @@
-import {
-  put, take, takeLatest, all, takeEvery,
-} from 'redux-saga/effects';
+import { put, take, takeLatest, all, takeEvery } from 'redux-saga/effects';
 import * as actions from '../actions/user.actions';
 
 export function* login({ domain, username, password }) {
@@ -51,7 +49,6 @@ export function* login({ domain, username, password }) {
 
 export function* getUserInfo({ domain, token }) {
   yield put({ type: actions.GET_MY_USER_INFO_START });
-
   yield put({
     type: 'REQUEST',
     payload: {
