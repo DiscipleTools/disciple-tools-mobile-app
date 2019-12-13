@@ -2581,7 +2581,11 @@ class ContactDetailScreen extends React.Component {
                 onChangeText={this.setComment}
                 onContentSizeChange={this.setHeight}
                 multiline
-                style={[styles.commentInput, { height: this.state.height }]}
+                style={[
+                  styles.commentInput,
+                  { height: this.state.height },
+                  i18n.isRTL ? { textAlign: 'right', flex: 1 } : {},
+                ]}
               />
               <TouchableOpacity
                 onPress={() => this.onSaveComment()}
