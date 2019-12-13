@@ -58,8 +58,8 @@ npx jest TextField
 npx jest components/*
 ```
 
-[appstore-image]: https://github.com/DiscipleTools/disciple-tools-mobile-app/badges/appstore.png
-[playstore-image]: https://github.com/DiscipleTools/disciple-tools-mobile-app/badges/playstore.png
+[appstore-image]: https://github.com/DiscipleTools/disciple-tools-mobile-app/blob/development/badges/appstore.png
+[playstore-image]: https://github.com/DiscipleTools/disciple-tools-mobile-app/blob/development/badges/playstore.png
 
 [appstore-url]: https://apps.apple.com/us/app/d-t/id1483836867
 [playstore-url]: https://play.google.com/store/apps/details?id=tools.disciple.app
