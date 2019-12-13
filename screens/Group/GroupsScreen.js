@@ -203,7 +203,13 @@ class GroupsScreen extends React.Component {
   );
 
   onRefresh = () => {
-    this.props.getAllGroups(this.props.userData.domain, this.props.userData.token);
+    this.props.getAllGroups(
+      this.props.userData.domain,
+      this.props.userData.token,
+      0,
+      100,
+      '-last_modified',
+    );
     this.setState(
       {
         refresh: true,
@@ -400,8 +406,8 @@ const mapStateToProps = (state) => ({
   isConnected: state.networkConnectivityReducer.isConnected,
 });
 const mapDispatchToProps = (dispatch) => ({
-  getAllGroups: (domain, token) => {
-    dispatch(getAll(domain, token));
+  getAllGroups: (domain, token, offset, limit, sort) => {
+    dispatch(getAll(domain, token, offset, limit, sort));
   },
 });
 

@@ -1,16 +1,14 @@
-import {
-  put, take, all, takeLatest, takeEvery, select,
-} from 'redux-saga/effects';
+import { put, take, all, takeLatest, takeEvery, select } from 'redux-saga/effects';
 
 import * as actions from '../actions/groups.actions';
 
-export function* getAll({ domain, token }) {
+export function* getAll({ domain, token, offset, limit, sort }) {
   yield put({ type: actions.GROUPS_GETALL_START });
 
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/groups`,
+      url: `https://${domain}/wp-json/dt-posts/v2/groups?offset=${offset}&limit=${limit}&sort=${sort}`,
       data: {
         method: 'GET',
         headers: {
@@ -21,7 +19,7 @@ export function* getAll({ domain, token }) {
       action: actions.GROUPS_GETALL_RESPONSE,
     },
   });
-  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
   try {
     let response = yield take(actions.GROUPS_GETALL_RESPONSE);
     response = response.payload;
@@ -60,7 +58,7 @@ export function* getAll({ domain, token }) {
 }
 
 export function* saveGroup({ domain, token, groupData }) {
-  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
 
   yield put({ type: actions.GROUPS_SAVE_START });
 
@@ -228,19 +226,20 @@ export function* getUsersAndContacts({ domain, token }) {
   }
 }
 
-export function* getCommentsByGroup({
-  domain, token, groupId, offset, limit,
-}) {
-  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+export function* getCommentsByGroup({ domain, token, groupId, offset, limit }) {
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
   yield put({ type: actions.GROUPS_GET_COMMENTS_START });
 
   try {
     if (!isConnected || Number.isNaN(groupId)) {
-      let queue = yield select(state => state.requestReducer.queue);
-      const authorName = yield select(state => state.userReducer.userData.username);
-      queue = queue.filter(requestQueue => (requestQueue.data.method === 'POST'
-        && requestQueue.action === 'GROUPS_SAVE_COMMENT_RESPONSE'
-        && requestQueue.url.includes(`groups/${groupId}/comments`)));
+      let queue = yield select((state) => state.requestReducer.queue);
+      const authorName = yield select((state) => state.userReducer.userData.username);
+      queue = queue.filter(
+        (requestQueue) =>
+          requestQueue.data.method === 'POST' &&
+          requestQueue.action === 'GROUPS_SAVE_COMMENT_RESPONSE' &&
+          requestQueue.url.includes(`groups/${groupId}/comments`),
+      );
       yield put({
         type: actions.GROUPS_GET_COMMENTS_SUCCESS,
         comments: queue.map((request) => {
@@ -299,10 +298,8 @@ export function* getCommentsByGroup({
   }
 }
 
-export function* saveComment({
-  domain, token, groupId, commentData,
-}) {
-  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+export function* saveComment({ domain, token, groupId, commentData }) {
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
 
   yield put({ type: actions.GROUPS_SAVE_COMMENT_START });
 
@@ -343,7 +340,7 @@ export function* saveComment({
         });
       }
     } else {
-      const authorName = yield select(state => state.userReducer.userData.username);
+      const authorName = yield select((state) => state.userReducer.userData.username);
       jsonData = {
         ...response,
         author: authorName,
@@ -460,9 +457,7 @@ export function* getPeopleGroups({ domain, token }) {
   }
 }
 
-export function* getActivitiesByGroup({
-  domain, token, groupId, offset, limit,
-}) {
+export function* getActivitiesByGroup({ domain, token, groupId, offset, limit }) {
   yield put({ type: actions.GROUPS_GET_ACTIVITIES_START });
 
   yield put({
