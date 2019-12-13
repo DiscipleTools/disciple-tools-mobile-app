@@ -5,12 +5,12 @@ const initialState = {
   isRTL: false,
 };
 
-export default function networkConnectivityReducer(state = initialState, action) {
+export default function i18nReducer(state = initialState, action) {
   switch (action.type) {
     case actions.I18N_SETLANGUAGE:
       return {
         locale: action.locale,
-        isRTL: !!action.isRTL,
+        isRTL: action.isRTL,
       };
     default:
       return state;

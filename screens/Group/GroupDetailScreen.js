@@ -2543,16 +2543,19 @@ class GroupDetailScreen extends React.Component {
                 onChangeText={this.setComment}
                 onContentSizeChange={this.setHeight}
                 multiline
-                style={{
-                  borderColor: '#B4B4B4',
-                  borderRadius: 5,
-                  borderWidth: 1,
-                  flex: 1,
-                  margin: 10,
-                  paddingLeft: 5,
-                  paddingRight: 5,
-                  height: this.state.height,
-                }}
+                style={[
+                  {
+                    borderColor: '#B4B4B4',
+                    borderRadius: 5,
+                    borderWidth: 1,
+                    flex: 1,
+                    margin: 10,
+                    paddingLeft: 5,
+                    paddingRight: 5,
+                    height: this.state.height,
+                  },
+                  i18n.isRTL ? { textAlign: 'right', flex: 1 } : {},
+                ]}
               />
               <TouchableOpacity
                 onPress={() => this.onSaveComment()}
