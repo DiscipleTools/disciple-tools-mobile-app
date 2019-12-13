@@ -1,17 +1,14 @@
-import {
-  put, take, takeEvery, takeLatest, all, select,
-} from 'redux-saga/effects';
+import { put, take, takeEvery, takeLatest, all, select } from 'redux-saga/effects';
 
 import * as actions from '../actions/contacts.actions';
 
-
-export function* getAll({ domain, token }) {
+export function* getAll({ domain, token, offset, limit, sort }) {
   yield put({ type: actions.CONTACTS_GETALL_START });
 
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/contacts`,
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts?offset=${offset}&limit=${limit}&sort=${sort}`,
       data: {
         method: 'GET',
         headers: {
@@ -22,7 +19,7 @@ export function* getAll({ domain, token }) {
       action: actions.CONTACTS_GETALL_RESPONSE,
     },
   });
-  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
   try {
     let response = yield take(actions.CONTACTS_GETALL_RESPONSE);
     response = response.payload;
@@ -68,7 +65,7 @@ export function* getAll({ domain, token }) {
 }
 
 export function* save({ domain, token, contactData }) {
-  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
 
   yield put({ type: actions.CONTACTS_SAVE_START });
 
@@ -188,10 +185,8 @@ export function* getById({ domain, token, contactId }) {
   }
 }
 
-export function* saveComment({
-  domain, token, contactId, commentData,
-}) {
-  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+export function* saveComment({ domain, token, contactId, commentData }) {
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
 
   yield put({ type: actions.CONTACTS_SAVE_COMMENT_START });
 
@@ -232,7 +227,7 @@ export function* saveComment({
         });
       }
     } else {
-      const authorName = yield select(state => state.userReducer.userData.username);
+      const authorName = yield select((state) => state.userReducer.userData.username);
       jsonData = {
         ...response,
         author: authorName,
@@ -255,18 +250,19 @@ export function* saveComment({
   }
 }
 
-export function* getCommentsByContact({
-  domain, token, contactId, offset, limit,
-}) {
-  const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+export function* getCommentsByContact({ domain, token, contactId, offset, limit }) {
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
   yield put({ type: actions.CONTACTS_GET_COMMENTS_START });
   try {
     if (!isConnected || Number.isNaN(contactId)) {
-      let queue = yield select(state => state.requestReducer.queue);
-      const authorName = yield select(state => state.userReducer.userData.username);
-      queue = queue.filter(requestQueue => (requestQueue.data.method === 'POST'
-        && requestQueue.action === 'CONTACTS_SAVE_COMMENT_RESPONSE'
-        && requestQueue.url.includes(`contacts/${contactId}/comments`)));
+      let queue = yield select((state) => state.requestReducer.queue);
+      const authorName = yield select((state) => state.userReducer.userData.username);
+      queue = queue.filter(
+        (requestQueue) =>
+          requestQueue.data.method === 'POST' &&
+          requestQueue.action === 'CONTACTS_SAVE_COMMENT_RESPONSE' &&
+          requestQueue.url.includes(`contacts/${contactId}/comments`),
+      );
       yield put({
         type: actions.CONTACTS_GET_COMMENTS_SUCCESS,
         comments: queue.map((request) => {
@@ -325,9 +321,7 @@ export function* getCommentsByContact({
   }
 }
 
-export function* getActivitiesByContact({
-  domain, token, contactId, offset, limit,
-}) {
+export function* getActivitiesByContact({ domain, token, contactId, offset, limit }) {
   yield put({ type: actions.CONTACTS_GET_ACTIVITIES_START });
   if (Number.isNaN(contactId)) {
     yield put({

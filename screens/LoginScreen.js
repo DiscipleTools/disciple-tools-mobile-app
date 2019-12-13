@@ -361,8 +361,20 @@ class LoginScreen extends React.Component {
     this.props.searchGroups(this.props.userData.domain, this.props.userData.token);
     this.props.getContactSettings(this.props.userData.domain, this.props.userData.token);
     this.props.getGroupSettings(this.props.userData.domain, this.props.userData.token);
-    this.props.getContacts(this.props.userData.domain, this.props.userData.token);
-    this.props.getGroups(this.props.userData.domain, this.props.userData.token);
+    this.props.getContacts(
+      this.props.userData.domain,
+      this.props.userData.token,
+      0,
+      100,
+      '-last_modified',
+    );
+    this.props.getGroups(
+      this.props.userData.domain,
+      this.props.userData.token,
+      0,
+      100,
+      '-last_modified',
+    );
   };
 
   getUserInfo = () => {
@@ -667,14 +679,14 @@ const mapDispatchToProps = (dispatch) => ({
   getGroupSettings: (domain, token) => {
     dispatch(getGroupSettings(domain, token));
   },
-  getContacts: (domain, token) => {
-    dispatch(getAllContacts(domain, token));
+  getContacts: (domain, token, offset, limit, sort) => {
+    dispatch(getAllContacts(domain, token, offset, limit, sort));
   },
-  getGroups: (domain, token) => {
-    dispatch(getAllGroups(domain, token));
+  getGroups: (domain, token, offset, limit, sort) => {
+    dispatch(getAllGroups(domain, token, offset, limit, sort));
   },
-  getUserInfo: (domain, token) => {
-    dispatch(getUserInfo(domain, token));
+  getUserInfo: (domain, token, offset, limit, sort) => {
+    dispatch(getUserInfo(domain, token, offset, limit, sort));
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

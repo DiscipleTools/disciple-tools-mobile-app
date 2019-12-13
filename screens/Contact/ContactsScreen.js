@@ -198,7 +198,13 @@ class ContactsScreen extends React.Component {
   );
 
   onRefresh = () => {
-    this.props.getAllContacts(this.props.userData.domain, this.props.userData.token);
+    this.props.getAllContacts(
+      this.props.userData.domain,
+      this.props.userData.token,
+      0,
+      100,
+      '-last_modified',
+    );
     this.setState(
       {
         refresh: true,
@@ -421,8 +427,8 @@ const mapStateToProps = (state) => ({
   isConnected: state.networkConnectivityReducer.isConnected,
 });
 const mapDispatchToProps = (dispatch) => ({
-  getAllContacts: (domain, token) => {
-    dispatch(getAll(domain, token));
+  getAllContacts: (domain, token, offset, limit, sort) => {
+    dispatch(getAll(domain, token, offset, limit, sort));
   },
 });
 

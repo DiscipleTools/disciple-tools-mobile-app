@@ -48,11 +48,14 @@ export const CONTACTS_GET_SETTINGS_FAILURE = 'CONTACTS_GET_SETTINGS_FAILURE';
 /*
  * Action Creators
  */
-export function getAll(domain, token) {
+export function getAll(domain, token, offset, limit, sort) {
   return {
     type: CONTACTS_GETALL,
     domain,
     token,
+    offset,
+    limit,
+    sort,
   };
 }
 
