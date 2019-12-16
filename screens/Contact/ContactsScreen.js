@@ -102,6 +102,9 @@ class ContactsScreen extends React.Component {
     refresh: false,
     search: '',
     haveContacts: true,
+    offset: 0,
+    limit: 100,
+    sort: '-last_modified',
   };
 
   componentDidUpdate(prevProps) {
@@ -201,9 +204,9 @@ class ContactsScreen extends React.Component {
     this.props.getAllContacts(
       this.props.userData.domain,
       this.props.userData.token,
-      0,
-      100,
-      '-last_modified',
+      this.state.offset,
+      this.state.limit,
+      this.state.sort,
     );
     this.setState(
       {
