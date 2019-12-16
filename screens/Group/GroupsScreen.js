@@ -102,7 +102,12 @@ class GroupsScreen extends React.Component {
     refresh: false,
     search: '',
     dataSourceGroups: this.props.groups,
+    dataSourceGroupsFiltered: [],
     haveGroups: true,
+    filtered: false,
+    offset: 0,
+    limit: 100,
+    sort: '-last_modified',
   };
 
   componentDidUpdate(prevProps) {
@@ -129,11 +134,21 @@ class GroupsScreen extends React.Component {
     let newState;
     if (groups) {
       if (groups.length > 0) {
-        newState = {
-          ...prevState,
-          dataSourceGroups: groups,
-          haveGroups: true,
-        };
+        if (prevState.filtered) {
+          newState = {
+            ...prevState,
+            dataSourceGroups: prevState.dataSourceGroupsFiltered,
+            haveGroups: true,
+            refresh: false,
+          };
+        } else {
+          newState = {
+            ...prevState,
+            dataSourceGroups: groups,
+            haveGroups: true,
+            refresh: false,
+          };
+        }
       } else {
         newState = {
           ...prevState,
@@ -206,13 +221,14 @@ class GroupsScreen extends React.Component {
     this.props.getAllGroups(
       this.props.userData.domain,
       this.props.userData.token,
-      0,
-      100,
-      '-last_modified',
+      this.state.offset,
+      this.state.limit,
+      this.state.sort,
     );
     this.setState(
       {
         refresh: true,
+        filtered: false,
       },
       () => {
         this.setState({
@@ -297,18 +313,14 @@ class GroupsScreen extends React.Component {
       }
       return itemsFiltered;
     });
-    this.setState(
-      {
+    if (itemsFiltered.length > 0) {
+      this.setState({
         refresh: true,
-      },
-      () => {
-        this.setState({
-          dataSourceGroups: itemsFiltered,
-          search: text,
-          refresh: false,
-        });
-      },
-    );
+        dataSourceGroupsFiltered: itemsFiltered,
+        filtered: true,
+        search: text,
+      });
+    }
   }
 
   static navigationOptions = {
