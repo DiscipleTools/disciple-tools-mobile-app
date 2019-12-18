@@ -132,6 +132,9 @@ class LoginScreen extends React.Component {
     contactSettingsListRetrieved: false,
     groupSettingsListRetrieved: false,
     appLanguageSet: false,
+    offset: 0,
+    limit: 100,
+    sort: '-last_modified',
   };
 
   constructor(props) {
@@ -364,16 +367,16 @@ class LoginScreen extends React.Component {
     this.props.getContacts(
       this.props.userData.domain,
       this.props.userData.token,
-      0,
-      100,
-      '-last_modified',
+      this.state.offset,
+      this.state.limit,
+      this.state.sort,
     );
     this.props.getGroups(
       this.props.userData.domain,
       this.props.userData.token,
-      0,
-      100,
-      '-last_modified',
+      this.state.offset,
+      this.state.limit,
+      this.state.sort,
     );
   };
 

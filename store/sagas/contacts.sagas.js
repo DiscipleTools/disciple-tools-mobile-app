@@ -4,7 +4,6 @@ import * as actions from '../actions/contacts.actions';
 
 export function* getAll({ domain, token, offset, limit, sort }) {
   yield put({ type: actions.CONTACTS_GETALL_START });
-
   yield put({
     type: 'REQUEST',
     payload: {

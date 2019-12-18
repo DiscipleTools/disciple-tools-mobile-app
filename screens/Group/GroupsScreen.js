@@ -320,6 +320,12 @@ class GroupsScreen extends React.Component {
         filtered: true,
         search: text,
       });
+    } else {
+      this.setState({
+        refresh: true,
+        filtered: true,
+        search: text,
+      });
     }
   }
 

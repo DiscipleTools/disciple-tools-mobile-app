@@ -92,8 +92,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff2ac',
     padding: 5,
   },
+  loadMoreFooterText: {
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#3f729b',
+  },
 });
-let firstloader = 0;
 let toastError;
 
 class ContactsScreen extends React.Component {
@@ -101,11 +106,17 @@ class ContactsScreen extends React.Component {
   state = {
     refresh: false,
     search: '',
+    dataSourceContact: [],
+    dataSourceContactsFiltered: [],
     haveContacts: true,
     offset: 0,
     limit: 100,
     sort: '-last_modified',
   };
+
+  componentDidMount() {
+    this.onRefresh();
+  }
 
   componentDidUpdate(prevProps) {
     const { error } = this.props;
@@ -128,29 +139,69 @@ class ContactsScreen extends React.Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const { contacts } = nextProps;
-    let newState;
+    let newState = {
+      ...prevState,
+    };
     if (contacts) {
-      if (contacts.length > 0) {
+      if (prevState.filtered) {
+        newState = {
+          ...prevState,
+          dataSourceContact: prevState.dataSourceContactsFiltered,
+          haveContacts: true,
+          refresh: false,
+        };
+      } else if (newState.offset > 0) {
+        if (contacts.length > 0 && prevState.dataSourceContact !== contacts) {
+          newState = {
+            ...newState,
+            dataSourceContact: prevState.dataSourceContact.concat(contacts),
+          };
+        } else {
+          newState = {
+            ...newState,
+            dataSourceContact: prevState.dataSourceContact,
+          };
+        }
+      } else if (contacts.length > 0) {
         newState = {
           ...prevState,
           dataSourceContact: contacts,
           haveContacts: true,
+          dataSourceContactsFiltered: [],
+          offset: 0,
         };
       } else {
         newState = {
           ...prevState,
-          dataSourceContact: [],
+          dataSourceContact:
+            contacts.length > prevState.dataSourceContact.length
+              ? contacts
+              : prevState.dataSourceContact,
+          dataSourceContactsFiltered: [],
           haveContacts: false,
+          offset: 0,
         };
       }
     }
 
-    firstloader += 1;
-    if (firstloader < 5) {
-      return newState;
-    }
-    return null;
+    return newState;
   }
+
+  renderFooter = () => {
+    // it will show indicator at the bottom of the list when data is loading otherwise it returns null
+    return (
+      <View style={styles.loadMoreFooterText}>
+        {!this.state.filtered && (
+          <TouchableOpacity
+            onPress={() => {
+              this.onRefresh(true);
+            }}>
+            <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
 
   renderRow = (contact) => (
     <TouchableOpacity
@@ -200,25 +251,40 @@ class ContactsScreen extends React.Component {
     />
   );
 
-  onRefresh = () => {
-    this.props.getAllContacts(
-      this.props.userData.domain,
-      this.props.userData.token,
-      this.state.offset,
-      this.state.limit,
-      this.state.sort,
-    );
-    this.setState(
-      {
-        refresh: true,
-      },
-      () => {
-        this.setState({
-          dataSourceContact: this.props.contacts,
-          refresh: false,
-        });
-      },
-    );
+  onRefresh = (pagination = false) => {
+    if (pagination) {
+      this.setState(
+        (prevState) => ({
+          offset: prevState.offset + prevState.limit,
+          filtered: false,
+        }),
+        () => {
+          this.props.getAllContacts(
+            this.props.userData.domain,
+            this.props.userData.token,
+            this.state.offset,
+            this.state.limit,
+            this.state.sort,
+          );
+        },
+      );
+    } else {
+      this.setState(
+        () => ({
+          offset: 0,
+          filtered: false,
+        }),
+        () => {
+          this.props.getAllContacts(
+            this.props.userData.domain,
+            this.props.userData.token,
+            this.state.offset,
+            this.state.limit,
+            this.state.sort,
+          );
+        },
+      );
+    }
   };
 
   goToContactDetailScreen = (contactData = null) => {
@@ -278,59 +344,69 @@ class ContactsScreen extends React.Component {
 
   SearchFilterFunction(text) {
     const itemsFiltered = [];
-    this.props.contacts.filter(function(item) {
-      let filterByPhone = false;
-      let filterByEmail = false;
-      const textData = text
-        .toUpperCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
-      const itemDataTitle = item.title
-        .toUpperCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
-      const filterByTitle = itemDataTitle.includes(textData);
+    if (text.length > 0) {
+      this.props.contacts.filter(function(item) {
+        let filterByPhone = false;
+        let filterByEmail = false;
+        const textData = text
+          .toUpperCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+        const itemDataTitle = item.title
+          .toUpperCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+        const filterByTitle = itemDataTitle.includes(textData);
 
-      if (item.contact_phone !== undefined) {
-        item.contact_phone.forEach((elements) => {
-          const itemDataPhone = elements.value.toUpperCase();
-          if (filterByPhone === false) {
-            filterByPhone = itemDataPhone.includes(textData);
-          }
-        });
-      }
+        if (item.contact_phone !== undefined) {
+          item.contact_phone.forEach((elements) => {
+            const itemDataPhone = elements.value.toUpperCase();
+            if (filterByPhone === false) {
+              filterByPhone = itemDataPhone.includes(textData);
+            }
+          });
+        }
 
-      if (item.contact_email !== undefined) {
-        item.contact_email.forEach((elements) => {
-          const itemDataEmail = elements.value.toUpperCase();
-          if (filterByEmail === false) {
-            filterByEmail = itemDataEmail.includes(textData);
-          }
-        });
-      }
-      if (filterByTitle === true) {
-        itemsFiltered.push(item);
-      } else if (filterByPhone === true) {
-        itemsFiltered.push(item);
-      } else if (filterByEmail === true) {
-        itemsFiltered.push(item);
-      }
+        if (item.contact_email !== undefined) {
+          item.contact_email.forEach((elements) => {
+            const itemDataEmail = elements.value.toUpperCase();
+            if (filterByEmail === false) {
+              filterByEmail = itemDataEmail.includes(textData);
+            }
+          });
+        }
+        if (filterByTitle === true) {
+          itemsFiltered.push(item);
+        } else if (filterByPhone === true) {
+          itemsFiltered.push(item);
+        } else if (filterByEmail === true) {
+          itemsFiltered.push(item);
+        }
 
-      return itemsFiltered;
-    });
-
-    this.setState(
-      {
-        refresh: true,
-      },
-      () => {
+        return itemsFiltered;
+      });
+      if (itemsFiltered.length > 0) {
         this.setState({
-          dataSourceContact: itemsFiltered,
+          refresh: true,
+          dataSourceContactsFiltered: itemsFiltered,
+          filtered: true,
           search: text,
-          refresh: false,
         });
-      },
-    );
+      } else {
+        this.setState({
+          refresh: true,
+          filtered: true,
+          search: text,
+        });
+      }
+    } else {
+      this.setState({
+        refresh: false,
+        filtered: false,
+        search: '',
+        dataSourceContactsFiltered: [],
+      });
+    }
   }
 
   static navigationOptions = {
@@ -353,13 +429,18 @@ class ContactsScreen extends React.Component {
           <FlatList
             ListHeaderComponent={this.renderHeader}
             data={this.state.dataSourceContact}
-            extraData={this.state.refresh}
+            extraData={this.state.loading}
             renderItem={(item) => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
             refreshControl={
               <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
             }
-            keyExtractor={(item) => item.ID.toString()}
+            /* onEndReachedThreshold = {1}
+            onEndReached = {() => {
+              this.onRefresh(true);
+            }} */
+            ListFooterComponent={this.renderFooter}
+            // keyExtractor={(item) => item.ID.toString()}
           />
           <Fab
             style={{ backgroundColor: Colors.tintColor }}
