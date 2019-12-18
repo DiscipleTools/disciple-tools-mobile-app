@@ -1,5 +1,8 @@
 import { put, take, takeLatest, all, takeEvery } from 'redux-saga/effects';
 import * as actions from '../actions/user.actions';
+import Constants from 'expo-constants';
+import * as Permissions from 'expo-permissions';
+import { Notifications } from 'expo';
 
 export function* login({ domain, username, password }) {
   yield put({ type: actions.USER_LOGIN_START });
@@ -26,7 +29,11 @@ export function* login({ domain, username, password }) {
     response = response.payload;
     const jsonData = response.data;
     if (response.status === 200) {
-      yield put({ type: actions.USER_LOGIN_SUCCESS, domain, user: jsonData });
+
+      yield put({ type: actions.USER_LOGIN_SUCCESS, domain, user: jsonData });   
+
+      yield put({ type: actions.USER_GET_PUSH_TOKEN });  
+
     } else {
       yield put({
         type: actions.USER_LOGIN_FAILURE,
@@ -39,6 +46,76 @@ export function* login({ domain, username, password }) {
   } catch (error) {
     yield put({
       type: actions.USER_LOGIN_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
+export function* registerForPushNotifications(userData) {
+
+  const expoPushToken = '';
+
+  if (Constants.isDevice) {
+    // Get permission
+    const { status: existingStatus } = yield Permissions.getAsync(Permissions.NOTIFICATIONS);
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = yield Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    // Get push token from expo
+    expoPushToken = yield Notifications.getExpoPushTokenAsync();
+    yield put({ type: actions.USER_ADD_PUSH_TOKEN, userData: userData, expoPushToken: expoPushToken });
+
+  } else {
+    console.log('Must use physical device for Push Notifications');
+  }
+
+  let domain = userData.domain;
+  let token = userData.token;
+
+  // send push token to DT
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt/v1/user/update`,
+      data: {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: `{ "add_push_token": "${expoPushToken}" }`,
+      },
+      action: actions.USER_ADD_PUSH_TOKEN_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.USER_ADD_PUSH_TOKEN_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({ type: actions.USER_ADD_PUSH_TOKEN_SUCCESS, domain, user: jsonData });
+    } else {
+      yield put({
+        type: actions.USER_ADD_PUSH_TOKEN_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.USER_ADD_PUSH_TOKEN_FAILURE,
       error: {
         code: '400',
         message: 'Unable to process the request. Please try again later.',
@@ -96,6 +173,7 @@ export function* getUserInfo({ domain, token }) {
 export default function* userSaga() {
   yield all([
     takeLatest(actions.USER_LOGIN, login),
-    takeEvery(actions.GET_MY_USER_INFO, getUserInfo),
+    takeEvery(actions.GET_MY_USER_INFO, getUserInfo),    
+    takeLatest(actions.USER_GET_PUSH_TOKEN, registerForPushNotifications),
   ]);
 }

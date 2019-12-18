@@ -8,6 +8,12 @@ export const USER_LOGIN_RESPONSE = 'USER_LOGIN_RESPONSE';
 export const USER_LOGIN_FAILURE = 'USER_LOGIN_FAILURE';
 export const USER_LOGOUT = 'USER_LOGOUT';
 
+export const USER_GET_PUSH_TOKEN = 'USER_GET_PUSH_TOKEN';
+
+export const USER_ADD_PUSH_TOKEN = 'USER_ADD_PUSH_TOKEN';
+export const USER_ADD_PUSH_TOKEN_SUCCESS = 'USER_ADD_PUSH_TOKEN_RESPONSE';
+export const USER_ADD_PUSH_TOKEN_FAILURE = 'USER_ADD_PUSH_TOKEN_RESPONSE';
+
 export const GET_MY_USER_INFO = 'GET_MY_USER_INFO';
 export const GET_MY_USER_INFO_START = 'GET_MY_USER_INFO_START';
 export const GET_MY_USER_INFO_RESPONSE = 'GET_MY_USER_INFO_RESPONSE';
@@ -23,6 +29,14 @@ export function login(domain, username, password) {
     domain,
     username,
     password,
+  };
+}
+
+export function getPushToken(domain, token) {
+  return {
+    type: USER_GET_PUSH_TOKEN,
+    domain,
+    token,
   };
 }
 

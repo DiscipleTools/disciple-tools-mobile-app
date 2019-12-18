@@ -12,6 +12,7 @@ const initialState = {
     email: null,
     locale: null,
     id: null,
+    expoPushToken: null,
   },
 };
 
@@ -53,6 +54,21 @@ export default function userReducer(state = initialState, action) {
           ...newState.userData,
           locale: action.userInfo.locale,
           id: action.userInfo.ID,
+        },
+      };
+      case actions.USER_GET_PUSH_TOKEN:
+        return {
+          ...newState,
+          userData: {
+            ...newState.userData,
+          },
+        };
+    case actions.USER_ADD_PUSH_TOKEN:
+      return {
+        ...newState,
+        userData: {
+          ...newState.userData,
+          expoPushToken: action.expoPushToken,
         },
       };
     case actions.USER_LOGOUT:
