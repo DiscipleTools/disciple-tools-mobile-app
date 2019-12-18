@@ -15,6 +15,7 @@ const initialState = {
   loadingActivities: false,
   saved: false,
   settings: null,
+  offset: 0,
 };
 
 export default function contactsReducer(state = initialState, action) {
@@ -37,7 +38,7 @@ export default function contactsReducer(state = initialState, action) {
       };
     case actions.CONTACTS_GETALL_SUCCESS: {
       let { contacts } = action;
-      const { offline } = action;
+      const { offline, offset } = action;
       const localContacts = newState.contacts.filter((localContact) =>
         Number.isNaN(localContact.ID),
       );
@@ -150,6 +151,9 @@ export default function contactsReducer(state = initialState, action) {
           return mappedContact;
         }); /* .sort((a, b) => parseInt(a.last_modified, 10) - parseInt(b.last_modified, 10)).reverse(); */
         contacts = localContacts.concat(dataBaseContacts);
+      }
+      if (offset > 0) {
+        contacts = newState.contacts.concat(contacts);
       }
       return {
         ...newState,

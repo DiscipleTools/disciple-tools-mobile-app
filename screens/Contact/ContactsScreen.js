@@ -110,13 +110,10 @@ class ContactsScreen extends React.Component {
     dataSourceContactsFiltered: [],
     haveContacts: true,
     offset: 0,
-    limit: 100,
+    limit: 20,
     sort: '-last_modified',
+    contacts: [],
   };
-
-  componentDidMount() {
-    this.onRefresh();
-  }
 
   componentDidUpdate(prevProps) {
     const { error } = this.props;
@@ -141,6 +138,7 @@ class ContactsScreen extends React.Component {
     const { contacts } = nextProps;
     let newState = {
       ...prevState,
+      contacts: contacts || prevState.contacts,
     };
     if (contacts) {
       if (prevState.filtered) {
@@ -150,36 +148,10 @@ class ContactsScreen extends React.Component {
           haveContacts: true,
           refresh: false,
         };
-      } else if (newState.offset > 0) {
-        if (contacts.length > 0 && prevState.dataSourceContact !== contacts) {
-          newState = {
-            ...newState,
-            dataSourceContact: prevState.dataSourceContact.concat(contacts),
-          };
-        } else {
-          newState = {
-            ...newState,
-            dataSourceContact: prevState.dataSourceContact,
-          };
-        }
-      } else if (contacts.length > 0) {
-        newState = {
-          ...prevState,
-          dataSourceContact: contacts,
-          haveContacts: true,
-          dataSourceContactsFiltered: [],
-          offset: 0,
-        };
       } else {
         newState = {
-          ...prevState,
-          dataSourceContact:
-            contacts.length > prevState.dataSourceContact.length
-              ? contacts
-              : prevState.dataSourceContact,
-          dataSourceContactsFiltered: [],
-          haveContacts: false,
-          offset: 0,
+          ...newState,
+          dataSourceContact: contacts,
         };
       }
     }
@@ -188,7 +160,6 @@ class ContactsScreen extends React.Component {
   }
 
   renderFooter = () => {
-    // it will show indicator at the bottom of the list when data is loading otherwise it returns null
     return (
       <View style={styles.loadMoreFooterText}>
         {!this.state.filtered && (
@@ -509,6 +480,7 @@ const mapStateToProps = (state) => ({
   error: state.contactsReducer.error,
   contactSettings: state.contactsReducer.settings,
   isConnected: state.networkConnectivityReducer.isConnected,
+  offset: state.contactsReducer.offset,
 });
 const mapDispatchToProps = (dispatch) => ({
   getAllContacts: (domain, token, offset, limit, sort) => {
