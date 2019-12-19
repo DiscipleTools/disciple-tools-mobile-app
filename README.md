@@ -63,3 +63,6 @@ npx jest components/*
 
 [appstore-url]: https://apps.apple.com/us/app/d-t/id1483836867
 [playstore-url]: https://play.google.com/store/apps/details?id=tools.disciple.app
+
+## Contributing
+[Contributing Guide](https://github.com/DiscipleTools/disciple-tools-mobile-app/blob/development/CONTRIBUTING.md)
