@@ -10,8 +10,6 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import Reactotron from 'reactotron-react-native';
 
-import * as Permissions from 'expo-permissions';
-import Constants from 'expo-constants';
 import AppNavigator from './navigation/AppNavigator';
 import { store, persistor } from './store/store';
 // import i18n from './languages';
@@ -35,7 +33,6 @@ class App extends React.Component {
     super();
     this.state = {
       isLoadingComplete: false,
-      expoPushToken: '',
       notification: {},
     };
   }
@@ -59,8 +56,6 @@ class App extends React.Component {
         .useReactNative() // add all built-in react native plugins
         .connect(); // let's connect!
     }
-
-    this.registerForPushNotificationsAsync();
 
     // Handle notifications that are received or selected while the app
     // is open. If the app was closed and then opened by tapping the
@@ -94,26 +89,6 @@ class App extends React.Component {
   handleNotification = (notification) => {
     this.setState({ notification });
     console.log(`received notification: ${JSON.stringify(this.state.notification)}`);
-  };
-
-  registerForPushNotificationsAsync = async () => {
-    if (Constants.isDevice) {
-      const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-      let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
-        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-        finalStatus = status;
-      }
-      if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
-        return;
-      }
-      const token = await Notifications.getExpoPushTokenAsync();
-      this.setState({ expoPushToken: token });
-      console.log(`Expo push token: ${this.state.expoPushToken}`);
-    } else {
-      console.log('Must use physical device for Push Notifications');
-    }
   };
 
   loadResourcesAsync = async () =>
