@@ -11,8 +11,9 @@ export const USER_LOGOUT = 'USER_LOGOUT';
 export const USER_GET_PUSH_TOKEN = 'USER_GET_PUSH_TOKEN';
 
 export const USER_ADD_PUSH_TOKEN = 'USER_ADD_PUSH_TOKEN';
-export const USER_ADD_PUSH_TOKEN_SUCCESS = 'USER_ADD_PUSH_TOKEN_RESPONSE';
-export const USER_ADD_PUSH_TOKEN_FAILURE = 'USER_ADD_PUSH_TOKEN_RESPONSE';
+export const USER_ADD_PUSH_TOKEN_RESPONSE = 'USER_ADD_PUSH_TOKEN_RESPONSE';
+export const USER_ADD_PUSH_TOKEN_SUCCESS = 'USER_ADD_PUSH_TOKEN_SUCCESS';
+export const USER_ADD_PUSH_TOKEN_FAILURE = 'USER_ADD_PUSH_TOKEN_FAILURE';
 
 export const GET_MY_USER_INFO = 'GET_MY_USER_INFO';
 export const GET_MY_USER_INFO_START = 'GET_MY_USER_INFO_START';
@@ -37,6 +38,15 @@ export function getPushToken(domain, token) {
     type: USER_GET_PUSH_TOKEN,
     domain,
     token,
+  };
+}
+
+export function addPushToken(domain, token, expoPushToken) {
+  return {
+    type: USER_ADD_PUSH_TOKEN,
+    domain,
+    token,
+    expoPushToken,
   };
 }
 

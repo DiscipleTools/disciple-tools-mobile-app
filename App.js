@@ -10,8 +10,6 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import Reactotron from 'reactotron-react-native';
 
-import * as Permissions from 'expo-permissions';
-import Constants from 'expo-constants';
 import AppNavigator from './navigation/AppNavigator';
 import { store, persistor } from './store/store';
 // import i18n from './languages';
@@ -35,7 +33,6 @@ class App extends React.Component {
     super();
     this.state = {
       isLoadingComplete: false,
-      expoPushToken: '',
       notification: {},
     };
   }
