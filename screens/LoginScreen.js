@@ -133,7 +133,7 @@ class LoginScreen extends React.Component {
     groupSettingsListRetrieved: false,
     appLanguageSet: false,
     offset: 0,
-    limit: 20,
+    limit: 100,
     sort: '-last_modified',
   };
 

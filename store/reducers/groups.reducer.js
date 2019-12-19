@@ -19,6 +19,7 @@ const initialState = {
   loadingActivities: false,
   saved: false,
   settings: null,
+  offset: 0,
 };
 
 export default function groupsReducer(state = initialState, action) {
@@ -126,7 +127,7 @@ export default function groupsReducer(state = initialState, action) {
       };
     case actions.GROUPS_GETALL_SUCCESS: {
       let { groups } = action;
-      const { offline } = action;
+      const { offline, offset } = action;
       const localGroups = newState.groups.filter((localGroup) => Number.isNaN(localGroup.ID));
       if (!offline) {
         const dataBaseGroups = [...groups].map((group) => {
@@ -255,6 +256,9 @@ export default function groupsReducer(state = initialState, action) {
           return mappedGroup;
         }); /* .sort((a, b) => parseInt(a.last_modified, 10) - parseInt(b.last_modified, 10)).reverse(); */
         groups = localGroups.concat(dataBaseGroups);
+      }
+      if (offset > 0) {
+        groups = newState.groups.concat(groups);
       }
       return {
         ...newState,

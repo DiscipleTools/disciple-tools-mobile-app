@@ -110,7 +110,7 @@ class ContactsScreen extends React.Component {
     dataSourceContactsFiltered: [],
     haveContacts: true,
     offset: 0,
-    limit: 20,
+    limit: 100,
     sort: '-last_modified',
     contacts: [],
   };
@@ -162,7 +162,7 @@ class ContactsScreen extends React.Component {
   renderFooter = () => {
     return (
       <View style={styles.loadMoreFooterText}>
-        {!this.state.filtered && (
+        {this.props.isConnected && !this.state.filtered && (
           <TouchableOpacity
             onPress={() => {
               this.onRefresh(true);

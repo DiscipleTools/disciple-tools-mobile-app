@@ -92,6 +92,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff2ac',
     padding: 5,
   },
+  loadMoreFooterText: {
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#3f729b',
+  },
 });
 
 let toastError;
@@ -131,34 +137,43 @@ class GroupsScreen extends React.Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const { groups } = nextProps;
-    let newState;
+    let newState = {
+      ...prevState,
+      groups: groups || prevState.groups,
+    };
     if (groups) {
-      if (groups.length > 0) {
-        if (prevState.filtered) {
-          newState = {
-            ...prevState,
-            dataSourceGroups: prevState.dataSourceGroupsFiltered,
-            haveGroups: true,
-            refresh: false,
-          };
-        } else {
-          newState = {
-            ...prevState,
-            dataSourceGroups: groups,
-            haveGroups: true,
-            refresh: false,
-          };
-        }
-      } else {
+      if (prevState.filtered) {
         newState = {
           ...prevState,
-          dataSourceGroups: [],
-          haveGroups: false,
+          dataSourceGroups: prevState.dataSourceGroupsFiltered,
+          haveGroups: true,
+          refresh: false,
+        };
+      } else {
+        newState = {
+          ...newState,
+          dataSourceGroups: groups,
         };
       }
     }
+
     return newState;
   }
+
+  renderFooter = () => {
+    return (
+      <View style={styles.loadMoreFooterText}>
+        {this.props.isConnected && !this.state.filtered && (
+          <TouchableOpacity
+            onPress={() => {
+              this.onRefresh(true);
+            }}>
+            <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
 
   renderRow = (group) => (
     <TouchableOpacity
@@ -217,26 +232,40 @@ class GroupsScreen extends React.Component {
     />
   );
 
-  onRefresh = () => {
-    this.props.getAllGroups(
-      this.props.userData.domain,
-      this.props.userData.token,
-      this.state.offset,
-      this.state.limit,
-      this.state.sort,
-    );
-    this.setState(
-      {
-        refresh: true,
-        filtered: false,
-      },
-      () => {
-        this.setState({
-          dataSourceGroups: this.props.groups,
-          refresh: false,
-        });
-      },
-    );
+  onRefresh = (pagination = false) => {
+    if (pagination) {
+      this.setState(
+        (prevState) => ({
+          offset: prevState.offset + prevState.limit,
+          filtered: false,
+        }),
+        () => {
+          this.props.getAllGroups(
+            this.props.userData.domain,
+            this.props.userData.token,
+            this.state.offset,
+            this.state.limit,
+            this.state.sort,
+          );
+        },
+      );
+    } else {
+      this.setState(
+        () => ({
+          offset: 0,
+          filtered: false,
+        }),
+        () => {
+          this.props.getAllGroups(
+            this.props.userData.domain,
+            this.props.userData.token,
+            this.state.offset,
+            this.state.limit,
+            this.state.sort,
+          );
+        },
+      );
+    }
   };
 
   goToGroupDetailScreen = (groupData = null) => {
@@ -355,6 +384,7 @@ class GroupsScreen extends React.Component {
             refreshControl={
               <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
             }
+            ListFooterComponent={this.renderFooter}
             keyExtractor={(item) => item.ID.toString()}
           />
           <Fab

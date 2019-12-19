@@ -1200,7 +1200,6 @@ class ContactDetailScreen extends React.Component {
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
-          {!this.props.isConnected && this.offlineBarRender()}
           <ScrollView
             refreshControl={
               <RefreshControl
@@ -1556,7 +1555,6 @@ class ContactDetailScreen extends React.Component {
         <KeyboardShift>
           {() => (
             <View>
-              {!this.props.isConnected && this.offlineBarRender()}
               <ScrollView keyboardShouldPersistTaps="handled">
                 <View style={styles.formContainer}>
                   <Label
@@ -2324,7 +2322,6 @@ class ContactDetailScreen extends React.Component {
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
-          {!this.props.isConnected && this.offlineBarRender()}
           <ScrollView
             refreshControl={
               <RefreshControl
@@ -2404,7 +2401,6 @@ class ContactDetailScreen extends React.Component {
         <KeyboardShift>
           {() => (
             <View>
-              {!this.props.isConnected && this.offlineBarRender()}
               <ScrollView keyboardShouldPersistTaps="handled">
                 <View style={styles.formContainer}>
                   <Row style={styles.formFieldPadding}>
@@ -2499,7 +2495,6 @@ class ContactDetailScreen extends React.Component {
 
   commentsView = () => (
     <View style={{ flex: 1 }}>
-      {!this.props.isConnected && this.offlineBarRender()}
       {this.state.comments.length <= 0 &&
         this.state.activities.length <= 0 &&
         this.noCommentsRender()}
@@ -2613,7 +2608,6 @@ class ContactDetailScreen extends React.Component {
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
-          {!this.props.isConnected && this.offlineBarRender()}
           <ScrollView
             keyboardShouldPersistTaps="handled"
             refreshControl={
@@ -2834,7 +2828,6 @@ class ContactDetailScreen extends React.Component {
         <KeyboardShift>
           {() => (
             <View>
-              {!this.props.isConnected && this.offlineBarRender()}
               <ScrollView keyboardShouldPersistTaps="handled">
                 <View style={styles.formContainer}>
                   <Row style={styles.formFieldPadding}>
@@ -4422,6 +4415,7 @@ class ContactDetailScreen extends React.Component {
             {this.state.contact.ID ? (
               <View style={{ flex: 1 }}>
                 <View style={{ flex: 1 }}>
+                  {!this.props.isConnected && this.offlineBarRender()}
                   <TabView
                     navigationState={this.state.tabViewConfig}
                     renderTabBar={(props) => (

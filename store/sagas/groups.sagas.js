@@ -29,6 +29,7 @@ export function* getAll({ domain, token, offset, limit, sort }) {
         yield put({
           type: actions.GROUPS_GETALL_SUCCESS,
           groups: jsonData.posts,
+          offset,
         });
       } else {
         yield put({
