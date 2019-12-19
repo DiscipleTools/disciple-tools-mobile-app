@@ -1642,7 +1642,6 @@ class GroupDetailScreen extends React.Component {
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
-          {!this.props.isConnected && this.offlineBarRender()}
           <ScrollView
             keyboardShouldPersistTaps="handled"
             refreshControl={
@@ -1865,7 +1864,6 @@ class GroupDetailScreen extends React.Component {
         <KeyboardShift>
           {() => (
             <View>
-              {!this.props.isConnected && this.offlineBarRender()}
               <ScrollView keyboardShouldPersistTaps="handled">
                 <View style={styles.formContainer}>
                   <Label
@@ -2354,7 +2352,6 @@ class GroupDetailScreen extends React.Component {
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
-          {!this.props.isConnected && this.offlineBarRender()}
           <ScrollView
             keyboardShouldPersistTaps="handled"
             refreshControl={
@@ -2398,7 +2395,6 @@ class GroupDetailScreen extends React.Component {
         <KeyboardShift>
           {() => (
             <View>
-              {!this.props.isConnected && this.offlineBarRender()}
               <ScrollView keyboardShouldPersistTaps="handled">
                 <View style={styles.formContainer}>
                   <Row style={styles.formFieldPadding}>
@@ -2455,7 +2451,6 @@ class GroupDetailScreen extends React.Component {
 
   commentsView = () => (
     <View style={{ flex: 1 }}>
-      {!this.props.isConnected && this.offlineBarRender()}
       {this.state.comments.length <= 0 &&
         this.state.activities.length <= 0 &&
         this.noCommentsRender()}
@@ -2664,7 +2659,6 @@ class GroupDetailScreen extends React.Component {
 
   membersView = () => (
     <View style={{ flex: 1 }}>
-      {!this.props.isConnected && this.offlineBarRender()}
       {this.state.onlyView ? (
         <KeyboardShift>
           {() => (
@@ -2769,7 +2763,6 @@ class GroupDetailScreen extends React.Component {
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
-          {!this.props.isConnected && this.offlineBarRender()}
           <ScrollView
             keyboardShouldPersistTaps="handled"
             refreshControl={
@@ -2916,7 +2909,6 @@ class GroupDetailScreen extends React.Component {
         <KeyboardShift>
           {() => (
             <View>
-              {!this.props.isConnected && this.offlineBarRender()}
               <ScrollView keyboardShouldPersistTaps="handled">
                 <View style={styles.formContainer}>
                   <Row style={styles.formFieldPadding}>
@@ -3746,6 +3738,7 @@ class GroupDetailScreen extends React.Component {
             {this.state.group.ID ? (
               <View style={{ flex: 1 }}>
                 <View style={{ flex: 1 }}>
+                  {!this.props.isConnected && this.offlineBarRender()}
                   <TabView
                     navigationState={this.state.tabViewConfig}
                     renderTabBar={(props) => (
