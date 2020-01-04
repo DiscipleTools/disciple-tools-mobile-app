@@ -18,11 +18,11 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
-import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
+import { Label, Input, Icon, Picker, Button } from 'native-base';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
-import ModalFilterPicker from 'react-native-modal-filter-picker';
 import { Chip, Selectize } from 'react-native-material-selectize';
 import { TabView, TabBar } from 'react-native-tab-view';
 
@@ -451,40 +451,41 @@ class GroupDetailScreen extends React.Component {
     if (params) {
       if (params.onEnableEdit) {
         if (params.groupId) {
-          headerRight = params.onlyView ? (
-            <Row onPress={params.onEnableEdit}>
-              <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
-                {i18n.t('global.edit')}
-              </Text>
-              <Icon
-                type="MaterialCommunityIcons"
-                name="pencil"
-                style={[
-                  { color: '#FFFFFF' },
-                  i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
-                ]}
-              />
-            </Row>
-          ) : (
-            <Row onPress={params.onSaveGroup}>
-              <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
-                {i18n.t('global.save')}
-              </Text>
-              <Icon
-                type="Feather"
-                name="check"
-                style={[
-                  { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-                  i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
-                ]}
-              />
-            </Row>
-          );
+          headerRight = () =>
+            params.onlyView ? (
+              <Row onPress={params.onEnableEdit}>
+                <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+                  {i18n.t('global.edit')}
+                </Text>
+                <Icon
+                  type="MaterialCommunityIcons"
+                  name="pencil"
+                  style={[
+                    { color: '#FFFFFF' },
+                    i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+                  ]}
+                />
+              </Row>
+            ) : (
+              <Row onPress={params.onSaveGroup}>
+                <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+                  {i18n.t('global.save')}
+                </Text>
+                <Icon
+                  type="Feather"
+                  name="check"
+                  style={[
+                    { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                    i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+                  ]}
+                />
+              </Row>
+            );
         } else {
-          headerRight = <Text />;
+          headerRight = () => <Text />;
         }
       } else if (params.groupId) {
-        headerRight = (
+        headerRight = () => (
           <Row>
             <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
               {i18n.t('global.edit')}
@@ -499,7 +500,7 @@ class GroupDetailScreen extends React.Component {
       }
 
       if (params.onlyView) {
-        headerLeft = (
+        headerLeft = () => (
           <Icon
             type="Feather"
             name="arrow-left"
@@ -522,7 +523,7 @@ class GroupDetailScreen extends React.Component {
         );
       } else {
         navigationTitle = '';
-        headerLeft = (
+        headerLeft = () => (
           <Row onPress={params.onDisableEdit}>
             <Icon
               type="AntDesign"
@@ -1039,7 +1040,7 @@ class GroupDetailScreen extends React.Component {
     }));
   };
 
-  setGroupStartDate = (value) => {
+  setGroupStartDate = (event, value) => {
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
@@ -1048,7 +1049,7 @@ class GroupDetailScreen extends React.Component {
     }));
   };
 
-  setEndDate = (value) => {
+  setEndDate = (event, value) => {
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
@@ -1163,11 +1164,11 @@ class GroupDetailScreen extends React.Component {
     });
   };
 
-  onSelectAssignedTo = (key) => {
+  onSelectAssignedTo = (value, index) => {
     this.setState((prevState) => ({
-      group: {
-        ...prevState.group,
-        assigned_to: `user-${key}`,
+      contact: {
+        ...prevState.contact,
+        assigned_to: `user-${value}`,
       },
       showAssignedToModal: false,
     }));
@@ -1966,12 +1967,9 @@ class GroupDetailScreen extends React.Component {
                           borderBottomColor: '#D9D5DC',
                         }}>
                         {this.showAssignedUser()}
-                        <ModalFilterPicker
-                          visible={this.state.showAssignedToModal}
-                          onSelect={this.onSelectAssignedTo}
-                          onCancel={this.onCancelAssignedTo}
-                          options={this.state.users}
-                        />
+                        <Picker onValueChange={this.onSelectAssignedTo}>
+                          {this.renderPickerItems(this.state.users)}
+                        </Picker>
                       </Col>
                     </Row>
                   </TouchableOpacity>
@@ -2296,11 +2294,13 @@ class GroupDetailScreen extends React.Component {
                       </View>
                     </Col>
                     <Col>
-                      <DatePicker
-                        onDateChange={this.setGroupStartDate}
-                        defaultDate={
+                      <DateTimePicker
+                        value={
                           this.state.group.start_date ? new Date(this.state.group.start_date) : ''
                         }
+                        mode="date"
+                        display="default"
+                        onChange={this.setGroupStartDate}
                       />
                     </Col>
                   </Row>
@@ -2331,11 +2331,11 @@ class GroupDetailScreen extends React.Component {
                       </View>
                     </Col>
                     <Col>
-                      <DatePicker
-                        onDateChange={this.setEndDate}
-                        defaultDate={
-                          this.state.group.end_date ? new Date(this.state.group.end_date) : ''
-                        }
+                      <DateTimePicker
+                        value={this.state.group.end_date ? new Date(this.state.group.end_date) : ''}
+                        mode="date"
+                        display="default"
+                        onChange={this.setEndDate}
                       />
                     </Col>
                   </Row>
@@ -3617,6 +3617,11 @@ class GroupDetailScreen extends React.Component {
       </Grid>
     );
   }
+
+  renderPickerItems = (items) =>
+    items.map((item) => {
+      return <Picker.Item key={item.key} label={item.label} value={item.key} />;
+    });
 
   renderCustomHealthMilestones() {
     const healthMetricsList = Object.keys(this.props.groupSettings.health_metrics.values);

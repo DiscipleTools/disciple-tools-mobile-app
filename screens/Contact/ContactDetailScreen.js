@@ -19,12 +19,12 @@ import {
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
 
-import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
+import { Label, Input, Icon, Picker, Button } from 'native-base';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
-import ModalFilterPicker from 'react-native-modal-filter-picker';
 import { Chip, Selectize } from 'react-native-material-selectize';
 import ActionButton from 'react-native-action-button';
 import { TabView, TabBar } from 'react-native-tab-view';
@@ -264,38 +264,39 @@ class ContactDetailScreen extends React.Component {
     if (params) {
       if (params.onEnableEdit) {
         if (params.contactId) {
-          headerRight = params.onlyView ? (
-            <Row onPress={params.onEnableEdit}>
-              <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
-                {i18n.t('global.edit')}
-              </Text>
-              <Icon
-                type="MaterialCommunityIcons"
-                name="pencil"
-                style={[
-                  { color: '#FFFFFF' },
-                  i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
-                ]}
-              />
-            </Row>
-          ) : (
-            <Row onPress={params.onSaveContact}>
-              <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
-                {i18n.t('global.save')}
-              </Text>
-              <Icon
-                type="Feather"
-                name="check"
-                style={[
-                  { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-                  i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
-                ]}
-              />
-            </Row>
-          );
+          headerRight = () =>
+            params.onlyView ? (
+              <Row onPress={params.onEnableEdit}>
+                <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+                  {i18n.t('global.edit')}
+                </Text>
+                <Icon
+                  type="MaterialCommunityIcons"
+                  name="pencil"
+                  style={[
+                    { color: '#FFFFFF' },
+                    i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+                  ]}
+                />
+              </Row>
+            ) : (
+              <Row onPress={params.onSaveContact}>
+                <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+                  {i18n.t('global.save')}
+                </Text>
+                <Icon
+                  type="Feather"
+                  name="check"
+                  style={[
+                    { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                    i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+                  ]}
+                />
+              </Row>
+            );
         }
       } else if (params.contactId) {
-        headerRight = (
+        headerRight = () => (
           <Row>
             <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
               {i18n.t('global.edit')}
@@ -310,7 +311,7 @@ class ContactDetailScreen extends React.Component {
       }
 
       if (params.onlyView) {
-        headerLeft = (
+        headerLeft = () => (
           <Icon
             type="Feather"
             name="arrow-left"
@@ -327,7 +328,7 @@ class ContactDetailScreen extends React.Component {
         );
       } else {
         navigationTitle = '';
-        headerLeft = (
+        headerLeft = () => (
           <Row onPress={params.onDisableEdit}>
             <Icon
               type="AntDesign"
@@ -965,7 +966,7 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  setBaptismDate = (date) => {
+  setBaptismDate = (event, date) => {
     this.setState((prevState) => ({
       contact: {
         ...prevState.contact,
@@ -1657,12 +1658,9 @@ class ContactDetailScreen extends React.Component {
                           borderBottomColor: '#D9D5DC',
                         }}>
                         {this.showAssignedUser()}
-                        <ModalFilterPicker
-                          visible={this.state.showAssignedToModal}
-                          onSelect={this.onSelectAssignedTo}
-                          onCancel={this.onCancelAssignedTo}
-                          options={this.state.users}
-                        />
+                        <Picker onValueChange={this.onSelectAssignedTo}>
+                          {this.renderPickerItems(this.state.users)}
+                        </Picker>
                       </Col>
                     </Row>
                   </TouchableOpacity>
@@ -2474,13 +2472,15 @@ class ContactDetailScreen extends React.Component {
                       </View>
                     </Col>
                     <Col>
-                      <DatePicker
-                        onDateChange={this.setBaptismDate}
-                        defaultDate={
+                      <DateTimePicker
+                        value={
                           this.state.contact.baptism_date
                             ? new Date(this.state.contact.baptism_date)
                             : ''
                         }
+                        mode="date"
+                        display="default"
+                        onChange={this.setBaptismDate}
                       />
                     </Col>
                   </Row>
@@ -3581,6 +3581,11 @@ class ContactDetailScreen extends React.Component {
     </View>
   );
 
+  renderPickerItems = (items) =>
+    items.map((item) => {
+      return <Picker.Item key={item.key} label={item.label} value={item.key} />;
+    });
+
   renderSourcePickerItems = () =>
     Object.keys(this.props.contactSettings.fields.sources.values).map((key) => {
       const optionData = this.props.contactSettings.fields.sources.values[key];
@@ -3792,11 +3797,11 @@ class ContactDetailScreen extends React.Component {
     });
   };
 
-  onSelectAssignedTo = (key) => {
+  onSelectAssignedTo = (value, index) => {
     this.setState((prevState) => ({
       contact: {
         ...prevState.contact,
-        assigned_to: `user-${key}`,
+        assigned_to: `user-${value}`,
       },
       showAssignedToModal: false,
     }));
@@ -4983,12 +4988,9 @@ class ContactDetailScreen extends React.Component {
                                   borderBottomColor: '#D9D5DC',
                                 }}>
                                 {this.showAssignedUser()}
-                                <ModalFilterPicker
-                                  visible={this.state.showAssignedToModal}
-                                  onSelect={this.onSelectAssignedTo}
-                                  onCancel={this.onCancelAssignedTo}
-                                  options={this.state.users}
-                                />
+                                <Picker onValueChange={this.onSelectAssignedTo}>
+                                  {this.renderPickerItems(this.state.users)}
+                                </Picker>
                               </Col>
                             </Row>
                           </TouchableOpacity>

@@ -400,7 +400,7 @@ class LoginScreen extends React.Component {
   };
 
   static navigationOptions = {
-    header: null,
+    headerShown: false,
   };
 
   /* eslint-disable class-methods-use-this, no-console */
