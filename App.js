@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 });
 
 // App
-let netInfoSubscribe;
+let unsubscribe;
 class App extends React.Component {
   constructor() {
     super();
@@ -39,11 +39,12 @@ class App extends React.Component {
 
   componentDidMount() {
     // initial detection
-    NetInfo.fetch().then((isConnected) => {
-      this.handleConnectivityChange(isConnected);
+    NetInfo.fetch().then((state) => {
+      this.handleConnectivityChange(state.isConnected);
     });
     // add network connectivity handler
-    netInfoSubscribe = NetInfo.addEventListener('connectionChange', this.handleConnectivityChange);
+    unsubscribe = NetInfo.addEventListener(this.handleConnectivityChange);
+
     if (__DEV__) {
       // Reactotron can be used to see AsyncStorage data and API requests
       // If Reactotron gets no connection, this is the solution that worked for me (cairocoder01: 2019-08-15)
@@ -64,7 +65,7 @@ class App extends React.Component {
 
   componentWillUnmount() {
     // remove network connectivity handler
-    netInfoSubscribe.remove();
+    unsubscribe();
   }
 
   handleConnectivityChange = (isConnected) => {
