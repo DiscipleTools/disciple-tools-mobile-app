@@ -19,8 +19,8 @@ import {
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
 
-import { Label, Input, Icon, Picker, Button } from 'native-base';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
+//import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
@@ -55,6 +55,7 @@ import i18n from '../../languages';
 
 let toastSuccess;
 let toastError;
+const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
 const containerPadding = 35;
 const windowWidth = Dimensions.get('window').width;
 const progressBarWidth = windowWidth - 100;
@@ -966,7 +967,8 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  setBaptismDate = (event, date) => {
+  setBaptismDate = (date) => {
+    //(event, date) => {
     this.setState((prevState) => ({
       contact: {
         ...prevState.contact,
@@ -2472,15 +2474,26 @@ class ContactDetailScreen extends React.Component {
                       </View>
                     </Col>
                     <Col>
+                      {/*
                       <DateTimePicker
                         value={
                           this.state.contact.baptism_date
                             ? new Date(this.state.contact.baptism_date)
-                            : ''
+                            : new Date()
                         }
                         mode="date"
-                        display="default"
+                        display="spinner"
                         onChange={this.setBaptismDate}
+                        maximumDate={tomorrow}
+                      />
+                      */}
+                      <DatePicker
+                        onDateChange={this.setBaptismDate}
+                        defaultDate={
+                          this.state.contact.baptism_date
+                            ? new Date(this.state.contact.baptism_date)
+                            : ''
+                        }
                       />
                     </Col>
                   </Row>

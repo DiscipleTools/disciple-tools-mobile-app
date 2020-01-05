@@ -361,7 +361,6 @@ class NotificationsScreen extends React.Component {
 
   static navigationOptions = {
     title: i18n.t('notificationsScreen.notifications'),
-    headerLeft: null,
     headerStyle: {
       backgroundColor: Colors.tintColor,
     },
@@ -478,7 +477,7 @@ NotificationsScreen.propTypes = {
     domain: PropTypes.string,
     token: PropTypes.string,
     username: PropTypes.string,
-    id: PropTypes.string,
+    id: PropTypes.number,
   }).isRequired,
   /* eslint-disable */
   notifications: PropTypes.arrayOf(

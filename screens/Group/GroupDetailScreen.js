@@ -18,8 +18,8 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
-import { Label, Input, Icon, Picker, Button } from 'native-base';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
+//import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
@@ -1040,7 +1040,8 @@ class GroupDetailScreen extends React.Component {
     }));
   };
 
-  setGroupStartDate = (event, value) => {
+  setGroupStartDate = (value) => {
+    //(event, value) => {
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
@@ -1049,7 +1050,8 @@ class GroupDetailScreen extends React.Component {
     }));
   };
 
-  setEndDate = (event, value) => {
+  setEndDate = (value) => {
+    //(event, value) => {
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
@@ -2294,13 +2296,24 @@ class GroupDetailScreen extends React.Component {
                       </View>
                     </Col>
                     <Col>
+                      {/*
                       <DateTimePicker
                         value={
-                          this.state.group.start_date ? new Date(this.state.group.start_date) : ''
+                          this.state.group.start_date
+                            ? new Date(this.state.group.start_date)
+                            : new Date()
                         }
                         mode="date"
-                        display="default"
+                        display="spinner"
                         onChange={this.setGroupStartDate}
+                        maximumDate={tomorrow}
+                      />
+                      */}
+                      <DatePicker
+                        onDateChange={this.setGroupStartDate}
+                        defaultDate={
+                          this.state.group.start_date ? new Date(this.state.group.start_date) : ''
+                        }
                       />
                     </Col>
                   </Row>
@@ -2331,11 +2344,24 @@ class GroupDetailScreen extends React.Component {
                       </View>
                     </Col>
                     <Col>
+                      {/*
                       <DateTimePicker
-                        value={this.state.group.end_date ? new Date(this.state.group.end_date) : ''}
+                        value={
+                          this.state.group.end_date
+                            ? new Date(this.state.group.end_date)
+                            : new Date()
+                        }
                         mode="date"
-                        display="default"
+                        display="spinner"
                         onChange={this.setEndDate}
+                        maximumDate={tomorrow}
+                      />
+                      */}
+                      <DatePicker
+                        onDateChange={this.setEndDate}
+                        defaultDate={
+                          this.state.group.end_date ? new Date(this.state.group.end_date) : ''
+                        }
                       />
                     </Col>
                   </Row>
@@ -2668,7 +2694,6 @@ class GroupDetailScreen extends React.Component {
                   {i18n.t('global.membersActivity')}
                 </Text>
                 <FlatList
-                  style={styles.root}
                   data={this.getMembers()}
                   extraData={this.state.updateMembersList}
                   renderItem={(item) => this.membersRow(item.item)}
@@ -2687,7 +2712,6 @@ class GroupDetailScreen extends React.Component {
                   {i18n.t('global.membersActivity')}
                 </Text>
                 <FlatList
-                  style={styles.root}
                   data={this.getMembers()}
                   extraData={this.state.updateMembersList}
                   renderItem={(item) => this.membersRow(item.item)}
@@ -3345,9 +3369,9 @@ class GroupDetailScreen extends React.Component {
                     <Col size={2} />
                   </Row>
 
-                  <Row size={7} style={{ backgroundColor: 'white' }}>
+                  <Row size={7}>
                     <Col size={3}>
-                      <Row size={2} style={{ backgroundColor: 'white' }} />
+                      <Row size={2} />
                       <Row size={6}>
                         <Col>
                           <Row size={60}>
