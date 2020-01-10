@@ -19,7 +19,7 @@ import {
 import PropTypes from 'prop-types';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
-//import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
@@ -1041,7 +1041,7 @@ class GroupDetailScreen extends React.Component {
   };
 
   setGroupStartDate = (value) => {
-    //(event, value) => {
+    // (event, value) => {
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
@@ -1051,7 +1051,7 @@ class GroupDetailScreen extends React.Component {
   };
 
   setEndDate = (value) => {
-    //(event, value) => {
+    // (event, value) => {
     this.setState((prevState) => ({
       group: {
         ...prevState.group,

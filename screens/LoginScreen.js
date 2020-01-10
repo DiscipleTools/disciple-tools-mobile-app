@@ -14,6 +14,7 @@ import {
   I18nManager,
   Picker,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { Button, Icon } from 'native-base';
@@ -122,10 +123,41 @@ const styles = StyleSheet.create({
     bottom: 15,
     right: 15,
   },
+  headerText: {
+    fontSize: 25,
+    textAlign: 'center',
+    margin: 10,
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  textBoxContainer: {
+    position: 'relative',
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+  },
+  textBox: {
+    fontSize: 16,
+    alignSelf: 'stretch',
+    height: 45,
+    paddingRight: 45,
+    paddingLeft: 8,
+    paddingVertical: 0,
+  },
+  touachableButton: {
+    position: 'absolute',
+    right: 3,
+    height: 40,
+    width: 35,
+    padding: 2,
+  },
+  buttonImage: {
+    resizeMode: 'contain',
+    height: '100%',
+    width: '100%',
+  },
 });
 let toastError;
 class LoginScreen extends React.Component {
-  /* eslint-enable react/sort-comp */
   state = {
     loading: false,
     modalVisible: false,
@@ -147,6 +179,7 @@ class LoginScreen extends React.Component {
       domainIsInvalid: false,
       userIsInvalid: false,
       passwordIsInvalid: false,
+      hidePassword: true,
     };
   }
 
@@ -384,6 +417,10 @@ class LoginScreen extends React.Component {
     this.props.getUserInfo(this.props.userData.domain, this.props.userData.token);
   };
 
+  setPasswordVisibility = () => {
+    this.setState({ hidePassword: !this.state.hidePassword });
+  };
+
   onLoginPress = () => {
     Keyboard.dismiss();
     const { domain, username, password } = this.state;
@@ -439,7 +476,6 @@ class LoginScreen extends React.Component {
     const passwordStyle = passwordValidation
       ? [styles.textField, styles.validationErrorInput]
       : styles.textField;
-
     const domainErrorMessage = domainValidation ? (
       <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.domain.error')}</Text>
     ) : null;
@@ -449,7 +485,6 @@ class LoginScreen extends React.Component {
     const passwordErrorMessage = passwordValidation ? (
       <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.password.error')}</Text>
     ) : null;
-
     const languagePickerItems = locales.map((locale) => (
       <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
     ));
@@ -487,22 +522,47 @@ class LoginScreen extends React.Component {
               disabled={this.state.loading}
             />
             {userErrorMessage}
-            <TextField
-              containerStyle={passwordStyle}
-              iconName={Platform.OS === 'ios' ? 'ios-key' : 'md-key'}
-              label={i18n.t('loginScreen.password.label')}
-              onChangeText={(text) => this.setState({ password: text })}
-              autoCapitalize="none"
-              autoCorrect={false}
-              secureTextEntry
-              value={this.state.password}
-              returnKeyType="go"
-              selectTextOnFocus
-              onSubmitEditing={this.signInAsync}
-              blurOnSubmit
-              textContentType="password"
-              disabled={this.state.loading}
-            />
+            <View style={[passwordStyle]}>
+              <View style={{ margin: 10 }}>
+                <Text>{i18n.t('loginScreen.password.label')}</Text>
+                <View style={{ flex: 1, flexDirection: 'row' }}>
+                  <Icon
+                    type="Ionicons"
+                    name="md-key"
+                    style={{ marginBottom: 'auto', marginTop: 'auto' }}
+                  />
+                  <TextInput
+                    underlineColorAndroid="transparent"
+                    secureTextEntry={this.state.hidePassword}
+                    style={styles.textBox}
+                    onChangeText={(text) => this.setState({ password: text })}
+                  />
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={styles.touachableButton}
+                    onPress={this.setPasswordVisibility}>
+                    {this.state.hidePassword ? (
+                      <Icon
+                        type="FontAwesome"
+                        name="eye"
+                        style={{
+                          marginBottom: 'auto',
+                          marginTop: 'auto',
+                          opacity: 0.3,
+                          fontSize: 22,
+                        }}
+                      />
+                    ) : (
+                      <Icon
+                        type="FontAwesome"
+                        name="eye"
+                        style={{ marginBottom: 'auto', marginTop: 'auto', fontSize: 22 }}
+                      />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
             {passwordErrorMessage}
             {!this.state.loading && (
               <Button style={styles.signInButton} onPress={this.onLoginPress} block>

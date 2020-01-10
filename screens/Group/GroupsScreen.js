@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
 let toastError;
 
 class GroupsScreen extends React.Component {
-  /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
     search: '',
