@@ -379,6 +379,7 @@ class GroupsScreen extends React.Component {
             extraData={this.state.refresh}
             renderItem={(item) => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
+            keyboardShouldPersistTaps="always"
             refreshControl={
               <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
             }

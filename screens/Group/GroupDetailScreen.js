@@ -461,7 +461,7 @@ class GroupDetailScreen extends React.Component {
                   type="MaterialCommunityIcons"
                   name="pencil"
                   style={[
-                    { color: '#FFFFFF' },
+                    { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
                     i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
                   ]}
                 />
