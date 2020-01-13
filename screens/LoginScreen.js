@@ -454,6 +454,15 @@ class LoginScreen extends React.Component {
     }
   }
 
+  cleanDomainWiteSpace(text) {
+    if (text[text.length - 1] === ' ') {
+      text = text.replace(/ /g, '');
+      this.setState({ domain: text });
+    } else {
+      this.setState({ domain: text });
+    }
+  }
+
   // TODO: How to disable iCloud save password feature?
   render() {
     const errorToast = (
@@ -499,7 +508,7 @@ class LoginScreen extends React.Component {
               containerStyle={domainStyle}
               iconName="ios-globe"
               label={i18n.t('loginScreen.domain.label')}
-              onChangeText={(text) => this.setState({ domain: text })}
+              onChangeText={(text) => this.cleanDomainWiteSpace(text)}
               autoCapitalize="none"
               autoCorrect={false}
               value={this.state.domain}
