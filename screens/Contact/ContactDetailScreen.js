@@ -20,7 +20,7 @@ import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
 
 import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
-//import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
@@ -275,7 +275,7 @@ class ContactDetailScreen extends React.Component {
                   type="MaterialCommunityIcons"
                   name="pencil"
                   style={[
-                    { color: '#FFFFFF' },
+                    { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
                     i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
                   ]}
                 />
@@ -968,7 +968,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   setBaptismDate = (date) => {
-    //(event, date) => {
+    // (event, date) => {
     this.setState((prevState) => ({
       contact: {
         ...prevState.contact,

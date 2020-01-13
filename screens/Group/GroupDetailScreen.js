@@ -19,7 +19,7 @@ import {
 import PropTypes from 'prop-types';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
-//import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
@@ -461,7 +461,7 @@ class GroupDetailScreen extends React.Component {
                   type="MaterialCommunityIcons"
                   name="pencil"
                   style={[
-                    { color: '#FFFFFF' },
+                    { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
                     i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
                   ]}
                 />
@@ -1041,7 +1041,7 @@ class GroupDetailScreen extends React.Component {
   };
 
   setGroupStartDate = (value) => {
-    //(event, value) => {
+    // (event, value) => {
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
@@ -1051,11 +1051,20 @@ class GroupDetailScreen extends React.Component {
   };
 
   setEndDate = (value) => {
-    //(event, value) => {
+    // (event, value) => {
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
         end_date: sharedTools.formatDateToBackEnd(value),
+      },
+    }));
+  };
+
+  setChurchStartDate = (value) => {
+    this.setState((prevState) => ({
+      group: {
+        ...prevState.group,
+        church_start_date: sharedTools.formatDateToBackEnd(value),
       },
     }));
   };
@@ -1860,6 +1869,31 @@ class GroupDetailScreen extends React.Component {
                 </Col>
               </Row>
               <View style={styles.formDivider} />
+              <View style={styles.formDivider} />
+              <Row style={styles.formRow}>
+                <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="calendar-import"
+                    style={styles.formIcon}
+                  />
+                </Col>
+                <Col>
+                  <Text
+                    style={[
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
+                    {this.state.group.church_start_date ? this.state.group.church_start_date : ''}
+                  </Text>
+                </Col>
+                <Col style={styles.formParentLabel}>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.church_start_date.name}
+                  </Label>
+                </Col>
+              </Row>
+              <View style={styles.formDivider} />
             </View>
           </ScrollView>
         </View>
@@ -2361,6 +2395,44 @@ class GroupDetailScreen extends React.Component {
                         onDateChange={this.setEndDate}
                         defaultDate={
                           this.state.group.end_date ? new Date(this.state.group.end_date) : ''
+                        }
+                      />
+                    </Col>
+                  </Row>
+                  <Row style={styles.formFieldPadding}>
+                    <Col style={styles.formIconLabelCol}>
+                      <View style={styles.formIconLabelView}>
+                        <Icon
+                          type="MaterialCommunityIcons"
+                          name="calendar-import"
+                          style={styles.formIcon}
+                        />
+                      </View>
+                    </Col>
+                    <Col>
+                      <Label style={styles.formLabel}>
+                        {this.props.groupSettings.church_start_date.name}
+                      </Label>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col style={styles.formIconLabelCol}>
+                      <View style={styles.formIconLabelView}>
+                        <Icon
+                          type="MaterialCommunityIcons"
+                          name="calendar-export"
+                          style={[styles.formIcon, { opacity: 0 }]}
+                        />
+                      </View>
+                    </Col>
+                    <Col>
+                      {}
+                      <DatePicker
+                        onDateChange={this.setChurchStartDate}
+                        defaultDate={
+                          this.state.group.church_start_date
+                            ? new Date(this.state.group.church_start_date)
+                            : ''
                         }
                       />
                     </Col>

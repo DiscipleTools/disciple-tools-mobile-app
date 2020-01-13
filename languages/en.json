@@ -106,7 +106,7 @@
     "subAssignThisContact": "Sub-assign this contact",
     "mobile": "Mobile",
     "email": "Email",
-    "selectLocations": "Select locations",
+    "selectLocations": "Select geonames",
     "contactAge": {
       "underEighteenYearsOld": "Under 18 years old",
       "underTwentySixYearsOld": "18-25 years old",

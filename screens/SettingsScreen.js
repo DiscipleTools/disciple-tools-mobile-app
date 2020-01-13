@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
 });
 let toastError;
 class SettingsScreen extends React.Component {
-  /* eslint-enable react/sort-comp */
   constructor(props) {
     super(props);
 

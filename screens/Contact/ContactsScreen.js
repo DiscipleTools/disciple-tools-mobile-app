@@ -102,7 +102,6 @@ const styles = StyleSheet.create({
 let toastError;
 
 class ContactsScreen extends React.Component {
-  /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
     search: '',
@@ -402,13 +401,10 @@ class ContactsScreen extends React.Component {
             extraData={this.state.loading}
             renderItem={(item) => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
+            keyboardShouldPersistTaps="always"
             refreshControl={
               <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
             }
-            /* onEndReachedThreshold = {1}
-            onEndReached = {() => {
-              this.onRefresh(true);
-            }} */
             ListFooterComponent={this.renderFooter}
             // keyExtractor={(item) => item.ID.toString()}
           />

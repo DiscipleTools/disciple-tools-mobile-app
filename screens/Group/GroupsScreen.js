@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
 let toastError;
 
 class GroupsScreen extends React.Component {
-  /* eslint-enable react/sort-comp */
   state = {
     refresh: false,
     search: '',
@@ -380,6 +379,7 @@ class GroupsScreen extends React.Component {
             extraData={this.state.refresh}
             renderItem={(item) => this.renderRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
+            keyboardShouldPersistTaps="always"
             refreshControl={
               <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
             }
