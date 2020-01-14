@@ -15,6 +15,7 @@ import {
   Picker,
   Dimensions,
   TextInput,
+  Linking,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { Button, Icon } from 'native-base';
@@ -441,9 +442,12 @@ class LoginScreen extends React.Component {
   };
 
   /* eslint-disable class-methods-use-this, no-console */
-  goToForgotPassword() {
+  goToForgotPassword = () => {
+    const { domain } = this.state;
+    Linking.openURL('https://' + domain + '/wp-login.php?action=lostpassword');
+    console.log(domain);
     console.log('forgot password');
-  }
+  };
   /* eslint-enable class-methods-use-this, no-console */
 
   changeLanguage(languageCode) {
