@@ -15,10 +15,11 @@ import {
   Picker,
   Dimensions,
   TextInput,
+  Linking,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { Button, Icon } from 'native-base';
-import Toast from 'react-native-easy-toast';
+import Toast, { DURATION } from 'react-native-easy-toast';
 import { Updates } from 'expo';
 import Constants from 'expo-constants';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
@@ -441,9 +442,18 @@ class LoginScreen extends React.Component {
   };
 
   /* eslint-disable class-methods-use-this, no-console */
-  goToForgotPassword() {
-    console.log('forgot password');
-  }
+  goToForgotPassword = () => {
+    const { domain } = this.state;
+    let text = 'hola';
+    if (domain !== '') {
+      Linking.openURL(`https://${domain}/wp-login.php?action=lostpassword`);
+    } else {
+      this.refs.toastWithStyle.show(
+        i18n.t('loginScreen.domain.errorForgotPass'),
+        DURATION.LENGTH_LONG,
+      );
+    }
+  };
   /* eslint-enable class-methods-use-this, no-console */
 
   changeLanguage(languageCode) {
@@ -601,6 +611,11 @@ class LoginScreen extends React.Component {
             </Picker>
           </View>
           {errorToast}
+          <Toast
+            ref="toastWithStyle"
+            style={{ backgroundColor: Colors.errorBackground }}
+            position="bottom"
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     );

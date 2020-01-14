@@ -61,7 +61,8 @@
     "domain": {
       "label": "URL",
       "placeholder": "P.ej. myteam.disciple.tools",
-      "error": "El dominio es requerido"
+      "error": "El dominio es requerido",
+      "errorForgotPass": "Ingrese la URL para comenzar a recuperar su contraseña"
     },
     "username": {
       "label": "Nombre de Usuario",
@@ -191,7 +192,6 @@
     "noGroupCommentPlacheHolder": "No hay comentarios del grupo disponibles actualmente.",
     "noGroupCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
     "noGroupCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del grupo."
-    
   },
   "notificationsScreen": {
     "notifications": "Notificaciones",
