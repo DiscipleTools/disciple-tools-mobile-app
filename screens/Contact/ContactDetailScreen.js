@@ -1066,16 +1066,18 @@ class ContactDetailScreen extends React.Component {
 
   onSaveComment = () => {
     const { comment } = this.state;
-    if (comment.length > 0) {
-      Keyboard.dismiss();
-      this.props.saveComment(
-        this.props.userData.domain,
-        this.props.userData.token,
-        this.state.contact.ID,
-        {
-          comment,
-        },
-      );
+    if (!this.state.loadComments) {
+      if (comment.length > 0) {
+        Keyboard.dismiss();
+        this.props.saveComment(
+          this.props.userData.domain,
+          this.props.userData.token,
+          this.state.contact.ID,
+          {
+            comment,
+          },
+        );
+      }
     }
   };
 
@@ -2588,6 +2590,7 @@ class ContactDetailScreen extends React.Component {
                 value={this.state.comment}
                 onChangeText={this.setComment}
                 onContentSizeChange={this.setHeight}
+                editable={!this.state.loadComments}
                 multiline
                 style={[
                   styles.commentInput,
@@ -2599,13 +2602,15 @@ class ContactDetailScreen extends React.Component {
                 onPress={() => this.onSaveComment()}
                 style={[
                   {
-                    backgroundColor: Colors.tintColor,
                     borderRadius: 80,
                     height: 40,
                     margin: 10,
                     paddingTop: 7,
                     width: 40,
                   },
+                  this.state.loadComments
+                    ? { backgroundColor: '#e6e6e6' }
+                    : { backgroundColor: Colors.tintColor },
                   i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
                 ]}>
                 <Icon android="md-send" ios="ios-send" style={{ color: 'white', fontSize: 25 }} />

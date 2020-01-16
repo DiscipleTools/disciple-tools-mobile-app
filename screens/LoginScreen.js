@@ -485,7 +485,6 @@ class LoginScreen extends React.Component {
       />
     );
     const { domainValidation, userValidation, passwordValidation } = this.state;
-
     const domainStyle = domainValidation
       ? [styles.textField, styles.validationErrorInput]
       : styles.textField;
