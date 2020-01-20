@@ -164,8 +164,9 @@
   "groupDetailScreen": {
     "addNewGroup": "Crear un grupo nuevo",
     "groupCoach": "Entrenador del Grupo",
-    "selectCoaches": "Buscar usuarios y contactos",
+    "selectCoaches": "Seleccionar Entrenador del Grupo",
     "selectGeonames": "Buscar ubicaciones",
+    "selectLocations": "Seleccionar ubicaciones",
     "startDate": "Fecha de inicio",
     "endDate": "Fecha de finalización",
     "groupType": "Tipo de grupo",

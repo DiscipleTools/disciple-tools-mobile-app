@@ -2123,7 +2123,7 @@ class GroupDetailScreen extends React.Component {
                           this.state.geonames,
                         )}
                         textInputProps={{
-                          placeholder: i18n.t('groupDetailScreen.selectGeonames'),
+                          placeholder: i18n.t('groupDetailScreen.selectLocations'),
                         }}
                         renderRow={(id, onPress, item) => (
                           <TouchableOpacity
