@@ -468,6 +468,9 @@ class LoginScreen extends React.Component {
     if (text[text.length - 1] === ' ') {
       text = text.replace(/ /g, '');
       this.setState({ domain: text });
+    } else if (text[0] === ' ') {
+      text = text.replace(/ /g, '');
+      this.setState({ domain: text });
     } else {
       this.setState({ domain: text });
     }
