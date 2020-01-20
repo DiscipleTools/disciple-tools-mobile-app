@@ -2650,6 +2650,9 @@ class GroupDetailScreen extends React.Component {
                     height: this.state.height,
                   },
                   i18n.isRTL ? { textAlign: 'right', flex: 1 } : {},
+                  this.state.loadComments
+                    ? { backgroundColor: '#e6e6e6' }
+                    : { backgroundColor: 'white' },
                 ]}
               />
               <TouchableOpacity
