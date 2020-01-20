@@ -2596,6 +2596,9 @@ class ContactDetailScreen extends React.Component {
                   styles.commentInput,
                   { height: this.state.height },
                   i18n.isRTL ? { textAlign: 'right', flex: 1 } : {},
+                  this.state.loadComments
+                    ? { backgroundColor: '#e6e6e6' }
+                    : { backgroundColor: 'white' },
                 ]}
               />
               <TouchableOpacity
