@@ -138,11 +138,11 @@ const styles = StyleSheet.create({
   },
   textBox: {
     fontSize: 16,
-    alignSelf: 'stretch',
     height: 45,
-    paddingRight: 45,
+    paddingRight: 30,
     paddingLeft: 8,
     paddingVertical: 0,
+    flex: 1,
   },
   touachableButton: {
     position: 'absolute',
@@ -444,7 +444,6 @@ class LoginScreen extends React.Component {
   /* eslint-disable class-methods-use-this, no-console */
   goToForgotPassword = () => {
     const { domain } = this.state;
-    let text = 'hola';
     if (domain !== '') {
       Linking.openURL(`https://${domain}/wp-login.php?action=lostpassword`);
     } else {
@@ -546,7 +545,7 @@ class LoginScreen extends React.Component {
             <View style={[passwordStyle]}>
               <View style={{ margin: 10 }}>
                 <Text>{i18n.t('loginScreen.password.label')}</Text>
-                <View style={{ flex: 1, flexDirection: 'row' }}>
+                <View style={{ flexDirection: 'row' }}>
                   <Icon
                     type="Ionicons"
                     name="md-key"
