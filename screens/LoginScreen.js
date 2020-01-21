@@ -362,19 +362,54 @@ class LoginScreen extends React.Component {
       prevProps.contactsReducerError !== contactsReducerError && contactsReducerError;
     if (userError || groupsError || usersError || contactsError) {
       const error = userError || groupsError || usersError;
-      toastError.show(
-        <View>
-          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-            {i18n.t('global.error.code')}
-          </Text>
-          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-            {i18n.t('global.error.message')}
-          </Text>
-          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
-        </View>,
-        3000,
-      );
+      console.log(error);
+      if (error.code === '[jwt_auth] incorrect_password') {
+        toastError.show(
+          <View>
+            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+              {i18n.t('global.error.code')}
+            </Text>
+            <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+              {i18n.t('global.error.message')}
+            </Text>
+            <Text style={{ color: Colors.errorText }}>
+              {i18n.t('loginScreen.errors.incorrectPassword')}
+            </Text>
+          </View>,
+          3000,
+        );
+      } else if (error.code === '[jwt_auth] invalid_username') {
+        toastError.show(
+          <View>
+            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+              {i18n.t('global.error.code')}
+            </Text>
+            <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+              {i18n.t('global.error.message')}
+            </Text>
+            <Text style={{ color: Colors.errorText }}>
+              {i18n.t('loginScreen.errors.invalidUsername')}
+            </Text>
+          </View>,
+          3000,
+        );
+      } else {
+        toastError.show(
+          <View>
+            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+              {i18n.t('global.error.code')}
+            </Text>
+            <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+              {i18n.t('global.error.message')}
+            </Text>
+            <Text style={{ color: Colors.errorText }}>{error.message}</Text>
+          </View>,
+          3000,
+        );
+      }
     }
   }
 

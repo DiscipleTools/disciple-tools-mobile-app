@@ -51,10 +51,10 @@
     "cancel": "Cancelar",
     "save": "Guardar",
     "online": "En línea",
-    "offline": "Desconectado",
     "language": "Idioma",
     "search": "Buscar",
     "membersActivity": "Miembros",
+    "offline": "Desconectado",
     "moreFields": "Más Campos"
   },
   "loginScreen": {
@@ -73,7 +73,11 @@
       "error": "La contraseña es requerida"
     },
     "logIn": "Iniciar Sesión",
-    "forgotPassword": "Perdiste tu contraseña?"
+    "forgotPassword": "Perdiste tu contraseña?",
+    "errors": {
+      "invalidUsername": "Nombre de usuario desconocido. Vuelve a consultar o prueba tu dirección de correo electrónico.",
+      "incorrectPassword": "La contraseña que ingresó para el usuario es incorrecta"
+    }
   },
   "contactsScreen": {
     "contacts": "Contactos",
@@ -166,7 +170,6 @@
     "groupCoach": "Entrenador del Grupo",
     "selectCoaches": "Seleccionar Entrenador del Grupo",
     "selectGeonames": "Buscar ubicaciones",
-    "selectLocations": "Seleccionar ubicaciones",
     "startDate": "Fecha de inicio",
     "endDate": "Fecha de finalización",
     "groupType": "Tipo de grupo",
@@ -192,7 +195,8 @@
     "addMember": "Añadir miembro",
     "noGroupCommentPlacheHolder": "No hay comentarios del grupo disponibles actualmente.",
     "noGroupCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
-    "noGroupCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del grupo."
+    "noGroupCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del grupo.",
+    "selectLocations": "Seleccionar ubicaciones"
   },
   "notificationsScreen": {
     "notifications": "Notificaciones",
