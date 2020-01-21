@@ -980,7 +980,17 @@ class ContactDetailScreen extends React.Component {
   onSaveContact = (quickAction = {}) => {
     Keyboard.dismiss();
     const { unmodifiedContact } = this.state;
-    const contact = this.transformContactObject(this.state.contact, quickAction);
+    let contact = this.transformContactObject(this.state.contact, quickAction);
+
+    Object.keys(contact)
+      .filter((key) => key.includes('contact_'))
+      .forEach((key) => {
+        contact = {
+          ...contact,
+          [key]: contact[key].filter((socialMedia) => socialMedia.value.length > 0),
+        };
+      });
+
     let contactToSave = {
       ...sharedTools.diff(unmodifiedContact, contact),
     };
@@ -1013,6 +1023,7 @@ class ContactDetailScreen extends React.Component {
         ID: this.state.contact.ID,
       };
     }
+
     this.props.saveContact(this.props.userData.domain, this.props.userData.token, contactToSave);
   };
 

@@ -107,7 +107,7 @@
     "subAssignThisContact": "Sub-assign this contact",
     "mobile": "Mobile",
     "email": "Email",
-    "selectLocations": "Select geonames",
+    "selectLocations": "Select Locations",
     "contactAge": {
       "underEighteenYearsOld": "Under 18 years old",
       "underTwentySixYearsOld": "18-25 years old",
@@ -164,8 +164,9 @@
   "groupDetailScreen": {
     "addNewGroup": "Add New Group",
     "groupCoach": "Group Coach",
-    "selectCoaches": "Select coaches",
+    "selectCoaches": "Select Group Coach",
     "selectGeonames": "Select geonames",
+    "selectLocations": "Select Locations",
     "startDate": "Start Date",
     "endDate": "End Date",
     "groupType": "Group Type",
