@@ -73,7 +73,11 @@
       "error": "Password is required"
     },
     "logIn": "Log In",
-    "forgotPassword": "Lost your password?"
+    "forgotPassword": "Lost your password?",
+    "errors": {
+      "invalidUsername": "Unknown username. Check again or try your email address.",
+      "incorrectPassword": "The password you entered for username is incorrect"
+    }
   },
   "contactsScreen": {
     "contacts": "Contacts",
@@ -166,7 +170,6 @@
     "groupCoach": "Group Coach",
     "selectCoaches": "Select Group Coach",
     "selectGeonames": "Select geonames",
-    "selectLocations": "Select Locations",
     "startDate": "Start Date",
     "endDate": "End Date",
     "groupType": "Group Type",
@@ -192,7 +195,8 @@
     "addMember": "Add Member",
     "noGroupCommentPlacheHolder": "There are not any group comments currently available.",
     "noGroupCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
-    "noGroupCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your group comment."
+    "noGroupCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your group comment.",
+    "selectLocations": "Select Locations"
   },
   "notificationsScreen": {
     "notifications": "Notifications",
