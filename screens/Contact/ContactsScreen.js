@@ -227,6 +227,7 @@ class ContactsScreen extends React.Component {
         (prevState) => ({
           offset: prevState.offset + prevState.limit,
           filtered: false,
+          search: '',
         }),
         () => {
           this.props.getAllContacts(
@@ -243,6 +244,7 @@ class ContactsScreen extends React.Component {
         () => ({
           offset: 0,
           filtered: false,
+          search: '',
         }),
         () => {
           this.props.getAllContacts(
