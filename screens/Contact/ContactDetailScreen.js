@@ -985,10 +985,12 @@ class ContactDetailScreen extends React.Component {
     Object.keys(contact)
       .filter((key) => key.includes('contact_'))
       .forEach((key) => {
-        contact = {
-          ...contact,
-          [key]: contact[key].filter((socialMedia) => socialMedia.value.length > 0),
-        };
+        if (!contact[key][0].delete) {
+          contact = {
+            ...contact,
+            [key]: contact[key].filter((socialMedia) => socialMedia.value.length > 0),
+          };
+        }
       });
 
     let contactToSave = {
