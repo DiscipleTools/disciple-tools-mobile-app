@@ -196,7 +196,8 @@
     "noGroupCommentPlacheHolder": "There are not any group comments currently available.",
     "noGroupCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
     "noGroupCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your group comment.",
-    "selectLocations": "Select Locations"
+    "selectLocations": "Select Locations",
+    "noMembersMessage": "No members. Tap here or on Edit to add some members to this group"
   },
   "notificationsScreen": {
     "notifications": "Notifications",

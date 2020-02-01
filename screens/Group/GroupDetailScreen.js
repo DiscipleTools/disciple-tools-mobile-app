@@ -374,6 +374,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff2ac',
     padding: 5,
   },
+  membersCount: {
+    color: Colors.tintColor,
+    fontSize: 15,
+  },
+  addMembersHyperlink: {
+    paddingTop: 150,
+    textAlign: 'center',
+    color: '#A8A8A8',
+    fontSize: 18,
+    opacity: 0.7,
+  },
 });
 
 const initialState = {
@@ -1089,6 +1100,51 @@ class GroupDetailScreen extends React.Component {
     }
     return members || [];
   }
+
+  showMembersCount = () => (
+    <View>
+      <Row style={{ paddingBottom: 10 }}>
+        <Text
+          style={[
+            { color: Colors.tintColor, fontSize: 13, textAlign: 'left', fontWeight: 'bold' },
+          ]}>
+          {i18n.t('global.membersActivity')}:
+        </Text>
+        {this.state.group.member_count ? (
+          <Text
+            style={{
+              color: Colors.tintColor,
+              fontSize: 13,
+              textAlign: 'left',
+              fontWeight: 'bold',
+            }}>
+            {' '}
+            {this.state.group.member_count}
+          </Text>
+        ) : (
+          <Text
+            style={{
+              color: Colors.tintColor,
+              fontSize: 13,
+              textAlign: 'left',
+              fontWeight: 'bold',
+            }}>
+            {' '}
+            0{' '}
+          </Text>
+        )}
+      </Row>
+      {this.state.group.member_count === '0' ? (
+        <View>
+          <Text style={styles.addMembersHyperlink} onPress={() => this.onEnableEdit()}>
+            {i18n.t('groupDetailScreen.noMembersMessage')}
+          </Text>
+        </View>
+      ) : (
+        <View></View>
+      )}
+    </View>
+  );
 
   goToContactDetailScreen = (contactData = null) => {
     if (contactData) {
@@ -2769,9 +2825,7 @@ class GroupDetailScreen extends React.Component {
           {() => (
             <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
               <ScrollView keyboardShouldPersistTaps="handled">
-                <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'left' }}>
-                  {i18n.t('global.membersActivity')}
-                </Text>
+                {this.showMembersCount()}
                 <FlatList
                   data={this.getMembers()}
                   extraData={this.state.updateMembersList}
