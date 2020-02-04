@@ -239,7 +239,7 @@ class LoginScreen extends React.Component {
       });
     });
     // User is authenticated (logged)
-    if (this.props.userData && this.props.userData.token) {
+    if (this.props.userData && this.props.userData.token && this.props.rememberPassword) {
       if (this.props.isConnected) {
         this.setState({ loading: true }, () => {
           this.getDataLists();
@@ -756,6 +756,7 @@ const mapStateToProps = (state) => ({
   userData: state.userReducer.userData,
   userReducerLoading: state.userReducer.loading,
   userReducerError: state.userReducer.error,
+  rememberPassword: state.userReducer.rememberPassword,
   groupsReducerLoading: state.groupsReducer.loading,
   usersContacts: state.groupsReducer.usersContacts,
   geonames: state.groupsReducer.geonames,
@@ -763,6 +764,7 @@ const mapStateToProps = (state) => ({
   search: state.groupsReducer.search,
   groupSettings: state.groupsReducer.settings,
   groupsReducerError: state.groupsReducer.error,
+  groups: state.groupsReducer.groups,
   usersReducerLoading: state.usersReducer.loading,
   users: state.usersReducer.users,
   usersReducerError: state.usersReducer.error,
@@ -772,7 +774,6 @@ const mapStateToProps = (state) => ({
   contactsReducerLoading: state.contactsReducer.loading,
   contactsReducerError: state.contactsReducer.error,
   contacts: state.contactsReducer.contacts,
-  groups: state.groupsReducer.groups,
 });
 const mapDispatchToProps = (dispatch) => ({
   loginDispatch: (domain, username, password) => {

@@ -1344,7 +1344,9 @@ class ContactDetailScreen extends React.Component {
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
-                  <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.email')}</Label>
+                  <Label style={styles.formLabel}>
+                    {this.props.contactSettings.channels.email.label}
+                  </Label>
                 </Col>
               </Row>
               <View style={styles.formDivider} />
@@ -1420,7 +1422,9 @@ class ContactDetailScreen extends React.Component {
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
-                  <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
+                  <Label style={styles.formLabel}>
+                    {this.props.contactSettings.channels.address.label}
+                  </Label>
                 </Col>
               </Row>
               <View style={styles.formDivider} />
@@ -1833,7 +1837,9 @@ class ContactDetailScreen extends React.Component {
                       </View>
                     </Col>
                     <Col>
-                      <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.email')}</Label>
+                      <Label style={styles.formLabel}>
+                        {this.props.contactSettings.channels.email.label}
+                      </Label>
                     </Col>
                     <Col style={styles.formIconLabel}>
                       <Icon
@@ -1956,7 +1962,9 @@ class ContactDetailScreen extends React.Component {
                       </View>
                     </Col>
                     <Col>
-                      <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
+                      <Label style={styles.formLabel}>
+                        {this.props.contactSettings.channels.address.label}
+                      </Label>
                     </Col>
                     <Col style={styles.formIconLabel}>
                       <Icon
@@ -4512,7 +4520,7 @@ class ContactDetailScreen extends React.Component {
                       nativeFeedbackRippleColor="rgba(0,0,0,0)">
                       <ActionButton.Item
                         buttonColor={Colors.primaryRGBA}
-                        title={i18n.t('contactDetailScreen.noAnswer')}
+                        title={this.props.contactSettings.fields.quick_button_no_answer.name}
                         onPress={() =>
                           this.onSaveContact({
                             quick_button_no_answer: this.state.contact.quick_button_no_answer
@@ -4528,7 +4536,9 @@ class ContactDetailScreen extends React.Component {
                       </ActionButton.Item>
                       <ActionButton.Item
                         buttonColor={Colors.primaryRGBA}
-                        title={i18n.t('contactDetailScreen.contactEstablished')}
+                        title={
+                          this.props.contactSettings.fields.quick_button_contact_established.name
+                        }
                         onPress={() =>
                           this.onSaveContact({
                             quick_button_contact_established: Object.prototype.hasOwnProperty.call(
@@ -4552,7 +4562,9 @@ class ContactDetailScreen extends React.Component {
                       </ActionButton.Item>
                       <ActionButton.Item
                         buttonColor={Colors.primaryRGBA}
-                        title={i18n.t('contactDetailScreen.meetingScheduled')}
+                        title={
+                          this.props.contactSettings.fields.quick_button_meeting_scheduled.name
+                        }
                         onPress={() =>
                           this.onSaveContact({
                             quick_button_meeting_scheduled: Object.prototype.hasOwnProperty.call(
@@ -4598,7 +4610,7 @@ class ContactDetailScreen extends React.Component {
                       </ActionButton.Item>
                       <ActionButton.Item
                         buttonColor={Colors.primaryRGBA}
-                        title={i18n.t('contactDetailScreen.meetingNoShow')}
+                        title={this.props.contactSettings.fields.quick_button_no_show.name}
                         onPress={() =>
                           this.onSaveContact({
                             quick_button_no_show: Object.prototype.hasOwnProperty.call(
@@ -4668,7 +4680,7 @@ class ContactDetailScreen extends React.Component {
                         </Row>
                         <Row>
                           <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                            {i18n.t('contactDetailScreen.email')}
+                            {this.props.contactSettings.channels.email.label}
                           </Label>
                         </Row>
                         <Row>

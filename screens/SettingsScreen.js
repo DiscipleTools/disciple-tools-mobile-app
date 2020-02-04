@@ -22,7 +22,7 @@ import Constants from 'expo-constants';
 import * as MailComposer from 'expo-mail-composer';
 import Colors from '../constants/Colors';
 import { setLanguage } from '../store/actions/i18n.actions';
-import { logout } from '../store/actions/user.actions';
+import { logout, toggleRememberPassword } from '../store/actions/user.actions';
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
 import i18n from '../languages';
 //  import locales from '../languages/locales';
@@ -147,6 +147,10 @@ class SettingsScreen extends React.Component {
     });
   };
 
+  toggleRememberPassword = () => {
+    this.props.toggleRememberPassword();
+  };
+
   static navigationOptions = {
     title: i18n.t('settingsScreen.settings'),
     headerStyle: {
@@ -241,6 +245,20 @@ class SettingsScreen extends React.Component {
             </Right>
           </ListItem>
           */}
+          {/* === Remember password === */}
+          <ListItem icon>
+            <Left>
+              <NbButton>
+                <Icon active type="MaterialCommunityIcons" name="onepassword" />
+              </NbButton>
+            </Left>
+            <Body style={styles.body}>
+              <Text style={styles.text}>{i18n.t('settingsScreen.rememberPassword')}</Text>
+            </Body>
+            <Right>
+              <Switch value={this.props.rememberPassword} onChange={this.toggleRememberPassword} />
+            </Right>
+          </ListItem>
           {/* === Help / Support === */}
           <ListItem icon onPress={this.draftNewSupportEmail}>
             <Left>
@@ -292,6 +310,7 @@ const mapStateToProps = (state) => ({
   i18n: state.i18nReducer,
   isConnected: state.networkConnectivityReducer.isConnected,
   userData: state.userReducer.userData,
+  rememberPassword: state.userReducer.rememberPassword,
 });
 const mapDispatchToProps = (dispatch) => ({
   toggleNetworkConnectivity: (isConnected) => {
@@ -302,6 +321,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   logout: () => {
     dispatch(logout());
+  },
+  toggleRememberPassword: () => {
+    dispatch(toggleRememberPassword());
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsScreen);

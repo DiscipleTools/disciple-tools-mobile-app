@@ -94,7 +94,8 @@
     "signedInAs": "Conectado como",
     "storybook": "Storybook",
     "logout": "Desconectarse",
-    "helpSupport": "Ayuda / Soporte"
+    "helpSupport": "Ayuda / Soporte",
+    "rememberPassword": "Mantener iniciada la sesión"
   },
   "contactDetailScreen": {
     "addNewContact": "Crear nuevo contacto",
@@ -110,7 +111,6 @@
     "subAssignedTo": "Subasignado a",
     "subAssignThisContact": "Subasignar este contacto",
     "mobile": "Telefonos",
-    "email": "Correos Electrónicos",
     "selectLocations": "Seleccionar ubicaciones",
     "contactAge": {
       "underEighteenYearsOld": "Menor de 18 años de edad",
@@ -156,24 +156,16 @@
     "addBaptizmDate": "Agregar fecha de bautizmo",
     "group": "Grupo",
     "socialMedia": "Redes Sociales",
-    "noAnswer": "Sin Respuesta",
-    "contactEstablished": "Contacto Establecido",
-    "meetingScheduled": "Reunión Programada",
-    "meetingCompleted": "Reunión Completa",
-    "meetingNoShow": "Reunión No Se Presentó",
     "noContactCommentPlacheHolder": "No hay comentarios de contacto disponibles actualmente.",
     "noContactCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
     "noContactCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrate de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del contacto."
   },
   "groupDetailScreen": {
     "addNewGroup": "Crear un grupo nuevo",
-    "groupCoach": "Entrenador del Grupo",
     "selectCoaches": "Seleccionar Entrenador del Grupo",
     "selectGeonames": "Buscar ubicaciones",
     "startDate": "Fecha de inicio",
     "endDate": "Fecha de finalización",
-    "groupType": "Tipo de grupo",
-    "churchHealth": "Salúd de la Iglesia",
     "healthMetrics": {
       "giving": "Donación",
       "fellowship": "Compañerismo",

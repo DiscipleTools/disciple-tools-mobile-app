@@ -94,7 +94,8 @@
     "signedInAs": "Signed in as",
     "storybook": "Storybook",
     "logout": "Sign Out",
-    "helpSupport": "Help / Support"
+    "helpSupport": "Help / Support",
+    "rememberPassword": "Keep logged in"
   },
   "contactDetailScreen": {
     "addNewContact": "Add New Contact",
@@ -110,7 +111,6 @@
     "subAssignedTo": "Sub-assigned to",
     "subAssignThisContact": "Sub-assign this contact",
     "mobile": "Mobile",
-    "email": "Email",
     "selectLocations": "Select Locations",
     "contactAge": {
       "underEighteenYearsOld": "Under 18 years old",
@@ -156,24 +156,16 @@
     "addBaptizmDate": "Add baptizm date",
     "group": "Group",
     "socialMedia": "Social Media",
-    "noAnswer": "No Answer",
-    "contactEstablished": "Contact Established",
-    "meetingScheduled": "Meeting Scheduled",
-    "meetingCompleted": "Meeting Completed",
-    "meetingNoShow": "Meeting No-show",
     "noContactCommentPlacheHolder": "There are not any contact comments currently available.",
     "noContactCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
     "noContactCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your contact comments."
   },
   "groupDetailScreen": {
     "addNewGroup": "Add New Group",
-    "groupCoach": "Group Coach",
     "selectCoaches": "Select Group Coach",
     "selectGeonames": "Select geonames",
     "startDate": "Start Date",
     "endDate": "End Date",
-    "groupType": "Group Type",
-    "churchHealth": "Church Health",
     "healthMetrics": {
       "giving": "Giving",
       "fellowship": "Fellowship",
