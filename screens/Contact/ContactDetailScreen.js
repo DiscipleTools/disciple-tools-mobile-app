@@ -4587,7 +4587,7 @@ class ContactDetailScreen extends React.Component {
                       </ActionButton.Item>
                       <ActionButton.Item
                         buttonColor={Colors.primaryRGBA}
-                        title={i18n.t('contactDetailScreen.meetingCompleted')}
+                        title={this.props.contactSettings.fields.quick_button_meeting_complete.name}
                         onPress={() =>
                           this.onSaveContact({
                             quick_button_meeting_complete: Object.prototype.hasOwnProperty.call(

@@ -438,7 +438,7 @@ const initialState = {
       },
       {
         key: 'groups',
-        title: '',
+        title: i18n.t('global.groups'),
       },
     ],
   },
@@ -1881,7 +1881,9 @@ class GroupDetailScreen extends React.Component {
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
-                  <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.channels.address.label}
+                  </Label>
                 </Col>
               </Row>
               <View style={styles.formDivider} />
@@ -2069,7 +2071,6 @@ class GroupDetailScreen extends React.Component {
                           borderStyle: 'solid',
                           borderBottomColor: '#D9D5DC',
                         }}>
-                        {this.showAssignedUser()}
                         <Picker onValueChange={this.onSelectAssignedTo}>
                           {this.renderPickerItems(this.state.users)}
                         </Picker>
@@ -2320,7 +2321,9 @@ class GroupDetailScreen extends React.Component {
                       </View>
                     </Col>
                     <Col>
-                      <Label style={styles.formLabel}>{i18n.t('global.address')}</Label>
+                      <Label style={styles.formLabel}>
+                        {this.props.groupSettings.channels.address.label}
+                      </Label>
                     </Col>
                     <Col style={styles.formIconLabel}>
                       <Icon
