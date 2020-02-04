@@ -21,6 +21,8 @@ export const GET_MY_USER_INFO_RESPONSE = 'GET_MY_USER_INFO_RESPONSE';
 export const GET_MY_USER_INFO_SUCCESS = 'GET_MY_USER_INFO_SUCCESS';
 export const GET_MY_USER_INFO_FAILURE = 'GET_MY_USER_INFO_FAILURE';
 
+export const REMEMBER_PASSWORD = 'REMEMBER_PASSWORD';
+
 /*
  * Action Creators
  */
@@ -60,4 +62,8 @@ export function getUserInfo(domain, token) {
 
 export function logout() {
   return { type: USER_LOGOUT };
+}
+
+export function toggleRememberPassword() {
+  return { type: REMEMBER_PASSWORD };
 }

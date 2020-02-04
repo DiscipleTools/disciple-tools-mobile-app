@@ -14,6 +14,7 @@ const initialState = {
     id: null,
     expoPushToken: null,
   },
+  rememberPassword: true,
 };
 
 export default function userReducer(state = initialState, action) {
@@ -56,13 +57,13 @@ export default function userReducer(state = initialState, action) {
           id: action.userInfo.ID,
         },
       };
-      case actions.USER_GET_PUSH_TOKEN:
-        return {
-          ...newState,
-          userData: {
-            ...newState.userData,
-          },
-        };
+    case actions.USER_GET_PUSH_TOKEN:
+      return {
+        ...newState,
+        userData: {
+          ...newState.userData,
+        },
+      };
     case actions.USER_ADD_PUSH_TOKEN:
       return {
         ...newState,
@@ -78,6 +79,11 @@ export default function userReducer(state = initialState, action) {
           ...newState.userData,
           token: null,
         },
+      };
+    case actions.REMEMBER_PASSWORD:
+      return {
+        ...newState,
+        rememberPassword: !newState.rememberPassword,
       };
     default:
       return newState;
