@@ -10,6 +10,7 @@
     "groups": "Groups",
     "details": "Details",
     "selectPeopleGroups": "Select People Groups",
+    "address": "Address",
     "progress": "Progress",
     "commentsActivity": "Comments and Activity",
     "writeYourCommentNoteHere": "Write your comment or note here",
@@ -58,7 +59,8 @@
     "networkAvailable": "Network detected. Back to ONLINE mode",
     "storybook": "Storybook",
     "logout": "Sign Out",
-    "helpSupport": "Help / Support"
+    "helpSupport": "Help / Support",
+    "rememberPassword": "Keep logged in"
   },
   "contactDetailScreen": {
     "addNewContact": "Add New Contact",
