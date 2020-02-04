@@ -438,7 +438,7 @@ const initialState = {
       },
       {
         key: 'groups',
-        title: i18n.t('global.groups'),
+        title: '',
       },
     ],
   },
@@ -1007,7 +1007,7 @@ class GroupDetailScreen extends React.Component {
             },
             {
               key: 'groups',
-              title: i18n.t('global.groups'),
+              title: '',
             },
           ],
         },
@@ -1733,7 +1733,7 @@ class GroupDetailScreen extends React.Component {
                   },
                   i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
                 ]}>
-                {this.props.groupSettings.group_status.name}
+                {this.props.groupSettings.fields.group_status.name}
               </Label>
               <Row style={[styles.formRow, { paddingTop: 5 }]}>
                 <Col>
@@ -1756,8 +1756,8 @@ class GroupDetailScreen extends React.Component {
                             i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
                           ]
                     }>
-                    {Object.keys(this.props.groupSettings.group_status.values).map((key) => {
-                      const optionData = this.props.groupSettings.group_status.values[key];
+                    {Object.keys(this.props.groupSettings.fields.group_status.values).map((key) => {
+                      const optionData = this.props.groupSettings.fields.group_status.values[key];
                       return <Picker.Item key={key} label={optionData.label} value={key} />;
                     })}
                   </Picker>
@@ -1770,7 +1770,7 @@ class GroupDetailScreen extends React.Component {
                 <Col>{this.showAssignedUser()}</Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={styles.formLabel}>
-                    {this.props.groupSettings.assigned_to.name}
+                    {this.props.groupSettings.fields.assigned_to.name}
                   </Label>
                 </Col>
               </Row>
@@ -1801,7 +1801,9 @@ class GroupDetailScreen extends React.Component {
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
-                  <Label style={styles.formLabel}>{this.props.groupSettings.coaches.name}</Label>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.coaches.name}
+                  </Label>
                 </Col>
               </Row>
               <View style={styles.formDivider} />
@@ -1829,7 +1831,7 @@ class GroupDetailScreen extends React.Component {
                 </Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={styles.formLabel}>
-                    {this.props.groupSettings.location_grid.name}
+                    {this.props.groupSettings.fields.location_grid.name}
                   </Label>
                 </Col>
               </Row>
@@ -1858,7 +1860,7 @@ class GroupDetailScreen extends React.Component {
                 </Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={styles.formLabel}>
-                    {this.props.groupSettings.people_groups.name}
+                    {this.props.groupSettings.fields.people_groups.name}
                   </Label>
                 </Col>
               </Row>
@@ -1901,7 +1903,9 @@ class GroupDetailScreen extends React.Component {
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
-                  <Label style={styles.formLabel}>{this.props.groupSettings.start_date.name}</Label>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.start_date.name}
+                  </Label>
                 </Col>
               </Row>
               <View style={styles.formDivider} />
@@ -1924,7 +1928,7 @@ class GroupDetailScreen extends React.Component {
                 </Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={styles.formLabel}>
-                    {this.props.groupSettings.church_start_date.name}
+                    {this.props.groupSettings.fields.church_start_date.name}
                   </Label>
                 </Col>
               </Row>
@@ -1947,7 +1951,9 @@ class GroupDetailScreen extends React.Component {
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
-                  <Label style={styles.formLabel}>{this.props.groupSettings.end_date.name}</Label>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.end_date.name}
+                  </Label>
                 </Col>
               </Row>
               <View style={styles.formDivider} />
@@ -1967,7 +1973,7 @@ class GroupDetailScreen extends React.Component {
                       fontWeight: 'bold',
                       marginTop: 10,
                     }}>
-                    {this.props.groupSettings.group_status.name}
+                    {this.props.groupSettings.fields.group_status.name}
                   </Label>
                   <Row style={{ paddingBottom: 30 }}>
                     <Col>
@@ -1984,10 +1990,14 @@ class GroupDetailScreen extends React.Component {
                                 backgroundColor: this.state.groupStatusBackgroundColor,
                               }
                         }>
-                        {Object.keys(this.props.groupSettings.group_status.values).map((key) => {
-                          const optionData = this.props.groupSettings.group_status.values[key];
-                          return <Picker.Item key={key} label={optionData.label} value={key} />;
-                        })}
+                        {Object.keys(this.props.groupSettings.fields.group_status.values).map(
+                          (key) => {
+                            const optionData = this.props.groupSettings.fields.group_status.values[
+                              key
+                            ];
+                            return <Picker.Item key={key} label={optionData.label} value={key} />;
+                          },
+                        )}
                       </Picker>
                     </Col>
                   </Row>
@@ -2039,7 +2049,7 @@ class GroupDetailScreen extends React.Component {
                       </Col>
                       <Col>
                         <Label style={styles.formLabel}>
-                          {this.props.groupSettings.assigned_to.name}
+                          {this.props.groupSettings.fields.assigned_to.name}
                         </Label>
                       </Col>
                     </Row>
@@ -2074,7 +2084,7 @@ class GroupDetailScreen extends React.Component {
                     </Col>
                     <Col>
                       <Label style={styles.formLabel}>
-                        {i18n.t('groupDetailScreen.groupCoach')}
+                        {this.props.groupSettings.fields.coaches.name}
                       </Label>
                     </Col>
                   </Row>
@@ -2153,7 +2163,7 @@ class GroupDetailScreen extends React.Component {
                     </Col>
                     <Col>
                       <Label style={styles.formLabel}>
-                        {this.props.groupSettings.location_grid.name}
+                        {this.props.groupSettings.fields.location_grid.name}
                       </Label>
                     </Col>
                   </Row>
@@ -2232,7 +2242,7 @@ class GroupDetailScreen extends React.Component {
                     </Col>
                     <Col>
                       <Label style={styles.formLabel}>
-                        {this.props.groupSettings.people_groups.name}
+                        {this.props.groupSettings.fields.people_groups.name}
                       </Label>
                     </Col>
                   </Row>
@@ -2372,7 +2382,7 @@ class GroupDetailScreen extends React.Component {
                     </Col>
                     <Col>
                       <Label style={styles.formLabel}>
-                        {this.props.groupSettings.start_date.name}
+                        {this.props.groupSettings.fields.start_date.name}
                       </Label>
                     </Col>
                   </Row>
@@ -2420,7 +2430,7 @@ class GroupDetailScreen extends React.Component {
                     </Col>
                     <Col>
                       <Label style={styles.formLabel}>
-                        {this.props.groupSettings.church_start_date.name}
+                        {this.props.groupSettings.fields.church_start_date.name}
                       </Label>
                     </Col>
                   </Row>
@@ -2458,7 +2468,7 @@ class GroupDetailScreen extends React.Component {
                     </Col>
                     <Col>
                       <Label style={styles.formLabel}>
-                        {this.props.groupSettings.end_date.name}
+                        {this.props.groupSettings.fields.end_date.name}
                       </Label>
                     </Col>
                   </Row>
@@ -2527,19 +2537,22 @@ class GroupDetailScreen extends React.Component {
                       i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.group_type
-                      ? this.props.groupSettings.group_type.values[this.state.group.group_type]
-                          .label
+                      ? this.props.groupSettings.fields.group_type.values[
+                          this.state.group.group_type
+                        ].label
                       : ''}
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
-                  <Label style={styles.formLabel}>{i18n.t('groupDetailScreen.groupType')}</Label>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.group_type.name}
+                  </Label>
                 </Col>
               </Row>
               <View style={styles.formDivider} />
               <Label
                 style={[styles.formLabel, { fontWeight: 'bold', marginBottom: 10, marginTop: 20 }]}>
-                {i18n.t('groupDetailScreen.churchHealth')}
+                {this.props.groupSettings.fields.health_metrics.name}
               </Label>
             </View>
             {this.renderHealthMilestones()}
@@ -2560,7 +2573,7 @@ class GroupDetailScreen extends React.Component {
                     </Col>
                     <Col>
                       <Label style={styles.formLabel}>
-                        {this.props.groupSettings.group_type.name}
+                        {this.props.groupSettings.fields.group_type.name}
                       </Label>
                     </Col>
                   </Row>
@@ -2579,10 +2592,14 @@ class GroupDetailScreen extends React.Component {
                         mode="dropdown"
                         selectedValue={this.state.group.group_type}
                         onValueChange={this.setGroupType}>
-                        {Object.keys(this.props.groupSettings.group_type.values).map((key) => {
-                          const optionData = this.props.groupSettings.group_type.values[key];
-                          return <Picker.Item key={key} label={optionData.label} value={key} />;
-                        })}
+                        {Object.keys(this.props.groupSettings.fields.group_type.values).map(
+                          (key) => {
+                            const optionData = this.props.groupSettings.fields.group_type.values[
+                              key
+                            ];
+                            return <Picker.Item key={key} label={optionData.label} value={key} />;
+                          },
+                        )}
                       </Picker>
                     </Col>
                   </Row>
@@ -2591,7 +2608,7 @@ class GroupDetailScreen extends React.Component {
                       styles.formLabel,
                       { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
                     ]}>
-                    {i18n.t('groupDetailScreen.churchHealth')}
+                    {this.props.groupSettings.fields.health_metrics.name}
                   </Label>
                 </View>
                 {this.renderHealthMilestones()}
@@ -2937,7 +2954,7 @@ class GroupDetailScreen extends React.Component {
                 </Col>
                 <Col style={styles.formIconLabel}>
                   <Label style={styles.formLabel}>
-                    {this.props.groupSettings.parent_groups.name}
+                    {this.props.groupSettings.fields.parent_groups.name}
                   </Label>
                 </Col>
                 <Col />
@@ -2981,7 +2998,7 @@ class GroupDetailScreen extends React.Component {
                 </Col>
                 <Col style={styles.formIconLabel}>
                   <Label style={styles.formLabel}>
-                    {this.props.groupSettings.peer_groups.name}
+                    {this.props.groupSettings.fields.peer_groups.name}
                   </Label>
                 </Col>
                 <Col />
@@ -3076,7 +3093,7 @@ class GroupDetailScreen extends React.Component {
                     </Col>
                     <Col>
                       <Label style={styles.formLabel}>
-                        {this.props.groupSettings.parent_groups.name}
+                        {this.props.groupSettings.fields.parent_groups.name}
                       </Label>
                     </Col>
                   </Row>
@@ -3155,7 +3172,7 @@ class GroupDetailScreen extends React.Component {
                     </Col>
                     <Col>
                       <Label style={styles.formLabel}>
-                        {this.props.groupSettings.peer_groups.name}
+                        {this.props.groupSettings.fields.peer_groups.name}
                       </Label>
                     </Col>
                   </Row>
@@ -3234,7 +3251,7 @@ class GroupDetailScreen extends React.Component {
                     </Col>
                     <Col>
                       <Label style={styles.formLabel}>
-                        {this.props.groupSettings.child_groups.name}
+                        {this.props.groupSettings.fields.child_groups.name}
                       </Label>
                     </Col>
                   </Row>
@@ -3403,7 +3420,10 @@ class GroupDetailScreen extends React.Component {
                                   ? styles.activeToggleText
                                   : styles.inactiveToggleText,
                               ]}>
-                              {this.props.groupSettings.health_metrics.values.church_giving.label}
+                              {
+                                this.props.groupSettings.fields.health_metrics.values.church_giving
+                                  .label
+                              }
                             </Text>
                           </Row>
                         </Col>
@@ -3445,8 +3465,8 @@ class GroupDetailScreen extends React.Component {
                                   : styles.inactiveToggleText,
                               ]}>
                               {
-                                this.props.groupSettings.health_metrics.values.church_fellowship
-                                  .label
+                                this.props.groupSettings.fields.health_metrics.values
+                                  .church_fellowship.label
                               }
                             </Text>
                           </Row>
@@ -3491,8 +3511,8 @@ class GroupDetailScreen extends React.Component {
                                   : styles.inactiveToggleText,
                               ]}>
                               {
-                                this.props.groupSettings.health_metrics.values.church_communion
-                                  .label
+                                this.props.groupSettings.fields.health_metrics.values
+                                  .church_communion.label
                               }
                             </Text>
                           </Row>
@@ -3538,7 +3558,10 @@ class GroupDetailScreen extends React.Component {
                                   ? styles.activeToggleText
                                   : styles.inactiveToggleText,
                               ]}>
-                              {this.props.groupSettings.health_metrics.values.church_baptism.label}
+                              {
+                                this.props.groupSettings.fields.health_metrics.values.church_baptism
+                                  .label
+                              }
                             </Text>
                           </Row>
                         </Col>
@@ -3581,7 +3604,10 @@ class GroupDetailScreen extends React.Component {
                                   ? styles.activeToggleText
                                   : styles.inactiveToggleText,
                               ]}>
-                              {this.props.groupSettings.health_metrics.values.church_prayer.label}
+                              {
+                                this.props.groupSettings.fields.health_metrics.values.church_prayer
+                                  .label
+                              }
                             </Text>
                           </Row>
                         </Col>
@@ -3624,7 +3650,10 @@ class GroupDetailScreen extends React.Component {
                                   ? styles.activeToggleText
                                   : styles.inactiveToggleText,
                               ]}>
-                              {this.props.groupSettings.health_metrics.values.church_leaders.label}
+                              {
+                                this.props.groupSettings.fields.health_metrics.values.church_leaders
+                                  .label
+                              }
                             </Text>
                           </Row>
                         </Col>
@@ -3669,7 +3698,10 @@ class GroupDetailScreen extends React.Component {
                                   ? styles.activeToggleText
                                   : styles.inactiveToggleText,
                               ]}>
-                              {this.props.groupSettings.health_metrics.values.church_bible.label}
+                              {
+                                this.props.groupSettings.fields.health_metrics.values.church_bible
+                                  .label
+                              }
                             </Text>
                           </Row>
                         </Col>
@@ -3712,7 +3744,10 @@ class GroupDetailScreen extends React.Component {
                                   ? styles.activeToggleText
                                   : styles.inactiveToggleText,
                               ]}>
-                              {this.props.groupSettings.health_metrics.values.church_praise.label}
+                              {
+                                this.props.groupSettings.fields.health_metrics.values.church_praise
+                                  .label
+                              }
                             </Text>
                           </Row>
                         </Col>
@@ -3753,7 +3788,10 @@ class GroupDetailScreen extends React.Component {
                                   ? styles.activeToggleText
                                   : styles.inactiveToggleText,
                               ]}>
-                              {this.props.groupSettings.health_metrics.values.church_sharing.label}
+                              {
+                                this.props.groupSettings.fields.health_metrics.values.church_sharing
+                                  .label
+                              }
                             </Text>
                           </Row>
                         </Col>
@@ -3781,7 +3819,7 @@ class GroupDetailScreen extends React.Component {
     });
 
   renderCustomHealthMilestones() {
-    const healthMetricsList = Object.keys(this.props.groupSettings.health_metrics.values);
+    const healthMetricsList = Object.keys(this.props.groupSettings.fields.health_metrics.values);
     const customHealthMetrics = healthMetricsList.filter(
       (milestoneItem) => defaultHealthMilestones.indexOf(milestoneItem) < 0,
     );
@@ -3815,7 +3853,7 @@ class GroupDetailScreen extends React.Component {
                     color: this.onCheckExistingHealthMetric(value) ? '#FFFFFF' : '#000000',
                   },
                 ]}>
-                {this.props.groupSettings.health_metrics.values[value].label}
+                {this.props.groupSettings.fields.health_metrics.values[value].label}
               </Text>
             </TouchableOpacity>
           </Col>,
@@ -3858,7 +3896,7 @@ class GroupDetailScreen extends React.Component {
                     color: this.onCheckExistingHealthMetric(value) ? '#FFFFFF' : '#000000',
                   },
                 ]}>
-                {this.props.groupSettings.health_metrics.values[value].label}
+                {this.props.groupSettings.fields.health_metrics.values[value].label}
               </Text>
             </TouchableHighlight>
           </Col>,
@@ -3963,7 +4001,7 @@ class GroupDetailScreen extends React.Component {
                     </Row>
                     <Row>
                       <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                        {this.props.groupSettings.group_type.name}
+                        {this.props.groupSettings.fields.group_type.name}
                       </Label>
                     </Row>
                     <Row>
@@ -3971,10 +4009,14 @@ class GroupDetailScreen extends React.Component {
                         mode="dropdown"
                         selectedValue={this.state.group.group_type}
                         onValueChange={this.setGroupType}>
-                        {Object.keys(this.props.groupSettings.group_type.values).map((key) => {
-                          const optionData = this.props.groupSettings.group_type.values[key];
-                          return <Picker.Item key={key} label={optionData.label} value={key} />;
-                        })}
+                        {Object.keys(this.props.groupSettings.fields.group_type.values).map(
+                          (key) => {
+                            const optionData = this.props.groupSettings.fields.group_type.values[
+                              key
+                            ];
+                            return <Picker.Item key={key} label={optionData.label} value={key} />;
+                          },
+                        )}
                       </Picker>
                     </Row>
                   </Grid>

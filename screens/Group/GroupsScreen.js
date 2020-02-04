@@ -184,29 +184,30 @@ class GroupsScreen extends React.Component {
           <Text style={{ fontWeight: 'bold' }}>{group.title}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          {this.props.groupSettings.group_status.values[group.group_status] ? (
+          {this.props.groupSettings.fields.group_status.values[group.group_status] ? (
             <Text style={styles.groupSubtitle}>
-              {this.props.groupSettings.group_status.values[group.group_status].label}
+              {this.props.groupSettings.fields.group_status.values[group.group_status].label}
             </Text>
           ) : (
             <Text />
           )}
-          {this.props.groupSettings.group_status.values[group.group_status] &&
-          this.props.groupSettings.group_type.values[group.group_type] ? (
+          {this.props.groupSettings.fields.group_status.values[group.group_status] &&
+          this.props.groupSettings.fields.group_type.values[group.group_type] ? (
             <Text style={styles.groupSubtitle}>•</Text>
           ) : (
             <Text />
           )}
-          {this.props.groupSettings.group_type.values[group.group_type] ? (
+          {this.props.groupSettings.fields.group_type.values[group.group_type] ? (
             <Text style={styles.groupSubtitle}>
-              {this.props.groupSettings.group_type.values[group.group_type].label
-                ? this.props.groupSettings.group_type.values[group.group_type].label
+              {this.props.groupSettings.fields.group_type.values[group.group_type].label
+                ? this.props.groupSettings.fields.group_type.values[group.group_type].label
                 : ''}
             </Text>
           ) : (
             <Text />
           )}
-          {this.props.groupSettings.group_type.values[group.group_type] && group.member_count ? (
+          {this.props.groupSettings.fields.group_type.values[group.group_type] &&
+          group.member_count ? (
             <Text style={styles.groupSubtitle}>•</Text>
           ) : (
             <Text />
@@ -437,6 +438,7 @@ GroupsScreen.propTypes = {
     group_type: PropTypes.shape({
       values: PropTypes.shape({}),
     }),
+    labelPlural: PropTypes.string,
   }),
 };
 GroupsScreen.defaultProps = {
