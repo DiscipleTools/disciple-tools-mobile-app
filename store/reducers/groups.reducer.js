@@ -874,9 +874,24 @@ export default function groupsReducer(state = initialState, action) {
           };
         }
       });
+      let channels = {};
+      Object.keys(settings.channels).forEach((channelName) => {
+        const channelData = settings.channels[channelName];
+        channels = {
+          ...channels,
+          [channelName]: {
+            label: channelData.label,
+            value: channelName,
+          },
+        };
+      });
       return {
         ...newState,
-        settings: fieldList,
+        settings: {
+          fields: fieldList,
+          channels,
+          labelPlural: settings.label_plural,
+        },
         loading: false,
       };
     }

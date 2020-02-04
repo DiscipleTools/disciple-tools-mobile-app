@@ -460,6 +460,7 @@ ContactsScreen.propTypes = {
       seeker_path: PropTypes.shape({
         values: PropTypes.shape({}),
       }),
+      labelPlural: PropTypes.string,
     }),
   }),
 };

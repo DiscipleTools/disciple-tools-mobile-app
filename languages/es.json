@@ -196,7 +196,8 @@
     "noGroupCommentPlacheHolder": "No hay comentarios del grupo disponibles actualmente.",
     "noGroupCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
     "noGroupCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del grupo.",
-    "selectLocations": "Seleccionar ubicaciones"
+    "selectLocations": "Seleccionar ubicaciones",
+    "noMembersMessage": "No hay miembros Toque aquí o en Editar para agregar algunos miembros a este grupo"
   },
   "notificationsScreen": {
     "notifications": "Notificaciones",

@@ -740,10 +740,7 @@ export default function contactsReducer(state = initialState, action) {
       // Get channels
       let channels = {};
       Object.keys(settings.channels)
-        .filter(
-          (channelName) =>
-            channelName !== 'phone' && channelName !== 'email' && channelName !== 'address',
-        )
+        .filter((channelName) => channelName !== 'phone')
         .forEach((channelName) => {
           const channelData = settings.channels[channelName];
           channels = {
@@ -759,6 +756,7 @@ export default function contactsReducer(state = initialState, action) {
         settings: {
           fields: fieldList,
           channels,
+          labelPlural: settings.label_plural,
         },
         loading: false,
       };
