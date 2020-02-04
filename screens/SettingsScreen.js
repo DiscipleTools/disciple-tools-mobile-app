@@ -249,11 +249,11 @@ class SettingsScreen extends React.Component {
           <ListItem icon>
             <Left>
               <NbButton>
-                <Icon active name="ios-flash" />
+                <Icon active type="MaterialCommunityIcons" name="onepassword" />
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{'Remember Password'}</Text>
+              <Text style={styles.text}>{i18n.t('settingsScreen.rememberPassword')}</Text>
             </Body>
             <Right>
               <Switch value={this.props.rememberPassword} onChange={this.toggleRememberPassword} />

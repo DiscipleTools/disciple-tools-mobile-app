@@ -42,6 +42,7 @@
     "location": "Location",
     "peopleGroup": "People Group",
     "selectPeopleGroups": "Select People Groups",
+    "address": "Address",
     "progress": "Progress",
     "commentsActivity": "Comments and Activity",
     "writeYourCommentNoteHere": "Write your comment or note here",
@@ -93,7 +94,8 @@
     "signedInAs": "Signed in as",
     "storybook": "Storybook",
     "logout": "Sign Out",
-    "helpSupport": "Help / Support"
+    "helpSupport": "Help / Support",
+    "rememberPassword": "Keep logged in"
   },
   "contactDetailScreen": {
     "addNewContact": "Add New Contact",
@@ -109,7 +111,7 @@
     "subAssignedTo": "Sub-assigned to",
     "subAssignThisContact": "Sub-assign this contact",
     "mobile": "Mobile",
-    "selectLocations": "Select locations",
+    "selectLocations": "Select Locations",
     "contactAge": {
       "underEighteenYearsOld": "Under 18 years old",
       "underTwentySixYearsOld": "18-25 years old",
