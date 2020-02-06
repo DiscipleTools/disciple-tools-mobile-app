@@ -985,7 +985,7 @@ class ContactDetailScreen extends React.Component {
     Object.keys(contact)
       .filter((key) => key.includes('contact_'))
       .forEach((key) => {
-        if (!contact[key][0].delete) {
+        if (contact[key].length > 0 && !contact[key][0].delete) {
           contact = {
             ...contact,
             [key]: contact[key].filter((socialMedia) => socialMedia.value.length > 0),
@@ -996,7 +996,7 @@ class ContactDetailScreen extends React.Component {
     let contactToSave = {
       ...sharedTools.diff(unmodifiedContact, contact),
     };
-
+    // Set default title value
     if (!this.state.contact.title) {
       contactToSave = {
         ...contactToSave,
@@ -1015,6 +1015,11 @@ class ContactDetailScreen extends React.Component {
       contactToSave = {
         ...contactToSave,
         title: this.state.contact.title,
+      };
+    } else {
+      contactToSave = {
+        ...contactToSave,
+        title: '',
       };
     }
 
