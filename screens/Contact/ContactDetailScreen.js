@@ -997,14 +997,13 @@ class ContactDetailScreen extends React.Component {
       ...sharedTools.diff(unmodifiedContact, contact),
     };
 
-    // Remove empty arrays
     if (!this.state.contact.title) {
       contactToSave = {
         ...contactToSave,
         title: '',
       };
     }
-
+    // Remove empty arrays
     Object.keys(contactToSave).forEach((key) => {
       const value = contactToSave[key];
       if (Object.prototype.hasOwnProperty.call(value, 'values') && value.values.length === 0) {
@@ -1025,7 +1024,7 @@ class ContactDetailScreen extends React.Component {
         ID: this.state.contact.ID,
       };
     }
-
+    console.log(contactToSave);
     this.props.saveContact(this.props.userData.domain, this.props.userData.token, contactToSave);
   };
 
@@ -1359,8 +1358,14 @@ class ContactDetailScreen extends React.Component {
                   />
                 </Col>
                 <Col>
-                  {Object.keys(this.props.contactSettings.channels).map(
-                    (channelName, channelNameIndex) => {
+                  {Object.keys(this.props.contactSettings.channels)
+                    .filter(
+                      (channelName) =>
+                        channelName !== 'phone' &&
+                        channelName !== 'email' &&
+                        channelName !== 'address',
+                    )
+                    .map((channelName, channelNameIndex) => {
                       if (
                         Object.prototype.hasOwnProperty.call(
                           this.state.contact,
@@ -1393,8 +1398,7 @@ class ContactDetailScreen extends React.Component {
                         );
                       }
                       return null;
-                    },
-                  )}
+                    })}
                 </Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={[styles.formLabel, { marginTop: 5 }]}>
@@ -1678,7 +1682,6 @@ class ContactDetailScreen extends React.Component {
                           borderStyle: 'solid',
                           borderBottomColor: '#D9D5DC',
                         }}>
-                        {this.showAssignedUser()}
                         <Picker onValueChange={this.onSelectAssignedTo}>
                           {this.renderPickerItems(this.state.users)}
                         </Picker>
@@ -1909,8 +1912,14 @@ class ContactDetailScreen extends React.Component {
                       />
                     </Col>
                   </Row>
-                  {Object.keys(this.props.contactSettings.channels).map(
-                    (channelName, channelNameIndex) => {
+                  {Object.keys(this.props.contactSettings.channels)
+                    .filter(
+                      (channelName) =>
+                        channelName !== 'phone' &&
+                        channelName !== 'email' &&
+                        channelName !== 'address',
+                    )
+                    .map((channelName, channelNameIndex) => {
                       const propertyName = `contact_${channelName}`;
                       return (
                         <Col key={channelNameIndex.toString()}>
@@ -1930,10 +1939,15 @@ class ContactDetailScreen extends React.Component {
                             : null}
                         </Col>
                       );
-                    },
-                  )}
-                  {Object.keys(this.props.contactSettings.channels).map(
-                    (channelName, channelNameIndex) => {
+                    })}
+                  {Object.keys(this.props.contactSettings.channels)
+                    .filter(
+                      (channelName) =>
+                        channelName !== 'phone' &&
+                        channelName !== 'email' &&
+                        channelName !== 'address',
+                    )
+                    .map((channelName, channelNameIndex) => {
                       const propertyName = `contact_${channelName}`;
                       return (
                         <Col key={channelNameIndex.toString()}>
@@ -1953,8 +1967,7 @@ class ContactDetailScreen extends React.Component {
                             : null}
                         </Col>
                       );
-                    },
-                  )}
+                    })}
                   <Row style={styles.formFieldPadding}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
@@ -4374,13 +4387,18 @@ class ContactDetailScreen extends React.Component {
   }
 
   renderSocialMediaPickerItems = () =>
-    Object.keys(this.props.contactSettings.channels).map((channelName, index) => (
-      <Picker.Item
-        key={index.toString()}
-        label={this.props.contactSettings.channels[channelName].label}
-        value={this.props.contactSettings.channels[channelName].value}
-      />
-    ));
+    Object.keys(this.props.contactSettings.channels)
+      .filter(
+        (channelName) =>
+          channelName !== 'phone' && channelName !== 'email' && channelName !== 'address',
+      )
+      .map((channelName, index) => (
+        <Picker.Item
+          key={index.toString()}
+          label={this.props.contactSettings.channels[channelName].label}
+          value={this.props.contactSettings.channels[channelName].value}
+        />
+      ));
 
   renderSocialMediaField = (socialMediaIndex, socialMedia, propertyName, channelName) => (
     <Row key={socialMediaIndex.toString()} style={{ marginTop: 10, marginBottom: 10 }}>
@@ -5061,8 +5079,14 @@ class ContactDetailScreen extends React.Component {
                               />
                             </Col>
                           </Row>
-                          {Object.keys(this.props.contactSettings.channels).map(
-                            (channelName, channelNameIndex) => {
+                          {Object.keys(this.props.contactSettings.channels)
+                            .filter(
+                              (channelName) =>
+                                channelName !== 'phone' &&
+                                channelName !== 'email' &&
+                                channelName !== 'address',
+                            )
+                            .map((channelName, channelNameIndex) => {
                               const propertyName = `contact_${channelName}`;
                               return (
                                 <Col key={channelNameIndex.toString()}>
@@ -5082,10 +5106,15 @@ class ContactDetailScreen extends React.Component {
                                     : null}
                                 </Col>
                               );
-                            },
-                          )}
-                          {Object.keys(this.props.contactSettings.channels).map(
-                            (channelName, channelNameIndex) => {
+                            })}
+                          {Object.keys(this.props.contactSettings.channels)
+                            .filter(
+                              (channelName) =>
+                                channelName !== 'phone' &&
+                                channelName !== 'email' &&
+                                channelName !== 'address',
+                            )
+                            .map((channelName, channelNameIndex) => {
                               const propertyName = `contact_${channelName}`;
                               return (
                                 <Col key={channelNameIndex.toString()}>
@@ -5105,8 +5134,7 @@ class ContactDetailScreen extends React.Component {
                                     : null}
                                 </Col>
                               );
-                            },
-                          )}
+                            })}
 
                           <Row style={styles.formFieldPadding}>
                             <Col style={styles.formIconLabelCol}>

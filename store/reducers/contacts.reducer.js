@@ -739,18 +739,16 @@ export default function contactsReducer(state = initialState, action) {
       });
       // Get channels
       let channels = {};
-      Object.keys(settings.channels)
-        .filter((channelName) => channelName !== 'phone')
-        .forEach((channelName) => {
-          const channelData = settings.channels[channelName];
-          channels = {
-            ...channels,
-            [channelName]: {
-              label: channelData.label,
-              value: channelName,
-            },
-          };
-        });
+      Object.keys(settings.channels).forEach((channelName) => {
+        const channelData = settings.channels[channelName];
+        channels = {
+          ...channels,
+          [channelName]: {
+            label: channelData.label,
+            value: channelName,
+          },
+        };
+      });
       return {
         ...newState,
         settings: {
