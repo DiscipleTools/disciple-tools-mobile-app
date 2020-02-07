@@ -20,7 +20,6 @@ import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
 
 import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
-// import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
@@ -55,7 +54,6 @@ import i18n from '../../languages';
 
 let toastSuccess;
 let toastError;
-const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
 const containerPadding = 35;
 const windowWidth = Dimensions.get('window').width;
 const progressBarWidth = windowWidth - 100;
@@ -90,14 +88,8 @@ const styles = StyleSheet.create({
   },
   tabStyle: { backgroundColor: '#FFFFFF' },
   textStyle: { color: 'gray' },
-  activeTabStyle: { backgroundColor: '#FFFFFF' },
-  activeTextStyle: { color: Colors.tintColor, fontWeight: 'bold' },
   addRemoveIcons: {
     fontSize: 30,
-    marginRight: 0,
-  },
-  icon: {
-    color: Colors.tintColor,
   },
   // Social Media Field
   socialMediaNames: {
@@ -117,6 +109,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   formIconLabel: {
+    marginLeft: 10,
     width: 'auto',
   },
   formIcon: {
@@ -146,8 +139,8 @@ const styles = StyleSheet.create({
   formIconLabelView: {
     alignItems: 'center',
   },
-  formFieldPadding: {
-    paddingTop: 30,
+  formFieldMargin: {
+    marginTop: 20,
   },
   // Progress Section
   progressIcon: { height: '100%', width: '100%' },
@@ -171,14 +164,6 @@ const styles = StyleSheet.create({
   time: {
     color: Colors.tintColor,
     fontSize: 10,
-  },
-  inputContactAddress: {
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#D9D5DC',
-    marginRight: 10,
-    marginBottom: 5,
-    height: 40,
   },
   saveButton: {
     backgroundColor: Colors.tintColor,
@@ -245,6 +230,24 @@ const styles = StyleSheet.create({
     color: '#A8A8A8',
     backgroundColor: '#fff2ac',
     padding: 5,
+  },
+  contactField: {
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#B4B4B4',
+    borderRadius: 5,
+    fontSize: 15,
+    height: 50,
+  },
+  selectizeField: {
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#B4B4B4',
+    borderBottomWidth: 1.5,
+    borderBottomColor: '#B4B4B4',
+    borderRadius: 5,
+    fontSize: 15,
+    marginTop: -15,
   },
 });
 
@@ -1594,13 +1597,12 @@ class ContactDetailScreen extends React.Component {
                         color: Colors.tintColor,
                         fontSize: 12,
                         fontWeight: 'bold',
-                        marginTop: 10,
                       },
-                      styles.formFieldPadding,
+                      styles.formFieldMargin,
                     ]}>
                     {this.props.contactSettings.fields.overall_status.name}
                   </Label>
-                  <Row style={{ paddingBottom: 30 }}>
+                  <Row>
                     <Col>
                       <Picker
                         selectedValue={this.state.contact.overall_status}
@@ -1619,7 +1621,7 @@ class ContactDetailScreen extends React.Component {
                       </Picker>
                     </Col>
                   </Row>
-                  <Row>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="FontAwesome" name="user" style={styles.formIcon} />
@@ -1645,13 +1647,7 @@ class ContactDetailScreen extends React.Component {
                       <Input
                         value={this.state.contact.title}
                         onChangeText={this.setContactTitle}
-                        style={{
-                          borderBottomWidth: 1,
-                          borderStyle: 'solid',
-                          borderBottomColor: '#D9D5DC',
-                          fontSize: 15,
-                          height: 10,
-                        }}
+                        style={styles.contactField}
                       />
                     </Col>
                   </Row>
@@ -1659,7 +1655,7 @@ class ContactDetailScreen extends React.Component {
                     onPress={() => {
                       this.updateShowAssignedToModal(true);
                     }}>
-                    <Row style={styles.formFieldPadding}>
+                    <Row style={styles.formFieldMargin}>
                       <Col style={styles.formIconLabelCol}>
                         <View style={styles.formIconLabelView}>
                           <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
@@ -1681,19 +1677,20 @@ class ContactDetailScreen extends React.Component {
                           />
                         </View>
                       </Col>
-                      <Col
-                        style={{
-                          borderBottomWidth: 1,
-                          borderStyle: 'solid',
-                          borderBottomColor: '#D9D5DC',
-                        }}>
-                        <Picker onValueChange={this.onSelectAssignedTo}>
+                      <Col style={styles.contactField}>
+                        <Picker
+                          selectedValue={
+                            this.state.contact.assigned_to
+                              ? parseInt(this.state.contact.assigned_to.replace('user-', ''))
+                              : ''
+                          }
+                          onValueChange={this.onSelectAssignedTo}>
                           {this.renderPickerItems(this.state.users)}
                         </Picker>
                       </Col>
                     </Row>
                   </TouchableOpacity>
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="Ionicons" name="md-people" style={styles.formIcon} />
@@ -1773,15 +1770,11 @@ class ContactDetailScreen extends React.Component {
                           </TouchableOpacity>
                         )}
                         filterOnKey="name"
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="FontAwesome" name="phone" style={styles.formIcon} />
@@ -1802,7 +1795,7 @@ class ContactDetailScreen extends React.Component {
                   {this.state.contact.contact_phone ? (
                     this.state.contact.contact_phone.map((phone, index) =>
                       !phone.delete ? (
-                        <Row key={index.toString()}>
+                        <Row key={index.toString()} style={{ marginRight: 10, marginBottom: 10 }}>
                           <Col style={styles.formIconLabelCol}>
                             <View style={styles.formIconLabelView}>
                               <Icon
@@ -1819,7 +1812,7 @@ class ContactDetailScreen extends React.Component {
                               onChangeText={(value) => {
                                 this.onPhoneFieldChange(value, index, phone.key, this);
                               }}
-                              style={styles.inputContactAddress}
+                              style={styles.contactField}
                             />
                           </Col>
                           <Col style={styles.formIconLabel}>
@@ -1838,7 +1831,7 @@ class ContactDetailScreen extends React.Component {
                   ) : (
                     <Text />
                   )}
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="FontAwesome" name="envelope" style={styles.formIcon} />
@@ -1861,7 +1854,7 @@ class ContactDetailScreen extends React.Component {
                   {this.state.contact.contact_email ? (
                     this.state.contact.contact_email.map((email, index) =>
                       !email.delete ? (
-                        <Row key={index.toString()}>
+                        <Row key={index.toString()} style={{ marginRight: 10, marginBottom: 10 }}>
                           <Col style={styles.formIconLabelCol}>
                             <View style={styles.formIconLabelView}>
                               <Icon
@@ -1878,7 +1871,7 @@ class ContactDetailScreen extends React.Component {
                               onChangeText={(value) => {
                                 this.onEmailFieldChange(value, index, email.key, this);
                               }}
-                              style={styles.inputContactAddress}
+                              style={styles.contactField}
                             />
                           </Col>
                           <Col style={styles.formIconLabel}>
@@ -1897,7 +1890,7 @@ class ContactDetailScreen extends React.Component {
                   ) : (
                     <Text />
                   )}
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="Ionicons" name="chatboxes" style={styles.formIcon} />
@@ -1973,7 +1966,7 @@ class ContactDetailScreen extends React.Component {
                         </Col>
                       );
                     })}
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="Entypo" name="home" style={styles.formIcon} />
@@ -1996,7 +1989,7 @@ class ContactDetailScreen extends React.Component {
                   {this.state.contact.contact_address ? (
                     this.state.contact.contact_address.map((address, index) =>
                       !address.delete ? (
-                        <Row key={index.toString()}>
+                        <Row key={index.toString()} style={{ marginBottom: 10 }}>
                           <Col style={styles.formIconLabelCol}>
                             <View style={styles.formIconLabelView}>
                               <Icon
@@ -2013,14 +2006,14 @@ class ContactDetailScreen extends React.Component {
                               onChangeText={(value) => {
                                 this.onAddressFieldChange(value, index, address.key, this);
                               }}
-                              style={styles.inputContactAddress}
+                              style={styles.contactField}
                             />
                           </Col>
                           <Col style={styles.formIconLabel}>
                             <Icon
                               android="md-remove"
                               ios="ios-remove"
-                              style={[styles.formIcon, styles.addRemoveIcons]}
+                              style={[styles.formIcon, styles.addRemoveIcons, { marginRight: 10 }]}
                               onPress={() => {
                                 this.onRemoveAddressField(index, this);
                               }}
@@ -2032,7 +2025,7 @@ class ContactDetailScreen extends React.Component {
                   ) : (
                     <Text />
                   )}
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="FontAwesome" name="map-marker" style={styles.formIcon} />
@@ -2068,6 +2061,15 @@ class ContactDetailScreen extends React.Component {
                         textInputProps={{
                           placeholder: i18n.t('contactDetailScreen.selectLocations'),
                         }}
+                        renderChip={(id, onClose, item, style, iconStyle) => (
+                          <Chip
+                            key={id}
+                            iconStyle={iconStyle}
+                            onClose={onClose}
+                            text={item.name}
+                            style={style}
+                          />
+                        )}
                         renderRow={(id, onPress, item) => (
                           <TouchableOpacity
                             activeOpacity={0.6}
@@ -2092,25 +2094,12 @@ class ContactDetailScreen extends React.Component {
                             </View>
                           </TouchableOpacity>
                         )}
-                        renderChip={(id, onClose, item, style, iconStyle) => (
-                          <Chip
-                            key={id}
-                            iconStyle={iconStyle}
-                            onClose={onClose}
-                            text={item.name}
-                            style={style}
-                          />
-                        )}
                         filterOnKey="name"
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="FontAwesome" name="globe" style={styles.formIcon} />
@@ -2181,15 +2170,11 @@ class ContactDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="FontAwesome" name="clock-o" style={styles.formIcon} />
@@ -2211,7 +2196,7 @@ class ContactDetailScreen extends React.Component {
                         />
                       </View>
                     </Col>
-                    <Col>
+                    <Col style={styles.contactField}>
                       <Picker
                         mode="dropdown"
                         selectedValue={this.state.contact.age}
@@ -2223,7 +2208,7 @@ class ContactDetailScreen extends React.Component {
                       </Picker>
                     </Col>
                   </Row>
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon android="md-male" ios="ios-male" style={styles.formIcon} />
@@ -2245,7 +2230,7 @@ class ContactDetailScreen extends React.Component {
                         />
                       </View>
                     </Col>
-                    <Col>
+                    <Col style={styles.contactField}>
                       <Picker
                         mode="dropdown"
                         selectedValue={this.state.contact.gender}
@@ -2257,7 +2242,7 @@ class ContactDetailScreen extends React.Component {
                       </Picker>
                     </Col>
                   </Row>
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon
@@ -2342,11 +2327,7 @@ class ContactDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
@@ -2444,7 +2425,7 @@ class ContactDetailScreen extends React.Component {
             <View>
               <ScrollView keyboardShouldPersistTaps="handled">
                 <View style={styles.formContainer}>
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon android="md-calendar" ios="ios-calendar" style={styles.formIcon} />
@@ -2466,7 +2447,7 @@ class ContactDetailScreen extends React.Component {
                         />
                       </View>
                     </Col>
-                    <Col>
+                    <Col style={styles.contactField}>
                       <Picker
                         mode="dropdown"
                         selectedValue={this.state.contact.seeker_path}
@@ -2492,7 +2473,7 @@ class ContactDetailScreen extends React.Component {
                   </Label>
                   {this.renderfaithMilestones()}
                   {this.renderCustomFaithMilestones()}
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="Entypo" name="water" style={styles.formIcon} />
@@ -2514,20 +2495,7 @@ class ContactDetailScreen extends React.Component {
                         />
                       </View>
                     </Col>
-                    <Col>
-                      {/*
-                      <DateTimePicker
-                        value={
-                          this.state.contact.baptism_date
-                            ? new Date(this.state.contact.baptism_date)
-                            : new Date()
-                        }
-                        mode="date"
-                        display="spinner"
-                        onChange={this.setBaptismDate}
-                        maximumDate={tomorrow}
-                      />
-                      */}
+                    <Col style={styles.contactField}>
                       <DatePicker
                         onDateChange={this.setBaptismDate}
                         defaultDate={
@@ -2890,7 +2858,7 @@ class ContactDetailScreen extends React.Component {
             <View>
               <ScrollView keyboardShouldPersistTaps="handled">
                 <View style={styles.formContainer}>
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="FontAwesome" name="users" style={styles.formIcon} />
@@ -2961,15 +2929,11 @@ class ContactDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="Entypo" name="network" style={styles.formIcon} />
@@ -3050,15 +3014,11 @@ class ContactDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="Entypo" name="water" style={styles.formIcon} />
@@ -3139,15 +3099,11 @@ class ContactDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="Entypo" name="water" style={styles.formIcon} />
@@ -3228,15 +3184,11 @@ class ContactDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon type="FontAwesome" name="black-tie" style={styles.formIcon} />
@@ -3317,15 +3269,11 @@ class ContactDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
-                  <Row style={styles.formFieldPadding}>
+                  <Row style={styles.formFieldMargin}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon
@@ -3410,11 +3358,7 @@ class ContactDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
@@ -3857,7 +3801,7 @@ class ContactDetailScreen extends React.Component {
     });
   };
 
-  onSelectAssignedTo = (value, index) => {
+  onSelectAssignedTo = (value) => {
     this.setState((prevState) => ({
       contact: {
         ...prevState.contact,
@@ -4406,36 +4350,28 @@ class ContactDetailScreen extends React.Component {
       ));
 
   renderSocialMediaField = (socialMediaIndex, socialMedia, propertyName, channelName) => (
-    <Row key={socialMediaIndex.toString()} style={{ marginTop: 10, marginBottom: 10 }}>
+    <Row key={socialMediaIndex.toString()} style={{ marginBottom: 20 }}>
       <Col style={styles.formIconLabelCol}>
         <View style={styles.formIconLabelView}>
           <Icon type="Ionicons" name="chatboxes" style={[styles.formIcon, { opacity: 0 }]} />
         </View>
       </Col>
       <Col>
-        <Row>
-          <Input
-            value={socialMedia.value}
-            onChangeText={(value) => {
-              this.onSocialMediaFieldChange(
-                value,
-                propertyName,
-                socialMediaIndex,
-                socialMedia.key,
-                this,
-              );
-            }}
-            style={{
-              borderBottomWidth: 1,
-              borderStyle: 'solid',
-              borderBottomColor: '#D9D5DC',
-              fontSize: 15,
-              height: 40,
-            }}
-            autoCapitalize="none"
-          />
-        </Row>
-        <Row>
+        <Input
+          value={socialMedia.value}
+          onChangeText={(value) => {
+            this.onSocialMediaFieldChange(
+              value,
+              propertyName,
+              socialMediaIndex,
+              socialMedia.key,
+              this,
+            );
+          }}
+          style={[styles.contactField, { marginBottom: 10 }]}
+          autoCapitalize="none"
+        />
+        <Row style={styles.contactField}>
           <Picker
             onValueChange={(value) => {
               this.changeContactSocialMediaType(value, propertyName, socialMediaIndex, this);
@@ -4450,7 +4386,7 @@ class ContactDetailScreen extends React.Component {
         <Icon
           android="md-remove"
           ios="ios-remove"
-          style={[styles.formIcon, styles.addRemoveIcons, { marginTop: 5 }]}
+          style={[styles.formIcon, styles.addRemoveIcons, { marginRight: 10 }]}
           onPress={() => {
             this.onRemoveSocialMediaField(propertyName, socialMediaIndex, this);
           }}
@@ -4673,14 +4609,7 @@ class ContactDetailScreen extends React.Component {
                           <Input
                             placeholder={i18n.t('global.requiredField')}
                             onChangeText={this.setContactTitle}
-                            style={{
-                              borderColor: '#B4B4B4',
-                              borderWidth: 1,
-                              borderRadius: 5,
-                              borderStyle: 'solid',
-                              fontSize: 13,
-                              paddingLeft: 15,
-                            }}
+                            style={styles.contactField}
                           />
                         </Row>
                         <Row>
@@ -4691,14 +4620,7 @@ class ContactDetailScreen extends React.Component {
                         <Row>
                           <Input
                             onChangeText={this.setSingleContactPhone}
-                            style={{
-                              borderColor: '#B4B4B4',
-                              borderWidth: 1,
-                              borderRadius: 5,
-                              borderStyle: 'solid',
-                              fontSize: 13,
-                              paddingLeft: 15,
-                            }}
+                            style={styles.contactField}
                           />
                         </Row>
                         <Row>
@@ -4707,24 +4629,14 @@ class ContactDetailScreen extends React.Component {
                           </Label>
                         </Row>
                         <Row>
-                          <Input
-                            onChangeText={this.setContactEmail}
-                            style={{
-                              borderColor: '#B4B4B4',
-                              borderWidth: 1,
-                              borderRadius: 5,
-                              borderStyle: 'solid',
-                              fontSize: 13,
-                              paddingLeft: 15,
-                            }}
-                          />
+                          <Input onChangeText={this.setContactEmail} style={styles.contactField} />
                         </Row>
                         <Row>
                           <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
                             {this.props.contactSettings.fields.sources.name}
                           </Label>
                         </Row>
-                        <Row>
+                        <Row style={styles.contactField}>
                           <Picker
                             onValueChange={this.setContactSource}
                             selectedValue={this.state.contact.sources.values[0].value}>
@@ -4783,11 +4695,7 @@ class ContactDetailScreen extends React.Component {
                               )}
                               filterOnKey="name"
                               keyboardShouldPersistTaps
-                              inputContainerStyle={{
-                                borderWidth: 1,
-                                borderColor: '#CCCCCC',
-                                padding: 5,
-                              }}
+                              inputContainerStyle={styles.selectizeField}
                             />
                           </Col>
                         </Row>
@@ -4800,14 +4708,7 @@ class ContactDetailScreen extends React.Component {
                           <Input
                             multiline
                             onChangeText={this.setContactInitialComment}
-                            style={{
-                              borderColor: '#B4B4B4',
-                              borderWidth: 1,
-                              borderRadius: 5,
-                              borderStyle: 'solid',
-                              fontSize: 13,
-                              paddingLeft: 15,
-                            }}
+                            style={styles.contactField}
                           />
                         </Row>
                       </Grid>
@@ -4838,11 +4739,11 @@ class ContactDetailScreen extends React.Component {
                                   fontWeight: 'bold',
                                   marginTop: 10,
                                 },
-                                styles.formFieldPadding,
+                                styles.formFieldMargin,
                               ]}>
                               {this.props.contactSettings.fields.overall_status.name}
                             </Label>
-                            <Row style={{ paddingBottom: 30 }}>
+                            <Row>
                               <Col>
                                 <Picker
                                   selectedValue={this.state.contact.overall_status}
@@ -4862,7 +4763,7 @@ class ContactDetailScreen extends React.Component {
                               </Col>
                             </Row>
                           </View>
-                          <Row style={styles.formFieldPadding}>
+                          <Row style={styles.formFieldMargin}>
                             <Col style={styles.formIconLabelCol}>
                               <View style={styles.formIconLabelView}>
                                 <Icon android="md-male" ios="ios-male" style={styles.formIcon} />
@@ -4884,7 +4785,7 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </View>
                             </Col>
-                            <Col>
+                            <Col style={styles.contactField}>
                               <Picker
                                 mode="dropdown"
                                 selectedValue={this.state.contact.gender}
@@ -4901,7 +4802,7 @@ class ContactDetailScreen extends React.Component {
                               </Picker>
                             </Col>
                           </Row>
-                          <Row style={styles.formFieldPadding}>
+                          <Row style={styles.formFieldMargin}>
                             <Col style={styles.formIconLabelCol}>
                               <View style={styles.formIconLabelView}>
                                 <Icon type="FontAwesome" name="globe" style={styles.formIcon} />
@@ -4972,15 +4873,11 @@ class ContactDetailScreen extends React.Component {
                                 )}
                                 filterOnKey="name"
                                 keyboardShouldPersistTaps
-                                inputContainerStyle={{
-                                  borderWidth: 1,
-                                  borderColor: '#CCCCCC',
-                                  padding: 5,
-                                }}
+                                inputContainerStyle={styles.selectizeField}
                               />
                             </Col>
                           </Row>
-                          <Row style={styles.formFieldPadding}>
+                          <Row style={styles.formFieldMargin}>
                             <Col style={styles.formIconLabelCol}>
                               <View style={styles.formIconLabelView}>
                                 <Icon type="FontAwesome" name="clock-o" style={styles.formIcon} />
@@ -5002,7 +4899,7 @@ class ContactDetailScreen extends React.Component {
                                 />
                               </View>
                             </Col>
-                            <Col>
+                            <Col style={styles.contactField}>
                               <Picker
                                 mode="dropdown"
                                 selectedValue={this.state.contact.age}
@@ -5024,7 +4921,7 @@ class ContactDetailScreen extends React.Component {
                             onPress={() => {
                               this.updateShowAssignedToModal(true);
                             }}>
-                            <Row style={styles.formFieldPadding}>
+                            <Row style={styles.formFieldMargin}>
                               <Col style={styles.formIconLabelCol}>
                                 <View style={styles.formIconLabelView}>
                                   <Icon
@@ -5050,21 +4947,25 @@ class ContactDetailScreen extends React.Component {
                                   />
                                 </View>
                               </Col>
-                              <Col
-                                style={{
-                                  borderBottomWidth: 1,
-                                  borderStyle: 'solid',
-                                  borderBottomColor: '#D9D5DC',
-                                }}>
-                                {this.showAssignedUser()}
-                                <Picker onValueChange={this.onSelectAssignedTo}>
+                              <Col style={styles.contactField}>
+                                <Picker
+                                  selectedValue={
+                                    this.state.contact.assigned_to
+                                      ? parseInt(
+                                          this.state.contact.assigned_to.replace('user-', ''),
+                                        )
+                                      : this.props.userData
+                                      ? this.props.userData.id
+                                      : ''
+                                  }
+                                  onValueChange={this.onSelectAssignedTo}>
                                   {this.renderPickerItems(this.state.users)}
                                 </Picker>
                               </Col>
                             </Row>
                           </TouchableOpacity>
 
-                          <Row style={styles.formFieldPadding}>
+                          <Row style={styles.formFieldMargin}>
                             <Col style={styles.formIconLabelCol}>
                               <View style={styles.formIconLabelView}>
                                 <Icon type="Ionicons" name="chatboxes" style={styles.formIcon} />
@@ -5141,7 +5042,7 @@ class ContactDetailScreen extends React.Component {
                               );
                             })}
 
-                          <Row style={styles.formFieldPadding}>
+                          <Row style={styles.formFieldMargin}>
                             <Col style={styles.formIconLabelCol}>
                               <View style={styles.formIconLabelView}>
                                 <Icon type="FontAwesome" name="users" style={styles.formIcon} />
@@ -5218,11 +5119,7 @@ class ContactDetailScreen extends React.Component {
                                 )}
                                 filterOnKey="name"
                                 keyboardShouldPersistTaps
-                                inputContainerStyle={{
-                                  borderWidth: 1,
-                                  borderColor: '#CCCCCC',
-                                  padding: 5,
-                                }}
+                                inputContainerStyle={styles.contactField}
                               />
                             </Col>
                           </Row>
