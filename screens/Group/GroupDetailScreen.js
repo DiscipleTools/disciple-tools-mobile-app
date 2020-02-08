@@ -19,7 +19,6 @@ import {
 import PropTypes from 'prop-types';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
-// import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
@@ -71,7 +70,7 @@ let commentsFlatList,
   coachesSelectizeRef,
   geonamesSelectizeRef,
   peopleGroupsSelectizeRef,
-  addMembersSelectizeRed,
+  addMembersSelectizeRef,
   parentGroupsSelectizeRef,
   peerGroupsSelectizeRef,
   childGroupsSelectizeRef;
@@ -88,19 +87,6 @@ const defaultHealthMilestones = [
   'church_sharing',
 ];
 const styles = StyleSheet.create({
-  toggleButton: {
-    borderRadius: 5,
-    height: '100%',
-    margin: 5,
-  },
-  inputContactAddress: {
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#D9D5DC',
-    marginRight: 10,
-    marginBottom: 5,
-    height: 40,
-  },
   activeImage: {
     opacity: 1,
     height: '100%',
@@ -127,18 +113,9 @@ const styles = StyleSheet.create({
   },
   tabStyle: { backgroundColor: '#FFFFFF' },
   textStyle: { color: 'gray' },
-  activeTabStyle: { backgroundColor: '#FFFFFF' },
-  activeTextStyle: { color: Colors.tintColor, fontWeight: 'bold' },
-  label: {
-    color: Colors.tintColor,
-    fontSize: 15,
-  },
   addRemoveIcons: {
     fontSize: 30,
     marginRight: 0,
-  },
-  icons: {
-    color: Colors.tintColor,
   },
   // Comments Section
   root: {
@@ -205,7 +182,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     width: '100%',
   },
-  formIconLabel: { width: 'auto' },
+  formIconLabel: { marginLeft: 10, width: 'auto' },
   formIconLabelMarginLeft: {
     marginLeft: containerPadding + 10,
   },
@@ -384,6 +361,24 @@ const styles = StyleSheet.create({
     color: '#A8A8A8',
     fontSize: 18,
     opacity: 0.7,
+  },
+  groupField: {
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#B4B4B4',
+    borderRadius: 5,
+    fontSize: 15,
+    height: 50,
+  },
+  selectizeField: {
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#B4B4B4',
+    borderBottomWidth: 1.5,
+    borderBottomColor: '#B4B4B4',
+    borderRadius: 5,
+    fontSize: 15,
+    marginTop: -15,
   },
 });
 
@@ -2029,13 +2024,7 @@ class GroupDetailScreen extends React.Component {
                       <Input
                         value={this.state.group.title}
                         onChangeText={this.setGroupTitle}
-                        style={{
-                          borderBottomWidth: 1,
-                          borderStyle: 'solid',
-                          borderBottomColor: '#D9D5DC',
-                          fontSize: 15,
-                          height: 10,
-                        }}
+                        style={styles.groupField}
                       />
                     </Col>
                   </Row>
@@ -2065,12 +2054,7 @@ class GroupDetailScreen extends React.Component {
                           />
                         </View>
                       </Col>
-                      <Col
-                        style={{
-                          borderBottomWidth: 1,
-                          borderStyle: 'solid',
-                          borderBottomColor: '#D9D5DC',
-                        }}>
+                      <Col style={styles.groupField}>
                         <Picker onValueChange={this.onSelectAssignedTo}>
                           {this.renderPickerItems(this.state.users)}
                         </Picker>
@@ -2148,11 +2132,7 @@ class GroupDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
@@ -2227,11 +2207,7 @@ class GroupDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
@@ -2306,11 +2282,7 @@ class GroupDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
@@ -2337,7 +2309,7 @@ class GroupDetailScreen extends React.Component {
                   {this.state.group.contact_address ? (
                     this.state.group.contact_address.map((address, index) =>
                       !address.delete ? (
-                        <Row key={index.toString()}>
+                        <Row key={index.toString()} style={{ marginBottom: 10 }}>
                           <Col style={styles.formIconLabelCol}>
                             <View style={styles.formIconLabelView}>
                               <Icon
@@ -2354,14 +2326,14 @@ class GroupDetailScreen extends React.Component {
                               onChangeText={(value) => {
                                 this.onAddressFieldChange(value, index, address.key, this);
                               }}
-                              style={styles.inputContactAddress}
+                              style={styles.groupField}
                             />
                           </Col>
                           <Col style={styles.formIconLabel}>
                             <Icon
                               android="md-remove"
                               ios="ios-remove"
-                              style={styles.addRemoveIcons}
+                              style={[styles.formIcon, styles.addRemoveIcons, { marginRight: 10 }]}
                               onPress={() => {
                                 this.onRemoveAddressField(index, this);
                               }}
@@ -2399,20 +2371,7 @@ class GroupDetailScreen extends React.Component {
                         />
                       </View>
                     </Col>
-                    <Col>
-                      {/*
-                      <DateTimePicker
-                        value={
-                          this.state.group.start_date
-                            ? new Date(this.state.group.start_date)
-                            : new Date()
-                        }
-                        mode="date"
-                        display="spinner"
-                        onChange={this.setGroupStartDate}
-                        maximumDate={tomorrow}
-                      />
-                      */}
+                    <Col style={styles.groupField}>
                       <DatePicker
                         onDateChange={this.setGroupStartDate}
                         defaultDate={
@@ -2447,8 +2406,7 @@ class GroupDetailScreen extends React.Component {
                         />
                       </View>
                     </Col>
-                    <Col>
-                      {}
+                    <Col style={styles.groupField}>
                       <DatePicker
                         onDateChange={this.setChurchStartDate}
                         defaultDate={
@@ -2485,20 +2443,7 @@ class GroupDetailScreen extends React.Component {
                         />
                       </View>
                     </Col>
-                    <Col>
-                      {/*
-                      <DateTimePicker
-                        value={
-                          this.state.group.end_date
-                            ? new Date(this.state.group.end_date)
-                            : new Date()
-                        }
-                        mode="date"
-                        display="spinner"
-                        onChange={this.setEndDate}
-                        maximumDate={tomorrow}
-                      />
-                      */}
+                    <Col style={styles.groupField}>
                       <DatePicker
                         onDateChange={this.setEndDate}
                         defaultDate={
@@ -2590,7 +2535,7 @@ class GroupDetailScreen extends React.Component {
                         />
                       </View>
                     </Col>
-                    <Col>
+                    <Col style={styles.groupField}>
                       <Picker
                         mode="dropdown"
                         selectedValue={this.state.group.group_type}
@@ -2872,17 +2817,13 @@ class GroupDetailScreen extends React.Component {
                 />
                 <Grid>
                   <Row>
-                    <Col style={{ width: 40, marginTop: 10, marginLeft: 0 }}>
-                      <Icon
-                        type="Entypo"
-                        name="add-user"
-                        style={{ marginTop: 10, color: '#CCCCCC' }}
-                      />
+                    <Col style={{ width: 40, marginTop: 5, marginLeft: 0 }}>
+                      <Icon type="Entypo" name="add-user" style={{ color: '#CCCCCC' }} />
                     </Col>
                     <Col style={{ paddingBottom: 200 }}>
                       <Selectize
                         ref={(selectize) => {
-                          addMembersSelectizeRed = selectize;
+                          addMembersSelectizeRef = selectize;
                         }}
                         itemId="value"
                         items={this.state.usersContacts}
@@ -2917,13 +2858,7 @@ class GroupDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          marginTop: 'auto',
-                          marginBottom: 'auto',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
@@ -3159,11 +3094,7 @@ class GroupDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
@@ -3238,11 +3169,7 @@ class GroupDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
@@ -3317,11 +3244,7 @@ class GroupDetailScreen extends React.Component {
                         )}
                         filterOnKey="name"
                         keyboardShouldPersistTaps
-                        inputContainerStyle={{
-                          borderWidth: 1,
-                          borderColor: '#CCCCCC',
-                          padding: 5,
-                        }}
+                        inputContainerStyle={styles.selectizeField}
                       />
                     </Col>
                   </Row>
@@ -3992,14 +3915,7 @@ class GroupDetailScreen extends React.Component {
                       <Input
                         placeholder={i18n.t('global.requiredField')}
                         onChangeText={this.setGroupTitle}
-                        style={{
-                          borderColor: '#B4B4B4',
-                          borderWidth: 1,
-                          borderRadius: 5,
-                          borderStyle: 'solid',
-                          fontSize: 13,
-                          paddingLeft: 15,
-                        }}
+                        style={styles.groupField}
                       />
                     </Row>
                     <Row>
@@ -4007,7 +3923,7 @@ class GroupDetailScreen extends React.Component {
                         {this.props.groupSettings.fields.group_type.name}
                       </Label>
                     </Row>
-                    <Row>
+                    <Row style={styles.groupField}>
                       <Picker
                         mode="dropdown"
                         selectedValue={this.state.group.group_type}
