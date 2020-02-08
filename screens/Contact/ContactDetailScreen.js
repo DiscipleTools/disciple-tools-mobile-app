@@ -15,6 +15,7 @@ import {
   Platform,
   TouchableHighlight,
   SafeAreaView,
+  Linking,
 } from 'react-native';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
@@ -248,6 +249,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontSize: 15,
     marginTop: -15,
+  },
+  linkingText: {
+    paddingTop: 4,
+    paddingBottom: 8,
   },
 });
 
@@ -1032,7 +1037,6 @@ class ContactDetailScreen extends React.Component {
         ID: this.state.contact.ID,
       };
     }
-    console.log(contactToSave);
     this.props.saveContact(this.props.userData.domain, this.props.userData.token, contactToSave);
   };
 
@@ -1196,6 +1200,16 @@ class ContactDetailScreen extends React.Component {
     });
   };
 
+  linkingPhoneDialer = (phoneNumber) => {
+    let number = '';
+    if (Platform.OS === 'ios') {
+      number = 'telprompt:${' + phoneNumber + '}';
+    } else {
+      number = 'tel:${' + phoneNumber + '}';
+    }
+    Linking.openURL(number);
+  };
+
   offlineBarRender = () => (
     <View style={[styles.offlineBar]}>
       <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
@@ -1232,9 +1246,7 @@ class ContactDetailScreen extends React.Component {
                 onRefresh={() => this.onRefresh(this.state.contact.ID)}
               />
             }>
-            <View
-              style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}
-              pointerEvents="none">
+            <View style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
               <Label
                 style={{
                   color: Colors.tintColor,
@@ -1244,7 +1256,7 @@ class ContactDetailScreen extends React.Component {
                 }}>
                 {this.props.contactSettings.fields.overall_status.name}
               </Label>
-              <Row style={[styles.formRow, { paddingTop: 5 }]}>
+              <Row style={[styles.formRow, { paddingTop: 5 }]} pointerEvents="none">
                 <Col>
                   <Picker
                     selectedValue={this.state.contact.overall_status}
@@ -1311,21 +1323,32 @@ class ContactDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome" name="phone" style={styles.formIcon} />
+                  <Icon
+                    type="FontAwesome"
+                    name="phone"
+                    style={[styles.formIcon, { marginTop: 0 }]}
+                  />
                 </Col>
                 <Col>
-                  <Text
+                  <View
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
                       i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.contact.contact_phone
-                      ? this.state.contact.contact_phone
-                          .filter((phone) => !phone.delete)
-                          .map((phone) => phone.value)
-                          .join(', ')
-                      : ''}
-                  </Text>
+                    {this.state.contact.contact_phone ? (
+                      this.state.contact.contact_phone
+                        .filter((phone) => !phone.delete)
+                        .map((phone) => (
+                          <TouchableOpacity
+                            activeOpacity={0.5}
+                            onPress={() => this.linkingPhoneDialer(phone.value)}>
+                            <Text style={styles.linkingText}>{phone.value}</Text>
+                          </TouchableOpacity>
+                        ))
+                    ) : (
+                      <Text></Text>
+                    )}
+                  </View>
                 </Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.mobile')}</Label>
@@ -1334,21 +1357,32 @@ class ContactDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome" name="envelope" style={styles.formIcon} />
+                  <Icon
+                    type="FontAwesome"
+                    name="envelope"
+                    style={[styles.formIcon, { marginTop: 0 }]}
+                  />
                 </Col>
                 <Col>
-                  <Text
+                  <View
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
                       i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.contact.contact_email
-                      ? this.state.contact.contact_email
-                          .filter((email) => !email.delete)
-                          .map((email) => email.value)
-                          .join(', ')
-                      : ''}
-                  </Text>
+                    {this.state.contact.contact_email ? (
+                      this.state.contact.contact_email
+                        .filter((email) => !email.delete)
+                        .map((email) => (
+                          <Text
+                            style={styles.linkingText}
+                            onPress={() => Linking.openURL('mailto:' + email.value)}>
+                            {email.value}
+                          </Text>
+                        ))
+                    ) : (
+                      <Text></Text>
+                    )}
+                  </View>
                 </Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={styles.formLabel}>
