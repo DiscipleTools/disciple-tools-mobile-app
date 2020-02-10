@@ -7,10 +7,10 @@ import { combineReducers } from 'redux';
 describe('Redux Saga - Login', () => {
   it('Login - Online', (done) => {
     const user = {
-      domain: 'dtappdemo.wpengine.com',
+      domain: '',
       token: null,
-      username: 'hansrasch',
-      password: 'Hrasch22...',
+      username: '',
+      password: '',
     };
 
     const testLoginPayload = {
