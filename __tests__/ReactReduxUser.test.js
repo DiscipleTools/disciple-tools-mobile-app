@@ -13,12 +13,20 @@ describe('User Saga', () => {
       .withReducer(userReducer)
       .dispatch(
         actions.login({
-          domain: 'dtappdemo.wpengine.com',
-          username: 'hansrasch',
-          password: 'Hrasch22...',
+          domain: '',
+          username: '',
+          password: '',
         }),
       )
       .run()
+      .then(
+        (value) => {
+          console.log(value.storeState);
+        },
+        (error) => {
+          console.error(error);
+        },
+      )
       .finally(() => {
         done();
       }));

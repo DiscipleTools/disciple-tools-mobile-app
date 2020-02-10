@@ -47,6 +47,14 @@ describe('Redux Saga - Login', () => {
       .withReducer(reducers, initialState)
       .hasFinalState(initialState)
       .run()
+      .then(
+        (value) => {
+          console.log(value.storeState);
+        },
+        (error) => {
+          console.error(error);
+        },
+      )
       .finally(() => {
         done();
       });
