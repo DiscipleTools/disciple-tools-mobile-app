@@ -1,50 +1,50 @@
 import { expectSaga } from 'redux-saga-test-plan';
 import requestSaga from '../store/sagas/request.sagas';
-import networkConnectivityReducer from '../store/reducers/networkConnectivity.reducer';
+import groupsReducer from '../store/reducers/groups.reducer';
 import requestReducer from '../store/reducers/request.reducer';
 import { combineReducers } from 'redux';
+import * as groupActions from '../store/actions/groups.actions';
 
-describe('Redux Saga - Login', () => {
-  it('Login - Online', (done) => {
-    const user = {
+describe('Redux Saga - Groups', () => {
+  it('Groups - Online', (done) => {
+    const request = {
       domain: 'dtappdemo.wpengine.com',
-      username: 'hansrasch',
-      password: 'Hrasch22...',
+      token: '',
+      offset: 0,
+      limit: 10,
+      sort: 'name',
     };
 
-    const testLoginPayload = {
-      url: `https://${user.domain}/wp-json/jwt-auth/v1/token`,
+    const getGroupsPayload = {
+      url: `https://${request.domain}/wp-json/dt-posts/v2/groups?offset=${request.offset}&limit=${request.limit}&sort=${request.sort}`,
       data: {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-        },
-        body: {
-          username: `${user.username}`,
-          password: `${user.password}`,
+          Authorization: `Bearer ${request.token}`,
         },
       },
+      action: groupActions.GROUPS_GETALL_RESPONSE,
     };
 
-    const testLogin = {
+    const getGroups = {
       type: 'REQUEST',
-      payload: testLoginPayload,
+      payload: getGroupsPayload,
     };
 
-    const finalState = {
-      networkConnectivityReducer: { isConnected: true },
-      requestReducer: [],
+    const initialState = {
+      groups: [],
     };
 
     const reducers = combineReducers({
-      networkConnectivityReducer,
       requestReducer,
+      groupsReducer,
     });
 
     return expectSaga(requestSaga)
+      .withState(initialState)
       .withReducer(reducers)
-      .dispatch(testLogin)
-      .hasFinalState(finalState)
+      .dispatch(getGroups)
       .run()
       .then(
         (value) => {

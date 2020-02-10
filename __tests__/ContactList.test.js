@@ -3,7 +3,7 @@ import App from '../App';
 import { shallow, mount } from 'enzyme';
 
 describe('Test Describe', () => {
-  it('Test ID', (done) => {
+  it('Test ID', () => {
     //const wrapper = shallow(<App />);
     const wrapper = mount(<App />);
     console.log(wrapper.instance().state);
@@ -11,7 +11,7 @@ describe('Test Describe', () => {
     setImmediate(() => {
       console.log(wrapper.instance().state);
       console.log(wrapper.debug());
-      done();
+      expect(true).toBeTruthy();
     });
     //expect(wrapper.exists()).toBeTruthy();
     //let providerExist;

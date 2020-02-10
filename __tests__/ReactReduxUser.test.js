@@ -8,14 +8,14 @@ import * as actions from '../store/actions/user.actions';
 //jest.setTimeout(15000);
 
 describe('User Saga', () => {
-  it('set UserData', (done) =>
+  it('set UserData', () =>
     expectSaga(userSaga)
       .withReducer(userReducer)
       .dispatch(
         actions.login({
-          domain: '',
-          username: '',
-          password: '',
+          domain: 'dtappdemo.wpengine.com',
+          username: 'hansrasch',
+          password: 'Hrasch22...',
         }),
       )
       .run()
@@ -28,6 +28,6 @@ describe('User Saga', () => {
         },
       )
       .finally(() => {
-        done();
+        expect(true).toBeTruthy();
       }));
 });
