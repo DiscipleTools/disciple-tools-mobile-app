@@ -1083,19 +1083,6 @@ class GroupDetailScreen extends React.Component {
       .sort((a, b) => new Date(a.date).getTime() < new Date(b.date).getTime());
   }
 
-  getMembers() {
-    const members = [];
-    if (this.state.group.members) {
-      this.state.group.members.values.forEach((element) => {
-        const member = this.state.usersContacts.find((user) => user.value === element.value);
-        if (member) {
-          members.push(member);
-        }
-      });
-    }
-    return members || [];
-  }
-
   showMembersCount = () => (
     <View>
       <Row style={{ paddingBottom: 10 }}>
@@ -2789,10 +2776,17 @@ class GroupDetailScreen extends React.Component {
         <KeyboardShift>
           {() => (
             <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
-              <ScrollView keyboardShouldPersistTaps="handled">
+              <ScrollView
+                keyboardShouldPersistTaps="handled"
+                refreshControl={
+                  <RefreshControl
+                    refreshing={this.state.loading}
+                    onRefresh={() => this.onRefresh(this.state.group.ID)}
+                  />
+                }>
                 {this.showMembersCount()}
                 <FlatList
-                  data={this.getMembers()}
+                  data={this.state.group.members ? this.state.group.members.values : []}
                   extraData={this.state.updateMembersList}
                   renderItem={(item) => this.membersRow(item.item)}
                   ItemSeparatorComponent={this.flatListItemSeparator}
@@ -2810,7 +2804,7 @@ class GroupDetailScreen extends React.Component {
                   {i18n.t('global.membersActivity')}
                 </Text>
                 <FlatList
-                  data={this.getMembers()}
+                  data={this.state.group.members ? this.state.group.members.values : []}
                   extraData={this.state.updateMembersList}
                   renderItem={(item) => this.membersRow(item.item)}
                   ItemSeparatorComponent={this.flatListItemSeparator}

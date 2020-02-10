@@ -336,6 +336,7 @@ export default function groupsReducer(state = initialState, action) {
                       if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                         // connection
                         let object = {
+                          name: valueTwo.post_title,
                           value: valueTwo.ID.toString(),
                         };
                         // groups
@@ -612,6 +613,7 @@ export default function groupsReducer(state = initialState, action) {
                       if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                         // connection
                         let object = {
+                          name: valueTwo.post_title,
                           value: valueTwo.ID.toString(),
                         };
                         // groups
