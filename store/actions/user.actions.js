@@ -23,6 +23,9 @@ export const GET_MY_USER_INFO_FAILURE = 'GET_MY_USER_INFO_FAILURE';
 
 export const REMEMBER_PASSWORD = 'REMEMBER_PASSWORD';
 
+export const SAVE_PIN_CODE = 'SAVE_PIN_CODE';
+export const REMOVE_PIN_CODE = 'REMOVE_PIN_CODE';
+
 /*
  * Action Creators
  */
@@ -66,4 +69,12 @@ export function logout() {
 
 export function toggleRememberPassword() {
   return { type: REMEMBER_PASSWORD };
+}
+
+export function savePINCode(value) {
+  return { type: SAVE_PIN_CODE, value };
+}
+
+export function removePINCode() {
+  return { type: REMOVE_PIN_CODE };
 }

@@ -1,6 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { I18nManager, StyleSheet, Text, View } from 'react-native';
+import {
+  I18nManager,
+  StyleSheet,
+  Text,
+  View,
+  KeyboardAvoidingView,
+  Dimensions,
+} from 'react-native';
 import {
   Body,
   Button as NbButton,
@@ -22,10 +29,17 @@ import Constants from 'expo-constants';
 import * as MailComposer from 'expo-mail-composer';
 import Colors from '../constants/Colors';
 import { setLanguage } from '../store/actions/i18n.actions';
-import { logout, toggleRememberPassword } from '../store/actions/user.actions';
+import {
+  logout,
+  toggleRememberPassword,
+  savePINCode,
+  removePINCode,
+} from '../store/actions/user.actions';
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
 import i18n from '../languages';
 //  import locales from '../languages/locales';
+import CodePin from 'react-native-pin-code';
+import { BlurView } from 'expo-blur';
 
 const propTypes = {
   navigation: PropTypes.shape({
@@ -43,6 +57,10 @@ const propTypes = {
   logout: PropTypes.func.isRequired,
   //    setLanguage: PropTypes.func.isRequired,
   toggleNetworkConnectivity: PropTypes.func.isRequired,
+  pinCode: PropTypes.shape({
+    enabled: PropTypes.bool,
+    value: PropTypes.string,
+  }),
 };
 
 const styles = StyleSheet.create({
@@ -94,7 +112,13 @@ const styles = StyleSheet.create({
   },
 });
 let toastError;
+let codePinRef;
+const { height, width } = Dimensions.get('window');
 class SettingsScreen extends React.Component {
+  state = {
+    toggleShowPIN: false,
+  };
+
   constructor(props) {
     super(props);
 
@@ -149,6 +173,33 @@ class SettingsScreen extends React.Component {
 
   toggleRememberPassword = () => {
     this.props.toggleRememberPassword();
+  };
+
+  toggleShowPIN = () => {
+    this.setState((prevState) => ({
+      toggleShowPIN: !prevState.toggleShowPIN,
+    }));
+  };
+
+  showToast = (message, error = false) => {
+    if (error) {
+      toastError.show(
+        <View>
+          <Text style={{ color: Colors.errorText }}>{message}</Text>
+        </View>,
+        3000,
+      );
+    } else {
+      this.toast.show(message, 3000);
+    }
+  };
+
+  savePINCode = (value) => {
+    this.props.savePINCode(value);
+  };
+
+  removePINCode = () => {
+    this.props.removePINCode();
   };
 
   static navigationOptions = {
@@ -259,6 +310,19 @@ class SettingsScreen extends React.Component {
               <Switch value={this.props.rememberPassword} onChange={this.toggleRememberPassword} />
             </Right>
           </ListItem>
+          {/* === PIN Code === */}
+          <ListItem icon onPress={this.toggleShowPIN}>
+            <Left>
+              <NbButton>
+                <Icon active type="MaterialCommunityIcons" name="security" />
+              </NbButton>
+            </Left>
+            <Body style={styles.body}>
+              <Text style={styles.text}>{`${
+                this.props.pinCode.enabled ? 'Remove' : 'Set'
+              } PIN code`}</Text>
+            </Body>
+          </ListItem>
           {/* === Help / Support === */}
           <ListItem icon onPress={this.draftNewSupportEmail}>
             <Left>
@@ -299,6 +363,68 @@ class SettingsScreen extends React.Component {
           style={{ backgroundColor: Colors.errorBackground }}
           positionValue={210}
         />
+        {this.state.toggleShowPIN ? (
+          <BlurView
+            tint="dark"
+            intensity={50}
+            style={{
+              position: 'absolute',
+              justifyContent: 'center',
+              alignItems: 'center',
+              top: 0,
+              left: 0,
+              width: width,
+              height: height,
+            }}>
+            <NbButton onPress={this.toggleShowPIN} style={{}}>
+              <Text>{'Close'}</Text>
+            </NbButton>
+            <KeyboardAvoidingView
+              behavior={'position'}
+              contentContainerStyle={{
+                borderRadius: 10,
+                height: height / 2,
+                width: width - 30,
+              }}>
+              <CodePin
+                ref={(ref) => (this.codePinRef = ref)}
+                number={4}
+                checkPinCode={(code, callback) => {
+                  let result = false;
+                  if (!this.props.pinCode.value) {
+                    //New code
+                    result = true;
+                    this.savePINCode(code);
+                    this.showToast('PIN code saved succesfully!.');
+                    this.toggleShowPIN();
+                  } else if (code === this.props.pinCode.value) {
+                    //input correct code
+                    result = true;
+                    this.removePINCode();
+                    this.showToast('PIN code removed succesfully!.');
+                    this.toggleShowPIN();
+                  } else {
+                    result = false;
+                  }
+                  return callback(result);
+                }}
+                text={this.props.pinCode.enabled ? 'Enter PIN' : 'Set new PIN'}
+                error={'Incorrect PIN'}
+                autoFocusFirst={true}
+                containerStyle={{
+                  borderRadius: 10,
+                }}
+                pinStyle={{
+                  marginLeft: 25,
+                  marginRight: 25,
+                }}
+                textStyle={{ fontSize: 12 }}
+                errorStyle={{ fontSize: 10 }}
+                keyboardType="numeric"
+              />
+            </KeyboardAvoidingView>
+          </BlurView>
+        ) : null}
       </Container>
     );
   }
@@ -311,6 +437,7 @@ const mapStateToProps = (state) => ({
   isConnected: state.networkConnectivityReducer.isConnected,
   userData: state.userReducer.userData,
   rememberPassword: state.userReducer.rememberPassword,
+  pinCode: state.userReducer.pinCode,
 });
 const mapDispatchToProps = (dispatch) => ({
   toggleNetworkConnectivity: (isConnected) => {
@@ -324,6 +451,12 @@ const mapDispatchToProps = (dispatch) => ({
   },
   toggleRememberPassword: () => {
     dispatch(toggleRememberPassword());
+  },
+  savePINCode: (value) => {
+    dispatch(savePINCode(value));
+  },
+  removePINCode: () => {
+    dispatch(removePINCode());
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsScreen);

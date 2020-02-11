@@ -15,6 +15,10 @@ const initialState = {
     expoPushToken: null,
   },
   rememberPassword: true,
+  pinCode: {
+    enabled: false,
+    value: null,
+  },
 };
 
 export default function userReducer(state = initialState, action) {
@@ -84,6 +88,22 @@ export default function userReducer(state = initialState, action) {
       return {
         ...newState,
         rememberPassword: !newState.rememberPassword,
+      };
+    case actions.SAVE_PIN_CODE:
+      return {
+        ...newState,
+        pinCode: {
+          enabled: true,
+          value: action.value,
+        },
+      };
+    case actions.REMOVE_PIN_CODE:
+      return {
+        ...newState,
+        pinCode: {
+          enabled: false,
+          value: null,
+        },
       };
     default:
       return newState;
