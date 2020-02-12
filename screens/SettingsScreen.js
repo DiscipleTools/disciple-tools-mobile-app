@@ -379,19 +379,8 @@ class SettingsScreen extends React.Component {
             <KeyboardAvoidingView
               behavior={'position'}
               contentContainerStyle={{
-                borderRadius: 10,
-                height: height / 2,
-                width: width - 30,
+                height: height / 2 + 35,
               }}>
-              <View>
-                <NbButton
-                  onPress={this.toggleShowPIN}
-                  style={{
-                    backgroundColor: '#FFF',
-                  }}>
-                  <Text>{'Close'}</Text>
-                </NbButton>
-              </View>
               <CodePin
                 ref={(ref) => (this.codePinRef = ref)}
                 number={4}
@@ -418,7 +407,7 @@ class SettingsScreen extends React.Component {
                 error={'Incorrect PIN'}
                 autoFocusFirst={true}
                 containerStyle={{
-                  height: 220,
+                  height: 170,
                   alignItems: 'center',
                 }}
                 pinStyle={{
@@ -428,7 +417,7 @@ class SettingsScreen extends React.Component {
                   alignItems: 'center',
                   flex: 1,
                   borderRadius: 5,
-                  height: 70,
+                  height: 50,
                   fontSize: 25,
                   paddingTop: 10,
                   paddingBottom: 10,
@@ -445,6 +434,19 @@ class SettingsScreen extends React.Component {
                 }}
                 keyboardType="numeric"
               />
+              <View style={{ marginTop: 20 }}>
+                <NbButton
+                  block
+                  style={{
+                    backgroundColor: Colors.tintColor,
+                    borderRadius: 5,
+                    width: 150,
+                    alignSelf: 'center',
+                  }}
+                  onPress={this.toggleShowPIN}>
+                  <Text style={{ color: '#FFFFFF' }}>{'Close'}</Text>
+                </NbButton>
+              </View>
             </KeyboardAvoidingView>
           </BlurView>
         ) : null}
