@@ -376,9 +376,6 @@ class SettingsScreen extends React.Component {
               width: width,
               height: height,
             }}>
-            <NbButton onPress={this.toggleShowPIN} style={{}}>
-              <Text>{'Close'}</Text>
-            </NbButton>
             <KeyboardAvoidingView
               behavior={'position'}
               contentContainerStyle={{
@@ -386,6 +383,15 @@ class SettingsScreen extends React.Component {
                 height: height / 2,
                 width: width - 30,
               }}>
+              <View>
+                <NbButton
+                  onPress={this.toggleShowPIN}
+                  style={{
+                    backgroundColor: '#FFF',
+                  }}>
+                  <Text>{'Close'}</Text>
+                </NbButton>
+              </View>
               <CodePin
                 ref={(ref) => (this.codePinRef = ref)}
                 number={4}
@@ -412,14 +418,31 @@ class SettingsScreen extends React.Component {
                 error={'Incorrect PIN'}
                 autoFocusFirst={true}
                 containerStyle={{
-                  borderRadius: 10,
+                  height: 220,
+                  alignItems: 'center',
                 }}
                 pinStyle={{
-                  marginLeft: 25,
-                  marginRight: 25,
+                  backgroundColor: '#F0F0F0',
+                  textAlign: 'center',
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                  flex: 1,
+                  borderRadius: 5,
+                  height: 70,
+                  fontSize: 25,
+                  paddingTop: 10,
+                  paddingBottom: 10,
                 }}
-                textStyle={{ fontSize: 12 }}
-                errorStyle={{ fontSize: 10 }}
+                textStyle={{
+                  textAlign: 'center',
+                  color: 'gray',
+                  fontSize: 20,
+                  marginTop: 30,
+                }}
+                errorStyle={{
+                  textAlign: 'center',
+                  color: 'red',
+                }}
                 keyboardType="numeric"
               />
             </KeyboardAvoidingView>
