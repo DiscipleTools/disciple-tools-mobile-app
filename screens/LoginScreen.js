@@ -23,6 +23,8 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 import { Updates } from 'expo';
 import Constants from 'expo-constants';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
+import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
+import { BlurView } from 'expo-blur';
 import i18n from '../languages';
 import locales from '../languages/locales';
 import Colors from '../constants/Colors';
@@ -157,7 +159,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
-let toastError;
+let toastError, codePinRef;
+const { height, width } = Dimensions.get('window');
 class LoginScreen extends React.Component {
   state = {
     loading: false,
@@ -168,6 +171,9 @@ class LoginScreen extends React.Component {
     offset: 0,
     limit: 100,
     sort: '-last_modified',
+    toggleShowPIN: false,
+    pin: '',
+    incorrectPin: false,
   };
 
   constructor(props) {
@@ -241,10 +247,15 @@ class LoginScreen extends React.Component {
     // User is authenticated (logged)
     if (this.props.userData && this.props.userData.token && this.props.rememberPassword) {
       if (this.props.isConnected) {
-        this.setState({ loading: true }, () => {
-          this.getDataLists();
-          this.getUserInfo();
-        });
+        if (this.props.pinCode.enabled) {
+          this.toggleShowPIN();
+        } else {
+          this.props.loginDispatch(
+            this.props.userData.domain,
+            this.props.userData.username,
+            this.props.userData.password,
+          );
+        }
       } else {
         this.setState(
           {
@@ -459,16 +470,21 @@ class LoginScreen extends React.Component {
 
   onLoginPress = () => {
     Keyboard.dismiss();
-    const { domain, username, password } = this.state;
-    if (domain && username && password) {
-      const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
-      this.props.loginDispatch(cleanedDomain, username, password);
+    if (this.props.pinCode.enabled) {
+      // User with PIN=true and AutoLogin=FALSE
+      this.toggleShowPIN();
     } else {
-      this.setState({
-        domainValidation: !domain,
-        userValidation: !username,
-        passwordValidation: !password,
-      });
+      const { domain, username, password } = this.state;
+      if (domain && username && password) {
+        const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
+        this.props.loginDispatch(cleanedDomain, username, password);
+      } else {
+        this.setState({
+          domainValidation: !domain,
+          userValidation: !username,
+          passwordValidation: !password,
+        });
+      }
     }
   };
 
@@ -509,6 +525,14 @@ class LoginScreen extends React.Component {
       this.setState({ domain: text });
     }
   }
+
+  toggleShowPIN = () => {
+    this.setState((prevState) => ({
+      toggleShowPIN: !prevState.toggleShowPIN,
+      pin: '',
+      incorrectPin: false,
+    }));
+  };
 
   // TODO: How to disable iCloud save password feature?
   render() {
@@ -653,6 +677,90 @@ class LoginScreen extends React.Component {
             position="bottom"
           />
         </ScrollView>
+        {this.state.toggleShowPIN ? (
+          <BlurView
+            tint="dark"
+            intensity={50}
+            style={{
+              position: 'absolute',
+              justifyContent: 'center',
+              alignItems: 'center',
+              top: 0,
+              left: 0,
+              width: width,
+              height: height,
+            }}>
+            <KeyboardAvoidingView
+              behavior={'position'}
+              contentContainerStyle={{
+                height: height / 2 + 35,
+              }}>
+              <View style={{ backgroundColor: '#FFFFFF', padding: 20 }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    textAlign: 'center',
+                    color: Colors.gray,
+                    marginBottom: 5,
+                  }}>
+                  {this.props.pinCode.enabled ? 'Enter PIN' : 'Set new PIN'}
+                </Text>
+                {this.state.incorrectPin ? (
+                  <Text
+                    style={{
+                      color: Colors.errorBackground,
+                      textAlign: 'center',
+                      fontSize: 14,
+                      marginBottom: 5,
+                    }}>
+                    {'Incorrect PIN'}
+                  </Text>
+                ) : null}
+                <SmoothPinCodeInput
+                  password
+                  mask="﹡"
+                  cellSize={60}
+                  ref={this.pinInput}
+                  value={this.state.pin}
+                  onTextChange={(pin) => {
+                    this.setState({
+                      pin,
+                      incorrectPin: this.state.incorrectPin ? false : undefined,
+                    });
+                  }}
+                  onFulfill={(pin) => {
+                    if (pin === this.props.pinCode.value) {
+                      this.props.loginDispatch(
+                        this.props.userData.domain,
+                        this.props.userData.username,
+                        this.props.userData.password,
+                      );
+                      this.toggleShowPIN();
+                    } else {
+                      this.setState({
+                        incorrectPin: true,
+                        pin: '',
+                      });
+                    }
+                  }}
+                  autoFocus={true}
+                />
+                <Button
+                  block
+                  style={{
+                    backgroundColor: Colors.tintColor,
+                    borderRadius: 5,
+                    width: 150,
+                    alignSelf: 'center',
+                    marginTop: 20,
+                  }}
+                  onPress={this.toggleShowPIN}>
+                  <Text style={{ color: '#FFFFFF' }}>{'Close'}</Text>
+                </Button>
+              </View>
+            </KeyboardAvoidingView>
+          </BlurView>
+        ) : null}
       </KeyboardAvoidingView>
     );
   }
@@ -774,6 +882,7 @@ const mapStateToProps = (state) => ({
   contactsReducerLoading: state.contactsReducer.loading,
   contactsReducerError: state.contactsReducer.error,
   contacts: state.contactsReducer.contacts,
+  pinCode: state.userReducer.pinCode,
 });
 const mapDispatchToProps = (dispatch) => ({
   loginDispatch: (domain, username, password) => {

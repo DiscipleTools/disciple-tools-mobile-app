@@ -8,13 +8,18 @@ const initialState = {
     domain: null,
     token: null,
     username: null,
+    password: null,
     displayName: null,
     email: null,
     locale: null,
     id: null,
     expoPushToken: null,
   },
-  rememberPassword: true,
+  rememberPassword: false,
+  pinCode: {
+    enabled: false,
+    value: null,
+  },
 };
 
 export default function userReducer(state = initialState, action) {
@@ -28,20 +33,34 @@ export default function userReducer(state = initialState, action) {
         ...newState,
         loading: true,
       };
-    case actions.USER_LOGIN_SUCCESS:
-      return {
-        ...newState,
+    case actions.USER_LOGIN_SUCCESS: {
+      let state = { ...newState };
+      if (newState.userData.username !== action.user.user_nicename) {
+        state = {
+          ...state,
+          pinCode: {
+            enabled: false,
+            value: null,
+          },
+        };
+      }
+      state = {
+        ...state,
         userData: {
           domain: action.domain,
           token: action.user.token,
           username: action.user.user_nicename,
+          password: action.user.password,
           displayName: action.user.user_display_name,
           email: action.user.user_email,
           locale: null,
           id: null,
         },
         loading: false,
+        rememberPassword: true,
       };
+      return state;
+    }
     case actions.USER_LOGIN_FAILURE:
       return {
         ...newState,
@@ -78,12 +97,34 @@ export default function userReducer(state = initialState, action) {
         userData: {
           ...newState.userData,
           token: null,
+          password: null,
         },
+        pinCode: {
+          enabled: false,
+          value: null,
+        },
+        rememberPassword: false,
       };
     case actions.REMEMBER_PASSWORD:
       return {
         ...newState,
         rememberPassword: !newState.rememberPassword,
+      };
+    case actions.SAVE_PIN_CODE:
+      return {
+        ...newState,
+        pinCode: {
+          enabled: true,
+          value: action.value,
+        },
+      };
+    case actions.REMOVE_PIN_CODE:
+      return {
+        ...newState,
+        pinCode: {
+          enabled: false,
+          value: null,
+        },
       };
     default:
       return newState;
