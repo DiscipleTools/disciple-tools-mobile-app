@@ -57,6 +57,7 @@ export default function userReducer(state = initialState, action) {
           id: null,
         },
         loading: false,
+        rememberPassword: true,
       };
       return state;
     }

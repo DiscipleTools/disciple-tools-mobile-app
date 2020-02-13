@@ -38,8 +38,8 @@ import {
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
 import i18n from '../languages';
 //  import locales from '../languages/locales';
-import CodePin from 'react-native-pin-code';
 import { BlurView } from 'expo-blur';
+import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 
 const propTypes = {
   navigation: PropTypes.shape({
@@ -117,6 +117,8 @@ const { height, width } = Dimensions.get('window');
 class SettingsScreen extends React.Component {
   state = {
     toggleShowPIN: false,
+    pin: '',
+    incorrectPin: false,
   };
 
   constructor(props) {
@@ -178,6 +180,8 @@ class SettingsScreen extends React.Component {
   toggleShowPIN = () => {
     this.setState((prevState) => ({
       toggleShowPIN: !prevState.toggleShowPIN,
+      pin: '',
+      incorrectPin: false,
     }));
   };
 
@@ -381,60 +385,59 @@ class SettingsScreen extends React.Component {
               contentContainerStyle={{
                 height: height / 2 + 35,
               }}>
-              <CodePin
-                ref={(ref) => (this.codePinRef = ref)}
-                number={4}
-                checkPinCode={(code, callback) => {
-                  let result = false;
-                  if (!this.props.pinCode.value) {
-                    //New code
-                    result = true;
-                    this.savePINCode(code);
-                    this.showToast('PIN code saved succesfully!.');
-                    this.toggleShowPIN();
-                  } else if (code === this.props.pinCode.value) {
-                    //input correct code
-                    result = true;
-                    this.removePINCode();
-                    this.showToast('PIN code removed succesfully!.');
-                    this.toggleShowPIN();
-                  } else {
-                    result = false;
-                  }
-                  return callback(result);
-                }}
-                text={this.props.pinCode.enabled ? 'Enter PIN' : 'Set new PIN'}
-                error={'Incorrect PIN'}
-                autoFocusFirst={true}
-                containerStyle={{
-                  height: 170,
-                  alignItems: 'center',
-                }}
-                pinStyle={{
-                  backgroundColor: '#F0F0F0',
-                  textAlign: 'center',
-                  justifyContent: 'space-around',
-                  alignItems: 'center',
-                  flex: 1,
-                  borderRadius: 5,
-                  height: 50,
-                  fontSize: 25,
-                  paddingTop: 10,
-                  paddingBottom: 10,
-                }}
-                textStyle={{
-                  textAlign: 'center',
-                  color: 'gray',
-                  fontSize: 20,
-                  marginTop: 30,
-                }}
-                errorStyle={{
-                  textAlign: 'center',
-                  color: 'red',
-                }}
-                keyboardType="numeric"
-              />
-              <View style={{ marginTop: 20 }}>
+              <View style={{ backgroundColor: '#FFFFFF', padding: 20 }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    textAlign: 'center',
+                    color: Colors.gray,
+                    marginBottom: 5,
+                  }}>
+                  {this.props.pinCode.enabled ? 'Enter PIN' : 'Set new PIN'}
+                </Text>
+                {this.state.incorrectPin ? (
+                  <Text
+                    style={{
+                      color: Colors.errorBackground,
+                      textAlign: 'center',
+                      fontSize: 14,
+                      marginBottom: 5,
+                    }}>
+                    {'Incorrect PIN'}
+                  </Text>
+                ) : null}
+                <SmoothPinCodeInput
+                  password
+                  mask="﹡"
+                  cellSize={60}
+                  ref={this.pinInput}
+                  value={this.state.pin}
+                  onTextChange={(pin) => {
+                    this.setState({
+                      pin,
+                      incorrectPin: this.state.incorrectPin ? false : undefined,
+                    });
+                  }}
+                  onFulfill={(pin) => {
+                    if (!this.props.pinCode.value) {
+                      //New code
+                      this.savePINCode(pin);
+                      this.showToast('PIN code saved succesfully!.');
+                      this.toggleShowPIN();
+                    } else if (pin === this.props.pinCode.value) {
+                      //input correct pin
+                      this.removePINCode();
+                      this.showToast('PIN code removed succesfully!.');
+                      this.toggleShowPIN();
+                    } else {
+                      this.setState({
+                        incorrectPin: true,
+                        pin: '',
+                      });
+                    }
+                  }}
+                  autoFocus={true}
+                />
                 <NbButton
                   block
                   style={{
@@ -442,6 +445,7 @@ class SettingsScreen extends React.Component {
                     borderRadius: 5,
                     width: 150,
                     alignSelf: 'center',
+                    marginTop: 20,
                   }}
                   onPress={this.toggleShowPIN}>
                   <Text style={{ color: '#FFFFFF' }}>{'Close'}</Text>
