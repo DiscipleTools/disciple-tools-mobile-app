@@ -338,6 +338,7 @@ class ContactDetailScreen extends React.Component {
       headerTintColor: '#FFFFFF',
       headerTitleStyle: {
         fontWeight: 'bold',
+        width: 200,
       },
     };
   };
