@@ -166,17 +166,6 @@ const styles = StyleSheet.create({
     color: Colors.tintColor,
     fontSize: 10,
   },
-  saveButton: {
-    backgroundColor: Colors.tintColor,
-    borderRadius: 5,
-    marginTop: 40,
-  },
-  saveButtonOff: {
-    backgroundColor: Colors.tintColor,
-    opacity: 0.5,
-    borderRadius: 5,
-    marginTop: 40,
-  },
   contactFABIcon: {
     color: 'white',
     fontSize: 20,
@@ -267,53 +256,37 @@ class ContactDetailScreen extends React.Component {
     let navigationTitle = Object.prototype.hasOwnProperty.call(params, 'contactName')
       ? params.contactName
       : i18n.t('contactDetailScreen.addNewContact');
-    let headerRight;
+    let headerRight = () => (
+      <Row onPress={params.onSaveContact}>
+        <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+          {i18n.t('global.save')}
+        </Text>
+        <Icon
+          type="Feather"
+          name="check"
+          style={[
+            { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+            i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+          ]}
+        />
+      </Row>
+    );
     let headerLeft;
 
     if (params) {
-      if (params.onEnableEdit) {
-        if (params.contactId) {
-          headerRight = () =>
-            params.onlyView ? (
-              <Row onPress={params.onEnableEdit}>
-                <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
-                  {i18n.t('global.edit')}
-                </Text>
-                <Icon
-                  type="MaterialCommunityIcons"
-                  name="pencil"
-                  style={[
-                    { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-                    i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
-                  ]}
-                />
-              </Row>
-            ) : (
-              <Row onPress={params.onSaveContact}>
-                <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
-                  {i18n.t('global.save')}
-                </Text>
-                <Icon
-                  type="Feather"
-                  name="check"
-                  style={[
-                    { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-                    i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
-                  ]}
-                />
-              </Row>
-            );
-        }
-      } else if (params.contactId) {
+      if (params.onEnableEdit && params.contactId && params.onlyView) {
         headerRight = () => (
-          <Row>
+          <Row onPress={params.onEnableEdit}>
             <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
               {i18n.t('global.edit')}
             </Text>
             <Icon
               type="MaterialCommunityIcons"
               name="pencil"
-              style={[{ color: '#FFFFFF', paddingRight: 16 }]}
+              style={[
+                { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+              ]}
             />
           </Row>
         );
@@ -332,7 +305,7 @@ class ContactDetailScreen extends React.Component {
                 navigation.goBack();
               }
             }}
-            style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }]}
+            style={{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }}
           />
         );
       } else {
@@ -449,7 +422,6 @@ class ContactDetailScreen extends React.Component {
         onSaveContact: this.onSaveContact,
       });
     } else {
-      this.props.navigation.setParams({ hideTabBar: true });
       newState = {
         contact: {
           title: null,
@@ -465,6 +437,12 @@ class ContactDetailScreen extends React.Component {
         },
         overallStatusBackgroundColor: sharedTools.getSelectorColor('new'),
       };
+      navigation.setParams({
+        hideTabBar: true,
+        onEnableEdit: this.onEnableEdit,
+        onDisableEdit: this.onDisableEdit,
+        onSaveContact: this.onSaveContact,
+      });
     }
     if (onlyView) {
       newState = {
@@ -644,7 +622,7 @@ class ContactDetailScreen extends React.Component {
         (contact.oldID && contact.oldID === this.state.contact.ID.toString())
       ) {
         // Highlight Updates -> Compare this.state.contact with contact and show differences
-        navigation.setParams({ contactName: contact.title });
+        navigation.setParams({ contactName: contact.title, contactId: contact.ID });
         if (contact.seeker_path) {
           this.setContactSeekerPath(contact.seeker_path);
         }
@@ -5161,15 +5139,6 @@ class ContactDetailScreen extends React.Component {
                       ) : (
                         <Text />
                       )}
-                      <Button
-                        block
-                        style={this.state.contact.title ? styles.saveButton : styles.saveButtonOff}
-                        onPress={this.onSaveContact}
-                        disabled={this.state.haveTitle}>
-                        <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-                          {i18n.t('global.save')}
-                        </Text>
-                      </Button>
                     </View>
                   </ScrollView>
                 )}
