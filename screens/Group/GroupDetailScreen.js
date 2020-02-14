@@ -1183,10 +1183,10 @@ class GroupDetailScreen extends React.Component {
     });
   };
 
-  onSelectAssignedTo = (value, index) => {
+  onSelectAssignedTo = (value) => {
     this.setState((prevState) => ({
-      contact: {
-        ...prevState.contact,
+      group: {
+        ...prevState.group,
         assigned_to: `user-${value}`,
       },
       showAssignedToModal: false,
@@ -2012,7 +2012,13 @@ class GroupDetailScreen extends React.Component {
                         </View>
                       </Col>
                       <Col style={styles.groupField}>
-                        <Picker onValueChange={this.onSelectAssignedTo}>
+                        <Picker
+                          selectedValue={
+                            this.state.group.assigned_to
+                              ? parseInt(this.state.group.assigned_to.replace('user-', ''))
+                              : ''
+                          }
+                          onValueChange={this.onSelectAssignedTo}>
                           {this.renderPickerItems(this.state.users)}
                         </Picker>
                       </Col>
