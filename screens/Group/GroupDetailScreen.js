@@ -281,17 +281,6 @@ const styles = StyleSheet.create({
     height: 30,
     width: 32,
   },
-  saveButton: {
-    backgroundColor: Colors.tintColor,
-    borderRadius: 5,
-    marginTop: 40,
-  },
-  saveButtonOff: {
-    backgroundColor: Colors.tintColor,
-    opacity: 0.5,
-    borderRadius: 5,
-    marginTop: 40,
-  },
   progressIconText: {
     fontSize: 9,
     textAlign: 'center',
@@ -384,7 +373,6 @@ const styles = StyleSheet.create({
 
 const initialState = {
   group: {},
-  haveTitle: true,
   unmodifiedGroup: {},
   onlyView: false,
   loadedLocal: false,
@@ -451,55 +439,37 @@ class GroupDetailScreen extends React.Component {
     let navigationTitle = Object.prototype.hasOwnProperty.call(params, 'groupName')
       ? params.groupName
       : i18n.t('groupDetailScreen.addNewGroup');
-    let headerRight;
+    let headerRight = () => (
+      <Row onPress={params.onSaveGroup}>
+        <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+          {i18n.t('global.save')}
+        </Text>
+        <Icon
+          type="Feather"
+          name="check"
+          style={[
+            { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+            i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+          ]}
+        />
+      </Row>
+    );
     let headerLeft;
 
     if (params) {
-      if (params.onEnableEdit) {
-        if (params.groupId) {
-          headerRight = () =>
-            params.onlyView ? (
-              <Row onPress={params.onEnableEdit}>
-                <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
-                  {i18n.t('global.edit')}
-                </Text>
-                <Icon
-                  type="MaterialCommunityIcons"
-                  name="pencil"
-                  style={[
-                    { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-                    i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
-                  ]}
-                />
-              </Row>
-            ) : (
-              <Row onPress={params.onSaveGroup}>
-                <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
-                  {i18n.t('global.save')}
-                </Text>
-                <Icon
-                  type="Feather"
-                  name="check"
-                  style={[
-                    { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-                    i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
-                  ]}
-                />
-              </Row>
-            );
-        } else {
-          headerRight = () => <Text />;
-        }
-      } else if (params.groupId) {
+      if (params.onEnableEdit && params.groupId && params.onlyView) {
         headerRight = () => (
-          <Row>
+          <Row onPress={params.onEnableEdit}>
             <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
               {i18n.t('global.edit')}
             </Text>
             <Icon
               type="MaterialCommunityIcons"
               name="pencil"
-              style={[{ color: '#FFFFFF', paddingRight: 16 }]}
+              style={[
+                { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+              ]}
             />
           </Row>
         );
@@ -557,6 +527,7 @@ class GroupDetailScreen extends React.Component {
       headerTintColor: '#FFFFFF',
       headerTitleStyle: {
         fontWeight: 'bold',
+        width: 200,
       },
     };
   };
@@ -732,7 +703,7 @@ class GroupDetailScreen extends React.Component {
         (group.oldID && group.oldID.toString() === this.state.group.ID.toString())
       ) {
         // Highlight Updates -> Compare this.state.group with group and show differences
-        navigation.setParams({ groupName: group.title });
+        navigation.setParams({ groupName: group.title, groupId: group.ID });
         this.getGroupByIdEnd();
       }
     }
@@ -1017,7 +988,6 @@ class GroupDetailScreen extends React.Component {
         ...prevState.group,
         title: value,
       },
-      haveTitle: false,
     }));
   };
 
@@ -1213,10 +1183,10 @@ class GroupDetailScreen extends React.Component {
     });
   };
 
-  onSelectAssignedTo = (value, index) => {
+  onSelectAssignedTo = (value) => {
     this.setState((prevState) => ({
-      contact: {
-        ...prevState.contact,
+      group: {
+        ...prevState.group,
         assigned_to: `user-${value}`,
       },
       showAssignedToModal: false,
@@ -2042,7 +2012,13 @@ class GroupDetailScreen extends React.Component {
                         </View>
                       </Col>
                       <Col style={styles.groupField}>
-                        <Picker onValueChange={this.onSelectAssignedTo}>
+                        <Picker
+                          selectedValue={
+                            this.state.group.assigned_to
+                              ? parseInt(this.state.group.assigned_to.replace('user-', ''))
+                              : ''
+                          }
+                          onValueChange={this.onSelectAssignedTo}>
                           {this.renderPickerItems(this.state.users)}
                         </Picker>
                       </Col>
@@ -3933,15 +3909,6 @@ class GroupDetailScreen extends React.Component {
                       </Picker>
                     </Row>
                   </Grid>
-                  <Button
-                    block
-                    style={this.state.group.title ? styles.saveButton : styles.saveButtonOff}
-                    onPress={this.onSaveGroup}
-                    disabled={this.state.haveTitle}>
-                    <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-                      {i18n.t('global.save')}
-                    </Text>
-                  </Button>
                 </View>
               </ScrollView>
             )}
@@ -4000,7 +3967,6 @@ GroupDetailScreen.propTypes = {
   saved: PropTypes.bool,
   getByIdEnd: PropTypes.func.isRequired,
   isConnected: PropTypes.bool,
-  haveTitle: PropTypes.bool,
   groupSettings: PropTypes.shape({
     health_metrics: PropTypes.shape({
       values: PropTypes.shape({
@@ -4082,7 +4048,6 @@ GroupDetailScreen.defaultProps = {
   saved: null,
   isConnected: null,
   groupSettings: null,
-  haveTitle: false,
 };
 
 const mapStateToProps = (state) => ({
