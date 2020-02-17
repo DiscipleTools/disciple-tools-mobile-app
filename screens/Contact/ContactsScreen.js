@@ -408,7 +408,7 @@ class ContactsScreen extends React.Component {
               <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
             }
             ListFooterComponent={this.renderFooter}
-            // keyExtractor={(item) => item.ID.toString()}
+            keyExtractor={(item) => item.ID.toString()}
           />
           <Fab
             style={{ backgroundColor: Colors.tintColor }}
