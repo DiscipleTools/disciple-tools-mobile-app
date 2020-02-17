@@ -584,6 +584,7 @@ class LoginScreen extends React.Component {
               value={this.state.domain}
               returnKeyType="next"
               textContentType="URL"
+              keyboardType="url"
               disabled={this.state.loading}
               placeholder={i18n.t('loginScreen.domain.placeholder')}
             />
@@ -598,6 +599,7 @@ class LoginScreen extends React.Component {
               value={this.state.username}
               returnKeyType="next"
               textContentType="emailAddress"
+              keyboardType="email-address"
               disabled={this.state.loading}
             />
             {userErrorMessage}
