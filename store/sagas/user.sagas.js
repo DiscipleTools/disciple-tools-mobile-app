@@ -1,5 +1,6 @@
 import { put, take, takeLatest, all, takeEvery } from 'redux-saga/effects';
 import Constants from 'expo-constants';
+import * as Device from 'expo-device';
 import * as Permissions from 'expo-permissions';
 import { Notifications } from 'expo';
 import * as actions from '../actions/user.actions';
@@ -68,13 +69,24 @@ export function* getExpoPushToken({ domain, token }) {
     }
     // Get push token from expo
     expoPushToken = yield Notifications.getExpoPushTokenAsync();
-    yield put({ type: actions.USER_ADD_PUSH_TOKEN, domain, token, expoPushToken });
+    // Construct a (somewhat) unique identifier for this particular device
+    let uniqueId =
+      (Device.manufacturer || '') +
+      ':' +
+      (Device.modelName || '') +
+      ':' +
+      (Device.deviceYearClass || '') +
+      ':' +
+      (Device.osName || '') +
+      ':' +
+      (Device.osVersion || '');
+    yield put({ type: actions.USER_ADD_PUSH_TOKEN, domain, token, expoPushToken, uniqueId });
   } else {
     console.log('Must use physical device for Push Notifications');
   }
 }
 
-export function* addPushToken({ domain, token, expoPushToken }) {
+export function* addPushToken({ domain, token, expoPushToken, uniqueId }) {
   // send push token to DT
   yield put({
     type: 'REQUEST',
@@ -86,7 +98,10 @@ export function* addPushToken({ domain, token, expoPushToken }) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: `{ "add_push_token": "${expoPushToken}" }`,
+        body: JSON.stringify({
+          add_push_token: expoPushToken,
+          add_device_id: uniqueId,
+        }),
       },
       action: actions.USER_ADD_PUSH_TOKEN_RESPONSE,
     },
