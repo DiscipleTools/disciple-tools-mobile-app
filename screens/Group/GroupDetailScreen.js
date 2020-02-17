@@ -350,13 +350,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     opacity: 0.7,
   },
-  groupField: {
-    borderWidth: 1,
+  groupTextField: {
+    borderBottomWidth: 1,
     borderStyle: 'solid',
     borderColor: '#B4B4B4',
-    borderRadius: 5,
-    fontSize: 15,
     height: 50,
+    fontSize: 15,
+  },
+  groupTextRoundField: {
+    borderWidth: 1,
+    borderRadius: 5,
+    borderStyle: 'solid',
+    borderColor: '#B4B4B4',
+    height: 50,
+    fontSize: 15,
   },
   selectizeField: {
     borderWidth: 1,
@@ -365,8 +372,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1.5,
     borderBottomColor: '#B4B4B4',
     borderRadius: 5,
+    minHeight: 50,
     marginTop: -15,
+    padding: 10,
   },
+  statusFieldContainer: Platform.select({
+    default: {
+      borderStyle: 'solid',
+      borderWidth: 2,
+      borderRadius: 3,
+    },
+    ios: {},
+  }),
 });
 
 const initialState = {
@@ -1686,26 +1703,33 @@ class GroupDetailScreen extends React.Component {
                 {this.props.groupSettings.fields.group_status.name}
               </Label>
               <Row style={[styles.formRow, { paddingTop: 5 }]}>
-                <Col>
+                <Col
+                  style={[
+                    styles.statusFieldContainer,
+                    Platform.select({
+                      default: { borderColor: this.state.groupStatusBackgroundColor },
+                      ios: {},
+                    }),
+                  ]}>
                   <Picker
                     selectedValue={this.state.group.group_status}
                     onValueChange={this.setGroupStatus}
-                    style={
-                      Platform.OS === 'android'
-                        ? [
-                            {
-                              color: '#ffffff',
-                              backgroundColor: this.state.groupStatusBackgroundColor,
-                            },
-                            i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                          ]
-                        : [
-                            {
-                              backgroundColor: this.state.groupStatusBackgroundColor,
-                            },
-                            i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                          ]
-                    }>
+                    style={[
+                      Platform.select({
+                        android: {
+                          color: '#ffffff',
+                          backgroundColor: this.state.groupStatusBackgroundColor,
+                          width: '100%',
+                        },
+                        default: {
+                          backgroundColor: this.state.groupStatusBackgroundColor,
+                        },
+                      }),
+                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}
+                    textStyle={{
+                      color: '#ffffff',
+                    }}>
                     {Object.keys(this.props.groupSettings.fields.group_status.values).map((key) => {
                       const optionData = this.props.groupSettings.fields.group_status.values[key];
                       return <Picker.Item key={key} label={optionData.label} value={key} />;
@@ -1930,20 +1954,33 @@ class GroupDetailScreen extends React.Component {
               {this.props.groupSettings.fields.group_status.name}
             </Label>
             <Row style={{ paddingBottom: 30 }}>
-              <Col>
+              <Col
+                style={[
+                  styles.statusFieldContainer,
+                  Platform.select({
+                    default: { borderColor: this.state.groupStatusBackgroundColor },
+                    ios: {},
+                  }),
+                ]}>
                 <Picker
                   selectedValue={this.state.group.group_status}
                   onValueChange={this.setGroupStatus}
-                  style={
-                    Platform.OS === 'android'
-                      ? {
-                          color: '#ffffff',
-                          backgroundColor: this.state.groupStatusBackgroundColor,
-                        }
-                      : {
-                          backgroundColor: this.state.groupStatusBackgroundColor,
-                        }
-                  }>
+                  style={[
+                    Platform.select({
+                      android: {
+                        color: '#ffffff',
+                        backgroundColor: this.state.groupStatusBackgroundColor,
+                        width: '100%',
+                      },
+                      default: {
+                        backgroundColor: this.state.groupStatusBackgroundColor,
+                      },
+                    }),
+                    i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                  ]}
+                  textStyle={{
+                    color: '#ffffff',
+                  }}>
                   {Object.keys(this.props.groupSettings.fields.group_status.values).map((key) => {
                     const optionData = this.props.groupSettings.fields.group_status.values[key];
                     return <Picker.Item key={key} label={optionData.label} value={key} />;
@@ -1971,7 +2008,7 @@ class GroupDetailScreen extends React.Component {
                 <Input
                   value={this.state.group.title}
                   onChangeText={this.setGroupTitle}
-                  style={styles.groupField}
+                  style={styles.groupTextField}
                 />
               </Col>
             </Row>
@@ -2001,7 +2038,7 @@ class GroupDetailScreen extends React.Component {
                     />
                   </View>
                 </Col>
-                <Col style={styles.groupField}>
+                <Col style={styles.groupTextRoundField}>
                   <Picker
                     selectedValue={
                       this.state.group.assigned_to
@@ -2271,7 +2308,7 @@ class GroupDetailScreen extends React.Component {
                         onChangeText={(value) => {
                           this.onAddressFieldChange(value, index, address.key, this);
                         }}
-                        style={styles.groupField}
+                        style={styles.groupTextField}
                       />
                     </Col>
                     <Col style={styles.formIconLabel}>
@@ -2316,7 +2353,7 @@ class GroupDetailScreen extends React.Component {
                   />
                 </View>
               </Col>
-              <Col style={styles.groupField}>
+              <Col>
                 <DatePicker
                   onDateChange={this.setGroupStartDate}
                   defaultDate={
@@ -2351,7 +2388,7 @@ class GroupDetailScreen extends React.Component {
                   />
                 </View>
               </Col>
-              <Col style={styles.groupField}>
+              <Col>
                 <DatePicker
                   onDateChange={this.setChurchStartDate}
                   defaultDate={
@@ -2388,7 +2425,7 @@ class GroupDetailScreen extends React.Component {
                   />
                 </View>
               </Col>
-              <Col style={styles.groupField}>
+              <Col>
                 <DatePicker
                   onDateChange={this.setEndDate}
                   defaultDate={this.state.group.end_date ? new Date(this.state.group.end_date) : ''}
@@ -2477,7 +2514,7 @@ class GroupDetailScreen extends React.Component {
                   />
                 </View>
               </Col>
-              <Col style={styles.groupField}>
+              <Col style={styles.groupTextRoundField}>
                 <Picker
                   mode="dropdown"
                   selectedValue={this.state.group.group_type}
@@ -3844,7 +3881,7 @@ class GroupDetailScreen extends React.Component {
                       <Input
                         placeholder={i18n.t('global.requiredField')}
                         onChangeText={this.setGroupTitle}
-                        style={styles.groupField}
+                        style={styles.groupTextField}
                       />
                     </Row>
                     <Row>
@@ -3852,7 +3889,7 @@ class GroupDetailScreen extends React.Component {
                         {this.props.groupSettings.fields.group_type.name}
                       </Label>
                     </Row>
-                    <Row style={styles.groupField}>
+                    <Row style={styles.groupTextRoundField}>
                       <Picker
                         mode="dropdown"
                         selectedValue={this.state.group.group_type}

@@ -220,13 +220,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff2ac',
     padding: 5,
   },
-  contactField: {
-    borderWidth: 1,
+  contactTextField: {
+    borderBottomWidth: 1,
     borderStyle: 'solid',
     borderColor: '#B4B4B4',
-    borderRadius: 5,
-    fontSize: 15,
     height: 50,
+    fontSize: 15,
+  },
+  contactTextRoundField: {
+    borderWidth: 1,
+    borderRadius: 5,
+    borderStyle: 'solid',
+    borderColor: '#B4B4B4',
+    height: 50,
+    fontSize: 15,
   },
   selectizeField: {
     borderWidth: 1,
@@ -235,12 +242,22 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1.5,
     borderBottomColor: '#B4B4B4',
     borderRadius: 5,
+    minHeight: 50,
     marginTop: -15,
+    padding: 10,
   },
   linkingText: {
     paddingTop: 4,
     paddingBottom: 8,
   },
+  statusFieldContainer: Platform.select({
+    default: {
+      borderStyle: 'solid',
+      borderWidth: 2,
+      borderRadius: 3,
+    },
+    ios: {},
+  }),
 });
 
 const safeFind = (found, prop) => {
@@ -1234,20 +1251,30 @@ class ContactDetailScreen extends React.Component {
                 {this.props.contactSettings.fields.overall_status.name}
               </Label>
               <Row style={[styles.formRow, { paddingTop: 5 }]} pointerEvents="none">
-                <Col>
+                <Col
+                  style={[
+                    styles.statusFieldContainer,
+                    Platform.select({
+                      default: { borderColor: this.state.overallStatusBackgroundColor },
+                      ios: {},
+                    }),
+                  ]}>
                   <Picker
                     selectedValue={this.state.contact.overall_status}
                     onValueChange={this.setContactStatus}
-                    style={
-                      Platform.OS === 'android'
-                        ? {
-                            color: '#ffffff',
-                            backgroundColor: this.state.overallStatusBackgroundColor,
-                          }
-                        : {
-                            backgroundColor: this.state.overallStatusBackgroundColor,
-                          }
-                    }>
+                    style={Platform.select({
+                      android: {
+                        color: '#ffffff',
+                        backgroundColor: this.state.overallStatusBackgroundColor,
+                        width: '100%',
+                      },
+                      default: {
+                        backgroundColor: this.state.overallStatusBackgroundColor,
+                      },
+                    })}
+                    textStyle={{
+                      color: '#ffffff',
+                    }}>
                     {this.renderStatusPickerItems()}
                   </Picker>
                 </Col>
@@ -1618,20 +1645,30 @@ class ContactDetailScreen extends React.Component {
               {this.props.contactSettings.fields.overall_status.name}
             </Label>
             <Row>
-              <Col>
+              <Col
+                style={[
+                  styles.statusFieldContainer,
+                  Platform.select({
+                    default: { borderColor: this.state.overallStatusBackgroundColor },
+                    ios: {},
+                  }),
+                ]}>
                 <Picker
                   selectedValue={this.state.contact.overall_status}
                   onValueChange={this.setContactStatus}
-                  style={
-                    Platform.OS === 'android'
-                      ? {
-                          color: '#ffffff',
-                          backgroundColor: this.state.overallStatusBackgroundColor,
-                        }
-                      : {
-                          backgroundColor: this.state.overallStatusBackgroundColor,
-                        }
-                  }>
+                  style={Platform.select({
+                    android: {
+                      color: '#ffffff',
+                      backgroundColor: this.state.overallStatusBackgroundColor,
+                      width: '100%',
+                    },
+                    default: {
+                      backgroundColor: this.state.overallStatusBackgroundColor,
+                    },
+                  })}
+                  textStyle={{
+                    color: '#ffffff',
+                  }}>
                   {this.renderStatusPickerItems()}
                 </Picker>
               </Col>
@@ -1656,7 +1693,7 @@ class ContactDetailScreen extends React.Component {
                 <Input
                   value={this.state.contact.title}
                   onChangeText={this.setContactTitle}
-                  style={styles.contactField}
+                  style={styles.contactTextField}
                 />
               </Col>
             </Row>
@@ -1686,7 +1723,7 @@ class ContactDetailScreen extends React.Component {
                     />
                   </View>
                 </Col>
-                <Col style={styles.contactField}>
+                <Col style={styles.contactTextRoundField}>
                   <Picker
                     selectedValue={
                       this.state.contact.assigned_to
@@ -1816,12 +1853,11 @@ class ContactDetailScreen extends React.Component {
                     </Col>
                     <Col>
                       <Input
-                        multiline
                         value={phone.value}
                         onChangeText={(value) => {
                           this.onPhoneFieldChange(value, index, phone.key, this);
                         }}
-                        style={styles.contactField}
+                        style={styles.contactTextField}
                       />
                     </Col>
                     <Col style={styles.formIconLabel}>
@@ -1875,12 +1911,11 @@ class ContactDetailScreen extends React.Component {
                     </Col>
                     <Col>
                       <Input
-                        multiline
                         value={email.value}
                         onChangeText={(value) => {
                           this.onEmailFieldChange(value, index, email.key, this);
                         }}
-                        style={styles.contactField}
+                        style={styles.contactTextField}
                       />
                     </Col>
                     <Col style={styles.formIconLabel}>
@@ -2001,7 +2036,7 @@ class ContactDetailScreen extends React.Component {
                         onChangeText={(value) => {
                           this.onAddressFieldChange(value, index, address.key, this);
                         }}
-                        style={styles.contactField}
+                        style={styles.contactTextField}
                       />
                     </Col>
                     <Col style={styles.formIconLabel}>
@@ -2184,7 +2219,7 @@ class ContactDetailScreen extends React.Component {
                   />
                 </View>
               </Col>
-              <Col style={styles.contactField}>
+              <Col style={styles.contactTextRoundField}>
                 <Picker
                   mode="dropdown"
                   selectedValue={this.state.contact.age}
@@ -2218,7 +2253,7 @@ class ContactDetailScreen extends React.Component {
                   />
                 </View>
               </Col>
-              <Col style={styles.contactField}>
+              <Col style={styles.contactTextRoundField}>
                 <Picker
                   mode="dropdown"
                   selectedValue={this.state.contact.gender}
@@ -2433,7 +2468,7 @@ class ContactDetailScreen extends React.Component {
                   />
                 </View>
               </Col>
-              <Col style={styles.contactField}>
+              <Col style={styles.contactTextRoundField}>
                 <Picker
                   mode="dropdown"
                   selectedValue={this.state.contact.seeker_path}
@@ -2470,7 +2505,7 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="Entypo" name="water" style={[styles.formIcon, { opacity: 0 }]} />
                 </View>
               </Col>
-              <Col style={styles.contactField}>
+              <Col>
                 <DatePicker
                   onDateChange={this.setBaptismDate}
                   defaultDate={
@@ -4327,10 +4362,11 @@ class ContactDetailScreen extends React.Component {
               this,
             );
           }}
-          style={[styles.contactField, { marginBottom: 10 }]}
+          style={[styles.contactTextField, { marginBottom: 10 }]}
           autoCapitalize="none"
+          placeholder={i18n.t('contactDetailScreen.socialMedia')}
         />
-        <Row style={styles.contactField}>
+        <Row style={styles.contactTextRoundField}>
           <Picker
             onValueChange={(value) => {
               this.changeContactSocialMediaType(value, propertyName, socialMediaIndex, this);
@@ -4571,7 +4607,7 @@ class ContactDetailScreen extends React.Component {
                       <Input
                         placeholder={i18n.t('global.requiredField')}
                         onChangeText={this.setContactTitle}
-                        style={styles.contactField}
+                        style={styles.contactTextField}
                       />
                     </Row>
                     <Row>
@@ -4582,7 +4618,7 @@ class ContactDetailScreen extends React.Component {
                     <Row>
                       <Input
                         onChangeText={this.setSingleContactPhone}
-                        style={styles.contactField}
+                        style={styles.contactTextRoundField}
                       />
                     </Row>
                     <Row>
@@ -4591,14 +4627,17 @@ class ContactDetailScreen extends React.Component {
                       </Label>
                     </Row>
                     <Row>
-                      <Input onChangeText={this.setContactEmail} style={styles.contactField} />
+                      <Input
+                        onChangeText={this.setContactEmail}
+                        style={styles.contactTextRoundField}
+                      />
                     </Row>
                     <Row>
                       <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
                         {this.props.contactSettings.fields.sources.name}
                       </Label>
                     </Row>
-                    <Row style={styles.contactField}>
+                    <Row style={styles.contactTextRoundField}>
                       <Picker
                         onValueChange={this.setContactSource}
                         selectedValue={this.state.contact.sources.values[0].value}>
@@ -4611,7 +4650,7 @@ class ContactDetailScreen extends React.Component {
                       </Label>
                     </Row>
                     <Row>
-                      <Col style={{ paddingLeft: 10, paddingRight: 10 }}>
+                      <Col>
                         <Selectize
                           ref={(selectize) => {
                             geonamesSelectizeRef = selectize;
@@ -4669,7 +4708,7 @@ class ContactDetailScreen extends React.Component {
                       <Input
                         multiline
                         onChangeText={this.setContactInitialComment}
-                        style={styles.contactField}
+                        style={[styles.contactTextRoundField, { height: 40 }]}
                       />
                     </Row>
                   </Grid>
@@ -4705,20 +4744,30 @@ class ContactDetailScreen extends React.Component {
                           {this.props.contactSettings.fields.overall_status.name}
                         </Label>
                         <Row>
-                          <Col>
+                          <Col
+                            style={[
+                              styles.statusFieldContainer,
+                              Platform.select({
+                                default: { borderColor: this.state.overallStatusBackgroundColor },
+                                ios: {},
+                              }),
+                            ]}>
                             <Picker
                               selectedValue={this.state.contact.overall_status}
                               onValueChange={this.setContactStatus}
-                              style={
-                                Platform.OS === 'android'
-                                  ? {
-                                      color: '#ffffff',
-                                      backgroundColor: this.state.overallStatusBackgroundColor,
-                                    }
-                                  : {
-                                      backgroundColor: this.state.overallStatusBackgroundColor,
-                                    }
-                              }>
+                              style={Platform.select({
+                                android: {
+                                  color: '#ffffff',
+                                  backgroundColor: this.state.overallStatusBackgroundColor,
+                                  width: '100%',
+                                },
+                                default: {
+                                  backgroundColor: this.state.overallStatusBackgroundColor,
+                                },
+                              })}
+                              textStyle={{
+                                color: '#ffffff',
+                              }}>
                               {this.renderStatusPickerItems()}
                             </Picker>
                           </Col>
@@ -4746,7 +4795,7 @@ class ContactDetailScreen extends React.Component {
                             />
                           </View>
                         </Col>
-                        <Col style={styles.contactField}>
+                        <Col style={styles.contactTextRoundField}>
                           <Picker
                             mode="dropdown"
                             selectedValue={this.state.contact.gender}
@@ -4860,7 +4909,7 @@ class ContactDetailScreen extends React.Component {
                             />
                           </View>
                         </Col>
-                        <Col style={styles.contactField}>
+                        <Col style={styles.contactTextRoundField}>
                           <Picker
                             mode="dropdown"
                             selectedValue={this.state.contact.age}
@@ -4904,7 +4953,7 @@ class ContactDetailScreen extends React.Component {
                               />
                             </View>
                           </Col>
-                          <Col style={styles.contactField}>
+                          <Col style={styles.contactTextRoundField}>
                             <Picker
                               selectedValue={
                                 this.state.contact.assigned_to
