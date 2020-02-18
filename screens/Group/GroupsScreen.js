@@ -273,7 +273,7 @@ class GroupsScreen extends React.Component {
   goToGroupDetailScreen = (groupData = null) => {
     if (groupData) {
       // Detail
-      this.props.navigation.push('GroupDetail', {
+      this.props.navigation.navigate('GroupDetail', {
         groupId: groupData.ID,
         onlyView: true,
         groupName: groupData.title,
@@ -282,7 +282,7 @@ class GroupsScreen extends React.Component {
       });
     } else {
       // Create
-      this.props.navigation.push('GroupDetail', {
+      this.props.navigation.navigate('GroupDetail', {
         previousList: [],
         onlyView: true,
         onGoBack: () => this.onRefresh(),

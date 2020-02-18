@@ -28,6 +28,7 @@ import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import { Chip, Selectize } from 'react-native-material-selectize';
 import ActionButton from 'react-native-action-button';
 import { TabView, TabBar } from 'react-native-tab-view';
+import { NavigationActions, StackActions } from 'react-navigation';
 
 import sharedTools from '../../shared';
 import {
@@ -315,8 +316,17 @@ class ContactDetailScreen extends React.Component {
             onPress={() => {
               if (params.fromGroupDetail) {
                 navigation.navigate('GroupDetail');
+              } else if (params.fromNotificationView) {
+                const resetAction = StackActions.reset({
+                  index: 0,
+                  actions: [NavigationActions.navigate({ routeName: 'ContactList' })],
+                });
+                navigation.dispatch(resetAction);
+                navigation.navigate('NotificationList');
               } else {
-                params.onGoBack();
+                if (typeof params.onGoBack === 'function') {
+                  params.onGoBack();
+                }
                 navigation.goBack();
               }
             }}

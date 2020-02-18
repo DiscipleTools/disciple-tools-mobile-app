@@ -25,6 +25,7 @@ import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import { Chip, Selectize } from 'react-native-material-selectize';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { NavigationActions, StackActions } from 'react-navigation';
 import sharedTools from '../../shared';
 import {
   saveGroup,
@@ -504,10 +505,19 @@ class GroupDetailScreen extends React.Component {
                   ...previousParams,
                   previousList: newPreviousList,
                 });
+              } else if (params.fromNotificationView) {
+                const resetAction = StackActions.reset({
+                  index: 0,
+                  actions: [NavigationActions.navigate({ routeName: 'GroupList' })],
+                });
+                navigation.dispatch(resetAction);
+                navigation.navigate('NotificationList');
               } else {
-                params.onGoBack();
+                if (typeof params.onGoBack === 'function') {
+                  params.onGoBack();
+                }
+                navigation.goBack();
               }
-              navigation.goBack();
             }}
             style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }]}
           />
