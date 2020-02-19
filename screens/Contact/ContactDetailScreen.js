@@ -1868,6 +1868,7 @@ class ContactDetailScreen extends React.Component {
                           this.onPhoneFieldChange(value, index, phone.key, this);
                         }}
                         style={styles.contactTextField}
+                        keyboardType="phone-pad"
                       />
                     </Col>
                     <Col style={styles.formIconLabel}>
@@ -1926,6 +1927,7 @@ class ContactDetailScreen extends React.Component {
                           this.onEmailFieldChange(value, index, email.key, this);
                         }}
                         style={styles.contactTextField}
+                        keyboardType="email-address"
                       />
                     </Col>
                     <Col style={styles.formIconLabel}>
