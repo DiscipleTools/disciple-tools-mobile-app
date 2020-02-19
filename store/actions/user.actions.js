@@ -46,15 +46,6 @@ export function getPushToken(domain, token) {
   };
 }
 
-export function addPushToken(domain, token, expoPushToken) {
-  return {
-    type: USER_ADD_PUSH_TOKEN,
-    domain,
-    token,
-    expoPushToken,
-  };
-}
-
 export function getUserInfo(domain, token) {
   return {
     type: GET_MY_USER_INFO,
