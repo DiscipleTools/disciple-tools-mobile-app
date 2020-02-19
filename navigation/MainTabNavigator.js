@@ -37,7 +37,7 @@ HomeStack.propTypes = {
 };
 */
 const NotificationsStack = createStackNavigator({
-  Settings: {
+  NotificationList: {
     screen: NotificationsScreen,
     navigationOptions: () => ({
       title: i18n.t('notificationsScreen.notifications'),

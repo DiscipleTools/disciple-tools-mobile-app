@@ -262,7 +262,7 @@ class ContactsScreen extends React.Component {
   goToContactDetailScreen = (contactData = null) => {
     if (contactData) {
       // Detail
-      this.props.navigation.push('ContactDetail', {
+      this.props.navigation.navigate('ContactDetail', {
         contactId: contactData.ID,
         onlyView: true,
         contactName: contactData.title,
@@ -270,7 +270,7 @@ class ContactsScreen extends React.Component {
       });
     } else {
       // Create
-      this.props.navigation.push('ContactDetail', {
+      this.props.navigation.navigate('ContactDetail', {
         onlyView: true,
         onGoBack: () => this.onRefresh(),
       });
@@ -408,7 +408,7 @@ class ContactsScreen extends React.Component {
               <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
             }
             ListFooterComponent={this.renderFooter}
-            // keyExtractor={(item) => item.ID.toString()}
+            keyExtractor={(item) => item.ID.toString()}
           />
           <Fab
             style={{ backgroundColor: Colors.tintColor }}

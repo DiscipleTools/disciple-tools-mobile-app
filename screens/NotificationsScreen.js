@@ -270,6 +270,28 @@ class NotificationsScreen extends React.Component {
     }
   };
 
+  redirectToDetailView = (viewName, entityId, entityTitle) => {
+    let view, prop;
+    switch (viewName) {
+      case 'contacts':
+        view = 'ContactDetail';
+        prop = 'contact';
+        break;
+      case 'groups':
+        view = 'GroupDetail';
+        prop = 'group';
+        break;
+      default:
+    }
+    this.props.navigation.push(view, {
+      [`${prop}Id`]: entityId,
+      onlyView: true,
+      [`${prop}Name`]: entityTitle,
+      previousList: [],
+      fromNotificationView: true,
+    });
+  };
+
   renderRow = (notification) => {
     const str1 = notification.notification_note.search('<');
     const str2 = notification.notification_note.search('>');
@@ -277,8 +299,13 @@ class NotificationsScreen extends React.Component {
     const newNotificationNoteA = notification.notification_note.substr(0, str1);
     const newNotificationNoteB = notification.notification_note.substr(str2, str3);
     const str4 = newNotificationNoteB.search('<') - 1;
-    const newNotificationBoteC = newNotificationNoteB.substr(1, str4);
-
+    const newNotificationNoteC = newNotificationNoteB.substr(1, str4);
+    let entityLink = notification.notification_note.substring(
+      notification.notification_note.lastIndexOf('href="') + 6,
+      notification.notification_note.lastIndexOf('">'),
+    );
+    let entityId = entityLink.split('/')[4];
+    let entityName = entityLink.split('/')[3];
     return (
       <View
         style={
@@ -287,9 +314,16 @@ class NotificationsScreen extends React.Component {
             : { backgroundColor: 'white' }
         }>
         <View style={[styles.notificationContainer, { flex: 1, flexDirection: 'row' }]}>
-          <View style={{ flex: 1, flexDirection: 'column' }}>
-            <Text style={[i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
-              {newNotificationNoteA} {newNotificationBoteC}
+          <View style={{ flex: 1 }}>
+            <Text style={[i18n.isRTL ? { textAlign: 'left' } : {}]}>
+              <Text>{newNotificationNoteA}</Text>
+              <Text
+                style={{ color: Colors.primary }}
+                onPress={() =>
+                  this.redirectToDetailView(entityName, entityId, newNotificationNoteC)
+                }>
+                {newNotificationNoteC}
+              </Text>
             </Text>
             <Text style={[styles.prettyTime, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
               {notification.pretty_time}
@@ -491,6 +525,10 @@ NotificationsScreen.propTypes = {
     code: PropTypes.any,
     message: PropTypes.string,
   }),
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 NotificationsScreen.defaultProps = {
