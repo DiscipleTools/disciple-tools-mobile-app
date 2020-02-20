@@ -52,6 +52,7 @@ import inChurchIcon from '../../assets/icons/group.png';
 import dtIcon from '../../assets/images/dt-icon.png';
 import startingChurchesIcon from '../../assets/icons/group-starting.png';
 import i18n from '../../languages';
+import { searchLocations } from '../../store/actions/groups.actions';
 
 let toastSuccess;
 let toastError;
@@ -419,6 +420,7 @@ class ContactDetailScreen extends React.Component {
         },
       ],
     },
+    foundGeonames: [],
   };
 
   componentDidMount() {
@@ -497,6 +499,7 @@ class ContactDetailScreen extends React.Component {
       totalActivities,
       loadingActivities,
       newComment,
+      foundGeonames,
     } = nextProps;
     let newState = {
       ...prevState,
@@ -610,6 +613,14 @@ class ContactDetailScreen extends React.Component {
         // UPDATE OFFSET
         ...newState,
         activitiesOffset: prevState.activitiesOffset + prevState.activitiesLimit,
+      };
+    }
+
+    // GET FILTERED LOCATIONS
+    if (foundGeonames) {
+      newState = {
+        ...newState,
+        foundGeonames,
       };
     }
 
@@ -755,13 +766,10 @@ class ContactDetailScreen extends React.Component {
       };
     }
 
-    const geonames = await ExpoFileSystemStorage.getItem('locationsList');
-    if (geonames !== null) {
-      newState = {
-        ...newState,
-        geonames: JSON.parse(geonames),
-      };
-    }
+    newState = {
+      ...newState,
+      geonames: [...this.props.geonames],
+    };
 
     const groups = await ExpoFileSystemStorage.getItem('searchGroupsList');
     if (groups !== null) {
@@ -2095,7 +2103,7 @@ class ContactDetailScreen extends React.Component {
                     geonamesSelectizeRef = selectize;
                   }}
                   itemId="value"
-                  items={this.state.geonames}
+                  items={this.state.foundGeonames}
                   selectedItems={this.getSelectizeItems(
                     this.state.contact.location_grid,
                     this.state.geonames,
@@ -2138,6 +2146,9 @@ class ContactDetailScreen extends React.Component {
                   )}
                   filterOnKey="name"
                   inputContainerStyle={styles.selectizeField}
+                  textInputProps={{
+                    onChangeText: this.searchLocationsDelayed,
+                  }}
                 />
               </Col>
             </Row>
@@ -4402,6 +4413,20 @@ class ContactDetailScreen extends React.Component {
     </Row>
   );
 
+  searchLocationsDelayed = sharedTools.debounce((queryText) => {
+    if (queryText.length > 0) {
+      this.searchLocations(queryText);
+    } else if (this.state.foundGeonames.length > 0) {
+      this.setState({
+        foundGeonames: [],
+      });
+    }
+  }, 500);
+
+  searchLocations = (queryText) => {
+    this.props.searchLocations(this.props.userData.domain, this.props.userData.token, queryText);
+  };
+
   render() {
     const successToast = (
       <Toast
@@ -4668,7 +4693,7 @@ class ContactDetailScreen extends React.Component {
                             geonamesSelectizeRef = selectize;
                           }}
                           itemId="value"
-                          items={this.state.geonames}
+                          items={this.state.foundGeonames}
                           selectedItems={[]}
                           textInputProps={{
                             placeholder: i18n.t('contactDetailScreen.selectLocations'),
@@ -4708,6 +4733,9 @@ class ContactDetailScreen extends React.Component {
                           )}
                           filterOnKey="name"
                           inputContainerStyle={styles.selectizeField}
+                          textInputProps={{
+                            onChangeText: this.searchLocationsDelayed,
+                          }}
                         />
                       </Col>
                     </Row>
@@ -5323,6 +5351,8 @@ const mapStateToProps = (state) => ({
   saved: state.contactsReducer.saved,
   isConnected: state.networkConnectivityReducer.isConnected,
   contactSettings: state.contactsReducer.settings,
+  geonames: state.groupsReducer.geonames,
+  foundGeonames: state.groupsReducer.foundGeonames,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -5346,6 +5376,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   endSaveContact: () => {
     dispatch(saveEnd());
+  },
+  searchLocations: (domain, token, queryText) => {
+    dispatch(searchLocations(domain, token, queryText));
   },
 });
 

@@ -25,19 +25,12 @@ export function* getAll({ domain, token, offset, limit, sort }) {
     response = response.payload;
     const jsonData = response.data;
     if (response.status === 200) {
-      if (isConnected) {
-        yield put({
-          type: actions.GROUPS_GETALL_SUCCESS,
-          groups: jsonData.posts,
-          offset,
-        });
-      } else {
-        yield put({
-          type: actions.GROUPS_GETALL_SUCCESS,
-          groups: jsonData.posts,
-          offline: true,
-        });
-      }
+      yield put({
+        type: actions.GROUPS_GETALL_SUCCESS,
+        groups: jsonData.posts,
+        offset,
+        offline: !isConnected,
+      });
     } else {
       yield put({
         type: actions.GROUPS_GETALL_FAILURE,
@@ -370,7 +363,7 @@ export function* getLocations({ domain, token }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt/v1/mapping_module/search_location_grid_by_name?filter=all`,
+      url: `https://${domain}/wp-json/dt/v1/mapping_module/search_location_grid_by_name?filter=focus`,
       data: {
         method: 'GET',
         headers: {
@@ -592,6 +585,54 @@ export function* getSettings({ domain, token }) {
   }
 }
 
+export function* searchLocations({ domain, token, queryText }) {
+  yield put({ type: actions.GROUPS_GET_LOCATIONS_START });
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt/v1/mapping_module/search_location_grid_by_name?s=${queryText}&filter=focus`,
+      data: {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      action: actions.GROUPS_GET_LOCATIONS_RESPONSE,
+    },
+  });
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+  try {
+    let response = yield take(actions.GROUPS_GET_LOCATIONS_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_LOCATIONS_SEARCH_SUCCESS,
+        filteredGeonames: jsonData.location_grid,
+        offline: !isConnected,
+        queryText,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_LOCATIONS_SEARCH_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.GROUPS_LOCATIONS_SEARCH_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
 export default function* groupsSaga() {
   yield all([
     takeEvery(actions.GROUPS_SAVE, saveGroup),
@@ -605,5 +646,6 @@ export default function* groupsSaga() {
     takeEvery(actions.GROUPS_GET_ACTIVITIES, getActivitiesByGroup),
     takeEvery(actions.GROUPS_SEARCH, searchGroups),
     takeEvery(actions.GROUPS_GET_SETTINGS, getSettings),
+    takeEvery(actions.GROUPS_LOCATIONS_SEARCH, searchLocations),
   ]);
 }

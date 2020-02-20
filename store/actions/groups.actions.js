@@ -68,6 +68,12 @@ export const GROUPS_GET_SETTINGS_SUCCESS = 'GROUPS_GET_SETTINGS_SUCCESS';
 export const GROUPS_GET_SETTINGS_RESPONSE = 'GROUPS_GET_SETTINGS_RESPONSE';
 export const GROUPS_GET_SETTINGS_FAILURE = 'GROUPS_GET_SETTINGS_FAILURE';
 
+export const GROUPS_LOCATIONS_SEARCH = 'GROUPS_LOCATIONS_SEARCH';
+export const GROUPS_LOCATIONS_SEARCH_START = 'GROUPS_LOCATIONS_SEARCH_START';
+export const GROUPS_LOCATIONS_SEARCH_SUCCESS = 'GROUPS_LOCATIONS_SEARCH_SUCCESS';
+export const GROUPS_LOCATIONS_SEARCH_RESPONSE = 'GROUPS_LOCATIONS_SEARCH_RESPONSE';
+export const GROUPS_LOCATIONS_SEARCH_FAILURE = 'GROUPS_LOCATIONS_SEARCH_FAILURE';
+
 /**
  * Action Creators
  */
@@ -175,5 +181,14 @@ export function getGroupSettings(domain, token) {
     type: GROUPS_GET_SETTINGS,
     domain,
     token,
+  };
+}
+
+export function searchLocations(domain, token, queryText) {
+  return {
+    type: GROUPS_LOCATIONS_SEARCH,
+    domain,
+    token,
+    queryText,
   };
 }

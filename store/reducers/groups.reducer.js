@@ -10,7 +10,7 @@ const initialState = {
   newComment: null,
   activities: null,
   usersContacts: null,
-  geonames: null,
+  geonames: [],
   peopleGroups: null,
   search: null,
   totalComments: null,
@@ -20,6 +20,7 @@ const initialState = {
   saved: false,
   settings: null,
   offset: 0,
+  foundGeonames: [],
 };
 
 export default function groupsReducer(state = initialState, action) {
@@ -28,7 +29,6 @@ export default function groupsReducer(state = initialState, action) {
     group: null,
     usersContacts: null,
     peopleGroups: null,
-    geonames: null,
     search: null,
     newComment: null,
     error: null,
@@ -37,8 +37,8 @@ export default function groupsReducer(state = initialState, action) {
     activities: null,
     totalActivities: null,
     saved: false,
+    foundGeonames: null,
   };
-
   switch (action.type) {
     case actions.GROUPS_GET_USERS_CONTACTS_START:
       return {
@@ -897,7 +897,45 @@ export default function groupsReducer(state = initialState, action) {
         loading: false,
       };
     }
-    case actions.GROUPS_GET_SETTINGS_FAILURE:
+    case actions.GROUPS_LOCATIONS_SEARCH_START:
+      return {
+        ...newState,
+        loading: true,
+      };
+    case actions.GROUPS_LOCATIONS_SEARCH_SUCCESS: {
+      const { offline, filteredGeonames, queryText } = action;
+      let foundGeonames = [],
+        oldGeonames = [];
+      if (offline) {
+        // Get geonames by queryText
+        oldGeonames = filteredGeonames;
+        foundGeonames = oldGeonames.filter((oldGeoname) =>
+          oldGeoname.name.toLowerCase().includes(queryText.toLowerCase()),
+        );
+      } else {
+        // Get geonames by queryText
+        (oldGeonames = newState.geonames), (geonamesToAdd = []);
+        foundGeonames = filteredGeonames.map((geoname) => ({
+          value: geoname.ID,
+          name: geoname.name,
+        }));
+        // Add non persisted geonames to state
+        geonamesToAdd = foundGeonames.filter(
+          (foundGeoname) =>
+            oldGeonames.find((oldGeoname) => oldGeoname.value == foundGeoname.value) === undefined,
+        );
+      }
+      return {
+        ...newState,
+        foundGeonames,
+        geonames: (geonamesToAdd
+          ? [...oldGeonames, ...geonamesToAdd]
+          : [...oldGeonames]
+        ).sort((a, b) => a.value.localeCompare(b.value)),
+        loading: false,
+      };
+    }
+    case actions.GROUPS_LOCATIONS_SEARCH_FAILURE:
       return {
         ...newState,
         error: action.error,
