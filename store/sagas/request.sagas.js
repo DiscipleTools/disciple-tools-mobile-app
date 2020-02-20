@@ -2,9 +2,7 @@
 //   -- https://www.youtube.com/watch?v=Pg7LgW3TL7A
 //   -- https://redux-saga.js.org/docs/advanced/Channels.html
 
-import {
-  take, fork, call, put, race, delay, actionChannel, select,
-} from 'redux-saga/effects';
+import { take, fork, call, put, race, delay, actionChannel, select } from 'redux-saga/effects';
 
 const REQUEST_TIMEOUT_MILLIS = 10000;
 
@@ -16,15 +14,15 @@ function* sendRequest(url, data) {
       }
       throw response;
     })
-    .then(response => response.json())
-    .then(response => ({
+    .then((response) => response.json())
+    .then((response) => ({
       status: 200,
       data: response,
     }))
     .catch((error) => {
       if (typeof error.json === 'function') {
-        return error.json().then(errorJSON => ({
-          status: (errorJSON.data && errorJSON.data.status) ? errorJSON.data.status : '',
+        return error.json().then((errorJSON) => ({
+          status: errorJSON.data && errorJSON.data.status ? errorJSON.data.status : '',
           data: {
             code: errorJSON.code,
             message: errorJSON.message,
@@ -43,8 +41,8 @@ function* sendRequest(url, data) {
 }
 
 function* processRequest(request) {
-  let oldID; let
-    requestCopy = { ...request };
+  let oldID;
+  let requestCopy = { ...request };
 
   if (requestCopy.data.body) {
     const jsonParseBody = JSON.parse(requestCopy.data.body);
@@ -70,7 +68,7 @@ function* processRequest(request) {
   });
   if (response) {
     if (requestCopy.action) {
-      yield put({ type: requestCopy.action, payload: (oldID) ? { ...response, oldID } : response });
+      yield put({ type: requestCopy.action, payload: oldID ? { ...response, oldID } : response });
     }
     // Dispatch action 'RESPONSE' to remove request from queue
     yield put({ type: 'RESPONSE', payload: request });
@@ -86,7 +84,7 @@ export default function* requestSaga() {
     const { request } = yield race({
       request: take(requestChannel),
     });
-    const isConnected = yield select(state => state.networkConnectivityReducer.isConnected);
+    const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
     const localGetById = {
       value: null,
       isLocal: false,
@@ -101,7 +99,7 @@ export default function* requestSaga() {
     }
     if (!isConnected || localGetById.isLocal) {
       // Get last request
-      const payload = yield select(state => state.requestReducer.currentAction);
+      const payload = yield select((state) => state.requestReducer.currentAction);
       // OFFLINE request
       if (payload) {
         if (payload.data.method === 'POST' && payload.action.includes('SAVE')) {
@@ -111,23 +109,45 @@ export default function* requestSaga() {
           /* eslint-enable */
         }
         if (payload.data.method === 'GET' && payload.action.includes('GETBYID')) {
-          yield put({ type: payload.action, payload: { data: { ID: localGetById.value, isOffline: true }, status: 200 } });
+          yield put({
+            type: payload.action,
+            payload: { data: { ID: localGetById.value, isOffline: true }, status: 200 },
+          });
         }
         if (payload.data.method === 'GET' && payload.action.includes('GETALL')) {
           const entityName = payload.action.substr(0, payload.action.indexOf('_')).toLowerCase();
-          const list = yield select(state => state[`${entityName}Reducer`][`${entityName}`]);
+          const list = yield select((state) => state[`${entityName}Reducer`][`${entityName}`]);
           yield put({ type: payload.action, payload: { data: { posts: list }, status: 200 } });
+        }
+        if (payload.data.method === 'GET' && payload.action.includes('GET_LOCATIONS')) {
+          const entityName = payload.action.substr(0, payload.action.indexOf('_')).toLowerCase();
+          const list = yield select((state) => state[`${entityName}Reducer`]['geonames']);
+          yield put({
+            type: payload.action,
+            payload: { data: { location_grid: list }, status: 200 },
+          });
         }
       }
     } else if (request) {
       // ONLINE request
       // Get current queue, compare it with last request (if exist, fork it)
-      const queue = yield select(state => state.requestReducer.queue);
+      const queue = yield select((state) => state.requestReducer.queue);
       let requestIndex;
       if (request.payload.data.method === 'POST') {
-        requestIndex = queue.findIndex(requestQueue => requestQueue.action === request.payload.action && requestQueue.url === request.payload.url && requestQueue.data.method === request.payload.data.method && JSON.parse(requestQueue.data.body).ID === JSON.parse(request.payload.data.body).ID);
+        requestIndex = queue.findIndex(
+          (requestQueue) =>
+            requestQueue.action === request.payload.action &&
+            requestQueue.url === request.payload.url &&
+            requestQueue.data.method === request.payload.data.method &&
+            JSON.parse(requestQueue.data.body).ID === JSON.parse(request.payload.data.body).ID,
+        );
       } else {
-        requestIndex = queue.findIndex(requestQueue => requestQueue.action === request.payload.action && requestQueue.url === request.payload.url && requestQueue.data.method === request.payload.data.method);
+        requestIndex = queue.findIndex(
+          (requestQueue) =>
+            requestQueue.action === request.payload.action &&
+            requestQueue.url === request.payload.url &&
+            requestQueue.data.method === request.payload.data.method,
+        );
       }
       if (requestIndex > -1) {
         yield fork(processRequest, queue[requestIndex]);

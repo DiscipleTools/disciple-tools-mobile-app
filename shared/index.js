@@ -11,17 +11,16 @@ const diff = (obj1, obj2) => {
   const diffs = {};
   // let key;
 
-
   //
   // Methods
   //
 
   /**
-     * Check if two arrays are equal
-     * @param  {Array}   arr1 The first array
-     * @param  {Array}   arr2 The second array
-     * @return {Boolean}      If true, both arrays are equal
-     */
+   * Check if two arrays are equal
+   * @param  {Array}   arr1 The first array
+   * @param  {Array}   arr2 The second array
+   * @return {Boolean}      If true, both arrays are equal
+   */
   const arraysMatch = (value, other) => {
     // Get the value type
     const type = Object.prototype.toString.call(value);
@@ -77,11 +76,11 @@ const diff = (obj1, obj2) => {
   };
 
   /**
-     * Compare two items and push non-matches to object
-     * @param  {*}      item1 The first item
-     * @param  {*}      item2 The second item
-     * @param  {String} key   The key in our object
-     */
+   * Compare two items and push non-matches to object
+   * @param  {*}      item1 The first item
+   * @param  {*}      item2 The second item
+   * @param  {String} key   The key in our object
+   */
   const compare = (item1, item2, key) => {
     // Get the object type
     const type1 = Object.prototype.toString.call(item1);
@@ -127,7 +126,6 @@ const diff = (obj1, obj2) => {
     }
   };
 
-
   //
   // Compare our objects
   //
@@ -155,8 +153,9 @@ const diff = (obj1, obj2) => {
 const formatDateToBackEnd = (dateString) => {
   const dateObject = new Date(dateString);
   const year = dateObject.getFullYear();
-  const month = (dateObject.getMonth() + 1) < 10 ? `0${dateObject.getMonth() + 1}` : (dateObject.getMonth() + 1);
-  const day = (dateObject.getDate()) < 10 ? `0${dateObject.getDate()}` : (dateObject.getDate());
+  const month =
+    dateObject.getMonth() + 1 < 10 ? `0${dateObject.getMonth() + 1}` : dateObject.getMonth() + 1;
+  const day = dateObject.getDate() < 10 ? `0${dateObject.getDate()}` : dateObject.getDate();
   const newDate = `${year}-${month}-${day}`;
   return newDate;
 };
@@ -173,8 +172,20 @@ const getSelectorColor = (status) => {
   return newColor;
 };
 
+const debounce = (fn, time) => {
+  let timeout;
+
+  return function() {
+    const functionCall = () => fn.apply(this, arguments);
+
+    clearTimeout(timeout);
+    timeout = setTimeout(functionCall, time);
+  };
+};
+
 export default {
   diff,
   formatDateToBackEnd,
   getSelectorColor,
+  debounce,
 };

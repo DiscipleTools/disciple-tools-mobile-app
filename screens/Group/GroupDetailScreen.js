@@ -34,6 +34,7 @@ import {
   saveComment,
   getActivitiesByGroup,
   getByIdEnd,
+  searchLocations,
 } from '../../store/actions/groups.actions';
 import Colors from '../../constants/Colors';
 import baptismIcon from '../../assets/icons/baptism.png';
@@ -442,6 +443,7 @@ const initialState = {
     ],
   },
   updateMembersList: false,
+  foundGeonames: [],
 };
 
 const safeFind = (found, prop) => {
@@ -582,6 +584,7 @@ class GroupDetailScreen extends React.Component {
       totalActivities,
       loadingActivities,
       newComment,
+      foundGeonames,
     } = nextProps;
     let newState = {
       ...prevState,
@@ -694,6 +697,14 @@ class GroupDetailScreen extends React.Component {
         // UPDATE OFFSET
         ...newState,
         activitiesOffset: prevState.activitiesOffset + prevState.activitiesLimit,
+      };
+    }
+
+    // GET FILTERED LOCATIONS
+    if (foundGeonames) {
+      newState = {
+        ...newState,
+        foundGeonames,
       };
     }
 
@@ -887,13 +898,10 @@ class GroupDetailScreen extends React.Component {
       };
     }
 
-    const geonames = await ExpoFileSystemStorage.getItem('locationsList');
-    if (geonames !== null) {
-      newState = {
-        ...newState,
-        geonames: JSON.parse(geonames),
-      };
-    }
+    newState = {
+      ...newState,
+      geonames: [...this.props.geonames],
+    };
 
     const groups = await ExpoFileSystemStorage.getItem('searchGroupsList');
     if (groups !== null) {
@@ -2164,7 +2172,7 @@ class GroupDetailScreen extends React.Component {
                     geonamesSelectizeRef = selectize;
                   }}
                   itemId="value"
-                  items={this.state.geonames}
+                  items={this.state.foundGeonames}
                   selectedItems={this.getSelectizeItems(
                     this.state.group.location_grid,
                     this.state.geonames,
@@ -2208,6 +2216,9 @@ class GroupDetailScreen extends React.Component {
                   filterOnKey="name"
                   keyboardShouldPersistTaps
                   inputContainerStyle={styles.selectizeField}
+                  textInputProps={{
+                    onChangeText: this.searchLocationsDelayed,
+                  }}
                 />
               </Col>
             </Row>
@@ -3813,6 +3824,20 @@ class GroupDetailScreen extends React.Component {
     );
   }
 
+  searchLocationsDelayed = sharedTools.debounce((queryText) => {
+    if (queryText.length > 0) {
+      this.searchLocations(queryText);
+    } else if (this.state.foundGeonames.length > 0) {
+      this.setState({
+        foundGeonames: [],
+      });
+    }
+  }, 500);
+
+  searchLocations = (queryText) => {
+    this.props.searchLocations(this.props.userData.domain, this.props.userData.token, queryText);
+  };
+
   render() {
     const successToast = (
       <Toast
@@ -4072,6 +4097,8 @@ const mapStateToProps = (state) => ({
   saved: state.groupsReducer.saved,
   isConnected: state.networkConnectivityReducer.isConnected,
   groupSettings: state.groupsReducer.settings,
+  geonames: state.groupsReducer.geonames,
+  foundGeonames: state.groupsReducer.foundGeonames,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -4092,6 +4119,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getByIdEnd: () => {
     dispatch(getByIdEnd());
+  },
+  searchLocations: (domain, token, queryText) => {
+    dispatch(searchLocations(domain, token, queryText));
   },
 });
 
