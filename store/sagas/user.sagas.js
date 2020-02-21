@@ -1,4 +1,4 @@
-import { put, take, takeLatest, all, takeEvery } from 'redux-saga/effects';
+import { put, take, takeLatest, all, takeEvery, race, call } from 'redux-saga/effects';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Permissions from 'expo-permissions';
@@ -29,6 +29,7 @@ export function* login({ domain, username, password }) {
     let response = yield take(actions.USER_LOGIN_RESPONSE);
     response = response.payload;
     const jsonData = response.data;
+
     if (response.status === 200) {
       yield put({ type: actions.USER_LOGIN_SUCCESS, domain, user: { ...jsonData, password } });
       yield put({ type: actions.USER_GET_PUSH_TOKEN, domain, token: jsonData.token });
@@ -50,6 +51,20 @@ export function* login({ domain, username, password }) {
       },
     });
   }
+}
+
+export function* watchLogin() {
+  yield takeLatest(actions.USER_LOGIN, function*(args) {
+    const { cancelTake } = yield race({
+      loginSaga: call(login, { ...args }),
+      cancelTake: take(actions.CANCEL_LOGIN),
+    });
+    if (cancelTake) {
+      yield put({
+        type: actions.CANCEL_LOGIN_SUCCESS,
+      });
+    }
+  });
 }
 
 export function* getExpoPushToken({ domain, token }) {
@@ -181,7 +196,7 @@ export function* getUserInfo({ domain, token }) {
 
 export default function* userSaga() {
   yield all([
-    takeLatest(actions.USER_LOGIN, login),
+    watchLogin(),
     takeEvery(actions.GET_MY_USER_INFO, getUserInfo),
     takeLatest(actions.USER_GET_PUSH_TOKEN, getExpoPushToken),
     takeLatest(actions.USER_ADD_PUSH_TOKEN, addPushToken),

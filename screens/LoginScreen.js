@@ -28,7 +28,7 @@ import { BlurView } from 'expo-blur';
 import i18n from '../languages';
 import locales from '../languages/locales';
 import Colors from '../constants/Colors';
-import { login, getUserInfo } from '../store/actions/user.actions';
+import { login, getUserInfo, cancelLogin } from '../store/actions/user.actions';
 import { setLanguage } from '../store/actions/i18n.actions';
 import TextField from '../components/TextField';
 import {
@@ -158,6 +158,14 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
   },
+  cancelButton: {
+    marginTop: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 2,
+  },
+  cancelButtonText: {
+    color: Colors.tintColor,
+  },
 });
 let toastError, codePinRef;
 const { height, width } = Dimensions.get('window');
@@ -174,6 +182,7 @@ class LoginScreen extends React.Component {
     toggleShowPIN: false,
     pin: '',
     incorrectPin: false,
+    showCancelButton: false,
   };
 
   constructor(props) {
@@ -202,13 +211,13 @@ class LoginScreen extends React.Component {
       usersReducerError,
       contactsReducerLoading,
       contactsReducerError,
+      loginCanceled,
     } = nextProps;
     let newState = {
       ...prevState,
       userData,
       loading: userReducerLoading || groupsReducerLoading || contactsReducerLoading,
     };
-
     if (contactSettings) {
       newState = {
         ...newState,
@@ -228,6 +237,14 @@ class LoginScreen extends React.Component {
       newState = {
         ...newState,
         loading: false,
+      };
+    }
+
+    if (loginCanceled) {
+      newState = {
+        ...newState,
+        loading: false,
+        showCancelButton: false,
       };
     }
 
@@ -282,13 +299,12 @@ class LoginScreen extends React.Component {
       search,
       contactSettings,
       groupSettings,
-    } = this.props;
-    const {
       users,
       userReducerError,
       groupsReducerError,
       usersReducerError,
       contactsReducerError,
+      loginCanceled,
     } = this.props;
     const { contactSettingsListRetrieved, groupSettingsListRetrieved, appLanguageSet } = this.state;
     // If the RTL value in the store does not match what is
@@ -304,7 +320,7 @@ class LoginScreen extends React.Component {
     } */
 
     // User logged successfully
-    if (userData && prevProps.userData !== userData) {
+    if (userData && prevProps.userData !== userData && !loginCanceled) {
       this.getDataLists();
       this.getUserInfo();
       // User locale retrieved
@@ -373,7 +389,6 @@ class LoginScreen extends React.Component {
       prevProps.contactsReducerError !== contactsReducerError && contactsReducerError;
     if (userError || groupsError || usersError || contactsError) {
       const error = userError || groupsError || usersError;
-      console.log(error);
       if (error.code === '[jwt_auth] incorrect_password') {
         toastError.show(
           <View>
@@ -478,6 +493,7 @@ class LoginScreen extends React.Component {
       if (domain && username && password) {
         const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
         this.props.loginDispatch(cleanedDomain, username, password);
+        this.toggleCancelButton();
       } else {
         this.setState({
           domainValidation: !domain,
@@ -485,6 +501,16 @@ class LoginScreen extends React.Component {
           passwordValidation: !password,
         });
       }
+    }
+  };
+
+  toggleCancelButton = (userTap = false) => {
+    if (userTap) {
+      this.props.cancelLogin();
+    } else {
+      this.setState({
+        showCancelButton: true,
+      });
     }
   };
 
@@ -648,6 +674,16 @@ class LoginScreen extends React.Component {
             {!this.state.loading && (
               <Button style={styles.signInButton} onPress={this.onLoginPress} block>
                 <Text style={styles.signInButtonText}>{i18n.t('loginScreen.logIn')}</Text>
+              </Button>
+            )}
+            {this.state.showCancelButton && (
+              <Button
+                style={styles.cancelButton}
+                onPress={() => {
+                  this.toggleCancelButton(true);
+                }}
+                block>
+                <Text style={styles.cancelButtonText}>{i18n.t('global.cancel')}</Text>
               </Button>
             )}
             {!this.state.loading && (
@@ -885,6 +921,7 @@ const mapStateToProps = (state) => ({
   contactsReducerError: state.contactsReducer.error,
   contacts: state.contactsReducer.contacts,
   pinCode: state.userReducer.pinCode,
+  loginCanceled: state.userReducer.loginCanceled,
 });
 const mapDispatchToProps = (dispatch) => ({
   loginDispatch: (domain, username, password) => {
@@ -922,6 +959,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getUserInfo: (domain, token, offset, limit, sort) => {
     dispatch(getUserInfo(domain, token, offset, limit, sort));
+  },
+  cancelLogin: () => {
+    dispatch(cancelLogin());
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

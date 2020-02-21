@@ -26,6 +26,9 @@ export const REMEMBER_PASSWORD = 'REMEMBER_PASSWORD';
 export const SAVE_PIN_CODE = 'SAVE_PIN_CODE';
 export const REMOVE_PIN_CODE = 'REMOVE_PIN_CODE';
 
+export const CANCEL_LOGIN = 'CANCEL_LOGIN';
+export const CANCEL_LOGIN_SUCCESS = 'CANCEL_LOGIN_SUCCESS';
+
 /*
  * Action Creators
  */
@@ -68,4 +71,8 @@ export function savePINCode(value) {
 
 export function removePINCode() {
   return { type: REMOVE_PIN_CODE };
+}
+
+export function cancelLogin() {
+  return { type: CANCEL_LOGIN };
 }
