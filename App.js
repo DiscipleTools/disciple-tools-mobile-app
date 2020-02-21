@@ -43,7 +43,9 @@ class App extends React.Component {
       this.handleConnectivityChange(state.isConnected);
     });
     // add network connectivity handler
-    unsubscribe = NetInfo.addEventListener(this.handleConnectivityChange);
+    unsubscribe = NetInfo.addEventListener((state) => {
+      this.handleConnectivityChange(state.isConnected);
+    });
 
     if (__DEV__) {
       // Reactotron can be used to see AsyncStorage data and API requests
