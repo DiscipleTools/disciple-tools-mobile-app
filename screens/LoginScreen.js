@@ -237,6 +237,7 @@ class LoginScreen extends React.Component {
       newState = {
         ...newState,
         loading: false,
+        showCancelButton: false,
       };
     }
 
