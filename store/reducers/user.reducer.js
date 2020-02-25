@@ -61,7 +61,6 @@ export default function userReducer(state = initialState, action) {
           locale: null,
           id: null,
         },
-        loading: false,
         rememberPassword: true,
       };
       return state;
@@ -109,6 +108,7 @@ export default function userReducer(state = initialState, action) {
           value: null,
         },
         rememberPassword: false,
+        loading: false,
       };
     case actions.REMEMBER_PASSWORD:
       return {

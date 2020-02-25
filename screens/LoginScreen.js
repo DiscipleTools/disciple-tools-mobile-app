@@ -672,11 +672,6 @@ class LoginScreen extends React.Component {
               </View>
             </View>
             {passwordErrorMessage}
-            {!this.state.loading && (
-              <Button style={styles.signInButton} onPress={this.onLoginPress} block>
-                <Text style={styles.signInButtonText}>{i18n.t('loginScreen.logIn')}</Text>
-              </Button>
-            )}
             {this.state.showCancelButton && (
               <Button
                 style={styles.cancelButton}
@@ -687,15 +682,23 @@ class LoginScreen extends React.Component {
                 <Text style={styles.cancelButtonText}>{i18n.t('global.cancel')}</Text>
               </Button>
             )}
-            {!this.state.loading && (
-              <TouchableOpacity
-                style={styles.forgotButton}
-                onPress={this.goToForgotPassword}
-                disabled={this.state.loading}>
-                <Text style={styles.forgotButtonText}>{i18n.t('loginScreen.forgotPassword')}</Text>
-              </TouchableOpacity>
+            {this.state.loading ? (
+              <ActivityIndicator style={{ margin: 20 }} size="small" />
+            ) : (
+              <View>
+                <Button style={styles.signInButton} onPress={this.onLoginPress} block>
+                  <Text style={styles.signInButtonText}>{i18n.t('loginScreen.logIn')}</Text>
+                </Button>
+                <TouchableOpacity
+                  style={styles.forgotButton}
+                  onPress={this.goToForgotPassword}
+                  disabled={this.state.loading}>
+                  <Text style={styles.forgotButtonText}>
+                    {i18n.t('loginScreen.forgotPassword')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             )}
-            {this.state.loading && <ActivityIndicator style={{ margin: 20 }} size="small" />}
             <Text style={styles.versionText}>{Constants.manifest.version}</Text>
           </View>
           <View style={styles.languagePickerContainer}>
