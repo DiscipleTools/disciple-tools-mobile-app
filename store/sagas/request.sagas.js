@@ -2,9 +2,7 @@
 //   -- https://www.youtube.com/watch?v=Pg7LgW3TL7A
 //   -- https://redux-saga.js.org/docs/advanced/Channels.html
 
-import { take, fork, call, put, race, delay, actionChannel, select } from 'redux-saga/effects';
-
-const REQUEST_TIMEOUT_MILLIS = 10000;
+import { take, fork, call, put, race, actionChannel, select } from 'redux-saga/effects';
 
 function* sendRequest(url, data) {
   const request = yield fetch(url, data)
@@ -62,9 +60,8 @@ function* processRequest(request) {
       };
     }
   }
-  const { response, timeout } = yield race({
+  const { response } = yield race({
     response: call(sendRequest, requestCopy.url, requestCopy.data),
-    timeout: delay(REQUEST_TIMEOUT_MILLIS),
   });
   if (response) {
     if (requestCopy.action) {
@@ -72,8 +69,6 @@ function* processRequest(request) {
     }
     // Dispatch action 'RESPONSE' to remove request from queue
     yield put({ type: 'RESPONSE', payload: request });
-  } else if (timeout) {
-    yield put({ type: 'OFFLINE' });
   }
 }
 
@@ -102,30 +97,33 @@ export default function* requestSaga() {
       const payload = yield select((state) => state.requestReducer.currentAction);
       // OFFLINE request
       if (payload) {
-        if (payload.data.method === 'POST' && payload.action.includes('SAVE')) {
-          // Offline entity creation (send "last request" as response)
-          /* eslint-disable */
-          yield put({ type: payload.action, payload: JSON.parse(payload.data.body) });
-          /* eslint-enable */
-        }
-        if (payload.data.method === 'GET' && payload.action.includes('GETBYID')) {
-          yield put({
-            type: payload.action,
-            payload: { data: { ID: localGetById.value, isOffline: true }, status: 200 },
-          });
-        }
-        if (payload.data.method === 'GET' && payload.action.includes('GETALL')) {
-          const entityName = payload.action.substr(0, payload.action.indexOf('_')).toLowerCase();
-          const list = yield select((state) => state[`${entityName}Reducer`][`${entityName}`]);
-          yield put({ type: payload.action, payload: { data: { posts: list }, status: 200 } });
-        }
-        if (payload.data.method === 'GET' && payload.action.includes('GET_LOCATIONS')) {
-          const entityName = payload.action.substr(0, payload.action.indexOf('_')).toLowerCase();
-          const list = yield select((state) => state[`${entityName}Reducer`]['geonames']);
-          yield put({
-            type: payload.action,
-            payload: { data: { location_grid: list }, status: 200 },
-          });
+        // Prevent error when app lost connection
+        if (payload.data.method) {
+          if (payload.data.method === 'POST' && payload.action.includes('SAVE')) {
+            // Offline entity creation (send "last request" as response)
+            /* eslint-disable */
+            yield put({ type: payload.action, payload: JSON.parse(payload.data.body) });
+            /* eslint-enable */
+          }
+          if (payload.data.method === 'GET' && payload.action.includes('GETBYID')) {
+            yield put({
+              type: payload.action,
+              payload: { data: { ID: localGetById.value, isOffline: true }, status: 200 },
+            });
+          }
+          if (payload.data.method === 'GET' && payload.action.includes('GETALL')) {
+            const entityName = payload.action.substr(0, payload.action.indexOf('_')).toLowerCase();
+            const list = yield select((state) => state[`${entityName}Reducer`][`${entityName}`]);
+            yield put({ type: payload.action, payload: { data: { posts: list }, status: 200 } });
+          }
+          if (payload.data.method === 'GET' && payload.action.includes('GET_LOCATIONS')) {
+            const entityName = payload.action.substr(0, payload.action.indexOf('_')).toLowerCase();
+            const list = yield select((state) => state[`${entityName}Reducer`]['geonames']);
+            yield put({
+              type: payload.action,
+              payload: { data: { location_grid: list }, status: 200 },
+            });
+          }
         }
       }
     } else if (request) {
