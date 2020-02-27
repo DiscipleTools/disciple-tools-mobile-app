@@ -19,14 +19,17 @@ import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/groups.actions';
 import i18n from '../../languages';
 import dtIcon from '../../assets/images/dt-icon.png';
+import sharedTools from '../../shared';
 
 const styles = StyleSheet.create({
   flatListItem: {
-    height: 90,
+    height: 77,
     backgroundColor: 'white',
-    padding: 20,
+    margin: 20,
   },
   groupSubtitle: {
+    flex: 1,
+    flexWrap: 'wrap',
     paddingTop: 6,
     fontWeight: '200',
     color: 'rgba(0,0,0,0.6)',
@@ -100,7 +103,8 @@ const styles = StyleSheet.create({
   },
 });
 
-let toastError;
+let toastError,
+  statusCircleSize = 15;
 
 class GroupsScreen extends React.Component {
   state = {
@@ -179,44 +183,41 @@ class GroupsScreen extends React.Component {
       onPress={() => this.goToGroupDetailScreen(group)}
       style={styles.flatListItem}
       key={group.ID}>
-      <View style={{ flex: 1 }}>
-        <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={{ fontWeight: 'bold' }}>{group.title}</Text>
-        </View>
-        <View style={{ flex: 1, flexDirection: 'row' }}>
-          {this.props.groupSettings.fields.group_status.values[group.group_status] ? (
+      <View style={{ flexDirection: 'row', height: '100%' }}>
+        <View style={{ flexDirection: 'column', flexGrow: 1 }}>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{ flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }}>{group.title}</Text>
+          </View>
+          <View style={{ flexDirection: 'row' }}>
             <Text style={styles.groupSubtitle}>
-              {this.props.groupSettings.fields.group_status.values[group.group_status].label}
-            </Text>
-          ) : (
-            <Text />
-          )}
-          {this.props.groupSettings.fields.group_status.values[group.group_status] &&
-          this.props.groupSettings.fields.group_type.values[group.group_type] ? (
-            <Text style={styles.groupSubtitle}>•</Text>
-          ) : (
-            <Text />
-          )}
-          {this.props.groupSettings.fields.group_type.values[group.group_type] ? (
-            <Text style={styles.groupSubtitle}>
-              {this.props.groupSettings.fields.group_type.values[group.group_type].label
+              {this.props.groupSettings.fields.group_status.values[group.group_status]
+                ? this.props.groupSettings.fields.group_status.values[group.group_status].label
+                : ''}
+              {this.props.groupSettings.fields.group_status.values[group.group_status] &&
+              this.props.groupSettings.fields.group_type.values[group.group_type]
+                ? ' • '
+                : ''}
+              {this.props.groupSettings.fields.group_type.values[group.group_type]
                 ? this.props.groupSettings.fields.group_type.values[group.group_type].label
                 : ''}
+              {this.props.groupSettings.fields.group_type.values[group.group_type] &&
+              group.member_count
+                ? ' • '
+                : ''}
+              {group.member_count ? group.member_count : ''}
             </Text>
-          ) : (
-            <Text />
-          )}
-          {this.props.groupSettings.fields.group_type.values[group.group_type] &&
-          group.member_count ? (
-            <Text style={styles.groupSubtitle}>•</Text>
-          ) : (
-            <Text />
-          )}
-          {group.member_count ? (
-            <Text style={styles.groupSubtitle}>{group.member_count}</Text>
-          ) : (
-            <Text />
-          )}
+          </View>
+        </View>
+        <View style={{ flexDirection: 'column', width: statusCircleSize }}>
+          <View
+            style={{
+              width: statusCircleSize,
+              height: statusCircleSize,
+              borderRadius: statusCircleSize / 2,
+              backgroundColor: sharedTools.getSelectorColor(group.group_status),
+              marginTop: 'auto',
+              marginBottom: 'auto',
+            }}></View>
         </View>
       </View>
     </TouchableOpacity>
@@ -301,7 +302,7 @@ class GroupsScreen extends React.Component {
           containerStyle={styles.searchBarContainer}
           inputContainerStyle={styles.searchBarInput}
         />
-        {!this.state.haveGroups && this.noContactsRender()}
+        {!this.state.haveGroups && this.noGroupsRender()}
       </View>
     );
   };
@@ -312,7 +313,7 @@ class GroupsScreen extends React.Component {
     </View>
   );
 
-  noContactsRender = () => (
+  noGroupsRender = () => (
     <View style={styles.noGroupsContainer}>
       <Row style={{ justifyContent: 'center' }}>
         <Image style={styles.noGroupsImage} source={dtIcon} />
