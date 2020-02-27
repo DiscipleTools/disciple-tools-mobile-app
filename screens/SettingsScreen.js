@@ -252,21 +252,19 @@ class SettingsScreen extends React.Component {
             </ListItem>
           )}
           {/* === Online === */}
-          {__DEV__ && (
-            <ListItem icon onPress={this.onFABPress}>
-              <Left>
-                <NbButton onPress={this.onFABPress}>
-                  <Icon active name="ios-flash" />
-                </NbButton>
-              </Left>
-              <Body style={styles.body}>
-                <Text style={styles.text}>{i18n.t('global.online')}</Text>
-              </Body>
-              <Right>
-                <Switch value={this.props.isConnected} onChange={this.onFABPress} />
-              </Right>
-            </ListItem>
-          )}
+          <ListItem icon onPress={this.onFABPress}>
+            <Left>
+              <NbButton onPress={this.onFABPress}>
+                <Icon active name="ios-flash" />
+              </NbButton>
+            </Left>
+            <Body style={styles.body}>
+              <Text style={styles.text}>{i18n.t('global.online')}</Text>
+            </Body>
+            <Right>
+              <Switch value={this.props.isConnected} onChange={this.onFABPress} />
+            </Right>
+          </ListItem>
           {/* === Language === */}
           {/*
           <ListItem icon>
