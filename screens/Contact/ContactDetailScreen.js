@@ -335,7 +335,6 @@ class ContactDetailScreen extends React.Component {
           />
         );
       } else {
-        navigationTitle = '';
         headerLeft = () => (
           <Row onPress={params.onDisableEdit}>
             <Icon
@@ -364,14 +363,14 @@ class ContactDetailScreen extends React.Component {
       headerTintColor: '#FFFFFF',
       headerTitleStyle: {
         fontWeight: 'bold',
-        width: 200,
+        width: params.onlyView ? 200 : 180,
+        marginLeft: params.onlyView ? undefined : 21,
       },
     };
   };
 
   state = {
     contact: {},
-    haveTitle: true,
     unmodifiedContact: {},
     users: [],
     usersContacts: [],
@@ -394,7 +393,6 @@ class ContactDetailScreen extends React.Component {
     comment: '',
     progressBarValue: 0,
     overallStatusBackgroundColor: '#ffffff',
-    activeFab: false,
     renderFab: true,
     showAssignedToModal: false,
     loading: false,
@@ -831,7 +829,11 @@ class ContactDetailScreen extends React.Component {
         },
       };
     });
-    this.props.navigation.setParams({ hideTabBar: true, onlyView: false });
+    this.props.navigation.setParams({
+      hideTabBar: true,
+      onlyView: false,
+      contactName: this.state.contact.title,
+    });
   };
 
   onDisableEdit = () => {
@@ -879,7 +881,6 @@ class ContactDetailScreen extends React.Component {
         ...prevState.contact,
         title: value,
       },
-      haveTitle: false,
     }));
   };
 
@@ -5119,7 +5120,6 @@ ContactDetailScreen.propTypes = {
   getActivities: PropTypes.func.isRequired,
   saved: PropTypes.bool,
   isConnected: PropTypes.bool,
-  haveTitle: PropTypes.bool,
   endSaveContact: PropTypes.func.isRequired,
   getByIdEnd: PropTypes.func.isRequired,
   contactSettings: PropTypes.shape({
@@ -5226,7 +5226,6 @@ ContactDetailScreen.defaultProps = {
   saved: null,
   isConnected: null,
   contactSettings: null,
-  haveTitle: false,
 };
 
 const mapStateToProps = (state) => ({
