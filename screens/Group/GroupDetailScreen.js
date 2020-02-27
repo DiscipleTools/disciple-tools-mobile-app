@@ -1792,8 +1792,8 @@ class GroupDetailScreen extends React.Component {
                       : ''}
                   </Text>
                 </Col>
-                <Col style={styles.formParentLabel}>
-                  <Label style={styles.formLabel}>
+                <Col style={{ width: 100 }}>
+                  <Label style={[styles.formLabel, { textAlign: 'right' }]}>
                     {this.props.groupSettings.fields.coaches.name}
                   </Label>
                 </Col>
