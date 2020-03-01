@@ -12,7 +12,11 @@ function* sendRequest(url, data) {
       }
       throw response;
     })
-    .then((response) => response.json())
+    .then(async (response) => {
+      return response.json().then((responseJSON) => {
+        return responseJSON;
+      });
+    })
     .then((response) => ({
       status: 200,
       data: response,

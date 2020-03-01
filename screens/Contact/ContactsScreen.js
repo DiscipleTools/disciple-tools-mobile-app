@@ -19,14 +19,17 @@ import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
 import dtIcon from '../../assets/images/dt-icon.png';
 import i18n from '../../languages';
+import sharedTools from '../../shared';
 
 const styles = StyleSheet.create({
   flatListItem: {
-    height: 90,
+    height: 77,
     backgroundColor: 'white',
-    padding: 20,
+    margin: 20,
   },
   contactSubtitle: {
+    flex: 1,
+    flexWrap: 'wrap',
     paddingTop: 6,
     fontWeight: '200',
     color: 'rgba(0,0,0,0.6)',
@@ -99,7 +102,8 @@ const styles = StyleSheet.create({
     color: '#3f729b',
   },
 });
-let toastError;
+let toastError,
+  statusCircleSize = 15;
 
 class ContactsScreen extends React.Component {
   state = {
@@ -178,34 +182,37 @@ class ContactsScreen extends React.Component {
       onPress={() => this.goToContactDetailScreen(contact)}
       style={styles.flatListItem}
       key={contact.ID}>
-      <View style={{ flex: 1 }}>
-        <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={{ fontWeight: 'bold' }}>{contact.title}</Text>
+      <View style={{ flexDirection: 'row', height: '100%' }}>
+        <View style={{ flexDirection: 'column', flexGrow: 1 }}>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{ flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }}>{contact.title}</Text>
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={styles.contactSubtitle}>
+              {this.props.contactSettings.fields.overall_status.values[contact.overall_status]
+                ? this.props.contactSettings.fields.overall_status.values[contact.overall_status]
+                    .label
+                : ''}
+              {this.props.contactSettings.fields.overall_status.values[contact.overall_status] &&
+              this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
+                ? ' • '
+                : ''}
+              {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
+                ? this.props.contactSettings.fields.seeker_path.values[contact.seeker_path].label
+                : ''}
+            </Text>
+          </View>
         </View>
-        <View style={{ flex: 1, flexDirection: 'row' }}>
-          {this.props.contactSettings.fields.overall_status.values[contact.overall_status] ? (
-            <Text style={styles.contactSubtitle}>
-              {
-                this.props.contactSettings.fields.overall_status.values[contact.overall_status]
-                  .label
-              }
-            </Text>
-          ) : (
-            <Text />
-          )}
-          {this.props.contactSettings.fields.overall_status.values[contact.overall_status] &&
-          this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
-            <Text style={styles.contactSubtitle}>•</Text>
-          ) : (
-            <Text />
-          )}
-          {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path] ? (
-            <Text style={styles.contactSubtitle}>
-              {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path].label}
-            </Text>
-          ) : (
-            <Text />
-          )}
+        <View style={{ flexDirection: 'column', width: statusCircleSize }}>
+          <View
+            style={{
+              width: statusCircleSize,
+              height: statusCircleSize,
+              borderRadius: statusCircleSize / 2,
+              backgroundColor: sharedTools.getSelectorColor(contact.overall_status),
+              marginTop: 'auto',
+              marginBottom: 'auto',
+            }}></View>
         </View>
       </View>
     </TouchableOpacity>

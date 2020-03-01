@@ -454,6 +454,7 @@ const safeFind = (found, prop) => {
 class GroupDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
+    console.log(params);
     let navigationTitle = Object.prototype.hasOwnProperty.call(params, 'groupName')
       ? params.groupName
       : i18n.t('groupDetailScreen.addNewGroup');
@@ -525,7 +526,6 @@ class GroupDetailScreen extends React.Component {
           />
         );
       } else {
-        navigationTitle = '';
         headerLeft = () => (
           <Row onPress={params.onDisableEdit}>
             <Icon
@@ -554,7 +554,8 @@ class GroupDetailScreen extends React.Component {
       headerTintColor: '#FFFFFF',
       headerTitleStyle: {
         fontWeight: 'bold',
-        width: 200,
+        width: params.onlyView ? 200 : 180,
+        marginLeft: params.onlyView ? undefined : 21,
       },
     };
   };
@@ -970,7 +971,11 @@ class GroupDetailScreen extends React.Component {
         },
       };
     });
-    this.props.navigation.setParams({ hideTabBar: true, onlyView: false });
+    this.props.navigation.setParams({
+      hideTabBar: true,
+      onlyView: false,
+      groupName: this.state.group.title,
+    });
   };
 
   onDisableEdit = () => {
@@ -1792,8 +1797,8 @@ class GroupDetailScreen extends React.Component {
                       : ''}
                   </Text>
                 </Col>
-                <Col style={styles.formParentLabel}>
-                  <Label style={styles.formLabel}>
+                <Col style={{ width: 100 }}>
+                  <Label style={[styles.formLabel, { textAlign: 'right' }]}>
                     {this.props.groupSettings.fields.coaches.name}
                   </Label>
                 </Col>
@@ -2056,7 +2061,7 @@ class GroupDetailScreen extends React.Component {
                     />
                   </View>
                 </Col>
-                <Col style={styles.groupTextRoundField}>
+                <Col style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
                   <Picker
                     selectedValue={
                       this.state.group.assigned_to
@@ -2535,7 +2540,7 @@ class GroupDetailScreen extends React.Component {
                   />
                 </View>
               </Col>
-              <Col style={styles.groupTextRoundField}>
+              <Col style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
                 <Picker
                   mode="dropdown"
                   selectedValue={this.state.group.group_type}
@@ -3924,7 +3929,7 @@ class GroupDetailScreen extends React.Component {
                         {this.props.groupSettings.fields.group_type.name}
                       </Label>
                     </Row>
-                    <Row style={styles.groupTextRoundField}>
+                    <Row style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
                       <Picker
                         mode="dropdown"
                         selectedValue={this.state.group.group_type}
