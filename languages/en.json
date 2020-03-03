@@ -60,7 +60,9 @@
     "storybook": "Storybook",
     "logout": "Sign Out",
     "helpSupport": "Help / Support",
-    "rememberPassword": "Keep logged in"
+    "rememberPassword": "Keep logged in",
+    "rememberPasswordActive": "Keep logged in enabled",
+    "rememberPasswordInactive": "Keep logged in disabled"
   },
   "contactDetailScreen": {
     "addNewContact": "Add New Contact",
@@ -79,7 +81,8 @@
     "phoneNumber": "Phone Number",
     "initialComment": "Initial Comment",
     "socialMedia": "Social Media",
-    "noContactCommentPlacheHolder": "There are not any contact comments currently available."
+    "noContactCommentPlacheHolder": "There are not any contact comments currently available.",
+    "noContactCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again."
   },
   "groupDetailScreen": {
     "addNewGroup": "Add New Group",

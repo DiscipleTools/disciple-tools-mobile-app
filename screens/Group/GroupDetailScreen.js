@@ -119,11 +119,6 @@ const styles = StyleSheet.create({
     marginRight: 0,
   },
   // Comments Section
-  root: {
-    backgroundColor: '#ffffff',
-    flex: 1,
-    marginBottom: 60,
-  },
   container: {
     paddingLeft: 19,
     paddingRight: 16,
@@ -444,6 +439,7 @@ const initialState = {
   },
   updateMembersList: false,
   foundGeonames: [],
+  heightContainer: 0,
 };
 
 const safeFind = (found, prop) => {
@@ -454,7 +450,6 @@ const safeFind = (found, prop) => {
 class GroupDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
-    console.log(params);
     let navigationTitle = Object.prototype.hasOwnProperty.call(params, 'groupName')
       ? params.groupName
       : i18n.t('groupDetailScreen.addNewGroup');
@@ -554,8 +549,21 @@ class GroupDetailScreen extends React.Component {
       headerTintColor: '#FFFFFF',
       headerTitleStyle: {
         fontWeight: 'bold',
-        width: params.onlyView ? 200 : 180,
-        marginLeft: params.onlyView ? undefined : 21,
+        width: params.onlyView
+          ? Platform.select({
+              android: 200,
+              ios: 180,
+            })
+          : Platform.select({
+              android: 180,
+              ios: 140,
+            }),
+        marginLeft: params.onlyView
+          ? undefined
+          : Platform.select({
+              android: 21,
+              ios: 25,
+            }),
       },
     };
   };
@@ -726,6 +734,7 @@ class GroupDetailScreen extends React.Component {
     if (newComment && prevProps.newComment !== newComment) {
       commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
       this.setComment('');
+      this.setHeight();
     }
 
     // GROUP SAVE / GET BY ID
@@ -1124,7 +1133,7 @@ class GroupDetailScreen extends React.Component {
           </Text>
         )}
       </Row>
-      {this.state.group.member_count === '0' ? (
+      {!this.state.group.member_count || parseInt(this.state.group.member_count) === 0 ? (
         <View>
           <Text style={styles.addMembersHyperlink} onPress={() => this.onEnableEdit()}>
             {i18n.t('groupDetailScreen.noMembersMessage')}
@@ -1349,19 +1358,12 @@ class GroupDetailScreen extends React.Component {
     });
   };
 
-  setHeight = (value) => {
-    try {
-      const height = value !== undefined ? value.nativeEvent.contentSize.height + 20 : 40;
-      this.setState({
-        height: Math.min(120, height),
-        heightContainer: Math.min(120, height) + 20,
-      });
-    } catch (error) {
-      this.setState({
-        height: 40,
-        heightContainer: 60,
-      });
-    }
+  setHeight = (newHeight = 0) => {
+    newHeight = Math.max(sharedTools.commentFieldMinHeight, newHeight);
+    this.setState({
+      height: Math.min(sharedTools.commentFieldMinContainerHeight, newHeight),
+      heightContainer: Math.min(sharedTools.commentFieldMinContainerHeight, newHeight) + 20,
+    });
   };
 
   getSelectizeValuesToSave = (dbData, selectizeRef) => {
@@ -2570,7 +2572,11 @@ class GroupDetailScreen extends React.Component {
         this.state.activities.length <= 0 &&
         this.noCommentsRender()}
       <FlatList
-        style={styles.root}
+        style={{
+          backgroundColor: '#ffffff',
+          flex: 1,
+          marginBottom: this.state.heightContainer,
+        }}
         ref={(flatList) => {
           commentsFlatList = flatList;
         }}
@@ -2651,7 +2657,9 @@ class GroupDetailScreen extends React.Component {
                 placeholder={i18n.t('global.writeYourCommentNoteHere')}
                 value={this.state.comment}
                 onChangeText={this.setComment}
-                onContentSizeChange={this.setHeight}
+                onContentSizeChange={(event) =>
+                  this.setHeight(event.nativeEvent.contentSize.height)
+                }
                 editable={!this.state.loadComments}
                 multiline
                 style={[
@@ -2780,31 +2788,24 @@ class GroupDetailScreen extends React.Component {
 
   membersView = () =>
     this.state.onlyView ? (
-      <KeyboardAwareScrollView
-        enableAutomaticScroll
-        enableOnAndroid
-        keyboardOpeningTime={0}
-        extraScrollHeight={150}
-        keyboardShouldPersistTaps="handled">
-        <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.loading}
-                onRefresh={() => this.onRefresh(this.state.group.ID)}
-              />
-            }>
-            {this.showMembersCount()}
-            <FlatList
-              data={this.state.group.members ? this.state.group.members.values : []}
-              extraData={this.state.updateMembersList}
-              renderItem={(item) => this.membersRow(item.item)}
-              ItemSeparatorComponent={this.flatListItemSeparator}
+      <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.loading}
+              onRefresh={() => this.onRefresh(this.state.group.ID)}
             />
-          </ScrollView>
-        </View>
-      </KeyboardAwareScrollView>
+          }>
+          {this.showMembersCount()}
+          <FlatList
+            data={this.state.group.members ? this.state.group.members.values : []}
+            extraData={this.state.updateMembersList}
+            renderItem={(item) => this.membersRow(item.item)}
+            ItemSeparatorComponent={this.flatListItemSeparator}
+          />
+        </ScrollView>
+      </View>
     ) : (
       <KeyboardAwareScrollView
         enableAutomaticScroll

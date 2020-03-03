@@ -1,181 +1,117 @@
 {
-    "global": {
-        "error": {
-            "code": "",
-            "message": ""
-        },
-        "success": {
-            "save": ""
-        },
-        "contactOverallStatus": {
-            "new": "",
-            "unassignable": "",
-            "unassigned": "",
-            "assigned": "",
-            "active": "",
-            "paused": "",
-            "closed": ""
-        },
-        "seekerPath": {
-            "none": "",
-            "attempted": "",
-            "established": "",
-            "scheduled": "",
-            "met": "",
-            "ongoing": "",
-            "coaching": ""
-        },
-        "groupStatus": {
-            "active": "",
-            "inactive": ""
-        },
-        "groupType": {
-            "pre-group": "",
-            "group": "",
-            "church": "",
-            "team": ""
-        },
-        "groups": "",
-        "details": "",
-        "status": "",
-        "assignedTo": "",
-        "location": "",
-        "peopleGroup": "",
-        "selectPeopleGroups": "",
-        "address": "",
-        "progress": "",
-        "commentsActivity": "",
-        "writeYourCommentNoteHere": "",
-        "requiredField": "",
-        "edit": "",
-        "cancel": "",
-        "save": "",
-        "online": "",
-        "language": ""
+  "global": {
+    "error": {
+      "code": "",
+      "message": ""
     },
-    "loginScreen": {
-        "domain": {
-            "label": "",
-            "placeholder": "",
-            "error": ""
-        },
-        "username": {
-            "label": "",
-            "error": ""
-        },
-        "password": {
-            "label": "",
-            "error": ""
-        },
-        "logIn": "",
-        "forgotPassword": ""
+    "success": {
+      "save": ""
     },
-    "contactsScreen": {
-        "contacts": ""
+    "groups": "",
+    "details": "",
+    "selectPeopleGroups": "",
+    "address": "",
+    "progress": "",
+    "commentsActivity": "",
+    "writeYourCommentNoteHere": "",
+    "requiredField": "",
+    "edit": "",
+    "cancel": "",
+    "save": "",
+    "online": "",
+    "language": "",
+    "search": "",
+    "membersActivity": "",
+    "offline": "",
+    "moreFields": ""
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "",
+      "placeholder": "",
+      "error": "",
+      "errorForgotPass": ""
     },
-    "settingsScreen": {
-        "settings": "",
-        "networkUnavailable": "",
-        "networkAvailable": "",
-        "signOut": "",
-        "domain": "",
-        "signedInAs": "",
-        "storybook": "",
-        "logout": "",
-        "helpSupport": ""
+    "username": {
+      "label": "",
+      "error": ""
     },
-    "contactDetailScreen": {
-        "addNewContact": "",
-        "contactSources": {
-            "personal": "",
-            "web": "",
-            "phone": "",
-            "linkedin": "",
-            "referral": "",
-            "advertisement": "",
-            "transfer": ""
-        },
-        "subAssignedTo": "",
-        "subAssignThisContact": "",
-        "mobile": "",
-        "email": "",
-        "selectLocations": "",
-        "contactAge": {
-            "underEighteenYearsOld": "",
-            "underTwentySixYearsOld": "",
-            "underFortyOneYearsOld": "",
-            "overFortyYearsOld": ""
-        },
-        "age": "",
-        "male": "",
-        "female": "",
-        "gender": "",
-        "source": "",
-        "selectSources": "",
-        "seekerPath": "",
-        "faithMilestones": "",
-        "milestones": {
-            "hasBible": "",
-            "readingBible": "",
-            "statesBelief": "",
-            "shareGospel": "",
-            "sharingGospel": "",
-            "baptized": "",
-            "baptizing": "",
-            "inGroup": "",
-            "startingChurches": "",
-            "baptismDate": ""
-        },
-        "connections": "",
-        "addGroup": "",
-        "connection": "",
-        "addConnection": "",
-        "baptizedBy": "",
-        "addBaptizedBy": "",
-        "baptized": "",
-        "addBaptized": "",
-        "coachedBy": "",
-        "addCoachedBy": "",
-        "coaching": "",
-        "addCoaching": "",
-        "fullName": "",
-        "phoneNumber": "",
-        "initialComment": "",
-        "addBaptizmDate": "",
-        "group": "",
-        "socialMedia": "",
-        "noAnswer": "",
-        "contactEstablished": "",
-        "meetingScheduled": "",
-        "meetingCompleted": "",
-        "meetingNoShow": ""
+    "password": {
+      "label": "",
+      "error": ""
     },
-    "groupDetailScreen": {
-        "addNewGroup": "",
-        "groupCoach": "",
-        "selectCoaches": "",
-        "selectGeonames": "",
-        "startDate": "",
-        "endDate": "",
-        "groupType": "",
-        "churchHealth": "",
-        "healthMetrics": {
-            "giving": "",
-            "fellowship": "",
-            "communion": "",
-            "baptism": "",
-            "prayer": "",
-            "leaders": "",
-            "bibleStudy": "",
-            "praise": "",
-            "sharingGospel": ""
-        },
-        "parentGroup": "",
-        "searchGroups": "",
-        "peerGroup": "",
-        "searchPeerGroups": "",
-        "childGroup": "",
-        "searchChildGroups": "",
-        "groupName": ""
+    "logIn": "",
+    "forgotPassword": "",
+    "errors": {
+      "invalidUsername": "",
+      "incorrectPassword": ""
     }
+  },
+  "contactsScreen": {
+    "contacts": "",
+    "noContactPlacheHolder": "",
+    "noContactPlacheHolder1": "",
+    "noContactPlacheHolderOffline": ""
+  },
+  "settingsScreen": {
+    "settings": "",
+    "networkUnavailable": "",
+    "networkAvailable": "",
+    "storybook": "",
+    "logout": "",
+    "helpSupport": "",
+    "rememberPassword": "",
+    "rememberPasswordActive": "",
+    "rememberPasswordInactive": ""
+  },
+  "contactDetailScreen": {
+    "addNewContact": "",
+    "subAssignThisContact": "",
+    "mobile": "",
+    "selectLocations": "",
+    "selectSources": "",
+    "connections": "",
+    "addGroup": "",
+    "addConnection": "",
+    "addBaptizedBy": "",
+    "addBaptized": "",
+    "addCoachedBy": "",
+    "addCoaching": "",
+    "fullName": "",
+    "phoneNumber": "",
+    "initialComment": "",
+    "socialMedia": "",
+    "noContactCommentPlacheHolder": "",
+    "noContactCommentPlacheHolder1": ""
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "",
+    "selectCoaches": "",
+    "searchGroups": "",
+    "searchPeerGroups": "",
+    "childGroup": "",
+    "searchChildGroups": "",
+    "groupName": "",
+    "addMember": "",
+    "noGroupCommentPlacheHolder": "",
+    "noGroupCommentPlacheHolder1": "",
+    "noGroupCommentPlacheHolderOffline": "",
+    "selectLocations": "",
+    "noMembersMessage": ""
+  },
+  "notificationsScreen": {
+    "notifications": "",
+    "loadMore": "",
+    "new": "",
+    "unRead": "",
+    "all": "",
+    "markAll": "",
+    "dontHaveNotificationsUnread": "",
+    "dontHaveNotifications": ""
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "",
+    "noGroupPlacheHolder1": "",
+    "noGroupPlacheHolderOffline": ""
+  }
 }

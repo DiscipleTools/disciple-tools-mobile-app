@@ -127,7 +127,8 @@ class SettingsScreen extends React.Component {
     this.onFABPress = this.onFABPress.bind(this);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const { rememberPassword } = this.props;
     // If the RTL value in the store does not match what is
     // in I18nManager (which controls content flow), call
     // forceRTL(...) to set it in I18nManager and reload app
@@ -138,6 +139,13 @@ class SettingsScreen extends React.Component {
       setTimeout(() => {
         Updates.reloadFromCache();
       }, 500);
+    }
+    if (rememberPassword !== undefined && prevProps.rememberPassword !== rememberPassword) {
+      this.showToast(
+        rememberPassword
+          ? i18n.t('settingsScreen.rememberPasswordActive')
+          : i18n.t('settingsScreen.rememberPasswordInactive'),
+      );
     }
   }
 

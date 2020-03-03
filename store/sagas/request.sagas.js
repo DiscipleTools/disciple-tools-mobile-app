@@ -9,35 +9,54 @@ function* sendRequest(url, data) {
     .then((response) => {
       if (response.status >= 200 && response.status < 300) {
         return response;
+      } else {
+        throw response;
       }
-      throw response;
     })
     .then(async (response) => {
       return response.json().then((responseJSON) => {
         return responseJSON;
       });
     })
-    .then((response) => ({
-      status: 200,
-      data: response,
-    }))
+    .then((response) => {
+      return {
+        status: 200,
+        data: response,
+      };
+    })
     .catch((error) => {
       if (typeof error.json === 'function') {
-        return error.json().then((errorJSON) => ({
-          status: errorJSON.data && errorJSON.data.status ? errorJSON.data.status : '',
-          data: {
-            code: errorJSON.code,
-            message: errorJSON.message,
+        return error.json().then(
+          (errorJSON) => {
+            // Back-end error response
+            return {
+              status: errorJSON.data && errorJSON.data.status ? errorJSON.data.status : '',
+              data: {
+                code: errorJSON.code,
+                message: errorJSON.message,
+              },
+            };
           },
-        }));
+          (error) => {
+            // Sometimes the 'json()' method throw an error in iOS
+            return {
+              status: 400,
+              data: {
+                code: '400',
+                message: 'Unable to process the request. Please try again later.',
+              },
+            };
+          },
+        );
+      } else {
+        return {
+          status: 400,
+          data: {
+            code: '400',
+            message: 'Unable to process the request. Please try again later.',
+          },
+        };
       }
-      return {
-        status: 400,
-        data: {
-          code: 400,
-          message: error.toString(),
-        },
-      };
     });
   return request;
 }
