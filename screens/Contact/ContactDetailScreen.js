@@ -363,8 +363,21 @@ class ContactDetailScreen extends React.Component {
       headerTintColor: '#FFFFFF',
       headerTitleStyle: {
         fontWeight: 'bold',
-        width: params.onlyView ? 200 : 180,
-        marginLeft: params.onlyView ? undefined : 21,
+        width: params.onlyView
+          ? Platform.select({
+              android: 200,
+              ios: 180,
+            })
+          : Platform.select({
+              android: 180,
+              ios: 140,
+            }),
+        marginLeft: params.onlyView
+          ? undefined
+          : Platform.select({
+              android: 21,
+              ios: 25,
+            }),
       },
     };
   };

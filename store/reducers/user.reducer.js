@@ -18,7 +18,7 @@ const initialState = {
   userData: {
     ...userDataInitialState,
   },
-  rememberPassword: false,
+  rememberPassword: true,
   pinCode: {
     enabled: false,
     value: null,
@@ -61,7 +61,6 @@ export default function userReducer(state = initialState, action) {
           locale: null,
           id: null,
         },
-        rememberPassword: true,
       };
       return state;
     }
@@ -79,6 +78,12 @@ export default function userReducer(state = initialState, action) {
           locale: action.userInfo.locale,
           id: action.userInfo.ID,
         },
+      };
+    case actions.GET_MY_USER_INFO_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+        loading: false,
       };
     case actions.USER_GET_PUSH_TOKEN:
       return {

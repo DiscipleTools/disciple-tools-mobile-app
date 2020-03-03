@@ -95,7 +95,9 @@
     "storybook": "Storybook",
     "logout": "Desconectarse",
     "helpSupport": "Ayuda / Soporte",
-    "rememberPassword": "Mantener iniciada la sesión"
+    "rememberPassword": "Mantener iniciada la sesión",
+    "rememberPasswordActive": "Mantener iniciada la sesión activo",
+    "rememberPasswordInactive": "Mantener iniciada la sesión inactivo"
   },
   "contactDetailScreen": {
     "addNewContact": "Crear nuevo contacto",

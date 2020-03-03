@@ -60,7 +60,9 @@
     "storybook": "Storybook",
     "logout": "Sign Out",
     "helpSupport": "Help / Support",
-    "rememberPassword": "Keep logged in"
+    "rememberPassword": "Keep logged in",
+    "rememberPasswordActive": "Keep logged in enabled",
+    "rememberPasswordInactive": "Keep logged in disabled"
   },
   "contactDetailScreen": {
     "addNewContact": "Add New Contact",
