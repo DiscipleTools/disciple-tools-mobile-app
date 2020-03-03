@@ -454,7 +454,6 @@ const safeFind = (found, prop) => {
 class GroupDetailScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
-    console.log(params);
     let navigationTitle = Object.prototype.hasOwnProperty.call(params, 'groupName')
       ? params.groupName
       : i18n.t('groupDetailScreen.addNewGroup');
@@ -554,8 +553,21 @@ class GroupDetailScreen extends React.Component {
       headerTintColor: '#FFFFFF',
       headerTitleStyle: {
         fontWeight: 'bold',
-        width: params.onlyView ? 200 : 180,
-        marginLeft: params.onlyView ? undefined : 21,
+        width: params.onlyView
+          ? Platform.select({
+              android: 200,
+              ios: 180,
+            })
+          : Platform.select({
+              android: 180,
+              ios: 140,
+            }),
+        marginLeft: params.onlyView
+          ? undefined
+          : Platform.select({
+              android: 21,
+              ios: 25,
+            }),
       },
     };
   };
@@ -1124,7 +1136,7 @@ class GroupDetailScreen extends React.Component {
           </Text>
         )}
       </Row>
-      {this.state.group.member_count === '0' ? (
+      {!this.state.group.member_count || parseInt(this.state.group.member_count) === 0 ? (
         <View>
           <Text style={styles.addMembersHyperlink} onPress={() => this.onEnableEdit()}>
             {i18n.t('groupDetailScreen.noMembersMessage')}
@@ -2780,31 +2792,24 @@ class GroupDetailScreen extends React.Component {
 
   membersView = () =>
     this.state.onlyView ? (
-      <KeyboardAwareScrollView
-        enableAutomaticScroll
-        enableOnAndroid
-        keyboardOpeningTime={0}
-        extraScrollHeight={150}
-        keyboardShouldPersistTaps="handled">
-        <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.loading}
-                onRefresh={() => this.onRefresh(this.state.group.ID)}
-              />
-            }>
-            {this.showMembersCount()}
-            <FlatList
-              data={this.state.group.members ? this.state.group.members.values : []}
-              extraData={this.state.updateMembersList}
-              renderItem={(item) => this.membersRow(item.item)}
-              ItemSeparatorComponent={this.flatListItemSeparator}
+      <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.loading}
+              onRefresh={() => this.onRefresh(this.state.group.ID)}
             />
-          </ScrollView>
-        </View>
-      </KeyboardAwareScrollView>
+          }>
+          {this.showMembersCount()}
+          <FlatList
+            data={this.state.group.members ? this.state.group.members.values : []}
+            extraData={this.state.updateMembersList}
+            renderItem={(item) => this.membersRow(item.item)}
+            ItemSeparatorComponent={this.flatListItemSeparator}
+          />
+        </ScrollView>
+      </View>
     ) : (
       <KeyboardAwareScrollView
         enableAutomaticScroll
