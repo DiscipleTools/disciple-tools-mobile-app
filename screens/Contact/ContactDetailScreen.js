@@ -432,6 +432,7 @@ class ContactDetailScreen extends React.Component {
       ],
     },
     foundGeonames: [],
+    heightContainer: 0,
   };
 
   componentDidMount() {
@@ -655,7 +656,7 @@ class ContactDetailScreen extends React.Component {
         commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
       }
       this.setComment('');
-      this.setHeight(35);
+      this.setHeight();
     }
 
     // CONTACT SAVE / GET BY ID
@@ -1099,19 +1100,12 @@ class ContactDetailScreen extends React.Component {
     });
   };
 
-  setHeight = (value) => {
-    try {
-      const height = value !== undefined ? value.nativeEvent.contentSize.height + 20 : 40;
-      this.setState({
-        height: Math.min(120, height),
-        heightContainer: Math.min(120, height) + 20,
-      });
-    } catch (error) {
-      this.setState({
-        height: 40,
-        heightContainer: 60,
-      });
-    }
+  setHeight = (newHeight = 0) => {
+    newHeight = Math.max(sharedTools.commentFieldMinHeight, newHeight);
+    this.setState({
+      height: Math.min(sharedTools.commentFieldMinContainerHeight, newHeight),
+      heightContainer: Math.min(sharedTools.commentFieldMinContainerHeight, newHeight) + 20,
+    });
   };
 
   onSaveComment = () => {
@@ -2566,7 +2560,7 @@ class ContactDetailScreen extends React.Component {
         style={{
           backgroundColor: '#ffffff',
           flex: 1,
-          marginBottom: 60,
+          marginBottom: this.state.heightContainer,
         }}
         ref={(flatList) => {
           commentsFlatList = flatList;
@@ -2638,7 +2632,9 @@ class ContactDetailScreen extends React.Component {
                 placeholder={i18n.t('global.writeYourCommentNoteHere')}
                 value={this.state.comment}
                 onChangeText={this.setComment}
-                onContentSizeChange={this.setHeight}
+                onContentSizeChange={(event) =>
+                  this.setHeight(event.nativeEvent.contentSize.height)
+                }
                 editable={!this.state.loadComments}
                 multiline
                 style={[

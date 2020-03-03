@@ -119,11 +119,6 @@ const styles = StyleSheet.create({
     marginRight: 0,
   },
   // Comments Section
-  root: {
-    backgroundColor: '#ffffff',
-    flex: 1,
-    marginBottom: 60,
-  },
   container: {
     paddingLeft: 19,
     paddingRight: 16,
@@ -444,6 +439,7 @@ const initialState = {
   },
   updateMembersList: false,
   foundGeonames: [],
+  heightContainer: 0,
 };
 
 const safeFind = (found, prop) => {
@@ -738,6 +734,7 @@ class GroupDetailScreen extends React.Component {
     if (newComment && prevProps.newComment !== newComment) {
       commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
       this.setComment('');
+      this.setHeight();
     }
 
     // GROUP SAVE / GET BY ID
@@ -1361,19 +1358,12 @@ class GroupDetailScreen extends React.Component {
     });
   };
 
-  setHeight = (value) => {
-    try {
-      const height = value !== undefined ? value.nativeEvent.contentSize.height + 20 : 40;
-      this.setState({
-        height: Math.min(120, height),
-        heightContainer: Math.min(120, height) + 20,
-      });
-    } catch (error) {
-      this.setState({
-        height: 40,
-        heightContainer: 60,
-      });
-    }
+  setHeight = (newHeight = 0) => {
+    newHeight = Math.max(sharedTools.commentFieldMinHeight, newHeight);
+    this.setState({
+      height: Math.min(sharedTools.commentFieldMinContainerHeight, newHeight),
+      heightContainer: Math.min(sharedTools.commentFieldMinContainerHeight, newHeight) + 20,
+    });
   };
 
   getSelectizeValuesToSave = (dbData, selectizeRef) => {
@@ -2582,7 +2572,11 @@ class GroupDetailScreen extends React.Component {
         this.state.activities.length <= 0 &&
         this.noCommentsRender()}
       <FlatList
-        style={styles.root}
+        style={{
+          backgroundColor: '#ffffff',
+          flex: 1,
+          marginBottom: this.state.heightContainer,
+        }}
         ref={(flatList) => {
           commentsFlatList = flatList;
         }}
@@ -2663,7 +2657,9 @@ class GroupDetailScreen extends React.Component {
                 placeholder={i18n.t('global.writeYourCommentNoteHere')}
                 value={this.state.comment}
                 onChangeText={this.setComment}
-                onContentSizeChange={this.setHeight}
+                onContentSizeChange={(event) =>
+                  this.setHeight(event.nativeEvent.contentSize.height)
+                }
                 editable={!this.state.loadComments}
                 multiline
                 style={[

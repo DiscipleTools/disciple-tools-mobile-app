@@ -183,9 +183,14 @@ const debounce = (fn, time) => {
   };
 };
 
+const commentFieldMinHeight = 35;
+const commentFieldMinContainerHeight = 120;
+
 export default {
   diff,
   formatDateToBackEnd,
   getSelectorColor,
   debounce,
+  commentFieldMinHeight,
+  commentFieldMinContainerHeight,
 };
