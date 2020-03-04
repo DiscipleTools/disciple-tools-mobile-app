@@ -1017,15 +1017,20 @@ class ContactDetailScreen extends React.Component {
     const { unmodifiedContact } = this.state;
     let contact = this.transformContactObject(this.state.contact, quickAction);
 
+    // Do not save fields with empty values
     Object.keys(contact)
-      .filter((key) => key.includes('contact_'))
+      .filter(
+        (key) =>
+          key.includes('contact_') &&
+          Object.prototype.toString.call(contact[key]) === '[object Array]' &&
+          contact[key].length > 0 &&
+          !contact[key][0].delete,
+      )
       .forEach((key) => {
-        if (contact[key].length > 0 && !contact[key][0].delete) {
-          contact = {
-            ...contact,
-            [key]: contact[key].filter((socialMedia) => socialMedia.value.length > 0),
-          };
-        }
+        contact = {
+          ...contact,
+          [key]: contact[key].filter((socialMedia) => socialMedia.value.length > 0),
+        };
       });
 
     let contactToSave = {
