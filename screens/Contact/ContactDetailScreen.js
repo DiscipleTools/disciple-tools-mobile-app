@@ -4666,6 +4666,7 @@ class ContactDetailScreen extends React.Component {
                       <Input
                         onChangeText={this.setSingleContactPhone}
                         style={styles.contactTextRoundField}
+                        keyboardType="phone-pad"
                       />
                     </Row>
                     <Row>
@@ -4677,6 +4678,7 @@ class ContactDetailScreen extends React.Component {
                       <Input
                         onChangeText={this.setContactEmail}
                         style={styles.contactTextRoundField}
+                        keyboardType="email-address"
                       />
                     </Row>
                     <Row style={styles.formFieldMargin}>
