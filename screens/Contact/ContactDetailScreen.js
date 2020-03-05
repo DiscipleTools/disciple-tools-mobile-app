@@ -14,8 +14,8 @@ import {
   RefreshControl,
   Platform,
   TouchableHighlight,
-  SafeAreaView,
   Linking,
+  StatusBar,
 } from 'react-native';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
@@ -23,7 +23,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Label, Input, Icon, Picker, DatePicker, Textarea } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import { Chip, Selectize } from 'react-native-material-selectize';
 import ActionButton from 'react-native-action-button';
@@ -60,6 +59,9 @@ const containerPadding = 35;
 const windowWidth = Dimensions.get('window').width;
 const progressBarWidth = windowWidth - 100;
 const milestonesGridSize = windowWidth + 5;
+let keyboardDidShowListener, keyboardDidHideListener;
+const hasNotch = Platform.OS === 'android' && StatusBar.currentHeight > 25;
+const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
 /* eslint-disable */
 let commentsFlatList,
   subAssignedSelectizeRef,
@@ -432,7 +434,8 @@ class ContactDetailScreen extends React.Component {
       ],
     },
     foundGeonames: [],
-    heightContainer: 0,
+    footerLocation: 0,
+    footerHeight: 0,
   };
 
   componentDidMount() {
@@ -498,6 +501,19 @@ class ContactDetailScreen extends React.Component {
         this.getLists(contactId || null);
       },
     );
+    keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      this.keyboardDidShow.bind(this),
+    );
+    keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      this.keyboardDidHide.bind(this),
+    );
+  }
+
+  componentWillUnmount() {
+    keyboardDidShowListener.remove();
+    keyboardDidHideListener.remove();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -725,6 +741,18 @@ class ContactDetailScreen extends React.Component {
         3000,
       );
     }
+  }
+
+  keyboardDidShow(event) {
+    this.setState({
+      footerLocation: event.endCoordinates.height + extraNotchHeight,
+    });
+  }
+
+  keyboardDidHide(event) {
+    this.setState({
+      footerLocation: 0,
+    });
   }
 
   onRefresh(contactId) {
@@ -1109,7 +1137,7 @@ class ContactDetailScreen extends React.Component {
     newHeight = Math.max(sharedTools.commentFieldMinHeight, newHeight);
     this.setState({
       height: Math.min(sharedTools.commentFieldMinContainerHeight, newHeight),
-      heightContainer: Math.min(sharedTools.commentFieldMinContainerHeight, newHeight) + 20,
+      footerHeight: Math.min(sharedTools.commentFieldMinContainerHeight, newHeight) + 20,
     });
   };
 
@@ -2557,15 +2585,13 @@ class ContactDetailScreen extends React.Component {
   );
 
   commentsView = () => (
-    <View style={{ flex: 1 }}>
-      {this.state.comments.length <= 0 &&
-        this.state.activities.length <= 0 &&
+    <View style={{ flex: 1, paddingBottom: this.state.footerHeight + this.state.footerLocation }}>
+      {this.state.comments.length == 0 &&
+        this.state.activities.length == 0 &&
         this.noCommentsRender()}
       <FlatList
         style={{
           backgroundColor: '#ffffff',
-          flex: 1,
-          marginBottom: this.state.heightContainer,
         }}
         ref={(flatList) => {
           commentsFlatList = flatList;
@@ -2629,49 +2655,48 @@ class ContactDetailScreen extends React.Component {
           }
         }}
       />
-      <SafeAreaView>
-        <View>
-          <KeyboardAccessory>
-            <View style={[styles.commentInputContainer, { height: this.state.heightContainer }]}>
-              <TextInput
-                placeholder={i18n.t('global.writeYourCommentNoteHere')}
-                value={this.state.comment}
-                onChangeText={this.setComment}
-                onContentSizeChange={(event) =>
-                  this.setHeight(event.nativeEvent.contentSize.height)
-                }
-                editable={!this.state.loadComments}
-                multiline
-                style={[
-                  styles.commentInput,
-                  { height: this.state.height },
-                  i18n.isRTL ? { textAlign: 'right', flex: 1 } : {},
-                  this.state.loadComments
-                    ? { backgroundColor: '#e6e6e6' }
-                    : { backgroundColor: 'white' },
-                ]}
-              />
-              <TouchableOpacity
-                onPress={() => this.onSaveComment()}
-                style={[
-                  {
-                    borderRadius: 80,
-                    height: 40,
-                    margin: 10,
-                    paddingTop: 7,
-                    width: 40,
-                  },
-                  this.state.loadComments
-                    ? { backgroundColor: '#e6e6e6' }
-                    : { backgroundColor: Colors.tintColor },
-                  i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
-                ]}>
-                <Icon android="md-send" ios="ios-send" style={{ color: 'white', fontSize: 25 }} />
-              </TouchableOpacity>
-            </View>
-          </KeyboardAccessory>
-        </View>
-      </SafeAreaView>
+      <View
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: this.state.footerLocation,
+          height: this.state.footerHeight,
+          backgroundColor: 'white',
+          flexDirection: 'row',
+        }}>
+        <TextInput
+          placeholder={i18n.t('global.writeYourCommentNoteHere')}
+          value={this.state.comment}
+          onChangeText={this.setComment}
+          onContentSizeChange={(event) => this.setHeight(event.nativeEvent.contentSize.height)}
+          editable={!this.state.loadComments}
+          multiline
+          style={[
+            styles.commentInput,
+            { height: this.state.height },
+            i18n.isRTL ? { textAlign: 'right', flex: 1 } : {},
+            this.state.loadComments ? { backgroundColor: '#e6e6e6' } : { backgroundColor: 'white' },
+          ]}
+        />
+        <TouchableOpacity
+          onPress={() => this.onSaveComment()}
+          style={[
+            {
+              borderRadius: 80,
+              height: 40,
+              margin: 10,
+              paddingTop: 7,
+              width: 40,
+            },
+            this.state.loadComments
+              ? { backgroundColor: '#e6e6e6' }
+              : { backgroundColor: Colors.tintColor },
+            i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
+          ]}>
+          <Icon android="md-send" ios="ios-send" style={{ color: 'white', fontSize: 25 }} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
