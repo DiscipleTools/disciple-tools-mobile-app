@@ -5,6 +5,14 @@
 import { take, fork, call, put, race, actionChannel, select } from 'redux-saga/effects';
 
 function* sendRequest(url, data) {
+  let genericErrorResponse = {
+    status: 400,
+    data: {
+      code: '400',
+      message: 'Unable to process the request. Please try again later.',
+    },
+  };
+
   const request = yield fetch(url, data)
     .then((response) => {
       if (response.status >= 200 && response.status < 300) {
@@ -14,8 +22,8 @@ function* sendRequest(url, data) {
       }
     })
     .then(async (response) => {
-      return response.json().then((responseJSON) => {
-        return responseJSON;
+      return response.text().then((responseJSON) => {
+        return JSON.parse(responseJSON);
       });
     })
     .then((response) => {
@@ -24,38 +32,34 @@ function* sendRequest(url, data) {
         data: response,
       };
     })
-    .catch((error) => {
+    .catch(async (error) => {
       if (typeof error.json === 'function') {
-        return error.json().then(
+        return error.text().then(
           (errorJSON) => {
-            // Back-end error response
-            return {
-              status: errorJSON.data && errorJSON.data.status ? errorJSON.data.status : '',
-              data: {
-                code: errorJSON.code,
-                message: errorJSON.message,
-              },
-            };
+            var isHTML = RegExp.prototype.test.bind(/(<([^>]+)>)/i);
+            if (isHTML(errorJSON)) {
+              // Back-end error response in (HTML)
+              return genericErrorResponse;
+            } else {
+              // Back-end error response in (JSON)
+              errorJSON = JSON.parse(errorJSON);
+              return {
+                status: errorJSON.data && errorJSON.data.status ? errorJSON.data.status : '',
+                data: {
+                  code: errorJSON.code,
+                  message: errorJSON.message,
+                },
+              };
+            }
           },
           (error) => {
-            // Sometimes the 'json()' method throw an error in iOS
-            return {
-              status: 400,
-              data: {
-                code: '400',
-                message: 'Unable to process the request. Please try again later.',
-              },
-            };
+            // Catch if 'text() method' or 'JSON.parse()' throw error
+            return genericErrorResponse;
           },
         );
       } else {
-        return {
-          status: 400,
-          data: {
-            code: '400',
-            message: 'Unable to process the request. Please try again later.',
-          },
-        };
+        // Catch if 'text() method' or 'JSON.parse()' throw error
+        return genericErrorResponse;
       }
     });
   return request;
