@@ -23,7 +23,8 @@
     "search": "Search",
     "membersActivity": "Members",
     "offline": "offline",
-    "moreFields": "More Fields"
+    "moreFields": "More Fields",
+    "nameRequired": "Name required"
   },
   "loginScreen": {
     "domain": {

@@ -89,6 +89,28 @@ const defaultHealthMilestones = [
   'church_prayer',
   'church_sharing',
 ];
+const tabViewRoutes = [
+  {
+    key: 'details',
+    title: i18n.t('global.details'),
+  },
+  {
+    key: 'progress',
+    title: i18n.t('global.progress'),
+  },
+  {
+    key: 'comments',
+    title: i18n.t('global.commentsActivity'),
+  },
+  {
+    key: 'members',
+    title: i18n.t('global.membersActivity'),
+  },
+  {
+    key: 'groups',
+    title: i18n.t('global.groups'),
+  },
+];
 const styles = StyleSheet.create({
   activeImage: {
     opacity: 1,
@@ -411,33 +433,10 @@ const initialState = {
   showAssignedToModal: false,
   groupStatusBackgroundColor: '#ffffff',
   loading: false,
-  groupsTabActive: false,
-  currentTabIndex: 0,
   isMemberEdit: false,
   tabViewConfig: {
     index: 0,
-    routes: [
-      {
-        key: 'details',
-        title: i18n.t('global.details'),
-      },
-      {
-        key: 'progress',
-        title: i18n.t('global.progress'),
-      },
-      {
-        key: 'comments',
-        title: i18n.t('global.commentsActivity'),
-      },
-      {
-        key: 'members',
-        title: i18n.t('global.membersActivity'),
-      },
-      {
-        key: 'groups',
-        title: i18n.t('global.groups'),
-      },
-    ],
+    routes: [...tabViewRoutes],
   },
   updateMembersList: false,
   foundGeonames: [],
@@ -561,12 +560,7 @@ class GroupDetailScreen extends React.Component {
               android: 180,
               ios: 140,
             }),
-        marginLeft: params.onlyView
-          ? undefined
-          : Platform.select({
-              android: 21,
-              ios: 25,
-            }),
+        marginLeft: params.onlyView ? undefined : 25,
       },
     };
   };
@@ -900,13 +894,6 @@ class GroupDetailScreen extends React.Component {
     );
   }
 
-  setCurrentTabIndex(index) {
-    // Timeout to resolve the "tab content no rendered" issue
-    setTimeout(() => {
-      this.setState({ currentTabIndex: index, groupsTabActive: false });
-    }, 0);
-  }
-
   getLists = async (groupId) => {
     let newState = {};
     const users = await ExpoFileSystemStorage.getItem('usersList');
@@ -992,12 +979,10 @@ class GroupDetailScreen extends React.Component {
   onEnableEdit = () => {
     this.setState((state) => {
       let indexFix;
-      if (state.tabViewConfig.index === 4) {
-        indexFix = 3;
-      } else if (state.tabViewConfig.index >= 2) {
-        indexFix = 2;
-      } else {
+      if (state.tabViewConfig.index < 3) {
         indexFix = state.tabViewConfig.index;
+      } else if (state.tabViewConfig.index > 2) {
+        indexFix = state.tabViewConfig.index - 1;
       }
       return {
         onlyView: false,
@@ -1019,7 +1004,7 @@ class GroupDetailScreen extends React.Component {
     const { unmodifiedGroup } = this.state;
     this.setState((state) => {
       const indexFix =
-        state.tabViewConfig.index >= 2 ? state.tabViewConfig.index + 1 : state.tabViewConfig.index;
+        state.tabViewConfig.index > 1 ? state.tabViewConfig.index + 1 : state.tabViewConfig.index;
       return {
         onlyView: true,
         group: {
@@ -1029,28 +1014,7 @@ class GroupDetailScreen extends React.Component {
         tabViewConfig: {
           ...state.tabViewConfig,
           index: indexFix,
-          routes: [
-            {
-              key: 'details',
-              title: i18n.t('global.details'),
-            },
-            {
-              key: 'progress',
-              title: i18n.t('global.progress'),
-            },
-            {
-              key: 'comments',
-              title: i18n.t('global.commentsActivity'),
-            },
-            {
-              key: 'members',
-              title: i18n.t('global.membersActivity'),
-            },
-            {
-              key: 'groups',
-              title: '',
-            },
-          ],
+          routes: [...tabViewRoutes],
         },
       };
     });
@@ -1579,31 +1543,32 @@ class GroupDetailScreen extends React.Component {
 
   onSaveGroup = (membersAction = {}) => {
     Keyboard.dismiss();
-    const { unmodifiedGroup } = this.state;
-    const group = this.transformGroupObject(this.state.group, membersAction);
-
-    let groupToSave = {
-      ...sharedTools.diff(unmodifiedGroup, group),
-    };
-
     if (this.state.group.title) {
+      const { unmodifiedGroup } = this.state;
+      const group = this.transformGroupObject(this.state.group, membersAction);
+      let groupToSave = {
+        ...sharedTools.diff(unmodifiedGroup, group),
+      };
       groupToSave = {
         ...groupToSave,
         title: this.state.group.title,
       };
+      if (this.state.group.ID) {
+        groupToSave = {
+          ...groupToSave,
+          ID: this.state.group.ID,
+        };
+      }
+      this.props.saveGroup(this.props.userData.domain, this.props.userData.token, groupToSave);
     } else {
-      groupToSave = {
-        ...groupToSave,
-        title: '',
-      };
+      //Empty contact title/name
+      toastSuccess.show(
+        <View>
+          <Text style={{ color: Colors.sucessText }}>{i18n.t('global.nameRequired')}</Text>
+        </View>,
+        3000,
+      );
     }
-    if (this.state.group.ID) {
-      groupToSave = {
-        ...groupToSave,
-        ID: this.state.group.ID,
-      };
-    }
-    this.props.saveGroup(this.props.userData.domain, this.props.userData.token, groupToSave);
   };
 
   onFormatDateToView = (date) => {
@@ -1648,14 +1613,6 @@ class GroupDetailScreen extends React.Component {
         );
       }
     }
-  };
-
-  tabChanged = (event) => {
-    this.props.navigation.setParams({ hideTabBar: event.i === 2 });
-    this.setState({
-      groupsTabActive: event.i === 3,
-      currentTabIndex: event.i,
-    });
   };
 
   showAssignedUser = () => {
