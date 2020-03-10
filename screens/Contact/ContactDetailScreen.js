@@ -280,6 +280,9 @@ const styles = StyleSheet.create({
     },
     ios: {},
   }),
+  validationErrorMessage: {
+    color: Colors.errorBackground,
+  },
 });
 
 const safeFind = (found, prop) => {
@@ -432,6 +435,7 @@ class ContactDetailScreen extends React.Component {
     foundGeonames: [],
     footerLocation: 0,
     footerHeight: 0,
+    nameRequired: false,
   };
 
   componentDidMount() {
@@ -1026,55 +1030,66 @@ class ContactDetailScreen extends React.Component {
   };
 
   onSaveContact = (quickAction = {}) => {
-    Keyboard.dismiss();
-    if (this.state.contact.title) {
-      const { unmodifiedContact } = this.state;
-      let contact = this.transformContactObject(this.state.contact, quickAction);
-      // Do not save fields with empty values
-      Object.keys(contact)
-        .filter(
-          (key) =>
-            key.includes('contact_') &&
-            Object.prototype.toString.call(contact[key]) === '[object Array]' &&
-            contact[key].length > 0 &&
-            !contact[key][0].delete,
-        )
-        .forEach((key) => {
-          contact = {
-            ...contact,
-            [key]: contact[key].filter((socialMedia) => socialMedia.value.length > 0),
+    this.setState(
+      {
+        nameRequired: false,
+      },
+      () => {
+        Keyboard.dismiss();
+        if (this.state.contact.title) {
+          const { unmodifiedContact } = this.state;
+          let contact = this.transformContactObject(this.state.contact, quickAction);
+          // Do not save fields with empty values
+          Object.keys(contact)
+            .filter(
+              (key) =>
+                key.includes('contact_') &&
+                Object.prototype.toString.call(contact[key]) === '[object Array]' &&
+                contact[key].length > 0 &&
+                !contact[key][0].delete,
+            )
+            .forEach((key) => {
+              contact = {
+                ...contact,
+                [key]: contact[key].filter((socialMedia) => socialMedia.value.length > 0),
+              };
+            });
+          let contactToSave = {
+            ...sharedTools.diff(unmodifiedContact, contact),
           };
-        });
-      let contactToSave = {
-        ...sharedTools.diff(unmodifiedContact, contact),
-      };
-      contactToSave = {
-        ...contactToSave,
-        title: this.state.contact.title,
-      };
-      // Remove empty arrays
-      Object.keys(contactToSave).forEach((key) => {
-        const value = contactToSave[key];
-        if (Object.prototype.hasOwnProperty.call(value, 'values') && value.values.length === 0) {
-          delete contactToSave[key];
+          contactToSave = {
+            ...contactToSave,
+            title: this.state.contact.title,
+          };
+          // Remove empty arrays
+          Object.keys(contactToSave).forEach((key) => {
+            const value = contactToSave[key];
+            if (
+              Object.prototype.hasOwnProperty.call(value, 'values') &&
+              value.values.length === 0
+            ) {
+              delete contactToSave[key];
+            }
+          });
+          if (this.state.contact.ID) {
+            contactToSave = {
+              ...contactToSave,
+              ID: this.state.contact.ID,
+            };
+          }
+          this.props.saveContact(
+            this.props.userData.domain,
+            this.props.userData.token,
+            contactToSave,
+          );
+        } else {
+          //Empty contact title/name
+          this.setState({
+            nameRequired: true,
+          });
         }
-      });
-      if (this.state.contact.ID) {
-        contactToSave = {
-          ...contactToSave,
-          ID: this.state.contact.ID,
-        };
-      }
-      this.props.saveContact(this.props.userData.domain, this.props.userData.token, contactToSave);
-    } else {
-      //Empty contact title/name
-      toastSuccess.show(
-        <View>
-          <Text style={{ color: Colors.sucessText }}>{i18n.t('global.nameRequired')}</Text>
-        </View>,
-        3000,
-      );
-    }
+      },
+    );
   };
 
   onFormatDateToView = (date) => {
@@ -1716,7 +1731,9 @@ class ContactDetailScreen extends React.Component {
                 </View>
               </Col>
               <Col>
-                <Label style={styles.formLabel}>{i18n.t('contactDetailScreen.fullName')}</Label>
+                <Label style={styles.formLabel}>
+                  {i18n.t('contactDetailScreen.fullName.label')}
+                </Label>
               </Col>
             </Row>
             <Row>
@@ -1726,11 +1743,31 @@ class ContactDetailScreen extends React.Component {
                 </View>
               </Col>
               <Col>
-                <Input
-                  value={this.state.contact.title}
-                  onChangeText={this.setContactTitle}
-                  style={styles.contactTextField}
-                />
+                <Col
+                  style={
+                    this.state.nameRequired
+                      ? {
+                          backgroundColor: '#FFE6E6',
+                          borderWidth: 2,
+                          borderColor: Colors.errorBackground,
+                        }
+                      : null
+                  }>
+                  <Input
+                    value={this.state.contact.title}
+                    onChangeText={this.setContactTitle}
+                    style={
+                      this.state.nameRequired
+                        ? [styles.contactTextField, { borderBottomWidth: 0 }]
+                        : styles.contactTextField
+                    }
+                  />
+                </Col>
+                {this.state.nameRequired ? (
+                  <Text style={styles.validationErrorMessage}>
+                    {i18n.t('contactDetailScreen.fullName.error')}
+                  </Text>
+                ) : null}
               </Col>
             </Row>
             <TouchableOpacity
@@ -4656,16 +4693,34 @@ class ContactDetailScreen extends React.Component {
                   <Grid>
                     <Row>
                       <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                        {i18n.t('contactDetailScreen.fullName')}
+                        {i18n.t('contactDetailScreen.fullName.label')}
                       </Label>
                     </Row>
-                    <Row>
+                    <Row
+                      style={
+                        this.state.nameRequired
+                          ? {
+                              backgroundColor: '#FFE6E6',
+                              borderWidth: 2,
+                              borderColor: Colors.errorBackground,
+                            }
+                          : null
+                      }>
                       <Input
                         placeholder={i18n.t('global.requiredField')}
                         onChangeText={this.setContactTitle}
-                        style={styles.contactTextField}
+                        style={
+                          this.state.nameRequired
+                            ? [styles.contactTextField, { borderBottomWidth: 0 }]
+                            : styles.contactTextField
+                        }
                       />
                     </Row>
+                    {this.state.nameRequired ? (
+                      <Text style={styles.validationErrorMessage}>
+                        {i18n.t('contactDetailScreen.fullName.error')}
+                      </Text>
+                    ) : null}
                     <Row>
                       <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
                         {i18n.t('contactDetailScreen.phoneNumber')}

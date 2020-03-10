@@ -78,12 +78,15 @@
     "addBaptized": "",
     "addCoachedBy": "",
     "addCoaching": "",
-    "fullName": "",
     "phoneNumber": "",
     "initialComment": "",
     "socialMedia": "",
     "noContactCommentPlacheHolder": "",
-    "noContactCommentPlacheHolder1": ""
+    "noContactCommentPlacheHolder1": "",
+    "fullName": {
+      "label": "",
+      "error": ""
+    }
   },
   "groupDetailScreen": {
     "addNewGroup": "",
@@ -92,13 +95,16 @@
     "searchPeerGroups": "",
     "childGroup": "",
     "searchChildGroups": "",
-    "groupName": "",
     "addMember": "",
     "noGroupCommentPlacheHolder": "",
     "noGroupCommentPlacheHolder1": "",
     "noGroupCommentPlacheHolderOffline": "",
     "selectLocations": "",
-    "noMembersMessage": ""
+    "noMembersMessage": "",
+    "groupName": {
+      "label": "",
+      "error": ""
+    }
   },
   "notificationsScreen": {
     "notifications": "",

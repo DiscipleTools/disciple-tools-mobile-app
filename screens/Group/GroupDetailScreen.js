@@ -405,6 +405,9 @@ const styles = StyleSheet.create({
     },
     ios: {},
   }),
+  validationErrorMessage: {
+    color: Colors.errorBackground,
+  },
 });
 
 const initialState = {
@@ -442,6 +445,7 @@ const initialState = {
   foundGeonames: [],
   footerLocation: 0,
   footerHeight: 0,
+  nameRequired: false,
 };
 
 const safeFind = (found, prop) => {
@@ -1542,33 +1546,37 @@ class GroupDetailScreen extends React.Component {
   };
 
   onSaveGroup = (membersAction = {}) => {
-    Keyboard.dismiss();
-    if (this.state.group.title) {
-      const { unmodifiedGroup } = this.state;
-      const group = this.transformGroupObject(this.state.group, membersAction);
-      let groupToSave = {
-        ...sharedTools.diff(unmodifiedGroup, group),
-      };
-      groupToSave = {
-        ...groupToSave,
-        title: this.state.group.title,
-      };
-      if (this.state.group.ID) {
-        groupToSave = {
-          ...groupToSave,
-          ID: this.state.group.ID,
-        };
-      }
-      this.props.saveGroup(this.props.userData.domain, this.props.userData.token, groupToSave);
-    } else {
-      //Empty contact title/name
-      toastSuccess.show(
-        <View>
-          <Text style={{ color: Colors.sucessText }}>{i18n.t('global.nameRequired')}</Text>
-        </View>,
-        3000,
-      );
-    }
+    this.setState(
+      {
+        nameRequired: false,
+      },
+      () => {
+        Keyboard.dismiss();
+        if (this.state.group.title) {
+          const { unmodifiedGroup } = this.state;
+          const group = this.transformGroupObject(this.state.group, membersAction);
+          let groupToSave = {
+            ...sharedTools.diff(unmodifiedGroup, group),
+          };
+          groupToSave = {
+            ...groupToSave,
+            title: this.state.group.title,
+          };
+          if (this.state.group.ID) {
+            groupToSave = {
+              ...groupToSave,
+              ID: this.state.group.ID,
+            };
+          }
+          this.props.saveGroup(this.props.userData.domain, this.props.userData.token, groupToSave);
+        } else {
+          //Empty contact title/name
+          this.setState({
+            nameRequired: true,
+          });
+        }
+      },
+    );
   };
 
   onFormatDateToView = (date) => {
@@ -2005,7 +2013,9 @@ class GroupDetailScreen extends React.Component {
                 </View>
               </Col>
               <Col>
-                <Label style={styles.formLabel}>{i18n.t('groupDetailScreen.groupName')}</Label>
+                <Label style={styles.formLabel}>
+                  {i18n.t('groupDetailScreen.groupName.label')}
+                </Label>
               </Col>
             </Row>
             <Row>
@@ -2015,11 +2025,31 @@ class GroupDetailScreen extends React.Component {
                 </View>
               </Col>
               <Col>
-                <Input
-                  value={this.state.group.title}
-                  onChangeText={this.setGroupTitle}
-                  style={styles.groupTextField}
-                />
+                <Col
+                  style={
+                    this.state.nameRequired
+                      ? {
+                          backgroundColor: '#FFE6E6',
+                          borderWidth: 2,
+                          borderColor: Colors.errorBackground,
+                        }
+                      : null
+                  }>
+                  <Input
+                    value={this.state.group.title}
+                    onChangeText={this.setGroupTitle}
+                    style={
+                      this.state.nameRequired
+                        ? [styles.groupTextField, { borderBottomWidth: 0 }]
+                        : styles.groupTextField
+                    }
+                  />
+                </Col>
+                {this.state.nameRequired ? (
+                  <Text style={styles.validationErrorMessage}>
+                    {i18n.t('groupDetailScreen.groupName.error')}
+                  </Text>
+                ) : null}
               </Col>
             </Row>
             <TouchableOpacity
@@ -3894,16 +3924,34 @@ class GroupDetailScreen extends React.Component {
                   <Grid>
                     <Row>
                       <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                        {i18n.t('groupDetailScreen.groupName')}
+                        {i18n.t('groupDetailScreen.groupName.label')}
                       </Label>
                     </Row>
-                    <Row>
+                    <Row
+                      style={
+                        this.state.nameRequired
+                          ? {
+                              backgroundColor: '#FFE6E6',
+                              borderWidth: 2,
+                              borderColor: Colors.errorBackground,
+                            }
+                          : null
+                      }>
                       <Input
                         placeholder={i18n.t('global.requiredField')}
                         onChangeText={this.setGroupTitle}
-                        style={styles.groupTextField}
+                        style={
+                          this.state.nameRequired
+                            ? [styles.groupTextField, { borderBottomWidth: 0 }]
+                            : styles.groupTextField
+                        }
                       />
                     </Row>
+                    {this.state.nameRequired ? (
+                      <Text style={styles.validationErrorMessage}>
+                        {i18n.t('groupDetailScreen.groupName.error')}
+                      </Text>
+                    ) : null}
                     <Row>
                       <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
                         {this.props.groupSettings.fields.group_type.name}

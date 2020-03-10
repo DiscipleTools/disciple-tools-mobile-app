@@ -78,7 +78,10 @@
     "addBaptized": "Add baptized",
     "addCoachedBy": "Add coached by",
     "addCoaching": "Add coaching",
-    "fullName": "Full Name",
+    "fullName": {
+      "label": "Full Name",
+      "error": "Name is required"
+    },
     "phoneNumber": "Phone Number",
     "initialComment": "Initial Comment",
     "socialMedia": "Social Media",
@@ -92,7 +95,10 @@
     "searchPeerGroups": "Search peer groups",
     "childGroup": "Child Group",
     "searchChildGroups": "Search child groups",
-    "groupName": "Group Name",
+    "groupName": {
+      "label": "Group Name",
+      "error": "Name is required"
+    },
     "addMember": "Add Member",
     "noGroupCommentPlacheHolder": "There are not any group comments currently available.",
     "noGroupCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",

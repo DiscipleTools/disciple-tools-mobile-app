@@ -78,12 +78,15 @@
     "addBaptized": "إضافة مُعمّد",
     "addCoachedBy": "",
     "addCoaching": "",
-    "fullName": "الاسم الكامل",
     "phoneNumber": "رقم الهاتف",
     "initialComment": "تعليق أولي",
     "socialMedia": "",
     "noContactCommentPlacheHolder": "",
-    "noContactCommentPlacheHolder1": ""
+    "noContactCommentPlacheHolder1": "",
+    "fullName": {
+      "label": "",
+      "error": ""
+    }
   },
   "groupDetailScreen": {
     "addNewGroup": "إضافة مجموعة جديدة",
@@ -92,13 +95,16 @@
     "searchPeerGroups": "بحث مجموعات الأقران",
     "childGroup": "ربط المجموعة الإبن",
     "searchChildGroups": "بحث المجموعة الإبن",
-    "groupName": "اسم المجموعة",
     "addMember": "",
     "noGroupCommentPlacheHolder": "",
     "noGroupCommentPlacheHolder1": "",
     "noGroupCommentPlacheHolderOffline": "",
     "selectLocations": "",
-    "noMembersMessage": ""
+    "noMembersMessage": "",
+    "groupName": {
+      "label": "",
+      "error": ""
+    }
   },
   "notificationsScreen": {
     "notifications": "",

@@ -78,12 +78,15 @@
     "addBaptized": "Add baptized",
     "addCoachedBy": "Add coached by",
     "addCoaching": "Koçluk ekle",
-    "fullName": "Tam İsim",
     "phoneNumber": "Telefon Numarası",
     "initialComment": "İlk Yorum",
     "socialMedia": "",
     "noContactCommentPlacheHolder": "",
-    "noContactCommentPlacheHolder1": ""
+    "noContactCommentPlacheHolder1": "",
+    "fullName": {
+      "label": "",
+      "error": ""
+    }
   },
   "groupDetailScreen": {
     "addNewGroup": "Grup Ekle",
@@ -92,13 +95,16 @@
     "searchPeerGroups": "Eş gruplarda ara",
     "childGroup": "Alt Grup",
     "searchChildGroups": "Alt gruplarda ara",
-    "groupName": "Grup Adı",
     "addMember": "",
     "noGroupCommentPlacheHolder": "",
     "noGroupCommentPlacheHolder1": "",
     "noGroupCommentPlacheHolderOffline": "",
     "selectLocations": "",
-    "noMembersMessage": ""
+    "noMembersMessage": "",
+    "groupName": {
+      "label": "",
+      "error": ""
+    }
   },
   "notificationsScreen": {
     "notifications": "",

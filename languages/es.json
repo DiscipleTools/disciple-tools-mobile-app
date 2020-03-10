@@ -78,7 +78,10 @@
     "addBaptized": "Buscar multiplicadores y contactos",
     "addCoachedBy": "Buscar multiplicadores y contactos",
     "addCoaching": "Buscar multiplicadores y contactos",
-    "fullName": "Nombre",
+    "fullName": {
+      "label": "Nombre",
+      "error": "El nombre es requerido"
+    },
     "phoneNumber": "Telefono",
     "initialComment": "Primer Comentario",
     "socialMedia": "Redes Sociales",
@@ -92,7 +95,10 @@
     "searchPeerGroups": "Buscar grupos paritarios",
     "childGroup": "Grupos Subsiguientes",
     "searchChildGroups": "Buscar grupos subsiguientes",
-    "groupName": "Nombre del Grupo",
+    "groupName": {
+      "label": "Nombre del Grupo",
+      "error": "El nombre es requerido"
+    },
     "addMember": "Añadir miembro",
     "noGroupCommentPlacheHolder": "No hay comentarios del grupo disponibles actualmente.",
     "noGroupCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
