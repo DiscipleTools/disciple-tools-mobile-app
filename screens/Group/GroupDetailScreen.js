@@ -2555,6 +2555,8 @@ class GroupDetailScreen extends React.Component {
     <View style={{ flex: 1, paddingBottom: this.state.footerHeight + this.state.footerLocation }}>
       {this.state.comments.length == 0 &&
         this.state.activities.length == 0 &&
+        !this.state.loadComments &&
+        !this.state.loadActivities &&
         this.noCommentsRender()}
       <FlatList
         style={{

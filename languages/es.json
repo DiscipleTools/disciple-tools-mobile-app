@@ -66,7 +66,7 @@
     "rememberPasswordInactive": "Mantener iniciada la sesión inactivo"
   },
   "contactDetailScreen": {
-    "addNewContact": "Crear nuevo contacto",
+    "addNewContact": "Crear contacto",
     "subAssignThisContact": "Subasignar este contacto",
     "mobile": "Telefonos",
     "selectLocations": "Seleccionar ubicaciones",
@@ -86,7 +86,7 @@
     "noContactCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente."
   },
   "groupDetailScreen": {
-    "addNewGroup": "Crear un grupo nuevo",
+    "addNewGroup": "Crear grupo",
     "selectCoaches": "Seleccionar Entrenador del Grupo",
     "searchGroups": "Buscar grupos",
     "searchPeerGroups": "Buscar grupos paritarios",
