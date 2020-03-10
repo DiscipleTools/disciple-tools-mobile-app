@@ -23,7 +23,8 @@
     "search": "Ara",
     "membersActivity": "",
     "offline": "",
-    "moreFields": ""
+    "moreFields": "",
+    "nameRequired": ""
   },
   "loginScreen": {
     "domain": {

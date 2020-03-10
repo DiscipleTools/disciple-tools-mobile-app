@@ -23,7 +23,8 @@
     "search": "Buscar",
     "membersActivity": "Miembros",
     "offline": "Desconectado",
-    "moreFields": "Más Campos"
+    "moreFields": "Más Campos",
+    "nameRequired": "Nombre requerido"
   },
   "loginScreen": {
     "domain": {

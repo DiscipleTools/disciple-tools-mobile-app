@@ -86,6 +86,24 @@ const defaultFaithMilestones = [
   'milestone_in_group',
   'milestone_planting',
 ];
+let tabViewRoutes = [
+  {
+    key: 'details',
+    title: i18n.t('global.details'),
+  },
+  {
+    key: 'progress',
+    title: i18n.t('global.progress'),
+  },
+  {
+    key: 'comments',
+    title: i18n.t('global.commentsActivity'),
+  },
+  {
+    key: 'connections',
+    title: i18n.t('contactDetailScreen.connections'),
+  },
+];
 const styles = StyleSheet.create({
   tabBarUnderlineStyle: {
     backgroundColor: Colors.tintColor,
@@ -374,12 +392,7 @@ class ContactDetailScreen extends React.Component {
               android: 180,
               ios: 140,
             }),
-        marginLeft: params.onlyView
-          ? undefined
-          : Platform.select({
-              android: 21,
-              ios: 25,
-            }),
+        marginLeft: params.onlyView ? undefined : 25,
       },
     };
   };
@@ -414,24 +427,7 @@ class ContactDetailScreen extends React.Component {
     moreFields: false,
     tabViewConfig: {
       index: 0,
-      routes: [
-        {
-          key: 'details',
-          title: i18n.t('global.details'),
-        },
-        {
-          key: 'progress',
-          title: i18n.t('global.progress'),
-        },
-        {
-          key: 'comments',
-          title: i18n.t('global.commentsActivity'),
-        },
-        {
-          key: 'connections',
-          title: i18n.t('contactDetailScreen.connections'),
-        },
-      ],
+      routes: [...tabViewRoutes],
     },
     foundGeonames: [],
     footerLocation: 0,
@@ -861,7 +857,12 @@ class ContactDetailScreen extends React.Component {
 
   onEnableEdit = () => {
     this.setState((state) => {
-      const indexFix = state.tabViewConfig.index === 3 ? 2 : state.tabViewConfig.index;
+      let indexFix;
+      if (state.tabViewConfig.index < 3) {
+        indexFix = state.tabViewConfig.index;
+      } else if (state.tabViewConfig.index > 2) {
+        indexFix = state.tabViewConfig.index - 1;
+      }
       return {
         onlyView: false,
         tabViewConfig: {
@@ -881,7 +882,8 @@ class ContactDetailScreen extends React.Component {
   onDisableEdit = () => {
     const { unmodifiedContact } = this.state;
     this.setState((state) => {
-      const indexFix = state.tabViewConfig.index >= 2 ? 3 : state.tabViewConfig.index;
+      const indexFix =
+        state.tabViewConfig.index > 1 ? state.tabViewConfig.index + 1 : state.tabViewConfig.index;
       return {
         onlyView: true,
         contact: {
@@ -893,24 +895,7 @@ class ContactDetailScreen extends React.Component {
         tabViewConfig: {
           ...state.tabViewConfig,
           index: indexFix,
-          routes: [
-            {
-              key: 'details',
-              title: i18n.t('global.details'),
-            },
-            {
-              key: 'progress',
-              title: i18n.t('global.progress'),
-            },
-            {
-              key: 'comments',
-              title: i18n.t('global.commentsActivity'),
-            },
-            {
-              key: 'connections',
-              title: i18n.t('contactDetailScreen.connections'),
-            },
-          ],
+          routes: [...tabViewRoutes],
         },
       };
     });
@@ -1042,62 +1027,54 @@ class ContactDetailScreen extends React.Component {
 
   onSaveContact = (quickAction = {}) => {
     Keyboard.dismiss();
-    const { unmodifiedContact } = this.state;
-    let contact = this.transformContactObject(this.state.contact, quickAction);
-
-    // Do not save fields with empty values
-    Object.keys(contact)
-      .filter(
-        (key) =>
-          key.includes('contact_') &&
-          Object.prototype.toString.call(contact[key]) === '[object Array]' &&
-          contact[key].length > 0 &&
-          !contact[key][0].delete,
-      )
-      .forEach((key) => {
-        contact = {
-          ...contact,
-          [key]: contact[key].filter((socialMedia) => socialMedia.value.length > 0),
-        };
-      });
-
-    let contactToSave = {
-      ...sharedTools.diff(unmodifiedContact, contact),
-    };
-    // Set default title value
-    if (!this.state.contact.title) {
-      contactToSave = {
-        ...contactToSave,
-        title: '',
-      };
-    }
-    // Remove empty arrays
-    Object.keys(contactToSave).forEach((key) => {
-      const value = contactToSave[key];
-      if (Object.prototype.hasOwnProperty.call(value, 'values') && value.values.length === 0) {
-        delete contactToSave[key];
-      }
-    });
-
     if (this.state.contact.title) {
+      const { unmodifiedContact } = this.state;
+      let contact = this.transformContactObject(this.state.contact, quickAction);
+      // Do not save fields with empty values
+      Object.keys(contact)
+        .filter(
+          (key) =>
+            key.includes('contact_') &&
+            Object.prototype.toString.call(contact[key]) === '[object Array]' &&
+            contact[key].length > 0 &&
+            !contact[key][0].delete,
+        )
+        .forEach((key) => {
+          contact = {
+            ...contact,
+            [key]: contact[key].filter((socialMedia) => socialMedia.value.length > 0),
+          };
+        });
+      let contactToSave = {
+        ...sharedTools.diff(unmodifiedContact, contact),
+      };
       contactToSave = {
         ...contactToSave,
         title: this.state.contact.title,
       };
+      // Remove empty arrays
+      Object.keys(contactToSave).forEach((key) => {
+        const value = contactToSave[key];
+        if (Object.prototype.hasOwnProperty.call(value, 'values') && value.values.length === 0) {
+          delete contactToSave[key];
+        }
+      });
+      if (this.state.contact.ID) {
+        contactToSave = {
+          ...contactToSave,
+          ID: this.state.contact.ID,
+        };
+      }
+      this.props.saveContact(this.props.userData.domain, this.props.userData.token, contactToSave);
     } else {
-      contactToSave = {
-        ...contactToSave,
-        title: '',
-      };
+      //Empty contact title/name
+      toastSuccess.show(
+        <View>
+          <Text style={{ color: Colors.sucessText }}>{i18n.t('global.nameRequired')}</Text>
+        </View>,
+        3000,
+      );
     }
-
-    if (this.state.contact.ID) {
-      contactToSave = {
-        ...contactToSave,
-        ID: this.state.contact.ID,
-      };
-    }
-    this.props.saveContact(this.props.userData.domain, this.props.userData.token, contactToSave);
   };
 
   onFormatDateToView = (date) => {

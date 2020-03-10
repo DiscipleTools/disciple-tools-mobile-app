@@ -23,7 +23,8 @@
     "search": "",
     "membersActivity": "",
     "offline": "",
-    "moreFields": ""
+    "moreFields": "",
+    "nameRequired": ""
   },
   "loginScreen": {
     "domain": {
