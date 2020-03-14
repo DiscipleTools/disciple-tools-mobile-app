@@ -1,124 +1,124 @@
 {
   "global": {
     "error": {
-      "code": "",
-      "message": ""
+      "code": "碼： ",
+      "message": "信息： "
     },
     "success": {
-      "save": ""
+      "save": "數據保存成功！"
     },
-    "groups": "",
-    "details": "",
-    "selectPeopleGroups": "",
-    "address": "",
-    "progress": "",
-    "commentsActivity": "",
-    "writeYourCommentNoteHere": "",
-    "requiredField": "",
-    "edit": "",
-    "cancel": "",
-    "save": "",
-    "online": "",
-    "language": "",
-    "search": "",
-    "membersActivity": "",
-    "offline": "",
-    "moreFields": "",
-    "nameRequired": ""
+    "groups": "團體",
+    "details": "細節",
+    "selectPeopleGroups": "選擇人員組",
+    "address": "地址",
+    "progress": "進展",
+    "commentsActivity": "評論和活動",
+    "writeYourCommentNoteHere": "在這裡寫下您的評論或註釋",
+    "requiredField": "必填項目",
+    "edit": "編輯",
+    "cancel": "取消",
+    "save": "保存",
+    "online": "線上",
+    "offline": "離線",
+    "language": "語言",
+    "search": "搜索",
+    "membersActivity": "會員",
+    "moreFields": "更多領域",
+    "nameRequired": "姓名必填"
   },
   "loginScreen": {
     "domain": {
-      "label": "",
-      "placeholder": "",
-      "error": "",
-      "errorForgotPass": ""
+      "label": "網址",
+      "placeholder": "例如。 myteam.disciple.tools",
+      "error": "域是必填項",
+      "errorForgotPass": "請輸入URL以開始檢索密碼"
     },
     "username": {
-      "label": "",
-      "error": ""
+      "label": "用戶名",
+      "error": "用戶名為必填項"
     },
     "password": {
-      "label": "",
-      "error": ""
+      "label": "密碼",
+      "error": "密碼是必需的"
     },
-    "logIn": "",
-    "forgotPassword": "",
+    "logIn": "登錄",
+    "forgotPassword": "忘記密碼？",
     "errors": {
-      "invalidUsername": "",
-      "incorrectPassword": ""
+      "invalidUsername": "未知的用戶名。再次檢查或嘗試您的電子郵件地址。",
+      "incorrectPassword": "您輸入的用戶名密碼不正確"
     }
   },
   "contactsScreen": {
-    "contacts": "",
-    "noContactPlacheHolder": "",
-    "noContactPlacheHolder1": "",
-    "noContactPlacheHolderOffline": ""
+    "contacts": "聯絡人",
+    "noContactPlacheHolder": "當前沒有任何联係人。",
+    "noContactPlacheHolder1": "從您的網站獲取它們可能存在問題。向下拖動以嘗試刷新，然後重試。",
+    "noContactPlacheHolderOffline": "您目前離線。確保您已連接到wifi或移動數據，以便刷新並獲取聯繫人。"
   },
   "settingsScreen": {
-    "settings": "",
-    "networkUnavailable": "",
-    "networkAvailable": "",
-    "storybook": "",
-    "logout": "",
-    "helpSupport": "",
-    "rememberPassword": "",
-    "rememberPasswordActive": "",
-    "rememberPasswordInactive": ""
+    "settings": "設定值",
+    "networkUnavailable": "網絡不可用。現在處於“離線”模式。",
+    "networkAvailable": "網絡可用。現在處於“在線”模式。",
+    "storybook": "故事書",
+    "logout": "登出",
+    "helpSupport": "幫助支持",
+    "rememberPassword": "記住密碼",
+    "rememberPasswordActive": "保持登錄狀態",
+    "rememberPasswordInactive": "保持登錄狀態已禁用"
   },
   "contactDetailScreen": {
-    "addNewContact": "",
-    "subAssignThisContact": "",
-    "mobile": "",
-    "selectLocations": "",
-    "selectSources": "",
-    "connections": "",
-    "addGroup": "",
-    "addConnection": "",
-    "addBaptizedBy": "",
-    "addBaptized": "",
-    "addCoachedBy": "",
-    "addCoaching": "",
-    "phoneNumber": "",
-    "initialComment": "",
-    "socialMedia": "",
-    "noContactCommentPlacheHolder": "",
-    "noContactCommentPlacheHolder1": "",
+    "addNewContact": "新增聯絡人",
+    "subAssignThisContact": "分配此聯繫人",
+    "mobile": "移動",
+    "selectLocations": "選擇地點",
+    "selectSources": "選擇來源",
+    "connections": "連接數",
+    "addGroup": "新增群組",
+    "addConnection": "添加連接",
+    "addBaptizedBy": "添加受洗者",
+    "addBaptized": "添加受洗",
+    "addCoachedBy": "添加教練",
+    "addCoaching": "添加教練",
     "fullName": {
-      "label": "",
-      "error": ""
-    }
+      "label": "全名",
+      "error": "名稱為必填項"
+    },
+    "phoneNumber": "電話號碼",
+    "initialComment": "初步評論",
+    "socialMedia": "社交媒體",
+    "noContactCommentPlacheHolder": "當前沒有任何联系方式。",
+    "noContactCommentPlacheHolder1": "從您的網站獲取它們可能存在問題。向下拖動以嘗試刷新，然後重試。"
   },
   "groupDetailScreen": {
-    "addNewGroup": "",
-    "selectCoaches": "",
-    "searchGroups": "",
-    "searchPeerGroups": "",
-    "childGroup": "",
-    "searchChildGroups": "",
-    "addMember": "",
-    "noGroupCommentPlacheHolder": "",
-    "noGroupCommentPlacheHolder1": "",
-    "noGroupCommentPlacheHolderOffline": "",
-    "selectLocations": "",
-    "noMembersMessage": "",
+    "addNewGroup": "新增群組",
+    "selectCoaches": "選擇教練",
+    "searchGroups": "搜索組",
+    "searchPeerGroups": "搜索同齡人組",
+    "childGroup": "兒童組",
+    "searchChildGroups": "搜索子組",
     "groupName": {
-      "label": "",
-      "error": ""
-    }
+      "label": "組的名字",
+      "error": "名稱為必填項"
+    },
+    "addMember": "新增會員",
+    "noGroupCommentPlacheHolder": "當前沒有任何組註釋。",
+    "noGroupCommentPlacheHolder1": "從您的網站獲取它們可能存在問題。向下拖動以嘗試刷新，然後重試。",
+    "noGroupCommentPlacheHolderOffline": "您目前離線。確保您已連接到wifi或移動數據，以便刷新並獲取群組評論。",
+    "selectLocations": "選擇地點",
+    "noMembersMessage": "沒有成員。 單擊此處或單擊“更改”以將一些成員添加到該組。"
   },
   "notificationsScreen": {
-    "notifications": "",
-    "loadMore": "",
-    "new": "",
-    "unRead": "",
-    "all": "",
-    "markAll": "",
-    "dontHaveNotificationsUnread": "",
-    "dontHaveNotifications": ""
+    "notifications": "通知事項",
+    "loadMore": "裝載更多",
+    "new": "新",
+    "unRead": "未讀",
+    "all": "所有",
+    "markAll": "全部標記",
+    "dontHaveNotificationsUnread": "沒有未讀的通知",
+    "dontHaveNotifications": "沒有通知"
   },
   "groupsScreen": {
-    "noGroupPlacheHolder": "",
-    "noGroupPlacheHolder1": "",
-    "noGroupPlacheHolderOffline": ""
+    "noGroupPlacheHolder": "當前沒有任何組。",
+    "noGroupPlacheHolder1": "從您的網站獲取它們可能存在問題。向下拖動以嘗試刷新，然後重試。",
+    "noGroupPlacheHolderOffline": "您目前離線。確保您已連接到wifi或移動數據，以便刷新並分組。"
   }
 }
