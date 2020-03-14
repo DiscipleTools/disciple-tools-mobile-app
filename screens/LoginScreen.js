@@ -197,6 +197,7 @@ class LoginScreen extends React.Component {
       passwordIsInvalid: false,
       hidePassword: true,
     };
+    i18n.setLocale(props.i18n.locale, props.i18n.isRTL);
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
