@@ -374,11 +374,14 @@ class LoginScreen extends React.Component {
 
     if (this.props.i18n && prevProps.i18n !== this.props.i18n) {
       i18n.setLocale(this.props.i18n.locale, this.props.i18n.isRTL);
-      I18nManager.forceRTL(this.props.i18n.isRTL);
       if (prevProps.i18n.isRTL !== this.props.i18n.isRTL) {
+        I18nManager.forceRTL(this.props.i18n.isRTL);
         setTimeout(() => {
           Updates.reload();
-        }, 3000);
+        }, 1000);
+      } else {
+        // TODO: refactor this code so this force re-render is no longer necessary
+        this.forceUpdate();
       }
     }
 
