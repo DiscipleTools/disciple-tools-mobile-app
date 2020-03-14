@@ -636,7 +636,7 @@ class LoginScreen extends React.Component {
             {userErrorMessage}
             <View style={[passwordStyle]}>
               <View style={{ margin: 10 }}>
-                <Text>{i18n.t('loginScreen.password.label')}</Text>
+                <Text style={{ textAlign: 'left' }}>{i18n.t('loginScreen.password.label')}</Text>
                 <View style={{ flexDirection: 'row' }}>
                   <Icon
                     type="Ionicons"
@@ -648,6 +648,7 @@ class LoginScreen extends React.Component {
                     secureTextEntry={this.state.hidePassword}
                     style={styles.textBox}
                     onChangeText={(text) => this.setState({ password: text })}
+                    textAlign={this.props.i18n.isRTL ? 'right' : 'left'}
                   />
                   <TouchableOpacity
                     activeOpacity={0.8}
