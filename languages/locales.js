@@ -5,19 +5,9 @@ export default [
     direction: 'ltr',
   },
   {
-    code: 'ar',
-    name: 'عربي',
-    direction: 'rtl',
-  },
-  {
     code: 'es',
     name: 'Español',
     direction: 'ltr',
-  },
-  {
-    code: 'fa',
-    name: 'فارسی',
-    direction: 'rtl',
   },
   {
     code: 'fr',
@@ -25,7 +15,7 @@ export default [
     direction: 'ltr',
   },
   {
-    code: 'pt',
+    code: 'pt-BR',
     name: 'Português',
     direction: 'ltr',
   },
@@ -40,13 +30,23 @@ export default [
     direction: 'ltr',
   },
   {
-    code: 'zh-cn',
+    code: 'zh-hans',
     name: '汉语',
     direction: 'ltr',
   },
   {
-    code: 'zh-tw',
+    code: 'zh-hant',
     name: '漢語',
     direction: 'ltr',
+  },
+  {
+    code: 'ar',
+    name: 'عربي',
+    direction: 'rtl',
+  },
+  {
+    code: 'fa',
+    name: 'فارسی',
+    direction: 'rtl',
   },
 ];
