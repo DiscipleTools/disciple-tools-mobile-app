@@ -1026,6 +1026,7 @@ class GroupDetailScreen extends React.Component {
           index: indexFix,
           routes: state.tabViewConfig.routes.filter((route) => route.key !== 'comments'),
         },
+        editingMembers: indexFix === 2,
       };
     });
     this.props.navigation.setParams({
@@ -1413,7 +1414,7 @@ class GroupDetailScreen extends React.Component {
         },
       }),
       () => {
-        this.onSaveGroup(true);
+        this.onSaveGroup(/*true*/);
       },
     );
   };
@@ -1441,7 +1442,7 @@ class GroupDetailScreen extends React.Component {
           },
         }),
         () => {
-          this.onSaveGroup(true);
+          this.onSaveGroup(/*true*/);
         },
       );
     }
@@ -1476,7 +1477,7 @@ class GroupDetailScreen extends React.Component {
         },
       }),
       () => {
-        this.onSaveGroup(true);
+        this.onSaveGroup(/*true*/);
       },
     );
   };
@@ -1599,11 +1600,11 @@ class GroupDetailScreen extends React.Component {
     return transformedGroup;
   };
 
-  onSaveGroup = (editingMembers = false) => {
+  onSaveGroup = (/*editingMembers = false*/) => {
     this.setState(
       {
         nameRequired: false,
-        editingMembers: editingMembers ? editingMembers : undefined,
+        //editingMembers: editingMembers ? editingMembers : undefined,
       },
       () => {
         Keyboard.dismiss();
@@ -1711,12 +1712,15 @@ class GroupDetailScreen extends React.Component {
   };
 
   tabChanged = (index) => {
-    this.props.navigation.setParams({ hideTabBar: index === 2 });
+    this.props.navigation.setParams({
+      hideTabBar: (index === 2 && this.state.onlyView) || !this.state.onlyView,
+    });
     this.setState((prevState) => ({
       tabViewConfig: {
         ...prevState.tabViewConfig,
         index,
       },
+      editingMembers: index === 2 && !prevState.onlyView,
     }));
   };
 
@@ -2902,6 +2906,7 @@ class GroupDetailScreen extends React.Component {
                     itemId="value"
                     items={this.state.usersContacts.filter(
                       (userContact) =>
+                        this.state.group.members &&
                         !this.state.group.members.values.find(
                           (member) => member.value === userContact.value,
                         ),
