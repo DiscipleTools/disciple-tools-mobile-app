@@ -331,7 +331,10 @@ export default function contactsReducer(state = initialState, action) {
                 }
                 if (findObjectInOldRequestIndex > -1) {
                   // if exist
-                  if (Object.prototype.hasOwnProperty.call(object, 'delete')) {
+                  if (
+                    Object.prototype.hasOwnProperty.call(object, 'delete') &&
+                    object.delete === true
+                  ) {
                     oldCollection.splice(findObjectInOldRequestIndex, 1);
                   } else {
                     // update the object

@@ -436,7 +436,7 @@ const initialState = {
   showAssignedToModal: false,
   groupStatusBackgroundColor: '#ffffff',
   loading: false,
-  isMemberEdit: false,
+  editingMembers: false,
   tabViewConfig: {
     index: 0,
     routes: [...tabViewRoutes],
@@ -608,6 +608,7 @@ class GroupDetailScreen extends React.Component {
       loadingActivities,
       newComment,
       foundGeonames,
+      isConnected,
     } = nextProps;
     let newState = {
       ...prevState,
@@ -681,6 +682,36 @@ class GroupDetailScreen extends React.Component {
           });
         }
         if (newState.group.members) {
+          // Add member names to list in OFFLINE mode
+          if (!isConnected) {
+            let membersList = newState.group.members.values.map((member) => {
+              if (!member.name) {
+                member = {
+                  ...member,
+                  name: safeFind(
+                    newState.usersContacts.find((user) => user.value === member.value),
+                    'name',
+                  ),
+                };
+              }
+              return member;
+            });
+            newState = {
+              ...newState,
+              group: {
+                ...newState.group,
+                members: {
+                  values: [...membersList],
+                },
+              },
+              unmodifiedGroup: {
+                ...newState.group,
+                members: {
+                  values: [...membersList],
+                },
+              },
+            };
+          }
           newState = {
             ...newState,
             updateMembersList: !newState.updateMembersList,
@@ -781,13 +812,13 @@ class GroupDetailScreen extends React.Component {
       ) {
         // Highlight Updates -> Compare this.state.contact with contact and show differences
         this.onRefreshCommentsActivities(group.ID);
-        if (!this.state.isMemberEdit) {
-          toastSuccess.show(
-            <View>
-              <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
-            </View>,
-            3000,
-          );
+        toastSuccess.show(
+          <View>
+            <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
+          </View>,
+          3000,
+        );
+        if (!this.state.editingMembers) {
           this.onDisableEdit();
         }
       }
@@ -1362,17 +1393,106 @@ class GroupDetailScreen extends React.Component {
     });
   };
 
-  getSelectizeValuesToSave = (dbData, selectizeRef) => {
+  onAddMember = (selectedValue) => {
+    this.setState(
+      (prevState) => ({
+        group: {
+          ...prevState.group,
+          members: {
+            values: [
+              ...prevState.group.members.values,
+              {
+                name: safeFind(
+                  prevState.usersContacts.find((user) => user.value === selectedValue.value),
+                  'name',
+                ), // Show name in list while request its processed
+                value: selectedValue.value,
+              },
+            ],
+          },
+        },
+      }),
+      () => {
+        this.onSaveGroup(true);
+      },
+    );
+  };
+
+  onRemoveMember = (selectedValue) => {
+    const foundMember = this.state.group.members.values.find(
+      (member) => member.value === selectedValue.value,
+    );
+    if (foundMember) {
+      let membersListCopy = [...this.state.group.members.values];
+      const foundMemberIndex = membersListCopy.indexOf(foundMember);
+      /*const memberModified = {
+        ...foundMember,
+        delete: true
+      };
+      membersListCopy[foundMemberIndex] = memberModified;*/
+      membersListCopy.splice(foundMemberIndex, 1);
+      this.setState(
+        (prevState) => ({
+          group: {
+            ...prevState.group,
+            members: {
+              values: [...membersListCopy],
+            },
+          },
+        }),
+        () => {
+          this.onSaveGroup(true);
+        },
+      );
+    }
+  };
+
+  onSetLeader = (selectedValue) => {
+    let leadersListCopy = [...this.state.group.leaders.values];
+    const leaderModified = {
+      ...selectedValue,
+      delete:
+        this.state.group.leaders &&
+        leadersListCopy.find((leader) => leader.value === selectedValue.value)
+          ? true
+          : false,
+    };
+    const foundLeader = leadersListCopy.find((leader) => leader.value === selectedValue.value);
+    if (foundLeader) {
+      const foundLeaderIndex = leadersListCopy.indexOf(foundLeader);
+      leadersListCopy[foundLeaderIndex] = {
+        ...leaderModified,
+      };
+    } else {
+      leadersListCopy.push(leaderModified);
+    }
+    this.setState(
+      (prevState) => ({
+        group: {
+          ...prevState.group,
+          leaders: {
+            values: [...leadersListCopy],
+          },
+        },
+      }),
+      () => {
+        this.onSaveGroup(true);
+      },
+    );
+  };
+
+  getSelectizeValuesToSave = (dbData, selectizeRef, selectedValues = null) => {
     const dbItems = [...dbData];
-    const localItems = [];
-
-    const selectedValues = selectizeRef.getSelectedItems();
-
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const item = selectedValues.entities.item[itemValue];
-      localItems.push(item);
-    });
-
+    let localItems = [];
+    if (selectedValues) {
+      localItems = [...selectedValues];
+    } else {
+      selectedValues = selectizeRef.getSelectedItems();
+      Object.keys(selectedValues.entities.item).forEach((itemValue) => {
+        const item = selectedValues.entities.item[itemValue];
+        localItems.push(item);
+      });
+    }
     const itemsToSave = localItems
       .filter((localItem) => {
         const foundLocalInDatabase = dbItems.find((dbItem) => dbItem.value === localItem.value);
@@ -1393,87 +1513,10 @@ class GroupDetailScreen extends React.Component {
     return itemsToSave;
   };
 
-  transformGroupObject = (group, membersAction = {}) => {
+  transformGroupObject = (group) => {
     let transformedGroup = {
       ...group,
     };
-    if (Object.prototype.hasOwnProperty.call(membersAction, 'members')) {
-      this.setState({ isMemberEdit: true });
-      transformedGroup = {
-        ...transformedGroup,
-        leaders: {
-          values: [
-            ...transformedGroup.leaders.values,
-            {
-              value: membersAction.members.value,
-            },
-          ],
-        },
-      };
-    } else if (Object.prototype.hasOwnProperty.call(membersAction, 'leaders')) {
-      this.setState({ isMemberEdit: true });
-      transformedGroup = {
-        ...transformedGroup,
-        leaders: {
-          values: [
-            ...transformedGroup.leaders.values,
-            {
-              value: membersAction.leaders.value,
-              delete: true,
-            },
-          ],
-        },
-      };
-    } else if (Object.prototype.hasOwnProperty.call(membersAction, 'remove')) {
-      this.setState({ isMemberEdit: true });
-      transformedGroup = {
-        ...transformedGroup,
-        members: {
-          values: [
-            ...transformedGroup.members.values,
-            {
-              value: membersAction.remove.value,
-              delete: true,
-            },
-          ],
-        },
-      };
-      if (this.state.group.leaders.values) {
-        if (
-          this.state.group.leaders.values.find(
-            (leader) => leader.value === membersAction.remove.value,
-          )
-        ) {
-          transformedGroup = {
-            ...transformedGroup,
-            leaders: {
-              values: [
-                ...transformedGroup.leaders.values,
-                {
-                  value: membersAction.remove.value,
-                  delete: true,
-                },
-              ],
-            },
-          };
-        }
-      }
-    } else if (Object.prototype.hasOwnProperty.call(membersAction, 'addNewMember')) {
-      this.setState({ isMemberEdit: true });
-      transformedGroup = {
-        ...transformedGroup,
-        members: {
-          values: [
-            ...transformedGroup.members.values,
-            {
-              value: membersAction.addNewMember.value,
-            },
-          ],
-        },
-      };
-    } else {
-      this.setState({ isMemberEdit: false });
-    }
     // if property exist, get from json, otherwise, send empty array
     if (coachesSelectizeRef) {
       transformedGroup = {
@@ -1541,25 +1584,34 @@ class GroupDetailScreen extends React.Component {
         },
       };
     }
-
+    if (addMembersSelectizeRef) {
+      transformedGroup = {
+        ...transformedGroup,
+        members: {
+          values: this.getSelectizeValuesToSave(
+            this.state.unmodifiedGroup.members ? this.state.unmodifiedGroup.members.values : [],
+            null,
+            transformedGroup.members ? transformedGroup.members.values : [],
+          ),
+        },
+      };
+    }
     return transformedGroup;
   };
 
-  onSaveGroup = (membersAction = {}) => {
+  onSaveGroup = (editingMembers = false) => {
     this.setState(
       {
         nameRequired: false,
+        editingMembers: editingMembers ? editingMembers : undefined,
       },
       () => {
         Keyboard.dismiss();
         if (this.state.group.title) {
           const { unmodifiedGroup } = this.state;
-          const group = this.transformGroupObject(this.state.group, membersAction);
+          const group = this.transformGroupObject(this.state.group);
           let groupToSave = {
             ...sharedTools.diff(unmodifiedGroup, group),
-          };
-          groupToSave = {
-            ...groupToSave,
             title: this.state.group.title,
           };
           if (this.state.group.ID) {
@@ -2758,7 +2810,9 @@ class GroupDetailScreen extends React.Component {
       ) : (
         <Grid style={{ marginTop: 10, marginBottom: 10 }}>
           <Col style={{ width: 20 }}>
-            <TouchableOpacity onPress={() => this.addLeader(membersGroup)} key={membersGroup.value}>
+            <TouchableOpacity
+              onPress={() => this.onSetLeader(membersGroup)}
+              key={membersGroup.value}>
               <Image
                 source={footprint}
                 style={[
@@ -2785,7 +2839,7 @@ class GroupDetailScreen extends React.Component {
           </Col>
           <Col style={{ width: 20 }}>
             <TouchableOpacity
-              onPress={() => this.onSaveGroup({ remove: { value: membersGroup.value } })}
+              onPress={() => this.onRemoveMember(membersGroup)}
               key={membersGroup.value}>
               <Icon type="MaterialCommunityIcons" name="close" style={styles.membersCloseIcon} />
             </TouchableOpacity>
@@ -2795,8 +2849,8 @@ class GroupDetailScreen extends React.Component {
     </View>
   );
 
-  membersView = () =>
-    this.state.onlyView ? (
+  membersView = () => {
+    return this.state.onlyView ? (
       <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
@@ -2808,7 +2862,9 @@ class GroupDetailScreen extends React.Component {
           }>
           {this.showMembersCount()}
           <FlatList
-            data={this.state.group.members ? this.state.group.members.values : []}
+            data={(this.state.group.members ? this.state.group.members.values : []).filter(
+              (member) => !member.delete,
+            )}
             extraData={this.state.updateMembersList}
             renderItem={(item) => this.membersRow(item.item)}
             ItemSeparatorComponent={this.flatListItemSeparator}
@@ -2844,7 +2900,12 @@ class GroupDetailScreen extends React.Component {
                       addMembersSelectizeRef = selectize;
                     }}
                     itemId="value"
-                    items={this.state.usersContacts}
+                    items={this.state.usersContacts.filter(
+                      (userContact) =>
+                        !this.state.group.members.values.find(
+                          (member) => member.value === userContact.value,
+                        ),
+                    )}
                     selectedItems={[]}
                     textInputProps={{
                       placeholder: i18n.t('groupDetailScreen.addMember'),
@@ -2854,7 +2915,7 @@ class GroupDetailScreen extends React.Component {
                       <TouchableOpacity
                         activeOpacity={0.6}
                         key={id}
-                        onPress={() => this.onSaveGroup({ addNewMember: { value: id } })}
+                        onPress={() => this.onAddMember(item)}
                         style={{
                           paddingVertical: 8,
                           paddingHorizontal: 10,
@@ -2885,6 +2946,7 @@ class GroupDetailScreen extends React.Component {
         </View>
       </KeyboardAwareScrollView>
     );
+  };
 
   groupsView = () => (
     <View style={{ flex: 1 }}>
@@ -3258,18 +3320,6 @@ class GroupDetailScreen extends React.Component {
       )}
     </View>
   );
-
-  addLeader(member) {
-    if (this.state.group.leaders) {
-      if (this.state.group.leaders.values.find((leader) => leader.value === member.value)) {
-        this.onSaveGroup({ leaders: { value: member.value } });
-      } else {
-        this.onSaveGroup({ members: { value: member.value } });
-      }
-    } else {
-      this.onSaveGroup({ members: { value: member.value } });
-    }
-  }
 
   renderHealthMilestones() {
     return (
@@ -3860,7 +3910,7 @@ class GroupDetailScreen extends React.Component {
           toastSuccess = toast;
         }}
         style={{ backgroundColor: Colors.successBackground }}
-        positionValue={210}
+        positionValue={250}
       />
     );
     const errorToast = (
@@ -3869,7 +3919,7 @@ class GroupDetailScreen extends React.Component {
           toastError = toast;
         }}
         style={{ backgroundColor: Colors.errorBackground }}
-        positionValue={210}
+        positionValue={250}
       />
     );
 

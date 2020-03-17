@@ -451,7 +451,10 @@ export default function groupsReducer(state = initialState, action) {
                 }
                 if (findObjectInOldRequestIndex > -1) {
                   // if exist
-                  if (Object.prototype.hasOwnProperty.call(object, 'delete')) {
+                  if (
+                    Object.prototype.hasOwnProperty.call(object, 'delete') &&
+                    object.delete === true
+                  ) {
                     oldCollection.splice(findObjectInOldRequestIndex, 1);
                   } else {
                     // update the object
@@ -486,6 +489,17 @@ export default function groupsReducer(state = initialState, action) {
               };
             }
           });
+          // Update members length in OFFLINE mode
+          if (
+            newGroupData.members &&
+            newGroupData.members.values &&
+            newGroupData.members.values.length != parseInt(newGroupData.member_count)
+          ) {
+            newGroupData = {
+              ...newGroupData,
+              member_count: newGroupData.members.values.length.toString(),
+            };
+          }
         } else {
           newGroupData = {
             ...newState.groups[groupIndex],
