@@ -1092,7 +1092,6 @@ class GroupDetailScreen extends React.Component {
   };
 
   setGroupStartDate = (value) => {
-    // (event, value) => {
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
@@ -1102,7 +1101,6 @@ class GroupDetailScreen extends React.Component {
   };
 
   setEndDate = (value) => {
-    // (event, value) => {
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
@@ -1600,11 +1598,10 @@ class GroupDetailScreen extends React.Component {
     return transformedGroup;
   };
 
-  onSaveGroup = (/*editingMembers = false*/) => {
+  onSaveGroup = () => {
     this.setState(
       {
         nameRequired: false,
-        //editingMembers: editingMembers ? editingMembers : undefined,
       },
       () => {
         Keyboard.dismiss();
