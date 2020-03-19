@@ -19,19 +19,19 @@
     "cancel": "İptal et",
     "save": "kaydet",
     "online": "Çevrimiçi",
+    "offline": "Çevrimdışı",
     "language": "Dil",
     "search": "Ara",
-    "membersActivity": "",
-    "offline": "",
-    "moreFields": "",
-    "nameRequired": ""
+    "membersActivity": "Üyeler",
+    "moreFields": "Diğer Alanlar",
+    "nameRequired": "İsim (gerekli"
   },
   "loginScreen": {
     "domain": {
       "label": "Disciple Tools URL",
       "placeholder": "Örnek: myteam.disciple.tools",
       "error": "Alan adı gerekli",
-      "errorForgotPass": ""
+      "errorForgotPass": "Lütfen şifrenizi almaya başlamak için URL girin"
     },
     "username": {
       "label": "Kullanıcı Adı",
@@ -44,15 +44,15 @@
     "logIn": "Giriş yap",
     "forgotPassword": "Parolamı unuttum?",
     "errors": {
-      "invalidUsername": "",
-      "incorrectPassword": ""
+      "invalidUsername": "Bilinmeyen kullanıcı adı. Tekrar kontrol edin veya e-posta adresinizi deneyin.",
+      "incorrectPassword": "Kullanıcı adı için girdiğiniz şifre yanlış"
     }
   },
   "contactsScreen": {
     "contacts": "Bağlantılarım",
-    "noContactPlacheHolder": "",
-    "noContactPlacheHolder1": "",
-    "noContactPlacheHolderOffline": ""
+    "noContactPlacheHolder": "Şu anda kullanılabilir kişi yok.",
+    "noContactPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
+    "noContactPlacheHolderOffline": "Şu anda çevrimdışısınız. Kişilerinizi yenilemek ve almak için wifi veya mobil verilere bağlı olduğunuzdan emin olun."
   },
   "settingsScreen": {
     "settings": "Ayarlar",
@@ -60,10 +60,10 @@
     "networkAvailable": "Ağ algılandı. Çevrimiçi moda geri dönüldü",
     "storybook": "Hikaye kitabı",
     "logout": "Oturumu kapat",
-    "helpSupport": "",
-    "rememberPassword": "",
-    "rememberPasswordActive": "",
-    "rememberPasswordInactive": ""
+    "helpSupport": "yardım / destek",
+    "rememberPassword": "şifre hatırlamak",
+    "rememberPasswordActive": "Oturum açmayı etkin tut",
+    "rememberPasswordInactive": "Giriş yapmayı devre dışı bırak"
   },
   "contactDetailScreen": {
     "addNewContact": "Yeni bağlantı ekle",
@@ -74,19 +74,19 @@
     "connections": "Bağlantılar",
     "addGroup": "Grup Ekle",
     "addConnection": "Bağlantı Ekle",
-    "addBaptizedBy": "Add baptized by",
+    "addBaptizedBy": "Tarafından Vaftiz Edildi Ekle",
     "addBaptized": "Add baptized",
     "addCoachedBy": "Add coached by",
     "addCoaching": "Koçluk ekle",
+    "fullName": {
+      "label": "Ad Soyad",
+      "error": "İsim gerekli"
+    },
     "phoneNumber": "Telefon Numarası",
     "initialComment": "İlk Yorum",
-    "socialMedia": "",
-    "noContactCommentPlacheHolder": "",
-    "noContactCommentPlacheHolder1": "",
-    "fullName": {
-      "label": "",
-      "error": ""
-    }
+    "socialMedia": "Sosyal Medya",
+    "noContactCommentPlacheHolder": "Şu anda kullanılabilecek kişi yorumu yok.",
+    "noContactCommentPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin."
   },
   "groupDetailScreen": {
     "addNewGroup": "Grup Ekle",
@@ -95,30 +95,30 @@
     "searchPeerGroups": "Eş gruplarda ara",
     "childGroup": "Alt Grup",
     "searchChildGroups": "Alt gruplarda ara",
-    "addMember": "",
-    "noGroupCommentPlacheHolder": "",
-    "noGroupCommentPlacheHolder1": "",
-    "noGroupCommentPlacheHolderOffline": "",
-    "selectLocations": "",
-    "noMembersMessage": "",
     "groupName": {
-      "label": "",
-      "error": ""
-    }
+      "label": "Grup ismi",
+      "error": "İsim gerekli"
+    },
+    "addMember": "Üye Ekle",
+    "noGroupCommentPlacheHolder": "Şu anda hiçbir grup yorumu mevcut değil.",
+    "noGroupCommentPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
+    "noGroupCommentPlacheHolderOffline": "Şu anda çevrimdışısınız. Grup yorumunuzu yenilemek ve almak için kablosuz bağlantıya veya mobil verilere bağlı olduğunuzdan emin olun.",
+    "selectLocations": "Konumları Seçin",
+    "noMembersMessage": "Üye yok. Bu gruba bazı üyeler eklemek için burayı veya Değiştir'i tıklayın."
   },
   "notificationsScreen": {
-    "notifications": "",
-    "loadMore": "",
-    "new": "",
-    "unRead": "",
-    "all": "",
-    "markAll": "",
-    "dontHaveNotificationsUnread": "",
-    "dontHaveNotifications": ""
+    "notifications": "Bildirim",
+    "loadMore": "Daha Fazla Yükle",
+    "new": "Yeni",
+    "unRead": "Okunmamış",
+    "all": "Tümü",
+    "markAll": "hepsini seç",
+    "dontHaveNotificationsUnread": "Okunmamış bildirim yok",
+    "dontHaveNotifications": "Bildirim yok"
   },
   "groupsScreen": {
-    "noGroupPlacheHolder": "",
-    "noGroupPlacheHolder1": "",
-    "noGroupPlacheHolderOffline": ""
+    "noGroupPlacheHolder": "Şu anda kullanılabilir grup yok.",
+    "noGroupPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
+    "noGroupPlacheHolderOffline": "Şu anda çevrimdışısınız. Gruplarınızı yenilemek ve almak için kablosuz bağlantıya veya mobil verilere bağlı olduğunuzdan emin olun."
   }
 }

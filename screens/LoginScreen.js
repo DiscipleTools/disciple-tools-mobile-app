@@ -197,6 +197,7 @@ class LoginScreen extends React.Component {
       passwordIsInvalid: false,
       hidePassword: true,
     };
+    i18n.setLocale(props.i18n.locale, props.i18n.isRTL);
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -374,11 +375,14 @@ class LoginScreen extends React.Component {
 
     if (this.props.i18n && prevProps.i18n !== this.props.i18n) {
       i18n.setLocale(this.props.i18n.locale, this.props.i18n.isRTL);
-      I18nManager.forceRTL(this.props.i18n.isRTL);
       if (prevProps.i18n.isRTL !== this.props.i18n.isRTL) {
+        I18nManager.forceRTL(this.props.i18n.isRTL);
         setTimeout(() => {
           Updates.reload();
-        }, 3000);
+        }, 1000);
+      } else {
+        // TODO: refactor this code so this force re-render is no longer necessary
+        this.forceUpdate();
       }
     }
 
@@ -632,7 +636,7 @@ class LoginScreen extends React.Component {
             {userErrorMessage}
             <View style={[passwordStyle]}>
               <View style={{ margin: 10 }}>
-                <Text>{i18n.t('loginScreen.password.label')}</Text>
+                <Text style={{ textAlign: 'left' }}>{i18n.t('loginScreen.password.label')}</Text>
                 <View style={{ flexDirection: 'row' }}>
                   <Icon
                     type="Ionicons"
@@ -644,6 +648,7 @@ class LoginScreen extends React.Component {
                     secureTextEntry={this.state.hidePassword}
                     style={styles.textBox}
                     onChangeText={(text) => this.setState({ password: text })}
+                    textAlign={this.props.i18n.isRTL ? 'right' : 'left'}
                   />
                   <TouchableOpacity
                     activeOpacity={0.8}

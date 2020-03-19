@@ -19,19 +19,19 @@
     "cancel": "إلغاء",
     "save": "حفظ",
     "online": "متصل بالأنترنت",
+    "offline": "غير متصل على الانترنت",
     "language": "لغة",
     "search": "بحث",
-    "membersActivity": "",
-    "offline": "",
-    "moreFields": "",
-    "nameRequired": ""
+    "membersActivity": "أفراد",
+    "moreFields": "المزيد من الحقول",
+    "nameRequired": "الاسم مطلوب"
   },
   "loginScreen": {
     "domain": {
       "label": "اسم نطاق أدوات التلمذة",
       "placeholder": "مثلاً: myteam.disciple.tools",
       "error": "اسم النطاق مطلوب",
-      "errorForgotPass": ""
+      "errorForgotPass": "الرجاء إدخال عنوان URL للبدء في استعادة كلمة المرور الخاصة بك"
     },
     "username": {
       "label": "اسم المستخدم",
@@ -44,26 +44,26 @@
     "logIn": "تسجيل الدخول",
     "forgotPassword": "فقدت كلمة المرور الخاصة بك؟",
     "errors": {
-      "invalidUsername": "",
-      "incorrectPassword": ""
+      "invalidUsername": "اسم مستخدم غير معروف. تحقق مرة أخرى أو حاول عنوان بريدك الإلكتروني.",
+      "incorrectPassword": "كلمة المرور التي أدخلتها لاسم المستخدم غير صحيحة"
     }
   },
   "contactsScreen": {
     "contacts": "المتواصلون",
-    "noContactPlacheHolder": "",
-    "noContactPlacheHolder1": "",
-    "noContactPlacheHolderOffline": ""
+    "noContactPlacheHolder": "لا توجد أي جهات اتصال متاحة حاليًا.",
+    "noContactPlacheHolder1": "ربما كانت هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث والمحاولة مرة أخرى.",
+    "noContactPlacheHolderOffline": "أنت غير متصل حاليًا. تأكد من اتصالك بشبكة wifi أو بيانات الجوال من أجل التحديث والحصول على جهات الاتصال الخاصة بك."
   },
   "settingsScreen": {
     "settings": "الإعدادات",
     "networkUnavailable": "الشبكة غير متاحة الآن في وضع عدم الاتصال بالانترنت",
     "networkAvailable": "تم العثور علي شبكة. العودة لوضع الاتصال بالانترنت",
-    "storybook": "",
+    "storybook": "القصص القصيرة",
     "logout": "تسجيل الخروج",
-    "helpSupport": "",
-    "rememberPassword": "",
-    "rememberPasswordActive": "",
-    "rememberPasswordInactive": ""
+    "helpSupport": "ساعد لدعم",
+    "rememberPassword": "تذكر كلمة المرور",
+    "rememberPasswordActive": "تمكين تسجيل الدخول باستمرار",
+    "rememberPasswordInactive": "حافظ على تسجيل الدخول معطلة"
   },
   "contactDetailScreen": {
     "addNewContact": "إضافة جهة اتصال جديدة",
@@ -74,19 +74,19 @@
     "connections": "الروابط",
     "addGroup": "إضافة مجموعة",
     "addConnection": "إضافة رابط",
-    "addBaptizedBy": "",
+    "addBaptizedBy": "أضف عمد بواسطة",
     "addBaptized": "إضافة مُعمّد",
-    "addCoachedBy": "",
-    "addCoaching": "",
+    "addCoachedBy": "إضافة المدربين من قبل",
+    "addCoaching": "إضافة التدريب",
+    "fullName": {
+      "label": "الاسم الكامل",
+      "error": "مطلوب اسم"
+    },
     "phoneNumber": "رقم الهاتف",
     "initialComment": "تعليق أولي",
-    "socialMedia": "",
-    "noContactCommentPlacheHolder": "",
-    "noContactCommentPlacheHolder1": "",
-    "fullName": {
-      "label": "",
-      "error": ""
-    }
+    "socialMedia": "وسائل التواصل الاجتماعي",
+    "noContactCommentPlacheHolder": "لا توجد أي تعليقات اتصال متاحة حاليا.",
+    "noContactCommentPlacheHolder1": "قد تكون هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث وحاول مرة أخرى."
   },
   "groupDetailScreen": {
     "addNewGroup": "إضافة مجموعة جديدة",
@@ -95,30 +95,30 @@
     "searchPeerGroups": "بحث مجموعات الأقران",
     "childGroup": "ربط المجموعة الإبن",
     "searchChildGroups": "بحث المجموعة الإبن",
-    "addMember": "",
-    "noGroupCommentPlacheHolder": "",
-    "noGroupCommentPlacheHolder1": "",
-    "noGroupCommentPlacheHolderOffline": "",
-    "selectLocations": "",
-    "noMembersMessage": "",
     "groupName": {
-      "label": "",
-      "error": ""
-    }
+      "label": "أسم المجموعة",
+      "error": "مطلوب اسم"
+    },
+    "addMember": "إضافة عضو",
+    "noGroupCommentPlacheHolder": "لا توجد أي تعليقات جماعية متاحة حاليًا.",
+    "noGroupCommentPlacheHolder1": "ربما كانت هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث والمحاولة مرة أخرى.",
+    "noGroupCommentPlacheHolderOffline": "أنت غير متصل حاليًا. تأكد من اتصالك بشبكة wifi أو بيانات الجوال من أجل التحديث والحصول على تعليق مجموعتك.",
+    "selectLocations": "اختر المواقع",
+    "noMembersMessage": "لا يوجد أعضاء. انقر هنا أو على \"تعديل\" لإضافة بعض الأعضاء إلى هذه المجموعة."
   },
   "notificationsScreen": {
-    "notifications": "",
-    "loadMore": "",
-    "new": "",
-    "unRead": "",
-    "all": "",
-    "markAll": "",
-    "dontHaveNotificationsUnread": "",
-    "dontHaveNotifications": ""
+    "notifications": "إخطارات",
+    "loadMore": "تحميل المزيد",
+    "new": "الجديد",
+    "unRead": "غير مقروء",
+    "all": "الكل",
+    "markAll": "حدد الكل",
+    "dontHaveNotificationsUnread": "لا إخطارات غير مقروءة",
+    "dontHaveNotifications": "لا إشعارات"
   },
   "groupsScreen": {
-    "noGroupPlacheHolder": "",
-    "noGroupPlacheHolder1": "",
-    "noGroupPlacheHolderOffline": ""
+    "noGroupPlacheHolder": "لا توجد أي مجموعات متاحة حاليًا.",
+    "noGroupPlacheHolder1": "ربما كانت هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث والمحاولة مرة أخرى.",
+    "noGroupPlacheHolderOffline": "أنت غير متصل حاليًا. تأكد من اتصالك بشبكة wifi أو بيانات الجوال من أجل التحديث والحصول على مجموعاتك."
   }
 }
