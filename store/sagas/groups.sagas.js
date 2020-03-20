@@ -59,7 +59,7 @@ export function* saveGroup({ domain, token, groupData }) {
   const group = groupData;
   let groupId = '';
   // Add ID to URL only on D.B. IDs
-  if (group.ID && !Number.isNaN(group.ID)) {
+  if (group.ID && !isNaN(group.ID)) {
     groupId = group.ID;
   }
 
@@ -225,7 +225,7 @@ export function* getCommentsByGroup({ domain, token, groupId, offset, limit }) {
   yield put({ type: actions.GROUPS_GET_COMMENTS_START });
 
   try {
-    if (!isConnected || Number.isNaN(groupId)) {
+    if (!isConnected || isNaN(groupId)) {
       let queue = yield select((state) => state.requestReducer.queue);
       const authorName = yield select((state) => state.userReducer.userData.username);
       queue = queue.filter(

@@ -175,7 +175,6 @@ export default function requestReducer(state = initialState, action) {
                 jsonParseBody = JSON.parse(request.data.body);
               }
               return (
-                actionToModify.url === request.url &&
                 actionToModify.action === request.action &&
                 jsonParseBody &&
                 jsonParseBody.ID === jsonBodyId
