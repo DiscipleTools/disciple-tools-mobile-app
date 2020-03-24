@@ -39,9 +39,7 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_GETALL_SUCCESS: {
       let { contacts } = action;
       const { offline, offset } = action;
-      const localContacts = newState.contacts.filter((localContact) =>
-        Number.isNaN(localContact.ID),
-      );
+      const localContacts = newState.contacts.filter((localContact) => isNaN(localContact.ID));
       if (!offline) {
         const dataBaseContacts = [...action.contacts].map((contact) => {
           const mappedContact = {};
@@ -279,9 +277,7 @@ export default function contactsReducer(state = initialState, action) {
           }
         });
       }
-
       const oldId = mappedContact.oldID ? mappedContact.oldID : null;
-
       newState = {
         ...newState,
         contact: mappedContact,
@@ -294,7 +290,7 @@ export default function contactsReducer(state = initialState, action) {
       if (contactIndex > -1) {
         // Merge all data of request with found entity
         let newContactData;
-        if (offline && !Number.isNaN(contact.ID)) {
+        if (offline) {
           // Editing D.B. entity in OFFLINE mode
           newContactData = {
             ...newState.contacts[contactIndex],
@@ -331,7 +327,10 @@ export default function contactsReducer(state = initialState, action) {
                 }
                 if (findObjectInOldRequestIndex > -1) {
                   // if exist
-                  if (Object.prototype.hasOwnProperty.call(object, 'delete')) {
+                  if (
+                    Object.prototype.hasOwnProperty.call(object, 'delete') &&
+                    object.delete === true
+                  ) {
                     oldCollection.splice(findObjectInOldRequestIndex, 1);
                   } else {
                     // update the object
@@ -428,7 +427,7 @@ export default function contactsReducer(state = initialState, action) {
       };
     case actions.CONTACTS_GETBYID_SUCCESS: {
       let contact = { ...action.contact };
-      if (Number.isNaN(contact.ID) || contact.isOffline) {
+      if (isNaN(contact.ID) || contact.isOffline) {
         // Search local contact
         const foundContact = newState.contacts.find(
           (contactItem) => contactItem.ID.toString() === contact.ID,

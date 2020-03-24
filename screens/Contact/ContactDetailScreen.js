@@ -3676,7 +3676,9 @@ class ContactDetailScreen extends React.Component {
     });
 
   tabChanged = (index) => {
-    this.props.navigation.setParams({ hideTabBar: index === 2 });
+    this.props.navigation.setParams({
+      hideTabBar: (index === 2 && this.state.onlyView) || !this.state.onlyView,
+    });
     this.setState((prevState) => ({
       tabViewConfig: {
         ...prevState.tabViewConfig,
@@ -4483,6 +4485,58 @@ class ContactDetailScreen extends React.Component {
     this.props.searchLocations(this.props.userData.domain, this.props.userData.token, queryText);
   };
 
+  onSaveQuickAction = (quickActionPropertyName) => {
+    let newActionValue = this.state.contact[quickActionPropertyName]
+      ? parseInt(this.state.contact[quickActionPropertyName], 10) + 1
+      : 1;
+    if (this.props.isConnected) {
+      this.onSaveContact({
+        [quickActionPropertyName]: newActionValue,
+      });
+    } else {
+      // Update Seeker Path in OFFLINE mode
+      let seekerPathValue = null;
+      let quickActionName = quickActionPropertyName.replace('quick_button_', '');
+      switch (quickActionName) {
+        case 'no_answer': {
+          seekerPathValue = 'attempted';
+          break;
+        }
+        case 'contact_established': {
+          seekerPathValue = 'established';
+          break;
+        }
+        case 'meeting_scheduled': {
+          seekerPathValue = 'scheduled';
+          break;
+        }
+        case 'meeting_complete': {
+          seekerPathValue = 'met';
+          break;
+        }
+      }
+      if (seekerPathValue && this.state.contact.seeker_path != 'met') {
+        this.setState(
+          (prevState) => ({
+            contact: {
+              ...prevState.contact,
+              seeker_path: seekerPathValue,
+            },
+          }),
+          () => {
+            this.onSaveContact({
+              [quickActionPropertyName]: newActionValue,
+            });
+          },
+        );
+      } else {
+        this.onSaveContact({
+          [quickActionPropertyName]: newActionValue,
+        });
+      }
+    }
+  };
+
   render() {
     const successToast = (
       <Toast
@@ -4490,7 +4544,7 @@ class ContactDetailScreen extends React.Component {
           toastSuccess = toast;
         }}
         style={{ backgroundColor: Colors.successBackground }}
-        positionValue={210}
+        positionValue={250}
       />
     );
     const errorToast = (
@@ -4499,7 +4553,7 @@ class ContactDetailScreen extends React.Component {
           toastError = toast;
         }}
         style={{ backgroundColor: Colors.errorBackground }}
-        positionValue={210}
+        positionValue={250}
       />
     );
     return (
@@ -4568,13 +4622,9 @@ class ContactDetailScreen extends React.Component {
                       <ActionButton.Item
                         buttonColor={Colors.primaryRGBA}
                         title={this.props.contactSettings.fields.quick_button_no_answer.name}
-                        onPress={() =>
-                          this.onSaveContact({
-                            quick_button_no_answer: this.state.contact.quick_button_no_answer
-                              ? parseInt(this.state.contact.quick_button_no_answer, 10) + 1
-                              : 1,
-                          })
-                        }
+                        onPress={() => {
+                          this.onSaveQuickAction('quick_button_no_answer');
+                        }}
                         size={40}
                         nativeFeedbackRippleColor="rgba(0,0,0,0)"
                         textStyle={{ color: Colors.tintColor, fontSize: 15 }}
@@ -4586,17 +4636,9 @@ class ContactDetailScreen extends React.Component {
                         title={
                           this.props.contactSettings.fields.quick_button_contact_established.name
                         }
-                        onPress={() =>
-                          this.onSaveContact({
-                            quick_button_contact_established: Object.prototype.hasOwnProperty.call(
-                              this.state.contact,
-                              'quick_button_contact_established',
-                            )
-                              ? parseInt(this.state.contact.quick_button_contact_established, 10) +
-                                1
-                              : 1,
-                          })
-                        }
+                        onPress={() => {
+                          this.onSaveQuickAction('quick_button_contact_established');
+                        }}
                         size={40}
                         nativeFeedbackRippleColor="rgba(0,0,0,0)"
                         textStyle={{ color: Colors.tintColor, fontSize: 15 }}
@@ -4612,16 +4654,9 @@ class ContactDetailScreen extends React.Component {
                         title={
                           this.props.contactSettings.fields.quick_button_meeting_scheduled.name
                         }
-                        onPress={() =>
-                          this.onSaveContact({
-                            quick_button_meeting_scheduled: Object.prototype.hasOwnProperty.call(
-                              this.state.contact,
-                              'quick_button_meeting_scheduled',
-                            )
-                              ? parseInt(this.state.contact.quick_button_meeting_scheduled, 10) + 1
-                              : 1,
-                          })
-                        }
+                        onPress={() => {
+                          this.onSaveQuickAction('quick_button_meeting_scheduled');
+                        }}
                         size={40}
                         nativeFeedbackRippleColor="rgba(0,0,0,0)"
                         textStyle={{ color: Colors.tintColor, fontSize: 15 }}
@@ -4635,16 +4670,9 @@ class ContactDetailScreen extends React.Component {
                       <ActionButton.Item
                         buttonColor={Colors.primaryRGBA}
                         title={this.props.contactSettings.fields.quick_button_meeting_complete.name}
-                        onPress={() =>
-                          this.onSaveContact({
-                            quick_button_meeting_complete: Object.prototype.hasOwnProperty.call(
-                              this.state.contact,
-                              'quick_button_meeting_complete',
-                            )
-                              ? parseInt(this.state.contact.quick_button_meeting_complete, 10) + 1
-                              : 1,
-                          })
-                        }
+                        onPress={() => {
+                          this.onSaveQuickAction('quick_button_meeting_complete');
+                        }}
                         size={40}
                         nativeFeedbackRippleColor="rgba(0,0,0,0)"
                         textStyle={{ color: Colors.tintColor, fontSize: 15 }}
@@ -4658,16 +4686,9 @@ class ContactDetailScreen extends React.Component {
                       <ActionButton.Item
                         buttonColor={Colors.primaryRGBA}
                         title={this.props.contactSettings.fields.quick_button_no_show.name}
-                        onPress={() =>
-                          this.onSaveContact({
-                            quick_button_no_show: Object.prototype.hasOwnProperty.call(
-                              this.state.contact,
-                              'quick_button_no_show',
-                            )
-                              ? parseInt(this.state.contact.quick_button_no_show, 10) + 1
-                              : 1,
-                          })
-                        }
+                        onPress={() => {
+                          this.onSaveQuickAction('quick_button_no_show');
+                        }}
                         size={40}
                         nativeFeedbackRippleColor="rgba(0,0,0,0)"
                         textStyle={{ color: Colors.tintColor, fontSize: 15 }}
