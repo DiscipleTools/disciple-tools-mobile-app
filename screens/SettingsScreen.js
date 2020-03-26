@@ -110,6 +110,16 @@ const styles = StyleSheet.create({
     bottom: 15,
     right: 15,
   },
+  offlineBar: {
+    height: 20,
+    backgroundColor: '#FCAB10',
+  },
+  offlineBarText: {
+    fontSize: 14,
+    color: 'white',
+    textAlignVertical: 'center',
+    textAlign: 'center',
+  },
 });
 let toastError;
 let codePinRef;
@@ -225,6 +235,12 @@ class SettingsScreen extends React.Component {
     },
   };
 
+  offlineBarRender = () => (
+    <View style={[styles.offlineBar]}>
+      <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
+    </View>
+  );
+
   render() {
     // const languagePickerItems = locales.map((locale) => (
     //   <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
@@ -232,6 +248,7 @@ class SettingsScreen extends React.Component {
 
     return (
       <Container style={styles.container}>
+        {!this.props.isConnected && this.offlineBarRender()}
         <Content>
           <ListItem itemHeader first avatar style={styles.header}>
             <Left>

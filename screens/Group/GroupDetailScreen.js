@@ -3962,6 +3962,7 @@ class GroupDetailScreen extends React.Component {
               </View>
             ) : (
               <ScrollView>
+                {!this.props.isConnected && this.offlineBarRender()}
                 <View style={styles.formContainer}>
                   <Grid>
                     <Row>

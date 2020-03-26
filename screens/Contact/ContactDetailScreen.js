@@ -4710,6 +4710,7 @@ class ContactDetailScreen extends React.Component {
                 keyboardOpeningTime={0}
                 extraScrollHeight={150}
                 keyboardShouldPersistTaps="handled">
+                {!this.props.isConnected && this.offlineBarRender()}
                 <View style={styles.formContainer}>
                   <Grid>
                     <Row>
