@@ -86,7 +86,8 @@
     "initialComment": "تعليق أولي",
     "socialMedia": "وسائل التواصل الاجتماعي",
     "noContactCommentPlacheHolder": "لا توجد أي تعليقات اتصال متاحة حاليا.",
-    "noContactCommentPlacheHolder1": "قد تكون هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث وحاول مرة أخرى."
+    "noContactCommentPlacheHolder1": "قد تكون هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث وحاول مرة أخرى.",
+    "noContactCommentPlacheHolderOffline": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "إضافة مجموعة جديدة",

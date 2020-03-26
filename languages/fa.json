@@ -86,7 +86,8 @@
     "initialComment": "نظر اولیه",
     "socialMedia": "رسانه های اجتماعی",
     "noContactCommentPlacheHolder": "در حال حاضر هیچ گونه تماسی در دسترس نیست.",
-    "noContactCommentPlacheHolder1": "ممکن است مشکلی در گرفتن آنها از سایت شما وجود داشته باشد. پایین بکشید تا سعی کنید تازه کنید و دوباره امتحان کنید."
+    "noContactCommentPlacheHolder1": "ممکن است مشکلی در گرفتن آنها از سایت شما وجود داشته باشد. پایین بکشید تا سعی کنید تازه کنید و دوباره امتحان کنید.",
+    "noContactCommentPlacheHolderOffline": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "گروه جدید را اضافه کنید",

@@ -86,7 +86,8 @@
     "initialComment": "Commentaire initial",
     "socialMedia": "Des médias sociaux",
     "noContactCommentPlacheHolder": "Aucun commentaire de contact n'est actuellement disponible.",
-    "noContactCommentPlacheHolder1": "Il peut y avoir eu un problème pour les obtenir à partir de votre site. Faites glisser vers le bas pour essayer de rafraîchir et réessayez."
+    "noContactCommentPlacheHolder1": "Il peut y avoir eu un problème pour les obtenir à partir de votre site. Faites glisser vers le bas pour essayer de rafraîchir et réessayez.",
+    "noContactCommentPlacheHolderOffline": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Ajouter un nouveau groupe",

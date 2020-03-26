@@ -86,7 +86,8 @@
     "initialComment": "Primer Comentario",
     "socialMedia": "Redes Sociales",
     "noContactCommentPlacheHolder": "No hay comentarios de contacto disponibles actualmente.",
-    "noContactCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente."
+    "noContactCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
+    "noContactCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del contacto."
   },
   "groupDetailScreen": {
     "addNewGroup": "Crear grupo",

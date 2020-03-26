@@ -86,7 +86,8 @@
     "initialComment": "初步评论",
     "socialMedia": "社交媒体",
     "noContactCommentPlacheHolder": "当前没有任何联系方式。",
-    "noContactCommentPlacheHolder1": "从您的网站获取它们可能存在问题。向下拖动以尝试刷新，然后重试。"
+    "noContactCommentPlacheHolder1": "从您的网站获取它们可能存在问题。向下拖动以尝试刷新，然后重试。",
+    "noContactCommentPlacheHolderOffline": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "新增群组",

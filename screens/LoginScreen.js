@@ -346,7 +346,7 @@ class LoginScreen extends React.Component {
       ExpoFileSystemStorage.setItem('peopleGroupsList', JSON.stringify(peopleGroups));
     }
 
-    // peopleGroupsList retrieved
+    // searchGroupsList retrieved
     if (search && prevProps.search !== search) {
       ExpoFileSystemStorage.setItem('searchGroupsList', JSON.stringify(search));
     }

@@ -104,6 +104,7 @@ let tabViewRoutes = [
     title: i18n.t('contactDetailScreen.connections'),
   },
 ];
+let self;
 const styles = StyleSheet.create({
   tabBarUnderlineStyle: {
     backgroundColor: Colors.tintColor,
@@ -291,6 +292,11 @@ const safeFind = (found, prop) => {
 };
 
 class ContactDetailScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    self = this;
+  }
+
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
     let navigationTitle = Object.prototype.hasOwnProperty.call(params, 'contactName')
@@ -331,16 +337,13 @@ class ContactDetailScreen extends React.Component {
           </Row>
         );
       }
-
       if (params.onlyView) {
         headerLeft = () => (
           <Icon
             type="Feather"
             name="arrow-left"
             onPress={() => {
-              if (params.fromGroupDetail) {
-                navigation.navigate('GroupDetail');
-              } else if (params.fromNotificationView) {
+              if (params.fromNotificationView) {
                 const resetAction = StackActions.reset({
                   index: 0,
                   actions: [NavigationActions.navigate({ routeName: 'ContactList' })],
@@ -374,8 +377,13 @@ class ContactDetailScreen extends React.Component {
           </Row>
         );
       }
+      if (params.fromGroupDetail && self) {
+        navigation.setParams({
+          fromGroupDetail: false,
+        });
+        self.onRefresh(params.contactId);
+      }
     }
-
     return {
       title: navigationTitle,
       headerLeft,
@@ -552,61 +560,51 @@ class ContactDetailScreen extends React.Component {
     }
     // SAVE / GET BY ID
     if (contact) {
-      // Update contact data only in these conditions:
-      // Same contact created (offline/online)
-      // Same contact updated (offline/online)
-      // Same offline contact created in DB (AutoID to DBID)
-      if (
-        (typeof contact.ID !== 'undefined' && typeof prevState.contact.ID === 'undefined') ||
-        contact.ID.toString() === prevState.contact.ID.toString() ||
-        (contact.oldID && contact.oldID === prevState.contact.ID.toString())
-      ) {
+      newState = {
+        ...newState,
+        contact: {
+          ...contact,
+        },
+        unmodifiedContact: {
+          ...contact,
+        },
+      };
+      if (newState.contact.oldID) {
+        delete newState.contact.oldID;
+      }
+      if (newState.contact.overall_status) {
         newState = {
           ...newState,
-          contact: {
-            ...contact,
-          },
-          unmodifiedContact: {
-            ...contact,
-          },
+          overallStatusBackgroundColor: sharedTools.getSelectorColor(
+            newState.contact.overall_status,
+          ),
         };
-        if (newState.contact.oldID) {
-          delete newState.contact.oldID;
-        }
-        if (newState.contact.overall_status) {
-          newState = {
-            ...newState,
-            overallStatusBackgroundColor: sharedTools.getSelectorColor(
-              newState.contact.overall_status,
-            ),
-          };
-        }
-        if (prevState.contact.initial_comment) {
-          newState = {
-            ...newState,
-            comment: prevState.contact.initial_comment,
-          };
-        }
-        if (newState.contact.location_grid) {
-          newState.contact.location_grid.values.forEach((location) => {
-            const foundLocation = newState.geonames.find(
-              (geoname) => geoname.value === location.value,
-            );
-            if (!foundLocation) {
-              // Add non existent contact location in the geonames list to avoid null exception
-              newState = {
-                ...newState,
-                geonames: [
-                  ...newState.geonames,
-                  {
-                    name: location.name,
-                    value: location.value,
-                  },
-                ],
-              };
-            }
-          });
-        }
+      }
+      if (prevState.contact.initial_comment) {
+        newState = {
+          ...newState,
+          comment: prevState.contact.initial_comment,
+        };
+      }
+      if (newState.contact.location_grid) {
+        newState.contact.location_grid.values.forEach((location) => {
+          const foundLocation = newState.geonames.find(
+            (geoname) => geoname.value === location.value,
+          );
+          if (!foundLocation) {
+            // Add non existent contact location in the geonames list to avoid null exception
+            newState = {
+              ...newState,
+              geonames: [
+                ...newState.geonames,
+                {
+                  name: location.name,
+                  value: location.value,
+                },
+              ],
+            };
+          }
+        });
       }
     }
 
@@ -756,8 +754,10 @@ class ContactDetailScreen extends React.Component {
   }
 
   onRefresh(contactId) {
-    this.getContactById(contactId);
-    this.onRefreshCommentsActivities(contactId);
+    if (!self.state.loading) {
+      self.getContactById(contactId);
+      self.onRefreshCommentsActivities(contactId);
+    }
   }
 
   onRefreshCommentsActivities(contactId) {

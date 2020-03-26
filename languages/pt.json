@@ -86,7 +86,8 @@
     "initialComment": "Comentário Inicial",
     "socialMedia": "Mídia Social",
     "noContactCommentPlacheHolder": "Não há comentários de contatos disponíveis atualmente",
-    "noContactCommentPlacheHolder1": "Pode haver um problema ao removê-los do seu local. Arraste-os para tentar atualizar e tente novamente.  "
+    "noContactCommentPlacheHolder1": "Pode haver um problema ao removê-los do seu local. Arraste-os para tentar atualizar e tente novamente.",
+    "noContactCommentPlacheHolderOffline": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Adicionar novo grupo",

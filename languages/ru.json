@@ -86,7 +86,8 @@
     "initialComment": "Начальный комментарий",
     "socialMedia": "Социальные сети",
     "noContactCommentPlacheHolder": "В данное время никаких комментариев по контакту нет.",
-    "noContactCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Перетащите вниз, чтобы попытаться обновить и повторить попытку."
+    "noContactCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Перетащите вниз, чтобы попытаться обновить и повторить попытку.",
+    "noContactCommentPlacheHolderOffline": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Добавить новую группу",

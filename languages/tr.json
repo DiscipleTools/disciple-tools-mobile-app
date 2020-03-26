@@ -86,7 +86,8 @@
     "initialComment": "İlk Yorum",
     "socialMedia": "Sosyal Medya",
     "noContactCommentPlacheHolder": "Şu anda kullanılabilecek kişi yorumu yok.",
-    "noContactCommentPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin."
+    "noContactCommentPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
+    "noContactCommentPlacheHolderOffline": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Grup Ekle",
