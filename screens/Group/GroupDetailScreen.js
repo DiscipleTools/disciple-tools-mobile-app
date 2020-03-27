@@ -634,89 +634,79 @@ class GroupDetailScreen extends React.Component {
 
     // SAVE / GET BY ID
     if (group) {
-      // Update group data only in these conditions:
-      // Same group created (offline/online)
-      // Same group updated (offline/online)
-      // Same offline group created in DB (AutoID to DBID)
-      if (
-        (typeof group.ID !== 'undefined' && typeof prevState.group.ID === 'undefined') ||
-        group.ID.toString() === prevState.group.ID.toString() ||
-        (group.oldID && group.oldID.toString() === prevState.group.ID.toString())
-      ) {
+      newState = {
+        ...newState,
+        group: {
+          ...group,
+        },
+        unmodifiedGroup: {
+          ...group,
+        },
+      };
+      if (newState.group.oldID) {
+        delete newState.group.oldID;
+      }
+      if (newState.group.group_status) {
         newState = {
           ...newState,
-          group: {
-            ...group,
-          },
-          unmodifiedGroup: {
-            ...group,
-          },
+          groupStatusBackgroundColor: sharedTools.getSelectorColor(newState.group.group_status),
         };
-        if (newState.group.oldID) {
-          delete newState.group.oldID;
-        }
-        if (newState.group.group_status) {
-          newState = {
-            ...newState,
-            groupStatusBackgroundColor: sharedTools.getSelectorColor(newState.group.group_status),
-          };
-        }
-        if (newState.group.location_grid) {
-          newState.group.location_grid.values.forEach((location) => {
-            const foundLocation = newState.geonames.find(
-              (geoname) => geoname.value === location.value,
-            );
-            if (!foundLocation) {
-              // Add non existent group location in the geonames list to avoid null exception
-              newState = {
-                ...newState,
-                geonames: [
-                  ...newState.geonames,
-                  {
-                    name: location.name,
-                    value: location.value,
-                  },
-                ],
-              };
-            }
-          });
-        }
-        if (newState.group.members) {
-          // Add member names to list in OFFLINE mode
-          if (!isConnected) {
-            let membersList = newState.group.members.values.map((member) => {
-              if (!member.name) {
-                member = {
-                  ...member,
-                  name: safeFind(
-                    newState.usersContacts.find((user) => user.value === member.value),
-                    'name',
-                  ),
-                };
-              }
-              return member;
-            });
+      }
+      if (newState.group.location_grid) {
+        newState.group.location_grid.values.forEach((location) => {
+          const foundLocation = newState.geonames.find(
+            (geoname) => geoname.value === location.value,
+          );
+          if (!foundLocation) {
+            // Add non existent group location in the geonames list to avoid null exception
             newState = {
               ...newState,
-              group: {
-                ...newState.group,
-                members: {
-                  values: [...membersList],
+              geonames: [
+                ...newState.geonames,
+                {
+                  name: location.name,
+                  value: location.value,
                 },
-              },
-              unmodifiedGroup: {
-                ...newState.group,
-                members: {
-                  values: [...membersList],
-                },
-              },
+              ],
             };
           }
+        });
+      }
+      if (newState.group.members) {
+        // Add member names to list in OFFLINE mode
+        if (!isConnected) {
+          let membersList = newState.group.members.values.map((member) => {
+            if (!member.name) {
+              member = {
+                ...member,
+                name: safeFind(
+                  newState.usersContacts.find((user) => user.value === member.value),
+                  'name',
+                ),
+              };
+            }
+            return member;
+          });
           newState = {
             ...newState,
-            updateMembersList: !newState.updateMembersList,
+            group: {
+              ...newState.group,
+              members: {
+                values: [...membersList],
+              },
+            },
+            unmodifiedGroup: {
+              ...newState.group,
+              members: {
+                values: [...membersList],
+              },
+            },
           };
         }
+        newState = {
+          ...newState,
+          updateMembersList: !newState.updateMembersList,
+        };
       }
     }
 
@@ -3972,6 +3962,7 @@ class GroupDetailScreen extends React.Component {
               </View>
             ) : (
               <ScrollView>
+                {!this.props.isConnected && this.offlineBarRender()}
                 <View style={styles.formContainer}>
                   <Grid>
                     <Row>

@@ -86,7 +86,8 @@
     "initialComment": "Initial Comment",
     "socialMedia": "Social Media",
     "noContactCommentPlacheHolder": "There are not any contact comments currently available.",
-    "noContactCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again."
+    "noContactCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
+    "noContactCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your contact comment."
   },
   "groupDetailScreen": {
     "addNewGroup": "Add New Group",
