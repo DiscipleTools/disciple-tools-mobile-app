@@ -1119,6 +1119,28 @@ class ContactDetailScreen extends React.Component {
     return `${monthNames[newDate.getMonth()]} ${newDate.getDate()}, ${age} ${strTime}`;
   };
 
+  formatActivityDate = (comment) => {
+    baptismDateRegex = /\{(\d+)\}+/;
+
+    if (baptismDateRegex.test(comment)) {
+      comment = comment.replace(baptismDateRegex, this.formatTimestampToDate);
+    }
+    return comment;
+  };
+
+  formatTimestampToDate = (match, timestamp) => {
+    let langcode = this.props.userData.locale.substring(0, 2);
+    if (langcode === 'fa') {
+      //This is a check so that we use the gergorian (Western) calendar if the users locale is Farsi. This is the calendar used primarily by Farsi speakers outside of Iran, and is easily understood by those inside.
+      langcode = `${langcode}-u-ca-gregory`;
+    }
+    console.log(langcode);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    let formattedDate = new Intl.DateTimeFormat(langcode, options).format(timestamp * 1000);
+
+    return formattedDate;
+  };
+
   setComment = (value) => {
     this.setState({
       comment: value,
@@ -3652,7 +3674,7 @@ class ContactDetailScreen extends React.Component {
           ]}>
           {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
             ? commentOrActivity.content
-            : commentOrActivity.object_note}
+            : this.formatActivityDate(commentOrActivity.object_note)}
         </Text>
       </View>
     </View>
