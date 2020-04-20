@@ -32,12 +32,11 @@ import { login, getUserInfo, cancelLogin } from '../store/actions/user.actions';
 import { setLanguage } from '../store/actions/i18n.actions';
 import TextField from '../components/TextField';
 import {
-  getUsersAndContacts,
   getLocations,
   getPeopleGroups,
-  searchGroups,
   getGroupSettings,
   getAll as getAllGroups,
+  getLocationListLastModifiedDate,
 } from '../store/actions/groups.actions';
 import { getUsers } from '../store/actions/users.actions';
 import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
@@ -167,22 +166,31 @@ const styles = StyleSheet.create({
     color: Colors.tintColor,
   },
 });
-let toastError, codePinRef;
+let toastError;
 const { height, width } = Dimensions.get('window');
 class LoginScreen extends React.Component {
   state = {
     loading: false,
     modalVisible: false,
-    contactSettingsListRetrieved: false,
-    groupSettingsListRetrieved: false,
+    contactSettingsRetrieved: false,
+    groupSettingsRetrieved: false,
+    geonamesRetrieved: false,
+    peopleGroupsRetrieved: false,
+    usersRetrieved: false,
     appLanguageSet: false,
     offset: 0,
-    limit: 100,
+    limit: 5000,
     sort: '-last_modified',
     toggleShowPIN: false,
     pin: '',
     incorrectPin: false,
     showCancelButton: false,
+    geonamesLastModifiedDate: null,
+    userData: {
+      token: null,
+    },
+    userDataRetrieved: false,
+    geonamesLength: 0,
   };
 
   constructor(props) {
@@ -207,29 +215,72 @@ class LoginScreen extends React.Component {
       groupsReducerLoading,
       contactSettings,
       groupSettings,
+      geonames,
+      peopleGroups,
+      users,
       userReducerError,
       groupsReducerError,
       usersReducerError,
       contactsReducerLoading,
       contactsReducerError,
       loginCanceled,
+      geonamesLastModifiedDate,
+      geonamesLength,
     } = nextProps;
     let newState = {
       ...prevState,
       userData,
       loading: userReducerLoading || groupsReducerLoading || contactsReducerLoading,
+      geonamesLength,
     };
-    if (contactSettings) {
-      newState = {
-        ...newState,
-        contactSettingsListRetrieved: true,
-      };
-    }
-    if (groupSettings) {
-      newState = {
-        ...newState,
-        groupSettingsListRetrieved: true,
-      };
+    if (userData.token) {
+      if (contactSettings) {
+        newState = {
+          ...newState,
+          contactSettingsRetrieved: true,
+        };
+      }
+      if (groupSettings) {
+        newState = {
+          ...newState,
+          groupSettingsRetrieved: true,
+        };
+      }
+      if (geonames && geonames.length > 0) {
+        newState = {
+          ...newState,
+          geonamesRetrieved: true,
+        };
+      }
+      if (peopleGroups) {
+        newState = {
+          ...newState,
+          peopleGroupsRetrieved: true,
+        };
+      }
+      if (users) {
+        newState = {
+          ...newState,
+          usersRetrieved: true,
+        };
+      }
+      if (userData) {
+        newState = {
+          ...newState,
+          userDataRetrieved: true,
+        };
+      }
+      // geonamesLastModifiedDate same as stored date and previous geonames are persisted in storage
+      if (
+        geonamesLastModifiedDate &&
+        geonamesLastModifiedDate === newState.geonamesLastModifiedDate &&
+        newState.geonamesLength > 0
+      ) {
+        newState = {
+          ...newState,
+          geonamesRetrieved: true,
+        };
+      }
     }
 
     const error =
@@ -255,25 +306,48 @@ class LoginScreen extends React.Component {
 
   componentDidMount() {
     const { navigation } = this.props;
-
     this.focusListener = navigation.addListener('didFocus', () => {
       this.setState({
-        contactSettingsListRetrieved: false,
-        groupSettingsListRetrieved: false,
+        contactSettingsRetrieved: false,
+        groupSettingsRetrieved: false,
+        peopleGroupsRetrieved: false,
+        usersRetrieved: false,
         appLanguageSet: false,
+        userDataRetrieved: false,
+        geonamesRetrieved: false,
       });
     });
+    this.initLoginScreen();
+  }
+
+  initLoginScreen = async () => {
+    if (this.props.geonamesLastModifiedDate !== null) {
+      this.setState(
+        {
+          geonamesLastModifiedDate: this.props.geonamesLastModifiedDate,
+        },
+        () => {
+          this.userIsAuthenticated();
+        },
+      );
+    } else {
+      this.userIsAuthenticated();
+    }
+  };
+
+  userIsAuthenticated = () => {
     // User is authenticated (logged)
     if (this.props.userData && this.props.userData.token && this.props.rememberPassword) {
       if (this.props.isConnected) {
         if (this.props.pinCode.enabled) {
           this.toggleShowPIN();
         } else {
-          this.props.loginDispatch(
-            this.props.userData.domain,
-            this.props.userData.username,
-            this.props.userData.password,
-          );
+          if (this.props)
+            this.props.loginDispatch(
+              this.props.userData.domain,
+              this.props.userData.username,
+              this.props.userData.password,
+            );
         }
       } else {
         this.setState(
@@ -282,33 +356,41 @@ class LoginScreen extends React.Component {
           },
           () => {
             this.setState({
-              contactSettingsListRetrieved: true,
-              groupSettingsListRetrieved: true,
+              contactSettingsRetrieved: true,
+              groupSettingsRetrieved: true,
+              geonamesRetrieved: true,
+              peopleGroupsRetrieved: true,
+              usersRetrieved: true,
               appLanguageSet: true,
+              userDataRetrieved: true,
             });
           },
         );
       }
     }
-  }
+  };
 
   componentDidUpdate(prevProps) {
     const {
       userData,
-      usersContacts,
       geonames,
       peopleGroups,
-      search,
-      contactSettings,
-      groupSettings,
       users,
       userReducerError,
       groupsReducerError,
       usersReducerError,
       contactsReducerError,
       loginCanceled,
+      geonamesLastModifiedDate,
     } = this.props;
-    const { contactSettingsListRetrieved, groupSettingsListRetrieved, appLanguageSet } = this.state;
+    const {
+      contactSettingsRetrieved,
+      groupSettingsRetrieved,
+      appLanguageSet,
+      geonamesRetrieved,
+      peopleGroupsRetrieved,
+      usersRetrieved,
+    } = this.state;
     // If the RTL value in the store does not match what is
     // in I18nManager (which controls content flow), call
     // forceRTL(...) to set it in I18nManager and reload app
@@ -322,23 +404,13 @@ class LoginScreen extends React.Component {
     } */
 
     // User logged successfully
-    if (userData && prevProps.userData !== userData && !loginCanceled) {
+    if (userData && prevProps.userData.token !== userData.token && !loginCanceled) {
       this.getDataLists();
       this.getUserInfo();
-      // User locale retrieved
-      if (userData.locale) {
-        this.setAppLanguage();
-      }
     }
-
-    // usersContactsList retrieved
-    if (usersContacts && prevProps.usersContacts !== usersContacts) {
-      ExpoFileSystemStorage.setItem('usersAndContactsList', JSON.stringify(usersContacts));
-    }
-
-    // geonamesList retrieved
-    if (geonames && prevProps.geonames !== geonames) {
-      ExpoFileSystemStorage.setItem('locationsList', JSON.stringify(geonames));
+    // User locale retrieved
+    if (userData && userData.locale && prevProps.userData.locale !== userData.locale) {
+      this.setAppLanguage();
     }
 
     // peopleGroupsList retrieved
@@ -346,27 +418,31 @@ class LoginScreen extends React.Component {
       ExpoFileSystemStorage.setItem('peopleGroupsList', JSON.stringify(peopleGroups));
     }
 
-    // searchGroupsList retrieved
-    if (search && prevProps.search !== search) {
-      ExpoFileSystemStorage.setItem('searchGroupsList', JSON.stringify(search));
-    }
-
     // usersList retrieved
     if (users && prevProps.users !== users) {
       ExpoFileSystemStorage.setItem('usersList', JSON.stringify(users));
     }
 
-    // contactSettings retrieved
-    if (contactSettings && prevProps.contactSettings !== contactSettings) {
-      ExpoFileSystemStorage.setItem('contactSettings', JSON.stringify(contactSettings));
+    // geonamesLastModifiedDate modified
+    if (
+      geonamesLastModifiedDate &&
+      prevProps.geonamesLastModifiedDate !== geonamesLastModifiedDate
+    ) {
+      this.getLocations();
     }
 
-    // groupSettings retrieved
-    if (groupSettings && prevProps.groupSettings !== groupSettings) {
-      ExpoFileSystemStorage.setItem('groupSettings', JSON.stringify(groupSettings));
+    // geonamesList retrieved
+    if (geonames && prevProps.geonames !== geonames) {
+      ExpoFileSystemStorage.setItem('locationsList', JSON.stringify(geonames));
     }
-
-    if (contactSettingsListRetrieved && groupSettingsListRetrieved && appLanguageSet) {
+    if (
+      contactSettingsRetrieved &&
+      groupSettingsRetrieved &&
+      appLanguageSet &&
+      geonamesRetrieved &&
+      peopleGroupsRetrieved &&
+      usersRetrieved
+    ) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
       ExpoFileSystemStorage.setItem('listsLastUpdate', listsLastUpdate);
@@ -457,11 +533,6 @@ class LoginScreen extends React.Component {
   };
 
   getDataLists = () => {
-    this.props.getUsersAndContacts(this.props.userData.domain, this.props.userData.token);
-    this.props.getLocations(this.props.userData.domain, this.props.userData.token);
-    this.props.getPeopleGroups(this.props.userData.domain, this.props.userData.token);
-    this.props.getUsers(this.props.userData.domain, this.props.userData.token);
-    this.props.searchGroups(this.props.userData.domain, this.props.userData.token);
     this.props.getContactSettings(this.props.userData.domain, this.props.userData.token);
     this.props.getGroupSettings(this.props.userData.domain, this.props.userData.token);
     this.props.getContacts(
@@ -478,10 +549,17 @@ class LoginScreen extends React.Component {
       this.state.limit,
       this.state.sort,
     );
+    this.props.getPeopleGroups(this.props.userData.domain, this.props.userData.token);
+    this.props.getLocationModifiedDate(this.props.userData.domain, this.props.userData.token);
+    this.props.getUsers(this.props.userData.domain, this.props.userData.token);
   };
 
   getUserInfo = () => {
     this.props.getUserInfo(this.props.userData.domain, this.props.userData.token);
+  };
+
+  getLocations = () => {
+    this.props.getLocations(this.props.userData.domain, this.props.userData.token);
   };
 
   setPasswordVisibility = () => {
@@ -823,10 +901,8 @@ LoginScreen.propTypes = {
     email: PropTypes.string,
     locale: PropTypes.string,
   }),
-  getUsersAndContacts: PropTypes.func.isRequired,
   getLocations: PropTypes.func.isRequired,
   getPeopleGroups: PropTypes.func.isRequired,
-  searchGroups: PropTypes.func.isRequired,
   getUsers: PropTypes.func.isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
@@ -835,22 +911,12 @@ LoginScreen.propTypes = {
   }).isRequired,
   setLanguage: PropTypes.func.isRequired,
   /* eslint-disable */
-  usersContacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      key: PropTypes.number,
-    }),
-  ),
   geonames: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.number,
     }),
   ),
   peopleGroups: PropTypes.arrayOf(
-    PropTypes.shape({
-      key: PropTypes.number,
-    }),
-  ),
-  search: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.number,
     }),
@@ -913,10 +979,8 @@ const mapStateToProps = (state) => ({
   userReducerError: state.userReducer.error,
   rememberPassword: state.userReducer.rememberPassword,
   groupsReducerLoading: state.groupsReducer.loading,
-  usersContacts: state.groupsReducer.usersContacts,
   geonames: state.groupsReducer.geonames,
   peopleGroups: state.groupsReducer.peopleGroups,
-  search: state.groupsReducer.search,
   groupSettings: state.groupsReducer.settings,
   groupsReducerError: state.groupsReducer.error,
   groups: state.groupsReducer.groups,
@@ -931,22 +995,18 @@ const mapStateToProps = (state) => ({
   contacts: state.contactsReducer.contacts,
   pinCode: state.userReducer.pinCode,
   loginCanceled: state.userReducer.loginCanceled,
+  geonamesLastModifiedDate: state.groupsReducer.geonamesLastModifiedDate,
+  geonamesLength: state.groupsReducer.geonamesLength,
 });
 const mapDispatchToProps = (dispatch) => ({
   loginDispatch: (domain, username, password) => {
     dispatch(login(domain, username, password));
-  },
-  getUsersAndContacts: (domain, token) => {
-    dispatch(getUsersAndContacts(domain, token));
   },
   getLocations: (domain, token) => {
     dispatch(getLocations(domain, token));
   },
   getPeopleGroups: (domain, token) => {
     dispatch(getPeopleGroups(domain, token));
-  },
-  searchGroups: (domain, token) => {
-    dispatch(searchGroups(domain, token));
   },
   getUsers: (domain, token) => {
     dispatch(getUsers(domain, token));
@@ -971,6 +1031,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   cancelLogin: () => {
     dispatch(cancelLogin());
+  },
+  getLocationModifiedDate: (domain, token) => {
+    dispatch(getLocationListLastModifiedDate(domain, token));
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

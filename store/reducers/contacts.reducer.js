@@ -544,7 +544,7 @@ export default function contactsReducer(state = initialState, action) {
         contact = mappedContact;
         // Update localContact with dbContact
         const contactIndex = newState.contacts.findIndex(
-          (contactItem) => contactItem.ID === contact.ID,
+          (contactItem) => contactItem.ID.toString() === contact.ID,
         );
         if (contactIndex > -1) {
           newState.contacts[contactIndex] = {

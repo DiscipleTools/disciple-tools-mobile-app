@@ -9,10 +9,8 @@ const initialState = {
   comments: null,
   newComment: null,
   activities: null,
-  usersContacts: null,
   geonames: [],
   peopleGroups: null,
-  search: null,
   totalComments: null,
   totalActivities: null,
   loadingComments: false,
@@ -21,15 +19,15 @@ const initialState = {
   settings: null,
   offset: 0,
   foundGeonames: [],
+  geonamesLastModifiedDate: null,
+  geonamesLength: 0,
 };
 
 export default function groupsReducer(state = initialState, action) {
   let newState = {
     ...state,
     group: null,
-    usersContacts: null,
     peopleGroups: null,
-    search: null,
     newComment: null,
     error: null,
     comments: null,
@@ -40,26 +38,6 @@ export default function groupsReducer(state = initialState, action) {
     foundGeonames: null,
   };
   switch (action.type) {
-    case actions.GROUPS_GET_USERS_CONTACTS_START:
-      return {
-        ...newState,
-        loading: true,
-      };
-    case actions.GROUPS_GET_USERS_CONTACTS_SUCCESS:
-      return {
-        ...newState,
-        usersContacts: action.usersContacts.map((user) => ({
-          value: user.ID.toString(),
-          name: user.name,
-        })),
-        loading: false,
-      };
-    case actions.GROUPS_GET_USERS_CONTACTS_FAILURE:
-      return {
-        ...newState,
-        error: action.error,
-        loading: false,
-      };
     case actions.GROUPS_GET_LOCATIONS_START:
       return {
         ...newState,
@@ -68,11 +46,12 @@ export default function groupsReducer(state = initialState, action) {
     case actions.GROUPS_GET_LOCATIONS_SUCCESS:
       return {
         ...newState,
-        geonames: action.geonames.map((geoname) => ({
-          value: geoname.ID,
-          name: geoname.name,
+        geonames: Object.keys(action.geonames).map((key) => ({
+          value: key,
+          name: action.geonames[key],
         })),
         loading: false,
+        geonamesLength: Object.keys(action.geonames).length,
       };
     case actions.GROUPS_GET_LOCATIONS_FAILURE:
       return {
@@ -95,26 +74,6 @@ export default function groupsReducer(state = initialState, action) {
         loading: false,
       };
     case actions.GROUPS_GET_PEOPLE_GROUPS_FAILURE:
-      return {
-        ...newState,
-        error: action.error,
-        loading: false,
-      };
-    case actions.GROUPS_SEARCH_START:
-      return {
-        ...newState,
-        loading: true,
-      };
-    case actions.GROUPS_SEARCH_SUCCESS:
-      return {
-        ...newState,
-        search: action.search.map((group) => ({
-          name: group.name,
-          value: group.ID,
-        })),
-        loading: false,
-      };
-    case actions.GROUPS_SEARCH_FAILURE:
       return {
         ...newState,
         error: action.error,
@@ -520,7 +479,9 @@ export default function groupsReducer(state = initialState, action) {
         }
       } else if (oldId) {
         // Search entity with oldID, remove it and add updated entity
-        const oldGroupIndex = newState.groups.findIndex((groupItem) => groupItem.ID === oldId);
+        const oldGroupIndex = newState.groups.findIndex(
+          (groupItem) => groupItem.ID.toString() === oldId,
+        );
         const previousGroupData = {
           ...newState.groups[oldGroupIndex],
         };
@@ -692,7 +653,9 @@ export default function groupsReducer(state = initialState, action) {
         });
         group = mappedGroup;
         // Update localGroup with dbGroup
-        const groupIndex = newState.groups.findIndex((groupItem) => groupItem.ID === group.ID);
+        const groupIndex = newState.groups.findIndex(
+          (groupItem) => groupItem.ID.toString() === group.ID,
+        );
         if (groupIndex > -1) {
           newState.groups[groupIndex] = {
             ...group,
@@ -854,10 +817,8 @@ export default function groupsReducer(state = initialState, action) {
     case userActions.USER_LOGOUT:
       return {
         ...newState,
-        usersContacts: null,
         geonames: null,
         peopleGroups: null,
-        search: null,
       };
     case actions.GROUPS_GET_SETTINGS_SUCCESS: {
       const { settings } = action;
@@ -911,11 +872,6 @@ export default function groupsReducer(state = initialState, action) {
         loading: false,
       };
     }
-    case actions.GROUPS_LOCATIONS_SEARCH_START:
-      return {
-        ...newState,
-        loading: true,
-      };
     case actions.GROUPS_LOCATIONS_SEARCH_SUCCESS: {
       const { offline, filteredGeonames, queryText } = action;
       let foundGeonames = [],
@@ -955,6 +911,19 @@ export default function groupsReducer(state = initialState, action) {
         error: action.error,
         loading: false,
       };
+    case actions.GROUPS_LOCATIONS_MODIFIED_DATE_SUCCESS: {
+      const { geonamesLastModifiedDate } = action;
+      return {
+        ...newState,
+        geonamesLastModifiedDate,
+      };
+    }
+    case actions.GROUPS_LOCATIONS_MODIFIED_DATE_FAILURE: {
+      return {
+        ...newState,
+        error: action.error,
+      };
+    }
     default:
       return newState;
   }
