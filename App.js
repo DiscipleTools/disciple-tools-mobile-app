@@ -27,7 +27,16 @@ const styles = StyleSheet.create({
 });
 
 // App
-let unsubscribe;
+let unsubscribe, handle;
+let onlyExecuteLastCall = (parameter, functionName, timeout) => {
+  if (handle) {
+    clearTimeout(handle);
+  }
+  handle = setTimeout(function() {
+    handle = 0;
+    functionName(parameter);
+  }, timeout);
+};
 class App extends React.Component {
   constructor() {
     super();
@@ -43,9 +52,9 @@ class App extends React.Component {
       this.handleConnectivityChange(state.isConnected);
     });
     // add network connectivity handler
-    unsubscribe = NetInfo.addEventListener((state) => {
-      this.handleConnectivityChange(state.isConnected);
-    });
+    unsubscribe = NetInfo.addEventListener((state) =>
+      onlyExecuteLastCall(state.isConnected, this.handleConnectivityChange, 1000),
+    );
 
     if (__DEV__) {
       // Reactotron can be used to see AsyncStorage data and API requests

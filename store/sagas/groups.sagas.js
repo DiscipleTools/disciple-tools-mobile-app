@@ -173,53 +173,6 @@ export function* getById({ domain, token, groupId }) {
   }
 }
 
-export function* getUsersAndContacts({ domain, token }) {
-  yield put({ type: actions.GROUPS_GET_USERS_CONTACTS_START });
-
-  yield put({
-    type: 'REQUEST',
-    payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/contacts/compact`,
-      data: {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      },
-      action: actions.GROUPS_GET_USERS_CONTACTS_RESPONSE,
-    },
-  });
-
-  try {
-    let response = yield take(actions.GROUPS_GET_USERS_CONTACTS_RESPONSE);
-    response = response.payload;
-    const jsonData = response.data;
-    if (response.status === 200) {
-      yield put({
-        type: actions.GROUPS_GET_USERS_CONTACTS_SUCCESS,
-        usersContacts: jsonData.posts,
-      });
-    } else {
-      yield put({
-        type: actions.GROUPS_GET_USERS_CONTACTS_FAILURE,
-        error: {
-          code: jsonData.code,
-          message: jsonData.message,
-        },
-      });
-    }
-  } catch (error) {
-    yield put({
-      type: actions.GROUPS_GET_USERS_CONTACTS_FAILURE,
-      error: {
-        code: '400',
-        message: 'Unable to process the request. Please try again later.',
-      },
-    });
-  }
-}
-
 export function* getCommentsByGroup({ domain, token, groupId, offset, limit }) {
   const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
   yield put({ type: actions.GROUPS_GET_COMMENTS_START });
@@ -363,7 +316,7 @@ export function* getLocations({ domain, token }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt/v1/mapping_module/search_location_grid_by_name?filter=focus`,
+      url: `https://${domain}/wp-json/dt-mobile-app/v1/locations`,
       data: {
         method: 'GET',
         headers: {
@@ -410,7 +363,7 @@ export function* getPeopleGroups({ domain, token }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt/v1/people-groups/compact/?s=`,
+      url: `https://${domain}/wp-json/dt/v1/people-groups/compact`,
       data: {
         method: 'GET',
         headers: {
@@ -491,45 +444,6 @@ export function* getActivitiesByGroup({ domain, token, groupId, offset, limit })
   } catch (error) {
     yield put({
       type: actions.GROUPS_GET_ACTIVITIES_FAILURE,
-      error: {
-        code: '400',
-        message: 'Unable to process the request. Please try again later.',
-      },
-    });
-  }
-}
-
-export function* searchGroups({ domain, token }) {
-  yield put({ type: actions.GROUPS_SEARCH_START });
-
-  yield put({
-    type: 'REQUEST',
-    payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/groups/compact/?s=`,
-      data: {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      },
-      action: actions.GROUPS_SEARCH_RESPONSE,
-    },
-  });
-
-  try {
-    let response = yield take(actions.GROUPS_SEARCH_RESPONSE);
-    response = response.payload;
-    const jsonData = response.data;
-    if (response.status === 200) {
-      yield put({
-        type: actions.GROUPS_SEARCH_SUCCESS,
-        search: jsonData.posts,
-      });
-    }
-  } catch (error) {
-    yield put({
-      type: actions.GROUPS_SEARCH_FAILURE,
       error: {
         code: '400',
         message: 'Unable to process the request. Please try again later.',
@@ -633,19 +547,62 @@ export function* searchLocations({ domain, token, queryText }) {
   }
 }
 
+export function* getLocationListLastModifiedDate({ domain, token }) {
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-mobile-app/v1/location-data`,
+      data: {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      action: actions.GROUPS_LOCATIONS_MODIFIED_DATE_RESPONSE,
+    },
+  });
+  try {
+    let response = yield take(actions.GROUPS_LOCATIONS_MODIFIED_DATE_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_LOCATIONS_MODIFIED_DATE_SUCCESS,
+        geonamesLastModifiedDate: jsonData.last_modified_date,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_LOCATIONS_MODIFIED_DATE_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.GROUPS_LOCATIONS_MODIFIED_DATE_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
 export default function* groupsSaga() {
   yield all([
     takeEvery(actions.GROUPS_SAVE, saveGroup),
     takeLatest(actions.GROUPS_GETALL, getAll),
     takeEvery(actions.GROUPS_GETBYID, getById),
-    takeEvery(actions.GROUPS_GET_USERS_CONTACTS, getUsersAndContacts),
     takeEvery(actions.GROUPS_GET_COMMENTS, getCommentsByGroup),
     takeEvery(actions.GROUPS_SAVE_COMMENT, saveComment),
     takeEvery(actions.GROUPS_GET_LOCATIONS, getLocations),
     takeEvery(actions.GROUPS_GET_PEOPLE_GROUPS, getPeopleGroups),
     takeEvery(actions.GROUPS_GET_ACTIVITIES, getActivitiesByGroup),
-    takeEvery(actions.GROUPS_SEARCH, searchGroups),
     takeEvery(actions.GROUPS_GET_SETTINGS, getSettings),
     takeEvery(actions.GROUPS_LOCATIONS_SEARCH, searchLocations),
+    takeEvery(actions.GROUPS_LOCATIONS_MODIFIED_DATE, getLocationListLastModifiedDate),
   ]);
 }

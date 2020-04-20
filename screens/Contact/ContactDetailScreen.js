@@ -779,6 +779,7 @@ class ContactDetailScreen extends React.Component {
 
   getLists = async (contactId) => {
     let newState = {};
+
     const users = await ExpoFileSystemStorage.getItem('usersList');
     if (users !== null) {
       newState = {
@@ -790,14 +791,6 @@ class ContactDetailScreen extends React.Component {
       };
     }
 
-    const usersContacts = await ExpoFileSystemStorage.getItem('usersAndContactsList');
-    if (usersContacts !== null) {
-      newState = {
-        ...newState,
-        usersContacts: JSON.parse(usersContacts),
-      };
-    }
-
     const peopleGroups = await ExpoFileSystemStorage.getItem('peopleGroupsList');
     if (peopleGroups !== null) {
       newState = {
@@ -806,23 +799,27 @@ class ContactDetailScreen extends React.Component {
       };
     }
 
-    newState = {
-      ...newState,
-      geonames: [...this.props.geonames],
-    };
-
-    const groups = await ExpoFileSystemStorage.getItem('searchGroupsList');
-    if (groups !== null) {
+    const geonames = await ExpoFileSystemStorage.getItem('locationsList');
+    if (geonames !== null) {
       newState = {
         ...newState,
-        groups: JSON.parse(groups),
+        geonames: JSON.parse(geonames),
       };
     }
 
     newState = {
       ...newState,
+      usersContacts: this.props.contactsList.map((contact) => ({
+        name: contact.title,
+        value: contact.ID,
+      })),
+      groups: this.props.groupsList.map((group) => ({
+        name: group.title,
+        value: group.ID,
+      })),
       loadedLocal: true,
     };
+
     this.setState(newState, () => {
       // Only execute in detail mode
       if (contactId) {
@@ -5363,8 +5360,9 @@ const mapStateToProps = (state) => ({
   saved: state.contactsReducer.saved,
   isConnected: state.networkConnectivityReducer.isConnected,
   contactSettings: state.contactsReducer.settings,
-  geonames: state.groupsReducer.geonames,
   foundGeonames: state.groupsReducer.foundGeonames,
+  groupsList: state.groupsReducer.groups,
+  contactsList: state.contactsReducer.contacts,
 });
 
 const mapDispatchToProps = (dispatch) => ({
