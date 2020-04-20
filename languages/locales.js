@@ -26,7 +26,7 @@ export default [
   },
   {
     code: 'tr',
-    name: 'Türk',
+    name: 'Türkçe',
     direction: 'ltr',
   },
   {
