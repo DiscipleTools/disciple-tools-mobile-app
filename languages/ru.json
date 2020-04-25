@@ -1,0 +1,125 @@
+{
+  "global": {
+    "error": {
+      "code": "Код: ",
+      "message": "Сообщение: "
+    },
+    "success": {
+      "save": "Данные успешно сохранены!"
+    },
+    "groups": "Группы",
+    "details": "Детали",
+    "selectPeopleGroups": "Выберите группы людей",
+    "address": "Адрес",
+    "progress": "Прогресс",
+    "commentsActivity": "Комментарии и активность",
+    "writeYourCommentNoteHere": "Напишите свой комментарий или заметку здесь",
+    "requiredField": "Обязательное поле",
+    "edit": "Редактировать",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "online": "Онлайн",
+    "offline": "Офлайн",
+    "language": "Язык",
+    "search": "Поиск",
+    "membersActivity": "Члены",
+    "moreFields": "Больше полей",
+    "nameRequired": "Имя (обязательно"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "Например: myteam.disciple.tools",
+      "error": "Требуется домен",
+      "errorForgotPass": "Пожалуйста, введите URL, чтобы начать восстановление пароля"
+    },
+    "username": {
+      "label": "Имя пользователя",
+      "error": "Требуется имя пользователя"
+    },
+    "password": {
+      "label": "Пароль",
+      "error": "Требуется пароль"
+    },
+    "logIn": "Войти",
+    "forgotPassword": "Забыли пароль?",
+    "errors": {
+      "invalidUsername": "Неизвестное имя пользователя. Проверьте еще раз или попробуйте свой адрес электронной почты.",
+      "incorrectPassword": "Неверный пароль для этого пользователя"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "Контакты",
+    "noContactPlacheHolder": "В настоящее время нет доступных контактов.",
+    "noContactPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта.  Попытайтесь еще раз (обновите экран, потянув его вниз).",
+    "noContactPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить ваши контакты."
+  },
+  "settingsScreen": {
+    "settings": "Настройки",
+    "networkUnavailable": "Сеть недоступна. Работаем в режиме «Офлайн».",
+    "networkAvailable": "Сеть доступна. Работаем в режиме «Онлайн».",
+    "storybook": "Сторибук",
+    "logout": "Выход",
+    "helpSupport": "Помощь / Поддержка",
+    "rememberPassword": "Запомнить пароль",
+    "rememberPasswordActive": "Оставайтесь в системе активным",
+    "rememberPasswordInactive": "Оставайтесь в системе отключенным"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Добавить новый контакт",
+    "subAssignThisContact": "Под-назначить этот контакт",
+    "mobile": "Мобильный",
+    "selectLocations": "Выберите места",
+    "selectSources": "Выберите источники",
+    "connections": "Связи",
+    "addGroup": "Добавить группу",
+    "addConnection": "Добавить связь",
+    "addBaptizedBy": "Добавить крестителя",
+    "addBaptized": "Добавить крещеного",
+    "addCoachedBy": "Добавить наставника",
+    "addCoaching": "Добавить наставляемого",
+    "fullName": {
+      "label": "Полное имя",
+      "error": "Имя обязательно"
+    },
+    "phoneNumber": "Номер телефона",
+    "initialComment": "Начальный комментарий",
+    "socialMedia": "Социальные сети",
+    "noContactCommentPlacheHolder": "В данное время никаких комментариев по контакту нет.",
+    "noContactCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Перетащите вниз, чтобы попытаться обновить и повторить попытку.",
+    "noContactCommentPlacheHolderOffline": ""
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Добавить новую группу",
+    "selectCoaches": "Выберите наставника группы",
+    "searchGroups": "Поиск групп",
+    "searchPeerGroups": "Поиск одноранговых (пир) групп",
+    "childGroup": "Дочерняя группа",
+    "searchChildGroups": "Поиск дочерних групп",
+    "groupName": {
+      "label": "Имя группы",
+      "error": "Имя обязательно"
+    },
+    "addMember": "Добавить участников",
+    "noGroupCommentPlacheHolder": "В настоящее время нет групповых комментариев.",
+    "noGroupCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Попытайтесь еще раз (обновите экран, потянув его вниз).",
+    "noGroupCommentPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить комментарий группы.",
+    "selectLocations": "Выберите места",
+    "noMembersMessage": "Нет участников. Нажмите здесь или на Изменить, чтобы добавить некоторых участников в эту группу."
+  },
+  "notificationsScreen": {
+    "notifications": "Уведомления",
+    "loadMore": "Загрузить еще",
+    "new": "Новое",
+    "unRead": "Не прочитанные",
+    "all": "Все",
+    "markAll": "Пометить все",
+    "dontHaveNotificationsUnread": "Нет непрочитанных уведомлений",
+    "dontHaveNotifications": "Нет уведомлений"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "В настоящее время нет доступных групп.",
+    "noGroupPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Попытайтесь еще раз (обновите экран, потянув его вниз).",
+    "noGroupPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить ваши группы."
+  }
+}

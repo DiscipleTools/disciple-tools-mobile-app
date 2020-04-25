@@ -1,182 +1,125 @@
 {
-    "global": {
-        "error": {
-            "code": "Código: ",
-            "message": "Mensaje: "
-        },
-        "success": {
-            "save": "Datos guardados correctamente!"
-        },
-        "contactOverallStatus": {
-            "new": "Nuevo Contacto",
-            "unassignable": "No está listo",
-            "unassigned": "Asignación necesaria",
-            "assigned": "En espera de ser aceptado",
-            "active": "Activo",
-            "paused": "En pausa",
-            "closed": "Cerrado"
-        },
-        "seekerPath": {
-            "none": "Intento de Contacto Necesario",
-            "attempted": "Se Intentó Contactar",
-            "established": "Contacto Establecido",
-            "scheduled": "Primera Reunión Programada",
-            "met": "Primera Reunión Completada",
-            "ongoing": "Se Continúan Reuniones",
-            "coaching": "Siendo Entrenado"
-        },
-        "groupStatus": {
-            "active": "Activo",
-            "inactive": "Inactivo"
-        },
-        "groupType": {
-            "pre-group": "Pre-Grupo",
-            "group": "Grupo",
-            "church": "Iglesia",
-            "team": "Equipo"
-        },
-        "groups": "Grupos",
-        "details": "Detalles",
-        "status": "Estado",
-        "assignedTo": "Asignado a",
-        "location": "Ubicación",
-        "peopleGroup": "Grupos de Personas",
-        "selectPeopleGroups": "Seleccione grupos de personas",
-        "address": "Dirección",
-        "progress": "Progreso",
-        "commentsActivity": "Comentarios y Actividad",
-        "writeYourCommentNoteHere": "Escriba su comentario o nota aquí",
-        "requiredField": "Campo requerido",
-        "edit": "Editar",
-        "cancel": "Cancelar",
-        "save": "Guardar",
-        "online": "En línea",
-        "language": "Idioma",
-        "search": "Buscar"
+  "global": {
+    "error": {
+      "code": "Código: ",
+      "message": "Mensaje: "
     },
-    "loginScreen": {
-        "domain": {
-            "label": "URL",
-            "placeholder": "P.ej. myteam.disciple.tools",
-            "error": "El dominio es requerido"
-        },
-        "username": {
-            "label": "Nombre de Usuario",
-            "error": "El nombre de usuario es requerido"
-        },
-        "password": {
-            "label": "Contraseña",
-            "error": "La contraseña es requerida"
-        },
-        "logIn": "Iniciar Sesión",
-        "forgotPassword": "Perdiste tu contraseña?"
+    "success": {
+      "save": "Datos guardados correctamente!"
     },
-    "contactsScreen": {
-        "contacts": "Contactos"
+    "groups": "Grupos",
+    "details": "Detalles",
+    "selectPeopleGroups": "Seleccione Grupo Étnico",
+    "address": "Dirección",
+    "progress": "Progreso",
+    "commentsActivity": "Comentarios y Actividad",
+    "writeYourCommentNoteHere": "Escriba su comentario o nota aquí",
+    "requiredField": "Campo requerido",
+    "edit": "Editar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "online": "En línea",
+    "language": "Idioma",
+    "search": "Buscar",
+    "membersActivity": "Miembros",
+    "offline": "Desconectado",
+    "moreFields": "Más Campos",
+    "nameRequired": "Nombre requerido"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "P.ej. myteam.disciple.tools",
+      "error": "El dominio es requerido",
+      "errorForgotPass": "Ingrese la URL para comenzar a recuperar su contraseña"
     },
-    "settingsScreen": {
-        "settings": "Configuraciones",
-        "networkUnavailable": "Red no disponible",
-        "networkAvailable": "Red disponible",
-        "signOut": "Cerrar Sesión",
-        "domain": "Dominio",
-        "signedInAs": "Conectado como",
-        "storybook": "Storybook",
-        "logout": "Desconectarse",
-        "helpSupport": "Ayuda / Soporte"
+    "username": {
+      "label": "Nombre de Usuario",
+      "error": "El nombre de usuario es requerido"
     },
-    "contactDetailScreen": {
-        "addNewContact": "Crear nuevo contacto",
-        "contactSources": {
-            "personal": "Personal",
-            "web": "Web",
-            "phone": "Telefónica",
-            "linkedin": "LinkedIn",
-            "referral": "Referencia",
-            "advertisement": "Anuncio",
-            "transfer": "Transferencia"
-        },
-        "subAssignedTo": "Sub-asignado a",
-        "subAssignThisContact": "Sub-asignar este contacto",
-        "mobile": "Telefonos",
-        "email": "Correos Electrónicos",
-        "selectLocations": "Seleccionar ubicaciones",
-        "contactAge": {
-            "underEighteenYearsOld": "Menor de 18 años de edad",
-            "underTwentySixYearsOld": "18-25 años",
-            "underFortyOneYearsOld": "26-40 años",
-            "overFortyYearsOld": "Mayor de 40 años"
-        },
-        "age": "Edad",
-        "male": "Masculino",
-        "female": "Femenino",
-        "gender": "Género",
-        "source": "Fuente",
-        "selectSources": "Seleccionar fuentes",
-        "seekerPath": "Seeker Path",
-        "faithMilestones": "Faith Milestones",
-        "milestones": {
-            "hasBible": "Tiene biblia",
-            "readingBible": "Leyendo la biblia",
-            "statesBelief": "Declara Creencia",
-            "shareGospel": "Puede compartir Evangelio / Testimonio",
-            "sharingGospel": "Compartiendo Evangelio / Testimonio",
-            "baptized": "Bautizado",
-            "baptizing": "Bautizando",
-            "inGroup": "En Iglesia / Grupo",
-            "startingChurches": "Iniciando Iglesias",
-            "baptismDate": "Fecha de Bautismo"
-        },
-        "connections": "Conexiones",
-        "addGroup": "Buscar Grupos",
-        "connection": "Conexión",
-        "addConnection": "Buscar multiplicadores y contactos",
-        "baptizedBy": "Bautizado por",
-        "addBaptizedBy": "Buscar multiplicadores y contactos",
-        "baptized": "Bautizado",
-        "addBaptized": "Buscar multiplicadores y contactos",
-        "coachedBy": "Entrenado por",
-        "addCoachedBy": "Buscar multiplicadores y contactos",
-        "coaching": "Entrenando",
-        "addCoaching": "Buscar multiplicadores y contactos",
-        "fullName": "Nombre",
-        "phoneNumber": "Telefono",
-        "initialComment": "Primer Comentario",
-        "addBaptizmDate": "Agregar fecha de bautizmo",
-        "group": "Grupo",
-        "socialMedia": "Redes Sociales",
-        "noAnswer": "Sin Respuesta",
-        "contactEstablished": "Contacto Establecido",
-        "meetingScheduled": "Reunión Programada",
-        "meetingCompleted": "Reunión Completa",
-        "meetingNoShow": "Reunión No Se Presentó"
+    "password": {
+      "label": "Contraseña",
+      "error": "La contraseña es requerida"
     },
-    "groupDetailScreen": {
-        "addNewGroup": "Crear un grupo nuevo",
-        "groupCoach": "Entrenador del Grupo",
-        "selectCoaches": "Buscar usuarios y contactos",
-        "selectGeonames": "Buscar ubicaciones",
-        "startDate": "Fecha de inicio",
-        "endDate": "Fecha de finalización",
-        "groupType": "Tipo de grupo",
-        "churchHealth": "Salúd de la Iglesia",
-        "healthMetrics": {
-            "giving": "Donación",
-            "fellowship": "Compañerismo",
-            "communion": "Comunión",
-            "baptism": "Bautizo",
-            "prayer": "Oración",
-            "leaders": "Guias",
-            "bibleStudy": "Estudio Bíblico",
-            "praise": "Alabanza",
-            "sharingGospel": "Compartir el Evangelio"
-        },
-        "parentGroup": "Categoría del Grupo",
-        "searchGroups": "Buscar grupos",
-        "peerGroup": "Grupo de pares",
-        "searchPeerGroups": "Buscar grupos",
-        "childGroup": "Subsiguientes Grupos",
-        "searchChildGroups": "Buscar grupos",
-        "groupName": "Nombre"
+    "logIn": "Iniciar Sesión",
+    "forgotPassword": "Perdiste tu contraseña?",
+    "errors": {
+      "invalidUsername": "Nombre de usuario desconocido. Vuelve a consultar o prueba tu dirección de correo electrónico.",
+      "incorrectPassword": "La contraseña que ingresó para el usuario es incorrecta"
     }
+  },
+  "contactsScreen": {
+    "contacts": "Contactos",
+    "noContactPlacheHolder": "No hay contactos disponibles actualmente.",
+    "noContactPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
+    "noContactPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener sus contactos."
+  },
+  "settingsScreen": {
+    "settings": "Configuraciones",
+    "networkUnavailable": "Red NO DISPONIBLE. Ahora en modo `Desconectado`.",
+    "networkAvailable": "Red DISPONIBLE. Ahora en modo `En línea`.",
+    "storybook": "Storybook",
+    "logout": "Desconectarse",
+    "helpSupport": "Ayuda / Soporte",
+    "rememberPassword": "Mantener iniciada la sesión",
+    "rememberPasswordActive": "Mantener iniciada la sesión activo",
+    "rememberPasswordInactive": "Mantener iniciada la sesión inactivo"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Crear contacto",
+    "subAssignThisContact": "Subasignar este contacto",
+    "mobile": "Telefonos",
+    "selectLocations": "Seleccionar ubicaciones",
+    "selectSources": "Seleccionar fuentes",
+    "connections": "Conexiones",
+    "addGroup": "Buscar Grupos",
+    "addConnection": "Buscar multiplicadores y contactos",
+    "addBaptizedBy": "Buscar multiplicadores y contactos",
+    "addBaptized": "Buscar multiplicadores y contactos",
+    "addCoachedBy": "Buscar multiplicadores y contactos",
+    "addCoaching": "Buscar multiplicadores y contactos",
+    "fullName": {
+      "label": "Nombre",
+      "error": "El nombre es requerido"
+    },
+    "phoneNumber": "Telefono",
+    "initialComment": "Primer Comentario",
+    "socialMedia": "Redes Sociales",
+    "noContactCommentPlacheHolder": "No hay comentarios de contacto disponibles actualmente.",
+    "noContactCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
+    "noContactCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del contacto."
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Crear grupo",
+    "selectCoaches": "Seleccionar Entrenador del Grupo",
+    "searchGroups": "Buscar grupos",
+    "searchPeerGroups": "Buscar grupos paritarios",
+    "childGroup": "Grupos Subsiguientes",
+    "searchChildGroups": "Buscar grupos subsiguientes",
+    "groupName": {
+      "label": "Nombre del Grupo",
+      "error": "El nombre es requerido"
+    },
+    "addMember": "Añadir miembro",
+    "noGroupCommentPlacheHolder": "No hay comentarios del grupo disponibles actualmente.",
+    "noGroupCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
+    "noGroupCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del grupo.",
+    "selectLocations": "Seleccionar ubicaciones",
+    "noMembersMessage": "No hay miembros Toque aquí o en Editar para agregar algunos miembros a este grupo"
+  },
+  "notificationsScreen": {
+    "notifications": "Notificaciones",
+    "loadMore": "Cargar más",
+    "new": "Nuevos",
+    "unRead": "No leído",
+    "all": "Todos",
+    "markAll": "Marcar Todos",
+    "dontHaveNotificationsUnread": "No tienes notificaciones sin leer",
+    "dontHaveNotifications": "No tienes notificaciones"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "No hay grupos disponibles actualmente.",
+    "noGroupPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
+    "noGroupPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener sus grupos."
+  }
 }

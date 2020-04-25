@@ -1,0 +1,125 @@
+{
+  "global": {
+    "error": {
+      "code": "کد: ",
+      "message": "پیام: "
+    },
+    "success": {
+      "save": "داده با موفقیت ذخیره شد!"
+    },
+    "groups": "گروه ها",
+    "details": "جزئیات",
+    "selectPeopleGroups": "گروه های افراد را انتخاب کنید",
+    "address": "نشانی",
+    "progress": "پیش رفتن",
+    "commentsActivity": "نظرات و فعالیت ها",
+    "writeYourCommentNoteHere": "نظر یا یادداشت خود را اینجا بنویسید",
+    "requiredField": "زمینه مورد نیاز",
+    "edit": "ویرایش کنید",
+    "cancel": "لغو",
+    "save": "صرفه جویی",
+    "online": "برخط",
+    "offline": "آفلاین",
+    "language": "زبان",
+    "search": "جستجو کردن",
+    "membersActivity": "اعضا",
+    "moreFields": "زمینه های بیشتر",
+    "nameRequired": "نام لازم است"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "آدرس اینترنتی",
+      "placeholder": "به عنوان مثال. myteam.disciple.tools",
+      "error": "دامنه مورد نیاز است",
+      "errorForgotPass": "لطفاً URL را وارد کنید تا بازیابی رمز عبور خود را شروع کنید"
+    },
+    "username": {
+      "label": "نام کاربری",
+      "error": "نام کاربری مورد نیاز است"
+    },
+    "password": {
+      "label": "کلمه عبور",
+      "error": "رمز عبور مورد نیاز است"
+    },
+    "logIn": "وارد شدن",
+    "forgotPassword": "رمزعبور خود را گم کردید؟",
+    "errors": {
+      "invalidUsername": "نام کاربری ناشناخته دوباره بررسی کنید یا آدرس ایمیل خود را امتحان کنید.",
+      "incorrectPassword": "گذرواژه‌ای که برای نام کاربری خود وارد کردید اشتباه است"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "مخاطب",
+    "noContactPlacheHolder": "در حال حاضر هیچ تماسی موجود نیست.",
+    "noContactPlacheHolder1": "ممکن است مشکلی در گرفتن آنها از سایت شما وجود داشته باشد. پایین بکشید تا سعی کنید تازه کنید و دوباره امتحان کنید.",
+    "noContactPlacheHolderOffline": "شما در حال حاضر آفلاین هستید. به منظور اطمینان از به دست آوردن مخاطبین ، اطمینان حاصل کنید که به داده های wifi یا تلفن همراه وصل شده اید."
+  },
+  "settingsScreen": {
+    "settings": "تنظیمات",
+    "networkUnavailable": "شبکه در دسترس نیست. اکنون در حالت آفلاین است",
+    "networkAvailable": "شبکه شناسایی شد بازگشت به حالت ONLINE",
+    "storybook": "کتاب داستان",
+    "logout": "خروج از سیستم",
+    "helpSupport": "راهنما / پشتیبانی",
+    "rememberPassword": "به یاد داشته باشید کلمه کلیدی",
+    "rememberPasswordActive": "فعال شوید",
+    "rememberPasswordInactive": "وارد سیستم غیرفعال شوید"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "مخاطب جدید اضافه کنید",
+    "subAssignThisContact": "این مخاطب را اختصاص دهید",
+    "mobile": "سیار",
+    "selectLocations": "مکان ها را انتخاب کنید",
+    "selectSources": "منابع را انتخاب کنید",
+    "connections": "اتصالات",
+    "addGroup": "افزودن گروه",
+    "addConnection": "اتصال را اضافه کنید",
+    "addBaptizedBy": "تعمید داده شده توسط",
+    "addBaptized": "تعمید اضافه کنید",
+    "addCoachedBy": "مربی اضافه شده توسط",
+    "addCoaching": "مربیگری را اضافه کنید",
+    "fullName": {
+      "label": "نام و نام خانوادگی",
+      "error": "نام لازم است"
+    },
+    "phoneNumber": "شماره تلفن",
+    "initialComment": "نظر اولیه",
+    "socialMedia": "رسانه های اجتماعی",
+    "noContactCommentPlacheHolder": "در حال حاضر هیچ گونه تماسی در دسترس نیست.",
+    "noContactCommentPlacheHolder1": "ممکن است مشکلی در گرفتن آنها از سایت شما وجود داشته باشد. پایین بکشید تا سعی کنید تازه کنید و دوباره امتحان کنید.",
+    "noContactCommentPlacheHolderOffline": ""
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "گروه جدید را اضافه کنید",
+    "selectCoaches": "مربی گروه را انتخاب کنید",
+    "searchGroups": "گروه های جستجو",
+    "searchPeerGroups": "جستجوی گروه های همتا",
+    "childGroup": "گروه کودک",
+    "searchChildGroups": "گروه های کودک را جستجو کنید",
+    "groupName": {
+      "label": "اسم گروه",
+      "error": "نام لازم است"
+    },
+    "addMember": "عضو را اضافه کنید",
+    "noGroupCommentPlacheHolder": "هیچ نظر گروهی در حال حاضر موجود نیست",
+    "noGroupCommentPlacheHolder1": "ممکن است مشکلی در گرفتن آنها از سایت شما وجود داشته باشد. پایین بکشید تا سعی کنید تازه کنید و دوباره امتحان کنید.",
+    "noGroupCommentPlacheHolderOffline": "شما در حال حاضر آفلاین هستید. اطمینان حاصل کنید که به منظور تازه کردن و اظهار نظر گروه خود ، به داده های wifi یا تلفن همراه وصل شده اید.",
+    "selectLocations": "مکان ها را انتخاب کنید",
+    "noMembersMessage": "هیچ عضو برای افزودن برخی از اعضا به این گروه ، اینجا یا بر روی ویرایش ضربه بزنید."
+  },
+  "notificationsScreen": {
+    "notifications": "اطلاعیه",
+    "loadMore": "بارگذاری بیشتر",
+    "new": "جدید",
+    "unRead": "خوانده نشده",
+    "all": "همه",
+    "markAll": "علامت گذاری همه",
+    "dontHaveNotificationsUnread": "بدون اعلان خوانده نشده است",
+    "dontHaveNotifications": "بدون اعلان"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "در حال حاضر هیچ گروهی موجود نیست",
+    "noGroupPlacheHolder1": "ممکن است مشکلی در گرفتن آنها از سایت شما وجود داشته باشد. پایین بکشید تا سعی کنید تازه کنید و دوباره امتحان کنید.",
+    "noGroupPlacheHolderOffline": "شما در حال حاضر آفلاین هستید. برای اطمینان از گروه های خود ، اطمینان حاصل کنید که به داده های wifi یا تلفن همراه وصل شده اید."
+  }
+}

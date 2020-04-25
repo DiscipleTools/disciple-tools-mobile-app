@@ -9,26 +9,25 @@ const initialState = {
   comments: null,
   newComment: null,
   activities: null,
-  usersContacts: null,
-  geonames: null,
+  geonames: [],
   peopleGroups: null,
-  search: null,
   totalComments: null,
   totalActivities: null,
   loadingComments: false,
   loadingActivities: false,
   saved: false,
   settings: null,
+  offset: 0,
+  foundGeonames: [],
+  geonamesLastModifiedDate: null,
+  geonamesLength: 0,
 };
 
 export default function groupsReducer(state = initialState, action) {
   let newState = {
     ...state,
     group: null,
-    usersContacts: null,
     peopleGroups: null,
-    geonames: null,
-    search: null,
     newComment: null,
     error: null,
     comments: null,
@@ -36,29 +35,9 @@ export default function groupsReducer(state = initialState, action) {
     activities: null,
     totalActivities: null,
     saved: false,
+    foundGeonames: null,
   };
-
   switch (action.type) {
-    case actions.GROUPS_GET_USERS_CONTACTS_START:
-      return {
-        ...newState,
-        loading: true,
-      };
-    case actions.GROUPS_GET_USERS_CONTACTS_SUCCESS:
-      return {
-        ...newState,
-        usersContacts: action.usersContacts.map(user => ({
-          value: user.ID.toString(),
-          name: user.name,
-        })),
-        loading: false,
-      };
-    case actions.GROUPS_GET_USERS_CONTACTS_FAILURE:
-      return {
-        ...newState,
-        error: action.error,
-        loading: false,
-      };
     case actions.GROUPS_GET_LOCATIONS_START:
       return {
         ...newState,
@@ -67,11 +46,12 @@ export default function groupsReducer(state = initialState, action) {
     case actions.GROUPS_GET_LOCATIONS_SUCCESS:
       return {
         ...newState,
-        geonames: action.geonames.map(geoname => ({
-          value: geoname.ID,
-          name: geoname.name,
+        geonames: Object.keys(action.geonames).map((key) => ({
+          value: key,
+          name: action.geonames[key],
         })),
         loading: false,
+        geonamesLength: Object.keys(action.geonames).length,
       };
     case actions.GROUPS_GET_LOCATIONS_FAILURE:
       return {
@@ -87,33 +67,13 @@ export default function groupsReducer(state = initialState, action) {
     case actions.GROUPS_GET_PEOPLE_GROUPS_SUCCESS:
       return {
         ...newState,
-        peopleGroups: action.peopleGroups.map(peopleGroup => ({
+        peopleGroups: action.peopleGroups.map((peopleGroup) => ({
           value: peopleGroup.ID.toString(),
           name: peopleGroup.name,
         })),
         loading: false,
       };
     case actions.GROUPS_GET_PEOPLE_GROUPS_FAILURE:
-      return {
-        ...newState,
-        error: action.error,
-        loading: false,
-      };
-    case actions.GROUPS_SEARCH_START:
-      return {
-        ...newState,
-        loading: true,
-      };
-    case actions.GROUPS_SEARCH_SUCCESS:
-      return {
-        ...newState,
-        search: action.search.map(group => ({
-          name: group.name,
-          value: group.ID,
-        })),
-        loading: false,
-      };
-    case actions.GROUPS_SEARCH_FAILURE:
       return {
         ...newState,
         error: action.error,
@@ -126,14 +86,22 @@ export default function groupsReducer(state = initialState, action) {
       };
     case actions.GROUPS_GETALL_SUCCESS: {
       let { groups } = action;
-      const { offline } = action;
-      const localGroups = newState.groups.filter(localGroup => Number.isNaN(localGroup.ID));
+      const { offline, offset } = action;
+      const localGroups = newState.groups.filter((localGroup) => isNaN(localGroup.ID));
       if (!offline) {
         const dataBaseGroups = [...groups].map((group) => {
           const mappedGroup = {};
           Object.keys(group).forEach((key) => {
             // Omit restricted properties
-            if (key !== 'last_modified' && key !== 'created_from_contact_id' && key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'baptized_member_count') {
+            if (
+              key !== 'last_modified' &&
+              key !== 'created_from_contact_id' &&
+              key !== '_sample' &&
+              key !== 'geonames' &&
+              key !== 'created_date' &&
+              key !== 'permalink' &&
+              key !== 'baptized_member_count'
+            ) {
               const value = group[key];
               const valueType = Object.prototype.toString.call(value);
               switch (valueType) {
@@ -156,7 +124,10 @@ export default function groupsReducer(state = initialState, action) {
                   return;
                 }
                 case '[object Object]': {
-                  if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                  if (
+                    Object.prototype.hasOwnProperty.call(value, 'key') &&
+                    Object.prototype.hasOwnProperty.call(value, 'label')
+                  ) {
                     // key_select
                     mappedGroup[key] = value.key;
                   } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
@@ -179,7 +150,13 @@ export default function groupsReducer(state = initialState, action) {
                             value: valueTwo.ID.toString(),
                           };
                           // groups
-                          if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') && Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                          if (
+                            Object.prototype.hasOwnProperty.call(
+                              valueTwo,
+                              'baptized_member_count',
+                            ) &&
+                            Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')
+                          ) {
                             object = {
                               ...object,
                               post_title: valueTwo.post_title,
@@ -188,12 +165,20 @@ export default function groupsReducer(state = initialState, action) {
                             };
                           }
                           return object;
-                        } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                        }
+                        if (
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'value')
+                        ) {
                           return {
                             key: valueTwo.key,
                             value: valueTwo.value,
                           };
-                        } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                        }
+                        if (
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'label')
+                        ) {
                           return {
                             value: valueTwo.id.toString(),
                             name: valueTwo.label,
@@ -228,8 +213,11 @@ export default function groupsReducer(state = initialState, action) {
             }
           });
           return mappedGroup;
-        }).sort((a, b) => parseInt(a.last_modified, 10) - parseInt(b.last_modified, 10)).reverse();
+        }); /* .sort((a, b) => parseInt(a.last_modified, 10) - parseInt(b.last_modified, 10)).reverse(); */
         groups = localGroups.concat(dataBaseGroups);
+      }
+      if (offset > 0) {
+        groups = newState.groups.concat(groups);
       }
       return {
         ...newState,
@@ -253,7 +241,15 @@ export default function groupsReducer(state = initialState, action) {
       } else {
         Object.keys(group).forEach((key) => {
           // Omit restricted properties
-          if (key !== 'last_modified' && key !== 'created_from_contact_id' && key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'baptized_member_count') {
+          if (
+            key !== 'last_modified' &&
+            key !== 'created_from_contact_id' &&
+            key !== '_sample' &&
+            key !== 'geonames' &&
+            key !== 'created_date' &&
+            key !== 'permalink' &&
+            key !== 'baptized_member_count'
+          ) {
             const value = group[key];
             const valueType = Object.prototype.toString.call(value);
             switch (valueType) {
@@ -276,7 +272,10 @@ export default function groupsReducer(state = initialState, action) {
                 return;
               }
               case '[object Object]': {
-                if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                if (
+                  Object.prototype.hasOwnProperty.call(value, 'key') &&
+                  Object.prototype.hasOwnProperty.call(value, 'label')
+                ) {
                   // key_select
                   mappedGroup[key] = value.key;
                 } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
@@ -296,10 +295,14 @@ export default function groupsReducer(state = initialState, action) {
                       if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                         // connection
                         let object = {
+                          name: valueTwo.post_title,
                           value: valueTwo.ID.toString(),
                         };
                         // groups
-                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') && Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                        if (
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') &&
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')
+                        ) {
                           object = {
                             ...object,
                             post_title: valueTwo.post_title,
@@ -308,12 +311,20 @@ export default function groupsReducer(state = initialState, action) {
                           };
                         }
                         return object;
-                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                      }
+                      if (
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'value')
+                      ) {
                         return {
                           key: valueTwo.key,
                           value: valueTwo.value,
                         };
-                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                      }
+                      if (
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'label')
+                      ) {
                         return {
                           value: valueTwo.id.toString(),
                           name: valueTwo.label,
@@ -349,18 +360,20 @@ export default function groupsReducer(state = initialState, action) {
         });
       }
 
-      const oldId = (mappedGroup.oldID) ? mappedGroup.oldID : null;
+      const oldId = mappedGroup.oldID ? mappedGroup.oldID : null;
 
       newState = {
         ...newState,
         group: mappedGroup,
         saved: true,
       };
-      const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID.toString() === group.ID.toString()));
+      const groupIndex = newState.groups.findIndex(
+        (groupItem) => groupItem.ID.toString() === group.ID.toString(),
+      );
       // Search entity in list (groups) if exists: updated it, otherwise: added it to group list
       if (groupIndex > -1) {
         let newGroupData;
-        if (offline && !Number.isNaN(group.ID)) {
+        if (offline) {
           // Editing D.B. entity in OFFLINE mode
           newGroupData = {
             ...newState.groups[groupIndex],
@@ -369,28 +382,38 @@ export default function groupsReducer(state = initialState, action) {
           Object.keys(mappedGroup).forEach((key) => {
             const value = mappedGroup[key];
             const valueType = Object.prototype.toString.call(value);
-            if (valueType === '[object Array]' || Object.prototype.hasOwnProperty.call(value, 'values')) {
-              let collection; let
-                oldCollection;
+            if (
+              valueType === '[object Array]' ||
+              Object.prototype.hasOwnProperty.call(value, 'values')
+            ) {
+              let collection;
+              let oldCollection;
               if (valueType === '[object Array]') {
                 collection = value;
-                oldCollection = (newGroupData[key]) ? [...newGroupData[key]] : [];
+                oldCollection = newGroupData[key] ? [...newGroupData[key]] : [];
               } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
                 collection = value.values;
-                oldCollection = (newGroupData[key]) ? [...newGroupData[key].values] : [];
+                oldCollection = newGroupData[key] ? [...newGroupData[key].values] : [];
               }
               // compare newCollection with old and merge differences.
               collection.forEach((object) => {
                 // search object in newGroupData
                 let findObjectInOldRequestIndex;
                 if (valueType === '[object Array]') {
-                  findObjectInOldRequestIndex = oldCollection.findIndex(oldObject => (oldObject.key === object.key));
+                  findObjectInOldRequestIndex = oldCollection.findIndex(
+                    (oldObject) => oldObject.key === object.key,
+                  );
                 } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
-                  findObjectInOldRequestIndex = oldCollection.findIndex(oldObject => (oldObject.value === object.value));
+                  findObjectInOldRequestIndex = oldCollection.findIndex(
+                    (oldObject) => oldObject.value === object.value,
+                  );
                 }
                 if (findObjectInOldRequestIndex > -1) {
                   // if exist
-                  if (Object.prototype.hasOwnProperty.call(object, 'delete')) {
+                  if (
+                    Object.prototype.hasOwnProperty.call(object, 'delete') &&
+                    object.delete === true
+                  ) {
                     oldCollection.splice(findObjectInOldRequestIndex, 1);
                   } else {
                     // update the object
@@ -425,6 +448,17 @@ export default function groupsReducer(state = initialState, action) {
               };
             }
           });
+          // Update members length in OFFLINE mode
+          if (
+            newGroupData.members &&
+            newGroupData.members.values &&
+            newGroupData.members.values.length != parseInt(newGroupData.member_count)
+          ) {
+            newGroupData = {
+              ...newGroupData,
+              member_count: newGroupData.members.values.length.toString(),
+            };
+          }
         } else {
           newGroupData = {
             ...newState.groups[groupIndex],
@@ -445,7 +479,9 @@ export default function groupsReducer(state = initialState, action) {
         }
       } else if (oldId) {
         // Search entity with oldID, remove it and add updated entity
-        const oldGroupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === oldId));
+        const oldGroupIndex = newState.groups.findIndex(
+          (groupItem) => groupItem.ID.toString() === oldId,
+        );
         const previousGroupData = {
           ...newState.groups[oldGroupIndex],
         };
@@ -485,9 +521,11 @@ export default function groupsReducer(state = initialState, action) {
       };
     case actions.GROUPS_GETBYID_SUCCESS: {
       let group = { ...action.group };
-      if (Number.isNaN(group.ID) || group.isOffline) {
+      if (isNaN(group.ID) || group.isOffline) {
         // Search local group
-        const foundGroup = newState.groups.find(groupItem => (groupItem.ID.toString() === group.ID));
+        const foundGroup = newState.groups.find(
+          (groupItem) => groupItem.ID.toString() === group.ID,
+        );
         group = {
           ...foundGroup,
         };
@@ -496,7 +534,15 @@ export default function groupsReducer(state = initialState, action) {
         // MAP GROUP TO CAN SAVE IT LATER
         Object.keys(group).forEach((key) => {
           // Omit restricted properties
-          if (key !== 'last_modified' && key !== 'created_from_contact_id' && key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'baptized_member_count') {
+          if (
+            key !== 'last_modified' &&
+            key !== 'created_from_contact_id' &&
+            key !== '_sample' &&
+            key !== 'geonames' &&
+            key !== 'created_date' &&
+            key !== 'permalink' &&
+            key !== 'baptized_member_count'
+          ) {
             const value = group[key];
             const valueType = Object.prototype.toString.call(value);
             switch (valueType) {
@@ -519,7 +565,10 @@ export default function groupsReducer(state = initialState, action) {
                 return;
               }
               case '[object Object]': {
-                if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                if (
+                  Object.prototype.hasOwnProperty.call(value, 'key') &&
+                  Object.prototype.hasOwnProperty.call(value, 'label')
+                ) {
                   // key_select
                   mappedGroup[key] = value.key;
                 } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
@@ -539,10 +588,14 @@ export default function groupsReducer(state = initialState, action) {
                       if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                         // connection
                         let object = {
+                          name: valueTwo.post_title,
                           value: valueTwo.ID.toString(),
                         };
                         // groups
-                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') && Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                        if (
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') &&
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')
+                        ) {
                           object = {
                             ...object,
                             post_title: valueTwo.post_title,
@@ -551,12 +604,20 @@ export default function groupsReducer(state = initialState, action) {
                           };
                         }
                         return object;
-                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                      }
+                      if (
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'value')
+                      ) {
                         return {
                           key: valueTwo.key,
                           value: valueTwo.value,
                         };
-                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                      }
+                      if (
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'label')
+                      ) {
                         return {
                           value: valueTwo.id.toString(),
                           name: valueTwo.label,
@@ -592,7 +653,9 @@ export default function groupsReducer(state = initialState, action) {
         });
         group = mappedGroup;
         // Update localGroup with dbGroup
-        const groupIndex = newState.groups.findIndex(groupItem => (groupItem.ID === group.ID));
+        const groupIndex = newState.groups.findIndex(
+          (groupItem) => groupItem.ID.toString() === group.ID,
+        );
         if (groupIndex > -1) {
           newState.groups[groupIndex] = {
             ...group,
@@ -623,7 +686,7 @@ export default function groupsReducer(state = initialState, action) {
         const date = new Date();
         const year = date.getUTCFullYear();
         let day = date.getUTCDate();
-        let month = (date.getUTCMonth() + 1);
+        let month = date.getUTCMonth() + 1;
         if (day < 10) day = `0${day}`;
         if (month < 10) month = `0${month}`;
         const curDay = `${year}-${month}-${day}`;
@@ -636,7 +699,7 @@ export default function groupsReducer(state = initialState, action) {
         const currentDate = `${curDay}T${hours}:${minutes}:${seconds}Z`;
         return {
           ...newState,
-          comments: comments.map(comment => ({
+          comments: comments.map((comment) => ({
             ID: comment.ID,
             author: comment.author,
             date: currentDate,
@@ -650,7 +713,7 @@ export default function groupsReducer(state = initialState, action) {
       }
       return {
         ...newState,
-        comments: comments.map(comment => ({
+        comments: comments.map((comment) => ({
           ID: comment.comment_ID,
           date: `${comment.comment_date.replace(' ', 'T')}Z`,
           author: comment.comment_author,
@@ -678,7 +741,7 @@ export default function groupsReducer(state = initialState, action) {
         const date = new Date();
         const year = date.getUTCFullYear();
         let day = date.getUTCDate();
-        let month = (date.getUTCMonth() + 1);
+        let month = date.getUTCMonth() + 1;
         if (day < 10) day = `0${day}`;
         if (month < 10) month = `0${month}`;
         const curDay = `${year}-${month}-${day}`;
@@ -730,11 +793,9 @@ export default function groupsReducer(state = initialState, action) {
     case actions.GROUPS_GET_ACTIVITIES_SUCCESS:
       return {
         ...newState,
-        activities: action.activities.map(activity => ({
+        activities: action.activities.map((activity) => ({
           ID: activity.histid,
-          date: new Date(
-            parseInt(activity.hist_time, 10) * 1000,
-          ).toISOString(),
+          date: new Date(parseInt(activity.hist_time, 10) * 1000).toISOString(),
           object_note: activity.object_note,
           gravatar:
             activity.gravatar === ''
@@ -756,10 +817,8 @@ export default function groupsReducer(state = initialState, action) {
     case userActions.USER_LOGOUT:
       return {
         ...newState,
-        usersContacts: null,
         geonames: null,
         peopleGroups: null,
-        search: null,
       };
     case actions.GROUPS_GET_SETTINGS_SUCCESS: {
       const { settings } = action;
@@ -792,18 +851,79 @@ export default function groupsReducer(state = initialState, action) {
           };
         }
       });
+      let channels = {};
+      Object.keys(settings.channels).forEach((channelName) => {
+        const channelData = settings.channels[channelName];
+        channels = {
+          ...channels,
+          [channelName]: {
+            label: channelData.label,
+            value: channelName,
+          },
+        };
+      });
       return {
         ...newState,
-        settings: fieldList,
+        settings: {
+          fields: fieldList,
+          channels,
+          labelPlural: settings.label_plural,
+        },
         loading: false,
       };
     }
-    case actions.GROUPS_GET_SETTINGS_FAILURE:
+    case actions.GROUPS_LOCATIONS_SEARCH_SUCCESS: {
+      const { offline, filteredGeonames, queryText } = action;
+      let foundGeonames = [],
+        oldGeonames = [];
+      if (offline) {
+        // Get geonames by queryText
+        oldGeonames = filteredGeonames;
+        foundGeonames = oldGeonames.filter((oldGeoname) =>
+          oldGeoname.name.toLowerCase().includes(queryText.toLowerCase()),
+        );
+      } else {
+        // Get geonames by queryText
+        (oldGeonames = newState.geonames), (geonamesToAdd = []);
+        foundGeonames = filteredGeonames.map((geoname) => ({
+          value: geoname.ID,
+          name: geoname.name,
+        }));
+        // Add non persisted geonames to state
+        geonamesToAdd = foundGeonames.filter(
+          (foundGeoname) =>
+            oldGeonames.find((oldGeoname) => oldGeoname.value == foundGeoname.value) === undefined,
+        );
+      }
+      return {
+        ...newState,
+        foundGeonames,
+        geonames: (geonamesToAdd
+          ? [...oldGeonames, ...geonamesToAdd]
+          : [...oldGeonames]
+        ).sort((a, b) => a.value.localeCompare(b.value)),
+        loading: false,
+      };
+    }
+    case actions.GROUPS_LOCATIONS_SEARCH_FAILURE:
       return {
         ...newState,
         error: action.error,
         loading: false,
       };
+    case actions.GROUPS_LOCATIONS_MODIFIED_DATE_SUCCESS: {
+      const { geonamesLastModifiedDate } = action;
+      return {
+        ...newState,
+        geonamesLastModifiedDate,
+      };
+    }
+    case actions.GROUPS_LOCATIONS_MODIFIED_DATE_FAILURE: {
+      return {
+        ...newState,
+        error: action.error,
+      };
+    }
     default:
       return newState;
   }

@@ -14,31 +14,29 @@ import {
   I18nManager,
   Picker,
   Dimensions,
+  TextInput,
+  Linking,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import {
-  Button,
-  Icon,
-} from 'native-base';
-import Toast from 'react-native-easy-toast';
+import { Button, Icon } from 'native-base';
+import Toast, { DURATION } from 'react-native-easy-toast';
 import { Updates } from 'expo';
 import Constants from 'expo-constants';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
+import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
+import { BlurView } from 'expo-blur';
 import i18n from '../languages';
 import locales from '../languages/locales';
 import Colors from '../constants/Colors';
-import {
-  login, getUserInfo,
-} from '../store/actions/user.actions';
+import { login, getUserInfo } from '../store/actions/user.actions';
 import { setLanguage } from '../store/actions/i18n.actions';
 import TextField from '../components/TextField';
 import {
-  getUsersAndContacts,
   getLocations,
   getPeopleGroups,
-  searchGroups,
   getGroupSettings,
   getAll as getAllGroups,
+  getLocationListLastModifiedDate,
 } from '../store/actions/groups.actions';
 import { getUsers } from '../store/actions/users.actions';
 import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
@@ -127,17 +125,63 @@ const styles = StyleSheet.create({
     bottom: 15,
     right: 15,
   },
+  headerText: {
+    fontSize: 25,
+    textAlign: 'center',
+    margin: 10,
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  textBoxContainer: {
+    position: 'relative',
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+  },
+  textBox: {
+    fontSize: 16,
+    height: 45,
+    paddingRight: 30,
+    paddingLeft: 8,
+    paddingVertical: 0,
+    flex: 1,
+  },
+  touachableButton: {
+    position: 'absolute',
+    right: 3,
+    height: 40,
+    width: 35,
+    padding: 2,
+  },
+  buttonImage: {
+    resizeMode: 'contain',
+    height: '100%',
+    width: '100%',
+  },
 });
 let toastError;
+const { height, width } = Dimensions.get('window');
 class LoginScreen extends React.Component {
-
-  /* eslint-enable react/sort-comp */
   state = {
     loading: false,
     modalVisible: false,
-    contactSettingsListRetrieved: false,
-    groupSettingsListRetrieved: false,
+    contactSettingsRetrieved: false,
+    groupSettingsRetrieved: false,
+    geonamesRetrieved: false,
+    peopleGroupsRetrieved: false,
+    usersRetrieved: false,
     appLanguageSet: false,
+    offset: 0,
+    limit: 5000,
+    sort: '-last_modified',
+    toggleShowPIN: false,
+    pin: '',
+    incorrectPin: false,
+    geonamesLastModifiedDate: null,
+    userData: {
+      token: null,
+    },
+    userDataRetrieved: false,
+    geonamesLength: 0,
   };
 
   constructor(props) {
@@ -150,7 +194,9 @@ class LoginScreen extends React.Component {
       domainIsInvalid: false,
       userIsInvalid: false,
       passwordIsInvalid: false,
+      hidePassword: true,
     };
+    i18n.setLocale(props.i18n.locale, props.i18n.isRTL);
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -160,32 +206,75 @@ class LoginScreen extends React.Component {
       groupsReducerLoading,
       contactSettings,
       groupSettings,
+      geonames,
+      peopleGroups,
+      users,
       userReducerError,
       groupsReducerError,
       usersReducerError,
       contactsReducerLoading,
       contactsReducerError,
+      geonamesLastModifiedDate,
+      geonamesLength,
     } = nextProps;
     let newState = {
       ...prevState,
       userData,
       loading: userReducerLoading || groupsReducerLoading || contactsReducerLoading,
+      geonamesLength,
     };
-
-    if (contactSettings) {
-      newState = {
-        ...newState,
-        contactSettingsListRetrieved: true,
-      };
+    if (userData.token) {
+      if (contactSettings) {
+        newState = {
+          ...newState,
+          contactSettingsRetrieved: true,
+        };
+      }
+      if (groupSettings) {
+        newState = {
+          ...newState,
+          groupSettingsRetrieved: true,
+        };
+      }
+      if (geonames && geonames.length > 0) {
+        newState = {
+          ...newState,
+          geonamesRetrieved: true,
+        };
+      }
+      if (peopleGroups) {
+        newState = {
+          ...newState,
+          peopleGroupsRetrieved: true,
+        };
+      }
+      if (users) {
+        newState = {
+          ...newState,
+          usersRetrieved: true,
+        };
+      }
+      if (userData) {
+        newState = {
+          ...newState,
+          userDataRetrieved: true,
+        };
+      }
+      // geonamesLastModifiedDate same as stored date and previous geonames are persisted in storage
+      if (
+        geonamesLastModifiedDate &&
+        geonamesLastModifiedDate === newState.geonamesLastModifiedDate &&
+        newState.geonamesLength > 0
+      ) {
+        newState = {
+          ...newState,
+          geonamesRetrieved: true,
+        };
+      }
     }
-    if (groupSettings) {
-      newState = {
-        ...newState,
-        groupSettingsListRetrieved: true,
-      };
-    }
 
-    const error = (userReducerError || groupsReducerError || usersReducerError || contactsReducerError);
+    const error =
+      userReducerError || groupsReducerError || usersReducerError || contactsReducerError;
     if (error) {
       newState = {
         ...newState,
@@ -198,152 +287,216 @@ class LoginScreen extends React.Component {
 
   componentDidMount() {
     const { navigation } = this.props;
-
     this.focusListener = navigation.addListener('didFocus', () => {
       this.setState({
-        contactSettingsListRetrieved: false,
-        groupSettingsListRetrieved: false,
+        contactSettingsRetrieved: false,
+        groupSettingsRetrieved: false,
+        peopleGroupsRetrieved: false,
+        usersRetrieved: false,
         appLanguageSet: false,
+        userDataRetrieved: false,
+        geonamesRetrieved: false,
       });
     });
+    this.initLoginScreen();
+  }
+
+  initLoginScreen = async () => {
+    if (this.props.geonamesLastModifiedDate !== null) {
+      this.setState(
+        {
+          geonamesLastModifiedDate: this.props.geonamesLastModifiedDate,
+        },
+        () => {
+          this.userIsAuthenticated();
+        },
+      );
+    } else {
+      this.userIsAuthenticated();
+    }
+  };
+
+  userIsAuthenticated = () => {
     // User is authenticated (logged)
-    if (this.props.userData && this.props.userData.token) {
+    if (this.props.userData && this.props.userData.token && this.props.rememberPassword) {
       if (this.props.isConnected) {
-        this.setState({ loading: true }, () => {
-          this.getDataLists();
-          this.getUserInfo();
-        });
+        if (this.props.pinCode.enabled) {
+          this.toggleShowPIN();
+        } else {
+          if (this.props)
+            this.props.loginDispatch(
+              this.props.userData.domain,
+              this.props.userData.username,
+              this.props.userData.password,
+            );
+        }
       } else {
-        this.setState({
-          loading: true,
-        }, () => {
-          this.setState({
-            contactSettingsListRetrieved: true,
-            groupSettingsListRetrieved: true,
-            appLanguageSet: true,
-          });
-        });
+        this.setState(
+          {
+            loading: true,
+          },
+          () => {
+            this.setState({
+              contactSettingsRetrieved: true,
+              groupSettingsRetrieved: true,
+              geonamesRetrieved: true,
+              peopleGroupsRetrieved: true,
+              usersRetrieved: true,
+              appLanguageSet: true,
+              userDataRetrieved: true,
+            });
+          },
+        );
       }
     }
-  }
+  };
 
   componentDidUpdate(prevProps) {
     const {
-      userData, usersContacts, geonames, peopleGroups, search, contactSettings, groupSettings,
+      userData,
+      geonames,
+      peopleGroups,
+      users,
+      userReducerError,
+      groupsReducerError,
+      usersReducerError,
+      contactsReducerError,
+      geonamesLastModifiedDate,
     } = this.props;
     const {
-      users, userReducerError, groupsReducerError, usersReducerError, contactsReducerError,
-    } = this.props;
-    const {
-      contactSettingsListRetrieved,
-      groupSettingsListRetrieved,
+      contactSettingsRetrieved,
+      groupSettingsRetrieved,
       appLanguageSet,
+      geonamesRetrieved,
+      peopleGroupsRetrieved,
+      usersRetrieved,
     } = this.state;
     // If the RTL value in the store does not match what is
     // in I18nManager (which controls content flow), call
     // forceRTL(...) to set it in I18nManager and reload app
     // so that new RTL value is used for content flow.
-    if (this.props.i18n.isRTL !== I18nManager.isRTL) {
+    /* if (this.props.i18n.isRTL !== I18nManager.isRTL) {
       I18nManager.forceRTL(this.props.i18n.isRTL);
       // a bit of a hack to wait and make sure the reducer is persisted to storage
       setTimeout(() => {
         Updates.reloadFromCache();
       }, 500);
-    }
+    } */
 
     // User logged successfully
-    if (userData && prevProps.userData !== userData) {
+    if (userData && prevProps.userData.token !== userData.token) {
       this.getDataLists();
       this.getUserInfo();
-      // User locale retrieved
-      if (userData.locale) {
-        this.setAppLanguage();
-      }
     }
-
-    // usersContactsList retrieved
-    if (usersContacts && prevProps.usersContacts !== usersContacts) {
-      ExpoFileSystemStorage.setItem(
-        'usersAndContactsList',
-        JSON.stringify(usersContacts),
-      );
-    }
-
-    // geonamesList retrieved
-    if (geonames && prevProps.geonames !== geonames) {
-      ExpoFileSystemStorage.setItem(
-        'locationsList',
-        JSON.stringify(geonames),
-      );
+    // User locale retrieved
+    if (userData && userData.locale && prevProps.userData.locale !== userData.locale) {
+      this.setAppLanguage();
     }
 
     // peopleGroupsList retrieved
     if (peopleGroups && prevProps.peopleGroups !== peopleGroups) {
-      ExpoFileSystemStorage.setItem(
-        'peopleGroupsList',
-        JSON.stringify(peopleGroups),
-      );
-    }
-
-    // peopleGroupsList retrieved
-    if (search && prevProps.search !== search) {
-      ExpoFileSystemStorage.setItem(
-        'searchGroupsList',
-        JSON.stringify(search),
-      );
+      ExpoFileSystemStorage.setItem('peopleGroupsList', JSON.stringify(peopleGroups));
     }
 
     // usersList retrieved
     if (users && prevProps.users !== users) {
-      ExpoFileSystemStorage.setItem(
-        'usersList',
-        JSON.stringify(users),
-      );
+      ExpoFileSystemStorage.setItem('usersList', JSON.stringify(users));
     }
 
-    // contactSettings retrieved
-    if (contactSettings && prevProps.contactSettings !== contactSettings) {
-      ExpoFileSystemStorage.setItem(
-        'contactSettings',
-        JSON.stringify(contactSettings),
-      );
+    // geonamesLastModifiedDate modified
+    if (
+      geonamesLastModifiedDate &&
+      prevProps.geonamesLastModifiedDate !== geonamesLastModifiedDate
+    ) {
+      this.getLocations();
     }
 
-    // groupSettings retrieved
-    if (groupSettings && prevProps.groupSettings !== groupSettings) {
-      ExpoFileSystemStorage.setItem(
-        'groupSettings',
-        JSON.stringify(groupSettings),
-      );
+    // geonamesList retrieved
+    if (geonames && prevProps.geonames !== geonames) {
+      ExpoFileSystemStorage.setItem('locationsList', JSON.stringify(geonames));
     }
-
-    if (contactSettingsListRetrieved && groupSettingsListRetrieved && appLanguageSet) {
+    if (
+      contactSettingsRetrieved &&
+      groupSettingsRetrieved &&
+      appLanguageSet &&
+      geonamesRetrieved &&
+      peopleGroupsRetrieved &&
+      usersRetrieved
+    ) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
       ExpoFileSystemStorage.setItem('listsLastUpdate', listsLastUpdate);
       this.props.navigation.navigate('ContactList');
     }
 
-    const userError = (prevProps.userReducerError !== userReducerError && userReducerError);
-    let groupsError = (prevProps.groupsReducerError !== groupsReducerError);
-    groupsError = (groupsError && groupsReducerError);
-    const usersError = (prevProps.usersReducerError !== usersReducerError && usersReducerError);
-    const contactsError = (prevProps.contactsReducerError !== contactsReducerError && contactsReducerError);
+    if (this.props.i18n && prevProps.i18n !== this.props.i18n) {
+      i18n.setLocale(this.props.i18n.locale, this.props.i18n.isRTL);
+      if (prevProps.i18n.isRTL !== this.props.i18n.isRTL) {
+        I18nManager.forceRTL(this.props.i18n.isRTL);
+        setTimeout(() => {
+          Updates.reload();
+        }, 1000);
+      } else {
+        // TODO: refactor this code so this force re-render is no longer necessary
+        this.forceUpdate();
+      }
+    }
+
+    const userError = prevProps.userReducerError !== userReducerError && userReducerError;
+    let groupsError = prevProps.groupsReducerError !== groupsReducerError;
+    groupsError = groupsError && groupsReducerError;
+    const usersError = prevProps.usersReducerError !== usersReducerError && usersReducerError;
+    const contactsError =
+      prevProps.contactsReducerError !== contactsReducerError && contactsReducerError;
     if (userError || groupsError || usersError || contactsError) {
       const error = userError || groupsError || usersError;
-      toastError.show(
-        <View>
-        <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-          {i18n.t('global.error.code')}
-        </Text>
-        <Text style={{ color: Colors.errorText }}>{error.code}</Text>
-        <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-          {i18n.t('global.error.message')}
-        </Text>
-        <Text style={{ color: Colors.errorText }}>{error.message}</Text>
-      </View>,
-        3000,
-      );
+      if (error.code === '[jwt_auth] incorrect_password') {
+        toastError.show(
+          <View>
+            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+              {i18n.t('global.error.code')}
+            </Text>
+            <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+              {i18n.t('global.error.message')}
+            </Text>
+            <Text style={{ color: Colors.errorText }}>
+              {i18n.t('loginScreen.errors.incorrectPassword')}
+            </Text>
+          </View>,
+          3000,
+        );
+      } else if (error.code === '[jwt_auth] invalid_username') {
+        toastError.show(
+          <View>
+            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+              {i18n.t('global.error.code')}
+            </Text>
+            <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+              {i18n.t('global.error.message')}
+            </Text>
+            <Text style={{ color: Colors.errorText }}>
+              {i18n.t('loginScreen.errors.invalidUsername')}
+            </Text>
+          </View>,
+          3000,
+        );
+      } else {
+        toastError.show(
+          <View>
+            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+              {i18n.t('global.error.code')}
+            </Text>
+            <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+              {i18n.t('global.error.message')}
+            </Text>
+            <Text style={{ color: Colors.errorText }}>{error.message}</Text>
+          </View>,
+          3000,
+        );
+      }
     }
   }
 
@@ -352,68 +505,112 @@ class LoginScreen extends React.Component {
   }
 
   setAppLanguage = () => {
-    const userLocaleConfig = this.props.userData.locale.substring(0, 2);
-    const locale = locales.find(item => item.code === userLocaleConfig);
-    if (locale) {
-      const isRTL = locale.direction === 'rtl';
-      // store locale/rtl instore for next load of app
-      this.props.setLanguage(locale.code, isRTL);
-      // set current locale for all language strings
-      i18n.setLocale(locale.code, isRTL);
-      this.setState({
-        appLanguageSet: true,
-      });
-    }
-  }
+    const localeCode = this.props.userData.locale.substring(0, 2);
+    this.changeLanguage(localeCode);
+    this.setState({
+      appLanguageSet: true,
+    });
+  };
 
   getDataLists = () => {
-    this.props.getUsersAndContacts(
-      this.props.userData.domain,
-      this.props.userData.token,
-    );
-    this.props.getLocations(this.props.userData.domain, this.props.userData.token);
-    this.props.getPeopleGroups(this.props.userData.domain, this.props.userData.token);
-    this.props.getUsers(this.props.userData.domain, this.props.userData.token);
-    this.props.searchGroups(this.props.userData.domain, this.props.userData.token);
     this.props.getContactSettings(this.props.userData.domain, this.props.userData.token);
     this.props.getGroupSettings(this.props.userData.domain, this.props.userData.token);
-    this.props.getContacts(this.props.userData.domain, this.props.userData.token);
-    this.props.getGroups(this.props.userData.domain, this.props.userData.token);
+    this.props.getContacts(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.offset,
+      this.state.limit,
+      this.state.sort,
+    );
+    this.props.getGroups(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.offset,
+      this.state.limit,
+      this.state.sort,
+    );
+    this.props.getPeopleGroups(this.props.userData.domain, this.props.userData.token);
+    this.props.getLocationModifiedDate(this.props.userData.domain, this.props.userData.token);
+    this.props.getUsers(this.props.userData.domain, this.props.userData.token);
   };
 
   getUserInfo = () => {
     this.props.getUserInfo(this.props.userData.domain, this.props.userData.token);
-  }
+  };
+
+  getLocations = () => {
+    this.props.getLocations(this.props.userData.domain, this.props.userData.token);
+  };
+
+  setPasswordVisibility = () => {
+    this.setState({ hidePassword: !this.state.hidePassword });
+  };
 
   onLoginPress = () => {
     Keyboard.dismiss();
-    const {
-      domain, username, password,
-    } = this.state;
-    if (domain && username && password) {
-      const cleanedDomain = (domain || '')
-        .replace('http://', '')
-        .replace('https://', '');
-      this.props.loginDispatch(cleanedDomain, username, password);
+    if (this.props.pinCode.enabled) {
+      // User with PIN=true and AutoLogin=FALSE
+      this.toggleShowPIN();
     } else {
-      this.setState({
-        domainValidation: !domain,
-        userValidation: !username,
-        passwordValidation: !password,
-      });
+      const { domain, username, password } = this.state;
+      if (domain && username && password) {
+        const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
+        this.props.loginDispatch(cleanedDomain, username, password);
+      } else {
+        this.setState({
+          domainValidation: !domain,
+          userValidation: !username,
+          passwordValidation: !password,
+        });
+      }
     }
   };
 
-  
   static navigationOptions = {
-    header: null,
+    headerShown: false,
   };
 
   /* eslint-disable class-methods-use-this, no-console */
-  goToForgotPassword() {
-    console.log('forgot password');
-  }
+  goToForgotPassword = () => {
+    const { domain } = this.state;
+    if (domain !== '') {
+      Linking.openURL(`https://${domain}/wp-login.php?action=lostpassword`);
+    } else {
+      this.refs.toastWithStyle.show(
+        i18n.t('loginScreen.domain.errorForgotPass'),
+        DURATION.LENGTH_LONG,
+      );
+    }
+  };
   /* eslint-enable class-methods-use-this, no-console */
+
+  changeLanguage(languageCode) {
+    const locale = locales.find((item) => item.code === languageCode);
+    if (locale) {
+      const isRTL = locale.direction === 'rtl';
+      this.props.setLanguage(locale.code, isRTL);
+    }
+  }
+
+  cleanDomainWiteSpace(text) {
+    if (text[text.length - 1] === ' ') {
+      text = text.replace(/ /g, '');
+      this.setState({ domain: text });
+    } else if (text[0] === ' ') {
+      text = text.replace(/ /g, '');
+      this.setState({ domain: text });
+    } else {
+      this.setState({ domain: text });
+    }
+  }
+
+  toggleShowPIN = () => {
+    this.setState((prevState) => ({
+      toggleShowPIN: !prevState.toggleShowPIN,
+      pin: '',
+      incorrectPin: false,
+    }));
+  };
 
   // TODO: How to disable iCloud save password feature?
   render() {
@@ -427,7 +624,6 @@ class LoginScreen extends React.Component {
       />
     );
     const { domainValidation, userValidation, passwordValidation } = this.state;
-
     const domainStyle = domainValidation
       ? [styles.textField, styles.validationErrorInput]
       : styles.textField;
@@ -437,34 +633,36 @@ class LoginScreen extends React.Component {
     const passwordStyle = passwordValidation
       ? [styles.textField, styles.validationErrorInput]
       : styles.textField;
-
-    const domainErrorMessage = domainValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.domain.error')}</Text> : null;
-    const userErrorMessage = userValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.username.error')}</Text> : null;
-    const passwordErrorMessage = passwordValidation ? <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.password.error')}</Text> : null;
-
-    const languagePickerItems = locales.map(locale => (
+    const domainErrorMessage = domainValidation ? (
+      <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.domain.error')}</Text>
+    ) : null;
+    const userErrorMessage = userValidation ? (
+      <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.username.error')}</Text>
+    ) : null;
+    const passwordErrorMessage = passwordValidation ? (
+      <Text style={styles.validationErrorMessage}>{i18n.t('loginScreen.password.error')}</Text>
+    ) : null;
+    const languagePickerItems = locales.map((locale) => (
       <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
     ));
     return (
       <KeyboardAvoidingView behavior="padding">
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.header}>
-            <Image
-              source={require('../assets/images/dt-icon.png')}
-              style={styles.welcomeImage}
-            />
+            <Image source={require('../assets/images/dt-icon.png')} style={styles.welcomeImage} />
           </View>
           <View style={styles.formContainer}>
             <TextField
               containerStyle={domainStyle}
               iconName="ios-globe"
               label={i18n.t('loginScreen.domain.label')}
-              onChangeText={text => this.setState({ domain: text })}
+              onChangeText={(text) => this.cleanDomainWiteSpace(text)}
               autoCapitalize="none"
               autoCorrect={false}
               value={this.state.domain}
               returnKeyType="next"
               textContentType="URL"
+              keyboardType="url"
               disabled={this.state.loading}
               placeholder={i18n.t('loginScreen.domain.placeholder')}
             />
@@ -473,56 +671,75 @@ class LoginScreen extends React.Component {
               containerStyle={userStyle}
               iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
               label={i18n.t('loginScreen.username.label')}
-              onChangeText={text => this.setState({ username: text })}
+              onChangeText={(text) => this.setState({ username: text })}
               autoCapitalize="none"
               autoCorrect={false}
               value={this.state.username}
               returnKeyType="next"
               textContentType="emailAddress"
+              keyboardType="email-address"
               disabled={this.state.loading}
             />
             {userErrorMessage}
-            <TextField
-              containerStyle={passwordStyle}
-              iconName={Platform.OS === 'ios' ? 'ios-key' : 'md-key'}
-              label={i18n.t('loginScreen.password.label')}
-              onChangeText={text => this.setState({ password: text })}
-              autoCapitalize="none"
-              autoCorrect={false}
-              secureTextEntry
-              value={this.state.password}
-              returnKeyType="go"
-              selectTextOnFocus
-              onSubmitEditing={this.signInAsync}
-              blurOnSubmit
-              textContentType="password"
-              disabled={this.state.loading}
-            />
+            <View style={[passwordStyle]}>
+              <View style={{ margin: 10 }}>
+                <Text style={{ textAlign: 'left' }}>{i18n.t('loginScreen.password.label')}</Text>
+                <View style={{ flexDirection: 'row' }}>
+                  <Icon
+                    type="Ionicons"
+                    name="md-key"
+                    style={{ marginBottom: 'auto', marginTop: 'auto' }}
+                  />
+                  <TextInput
+                    underlineColorAndroid="transparent"
+                    secureTextEntry={this.state.hidePassword}
+                    style={styles.textBox}
+                    onChangeText={(text) => this.setState({ password: text })}
+                    textAlign={this.props.i18n.isRTL ? 'right' : 'left'}
+                  />
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={styles.touachableButton}
+                    onPress={this.setPasswordVisibility}>
+                    {this.state.hidePassword ? (
+                      <Icon
+                        type="FontAwesome"
+                        name="eye"
+                        style={{
+                          marginBottom: 'auto',
+                          marginTop: 'auto',
+                          opacity: 0.3,
+                          fontSize: 22,
+                        }}
+                      />
+                    ) : (
+                      <Icon
+                        type="FontAwesome"
+                        name="eye"
+                        style={{ marginBottom: 'auto', marginTop: 'auto', fontSize: 22 }}
+                      />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
             {passwordErrorMessage}
-            {!this.state.loading && (
-              <Button
-                style={styles.signInButton}
-                onPress={this.onLoginPress}
-                block
-              >
-                <Text style={styles.signInButtonText}>
-                  {i18n.t('loginScreen.logIn')}
-                </Text>
-              </Button>
-            )}
-            {!this.state.loading && (
-              <TouchableOpacity
-                style={styles.forgotButton}
-                onPress={this.goToForgotPassword}
-                disabled={this.state.loading}
-              >
-                <Text style={styles.forgotButtonText}>
-                  {i18n.t('loginScreen.forgotPassword')}
-                </Text>
-              </TouchableOpacity>
-            )}
-            {this.state.loading && (
+            {this.state.loading ? (
               <ActivityIndicator style={{ margin: 20 }} size="small" />
+            ) : (
+              <View>
+                <Button style={styles.signInButton} onPress={this.onLoginPress} block>
+                  <Text style={styles.signInButtonText}>{i18n.t('loginScreen.logIn')}</Text>
+                </Button>
+                <TouchableOpacity
+                  style={styles.forgotButton}
+                  onPress={this.goToForgotPassword}
+                  disabled={this.state.loading}>
+                  <Text style={styles.forgotButtonText}>
+                    {i18n.t('loginScreen.forgotPassword')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             )}
             <Text style={styles.versionText}>{Constants.manifest.version}</Text>
           </View>
@@ -532,21 +749,102 @@ class LoginScreen extends React.Component {
               selectedValue={this.props.i18n.locale}
               style={styles.languagePicker}
               onValueChange={(itemValue) => {
-                const locale = locales.find(item => item.code === itemValue);
-                if (locale) {
-                  const isRTL = locale.direction === 'rtl';
-                  // store locale/rtl instore for next load of app
-                  this.props.setLanguage(locale.code, isRTL);
-                  // set current locale for all language strings
-                  i18n.setLocale(locale.code, isRTL);
-                }
-              }}
-            >
+                this.changeLanguage(itemValue);
+              }}>
               {languagePickerItems}
             </Picker>
           </View>
           {errorToast}
+          <Toast
+            ref="toastWithStyle"
+            style={{ backgroundColor: Colors.errorBackground }}
+            position="bottom"
+          />
         </ScrollView>
+        {this.state.toggleShowPIN ? (
+          <BlurView
+            tint="dark"
+            intensity={50}
+            style={{
+              position: 'absolute',
+              justifyContent: 'center',
+              alignItems: 'center',
+              top: 0,
+              left: 0,
+              width: width,
+              height: height,
+            }}>
+            <KeyboardAvoidingView
+              behavior={'position'}
+              contentContainerStyle={{
+                height: height / 2 + 35,
+              }}>
+              <View style={{ backgroundColor: '#FFFFFF', padding: 20 }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    textAlign: 'center',
+                    color: Colors.gray,
+                    marginBottom: 5,
+                  }}>
+                  {this.props.pinCode.enabled ? 'Enter PIN' : 'Set new PIN'}
+                </Text>
+                {this.state.incorrectPin ? (
+                  <Text
+                    style={{
+                      color: Colors.errorBackground,
+                      textAlign: 'center',
+                      fontSize: 14,
+                      marginBottom: 5,
+                    }}>
+                    {'Incorrect PIN'}
+                  </Text>
+                ) : null}
+                <SmoothPinCodeInput
+                  password
+                  mask="﹡"
+                  cellSize={60}
+                  ref={this.pinInput}
+                  value={this.state.pin}
+                  onTextChange={(pin) => {
+                    this.setState({
+                      pin,
+                      incorrectPin: this.state.incorrectPin ? false : undefined,
+                    });
+                  }}
+                  onFulfill={(pin) => {
+                    if (pin === this.props.pinCode.value) {
+                      this.props.loginDispatch(
+                        this.props.userData.domain,
+                        this.props.userData.username,
+                        this.props.userData.password,
+                      );
+                      this.toggleShowPIN();
+                    } else {
+                      this.setState({
+                        incorrectPin: true,
+                        pin: '',
+                      });
+                    }
+                  }}
+                  autoFocus={true}
+                />
+                <Button
+                  block
+                  style={{
+                    backgroundColor: Colors.tintColor,
+                    borderRadius: 5,
+                    width: 150,
+                    alignSelf: 'center',
+                    marginTop: 20,
+                  }}
+                  onPress={this.toggleShowPIN}>
+                  <Text style={{ color: '#FFFFFF' }}>{'Close'}</Text>
+                </Button>
+              </View>
+            </KeyboardAvoidingView>
+          </BlurView>
+        ) : null}
       </KeyboardAvoidingView>
     );
   }
@@ -562,10 +860,8 @@ LoginScreen.propTypes = {
     email: PropTypes.string,
     locale: PropTypes.string,
   }),
-  getUsersAndContacts: PropTypes.func.isRequired,
   getLocations: PropTypes.func.isRequired,
   getPeopleGroups: PropTypes.func.isRequired,
-  searchGroups: PropTypes.func.isRequired,
   getUsers: PropTypes.func.isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
@@ -574,22 +870,12 @@ LoginScreen.propTypes = {
   }).isRequired,
   setLanguage: PropTypes.func.isRequired,
   /* eslint-disable */
-  usersContacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      key: PropTypes.number,
-    }),
-  ),
   geonames: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.number,
     }),
   ),
   peopleGroups: PropTypes.arrayOf(
-    PropTypes.shape({
-      key: PropTypes.number,
-    }),
-  ),
-  search: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.number,
     }),
@@ -646,17 +932,17 @@ LoginScreen.defaultProps = {
   contactSettings: null,
   groupSettings: null,
 };
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   userData: state.userReducer.userData,
   userReducerLoading: state.userReducer.loading,
   userReducerError: state.userReducer.error,
+  rememberPassword: state.userReducer.rememberPassword,
   groupsReducerLoading: state.groupsReducer.loading,
-  usersContacts: state.groupsReducer.usersContacts,
   geonames: state.groupsReducer.geonames,
   peopleGroups: state.groupsReducer.peopleGroups,
-  search: state.groupsReducer.search,
   groupSettings: state.groupsReducer.settings,
   groupsReducerError: state.groupsReducer.error,
+  groups: state.groupsReducer.groups,
   usersReducerLoading: state.usersReducer.loading,
   users: state.usersReducer.users,
   usersReducerError: state.usersReducer.error,
@@ -666,23 +952,19 @@ const mapStateToProps = state => ({
   contactsReducerLoading: state.contactsReducer.loading,
   contactsReducerError: state.contactsReducer.error,
   contacts: state.contactsReducer.contacts,
-  groups: state.groupsReducer.groups,
+  pinCode: state.userReducer.pinCode,
+  geonamesLastModifiedDate: state.groupsReducer.geonamesLastModifiedDate,
+  geonamesLength: state.groupsReducer.geonamesLength,
 });
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   loginDispatch: (domain, username, password) => {
     dispatch(login(domain, username, password));
-  },
-  getUsersAndContacts: (domain, token) => {
-    dispatch(getUsersAndContacts(domain, token));
   },
   getLocations: (domain, token) => {
     dispatch(getLocations(domain, token));
   },
   getPeopleGroups: (domain, token) => {
     dispatch(getPeopleGroups(domain, token));
-  },
-  searchGroups: (domain, token) => {
-    dispatch(searchGroups(domain, token));
   },
   getUsers: (domain, token) => {
     dispatch(getUsers(domain, token));
@@ -696,17 +978,17 @@ const mapDispatchToProps = dispatch => ({
   getGroupSettings: (domain, token) => {
     dispatch(getGroupSettings(domain, token));
   },
-  getContacts: (domain, token) => {
-    dispatch(getAllContacts(domain, token));
+  getContacts: (domain, token, offset, limit, sort) => {
+    dispatch(getAllContacts(domain, token, offset, limit, sort));
   },
-  getGroups: (domain, token) => {
-    dispatch(getAllGroups(domain, token));
+  getGroups: (domain, token, offset, limit, sort) => {
+    dispatch(getAllGroups(domain, token, offset, limit, sort));
   },
-  getUserInfo: (domain, token) => {
-    dispatch(getUserInfo(domain, token));
+  getUserInfo: (domain, token, offset, limit, sort) => {
+    dispatch(getUserInfo(domain, token, offset, limit, sort));
+  },
+  getLocationModifiedDate: (domain, token) => {
+    dispatch(getLocationListLastModifiedDate(domain, token));
   },
 });
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(LoginScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

@@ -1,182 +1,125 @@
 {
-    "global": {
-        "error": {
-            "code": "Kod: ",
-            "message": "Mesaj: "
-        },
-        "success": {
-            "save": "Başarıyla kayıt edildi!"
-        },
-        "contactOverallStatus": {
-            "new": "Yeni Bağlantı",
-            "unassignable": "Hazır Değil",
-            "unassigned": "Sevk Gerekli",
-            "assigned": "Kabul edilmeyi bekliyor",
-            "active": "Aktif",
-            "paused": "Duraklatıldı",
-            "closed": "Kapatıldı"
-        },
-        "seekerPath": {
-            "none": "Bağlantı Etkileşime Geçmeli",
-            "attempted": "Bağlantı Etkileşime Geçti",
-            "established": "Bağlantı Kuruldu",
-            "scheduled": "İlk toplantı planlandı",
-            "met": "İlk toplantı gerçekleşti",
-            "ongoing": "Devam eden toplantılar",
-            "coaching": "Koçluk Yapıldı"
-        },
-        "groupStatus": {
-            "active": "Aktif",
-            "inactive": "Pasif"
-        },
-        "groupType": {
-            "pre-group": "Ön grup",
-            "group": "Grup",
-            "church": "Kilise",
-            "team": "Takım"
-        },
-        "groups": "Gruplar",
-        "details": "Detaylar",
-        "status": "Durum",
-        "assignedTo": "Atandı",
-        "location": "Konum",
-        "peopleGroup": "İnsanlar Grubu",
-        "selectPeopleGroups": "İnsan gruplarını seç",
-        "address": "Adres",
-        "progress": "İlerleme",
-        "commentsActivity": "Yorumlar / Aktiviteler",
-        "writeYourCommentNoteHere": "Yorumunu veya notunu buraya yaz",
-        "requiredField": "Gerekli alan",
-        "edit": "Düzenle",
-        "cancel": "İptal et",
-        "save": "kaydet",
-        "online": "Çevrimiçi",
-        "language": "Dil",
-        "search": "Ara"
+  "global": {
+    "error": {
+      "code": "Kod: ",
+      "message": "Mesaj: "
     },
-    "loginScreen": {
-        "domain": {
-            "label": "Disciple Tools URL",
-            "placeholder": "Örnek: myteam.disciple.tools",
-            "error": "Alan adı gerekli"
-        },
-        "username": {
-            "label": "Kullanıcı Adı",
-            "error": "Kullanıcı adı gerekli"
-        },
-        "password": {
-            "label": "Parola",
-            "error": "Parola gerekli"
-        },
-        "logIn": "Giriş yap",
-        "forgotPassword": "Parolamı unuttum?"
+    "success": {
+      "save": "Başarıyla kayıt edildi!"
     },
-    "contactsScreen": {
-        "contacts": "Bağlantılarım"
+    "groups": "Gruplar",
+    "details": "Detaylar",
+    "selectPeopleGroups": "İnsan gruplarını seç",
+    "address": "Adres",
+    "progress": "İlerleme",
+    "commentsActivity": "Yorumlar / Aktiviteler",
+    "writeYourCommentNoteHere": "Yorumunu veya notunu buraya yaz",
+    "requiredField": "Gerekli alan",
+    "edit": "Düzenle",
+    "cancel": "İptal et",
+    "save": "kaydet",
+    "online": "Çevrimiçi",
+    "offline": "Çevrimdışı",
+    "language": "Dil",
+    "search": "Ara",
+    "membersActivity": "Üyeler",
+    "moreFields": "Diğer Alanlar",
+    "nameRequired": "İsim (gerekli"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "Disciple Tools URL",
+      "placeholder": "Örnek: myteam.disciple.tools",
+      "error": "Alan adı gerekli",
+      "errorForgotPass": "Lütfen şifrenizi almaya başlamak için URL girin"
     },
-    "settingsScreen": {
-        "settings": "Ayarlar",
-        "networkUnavailable": "Ağ kullanım dışı. Çevrimdışı mod",
-        "networkAvailable": "Ağ algılandı. Çevrimiçi moda geri dönüldü",
-        "signOut": "Oturumu kapat",
-        "domain": "Alan adı",
-        "signedInAs": "Olarak giriş yapıldı",
-        "storybook": "Hikaye kitabı",
-        "logout": "Oturumu kapat",
-        "helpSupport": ""
+    "username": {
+      "label": "Kullanıcı Adı",
+      "error": "Kullanıcı adı gerekli"
     },
-    "contactDetailScreen": {
-        "addNewContact": "Yeni bağlantı ekle",
-        "contactSources": {
-            "personal": "Kişi",
-            "web": "Web",
-            "phone": "Telefon",
-            "linkedin": "LinkedIn",
-            "referral": "Referans",
-            "advertisement": "Tanıtım",
-            "transfer": "Transfer"
-        },
-        "subAssignedTo": "Altına atandı",
-        "subAssignThisContact": "Bu bağlantıya alt görev ata",
-        "mobile": "Mobil",
-        "email": "Email",
-        "selectLocations": "Konumları seç",
-        "contactAge": {
-            "underEighteenYearsOld": "18 Yaşın altında",
-            "underTwentySixYearsOld": "18-25 Yaş arasında",
-            "underFortyOneYearsOld": "26-40 Yaş arasında",
-            "overFortyYearsOld": "40 Yaşından büyük"
-        },
-        "age": "Yaş",
-        "male": "Erkek",
-        "female": "Kadın",
-        "gender": "Cinsiyet",
-        "source": "Kaynak",
-        "selectSources": "Kaynak seç",
-        "seekerPath": "Arayıcı Yolu",
-        "faithMilestones": "İnanç Dönüm Noktaları",
-        "milestones": {
-            "hasBible": "İncil Sahibi",
-            "readingBible": "İncil Okuma",
-            "statesBelief": "Devletlerin İnancı",
-            "shareGospel": "Paylaşılabilir Gospel/Testimony",
-            "sharingGospel": "Paylaşılan Gospel/Testimony",
-            "baptized": "Vaftiz Edilmiş",
-            "baptizing": "Vaftiz",
-            "inGroup": "Kilise/Grup içerisinde",
-            "startingChurches": "Kiliselerin Başlama Zamanı",
-            "baptismDate": "Vaftiz Tarihi"
-        },
-        "connections": "Bağlantılar",
-        "addGroup": "Grup Ekle",
-        "connection": "Bağlantı",
-        "addConnection": "Bağlantı Ekle",
-        "baptizedBy": "Tarafından Vaftiz Edildi",
-        "addBaptizedBy": "Add baptized by",
-        "baptized": "Vaftiz edildi",
-        "addBaptized": "Add baptized",
-        "coachedBy": "Coached By",
-        "addCoachedBy": "Add coached by",
-        "coaching": "Koçluk",
-        "addCoaching": "Koçluk ekle",
-        "fullName": "Tam İsim",
-        "phoneNumber": "Telefon Numarası",
-        "initialComment": "İlk Yorum",
-        "addBaptizmDate": "Vaftiz tarihi ekle",
-        "group": "Grup",
-        "socialMedia": "",
-        "noAnswer": "",
-        "contactEstablished": "",
-        "meetingScheduled": "",
-        "meetingCompleted": "",
-        "meetingNoShow": ""
+    "password": {
+      "label": "Parola",
+      "error": "Parola gerekli"
     },
-    "groupDetailScreen": {
-        "addNewGroup": "Grup Ekle",
-        "groupCoach": "Grup Koçu",
-        "selectCoaches": "Koçları seç",
-        "selectGeonames": "Geoname seç",
-        "startDate": "Başlama Tarihi",
-        "endDate": "Bitiş Tarihi",
-        "groupType": "Grup Tipi",
-        "churchHealth": "Kilise Sağlığı",
-        "healthMetrics": {
-            "giving": "Bağışlama",
-            "fellowship": "Dostluk",
-            "communion": "Birlik",
-            "baptism": "Vaftiz",
-            "prayer": "Oyuncu",
-            "leaders": "Liderler",
-            "bibleStudy": "İncil Çalışması",
-            "praise": "Övgü",
-            "sharingGospel": "İncili Paylaşmak"
-        },
-        "parentGroup": "Üst Grup",
-        "searchGroups": "Grup ara",
-        "peerGroup": "Eş Grup",
-        "searchPeerGroups": "Eş gruplarda ara",
-        "childGroup": "Alt Grup",
-        "searchChildGroups": "Alt gruplarda ara",
-        "groupName": "Grup Adı"
+    "logIn": "Giriş yap",
+    "forgotPassword": "Parolamı unuttum?",
+    "errors": {
+      "invalidUsername": "Bilinmeyen kullanıcı adı. Tekrar kontrol edin veya e-posta adresinizi deneyin.",
+      "incorrectPassword": "Kullanıcı adı için girdiğiniz şifre yanlış"
     }
+  },
+  "contactsScreen": {
+    "contacts": "Bağlantılarım",
+    "noContactPlacheHolder": "Şu anda kullanılabilir kişi yok.",
+    "noContactPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
+    "noContactPlacheHolderOffline": "Şu anda çevrimdışısınız. Kişilerinizi yenilemek ve almak için wifi veya mobil verilere bağlı olduğunuzdan emin olun."
+  },
+  "settingsScreen": {
+    "settings": "Ayarlar",
+    "networkUnavailable": "Ağ kullanım dışı. Çevrimdışı mod",
+    "networkAvailable": "Ağ algılandı. Çevrimiçi moda geri dönüldü",
+    "storybook": "Hikaye kitabı",
+    "logout": "Oturumu kapat",
+    "helpSupport": "yardım / destek",
+    "rememberPassword": "şifre hatırlamak",
+    "rememberPasswordActive": "Oturum açmayı etkin tut",
+    "rememberPasswordInactive": "Giriş yapmayı devre dışı bırak"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Yeni bağlantı ekle",
+    "subAssignThisContact": "Bu bağlantıya alt görev ata",
+    "mobile": "Mobil",
+    "selectLocations": "Konumları seç",
+    "selectSources": "Kaynak seç",
+    "connections": "Bağlantılar",
+    "addGroup": "Grup Ekle",
+    "addConnection": "Bağlantı Ekle",
+    "addBaptizedBy": "Tarafından Vaftiz Edildi Ekle",
+    "addBaptized": "Add baptized",
+    "addCoachedBy": "Add coached by",
+    "addCoaching": "Koçluk ekle",
+    "fullName": {
+      "label": "Ad Soyad",
+      "error": "İsim gerekli"
+    },
+    "phoneNumber": "Telefon Numarası",
+    "initialComment": "İlk Yorum",
+    "socialMedia": "Sosyal Medya",
+    "noContactCommentPlacheHolder": "Şu anda kullanılabilecek kişi yorumu yok.",
+    "noContactCommentPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
+    "noContactCommentPlacheHolderOffline": ""
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Grup Ekle",
+    "selectCoaches": "Koçları seç",
+    "searchGroups": "Grup ara",
+    "searchPeerGroups": "Eş gruplarda ara",
+    "childGroup": "Alt Grup",
+    "searchChildGroups": "Alt gruplarda ara",
+    "groupName": {
+      "label": "Grup ismi",
+      "error": "İsim gerekli"
+    },
+    "addMember": "Üye Ekle",
+    "noGroupCommentPlacheHolder": "Şu anda hiçbir grup yorumu mevcut değil.",
+    "noGroupCommentPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
+    "noGroupCommentPlacheHolderOffline": "Şu anda çevrimdışısınız. Grup yorumunuzu yenilemek ve almak için kablosuz bağlantıya veya mobil verilere bağlı olduğunuzdan emin olun.",
+    "selectLocations": "Konumları Seçin",
+    "noMembersMessage": "Üye yok. Bu gruba bazı üyeler eklemek için burayı veya Değiştir'i tıklayın."
+  },
+  "notificationsScreen": {
+    "notifications": "Bildirim",
+    "loadMore": "Daha Fazla Yükle",
+    "new": "Yeni",
+    "unRead": "Okunmamış",
+    "all": "Tümü",
+    "markAll": "hepsini seç",
+    "dontHaveNotificationsUnread": "Okunmamış bildirim yok",
+    "dontHaveNotifications": "Bildirim yok"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "Şu anda kullanılabilir grup yok.",
+    "noGroupPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
+    "noGroupPlacheHolderOffline": "Şu anda çevrimdışısınız. Gruplarınızı yenilemek ve almak için kablosuz bağlantıya veya mobil verilere bağlı olduğunuzdan emin olun."
+  }
 }

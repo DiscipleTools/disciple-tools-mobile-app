@@ -15,6 +15,7 @@ const initialState = {
   loadingActivities: false,
   saved: false,
   settings: null,
+  offset: 0,
 };
 
 export default function contactsReducer(state = initialState, action) {
@@ -37,14 +38,20 @@ export default function contactsReducer(state = initialState, action) {
       };
     case actions.CONTACTS_GETALL_SUCCESS: {
       let { contacts } = action;
-      const { offline } = action;
-      const localContacts = newState.contacts.filter(localContact => Number.isNaN(localContact.ID));
+      const { offline, offset } = action;
+      const localContacts = newState.contacts.filter((localContact) => isNaN(localContact.ID));
       if (!offline) {
         const dataBaseContacts = [...action.contacts].map((contact) => {
           const mappedContact = {};
           Object.keys(contact).forEach((key) => {
             // Omit restricted properties
-            if (key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'last_modified') {
+            if (
+              key !== '_sample' &&
+              key !== 'geonames' &&
+              key !== 'created_date' &&
+              key !== 'permalink' &&
+              key !== 'last_modified'
+            ) {
               const value = contact[key];
               const valueType = Object.prototype.toString.call(value);
               switch (valueType) {
@@ -67,7 +74,10 @@ export default function contactsReducer(state = initialState, action) {
                   return;
                 }
                 case '[object Object]': {
-                  if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                  if (
+                    Object.prototype.hasOwnProperty.call(value, 'key') &&
+                    Object.prototype.hasOwnProperty.call(value, 'label')
+                  ) {
                     // key_select
                     mappedContact[key] = value.key;
                   } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
@@ -89,12 +99,20 @@ export default function contactsReducer(state = initialState, action) {
                           return {
                             value: valueTwo.ID.toString(),
                           };
-                        } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                        }
+                        if (
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'value')
+                        ) {
                           return {
                             key: valueTwo.key,
                             value: valueTwo.value,
                           };
-                        } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                        }
+                        if (
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'label')
+                        ) {
                           return {
                             value: valueTwo.id.toString(),
                             name: valueTwo.label,
@@ -129,8 +147,11 @@ export default function contactsReducer(state = initialState, action) {
             }
           });
           return mappedContact;
-        }).sort((a, b) => parseInt(a.last_modified, 10) - parseInt(b.last_modified, 10)).reverse();
+        }); /* .sort((a, b) => parseInt(a.last_modified, 10) - parseInt(b.last_modified, 10)).reverse(); */
         contacts = localContacts.concat(dataBaseContacts);
+      }
+      if (offset > 0) {
+        contacts = newState.contacts.concat(contacts);
       }
       return {
         ...newState,
@@ -154,7 +175,13 @@ export default function contactsReducer(state = initialState, action) {
       } else {
         Object.keys(contact).forEach((key) => {
           // Omit restricted properties
-          if (key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'last_modified') {
+          if (
+            key !== '_sample' &&
+            key !== 'geonames' &&
+            key !== 'created_date' &&
+            key !== 'permalink' &&
+            key !== 'last_modified'
+          ) {
             const value = contact[key];
             const valueType = Object.prototype.toString.call(value);
             switch (valueType) {
@@ -177,7 +204,10 @@ export default function contactsReducer(state = initialState, action) {
                 return;
               }
               case '[object Object]': {
-                if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                if (
+                  Object.prototype.hasOwnProperty.call(value, 'key') &&
+                  Object.prototype.hasOwnProperty.call(value, 'label')
+                ) {
                   // key_select
                   mappedContact[key] = value.key;
                 } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
@@ -199,12 +229,20 @@ export default function contactsReducer(state = initialState, action) {
                         return {
                           value: valueTwo.ID.toString(),
                         };
-                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                      }
+                      if (
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'value')
+                      ) {
                         return {
                           key: valueTwo.key,
                           value: valueTwo.value,
                         };
-                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                      }
+                      if (
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'label')
+                      ) {
                         return {
                           value: valueTwo.id.toString(),
                           name: valueTwo.label,
@@ -239,20 +277,20 @@ export default function contactsReducer(state = initialState, action) {
           }
         });
       }
-
-      const oldId = (mappedContact.oldID) ? mappedContact.oldID : null;
-
+      const oldId = mappedContact.oldID ? mappedContact.oldID : null;
       newState = {
         ...newState,
         contact: mappedContact,
         saved: true,
       };
-      const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID.toString() === contact.ID.toString()));
+      const contactIndex = newState.contacts.findIndex(
+        (contactItem) => contactItem.ID.toString() === contact.ID.toString(),
+      );
       // Search entity in list (contacts) if exists: updated it, otherwise: added it to contacts list
       if (contactIndex > -1) {
         // Merge all data of request with found entity
         let newContactData;
-        if (offline && !Number.isNaN(contact.ID)) {
+        if (offline) {
           // Editing D.B. entity in OFFLINE mode
           newContactData = {
             ...newState.contacts[contactIndex],
@@ -261,28 +299,38 @@ export default function contactsReducer(state = initialState, action) {
           Object.keys(mappedContact).forEach((key) => {
             const value = mappedContact[key];
             const valueType = Object.prototype.toString.call(value);
-            if (valueType === '[object Array]' || Object.prototype.hasOwnProperty.call(value, 'values')) {
-              let collection; let
-                oldCollection;
+            if (
+              valueType === '[object Array]' ||
+              Object.prototype.hasOwnProperty.call(value, 'values')
+            ) {
+              let collection;
+              let oldCollection;
               if (valueType === '[object Array]') {
                 collection = value;
-                oldCollection = (newContactData[key]) ? [...newContactData[key]] : [];
+                oldCollection = newContactData[key] ? [...newContactData[key]] : [];
               } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
                 collection = value.values;
-                oldCollection = (newContactData[key]) ? [...newContactData[key].values] : [];
+                oldCollection = newContactData[key] ? [...newContactData[key].values] : [];
               }
               // compare newCollection with old and merge differences.
               collection.forEach((object) => {
                 // search object in newContactData
                 let findObjectInOldRequestIndex;
                 if (valueType === '[object Array]') {
-                  findObjectInOldRequestIndex = oldCollection.findIndex(oldObject => (oldObject.key === object.key));
+                  findObjectInOldRequestIndex = oldCollection.findIndex(
+                    (oldObject) => oldObject.key === object.key,
+                  );
                 } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
-                  findObjectInOldRequestIndex = oldCollection.findIndex(oldObject => (oldObject.value === object.value));
+                  findObjectInOldRequestIndex = oldCollection.findIndex(
+                    (oldObject) => oldObject.value === object.value,
+                  );
                 }
                 if (findObjectInOldRequestIndex > -1) {
                   // if exist
-                  if (Object.prototype.hasOwnProperty.call(object, 'delete')) {
+                  if (
+                    Object.prototype.hasOwnProperty.call(object, 'delete') &&
+                    object.delete === true
+                  ) {
                     oldCollection.splice(findObjectInOldRequestIndex, 1);
                   } else {
                     // update the object
@@ -337,7 +385,9 @@ export default function contactsReducer(state = initialState, action) {
         }
       } else if (oldId) {
         // Search entity with oldID, remove it and add updated entity
-        const oldContactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID.toString() === oldId));
+        const oldContactIndex = newState.contacts.findIndex(
+          (contactItem) => contactItem.ID.toString() === oldId,
+        );
         const previousContactData = {
           ...newState.contacts[oldContactIndex],
         };
@@ -377,9 +427,11 @@ export default function contactsReducer(state = initialState, action) {
       };
     case actions.CONTACTS_GETBYID_SUCCESS: {
       let contact = { ...action.contact };
-      if (Number.isNaN(contact.ID) || contact.isOffline) {
+      if (isNaN(contact.ID) || contact.isOffline) {
         // Search local contact
-        const foundContact = newState.contacts.find(contactItem => (contactItem.ID.toString() === contact.ID));
+        const foundContact = newState.contacts.find(
+          (contactItem) => contactItem.ID.toString() === contact.ID,
+        );
         contact = {
           ...foundContact,
         };
@@ -388,7 +440,13 @@ export default function contactsReducer(state = initialState, action) {
         // MAP CONTACT TO CAN SAVE IT LATER
         Object.keys(contact).forEach((key) => {
           // Omit restricted properties
-          if (key !== '_sample' && key !== 'geonames' && key !== 'created_date' && key !== 'permalink' && key !== 'last_modified') {
+          if (
+            key !== '_sample' &&
+            key !== 'geonames' &&
+            key !== 'created_date' &&
+            key !== 'permalink' &&
+            key !== 'last_modified'
+          ) {
             const value = contact[key];
             const valueType = Object.prototype.toString.call(value);
             switch (valueType) {
@@ -411,7 +469,10 @@ export default function contactsReducer(state = initialState, action) {
                 return;
               }
               case '[object Object]': {
-                if (Object.prototype.hasOwnProperty.call(value, 'key') && Object.prototype.hasOwnProperty.call(value, 'label')) {
+                if (
+                  Object.prototype.hasOwnProperty.call(value, 'key') &&
+                  Object.prototype.hasOwnProperty.call(value, 'label')
+                ) {
                   // key_select
                   mappedContact[key] = value.key;
                 } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
@@ -433,12 +494,20 @@ export default function contactsReducer(state = initialState, action) {
                         return {
                           value: valueTwo.ID.toString(),
                         };
-                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'key') && Object.prototype.hasOwnProperty.call(valueTwo, 'value')) {
+                      }
+                      if (
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'value')
+                      ) {
                         return {
                           key: valueTwo.key,
                           value: valueTwo.value,
                         };
-                      } if (Object.prototype.hasOwnProperty.call(valueTwo, 'id') && Object.prototype.hasOwnProperty.call(valueTwo, 'label')) {
+                      }
+                      if (
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
+                        Object.prototype.hasOwnProperty.call(valueTwo, 'label')
+                      ) {
                         return {
                           value: valueTwo.id.toString(),
                           name: valueTwo.label,
@@ -474,7 +543,9 @@ export default function contactsReducer(state = initialState, action) {
         });
         contact = mappedContact;
         // Update localContact with dbContact
-        const contactIndex = newState.contacts.findIndex(contactItem => (contactItem.ID === contact.ID));
+        const contactIndex = newState.contacts.findIndex(
+          (contactItem) => contactItem.ID.toString() === contact.ID,
+        );
         if (contactIndex > -1) {
           newState.contacts[contactIndex] = {
             ...contact,
@@ -505,7 +576,7 @@ export default function contactsReducer(state = initialState, action) {
         const date = new Date();
         const year = date.getUTCFullYear();
         let day = date.getUTCDate();
-        let month = (date.getUTCMonth() + 1);
+        let month = date.getUTCMonth() + 1;
         if (day < 10) day = `0${day}`;
         if (month < 10) month = `0${month}`;
         const curDay = `${year}-${month}-${day}`;
@@ -518,7 +589,7 @@ export default function contactsReducer(state = initialState, action) {
         const currentDate = `${curDay}T${hours}:${minutes}:${seconds}Z`;
         return {
           ...newState,
-          comments: comments.map(comment => ({
+          comments: comments.map((comment) => ({
             ID: comment.ID,
             author: comment.author,
             date: currentDate,
@@ -532,7 +603,7 @@ export default function contactsReducer(state = initialState, action) {
       }
       return {
         ...newState,
-        comments: comments.map(comment => ({
+        comments: comments.map((comment) => ({
           ID: comment.comment_ID,
           date: `${comment.comment_date.replace(' ', 'T')}Z`,
           author: comment.comment_author,
@@ -560,7 +631,7 @@ export default function contactsReducer(state = initialState, action) {
         const date = new Date();
         const year = date.getUTCFullYear();
         let day = date.getUTCDate();
-        let month = (date.getUTCMonth() + 1);
+        let month = date.getUTCMonth() + 1;
         if (day < 10) day = `0${day}`;
         if (month < 10) month = `0${month}`;
         const curDay = `${year}-${month}-${day}`;
@@ -612,11 +683,9 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_GET_ACTIVITIES_SUCCESS:
       return {
         ...newState,
-        activities: action.activities.map(activity => ({
+        activities: action.activities.map((activity) => ({
           ID: activity.histid,
-          date: new Date(
-            parseInt(activity.hist_time, 10) * 1000,
-          ).toISOString(),
+          date: new Date(parseInt(activity.hist_time, 10) * 1000).toISOString(),
           object_note: activity.object_note,
           gravatar:
             activity.gravatar === ''
@@ -669,7 +738,7 @@ export default function contactsReducer(state = initialState, action) {
       });
       // Get channels
       let channels = {};
-      Object.keys(settings.channels).filter(channelName => channelName !== 'phone' && channelName !== 'email' && channelName !== 'address').forEach((channelName) => {
+      Object.keys(settings.channels).forEach((channelName) => {
         const channelData = settings.channels[channelName];
         channels = {
           ...channels,
@@ -684,6 +753,7 @@ export default function contactsReducer(state = initialState, action) {
         settings: {
           fields: fieldList,
           channels,
+          labelPlural: settings.label_plural,
         },
         loading: false,
       };

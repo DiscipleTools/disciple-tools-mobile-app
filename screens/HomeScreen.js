@@ -1,13 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Image, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import PropTypes from 'prop-types';
 import * as WebBrowser from 'expo-web-browser';
 
@@ -21,7 +14,6 @@ const propTypes = {
     id: PropTypes.number,
   }).isRequired,
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -116,14 +108,12 @@ const styles = StyleSheet.create({
 });
 
 class HomeScreen extends React.Component {
-
-  /* eslint-enable react/sort-comp */
   handleLearnMorePress = () => {
     WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
   };
 
   static navigationOptions = {
-    header: null,
+    headerShown: false,
   };
 
   maybeRenderDevelopmentModeWarning() {
@@ -134,11 +124,7 @@ class HomeScreen extends React.Component {
         </Text>
       );
 
-      const debugInfo = (
-        <Text>
-          {JSON.stringify(this.props.userData)}
-        </Text>
-      );
+      const debugInfo = <Text>{JSON.stringify(this.props.userData)}</Text>;
 
       return (
         <Text style={styles.developmentModeText}>
@@ -162,15 +148,10 @@ class HomeScreen extends React.Component {
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
           <View style={styles.welcomeContainer}>
-            <Image
-              source={require('../assets/images/dt-icon.png')}
-              style={styles.welcomeImage}
-            />
+            <Image source={require('../assets/images/dt-icon.png')} style={styles.welcomeImage} />
           </View>
 
-          <View style={styles.getStartedContainer}>
-            {this.maybeRenderDevelopmentModeWarning()}
-          </View>
+          <View style={styles.getStartedContainer}>{this.maybeRenderDevelopmentModeWarning()}</View>
         </ScrollView>
       </View>
     );
@@ -179,7 +160,7 @@ class HomeScreen extends React.Component {
 
 HomeScreen.propTypes = propTypes;
 // export default HomeScreen;
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   userData: state.userReducer.userData,
 });
 

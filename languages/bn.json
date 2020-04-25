@@ -1,181 +1,124 @@
 {
-    "global": {
-        "error": {
-            "code": "",
-            "message": ""
-        },
-        "success": {
-            "save": ""
-        },
-        "contactOverallStatus": {
-            "new": "",
-            "unassignable": "",
-            "unassigned": "",
-            "assigned": "",
-            "active": "",
-            "paused": "",
-            "closed": ""
-        },
-        "seekerPath": {
-            "none": "",
-            "attempted": "",
-            "established": "",
-            "scheduled": "",
-            "met": "",
-            "ongoing": "",
-            "coaching": ""
-        },
-        "groupStatus": {
-            "active": "",
-            "inactive": ""
-        },
-        "groupType": {
-            "pre-group": "",
-            "group": "",
-            "church": "",
-            "team": ""
-        },
-        "groups": "",
-        "details": "",
-        "status": "",
-        "assignedTo": "",
-        "location": "",
-        "peopleGroup": "",
-        "selectPeopleGroups": "",
-        "address": "",
-        "progress": "",
-        "commentsActivity": "",
-        "writeYourCommentNoteHere": "",
-        "requiredField": "",
-        "edit": "",
-        "cancel": "",
-        "save": "",
-        "online": "",
-        "language": ""
+  "global": {
+    "error": {
+      "code": "কোড: ",
+      "message": "বার্তা: "
     },
-    "loginScreen": {
-        "domain": {
-            "label": "",
-            "placeholder": "",
-            "error": ""
-        },
-        "username": {
-            "label": "",
-            "error": ""
-        },
-        "password": {
-            "label": "",
-            "error": ""
-        },
-        "logIn": "",
-        "forgotPassword": ""
+    "success": {
+      "save": "ডেটা সাফল্যের সাথে সংরক্ষিত হয়েছে!"
     },
-    "contactsScreen": {
-        "contacts": ""
+    "groups": "গ্রুপ",
+    "details": "বিস্তারিত",
+    "selectPeopleGroups": "লোক গোষ্ঠী নির্বাচন করুন",
+    "address": "ঠিকানা",
+    "progress": "উন্নতি",
+    "commentsActivity": "মন্তব্য এবং ক্রিয়াকলাপ",
+    "writeYourCommentNoteHere": "আপনার মন্তব্য বা নোট এখানে লিখুন",
+    "requiredField": "প্রয়োজনীয় ক্ষেত্র",
+    "edit": "সম্পাদন করা",
+    "cancel": "বাতিল",
+    "save": "সংরক্ষণ করুন",
+    "online": "অনলাইন",
+    "offline": "অফলাইন",
+    "language": "ভাষা",
+    "search": "অনুসন্ধান করুন",
+    "membersActivity": "সদস্য",
+    "moreFields": "আরও ক্ষেত্র",
+    "nameRequired": "নাম (প্রয়োজন"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL টি",
+      "placeholder": "উদাহরণস্বরূপ myteam.disciple.tools",
+      "error": "ডোমেন প্রয়োজনীয়",
+      "errorForgotPass": "আপনার পাসওয়ার্ড পুনরুদ্ধার করতে URL টি প্রবেশ করুন"
     },
-    "settingsScreen": {
-        "settings": "",
-        "networkUnavailable": "",
-        "networkAvailable": "",
-        "signOut": "",
-        "domain": "",
-        "signedInAs": "",
-        "storybook": "",
-        "logout": "",
-        "helpSupport": ""
+    "username": {
+      "label": "ব্যবহারকারীর নাম",
+      "error": "ইউজার নাম দরকার"
     },
-    "contactDetailScreen": {
-        "addNewContact": "",
-        "contactSources": {
-            "personal": "",
-            "web": "",
-            "phone": "",
-            "linkedin": "",
-            "referral": "",
-            "advertisement": "",
-            "transfer": ""
-        },
-        "subAssignedTo": "",
-        "subAssignThisContact": "",
-        "mobile": "",
-        "email": "",
-        "selectLocations": "",
-        "contactAge": {
-            "underEighteenYearsOld": "",
-            "underTwentySixYearsOld": "",
-            "underFortyOneYearsOld": "",
-            "overFortyYearsOld": ""
-        },
-        "age": "",
-        "male": "",
-        "female": "",
-        "gender": "",
-        "source": "",
-        "selectSources": "",
-        "seekerPath": "",
-        "faithMilestones": "",
-        "milestones": {
-            "hasBible": "",
-            "readingBible": "",
-            "statesBelief": "",
-            "shareGospel": "",
-            "sharingGospel": "",
-            "baptized": "",
-            "baptizing": "",
-            "inGroup": "",
-            "startingChurches": "",
-            "baptismDate": ""
-        },
-        "connections": "",
-        "addGroup": "",
-        "connection": "",
-        "addConnection": "",
-        "baptizedBy": "",
-        "addBaptizedBy": "",
-        "baptized": "",
-        "addBaptized": "",
-        "coachedBy": "",
-        "addCoachedBy": "",
-        "coaching": "",
-        "addCoaching": "",
-        "fullName": "",
-        "phoneNumber": "",
-        "initialComment": "",
-        "addBaptizmDate": "",
-        "group": "",
-        "socialMedia": "",
-        "noAnswer": "",
-        "contactEstablished": "",
-        "meetingScheduled": "",
-        "meetingCompleted": "",
-        "meetingNoShow": ""
+    "password": {
+      "label": "পাসওয়ার্ড",
+      "error": "পাসওয়ার্ড প্রয়োজন"
     },
-    "groupDetailScreen": {
-        "addNewGroup": "",
-        "groupCoach": "",
-        "selectCoaches": "",
-        "selectGeonames": "",
-        "startDate": "",
-        "endDate": "",
-        "groupType": "",
-        "churchHealth": "",
-        "healthMetrics": {
-            "giving": "",
-            "fellowship": "",
-            "communion": "",
-            "baptism": "",
-            "prayer": "",
-            "leaders": "",
-            "bibleStudy": "",
-            "praise": "",
-            "sharingGospel": ""
-        },
-        "parentGroup": "",
-        "searchGroups": "",
-        "peerGroup": "",
-        "searchPeerGroups": "",
-        "childGroup": "",
-        "searchChildGroups": "",
-        "groupName": ""
+    "logIn": "লগ ইন",
+    "forgotPassword": "আপনার পাসওয়ার্ড হারিয়েছেন?",
+    "errors": {
+      "invalidUsername": "অজানা ব্যবহারকারীর নাম। আবার চেক করুন বা আপনার ইমেল ঠিকানা চেষ্টা করুন।",
+      "incorrectPassword": "আপনি ব্যবহারকারীর জন্য প্রবেশ করা পাসওয়ার্ডটি ভুল"
     }
+  },
+  "contactsScreen": {
+    "contacts": "যোগাযোগ",
+    "noContactPlacheHolder": "বর্তমানে কোনও পরিচিতি উপলব্ধ নেই।",
+    "noContactPlacheHolder1": "আপনার সাইট থেকে এগুলি পেতে কোনও সমস্যা হতে পারে। রিফ্রেশ করার চেষ্টা করতে নীচে টানুন এবং আবার চেষ্টা করুন।",
+    "noContactPlacheHolderOffline": "আপনি বর্তমানে অফলাইন আপনার যোগাযোগগুলি রিফ্রেশ করতে এবং পাওয়ার জন্য আপনি ওয়াইফাই বা মোবাইল ডেটার সাথে সংযুক্ত আছেন তা নিশ্চিত করুন।"
+  },
+  "settingsScreen": {
+    "settings": "সেটিংস",
+    "networkUnavailable": "অনুপলব্ধ নেটওয়ার্ক. এখন `অফলাইন` মোডে।",
+    "networkAvailable": "নেটওয়ার্ক উপলব্ধ। এখন `অনলাইন` মোডে।",
+    "storybook": "storybook",
+    "logout": "সাইন আউট",
+    "helpSupport": "সাহায্য সহযোগীতা",
+    "rememberPassword": "পাসওয়ার্ড মনে",
+    "rememberPasswordActive": "সক্ষম থাকা লগ ইন করুন",
+    "rememberPasswordInactive": "লগ ইন অক্ষম রাখুন"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "নতুন পরিচিতি যোগ করুন",
+    "subAssignThisContact": "এই যোগাযোগটি সাব-এসাইন করুন",
+    "mobile": "মোবাইল",
+    "selectLocations": "অবস্থান নির্বাচন করুন",
+    "selectSources": "উত্স নির্বাচন করুন",
+    "connections": "সংযোগ",
+    "addGroup": "গ্রুপ যুক্ত করুন",
+    "addConnection": "সংযোগ যুক্ত করুন",
+    "addBaptizedBy": "দ্বারা বাপ্তিস্ম যোগ করুন",
+    "addBaptized": "বাপ্তিস্ম যুক্ত করুন",
+    "addCoachedBy": "দ্বারা প্রশিক্ষিত যোগ করুন",
+    "addCoaching": "কোচিং যোগ করুন",
+    "fullName": {
+      "label": "পুরো নাম",
+      "error": "নাম প্রয়োজন"
+    },
+    "phoneNumber": "ফোন নম্বর",
+    "initialComment": "প্রাথমিক মন্তব্য",
+    "socialMedia": "সামাজিক মাধ্যম",
+    "noContactCommentPlacheHolder": "বর্তমানে কোনও যোগাযোগের মন্তব্য উপলব্ধ নেই।",
+    "noContactCommentPlacheHolder1": "আপনার সাইট থেকে এগুলি পেতে কোনও সমস্যা হতে পারে। রিফ্রেশ করার চেষ্টা করতে নীচে টানুন এবং আবার চেষ্টা করুন।"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "নতুন গ্রুপ যুক্ত করুন",
+    "selectCoaches": "কোচ নির্বাচন করুন",
+    "searchGroups": "গোষ্ঠীগুলি অনুসন্ধান করুন",
+    "searchPeerGroups": "পিয়ার গ্রুপগুলি অনুসন্ধান করুন",
+    "childGroup": "শিশু দল",
+    "searchChildGroups": "শিশুদের দল অনুসন্ধান করুন Search",
+    "groupName": {
+      "label": "দলের নাম",
+      "error": "নাম প্রয়োজন"
+    },
+    "addMember": "সদস্য যোগ করুন",
+    "noGroupCommentPlacheHolder": "বর্তমানে কোনও গ্রুপ মন্তব্য উপলব্ধ নেই।",
+    "noGroupCommentPlacheHolder1": "আপনার সাইট থেকে এগুলি পেতে কোনও সমস্যা হতে পারে। রিফ্রেশ করার চেষ্টা করতে নীচে টানুন এবং আবার চেষ্টা করুন।",
+    "noGroupCommentPlacheHolderOffline": "আপনি বর্তমানে অফলাইন আপনার গ্রুপ মন্তব্যটি রিফ্রেশ করার জন্য আপনি ওয়াইফাই বা মোবাইল ডেটাতে সংযুক্ত আছেন তা নিশ্চিত করুন।",
+    "selectLocations": "অবস্থান নির্বাচন করুন",
+    "noMembersMessage": "noMembersMessage"
+  },
+  "notificationsScreen": {
+    "notifications": "বিজ্ঞপ্তিগুলি",
+    "loadMore": "আর ঢুকাও",
+    "new": "নতুন",
+    "unRead": "অপঠিত",
+    "all": "সব",
+    "markAll": "সমস্ত চিহ্নিত করুন",
+    "dontHaveNotificationsUnread": "কোনও বিজ্ঞপ্তি অপঠিত",
+    "dontHaveNotifications": "বিজ্ঞপ্তি নেই"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "বর্তমানে কোনও গোষ্ঠী উপলব্ধ নেই।",
+    "noGroupPlacheHolder1": "আপনার সাইট থেকে এগুলি পেতে কোনও সমস্যা হতে পারে। রিফ্রেশ করার চেষ্টা করতে নীচে টানুন এবং আবার চেষ্টা করুন।",
+    "noGroupPlacheHolderOffline": "আপনি বর্তমানে অফলাইন আপনার গ্রুপগুলি রিফ্রেশ করার জন্য আপনি ওয়াইফাই বা মোবাইল ডেটার সাথে সংযুক্ত আছেন তা নিশ্চিত করুন।"
+  }
 }

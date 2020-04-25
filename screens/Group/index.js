@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStackNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 import PropTypes from 'prop-types';
 
 import Colors from '../../constants/Colors';

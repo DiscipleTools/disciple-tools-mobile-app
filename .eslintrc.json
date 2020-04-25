@@ -1,5 +1,5 @@
 {
-  "extends": ["airbnb", "prettier"],
+  "extends": [/*"airbnb",*/ "prettier"],
   "env": {
     "node": true,
     "browser": true,
@@ -13,11 +13,7 @@
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [
-          ".js",
-          ".android.js",
-          ".ios.js"
-        ]
+        "extensions": [".js", ".android.js", ".ios.js"]
       }
     }
   },
@@ -26,14 +22,19 @@
     "react/jsx-filename-extension": 0,
     "global-require": 0,
     "import/export": 0,
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*test.js", "setup-tests.js"]}],
-    "max-len": ["error", 300, 2, {
-      "ignoreUrls": true,
-      "ignoreComments": true,
-      "ignoreRegExpLiterals": true,
-      "ignoreStrings": true,
-      "ignoreTemplateLiterals": true
-    }],
+    /*"import/no-extraneous-dependencies": ["error", {"devDependencies": ["** / *test.js", "setup-tests.js"]}],*/
+    "max-len": [
+      "error",
+      300,
+      2,
+      {
+        "ignoreUrls": true,
+        "ignoreComments": true,
+        "ignoreRegExpLiterals": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true
+      }
+    ],
     "no-plusplus": 0,
     "no-restricted-syntax": 0
   }

@@ -1,182 +1,125 @@
 {
-    "global": {
-        "error": {
-            "code": "Code: ",
-            "message": "Message: "
-        },
-        "success": {
-            "save": "Data saved successfully!"
-        },
-        "contactOverallStatus": {
-            "new": "New Contact",
-            "unassignable": "Not Ready",
-            "unassigned": "Dispatch Needed",
-            "assigned": "Waiting to be accepted",
-            "active": "Active",
-            "paused": "Paused",
-            "closed": "Closed"
-        },
-        "seekerPath": {
-            "none": "Contact Attempt Needed",
-            "attempted": "Contact Attempted",
-            "established": "Contact Established",
-            "scheduled": "First Meeting Scheduled",
-            "met": "First Meeting Complete",
-            "ongoing": "Ongoing Meetings",
-            "coaching": "Being Coached"
-        },
-        "groupStatus": {
-            "active": "Active",
-            "inactive": "Inactive"
-        },
-        "groupType": {
-            "pre-group": "Pre-Group",
-            "group": "Group",
-            "church": "Church",
-            "team": "Team"
-        },
-        "groups": "Groups",
-        "details": "Details",
-        "status": "Status",
-        "assignedTo": "Assigned to",
-        "location": "Location",
-        "peopleGroup": "People Group",
-        "selectPeopleGroups": "Select People Groups",
-        "address": "Address",
-        "progress": "Progress",
-        "commentsActivity": "Comments and Activity",
-        "writeYourCommentNoteHere": "Write your comment or note here",
-        "requiredField": "Required field",
-        "edit": "Edit",
-        "cancel": "Cancel",
-        "save": "Save",
-        "online": "Online",
-        "language": "Language",
-        "search": "Search"
+  "global": {
+    "error": {
+      "code": "Code: ",
+      "message": "Message: "
     },
-    "loginScreen": {
-        "domain": {
-            "label": "URL",
-            "placeholder": "E.g. myteam.disciple.tools",
-            "error": "Domain is required"
-        },
-        "username": {
-            "label": "Username",
-            "error": "Username is required"
-        },
-        "password": {
-            "label": "Password",
-            "error": "Password is required"
-        },
-        "logIn": "Log In",
-        "forgotPassword": "Lost your password?"
+    "success": {
+      "save": "Data saved successfully!"
     },
-    "contactsScreen": {
-        "contacts": "Contacts"
+    "groups": "Groups",
+    "details": "Details",
+    "selectPeopleGroups": "Select People Groups",
+    "address": "Address",
+    "progress": "Progress",
+    "commentsActivity": "Comments and Activity",
+    "writeYourCommentNoteHere": "Write your comment or note here",
+    "requiredField": "Required field",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "online": "Online",
+    "language": "Language",
+    "search": "Search",
+    "membersActivity": "Members",
+    "offline": "offline",
+    "moreFields": "More Fields",
+    "nameRequired": "Name required"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "E.g. myteam.disciple.tools",
+      "error": "Domain is required",
+      "errorForgotPass": "Please enter URL to start to retrieve your password"
     },
-    "settingsScreen": {
-        "settings": "Settings",
-        "networkUnavailable": "Network unavailable. Now in OFFLINE mode",
-        "networkAvailable": "Network detected. Back to ONLINE mode",
-        "signOut": "Sign Out",
-        "domain": "Domain",
-        "signedInAs": "Signed in as",
-        "storybook": "Storybook",
-        "logout": "Sign Out",
-        "helpSupport": "Help / Support"
+    "username": {
+      "label": "Username",
+      "error": "Username is required"
     },
-    "contactDetailScreen": {
-        "addNewContact": "Add New Contact",
-        "contactSources": {
-            "personal": "Personal",
-            "web": "Web",
-            "phone": "Phone",
-            "linkedin": "LinkedIn",
-            "referral": "Referral",
-            "advertisement": "Advertisement",
-            "transfer": "Transfer"
-        },
-        "subAssignedTo": "Sub-assigned to",
-        "subAssignThisContact": "Sub-assign this contact",
-        "mobile": "Mobile",
-        "email": "Email",
-        "selectLocations": "Select locations",
-        "contactAge": {
-            "underEighteenYearsOld": "Under 18 years old",
-            "underTwentySixYearsOld": "18-25 years old",
-            "underFortyOneYearsOld": "26-40 years old",
-            "overFortyYearsOld": "Over 40 years old"
-        },
-        "age": "Age",
-        "male": "Male",
-        "female": "Female",
-        "gender": "Gender",
-        "source": "Source",
-        "selectSources": "Select sources",
-        "seekerPath": "Seeker Path",
-        "faithMilestones": "Faith Milestones",
-        "milestones": {
-            "hasBible": "Has Bible",
-            "readingBible": "Reading Bible",
-            "statesBelief": "States Belief",
-            "shareGospel": "Can Share Gospel/Testimony",
-            "sharingGospel": "Sharing Gospel/Testimony",
-            "baptized": "Baptized",
-            "baptizing": "Baptizing",
-            "inGroup": "In Church/Group",
-            "startingChurches": "Starting Churches",
-            "baptismDate": "Baptism Date"
-        },
-        "connections": "Connections",
-        "addGroup": "Add Group",
-        "connection": "Connection",
-        "addConnection": "Add Connection",
-        "baptizedBy": "Baptized By",
-        "addBaptizedBy": "Add baptized by",
-        "baptized": "Baptized",
-        "addBaptized": "Add baptized",
-        "coachedBy": "Coached By",
-        "addCoachedBy": "Add coached by",
-        "coaching": "Coaching",
-        "addCoaching": "Add coaching",
-        "fullName": "Full Name",
-        "phoneNumber": "Phone Number",
-        "initialComment": "Initial Comment",
-        "addBaptizmDate": "Add baptizm date",
-        "group": "Group",
-        "socialMedia": "Social Media",
-        "noAnswer": "No Answer",
-        "contactEstablished": "Contact Established",
-        "meetingScheduled": "Meeting Scheduled",
-        "meetingCompleted": "Meeting Completed",
-        "meetingNoShow": "Meeting No-show"
+    "password": {
+      "label": "Password",
+      "error": "Password is required"
     },
-    "groupDetailScreen": {
-        "addNewGroup": "Add New Group",
-        "groupCoach": "Group Coach",
-        "selectCoaches": "Select coaches",
-        "selectGeonames": "Select geonames",
-        "startDate": "Start Date",
-        "endDate": "End Date",
-        "groupType": "Group Type",
-        "churchHealth": "Church Health",
-        "healthMetrics": {
-            "giving": "Giving",
-            "fellowship": "Fellowship",
-            "communion": "Communion",
-            "baptism": "Baptism",
-            "prayer": "Prayer",
-            "leaders": "Leaders",
-            "bibleStudy": "Bible Study",
-            "praise": "Praise",
-            "sharingGospel": "Sharing the Gospel"
-        },
-        "parentGroup": "Parent Group",
-        "searchGroups": "Search groups",
-        "peerGroup": "Peer Group",
-        "searchPeerGroups": "Search peer groups",
-        "childGroup": "Child Group",
-        "searchChildGroups": "Search child groups",
-        "groupName": "Group Name"
+    "logIn": "Log In",
+    "forgotPassword": "Lost your password?",
+    "errors": {
+      "invalidUsername": "Unknown username. Check again or try your email address.",
+      "incorrectPassword": "The password you entered for username is incorrect"
     }
+  },
+  "contactsScreen": {
+    "contacts": "Contacts",
+    "noContactPlacheHolder": "There are not any contacts currently available.",
+    "noContactPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
+    "noContactPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your contacts."
+  },
+  "settingsScreen": {
+    "settings": "Settings",
+    "networkUnavailable": "Network unavailable. Now in OFFLINE mode",
+    "networkAvailable": "Network detected. Back to ONLINE mode",
+    "storybook": "Storybook",
+    "logout": "Sign Out",
+    "helpSupport": "Help / Support",
+    "rememberPassword": "Keep logged in",
+    "rememberPasswordActive": "Keep logged in enabled",
+    "rememberPasswordInactive": "Keep logged in disabled"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Add New Contact",
+    "subAssignThisContact": "Sub-assign this contact",
+    "mobile": "Phone",
+    "selectLocations": "Select locations",
+    "selectSources": "Select sources",
+    "connections": "Connections",
+    "addGroup": "Add Group",
+    "addConnection": "Add Connection",
+    "addBaptizedBy": "Add baptized by",
+    "addBaptized": "Add baptized",
+    "addCoachedBy": "Add coached by",
+    "addCoaching": "Add coaching",
+    "fullName": {
+      "label": "Full Name",
+      "error": "Name is required"
+    },
+    "phoneNumber": "Phone Number",
+    "initialComment": "Initial Comment",
+    "socialMedia": "Social Media",
+    "noContactCommentPlacheHolder": "There are not any contact comments currently available.",
+    "noContactCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
+    "noContactCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your contact comment."
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Add New Group",
+    "selectCoaches": "Select Group Coach",
+    "searchGroups": "Search groups",
+    "searchPeerGroups": "Search peer groups",
+    "childGroup": "Child Group",
+    "searchChildGroups": "Search child groups",
+    "groupName": {
+      "label": "Group Name",
+      "error": "Name is required"
+    },
+    "addMember": "Add Member",
+    "noGroupCommentPlacheHolder": "There are not any group comments currently available.",
+    "noGroupCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
+    "noGroupCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your group comment.",
+    "selectLocations": "Select Locations",
+    "noMembersMessage": "No members. Tap here or on Edit to add some members to this group."
+  },
+  "notificationsScreen": {
+    "notifications": "Notifications",
+    "loadMore": "Load More",
+    "new": "New",
+    "unRead": "Unread",
+    "all": "All",
+    "markAll": "Mark All",
+    "dontHaveNotificationsUnread": "No unread notifications",
+    "dontHaveNotifications": "No notifications"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "There are not any groups currently available.",
+    "noGroupPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
+    "noGroupPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your groups."
+  }
 }

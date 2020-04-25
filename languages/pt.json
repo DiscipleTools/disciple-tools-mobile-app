@@ -1,0 +1,125 @@
+{
+  "global": {
+    "error": {
+      "code": "Código: ",
+      "message": "Mensagem: "
+    },
+    "success": {
+      "save": "Dados salvos com sucesso!"
+    },
+    "groups": "grupos",
+    "details": "Detalhes",
+    "selectPeopleGroups": "Selecionar grupo de pessoas",
+    "address": "Endereço",
+    "progress": "Progresso",
+    "commentsActivity": "Comentários e atividade",
+    "writeYourCommentNoteHere": "Escreva seu comentário ou anotação aqui",
+    "requiredField": "Campo obrigatório",
+    "edit": "editar",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "online": "online",
+    "offline": "offline",
+    "language": "Língua",
+    "search": "Procurar",
+    "membersActivity": "Membros",
+    "moreFields": "Mais campos",
+    "nameRequired": "Nome necessário"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "Exemplo myteam.disciple.tools",
+      "error": "É necessário o domínio",
+      "errorForgotPass": "Favor digitar a URL para começar a recuperação de senha"
+    },
+    "username": {
+      "label": "Nome de Usuário",
+      "error": "É necessário nome de Usuário"
+    },
+    "password": {
+      "label": "Senha",
+      "error": "É necessária a senha"
+    },
+    "logIn": "Login",
+    "forgotPassword": "Perdeu sua senha?",
+    "errors": {
+      "invalidUsername": "Nome de Usuário desconhecido. Verifique novamente ou tente seu endereço de e-mail",
+      "incorrectPassword": "A senha que você digitou para o usuário está incorreta"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "Contatos",
+    "noContactPlacheHolder": "Não há muitos contatos disponíveis atualmente",
+    "noContactPlacheHolder1": "Pode haver um problema ao removê-los do seu local. Arraste-os para tentar atualizar e tente novamente.",
+    "noContactPlacheHolderOffline": "Você está offline. Certifique-se de que está conectado à rede Wifi ou dados móveis para atualizar e obter seus contatos"
+  },
+  "settingsScreen": {
+    "settings": "Configurações",
+    "networkUnavailable": "Rede indisponível. Você está no modo offline.",
+    "networkAvailable": "Rede encontrada. De volta ao modo Online.",
+    "storybook": "Storybook",
+    "logout": "sair",
+    "helpSupport": "Ajuda / Suporte",
+    "rememberPassword": "Lembrar senha",
+    "rememberPasswordActive": "Manter-se logado está ligado",
+    "rememberPasswordInactive": "Manter-se logado está desligado"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Adicionar novo contato",
+    "subAssignThisContact": "Sub-assinar este contato",
+    "mobile": "Móvel",
+    "selectLocations": "Selecionar locais",
+    "selectSources": "Selecionar fontes",
+    "connections": "Nome do líder que tem contato",
+    "addGroup": "Adicionar Grupo",
+    "addConnection": "Adicionar Conexão",
+    "addBaptizedBy": "Adicionar batizado por",
+    "addBaptized": "Adicionar batizado",
+    "addCoachedBy": "Adicionar recebendo coach de",
+    "addCoaching": "Adicionar Coaching",
+    "fullName": {
+      "label": "Nome completo",
+      "error": "Nome é necessário"
+    },
+    "phoneNumber": "Telefone",
+    "initialComment": "Comentário Inicial",
+    "socialMedia": "Mídia Social",
+    "noContactCommentPlacheHolder": "Não há comentários de contatos disponíveis atualmente",
+    "noContactCommentPlacheHolder1": "Pode haver um problema ao removê-los do seu local. Arraste-os para tentar atualizar e tente novamente.",
+    "noContactCommentPlacheHolderOffline": ""
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Adicionar novo grupo",
+    "selectCoaches": "Selecionar Coach do Grupo",
+    "searchGroups": "Buscar grupos",
+    "searchPeerGroups": "Buscar grupos de parceiros",
+    "childGroup": "Grupo de crianças",
+    "searchChildGroups": "Buscar por grupos de crianças",
+    "groupName": {
+      "label": "Nome do Grupo",
+      "error": "Nome é necessário"
+    },
+    "addMember": "Adicionar Membro",
+    "noGroupCommentPlacheHolder": "Não há comentários de grupos disponíveis atualmente.",
+    "noGroupCommentPlacheHolder1": "Pode haver um problema ao removê-los do seu local. Arraste-os para tentar atualizar e tente novamente. ",
+    "noGroupCommentPlacheHolderOffline": "Você está offline. Certifique-se de que está conectado à rede Wifi ou dados móveis para atualizar e obter seus comentários de grupos. ",
+    "selectLocations": "Selecionar locais",
+    "noMembersMessage": "Não há membros. Clique aqui em Editar para adicionar membros a este grupo."
+  },
+  "notificationsScreen": {
+    "notifications": "Notificações",
+    "loadMore": "Carregar mais",
+    "new": "Novo",
+    "unRead": "Não lida",
+    "all": "Todos",
+    "markAll": "Marcar todos",
+    "dontHaveNotificationsUnread": "Não há notificações não lidas",
+    "dontHaveNotifications": "Não há notificações"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "Não há grupos disponíveis no momento",
+    "noGroupPlacheHolder1": "Pode haver um problema ao removê-los do seu local. Arraste-os para tentar atualizar e tente novamente. ",
+    "noGroupPlacheHolderOffline": "Você está offline. Certifique-se de que está conectado à rede Wifi ou dados móveis para atualizar e obter seus grupos."
+  }
+}
