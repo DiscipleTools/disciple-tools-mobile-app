@@ -89,19 +89,19 @@ const defaultFaithMilestones = [
 let tabViewRoutes = [
   {
     key: 'details',
-    title: i18n.t('global.details'),
+    title: 'global.details',
   },
   {
     key: 'progress',
-    title: i18n.t('global.progress'),
+    title: 'global.progress',
   },
   {
     key: 'comments',
-    title: i18n.t('global.commentsActivity'),
+    title: 'global.commentsActivity',
   },
   {
     key: 'connections',
-    title: i18n.t('contactDetailScreen.connections'),
+    title: 'contactDetailScreen.connections',
   },
 ];
 let self;
@@ -4595,7 +4595,7 @@ class ContactDetailScreen extends React.Component {
                         tabStyle={{ width: 'auto' }}
                         indicatorStyle={styles.tabBarUnderlineStyle}
                         renderLabel={({ route, color }) => (
-                          <Text style={{ color, fontWeight: 'bold' }}>{route.title}</Text>
+                          <Text style={{ color, fontWeight: 'bold' }}>{i18n.t(route.title)}</Text>
                         )}
                       />
                     )}
