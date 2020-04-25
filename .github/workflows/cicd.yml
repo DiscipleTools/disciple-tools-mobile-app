@@ -23,7 +23,7 @@ jobs:
           client.0.oauth_client.0.client_id: ${{ secrets.FIREBASE_OAUTH_CLIENT_ID }}
           client.0.api_key.0.current_key: ${{ secrets.FIREBASE_API_KEY }}
           client.0.services.appinvite_service.other_platform_oauth_client.0.client_id: ${{ secrets.FIREBASE_OAUTH_CLIENT_ID }}
-      - uses: expo/expo-github-action@v4
+      - uses: expo/expo-github-action@v5
         with:
           expo-version: 3.x
           expo-username: ${{ secrets.EXPO_CLI_USERNAME }}
