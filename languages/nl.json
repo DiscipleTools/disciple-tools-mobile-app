@@ -1,0 +1,124 @@
+{
+  "global": {
+    "error": {
+      "code": "Code: ",
+      "message": "Bericht: "
+    },
+    "success": {
+      "save": "Gegevens succesvol opgeslagen!"
+    },
+    "groups": "groepen",
+    "details": "Details",
+    "selectPeopleGroups": "Selecteer People Groups",
+    "address": "Adres",
+    "progress": "Vooruitgang",
+    "commentsActivity": "Opmerkingen en activiteit",
+    "writeYourCommentNoteHere": "Schrijf hier je reactie of opmerking",
+    "requiredField": "verplicht veld",
+    "edit": "Bewerk",
+    "cancel": "annuleren",
+    "save": "Opslaan",
+    "online": "Online",
+    "offline": "offline",
+    "language": "Taal",
+    "search": "Zoeken",
+    "membersActivity": "leden",
+    "moreFields": "Meer velden",
+    "nameRequired": "Naam (vereist"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "Bijv. myteam.disciple.tools",
+      "error": "Domein is verplicht",
+      "errorForgotPass": "Voer de URL in om te beginnen met het ophalen van uw wachtwoord"
+    },
+    "username": {
+      "label": "Gebruikersnaam",
+      "error": "Gebruikersnaam is verplicht"
+    },
+    "password": {
+      "label": "Wachtwoord",
+      "error": "Een wachtwoord is verplicht"
+    },
+    "logIn": "Log in",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "errors": {
+      "invalidUsername": "Onbekende gebruikersnaam. Controleer het opnieuw of probeer uw e-mailadres.",
+      "incorrectPassword": "Het wachtwoord dat u hebt ingevoerd voor de gebruikersnaam is onjuist"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "Contacten",
+    "noContactPlacheHolder": "Er zijn momenteel geen contacten beschikbaar.",
+    "noContactPlacheHolder1": "Er is mogelijk een probleem opgetreden bij het ophalen van uw site. Sleep omlaag om te proberen te vernieuwen en probeer het opnieuw.",
+    "noContactPlacheHolderOffline": "U bent momenteel offline. Zorg ervoor dat u bent verbonden met wifi of mobiele gegevens om uw contacten te vernieuwen en op te halen."
+  },
+  "settingsScreen": {
+    "settings": "instellingen",
+    "networkUnavailable": "Netwerk niet beschikbaar. Nu in de OFFLINE-modus",
+    "networkAvailable": "Netwerk gedetecteerd. Terug naar ONLINE-modus",
+    "storybook": "Verhalenboek",
+    "logout": "Afmelden",
+    "helpSupport": "Help & Ondersteuning",
+    "rememberPassword": "Onthoud wachtwoord",
+    "rememberPasswordActive": "Blijf ingelogd ingeschakeld",
+    "rememberPasswordInactive": "Blijf ingelogd uitgeschakeld"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Voeg nieuw contact toe",
+    "subAssignThisContact": "Wijs deze contactpersoon toe",
+    "mobile": "mobiel",
+    "selectLocations": "Selecteer locaties",
+    "selectSources": "Selecteer bronnen",
+    "connections": "aansluitingen",
+    "addGroup": "Groep toevoegen",
+    "addConnection": "Verbinding toevoegen",
+    "addBaptizedBy": "Gedoopt toevoegen door",
+    "addBaptized": "Gedoopt toevoegen",
+    "addCoachedBy": "Gecoacht door toevoegen",
+    "addCoaching": "Coaching toevoegen",
+    "fullName": {
+      "label": "Voor-en achternaam",
+      "error": "Naam is vereist"
+    },
+    "phoneNumber": "Telefoonnummer",
+    "initialComment": "Eerste opmerking",
+    "socialMedia": "Sociale media",
+    "noContactCommentPlacheHolder": "Er zijn momenteel geen contactreacties beschikbaar.",
+    "noContactCommentPlacheHolder1": "Mogelijk is er een probleem opgetreden bij het ophalen van uw site. Sleep naar beneden om te proberen te vernieuwen en probeer het opnieuw."
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Nieuwe groep toevoegen",
+    "selectCoaches": "Selecteer Groepscoach",
+    "searchGroups": "Doorzoek groepen",
+    "searchPeerGroups": "Zoek naar peergroepen",
+    "childGroup": "Kind groep",
+    "searchChildGroups": "Zoek kindgroepen",
+    "groupName": {
+      "label": "Groepsnaam",
+      "error": "Naam is vereist"
+    },
+    "addMember": "Lid toevoegen",
+    "noGroupCommentPlacheHolder": "Er zijn momenteel geen groepsreacties beschikbaar.",
+    "noGroupCommentPlacheHolder1": "Er is mogelijk een probleem opgetreden bij het ophalen van uw site. Sleep omlaag om te proberen te vernieuwen en probeer het opnieuw.",
+    "noGroupCommentPlacheHolderOffline": "U bent momenteel offline. Zorg ervoor dat je bent verbonden met wifi of mobiele gegevens om te vernieuwen en je groepsreactie te ontvangen.",
+    "selectLocations": "Selecteer locaties",
+    "noMembersMessage": "Geen leden"
+  },
+  "notificationsScreen": {
+    "notifications": "meldingen",
+    "loadMore": "Meer laden",
+    "new": "Nieuw",
+    "unRead": "Ongelezen",
+    "all": "Allemaal",
+    "markAll": "Markeer alles",
+    "dontHaveNotificationsUnread": "Geen meldingen ongelezen",
+    "dontHaveNotifications": "Geen notificaties"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "Er zijn momenteel geen groepen beschikbaar.",
+    "noGroupPlacheHolder1": "Er is mogelijk een probleem opgetreden bij het ophalen van uw site. Sleep omlaag om te proberen te vernieuwen en probeer het opnieuw.",
+    "noGroupPlacheHolderOffline": "U bent momenteel offline. Zorg ervoor dat u bent verbonden met wifi of mobiele gegevens om uw groepen te vernieuwen en op te halen."
+  }
+}

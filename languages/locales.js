@@ -5,6 +5,11 @@ export default [
     direction: 'ltr',
   },
   {
+    code: 'bn',
+    name: 'বাংলা',
+    direction: 'ltr',
+  },
+  {
     code: 'es',
     name: 'Español',
     direction: 'ltr',
@@ -15,6 +20,16 @@ export default [
     direction: 'ltr',
   },
   {
+    code: 'id',
+    name: 'bahasa Indonesia',
+    direction: 'ltr',
+  },
+  {
+    code: 'nl',
+    name: 'Nederlands',
+    direction: 'ltr',
+  },
+  {
     code: 'pt-BR',
     name: 'Português',
     direction: 'ltr',
@@ -22,6 +37,11 @@ export default [
   {
     code: 'ru',
     name: 'русский язык',
+    direction: 'ltr',
+  },
+  {
+    code: 'sw',
+    name: 'Kiswahili',
     direction: 'ltr',
   },
   {
