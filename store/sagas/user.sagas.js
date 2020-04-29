@@ -100,8 +100,10 @@ export function* addPushToken({ domain, token, expoPushToken, uniqueId }) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          add_push_token: expoPushToken,
-          add_device_id: uniqueId,
+          add_push_token: {
+            token: expoPushToken,
+            device_id: uniqueId,
+          },
         }),
       },
       action: actions.USER_ADD_PUSH_TOKEN_RESPONSE,
