@@ -37,9 +37,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       - run: npm install
-      - name: Deploy
+      - name: Deploy Prod
         if: github.ref == 'refs/heads/master'
-        run: expo publish --release-channel production
+        run: expo publish --release-channel production && expo build:android --release-channel production && expo build:ios --release-channel production
       - name: Deploy Release
         if: github.ref == 'refs/heads/release'
         run: expo publish --release-channel release
