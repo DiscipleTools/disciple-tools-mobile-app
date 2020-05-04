@@ -1,0 +1,124 @@
+{
+  "global": {
+    "error": {
+      "code": "Kode: ",
+      "message": "Pesan: "
+    },
+    "success": {
+      "save": "Data berhasil disimpan!"
+    },
+    "groups": "Grup",
+    "details": "Detail",
+    "selectPeopleGroups": "Pilih Grup Orang",
+    "address": "Alamat",
+    "progress": "Kemajuan",
+    "commentsActivity": "Komentar dan Kegiatan",
+    "writeYourCommentNoteHere": "Tulis komentar atau komentar Anda di sini",
+    "requiredField": "kolom yang harus diisi",
+    "edit": "Edit",
+    "cancel": "Membatalkan",
+    "save": "Menyimpan",
+    "online": "On line",
+    "offline": "Offline",
+    "language": "Bahasa",
+    "search": "Pencarian",
+    "membersActivity": "Anggota",
+    "moreFields": "Lebih banyak bidang",
+    "nameRequired": "Nama (wajib"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "Misalnya. myteam.disciple.tools",
+      "error": "Diperlukan domain",
+      "errorForgotPass": "Silakan masukkan URL untuk mulai mengambil kata sandi Anda"
+    },
+    "username": {
+      "label": "Nama pengguna",
+      "error": "Nama pengguna harus diisi"
+    },
+    "password": {
+      "label": "Kata sandi",
+      "error": "katakunci dibutuhkan"
+    },
+    "logIn": "Masuk",
+    "forgotPassword": "Kehilangan password?",
+    "errors": {
+      "invalidUsername": "Nama pengguna tidak dikenal. Periksa lagi atau coba alamat email Anda.",
+      "incorrectPassword": "Kata sandi yang Anda masukkan untuk nama pengguna salah"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "Kontak",
+    "noContactPlacheHolder": "Tidak ada kontak yang tersedia saat ini.",
+    "noContactPlacheHolder1": "Mungkin ada masalah saat mendapatkannya dari situs Anda. Seret ke bawah untuk mencoba menyegarkan dan coba lagi.",
+    "noContactPlacheHolderOffline": "Anda sedang offline. Pastikan Anda terhubung ke wifi atau data seluler untuk menyegarkan dan mendapatkan kontak Anda."
+  },
+  "settingsScreen": {
+    "settings": "Pengaturan",
+    "networkUnavailable": "Jaringan TIDAK TERSEDIA. Sekarang dalam mode `Offline`.",
+    "networkAvailable": "Jaringan TERSEDIA. Sekarang dalam mode `Online`.",
+    "storybook": "Buku cerita",
+    "logout": "Keluar",
+    "helpSupport": "Bantuan / Dukungan",
+    "rememberPassword": "ingat kata Sandi",
+    "rememberPasswordActive": "Tetap masuk log diaktifkan",
+    "rememberPasswordInactive": "Tetap masuk log dinonaktifkan"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Tambahkan Kontak Baru",
+    "subAssignThisContact": "Sub-assign kontak ini",
+    "mobile": "Mobile",
+    "selectLocations": "Pilih lokasi",
+    "selectSources": "Pilih sumber",
+    "connections": "Koneksi",
+    "addGroup": "Tambahkan Grup",
+    "addConnection": "Tambahkan Koneksi",
+    "addBaptizedBy": "Tambahkan dibaptis oleh",
+    "addBaptized": "Tambahkan yang dibaptis",
+    "addCoachedBy": "Tambahkan yang dilatih oleh",
+    "addCoaching": "Tambahkan pelatihan",
+    "fullName": {
+      "label": "Nama lengkap",
+      "error": "Nama harus diisi"
+    },
+    "phoneNumber": "Nomor telepon",
+    "initialComment": "Komentar awal",
+    "socialMedia": "Media sosial",
+    "noContactCommentPlacheHolder": "Tidak ada komentar kontak yang tersedia saat ini.",
+    "noContactCommentPlacheHolder1": "Mungkin ada masalah saat mendapatkannya dari situs Anda. Seret ke bawah untuk mencoba menyegarkan dan coba lagi."
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Tambahkan Grup Baru",
+    "selectCoaches": "Pilih pelatih",
+    "searchGroups": "Cari grup",
+    "searchPeerGroups": "Cari grup sebaya",
+    "childGroup": "Kelompok Anak",
+    "searchChildGroups": "Cari grup anak",
+    "groupName": {
+      "label": "Nama grup",
+      "error": "Nama harus diisi"
+    },
+    "addMember": "Tambahkan anggota",
+    "noGroupCommentPlacheHolder": "Tidak ada komentar grup yang tersedia saat ini.",
+    "noGroupCommentPlacheHolder1": "Mungkin ada masalah saat mendapatkannya dari situs Anda. Seret ke bawah untuk mencoba menyegarkan dan coba lagi.",
+    "noGroupCommentPlacheHolderOffline": "Anda sedang offline. Pastikan Anda terhubung ke wifi atau data seluler untuk menyegarkan dan mendapatkan komentar grup Anda.",
+    "selectLocations": "Pilih Lokasi",
+    "noMembersMessage": "noMembersMessage"
+  },
+  "notificationsScreen": {
+    "notifications": "Notifikasi",
+    "loadMore": "Muat lebih",
+    "new": "Baru",
+    "unRead": "Belum dibaca",
+    "all": "Semua",
+    "markAll": "Tandai semua",
+    "dontHaveNotificationsUnread": "Tidak ada pemberitahuan yang belum dibaca",
+    "dontHaveNotifications": "Tidak ada pemberitahuan"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "Tidak ada grup yang tersedia saat ini.",
+    "noGroupPlacheHolder1": "Mungkin ada masalah saat mendapatkannya dari situs Anda. Seret ke bawah untuk mencoba menyegarkan dan coba lagi.",
+    "noGroupPlacheHolderOffline": "Anda sedang offline. Pastikan Anda terhubung ke wifi atau data seluler untuk menyegarkan dan mendapatkan grup Anda."
+  }
+}

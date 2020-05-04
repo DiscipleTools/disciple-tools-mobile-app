@@ -23,7 +23,6 @@ const initialState = {
     enabled: false,
     value: null,
   },
-  loginCanceled: false,
 };
 
 export default function userReducer(state = initialState, action) {
@@ -36,7 +35,6 @@ export default function userReducer(state = initialState, action) {
       return {
         ...newState,
         loading: true,
-        loginCanceled: false,
       };
     case actions.USER_LOGIN_SUCCESS: {
       let state = { ...newState };
@@ -135,11 +133,6 @@ export default function userReducer(state = initialState, action) {
           enabled: false,
           value: null,
         },
-      };
-    case actions.CANCEL_LOGIN_SUCCESS:
-      return {
-        ...newState,
-        loginCanceled: true,
       };
     default:
       return newState;

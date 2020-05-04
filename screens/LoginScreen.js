@@ -28,7 +28,7 @@ import { BlurView } from 'expo-blur';
 import i18n from '../languages';
 import locales from '../languages/locales';
 import Colors from '../constants/Colors';
-import { login, getUserInfo, cancelLogin } from '../store/actions/user.actions';
+import { login, getUserInfo } from '../store/actions/user.actions';
 import { setLanguage } from '../store/actions/i18n.actions';
 import TextField from '../components/TextField';
 import {
@@ -157,14 +157,6 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
   },
-  cancelButton: {
-    marginTop: 20,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 2,
-  },
-  cancelButtonText: {
-    color: Colors.tintColor,
-  },
 });
 let toastError;
 const { height, width } = Dimensions.get('window');
@@ -184,7 +176,6 @@ class LoginScreen extends React.Component {
     toggleShowPIN: false,
     pin: '',
     incorrectPin: false,
-    showCancelButton: false,
     geonamesLastModifiedDate: null,
     userData: {
       token: null,
@@ -223,7 +214,6 @@ class LoginScreen extends React.Component {
       usersReducerError,
       contactsReducerLoading,
       contactsReducerError,
-      loginCanceled,
       geonamesLastModifiedDate,
       geonamesLength,
     } = nextProps;
@@ -289,15 +279,6 @@ class LoginScreen extends React.Component {
       newState = {
         ...newState,
         loading: false,
-        showCancelButton: false,
-      };
-    }
-
-    if (loginCanceled) {
-      newState = {
-        ...newState,
-        loading: false,
-        showCancelButton: false,
       };
     }
 
@@ -380,7 +361,6 @@ class LoginScreen extends React.Component {
       groupsReducerError,
       usersReducerError,
       contactsReducerError,
-      loginCanceled,
       geonamesLastModifiedDate,
     } = this.props;
     const {
@@ -404,7 +384,7 @@ class LoginScreen extends React.Component {
     } */
 
     // User logged successfully
-    if (userData && prevProps.userData.token !== userData.token && !loginCanceled) {
+    if (userData && prevProps.userData.token !== userData.token) {
       this.getDataLists();
       this.getUserInfo();
     }
@@ -576,7 +556,6 @@ class LoginScreen extends React.Component {
       if (domain && username && password) {
         const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
         this.props.loginDispatch(cleanedDomain, username, password);
-        this.toggleCancelButton();
       } else {
         this.setState({
           domainValidation: !domain,
@@ -584,16 +563,6 @@ class LoginScreen extends React.Component {
           passwordValidation: !password,
         });
       }
-    }
-  };
-
-  toggleCancelButton = (userTap = false) => {
-    if (userTap) {
-      this.props.cancelLogin();
-    } else {
-      this.setState({
-        showCancelButton: true,
-      });
     }
   };
 
@@ -755,16 +724,6 @@ class LoginScreen extends React.Component {
               </View>
             </View>
             {passwordErrorMessage}
-            {this.state.showCancelButton && (
-              <Button
-                style={styles.cancelButton}
-                onPress={() => {
-                  this.toggleCancelButton(true);
-                }}
-                block>
-                <Text style={styles.cancelButtonText}>{i18n.t('global.cancel')}</Text>
-              </Button>
-            )}
             {this.state.loading ? (
               <ActivityIndicator style={{ margin: 20 }} size="small" />
             ) : (
@@ -994,7 +953,6 @@ const mapStateToProps = (state) => ({
   contactsReducerError: state.contactsReducer.error,
   contacts: state.contactsReducer.contacts,
   pinCode: state.userReducer.pinCode,
-  loginCanceled: state.userReducer.loginCanceled,
   geonamesLastModifiedDate: state.groupsReducer.geonamesLastModifiedDate,
   geonamesLength: state.groupsReducer.geonamesLength,
 });
@@ -1028,9 +986,6 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getUserInfo: (domain, token, offset, limit, sort) => {
     dispatch(getUserInfo(domain, token, offset, limit, sort));
-  },
-  cancelLogin: () => {
-    dispatch(cancelLogin());
   },
   getLocationModifiedDate: (domain, token) => {
     dispatch(getLocationListLastModifiedDate(domain, token));

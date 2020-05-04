@@ -53,20 +53,6 @@ export function* login({ domain, username, password }) {
   }
 }
 
-export function* watchLogin() {
-  yield takeLatest(actions.USER_LOGIN, function*(args) {
-    const { cancelTake } = yield race({
-      loginSaga: call(login, { ...args }),
-      cancelTake: take(actions.CANCEL_LOGIN),
-    });
-    if (cancelTake) {
-      yield put({
-        type: actions.CANCEL_LOGIN_SUCCESS,
-      });
-    }
-  });
-}
-
 export function* getExpoPushToken({ domain, token }) {
   let expoPushToken = '';
 
@@ -114,8 +100,10 @@ export function* addPushToken({ domain, token, expoPushToken, uniqueId }) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          add_push_token: expoPushToken,
-          add_device_id: uniqueId,
+          add_push_token: {
+            token: expoPushToken,
+            device_id: uniqueId,
+          },
         }),
       },
       action: actions.USER_ADD_PUSH_TOKEN_RESPONSE,
@@ -196,7 +184,7 @@ export function* getUserInfo({ domain, token }) {
 
 export default function* userSaga() {
   yield all([
-    watchLogin(),
+    takeLatest(actions.USER_LOGIN, login),
     takeEvery(actions.GET_MY_USER_INFO, getUserInfo),
     takeLatest(actions.USER_GET_PUSH_TOKEN, getExpoPushToken),
     takeLatest(actions.USER_ADD_PUSH_TOKEN, addPushToken),

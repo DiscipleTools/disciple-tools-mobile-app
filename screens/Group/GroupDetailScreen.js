@@ -92,23 +92,23 @@ const defaultHealthMilestones = [
 const tabViewRoutes = [
   {
     key: 'details',
-    title: i18n.t('global.details'),
+    title: 'global.details',
   },
   {
     key: 'progress',
-    title: i18n.t('global.progress'),
+    title: 'global.progress',
   },
   {
     key: 'comments',
-    title: i18n.t('global.commentsActivity'),
+    title: 'global.commentsActivity',
   },
   {
     key: 'members',
-    title: i18n.t('global.membersActivity'),
+    title: 'global.membersActivity',
   },
   {
     key: 'groups',
-    title: i18n.t('global.groups'),
+    title: 'global.groups',
   },
 ];
 const styles = StyleSheet.create({
@@ -1658,7 +1658,6 @@ class GroupDetailScreen extends React.Component {
       //This is a check so that we use the gergorian (Western) calendar if the users locale is Farsi. This is the calendar used primarily by Farsi speakers outside of Iran, and is easily understood by those inside.
       langcode = `${langcode}-u-ca-gregory`;
     }
-    console.log(langcode);
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     let formattedDate = new Intl.DateTimeFormat(langcode, options).format(timestamp * 1000);
 
@@ -3954,7 +3953,7 @@ class GroupDetailScreen extends React.Component {
                         tabStyle={{ width: 'auto' }}
                         indicatorStyle={styles.tabBarUnderlineStyle}
                         renderLabel={({ route, color }) => (
-                          <Text style={{ color, fontWeight: 'bold' }}>{route.title}</Text>
+                          <Text style={{ color, fontWeight: 'bold' }}>{i18n.t(route.title)}</Text>
                         )}
                       />
                     )}

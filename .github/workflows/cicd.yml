@@ -23,7 +23,7 @@ jobs:
           client.0.oauth_client.0.client_id: ${{ secrets.FIREBASE_OAUTH_CLIENT_ID }}
           client.0.api_key.0.current_key: ${{ secrets.FIREBASE_API_KEY }}
           client.0.services.appinvite_service.other_platform_oauth_client.0.client_id: ${{ secrets.FIREBASE_OAUTH_CLIENT_ID }}
-      - uses: expo/expo-github-action@v4
+      - uses: expo/expo-github-action@v5
         with:
           expo-version: 3.x
           expo-username: ${{ secrets.EXPO_CLI_USERNAME }}
@@ -37,9 +37,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       - run: npm install
-      - name: Deploy
+      - name: Deploy Prod
         if: github.ref == 'refs/heads/master'
-        run: expo publish --release-channel production
+        run: expo publish --release-channel production && expo build:android --release-channel production && expo build:ios --release-channel production
       - name: Deploy Release
         if: github.ref == 'refs/heads/release'
         run: expo publish --release-channel release
