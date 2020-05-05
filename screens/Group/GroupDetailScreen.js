@@ -56,6 +56,9 @@ import groupPeerIcon from '../../assets/icons/group-peer.png';
 import groupTypeIcon from '../../assets/icons/group-type.png';
 import footprint from '../../assets/icons/footprint.png';
 import dtIcon from '../../assets/images/dt-icon.png';
+import dateIcon from '../../assets/icons/date.png';
+import dateSuccessIcon from '../../assets/icons/date-success.png';
+import dateEndIcon from '../../assets/icons/date-end.png';
 import i18n from '../../languages';
 
 let toastSuccess;
@@ -407,6 +410,12 @@ const styles = StyleSheet.create({
   }),
   validationErrorMessage: {
     color: Colors.errorBackground,
+  },
+  dateIcons: {
+    width: 20,
+    height: 20,
+    marginTop: 'auto',
+    marginBottom: 'auto',
   },
 });
 
@@ -1841,7 +1850,7 @@ class GroupDetailScreen extends React.Component {
                     {this.state.group.coaches
                       ? this.state.group.coaches.values
                           .map(
-                            function(coach) {
+                            function (coach) {
                               return safeFind(
                                 this.state.usersContacts.find((user) => user.value === coach.value),
                                 'name',
@@ -1942,11 +1951,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-import"
-                    style={styles.formIcon}
-                  />
+                  <Image source={dateIcon} style={styles.dateIcons} />
                 </Col>
                 <Col>
                   <Text
@@ -1966,11 +1971,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-import"
-                    style={styles.formIcon}
-                  />
+                  <Image source={dateSuccessIcon} style={styles.dateIcons} />
                 </Col>
                 <Col>
                   <Text
@@ -1990,11 +1991,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-export"
-                    style={styles.formIcon}
-                  />
+                  <Image source={dateEndIcon} style={styles.dateIcons} />
                 </Col>
                 <Col>
                   <Text
@@ -2434,11 +2431,7 @@ class GroupDetailScreen extends React.Component {
             <Row style={styles.formFieldPadding}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-import"
-                    style={styles.formIcon}
-                  />
+                  <Image source={dateIcon} style={styles.dateIcons} />
                 </View>
               </Col>
               <Col>
@@ -2450,11 +2443,7 @@ class GroupDetailScreen extends React.Component {
             <Row>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-import"
-                    style={[styles.formIcon, { opacity: 0 }]}
-                  />
+                  <Image source={dateIcon} style={[styles.dateIcons, { opacity: 0 }]} />
                 </View>
               </Col>
               <Col>
@@ -2469,11 +2458,7 @@ class GroupDetailScreen extends React.Component {
             <Row style={styles.formFieldPadding}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-import"
-                    style={styles.formIcon}
-                  />
+                  <Image source={dateSuccessIcon} style={styles.dateIcons} />
                 </View>
               </Col>
               <Col>
@@ -2485,11 +2470,7 @@ class GroupDetailScreen extends React.Component {
             <Row>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-export"
-                    style={[styles.formIcon, { opacity: 0 }]}
-                  />
+                  <Image source={dateSuccessIcon} style={[styles.dateIcons, { opacity: 0 }]} />
                 </View>
               </Col>
               <Col>
@@ -2506,11 +2487,7 @@ class GroupDetailScreen extends React.Component {
             <Row style={styles.formFieldPadding}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-export"
-                    style={styles.formIcon}
-                  />
+                  <Image source={dateEndIcon} style={styles.dateIcons} />
                 </View>
               </Col>
               <Col>
@@ -2522,11 +2499,7 @@ class GroupDetailScreen extends React.Component {
             <Row>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-export"
-                    style={[styles.formIcon, { opacity: 0 }]}
-                  />
+                  <Image source={dateEndIcon} style={[styles.dateIcons, { opacity: 0 }]} />
                 </View>
               </Col>
               <Col>
