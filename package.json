@@ -55,6 +55,7 @@
     "expo-permissions": "~8.1.0",
     "expo-web-browser": "~8.2.0",
     "i18n-js": "^3.5.1",
+    "intl": "^1.2.5",
     "isomorphic-fetch": "^2.2.1",
     "native-base": "2.13.8",
     "prop-types": "^15.7.2",
