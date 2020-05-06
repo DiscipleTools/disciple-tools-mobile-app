@@ -1374,7 +1374,7 @@ class ContactDetailScreen extends React.Component {
                     {this.state.contact.subassigned
                       ? this.state.contact.subassigned.values
                           .map(
-                            function(contact) {
+                            function (contact) {
                               return safeFind(
                                 this.state.usersContacts.find(
                                   (user) => user.value === contact.value,
@@ -1384,7 +1384,7 @@ class ContactDetailScreen extends React.Component {
                             }.bind(this),
                           )
                           .filter(String)
-                          .join()
+                          .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -1563,7 +1563,7 @@ class ContactDetailScreen extends React.Component {
                     {this.state.contact.location_grid
                       ? this.state.contact.location_grid.values
                           .map(
-                            function(location) {
+                            function (location) {
                               return safeFind(
                                 this.state.geonames.find(
                                   (geoname) => geoname.value === location.value,
@@ -1573,7 +1573,7 @@ class ContactDetailScreen extends React.Component {
                             }.bind(this),
                           )
                           .filter(String)
-                          .join()
+                          .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -1597,7 +1597,7 @@ class ContactDetailScreen extends React.Component {
                     {this.state.contact.people_groups
                       ? this.state.contact.people_groups.values
                           .map(
-                            function(peopleGroup) {
+                            function (peopleGroup) {
                               return safeFind(
                                 this.state.peopleGroups.find(
                                   (person) => person.value === peopleGroup.value,
@@ -1607,7 +1607,7 @@ class ContactDetailScreen extends React.Component {
                             }.bind(this),
                           )
                           .filter(String)
-                          .join()
+                          .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -2761,7 +2761,7 @@ class ContactDetailScreen extends React.Component {
                     {this.state.contact.groups
                       ? this.state.contact.groups.values
                           .map(
-                            function(group) {
+                            function (group) {
                               return safeFind(
                                 this.state.groups.find(
                                   (groupItem) => groupItem.value === group.value,
@@ -2771,7 +2771,7 @@ class ContactDetailScreen extends React.Component {
                             }.bind(this),
                           )
                           .filter(String)
-                          .join()
+                          .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -2795,7 +2795,7 @@ class ContactDetailScreen extends React.Component {
                     {this.state.contact.relation
                       ? this.state.contact.relation.values
                           .map(
-                            function(relation) {
+                            function (relation) {
                               return safeFind(
                                 this.state.usersContacts.find(
                                   (user) => user.value === relation.value,
@@ -2805,7 +2805,7 @@ class ContactDetailScreen extends React.Component {
                             }.bind(this),
                           )
                           .filter(String)
-                          .join()
+                          .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -2829,7 +2829,7 @@ class ContactDetailScreen extends React.Component {
                     {this.state.contact.baptized_by
                       ? this.state.contact.baptized_by.values
                           .map(
-                            function(baptizedBy) {
+                            function (baptizedBy) {
                               return safeFind(
                                 this.state.usersContacts.find(
                                   (user) => user.value === baptizedBy.value,
@@ -2839,7 +2839,7 @@ class ContactDetailScreen extends React.Component {
                             }.bind(this),
                           )
                           .filter(String)
-                          .join()
+                          .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -2863,7 +2863,7 @@ class ContactDetailScreen extends React.Component {
                     {this.state.contact.baptized
                       ? this.state.contact.baptized.values
                           .map(
-                            function(baptized) {
+                            function (baptized) {
                               return safeFind(
                                 this.state.usersContacts.find(
                                   (user) => user.value === baptized.value,
@@ -2873,7 +2873,7 @@ class ContactDetailScreen extends React.Component {
                             }.bind(this),
                           )
                           .filter(String)
-                          .join()
+                          .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -2897,7 +2897,7 @@ class ContactDetailScreen extends React.Component {
                     {this.state.contact.coached_by
                       ? this.state.contact.coached_by.values
                           .map(
-                            function(coachedBy) {
+                            function (coachedBy) {
                               return safeFind(
                                 this.state.usersContacts.find(
                                   (user) => user.value === coachedBy.value,
@@ -2907,7 +2907,7 @@ class ContactDetailScreen extends React.Component {
                             }.bind(this),
                           )
                           .filter(String)
-                          .join()
+                          .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -2931,7 +2931,7 @@ class ContactDetailScreen extends React.Component {
                     {this.state.contact.coaching
                       ? this.state.contact.coaching.values
                           .map(
-                            function(coaching) {
+                            function (coaching) {
                               return safeFind(
                                 this.state.usersContacts.find(
                                   (user) => user.value === coaching.value,
@@ -2941,7 +2941,7 @@ class ContactDetailScreen extends React.Component {
                             }.bind(this),
                           )
                           .filter(String)
-                          .join()
+                          .join(', ')
                       : ''}
                   </Text>
                 </Col>

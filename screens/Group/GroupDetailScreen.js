@@ -1858,7 +1858,7 @@ class GroupDetailScreen extends React.Component {
                             }.bind(this),
                           )
                           .filter(String)
-                          .join()
+                          .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -1887,6 +1887,7 @@ class GroupDetailScreen extends React.Component {
                                 (geoname) => geoname.value === location.value,
                               ).name,
                           )
+                          .filter(String)
                           .join(', ')
                       : ''}
                   </Text>
@@ -1916,6 +1917,7 @@ class GroupDetailScreen extends React.Component {
                                 (person) => person.value === peopleGroup.value,
                               ).name,
                           )
+                          .filter(String)
                           .join(', ')
                       : ''}
                   </Text>
