@@ -57,6 +57,7 @@
     "i18n-js": "^3.5.1",
     "intl": "^1.2.5",
     "isomorphic-fetch": "^2.2.1",
+    "moment": "^2.25.3",
     "native-base": "2.13.8",
     "prop-types": "^15.7.2",
     "react": "16.13.1",

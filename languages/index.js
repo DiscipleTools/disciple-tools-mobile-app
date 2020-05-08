@@ -4,7 +4,7 @@ import i18n from 'i18n-js';
 
 // Intl fix
 import 'intl';
-// Imports by supported languages (When adding or removing a new language, modify this imports)
+// Imports by supported languages (When adding or removing a new language, modify this imports and imports of 'languages/moment.js' file)
 import 'intl/locale-data/jsonp/en';
 import 'intl/locale-data/jsonp/ar';
 import 'intl/locale-data/jsonp/bn';

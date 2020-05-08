@@ -13,8 +13,9 @@ import { Fab, Container } from 'native-base';
 import { Row } from 'react-native-easy-grid';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
-import PropTypes from 'prop-types';
 import { SearchBar } from 'react-native-elements';
+
+import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
 import { getAll } from '../../store/actions/contacts.actions';
 import dtIcon from '../../assets/images/dt-icon.png';
@@ -324,7 +325,7 @@ class ContactsScreen extends React.Component {
   SearchFilterFunction(text) {
     const itemsFiltered = [];
     if (text.length > 0) {
-      this.props.contacts.filter(function(item) {
+      this.props.contacts.filter(function (item) {
         let filterByPhone = false;
         let filterByEmail = false;
         const textData = text

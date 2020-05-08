@@ -130,9 +130,9 @@ export default function groupsReducer(state = initialState, action) {
                   ) {
                     // key_select
                     mappedGroup[key] = value.key;
-                  } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                  } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
                     // date
-                    mappedGroup[key] = value.formatted;
+                    mappedGroup[key] = value.timestamp;
                   } else if (key === 'assigned_to') {
                     // assigned-to property
                     mappedGroup[key] = value['assigned-to'];
@@ -213,7 +213,7 @@ export default function groupsReducer(state = initialState, action) {
             }
           });
           return mappedGroup;
-        }); /* .sort((a, b) => parseInt(a.last_modified, 10) - parseInt(b.last_modified, 10)).reverse(); */
+        });
         groups = localGroups.concat(dataBaseGroups);
       }
       if (offset > 0) {
@@ -278,9 +278,9 @@ export default function groupsReducer(state = initialState, action) {
                 ) {
                   // key_select
                   mappedGroup[key] = value.key;
-                } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
                   // date
-                  mappedGroup[key] = value.formatted;
+                  mappedGroup[key] = value.timestamp;
                 } else if (key === 'assigned_to') {
                   // assigned-to property
                   mappedGroup[key] = value['assigned-to'];
@@ -571,9 +571,9 @@ export default function groupsReducer(state = initialState, action) {
                 ) {
                   // key_select
                   mappedGroup[key] = value.key;
-                } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
                   // date
-                  mappedGroup[key] = value.formatted;
+                  mappedGroup[key] = value.timestamp;
                 } else if (key === 'assigned_to') {
                   // assigned-to property
                   mappedGroup[key] = value['assigned-to'];

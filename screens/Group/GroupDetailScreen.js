@@ -25,6 +25,8 @@ import { Chip, Selectize } from 'react-native-material-selectize';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { NavigationActions, StackActions } from 'react-navigation';
+import moment from '../../languages/moment';
+
 import sharedTools from '../../shared';
 import {
   saveGroup,
@@ -1408,7 +1410,7 @@ class GroupDetailScreen extends React.Component {
         },
       }),
       () => {
-        this.onSaveGroup(/*true*/);
+        this.onSaveGroup();
       },
     );
   };
@@ -1420,11 +1422,6 @@ class GroupDetailScreen extends React.Component {
     if (foundMember) {
       let membersListCopy = [...this.state.group.members.values];
       const foundMemberIndex = membersListCopy.indexOf(foundMember);
-      /*const memberModified = {
-        ...foundMember,
-        delete: true
-      };
-      membersListCopy[foundMemberIndex] = memberModified;*/
       membersListCopy.splice(foundMemberIndex, 1);
       this.setState(
         (prevState) => ({
@@ -1436,7 +1433,7 @@ class GroupDetailScreen extends React.Component {
           },
         }),
         () => {
-          this.onSaveGroup(/*true*/);
+          this.onSaveGroup();
         },
       );
     }
@@ -1471,7 +1468,7 @@ class GroupDetailScreen extends React.Component {
         },
       }),
       () => {
-        this.onSaveGroup(/*true*/);
+        this.onSaveGroup();
       },
     );
   };
@@ -1626,35 +1623,11 @@ class GroupDetailScreen extends React.Component {
   };
 
   onFormatDateToView = (date) => {
-    const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    const newDate = new Date(date);
-    let hours = newDate.getHours();
-    let minutes = newDate.getMinutes();
-    const age = newDate.getFullYear();
-    const ampm = hours >= 12 ? 'pm' : 'am';
-    hours %= 12;
-    hours = hours || 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? `0${minutes}` : minutes;
-    const strTime = `${hours}:${minutes} ${ampm}`;
-    return `${monthNames[newDate.getMonth()]} ${newDate.getDate()}, ${age} ${strTime}`;
+    return moment(new Date(date)).format('LLL');
   };
 
   formatActivityDate = (comment) => {
-    baptismDateRegex = /\{(\d+)\}+/;
-
+    let baptismDateRegex = /\{(\d+)\}+/;
     if (baptismDateRegex.test(comment)) {
       comment = comment.replace(baptismDateRegex, this.formatTimestampToDate);
     }
@@ -1662,15 +1635,7 @@ class GroupDetailScreen extends React.Component {
   };
 
   formatTimestampToDate = (match, timestamp) => {
-    let langcode = this.props.userData.locale.substring(0, 2);
-    if (langcode === 'fa') {
-      //This is a check so that we use the gergorian (Western) calendar if the users locale is Farsi. This is the calendar used primarily by Farsi speakers outside of Iran, and is easily understood by those inside.
-      langcode = `${langcode}-u-ca-gregory`;
-    }
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    let formattedDate = new Intl.DateTimeFormat(langcode, options).format(timestamp * 1000);
-
-    return formattedDate;
+    return moment(new Date(timestamp * 1000)).format('LL');
   };
 
   onSaveComment = () => {
@@ -1961,7 +1926,9 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.group.start_date ? this.state.group.start_date : ''}
+                    {this.state.group.start_date
+                      ? moment(new Date(this.state.group.start_date * 1000)).format('LL')
+                      : ''}
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
@@ -1981,7 +1948,9 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.group.church_start_date ? this.state.group.church_start_date : ''}
+                    {this.state.group.church_start_date
+                      ? moment(new Date(this.state.group.church_start_date * 1000)).format('LL')
+                      : ''}
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
@@ -2001,7 +1970,9 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.group.end_date ? this.state.group.end_date : ''}
+                    {this.state.group.end_date
+                      ? moment(new Date(this.state.group.end_date * 1000)).format('LL')
+                      : ''}
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
@@ -2452,7 +2423,7 @@ class GroupDetailScreen extends React.Component {
                 <DatePicker
                   onDateChange={this.setGroupStartDate}
                   defaultDate={
-                    this.state.group.start_date ? new Date(this.state.group.start_date) : ''
+                    this.state.group.start_date ? new Date(this.state.group.start_date * 1000) : ''
                   }
                 />
               </Col>
@@ -2480,7 +2451,7 @@ class GroupDetailScreen extends React.Component {
                   onDateChange={this.setChurchStartDate}
                   defaultDate={
                     this.state.group.church_start_date
-                      ? new Date(this.state.group.church_start_date)
+                      ? new Date(this.state.group.church_start_date * 1000)
                       : ''
                   }
                 />
@@ -2507,7 +2478,9 @@ class GroupDetailScreen extends React.Component {
               <Col>
                 <DatePicker
                   onDateChange={this.setEndDate}
-                  defaultDate={this.state.group.end_date ? new Date(this.state.group.end_date) : ''}
+                  defaultDate={
+                    this.state.group.end_date ? new Date(this.state.group.end_date * 1000) : ''
+                  }
                 />
               </Col>
             </Row>

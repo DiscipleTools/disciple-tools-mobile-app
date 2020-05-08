@@ -4,6 +4,8 @@ import { View, Text, FlatList, RefreshControl, StyleSheet, TouchableOpacity } fr
 import { Container } from 'native-base';
 import PropTypes from 'prop-types';
 import { Col, Row } from 'react-native-easy-grid';
+import moment from '../languages/moment';
+
 import {
   getAll,
   getNotificationsCount,
@@ -326,7 +328,9 @@ class NotificationsScreen extends React.Component {
               </Text>
             </Text>
             <Text style={[styles.prettyTime, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
-              {notification.pretty_time}
+              {moment(notification.date_notified).fromNow() +
+                ' | ' +
+                moment(notification.date_notified).format('L')}
             </Text>
           </View>
           <TouchableOpacity

@@ -28,6 +28,7 @@ import { Chip, Selectize } from 'react-native-material-selectize';
 import ActionButton from 'react-native-action-button';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { NavigationActions, StackActions } from 'react-navigation';
+import moment from '../../languages/moment';
 
 import sharedTools from '../../shared';
 import {
@@ -1090,35 +1091,11 @@ class ContactDetailScreen extends React.Component {
   };
 
   onFormatDateToView = (date) => {
-    const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    const newDate = new Date(date);
-    let hours = newDate.getHours();
-    let minutes = newDate.getMinutes();
-    const age = newDate.getFullYear();
-    const ampm = hours >= 12 ? 'pm' : 'am';
-    hours %= 12;
-    hours = hours || 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? `0${minutes}` : minutes;
-    const strTime = `${hours}:${minutes} ${ampm}`;
-    return `${monthNames[newDate.getMonth()]} ${newDate.getDate()}, ${age} ${strTime}`;
+    return moment(new Date(date)).format('LLL');
   };
 
   formatActivityDate = (comment) => {
-    baptismDateRegex = /\{(\d+)\}+/;
-
+    let baptismDateRegex = /\{(\d+)\}+/;
     if (baptismDateRegex.test(comment)) {
       comment = comment.replace(baptismDateRegex, this.formatTimestampToDate);
     }
@@ -1126,16 +1103,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   formatTimestampToDate = (match, timestamp) => {
-    let langcode = this.props.userData.locale.substring(0, 2);
-    if (langcode === 'fa') {
-      //This is a check so that we use the gergorian (Western) calendar if the users locale is Farsi. This is the calendar used primarily by Farsi speakers outside of Iran, and is easily understood by those inside.
-      langcode = `${langcode}-u-ca-gregory`;
-    }
-    console.log(langcode);
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    let formattedDate = new Intl.DateTimeFormat(langcode, options).format(timestamp * 1000);
-
-    return formattedDate;
+    return moment(new Date(timestamp * 1000)).format('LL');
   };
 
   setComment = (value) => {
@@ -2522,7 +2490,9 @@ class ContactDetailScreen extends React.Component {
                   </Col>
                   <Col>
                     <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                      {this.state.contact.baptism_date ? this.state.contact.baptism_date : ''}
+                      {this.state.contact.baptism_date
+                        ? moment(new Date(this.state.contact.baptism_date * 1000)).format('LL')
+                        : ''}
                     </Text>
                   </Col>
                   <Col style={styles.formIconLabel}>
@@ -2606,7 +2576,9 @@ class ContactDetailScreen extends React.Component {
                 <DatePicker
                   onDateChange={this.setBaptismDate}
                   defaultDate={
-                    this.state.contact.baptism_date ? new Date(this.state.contact.baptism_date) : ''
+                    this.state.contact.baptism_date
+                      ? new Date(this.state.contact.baptism_date * 1000)
+                      : ''
                   }
                 />
               </Col>

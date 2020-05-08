@@ -25,6 +25,7 @@ import Constants from 'expo-constants';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import { BlurView } from 'expo-blur';
+
 import i18n from '../languages';
 import locales from '../languages/locales';
 import Colors from '../constants/Colors';
@@ -40,6 +41,7 @@ import {
 } from '../store/actions/groups.actions';
 import { getUsers } from '../store/actions/users.actions';
 import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
+import moment from '../languages/moment';
 
 const styles = StyleSheet.create({
   container: {
@@ -505,7 +507,12 @@ class LoginScreen extends React.Component {
   }
 
   setAppLanguage = () => {
-    const localeCode = this.props.userData.locale.substring(0, 2);
+    let localeCode;
+    if (this.props.userData.locale.substring(0, 2) === 'zh') {
+      localeCode = this.props.userData.locale;
+    } else {
+      localeCode = this.props.userData.locale.substring(0, 2);
+    }
     this.changeLanguage(localeCode);
     this.setState({
       appLanguageSet: true,
@@ -589,6 +596,8 @@ class LoginScreen extends React.Component {
     if (locale) {
       const isRTL = locale.direction === 'rtl';
       this.props.setLanguage(locale.code, isRTL);
+      // Update momentJS locale
+      moment.locale(languageCode);
     }
   }
 
