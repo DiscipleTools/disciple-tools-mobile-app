@@ -3,66 +3,156 @@ import {
 } from 'redux-saga/effects';
 
 export default function* networkConnectivitySaga() {
+
   const onlineChannel = yield actionChannel('ONLINE');
 
   while (true) {
+
     yield take(onlineChannel);
+
     let queue = yield select(state => state.requestReducer.queue);
-    for (const action of queue) {
-      let actionMapped = {
+
+    for (let action of queue) {
+
+      let mappedRequest = {
         ...action,
       };
-
+      // Only process POST and SAVE requests
       if (action.data.method === 'POST' && action.action.includes('SAVE')) {
-        // queued request entity creation
-        actionMapped = {
-          ...actionMapped,
+
+        mappedRequest = {
+          ...mappedRequest,
           isConnected: true,
         };
+
         yield put({
           type: 'REQUEST',
-          payload: actionMapped,
+          payload: mappedRequest,
         });
-        let response = yield take(actionMapped.action);
+
+        let response = yield take(mappedRequest.action);
         response = response.payload;
 
         if (Object.prototype.hasOwnProperty.call(response, 'status')) {
+
           let jsonData = response.data;
+
           if (response.oldID) {
+
             jsonData = {
               ...jsonData,
               oldID: response.oldID,
             };
+
           }
+
           if (response.status === 200) {
+
             if (jsonData.oldID) {
+
               const entityListName = action.action.substr(0, action.action.indexOf('_')).toLowerCase();
-              // Map comments requests of entity, update oldID to ID in URL
-              queue = queue.map((request) => {
-                if (request.url.includes(`${entityListName}/${jsonData.oldID}/comments`)) {
-                  request.url = request.url.replace(jsonData.oldID, jsonData.ID);
+              // Map comments requests of entity
+              queue.forEach(function (requestTwo, index) {
+
+                let mappedRequestTwo = {
+                  ...requestTwo,
+                };
+                // update oldID to ID in URL
+                if (requestTwo.url.includes(`${entityListName}/${jsonData.oldID}/comments`)) {
+
+                  mappedRequestTwo = {
+                    ...mappedRequestTwo,
+                    url: requestTwo.url.replace(jsonData.oldID, jsonData.ID)
+                  };
+
                 }
-                return request;
+                // search only in POST requests
+                if (requestTwo.data.method === 'POST') {
+
+                  let requestBody = { ...JSON.parse(requestTwo.data.body) };
+
+                  Object.keys(requestBody).forEach((key) => {
+
+                    const value = requestBody[key];
+                    // Update temporal ID in multi-value fields with back-end ID
+                    if (Object.prototype.hasOwnProperty.call(value, 'values') && value.values.length > 0) {
+
+                      let mappedValue = value.values;
+
+                      mappedValue = mappedValue.map((object) => {
+
+                        let copyObject = { ...object };
+
+                        if (copyObject.value === jsonData.oldID) {
+
+                          copyObject = {
+                            value: jsonData.ID.toString()
+                          };
+
+                        }
+
+                        return copyObject;
+
+                      });
+
+                      requestBody = {
+                        ...requestBody,
+                        [key]: {
+                          values: mappedValue
+                        }
+                      };
+
+                    }
+
+                  });
+
+                  mappedRequestTwo = {
+                    ...mappedRequestTwo,
+                    data: {
+                      ...mappedRequestTwo.data,
+                      body: JSON.stringify(requestBody)
+                    }
+                  };
+
+                }
+
+                queue[index] = {
+                  ...mappedRequestTwo
+                };
+
               });
+
             }
-            if (!actionMapped.url.includes('/comments')) {
+
+            if (!mappedRequest.url.includes('/comments')) {
+
               const entityName = action.action.substr(0, action.action.indexOf('_') - 1).toLowerCase();
+
               yield put({
-                type: actionMapped.action.replace('RESPONSE', 'SUCCESS'),
+                type: mappedRequest.action.replace('RESPONSE', 'SUCCESS'),
                 [entityName]: jsonData,
               });
+
             }
+
           } else {
+
             yield put({
-              type: actionMapped.action.replace('RESPONSE', 'FAILURE'),
+              type: mappedRequest.action.replace('RESPONSE', 'FAILURE'),
               error: {
                 code: jsonData.code,
                 message: jsonData.message,
               },
             });
+
           }
+
         }
+
       }
+
     }
+
   }
+
 }

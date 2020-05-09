@@ -80,9 +80,9 @@ export default function contactsReducer(state = initialState, action) {
                   ) {
                     // key_select
                     mappedContact[key] = value.key;
-                  } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                  } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
                     // date
-                    mappedContact[key] = value.formatted;
+                    mappedContact[key] = value.timestamp;
                   } else if (key === 'assigned_to') {
                     // assigned-to property
                     mappedContact[key] = value['assigned-to'];
@@ -147,7 +147,7 @@ export default function contactsReducer(state = initialState, action) {
             }
           });
           return mappedContact;
-        }); /* .sort((a, b) => parseInt(a.last_modified, 10) - parseInt(b.last_modified, 10)).reverse(); */
+        });
         contacts = localContacts.concat(dataBaseContacts);
       }
       if (offset > 0) {
@@ -210,9 +210,9 @@ export default function contactsReducer(state = initialState, action) {
                 ) {
                   // key_select
                   mappedContact[key] = value.key;
-                } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
                   // date
-                  mappedContact[key] = value.formatted;
+                  mappedContact[key] = value.timestamp;
                 } else if (key === 'assigned_to') {
                   // assigned-to property
                   mappedContact[key] = value['assigned-to'];
@@ -475,9 +475,9 @@ export default function contactsReducer(state = initialState, action) {
                 ) {
                   // key_select
                   mappedContact[key] = value.key;
-                } else if (Object.prototype.hasOwnProperty.call(value, 'formatted')) {
+                } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
                   // date
-                  mappedContact[key] = value.formatted;
+                  mappedContact[key] = value.timestamp;
                 } else if (key === 'assigned_to') {
                   // assigned-to property
                   mappedContact[key] = value['assigned-to'];
