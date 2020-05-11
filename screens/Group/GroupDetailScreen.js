@@ -2940,7 +2940,8 @@ class GroupDetailScreen extends React.Component {
                         key={index.toString()}
                         style={styles.groupCircleContainer}
                         onPress={() => this.goToGroupDetailScreen(parentGroup)}>
-                        {index % 2 === 0 ? (
+                        {Object.prototype.hasOwnProperty.call(parentGroup, 'is_church') &&
+                        parentGroup.is_church ? (
                           <Image source={groupCircleIcon} style={styles.groupCircle} />
                         ) : (
                           <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
@@ -2984,7 +2985,8 @@ class GroupDetailScreen extends React.Component {
                         key={index.toString()}
                         style={styles.groupCircleContainer}
                         onPress={() => this.goToGroupDetailScreen(peerGroup)}>
-                        {index % 2 === 0 ? (
+                        {Object.prototype.hasOwnProperty.call(peerGroup, 'is_church') &&
+                        peerGroup.is_church ? (
                           <Image source={groupCircleIcon} style={styles.groupCircle} />
                         ) : (
                           <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
@@ -3026,7 +3028,8 @@ class GroupDetailScreen extends React.Component {
                         key={index.toString()}
                         style={styles.groupCircleContainer}
                         onPress={() => this.goToGroupDetailScreen(childGroup)}>
-                        {index % 2 === 0 ? (
+                        {Object.prototype.hasOwnProperty.call(childGroup, 'is_church') &&
+                        childGroup.is_church ? (
                           <Image source={groupCircleIcon} style={styles.groupCircle} />
                         ) : (
                           <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
