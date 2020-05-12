@@ -1043,13 +1043,15 @@ class ContactDetailScreen extends React.Component {
               (key) =>
                 key.includes('contact_') &&
                 Object.prototype.toString.call(contact[key]) === '[object Array]' &&
-                contact[key].length > 0 &&
-                !contact[key][0].delete,
+                contact[key].length > 0,
             )
             .forEach((key) => {
               contact = {
                 ...contact,
-                [key]: contact[key].filter((socialMedia) => socialMedia.value.length > 0),
+                [key]: contact[key].filter(
+                  (socialMedia) =>
+                    socialMedia.delete || (!socialMedia.delete && socialMedia.value.length > 0),
+                ),
               };
             });
           let contactToSave = {
