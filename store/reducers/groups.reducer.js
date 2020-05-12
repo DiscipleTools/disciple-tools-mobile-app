@@ -164,6 +164,12 @@ export default function groupsReducer(state = initialState, action) {
                               member_count: valueTwo.member_count,
                             };
                           }
+                          if (Object.prototype.hasOwnProperty.call(valueTwo, 'is_church')) {
+                            object = {
+                              ...object,
+                              is_church: valueTwo.is_church,
+                            };
+                          }
                           return object;
                         }
                         if (
@@ -308,6 +314,12 @@ export default function groupsReducer(state = initialState, action) {
                             post_title: valueTwo.post_title,
                             baptized_member_count: valueTwo.baptized_member_count,
                             member_count: valueTwo.member_count,
+                          };
+                        }
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'is_church')) {
+                          object = {
+                            ...object,
+                            is_church: valueTwo.is_church,
                           };
                         }
                         return object;
@@ -601,6 +613,12 @@ export default function groupsReducer(state = initialState, action) {
                             post_title: valueTwo.post_title,
                             baptized_member_count: valueTwo.baptized_member_count,
                             member_count: valueTwo.member_count,
+                          };
+                        }
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'is_church')) {
+                          object = {
+                            ...object,
+                            is_church: valueTwo.is_church,
                           };
                         }
                         return object;
