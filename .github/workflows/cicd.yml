@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - uses: microsoft/variable-substitution@v1 
+      - uses: microsoft/variable-substitution@v1
         with:
           files: './google-services.json'
         env:
@@ -39,7 +39,7 @@ jobs:
       - run: npm install
       - name: Deploy Prod
         if: github.ref == 'refs/heads/master'
-        run: expo publish --release-channel production && expo build:android --release-channel production && expo build:ios --release-channel production
+        run: expo publish --release-channel production && expo build:ios --release-channel production --non-interactive && expo build:android -t apk --release-channel production --non-interactive
       - name: Deploy Release
         if: github.ref == 'refs/heads/release'
         run: expo publish --release-channel release
