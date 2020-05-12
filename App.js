@@ -13,6 +13,8 @@ import Reactotron from 'reactotron-react-native';
 import AppNavigator from './navigation/AppNavigator';
 import { store, persistor } from './store/store';
 // import i18n from './languages';
+// This import is added to enable momentJS library (do not delete)
+import moment from './languages/moment';
 
 // notifications
 
@@ -32,7 +34,7 @@ let onlyExecuteLastCall = (parameter, functionName, timeout) => {
   if (handle) {
     clearTimeout(handle);
   }
-  handle = setTimeout(function() {
+  handle = setTimeout(function () {
     handle = 0;
     functionName(parameter);
   }, timeout);

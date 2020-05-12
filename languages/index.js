@@ -2,6 +2,23 @@ import { I18nManager } from 'react-native';
 import * as Localization from 'expo-localization';
 import i18n from 'i18n-js';
 
+// Intl fix
+import 'intl';
+// Imports by supported languages (When adding or removing a new language, modify this imports and imports of 'languages/moment.js' file)
+import 'intl/locale-data/jsonp/en';
+import 'intl/locale-data/jsonp/ar';
+import 'intl/locale-data/jsonp/bn';
+import 'intl/locale-data/jsonp/es';
+import 'intl/locale-data/jsonp/fa';
+import 'intl/locale-data/jsonp/fr';
+import 'intl/locale-data/jsonp/id';
+import 'intl/locale-data/jsonp/nl';
+import 'intl/locale-data/jsonp/pt';
+import 'intl/locale-data/jsonp/ru';
+import 'intl/locale-data/jsonp/sw';
+import 'intl/locale-data/jsonp/tr';
+import 'intl/locale-data/jsonp/zh';
+
 import * as en from './en.json';
 import * as bn from './bn.json';
 import * as es from './es.json';

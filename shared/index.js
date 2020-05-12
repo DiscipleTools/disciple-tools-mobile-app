@@ -168,6 +168,8 @@ const getSelectorColor = (status) => {
     newColor = '#f0ad4e';
   } else if (status === 'active') {
     newColor = '#5cb85c';
+  } else if (status === 'from_facebook') {
+    newColor = '#366184';
   }
   return newColor;
 };
@@ -175,7 +177,7 @@ const getSelectorColor = (status) => {
 const debounce = (fn, time) => {
   let timeout;
 
-  return function() {
+  return function () {
     const functionCall = () => fn.apply(this, arguments);
 
     clearTimeout(timeout);

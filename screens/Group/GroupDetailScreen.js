@@ -25,6 +25,8 @@ import { Chip, Selectize } from 'react-native-material-selectize';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { NavigationActions, StackActions } from 'react-navigation';
+import moment from '../../languages/moment';
+
 import sharedTools from '../../shared';
 import {
   saveGroup,
@@ -56,6 +58,9 @@ import groupPeerIcon from '../../assets/icons/group-peer.png';
 import groupTypeIcon from '../../assets/icons/group-type.png';
 import footprint from '../../assets/icons/footprint.png';
 import dtIcon from '../../assets/images/dt-icon.png';
+import dateIcon from '../../assets/icons/date.png';
+import dateSuccessIcon from '../../assets/icons/date-success.png';
+import dateEndIcon from '../../assets/icons/date-end.png';
 import i18n from '../../languages';
 
 let toastSuccess;
@@ -407,6 +412,12 @@ const styles = StyleSheet.create({
   }),
   validationErrorMessage: {
     color: Colors.errorBackground,
+  },
+  dateIcons: {
+    width: 20,
+    height: 20,
+    marginTop: 'auto',
+    marginBottom: 'auto',
   },
 });
 
@@ -1399,7 +1410,7 @@ class GroupDetailScreen extends React.Component {
         },
       }),
       () => {
-        this.onSaveGroup(/*true*/);
+        this.onSaveGroup();
       },
     );
   };
@@ -1411,11 +1422,6 @@ class GroupDetailScreen extends React.Component {
     if (foundMember) {
       let membersListCopy = [...this.state.group.members.values];
       const foundMemberIndex = membersListCopy.indexOf(foundMember);
-      /*const memberModified = {
-        ...foundMember,
-        delete: true
-      };
-      membersListCopy[foundMemberIndex] = memberModified;*/
       membersListCopy.splice(foundMemberIndex, 1);
       this.setState(
         (prevState) => ({
@@ -1427,7 +1433,7 @@ class GroupDetailScreen extends React.Component {
           },
         }),
         () => {
-          this.onSaveGroup(/*true*/);
+          this.onSaveGroup();
         },
       );
     }
@@ -1462,7 +1468,7 @@ class GroupDetailScreen extends React.Component {
         },
       }),
       () => {
-        this.onSaveGroup(/*true*/);
+        this.onSaveGroup();
       },
     );
   };
@@ -1617,35 +1623,11 @@ class GroupDetailScreen extends React.Component {
   };
 
   onFormatDateToView = (date) => {
-    const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    const newDate = new Date(date);
-    let hours = newDate.getHours();
-    let minutes = newDate.getMinutes();
-    const age = newDate.getFullYear();
-    const ampm = hours >= 12 ? 'pm' : 'am';
-    hours %= 12;
-    hours = hours || 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? `0${minutes}` : minutes;
-    const strTime = `${hours}:${minutes} ${ampm}`;
-    return `${monthNames[newDate.getMonth()]} ${newDate.getDate()}, ${age} ${strTime}`;
+    return moment(new Date(date)).format('LLL');
   };
 
   formatActivityDate = (comment) => {
-    baptismDateRegex = /\{(\d+)\}+/;
-
+    let baptismDateRegex = /\{(\d+)\}+/;
     if (baptismDateRegex.test(comment)) {
       comment = comment.replace(baptismDateRegex, this.formatTimestampToDate);
     }
@@ -1653,15 +1635,7 @@ class GroupDetailScreen extends React.Component {
   };
 
   formatTimestampToDate = (match, timestamp) => {
-    let langcode = this.props.userData.locale.substring(0, 2);
-    if (langcode === 'fa') {
-      //This is a check so that we use the gergorian (Western) calendar if the users locale is Farsi. This is the calendar used primarily by Farsi speakers outside of Iran, and is easily understood by those inside.
-      langcode = `${langcode}-u-ca-gregory`;
-    }
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    let formattedDate = new Intl.DateTimeFormat(langcode, options).format(timestamp * 1000);
-
-    return formattedDate;
+    return moment(new Date(timestamp * 1000)).format('LL');
   };
 
   onSaveComment = () => {
@@ -1841,7 +1815,7 @@ class GroupDetailScreen extends React.Component {
                     {this.state.group.coaches
                       ? this.state.group.coaches.values
                           .map(
-                            function(coach) {
+                            function (coach) {
                               return safeFind(
                                 this.state.usersContacts.find((user) => user.value === coach.value),
                                 'name',
@@ -1849,7 +1823,7 @@ class GroupDetailScreen extends React.Component {
                             }.bind(this),
                           )
                           .filter(String)
-                          .join()
+                          .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -1878,6 +1852,7 @@ class GroupDetailScreen extends React.Component {
                                 (geoname) => geoname.value === location.value,
                               ).name,
                           )
+                          .filter(String)
                           .join(', ')
                       : ''}
                   </Text>
@@ -1907,6 +1882,7 @@ class GroupDetailScreen extends React.Component {
                                 (person) => person.value === peopleGroup.value,
                               ).name,
                           )
+                          .filter(String)
                           .join(', ')
                       : ''}
                   </Text>
@@ -1942,11 +1918,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-import"
-                    style={styles.formIcon}
-                  />
+                  <Image source={dateIcon} style={styles.dateIcons} />
                 </Col>
                 <Col>
                   <Text
@@ -1954,7 +1926,9 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.group.start_date ? this.state.group.start_date : ''}
+                    {this.state.group.start_date
+                      ? moment(new Date(this.state.group.start_date * 1000)).format('LL')
+                      : ''}
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
@@ -1966,11 +1940,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-import"
-                    style={styles.formIcon}
-                  />
+                  <Image source={dateSuccessIcon} style={styles.dateIcons} />
                 </Col>
                 <Col>
                   <Text
@@ -1978,7 +1948,9 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.group.church_start_date ? this.state.group.church_start_date : ''}
+                    {this.state.group.church_start_date
+                      ? moment(new Date(this.state.group.church_start_date * 1000)).format('LL')
+                      : ''}
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
@@ -1990,11 +1962,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-export"
-                    style={styles.formIcon}
-                  />
+                  <Image source={dateEndIcon} style={styles.dateIcons} />
                 </Col>
                 <Col>
                   <Text
@@ -2002,7 +1970,9 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.group.end_date ? this.state.group.end_date : ''}
+                    {this.state.group.end_date
+                      ? moment(new Date(this.state.group.end_date * 1000)).format('LL')
+                      : ''}
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
@@ -2434,11 +2404,7 @@ class GroupDetailScreen extends React.Component {
             <Row style={styles.formFieldPadding}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-import"
-                    style={styles.formIcon}
-                  />
+                  <Image source={dateIcon} style={styles.dateIcons} />
                 </View>
               </Col>
               <Col>
@@ -2450,18 +2416,14 @@ class GroupDetailScreen extends React.Component {
             <Row>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-import"
-                    style={[styles.formIcon, { opacity: 0 }]}
-                  />
+                  <Image source={dateIcon} style={[styles.dateIcons, { opacity: 0 }]} />
                 </View>
               </Col>
               <Col>
                 <DatePicker
                   onDateChange={this.setGroupStartDate}
                   defaultDate={
-                    this.state.group.start_date ? new Date(this.state.group.start_date) : ''
+                    this.state.group.start_date ? new Date(this.state.group.start_date * 1000) : ''
                   }
                 />
               </Col>
@@ -2469,11 +2431,7 @@ class GroupDetailScreen extends React.Component {
             <Row style={styles.formFieldPadding}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-import"
-                    style={styles.formIcon}
-                  />
+                  <Image source={dateSuccessIcon} style={styles.dateIcons} />
                 </View>
               </Col>
               <Col>
@@ -2485,11 +2443,7 @@ class GroupDetailScreen extends React.Component {
             <Row>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-export"
-                    style={[styles.formIcon, { opacity: 0 }]}
-                  />
+                  <Image source={dateSuccessIcon} style={[styles.dateIcons, { opacity: 0 }]} />
                 </View>
               </Col>
               <Col>
@@ -2497,7 +2451,7 @@ class GroupDetailScreen extends React.Component {
                   onDateChange={this.setChurchStartDate}
                   defaultDate={
                     this.state.group.church_start_date
-                      ? new Date(this.state.group.church_start_date)
+                      ? new Date(this.state.group.church_start_date * 1000)
                       : ''
                   }
                 />
@@ -2506,11 +2460,7 @@ class GroupDetailScreen extends React.Component {
             <Row style={styles.formFieldPadding}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-export"
-                    style={styles.formIcon}
-                  />
+                  <Image source={dateEndIcon} style={styles.dateIcons} />
                 </View>
               </Col>
               <Col>
@@ -2522,17 +2472,15 @@ class GroupDetailScreen extends React.Component {
             <Row>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="calendar-export"
-                    style={[styles.formIcon, { opacity: 0 }]}
-                  />
+                  <Image source={dateEndIcon} style={[styles.dateIcons, { opacity: 0 }]} />
                 </View>
               </Col>
               <Col>
                 <DatePicker
                   onDateChange={this.setEndDate}
-                  defaultDate={this.state.group.end_date ? new Date(this.state.group.end_date) : ''}
+                  defaultDate={
+                    this.state.group.end_date ? new Date(this.state.group.end_date * 1000) : ''
+                  }
                 />
               </Col>
             </Row>
@@ -2992,7 +2940,8 @@ class GroupDetailScreen extends React.Component {
                         key={index.toString()}
                         style={styles.groupCircleContainer}
                         onPress={() => this.goToGroupDetailScreen(parentGroup)}>
-                        {index % 2 === 0 ? (
+                        {Object.prototype.hasOwnProperty.call(parentGroup, 'is_church') &&
+                        parentGroup.is_church ? (
                           <Image source={groupCircleIcon} style={styles.groupCircle} />
                         ) : (
                           <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
@@ -3036,7 +2985,8 @@ class GroupDetailScreen extends React.Component {
                         key={index.toString()}
                         style={styles.groupCircleContainer}
                         onPress={() => this.goToGroupDetailScreen(peerGroup)}>
-                        {index % 2 === 0 ? (
+                        {Object.prototype.hasOwnProperty.call(peerGroup, 'is_church') &&
+                        peerGroup.is_church ? (
                           <Image source={groupCircleIcon} style={styles.groupCircle} />
                         ) : (
                           <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
@@ -3078,7 +3028,8 @@ class GroupDetailScreen extends React.Component {
                         key={index.toString()}
                         style={styles.groupCircleContainer}
                         onPress={() => this.goToGroupDetailScreen(childGroup)}>
-                        {index % 2 === 0 ? (
+                        {Object.prototype.hasOwnProperty.call(childGroup, 'is_church') &&
+                        childGroup.is_church ? (
                           <Image source={groupCircleIcon} style={styles.groupCircle} />
                         ) : (
                           <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
