@@ -987,23 +987,27 @@ class GroupDetailScreen extends React.Component {
   }
 
   getGroupComments(groupId) {
-    this.props.getComments(
-      this.props.userData.domain,
-      this.props.userData.token,
-      groupId,
-      this.state.commentsOffset,
-      this.state.commentsLimit,
-    );
+    if (!this.state.loadComments) {
+      this.props.getComments(
+        this.props.userData.domain,
+        this.props.userData.token,
+        groupId,
+        this.state.commentsOffset,
+        this.state.commentsLimit,
+      );
+    }
   }
 
   getGroupActivities(groupId) {
-    this.props.getActivities(
-      this.props.userData.domain,
-      this.props.userData.token,
-      groupId,
-      this.state.activitiesOffset,
-      this.state.activitiesLimit,
-    );
+    if (!this.state.loadActivities) {
+      this.props.getActivities(
+        this.props.userData.domain,
+        this.props.userData.token,
+        groupId,
+        this.state.activitiesOffset,
+        this.state.activitiesLimit,
+      );
+    }
   }
 
   onEnableEdit = () => {

@@ -845,23 +845,27 @@ class ContactDetailScreen extends React.Component {
   }
 
   getContactComments(contactId) {
-    this.props.getComments(
-      this.props.userData.domain,
-      this.props.userData.token,
-      contactId,
-      this.state.commentsOffset,
-      this.state.commentsLimit,
-    );
+    if (!this.state.loadComments) {
+      this.props.getComments(
+        this.props.userData.domain,
+        this.props.userData.token,
+        contactId,
+        this.state.commentsOffset,
+        this.state.commentsLimit,
+      );
+    }
   }
 
   getContactActivities(contactId) {
-    this.props.getActivities(
-      this.props.userData.domain,
-      this.props.userData.token,
-      contactId,
-      this.state.activitiesOffset,
-      this.state.activitiesLimit,
-    );
+    if (!this.state.loadActivities) {
+      this.props.getActivities(
+        this.props.userData.domain,
+        this.props.userData.token,
+        contactId,
+        this.state.activitiesOffset,
+        this.state.activitiesLimit,
+      );
+    }
   }
 
   onEnableEdit = () => {
