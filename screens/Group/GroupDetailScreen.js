@@ -447,7 +447,6 @@ const initialState = {
   showAssignedToModal: false,
   groupStatusBackgroundColor: '#ffffff',
   loading: false,
-  editingMembers: false,
   tabViewConfig: {
     index: 0,
     routes: [...tabViewRoutes],
@@ -819,9 +818,7 @@ class GroupDetailScreen extends React.Component {
           </View>,
           3000,
         );
-        if (!this.state.editingMembers) {
-          this.onDisableEdit();
-        }
+        this.onDisableEdit();
       }
     }
 
@@ -1024,7 +1021,6 @@ class GroupDetailScreen extends React.Component {
           index: indexFix,
           routes: state.tabViewConfig.routes.filter((route) => route.key !== 'comments'),
         },
-        editingMembers: indexFix === 2,
       };
     });
     this.props.navigation.setParams({
@@ -1390,28 +1386,23 @@ class GroupDetailScreen extends React.Component {
   };
 
   onAddMember = (selectedValue) => {
-    this.setState(
-      (prevState) => ({
-        group: {
-          ...prevState.group,
-          members: {
-            values: [
-              ...prevState.group.members.values,
-              {
-                name: safeFind(
-                  prevState.usersContacts.find((user) => user.value === selectedValue.value),
-                  'name',
-                ), // Show name in list while request its processed
-                value: selectedValue.value,
-              },
-            ],
-          },
+    this.setState((prevState) => ({
+      group: {
+        ...prevState.group,
+        members: {
+          values: [
+            ...prevState.group.members.values,
+            {
+              name: safeFind(
+                prevState.usersContacts.find((user) => user.value === selectedValue.value),
+                'name',
+              ), // Show name in list while request its processed
+              value: selectedValue.value,
+            },
+          ],
         },
-      }),
-      () => {
-        this.onSaveGroup();
       },
-    );
+    }));
   };
 
   onRemoveMember = (selectedValue) => {
@@ -1422,19 +1413,14 @@ class GroupDetailScreen extends React.Component {
       let membersListCopy = [...this.state.group.members.values];
       const foundMemberIndex = membersListCopy.indexOf(foundMember);
       membersListCopy.splice(foundMemberIndex, 1);
-      this.setState(
-        (prevState) => ({
-          group: {
-            ...prevState.group,
-            members: {
-              values: [...membersListCopy],
-            },
+      this.setState((prevState) => ({
+        group: {
+          ...prevState.group,
+          members: {
+            values: [...membersListCopy],
           },
-        }),
-        () => {
-          this.onSaveGroup();
         },
-      );
+      }));
     }
   };
 
@@ -1457,19 +1443,14 @@ class GroupDetailScreen extends React.Component {
     } else {
       leadersListCopy.push(leaderModified);
     }
-    this.setState(
-      (prevState) => ({
-        group: {
-          ...prevState.group,
-          leaders: {
-            values: [...leadersListCopy],
-          },
+    this.setState((prevState) => ({
+      group: {
+        ...prevState.group,
+        leaders: {
+          values: [...leadersListCopy],
         },
-      }),
-      () => {
-        this.onSaveGroup();
       },
-    );
+    }));
   };
 
   getSelectizeValuesToSave = (dbData, selectizeRef, selectedValues = null) => {
@@ -1698,7 +1679,6 @@ class GroupDetailScreen extends React.Component {
         ...prevState.tabViewConfig,
         index,
       },
-      editingMembers: index === 2 && !prevState.onlyView,
     }));
   };
 
