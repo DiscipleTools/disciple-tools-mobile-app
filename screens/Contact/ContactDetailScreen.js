@@ -60,7 +60,7 @@ const containerPadding = 35;
 const windowWidth = Dimensions.get('window').width;
 const progressBarWidth = windowWidth - 100;
 const milestonesGridSize = windowWidth + 5;
-let keyboardDidShowListener, keyboardDidHideListener;
+let keyboardDidShowListener, keyboardDidHideListener, focusListener;
 const hasNotch = Platform.OS === 'android' && StatusBar.currentHeight > 25;
 const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
 /* eslint-disable */
@@ -378,12 +378,6 @@ class ContactDetailScreen extends React.Component {
           </Row>
         );
       }
-      if (params.fromGroupDetail && self) {
-        navigation.setParams({
-          fromGroupDetail: false,
-        });
-        self.onRefresh(params.contactId);
-      }
     }
     return {
       title: navigationTitle,
@@ -518,11 +512,24 @@ class ContactDetailScreen extends React.Component {
       'keyboardDidHide',
       this.keyboardDidHide.bind(this),
     );
+    focusListener = navigation.addListener('didFocus', () => {
+      if (typeof contactId !== 'undefined' && this.state.loadedLocal) {
+        this.setState(
+          {
+            loading: false,
+          },
+          () => {
+            this.onRefresh(contactId);
+          },
+        );
+      }
+    });
   }
 
   componentWillUnmount() {
     keyboardDidShowListener.remove();
     keyboardDidHideListener.remove();
+    focusListener.remove();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {

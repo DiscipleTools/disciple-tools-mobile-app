@@ -1175,7 +1175,6 @@ class GroupDetailScreen extends React.Component {
         contactId: contactData.value,
         onlyView: true,
         contactName: contactData.name,
-        fromGroupDetail: true,
       });
     }
   };
