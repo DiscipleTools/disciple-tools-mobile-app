@@ -15,6 +15,7 @@ import {
   Platform,
   TouchableHighlight,
   StatusBar,
+  BackHandler,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
@@ -70,7 +71,7 @@ const windowWidth = Dimensions.get('window').width;
 const spacing = windowWidth * 0.025;
 const sideSize = windowWidth - 2 * spacing;
 const circleSideSize = windowWidth / 3 + 20;
-let keyboardDidShowListener, keyboardDidHideListener;
+let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBackPressListener;
 const hasNotch = Platform.OS === 'android' && StatusBar.currentHeight > 25;
 const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
 /* eslint-disable */
@@ -419,6 +420,10 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
     marginBottom: 'auto',
   },
+  linkingText: {
+    paddingTop: 4,
+    paddingBottom: 8,
+  },
 });
 
 const initialState = {
@@ -511,27 +516,7 @@ class GroupDetailScreen extends React.Component {
             type="Feather"
             name="arrow-left"
             onPress={() => {
-              if (params.previousList.length > 0) {
-                const newPreviousList = params.previousList;
-                const previousParams = newPreviousList[newPreviousList.length - 1];
-                newPreviousList.pop();
-                navigation.state.params.onBackFromSameScreen({
-                  ...previousParams,
-                  previousList: newPreviousList,
-                });
-              } else if (params.fromNotificationView) {
-                const resetAction = StackActions.reset({
-                  index: 0,
-                  actions: [NavigationActions.navigate({ routeName: 'GroupList' })],
-                });
-                navigation.dispatch(resetAction);
-                navigation.navigate('NotificationList');
-              } else {
-                if (typeof params.onGoBack === 'function') {
-                  params.onGoBack();
-                }
-                navigation.goBack();
-              }
+              params.backButtonClick();
             }}
             style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }]}
           />
@@ -590,6 +575,7 @@ class GroupDetailScreen extends React.Component {
       onEnableEdit: this.onEnableEdit,
       onDisableEdit: this.onDisableEdit,
       onSaveGroup: this.onSaveGroup,
+      backButtonClick: this.backButtonClick,
     });
     keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -599,11 +585,32 @@ class GroupDetailScreen extends React.Component {
       'keyboardDidHide',
       this.keyboardDidHide.bind(this),
     );
+    focusListener = navigation.addListener('didFocus', () => {
+      if (
+        typeof this.props.navigation.state.params.groupId !== 'undefined' &&
+        this.state.loadedLocal
+      ) {
+        this.setState(
+          {
+            loading: false,
+          },
+          () => {
+            this.onRefresh(this.props.navigation.state.params.groupId);
+          },
+        );
+      }
+    });
+    hardwareBackPressListener = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.backButtonClick,
+    );
   }
 
   componentWillUnmount() {
     keyboardDidShowListener.remove();
     keyboardDidHideListener.remove();
+    focusListener.remove();
+    hardwareBackPressListener.remove();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -856,6 +863,29 @@ class GroupDetailScreen extends React.Component {
     });
   }
 
+  backButtonClick = () => {
+    const { navigation } = this.props;
+    const { params } = navigation.state;
+    if (params.previousList.length > 0) {
+      navigation.goBack();
+      params.onBackFromSameScreen();
+    } else if (params.fromNotificationView) {
+      const resetAction = StackActions.reset({
+        index: 0,
+        actions: [NavigationActions.navigate({ routeName: 'GroupList' })],
+      });
+      navigation.dispatch(resetAction);
+      navigation.navigate('NotificationList');
+    } else {
+      navigation.goBack();
+      // Prevent error when view loaded from ContactDetailScreen.js
+      if (typeof params.onGoBack === 'function') {
+        params.onGoBack();
+      }
+    }
+    return true;
+  };
+
   onLoad() {
     const { navigation } = this.props;
     const { groupId, onlyView, groupName } = navigation.state.params;
@@ -872,7 +902,6 @@ class GroupDetailScreen extends React.Component {
       };
       navigation.setParams({ groupName });
     } else {
-      this.props.navigation.setParams({ hideTabBar: true });
       newState = {
         group: {
           title: null,
@@ -880,6 +909,7 @@ class GroupDetailScreen extends React.Component {
           group_status: 'active',
         },
       };
+      navigation.setParams({ hideTabBar: true });
     }
     if (onlyView) {
       newState = {
@@ -897,13 +927,20 @@ class GroupDetailScreen extends React.Component {
     );
   }
 
-  onBackFromSameScreen(previousData) {
+  onBackFromSameScreen = () => {
     const { navigation } = this.props;
-    navigation.setParams(previousData);
+    const { params } = navigation.state;
+    const newPreviousList = params.previousList;
+    const previousParams = newPreviousList[newPreviousList.length - 1];
+    newPreviousList.pop();
+    navigation.setParams({
+      ...previousParams,
+      previousList: newPreviousList,
+    });
     this.setState(initialState, () => {
       this.onLoad();
     });
-  }
+  };
 
   onRefresh(groupId) {
     this.getGroupById(groupId);
@@ -1169,14 +1206,16 @@ class GroupDetailScreen extends React.Component {
     </View>
   );
 
-  goToContactDetailScreen = (contactData = null) => {
-    if (contactData) {
-      this.props.navigation.navigate('ContactDetail', {
-        contactId: contactData.value,
-        onlyView: true,
-        contactName: contactData.name,
-      });
-    }
+  goToContactDetailScreen = (contactID) => {
+    this.props.navigation.navigate('ContactDetail', {
+      contactId: contactID,
+      onlyView: true,
+      contactName: safeFind(
+        this.state.usersContacts.find((user) => user.value === contactID),
+        'name',
+      ),
+      previousList: [],
+    });
   };
 
   getSelectizeItems = (groupList, localList) => {
@@ -1665,10 +1704,11 @@ class GroupDetailScreen extends React.Component {
       groupName: title,
     });
     navigation.push('GroupDetail', {
+      ...params, // previousList, onGoBack()
       groupId: groupData.value,
       onlyView: true,
       groupName: groupData.name,
-      previousList: params.previousList,
+      backButtonClick: this.backButtonClick.bind(this),
       onBackFromSameScreen: this.onBackFromSameScreen.bind(this),
     });
     /* eslint-enable */
@@ -1723,9 +1763,7 @@ class GroupDetailScreen extends React.Component {
                 onRefresh={() => this.onRefresh(this.state.group.ID)}
               />
             }>
-            <View
-              style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}
-              pointerEvents="none">
+            <View style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
               <Label
                 style={[
                   {
@@ -1738,7 +1776,7 @@ class GroupDetailScreen extends React.Component {
                 ]}>
                 {this.props.groupSettings.fields.group_status.name}
               </Label>
-              <Row style={[styles.formRow, { paddingTop: 5 }]}>
+              <Row style={[styles.formRow, { paddingTop: 5 }]} pointerEvents="none">
                 <Col
                   style={[
                     styles.statusFieldContainer,
@@ -1787,28 +1825,43 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome" name="black-tie" style={styles.formIcon} />
+                  <Icon
+                    type="FontAwesome"
+                    name="black-tie"
+                    style={[styles.formIcon, { marginTop: 0 }]}
+                  />
                 </Col>
                 <Col>
-                  <Text
+                  <View
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
                       i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.group.coaches
-                      ? this.state.group.coaches.values
-                          .map(
-                            function (coach) {
-                              return safeFind(
+                    {this.state.group.coaches ? (
+                      this.state.group.coaches.values.map((coach, index) =>
+                        safeFind(
+                          this.state.usersContacts.find((user) => user.value === coach.value),
+                          'name',
+                        ).length > 0 ? (
+                          <TouchableOpacity
+                            key={index.toString()}
+                            activeOpacity={0.5}
+                            onPress={() => this.goToContactDetailScreen(coach.value)}>
+                            <Text style={styles.linkingText}>
+                              {safeFind(
                                 this.state.usersContacts.find((user) => user.value === coach.value),
                                 'name',
-                              );
-                            }.bind(this),
-                          )
-                          .filter(String)
-                          .join(', ')
-                      : ''}
-                  </Text>
+                              )}
+                            </Text>
+                          </TouchableOpacity>
+                        ) : (
+                          <Text></Text>
+                        ),
+                      )
+                    ) : (
+                      <Text></Text>
+                    )}
+                  </View>
                 </Col>
                 <Col style={{ width: 100 }}>
                   <Label style={[styles.formLabel, { textAlign: 'right' }]}>
@@ -2734,7 +2787,7 @@ class GroupDetailScreen extends React.Component {
           </Col>
           <Col>
             <TouchableOpacity
-              onPress={() => this.goToContactDetailScreen(membersGroup)}
+              onPress={() => this.goToContactDetailScreen(membersGroup.value)}
               key={membersGroup.value}
               style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               <Text
@@ -2769,7 +2822,7 @@ class GroupDetailScreen extends React.Component {
           </Col>
           <Col>
             <TouchableOpacity
-              onPress={() => this.goToContactDetailScreen(membersGroup)}
+              onPress={() => this.goToContactDetailScreen(membersGroup.value)}
               key={membersGroup.value}
               style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               <Text style={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: 15, padding: 5 }}>

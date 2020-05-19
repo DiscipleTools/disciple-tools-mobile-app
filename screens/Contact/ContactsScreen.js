@@ -274,11 +274,13 @@ class ContactsScreen extends React.Component {
         contactId: contactData.ID,
         onlyView: true,
         contactName: contactData.title,
+        previousList: [],
         onGoBack: () => this.onRefresh(),
       });
     } else {
       // Create
       this.props.navigation.navigate('ContactDetail', {
+        previousList: [],
         onlyView: true,
         onGoBack: () => this.onRefresh(),
       });
