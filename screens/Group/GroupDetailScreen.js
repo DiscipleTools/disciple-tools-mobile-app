@@ -3887,14 +3887,17 @@ class GroupDetailScreen extends React.Component {
   }
 
   searchLocationsDelayed = sharedTools.debounce((queryText) => {
-    if (queryText.length > 0) {
-      this.searchLocations(queryText);
-    } else if (this.state.foundGeonames.length > 0) {
-      this.setState({
+    this.setState(
+      {
         foundGeonames: [],
-      });
-    }
-  }, 500);
+      },
+      () => {
+        if (queryText.length > 0) {
+          this.searchLocations(queryText);
+        }
+      },
+    );
+  }, 750);
 
   searchLocations = (queryText) => {
     this.props.searchLocations(this.props.userData.domain, this.props.userData.token, queryText);
