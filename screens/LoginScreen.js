@@ -9,7 +9,6 @@ import {
   Keyboard,
   ActivityIndicator,
   Platform,
-  KeyboardAvoidingView,
   ScrollView,
   I18nManager,
   Picker,
@@ -25,6 +24,7 @@ import Constants from 'expo-constants';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import { BlurView } from 'expo-blur';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import i18n from '../languages';
 import locales from '../languages/locales';
@@ -655,7 +655,12 @@ class LoginScreen extends React.Component {
       <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
     ));
     return (
-      <KeyboardAvoidingView behavior="padding">
+      <KeyboardAwareScrollView
+        enableAutomaticScroll
+        enableOnAndroid
+        keyboardOpeningTime={0}
+        extraScrollHeight={0}
+        keyboardShouldPersistTaps="handled">
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.header}>
             <Image source={require('../assets/images/dt-icon.png')} style={styles.welcomeImage} />
@@ -783,78 +788,72 @@ class LoginScreen extends React.Component {
               width: width,
               height: height,
             }}>
-            <KeyboardAvoidingView
-              behavior={'position'}
-              contentContainerStyle={{
-                height: height / 2 + 35,
-              }}>
-              <View style={{ backgroundColor: '#FFFFFF', padding: 20 }}>
+            <View style={{ backgroundColor: '#FFFFFF', padding: 20 }}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  textAlign: 'center',
+                  color: Colors.gray,
+                  marginBottom: 5,
+                }}>
+                {this.props.pinCode.enabled ? 'Enter PIN' : 'Set new PIN'}
+              </Text>
+              {this.state.incorrectPin ? (
                 <Text
                   style={{
-                    fontSize: 20,
+                    color: Colors.errorBackground,
                     textAlign: 'center',
-                    color: Colors.gray,
+                    fontSize: 14,
                     marginBottom: 5,
                   }}>
-                  {this.props.pinCode.enabled ? 'Enter PIN' : 'Set new PIN'}
+                  {'Incorrect PIN'}
                 </Text>
-                {this.state.incorrectPin ? (
-                  <Text
-                    style={{
-                      color: Colors.errorBackground,
-                      textAlign: 'center',
-                      fontSize: 14,
-                      marginBottom: 5,
-                    }}>
-                    {'Incorrect PIN'}
-                  </Text>
-                ) : null}
-                <SmoothPinCodeInput
-                  password
-                  mask="﹡"
-                  cellSize={60}
-                  ref={this.pinInput}
-                  value={this.state.pin}
-                  onTextChange={(pin) => {
+              ) : null}
+              <SmoothPinCodeInput
+                password
+                mask="﹡"
+                cellSize={60}
+                ref={this.pinInput}
+                value={this.state.pin}
+                onTextChange={(pin) => {
+                  this.setState({
+                    pin,
+                    incorrectPin: this.state.incorrectPin ? false : undefined,
+                  });
+                }}
+                onFulfill={(pin) => {
+                  if (pin === this.props.pinCode.value) {
+                    this.props.loginDispatch(
+                      this.props.userData.domain,
+                      this.props.userData.username,
+                      this.props.userData.password,
+                    );
+                    this.toggleShowPIN();
+                  } else {
                     this.setState({
-                      pin,
-                      incorrectPin: this.state.incorrectPin ? false : undefined,
+                      incorrectPin: true,
+                      pin: '',
                     });
-                  }}
-                  onFulfill={(pin) => {
-                    if (pin === this.props.pinCode.value) {
-                      this.props.loginDispatch(
-                        this.props.userData.domain,
-                        this.props.userData.username,
-                        this.props.userData.password,
-                      );
-                      this.toggleShowPIN();
-                    } else {
-                      this.setState({
-                        incorrectPin: true,
-                        pin: '',
-                      });
-                    }
-                  }}
-                  autoFocus={true}
-                />
-                <Button
-                  block
-                  style={{
-                    backgroundColor: Colors.tintColor,
-                    borderRadius: 5,
-                    width: 150,
-                    alignSelf: 'center',
-                    marginTop: 20,
-                  }}
-                  onPress={this.toggleShowPIN}>
-                  <Text style={{ color: '#FFFFFF' }}>{'Close'}</Text>
-                </Button>
-              </View>
-            </KeyboardAvoidingView>
+                  }
+                }}
+                autoFocus={true}
+              />
+              <Button
+                block
+                style={{
+                  backgroundColor: Colors.tintColor,
+                  borderRadius: 5,
+                  width: 150,
+                  alignSelf: 'center',
+                  marginTop: 20,
+                }}
+                onPress={this.toggleShowPIN}>
+                <Text style={{ color: '#FFFFFF' }}>{'Close'}</Text>
+              </Button>
+            </View>
           </BlurView>
         ) : null}
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     );
   }
 }
