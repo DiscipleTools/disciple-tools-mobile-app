@@ -46,7 +46,10 @@
     "errors": {
       "invalidUsername": "Nama pengguna tidak dikenal. Periksa lagi atau coba alamat email Anda.",
       "incorrectPassword": "Kata sandi yang Anda masukkan untuk nama pengguna salah"
-    }
+    },
+    "confirm": "",
+    "appRestart": "",
+    "textDirection": ""
   },
   "contactsScreen": {
     "contacts": "Kontak",

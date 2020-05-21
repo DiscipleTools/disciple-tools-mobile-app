@@ -46,7 +46,10 @@
     "errors": {
       "invalidUsername": "Unknown username. Check again or try your email address.",
       "incorrectPassword": "The password you entered for username is incorrect"
-    }
+    },
+    "confirm": "Confirm",
+    "appRestart": "The application will be restarted to apply the following configuration:",
+    "textDirection": "Text direction"
   },
   "contactsScreen": {
     "contacts": "Contacts",

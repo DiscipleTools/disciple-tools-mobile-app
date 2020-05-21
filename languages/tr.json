@@ -46,7 +46,10 @@
     "errors": {
       "invalidUsername": "Bilinmeyen kullanıcı adı. Tekrar kontrol edin veya e-posta adresinizi deneyin.",
       "incorrectPassword": "Kullanıcı adı için girdiğiniz şifre yanlış"
-    }
+    },
+    "confirm": "",
+    "appRestart": "",
+    "textDirection": ""
   },
   "contactsScreen": {
     "contacts": "Bağlantılarım",

@@ -159,6 +159,32 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
   },
+  dialogBackground: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    top: 0,
+    left: 0,
+  },
+  dialogBox: {
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    marginLeft: 10,
+    marginRight: 10,
+  },
+  dialogButton: {
+    backgroundColor: Colors.tintColor,
+    borderRadius: 5,
+    width: 150,
+    alignSelf: 'center',
+    marginTop: 20,
+  },
+  dialogContent: {
+    fontSize: 20,
+    textAlign: 'center',
+    color: Colors.gray,
+    marginBottom: 5,
+  },
 });
 let toastError;
 const { height, width } = Dimensions.get('window');
@@ -184,6 +210,7 @@ class LoginScreen extends React.Component {
     },
     userDataRetrieved: false,
     geonamesLength: 0,
+    toggleRestartDialog: false,
   };
 
   constructor(props) {
@@ -435,9 +462,6 @@ class LoginScreen extends React.Component {
       i18n.setLocale(this.props.i18n.locale, this.props.i18n.isRTL);
       if (prevProps.i18n.isRTL !== this.props.i18n.isRTL) {
         I18nManager.forceRTL(this.props.i18n.isRTL);
-        setTimeout(() => {
-          Updates.reload();
-        }, 1000);
       } else {
         // TODO: refactor this code so this force re-render is no longer necessary
         this.forceUpdate();
@@ -514,9 +538,6 @@ class LoginScreen extends React.Component {
       localeCode = this.props.userData.locale.substring(0, 2);
     }
     this.changeLanguage(localeCode);
-    this.setState({
-      appLanguageSet: true,
-    });
   };
 
   getDataLists = () => {
@@ -595,6 +616,14 @@ class LoginScreen extends React.Component {
     const locale = locales.find((item) => item.code === languageCode);
     if (locale) {
       const isRTL = locale.direction === 'rtl';
+      //New 'isRTL' value same as old value
+      if (isRTL === this.props.i18n.isRTL) {
+        this.setState({
+          appLanguageSet: true,
+        });
+      } else {
+        this.showRestartDialog();
+      }
       this.props.setLanguage(locale.code, isRTL);
       // Update momentJS locale
       moment.locale(languageCode);
@@ -619,6 +648,18 @@ class LoginScreen extends React.Component {
       pin: '',
       incorrectPin: false,
     }));
+  };
+
+  showRestartDialog = () => {
+    this.setState({
+      toggleRestartDialog: true,
+    });
+  };
+
+  restartApp = () => {
+    setTimeout(() => {
+      Updates.reload();
+    }, 1000);
   };
 
   // TODO: How to disable iCloud save password feature?
@@ -779,23 +820,15 @@ class LoginScreen extends React.Component {
           <BlurView
             tint="dark"
             intensity={50}
-            style={{
-              position: 'absolute',
-              justifyContent: 'center',
-              alignItems: 'center',
-              top: 0,
-              left: 0,
-              width: width,
-              height: height,
-            }}>
-            <View style={{ backgroundColor: '#FFFFFF', padding: 20 }}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  textAlign: 'center',
-                  color: Colors.gray,
-                  marginBottom: 5,
-                }}>
+            style={[
+              styles.dialogBackground,
+              {
+                width: width,
+                height: height,
+              },
+            ]}>
+            <View style={styles.dialogBox}>
+              <Text style={styles.dialogContent}>
                 {this.props.pinCode.enabled ? 'Enter PIN' : 'Set new PIN'}
               </Text>
               {this.state.incorrectPin ? (
@@ -838,17 +871,32 @@ class LoginScreen extends React.Component {
                 }}
                 autoFocus={true}
               />
-              <Button
-                block
-                style={{
-                  backgroundColor: Colors.tintColor,
-                  borderRadius: 5,
-                  width: 150,
-                  alignSelf: 'center',
-                  marginTop: 20,
-                }}
-                onPress={this.toggleShowPIN}>
+              <Button block style={styles.dialogButton} onPress={this.toggleShowPIN}>
                 <Text style={{ color: '#FFFFFF' }}>{'Close'}</Text>
+              </Button>
+            </View>
+          </BlurView>
+        ) : null}
+        {this.state.toggleRestartDialog ? (
+          <BlurView
+            tint="dark"
+            intensity={50}
+            style={[
+              styles.dialogBackground,
+              {
+                width: width,
+                height: height,
+              },
+            ]}>
+            <View style={styles.dialogBox}>
+              <Text style={styles.dialogContent}>{i18n.t('loginScreen.appRestart')}</Text>
+              <Text style={styles.dialogContent}>
+                {i18n.t('loginScreen.textDirection') +
+                  ': ' +
+                  (this.props.i18n.isRTL ? 'RTL' : 'LTR')}
+              </Text>
+              <Button block style={styles.dialogButton} onPress={this.restartApp}>
+                <Text style={{ color: '#FFFFFF' }}>{i18n.t('loginScreen.confirm')}</Text>
               </Button>
             </View>
           </BlurView>

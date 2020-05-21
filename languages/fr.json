@@ -46,7 +46,10 @@
     "errors": {
       "invalidUsername": "Nom d'utilisateur inconnu. Vérifiez à nouveau ou essayez votre adresse e-mail.",
       "incorrectPassword": "Le mot de passe que vous avez entré pour le nom d'utilisateur est incorrect"
-    }
+    },
+    "confirm": "",
+    "appRestart": "",
+    "textDirection": ""
   },
   "contactsScreen": {
     "contacts": "Contacts",
