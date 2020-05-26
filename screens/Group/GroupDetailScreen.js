@@ -898,7 +898,6 @@ class GroupDetailScreen extends React.Component {
           ID: groupId,
           title: groupName,
           group_type: 'group',
-          group_status: 'active',
         },
       };
       navigation.setParams({ groupName });
@@ -907,7 +906,6 @@ class GroupDetailScreen extends React.Component {
         group: {
           title: null,
           group_type: 'group',
-          group_status: 'active',
         },
       };
       navigation.setParams({ hideTabBar: true });

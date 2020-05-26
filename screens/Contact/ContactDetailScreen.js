@@ -713,7 +713,6 @@ class ContactDetailScreen extends React.Component {
               },
             ],
           },
-          overall_status: 'new',
           seeker_path: 'none',
         },
       };
@@ -731,10 +730,8 @@ class ContactDetailScreen extends React.Component {
               },
             ],
           },
-          overall_status: 'new',
           seeker_path: 'none',
         },
-        overallStatusBackgroundColor: sharedTools.getSelectorColor('new'),
       };
       navigation.setParams({
         hideTabBar: true,
