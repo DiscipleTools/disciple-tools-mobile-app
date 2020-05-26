@@ -47,7 +47,7 @@
       "invalidUsername": "Nome de Usuário desconhecido. Verifique novamente ou tente seu endereço de e-mail",
       "incorrectPassword": "A senha que você digitou para o usuário está incorreta"
     },
-    "confirm": "",
+    "ok": "",
     "appRestart": "",
     "textDirection": ""
   },

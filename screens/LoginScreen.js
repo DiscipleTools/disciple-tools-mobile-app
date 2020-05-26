@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   dialogContent: {
     fontSize: 20,
     textAlign: 'center',
-    color: Colors.gray,
+    color: Colors.grayDark,
     marginBottom: 5,
   },
 });
@@ -896,7 +896,7 @@ class LoginScreen extends React.Component {
                   (this.props.i18n.isRTL ? 'RTL' : 'LTR')}
               </Text>
               <Button block style={styles.dialogButton} onPress={this.restartApp}>
-                <Text style={{ color: '#FFFFFF' }}>{i18n.t('loginScreen.confirm')}</Text>
+                <Text style={{ color: '#FFFFFF' }}>{i18n.t('loginScreen.ok')}</Text>
               </Button>
             </View>
           </BlurView>

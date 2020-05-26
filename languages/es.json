@@ -47,7 +47,7 @@
       "invalidUsername": "Nombre de usuario desconocido. Vuelve a consultar o prueba tu dirección de correo electrónico.",
       "incorrectPassword": "La contraseña que ingresó para el usuario es incorrecta"
     },
-    "confirm": "Confirmar",
+    "ok": "Muy bien",
     "appRestart": "La aplicación sera reiniciada para aplicar la siguiente configuración:",
     "textDirection": "Dirección del texto"
   },

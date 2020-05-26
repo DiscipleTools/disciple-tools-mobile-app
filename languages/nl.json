@@ -47,7 +47,7 @@
       "invalidUsername": "Onbekende gebruikersnaam. Controleer het opnieuw of probeer uw e-mailadres.",
       "incorrectPassword": "Het wachtwoord dat u hebt ingevoerd voor de gebruikersnaam is onjuist"
     },
-    "confirm": "",
+    "ok": "",
     "appRestart": "",
     "textDirection": ""
   },

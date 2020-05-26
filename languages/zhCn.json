@@ -47,7 +47,7 @@
       "invalidUsername": "未知的用户名。再次检查或尝试您的电子邮件地址。",
       "incorrectPassword": "您输入的用户名密码不正确"
     },
-    "confirm": "",
+    "ok": "",
     "appRestart": "",
     "textDirection": ""
   },
