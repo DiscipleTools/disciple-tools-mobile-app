@@ -7,7 +7,7 @@
       "ios",
       "android"
     ],
-    "version": "1.4.0",
+    "version": "1.5.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -28,7 +28,7 @@
     "android": {
       "package": "tools.disciple.app",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 140
+      "versionCode": 150
     },
     "description": ""
   }
