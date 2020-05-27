@@ -46,7 +46,10 @@
     "errors": {
       "invalidUsername": "未知的用戶名。再次檢查或嘗試您的電子郵件地址。",
       "incorrectPassword": "您輸入的用戶名密碼不正確"
-    }
+    },
+    "ok": "",
+    "appRestart": "",
+    "textDirection": ""
   },
   "contactsScreen": {
     "contacts": "聯絡人",

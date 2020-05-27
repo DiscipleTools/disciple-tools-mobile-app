@@ -46,7 +46,10 @@
     "errors": {
       "invalidUsername": "اسم مستخدم غير معروف. تحقق مرة أخرى أو حاول عنوان بريدك الإلكتروني.",
       "incorrectPassword": "كلمة المرور التي أدخلتها لاسم المستخدم غير صحيحة"
-    }
+    },
+    "ok": "",
+    "appRestart": "",
+    "textDirection": ""
   },
   "contactsScreen": {
     "contacts": "المتواصلون",

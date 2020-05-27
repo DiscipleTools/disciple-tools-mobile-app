@@ -46,7 +46,10 @@
     "errors": {
       "invalidUsername": "Неизвестное имя пользователя. Проверьте еще раз или попробуйте свой адрес электронной почты.",
       "incorrectPassword": "Неверный пароль для этого пользователя"
-    }
+    },
+    "ok": "",
+    "appRestart": "",
+    "textDirection": ""
   },
   "contactsScreen": {
     "contacts": "Контакты",

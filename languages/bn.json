@@ -46,7 +46,10 @@
     "errors": {
       "invalidUsername": "অজানা ব্যবহারকারীর নাম। আবার চেক করুন বা আপনার ইমেল ঠিকানা চেষ্টা করুন।",
       "incorrectPassword": "আপনি ব্যবহারকারীর জন্য প্রবেশ করা পাসওয়ার্ডটি ভুল"
-    }
+    },
+    "ok": "",
+    "appRestart": "",
+    "textDirection": ""
   },
   "contactsScreen": {
     "contacts": "যোগাযোগ",

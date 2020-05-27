@@ -902,7 +902,10 @@ export default function groupsReducer(state = initialState, action) {
         );
       } else {
         // Get geonames by queryText
-        (oldGeonames = newState.geonames), (geonamesToAdd = []);
+        /* eslint-disable */
+        oldGeonames = newState.geonames;
+        geonamesToAdd = [];
+        /* eslint-enable */
         foundGeonames = filteredGeonames.map((geoname) => ({
           value: geoname.ID,
           name: geoname.name,
