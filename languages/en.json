@@ -19,17 +19,18 @@
     "cancel": "Cancel",
     "save": "Save",
     "online": "Online",
+    "offline": "offline",
     "language": "Language",
     "search": "Search",
     "membersActivity": "Members",
-    "offline": "offline",
     "moreFields": "More Fields",
-    "nameRequired": "Name required"
+    "nameRequired": "Name required",
+    "close": "Close"
   },
   "loginScreen": {
     "domain": {
       "label": "URL",
-      "placeholder": "E.g. myteam.disciple.tools",
+      "placeholder": "E.g. myteam.mydomain.com",
       "error": "Domain is required",
       "errorForgotPass": "Please enter URL to start to retrieve your password"
     },
@@ -47,7 +48,7 @@
       "invalidUsername": "Unknown username. Check again or try your email address.",
       "incorrectPassword": "The password you entered for username is incorrect"
     },
-    "ok": "Ok",
+    "ok": "OK",
     "appRestart": "The application will be restarted to apply the following configuration:",
     "textDirection": "Text direction"
   },
@@ -64,15 +65,23 @@
     "storybook": "Storybook",
     "logout": "Sign Out",
     "helpSupport": "Help / Support",
-    "rememberPassword": "Keep logged in",
+    "rememberPassword": "Remember Password",
     "rememberPasswordActive": "Keep logged in enabled",
-    "rememberPasswordInactive": "Keep logged in disabled"
+    "rememberPasswordInactive": "Keep logged in disabled",
+    "pinCode": {
+      "remove": "Remove PIN code",
+      "set": "Set PIN code",
+      "enter": "Enter PIN code",
+      "incorrect": "Incorrect PIN code",
+      "saved": "PIN code saved succesfully!",
+      "removed": "PIN code removed succesfully!"
+    }
   },
   "contactDetailScreen": {
     "addNewContact": "Add New Contact",
     "subAssignThisContact": "Sub-assign this contact",
     "mobile": "Phone",
-    "selectLocations": "Select locations",
+    "selectLocations": "Select Locations",
     "selectSources": "Select sources",
     "connections": "Connections",
     "addGroup": "Add Group",
@@ -81,14 +90,14 @@
     "addBaptized": "Add baptized",
     "addCoachedBy": "Add coached by",
     "addCoaching": "Add coaching",
-    "fullName": {
-      "label": "Full Name",
-      "error": "Name is required"
-    },
     "phoneNumber": "Phone Number",
     "initialComment": "Initial Comment",
     "socialMedia": "Social Media",
     "noContactCommentPlacheHolder": "There are not any contact comments currently available.",
+    "fullName": {
+      "label": "Full Name",
+      "error": "Name is required"
+    },
     "noContactCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
     "noContactCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your contact comment."
   },
@@ -99,16 +108,16 @@
     "searchPeerGroups": "Search peer groups",
     "childGroup": "Child Group",
     "searchChildGroups": "Search child groups",
-    "groupName": {
-      "label": "Group Name",
-      "error": "Name is required"
-    },
     "addMember": "Add Member",
     "noGroupCommentPlacheHolder": "There are not any group comments currently available.",
     "noGroupCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
     "noGroupCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your group comment.",
     "selectLocations": "Select Locations",
-    "noMembersMessage": "No members. Tap here or on Edit to add some members to this group."
+    "noMembersMessage": "No members. Tap here or on Edit to add some members to this group.",
+    "groupName": {
+      "label": "Group Name",
+      "error": "Name is required"
+    }
   },
   "notificationsScreen": {
     "notifications": "Notifications",

@@ -24,12 +24,13 @@
     "search": "Ara",
     "membersActivity": "Üyeler",
     "moreFields": "Diğer Alanlar",
-    "nameRequired": "İsim (gerekli"
+    "nameRequired": "İsim (gerekli",
+    "close": "Kapat"
   },
   "loginScreen": {
     "domain": {
-      "label": "Disciple Tools URL",
-      "placeholder": "Örnek: myteam.disciple.tools",
+      "label": "URL",
+      "placeholder": "Örnek: myteam.mydomain.com",
       "error": "Alan adı gerekli",
       "errorForgotPass": "Lütfen şifrenizi almaya başlamak için URL girin"
     },
@@ -47,9 +48,9 @@
       "invalidUsername": "Bilinmeyen kullanıcı adı. Tekrar kontrol edin veya e-posta adresinizi deneyin.",
       "incorrectPassword": "Kullanıcı adı için girdiğiniz şifre yanlış"
     },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    "ok": "tamam",
+    "appRestart": "Aşağıdaki yapılandırmayı uygulamak için uygulama yeniden başlatılır:",
+    "textDirection": "Metin yönü"
   },
   "contactsScreen": {
     "contacts": "Bağlantılarım",
@@ -66,7 +67,15 @@
     "helpSupport": "yardım / destek",
     "rememberPassword": "şifre hatırlamak",
     "rememberPasswordActive": "Oturum açmayı etkin tut",
-    "rememberPasswordInactive": "Giriş yapmayı devre dışı bırak"
+    "rememberPasswordInactive": "Giriş yapmayı devre dışı bırak",
+    "pinCode": {
+      "remove": "PIN kodunu kaldır",
+      "set": "PIN kodunu ayarla",
+      "enter": "PIN kodunu girin",
+      "incorrect": "Yanlış PIN kodu",
+      "saved": "PIN kodu başarıyla kaydedildi!",
+      "removed": "PIN kodu başarıyla kaldırıldı!"
+    }
   },
   "contactDetailScreen": {
     "addNewContact": "Yeni bağlantı ekle",
@@ -81,16 +90,16 @@
     "addBaptized": "Add baptized",
     "addCoachedBy": "Add coached by",
     "addCoaching": "Koçluk ekle",
-    "fullName": {
-      "label": "Ad Soyad",
-      "error": "İsim gerekli"
-    },
     "phoneNumber": "Telefon Numarası",
     "initialComment": "İlk Yorum",
     "socialMedia": "Sosyal Medya",
     "noContactCommentPlacheHolder": "Şu anda kullanılabilecek kişi yorumu yok.",
+    "fullName": {
+      "label": "Ad Soyad",
+      "error": "İsim gerekli"
+    },
     "noContactCommentPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
-    "noContactCommentPlacheHolderOffline": ""
+    "noContactCommentPlacheHolderOffline": "Şu anda çevrimdışısınız. İrtibat yorumunuzu yenilemek ve almak için wifi veya mobil verilere bağlı olduğunuzdan emin olun."
   },
   "groupDetailScreen": {
     "addNewGroup": "Grup Ekle",
@@ -99,16 +108,16 @@
     "searchPeerGroups": "Eş gruplarda ara",
     "childGroup": "Alt Grup",
     "searchChildGroups": "Alt gruplarda ara",
-    "groupName": {
-      "label": "Grup ismi",
-      "error": "İsim gerekli"
-    },
     "addMember": "Üye Ekle",
     "noGroupCommentPlacheHolder": "Şu anda hiçbir grup yorumu mevcut değil.",
     "noGroupCommentPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
     "noGroupCommentPlacheHolderOffline": "Şu anda çevrimdışısınız. Grup yorumunuzu yenilemek ve almak için kablosuz bağlantıya veya mobil verilere bağlı olduğunuzdan emin olun.",
     "selectLocations": "Konumları Seçin",
-    "noMembersMessage": "Üye yok. Bu gruba bazı üyeler eklemek için burayı veya Değiştir'i tıklayın."
+    "noMembersMessage": "Üye yok. Bu gruba bazı üyeler eklemek için burayı veya Değiştir'i tıklayın.",
+    "groupName": {
+      "label": "Grup ismi",
+      "error": "İsim gerekli"
+    }
   },
   "notificationsScreen": {
     "notifications": "Bildirim",

@@ -345,9 +345,11 @@ class SettingsScreen extends React.Component {
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{`${
-                this.props.pinCode.enabled ? 'Remove' : 'Set'
-              } PIN code`}</Text>
+              <Text style={styles.text}>
+                {this.props.pinCode.enabled
+                  ? i18n.t('settingsScreen.pinCode.remove')
+                  : i18n.t('settingsScreen.pinCode.set')}
+              </Text>
             </Body>
           </ListItem>
           {/* === Help / Support === */}
@@ -416,7 +418,9 @@ class SettingsScreen extends React.Component {
                     color: Colors.gray,
                     marginBottom: 5,
                   }}>
-                  {this.props.pinCode.enabled ? 'Enter PIN' : 'Set new PIN'}
+                  {this.props.pinCode.enabled
+                    ? i18n.t('settingsScreen.pinCode.enter')
+                    : i18n.t('settingsScreen.pinCode.set')}
                 </Text>
                 {this.state.incorrectPin ? (
                   <Text
@@ -426,7 +430,7 @@ class SettingsScreen extends React.Component {
                       fontSize: 14,
                       marginBottom: 5,
                     }}>
-                    {'Incorrect PIN'}
+                    {i18n.t('settingsScreen.pinCode.incorrect')}
                   </Text>
                 ) : null}
                 <SmoothPinCodeInput
@@ -445,12 +449,12 @@ class SettingsScreen extends React.Component {
                     if (!this.props.pinCode.value) {
                       //New code
                       this.savePINCode(pin);
-                      this.showToast('PIN code saved succesfully!.');
+                      this.showToast(i18n.t('settingsScreen.pinCode.saved'));
                       this.toggleShowPIN();
                     } else if (pin === this.props.pinCode.value) {
                       //input correct pin
                       this.removePINCode();
-                      this.showToast('PIN code removed succesfully!.');
+                      this.showToast(i18n.t('settingsScreen.pinCode.removed'));
                       this.toggleShowPIN();
                     } else {
                       this.setState({
@@ -471,7 +475,7 @@ class SettingsScreen extends React.Component {
                     marginTop: 20,
                   }}
                   onPress={this.toggleShowPIN}>
-                  <Text style={{ color: '#FFFFFF' }}>{'Close'}</Text>
+                  <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.close')}</Text>
                 </NbButton>
               </View>
             </KeyboardAvoidingView>

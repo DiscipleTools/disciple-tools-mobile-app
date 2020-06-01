@@ -829,7 +829,9 @@ class LoginScreen extends React.Component {
             ]}>
             <View style={styles.dialogBox}>
               <Text style={styles.dialogContent}>
-                {this.props.pinCode.enabled ? 'Enter PIN' : 'Set new PIN'}
+                {this.props.pinCode.enabled
+                  ? i18n.t('settingsScreen.pinCode.enter')
+                  : i18n.t('settingsScreen.pinCode.set')}
               </Text>
               {this.state.incorrectPin ? (
                 <Text
@@ -839,7 +841,7 @@ class LoginScreen extends React.Component {
                     fontSize: 14,
                     marginBottom: 5,
                   }}>
-                  {'Incorrect PIN'}
+                  {i18n.t('settingsScreen.pinCode.incorrect')}
                 </Text>
               ) : null}
               <SmoothPinCodeInput
@@ -872,7 +874,7 @@ class LoginScreen extends React.Component {
                 autoFocus={true}
               />
               <Button block style={styles.dialogButton} onPress={this.toggleShowPIN}>
-                <Text style={{ color: '#FFFFFF' }}>{'Close'}</Text>
+                <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.close')}</Text>
               </Button>
             </View>
           </BlurView>
