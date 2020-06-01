@@ -12,9 +12,6 @@ import Reactotron from 'reactotron-react-native';
 
 import AppNavigator from './navigation/AppNavigator';
 import { store, persistor } from './store/store';
-// import i18n from './languages';
-// This import is added to enable momentJS library (do not delete)
-import moment from './languages/moment';
 
 // notifications
 

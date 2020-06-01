@@ -26,6 +26,12 @@
     "moreFields": "Lebih banyak bidang",
     "nameRequired": "Nama (wajib"
   },
+  "appRestart": {
+    "message": "",
+    "button": "",
+    "textDirection": "",
+    "selectedLanguage": ""
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -46,10 +52,7 @@
     "errors": {
       "invalidUsername": "Nama pengguna tidak dikenal. Periksa lagi atau coba alamat email Anda.",
       "incorrectPassword": "Kata sandi yang Anda masukkan untuk nama pengguna salah"
-    },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    }
   },
   "contactsScreen": {
     "contacts": "Kontak",
@@ -66,7 +69,16 @@
     "helpSupport": "Bantuan / Dukungan",
     "rememberPassword": "ingat kata Sandi",
     "rememberPasswordActive": "Tetap masuk log diaktifkan",
-    "rememberPasswordInactive": "Tetap masuk log dinonaktifkan"
+    "rememberPasswordInactive": "Tetap masuk log dinonaktifkan",
+    "remove": "",
+    "set": "",
+    "pinCode": "",
+    "enterPin": "",
+    "setPin": "",
+    "incorrectPin": "",
+    "savedPinCode": "",
+    "removedPinCode": "",
+    "close": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Tambahkan Kontak Baru",

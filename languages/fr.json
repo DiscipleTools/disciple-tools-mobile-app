@@ -26,6 +26,12 @@
     "moreFields": "Plus de champs",
     "nameRequired": "Nom obligatoire"
   },
+  "appRestart": {
+    "message": "",
+    "button": "",
+    "textDirection": "",
+    "selectedLanguage": ""
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -46,10 +52,7 @@
     "errors": {
       "invalidUsername": "Nom d'utilisateur inconnu. Vérifiez à nouveau ou essayez votre adresse e-mail.",
       "incorrectPassword": "Le mot de passe que vous avez entré pour le nom d'utilisateur est incorrect"
-    },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    }
   },
   "contactsScreen": {
     "contacts": "Contacts",
@@ -66,7 +69,16 @@
     "helpSupport": "Aide",
     "rememberPassword": "se souvenir du mot de passe",
     "rememberPasswordActive": "Rester connecté activé",
-    "rememberPasswordInactive": "Rester connecté désactivé"
+    "rememberPasswordInactive": "Rester connecté désactivé",
+    "remove": "",
+    "set": "",
+    "pinCode": "",
+    "enterPin": "",
+    "setPin": "",
+    "incorrectPin": "",
+    "savedPinCode": "",
+    "removedPinCode": "",
+    "close": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Ajouter un nouveau contact",

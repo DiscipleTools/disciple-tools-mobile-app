@@ -26,6 +26,12 @@
     "moreFields": "আরও ক্ষেত্র",
     "nameRequired": "নাম (প্রয়োজন"
   },
+  "appRestart": {
+    "message": "",
+    "button": "",
+    "textDirection": "",
+    "selectedLanguage": ""
+  },
   "loginScreen": {
     "domain": {
       "label": "URL টি",
@@ -46,10 +52,7 @@
     "errors": {
       "invalidUsername": "অজানা ব্যবহারকারীর নাম। আবার চেক করুন বা আপনার ইমেল ঠিকানা চেষ্টা করুন।",
       "incorrectPassword": "আপনি ব্যবহারকারীর জন্য প্রবেশ করা পাসওয়ার্ডটি ভুল"
-    },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    }
   },
   "contactsScreen": {
     "contacts": "যোগাযোগ",
@@ -66,7 +69,16 @@
     "helpSupport": "সাহায্য সহযোগীতা",
     "rememberPassword": "পাসওয়ার্ড মনে",
     "rememberPasswordActive": "সক্ষম থাকা লগ ইন করুন",
-    "rememberPasswordInactive": "লগ ইন অক্ষম রাখুন"
+    "rememberPasswordInactive": "লগ ইন অক্ষম রাখুন",
+    "remove": "",
+    "set": "",
+    "pinCode": "",
+    "enterPin": "",
+    "setPin": "",
+    "incorrectPin": "",
+    "savedPinCode": "",
+    "removedPinCode": "",
+    "close": ""
   },
   "contactDetailScreen": {
     "addNewContact": "নতুন পরিচিতি যোগ করুন",

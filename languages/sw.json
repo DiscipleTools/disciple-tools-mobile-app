@@ -26,6 +26,12 @@
     "moreFields": "Mashamba Zaidi",
     "nameRequired": "Jina linalohitajika"
   },
+  "appRestart": {
+    "message": "",
+    "button": "",
+    "textDirection": "",
+    "selectedLanguage": ""
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -46,10 +52,7 @@
     "errors": {
       "invalidUsername": "Jina la mtumiaji lisilojulikana. Angalia tena au jaribu anwani yako ya barua pepe.",
       "incorrectPassword": "Nenosiri uliloliingiza jina la mtumiaji sio sahihi"
-    },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    }
   },
   "contactsScreen": {
     "contacts": "Anwani",
@@ -66,7 +69,16 @@
     "helpSupport": "Msaada / Msaada",
     "rememberPassword": "Kumbuka Nenosiri",
     "rememberPasswordActive": "Endelea kuwezeshwa",
-    "rememberPasswordInactive": "Endelea kuwa umelemazwa"
+    "rememberPasswordInactive": "Endelea kuwa umelemazwa",
+    "remove": "",
+    "set": "",
+    "pinCode": "",
+    "enterPin": "",
+    "setPin": "",
+    "incorrectPin": "",
+    "savedPinCode": "",
+    "removedPinCode": "",
+    "close": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Ongeza Mawasiliano Mpya",

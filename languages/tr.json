@@ -26,6 +26,12 @@
     "moreFields": "Diğer Alanlar",
     "nameRequired": "İsim (gerekli"
   },
+  "appRestart": {
+    "message": "",
+    "button": "",
+    "textDirection": "",
+    "selectedLanguage": ""
+  },
   "loginScreen": {
     "domain": {
       "label": "Disciple Tools URL",
@@ -46,10 +52,7 @@
     "errors": {
       "invalidUsername": "Bilinmeyen kullanıcı adı. Tekrar kontrol edin veya e-posta adresinizi deneyin.",
       "incorrectPassword": "Kullanıcı adı için girdiğiniz şifre yanlış"
-    },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    }
   },
   "contactsScreen": {
     "contacts": "Bağlantılarım",
@@ -66,7 +69,16 @@
     "helpSupport": "yardım / destek",
     "rememberPassword": "şifre hatırlamak",
     "rememberPasswordActive": "Oturum açmayı etkin tut",
-    "rememberPasswordInactive": "Giriş yapmayı devre dışı bırak"
+    "rememberPasswordInactive": "Giriş yapmayı devre dışı bırak",
+    "remove": "",
+    "set": "",
+    "pinCode": "",
+    "enterPin": "",
+    "setPin": "",
+    "incorrectPin": "",
+    "savedPinCode": "",
+    "removedPinCode": "",
+    "close": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Yeni bağlantı ekle",

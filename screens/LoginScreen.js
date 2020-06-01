@@ -25,6 +25,7 @@ import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import { BlurView } from 'expo-blur';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as Localization from 'expo-localization';
 
 import i18n from '../languages';
 import locales from '../languages/locales';
@@ -41,7 +42,6 @@ import {
 } from '../store/actions/groups.actions';
 import { getUsers } from '../store/actions/users.actions';
 import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
-import moment from '../languages/moment';
 
 const styles = StyleSheet.create({
   container: {
@@ -225,7 +225,24 @@ class LoginScreen extends React.Component {
       passwordIsInvalid: false,
       hidePassword: true,
     };
-    i18n.setLocale(props.i18n.locale, props.i18n.isRTL);
+
+    // Set locale in APP
+    if (props.i18n.locale) {
+      // Set locale and RTL in i18n Library
+      i18n.setLocale(props.i18n.locale, props.i18n.isRTL);
+    } else {
+      // On first time app launch
+      let locale = locales.find((item) => {
+        return (
+          item.code === Localization.locale ||
+          item.code.substring(0, 2) === Localization.locale.substring(0, 2)
+        );
+      });
+      // Set locale and RTL in i18n Library
+      i18n.setLocale(locale.code, locale.rtl);
+      // Set locale and RTL in State
+      this.props.setLanguage(locale.code, locale.rtl);
+    }
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -400,26 +417,16 @@ class LoginScreen extends React.Component {
       peopleGroupsRetrieved,
       usersRetrieved,
     } = this.state;
-    // If the RTL value in the store does not match what is
-    // in I18nManager (which controls content flow), call
-    // forceRTL(...) to set it in I18nManager and reload app
-    // so that new RTL value is used for content flow.
-    /* if (this.props.i18n.isRTL !== I18nManager.isRTL) {
-      I18nManager.forceRTL(this.props.i18n.isRTL);
-      // a bit of a hack to wait and make sure the reducer is persisted to storage
-      setTimeout(() => {
-        Updates.reloadFromCache();
-      }, 500);
-    } */
 
     // User logged successfully
     if (userData && prevProps.userData.token !== userData.token) {
       this.getDataLists();
       this.getUserInfo();
     }
+
     // User locale retrieved
     if (userData && userData.locale && prevProps.userData.locale !== userData.locale) {
-      this.setAppLanguage();
+      this.changeLanguage(userData.locale.replace('_', '-'), true);
     }
 
     // peopleGroupsList retrieved
@@ -456,16 +463,6 @@ class LoginScreen extends React.Component {
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
       ExpoFileSystemStorage.setItem('listsLastUpdate', listsLastUpdate);
       this.props.navigation.navigate('ContactList');
-    }
-
-    if (this.props.i18n && prevProps.i18n !== this.props.i18n) {
-      i18n.setLocale(this.props.i18n.locale, this.props.i18n.isRTL);
-      if (prevProps.i18n.isRTL !== this.props.i18n.isRTL) {
-        I18nManager.forceRTL(this.props.i18n.isRTL);
-      } else {
-        // TODO: refactor this code so this force re-render is no longer necessary
-        this.forceUpdate();
-      }
     }
 
     const userError = prevProps.userReducerError !== userReducerError && userReducerError;
@@ -529,16 +526,6 @@ class LoginScreen extends React.Component {
   componentWillUnmount() {
     this.focusListener.remove();
   }
-
-  setAppLanguage = () => {
-    let localeCode;
-    if (this.props.userData.locale.substring(0, 2) === 'zh') {
-      localeCode = this.props.userData.locale;
-    } else {
-      localeCode = this.props.userData.locale.substring(0, 2);
-    }
-    this.changeLanguage(localeCode);
-  };
 
   getDataLists = () => {
     this.props.getContactSettings(this.props.userData.domain, this.props.userData.token);
@@ -612,21 +599,20 @@ class LoginScreen extends React.Component {
   };
   /* eslint-enable class-methods-use-this, no-console */
 
-  changeLanguage(languageCode) {
-    const locale = locales.find((item) => item.code === languageCode);
-    if (locale) {
-      const isRTL = locale.direction === 'rtl';
-      //New 'isRTL' value same as old value
-      if (isRTL === this.props.i18n.isRTL) {
-        this.setState({
-          appLanguageSet: true,
-        });
-      } else {
-        this.showRestartDialog();
-      }
-      this.props.setLanguage(locale.code, isRTL);
-      // Update momentJS locale
-      moment.locale(languageCode);
+  changeLanguage(languageCode, logIn = false) {
+    let locale = locales.find((item) => {
+      return item.code === languageCode;
+    });
+    // Set locale and RTL in i18n Library
+    i18n.setLocale(locale.code, locale.rtl);
+    // Set locale and RTL in State
+    this.props.setLanguage(locale.code, locale.rtl);
+    if (locale.rtl !== this.props.i18n.isRTL) {
+      this.showRestartDialog();
+    } else if (logIn) {
+      this.setState({
+        appLanguageSet: true,
+      });
     }
   }
 
@@ -738,7 +724,9 @@ class LoginScreen extends React.Component {
             {userErrorMessage}
             <View style={[passwordStyle]}>
               <View style={{ margin: 10 }}>
-                <Text style={{ textAlign: 'left' }}>{i18n.t('loginScreen.password.label')}</Text>
+                <Text style={{ textAlign: 'left', color: '#555555' }}>
+                  {i18n.t('loginScreen.password.label')}
+                </Text>
                 <View style={{ flexDirection: 'row' }}>
                   <Icon
                     type="Ionicons"
@@ -889,14 +877,19 @@ class LoginScreen extends React.Component {
               },
             ]}>
             <View style={styles.dialogBox}>
-              <Text style={styles.dialogContent}>{i18n.t('loginScreen.appRestart')}</Text>
+              <Text style={styles.dialogContent}>{i18n.t('appRestart.message')}</Text>
               <Text style={styles.dialogContent}>
-                {i18n.t('loginScreen.textDirection') +
+                {i18n.t('appRestart.selectedLanguage') +
+                  ': ' +
+                  locales.find((item) => item.code === this.props.i18n.locale).name}
+              </Text>
+              <Text style={styles.dialogContent}>
+                {i18n.t('appRestart.textDirection') +
                   ': ' +
                   (this.props.i18n.isRTL ? 'RTL' : 'LTR')}
               </Text>
               <Button block style={styles.dialogButton} onPress={this.restartApp}>
-                <Text style={{ color: '#FFFFFF' }}>{i18n.t('loginScreen.ok')}</Text>
+                <Text style={{ color: '#FFFFFF' }}>{i18n.t('appRestart.button')}</Text>
               </Button>
             </View>
           </BlurView>

@@ -134,6 +134,20 @@ export default function userReducer(state = initialState, action) {
           value: null,
         },
       };
+    case actions.UPDATE_USER_INFO_SUCCESS: {
+      return {
+        ...newState,
+        userData: {
+          ...newState.userData,
+          locale: action.locale,
+        },
+      };
+    }
+    case actions.UPDATE_USER_INFO_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+      };
     default:
       return newState;
   }

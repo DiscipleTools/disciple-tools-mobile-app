@@ -26,6 +26,12 @@
     "moreFields": "Больше полей",
     "nameRequired": "Имя (обязательно"
   },
+  "appRestart": {
+    "message": "",
+    "button": "",
+    "textDirection": "",
+    "selectedLanguage": ""
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -46,10 +52,7 @@
     "errors": {
       "invalidUsername": "Неизвестное имя пользователя. Проверьте еще раз или попробуйте свой адрес электронной почты.",
       "incorrectPassword": "Неверный пароль для этого пользователя"
-    },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    }
   },
   "contactsScreen": {
     "contacts": "Контакты",
@@ -66,7 +69,16 @@
     "helpSupport": "Помощь / Поддержка",
     "rememberPassword": "Запомнить пароль",
     "rememberPasswordActive": "Оставайтесь в системе активным",
-    "rememberPasswordInactive": "Оставайтесь в системе отключенным"
+    "rememberPasswordInactive": "Оставайтесь в системе отключенным",
+    "remove": "",
+    "set": "",
+    "pinCode": "",
+    "enterPin": "",
+    "setPin": "",
+    "incorrectPin": "",
+    "savedPinCode": "",
+    "removedPinCode": "",
+    "close": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Добавить новый контакт",

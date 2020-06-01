@@ -1,13 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  I18nManager,
-  StyleSheet,
-  Text,
-  View,
-  KeyboardAvoidingView,
-  Dimensions,
-} from 'react-native';
+import { StyleSheet, Text, View, KeyboardAvoidingView, Dimensions } from 'react-native';
 import {
   Body,
   Button as NbButton,
@@ -16,7 +9,7 @@ import {
   Icon,
   Left,
   ListItem,
-  //    Picker,
+  Picker,
   Right,
   Switch,
   Thumbnail,
@@ -34,10 +27,11 @@ import {
   toggleRememberPassword,
   savePINCode,
   removePINCode,
+  updateUserInfo,
 } from '../store/actions/user.actions';
 import { toggleNetworkConnectivity } from '../store/actions/networkConnectivity.actions';
 import i18n from '../languages';
-//  import locales from '../languages/locales';
+import locales from '../languages/locales';
 import { BlurView } from 'expo-blur';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 
@@ -55,7 +49,7 @@ const propTypes = {
     displayName: PropTypes.string,
   }).isRequired,
   logout: PropTypes.func.isRequired,
-  //    setLanguage: PropTypes.func.isRequired,
+  setLanguage: PropTypes.func.isRequired,
   toggleNetworkConnectivity: PropTypes.func.isRequired,
   pinCode: PropTypes.shape({
     enabled: PropTypes.bool,
@@ -120,15 +114,45 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     textAlign: 'center',
   },
+  dialogBackground: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    top: 0,
+    left: 0,
+  },
+  dialogBox: {
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    marginLeft: 10,
+    marginRight: 10,
+  },
+  dialogButton: {
+    backgroundColor: Colors.tintColor,
+    borderRadius: 5,
+    width: 150,
+    alignSelf: 'center',
+    marginTop: 20,
+  },
+  dialogContent: {
+    fontSize: 20,
+    textAlign: 'center',
+    color: Colors.grayDark,
+    marginBottom: 5,
+  },
 });
 let toastError;
-let codePinRef;
 const { height, width } = Dimensions.get('window');
 class SettingsScreen extends React.Component {
   state = {
     toggleShowPIN: false,
     pin: '',
     incorrectPin: false,
+    toggleRestartDialog: false,
+    selectedNewRTLDirection: false,
+    i18n: {
+      ...this.props.i18n,
+    },
   };
 
   constructor(props) {
@@ -137,24 +161,53 @@ class SettingsScreen extends React.Component {
     this.onFABPress = this.onFABPress.bind(this);
   }
 
-  componentDidUpdate(prevProps) {
-    const { rememberPassword } = this.props;
-    // If the RTL value in the store does not match what is
-    // in I18nManager (which controls content flow), call
-    // forceRTL(...) to set it in I18nManager and reload app
-    // so that new RTL value is used for content flow.
-    if (this.props.i18n.isRTL !== I18nManager.isRTL) {
-      I18nManager.forceRTL(this.props.i18n.isRTL);
-      // a bit of a hack to wait and make sure the reducer is persisted to storage
-      setTimeout(() => {
-        Updates.reloadFromCache();
-      }, 500);
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { userData, i18n } = nextProps;
+
+    let newState = {
+      ...prevState,
+      ...i18n,
+    };
+
+    if (userData) {
+      newState = {
+        ...newState,
+        selectedNewRTLDirection: prevState.i18n.isRTL !== i18n.isRTL,
+      };
     }
+
+    return newState;
+  }
+
+  componentDidUpdate(prevProps) {
+    const { rememberPassword, userData, userReducerError } = this.props;
+
+    if (userData && prevProps.userData !== userData && userData.locale !== this.props.i18n.locale) {
+      this.changeLanguage(userData.locale.replace('_', '-'));
+    }
+
     if (rememberPassword !== undefined && prevProps.rememberPassword !== rememberPassword) {
       this.showToast(
         rememberPassword
           ? i18n.t('settingsScreen.rememberPasswordActive')
           : i18n.t('settingsScreen.rememberPasswordInactive'),
+      );
+    }
+
+    const userError = prevProps.userReducerError !== userReducerError && userReducerError;
+    if (userError) {
+      toastError.show(
+        <View>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{userError.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{userError.message}</Text>
+        </View>,
+        3000,
       );
     }
   }
@@ -241,11 +294,44 @@ class SettingsScreen extends React.Component {
     </View>
   );
 
-  render() {
-    // const languagePickerItems = locales.map((locale) => (
-    //   <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
-    // ));
+  renderLanguagePickerItems = () =>
+    locales.map((locale) => (
+      <Picker.Item label={locale.name} value={locale.code} key={locale.code} />
+    ));
 
+  selectLanguage = (languageCode) => {
+    // Set language in Server
+    this.updateUserInfo({
+      locale: languageCode.replace('-', '_'),
+    });
+  };
+
+  updateUserInfo = (userInfo) => {
+    this.props.updateUserInfo(this.props.userData.domain, this.props.userData.token, userInfo);
+  };
+
+  changeLanguage(languageCode) {
+    let locale = locales.find((item) => {
+      return item.code === languageCode;
+    });
+    // Set locale and RTL in i18n Library
+    i18n.setLocale(locale.code, locale.rtl);
+    // Set locale and RTL in State
+    this.props.setLanguage(locale.code, locale.rtl);
+    this.showRestartDialog();
+  }
+
+  showRestartDialog = () => {
+    this.setState({
+      toggleRestartDialog: true,
+    });
+  };
+
+  restartApp = () => {
+    Updates.reload();
+  };
+
+  render() {
     return (
       <Container style={styles.container}>
         {!this.props.isConnected && this.offlineBarRender()}
@@ -291,10 +377,9 @@ class SettingsScreen extends React.Component {
             </Right>
           </ListItem>
           {/* === Language === */}
-          {/*
           <ListItem icon>
             <Left>
-              <NbButton onPress={this.onFABPress}>
+              <NbButton>
                 <Icon active type="FontAwesome" name="language" />
               </NbButton>
             </Left>
@@ -303,26 +388,13 @@ class SettingsScreen extends React.Component {
             </Body>
             <Right>
               <Picker
-
-                style={{ width: 120 }}
+                style={{ width: 150 }}
                 selectedValue={this.props.i18n.locale}
-                onValueChange={(itemValue) => {
-                  const locale = locales.find(item => item.code === itemValue);
-                  if (locale) {
-                    const isRTL = locale.direction === 'rtl';
-                    // store locale/rtl instore for next load of app
-                    this.props.setLanguage(locale.code, isRTL);
-                    // set current locale for all language strings
-                    i18n.setLocale(locale.code, isRTL);
-                  }
-                }}
-                enabled={false}
-              >
-                {languagePickerItems}
+                onValueChange={this.selectLanguage}>
+                {this.renderLanguagePickerItems()}
               </Picker>
             </Right>
           </ListItem>
-          */}
           {/* === Remember password === */}
           <ListItem icon>
             <Left>
@@ -345,9 +417,13 @@ class SettingsScreen extends React.Component {
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{`${
-                this.props.pinCode.enabled ? 'Remove' : 'Set'
-              } PIN code`}</Text>
+              <Text style={styles.text}>
+                {`${
+                  this.props.pinCode.enabled
+                    ? i18n.t('settingsScreen.remove')
+                    : i18n.t('settingsScreen.set')
+                } ${i18n.t('settingsScreen.pinCode')}`}
+              </Text>
             </Body>
           </ListItem>
           {/* === Help / Support === */}
@@ -416,7 +492,9 @@ class SettingsScreen extends React.Component {
                     color: Colors.gray,
                     marginBottom: 5,
                   }}>
-                  {this.props.pinCode.enabled ? 'Enter PIN' : 'Set new PIN'}
+                  {this.props.pinCode.enabled
+                    ? i18n.t('settingsScreen.enterPin')
+                    : i18n.t('settingsScreen.setPin')}
                 </Text>
                 {this.state.incorrectPin ? (
                   <Text
@@ -426,7 +504,7 @@ class SettingsScreen extends React.Component {
                       fontSize: 14,
                       marginBottom: 5,
                     }}>
-                    {'Incorrect PIN'}
+                    {i18n.t('settingsScreen.incorrectPin')}
                   </Text>
                 ) : null}
                 <SmoothPinCodeInput
@@ -445,12 +523,12 @@ class SettingsScreen extends React.Component {
                     if (!this.props.pinCode.value) {
                       //New code
                       this.savePINCode(pin);
-                      this.showToast('PIN code saved succesfully!.');
+                      this.showToast(i18n.t('settingsScreen.savedPinCode'));
                       this.toggleShowPIN();
                     } else if (pin === this.props.pinCode.value) {
                       //input correct pin
                       this.removePINCode();
-                      this.showToast('PIN code removed succesfully!.');
+                      this.showToast(i18n.t('settingsScreen.removedPinCode'));
                       this.toggleShowPIN();
                     } else {
                       this.setState({
@@ -471,10 +549,41 @@ class SettingsScreen extends React.Component {
                     marginTop: 20,
                   }}
                   onPress={this.toggleShowPIN}>
-                  <Text style={{ color: '#FFFFFF' }}>{'Close'}</Text>
+                  <Text style={{ color: '#FFFFFF' }}>{i18n.t('settingsScreen.close')}</Text>
                 </NbButton>
               </View>
             </KeyboardAvoidingView>
+          </BlurView>
+        ) : null}
+        {this.state.toggleRestartDialog ? (
+          <BlurView
+            tint="dark"
+            intensity={50}
+            style={[
+              styles.dialogBackground,
+              {
+                width: width,
+                height: height,
+              },
+            ]}>
+            <View style={styles.dialogBox}>
+              <Text style={styles.dialogContent}>{i18n.t('appRestart.message')}</Text>
+              <Text style={styles.dialogContent}>
+                {i18n.t('appRestart.selectedLanguage') +
+                  ': ' +
+                  locales.find((item) => item.code === this.props.i18n.locale).name}
+              </Text>
+              {this.state.selectedNewRTLDirection ? (
+                <Text style={styles.dialogContent}>
+                  {i18n.t('appRestart.textDirection') +
+                    ': ' +
+                    (this.props.i18n.isRTL ? 'RTL' : 'LTR')}
+                </Text>
+              ) : null}
+              <NbButton block style={styles.dialogButton} onPress={this.restartApp}>
+                <Text style={{ color: '#FFFFFF' }}>{i18n.t('appRestart.button')}</Text>
+              </NbButton>
+            </View>
           </BlurView>
         ) : null}
       </Container>
@@ -483,13 +592,16 @@ class SettingsScreen extends React.Component {
 }
 
 SettingsScreen.propTypes = propTypes;
-
+SettingsScreen.defaultProps = {
+  userReducerError: null,
+};
 const mapStateToProps = (state) => ({
   i18n: state.i18nReducer,
   isConnected: state.networkConnectivityReducer.isConnected,
   userData: state.userReducer.userData,
   rememberPassword: state.userReducer.rememberPassword,
   pinCode: state.userReducer.pinCode,
+  userReducerError: state.userReducer.error,
 });
 const mapDispatchToProps = (dispatch) => ({
   toggleNetworkConnectivity: (isConnected) => {
@@ -509,6 +621,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   removePINCode: () => {
     dispatch(removePINCode());
+  },
+  updateUserInfo: (domain, token, userInfo) => {
+    dispatch(updateUserInfo(domain, token, userInfo));
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsScreen);

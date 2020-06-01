@@ -26,6 +26,12 @@
     "moreFields": "更多领域",
     "nameRequired": "姓名必填"
   },
+  "appRestart": {
+    "message": "",
+    "button": "",
+    "textDirection": "",
+    "selectedLanguage": ""
+  },
   "loginScreen": {
     "domain": {
       "label": "网址",
@@ -46,10 +52,7 @@
     "errors": {
       "invalidUsername": "未知的用户名。再次检查或尝试您的电子邮件地址。",
       "incorrectPassword": "您输入的用户名密码不正确"
-    },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    }
   },
   "contactsScreen": {
     "contacts": "联络人",
@@ -66,7 +69,16 @@
     "helpSupport": "帮助支持",
     "rememberPassword": "记住密码",
     "rememberPasswordActive": "保持登录状态",
-    "rememberPasswordInactive": "保持登录状态已禁用"
+    "rememberPasswordInactive": "保持登录状态已禁用",
+    "remove": "",
+    "set": "",
+    "pinCode": "",
+    "enterPin": "",
+    "setPin": "",
+    "incorrectPin": "",
+    "savedPinCode": "",
+    "removedPinCode": "",
+    "close": ""
   },
   "contactDetailScreen": {
     "addNewContact": "新增联络人",

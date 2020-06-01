@@ -26,6 +26,12 @@
     "moreFields": "Meer velden",
     "nameRequired": "Naam (vereist"
   },
+  "appRestart": {
+    "message": "",
+    "button": "",
+    "textDirection": "",
+    "selectedLanguage": ""
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -46,10 +52,7 @@
     "errors": {
       "invalidUsername": "Onbekende gebruikersnaam. Controleer het opnieuw of probeer uw e-mailadres.",
       "incorrectPassword": "Het wachtwoord dat u hebt ingevoerd voor de gebruikersnaam is onjuist"
-    },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    }
   },
   "contactsScreen": {
     "contacts": "Contacten",
@@ -66,7 +69,16 @@
     "helpSupport": "Help & Ondersteuning",
     "rememberPassword": "Onthoud wachtwoord",
     "rememberPasswordActive": "Blijf ingelogd ingeschakeld",
-    "rememberPasswordInactive": "Blijf ingelogd uitgeschakeld"
+    "rememberPasswordInactive": "Blijf ingelogd uitgeschakeld",
+    "remove": "",
+    "set": "",
+    "pinCode": "",
+    "enterPin": "",
+    "setPin": "",
+    "incorrectPin": "",
+    "savedPinCode": "",
+    "removedPinCode": "",
+    "close": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Voeg nieuw contact toe",

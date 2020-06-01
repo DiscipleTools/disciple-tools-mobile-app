@@ -26,6 +26,12 @@
     "moreFields": "زمینه های بیشتر",
     "nameRequired": "نام لازم است"
   },
+  "appRestart": {
+    "message": "",
+    "button": "",
+    "textDirection": "",
+    "selectedLanguage": ""
+  },
   "loginScreen": {
     "domain": {
       "label": "آدرس اینترنتی",
@@ -46,10 +52,7 @@
     "errors": {
       "invalidUsername": "نام کاربری ناشناخته دوباره بررسی کنید یا آدرس ایمیل خود را امتحان کنید.",
       "incorrectPassword": "گذرواژه‌ای که برای نام کاربری خود وارد کردید اشتباه است"
-    },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    }
   },
   "contactsScreen": {
     "contacts": "مخاطب",
@@ -66,7 +69,16 @@
     "helpSupport": "راهنما / پشتیبانی",
     "rememberPassword": "به یاد داشته باشید کلمه کلیدی",
     "rememberPasswordActive": "فعال شوید",
-    "rememberPasswordInactive": "وارد سیستم غیرفعال شوید"
+    "rememberPasswordInactive": "وارد سیستم غیرفعال شوید",
+    "remove": "",
+    "set": "",
+    "pinCode": "",
+    "enterPin": "",
+    "setPin": "",
+    "incorrectPin": "",
+    "savedPinCode": "",
+    "removedPinCode": "",
+    "close": ""
   },
   "contactDetailScreen": {
     "addNewContact": "مخاطب جدید اضافه کنید",

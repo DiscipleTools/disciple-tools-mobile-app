@@ -26,6 +26,12 @@
     "moreFields": "المزيد من الحقول",
     "nameRequired": "الاسم مطلوب"
   },
+  "appRestart": {
+    "message": "",
+    "button": "",
+    "textDirection": "",
+    "selectedLanguage": ""
+  },
   "loginScreen": {
     "domain": {
       "label": "اسم نطاق أدوات التلمذة",
@@ -46,10 +52,7 @@
     "errors": {
       "invalidUsername": "اسم مستخدم غير معروف. تحقق مرة أخرى أو حاول عنوان بريدك الإلكتروني.",
       "incorrectPassword": "كلمة المرور التي أدخلتها لاسم المستخدم غير صحيحة"
-    },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    }
   },
   "contactsScreen": {
     "contacts": "المتواصلون",
@@ -66,7 +69,16 @@
     "helpSupport": "ساعد لدعم",
     "rememberPassword": "تذكر كلمة المرور",
     "rememberPasswordActive": "تمكين تسجيل الدخول باستمرار",
-    "rememberPasswordInactive": "حافظ على تسجيل الدخول معطلة"
+    "rememberPasswordInactive": "حافظ على تسجيل الدخول معطلة",
+    "remove": "",
+    "set": "",
+    "pinCode": "",
+    "enterPin": "",
+    "setPin": "",
+    "incorrectPin": "",
+    "savedPinCode": "",
+    "removedPinCode": "",
+    "close": ""
   },
   "contactDetailScreen": {
     "addNewContact": "إضافة جهة اتصال جديدة",

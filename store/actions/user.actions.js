@@ -26,6 +26,11 @@ export const REMEMBER_PASSWORD = 'REMEMBER_PASSWORD';
 export const SAVE_PIN_CODE = 'SAVE_PIN_CODE';
 export const REMOVE_PIN_CODE = 'REMOVE_PIN_CODE';
 
+export const UPDATE_USER_INFO = 'UPDATE_USER_INFO';
+export const UPDATE_USER_INFO_RESPONSE = 'UPDATE_USER_INFO_RESPONSE';
+export const UPDATE_USER_INFO_SUCCESS = 'UPDATE_USER_INFO_SUCCESS';
+export const UPDATE_USER_INFO_FAILURE = 'UPDATE_USER_INFO_FAILURE';
+
 /*
  * Action Creators
  */
@@ -68,4 +73,8 @@ export function savePINCode(value) {
 
 export function removePINCode() {
   return { type: REMOVE_PIN_CODE };
+}
+
+export function updateUserInfo(domain, token, userInfo) {
+  return { type: UPDATE_USER_INFO, domain, token, userInfo };
 }

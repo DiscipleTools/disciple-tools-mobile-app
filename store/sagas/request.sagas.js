@@ -151,6 +151,12 @@ export default function* requestSaga() {
               payload: { data: { location_grid: list }, status: 200 },
             });
           }
+          if (payload.data.method === 'POST' && payload.action.includes('UPDATE_USER_INFO')) {
+            yield put({
+              type: payload.action,
+              payload: { data: {}, status: 200 },
+            });
+          }
         }
       }
     } else if (request) {

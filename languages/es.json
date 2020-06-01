@@ -26,6 +26,12 @@
     "moreFields": "Más Campos",
     "nameRequired": "Nombre requerido"
   },
+  "appRestart": {
+    "message": "La aplicación sera reiniciada para aplicar la siguiente configuración:",
+    "button": "De acuerdo",
+    "textDirection": "Dirección del texto",
+    "selectedLanguage": "Lenguaje seleccionado"
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -46,10 +52,7 @@
     "errors": {
       "invalidUsername": "Nombre de usuario desconocido. Vuelve a consultar o prueba tu dirección de correo electrónico.",
       "incorrectPassword": "La contraseña que ingresó para el usuario es incorrecta"
-    },
-    "ok": "Muy bien",
-    "appRestart": "La aplicación sera reiniciada para aplicar la siguiente configuración:",
-    "textDirection": "Dirección del texto"
+    }
   },
   "contactsScreen": {
     "contacts": "Contactos",
@@ -66,7 +69,16 @@
     "helpSupport": "Ayuda / Soporte",
     "rememberPassword": "Mantener iniciada la sesión",
     "rememberPasswordActive": "Mantener iniciada la sesión activo",
-    "rememberPasswordInactive": "Mantener iniciada la sesión inactivo"
+    "rememberPasswordInactive": "Mantener iniciada la sesión inactivo",
+    "remove": "Remover",
+    "set": "Agregar",
+    "pinCode": "código PIN",
+    "enterPin": "Ingrese el PIN",
+    "setPin": "Ingrese el nuevo PIN",
+    "incorrectPin": "PIN incorrecto",
+    "savedPinCode": "El código PIN se ha guardado correctamente!.",
+    "removedPinCode": "El código PIN se ha removido correctamente!.",
+    "close": "Cerrar"
   },
   "contactDetailScreen": {
     "addNewContact": "Crear contacto",

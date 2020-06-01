@@ -26,6 +26,12 @@
     "moreFields": "More Fields",
     "nameRequired": "Name required"
   },
+  "appRestart": {
+    "message": "The application will be restarted to apply the following configuration:",
+    "button": "Ok",
+    "textDirection": "Text direction",
+    "selectedLanguage": "Selected language"
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -46,10 +52,7 @@
     "errors": {
       "invalidUsername": "Unknown username. Check again or try your email address.",
       "incorrectPassword": "The password you entered for username is incorrect"
-    },
-    "ok": "Ok",
-    "appRestart": "The application will be restarted to apply the following configuration:",
-    "textDirection": "Text direction"
+    }
   },
   "contactsScreen": {
     "contacts": "Contacts",
@@ -66,7 +69,16 @@
     "helpSupport": "Help / Support",
     "rememberPassword": "Keep logged in",
     "rememberPasswordActive": "Keep logged in enabled",
-    "rememberPasswordInactive": "Keep logged in disabled"
+    "rememberPasswordInactive": "Keep logged in disabled",
+    "remove": "Remove",
+    "set": "Set",
+    "pinCode": "PIN code",
+    "enterPin": "Enter PIN",
+    "setPin": "Set new PIN",
+    "incorrectPin": "Incorrect PIN",
+    "savedPinCode": "PIN code saved succesfully!.",
+    "removedPinCode": "PIN code removed succesfully!.",
+    "close": "Close"
   },
   "contactDetailScreen": {
     "addNewContact": "Add New Contact",

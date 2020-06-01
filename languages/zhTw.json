@@ -26,6 +26,12 @@
     "moreFields": "更多領域",
     "nameRequired": "姓名必填"
   },
+  "appRestart": {
+    "message": "",
+    "button": "",
+    "textDirection": "",
+    "selectedLanguage": ""
+  },
   "loginScreen": {
     "domain": {
       "label": "網址",
@@ -46,10 +52,7 @@
     "errors": {
       "invalidUsername": "未知的用戶名。再次檢查或嘗試您的電子郵件地址。",
       "incorrectPassword": "您輸入的用戶名密碼不正確"
-    },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    }
   },
   "contactsScreen": {
     "contacts": "聯絡人",
@@ -66,7 +69,16 @@
     "helpSupport": "幫助支持",
     "rememberPassword": "記住密碼",
     "rememberPasswordActive": "保持登錄狀態",
-    "rememberPasswordInactive": "保持登錄狀態已禁用"
+    "rememberPasswordInactive": "保持登錄狀態已禁用",
+    "remove": "",
+    "set": "",
+    "pinCode": "",
+    "enterPin": "",
+    "setPin": "",
+    "incorrectPin": "",
+    "savedPinCode": "",
+    "removedPinCode": "",
+    "close": ""
   },
   "contactDetailScreen": {
     "addNewContact": "新增聯絡人",

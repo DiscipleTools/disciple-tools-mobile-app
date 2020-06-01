@@ -1,72 +1,72 @@
 export default [
   {
-    code: 'en',
+    code: 'en-US',
     name: 'English',
-    direction: 'ltr',
-  },
-  {
-    code: 'bn',
-    name: 'বাংলা',
-    direction: 'ltr',
-  },
-  {
-    code: 'es',
-    name: 'Español',
-    direction: 'ltr',
-  },
-  {
-    code: 'fr',
-    name: 'Français',
-    direction: 'ltr',
-  },
-  {
-    code: 'id',
-    name: 'bahasa Indonesia',
-    direction: 'ltr',
-  },
-  {
-    code: 'nl',
-    name: 'Nederlands',
-    direction: 'ltr',
-  },
-  {
-    code: 'pt-BR',
-    name: 'Português',
-    direction: 'ltr',
-  },
-  {
-    code: 'ru',
-    name: 'русский язык',
-    direction: 'ltr',
-  },
-  {
-    code: 'sw',
-    name: 'Kiswahili',
-    direction: 'ltr',
-  },
-  {
-    code: 'tr',
-    name: 'Türkçe',
-    direction: 'ltr',
-  },
-  {
-    code: 'zh-hans',
-    name: '汉语',
-    direction: 'ltr',
-  },
-  {
-    code: 'zh-hant',
-    name: '漢語',
-    direction: 'ltr',
+    rtl: false,
   },
   {
     code: 'ar',
     name: 'عربي',
-    direction: 'rtl',
+    rtl: true,
   },
   {
-    code: 'fa',
+    code: 'bn-BD',
+    name: 'বাংলা',
+    rtl: true,
+  },
+  {
+    code: 'es-ES',
+    name: 'Español',
+    rtl: false,
+  },
+  {
+    code: 'fa-IR',
     name: 'فارسی',
-    direction: 'rtl',
+    rtl: true,
+  },
+  {
+    code: 'fr-FR',
+    name: 'Français',
+    rtl: false,
+  },
+  {
+    code: 'id-ID',
+    name: 'bahasa Indonesia',
+    rtl: false,
+  },
+  {
+    code: 'nl-NL',
+    name: 'Nederlands',
+    rtl: false,
+  },
+  {
+    code: 'pt-BR',
+    name: 'Português',
+    rtl: false,
+  },
+  {
+    code: 'ru-RU',
+    name: 'русский язык',
+    rtl: false,
+  },
+  {
+    code: 'sw',
+    name: 'Kiswahili',
+    rtl: true,
+  },
+  {
+    code: 'tr-TR',
+    name: 'Türkçe',
+    rtl: false,
+  },
+  {
+    code: 'zh-CN',
+    name: '汉语',
+    rtl: false,
+  },
+  {
+    code: 'zh-TW',
+    name: '漢語',
+    rtl: false,
   },
 ];
