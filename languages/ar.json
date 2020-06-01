@@ -24,12 +24,13 @@
     "search": "بحث",
     "membersActivity": "أفراد",
     "moreFields": "المزيد من الحقول",
-    "nameRequired": "الاسم مطلوب"
+    "nameRequired": "الاسم مطلوب",
+    "close": "قريب"
   },
   "loginScreen": {
     "domain": {
       "label": "اسم نطاق أدوات التلمذة",
-      "placeholder": "مثلاً: myteam.disciple.tools",
+      "placeholder": "مثلاً: myteam.mydomain.com",
       "error": "اسم النطاق مطلوب",
       "errorForgotPass": "الرجاء إدخال عنوان URL للبدء في استعادة كلمة المرور الخاصة بك"
     },
@@ -46,7 +47,10 @@
     "errors": {
       "invalidUsername": "اسم مستخدم غير معروف. تحقق مرة أخرى أو حاول عنوان بريدك الإلكتروني.",
       "incorrectPassword": "كلمة المرور التي أدخلتها لاسم المستخدم غير صحيحة"
-    }
+    },
+    "ok": "حسنا",
+    "appRestart": "سيتم إعادة تشغيل التطبيق لتطبيق التكوين التالي:",
+    "textDirection": "اتجاه النص"
   },
   "contactsScreen": {
     "contacts": "المتواصلون",
@@ -58,12 +62,20 @@
     "settings": "الإعدادات",
     "networkUnavailable": "الشبكة غير متاحة الآن في وضع عدم الاتصال بالانترنت",
     "networkAvailable": "تم العثور علي شبكة. العودة لوضع الاتصال بالانترنت",
-    "storybook": "القصص القصيرة",
+    "storybook": "قصة",
     "logout": "تسجيل الخروج",
     "helpSupport": "ساعد لدعم",
     "rememberPassword": "تذكر كلمة المرور",
     "rememberPasswordActive": "تمكين تسجيل الدخول باستمرار",
-    "rememberPasswordInactive": "حافظ على تسجيل الدخول معطلة"
+    "rememberPasswordInactive": "حافظ على تسجيل الدخول معطلة",
+    "pinCode": {
+      "remove": "إزالة رمز PIN",
+      "set": "قم بتعيين رمز PIN",
+      "enter": "أدخل رمز PIN",
+      "incorrect": "رمز PIN غير صحيح",
+      "saved": "تم حفظ رمز PIN بنجاح!",
+      "removed": "تمت إزالة رمز PIN بنجاح!"
+    }
   },
   "contactDetailScreen": {
     "addNewContact": "إضافة جهة اتصال جديدة",
@@ -78,16 +90,16 @@
     "addBaptized": "إضافة مُعمّد",
     "addCoachedBy": "إضافة المدربين من قبل",
     "addCoaching": "إضافة التدريب",
-    "fullName": {
-      "label": "الاسم الكامل",
-      "error": "مطلوب اسم"
-    },
     "phoneNumber": "رقم الهاتف",
     "initialComment": "تعليق أولي",
     "socialMedia": "وسائل التواصل الاجتماعي",
     "noContactCommentPlacheHolder": "لا توجد أي تعليقات اتصال متاحة حاليا.",
+    "fullName": {
+      "label": "الاسم الكامل",
+      "error": "مطلوب اسم"
+    },
     "noContactCommentPlacheHolder1": "قد تكون هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث وحاول مرة أخرى.",
-    "noContactCommentPlacheHolderOffline": ""
+    "noContactCommentPlacheHolderOffline": "أنت الآن في وضع عدم الاتصال. تأكد من أنك متصل بشبكة wifi أو بيانات الجوال لتحديث والحصول على تعليق الاتصال الخاص بك."
   },
   "groupDetailScreen": {
     "addNewGroup": "إضافة مجموعة جديدة",
@@ -96,16 +108,16 @@
     "searchPeerGroups": "بحث مجموعات الأقران",
     "childGroup": "ربط المجموعة الإبن",
     "searchChildGroups": "بحث المجموعة الإبن",
-    "groupName": {
-      "label": "أسم المجموعة",
-      "error": "مطلوب اسم"
-    },
     "addMember": "إضافة عضو",
     "noGroupCommentPlacheHolder": "لا توجد أي تعليقات جماعية متاحة حاليًا.",
     "noGroupCommentPlacheHolder1": "ربما كانت هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث والمحاولة مرة أخرى.",
     "noGroupCommentPlacheHolderOffline": "أنت غير متصل حاليًا. تأكد من اتصالك بشبكة wifi أو بيانات الجوال من أجل التحديث والحصول على تعليق مجموعتك.",
     "selectLocations": "اختر المواقع",
-    "noMembersMessage": "لا يوجد أعضاء. انقر هنا أو على \"تعديل\" لإضافة بعض الأعضاء إلى هذه المجموعة."
+    "noMembersMessage": "لا يوجد أعضاء. انقر هنا أو على \"تعديل\" لإضافة بعض الأعضاء إلى هذه المجموعة.",
+    "groupName": {
+      "label": "أسم المجموعة",
+      "error": "مطلوب اسم"
+    }
   },
   "notificationsScreen": {
     "notifications": "إخطارات",

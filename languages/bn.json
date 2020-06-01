@@ -24,12 +24,13 @@
     "search": "অনুসন্ধান করুন",
     "membersActivity": "সদস্য",
     "moreFields": "আরও ক্ষেত্র",
-    "nameRequired": "নাম (প্রয়োজন"
+    "nameRequired": "নাম (প্রয়োজন",
+    "close": "ঘনিষ্ঠ"
   },
   "loginScreen": {
     "domain": {
       "label": "URL টি",
-      "placeholder": "উদাহরণস্বরূপ myteam.disciple.tools",
+      "placeholder": "উদাহরণস্বরূপ myteam.mydomain.com",
       "error": "ডোমেন প্রয়োজনীয়",
       "errorForgotPass": "আপনার পাসওয়ার্ড পুনরুদ্ধার করতে URL টি প্রবেশ করুন"
     },
@@ -46,7 +47,10 @@
     "errors": {
       "invalidUsername": "অজানা ব্যবহারকারীর নাম। আবার চেক করুন বা আপনার ইমেল ঠিকানা চেষ্টা করুন।",
       "incorrectPassword": "আপনি ব্যবহারকারীর জন্য প্রবেশ করা পাসওয়ার্ডটি ভুল"
-    }
+    },
+    "ok": "ঠিক আছে",
+    "appRestart": "নিম্নলিখিত কনফিগারেশন প্রয়োগ করার জন্য অ্যাপ্লিকেশনটি আবার শুরু হবে:",
+    "textDirection": "লেখার দিকবিন্যাস"
   },
   "contactsScreen": {
     "contacts": "যোগাযোগ",
@@ -63,7 +67,15 @@
     "helpSupport": "সাহায্য সহযোগীতা",
     "rememberPassword": "পাসওয়ার্ড মনে",
     "rememberPasswordActive": "সক্ষম থাকা লগ ইন করুন",
-    "rememberPasswordInactive": "লগ ইন অক্ষম রাখুন"
+    "rememberPasswordInactive": "লগ ইন অক্ষম রাখুন",
+    "pinCode": {
+      "remove": "পিন কোড সরান",
+      "set": "পিন কোড সেট করুন",
+      "enter": "পিন কোড প্রবেশ করান",
+      "incorrect": "ভুল পিন কোড",
+      "saved": "পিন কোড সফলভাবে সংরক্ষণ করা হয়েছে!",
+      "removed": "পিন কোড সফলভাবে সরানো হয়েছে!"
+    }
   },
   "contactDetailScreen": {
     "addNewContact": "নতুন পরিচিতি যোগ করুন",
@@ -78,15 +90,16 @@
     "addBaptized": "বাপ্তিস্ম যুক্ত করুন",
     "addCoachedBy": "দ্বারা প্রশিক্ষিত যোগ করুন",
     "addCoaching": "কোচিং যোগ করুন",
-    "fullName": {
-      "label": "পুরো নাম",
-      "error": "নাম প্রয়োজন"
-    },
     "phoneNumber": "ফোন নম্বর",
     "initialComment": "প্রাথমিক মন্তব্য",
     "socialMedia": "সামাজিক মাধ্যম",
     "noContactCommentPlacheHolder": "বর্তমানে কোনও যোগাযোগের মন্তব্য উপলব্ধ নেই।",
-    "noContactCommentPlacheHolder1": "আপনার সাইট থেকে এগুলি পেতে কোনও সমস্যা হতে পারে। রিফ্রেশ করার চেষ্টা করতে নীচে টানুন এবং আবার চেষ্টা করুন।"
+    "fullName": {
+      "label": "পুরো নাম",
+      "error": "নাম প্রয়োজন"
+    },
+    "noContactCommentPlacheHolder1": "আপনার সাইট থেকে এগুলি পেতে কোনও সমস্যা হতে পারে। রিফ্রেশ করার চেষ্টা করতে নীচে টানুন এবং আবার চেষ্টা করুন।",
+    "noContactCommentPlacheHolderOffline": "আপনি বর্তমানে অফলাইন আপনার যোগাযোগের মন্তব্যটি রিফ্রেশ করার জন্য এবং আপনি ওয়াইফাই বা মোবাইল ডেটার সাথে সংযুক্ত আছেন তা নিশ্চিত করুন।"
   },
   "groupDetailScreen": {
     "addNewGroup": "নতুন গ্রুপ যুক্ত করুন",
@@ -95,16 +108,16 @@
     "searchPeerGroups": "পিয়ার গ্রুপগুলি অনুসন্ধান করুন",
     "childGroup": "শিশু দল",
     "searchChildGroups": "শিশুদের দল অনুসন্ধান করুন Search",
-    "groupName": {
-      "label": "দলের নাম",
-      "error": "নাম প্রয়োজন"
-    },
     "addMember": "সদস্য যোগ করুন",
     "noGroupCommentPlacheHolder": "বর্তমানে কোনও গ্রুপ মন্তব্য উপলব্ধ নেই।",
     "noGroupCommentPlacheHolder1": "আপনার সাইট থেকে এগুলি পেতে কোনও সমস্যা হতে পারে। রিফ্রেশ করার চেষ্টা করতে নীচে টানুন এবং আবার চেষ্টা করুন।",
     "noGroupCommentPlacheHolderOffline": "আপনি বর্তমানে অফলাইন আপনার গ্রুপ মন্তব্যটি রিফ্রেশ করার জন্য আপনি ওয়াইফাই বা মোবাইল ডেটাতে সংযুক্ত আছেন তা নিশ্চিত করুন।",
     "selectLocations": "অবস্থান নির্বাচন করুন",
-    "noMembersMessage": "noMembersMessage"
+    "noMembersMessage": "noMembersMessage",
+    "groupName": {
+      "label": "দলের নাম",
+      "error": "নাম প্রয়োজন"
+    }
   },
   "notificationsScreen": {
     "notifications": "বিজ্ঞপ্তিগুলি",

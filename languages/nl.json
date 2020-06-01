@@ -24,12 +24,13 @@
     "search": "Zoeken",
     "membersActivity": "leden",
     "moreFields": "Meer velden",
-    "nameRequired": "Naam (vereist"
+    "nameRequired": "Naam (vereist",
+    "close": "Dichtbij"
   },
   "loginScreen": {
     "domain": {
       "label": "URL",
-      "placeholder": "Bijv. myteam.disciple.tools",
+      "placeholder": "Bijv. myteam.mydomain.com",
       "error": "Domein is verplicht",
       "errorForgotPass": "Voer de URL in om te beginnen met het ophalen van uw wachtwoord"
     },
@@ -46,7 +47,10 @@
     "errors": {
       "invalidUsername": "Onbekende gebruikersnaam. Controleer het opnieuw of probeer uw e-mailadres.",
       "incorrectPassword": "Het wachtwoord dat u hebt ingevoerd voor de gebruikersnaam is onjuist"
-    }
+    },
+    "ok": "OK",
+    "appRestart": "De applicatie wordt opnieuw opgestart om de volgende configuratie toe te passen:",
+    "textDirection": "Tekstrichting"
   },
   "contactsScreen": {
     "contacts": "Contacten",
@@ -63,7 +67,15 @@
     "helpSupport": "Help & Ondersteuning",
     "rememberPassword": "Onthoud wachtwoord",
     "rememberPasswordActive": "Blijf ingelogd ingeschakeld",
-    "rememberPasswordInactive": "Blijf ingelogd uitgeschakeld"
+    "rememberPasswordInactive": "Blijf ingelogd uitgeschakeld",
+    "pinCode": {
+      "remove": "PIN-code verwijderen",
+      "set": "Pincode instellen",
+      "enter": "Voer pincode in",
+      "incorrect": "Onjuiste pincode",
+      "saved": "PIN-code succesvol opgeslagen!",
+      "removed": "PIN-code succesvol verwijderd!"
+    }
   },
   "contactDetailScreen": {
     "addNewContact": "Voeg nieuw contact toe",
@@ -78,15 +90,16 @@
     "addBaptized": "Gedoopt toevoegen",
     "addCoachedBy": "Gecoacht door toevoegen",
     "addCoaching": "Coaching toevoegen",
-    "fullName": {
-      "label": "Voor-en achternaam",
-      "error": "Naam is vereist"
-    },
     "phoneNumber": "Telefoonnummer",
     "initialComment": "Eerste opmerking",
     "socialMedia": "Sociale media",
     "noContactCommentPlacheHolder": "Er zijn momenteel geen contactreacties beschikbaar.",
-    "noContactCommentPlacheHolder1": "Mogelijk is er een probleem opgetreden bij het ophalen van uw site. Sleep naar beneden om te proberen te vernieuwen en probeer het opnieuw."
+    "fullName": {
+      "label": "Voor-en achternaam",
+      "error": "Naam is vereist"
+    },
+    "noContactCommentPlacheHolder1": "Mogelijk is er een probleem opgetreden bij het ophalen van uw site. Sleep naar beneden om te proberen te vernieuwen en probeer het opnieuw.",
+    "noContactCommentPlacheHolderOffline": "Je bent momenteel offline. Zorg ervoor dat je verbonden bent met wifi of mobiele data om te vernieuwen en je contactcommentaar te krijgen."
   },
   "groupDetailScreen": {
     "addNewGroup": "Nieuwe groep toevoegen",
@@ -95,16 +108,16 @@
     "searchPeerGroups": "Zoek naar peergroepen",
     "childGroup": "Kind groep",
     "searchChildGroups": "Zoek kindgroepen",
-    "groupName": {
-      "label": "Groepsnaam",
-      "error": "Naam is vereist"
-    },
     "addMember": "Lid toevoegen",
     "noGroupCommentPlacheHolder": "Er zijn momenteel geen groepsreacties beschikbaar.",
     "noGroupCommentPlacheHolder1": "Er is mogelijk een probleem opgetreden bij het ophalen van uw site. Sleep omlaag om te proberen te vernieuwen en probeer het opnieuw.",
     "noGroupCommentPlacheHolderOffline": "U bent momenteel offline. Zorg ervoor dat je bent verbonden met wifi of mobiele gegevens om te vernieuwen en je groepsreactie te ontvangen.",
     "selectLocations": "Selecteer locaties",
-    "noMembersMessage": "Geen leden"
+    "noMembersMessage": "Geen leden",
+    "groupName": {
+      "label": "Groepsnaam",
+      "error": "Naam is vereist"
+    }
   },
   "notificationsScreen": {
     "notifications": "meldingen",

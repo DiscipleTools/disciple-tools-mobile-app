@@ -24,12 +24,13 @@
     "search": "搜索",
     "membersActivity": "會員",
     "moreFields": "更多領域",
-    "nameRequired": "姓名必填"
+    "nameRequired": "姓名必填",
+    "close": "關"
   },
   "loginScreen": {
     "domain": {
       "label": "網址",
-      "placeholder": "例如。 myteam.disciple.tools",
+      "placeholder": "例如。 myteam.mydomain.com",
       "error": "域是必填項",
       "errorForgotPass": "請輸入URL以開始檢索密碼"
     },
@@ -46,7 +47,10 @@
     "errors": {
       "invalidUsername": "未知的用戶名。再次檢查或嘗試您的電子郵件地址。",
       "incorrectPassword": "您輸入的用戶名密碼不正確"
-    }
+    },
+    "ok": "好",
+    "appRestart": "該應用程序將重新啟動以應用以下配置：",
+    "textDirection": "文字方向"
   },
   "contactsScreen": {
     "contacts": "聯絡人",
@@ -63,7 +67,15 @@
     "helpSupport": "幫助支持",
     "rememberPassword": "記住密碼",
     "rememberPasswordActive": "保持登錄狀態",
-    "rememberPasswordInactive": "保持登錄狀態已禁用"
+    "rememberPasswordInactive": "保持登錄狀態已禁用",
+    "pinCode": {
+      "remove": "刪除PIN碼",
+      "set": "設置PIN碼",
+      "enter": "輸入PIN碼",
+      "incorrect": "PIN碼不正確",
+      "saved": "PIN碼已成功保存！",
+      "removed": "PIN碼已成功刪除！"
+    }
   },
   "contactDetailScreen": {
     "addNewContact": "新增聯絡人",
@@ -78,16 +90,16 @@
     "addBaptized": "添加受洗",
     "addCoachedBy": "添加教練",
     "addCoaching": "添加教練",
-    "fullName": {
-      "label": "全名",
-      "error": "名稱為必填項"
-    },
     "phoneNumber": "電話號碼",
     "initialComment": "初步評論",
     "socialMedia": "社交媒體",
     "noContactCommentPlacheHolder": "當前沒有任何联系方式。",
+    "fullName": {
+      "label": "全名",
+      "error": "名稱為必填項"
+    },
     "noContactCommentPlacheHolder1": "從您的網站獲取它們可能存在問題。向下拖動以嘗試刷新，然後重試。",
-    "noContactCommentPlacheHolderOffline": ""
+    "noContactCommentPlacheHolderOffline": "您目前離線。確保您已連接到wifi或移動數據，以便刷新並獲取聯繫評論。"
   },
   "groupDetailScreen": {
     "addNewGroup": "新增群組",
@@ -96,16 +108,16 @@
     "searchPeerGroups": "搜索同齡人組",
     "childGroup": "兒童組",
     "searchChildGroups": "搜索子組",
-    "groupName": {
-      "label": "組的名字",
-      "error": "名稱為必填項"
-    },
     "addMember": "新增會員",
     "noGroupCommentPlacheHolder": "當前沒有任何組註釋。",
     "noGroupCommentPlacheHolder1": "從您的網站獲取它們可能存在問題。向下拖動以嘗試刷新，然後重試。",
     "noGroupCommentPlacheHolderOffline": "您目前離線。確保您已連接到wifi或移動數據，以便刷新並獲取群組評論。",
     "selectLocations": "選擇地點",
-    "noMembersMessage": "沒有成員。 單擊此處或單擊“更改”以將一些成員添加到該組。"
+    "noMembersMessage": "沒有成員。 單擊此處或單擊“更改”以將一些成員添加到該組。",
+    "groupName": {
+      "label": "組的名字",
+      "error": "名稱為必填項"
+    }
   },
   "notificationsScreen": {
     "notifications": "通知事項",

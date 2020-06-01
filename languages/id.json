@@ -24,12 +24,13 @@
     "search": "Pencarian",
     "membersActivity": "Anggota",
     "moreFields": "Lebih banyak bidang",
-    "nameRequired": "Nama (wajib"
+    "nameRequired": "Nama (wajib",
+    "close": "Menutup"
   },
   "loginScreen": {
     "domain": {
       "label": "URL",
-      "placeholder": "Misalnya. myteam.disciple.tools",
+      "placeholder": "Misalnya. myteam.mydomain.com",
       "error": "Diperlukan domain",
       "errorForgotPass": "Silakan masukkan URL untuk mulai mengambil kata sandi Anda"
     },
@@ -46,7 +47,10 @@
     "errors": {
       "invalidUsername": "Nama pengguna tidak dikenal. Periksa lagi atau coba alamat email Anda.",
       "incorrectPassword": "Kata sandi yang Anda masukkan untuk nama pengguna salah"
-    }
+    },
+    "ok": "baik",
+    "appRestart": "Aplikasi akan dihidupkan ulang untuk menerapkan konfigurasi berikut:",
+    "textDirection": "Arah teks"
   },
   "contactsScreen": {
     "contacts": "Kontak",
@@ -63,7 +67,15 @@
     "helpSupport": "Bantuan / Dukungan",
     "rememberPassword": "ingat kata Sandi",
     "rememberPasswordActive": "Tetap masuk log diaktifkan",
-    "rememberPasswordInactive": "Tetap masuk log dinonaktifkan"
+    "rememberPasswordInactive": "Tetap masuk log dinonaktifkan",
+    "pinCode": {
+      "remove": "Hapus kode PIN",
+      "set": "Setel kode PIN",
+      "enter": "Masukkan kode PIN",
+      "incorrect": "Kode PIN salah",
+      "saved": "Kode PIN berhasil disimpan!",
+      "removed": "Kode PIN berhasil dihapus!"
+    }
   },
   "contactDetailScreen": {
     "addNewContact": "Tambahkan Kontak Baru",
@@ -78,15 +90,16 @@
     "addBaptized": "Tambahkan yang dibaptis",
     "addCoachedBy": "Tambahkan yang dilatih oleh",
     "addCoaching": "Tambahkan pelatihan",
-    "fullName": {
-      "label": "Nama lengkap",
-      "error": "Nama harus diisi"
-    },
     "phoneNumber": "Nomor telepon",
     "initialComment": "Komentar awal",
     "socialMedia": "Media sosial",
     "noContactCommentPlacheHolder": "Tidak ada komentar kontak yang tersedia saat ini.",
-    "noContactCommentPlacheHolder1": "Mungkin ada masalah saat mendapatkannya dari situs Anda. Seret ke bawah untuk mencoba menyegarkan dan coba lagi."
+    "fullName": {
+      "label": "Nama lengkap",
+      "error": "Nama harus diisi"
+    },
+    "noContactCommentPlacheHolder1": "Mungkin ada masalah saat mendapatkannya dari situs Anda. Seret ke bawah untuk mencoba menyegarkan dan coba lagi.",
+    "noContactCommentPlacheHolderOffline": "Anda sedang offline. Pastikan Anda terhubung ke wifi atau data seluler untuk menyegarkan dan mendapatkan komentar kontak Anda."
   },
   "groupDetailScreen": {
     "addNewGroup": "Tambahkan Grup Baru",
@@ -95,16 +108,16 @@
     "searchPeerGroups": "Cari grup sebaya",
     "childGroup": "Kelompok Anak",
     "searchChildGroups": "Cari grup anak",
-    "groupName": {
-      "label": "Nama grup",
-      "error": "Nama harus diisi"
-    },
     "addMember": "Tambahkan anggota",
     "noGroupCommentPlacheHolder": "Tidak ada komentar grup yang tersedia saat ini.",
     "noGroupCommentPlacheHolder1": "Mungkin ada masalah saat mendapatkannya dari situs Anda. Seret ke bawah untuk mencoba menyegarkan dan coba lagi.",
     "noGroupCommentPlacheHolderOffline": "Anda sedang offline. Pastikan Anda terhubung ke wifi atau data seluler untuk menyegarkan dan mendapatkan komentar grup Anda.",
     "selectLocations": "Pilih Lokasi",
-    "noMembersMessage": "noMembersMessage"
+    "noMembersMessage": "noMembersMessage",
+    "groupName": {
+      "label": "Nama grup",
+      "error": "Nama harus diisi"
+    }
   },
   "notificationsScreen": {
     "notifications": "Notifikasi",
