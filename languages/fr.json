@@ -24,18 +24,19 @@
     "search": "Chercher",
     "membersActivity": "Membres",
     "moreFields": "Plus de champs",
-    "nameRequired": "Nom obligatoire"
+    "nameRequired": "Nom obligatoire",
+    "close": "proche"
   },
   "appRestart": {
-    "message": "",
-    "button": "",
-    "textDirection": "",
-    "selectedLanguage": ""
+    "message": "L'application sera redémarrée pour appliquer la configuration suivante:",
+    "button": "D'accord",
+    "textDirection": "Direction du texte",
+    "selectedLanguage": "Langue choisie"
   },
   "loginScreen": {
     "domain": {
       "label": "URL",
-      "placeholder": "Par exemple. myteam.disciple.tools",
+      "placeholder": "Par exemple. myteam.mydomain.com",
       "error": "Le domaine est requis",
       "errorForgotPass": "Veuillez saisir l'URL pour commencer à récupérer votre mot de passe"
     },
@@ -70,15 +71,15 @@
     "rememberPassword": "se souvenir du mot de passe",
     "rememberPasswordActive": "Rester connecté activé",
     "rememberPasswordInactive": "Rester connecté désactivé",
-    "remove": "",
-    "set": "",
-    "pinCode": "",
-    "enterPin": "",
-    "setPin": "",
-    "incorrectPin": "",
-    "savedPinCode": "",
-    "removedPinCode": "",
-    "close": ""
+    "remove": "Supprimer le code PIN",
+    "set": "Définir le code PIN",
+    "pinCode": "Code PIN",
+    "enterPin": "Entrez le code PIN",
+    "setPin": "Définir un nouveau code PIN",
+    "incorrectPin": "Code PIN incorrect",
+    "savedPinCode": "Le code PIN a été enregistré avec succès!",
+    "removedPinCode": "Le code PIN a été supprimé avec succès!",
+    "close": "Fermer"
   },
   "contactDetailScreen": {
     "addNewContact": "Ajouter un nouveau contact",
@@ -93,16 +94,16 @@
     "addBaptized": "Ajouter baptisé",
     "addCoachedBy": "Ajouter coaché par",
     "addCoaching": "Ajouter un coaching",
-    "fullName": {
-      "label": "Nom complet",
-      "error": "Nom obligatoire"
-    },
     "phoneNumber": "Numéro de téléphone",
     "initialComment": "Commentaire initial",
     "socialMedia": "Des médias sociaux",
     "noContactCommentPlacheHolder": "Aucun commentaire de contact n'est actuellement disponible.",
+    "fullName": {
+      "label": "Nom complet",
+      "error": "Nom obligatoire"
+    },
     "noContactCommentPlacheHolder1": "Il peut y avoir eu un problème pour les obtenir à partir de votre site. Faites glisser vers le bas pour essayer de rafraîchir et réessayez.",
-    "noContactCommentPlacheHolderOffline": ""
+    "noContactCommentPlacheHolderOffline": "Vous êtes actuellement hors ligne. Assurez-vous que vous êtes connecté au wifi ou aux données mobiles afin de vous rafraîchir et d'obtenir votre commentaire de contact."
   },
   "groupDetailScreen": {
     "addNewGroup": "Ajouter un nouveau groupe",
@@ -111,16 +112,16 @@
     "searchPeerGroups": "Rechercher des groupes de pairs",
     "childGroup": "Groupe d'enfants",
     "searchChildGroups": "Rechercher des groupes d'enfants",
-    "groupName": {
-      "label": "Nom de groupe",
-      "error": "Nom obligatoire"
-    },
     "addMember": "Ajouter un membre",
     "noGroupCommentPlacheHolder": "Aucun commentaire de groupe n'est actuellement disponible.",
     "noGroupCommentPlacheHolder1": "Il peut y avoir eu un problème pour les obtenir à partir de votre site. Faites glisser vers le bas pour essayer de rafraîchir et réessayez.",
     "noGroupCommentPlacheHolderOffline": "Vous êtes actuellement hors ligne. Assurez-vous que vous êtes connecté au wifi ou aux données mobiles afin de vous rafraîchir et d'obtenir les commentaires de votre groupe.",
     "selectLocations": "Sélectionner des emplacements",
-    "noMembersMessage": "Aucun membre. Appuyez ici ou sur Modifier pour ajouter des membres à ce groupe."
+    "noMembersMessage": "Aucun membre. Appuyez ici ou sur Modifier pour ajouter des membres à ce groupe.",
+    "groupName": {
+      "label": "Nom de groupe",
+      "error": "Nom obligatoire"
+    }
   },
   "notificationsScreen": {
     "notifications": "Notifications",

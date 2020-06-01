@@ -24,18 +24,19 @@
     "search": "Tafuta",
     "membersActivity": "Wajumbe",
     "moreFields": "Mashamba Zaidi",
-    "nameRequired": "Jina linalohitajika"
+    "nameRequired": "Jina linalohitajika",
+    "close": "Karibu"
   },
   "appRestart": {
-    "message": "",
-    "button": "",
-    "textDirection": "",
-    "selectedLanguage": ""
+    "message": "Maombi yataanza tena kutumia usanidi ufuatao:",
+    "button": "sawa",
+    "textDirection": "Miongozo ya maandishi",
+    "selectedLanguage": "Lugha iliyochaguliwa"
   },
   "loginScreen": {
     "domain": {
       "label": "URL",
-      "placeholder": "Kwa mfano myteam.disciple.tools",
+      "placeholder": "Kwa mfano myteam.mydomain.com",
       "error": "Kikoa inahitajika",
       "errorForgotPass": "Tafadhali ingiza URL kuanza kupata nenosiri lako"
     },
@@ -70,15 +71,15 @@
     "rememberPassword": "Kumbuka Nenosiri",
     "rememberPasswordActive": "Endelea kuwezeshwa",
     "rememberPasswordInactive": "Endelea kuwa umelemazwa",
-    "remove": "",
-    "set": "",
-    "pinCode": "",
-    "enterPin": "",
-    "setPin": "",
-    "incorrectPin": "",
-    "savedPinCode": "",
-    "removedPinCode": "",
-    "close": ""
+    "remove": "Ondoa msimbo wa Pini",
+    "set": "Weka nambari ya PIN",
+    "pinCode": "Nambari ya siri",
+    "enterPin": "Ingiza msimbo wa pini",
+    "setPin": "Weka PIN mpya",
+    "incorrectPin": "Nambari ya Pini isiyo sahihi",
+    "savedPinCode": "Nambari ya pini iliyohifadhiwa kikamilifu!",
+    "removedPinCode": "Nambari ya pini imeondolewa vyema!",
+    "close": "karibu"
   },
   "contactDetailScreen": {
     "addNewContact": "Ongeza Mawasiliano Mpya",
@@ -93,15 +94,16 @@
     "addBaptized": "Ongeza kubatizwa",
     "addCoachedBy": "Ongeza kilichofunzwa na",
     "addCoaching": "Ongeza kufundisha",
-    "fullName": {
-      "label": "Jina kamili",
-      "error": "Jina inahitajika"
-    },
     "phoneNumber": "Nambari ya simu",
     "initialComment": "Maoni ya awali",
     "socialMedia": "Mtandao wa kijamii",
     "noContactCommentPlacheHolder": "Hakuna maoni yoyote ya mawasiliano yanayopatikana kwa sasa.",
-    "noContactCommentPlacheHolder1": "Kunaweza kuwa na shida kuipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena."
+    "fullName": {
+      "label": "Jina kamili",
+      "error": "Jina inahitajika"
+    },
+    "noContactCommentPlacheHolder1": "Kunaweza kuwa na shida kuipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
+    "noContactCommentPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate maoni yako ya mawasiliano."
   },
   "groupDetailScreen": {
     "addNewGroup": "Ongeza Kundi Mpya",
@@ -110,16 +112,16 @@
     "searchPeerGroups": "Tafuta vikundi vya rika",
     "childGroup": "Kundi la watoto",
     "searchChildGroups": "Tafuta vikundi vya watoto",
-    "groupName": {
-      "label": "Jina la Kikundi",
-      "error": "Jina inahitajika"
-    },
     "addMember": "Ongeza Mwanachama",
     "noGroupCommentPlacheHolder": "Hakuna maoni yoyote ya kikundi yanayopatikana kwa sasa.",
     "noGroupCommentPlacheHolder1": "Kunaweza kuwa na shida kuzipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
     "noGroupCommentPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate maoni ya kikundi chako.",
     "selectLocations": "Chagua Maeneo",
-    "noMembersMessage": "Hakuna Wajumbe"
+    "noMembersMessage": "Hakuna Wajumbe",
+    "groupName": {
+      "label": "Jina la Kikundi",
+      "error": "Jina inahitajika"
+    }
   },
   "notificationsScreen": {
     "notifications": "Arifa",

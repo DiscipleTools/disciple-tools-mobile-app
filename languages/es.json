@@ -19,12 +19,13 @@
     "cancel": "Cancelar",
     "save": "Guardar",
     "online": "En línea",
+    "offline": "Desconectado",
     "language": "Idioma",
     "search": "Buscar",
     "membersActivity": "Miembros",
-    "offline": "Desconectado",
     "moreFields": "Más Campos",
-    "nameRequired": "Nombre requerido"
+    "nameRequired": "Nombre requerido",
+    "close": "Cerrar"
   },
   "appRestart": {
     "message": "La aplicación sera reiniciada para aplicar la siguiente configuración:",
@@ -35,7 +36,7 @@
   "loginScreen": {
     "domain": {
       "label": "URL",
-      "placeholder": "P.ej. myteam.disciple.tools",
+      "placeholder": "P.ej. myteam.mydomain.com",
       "error": "El dominio es requerido",
       "errorForgotPass": "Ingrese la URL para comenzar a recuperar su contraseña"
     },
@@ -93,16 +94,16 @@
     "addBaptized": "Buscar multiplicadores y contactos",
     "addCoachedBy": "Buscar multiplicadores y contactos",
     "addCoaching": "Buscar multiplicadores y contactos",
-    "fullName": {
-      "label": "Nombre",
-      "error": "El nombre es requerido"
-    },
     "phoneNumber": "Telefono",
     "initialComment": "Primer Comentario",
     "socialMedia": "Redes Sociales",
     "noContactCommentPlacheHolder": "No hay comentarios de contacto disponibles actualmente.",
+    "fullName": {
+      "label": "Nombre",
+      "error": "El nombre es requerido"
+    },
     "noContactCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
-    "noContactCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del contacto."
+    "noContactCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener su comentario de contacto."
   },
   "groupDetailScreen": {
     "addNewGroup": "Crear grupo",
@@ -111,16 +112,16 @@
     "searchPeerGroups": "Buscar grupos paritarios",
     "childGroup": "Grupos Subsiguientes",
     "searchChildGroups": "Buscar grupos subsiguientes",
-    "groupName": {
-      "label": "Nombre del Grupo",
-      "error": "El nombre es requerido"
-    },
     "addMember": "Añadir miembro",
     "noGroupCommentPlacheHolder": "No hay comentarios del grupo disponibles actualmente.",
     "noGroupCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
     "noGroupCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del grupo.",
     "selectLocations": "Seleccionar ubicaciones",
-    "noMembersMessage": "No hay miembros Toque aquí o en Editar para agregar algunos miembros a este grupo"
+    "noMembersMessage": "No hay miembros Toque aquí o en Editar para agregar algunos miembros a este grupo",
+    "groupName": {
+      "label": "Nombre del Grupo",
+      "error": "El nombre es requerido"
+    }
   },
   "notificationsScreen": {
     "notifications": "Notificaciones",
