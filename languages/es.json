@@ -19,17 +19,18 @@
     "cancel": "Cancelar",
     "save": "Guardar",
     "online": "En línea",
+    "offline": "Desconectado",
     "language": "Idioma",
     "search": "Buscar",
     "membersActivity": "Miembros",
-    "offline": "Desconectado",
     "moreFields": "Más Campos",
-    "nameRequired": "Nombre requerido"
+    "nameRequired": "Nombre requerido",
+    "close": "Cerrar"
   },
   "loginScreen": {
     "domain": {
       "label": "URL",
-      "placeholder": "P.ej. myteam.disciple.tools",
+      "placeholder": "P.ej. myteam.mydomain.com",
       "error": "El dominio es requerido",
       "errorForgotPass": "Ingrese la URL para comenzar a recuperar su contraseña"
     },
@@ -47,8 +48,8 @@
       "invalidUsername": "Nombre de usuario desconocido. Vuelve a consultar o prueba tu dirección de correo electrónico.",
       "incorrectPassword": "La contraseña que ingresó para el usuario es incorrecta"
     },
-    "ok": "Muy bien",
-    "appRestart": "La aplicación sera reiniciada para aplicar la siguiente configuración:",
+    "ok": "Okay",
+    "appRestart": "La aplicación se reiniciará para aplicar la siguiente configuración:",
     "textDirection": "Dirección del texto"
   },
   "contactsScreen": {
@@ -66,7 +67,15 @@
     "helpSupport": "Ayuda / Soporte",
     "rememberPassword": "Mantener iniciada la sesión",
     "rememberPasswordActive": "Mantener iniciada la sesión activo",
-    "rememberPasswordInactive": "Mantener iniciada la sesión inactivo"
+    "rememberPasswordInactive": "Mantener iniciada la sesión inactivo",
+    "pinCode": {
+      "remove": "Eliminar código PIN",
+      "set": "Establecer código PIN",
+      "enter": "Ingrese el código PIN",
+      "incorrect": "Código PIN incorrecto",
+      "saved": "¡Código PIN guardado con éxito!",
+      "removed": "¡Código PIN eliminado con éxito!"
+    }
   },
   "contactDetailScreen": {
     "addNewContact": "Crear contacto",
@@ -81,16 +90,16 @@
     "addBaptized": "Buscar multiplicadores y contactos",
     "addCoachedBy": "Buscar multiplicadores y contactos",
     "addCoaching": "Buscar multiplicadores y contactos",
-    "fullName": {
-      "label": "Nombre",
-      "error": "El nombre es requerido"
-    },
     "phoneNumber": "Telefono",
     "initialComment": "Primer Comentario",
     "socialMedia": "Redes Sociales",
     "noContactCommentPlacheHolder": "No hay comentarios de contacto disponibles actualmente.",
+    "fullName": {
+      "label": "Nombre",
+      "error": "El nombre es requerido"
+    },
     "noContactCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
-    "noContactCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del contacto."
+    "noContactCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener su comentario de contacto."
   },
   "groupDetailScreen": {
     "addNewGroup": "Crear grupo",
@@ -99,16 +108,16 @@
     "searchPeerGroups": "Buscar grupos paritarios",
     "childGroup": "Grupos Subsiguientes",
     "searchChildGroups": "Buscar grupos subsiguientes",
-    "groupName": {
-      "label": "Nombre del Grupo",
-      "error": "El nombre es requerido"
-    },
     "addMember": "Añadir miembro",
     "noGroupCommentPlacheHolder": "No hay comentarios del grupo disponibles actualmente.",
     "noGroupCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
     "noGroupCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del grupo.",
     "selectLocations": "Seleccionar ubicaciones",
-    "noMembersMessage": "No hay miembros Toque aquí o en Editar para agregar algunos miembros a este grupo"
+    "noMembersMessage": "No hay miembros Toque aquí o en Editar para agregar algunos miembros a este grupo",
+    "groupName": {
+      "label": "Nombre del Grupo",
+      "error": "El nombre es requerido"
+    }
   },
   "notificationsScreen": {
     "notifications": "Notificaciones",

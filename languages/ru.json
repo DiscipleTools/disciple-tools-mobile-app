@@ -24,12 +24,13 @@
     "search": "Поиск",
     "membersActivity": "Члены",
     "moreFields": "Больше полей",
-    "nameRequired": "Имя (обязательно"
+    "nameRequired": "Имя обязательно",
+    "close": "близко"
   },
   "loginScreen": {
     "domain": {
       "label": "URL",
-      "placeholder": "Например: myteam.disciple.tools",
+      "placeholder": "Например: myteam.mydomain.com",
       "error": "Требуется домен",
       "errorForgotPass": "Пожалуйста, введите URL, чтобы начать восстановление пароля"
     },
@@ -47,9 +48,9 @@
       "invalidUsername": "Неизвестное имя пользователя. Проверьте еще раз или попробуйте свой адрес электронной почты.",
       "incorrectPassword": "Неверный пароль для этого пользователя"
     },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    "ok": "Хорошо",
+    "appRestart": "Приложение будет перезапущено для применения следующей конфигурации:",
+    "textDirection": "Направление текста"
   },
   "contactsScreen": {
     "contacts": "Контакты",
@@ -65,8 +66,16 @@
     "logout": "Выход",
     "helpSupport": "Помощь / Поддержка",
     "rememberPassword": "Запомнить пароль",
-    "rememberPasswordActive": "Оставайтесь в системе активным",
-    "rememberPasswordInactive": "Оставайтесь в системе отключенным"
+    "rememberPasswordActive": "Режим \"Оставаться в системе\" включен",
+    "rememberPasswordInactive": "Режим \"Оставаться в системе\" выключен",
+    "pinCode": {
+      "remove": "Удалить ПИН код",
+      "set": "Установить PIN-код",
+      "enter": "Введите пин код",
+      "incorrect": "Неверный PIN-код",
+      "saved": "ПИН-код успешно сохранен!",
+      "removed": "PIN-код успешно удален!"
+    }
   },
   "contactDetailScreen": {
     "addNewContact": "Добавить новый контакт",
@@ -81,16 +90,16 @@
     "addBaptized": "Добавить крещеного",
     "addCoachedBy": "Добавить наставника",
     "addCoaching": "Добавить наставляемого",
-    "fullName": {
-      "label": "Полное имя",
-      "error": "Имя обязательно"
-    },
     "phoneNumber": "Номер телефона",
     "initialComment": "Начальный комментарий",
     "socialMedia": "Социальные сети",
     "noContactCommentPlacheHolder": "В данное время никаких комментариев по контакту нет.",
-    "noContactCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Перетащите вниз, чтобы попытаться обновить и повторить попытку.",
-    "noContactCommentPlacheHolderOffline": ""
+    "fullName": {
+      "label": "Полное имя",
+      "error": "Имя обязательно"
+    },
+    "noContactCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Попытайтесь еще раз (обновите экран, потянув его вниз).",
+    "noContactCommentPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить свой контактный комментарий."
   },
   "groupDetailScreen": {
     "addNewGroup": "Добавить новую группу",
@@ -99,16 +108,16 @@
     "searchPeerGroups": "Поиск одноранговых (пир) групп",
     "childGroup": "Дочерняя группа",
     "searchChildGroups": "Поиск дочерних групп",
-    "groupName": {
-      "label": "Имя группы",
-      "error": "Имя обязательно"
-    },
     "addMember": "Добавить участников",
     "noGroupCommentPlacheHolder": "В настоящее время нет групповых комментариев.",
     "noGroupCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Попытайтесь еще раз (обновите экран, потянув его вниз).",
     "noGroupCommentPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить комментарий группы.",
     "selectLocations": "Выберите места",
-    "noMembersMessage": "Нет участников. Нажмите здесь или на Изменить, чтобы добавить некоторых участников в эту группу."
+    "noMembersMessage": "Нет участников. Нажмите здесь или на Редактировать, чтобы добавить участников в эту группу.",
+    "groupName": {
+      "label": "Имя группы",
+      "error": "Имя обязательно"
+    }
   },
   "notificationsScreen": {
     "notifications": "Уведомления",

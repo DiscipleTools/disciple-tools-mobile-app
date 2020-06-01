@@ -24,12 +24,13 @@
     "search": "جستجو کردن",
     "membersActivity": "اعضا",
     "moreFields": "زمینه های بیشتر",
-    "nameRequired": "نام لازم است"
+    "nameRequired": "نام لازم است",
+    "close": "نزدیک"
   },
   "loginScreen": {
     "domain": {
       "label": "آدرس اینترنتی",
-      "placeholder": "به عنوان مثال. myteam.disciple.tools",
+      "placeholder": "به عنوان مثال. myteam.mydomain.com",
       "error": "دامنه مورد نیاز است",
       "errorForgotPass": "لطفاً URL را وارد کنید تا بازیابی رمز عبور خود را شروع کنید"
     },
@@ -47,9 +48,9 @@
       "invalidUsername": "نام کاربری ناشناخته دوباره بررسی کنید یا آدرس ایمیل خود را امتحان کنید.",
       "incorrectPassword": "گذرواژه‌ای که برای نام کاربری خود وارد کردید اشتباه است"
     },
-    "ok": "",
-    "appRestart": "",
-    "textDirection": ""
+    "ok": "خوب",
+    "appRestart": "برنامه برای اجرای پیکربندی زیر مجدداً راه اندازی می شود:",
+    "textDirection": "جهت متن"
   },
   "contactsScreen": {
     "contacts": "مخاطب",
@@ -66,7 +67,15 @@
     "helpSupport": "راهنما / پشتیبانی",
     "rememberPassword": "به یاد داشته باشید کلمه کلیدی",
     "rememberPasswordActive": "فعال شوید",
-    "rememberPasswordInactive": "وارد سیستم غیرفعال شوید"
+    "rememberPasswordInactive": "وارد سیستم غیرفعال شوید",
+    "pinCode": {
+      "remove": "کد پین را حذف کنید",
+      "set": "کد پین را تنظیم کنید",
+      "enter": "کد پین را وارد کنید",
+      "incorrect": "کد پین نادرست",
+      "saved": "کد پین با موفقیت ذخیره شد!",
+      "removed": "کد پین با موفقیت حذف شد!"
+    }
   },
   "contactDetailScreen": {
     "addNewContact": "مخاطب جدید اضافه کنید",
@@ -81,16 +90,16 @@
     "addBaptized": "تعمید اضافه کنید",
     "addCoachedBy": "مربی اضافه شده توسط",
     "addCoaching": "مربیگری را اضافه کنید",
-    "fullName": {
-      "label": "نام و نام خانوادگی",
-      "error": "نام لازم است"
-    },
     "phoneNumber": "شماره تلفن",
     "initialComment": "نظر اولیه",
     "socialMedia": "رسانه های اجتماعی",
     "noContactCommentPlacheHolder": "در حال حاضر هیچ گونه تماسی در دسترس نیست.",
+    "fullName": {
+      "label": "نام و نام خانوادگی",
+      "error": "نام لازم است"
+    },
     "noContactCommentPlacheHolder1": "ممکن است مشکلی در گرفتن آنها از سایت شما وجود داشته باشد. پایین بکشید تا سعی کنید تازه کنید و دوباره امتحان کنید.",
-    "noContactCommentPlacheHolderOffline": ""
+    "noContactCommentPlacheHolderOffline": "شما در حال حاضر آفلاین هستید. اطمینان حاصل کنید که برای تازه کردن و گرفتن نظر مخاطب خود به داده های wifi یا تلفن همراه وصل شده اید."
   },
   "groupDetailScreen": {
     "addNewGroup": "گروه جدید را اضافه کنید",
@@ -99,16 +108,16 @@
     "searchPeerGroups": "جستجوی گروه های همتا",
     "childGroup": "گروه کودک",
     "searchChildGroups": "گروه های کودک را جستجو کنید",
-    "groupName": {
-      "label": "اسم گروه",
-      "error": "نام لازم است"
-    },
     "addMember": "عضو را اضافه کنید",
     "noGroupCommentPlacheHolder": "هیچ نظر گروهی در حال حاضر موجود نیست",
     "noGroupCommentPlacheHolder1": "ممکن است مشکلی در گرفتن آنها از سایت شما وجود داشته باشد. پایین بکشید تا سعی کنید تازه کنید و دوباره امتحان کنید.",
     "noGroupCommentPlacheHolderOffline": "شما در حال حاضر آفلاین هستید. اطمینان حاصل کنید که به منظور تازه کردن و اظهار نظر گروه خود ، به داده های wifi یا تلفن همراه وصل شده اید.",
     "selectLocations": "مکان ها را انتخاب کنید",
-    "noMembersMessage": "هیچ عضو برای افزودن برخی از اعضا به این گروه ، اینجا یا بر روی ویرایش ضربه بزنید."
+    "noMembersMessage": "هیچ عضو برای افزودن برخی از اعضا به این گروه ، اینجا یا بر روی ویرایش ضربه بزنید.",
+    "groupName": {
+      "label": "اسم گروه",
+      "error": "نام لازم است"
+    }
   },
   "notificationsScreen": {
     "notifications": "اطلاعیه",
