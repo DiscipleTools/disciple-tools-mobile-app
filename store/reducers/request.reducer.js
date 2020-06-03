@@ -1,4 +1,5 @@
 import * as actions from '../actions/request.actions';
+import * as userActions from '../actions/user.actions';
 
 const initialState = {
   queue: [],
@@ -400,6 +401,11 @@ export default function requestReducer(state = initialState, action) {
       newState = {
         ...newState,
         queue: [...newQueue],
+      };
+    case userActions.USER_LOGOUT:
+      return {
+        queue: [],
+        currentAction: {},
       };
       return newState;
     default:

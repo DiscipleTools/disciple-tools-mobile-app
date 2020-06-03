@@ -768,6 +768,7 @@ export default function contactsReducer(state = initialState, action) {
       return {
         ...newState,
         settings: null,
+        contacts: [],
       };
     default:
       return newState;

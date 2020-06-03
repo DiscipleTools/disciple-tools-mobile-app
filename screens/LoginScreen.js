@@ -10,7 +10,6 @@ import {
   ActivityIndicator,
   Platform,
   ScrollView,
-  I18nManager,
   Picker,
   Dimensions,
   TextInput,
@@ -42,6 +41,7 @@ import {
 } from '../store/actions/groups.actions';
 import { getUsers } from '../store/actions/users.actions';
 import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
+import { logout } from '../store/actions/user.actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -364,35 +364,39 @@ class LoginScreen extends React.Component {
 
   userIsAuthenticated = () => {
     // User is authenticated (logged)
-    if (this.props.userData && this.props.userData.token && this.props.rememberPassword) {
-      if (this.props.isConnected) {
-        if (this.props.pinCode.enabled) {
-          this.toggleShowPIN();
-        } else {
-          if (this.props)
+    if (this.props.userData && this.props.userData.token !== null) {
+      if (this.props.rememberPassword) {
+        if (this.props.isConnected) {
+          if (this.props.pinCode.enabled) {
+            this.toggleShowPIN();
+          } else {
             this.props.loginDispatch(
               this.props.userData.domain,
               this.props.userData.username,
               this.props.userData.password,
             );
+          }
+        } else {
+          this.setState(
+            {
+              loading: true,
+            },
+            () => {
+              this.setState({
+                contactSettingsRetrieved: true,
+                groupSettingsRetrieved: true,
+                geonamesRetrieved: true,
+                peopleGroupsRetrieved: true,
+                usersRetrieved: true,
+                appLanguageSet: true,
+                userDataRetrieved: true,
+              });
+            },
+          );
         }
       } else {
-        this.setState(
-          {
-            loading: true,
-          },
-          () => {
-            this.setState({
-              contactSettingsRetrieved: true,
-              groupSettingsRetrieved: true,
-              geonamesRetrieved: true,
-              peopleGroupsRetrieved: true,
-              usersRetrieved: true,
-              appLanguageSet: true,
-              userDataRetrieved: true,
-            });
-          },
-        );
+        // Clear previous user's stored data (User closed app with rememberPassword: false)
+        this.props.logout();
       }
     }
   };
@@ -419,7 +423,7 @@ class LoginScreen extends React.Component {
     } = this.state;
 
     // User logged successfully
-    if (userData && prevProps.userData.token !== userData.token) {
+    if (userData && userData.token && prevProps.userData.token !== userData.token) {
       this.getDataLists();
       this.getUserInfo();
     }
@@ -451,6 +455,7 @@ class LoginScreen extends React.Component {
     if (geonames && prevProps.geonames !== geonames) {
       ExpoFileSystemStorage.setItem('locationsList', JSON.stringify(geonames));
     }
+
     if (
       contactSettingsRetrieved &&
       groupSettingsRetrieved &&
@@ -471,6 +476,7 @@ class LoginScreen extends React.Component {
     const usersError = prevProps.usersReducerError !== usersReducerError && usersReducerError;
     const contactsError =
       prevProps.contactsReducerError !== contactsReducerError && contactsReducerError;
+
     if (userError || groupsError || usersError || contactsError) {
       const error = userError || groupsError || usersError;
       if (error.code === '[jwt_auth] incorrect_password') {
@@ -966,6 +972,7 @@ LoginScreen.propTypes = {
   getContacts: PropTypes.func.isRequired,
   getGroups: PropTypes.func.isRequired,
   getUserInfo: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
 };
 LoginScreen.defaultProps = {
   userData: {
@@ -1040,6 +1047,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getLocationModifiedDate: (domain, token) => {
     dispatch(getLocationListLastModifiedDate(domain, token));
+  },
+  logout: () => {
+    dispatch(logout());
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

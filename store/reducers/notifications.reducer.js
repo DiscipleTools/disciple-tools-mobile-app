@@ -1,4 +1,5 @@
 import * as actions from '../actions/notifications.actions';
+import * as userActions from '../actions/user.actions';
 
 const initialState = {
   loading: false,
@@ -41,6 +42,10 @@ export default function notificationsReducer(state = initialState, action) {
         ...newState,
         error: action.error,
         loading: false,
+      };
+    case userActions.USER_LOGOUT:
+      return {
+        notificationsCount: null,
       };
     default:
       return newState;

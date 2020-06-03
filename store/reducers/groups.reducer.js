@@ -835,8 +835,11 @@ export default function groupsReducer(state = initialState, action) {
     case userActions.USER_LOGOUT:
       return {
         ...newState,
+        groups: [],
         geonames: null,
-        peopleGroups: null,
+        settings: null,
+        geonamesLastModifiedDate: null,
+        geonamesLength: 0,
       };
     case actions.GROUPS_GET_SETTINGS_SUCCESS: {
       const { settings } = action;
