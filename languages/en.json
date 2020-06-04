@@ -77,8 +77,8 @@
     "enterPin": "Enter PIN",
     "setPin": "Set new PIN",
     "incorrectPin": "Incorrect PIN",
-    "savedPinCode": "PIN code saved succesfully!.",
-    "removedPinCode": "PIN code removed succesfully!.",
+    "savedPinCode": "PIN code saved successfully!.",
+    "removedPinCode": "PIN code removed successfully!.",
     "close": "Close"
   },
   "contactDetailScreen": {
