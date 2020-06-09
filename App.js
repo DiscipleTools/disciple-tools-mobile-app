@@ -12,6 +12,7 @@ import Reactotron from 'reactotron-react-native';
 
 import AppNavigator from './navigation/AppNavigator';
 import { store, persistor } from './store/store';
+import sharedTools from './shared';
 
 // notifications
 
@@ -26,16 +27,7 @@ const styles = StyleSheet.create({
 });
 
 // App
-let unsubscribe, handle;
-let onlyExecuteLastCall = (parameter, functionName, timeout) => {
-  if (handle) {
-    clearTimeout(handle);
-  }
-  handle = setTimeout(function () {
-    handle = 0;
-    functionName(parameter);
-  }, timeout);
-};
+let unsubscribe;
 class App extends React.Component {
   constructor() {
     super();
@@ -52,7 +44,7 @@ class App extends React.Component {
     });
     // add network connectivity handler
     unsubscribe = NetInfo.addEventListener((state) =>
-      onlyExecuteLastCall(state.isConnected, this.handleConnectivityChange, 1000),
+      sharedTools.onlyExecuteLastCall(state.isConnected, this.handleConnectivityChange, 1000),
     );
 
     if (__DEV__) {

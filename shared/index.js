@@ -187,6 +187,16 @@ const debounce = (fn, time) => {
 
 const commentFieldMinHeight = 35;
 const commentFieldMinContainerHeight = 120;
+let handle,
+  onlyExecuteLastCall = (parameter, functionName, timeout) => {
+    if (handle) {
+      clearTimeout(handle);
+    }
+    handle = setTimeout(function () {
+      handle = 0;
+      functionName(parameter);
+    }, timeout);
+  };
 
 export default {
   diff,
@@ -195,4 +205,5 @@ export default {
   debounce,
   commentFieldMinHeight,
   commentFieldMinContainerHeight,
+  onlyExecuteLastCall,
 };

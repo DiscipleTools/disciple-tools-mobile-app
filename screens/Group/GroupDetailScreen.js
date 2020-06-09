@@ -602,10 +602,16 @@ class GroupDetailScreen extends React.Component {
         );
       }
     });
-    hardwareBackPressListener = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.backButtonTap,
-    );
+    hardwareBackPressListener = BackHandler.addEventListener('hardwareBackPress', () => {
+      sharedTools.onlyExecuteLastCall(
+        null,
+        () => {
+          this.backButtonTap();
+        },
+        1000,
+      );
+      return true;
+    });
   }
 
   componentWillUnmount() {
@@ -874,8 +880,8 @@ class GroupDetailScreen extends React.Component {
   }
 
   backButtonTap = () => {
-    const { navigation } = this.props;
-    const { params } = navigation.state;
+    let { navigation } = this.props;
+    let { params } = navigation.state;
     if (params.hideTabBar) {
       this.setState(
         {
