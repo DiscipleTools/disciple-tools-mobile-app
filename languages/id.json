@@ -27,6 +27,12 @@
     "nameRequired": "Nama (wajib",
     "close": "Menutup"
   },
+  "appRestart": {
+    "message": "Aplikasi akan dihidupkan ulang untuk menerapkan konfigurasi berikut:",
+    "button": "baik",
+    "textDirection": "Arah teks",
+    "selectedLanguage": "Bahasa yang dipilih"
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -47,10 +53,7 @@
     "errors": {
       "invalidUsername": "Nama pengguna tidak dikenal. Periksa lagi atau coba alamat email Anda.",
       "incorrectPassword": "Kata sandi yang Anda masukkan untuk nama pengguna salah"
-    },
-    "ok": "baik",
-    "appRestart": "Aplikasi akan dihidupkan ulang untuk menerapkan konfigurasi berikut:",
-    "textDirection": "Arah teks"
+    }
   },
   "contactsScreen": {
     "contacts": "Kontak",
@@ -68,14 +71,15 @@
     "rememberPassword": "ingat kata Sandi",
     "rememberPasswordActive": "Tetap masuk log diaktifkan",
     "rememberPasswordInactive": "Tetap masuk log dinonaktifkan",
-    "pinCode": {
-      "remove": "Hapus kode PIN",
-      "set": "Setel kode PIN",
-      "enter": "Masukkan kode PIN",
-      "incorrect": "Kode PIN salah",
-      "saved": "Kode PIN berhasil disimpan!",
-      "removed": "Kode PIN berhasil dihapus!"
-    }
+    "remove": "Hapus kode PIN",
+    "set": "Setel kode PIN",
+    "pinCode": "Kode PIN",
+    "enterPin": "Masukkan kode PIN",
+    "setPin": "Tetapkan PIN baru",
+    "incorrectPin": "Kode PIN salah",
+    "savedPinCode": "Kode PIN berhasil disimpan!",
+    "removedPinCode": "Kode PIN berhasil dihapus!",
+    "close": "Menutup"
   },
   "contactDetailScreen": {
     "addNewContact": "Tambahkan Kontak Baru",

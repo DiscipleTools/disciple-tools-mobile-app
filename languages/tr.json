@@ -27,6 +27,12 @@
     "nameRequired": "İsim (gerekli",
     "close": "Kapat"
   },
+  "appRestart": {
+    "message": "Aşağıdaki yapılandırmayı uygulamak için uygulama yeniden başlatılır:",
+    "button": "tamam",
+    "textDirection": "Metin yönü",
+    "selectedLanguage": "Seçilen dil"
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -47,10 +53,7 @@
     "errors": {
       "invalidUsername": "Bilinmeyen kullanıcı adı. Tekrar kontrol edin veya e-posta adresinizi deneyin.",
       "incorrectPassword": "Kullanıcı adı için girdiğiniz şifre yanlış"
-    },
-    "ok": "tamam",
-    "appRestart": "Aşağıdaki yapılandırmayı uygulamak için uygulama yeniden başlatılır:",
-    "textDirection": "Metin yönü"
+    }
   },
   "contactsScreen": {
     "contacts": "Bağlantılarım",
@@ -68,14 +71,15 @@
     "rememberPassword": "şifre hatırlamak",
     "rememberPasswordActive": "Oturum açmayı etkin tut",
     "rememberPasswordInactive": "Giriş yapmayı devre dışı bırak",
-    "pinCode": {
-      "remove": "PIN kodunu kaldır",
-      "set": "PIN kodunu ayarla",
-      "enter": "PIN kodunu girin",
-      "incorrect": "Yanlış PIN kodu",
-      "saved": "PIN kodu başarıyla kaydedildi!",
-      "removed": "PIN kodu başarıyla kaldırıldı!"
-    }
+    "remove": "PIN kodunu kaldır",
+    "set": "PIN kodunu ayarla",
+    "pinCode": "PIN kodu",
+    "enterPin": "PIN kodunu girin",
+    "setPin": "Yeni PIN ayarla",
+    "incorrectPin": "Yanlış PIN kodu",
+    "savedPinCode": "PIN kodu başarıyla kaydedildi!",
+    "removedPinCode": "PIN kodu başarıyla kaldırıldı!",
+    "close": "kapat"
   },
   "contactDetailScreen": {
     "addNewContact": "Yeni bağlantı ekle",

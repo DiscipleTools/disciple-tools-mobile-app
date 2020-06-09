@@ -27,6 +27,12 @@
     "nameRequired": "Jina linalohitajika",
     "close": "Karibu"
   },
+  "appRestart": {
+    "message": "Maombi yataanza tena kutumia usanidi ufuatao:",
+    "button": "sawa",
+    "textDirection": "Miongozo ya maandishi",
+    "selectedLanguage": "Lugha iliyochaguliwa"
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -47,10 +53,7 @@
     "errors": {
       "invalidUsername": "Jina la mtumiaji lisilojulikana. Angalia tena au jaribu anwani yako ya barua pepe.",
       "incorrectPassword": "Nenosiri uliloliingiza jina la mtumiaji sio sahihi"
-    },
-    "ok": "sawa",
-    "appRestart": "Maombi yataanza tena kutumia usanidi ufuatao:",
-    "textDirection": "Miongozo ya maandishi"
+    }
   },
   "contactsScreen": {
     "contacts": "Anwani",
@@ -68,14 +71,15 @@
     "rememberPassword": "Kumbuka Nenosiri",
     "rememberPasswordActive": "Endelea kuwezeshwa",
     "rememberPasswordInactive": "Endelea kuwa umelemazwa",
-    "pinCode": {
-      "remove": "Ondoa msimbo wa Pini",
-      "set": "Weka nambari ya PIN",
-      "enter": "Ingiza msimbo wa pini",
-      "incorrect": "Nambari ya Pini isiyo sahihi",
-      "saved": "Nambari ya pini iliyohifadhiwa kikamilifu!",
-      "removed": "Nambari ya pini imeondolewa vyema!"
-    }
+    "remove": "Ondoa msimbo wa Pini",
+    "set": "Weka nambari ya PIN",
+    "pinCode": "Nambari ya siri",
+    "enterPin": "Ingiza msimbo wa pini",
+    "setPin": "Weka PIN mpya",
+    "incorrectPin": "Nambari ya Pini isiyo sahihi",
+    "savedPinCode": "Nambari ya pini iliyohifadhiwa kikamilifu!",
+    "removedPinCode": "Nambari ya pini imeondolewa vyema!",
+    "close": "karibu"
   },
   "contactDetailScreen": {
     "addNewContact": "Ongeza Mawasiliano Mpya",

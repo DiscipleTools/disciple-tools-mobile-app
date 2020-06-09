@@ -27,6 +27,12 @@
     "nameRequired": "Name required",
     "close": "Close"
   },
+  "appRestart": {
+    "message": "The application will be restarted to apply the following configuration:",
+    "button": "Ok",
+    "textDirection": "Text direction",
+    "selectedLanguage": "Selected language"
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -47,10 +53,7 @@
     "errors": {
       "invalidUsername": "Unknown username. Check again or try your email address.",
       "incorrectPassword": "The password you entered for username is incorrect"
-    },
-    "ok": "OK",
-    "appRestart": "The application will be restarted to apply the following configuration:",
-    "textDirection": "Text direction"
+    }
   },
   "contactsScreen": {
     "contacts": "Contacts",
@@ -68,14 +71,15 @@
     "rememberPassword": "Remember Password",
     "rememberPasswordActive": "Keep logged in enabled",
     "rememberPasswordInactive": "Keep logged in disabled",
-    "pinCode": {
-      "remove": "Remove PIN code",
-      "set": "Set PIN code",
-      "enter": "Enter PIN code",
-      "incorrect": "Incorrect PIN code",
-      "saved": "PIN code saved succesfully!",
-      "removed": "PIN code removed succesfully!"
-    }
+    "remove": "Remove",
+    "set": "Set",
+    "pinCode": "PIN code",
+    "enterPin": "Enter PIN",
+    "setPin": "Set new PIN",
+    "incorrectPin": "Incorrect PIN",
+    "savedPinCode": "PIN code saved successfully!.",
+    "removedPinCode": "PIN code removed successfully!.",
+    "close": "Close"
   },
   "contactDetailScreen": {
     "addNewContact": "Add New Contact",

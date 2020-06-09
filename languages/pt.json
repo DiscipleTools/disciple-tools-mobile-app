@@ -27,6 +27,12 @@
     "nameRequired": "Nome necessário",
     "close": "Fechar"
   },
+  "appRestart": {
+    "message": "O aplicativo será reiniciado para aplicar a seguinte configuração:",
+    "button": "Está bem",
+    "textDirection": "Direção do texto",
+    "selectedLanguage": "Idioma selecionado"
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -47,10 +53,7 @@
     "errors": {
       "invalidUsername": "Nome de Usuário desconhecido. Verifique novamente ou tente seu endereço de e-mail",
       "incorrectPassword": "A senha que você digitou para o usuário está incorreta"
-    },
-    "ok": "Está bem",
-    "appRestart": "O aplicativo será reiniciado para aplicar a seguinte configuração:",
-    "textDirection": "Direção do texto"
+    }
   },
   "contactsScreen": {
     "contacts": "Contatos",
@@ -68,14 +71,15 @@
     "rememberPassword": "Lembrar senha",
     "rememberPasswordActive": "Manter-se logado está ligado",
     "rememberPasswordInactive": "Manter-se logado está desligado",
-    "pinCode": {
-      "remove": "Remover código PIN",
-      "set": "Definir código PIN",
-      "enter": "Digite o código PIN",
-      "incorrect": "Código PIN incorreto",
-      "saved": "Código PIN salvo com sucesso!",
-      "removed": "Código PIN removido com sucesso!"
-    }
+    "remove": "Remover código PIN",
+    "set": "Definir código PIN",
+    "pinCode": "Código PIN",
+    "enterPin": "Digite o código PIN",
+    "setPin": "Definir novo PIN",
+    "incorrectPin": "Código PIN incorreto",
+    "savedPinCode": "Código PIN salvo com sucesso!",
+    "removedPinCode": "Código PIN removido com sucesso!",
+    "close": "Fechar"
   },
   "contactDetailScreen": {
     "addNewContact": "Adicionar novo contato",

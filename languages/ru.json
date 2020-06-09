@@ -27,6 +27,12 @@
     "nameRequired": "Имя обязательно",
     "close": "близко"
   },
+  "appRestart": {
+    "message": "Приложение будет перезапущено для применения следующей конфигурации:",
+    "button": "Хорошо",
+    "textDirection": "Направление текста",
+    "selectedLanguage": "Выбранный язык"
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -47,10 +53,7 @@
     "errors": {
       "invalidUsername": "Неизвестное имя пользователя. Проверьте еще раз или попробуйте свой адрес электронной почты.",
       "incorrectPassword": "Неверный пароль для этого пользователя"
-    },
-    "ok": "Хорошо",
-    "appRestart": "Приложение будет перезапущено для применения следующей конфигурации:",
-    "textDirection": "Направление текста"
+    }
   },
   "contactsScreen": {
     "contacts": "Контакты",
@@ -68,14 +71,15 @@
     "rememberPassword": "Запомнить пароль",
     "rememberPasswordActive": "Режим \"Оставаться в системе\" включен",
     "rememberPasswordInactive": "Режим \"Оставаться в системе\" выключен",
-    "pinCode": {
-      "remove": "Удалить ПИН код",
-      "set": "Установить PIN-код",
-      "enter": "Введите пин код",
-      "incorrect": "Неверный PIN-код",
-      "saved": "ПИН-код успешно сохранен!",
-      "removed": "PIN-код успешно удален!"
-    }
+    "remove": "Удалить ПИН код",
+    "set": "Установить PIN-код",
+    "pinCode": "Пин-код",
+    "enterPin": "Введите пин код",
+    "setPin": "Установить новый PIN-код",
+    "incorrectPin": "Неверный PIN-код",
+    "savedPinCode": "ПИН-код успешно сохранен!",
+    "removedPinCode": "PIN-код успешно удален!",
+    "close": "близко"
   },
   "contactDetailScreen": {
     "addNewContact": "Добавить новый контакт",

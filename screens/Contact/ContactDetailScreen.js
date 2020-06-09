@@ -384,7 +384,7 @@ class ContactDetailScreen extends React.Component {
             type="Feather"
             name="arrow-left"
             onPress={() => {
-              params.backButtonClick();
+              params.backButtonTap();
             }}
             style={{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }}
           />
@@ -442,7 +442,7 @@ class ContactDetailScreen extends React.Component {
       onEnableEdit: this.onEnableEdit,
       onDisableEdit: this.onDisableEdit,
       onSaveContact: this.onSaveContact,
-      backButtonClick: this.backButtonClick,
+      backButtonTap: this.backButtonTap,
     });
     keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -469,7 +469,7 @@ class ContactDetailScreen extends React.Component {
     });
     hardwareBackPressListener = BackHandler.addEventListener(
       'hardwareBackPress',
-      this.backButtonClick,
+      this.backButtonTap,
     );
   }
 
@@ -765,9 +765,22 @@ class ContactDetailScreen extends React.Component {
     });
   }
 
-  backButtonClick = () => {
+  backButtonTap = () => {
     const { navigation } = this.props;
     const { params } = navigation.state;
+    if (params.hideTabBar) {
+      navigation.setParams({
+        hideTabBar: false,
+      });
+      setTimeout(() => {
+        return this.executeBack(navigation, params);
+      }, 600);
+    } else {
+      return this.executeBack(navigation, params);
+    }
+  };
+
+  executeBack = (navigation, params) => {
     if (params.previousList.length > 0) {
       navigation.goBack();
       params.onBackFromSameScreen();
@@ -1321,7 +1334,7 @@ class ContactDetailScreen extends React.Component {
         this.state.usersContacts.find((user) => user.value === contactID),
         'name',
       ),
-      backButtonClick: this.backButtonClick.bind(this),
+      backButtonTap: this.backButtonTap.bind(this),
       onBackFromSameScreen: this.onBackFromSameScreen.bind(this),
     });
     /* eslint-enable */

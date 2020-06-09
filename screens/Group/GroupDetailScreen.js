@@ -517,7 +517,7 @@ class GroupDetailScreen extends React.Component {
             type="Feather"
             name="arrow-left"
             onPress={() => {
-              params.backButtonClick();
+              params.backButtonTap();
             }}
             style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }]}
           />
@@ -576,7 +576,7 @@ class GroupDetailScreen extends React.Component {
       onEnableEdit: this.onEnableEdit,
       onDisableEdit: this.onDisableEdit,
       onSaveGroup: this.onSaveGroup,
-      backButtonClick: this.backButtonClick,
+      backButtonTap: this.backButtonTap,
     });
     keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -603,7 +603,7 @@ class GroupDetailScreen extends React.Component {
     });
     hardwareBackPressListener = BackHandler.addEventListener(
       'hardwareBackPress',
-      this.backButtonClick,
+      this.backButtonTap,
     );
   }
 
@@ -864,9 +864,22 @@ class GroupDetailScreen extends React.Component {
     });
   }
 
-  backButtonClick = () => {
+  backButtonTap = () => {
     const { navigation } = this.props;
     const { params } = navigation.state;
+    if (params.hideTabBar) {
+      navigation.setParams({
+        hideTabBar: false,
+      });
+      setTimeout(() => {
+        return this.executeBack(navigation, params);
+      }, 600);
+    } else {
+      return this.executeBack(navigation, params);
+    }
+  };
+
+  executeBack = (navigation, params) => {
     if (params.previousList.length > 0) {
       navigation.goBack();
       params.onBackFromSameScreen();
@@ -1707,7 +1720,7 @@ class GroupDetailScreen extends React.Component {
       groupId: groupData.value,
       onlyView: true,
       groupName: groupData.name,
-      backButtonClick: this.backButtonClick.bind(this),
+      backButtonTap: this.backButtonTap.bind(this),
       onBackFromSameScreen: this.onBackFromSameScreen.bind(this),
     });
     /* eslint-enable */

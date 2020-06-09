@@ -27,6 +27,12 @@
     "nameRequired": "نام لازم است",
     "close": "نزدیک"
   },
+  "appRestart": {
+    "message": "برنامه برای اجرای پیکربندی زیر مجدداً راه اندازی می شود:",
+    "button": "خوب",
+    "textDirection": "جهت متن",
+    "selectedLanguage": "زبان انتخاب شده"
+  },
   "loginScreen": {
     "domain": {
       "label": "آدرس اینترنتی",
@@ -47,10 +53,7 @@
     "errors": {
       "invalidUsername": "نام کاربری ناشناخته دوباره بررسی کنید یا آدرس ایمیل خود را امتحان کنید.",
       "incorrectPassword": "گذرواژه‌ای که برای نام کاربری خود وارد کردید اشتباه است"
-    },
-    "ok": "خوب",
-    "appRestart": "برنامه برای اجرای پیکربندی زیر مجدداً راه اندازی می شود:",
-    "textDirection": "جهت متن"
+    }
   },
   "contactsScreen": {
     "contacts": "مخاطب",
@@ -68,14 +71,15 @@
     "rememberPassword": "به یاد داشته باشید کلمه کلیدی",
     "rememberPasswordActive": "فعال شوید",
     "rememberPasswordInactive": "وارد سیستم غیرفعال شوید",
-    "pinCode": {
-      "remove": "کد پین را حذف کنید",
-      "set": "کد پین را تنظیم کنید",
-      "enter": "کد پین را وارد کنید",
-      "incorrect": "کد پین نادرست",
-      "saved": "کد پین با موفقیت ذخیره شد!",
-      "removed": "کد پین با موفقیت حذف شد!"
-    }
+    "remove": "کد پین را حذف کنید",
+    "set": "کد پین را تنظیم کنید",
+    "pinCode": "کد پین",
+    "enterPin": "کد پین را وارد کنید",
+    "setPin": "پین جدید را تنظیم کنید",
+    "incorrectPin": "کد پین نادرست",
+    "savedPinCode": "کد پین با موفقیت ذخیره شد!",
+    "removedPinCode": "کد پین با موفقیت حذف شد!",
+    "close": "نزدیک"
   },
   "contactDetailScreen": {
     "addNewContact": "مخاطب جدید اضافه کنید",
