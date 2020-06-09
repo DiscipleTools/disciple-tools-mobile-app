@@ -462,6 +462,7 @@ const initialState = {
   footerLocation: 0,
   footerHeight: 0,
   nameRequired: false,
+  executingBack: false,
 };
 
 const safeFind = (found, prop) => {
@@ -601,10 +602,16 @@ class GroupDetailScreen extends React.Component {
         );
       }
     });
-    hardwareBackPressListener = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.backButtonTap,
-    );
+    hardwareBackPressListener = BackHandler.addEventListener('hardwareBackPress', () => {
+      sharedTools.onlyExecuteLastCall(
+        null,
+        () => {
+          this.backButtonTap();
+        },
+        1000,
+      );
+      return true;
+    });
   }
 
   componentWillUnmount() {
@@ -850,6 +857,14 @@ class GroupDetailScreen extends React.Component {
         3000,
       );
     }
+
+    if (prevProps.navigation.state.params.hideTabBar !== navigation.state.params.hideTabBar) {
+      if (!navigation.state.params.hideTabBar && this.state.executingBack) {
+        setTimeout(() => {
+          this.executeBack(navigation, navigation.state.params);
+        }, 1000);
+      }
+    }
   }
 
   keyboardDidShow(event) {
@@ -865,17 +880,21 @@ class GroupDetailScreen extends React.Component {
   }
 
   backButtonTap = () => {
-    const { navigation } = this.props;
-    const { params } = navigation.state;
+    let { navigation } = this.props;
+    let { params } = navigation.state;
     if (params.hideTabBar) {
-      navigation.setParams({
-        hideTabBar: false,
-      });
-      setTimeout(() => {
-        return this.executeBack(navigation, params);
-      }, 600);
+      this.setState(
+        {
+          executingBack: true,
+        },
+        () => {
+          navigation.setParams({
+            hideTabBar: false,
+          });
+        },
+      );
     } else {
-      return this.executeBack(navigation, params);
+      this.executeBack(navigation, params);
     }
   };
 
@@ -897,7 +916,6 @@ class GroupDetailScreen extends React.Component {
         params.onGoBack();
       }
     }
-    return true;
   };
 
   onLoad() {
