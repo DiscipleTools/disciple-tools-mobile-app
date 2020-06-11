@@ -238,6 +238,8 @@ class LoginScreen extends React.Component {
           item.code.substring(0, 2) === Localization.locale.substring(0, 2)
         );
       });
+      // If phone locale does not exist, set English locale
+      if (!locale) locale = locales[0];
       // Set locale and RTL in i18n Library
       i18n.setLocale(locale.code, locale.rtl);
       // Set locale and RTL in State
@@ -569,21 +571,16 @@ class LoginScreen extends React.Component {
 
   onLoginPress = () => {
     Keyboard.dismiss();
-    if (this.props.pinCode.enabled) {
-      // User with PIN=true and AutoLogin=FALSE
-      this.toggleShowPIN();
+    const { domain, username, password } = this.state;
+    if (domain && username && password) {
+      const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
+      this.props.loginDispatch(cleanedDomain, username, password);
     } else {
-      const { domain, username, password } = this.state;
-      if (domain && username && password) {
-        const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
-        this.props.loginDispatch(cleanedDomain, username, password);
-      } else {
-        this.setState({
-          domainValidation: !domain,
-          userValidation: !username,
-          passwordValidation: !password,
-        });
-      }
+      this.setState({
+        domainValidation: !domain,
+        userValidation: !username,
+        passwordValidation: !password,
+      });
     }
   };
 
@@ -824,8 +821,8 @@ class LoginScreen extends React.Component {
             <View style={styles.dialogBox}>
               <Text style={styles.dialogContent}>
                 {this.props.pinCode.enabled
-                  ? i18n.t('settingsScreen.pinCode.enter')
-                  : i18n.t('settingsScreen.pinCode.set')}
+                  ? i18n.t('settingsScreen.enterPin')
+                  : i18n.t('settingsScreen.setPin')}
               </Text>
               {this.state.incorrectPin ? (
                 <Text
@@ -835,7 +832,7 @@ class LoginScreen extends React.Component {
                     fontSize: 14,
                     marginBottom: 5,
                   }}>
-                  {i18n.t('settingsScreen.pinCode.incorrect')}
+                  {i18n.t('settingsScreen.incorrectPin')}
                 </Text>
               ) : null}
               <SmoothPinCodeInput
