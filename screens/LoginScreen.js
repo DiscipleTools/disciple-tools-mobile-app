@@ -238,6 +238,8 @@ class LoginScreen extends React.Component {
           item.code.substring(0, 2) === Localization.locale.substring(0, 2)
         );
       });
+      // If phone locale does not exist, set English locale
+      if (!locale) locale = locales[0];
       // Set locale and RTL in i18n Library
       i18n.setLocale(locale.code, locale.rtl);
       // Set locale and RTL in State
