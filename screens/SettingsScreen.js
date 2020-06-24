@@ -90,10 +90,6 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: '#888',
   },
-  text: {
-    writingDirection: i18n.isRTL ? 'rtl' : 'ltr',
-    textAlign: i18n.isRTL ? 'right' : 'left',
-  },
   body: {
     alignItems: 'flex-start',
   },
@@ -341,8 +337,26 @@ class SettingsScreen extends React.Component {
               <Thumbnail source={require('../assets/images/gravatar-default.png')} />
             </Left>
             <Body style={styles.headerBody}>
-              <Text style={[styles.text, styles.username]}>{this.props.userData.displayName}</Text>
-              <Text style={[styles.text, styles.domain]}>{this.props.userData.domain}</Text>
+              <Text
+                style={[
+                  {
+                    writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                    textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+                  },
+                  styles.username,
+                ]}>
+                {this.props.userData.displayName}
+              </Text>
+              <Text
+                style={[
+                  {
+                    writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                    textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+                  },
+                  styles.domain,
+                ]}>
+                {this.props.userData.domain}
+              </Text>
             </Body>
           </ListItem>
 
@@ -355,10 +369,16 @@ class SettingsScreen extends React.Component {
                 </NbButton>
               </Left>
               <Body style={styles.body}>
-                <Text style={styles.text}>{i18n.t('settingsScreen.storybook')}</Text>
+                <Text
+                  style={{
+                    writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                    textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+                  }}>
+                  {i18n.t('settingsScreen.storybook')}
+                </Text>
               </Body>
               <Right>
-                <Icon active name={i18n.isRTL ? 'arrow-back' : 'arrow-forward'} />
+                <Icon active name={this.props.i18n.isRTL ? 'arrow-back' : 'arrow-forward'} />
               </Right>
             </ListItem>
           )}
@@ -370,7 +390,13 @@ class SettingsScreen extends React.Component {
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{i18n.t('global.online')}</Text>
+              <Text
+                style={{
+                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+                }}>
+                {i18n.t('global.online')}
+              </Text>
             </Body>
             <Right>
               <Switch value={this.props.isConnected} onChange={this.onFABPress} />
@@ -384,7 +410,13 @@ class SettingsScreen extends React.Component {
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{i18n.t('global.language')}</Text>
+              <Text
+                style={{
+                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+                }}>
+                {i18n.t('global.language')}
+              </Text>
             </Body>
             <Right>
               <Picker
@@ -403,7 +435,13 @@ class SettingsScreen extends React.Component {
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{i18n.t('settingsScreen.rememberPassword')}</Text>
+              <Text
+                style={{
+                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+                }}>
+                {i18n.t('settingsScreen.rememberPassword')}
+              </Text>
             </Body>
             <Right>
               <Switch value={this.props.rememberPassword} onChange={this.toggleRememberPassword} />
@@ -417,7 +455,11 @@ class SettingsScreen extends React.Component {
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>
+              <Text
+                style={{
+                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+                }}>
                 {`${
                   this.props.pinCode.enabled
                     ? i18n.t('settingsScreen.remove')
@@ -434,21 +476,33 @@ class SettingsScreen extends React.Component {
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{i18n.t('settingsScreen.helpSupport')}</Text>
+              <Text
+                style={{
+                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+                }}>
+                {i18n.t('settingsScreen.helpSupport')}
+              </Text>
             </Body>
           </ListItem>
           {/* === Logout === */}
           <ListItem icon onPress={this.signOutAsync}>
             <Left>
-              <NbButton onPress={this.signOutAsync}>
+              <NbButton>
                 <Icon active name="log-out" />
               </NbButton>
             </Left>
             <Body style={styles.body}>
-              <Text style={styles.text}>{i18n.t('settingsScreen.logout')}</Text>
+              <Text
+                style={{
+                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+                }}>
+                {i18n.t('settingsScreen.logout')}
+              </Text>
             </Body>
             <Right>
-              <Icon active name={i18n.isRTL ? 'arrow-back' : 'arrow-forward'} />
+              <Icon active name={this.props.i18n.isRTL ? 'arrow-back' : 'arrow-forward'} />
             </Right>
           </ListItem>
         </Content>

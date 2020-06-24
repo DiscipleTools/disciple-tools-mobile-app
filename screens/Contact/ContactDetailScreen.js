@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import {
   ScrollView,
   Text,
@@ -10,14 +9,15 @@ import {
   Image,
   Dimensions,
   FlatList,
-  TextInput,
   RefreshControl,
   Platform,
   TouchableHighlight,
   Linking,
-  StatusBar,
   BackHandler,
+  ActivityIndicator,
 } from 'react-native';
+
+import { connect } from 'react-redux';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -29,8 +29,10 @@ import { Chip, Selectize } from 'react-native-material-selectize';
 import ActionButton from 'react-native-action-button';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { NavigationActions, StackActions } from 'react-navigation';
-import moment from '../../languages/moment';
+import MentionsTextInput from 'react-native-mentions';
+import ParsedText from 'react-native-parsed-text';
 
+import moment from '../../languages/moment';
 import sharedTools from '../../shared';
 import {
   save,
@@ -62,8 +64,9 @@ const windowWidth = Dimensions.get('window').width;
 const progressBarWidth = windowWidth - 100;
 const milestonesGridSize = windowWidth + 5;
 let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBackPressListener;
-const hasNotch = Platform.OS === 'android' && StatusBar.currentHeight > 25;
-const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
+//const hasNotch = Platform.OS === 'android' && StatusBar.currentHeight > 25;
+//const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
+const isIOS = Platform.OS === 'ios';
 /* eslint-disable */
 let commentsFlatList,
   subAssignedSelectizeRef,
@@ -287,6 +290,35 @@ const styles = StyleSheet.create({
   validationErrorMessage: {
     color: Colors.errorBackground,
   },
+  suggestionsRowContainer: {
+    flexDirection: 'row',
+  },
+  userIconBox: {
+    height: 45,
+    width: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.tintColor,
+  },
+  usernameInitials: {
+    color: '#fff',
+    fontWeight: '800',
+    fontSize: 14,
+  },
+  userDetailsBox: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 10,
+    paddingRight: 15,
+  },
+  displayNameText: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  usernameText: {
+    fontSize: 12,
+    color: 'rgba(0,0,0,0.6)',
+  },
 });
 
 const initialState = {
@@ -326,6 +358,9 @@ const initialState = {
   footerHeight: 0,
   nameRequired: false,
   executingBack: false,
+  keyword: '',
+  suggestedUsers: [],
+  height: sharedTools.commentFieldMinHeight,
 };
 
 const safeFind = (found, prop) => {
@@ -354,7 +389,7 @@ class ContactDetailScreen extends React.Component {
           name="check"
           style={[
             { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-            i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+            self && self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
           ]}
         />
       </Row>
@@ -373,7 +408,7 @@ class ContactDetailScreen extends React.Component {
               name="pencil"
               style={[
                 { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-                i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+                self && self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
               ]}
             />
           </Row>
@@ -398,7 +433,7 @@ class ContactDetailScreen extends React.Component {
               name="close"
               style={[
                 { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-                i18n.isRTL ? { paddingRight: 16 } : { paddingLeft: 16 },
+                self && self.props.isRTL ? { paddingRight: 16 } : { paddingLeft: 16 },
               ]}
             />
             <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
@@ -633,7 +668,6 @@ class ContactDetailScreen extends React.Component {
         commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
       }
       this.setComment('');
-      this.setHeight();
     }
 
     // CONTACT SAVE / GET BY ID
@@ -770,7 +804,7 @@ class ContactDetailScreen extends React.Component {
 
   keyboardDidShow(event) {
     this.setState({
-      footerLocation: event.endCoordinates.height + extraNotchHeight,
+      footerLocation: isIOS ? event.endCoordinates.height /*+ extraNotchHeight*/ : 0,
     });
   }
 
@@ -1183,14 +1217,6 @@ class ContactDetailScreen extends React.Component {
     });
   };
 
-  setHeight = (newHeight = 0) => {
-    newHeight = Math.max(sharedTools.commentFieldMinHeight, newHeight);
-    this.setState({
-      height: Math.min(sharedTools.commentFieldMinContainerHeight, newHeight),
-      footerHeight: Math.min(sharedTools.commentFieldMinContainerHeight, newHeight) + 20,
-    });
-  };
-
   onSaveComment = () => {
     const { comment } = this.state;
     if (!this.state.loadComments) {
@@ -1463,7 +1489,7 @@ class ContactDetailScreen extends React.Component {
                   <View
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.subassigned ? (
                       this.state.contact.subassigned.values.map((contact, index) =>
@@ -1512,7 +1538,7 @@ class ContactDetailScreen extends React.Component {
                   <View
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.contact_phone ? (
                       this.state.contact.contact_phone
@@ -1547,7 +1573,7 @@ class ContactDetailScreen extends React.Component {
                   <View
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.contact_email ? (
                       this.state.contact.contact_email
@@ -1604,7 +1630,7 @@ class ContactDetailScreen extends React.Component {
                                   key={socialMediaIndex.toString()}
                                   style={[
                                     socialMediaIndex === 0 ? { marginTop: 10 } : {},
-                                    i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                                    this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                                   ]}>
                                   {socialMedia.value}
                                 </Text>
@@ -1613,7 +1639,7 @@ class ContactDetailScreen extends React.Component {
                             <Text
                               style={[
                                 styles.socialMediaNames,
-                                i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                                this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                               ]}>
                               {channelName}
                             </Text>
@@ -1638,7 +1664,7 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.contact_address
                       ? this.state.contact.contact_address
@@ -1663,7 +1689,7 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.location_grid
                       ? this.state.contact.location_grid.values
@@ -1697,7 +1723,7 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.people_groups
                       ? this.state.contact.people_groups.values
@@ -1731,7 +1757,7 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.age ? this.state.contact.age : ''}
                   </Text>
@@ -1751,7 +1777,7 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.gender
                       ? this.props.contactSettings.fields.gender.values[this.state.contact.gender]
@@ -1778,7 +1804,7 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.sources
                       ? `${this.state.contact.sources.values
@@ -2581,7 +2607,7 @@ class ContactDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.seeker_path
                       ? this.props.contactSettings.fields.seeker_path.values[
@@ -2613,7 +2639,7 @@ class ContactDetailScreen extends React.Component {
                 style={[
                   styles.formLabel,
                   { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
-                  i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                 ]}>
                 {this.props.contactSettings.fields.milestones.name}
               </Label>
@@ -2726,6 +2752,46 @@ class ContactDetailScreen extends React.Component {
     </View>
   );
 
+  onSuggestionTap(username, hidePanel) {
+    hidePanel();
+    let comment = this.state.comment.slice(0, -this.state.keyword.length),
+      mentionFormat = `@[${username.label}](${username.key})`;
+    this.setState({
+      suggestedUsers: [],
+      comment: `${comment}${mentionFormat}`,
+    });
+  }
+
+  filterUsers(keyword) {
+    let newKeyword = keyword.replace('@', '');
+    this.setState((state) => {
+      return {
+        suggestedUsers: state.users.filter((user) =>
+          user.label.toLowerCase().includes(newKeyword.toLowerCase()),
+        ),
+        keyword,
+      };
+    });
+  }
+
+  renderSuggestionsRow({ item }, hidePanel) {
+    return (
+      <TouchableOpacity onPress={() => this.onSuggestionTap(item, hidePanel)}>
+        <View style={styles.suggestionsRowContainer}>
+          <View style={styles.userIconBox}>
+            <Text style={styles.usernameInitials}>
+              {!!item.label && item.label.substring(0, 2).toUpperCase()}
+            </Text>
+          </View>
+          <View style={styles.userDetailsBox}>
+            <Text style={styles.displayNameText}>{item.label}</Text>
+            <Text style={styles.usernameText}>@{item.label}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
   commentsView = () => (
     <View style={{ flex: 1, paddingBottom: this.state.footerHeight + this.state.footerLocation }}>
       {this.state.comments.length == 0 &&
@@ -2799,29 +2865,44 @@ class ContactDetailScreen extends React.Component {
           }
         }}
       />
-      <View
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: this.state.footerLocation,
-          height: this.state.footerHeight,
-          backgroundColor: 'white',
-          flexDirection: 'row',
-        }}>
-        <TextInput
+      <View style={{ backgroundColor: '#FFFFFF' }}>
+        <MentionsTextInput
+          editable={!this.state.loadComments}
           placeholder={i18n.t('global.writeYourCommentNoteHere')}
           value={this.state.comment}
           onChangeText={this.setComment}
-          onContentSizeChange={(event) => this.setHeight(event.nativeEvent.contentSize.height)}
-          editable={!this.state.loadComments}
-          multiline
-          style={[
-            styles.commentInput,
-            { height: this.state.height },
-            i18n.isRTL ? { textAlign: 'right', flex: 1 } : {},
-            this.state.loadComments ? { backgroundColor: '#e6e6e6' } : { backgroundColor: 'white' },
-          ]}
+          style={this.props.isRTL ? { textAlign: 'right', flex: 1 } : {}}
+          textInputStyle={{
+            borderColor: '#B4B4B4',
+            borderRadius: 5,
+            borderWidth: 1,
+            padding: 5,
+            margin: 10,
+            width: windowWidth - 80,
+            backgroundColor: this.state.loadComments ? '#e6e6e6' : '#FFFFFF',
+          }}
+          loadingComponent={() => (
+            <View
+              style={{
+                flex: 1,
+                width: windowWidth,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <ActivityIndicator />
+            </View>
+          )}
+          textInputMinHeight={40}
+          textInputMaxHeight={80}
+          trigger={'@'}
+          triggerLocation={'new-word-only'}
+          triggerCallback={this.filterUsers.bind(this)}
+          renderSuggestionsRow={this.renderSuggestionsRow.bind(this)}
+          suggestionsData={this.state.suggestedUsers}
+          keyExtractor={(item, index) => item.key.toString()}
+          suggestionRowHeight={45}
+          horizontal={false}
+          MaxVisibleRowCount={3}
         />
         <TouchableOpacity
           onPress={() => this.onSaveComment()}
@@ -2829,16 +2910,20 @@ class ContactDetailScreen extends React.Component {
             {
               borderRadius: 80,
               height: 40,
-              margin: 10,
-              paddingTop: 7,
               width: 40,
+              paddingTop: 7,
+              marginRight: 10,
+              marginBottom: 10,
+              position: 'absolute',
+              right: 0,
+              bottom: 0,
             },
             this.state.loadComments
               ? { backgroundColor: '#e6e6e6' }
               : { backgroundColor: Colors.tintColor },
-            i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
+            this.props.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
           ]}>
-          <Icon android="md-send" ios="ios-send" style={{ color: 'white', fontSize: 25 }} />
+          <Icon android="md-send" ios="ios-send" style={[{ color: 'white', fontSize: 25 }]} />
         </TouchableOpacity>
       </View>
     </View>
@@ -2869,7 +2954,7 @@ class ContactDetailScreen extends React.Component {
                   <View
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.groups ? (
                       this.state.contact.groups.values.map((group, index) =>
@@ -2914,7 +2999,7 @@ class ContactDetailScreen extends React.Component {
                   <View
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.relation ? (
                       this.state.contact.relation.values.map((relation, index) =>
@@ -2961,7 +3046,7 @@ class ContactDetailScreen extends React.Component {
                   <View
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.baptized_by ? (
                       this.state.contact.baptized_by.values.map((baptizedBy, index) =>
@@ -3008,7 +3093,7 @@ class ContactDetailScreen extends React.Component {
                   <View
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.baptized ? (
                       this.state.contact.baptized.values.map((baptized, index) =>
@@ -3059,7 +3144,7 @@ class ContactDetailScreen extends React.Component {
                   <View
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.coached_by ? (
                       this.state.contact.coached_by.values.map((coachedBy, index) =>
@@ -3110,7 +3195,7 @@ class ContactDetailScreen extends React.Component {
                   <View
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.coaching ? (
                       this.state.contact.coaching.values.map((coaching, index) =>
@@ -3826,7 +3911,8 @@ class ContactDetailScreen extends React.Component {
             <Grid>
               <Row>
                 <Col>
-                  <Text style={[styles.name, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                  <Text
+                    style={[styles.name, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
                     {commentOrActivity.author}
                   </Text>
                 </Col>
@@ -3840,7 +3926,8 @@ class ContactDetailScreen extends React.Component {
             <Grid>
               <Row>
                 <Col>
-                  <Text style={[styles.name, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                  <Text
+                    style={[styles.name, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
                     {commentOrActivity.name}
                   </Text>
                 </Col>
@@ -3851,7 +3938,7 @@ class ContactDetailScreen extends React.Component {
             </Grid>
           )}
         </View>
-        <Text
+        <ParsedText
           style={[
             commentOrActivity.content
               ? {
@@ -3864,12 +3951,19 @@ class ContactDetailScreen extends React.Component {
                   color: '#B4B4B4',
                   fontStyle: 'italic',
                 },
-            i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+            this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+          ]}
+          parse={[
+            {
+              pattern: sharedTools.mentionPattern,
+              style: { color: Colors.primary },
+              renderText: sharedTools.renderMention,
+            },
           ]}>
           {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
             ? commentOrActivity.content
             : this.formatActivityDate(commentOrActivity.object_note)}
-        </Text>
+        </ParsedText>
       </View>
     </View>
   );
@@ -4116,7 +4210,7 @@ class ContactDetailScreen extends React.Component {
       <Text
         style={[
           { marginTop: 'auto', marginBottom: 'auto', fontSize: 15 },
-          i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+          this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
         ]}>
         {foundUser ? foundUser.label : ''}
       </Text>
@@ -5542,6 +5636,7 @@ ContactDetailScreen.defaultProps = {
   saved: null,
   isConnected: null,
   contactSettings: null,
+  isRTL: false,
 };
 
 const mapStateToProps = (state) => ({
@@ -5563,6 +5658,7 @@ const mapStateToProps = (state) => ({
   foundGeonames: state.groupsReducer.foundGeonames,
   groupsList: state.groupsReducer.groups,
   contactsList: state.contactsReducer.contacts,
+  isRTL: state.i18nReducer.isRTL,
 });
 
 const mapDispatchToProps = (dispatch) => ({
