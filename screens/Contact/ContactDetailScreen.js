@@ -361,6 +361,7 @@ const initialState = {
   keyword: '',
   suggestedUsers: [],
   height: sharedTools.commentFieldMinHeight,
+  sources: [],
 };
 
 const safeFind = (found, prop) => {
@@ -598,6 +599,26 @@ class ContactDetailScreen extends React.Component {
                 {
                   name: location.name,
                   value: location.value,
+                },
+              ],
+            };
+          }
+        });
+      }
+      if (newState.contact.sources) {
+        newState.contact.sources.values.forEach((sourceContact) => {
+          const foundSource = newState.sources.find(
+            (sourceItem) => sourceItem.value === sourceContact.value,
+          );
+          if (!foundSource) {
+            // Add non existent contact source in sources list to avoid null exception
+            newState = {
+              ...newState,
+              sources: [
+                ...newState.sources,
+                {
+                  name: sourceContact.value,
+                  value: sourceContact.value,
                 },
               ],
             };
@@ -918,6 +939,10 @@ class ContactDetailScreen extends React.Component {
         value: group.ID,
       })),
       loadedLocal: true,
+      sources: Object.keys(this.props.contactSettings.fields.sources.values).map((key) => ({
+        name: this.props.contactSettings.fields.sources.values[key].label,
+        value: key,
+      })),
     };
 
     this.setState(newState, () => {
@@ -1810,7 +1835,9 @@ class ContactDetailScreen extends React.Component {
                       ? `${this.state.contact.sources.values
                           .map(
                             (source) =>
-                              this.props.contactSettings.fields.sources.values[source.value].label,
+                              this.state.sources.find(
+                                (sourceItem) => sourceItem.value === source.value,
+                              ).name,
                           )
                           .join(', ')}`
                       : ''}
@@ -2525,17 +2552,13 @@ class ContactDetailScreen extends React.Component {
                     sourcesSelectizeRef = selectize;
                   }}
                   itemId="value"
-                  items={Object.keys(this.props.contactSettings.fields.sources.values).map(
-                    (key) => ({
-                      name: this.props.contactSettings.fields.sources.values[key].label,
-                      value: key,
-                    }),
-                  )}
+                  items={this.state.sources}
                   selectedItems={
                     this.state.contact.sources
                       ? this.state.contact.sources.values.map((source) => ({
-                          name: this.props.contactSettings.fields.sources.values[source.value]
-                            .label,
+                          name: this.state.sources.find(
+                            (sourceItem) => sourceItem.value === source.value,
+                          ).name,
                           value: source.value,
                         }))
                       : []
@@ -3974,9 +3997,8 @@ class ContactDetailScreen extends React.Component {
     });
 
   renderSourcePickerItems = () =>
-    Object.keys(this.props.contactSettings.fields.sources.values).map((key) => {
-      const optionData = this.props.contactSettings.fields.sources.values[key];
-      return <Picker.Item key={key} label={optionData.label} value={key} />;
+    this.state.sources.map((source) => {
+      return <Picker.Item key={source.value} label={source.name} value={source.value} />;
     });
 
   renderStatusPickerItems = () =>
