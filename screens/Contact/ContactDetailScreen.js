@@ -362,6 +362,8 @@ const initialState = {
   suggestedUsers: [],
   height: sharedTools.commentFieldMinHeight,
   sources: [],
+  nonExistingSources: [],
+  unmodifiedSources: [],
 };
 
 const safeFind = (found, prop) => {
@@ -616,6 +618,20 @@ class ContactDetailScreen extends React.Component {
               ...newState,
               sources: [
                 ...newState.sources,
+                {
+                  name: sourceContact.value,
+                  value: sourceContact.value,
+                },
+              ],
+              nonExistingSources: [
+                ...newState.nonExistingSources,
+                {
+                  name: sourceContact.value,
+                  value: sourceContact.value,
+                },
+              ],
+              unmodifiedSources: [
+                ...newState.unmodifiedSources,
                 {
                   name: sourceContact.value,
                   value: sourceContact.value,
@@ -928,6 +944,11 @@ class ContactDetailScreen extends React.Component {
       };
     }
 
+    let sourcesList = Object.keys(this.props.contactSettings.fields.sources.values).map((key) => ({
+      name: this.props.contactSettings.fields.sources.values[key].label,
+      value: key,
+    }));
+
     newState = {
       ...newState,
       usersContacts: this.props.contactsList.map((contact) => ({
@@ -939,10 +960,8 @@ class ContactDetailScreen extends React.Component {
         value: group.ID,
       })),
       loadedLocal: true,
-      sources: Object.keys(this.props.contactSettings.fields.sources.values).map((key) => ({
-        name: this.props.contactSettings.fields.sources.values[key].label,
-        value: key,
-      })),
+      sources: [...sourcesList],
+      unmodifiedSources: [...sourcesList],
     };
 
     this.setState(newState, () => {
@@ -1010,7 +1029,7 @@ class ContactDetailScreen extends React.Component {
   };
 
   onDisableEdit = () => {
-    const { unmodifiedContact } = this.state;
+    const { unmodifiedContact, unmodifiedSources } = this.state;
     this.setState((state) => {
       const indexFix =
         state.tabViewConfig.index > 1 ? state.tabViewConfig.index + 1 : state.tabViewConfig.index;
@@ -1027,6 +1046,7 @@ class ContactDetailScreen extends React.Component {
           index: indexFix,
           routes: [...tabViewRoutes],
         },
+        sources: [...unmodifiedSources],
       };
     });
     this.props.navigation.setParams({ hideTabBar: false, onlyView: true });
@@ -2555,12 +2575,21 @@ class ContactDetailScreen extends React.Component {
                   items={this.state.sources}
                   selectedItems={
                     this.state.contact.sources
-                      ? this.state.contact.sources.values.map((source) => ({
-                          name: this.state.sources.find(
-                            (sourceItem) => sourceItem.value === source.value,
-                          ).name,
-                          value: source.value,
-                        }))
+                      ? // Only add option elements (by contact sources) does exist in source list
+                        this.state.contact.sources.values
+                          .filter((contactSource) =>
+                            this.state.sources.find(
+                              (sourceItem) => sourceItem.value === contactSource.value,
+                            ),
+                          )
+                          .map((contactSource) => {
+                            return {
+                              name: this.state.sources.find(
+                                (sourceItem) => sourceItem.value === contactSource.value,
+                              ).name,
+                              value: contactSource.value,
+                            };
+                          })
                       : []
                   }
                   textInputProps={{
@@ -2594,7 +2623,24 @@ class ContactDetailScreen extends React.Component {
                     <Chip
                       key={id}
                       iconStyle={iconStyle}
-                      onClose={onClose}
+                      onClose={(props) => {
+                        const nonExistingSourcesList = [...this.state.nonExistingSources];
+                        let foundNonExistingSource = nonExistingSourcesList.findIndex(
+                          (source) => source.value === id,
+                        );
+                        if (foundNonExistingSource > -1) {
+                          // Remove custom source from select list
+                          const sourceList = [...this.state.sources]; //,
+                          let foundSourceIndex = sourceList.findIndex(
+                            (source) => source.value === id,
+                          );
+                          sourceList.splice(foundSourceIndex, 1);
+                          this.setState({
+                            sources: [...sourceList],
+                          });
+                        }
+                        onClose(props);
+                      }}
                       text={item.name}
                       style={style}
                     />
