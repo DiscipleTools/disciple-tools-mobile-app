@@ -3087,7 +3087,11 @@ class ContactDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="Entypo" name="water" style={[styles.formIcon, { marginTop: 0 }]} />
+                  <Icon
+                    type="FontAwesome5"
+                    name="water"
+                    style={[styles.formIcon, { marginTop: 0 }]}
+                  />
                 </Col>
                 <Col>
                   <View
@@ -3490,7 +3494,7 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon type="Entypo" name="water" style={styles.formIcon} />
+                  <Icon type="FontAwesome5" name="water" style={styles.formIcon} />
                 </View>
               </Col>
               <Col>
