@@ -1751,7 +1751,7 @@ class ContactDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome" name="clock-o" style={styles.formIcon} />
+                  <Icon type="FontAwesome5" name="user-clock" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Text
@@ -1771,7 +1771,11 @@ class ContactDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon android="md-male" ios="ios-male" style={styles.formIcon} />
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="gender-male-female"
+                    style={styles.formIcon}
+                  />
                 </Col>
                 <Col>
                   <Text
@@ -1794,11 +1798,7 @@ class ContactDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon
-                    android="md-arrow-dropright"
-                    ios="ios-arrow-dropright"
-                    style={styles.formIcon}
-                  />
+                  <Icon type="Foundation" name="arrow-right" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Text
@@ -2430,7 +2430,7 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="clock-o" style={styles.formIcon} />
+                  <Icon type="FontAwesome5" name="user-clock" style={styles.formIcon} />
                 </View>
               </Col>
               <Col>
@@ -2441,8 +2441,8 @@ class ContactDetailScreen extends React.Component {
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
                   <Icon
-                    type="FontAwesome"
-                    name="clock-o"
+                    type="FontAwesome5"
+                    name="user-clock"
                     style={[styles.formIcon, { opacity: 0 }]}
                   />
                 </View>
@@ -2462,7 +2462,11 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon android="md-male" ios="ios-male" style={styles.formIcon} />
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="gender-male-female"
+                    style={styles.formIcon}
+                  />
                 </View>
               </Col>
               <Col>
@@ -2475,8 +2479,8 @@ class ContactDetailScreen extends React.Component {
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
                   <Icon
-                    android="md-male"
-                    ios="ios-male"
+                    type="MaterialCommunityIcons"
+                    name="gender-male-female"
                     style={[styles.formIcon, { opacity: 0 }]}
                   />
                 </View>
@@ -2496,11 +2500,7 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon
-                    android="md-arrow-dropright"
-                    ios="ios-arrow-dropright"
-                    style={styles.formIcon}
-                  />
+                  <Icon type="Foundation" name="arrow-right" style={styles.formIcon} />
                 </View>
               </Col>
               <Col>
@@ -2601,7 +2601,11 @@ class ContactDetailScreen extends React.Component {
             <View style={[styles.formContainer, { marginTop: 10 }]}>
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon android="md-calendar" ios="ios-calendar" style={styles.formIcon} />
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="map-marker-path"
+                    style={styles.formIcon}
+                  />
                 </Col>
                 <Col>
                   <Text
@@ -2679,7 +2683,11 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon android="md-calendar" ios="ios-calendar" style={styles.formIcon} />
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="map-marker-path"
+                    style={styles.formIcon}
+                  />
                 </View>
               </Col>
               <Col>
@@ -5230,7 +5238,7 @@ class ContactDetailScreen extends React.Component {
                         <Row style={styles.formFieldMargin}>
                           <Col style={styles.formIconLabelCol}>
                             <View style={styles.formIconLabelView}>
-                              <Icon type="FontAwesome" name="clock-o" style={styles.formIcon} />
+                              <Icon type="FontAwesome5" name="user-clock" style={styles.formIcon} />
                             </View>
                           </Col>
                           <Col>
@@ -5243,8 +5251,8 @@ class ContactDetailScreen extends React.Component {
                           <Col style={styles.formIconLabelCol}>
                             <View style={styles.formIconLabelView}>
                               <Icon
-                                type="FontAwesome"
-                                name="clock-o"
+                                type="FontAwesome5"
+                                name="user-clock"
                                 style={[styles.formIcon, { opacity: 0 }]}
                               />
                             </View>
