@@ -7,7 +7,7 @@
     "lint": "npx eslint --ext .jsx,.js ./ --fix",
     "prettify": "npx pretty-quick --pattern '**/*.*(js|jsx)'",
     "eject": "./node_modules/.bin/expo eject",
-    "test": "node ./node_modules/jest/bin/jest.js --testEnvironment node --colors --coverage"
+    "test": "node ./node_modules/jest/bin/jest.js --testEnvironment node --colors --coverage --updateSnapshot"
   },
   "jest": {
     "preset": "jest-expo",
