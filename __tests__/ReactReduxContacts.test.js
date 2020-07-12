@@ -5,7 +5,7 @@ import contactReducer from '../store/reducers/contacts.reducer';
 import * as contactActions from '../store/actions/contacts.actions';
 
 describe('Contact Saga', () => {
-  test('get Contacts', () =>
+  test.skip('get Contacts', () =>
     expectSaga(contactSaga)
       .withReducer(contactReducer)
       .dispatch(

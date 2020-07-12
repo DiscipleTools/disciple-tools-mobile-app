@@ -7,10 +7,11 @@ import networkConnectivityReducer from '../store/reducers/networkConnectivity.re
 // expectSaga.DEFAULT_TIMEOUT = 4000; // set it to 4 secs (just under jest default of 5000ms)
 
 describe('Network Saga', () => {
-  it('toggle online, offline', () => expectSaga(networkConnectivitySaga)
-    .withReducer(networkConnectivityReducer)
-    .dispatch({ type: 'ONLINE' })
-    .dispatch({ type: 'OFFLINE' })
-    .hasFinalState({ isConnected: false })
-    .run());
+  it.skip('toggle online, offline', () =>
+    expectSaga(networkConnectivitySaga)
+      .withReducer(networkConnectivityReducer)
+      .dispatch({ type: 'ONLINE' })
+      .dispatch({ type: 'OFFLINE' })
+      .hasFinalState({ isConnected: false })
+      .run());
 });

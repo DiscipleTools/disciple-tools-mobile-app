@@ -3,7 +3,7 @@ import App from '../App';
 import { shallow, mount } from 'enzyme';
 
 describe('Test Describe', () => {
-  it('Test ID', () => {
+  it.skip('Test ID', () => {
     //const wrapper = shallow(<App />);
     const wrapper = mount(<App />);
     console.log(wrapper.instance().state);

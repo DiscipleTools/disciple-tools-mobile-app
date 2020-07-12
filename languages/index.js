@@ -18,7 +18,8 @@ import * as zhCn from './zhCn.json';
 import * as zhTw from './zhTw.json';
 import * as fa from './fa.json';
 
-//i18n.fallbacks = true;
+i18n.fallbacks = true;
+i18n.defaultLocale = 'en-US';
 // Locale codes names as expo-localization -> Localization.locale format (device)
 i18n.translations = {
   'en-US': en,

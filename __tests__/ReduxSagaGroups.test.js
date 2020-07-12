@@ -6,7 +6,7 @@ import { combineReducers } from 'redux';
 import * as groupActions from '../store/actions/groups.actions';
 
 describe('Redux Saga - Groups', () => {
-  it('Groups - Online', (done) => {
+  it.skip('Groups - Online', (done) => {
     const request = {
       domain: 'dtappdemo.wpengine.com',
       token: '',
