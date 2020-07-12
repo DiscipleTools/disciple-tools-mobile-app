@@ -27,6 +27,12 @@
     "nameRequired": "নাম (প্রয়োজন",
     "close": "ঘনিষ্ঠ"
   },
+  "appRestart": {
+    "message": "নিম্নলিখিত কনফিগারেশন প্রয়োগ করার জন্য অ্যাপ্লিকেশনটি আবার শুরু হবে:",
+    "button": "ঠিক আছে",
+    "textDirection": "লেখার দিকবিন্যাস",
+    "selectedLanguage": "নির্বাচিত ভাষা"
+  },
   "loginScreen": {
     "domain": {
       "label": "URL টি",
@@ -47,10 +53,7 @@
     "errors": {
       "invalidUsername": "অজানা ব্যবহারকারীর নাম। আবার চেক করুন বা আপনার ইমেল ঠিকানা চেষ্টা করুন।",
       "incorrectPassword": "আপনি ব্যবহারকারীর জন্য প্রবেশ করা পাসওয়ার্ডটি ভুল"
-    },
-    "ok": "ঠিক আছে",
-    "appRestart": "নিম্নলিখিত কনফিগারেশন প্রয়োগ করার জন্য অ্যাপ্লিকেশনটি আবার শুরু হবে:",
-    "textDirection": "লেখার দিকবিন্যাস"
+    }
   },
   "contactsScreen": {
     "contacts": "যোগাযোগ",
@@ -68,14 +71,15 @@
     "rememberPassword": "পাসওয়ার্ড মনে",
     "rememberPasswordActive": "সক্ষম থাকা লগ ইন করুন",
     "rememberPasswordInactive": "লগ ইন অক্ষম রাখুন",
-    "pinCode": {
-      "remove": "পিন কোড সরান",
-      "set": "পিন কোড সেট করুন",
-      "enter": "পিন কোড প্রবেশ করান",
-      "incorrect": "ভুল পিন কোড",
-      "saved": "পিন কোড সফলভাবে সংরক্ষণ করা হয়েছে!",
-      "removed": "পিন কোড সফলভাবে সরানো হয়েছে!"
-    }
+    "remove": "পিন কোড সরান",
+    "set": "পিন কোড সেট করুন",
+    "pinCode": "পিনকোড",
+    "enterPin": "পিন কোড প্রবেশ করান",
+    "setPin": "নতুন পিন সেট করুন",
+    "incorrectPin": "ভুল পিন কোড",
+    "savedPinCode": "পিন কোড সফলভাবে সংরক্ষণ করা হয়েছে!",
+    "removedPinCode": "পিন কোড সফলভাবে সরানো হয়েছে!",
+    "close": "ঘনিষ্ঠ"
   },
   "contactDetailScreen": {
     "addNewContact": "নতুন পরিচিতি যোগ করুন",

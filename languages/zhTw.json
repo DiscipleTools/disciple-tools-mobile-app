@@ -27,6 +27,12 @@
     "nameRequired": "姓名必填",
     "close": "關"
   },
+  "appRestart": {
+    "message": "該應用程序將重新啟動以應用以下配置：",
+    "button": "好",
+    "textDirection": "文字方向",
+    "selectedLanguage": "所選語言"
+  },
   "loginScreen": {
     "domain": {
       "label": "網址",
@@ -47,10 +53,7 @@
     "errors": {
       "invalidUsername": "未知的用戶名。再次檢查或嘗試您的電子郵件地址。",
       "incorrectPassword": "您輸入的用戶名密碼不正確"
-    },
-    "ok": "好",
-    "appRestart": "該應用程序將重新啟動以應用以下配置：",
-    "textDirection": "文字方向"
+    }
   },
   "contactsScreen": {
     "contacts": "聯絡人",
@@ -68,14 +71,15 @@
     "rememberPassword": "記住密碼",
     "rememberPasswordActive": "保持登錄狀態",
     "rememberPasswordInactive": "保持登錄狀態已禁用",
-    "pinCode": {
-      "remove": "刪除PIN碼",
-      "set": "設置PIN碼",
-      "enter": "輸入PIN碼",
-      "incorrect": "PIN碼不正確",
-      "saved": "PIN碼已成功保存！",
-      "removed": "PIN碼已成功刪除！"
-    }
+    "remove": "刪除PIN碼",
+    "set": "設置PIN碼",
+    "pinCode": "PIN碼",
+    "enterPin": "輸入PIN碼",
+    "setPin": "設置新密碼",
+    "incorrectPin": "PIN碼不正確",
+    "savedPinCode": "PIN碼已成功保存！",
+    "removedPinCode": "PIN碼已成功刪除！",
+    "close": "關"
   },
   "contactDetailScreen": {
     "addNewContact": "新增聯絡人",

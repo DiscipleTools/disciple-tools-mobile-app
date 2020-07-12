@@ -27,6 +27,12 @@
     "nameRequired": "الاسم مطلوب",
     "close": "قريب"
   },
+  "appRestart": {
+    "message": "سيتم إعادة تشغيل التطبيق لتطبيق التكوين التالي:",
+    "button": "حسنا",
+    "textDirection": "اتجاه النص",
+    "selectedLanguage": "اللغة المختارة"
+  },
   "loginScreen": {
     "domain": {
       "label": "اسم نطاق أدوات التلمذة",
@@ -47,10 +53,7 @@
     "errors": {
       "invalidUsername": "اسم مستخدم غير معروف. تحقق مرة أخرى أو حاول عنوان بريدك الإلكتروني.",
       "incorrectPassword": "كلمة المرور التي أدخلتها لاسم المستخدم غير صحيحة"
-    },
-    "ok": "حسنا",
-    "appRestart": "سيتم إعادة تشغيل التطبيق لتطبيق التكوين التالي:",
-    "textDirection": "اتجاه النص"
+    }
   },
   "contactsScreen": {
     "contacts": "المتواصلون",
@@ -68,14 +71,15 @@
     "rememberPassword": "تذكر كلمة المرور",
     "rememberPasswordActive": "تمكين تسجيل الدخول باستمرار",
     "rememberPasswordInactive": "حافظ على تسجيل الدخول معطلة",
-    "pinCode": {
-      "remove": "إزالة رمز PIN",
-      "set": "قم بتعيين رمز PIN",
-      "enter": "أدخل رمز PIN",
-      "incorrect": "رمز PIN غير صحيح",
-      "saved": "تم حفظ رمز PIN بنجاح!",
-      "removed": "تمت إزالة رمز PIN بنجاح!"
-    }
+    "remove": "إزالة رمز PIN",
+    "set": "قم بتعيين رمز PIN",
+    "pinCode": "كود PIN",
+    "enterPin": "أدخل رمز PIN",
+    "setPin": "قم بتعيين رقم تعريف شخصي جديد",
+    "incorrectPin": "رمز PIN غير صحيح",
+    "savedPinCode": "تم حفظ رمز PIN بنجاح!",
+    "removedPinCode": "تمت إزالة رمز PIN بنجاح!",
+    "close": "أغلق"
   },
   "contactDetailScreen": {
     "addNewContact": "إضافة جهة اتصال جديدة",

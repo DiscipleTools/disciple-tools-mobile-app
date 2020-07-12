@@ -27,6 +27,12 @@
     "nameRequired": "Naam (vereist",
     "close": "Dichtbij"
   },
+  "appRestart": {
+    "message": "De applicatie wordt opnieuw opgestart om de volgende configuratie toe te passen:",
+    "button": "OK",
+    "textDirection": "Tekstrichting",
+    "selectedLanguage": "Geselecteerde taal"
+  },
   "loginScreen": {
     "domain": {
       "label": "URL",
@@ -47,10 +53,7 @@
     "errors": {
       "invalidUsername": "Onbekende gebruikersnaam. Controleer het opnieuw of probeer uw e-mailadres.",
       "incorrectPassword": "Het wachtwoord dat u hebt ingevoerd voor de gebruikersnaam is onjuist"
-    },
-    "ok": "OK",
-    "appRestart": "De applicatie wordt opnieuw opgestart om de volgende configuratie toe te passen:",
-    "textDirection": "Tekstrichting"
+    }
   },
   "contactsScreen": {
     "contacts": "Contacten",
@@ -68,14 +71,15 @@
     "rememberPassword": "Onthoud wachtwoord",
     "rememberPasswordActive": "Blijf ingelogd ingeschakeld",
     "rememberPasswordInactive": "Blijf ingelogd uitgeschakeld",
-    "pinCode": {
-      "remove": "PIN-code verwijderen",
-      "set": "Pincode instellen",
-      "enter": "Voer pincode in",
-      "incorrect": "Onjuiste pincode",
-      "saved": "PIN-code succesvol opgeslagen!",
-      "removed": "PIN-code succesvol verwijderd!"
-    }
+    "remove": "PIN-code verwijderen",
+    "set": "Pincode instellen",
+    "pinCode": "Pincode",
+    "enterPin": "Voer pincode in",
+    "setPin": "Nieuwe pincode instellen",
+    "incorrectPin": "Onjuiste pincode",
+    "savedPinCode": "PIN-code succesvol opgeslagen!",
+    "removedPinCode": "PIN-code succesvol verwijderd!",
+    "close": "dichtbij"
   },
   "contactDetailScreen": {
     "addNewContact": "Voeg nieuw contact toe",
