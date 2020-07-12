@@ -39,7 +39,7 @@ jobs:
       - run: npm install
       - name: Deploy Prod
         if: github.ref == 'refs/heads/master'
-        run: expo publish --release-channel production && expo build:ios --release-channel production --non-interactive && expo build:android -t apk --release-channel production --non-interactive
+        run: expo publish --release-channel production && expo build:ios --release-channel production --non-interactive && expo build:android --type app-bundle --release-channel production --non-interactive
       - name: Deploy Release
         if: github.ref == 'refs/heads/release'
         run: expo publish --release-channel release
