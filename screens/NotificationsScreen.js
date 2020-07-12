@@ -317,7 +317,7 @@ class NotificationsScreen extends React.Component {
         }>
         <View style={[styles.notificationContainer, { flex: 1, flexDirection: 'row' }]}>
           <View style={{ flex: 1 }}>
-            <Text style={[i18n.isRTL ? { textAlign: 'left' } : {}]}>
+            <Text style={[this.props.isRTL ? { textAlign: 'left' } : {}]}>
               <Text>{newNotificationNoteA}</Text>
               <Text
                 style={{ color: Colors.primary }}
@@ -327,7 +327,8 @@ class NotificationsScreen extends React.Component {
                 {newNotificationNoteC}
               </Text>
             </Text>
-            <Text style={[styles.prettyTime, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+            <Text
+              style={[styles.prettyTime, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
               {moment(notification.date_notified).fromNow() +
                 ' | ' +
                 moment(notification.date_notified).format('L')}
@@ -485,6 +486,7 @@ const mapStateToProps = (state) => ({
   contactSettings: state.contactsReducer.settings,
   isConnected: state.networkConnectivityReducer.isConnected,
   notificationsCount: state.notificationsReducer.notificationsCount,
+  isRTL: state.i18nReducer.isRTL,
 });
 const mapDispatchToProps = (dispatch) => ({
   getAllNotifications: (domain, token, all, offset, limit) => {

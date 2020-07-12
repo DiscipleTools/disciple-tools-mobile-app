@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import {
   ScrollView,
   Keyboard,
@@ -10,13 +9,14 @@ import {
   StyleSheet,
   Dimensions,
   FlatList,
-  TextInput,
   RefreshControl,
   Platform,
   TouchableHighlight,
-  StatusBar,
   BackHandler,
+  ActivityIndicator,
 } from 'react-native';
+
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import { Label, Input, Icon, Picker, DatePicker } from 'native-base';
@@ -26,8 +26,10 @@ import { Chip, Selectize } from 'react-native-material-selectize';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { NavigationActions, StackActions } from 'react-navigation';
-import moment from '../../languages/moment';
+import MentionsTextInput from 'react-native-mentions';
+import ParsedText from 'react-native-parsed-text';
 
+import moment from '../../languages/moment';
 import sharedTools from '../../shared';
 import {
   saveGroup,
@@ -72,8 +74,9 @@ const spacing = windowWidth * 0.025;
 const sideSize = windowWidth - 2 * spacing;
 const circleSideSize = windowWidth / 3 + 20;
 let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBackPressListener;
-const hasNotch = Platform.OS === 'android' && StatusBar.currentHeight > 25;
-const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
+//const hasNotch = Platform.OS === 'android' && StatusBar.currentHeight > 25;
+//const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
+const isIOS = Platform.OS === 'ios';
 /* eslint-disable */
 let commentsFlatList,
   coachesSelectizeRef,
@@ -117,6 +120,7 @@ const tabViewRoutes = [
     title: 'global.groups',
   },
 ];
+let self;
 const styles = StyleSheet.create({
   activeImage: {
     opacity: 1,
@@ -425,6 +429,35 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     textDecorationLine: 'underline',
   },
+  suggestionsRowContainer: {
+    flexDirection: 'row',
+  },
+  userIconBox: {
+    height: 45,
+    width: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.tintColor,
+  },
+  usernameInitials: {
+    color: '#fff',
+    fontWeight: '800',
+    fontSize: 14,
+  },
+  userDetailsBox: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 10,
+    paddingRight: 15,
+  },
+  displayNameText: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  usernameText: {
+    fontSize: 12,
+    color: 'rgba(0,0,0,0.6)',
+  },
 });
 
 const initialState = {
@@ -462,6 +495,10 @@ const initialState = {
   footerLocation: 0,
   footerHeight: 0,
   nameRequired: false,
+  executingBack: false,
+  keyword: '',
+  suggestedUsers: [],
+  height: sharedTools.commentFieldMinHeight,
 };
 
 const safeFind = (found, prop) => {
@@ -470,6 +507,11 @@ const safeFind = (found, prop) => {
 };
 
 class GroupDetailScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    self = this;
+  }
+
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
     let navigationTitle = Object.prototype.hasOwnProperty.call(params, 'groupName')
@@ -485,7 +527,7 @@ class GroupDetailScreen extends React.Component {
           name="check"
           style={[
             { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-            i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+            self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
           ]}
         />
       </Row>
@@ -504,7 +546,7 @@ class GroupDetailScreen extends React.Component {
               name="pencil"
               style={[
                 { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-                i18n.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+                self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
               ]}
             />
           </Row>
@@ -517,7 +559,7 @@ class GroupDetailScreen extends React.Component {
             type="Feather"
             name="arrow-left"
             onPress={() => {
-              params.backButtonClick();
+              params.backButtonTap();
             }}
             style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }]}
           />
@@ -530,7 +572,7 @@ class GroupDetailScreen extends React.Component {
               name="close"
               style={[
                 { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-                i18n.isRTL ? { paddingRight: 16 } : { paddingLeft: 16 },
+                self.props.isRTL ? { paddingRight: 16 } : { paddingLeft: 16 },
               ]}
             />
             <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
@@ -576,7 +618,7 @@ class GroupDetailScreen extends React.Component {
       onEnableEdit: this.onEnableEdit,
       onDisableEdit: this.onDisableEdit,
       onSaveGroup: this.onSaveGroup,
-      backButtonClick: this.backButtonClick,
+      backButtonTap: this.backButtonTap,
     });
     keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -601,10 +643,16 @@ class GroupDetailScreen extends React.Component {
         );
       }
     });
-    hardwareBackPressListener = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.backButtonClick,
-    );
+    hardwareBackPressListener = BackHandler.addEventListener('hardwareBackPress', () => {
+      sharedTools.onlyExecuteLastCall(
+        null,
+        () => {
+          this.backButtonTap();
+        },
+        1000,
+      );
+      return true;
+    });
   }
 
   componentWillUnmount() {
@@ -787,7 +835,6 @@ class GroupDetailScreen extends React.Component {
     if (newComment && prevProps.newComment !== newComment) {
       commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
       this.setComment('');
-      this.setHeight();
     }
 
     // GROUP SAVE / GET BY ID
@@ -850,11 +897,19 @@ class GroupDetailScreen extends React.Component {
         3000,
       );
     }
+
+    if (prevProps.navigation.state.params.hideTabBar !== navigation.state.params.hideTabBar) {
+      if (!navigation.state.params.hideTabBar && this.state.executingBack) {
+        setTimeout(() => {
+          this.executeBack(navigation, navigation.state.params);
+        }, 1000);
+      }
+    }
   }
 
   keyboardDidShow(event) {
     this.setState({
-      footerLocation: event.endCoordinates.height + extraNotchHeight,
+      footerLocation: isIOS ? event.endCoordinates.height /*+ extraNotchHeight*/ : 0,
     });
   }
 
@@ -864,9 +919,26 @@ class GroupDetailScreen extends React.Component {
     });
   }
 
-  backButtonClick = () => {
-    const { navigation } = this.props;
-    const { params } = navigation.state;
+  backButtonTap = () => {
+    let { navigation } = this.props;
+    let { params } = navigation.state;
+    if (params.hideTabBar) {
+      this.setState(
+        {
+          executingBack: true,
+        },
+        () => {
+          navigation.setParams({
+            hideTabBar: false,
+          });
+        },
+      );
+    } else {
+      this.executeBack(navigation, params);
+    }
+  };
+
+  executeBack = (navigation, params) => {
     if (params.previousList.length > 0) {
       navigation.goBack();
       params.onBackFromSameScreen();
@@ -884,7 +956,6 @@ class GroupDetailScreen extends React.Component {
         params.onGoBack();
       }
     }
-    return true;
   };
 
   onLoad() {
@@ -1242,12 +1313,14 @@ class GroupDetailScreen extends React.Component {
             <Grid>
               <Row>
                 <Col>
-                  <Text style={[styles.name, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                  <Text
+                    style={[styles.name, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
                     {commentOrActivity.author}
                   </Text>
                 </Col>
                 <Col style={{ width: 110 }}>
-                  <Text style={[styles.time, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                  <Text
+                    style={[styles.time, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
                     {this.onFormatDateToView(commentOrActivity.date)}
                   </Text>
                 </Col>
@@ -1258,12 +1331,14 @@ class GroupDetailScreen extends React.Component {
             <Grid>
               <Row>
                 <Col>
-                  <Text style={[styles.name, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                  <Text
+                    style={[styles.name, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
                     {commentOrActivity.name}
                   </Text>
                 </Col>
                 <Col style={{ width: 110 }}>
-                  <Text style={[styles.time, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                  <Text
+                    style={[styles.time, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
                     {this.onFormatDateToView(commentOrActivity.date)}
                   </Text>
                 </Col>
@@ -1271,16 +1346,23 @@ class GroupDetailScreen extends React.Component {
             </Grid>
           )}
         </View>
-        <Text
+        <ParsedText
           style={
             commentOrActivity.content
-              ? [styles.commentMessage, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]
-              : [styles.activityMessage, i18n.isRTL ? { textAlign: 'left', flex: 1 } : {}]
-          }>
+              ? [styles.commentMessage, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]
+              : [styles.activityMessage, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]
+          }
+          parse={[
+            {
+              pattern: sharedTools.mentionPattern,
+              style: { color: Colors.primary },
+              renderText: sharedTools.renderMention,
+            },
+          ]}>
           {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
             ? commentOrActivity.content
             : this.formatActivityDate(commentOrActivity.object_note)}
-        </Text>
+        </ParsedText>
       </View>
     </View>
   );
@@ -1416,14 +1498,6 @@ class GroupDetailScreen extends React.Component {
   setComment = (value) => {
     this.setState({
       comment: value,
-    });
-  };
-
-  setHeight = (newHeight = 0) => {
-    newHeight = Math.max(sharedTools.commentFieldMinHeight, newHeight);
-    this.setState({
-      height: Math.min(sharedTools.commentFieldMinContainerHeight, newHeight),
-      footerHeight: Math.min(sharedTools.commentFieldMinContainerHeight, newHeight) + 20,
     });
   };
 
@@ -1685,7 +1759,7 @@ class GroupDetailScreen extends React.Component {
       <Text
         style={[
           { marginTop: 'auto', marginBottom: 'auto', fontSize: 15 },
-          i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+          this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
         ]}>
         {foundUser ? foundUser.label : ''}
       </Text>
@@ -1707,7 +1781,7 @@ class GroupDetailScreen extends React.Component {
       groupId: groupData.value,
       onlyView: true,
       groupName: groupData.name,
-      backButtonClick: this.backButtonClick.bind(this),
+      backButtonTap: this.backButtonTap.bind(this),
       onBackFromSameScreen: this.onBackFromSameScreen.bind(this),
     });
     /* eslint-enable */
@@ -1771,7 +1845,7 @@ class GroupDetailScreen extends React.Component {
                     fontWeight: 'bold',
                     marginTop: 10,
                   },
-                  i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                 ]}>
                 {this.props.groupSettings.fields.group_status.name}
               </Label>
@@ -1798,7 +1872,7 @@ class GroupDetailScreen extends React.Component {
                           backgroundColor: this.state.groupStatusBackgroundColor,
                         },
                       }),
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}
                     textStyle={{
                       color: '#ffffff',
@@ -1834,7 +1908,7 @@ class GroupDetailScreen extends React.Component {
                   <View
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.coaches ? (
                       this.state.group.coaches.values.map((coach, index) =>
@@ -1877,7 +1951,7 @@ class GroupDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.location_grid
                       ? this.state.group.location_grid.values
@@ -1907,7 +1981,7 @@ class GroupDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.people_groups
                       ? this.state.group.people_groups.values
@@ -1937,7 +2011,7 @@ class GroupDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.contact_address
                       ? this.state.group.contact_address.map((address) => address.value).join(', ')
@@ -1959,7 +2033,7 @@ class GroupDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.start_date
                       ? moment(new Date(this.state.group.start_date * 1000)).format('LL')
@@ -1981,7 +2055,7 @@ class GroupDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.church_start_date
                       ? moment(new Date(this.state.group.church_start_date * 1000)).format('LL')
@@ -2003,7 +2077,7 @@ class GroupDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.end_date
                       ? moment(new Date(this.state.group.end_date * 1000)).format('LL')
@@ -2060,7 +2134,7 @@ class GroupDetailScreen extends React.Component {
                         backgroundColor: this.state.groupStatusBackgroundColor,
                       },
                     }),
-                    i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                   ]}
                   textStyle={{
                     color: '#ffffff',
@@ -2546,7 +2620,7 @@ class GroupDetailScreen extends React.Component {
                   <Text
                     style={[
                       { marginTop: 'auto', marginBottom: 'auto' },
-                      i18n.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.group_type
                       ? this.props.groupSettings.fields.group_type.values[
@@ -2624,6 +2698,46 @@ class GroupDetailScreen extends React.Component {
       )}
     </View>
   );
+
+  onSuggestionTap(username, hidePanel) {
+    hidePanel();
+    let comment = this.state.comment.slice(0, -this.state.keyword.length),
+      mentionFormat = `@[${username.label}](${username.key})`;
+    this.setState({
+      suggestedUsers: [],
+      comment: `${comment}${mentionFormat}`,
+    });
+  }
+
+  filterUsers(keyword) {
+    let newKeyword = keyword.replace('@', '');
+    this.setState((state) => {
+      return {
+        suggestedUsers: state.users.filter((user) =>
+          user.label.toLowerCase().includes(newKeyword.toLowerCase()),
+        ),
+        keyword,
+      };
+    });
+  }
+
+  renderSuggestionsRow({ item }, hidePanel) {
+    return (
+      <TouchableOpacity onPress={() => this.onSuggestionTap(item, hidePanel)}>
+        <View style={styles.suggestionsRowContainer}>
+          <View style={styles.userIconBox}>
+            <Text style={styles.usernameInitials}>
+              {!!item.label && item.label.substring(0, 2).toUpperCase()}
+            </Text>
+          </View>
+          <View style={styles.userDetailsBox}>
+            <Text style={styles.displayNameText}>{item.label}</Text>
+            <Text style={styles.usernameText}>@{item.label}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  }
 
   commentsView = () => (
     <View style={{ flex: 1, paddingBottom: this.state.footerHeight + this.state.footerLocation }}>
@@ -2703,37 +2817,44 @@ class GroupDetailScreen extends React.Component {
           }
         }}
       />
-      <View
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: this.state.footerLocation,
-          height: this.state.footerHeight,
-          backgroundColor: 'white',
-          flexDirection: 'row',
-        }}>
-        <TextInput
+      <View style={{ backgroundColor: '#FFFFFF' }}>
+        <MentionsTextInput
+          editable={!this.state.loadComments}
           placeholder={i18n.t('global.writeYourCommentNoteHere')}
           value={this.state.comment}
           onChangeText={this.setComment}
-          onContentSizeChange={(event) => this.setHeight(event.nativeEvent.contentSize.height)}
-          editable={!this.state.loadComments}
-          multiline
-          style={[
-            {
-              borderColor: '#B4B4B4',
-              borderRadius: 5,
-              borderWidth: 1,
-              flex: 1,
-              margin: 10,
-              paddingLeft: 5,
-              paddingRight: 5,
-              height: this.state.height,
-            },
-            i18n.isRTL ? { textAlign: 'right', flex: 1 } : {},
-            this.state.loadComments ? { backgroundColor: '#e6e6e6' } : { backgroundColor: 'white' },
-          ]}
+          style={this.props.isRTL ? { textAlign: 'right', flex: 1 } : {}}
+          textInputStyle={{
+            borderColor: '#B4B4B4',
+            borderRadius: 5,
+            borderWidth: 1,
+            padding: 5,
+            margin: 10,
+            width: windowWidth - 80,
+            backgroundColor: this.state.loadComments ? '#e6e6e6' : '#FFFFFF',
+          }}
+          loadingComponent={() => (
+            <View
+              style={{
+                flex: 1,
+                width: windowWidth,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <ActivityIndicator />
+            </View>
+          )}
+          textInputMinHeight={40}
+          textInputMaxHeight={80}
+          trigger={'@'}
+          triggerLocation={'new-word-only'}
+          triggerCallback={this.filterUsers.bind(this)}
+          renderSuggestionsRow={this.renderSuggestionsRow.bind(this)}
+          suggestionsData={this.state.suggestedUsers}
+          keyExtractor={(item, index) => item.key.toString()}
+          suggestionRowHeight={45}
+          horizontal={false}
+          MaxVisibleRowCount={3}
         />
         <TouchableOpacity
           onPress={() => this.onSaveComment()}
@@ -2741,16 +2862,20 @@ class GroupDetailScreen extends React.Component {
             {
               borderRadius: 80,
               height: 40,
-              margin: 10,
-              paddingTop: 7,
               width: 40,
+              paddingTop: 7,
+              marginRight: 10,
+              marginBottom: 10,
+              position: 'absolute',
+              right: 0,
+              bottom: 0,
             },
             this.state.loadComments
               ? { backgroundColor: '#e6e6e6' }
               : { backgroundColor: Colors.tintColor },
-            i18n.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
+            this.props.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
           ]}>
-          <Icon android="md-send" ios="ios-send" style={{ color: 'white', fontSize: 25 }} />
+          <Icon android="md-send" ios="ios-send" style={[{ color: 'white', fontSize: 25 }]} />
         </TouchableOpacity>
       </View>
     </View>
@@ -2792,7 +2917,9 @@ class GroupDetailScreen extends React.Component {
               <Text
                 style={[
                   { marginTop: 'auto', marginBottom: 'auto', padding: 5 },
-                  i18n.isRTL ? { textAlign: 'left', flex: 1, marginRight: 15 } : { marginLeft: 15 },
+                  this.props.isRTL
+                    ? { textAlign: 'left', flex: 1, marginRight: 15 }
+                    : { marginLeft: 15 },
                 ]}>
                 {membersGroup.name}
               </Text>
@@ -4183,6 +4310,7 @@ const mapStateToProps = (state) => ({
   foundGeonames: state.groupsReducer.foundGeonames,
   groupsList: state.groupsReducer.groups,
   contactsList: state.contactsReducer.contacts,
+  isRTL: state.i18nReducer.isRTL,
 });
 
 const mapDispatchToProps = (dispatch) => ({

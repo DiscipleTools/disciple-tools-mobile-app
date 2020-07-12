@@ -1,4 +1,4 @@
-import { put, take, takeLatest, all, takeEvery, race, call } from 'redux-saga/effects';
+import { put, take, takeLatest, all, takeEvery } from 'redux-saga/effects';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Permissions from 'expo-permissions';
@@ -182,11 +182,59 @@ export function* getUserInfo({ domain, token }) {
   }
 }
 
+export function* updateUserInfo({ domain, token, userInfo }) {
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt/v1/user/update`,
+      data: {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(userInfo),
+      },
+      action: actions.UPDATE_USER_INFO_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.UPDATE_USER_INFO_RESPONSE);
+    response = response.payload;
+    let jsonData = response.data;
+
+    if (response.status === 200) {
+      yield put({
+        type: actions.UPDATE_USER_INFO_SUCCESS,
+        ...userInfo,
+      });
+    } else {
+      yield put({
+        type: actions.UPDATE_USER_INFO_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.UPDATE_USER_INFO_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
 export default function* userSaga() {
   yield all([
     takeLatest(actions.USER_LOGIN, login),
     takeEvery(actions.GET_MY_USER_INFO, getUserInfo),
     takeLatest(actions.USER_GET_PUSH_TOKEN, getExpoPushToken),
     takeLatest(actions.USER_ADD_PUSH_TOKEN, addPushToken),
+    takeLatest(actions.UPDATE_USER_INFO, updateUserInfo),
   ]);
 }

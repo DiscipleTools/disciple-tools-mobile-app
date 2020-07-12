@@ -185,8 +185,27 @@ const debounce = (fn, time) => {
   };
 };
 
-const commentFieldMinHeight = 35;
+const commentFieldMinHeight = 50;
 const commentFieldMinContainerHeight = 120;
+let handle,
+  onlyExecuteLastCall = (parameter, functionName, timeout) => {
+    if (handle) {
+      clearTimeout(handle);
+    }
+    handle = setTimeout(function () {
+      handle = 0;
+      functionName(parameter);
+    }, timeout);
+  };
+
+const mentionPattern = /@\[.+?\]\((.*)\)/g;
+const renderMention = (matchingString, matches) => {
+  let mentionText = matchingString.substring(
+    matchingString.lastIndexOf('[') + 1,
+    matchingString.lastIndexOf(']'),
+  );
+  return `@${mentionText}`;
+};
 
 export default {
   diff,
@@ -195,4 +214,7 @@ export default {
   debounce,
   commentFieldMinHeight,
   commentFieldMinContainerHeight,
+  onlyExecuteLastCall,
+  mentionPattern,
+  renderMention,
 };

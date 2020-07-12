@@ -3,11 +3,8 @@
     "name": "D.T",
     "slug": "discipletoolsapp",
     "privacy": "public",
-    "platforms": [
-      "ios",
-      "android"
-    ],
-    "version": "1.4.0",
+    "platforms": ["ios", "android"],
+    "version": "1.5.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -18,9 +15,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "tools.disciple.app",
       "supportsTablet": true
@@ -28,7 +23,7 @@
     "android": {
       "package": "tools.disciple.app",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 140
+      "versionCode": 150
     },
     "description": ""
   }
