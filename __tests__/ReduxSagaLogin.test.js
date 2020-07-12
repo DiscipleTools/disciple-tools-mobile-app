@@ -4,7 +4,7 @@ import networkConnectivityReducer from '../store/reducers/networkConnectivity.re
 import requestReducer from '../store/reducers/request.reducer';
 import { combineReducers } from 'redux';
 
-describe('Redux Saga - Login', () => {
+describe.skip('Redux Saga - Login', () => {
   it('Login - Online', (done) => {
     const user = {
       domain: 'dtappdemo.wpengine.com',

@@ -7,7 +7,7 @@ import * as actions from '../store/actions/user.actions';
 //expectSaga.DEFAULT_TIMEOUT = 25000;
 //jest.setTimeout(15000);
 
-describe('User Saga', () => {
+describe.skip('User Saga', () => {
   it('set UserData', () =>
     expectSaga(userSaga)
       .withReducer(userReducer)
