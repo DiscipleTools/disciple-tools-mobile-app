@@ -7,7 +7,7 @@
     "lint": "npx eslint --ext .jsx,.js ./ --fix",
     "prettify": "npx pretty-quick --pattern '**/*.*(js|jsx)'",
     "eject": "./node_modules/.bin/expo eject",
-    "test": "node ./node_modules/jest/bin/jest.js"
+    "test": "node ./node_modules/jest/bin/jest.js --testEnvironment node --colors --coverage --updateSnapshot"
   },
   "jest": {
     "preset": "jest-expo",
@@ -20,7 +20,9 @@
     ],
     "setupFiles": [
       "./setupJest.js"
-    ]
+    ],
+    "testEnvironment": "node",
+    "testURL": "http://localhost/"
   },
   "husky": {
     "hooks": {
@@ -110,6 +112,7 @@
     "jest-enzyme": "^7.1.2",
     "jest-expo": "^37.0.0",
     "jest-fetch-mock": "^3.0.3",
+    "jest-json-schema": "^2.1.0",
     "jsdom": "^16.2.2",
     "lint-staged": "^10.1.7",
     "prettier": "^2.0.5",

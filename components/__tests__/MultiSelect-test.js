@@ -6,43 +6,41 @@ import { Selectize } from 'react-native-material-selectize';
 import MultiSelect from '../MultiSelect';
 
 it('sets placeholder', () => {
-  const wrapper = shallow(<MultiSelect
-    placeholder="Select an item"
-  />);
+  const wrapper = shallow(<MultiSelect placeholder="Select an item" />);
 
-  expect(wrapper
-    .find(Selectize).first()
-    .prop('textInputProps')).toEqual({ placeholder: 'Select an item' });
+  expect(wrapper.find(Selectize).first().prop('textInputProps')).toEqual({
+    placeholder: 'Select an item',
+  });
 });
 
 it('sets items', () => {
-  const wrapper = shallow(<MultiSelect
-    items={[
-      { value: 'item1', label: 'Item 1' },
-      { value: 'item2', label: 'Item 2' },
-    ]}
-  />);
+  const wrapper = shallow(
+    <MultiSelect
+      items={[
+        { value: 'item1', label: 'Item 1' },
+        { value: 'item2', label: 'Item 2' },
+      ]}
+    />,
+  );
 
-  expect(wrapper
-    .find(Selectize).first()
-    .prop('items')).toEqual([
+  expect(wrapper.find(Selectize).first().prop('items')).toEqual([
     { value: 'item1', label: 'Item 1' },
     { value: 'item2', label: 'Item 2' },
   ]);
 });
 
 it('sets selectedItems', () => {
-  const wrapper = shallow(<MultiSelect
-    items={[
-      { value: 'item1', label: 'Item 1' },
-      { value: 'item2', label: 'Item 2' },
-    ]}
-    selectedItems={[{ value: 'item1', label: 'Item 1' }]}
-  />);
+  const wrapper = shallow(
+    <MultiSelect
+      items={[
+        { value: 'item1', label: 'Item 1' },
+        { value: 'item2', label: 'Item 2' },
+      ]}
+      selectedItems={[{ value: 'item1', label: 'Item 1' }]}
+    />,
+  );
 
-  expect(wrapper
-    .find(Selectize).first()
-    .prop('selectedItems')).toEqual([
+  expect(wrapper.find(Selectize).first().prop('selectedItems')).toEqual([
     { value: 'item1', label: 'Item 1' },
   ]);
 });

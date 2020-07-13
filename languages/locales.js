@@ -12,7 +12,7 @@ export default [
   {
     code: 'bn-BD',
     name: 'বাংলা',
-    rtl: true,
+    rtl: false,
   },
   {
     code: 'es-ES',
@@ -52,7 +52,7 @@ export default [
   {
     code: 'sw',
     name: 'Kiswahili',
-    rtl: true,
+    rtl: false,
   },
   {
     code: 'tr-TR',

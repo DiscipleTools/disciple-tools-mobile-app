@@ -11,6 +11,7 @@ configure(() => {
 // To find allowed options for getStorybookUI
 const StorybookUIRoot = getStorybookUI({
   disableWebsockets: true,
+  asyncStorage: null,
 });
 
 export default StorybookUIRoot;
