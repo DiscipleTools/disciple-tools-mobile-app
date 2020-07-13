@@ -11,7 +11,7 @@ configure(() => {
 // To find allowed options for getStorybookUI
 const StorybookUIRoot = getStorybookUI({
   disableWebsockets: true,
-  asyncStorage: require('@react-native-community/async-storage').default || null,
+  asyncStorage: null,
 });
 
 export default StorybookUIRoot;
