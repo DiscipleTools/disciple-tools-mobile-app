@@ -4,6 +4,7 @@ const initialState = {
   error: null,
   users: null,
   loading: null,
+  contactFilters: {},
 };
 
 export default function usersReducer(state = initialState, action) {
@@ -25,6 +26,23 @@ export default function usersReducer(state = initialState, action) {
         loading: false,
       };
     case actions.GET_USERS_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+        loading: false,
+      };
+    case actions.GET_CONTACT_FILTERS_START:
+      return {
+        ...newState,
+        loading: true,
+      };
+    case actions.GET_CONTACT_FILTERS_SUCCESS:
+      return {
+        ...newState,
+        contactFilters: action.contactFilters,
+        loading: false,
+      };
+    case actions.GET_CONTACT_FILTERS_FAILURE:
       return {
         ...newState,
         error: action.error,

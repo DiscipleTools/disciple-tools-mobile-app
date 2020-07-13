@@ -39,7 +39,7 @@ import {
   getAll as getAllGroups,
   getLocationListLastModifiedDate,
 } from '../store/actions/groups.actions';
-import { getUsers } from '../store/actions/users.actions';
+import { getUsers, getContactFilters } from '../store/actions/users.actions';
 import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
 import { logout } from '../store/actions/user.actions';
 
@@ -211,6 +211,7 @@ class LoginScreen extends React.Component {
     userDataRetrieved: false,
     geonamesLength: 0,
     toggleRestartDialog: false,
+    contactFiltersRetrieved: false,
   };
 
   constructor(props) {
@@ -264,6 +265,7 @@ class LoginScreen extends React.Component {
       contactsReducerError,
       geonamesLastModifiedDate,
       geonamesLength,
+      contactFilters,
     } = nextProps;
     let newState = {
       ...prevState,
@@ -317,6 +319,12 @@ class LoginScreen extends React.Component {
         newState = {
           ...newState,
           geonamesRetrieved: true,
+        };
+      }
+      if (contactFilters) {
+        newState = {
+          ...newState,
+          contactFiltersRetrieved: true,
         };
       }
     }
@@ -392,6 +400,7 @@ class LoginScreen extends React.Component {
                 usersRetrieved: true,
                 appLanguageSet: true,
                 userDataRetrieved: true,
+                contactFiltersRetrieved: true,
               });
             },
           );
@@ -422,6 +431,7 @@ class LoginScreen extends React.Component {
       geonamesRetrieved,
       peopleGroupsRetrieved,
       usersRetrieved,
+      contactFiltersRetrieved,
     } = this.state;
 
     // User logged successfully
@@ -464,7 +474,8 @@ class LoginScreen extends React.Component {
       appLanguageSet &&
       geonamesRetrieved &&
       peopleGroupsRetrieved &&
-      usersRetrieved
+      usersRetrieved &&
+      contactFiltersRetrieved
     ) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
@@ -555,6 +566,7 @@ class LoginScreen extends React.Component {
     this.props.getPeopleGroups(this.props.userData.domain, this.props.userData.token);
     this.props.getLocationModifiedDate(this.props.userData.domain, this.props.userData.token);
     this.props.getUsers(this.props.userData.domain, this.props.userData.token);
+    this.props.getContactFilters(this.props.userData.domain, this.props.userData.token);
   };
 
   getUserInfo = () => {
@@ -1010,6 +1022,7 @@ const mapStateToProps = (state) => ({
   pinCode: state.userReducer.pinCode,
   geonamesLastModifiedDate: state.groupsReducer.geonamesLastModifiedDate,
   geonamesLength: state.groupsReducer.geonamesLength,
+  contactFilters: state.usersReducer.contactFilters,
 });
 const mapDispatchToProps = (dispatch) => ({
   loginDispatch: (domain, username, password) => {
@@ -1047,6 +1060,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   logout: () => {
     dispatch(logout());
+  },
+  getContactFilters: (domain, token) => {
+    dispatch(getContactFilters(domain, token));
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
