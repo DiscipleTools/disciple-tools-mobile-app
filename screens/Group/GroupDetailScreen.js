@@ -527,7 +527,7 @@ class GroupDetailScreen extends React.Component {
           name="check"
           style={[
             { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-            self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+            self && self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
           ]}
         />
       </Row>
@@ -546,7 +546,7 @@ class GroupDetailScreen extends React.Component {
               name="pencil"
               style={[
                 { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-                self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
+                self && self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
               ]}
             />
           </Row>
@@ -572,7 +572,7 @@ class GroupDetailScreen extends React.Component {
               name="close"
               style={[
                 { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
-                self.props.isRTL ? { paddingRight: 16 } : { paddingLeft: 16 },
+                self && self.props.isRTL ? { paddingRight: 16 } : { paddingLeft: 16 },
               ]}
             />
             <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
