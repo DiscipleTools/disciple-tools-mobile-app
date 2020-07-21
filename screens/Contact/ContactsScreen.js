@@ -665,6 +665,7 @@ class ContactsScreen extends React.Component {
             }
             ListFooterComponent={this.renderFooter}
             keyExtractor={(item) => item.ID.toString()}
+            stickyHeaderIndices={[0]}
           />
           <Fab
             style={{ backgroundColor: Colors.tintColor }}
