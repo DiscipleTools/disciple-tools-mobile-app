@@ -23,7 +23,7 @@ import sharedTools from '../../shared';
 
 const styles = StyleSheet.create({
   flatListItem: {
-    height: 77,
+    height: 40,
     backgroundColor: 'white',
     margin: 20,
   },
@@ -330,7 +330,7 @@ class GroupsScreen extends React.Component {
 
   SearchFilterFunction(text) {
     const itemsFiltered = [];
-    this.props.groups.filter(function(item) {
+    this.props.groups.filter(function (item) {
       const textData = text
         .toUpperCase()
         .normalize('NFD')

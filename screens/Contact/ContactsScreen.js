@@ -27,7 +27,7 @@ import sharedTools from '../../shared';
 
 const styles = StyleSheet.create({
   flatListItem: {
-    height: 77,
+    height: 40,
     backgroundColor: 'white',
     margin: 20,
   },
