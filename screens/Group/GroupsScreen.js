@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Text,
   Image,
+  Platform
 } from 'react-native';
 import { Fab, Container } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -48,7 +49,6 @@ const styles = StyleSheet.create({
     borderColor: '#F2F2F2',
     paddingBottom: 10,
     marginBottom: 1,
-    elevation: 5,
   },
   searchBarInput: {
     marginLeft: 10,
@@ -299,7 +299,7 @@ class GroupsScreen extends React.Component {
           onChangeText={(text) => this.SearchFilterFunction(text)}
           autoCorrect={false}
           value={this.state.search}
-          containerStyle={styles.searchBarContainer}
+          containerStyle={[styles.searchBarContainer, Platform.OS == "ios" ? { borderBottomColor: Colors.grayLight, borderBottomWidth: 1 } : { elevation: 5 }]}
           inputContainerStyle={styles.searchBarInput}
         />
         {!this.state.haveGroups && this.noGroupsRender()}

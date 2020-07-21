@@ -9,6 +9,8 @@ import {
   Text,
   Image,
   Platform,
+  ScrollView,
+  Dimensions
 } from 'react-native';
 import { Fab, Container, Item, Input } from 'native-base';
 import { Row } from 'react-native-easy-grid';
@@ -48,11 +50,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     backgroundColor: Colors.tabBar,
     borderBottomColor: '#FFF',
-    elevation: 5,
+  },
+  searchBarScrollView: {
     paddingBottom: 10,
     paddingLeft: 15,
     paddingRight: 15,
     paddingTop: 9,
+    minHeight: 60
   },
   searchBarItem: {
     borderColor: '#DDDDDD',
@@ -115,6 +119,7 @@ const styles = StyleSheet.create({
 });
 let toastError,
   statusCircleSize = 15;
+const windowHeight = Dimensions.get('window').height;
 
 class ContactsScreen extends React.Component {
   state = {
@@ -208,10 +213,10 @@ class ContactsScreen extends React.Component {
             <Text style={styles.contactSubtitle}>
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status]
                 ? this.props.contactSettings.fields.overall_status.values[contact.overall_status]
-                    .label
+                  .label
                 : ''}
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status] &&
-              this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
+                this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
                 ? ' • '
                 : ''}
               {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
@@ -492,47 +497,49 @@ class ContactsScreen extends React.Component {
 
   renderHeader = () => {
     return (
-      <View style={styles.searchBarContainer}>
-        <Item regular style={styles.searchBarItem}>
-          <MaterialIcons name="search" style={styles.searchBarIcons} />
-          <Input
-            placeholder={i18n.t('global.search')}
-            onChangeText={(text) => this.filterContactsByText(text)}
-            autoCorrect={false}
-            value={this.state.search}
-            style={styles.searchBarInput}
-          />
-          {this.state.search.length > 0 ? (
+      <View style={[styles.searchBarContainer, Platform.OS == "ios" ? { borderBottomColor: Colors.grayLight, borderBottomWidth: 1 } : { elevation: 5 }, this.state.searchBarFilter.toggle ? { height: windowHeight / 2.5 } : {}]}>
+        <ScrollView style={styles.searchBarScrollView}>
+          <Item regular style={styles.searchBarItem}>
+            <MaterialIcons name="search" style={styles.searchBarIcons} />
+            <Input
+              placeholder={i18n.t('global.search')}
+              onChangeText={(text) => this.filterContactsByText(text)}
+              autoCorrect={false}
+              value={this.state.search}
+              style={styles.searchBarInput}
+            />
+            {this.state.search.length > 0 ? (
+              <MaterialIcons
+                name="clear"
+                style={[styles.searchBarIcons, { marginRight: 10 }]}
+                onPress={() =>
+                  this.setState({
+                    // Set input search filters as initial value
+                    refresh: false,
+                    filtered: false,
+                    search: '',
+                  })
+                }
+              />
+            ) : null}
             <MaterialIcons
-              name="clear"
-              style={[styles.searchBarIcons, { marginRight: 10 }]}
-              onPress={() =>
-                this.setState({
-                  // Set input search filters as initial value
-                  refresh: false,
-                  filtered: false,
-                  search: '',
-                })
-              }
+              name="filter-list"
+              style={styles.searchBarIcons}
+              onPress={() => this.showFiltersPanel()}
             />
+          </Item>
+          {this.state.searchBarFilter.toggle ? (
+            <View style={{ marginTop: 20, marginBottom: 20 }}>
+              <Accordion
+                activeSections={this.state.activeSections}
+                sections={this.props.contactFilters.tabs.filter((filter) => filter.key !== 'custom')}
+                renderHeader={this.renderSectionHeader}
+                renderContent={this.renderSectionContent}
+                onChange={this.updateSections}
+              />
+            </View>
           ) : null}
-          <MaterialIcons
-            name="filter-list"
-            style={styles.searchBarIcons}
-            onPress={() => this.showFiltersPanel()}
-          />
-        </Item>
-        {this.state.searchBarFilter.toggle ? (
-          <View style={{ padding: 10 }}>
-            <Accordion
-              activeSections={this.state.activeSections}
-              sections={this.props.contactFilters.tabs.filter((filter) => filter.key !== 'custom')}
-              renderHeader={this.renderSectionHeader}
-              renderContent={this.renderSectionContent}
-              onChange={this.updateSections}
-            />
-          </View>
-        ) : null}
+        </ScrollView>
       </View>
     );
   };
@@ -653,19 +660,21 @@ class ContactsScreen extends React.Component {
       <Container>
         <View style={{ flex: 1 }}>
           {!this.props.isConnected && this.offlineBarRender()}
-          <FlatList
-            ListHeaderComponent={this.renderHeader}
-            data={this.state.dataSourceContact}
-            extraData={this.state.loading}
-            renderItem={(item) => this.renderRow(item.item)}
-            ItemSeparatorComponent={this.flatListItemSeparator}
-            keyboardShouldPersistTaps="always"
-            refreshControl={
-              <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
-            }
-            ListFooterComponent={this.renderFooter}
-            keyExtractor={(item) => item.ID.toString()}
-          />
+          {this.renderHeader()}
+          {
+            <FlatList
+              data={this.state.dataSourceContact}
+              extraData={this.state.loading}
+              renderItem={(item) => this.renderRow(item.item)}
+              ItemSeparatorComponent={this.flatListItemSeparator}
+              keyboardShouldPersistTaps="always"
+              refreshControl={
+                <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
+              }
+              ListFooterComponent={this.renderFooter}
+              keyExtractor={(item) => item.ID.toString()}
+            />
+          }
           <Fab
             style={{ backgroundColor: Colors.tintColor }}
             position="bottomRight"
@@ -680,7 +689,7 @@ class ContactsScreen extends React.Component {
             positionValue={210}
           />
         </View>
-      </Container>
+      </Container >
     );
   }
 }
