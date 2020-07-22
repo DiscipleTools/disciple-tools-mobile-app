@@ -10,7 +10,7 @@ import {
   Image,
   Platform,
   ScrollView,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { Fab, Container, Item, Input } from 'native-base';
 import { Row } from 'react-native-easy-grid';
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     paddingTop: 9,
-    minHeight: 60
+    minHeight: 60,
   },
   searchBarItem: {
     borderColor: '#DDDDDD',
@@ -213,10 +213,10 @@ class ContactsScreen extends React.Component {
             <Text style={styles.contactSubtitle}>
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status]
                 ? this.props.contactSettings.fields.overall_status.values[contact.overall_status]
-                  .label
+                    .label
                 : ''}
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status] &&
-                this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
+              this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
                 ? ' • '
                 : ''}
               {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
@@ -497,7 +497,14 @@ class ContactsScreen extends React.Component {
 
   renderHeader = () => {
     return (
-      <View style={[styles.searchBarContainer, Platform.OS == "ios" ? { borderBottomColor: Colors.grayLight, borderBottomWidth: 1 } : { elevation: 5 }, this.state.searchBarFilter.toggle ? { height: windowHeight / 2.5 } : {}]}>
+      <View
+        style={[
+          styles.searchBarContainer,
+          Platform.OS == 'ios'
+            ? { borderBottomColor: Colors.grayLight, borderBottomWidth: 1 }
+            : { elevation: 5 },
+          {},
+        ]}>
         <ScrollView style={styles.searchBarScrollView}>
           <Item regular style={styles.searchBarItem}>
             <MaterialIcons name="search" style={styles.searchBarIcons} />
@@ -532,7 +539,9 @@ class ContactsScreen extends React.Component {
             <View style={{ marginTop: 20, marginBottom: 20 }}>
               <Accordion
                 activeSections={this.state.activeSections}
-                sections={this.props.contactFilters.tabs.filter((filter) => filter.key !== 'custom')}
+                sections={this.props.contactFilters.tabs.filter(
+                  (filter) => filter.key !== 'custom',
+                )}
                 renderHeader={this.renderSectionHeader}
                 renderContent={this.renderSectionContent}
                 onChange={this.updateSections}
@@ -689,7 +698,7 @@ class ContactsScreen extends React.Component {
             positionValue={210}
           />
         </View>
-      </Container >
+      </Container>
     );
   }
 }
