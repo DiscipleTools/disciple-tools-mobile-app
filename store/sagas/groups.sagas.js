@@ -504,7 +504,7 @@ export function* searchLocations({ domain, token, queryText }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt/v1/mapping_module/search_location_grid_by_name?s=${queryText}&filter=focus`,
+      url: `https://${domain}/wp-json/dt/v1/mapping_module/search_location_grid_by_name?s=${queryText}&filter=all`,
       data: {
         method: 'GET',
         headers: {
