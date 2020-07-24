@@ -31,6 +31,7 @@ import { TabView, TabBar } from 'react-native-tab-view';
 import { NavigationActions, StackActions } from 'react-navigation';
 import MentionsTextInput from 'react-native-mentions';
 import ParsedText from 'react-native-parsed-text';
+import * as Sentry from 'sentry-expo';
 
 import moment from '../../languages/moment';
 import sharedTools from '../../shared';
@@ -516,6 +517,10 @@ class ContactDetailScreen extends React.Component {
       );
       return true;
     });
+  }
+
+  componentDidCatch(error, errorInfo) {
+    Sentry.captureException(errorInfo);
   }
 
   componentWillUnmount() {
