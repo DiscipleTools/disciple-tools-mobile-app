@@ -28,6 +28,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { NavigationActions, StackActions } from 'react-navigation';
 import MentionsTextInput from 'react-native-mentions';
 import ParsedText from 'react-native-parsed-text';
+import * as Sentry from 'sentry-expo';
 
 import moment from '../../languages/moment';
 import sharedTools from '../../shared';
@@ -595,13 +596,13 @@ class GroupDetailScreen extends React.Component {
         fontWeight: 'bold',
         width: params.onlyView
           ? Platform.select({
-              android: 200,
-              ios: 180,
-            })
+            android: 200,
+            ios: 180,
+          })
           : Platform.select({
-              android: 180,
-              ios: 140,
-            }),
+            android: 180,
+            ios: 140,
+          }),
         marginLeft: params.onlyView ? undefined : 25,
       },
     };
@@ -653,6 +654,10 @@ class GroupDetailScreen extends React.Component {
       );
       return true;
     });
+  }
+
+  componentDidCatch(error, errorInfo) {
+    Sentry.captureException(errorInfo);
   }
 
   componentWillUnmount() {
@@ -1252,17 +1257,17 @@ class GroupDetailScreen extends React.Component {
             {this.state.group.member_count}
           </Text>
         ) : (
-          <Text
-            style={{
-              color: Colors.tintColor,
-              fontSize: 13,
-              textAlign: 'left',
-              fontWeight: 'bold',
-            }}>
-            {' '}
+            <Text
+              style={{
+                color: Colors.tintColor,
+                fontSize: 13,
+                textAlign: 'left',
+                fontWeight: 'bold',
+              }}>
+              {' '}
             0{' '}
-          </Text>
-        )}
+            </Text>
+          )}
       </Row>
       {!this.state.group.member_count || parseInt(this.state.group.member_count) === 0 ? (
         <View>
@@ -1271,8 +1276,8 @@ class GroupDetailScreen extends React.Component {
           </Text>
         </View>
       ) : (
-        <View></View>
-      )}
+          <View></View>
+        )}
     </View>
   );
 
@@ -1546,7 +1551,7 @@ class GroupDetailScreen extends React.Component {
       ...selectedValue,
       delete:
         this.state.group.leaders &&
-        leadersListCopy.find((leader) => leader.value === selectedValue.value)
+          leadersListCopy.find((leader) => leader.value === selectedValue.value)
           ? true
           : false,
     };
@@ -1916,24 +1921,24 @@ class GroupDetailScreen extends React.Component {
                           this.state.usersContacts.find((user) => user.value === coach.value),
                           'name',
                         ).length > 0 ? (
-                          <TouchableOpacity
-                            key={index.toString()}
-                            activeOpacity={0.5}
-                            onPress={() => this.goToContactDetailScreen(coach.value)}>
-                            <Text style={styles.linkingText}>
-                              {safeFind(
-                                this.state.usersContacts.find((user) => user.value === coach.value),
-                                'name',
-                              )}
-                            </Text>
-                          </TouchableOpacity>
-                        ) : (
-                          <Text></Text>
-                        ),
+                            <TouchableOpacity
+                              key={index.toString()}
+                              activeOpacity={0.5}
+                              onPress={() => this.goToContactDetailScreen(coach.value)}>
+                              <Text style={styles.linkingText}>
+                                {safeFind(
+                                  this.state.usersContacts.find((user) => user.value === coach.value),
+                                  'name',
+                                )}
+                              </Text>
+                            </TouchableOpacity>
+                          ) : (
+                            <Text></Text>
+                          ),
                       )
                     ) : (
-                      <Text></Text>
-                    )}
+                        <Text></Text>
+                      )}
                   </View>
                 </Col>
                 <Col style={{ width: 100 }}>
@@ -1955,14 +1960,14 @@ class GroupDetailScreen extends React.Component {
                     ]}>
                     {this.state.group.location_grid
                       ? this.state.group.location_grid.values
-                          .map(
-                            (location) =>
-                              this.state.geonames.find(
-                                (geoname) => geoname.value === location.value,
-                              ).name,
-                          )
-                          .filter(String)
-                          .join(', ')
+                        .map(
+                          (location) =>
+                            this.state.geonames.find(
+                              (geoname) => geoname.value === location.value,
+                            ).name,
+                        )
+                        .filter(String)
+                        .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -1985,14 +1990,14 @@ class GroupDetailScreen extends React.Component {
                     ]}>
                     {this.state.group.people_groups
                       ? this.state.group.people_groups.values
-                          .map(
-                            (peopleGroup) =>
-                              this.state.peopleGroups.find(
-                                (person) => person.value === peopleGroup.value,
-                              ).name,
-                          )
-                          .filter(String)
-                          .join(', ')
+                        .map(
+                          (peopleGroup) =>
+                            this.state.peopleGroups.find(
+                              (person) => person.value === peopleGroup.value,
+                            ).name,
+                        )
+                        .filter(String)
+                        .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -2095,116 +2100,151 @@ class GroupDetailScreen extends React.Component {
           </ScrollView>
         </View>
       ) : (
-        <KeyboardAwareScrollView
-          enableAutomaticScroll
-          enableOnAndroid
-          keyboardOpeningTime={0}
-          extraScrollHeight={150}
-          keyboardShouldPersistTaps="handled">
-          <View style={styles.formContainer}>
-            <Label
-              style={{
-                color: Colors.tintColor,
-                fontSize: 12,
-                fontWeight: 'bold',
-                marginTop: 10,
-              }}>
-              {this.props.groupSettings.fields.group_status.name}
-            </Label>
-            <Row style={{ paddingBottom: 30 }}>
-              <Col
-                style={[
-                  styles.statusFieldContainer,
-                  Platform.select({
-                    default: { borderColor: this.state.groupStatusBackgroundColor },
-                    ios: {},
-                  }),
-                ]}>
-                <Picker
-                  selectedValue={this.state.group.group_status}
-                  onValueChange={this.setGroupStatus}
-                  style={[
-                    Platform.select({
-                      android: {
-                        color: '#ffffff',
-                        backgroundColor: this.state.groupStatusBackgroundColor,
-                        width: '100%',
-                      },
-                      default: {
-                        backgroundColor: this.state.groupStatusBackgroundColor,
-                      },
-                    }),
-                    this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                  ]}
-                  textStyle={{
-                    color: '#ffffff',
-                  }}>
-                  {Object.keys(this.props.groupSettings.fields.group_status.values).map((key) => {
-                    const optionData = this.props.groupSettings.fields.group_status.values[key];
-                    return <Picker.Item key={key} label={optionData.label} value={key} />;
-                  })}
-                </Picker>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="user" style={styles.formIcon} />
-                </View>
-              </Col>
-              <Col>
-                <Label style={styles.formLabel}>
-                  {i18n.t('groupDetailScreen.groupName.label')}
-                </Label>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="user" style={[styles.formIcon, { opacity: 0 }]} />
-                </View>
-              </Col>
-              <Col>
+          <KeyboardAwareScrollView
+            enableAutomaticScroll
+            enableOnAndroid
+            keyboardOpeningTime={0}
+            extraScrollHeight={150}
+            keyboardShouldPersistTaps="handled">
+            <View style={styles.formContainer}>
+              <Label
+                style={{
+                  color: Colors.tintColor,
+                  fontSize: 12,
+                  fontWeight: 'bold',
+                  marginTop: 10,
+                }}>
+                {this.props.groupSettings.fields.group_status.name}
+              </Label>
+              <Row style={{ paddingBottom: 30 }}>
                 <Col
-                  style={
-                    this.state.nameRequired
-                      ? {
-                          backgroundColor: '#FFE6E6',
-                          borderWidth: 2,
-                          borderColor: Colors.errorBackground,
-                        }
-                      : null
-                  }>
-                  <Input
-                    value={this.state.group.title}
-                    onChangeText={this.setGroupTitle}
-                    style={
-                      this.state.nameRequired
-                        ? [styles.groupTextField, { borderBottomWidth: 0 }]
-                        : styles.groupTextField
-                    }
-                  />
+                  style={[
+                    styles.statusFieldContainer,
+                    Platform.select({
+                      default: { borderColor: this.state.groupStatusBackgroundColor },
+                      ios: {},
+                    }),
+                  ]}>
+                  <Picker
+                    selectedValue={this.state.group.group_status}
+                    onValueChange={this.setGroupStatus}
+                    style={[
+                      Platform.select({
+                        android: {
+                          color: '#ffffff',
+                          backgroundColor: this.state.groupStatusBackgroundColor,
+                          width: '100%',
+                        },
+                        default: {
+                          backgroundColor: this.state.groupStatusBackgroundColor,
+                        },
+                      }),
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}
+                    textStyle={{
+                      color: '#ffffff',
+                    }}>
+                    {Object.keys(this.props.groupSettings.fields.group_status.values).map((key) => {
+                      const optionData = this.props.groupSettings.fields.group_status.values[key];
+                      return <Picker.Item key={key} label={optionData.label} value={key} />;
+                    })}
+                  </Picker>
                 </Col>
-                {this.state.nameRequired ? (
-                  <Text style={styles.validationErrorMessage}>
-                    {i18n.t('groupDetailScreen.groupName.error')}
-                  </Text>
-                ) : null}
-              </Col>
-            </Row>
-            <TouchableOpacity
-              onPress={() => {
-                this.updateShowAssignedToModal(true);
-              }}>
-              <Row style={styles.formFieldPadding}>
+              </Row>
+              <Row>
                 <Col style={styles.formIconLabelCol}>
                   <View style={styles.formIconLabelView}>
-                    <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
+                    <Icon type="FontAwesome" name="user" style={styles.formIcon} />
                   </View>
                 </Col>
                 <Col>
                   <Label style={styles.formLabel}>
-                    {this.props.groupSettings.fields.assigned_to.name}
+                    {i18n.t('groupDetailScreen.groupName.label')}
+                  </Label>
+                </Col>
+              </Row>
+              <Row>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Icon type="FontAwesome" name="user" style={[styles.formIcon, { opacity: 0 }]} />
+                  </View>
+                </Col>
+                <Col>
+                  <Col
+                    style={
+                      this.state.nameRequired
+                        ? {
+                          backgroundColor: '#FFE6E6',
+                          borderWidth: 2,
+                          borderColor: Colors.errorBackground,
+                        }
+                        : null
+                    }>
+                    <Input
+                      value={this.state.group.title}
+                      onChangeText={this.setGroupTitle}
+                      style={
+                        this.state.nameRequired
+                          ? [styles.groupTextField, { borderBottomWidth: 0 }]
+                          : styles.groupTextField
+                      }
+                    />
+                  </Col>
+                  {this.state.nameRequired ? (
+                    <Text style={styles.validationErrorMessage}>
+                      {i18n.t('groupDetailScreen.groupName.error')}
+                    </Text>
+                  ) : null}
+                </Col>
+              </Row>
+              <TouchableOpacity
+                onPress={() => {
+                  this.updateShowAssignedToModal(true);
+                }}>
+                <Row style={styles.formFieldPadding}>
+                  <Col style={styles.formIconLabelCol}>
+                    <View style={styles.formIconLabelView}>
+                      <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
+                    </View>
+                  </Col>
+                  <Col>
+                    <Label style={styles.formLabel}>
+                      {this.props.groupSettings.fields.assigned_to.name}
+                    </Label>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col style={styles.formIconLabelCol}>
+                    <View style={styles.formIconLabelView}>
+                      <Icon
+                        type="FontAwesome"
+                        name="user-circle"
+                        style={[styles.formIcon, { opacity: 0 }]}
+                      />
+                    </View>
+                  </Col>
+                  <Col style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
+                    <Picker
+                      selectedValue={
+                        this.state.group.assigned_to
+                          ? parseInt(this.state.group.assigned_to.replace('user-', ''))
+                          : ''
+                      }
+                      onValueChange={this.onSelectAssignedTo}>
+                      {this.renderPickerItems(this.state.users)}
+                    </Picker>
+                  </Col>
+                </Row>
+              </TouchableOpacity>
+              <Row style={styles.formFieldPadding}>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Icon type="FontAwesome" name="black-tie" style={styles.formIcon} />
+                  </View>
+                </Col>
+                <Col>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.coaches.name}
                   </Label>
                 </Col>
               </Row>
@@ -2213,389 +2253,364 @@ class GroupDetailScreen extends React.Component {
                   <View style={styles.formIconLabelView}>
                     <Icon
                       type="FontAwesome"
-                      name="user-circle"
+                      name="black-tie"
                       style={[styles.formIcon, { opacity: 0 }]}
                     />
                   </View>
                 </Col>
-                <Col style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
-                  <Picker
-                    selectedValue={
-                      this.state.group.assigned_to
-                        ? parseInt(this.state.group.assigned_to.replace('user-', ''))
-                        : ''
-                    }
-                    onValueChange={this.onSelectAssignedTo}>
-                    {this.renderPickerItems(this.state.users)}
-                  </Picker>
+                <Col>
+                  <Selectize
+                    ref={(selectize) => {
+                      coachesSelectizeRef = selectize;
+                    }}
+                    itemId="value"
+                    items={this.state.usersContacts}
+                    selectedItems={this.getSelectizeItems(
+                      this.state.group.coaches,
+                      this.state.usersContacts,
+                    )}
+                    textInputProps={{
+                      placeholder: i18n.t('groupDetailScreen.selectCoaches'),
+                    }}
+                    renderRow={(id, onPress, item) => (
+                      <TouchableOpacity
+                        activeOpacity={0.6}
+                        key={id}
+                        onPress={onPress}
+                        style={{
+                          paddingVertical: 8,
+                          paddingHorizontal: 10,
+                        }}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                          }}>
+                          <Text
+                            style={{
+                              color: 'rgba(0, 0, 0, 0.87)',
+                              fontSize: 14,
+                              lineHeight: 21,
+                            }}>
+                            {item.name}
+                          </Text>
+                          <Text
+                            style={{
+                              color: 'rgba(0, 0, 0, 0.54)',
+                              fontSize: 14,
+                              lineHeight: 21,
+                            }}>
+                            {' '}
+                          (#
+                          {id})
+                        </Text>
+                        </View>
+                      </TouchableOpacity>
+                    )}
+                    renderChip={(id, onClose, item, style, iconStyle) => (
+                      <Chip
+                        key={id}
+                        iconStyle={iconStyle}
+                        onClose={onClose}
+                        text={item.name}
+                        style={style}
+                      />
+                    )}
+                    filterOnKey="name"
+                    keyboardShouldPersistTaps
+                    inputContainerStyle={styles.selectizeField}
+                  />
                 </Col>
               </Row>
-            </TouchableOpacity>
-            <Row style={styles.formFieldPadding}>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="black-tie" style={styles.formIcon} />
-                </View>
-              </Col>
-              <Col>
-                <Label style={styles.formLabel}>
-                  {this.props.groupSettings.fields.coaches.name}
-                </Label>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="FontAwesome"
-                    name="black-tie"
-                    style={[styles.formIcon, { opacity: 0 }]}
-                  />
-                </View>
-              </Col>
-              <Col>
-                <Selectize
-                  ref={(selectize) => {
-                    coachesSelectizeRef = selectize;
-                  }}
-                  itemId="value"
-                  items={this.state.usersContacts}
-                  selectedItems={this.getSelectizeItems(
-                    this.state.group.coaches,
-                    this.state.usersContacts,
-                  )}
-                  textInputProps={{
-                    placeholder: i18n.t('groupDetailScreen.selectCoaches'),
-                  }}
-                  renderRow={(id, onPress, item) => (
-                    <TouchableOpacity
-                      activeOpacity={0.6}
-                      key={id}
-                      onPress={onPress}
-                      style={{
-                        paddingVertical: 8,
-                        paddingHorizontal: 10,
-                      }}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                        }}>
-                        <Text
-                          style={{
-                            color: 'rgba(0, 0, 0, 0.87)',
-                            fontSize: 14,
-                            lineHeight: 21,
-                          }}>
-                          {item.name}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                  renderChip={(id, onClose, item, style, iconStyle) => (
-                    <Chip
-                      key={id}
-                      iconStyle={iconStyle}
-                      onClose={onClose}
-                      text={item.name}
-                      style={style}
+              <Row style={styles.formFieldPadding}>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Icon type="FontAwesome" name="map-marker" style={styles.formIcon} />
+                  </View>
+                </Col>
+                <Col>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.location_grid.name}
+                  </Label>
+                </Col>
+              </Row>
+              <Row>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Icon
+                      type="FontAwesome"
+                      name="map-marker"
+                      style={[styles.formIcon, { opacity: 0 }]}
                     />
-                  )}
-                  filterOnKey="name"
-                  keyboardShouldPersistTaps
-                  inputContainerStyle={styles.selectizeField}
-                />
-              </Col>
-            </Row>
-            <Row style={styles.formFieldPadding}>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="map-marker" style={styles.formIcon} />
-                </View>
-              </Col>
-              <Col>
-                <Label style={styles.formLabel}>
-                  {this.props.groupSettings.fields.location_grid.name}
-                </Label>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Icon
-                    type="FontAwesome"
-                    name="map-marker"
-                    style={[styles.formIcon, { opacity: 0 }]}
-                  />
-                </View>
-              </Col>
-              <Col>
-                <Selectize
-                  ref={(selectize) => {
-                    geonamesSelectizeRef = selectize;
-                  }}
-                  itemId="value"
-                  items={this.state.foundGeonames}
-                  selectedItems={this.getSelectizeItems(
-                    this.state.group.location_grid,
-                    this.state.geonames,
-                  )}
-                  textInputProps={{
-                    placeholder: i18n.t('groupDetailScreen.selectLocations'),
-                  }}
-                  renderRow={(id, onPress, item) => (
-                    <TouchableOpacity
-                      activeOpacity={0.6}
-                      key={id}
-                      onPress={onPress}
-                      style={{
-                        paddingVertical: 8,
-                        paddingHorizontal: 10,
-                      }}>
-                      <View
+                  </View>
+                </Col>
+                <Col>
+                  <Selectize
+                    ref={(selectize) => {
+                      geonamesSelectizeRef = selectize;
+                    }}
+                    itemId="value"
+                    items={this.state.foundGeonames}
+                    selectedItems={this.getSelectizeItems(
+                      this.state.group.location_grid,
+                      this.state.geonames,
+                    )}
+                    textInputProps={{
+                      placeholder: i18n.t('groupDetailScreen.selectLocations'),
+                    }}
+                    renderRow={(id, onPress, item) => (
+                      <TouchableOpacity
+                        activeOpacity={0.6}
+                        key={id}
+                        onPress={onPress}
                         style={{
-                          flexDirection: 'row',
+                          paddingVertical: 8,
+                          paddingHorizontal: 10,
                         }}>
-                        <Text
+                        <View
                           style={{
-                            color: 'rgba(0, 0, 0, 0.87)',
-                            fontSize: 14,
-                            lineHeight: 21,
+                            flexDirection: 'row',
                           }}>
-                          {item.name}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                  renderChip={(id, onClose, item, style, iconStyle) => (
-                    <Chip
-                      key={id}
-                      iconStyle={iconStyle}
-                      onClose={onClose}
-                      text={item.name}
-                      style={style}
-                    />
-                  )}
-                  filterOnKey="name"
-                  keyboardShouldPersistTaps
-                  inputContainerStyle={styles.selectizeField}
-                  textInputProps={{
-                    onChangeText: this.searchLocationsDelayed,
-                  }}
-                />
-              </Col>
-            </Row>
-            <Row style={styles.formFieldPadding}>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="globe" style={styles.formIcon} />
-                </View>
-              </Col>
-              <Col>
-                <Label style={styles.formLabel}>
-                  {this.props.groupSettings.fields.people_groups.name}
-                </Label>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="globe" style={[styles.formIcon, { opacity: 0 }]} />
-                </View>
-              </Col>
-              <Col>
-                <Selectize
-                  ref={(selectize) => {
-                    peopleGroupsSelectizeRef = selectize;
-                  }}
-                  itemId="value"
-                  items={this.state.peopleGroups}
-                  selectedItems={this.getSelectizeItems(
-                    this.state.group.people_groups,
-                    this.state.peopleGroups,
-                  )}
-                  textInputProps={{
-                    placeholder: i18n.t('global.selectPeopleGroups'),
-                  }}
-                  renderRow={(id, onPress, item) => (
-                    <TouchableOpacity
-                      activeOpacity={0.6}
-                      key={id}
-                      onPress={onPress}
-                      style={{
-                        paddingVertical: 8,
-                        paddingHorizontal: 10,
-                      }}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                        }}>
-                        <Text
-                          style={{
-                            color: 'rgba(0, 0, 0, 0.87)',
-                            fontSize: 14,
-                            lineHeight: 21,
-                          }}>
-                          {item.name}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                  renderChip={(id, onClose, item, style, iconStyle) => (
-                    <Chip
-                      key={id}
-                      iconStyle={iconStyle}
-                      onClose={onClose}
-                      text={item.name}
-                      style={style}
-                    />
-                  )}
-                  filterOnKey="name"
-                  keyboardShouldPersistTaps
-                  inputContainerStyle={styles.selectizeField}
-                />
-              </Col>
-            </Row>
-            <Row style={styles.formFieldPadding}>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Icon type="Entypo" name="home" style={styles.formIcon} />
-                </View>
-              </Col>
-              <Col>
-                <Label style={styles.formLabel}>
-                  {this.props.groupSettings.channels.address.label}
-                </Label>
-              </Col>
-              <Col style={styles.formIconLabel}>
-                <Icon
-                  android="md-add"
-                  ios="ios-add"
-                  style={[styles.formIcon, { fontSize: 30, marginRight: 0 }]}
-                  onPress={this.onAddAddressField}
-                />
-              </Col>
-            </Row>
-            {this.state.group.contact_address ? (
-              this.state.group.contact_address.map((address, index) =>
-                !address.delete ? (
-                  <Row key={index.toString()} style={{ marginBottom: 10 }}>
-                    <Col style={styles.formIconLabelCol}>
-                      <View style={styles.formIconLabelView}>
-                        <Icon type="Entypo" name="home" style={[styles.formIcon, { opacity: 0 }]} />
-                      </View>
-                    </Col>
-                    <Col>
-                      <Input
-                        multiline
-                        value={address.value}
-                        onChangeText={(value) => {
-                          this.onAddressFieldChange(value, index, address.key, this);
-                        }}
-                        style={styles.groupTextField}
+                          <Text
+                            style={{
+                              color: 'rgba(0, 0, 0, 0.87)',
+                              fontSize: 14,
+                              lineHeight: 21,
+                            }}>
+                            {item.name}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    )}
+                    renderChip={(id, onClose, item, style, iconStyle) => (
+                      <Chip
+                        key={id}
+                        iconStyle={iconStyle}
+                        onClose={onClose}
+                        text={item.name}
+                        style={style}
                       />
-                    </Col>
-                    <Col style={styles.formIconLabel}>
-                      <Icon
-                        android="md-remove"
-                        ios="ios-remove"
-                        style={[styles.formIcon, styles.addRemoveIcons, { marginRight: 10 }]}
-                        onPress={() => {
-                          this.onRemoveAddressField(index, this);
-                        }}
+                    )}
+                    filterOnKey="name"
+                    keyboardShouldPersistTaps
+                    inputContainerStyle={styles.selectizeField}
+                    textInputProps={{
+                      onChangeText: this.searchLocationsDelayed,
+                    }}
+                  />
+                </Col>
+              </Row>
+              <Row style={styles.formFieldPadding}>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Icon type="FontAwesome" name="globe" style={styles.formIcon} />
+                  </View>
+                </Col>
+                <Col>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.people_groups.name}
+                  </Label>
+                </Col>
+              </Row>
+              <Row>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Icon type="FontAwesome" name="globe" style={[styles.formIcon, { opacity: 0 }]} />
+                  </View>
+                </Col>
+                <Col>
+                  <Selectize
+                    ref={(selectize) => {
+                      peopleGroupsSelectizeRef = selectize;
+                    }}
+                    itemId="value"
+                    items={this.state.peopleGroups}
+                    selectedItems={this.getSelectizeItems(
+                      this.state.group.people_groups,
+                      this.state.peopleGroups,
+                    )}
+                    textInputProps={{
+                      placeholder: i18n.t('global.selectPeopleGroups'),
+                    }}
+                    renderRow={(id, onPress, item) => (
+                      <TouchableOpacity
+                        activeOpacity={0.6}
+                        key={id}
+                        onPress={onPress}
+                        style={{
+                          paddingVertical: 8,
+                          paddingHorizontal: 10,
+                        }}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                          }}>
+                          <Text
+                            style={{
+                              color: 'rgba(0, 0, 0, 0.87)',
+                              fontSize: 14,
+                              lineHeight: 21,
+                            }}>
+                            {item.name}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    )}
+                    renderChip={(id, onClose, item, style, iconStyle) => (
+                      <Chip
+                        key={id}
+                        iconStyle={iconStyle}
+                        onClose={onClose}
+                        text={item.name}
+                        style={style}
                       />
-                    </Col>
-                  </Row>
-                ) : null,
-              )
-            ) : (
-              <Text />
-            )}
-            <Row style={styles.formFieldPadding}>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Image source={dateIcon} style={styles.dateIcons} />
-                </View>
-              </Col>
-              <Col>
-                <Label style={styles.formLabel}>
-                  {this.props.groupSettings.fields.start_date.name}
-                </Label>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Image source={dateIcon} style={[styles.dateIcons, { opacity: 0 }]} />
-                </View>
-              </Col>
-              <Col>
-                <DatePicker
-                  onDateChange={this.setGroupStartDate}
-                  defaultDate={
-                    this.state.group.start_date ? new Date(this.state.group.start_date * 1000) : ''
-                  }
-                />
-              </Col>
-            </Row>
-            <Row style={styles.formFieldPadding}>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Image source={dateSuccessIcon} style={styles.dateIcons} />
-                </View>
-              </Col>
-              <Col>
-                <Label style={styles.formLabel}>
-                  {this.props.groupSettings.fields.church_start_date.name}
-                </Label>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Image source={dateSuccessIcon} style={[styles.dateIcons, { opacity: 0 }]} />
-                </View>
-              </Col>
-              <Col>
-                <DatePicker
-                  onDateChange={this.setChurchStartDate}
-                  defaultDate={
-                    this.state.group.church_start_date
-                      ? new Date(this.state.group.church_start_date * 1000)
-                      : ''
-                  }
-                />
-              </Col>
-            </Row>
-            <Row style={styles.formFieldPadding}>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Image source={dateEndIcon} style={styles.dateIcons} />
-                </View>
-              </Col>
-              <Col>
-                <Label style={styles.formLabel}>
-                  {this.props.groupSettings.fields.end_date.name}
-                </Label>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Image source={dateEndIcon} style={[styles.dateIcons, { opacity: 0 }]} />
-                </View>
-              </Col>
-              <Col>
-                <DatePicker
-                  onDateChange={this.setEndDate}
-                  defaultDate={
-                    this.state.group.end_date ? new Date(this.state.group.end_date * 1000) : ''
-                  }
-                />
-              </Col>
-            </Row>
-          </View>
-        </KeyboardAwareScrollView>
-      )}
+                    )}
+                    filterOnKey="name"
+                    keyboardShouldPersistTaps
+                    inputContainerStyle={styles.selectizeField}
+                  />
+                </Col>
+              </Row>
+              <Row style={styles.formFieldPadding}>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Icon type="Entypo" name="home" style={styles.formIcon} />
+                  </View>
+                </Col>
+                <Col>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.channels.address.label}
+                  </Label>
+                </Col>
+                <Col style={styles.formIconLabel}>
+                  <Icon
+                    android="md-add"
+                    ios="ios-add"
+                    style={[styles.formIcon, { fontSize: 30, marginRight: 0 }]}
+                    onPress={this.onAddAddressField}
+                  />
+                </Col>
+              </Row>
+              {this.state.group.contact_address ? (
+                this.state.group.contact_address.map((address, index) =>
+                  !address.delete ? (
+                    <Row key={index.toString()} style={{ marginBottom: 10 }}>
+                      <Col style={styles.formIconLabelCol}>
+                        <View style={styles.formIconLabelView}>
+                          <Icon type="Entypo" name="home" style={[styles.formIcon, { opacity: 0 }]} />
+                        </View>
+                      </Col>
+                      <Col>
+                        <Input
+                          multiline
+                          value={address.value}
+                          onChangeText={(value) => {
+                            this.onAddressFieldChange(value, index, address.key, this);
+                          }}
+                          style={styles.groupTextField}
+                        />
+                      </Col>
+                      <Col style={styles.formIconLabel}>
+                        <Icon
+                          android="md-remove"
+                          ios="ios-remove"
+                          style={[styles.formIcon, styles.addRemoveIcons, { marginRight: 10 }]}
+                          onPress={() => {
+                            this.onRemoveAddressField(index, this);
+                          }}
+                        />
+                      </Col>
+                    </Row>
+                  ) : null,
+                )
+              ) : (
+                  <Text />
+                )}
+              <Row style={styles.formFieldPadding}>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Image source={dateIcon} style={styles.dateIcons} />
+                  </View>
+                </Col>
+                <Col>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.start_date.name}
+                  </Label>
+                </Col>
+              </Row>
+              <Row>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Image source={dateIcon} style={[styles.dateIcons, { opacity: 0 }]} />
+                  </View>
+                </Col>
+                <Col>
+                  <DatePicker
+                    onDateChange={this.setGroupStartDate}
+                    defaultDate={
+                      this.state.group.start_date ? new Date(this.state.group.start_date * 1000) : ''
+                    }
+                  />
+                </Col>
+              </Row>
+              <Row style={styles.formFieldPadding}>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Image source={dateSuccessIcon} style={styles.dateIcons} />
+                  </View>
+                </Col>
+                <Col>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.church_start_date.name}
+                  </Label>
+                </Col>
+              </Row>
+              <Row>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Image source={dateSuccessIcon} style={[styles.dateIcons, { opacity: 0 }]} />
+                  </View>
+                </Col>
+                <Col>
+                  <DatePicker
+                    onDateChange={this.setChurchStartDate}
+                    defaultDate={
+                      this.state.group.church_start_date
+                        ? new Date(this.state.group.church_start_date * 1000)
+                        : ''
+                    }
+                  />
+                </Col>
+              </Row>
+              <Row style={styles.formFieldPadding}>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Image source={dateEndIcon} style={styles.dateIcons} />
+                  </View>
+                </Col>
+                <Col>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.end_date.name}
+                  </Label>
+                </Col>
+              </Row>
+              <Row>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Image source={dateEndIcon} style={[styles.dateIcons, { opacity: 0 }]} />
+                  </View>
+                </Col>
+                <Col>
+                  <DatePicker
+                    onDateChange={this.setEndDate}
+                    defaultDate={
+                      this.state.group.end_date ? new Date(this.state.group.end_date * 1000) : ''
+                    }
+                  />
+                </Col>
+              </Row>
+            </View>
+          </KeyboardAwareScrollView>
+        )}
     </View>
   );
 
@@ -2624,8 +2639,8 @@ class GroupDetailScreen extends React.Component {
                     ]}>
                     {this.state.group.group_type
                       ? this.props.groupSettings.fields.group_type.values[
-                          this.state.group.group_type
-                        ].label
+                        this.state.group.group_type
+                      ].label
                       : ''}
                   </Text>
                 </Col>
@@ -2646,56 +2661,56 @@ class GroupDetailScreen extends React.Component {
           </ScrollView>
         </View>
       ) : (
-        <KeyboardAwareScrollView
-          enableAutomaticScroll
-          enableOnAndroid
-          keyboardOpeningTime={0}
-          extraScrollHeight={150}
-          keyboardShouldPersistTaps="handled">
-          <View style={styles.formContainer}>
-            <Row style={styles.formFieldPadding}>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Image source={groupTypeIcon} style={styles.groupIcons} />
-                </View>
-              </Col>
-              <Col>
-                <Label style={styles.formLabel}>
-                  {this.props.groupSettings.fields.group_type.name}
-                </Label>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Icon
-                    android="md-people"
-                    ios="ios-people"
-                    style={[styles.formIcon, { opacity: 0 }]}
-                  />
-                </View>
-              </Col>
-              <Col style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
-                <Picker
-                  mode="dropdown"
-                  selectedValue={this.state.group.group_type}
-                  onValueChange={this.setGroupType}>
-                  {Object.keys(this.props.groupSettings.fields.group_type.values).map((key) => {
-                    const optionData = this.props.groupSettings.fields.group_type.values[key];
-                    return <Picker.Item key={key} label={optionData.label} value={key} />;
-                  })}
-                </Picker>
-              </Col>
-            </Row>
-            <Label
-              style={[styles.formLabel, { fontWeight: 'bold', marginBottom: 10, marginTop: 20 }]}>
-              {this.props.groupSettings.fields.health_metrics.name}
-            </Label>
-          </View>
-          {this.renderHealthMilestones()}
-          {this.renderCustomHealthMilestones()}
-        </KeyboardAwareScrollView>
-      )}
+          <KeyboardAwareScrollView
+            enableAutomaticScroll
+            enableOnAndroid
+            keyboardOpeningTime={0}
+            extraScrollHeight={150}
+            keyboardShouldPersistTaps="handled">
+            <View style={styles.formContainer}>
+              <Row style={styles.formFieldPadding}>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Image source={groupTypeIcon} style={styles.groupIcons} />
+                  </View>
+                </Col>
+                <Col>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.group_type.name}
+                  </Label>
+                </Col>
+              </Row>
+              <Row>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Icon
+                      android="md-people"
+                      ios="ios-people"
+                      style={[styles.formIcon, { opacity: 0 }]}
+                    />
+                  </View>
+                </Col>
+                <Col style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
+                  <Picker
+                    mode="dropdown"
+                    selectedValue={this.state.group.group_type}
+                    onValueChange={this.setGroupType}>
+                    {Object.keys(this.props.groupSettings.fields.group_type.values).map((key) => {
+                      const optionData = this.props.groupSettings.fields.group_type.values[key];
+                      return <Picker.Item key={key} label={optionData.label} value={key} />;
+                    })}
+                  </Picker>
+                </Col>
+              </Row>
+              <Label
+                style={[styles.formLabel, { fontWeight: 'bold', marginBottom: 10, marginTop: 20 }]}>
+                {this.props.groupSettings.fields.health_metrics.name}
+              </Label>
+            </View>
+            {this.renderHealthMilestones()}
+            {this.renderCustomHealthMilestones()}
+          </KeyboardAwareScrollView>
+        )}
     </View>
   );
 
@@ -2901,9 +2916,9 @@ class GroupDetailScreen extends React.Component {
               style={[
                 styles.membersLeaderIcon,
                 this.state.group.leaders &&
-                this.state.group.leaders.values.find(
-                  (leader) => leader.value === membersGroup.value,
-                )
+                  this.state.group.leaders.values.find(
+                    (leader) => leader.value === membersGroup.value,
+                  )
                   ? styles.membersIconActive
                   : styles.membersIconInactive,
               ]}
@@ -2927,44 +2942,44 @@ class GroupDetailScreen extends React.Component {
           </Col>
         </Grid>
       ) : (
-        <Grid style={{ marginTop: 10, marginBottom: 10 }}>
-          <Col style={{ width: 20 }}>
-            <TouchableOpacity
-              onPress={() => this.onSetLeader(membersGroup)}
-              key={membersGroup.value}>
-              <Image
-                source={footprint}
-                style={[
-                  styles.membersLeaderIcon,
-                  this.state.group.leaders &&
-                  this.state.group.leaders.values.find(
-                    (leader) => leader.value === membersGroup.value,
-                  )
-                    ? styles.membersIconActive
-                    : styles.membersIconInactive,
-                ]}
-              />
-            </TouchableOpacity>
-          </Col>
-          <Col>
-            <TouchableOpacity
-              onPress={() => this.goToContactDetailScreen(membersGroup.value)}
-              key={membersGroup.value}
-              style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              <Text style={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: 15, padding: 5 }}>
-                {membersGroup.name}
-              </Text>
-            </TouchableOpacity>
-          </Col>
-          <Col style={{ width: 20 }}>
-            <TouchableOpacity
-              onPress={() => this.onRemoveMember(membersGroup)}
-              key={membersGroup.value}>
-              <Icon type="MaterialCommunityIcons" name="close" style={styles.membersCloseIcon} />
-            </TouchableOpacity>
-          </Col>
-        </Grid>
-      )}
+          <Grid style={{ marginTop: 10, marginBottom: 10 }}>
+            <Col style={{ width: 20 }}>
+              <TouchableOpacity
+                onPress={() => this.onSetLeader(membersGroup)}
+                key={membersGroup.value}>
+                <Image
+                  source={footprint}
+                  style={[
+                    styles.membersLeaderIcon,
+                    this.state.group.leaders &&
+                      this.state.group.leaders.values.find(
+                        (leader) => leader.value === membersGroup.value,
+                      )
+                      ? styles.membersIconActive
+                      : styles.membersIconInactive,
+                  ]}
+                />
+              </TouchableOpacity>
+            </Col>
+            <Col>
+              <TouchableOpacity
+                onPress={() => this.goToContactDetailScreen(membersGroup.value)}
+                key={membersGroup.value}
+                style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                <Text style={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: 15, padding: 5 }}>
+                  {membersGroup.name}
+                </Text>
+              </TouchableOpacity>
+            </Col>
+            <Col style={{ width: 20 }}>
+              <TouchableOpacity
+                onPress={() => this.onRemoveMember(membersGroup)}
+                key={membersGroup.value}>
+                <Icon type="MaterialCommunityIcons" name="close" style={styles.membersCloseIcon} />
+              </TouchableOpacity>
+            </Col>
+          </Grid>
+        )}
     </View>
   );
 
@@ -2991,81 +3006,91 @@ class GroupDetailScreen extends React.Component {
         </ScrollView>
       </View>
     ) : (
-      <KeyboardAwareScrollView
-        enableAutomaticScroll
-        enableOnAndroid
-        keyboardOpeningTime={0}
-        extraScrollHeight={150}
-        keyboardShouldPersistTaps="handled">
-        <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
-          <ScrollView keyboardShouldPersistTaps="handled">
-            <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'left' }}>
-              {i18n.t('global.membersActivity')}
-            </Text>
-            <FlatList
-              data={this.state.group.members ? this.state.group.members.values : []}
-              extraData={this.state.updateMembersList}
-              renderItem={(item) => this.membersRow(item.item)}
-              ItemSeparatorComponent={this.flatListItemSeparator}
-            />
-            <Grid>
-              <Row>
-                <Col style={{ width: 40, marginTop: 5, marginLeft: 0 }}>
-                  <Icon type="Entypo" name="add-user" style={{ color: '#CCCCCC' }} />
-                </Col>
-                <Col style={{ paddingBottom: 200 }}>
-                  <Selectize
-                    ref={(selectize) => {
-                      addMembersSelectizeRef = selectize;
-                    }}
-                    itemId="value"
-                    items={this.state.usersContacts.filter(
-                      (userContact) =>
-                        this.state.group.members &&
-                        !this.state.group.members.values.find(
-                          (member) => member.value === userContact.value,
-                        ),
-                    )}
-                    selectedItems={[]}
-                    textInputProps={{
-                      placeholder: i18n.t('groupDetailScreen.addMember'),
-                      leftIcon: { type: 'Entypo', name: 'add-user' },
-                    }}
-                    renderRow={(id, onPress, item) => (
-                      <TouchableOpacity
-                        activeOpacity={0.6}
-                        key={id}
-                        onPress={() => this.onAddMember(item)}
-                        style={{
-                          paddingVertical: 8,
-                          paddingHorizontal: 10,
-                        }}>
-                        <View
+        <KeyboardAwareScrollView
+          enableAutomaticScroll
+          enableOnAndroid
+          keyboardOpeningTime={0}
+          extraScrollHeight={150}
+          keyboardShouldPersistTaps="handled">
+          <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
+            <ScrollView keyboardShouldPersistTaps="handled">
+              <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'left' }}>
+                {i18n.t('global.membersActivity')}
+              </Text>
+              <FlatList
+                data={this.state.group.members ? this.state.group.members.values : []}
+                extraData={this.state.updateMembersList}
+                renderItem={(item) => this.membersRow(item.item)}
+                ItemSeparatorComponent={this.flatListItemSeparator}
+              />
+              <Grid>
+                <Row>
+                  <Col style={{ width: 40, marginTop: 5, marginLeft: 0 }}>
+                    <Icon type="Entypo" name="add-user" style={{ color: '#CCCCCC' }} />
+                  </Col>
+                  <Col style={{ paddingBottom: 200 }}>
+                    <Selectize
+                      ref={(selectize) => {
+                        addMembersSelectizeRef = selectize;
+                      }}
+                      itemId="value"
+                      items={this.state.usersContacts.filter(
+                        (userContact) =>
+                          this.state.group.members &&
+                          !this.state.group.members.values.find(
+                            (member) => member.value === userContact.value,
+                          ),
+                      )}
+                      selectedItems={[]}
+                      textInputProps={{
+                        placeholder: i18n.t('groupDetailScreen.addMember'),
+                        leftIcon: { type: 'Entypo', name: 'add-user' },
+                      }}
+                      renderRow={(id, onPress, item) => (
+                        <TouchableOpacity
+                          activeOpacity={0.6}
+                          key={id}
+                          onPress={() => this.onAddMember(item)}
                           style={{
-                            flexDirection: 'row',
+                            paddingVertical: 8,
+                            paddingHorizontal: 10,
                           }}>
-                          <Text
+                          <View
                             style={{
-                              color: 'rgba(0, 0, 0, 0.87)',
-                              fontSize: 14,
-                              lineHeight: 21,
+                              flexDirection: 'row',
                             }}>
-                            {item.name}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                    )}
-                    filterOnKey="name"
-                    keyboardShouldPersistTaps
-                    inputContainerStyle={styles.selectizeField}
-                  />
-                </Col>
-              </Row>
-            </Grid>
-          </ScrollView>
-        </View>
-      </KeyboardAwareScrollView>
-    );
+                            <Text
+                              style={{
+                                color: 'rgba(0, 0, 0, 0.87)',
+                                fontSize: 14,
+                                lineHeight: 21,
+                              }}>
+                              {item.name}
+                            </Text>
+                            <Text
+                              style={{
+                                color: 'rgba(0, 0, 0, 0.54)',
+                                fontSize: 14,
+                                lineHeight: 21,
+                              }}>
+                              {' '}
+                          (#
+                          {id})
+                        </Text>
+                          </View>
+                        </TouchableOpacity>
+                      )}
+                      filterOnKey="name"
+                      keyboardShouldPersistTaps
+                      inputContainerStyle={styles.selectizeField}
+                    />
+                  </Col>
+                </Row>
+              </Grid>
+            </ScrollView>
+          </View>
+        </KeyboardAwareScrollView>
+      );
   };
 
   groupsView = () => (
@@ -3103,11 +3128,11 @@ class GroupDetailScreen extends React.Component {
                         style={styles.groupCircleContainer}
                         onPress={() => this.goToGroupDetailScreen(parentGroup)}>
                         {Object.prototype.hasOwnProperty.call(parentGroup, 'is_church') &&
-                        parentGroup.is_church ? (
-                          <Image source={groupCircleIcon} style={styles.groupCircle} />
-                        ) : (
-                          <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
-                        )}
+                          parentGroup.is_church ? (
+                            <Image source={groupCircleIcon} style={styles.groupCircle} />
+                          ) : (
+                            <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
+                          )}
                         <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
                         <Row style={styles.groupCircleName}>
                           <Text style={styles.groupCircleNameText}>{parentGroup.post_title}</Text>
@@ -3121,8 +3146,8 @@ class GroupDetailScreen extends React.Component {
                       </Col>
                     ))
                   ) : (
-                    <Text />
-                  )}
+                      <Text />
+                    )}
                 </ScrollView>
               </Row>
               <View style={[styles.formDivider, styles.formDivider2Margin]} />
@@ -3148,11 +3173,11 @@ class GroupDetailScreen extends React.Component {
                         style={styles.groupCircleContainer}
                         onPress={() => this.goToGroupDetailScreen(peerGroup)}>
                         {Object.prototype.hasOwnProperty.call(peerGroup, 'is_church') &&
-                        peerGroup.is_church ? (
-                          <Image source={groupCircleIcon} style={styles.groupCircle} />
-                        ) : (
-                          <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
-                        )}
+                          peerGroup.is_church ? (
+                            <Image source={groupCircleIcon} style={styles.groupCircle} />
+                          ) : (
+                            <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
+                          )}
                         <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
                         <Row style={styles.groupCircleName}>
                           <Text style={styles.groupCircleNameText}>{peerGroup.post_title}</Text>
@@ -3166,8 +3191,8 @@ class GroupDetailScreen extends React.Component {
                       </Col>
                     ))
                   ) : (
-                    <Text />
-                  )}
+                      <Text />
+                    )}
                 </ScrollView>
               </Row>
               <View style={[styles.formDivider, styles.formDivider2Margin]} />
@@ -3191,11 +3216,11 @@ class GroupDetailScreen extends React.Component {
                         style={styles.groupCircleContainer}
                         onPress={() => this.goToGroupDetailScreen(childGroup)}>
                         {Object.prototype.hasOwnProperty.call(childGroup, 'is_church') &&
-                        childGroup.is_church ? (
-                          <Image source={groupCircleIcon} style={styles.groupCircle} />
-                        ) : (
-                          <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
-                        )}
+                          childGroup.is_church ? (
+                            <Image source={groupCircleIcon} style={styles.groupCircle} />
+                          ) : (
+                            <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
+                          )}
                         <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
                         <Row style={styles.groupCircleName}>
                           <Text style={styles.groupCircleNameText}>{childGroup.post_title}</Text>
@@ -3209,8 +3234,8 @@ class GroupDetailScreen extends React.Component {
                       </Col>
                     ))
                   ) : (
-                    <Text />
-                  )}
+                      <Text />
+                    )}
                 </ScrollView>
               </Row>
               <View style={[styles.formDivider, styles.formDivider2Margin]} />
@@ -3218,229 +3243,259 @@ class GroupDetailScreen extends React.Component {
           </ScrollView>
         </View>
       ) : (
-        <KeyboardAwareScrollView
-          enableAutomaticScroll
-          enableOnAndroid
-          keyboardOpeningTime={0}
-          extraScrollHeight={150}
-          keyboardShouldPersistTaps="handled">
-          <View style={styles.formContainer}>
-            <Row style={styles.formFieldPadding}>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Image source={groupParentIcon} style={styles.groupIcons} />
-                </View>
-              </Col>
-              <Col>
-                <Label style={styles.formLabel}>
-                  {this.props.groupSettings.fields.parent_groups.name}
-                </Label>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="users" style={[styles.formIcon, { opacity: 0 }]} />
-                </View>
-              </Col>
-              <Col>
-                <Selectize
-                  ref={(selectize) => {
-                    parentGroupsSelectizeRef = selectize;
-                  }}
-                  itemId="value"
-                  items={this.state.groups}
-                  selectedItems={this.getSelectizeItems(
-                    this.state.group.parent_groups,
-                    this.state.groups,
-                  )}
-                  textInputProps={{
-                    placeholder: i18n.t('groupDetailScreen.searchGroups'),
-                  }}
-                  renderRow={(id, onPress, item) => (
-                    <TouchableOpacity
-                      activeOpacity={0.6}
-                      key={id}
-                      onPress={onPress}
-                      style={{
-                        paddingVertical: 8,
-                        paddingHorizontal: 10,
-                      }}>
-                      <View
+          <KeyboardAwareScrollView
+            enableAutomaticScroll
+            enableOnAndroid
+            keyboardOpeningTime={0}
+            extraScrollHeight={150}
+            keyboardShouldPersistTaps="handled">
+            <View style={styles.formContainer}>
+              <Row style={styles.formFieldPadding}>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Image source={groupParentIcon} style={styles.groupIcons} />
+                  </View>
+                </Col>
+                <Col>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.parent_groups.name}
+                  </Label>
+                </Col>
+              </Row>
+              <Row>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Icon type="FontAwesome" name="users" style={[styles.formIcon, { opacity: 0 }]} />
+                  </View>
+                </Col>
+                <Col>
+                  <Selectize
+                    ref={(selectize) => {
+                      parentGroupsSelectizeRef = selectize;
+                    }}
+                    itemId="value"
+                    items={this.state.groups}
+                    selectedItems={this.getSelectizeItems(
+                      this.state.group.parent_groups,
+                      this.state.groups,
+                    )}
+                    textInputProps={{
+                      placeholder: i18n.t('groupDetailScreen.searchGroups'),
+                    }}
+                    renderRow={(id, onPress, item) => (
+                      <TouchableOpacity
+                        activeOpacity={0.6}
+                        key={id}
+                        onPress={onPress}
                         style={{
-                          flexDirection: 'row',
+                          paddingVertical: 8,
+                          paddingHorizontal: 10,
                         }}>
-                        <Text
+                        <View
                           style={{
-                            color: 'rgba(0, 0, 0, 0.87)',
-                            fontSize: 14,
-                            lineHeight: 21,
+                            flexDirection: 'row',
                           }}>
-                          {item.name}
+                          <Text
+                            style={{
+                              color: 'rgba(0, 0, 0, 0.87)',
+                              fontSize: 14,
+                              lineHeight: 21,
+                            }}>
+                            {item.name}
+                          </Text>
+                          <Text
+                            style={{
+                              color: 'rgba(0, 0, 0, 0.54)',
+                              fontSize: 14,
+                              lineHeight: 21,
+                            }}>
+                            {' '}
+                          (#
+                          {id})
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                  renderChip={(id, onClose, item, style, iconStyle) => (
-                    <Chip
-                      key={id}
-                      iconStyle={iconStyle}
-                      onClose={onClose}
-                      text={item.name}
-                      style={style}
-                    />
-                  )}
-                  filterOnKey="name"
-                  keyboardShouldPersistTaps
-                  inputContainerStyle={styles.selectizeField}
-                />
-              </Col>
-            </Row>
-            <Row style={styles.formFieldPadding}>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Image source={groupPeerIcon} style={styles.groupIcons} />
-                </View>
-              </Col>
-              <Col>
-                <Label style={styles.formLabel}>
-                  {this.props.groupSettings.fields.peer_groups.name}
-                </Label>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="users" style={[styles.formIcon, { opacity: 0 }]} />
-                </View>
-              </Col>
-              <Col>
-                <Selectize
-                  ref={(selectize) => {
-                    peerGroupsSelectizeRef = selectize;
-                  }}
-                  itemId="value"
-                  items={this.state.groups}
-                  selectedItems={this.getSelectizeItems(
-                    this.state.group.peer_groups,
-                    this.state.groups,
-                  )}
-                  textInputProps={{
-                    placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
-                  }}
-                  renderRow={(id, onPress, item) => (
-                    <TouchableOpacity
-                      activeOpacity={0.6}
-                      key={id}
-                      onPress={onPress}
-                      style={{
-                        paddingVertical: 8,
-                        paddingHorizontal: 10,
-                      }}>
-                      <View
+                        </View>
+                      </TouchableOpacity>
+                    )}
+                    renderChip={(id, onClose, item, style, iconStyle) => (
+                      <Chip
+                        key={id}
+                        iconStyle={iconStyle}
+                        onClose={onClose}
+                        text={item.name}
+                        style={style}
+                      />
+                    )}
+                    filterOnKey="name"
+                    keyboardShouldPersistTaps
+                    inputContainerStyle={styles.selectizeField}
+                  />
+                </Col>
+              </Row>
+              <Row style={styles.formFieldPadding}>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Image source={groupPeerIcon} style={styles.groupIcons} />
+                  </View>
+                </Col>
+                <Col>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.peer_groups.name}
+                  </Label>
+                </Col>
+              </Row>
+              <Row>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Icon type="FontAwesome" name="users" style={[styles.formIcon, { opacity: 0 }]} />
+                  </View>
+                </Col>
+                <Col>
+                  <Selectize
+                    ref={(selectize) => {
+                      peerGroupsSelectizeRef = selectize;
+                    }}
+                    itemId="value"
+                    items={this.state.groups}
+                    selectedItems={this.getSelectizeItems(
+                      this.state.group.peer_groups,
+                      this.state.groups,
+                    )}
+                    textInputProps={{
+                      placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
+                    }}
+                    renderRow={(id, onPress, item) => (
+                      <TouchableOpacity
+                        activeOpacity={0.6}
+                        key={id}
+                        onPress={onPress}
                         style={{
-                          flexDirection: 'row',
+                          paddingVertical: 8,
+                          paddingHorizontal: 10,
                         }}>
-                        <Text
+                        <View
                           style={{
-                            color: 'rgba(0, 0, 0, 0.87)',
-                            fontSize: 14,
-                            lineHeight: 21,
+                            flexDirection: 'row',
                           }}>
-                          {item.name}
+                          <Text
+                            style={{
+                              color: 'rgba(0, 0, 0, 0.87)',
+                              fontSize: 14,
+                              lineHeight: 21,
+                            }}>
+                            {item.name}
+                          </Text>
+                          <Text
+                            style={{
+                              color: 'rgba(0, 0, 0, 0.54)',
+                              fontSize: 14,
+                              lineHeight: 21,
+                            }}>
+                            {' '}
+                          (#
+                          {id})
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                  renderChip={(id, onClose, item, style, iconStyle) => (
-                    <Chip
-                      key={id}
-                      iconStyle={iconStyle}
-                      onClose={onClose}
-                      text={item.name}
-                      style={style}
-                    />
-                  )}
-                  filterOnKey="name"
-                  keyboardShouldPersistTaps
-                  inputContainerStyle={styles.selectizeField}
-                />
-              </Col>
-            </Row>
-            <Row style={styles.formFieldPadding}>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Image source={groupChildIcon} style={styles.groupIcons} />
-                </View>
-              </Col>
-              <Col>
-                <Label style={styles.formLabel}>
-                  {this.props.groupSettings.fields.child_groups.name}
-                </Label>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={styles.formIconLabelCol}>
-                <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="users" style={[styles.formIcon, { opacity: 0 }]} />
-                </View>
-              </Col>
-              <Col>
-                <Selectize
-                  ref={(selectize) => {
-                    childGroupsSelectizeRef = selectize;
-                  }}
-                  itemId="value"
-                  items={this.state.groups}
-                  selectedItems={this.getSelectizeItems(
-                    this.state.group.child_groups,
-                    this.state.groups,
-                  )}
-                  textInputProps={{
-                    placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
-                  }}
-                  renderRow={(id, onPress, item) => (
-                    <TouchableOpacity
-                      activeOpacity={0.6}
-                      key={id}
-                      onPress={onPress}
-                      style={{
-                        paddingVertical: 8,
-                        paddingHorizontal: 10,
-                      }}>
-                      <View
+                        </View>
+                      </TouchableOpacity>
+                    )}
+                    renderChip={(id, onClose, item, style, iconStyle) => (
+                      <Chip
+                        key={id}
+                        iconStyle={iconStyle}
+                        onClose={onClose}
+                        text={item.name}
+                        style={style}
+                      />
+                    )}
+                    filterOnKey="name"
+                    keyboardShouldPersistTaps
+                    inputContainerStyle={styles.selectizeField}
+                  />
+                </Col>
+              </Row>
+              <Row style={styles.formFieldPadding}>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Image source={groupChildIcon} style={styles.groupIcons} />
+                  </View>
+                </Col>
+                <Col>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.child_groups.name}
+                  </Label>
+                </Col>
+              </Row>
+              <Row>
+                <Col style={styles.formIconLabelCol}>
+                  <View style={styles.formIconLabelView}>
+                    <Icon type="FontAwesome" name="users" style={[styles.formIcon, { opacity: 0 }]} />
+                  </View>
+                </Col>
+                <Col>
+                  <Selectize
+                    ref={(selectize) => {
+                      childGroupsSelectizeRef = selectize;
+                    }}
+                    itemId="value"
+                    items={this.state.groups}
+                    selectedItems={this.getSelectizeItems(
+                      this.state.group.child_groups,
+                      this.state.groups,
+                    )}
+                    textInputProps={{
+                      placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
+                    }}
+                    renderRow={(id, onPress, item) => (
+                      <TouchableOpacity
+                        activeOpacity={0.6}
+                        key={id}
+                        onPress={onPress}
                         style={{
-                          flexDirection: 'row',
+                          paddingVertical: 8,
+                          paddingHorizontal: 10,
                         }}>
-                        <Text
+                        <View
                           style={{
-                            color: 'rgba(0, 0, 0, 0.87)',
-                            fontSize: 14,
-                            lineHeight: 21,
+                            flexDirection: 'row',
                           }}>
-                          {item.name}
+                          <Text
+                            style={{
+                              color: 'rgba(0, 0, 0, 0.87)',
+                              fontSize: 14,
+                              lineHeight: 21,
+                            }}>
+                            {item.name}
+                          </Text>
+                          <Text
+                            style={{
+                              color: 'rgba(0, 0, 0, 0.54)',
+                              fontSize: 14,
+                              lineHeight: 21,
+                            }}>
+                            {' '}
+                          (#
+                          {id})
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                  renderChip={(id, onClose, item, style, iconStyle) => (
-                    <Chip
-                      key={id}
-                      iconStyle={iconStyle}
-                      onClose={onClose}
-                      text={item.name}
-                      style={style}
-                    />
-                  )}
-                  filterOnKey="name"
-                  keyboardShouldPersistTaps
-                  inputContainerStyle={styles.selectizeField}
-                />
-              </Col>
-            </Row>
-          </View>
-        </KeyboardAwareScrollView>
-      )}
+                        </View>
+                      </TouchableOpacity>
+                    )}
+                    renderChip={(id, onClose, item, style, iconStyle) => (
+                      <Chip
+                        key={id}
+                        iconStyle={iconStyle}
+                        onClose={onClose}
+                        text={item.name}
+                        style={style}
+                      />
+                    )}
+                    filterOnKey="name"
+                    keyboardShouldPersistTaps
+                    inputContainerStyle={styles.selectizeField}
+                  />
+                </Col>
+              </Row>
+            </View>
+          </KeyboardAwareScrollView>
+        )}
     </View>
   );
 
@@ -3916,7 +3971,7 @@ class GroupDetailScreen extends React.Component {
 
   renderPickerItems = (items) =>
     items.map((item) => {
-      return <Picker.Item key={item.key} label={item.label} value={item.key} />;
+      return <Picker.Item key={item.key} label={item.label + ' (#' + item.key + ')'} value={item.key} />;
     });
 
   renderCustomHealthMilestones() {
@@ -4095,64 +4150,64 @@ class GroupDetailScreen extends React.Component {
                 </View>
               </View>
             ) : (
-              <ScrollView>
-                {!this.props.isConnected && this.offlineBarRender()}
-                <View style={styles.formContainer}>
-                  <Grid>
-                    <Row>
-                      <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                        {i18n.t('groupDetailScreen.groupName.label')}
-                      </Label>
-                    </Row>
-                    <Row
-                      style={
-                        this.state.nameRequired
-                          ? {
+                <ScrollView>
+                  {!this.props.isConnected && this.offlineBarRender()}
+                  <View style={styles.formContainer}>
+                    <Grid>
+                      <Row>
+                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                          {i18n.t('groupDetailScreen.groupName.label')}
+                        </Label>
+                      </Row>
+                      <Row
+                        style={
+                          this.state.nameRequired
+                            ? {
                               backgroundColor: '#FFE6E6',
                               borderWidth: 2,
                               borderColor: Colors.errorBackground,
                             }
-                          : null
-                      }>
-                      <Input
-                        placeholder={i18n.t('global.requiredField')}
-                        onChangeText={this.setGroupTitle}
-                        style={
-                          this.state.nameRequired
-                            ? [styles.groupTextField, { borderBottomWidth: 0 }]
-                            : styles.groupTextField
-                        }
-                      />
-                    </Row>
-                    {this.state.nameRequired ? (
-                      <Text style={styles.validationErrorMessage}>
-                        {i18n.t('groupDetailScreen.groupName.error')}
-                      </Text>
-                    ) : null}
-                    <Row>
-                      <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                        {this.props.groupSettings.fields.group_type.name}
-                      </Label>
-                    </Row>
-                    <Row style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
-                      <Picker
-                        mode="dropdown"
-                        selectedValue={this.state.group.group_type}
-                        onValueChange={this.setGroupType}>
-                        {Object.keys(this.props.groupSettings.fields.group_type.values).map(
-                          (key) => {
-                            const optionData = this.props.groupSettings.fields.group_type.values[
-                              key
-                            ];
-                            return <Picker.Item key={key} label={optionData.label} value={key} />;
-                          },
-                        )}
-                      </Picker>
-                    </Row>
-                  </Grid>
-                </View>
-              </ScrollView>
-            )}
+                            : null
+                        }>
+                        <Input
+                          placeholder={i18n.t('global.requiredField')}
+                          onChangeText={this.setGroupTitle}
+                          style={
+                            this.state.nameRequired
+                              ? [styles.groupTextField, { borderBottomWidth: 0 }]
+                              : styles.groupTextField
+                          }
+                        />
+                      </Row>
+                      {this.state.nameRequired ? (
+                        <Text style={styles.validationErrorMessage}>
+                          {i18n.t('groupDetailScreen.groupName.error')}
+                        </Text>
+                      ) : null}
+                      <Row>
+                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                          {this.props.groupSettings.fields.group_type.name}
+                        </Label>
+                      </Row>
+                      <Row style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
+                        <Picker
+                          mode="dropdown"
+                          selectedValue={this.state.group.group_type}
+                          onValueChange={this.setGroupType}>
+                          {Object.keys(this.props.groupSettings.fields.group_type.values).map(
+                            (key) => {
+                              const optionData = this.props.groupSettings.fields.group_type.values[
+                                key
+                              ];
+                              return <Picker.Item key={key} label={optionData.label} value={key} />;
+                            },
+                          )}
+                        </Picker>
+                      </Row>
+                    </Grid>
+                  </View>
+                </ScrollView>
+              )}
           </View>
         )}
         {successToast}
