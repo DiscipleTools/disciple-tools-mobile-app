@@ -1884,7 +1884,7 @@ class GroupDetailScreen extends React.Component {
                     }}>
                     {Object.keys(this.props.groupSettings.fields.group_status.values).map((key) => {
                       const optionData = this.props.groupSettings.fields.group_status.values[key];
-                      return <Picker.Item key={key} label={optionData.label + ' (#' + key + ')'} value={key} />;
+                      return <Picker.Item key={key} label={optionData.label} value={key} />;
                     })}
                   </Picker>
                 </Col>
@@ -2146,7 +2146,7 @@ class GroupDetailScreen extends React.Component {
                     }}>
                     {Object.keys(this.props.groupSettings.fields.group_status.values).map((key) => {
                       const optionData = this.props.groupSettings.fields.group_status.values[key];
-                      return <Picker.Item key={key} label={optionData.label + ' (#' + key + ')'} value={key} />;
+                      return <Picker.Item key={key} label={optionData.label} value={key} />;
                     })}
                   </Picker>
                 </Col>
@@ -2378,16 +2378,6 @@ class GroupDetailScreen extends React.Component {
                             }}>
                             {item.name}
                           </Text>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.54)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {' '}
-                          (#
-                          {id})
-                        </Text>
                         </View>
                       </TouchableOpacity>
                     )}
@@ -2462,16 +2452,6 @@ class GroupDetailScreen extends React.Component {
                             }}>
                             {item.name}
                           </Text>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.54)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {' '}
-                          (#
-                          {id})
-                        </Text>
                         </View>
                       </TouchableOpacity>
                     )}
@@ -2717,7 +2697,7 @@ class GroupDetailScreen extends React.Component {
                     onValueChange={this.setGroupType}>
                     {Object.keys(this.props.groupSettings.fields.group_type.values).map((key) => {
                       const optionData = this.props.groupSettings.fields.group_type.values[key];
-                      return <Picker.Item key={key} label={optionData.label + ' (#' + key + ')'} value={key} />;
+                      return <Picker.Item key={key} label={optionData.label} value={key} />;
                     })}
                   </Picker>
                 </Col>
@@ -4219,7 +4199,7 @@ class GroupDetailScreen extends React.Component {
                               const optionData = this.props.groupSettings.fields.group_type.values[
                                 key
                               ];
-                              return <Picker.Item key={key} label={optionData.label + ' (#' + key + ')'} value={key} />;
+                              return <Picker.Item key={key} label={optionData.label} value={key} />;
                             },
                           )}
                         </Picker>

@@ -2398,16 +2398,6 @@ class ContactDetailScreen extends React.Component {
                             }}>
                             {item.name}
                           </Text>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.54)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {' '}
-                          (#
-                          {id})
-                        </Text>
                         </View>
                       </TouchableOpacity>
                     )}
@@ -2472,16 +2462,6 @@ class ContactDetailScreen extends React.Component {
                             }}>
                             {item.name}
                           </Text>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.54)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {' '}
-                          (#
-                          {id})
-                        </Text>
                         </View>
                       </TouchableOpacity>
                     )}
@@ -2526,7 +2506,7 @@ class ContactDetailScreen extends React.Component {
                     onValueChange={this.setContactAge}>
                     {Object.keys(this.props.contactSettings.fields.age.values).map((key) => {
                       const optionData = this.props.contactSettings.fields.age.values[key];
-                      return <Picker.Item key={key} label={optionData.label + ' (#' + key + ')'} value={key} />;
+                      return <Picker.Item key={key} label={optionData.label} value={key} />;
                     })}
                   </Picker>
                 </Col>
@@ -2564,7 +2544,7 @@ class ContactDetailScreen extends React.Component {
                     onValueChange={this.setContactGender}>
                     {Object.keys(this.props.contactSettings.fields.gender.values).map((key) => {
                       const optionData = this.props.contactSettings.fields.gender.values[key];
-                      return <Picker.Item key={key} label={optionData.label + ' (#' + key + ')'} value={key} />;
+                      return <Picker.Item key={key} label={optionData.label} value={key} />;
                     })}
                   </Picker>
                 </Col>
@@ -2641,16 +2621,6 @@ class ContactDetailScreen extends React.Component {
                             }}>
                             {item.name}
                           </Text>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.54)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {' '}
-                          (#
-                          {id})
-                        </Text>
                         </View>
                       </TouchableOpacity>
                     )}
@@ -2818,7 +2788,7 @@ class ContactDetailScreen extends React.Component {
                     textStyle={{ color: Colors.tintColor }}>
                     {Object.keys(this.props.contactSettings.fields.seeker_path.values).map((key) => {
                       const optionData = this.props.contactSettings.fields.seeker_path.values[key];
-                      return <Picker.Item key={key} label={optionData.label + ' (#' + key + ')'} value={key} />;
+                      return <Picker.Item key={key} label={optionData.label} value={key} />;
                     })}
                   </Picker>
                 </Col>
@@ -4101,13 +4071,13 @@ class ContactDetailScreen extends React.Component {
 
   renderSourcePickerItems = () =>
     this.state.sources.map((source) => {
-      return <Picker.Item key={source.value} label={source.name + ' (#' + source.value + ')'} value={source.value} />;
+      return <Picker.Item key={source.value} label={source.name} value={source.value} />;
     });
 
   renderStatusPickerItems = () =>
     Object.keys(this.props.contactSettings.fields.overall_status.values).map((key) => {
       const optionData = this.props.contactSettings.fields.overall_status.values[key];
-      return <Picker.Item key={key} label={optionData.label + ' (#' + key + ')'} value={key} />;
+      return <Picker.Item key={key} label={optionData.label} value={key} />;
     });
 
   tabChanged = (index) => {
@@ -4854,7 +4824,7 @@ class ContactDetailScreen extends React.Component {
       .map((channelName, index) => (
         <Picker.Item
           key={index.toString()}
-          label={this.props.contactSettings.channels[channelName].label + ' (#' + this.props.contactSettings.channels[channelName].value + ')'}
+          label={this.props.contactSettings.channels[channelName].label}
           value={this.props.contactSettings.channels[channelName].value}
         />
       ));
@@ -5313,7 +5283,7 @@ class ContactDetailScreen extends React.Component {
                                 const optionData = this.props.contactSettings.fields.gender.values[
                                   key
                                 ];
-                                return <Picker.Item key={key} label={optionData.label + ' (#' + key + ')'} value={key} />;
+                                return <Picker.Item key={key} label={optionData.label} value={key} />;
                               },
                             )}
                           </Picker>
@@ -5381,7 +5351,7 @@ class ContactDetailScreen extends React.Component {
                                       key
                                     ];
                                     return (
-                                      <Picker.Item key={key} label={optionData.label + ' (#' + key + ')'} value={key} />
+                                      <Picker.Item key={key} label={optionData.label} value={key} />
                                     );
                                   },
                                 )}
@@ -5489,16 +5459,6 @@ class ContactDetailScreen extends React.Component {
                                         }}>
                                         {item.name}
                                       </Text>
-                                      <Text
-                                        style={{
-                                          color: 'rgba(0, 0, 0, 0.54)',
-                                          fontSize: 14,
-                                          lineHeight: 21,
-                                        }}>
-                                        {' '}
-                          (#
-                          {id})
-                        </Text>
                                     </View>
                                   </TouchableOpacity>
                                 )}
@@ -5576,16 +5536,6 @@ class ContactDetailScreen extends React.Component {
                                         }}>
                                         {item.name}
                                       </Text>
-                                      <Text
-                                        style={{
-                                          color: 'rgba(0, 0, 0, 0.54)',
-                                          fontSize: 14,
-                                          lineHeight: 21,
-                                        }}>
-                                        {' '}
-                          (#
-                          {id})
-                        </Text>
                                     </View>
                                   </TouchableOpacity>
                                 )}
