@@ -4003,36 +4003,38 @@ class ContactDetailScreen extends React.Component {
             justifyContent: 'space-between',
             marginBottom: 6,
           }}>
-          {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') && (
-            <Grid>
-              <Row>
-                <Col>
-                  <Text
-                    style={[styles.name, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
-                    {commentOrActivity.author}
-                  </Text>
-                </Col>
-                <Col style={{ width: 110 }}>
-                  <Text style={styles.time}>{this.onFormatDateToView(commentOrActivity.date)}</Text>
-                </Col>
-              </Row>
-            </Grid>
-          )}
-          {Object.prototype.hasOwnProperty.call(commentOrActivity, 'object_note') && (
-            <Grid>
-              <Row>
-                <Col>
-                  <Text
-                    style={[styles.name, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
-                    {commentOrActivity.name}
-                  </Text>
-                </Col>
-                <Col style={{ width: 110 }}>
-                  <Text style={styles.time}>{this.onFormatDateToView(commentOrActivity.date)}</Text>
-                </Col>
-              </Row>
-            </Grid>
-          )}
+          {// Comment
+            Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') && (
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text
+                      style={[styles.name, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                      {commentOrActivity.author}
+                    </Text>
+                  </Col>
+                  <Col style={{ width: 110 }}>
+                    <Text style={styles.time}>{this.onFormatDateToView(commentOrActivity.date)}</Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
+          {// Activity
+            Object.prototype.hasOwnProperty.call(commentOrActivity, 'object_note') && (
+              <Grid>
+                <Row>
+                  <Col>
+                    <Text
+                      style={[styles.name, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                      {commentOrActivity.name}
+                    </Text>
+                  </Col>
+                  <Col style={{ width: 110 }}>
+                    <Text style={styles.time}>{this.onFormatDateToView(commentOrActivity.date)}</Text>
+                  </Col>
+                </Row>
+              </Grid>
+            )}
         </View>
         <ParsedText
           style={[

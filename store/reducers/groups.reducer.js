@@ -733,7 +733,7 @@ export default function groupsReducer(state = initialState, action) {
         ...newState,
         comments: comments.map((comment) => ({
           ID: comment.comment_ID,
-          date: `${comment.comment_date.replace(' ', 'T')}Z`,
+          date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
           author: comment.comment_author,
           content: comment.comment_content,
           gravatar: comment.gravatar,
@@ -788,7 +788,7 @@ export default function groupsReducer(state = initialState, action) {
           newComment: {
             ID: comment.comment_ID,
             author: comment.comment_author,
-            date: `${comment.comment_date.replace(' ', 'T')}Z`,
+            date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
             content: comment.comment_content,
             gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
           },
