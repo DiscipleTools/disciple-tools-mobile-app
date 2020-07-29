@@ -1,5 +1,6 @@
 import * as actions from '../actions/contacts.actions';
 import * as userActions from '../actions/user.actions';
+import { Html5Entities } from 'html-entities';
 
 const initialState = {
   loading: false,
@@ -30,6 +31,7 @@ export default function contactsReducer(state = initialState, action) {
     totalActivities: null,
     saved: false,
   };
+  const entities = new Html5Entities();
   switch (action.type) {
     case actions.CONTACTS_GETALL_START:
       return {
@@ -67,9 +69,10 @@ export default function contactsReducer(state = initialState, action) {
                   if (value.includes('quick_button')) {
                     mappedContact[key] = parseInt(value, 10);
                   } else if (key === 'post_title') {
-                    mappedContact.title = value;
+                    // Decode HTML strings
+                    mappedContact.title = entities.decode(value);
                   } else {
-                    mappedContact[key] = value;
+                    mappedContact[key] = entities.decode(value);
                   }
                   return;
                 }
@@ -197,9 +200,10 @@ export default function contactsReducer(state = initialState, action) {
                 if (value.includes('quick_button')) {
                   mappedContact[key] = parseInt(value, 10);
                 } else if (key === 'post_title') {
-                  mappedContact.title = value;
+                  // Decode HTML strings
+                  mappedContact.title = entities.decode(value);
                 } else {
-                  mappedContact[key] = value;
+                  mappedContact[key] = entities.decode(value);
                 }
                 return;
               }
@@ -462,9 +466,10 @@ export default function contactsReducer(state = initialState, action) {
                 if (value.includes('quick_button')) {
                   mappedContact[key] = parseInt(value, 10);
                 } else if (key === 'post_title') {
-                  mappedContact.title = value;
+                  // Decode HTML strings
+                  mappedContact.title = entities.decode(value);
                 } else {
-                  mappedContact[key] = value;
+                  mappedContact[key] = entities.decode(value);
                 }
                 return;
               }
@@ -607,7 +612,8 @@ export default function contactsReducer(state = initialState, action) {
           ID: comment.comment_ID,
           date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
           author: comment.comment_author,
-          content: comment.comment_content,
+          // Decode HTML strings
+          content: entities.decode(comment.comment_content),
           gravatar: comment.gravatar,
         })),
         totalComments: total,
@@ -661,7 +667,8 @@ export default function contactsReducer(state = initialState, action) {
             ID: comment.comment_ID,
             author: comment.comment_author,
             date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
-            content: comment.comment_content,
+            // Decode HTML strings
+            content: entities.decode(comment.comment_content),
             gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
           },
           loadingComments: false,
@@ -686,7 +693,8 @@ export default function contactsReducer(state = initialState, action) {
         activities: action.activities.map((activity) => ({
           ID: activity.histid,
           date: new Date(parseInt(activity.hist_time, 10) * 1000).toISOString(),
-          object_note: activity.object_note,
+          // Decode HTML strings
+          object_note: entities.decode(activity.object_note),
           gravatar:
             activity.gravatar === ''
               ? 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g'

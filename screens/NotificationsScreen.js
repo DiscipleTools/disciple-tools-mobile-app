@@ -5,6 +5,7 @@ import { Container } from 'native-base';
 import PropTypes from 'prop-types';
 import { Col, Row } from 'react-native-easy-grid';
 import moment from '../languages/moment';
+import { Html5Entities } from 'html-entities';
 
 import {
   getAll,
@@ -15,6 +16,8 @@ import {
 } from '../store/actions/notifications.actions';
 import Colors from '../constants/Colors';
 import i18n from '../languages';
+
+const entities = new Html5Entities();
 
 const styles = StyleSheet.create({
   notificationContainer: {
@@ -318,13 +321,13 @@ class NotificationsScreen extends React.Component {
         <View style={[styles.notificationContainer, { flex: 1, flexDirection: 'row' }]}>
           <View style={{ flex: 1 }}>
             <Text style={[this.props.isRTL ? { textAlign: 'left' } : {}]}>
-              <Text>{newNotificationNoteA}</Text>
+              <Text>{entities.decode(newNotificationNoteA)}</Text>
               <Text
                 style={{ color: Colors.primary }}
                 onPress={() =>
                   this.redirectToDetailView(entityName, entityId, newNotificationNoteC)
                 }>
-                {newNotificationNoteC}
+                {entities.decode(newNotificationNoteC)}
               </Text>
             </Text>
             <Text
