@@ -4,8 +4,10 @@ import { createStackNavigator } from 'react-navigation-stack';
 import MainTabNavigator from './MainTabNavigator';
 import LoginScreen from '../screens/LoginScreen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
+import QuestionnaireScreen from '../screens/QuestionnaireScreen';
 
 const AuthStack = createStackNavigator({ Login: LoginScreen });
+const QuestionnaireStack = createStackNavigator({ Question: QuestionnaireScreen });
 
 export default createAppContainer(
   createSwitchNavigator(
@@ -15,6 +17,7 @@ export default createAppContainer(
       AuthLoading: AuthLoadingScreen,
       Auth: AuthStack,
       Main: MainTabNavigator,
+      Questionnaire: QuestionnaireStack,
     },
     {
       initialRouteName: 'AuthLoading',
