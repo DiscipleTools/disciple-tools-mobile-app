@@ -62,7 +62,11 @@ export default function contactsReducer(state = initialState, action) {
                   return;
                 }
                 case '[object Number]': {
-                  mappedContact[key] = value;
+                  if(key === 'ID') {
+                    mappedContact[key] = value.toString();
+                  } else {
+                    mappedContact[key] = value;
+                  }
                   return;
                 }
                 case '[object String]': {
@@ -193,7 +197,11 @@ export default function contactsReducer(state = initialState, action) {
                 return;
               }
               case '[object Number]': {
-                mappedContact[key] = value;
+                if(key === 'ID') {
+                  mappedContact[key] = value.toString();
+                } else {
+                  mappedContact[key] = value;
+                }
                 return;
               }
               case '[object String]': {
@@ -459,7 +467,11 @@ export default function contactsReducer(state = initialState, action) {
                 return;
               }
               case '[object Number]': {
-                mappedContact[key] = value;
+                if(key === 'ID') {
+                  mappedContact[key] = value.toString();
+                } else {
+                  mappedContact[key] = value;
+                }
                 return;
               }
               case '[object String]': {

@@ -112,7 +112,11 @@ export default function groupsReducer(state = initialState, action) {
                   return;
                 }
                 case '[object Number]': {
-                  mappedGroup[key] = value;
+                  if(key === 'ID') {
+                    mappedGroup[key] = value.toString();
+                  } else {
+                    mappedGroup[key] = value;
+                  }
                   return;
                 }
                 case '[object String]': {
@@ -267,7 +271,11 @@ export default function groupsReducer(state = initialState, action) {
                 return;
               }
               case '[object Number]': {
-                mappedGroup[key] = value;
+                if(key === 'ID') {
+                  mappedGroup[key] = value.toString();
+                } else {
+                  mappedGroup[key] = value;
+                }
                 return;
               }
               case '[object String]': {
@@ -567,7 +575,11 @@ export default function groupsReducer(state = initialState, action) {
                 return;
               }
               case '[object Number]': {
-                mappedGroup[key] = value;
+                if(key === 'ID') {
+                  mappedGroup[key] = value.toString();
+                } else {
+                  mappedGroup[key] = value;
+                }
                 return;
               }
               case '[object String]': {
