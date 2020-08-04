@@ -213,10 +213,10 @@ class ContactsScreen extends React.Component {
             <Text style={styles.contactSubtitle}>
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status]
                 ? this.props.contactSettings.fields.overall_status.values[contact.overall_status]
-                    .label
+                  .label
                 : ''}
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status] &&
-              this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
+                this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
                 ? ' • '
                 : ''}
               {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
@@ -428,24 +428,30 @@ class ContactsScreen extends React.Component {
                       }
                     }
                   });
+                  // Remove subassigned query because contacts does not have this value
+                  if(Object.prototype.hasOwnProperty.call(queryFilterTwo, "subassigned")) {
+                    delete queryFilterTwo.subassigned;
+                  }
+                  // Filter contacts according to 'queryFilterTwo' filters
                   let itemsFiltered = contactList.filter((contact) => {
-                    let resp = true;
+                    let resp = [];
                     for (let key in queryFilterTwo) {
+                      let result = false;
                       //Property exist in object
                       if (Object.prototype.hasOwnProperty.call(contact, key)) {
-                        if (contact[key] !== queryFilterTwo[key]) {
-                          // omit filter values like status: -closed
-                          if (!queryFilterTwo[key].toString().startsWith('-')) {
-                            //omit contact property like property: { values:[] }
-                            if (!Object.prototype.hasOwnProperty.call(contact[key], 'values')) {
-                              //not same value in property
-                              resp = false;
-                            }
+                        // Value is to 'omit' contacts (-closed)
+                        if (queryFilterTwo[key].toString().startsWith('-')) {
+                          if (contact[key] !== queryFilterTwo[key].replace("-", "")) {
+                            result = true;
                           }
+                          // Same value as filter
+                        } else if (queryFilterTwo[key] === contact[key]) {
+                          result = true;
                         }
                       }
+                      resp.push(result);
                     }
-                    return resp;
+                    return resp.every((respValue) => respValue);
                   });
                   this.setState({
                     refresh: true,
