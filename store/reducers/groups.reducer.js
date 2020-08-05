@@ -155,6 +155,7 @@ export default function groupsReducer(state = initialState, action) {
                           // connection
                           let object = {
                             value: valueTwo.ID.toString(),
+                            name: entities.decode(valueTwo.post_title)
                           };
                           // groups
                           if (
@@ -313,8 +314,8 @@ export default function groupsReducer(state = initialState, action) {
                       if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                         // connection
                         let object = {
-                          name: valueTwo.post_title,
                           value: valueTwo.ID.toString(),
+                          name: entities.decode(valueTwo.post_title)
                         };
                         // groups
                         if (
@@ -617,8 +618,8 @@ export default function groupsReducer(state = initialState, action) {
                       if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                         // connection
                         let object = {
-                          name: valueTwo.post_title,
                           value: valueTwo.ID.toString(),
+                          name: entities.decode(valueTwo.post_title)
                         };
                         // groups
                         if (
