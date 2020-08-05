@@ -105,6 +105,7 @@ export default function contactsReducer(state = initialState, action) {
                           // connection
                           return {
                             value: valueTwo.ID.toString(),
+                            name: entities.decode(valueTwo.post_title)
                           };
                         }
                         if (
@@ -240,6 +241,7 @@ export default function contactsReducer(state = initialState, action) {
                         // connection
                         return {
                           value: valueTwo.ID.toString(),
+                          name: entities.decode(valueTwo.post_title)
                         };
                       }
                       if (
@@ -510,6 +512,7 @@ export default function contactsReducer(state = initialState, action) {
                         // connection
                         return {
                           value: valueTwo.ID.toString(),
+                          name: entities.decode(valueTwo.post_title)
                         };
                       }
                       if (
