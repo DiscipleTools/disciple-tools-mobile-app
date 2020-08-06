@@ -259,6 +259,7 @@ class ContactsScreen extends React.Component {
           search: '',
           searchBarFilter: {
             ...prevState.searchBarFilter,
+            toggle: false,
             currentFilter: '',
           },
         }),
@@ -274,10 +275,15 @@ class ContactsScreen extends React.Component {
       );
     } else {
       this.setState(
-        () => ({
+        (prevState) => ({
           offset: 0,
           filtered: false,
           search: '',
+          searchBarFilter: {
+            ...prevState.searchBarFilter,
+            toggle: false,
+            currentFilter: '',
+          },
         }),
         () => {
           this.props.getAllContacts(
