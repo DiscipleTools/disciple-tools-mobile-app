@@ -1795,9 +1795,10 @@ class GroupDetailScreen extends React.Component {
   };
 
   tabChanged = (index) => {
-    this.props.navigation.setParams({
+    // Hide tabBar when tab its in 'comments' section
+    /*this.props.navigation.setParams({
       hideTabBar: (index === 2 && this.state.onlyView) || !this.state.onlyView,
-    });
+    });*/
     this.setState((prevState) => ({
       tabViewConfig: {
         ...prevState.tabViewConfig,
