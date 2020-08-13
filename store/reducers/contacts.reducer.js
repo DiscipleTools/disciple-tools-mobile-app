@@ -92,7 +92,10 @@ export default function contactsReducer(state = initialState, action) {
                     mappedContact[key] = value.timestamp;
                   } else if (key === 'assigned_to') {
                     // assigned-to property
-                    mappedContact[key] = value['assigned-to'];
+                    mappedContact[key] = {
+                      key: parseInt(value['assigned-to'].replace('user-', '')),
+                      label: value['display']
+                    };
                   }
                   return;
                 }
@@ -228,7 +231,10 @@ export default function contactsReducer(state = initialState, action) {
                   mappedContact[key] = value.timestamp;
                 } else if (key === 'assigned_to') {
                   // assigned-to property
-                  mappedContact[key] = value['assigned-to'];
+                  mappedContact[key] = {
+                    key: parseInt(value['assigned-to'].replace('user-', '')),
+                    label: value['display']
+                  };
                 }
                 return;
               }
@@ -499,7 +505,10 @@ export default function contactsReducer(state = initialState, action) {
                   mappedContact[key] = value.timestamp;
                 } else if (key === 'assigned_to') {
                   // assigned-to property
-                  mappedContact[key] = value['assigned-to'];
+                  mappedContact[key] = {
+                    key: parseInt(value['assigned-to'].replace('user-', '')),
+                    label: value['display']
+                  };
                 }
                 return;
               }

@@ -112,7 +112,7 @@ export default function groupsReducer(state = initialState, action) {
                   return;
                 }
                 case '[object Number]': {
-                  if(key === 'ID') {
+                  if (key === 'ID') {
                     mappedGroup[key] = value.toString();
                   } else {
                     mappedGroup[key] = value;
@@ -142,7 +142,10 @@ export default function groupsReducer(state = initialState, action) {
                     mappedGroup[key] = value.timestamp;
                   } else if (key === 'assigned_to') {
                     // assigned-to property
-                    mappedGroup[key] = value['assigned-to'];
+                    mappedGroup[key] = {
+                      key: parseInt(value['assigned-to'].replace('user-', '')),
+                      label: value['display']
+                    };
                   }
                   return;
                 }
@@ -158,17 +161,15 @@ export default function groupsReducer(state = initialState, action) {
                             name: entities.decode(valueTwo.post_title)
                           };
                           // groups
-                          if (
-                            Object.prototype.hasOwnProperty.call(
-                              valueTwo,
-                              'baptized_member_count',
-                            ) &&
-                            Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')
-                          ) {
+                          if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {
                             object = {
                               ...object,
-                              post_title: valueTwo.post_title,
                               baptized_member_count: valueTwo.baptized_member_count,
+                            };
+                          }
+                          if(Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                            object = {
+                              ...object,
                               member_count: valueTwo.member_count,
                             };
                           }
@@ -272,7 +273,7 @@ export default function groupsReducer(state = initialState, action) {
                 return;
               }
               case '[object Number]': {
-                if(key === 'ID') {
+                if (key === 'ID') {
                   mappedGroup[key] = value.toString();
                 } else {
                   mappedGroup[key] = value;
@@ -302,7 +303,10 @@ export default function groupsReducer(state = initialState, action) {
                   mappedGroup[key] = value.timestamp;
                 } else if (key === 'assigned_to') {
                   // assigned-to property
-                  mappedGroup[key] = value['assigned-to'];
+                  mappedGroup[key] = {
+                    key: parseInt(value['assigned-to'].replace('user-', '')),
+                    label: value['display']
+                  };
                 }
                 return;
               }
@@ -318,14 +322,15 @@ export default function groupsReducer(state = initialState, action) {
                           name: entities.decode(valueTwo.post_title)
                         };
                         // groups
-                        if (
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') &&
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')
-                        ) {
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {
                           object = {
                             ...object,
-                            post_title: valueTwo.post_title,
                             baptized_member_count: valueTwo.baptized_member_count,
+                          };
+                        }
+                        if(Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                          object = {
+                            ...object,
                             member_count: valueTwo.member_count,
                           };
                         }
@@ -576,7 +581,7 @@ export default function groupsReducer(state = initialState, action) {
                 return;
               }
               case '[object Number]': {
-                if(key === 'ID') {
+                if (key === 'ID') {
                   mappedGroup[key] = value.toString();
                 } else {
                   mappedGroup[key] = value;
@@ -606,7 +611,10 @@ export default function groupsReducer(state = initialState, action) {
                   mappedGroup[key] = value.timestamp;
                 } else if (key === 'assigned_to') {
                   // assigned-to property
-                  mappedGroup[key] = value['assigned-to'];
+                  mappedGroup[key] = {
+                    key: parseInt(value['assigned-to'].replace('user-', '')),
+                    label: value['display']
+                  };
                 }
                 return;
               }
@@ -622,14 +630,15 @@ export default function groupsReducer(state = initialState, action) {
                           name: entities.decode(valueTwo.post_title)
                         };
                         // groups
-                        if (
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') &&
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')
-                        ) {
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {
                           object = {
                             ...object,
-                            post_title: valueTwo.post_title,
                             baptized_member_count: valueTwo.baptized_member_count,
+                          };
+                        }
+                        if(Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                          object = {
+                            ...object,
                             member_count: valueTwo.member_count,
                           };
                         }

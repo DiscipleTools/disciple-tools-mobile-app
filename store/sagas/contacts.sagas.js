@@ -1,4 +1,5 @@
 import { put, take, takeEvery, takeLatest, all, select } from 'redux-saga/effects';
+import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 
 import * as actions from '../actions/contacts.actions';
 
@@ -122,6 +123,23 @@ export function* save({ domain, token, contactData }) {
           ...jsonData,
           ID: contactId,
         };
+      }
+      if (jsonData.assigned_to) {
+        let assignedToId = parseInt(jsonData.assigned_to.replace('user-', ''));
+        let usersList = yield ExpoFileSystemStorage.getItem('usersList');
+        usersList = JSON.parse(usersList).map((user) => ({
+          key: user.ID,
+          label: user.name,
+        }));
+
+        jsonData = {
+          ...jsonData,
+          assigned_to: {
+            key: assignedToId,
+            label: usersList.find((user) => user.key === assignedToId).label
+          }
+        };
+
       }
       yield put({
         type: actions.CONTACTS_SAVE_SUCCESS,

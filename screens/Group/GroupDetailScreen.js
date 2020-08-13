@@ -500,6 +500,18 @@ const initialState = {
   keyword: '',
   suggestedUsers: [],
   height: sharedTools.commentFieldMinHeight,
+  groupCoachContacts: [],
+  unmodifiedGroupCoachContacts: [],
+  parentGroups: [],
+  unmodifiedParentGroups: [],
+  peerGroups: [],
+  unmodifiedPeerGroups: [],
+  childGroups: [],
+  unmodifiedChildGroups: [],
+  membersContacts: [],
+  unmodifiedMembersContacts: [],
+  assignedToContacts: [],
+  unmodifedAssignedToContacts: []
 };
 
 const safeFind = (found, prop) => {
@@ -778,6 +790,202 @@ class GroupDetailScreen extends React.Component {
           ...newState,
           updateMembersList: !newState.updateMembersList,
         };
+      }
+      if (newState.group.coaches) {
+
+        // Clear collection
+        newState = {
+          ...newState,
+          groupCoachContacts: []
+        };
+
+        newState.group.coaches.values.forEach((coachContact) => {
+          const foundCoachContact = newState.usersContacts.find((user) => user.value === coachContact.value);
+          if (!foundCoachContact) {
+            // Add non existent coach contact in usersContacts list (user does not have access permission to this contacts)
+            newState = {
+              ...newState,
+              groupCoachContacts: [
+                ...newState.groupCoachContacts,
+                {
+                  name: coachContact.name,
+                  value: coachContact.value
+                }
+              ],
+              unmodifiedGroupCoachContacts: [
+                ...newState.unmodifiedGroupCoachContacts,
+                {
+                  name: coachContact.name,
+                  value: coachContact.value
+                }
+              ]
+            };
+          }
+        });
+
+      }
+      if (newState.group.parent_groups) {
+
+        // Clear collection
+        newState = {
+          ...newState,
+          parentGroups: []
+        };
+
+        newState.group.parent_groups.values.forEach((parentGroup) => {
+          const foundParentGroup = newState.groups.find((groups) => groups.value === parentGroup.value);
+          if (!foundParentGroup) {
+            // Add non existent parent group in groups list (user does not have access permission to this group/s)
+            newState = {
+              ...newState,
+              parentGroups: [
+                ...newState.parentGroups,
+                {
+                  name: parentGroup.name,
+                  value: parentGroup.value
+                }
+              ],
+              unmodifiedParentGroups: [
+                ...newState.unmodifiedParentGroups,
+                {
+                  name: parentGroup.name,
+                  value: parentGroup.value
+                }
+              ]
+            };
+          }
+        });
+
+      }
+      if (newState.group.peer_groups) {
+
+        // Clear collection
+        newState = {
+          ...newState,
+          peerGroups: []
+        };
+
+        newState.group.peer_groups.values.forEach((peerGroup) => {
+          const foundPeerGroup = newState.groups.find((groups) => groups.value === peerGroup.value);
+          if (!foundPeerGroup) {
+            // Add non existent peer group in groups list (user does not have access permission to this group/s)
+            newState = {
+              ...newState,
+              peerGroups: [
+                ...newState.peerGroups,
+                {
+                  name: peerGroup.name,
+                  value: peerGroup.value
+                }
+              ],
+              unmodifiedPeerGroups: [
+                ...newState.unmodifiedPeerGroups,
+                {
+                  name: peerGroup.name,
+                  value: peerGroup.value
+                }
+              ]
+            };
+          }
+        });
+
+      }
+      if (newState.group.child_groups) {
+
+        // Clear collection
+        newState = {
+          ...newState,
+          childGroups: []
+        };
+
+        newState.group.child_groups.values.forEach((childGroup) => {
+          const foundChildGroup = newState.groups.find((groups) => groups.value === childGroup.value);
+          if (!foundChildGroup) {
+            // Add non existent child group in groups list (user does not have access permission to this group/s)
+            newState = {
+              ...newState,
+              childGroups: [
+                ...newState.childGroups,
+                {
+                  name: childGroup.name,
+                  value: childGroup.value
+                }
+              ],
+              unmodifiedChildGroups: [
+                ...newState.unmodifiedChildGroups,
+                {
+                  name: childGroup.name,
+                  value: childGroup.value
+                }
+              ]
+            };
+          }
+        });
+
+      }
+      if (newState.group.members) {
+
+        // Clear collection
+        newState = {
+          ...newState,
+          membersContacts: []
+        };
+
+        newState.group.members.values.forEach((member) => {
+          const foundMember = newState.usersContacts.find((contact) => contact.value === member.value);
+          if (!foundMember) {
+            // Add non existent member contact in members list (user does not have access permission to this contact/s)
+            newState = {
+              ...newState,
+              membersContacts: [
+                ...newState.membersContacts,
+                {
+                  name: member.name,
+                  value: member.value
+                }
+              ],
+              unmodifiedMembersContacts: [
+                ...newState.unmodifiedMembersContacts,
+                {
+                  name: member.name,
+                  value: member.value
+                }
+              ]
+            };
+          }
+        });
+
+      }
+      if (newState.group.assigned_to) {
+
+        // Clear collection
+        newState = {
+          ...newState,
+          assignedToContacts: []
+        };
+
+        let foundAssigned = newState.users.find((user) => user.key === newState.group.assigned_to.key);
+        if (!foundAssigned) {
+          // Add non existent group to list (user does not have access permission to this groups)
+          newState = {
+            ...newState,
+            assignedToContacts: [
+              ...newState.assignedToContacts,
+              {
+                label: foundAssigned.label,
+                key: foundAssigned.key
+              }
+            ],
+            unmodifedAssignedToContacts: [
+              ...newState.unmodifedAssignedToContacts,
+              {
+                label: foundAssigned.label,
+                key: foundAssigned.key
+              }
+            ]
+          };
+        }
+
       }
     }
 
@@ -1147,7 +1355,15 @@ class GroupDetailScreen extends React.Component {
   };
 
   onDisableEdit = () => {
-    const { unmodifiedGroup } = this.state;
+    const {
+      unmodifiedGroup,
+      unmodifiedGroupCoachContacts,
+      unmodifiedParentGroups,
+      unmodifiedPeerGroups,
+      unmodifiedChildGroups,
+      unmodifiedMembersContacts,
+      unmodifedAssignedToContacts
+    } = this.state;
     this.setState((state) => {
       const indexFix =
         state.tabViewConfig.index > 1 ? state.tabViewConfig.index + 1 : state.tabViewConfig.index;
@@ -1162,6 +1378,12 @@ class GroupDetailScreen extends React.Component {
           index: indexFix,
           routes: [...tabViewRoutes],
         },
+        groupCoachContacts: [...unmodifiedGroupCoachContacts],
+        parentGroups: [...unmodifiedParentGroups],
+        peerGroups: [...unmodifiedPeerGroups],
+        childGroups: [...unmodifiedChildGroups],
+        membersContacts: [...unmodifiedMembersContacts],
+        assignedToContacts: [...unmodifedAssignedToContacts]
       };
     });
     this.props.navigation.setParams({ hideTabBar: false, onlyView: true });
@@ -1384,9 +1606,15 @@ class GroupDetailScreen extends React.Component {
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
-        assigned_to: `user-${value}`,
+        assigned_to: {
+          key: value,
+          label: [...this.state.users, ...this.state.assignedToContacts].find(
+            (user) => user.key === value,
+          ).label
+        },
       },
       showAssignedToModal: false,
+      assignedToContacts: [] // Clear non existing assigentToContacts list
     }));
   };
 
@@ -1536,6 +1764,13 @@ class GroupDetailScreen extends React.Component {
       let membersListCopy = [...this.state.group.members.values];
       const foundMemberIndex = membersListCopy.indexOf(foundMember);
       membersListCopy.splice(foundMemberIndex, 1);
+      let foundMemberContactIndex = this.state.membersContacts.findIndex(
+        (memberContact) => memberContact.value === selectedValue.value
+      );
+      let membersContacts = [...this.state.membersContacts];
+      if (foundMemberContactIndex > -1) {
+        membersContacts.splice(foundMemberContactIndex, 1);
+      }
       this.setState((prevState) => ({
         group: {
           ...prevState.group,
@@ -1543,6 +1778,8 @@ class GroupDetailScreen extends React.Component {
             values: [...membersListCopy],
           },
         },
+        // Remove member contact from list
+        membersContacts: membersContacts
       }));
     }
   };
@@ -1714,6 +1951,12 @@ class GroupDetailScreen extends React.Component {
               ID: this.state.group.ID,
             };
           }
+          if (groupToSave.assigned_to) {
+            groupToSave = {
+              ...groupToSave,
+              assigned_to: `user-${groupToSave.assigned_to.key}`,
+            };
+          }
           this.props.saveGroup(this.props.userData.domain, this.props.userData.token, groupToSave);
         } else {
           //Empty contact title/name
@@ -1759,16 +2002,16 @@ class GroupDetailScreen extends React.Component {
   };
 
   showAssignedUser = () => {
-    const foundUser = this.state.group.assigned_to
-      ? this.state.users.find((user) => `user-${user.key}` === this.state.group.assigned_to)
-      : null;
+    const foundUser = [...this.state.users, ...this.state.assignedToContacts].find(
+      (user) => user.key === this.state.group.assigned_to.key,
+    );
     return (
       <Text
         style={[
           { marginTop: 'auto', marginBottom: 'auto', fontSize: 15 },
           this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
         ]}>
-        {foundUser ? foundUser.label : ''}
+        {foundUser.label}
       </Text>
     );
   };
@@ -1896,7 +2139,7 @@ class GroupDetailScreen extends React.Component {
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
                 </Col>
-                <Col>{this.showAssignedUser()}</Col>
+                <Col>{(this.state.group.assigned_to) ? this.showAssignedUser() : null}</Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={styles.formLabel}>
                     {this.props.groupSettings.fields.assigned_to.name}
@@ -1919,27 +2162,16 @@ class GroupDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.coaches ? (
-                      this.state.group.coaches.values.map((coach, index) =>
-                        safeFind(
-                          this.state.usersContacts.find((user) => user.value === coach.value),
-                          'name',
-                        ).length > 0 ? (
-                            <TouchableOpacity
-                              key={index.toString()}
-                              activeOpacity={0.5}
-                              onPress={() => this.goToContactDetailScreen(coach.value)}>
-                              <Text style={styles.linkingText}>
-                                {safeFind(
-                                  this.state.usersContacts.find((user) => user.value === coach.value),
-                                  'name',
-                                )}
-                              </Text>
-                            </TouchableOpacity>
-                          ) : (
-                            <Text></Text>
-                          ),
-                      )
-                    ) : (
+                      this.state.group.coaches.values.map((contact, index) =>
+                        <TouchableOpacity
+                          key={index.toString()}
+                          activeOpacity={0.5}
+                          onPress={() => this.goToContactDetailScreen(contact.value)}>
+                          <Text style={styles.linkingText}>
+                            {contact.name}
+                          </Text>
+                        </TouchableOpacity>
+                      )) : (
                         <Text></Text>
                       )}
                   </View>
@@ -2229,12 +2461,10 @@ class GroupDetailScreen extends React.Component {
                   <Col style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
                     <Picker
                       selectedValue={
-                        this.state.group.assigned_to
-                          ? parseInt(this.state.group.assigned_to.replace('user-', ''))
-                          : ''
+                        this.state.group.assigned_to ? this.state.group.assigned_to.key : null
                       }
                       onValueChange={this.onSelectAssignedTo}>
-                      {this.renderPickerItems(this.state.users)}
+                      {this.renderPickerItems([...this.state.users, ...this.state.assignedToContacts])}
                     </Picker>
                   </Col>
                 </Row>
@@ -2267,10 +2497,10 @@ class GroupDetailScreen extends React.Component {
                       coachesSelectizeRef = selectize;
                     }}
                     itemId="value"
-                    items={this.state.usersContacts}
+                    items={[...this.state.groupCoachContacts, ...this.state.usersContacts]}
                     selectedItems={this.getSelectizeItems(
                       this.state.group.coaches,
-                      this.state.usersContacts,
+                      [...this.state.groupCoachContacts, ...this.state.usersContacts],
                     )}
                     textInputProps={{
                       placeholder: i18n.t('groupDetailScreen.selectCoaches'),
@@ -2313,7 +2543,20 @@ class GroupDetailScreen extends React.Component {
                       <Chip
                         key={id}
                         iconStyle={iconStyle}
-                        onClose={onClose}
+                        onClose={(props) => {
+                          let foundCoachIndex = this.state.groupCoachContacts.findIndex(
+                            (coach) => coach.value === id
+                          );
+                          if (foundCoachIndex > -1) {
+                            // Remove coach from list
+                            const groupCoachContacts = [...this.state.groupCoachContacts];
+                            groupCoachContacts.splice(foundCoachIndex, 1);
+                            this.setState({
+                              groupCoachContacts: [...groupCoachContacts],
+                            });
+                          }
+                          onClose(props);
+                        }}
                         text={item.name}
                         style={style}
                       />
@@ -3037,7 +3280,7 @@ class GroupDetailScreen extends React.Component {
                         addMembersSelectizeRef = selectize;
                       }}
                       itemId="value"
-                      items={this.state.usersContacts.filter(
+                      items={[...this.state.membersContacts, ...this.state.usersContacts].filter(
                         (userContact) =>
                           this.state.group.members &&
                           !this.state.group.members.values.find(
@@ -3138,7 +3381,7 @@ class GroupDetailScreen extends React.Component {
                           )}
                         <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
                         <Row style={styles.groupCircleName}>
-                          <Text style={styles.groupCircleNameText}>{parentGroup.post_title}</Text>
+                          <Text style={styles.groupCircleNameText}>{parentGroup.name}</Text>
                         </Row>
                         <Row style={styles.groupCircleCounter}>
                           <Text>{parentGroup.baptized_member_count}</Text>
@@ -3183,7 +3426,7 @@ class GroupDetailScreen extends React.Component {
                           )}
                         <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
                         <Row style={styles.groupCircleName}>
-                          <Text style={styles.groupCircleNameText}>{peerGroup.post_title}</Text>
+                          <Text style={styles.groupCircleNameText}>{peerGroup.name}</Text>
                         </Row>
                         <Row style={styles.groupCircleCounter}>
                           <Text>{peerGroup.baptized_member_count}</Text>
@@ -3226,7 +3469,7 @@ class GroupDetailScreen extends React.Component {
                           )}
                         <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
                         <Row style={styles.groupCircleName}>
-                          <Text style={styles.groupCircleNameText}>{childGroup.post_title}</Text>
+                          <Text style={styles.groupCircleNameText}>{childGroup.name}</Text>
                         </Row>
                         <Row style={styles.groupCircleCounter}>
                           <Text>{childGroup.baptized_member_count}</Text>
@@ -3277,10 +3520,10 @@ class GroupDetailScreen extends React.Component {
                       parentGroupsSelectizeRef = selectize;
                     }}
                     itemId="value"
-                    items={this.state.groups}
+                    items={[...this.state.groups, ...this.state.parentGroups]}
                     selectedItems={this.getSelectizeItems(
                       this.state.group.parent_groups,
-                      this.state.groups,
+                      [...this.state.groups, ...this.state.parentGroups],
                     )}
                     textInputProps={{
                       placeholder: i18n.t('groupDetailScreen.searchGroups'),
@@ -3323,7 +3566,20 @@ class GroupDetailScreen extends React.Component {
                       <Chip
                         key={id}
                         iconStyle={iconStyle}
-                        onClose={onClose}
+                        onClose={(props) => {
+                          let foundParentGroupIndex = this.state.parentGroups.findIndex(
+                            (parentGroup) => parentGroup.value === id
+                          );
+                          if (foundParentGroupIndex > -1) {
+                            // Remove parent group from list
+                            const parentGroups = [...this.state.parentGroups];
+                            parentGroups.splice(foundParentGroupIndex, 1);
+                            this.setState({
+                              parentGroups: [...parentGroups],
+                            });
+                          }
+                          onClose(props);
+                        }}
                         text={item.name}
                         style={style}
                       />
@@ -3358,10 +3614,10 @@ class GroupDetailScreen extends React.Component {
                       peerGroupsSelectizeRef = selectize;
                     }}
                     itemId="value"
-                    items={this.state.groups}
+                    items={[...this.state.groups, this.state.peerGroups]}
                     selectedItems={this.getSelectizeItems(
                       this.state.group.peer_groups,
-                      this.state.groups,
+                      [...this.state.groups, this.state.peerGroups],
                     )}
                     textInputProps={{
                       placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
@@ -3404,7 +3660,20 @@ class GroupDetailScreen extends React.Component {
                       <Chip
                         key={id}
                         iconStyle={iconStyle}
-                        onClose={onClose}
+                        onClose={(props) => {
+                          let foundPeerGroupIndex = this.state.peerGroups.findIndex(
+                            (peerGroup) => peerGroup.value === id
+                          );
+                          if (foundPeerGroupIndex > -1) {
+                            // Remove peer group from list
+                            const peerGroups = [...this.state.peerGroups];
+                            peerGroups.splice(foundPeerGroupIndex, 1);
+                            this.setState({
+                              peerGroups: [...peerGroups],
+                            });
+                          }
+                          onClose(props);
+                        }}
                         text={item.name}
                         style={style}
                       />
@@ -3439,10 +3708,10 @@ class GroupDetailScreen extends React.Component {
                       childGroupsSelectizeRef = selectize;
                     }}
                     itemId="value"
-                    items={this.state.groups}
+                    items={[...this.state.groups, ...this.state.childGroups]}
                     selectedItems={this.getSelectizeItems(
                       this.state.group.child_groups,
-                      this.state.groups,
+                      [...this.state.groups, ...this.state.childGroups],
                     )}
                     textInputProps={{
                       placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
@@ -3485,7 +3754,20 @@ class GroupDetailScreen extends React.Component {
                       <Chip
                         key={id}
                         iconStyle={iconStyle}
-                        onClose={onClose}
+                        onClose={(props) => {
+                          let foundChildGroupIndex = this.state.childGroups.findIndex(
+                            (childGroup) => childGroup.value === id
+                          );
+                          if (foundChildGroupIndex > -1) {
+                            // Remove child group from list
+                            const childGroups = [...this.state.childGroups];
+                            childGroups.splice(foundChildGroupIndex, 1);
+                            this.setState({
+                              childGroups: [...childGroups],
+                            });
+                          }
+                          onClose(props);
+                        }}
                         text={item.name}
                         style={style}
                       />
