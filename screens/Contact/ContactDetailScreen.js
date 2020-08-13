@@ -365,8 +365,22 @@ const initialState = {
   sources: [],
   nonExistingSources: [],
   unmodifiedSources: [],
-  nonExistingSubassigned: [],
-  unmodifiedSubassigned: [],
+  subAssignedContacts: [],
+  unmodifiedSubAssignedContacts: [],
+  relationContacts: [],
+  unmodifiedRelationContacts: [],
+  baptizedByContacts: [],
+  unmodifiedBaptizedByContacts: [],
+  baptizedContacts: [],
+  unmodifiedBaptizedContacts: [],
+  coachedByContacts: [],
+  unmodifiedCoachedByContacts: [],
+  coachedContacts: [],
+  unmodifiedCoachedContacts: [],
+  connectionGroups: [],
+  unmodifiedConnectionGroups: [],
+  assignedToContacts: [],
+  unmodifedAssignedToContacts: []
 };
 
 const safeFind = (found, prop) => {
@@ -649,37 +663,266 @@ class ContactDetailScreen extends React.Component {
         });
       }
       if (newState.contact.subassigned) {
-        console.log(newState.contact.subassigned);
+
+        // Clear collection
+        newState = {
+          ...newState,
+          subAssignedContacts: []
+        };
+
         newState.contact.subassigned.values.forEach((subassignedContact) => {
           const foundSubassigned = newState.usersContacts.find((user) => user.value === subassignedContact.value);
           if (!foundSubassigned) {
             // Add non existent contact subassigned in subassigned list (user does not have access permission to this contacts)
             newState = {
               ...newState,
-              usersContacts: [
-                ...newState.usersContacts,
+              subAssignedContacts: [
+                ...newState.subAssignedContacts,
                 {
                   name: subassignedContact.name,
                   value: subassignedContact.value
                 }
               ],
-              nonExistingSubassigned: [
-                ...newState.nonExistingSubassigned,
+              unmodifiedSubAssignedContacts: [
+                ...newState.unmodifiedSubAssignedContacts,
                 {
                   name: subassignedContact.name,
-                  value: subassignedContact.value,
-                },
-              ],
-              unmodifiedSubassigned: [
-                ...newState.unmodifiedSubassigned,
-                {
-                  name: subassignedContact.name,
-                  value: subassignedContact.value,
-                },
-              ],
-            }
+                  value: subassignedContact.value
+                }
+              ]
+            };
           }
         });
+
+      }
+      if (newState.contact.relation) {
+
+        // Clear collection
+        newState = {
+          ...newState,
+          relationContacts: []
+        };
+
+        newState.contact.relation.values.forEach((relationContact) => {
+          const foundRelation = newState.usersContacts.find((user) => user.value === relationContact.value);
+          if (!foundRelation) {
+            // Add non existent contact relation in relation list (user does not have access permission to this contacts)
+            newState = {
+              ...newState,
+              relationContacts: [
+                ...newState.relationContacts,
+                {
+                  name: relationContact.name,
+                  value: relationContact.value
+                }
+              ],
+              unmodifiedRelationContacts: [
+                ...newState.unmodifiedRelationContacts,
+                {
+                  name: relationContact.name,
+                  value: relationContact.value
+                }
+              ]
+            };
+          }
+        });
+
+      }
+      if (newState.contact.baptized_by) {
+
+        // Clear collection
+        newState = {
+          ...newState,
+          baptizedByContacts: []
+        };
+
+        newState.contact.baptized_by.values.forEach((baptizedByContact) => {
+          const foundBaptized = newState.usersContacts.find((user) => user.value === baptizedByContact.value);
+          if (!foundBaptized) {
+            // Add non existent contact relation in relation list (user does not have access permission to this contacts)
+            newState = {
+              ...newState,
+              baptizedByContacts: [
+                ...newState.baptizedByContacts,
+                {
+                  name: baptizedByContact.name,
+                  value: baptizedByContact.value
+                }
+              ],
+              unmodifiedBaptizedByContacts: [
+                ...newState.unmodifiedBaptizedByContacts,
+                {
+                  name: baptizedByContact.name,
+                  value: baptizedByContact.value
+                }
+              ]
+            };
+          }
+        });
+
+      }
+      if (newState.contact.baptized) {
+
+        // Clear collection
+        newState = {
+          ...newState,
+          baptizedContacts: []
+        };
+
+        newState.contact.baptized.values.forEach((baptizedContact) => {
+          const foundBaptized = newState.usersContacts.find((user) => user.value === baptizedContact.value);
+          if (!foundBaptized) {
+            // Add non existent contact baptized to list (user does not have access permission to this contacts)
+            newState = {
+              ...newState,
+              baptizedContacts: [
+                ...newState.baptizedContacts,
+                {
+                  name: baptizedContact.name,
+                  value: baptizedContact.value
+                }
+              ],
+              unmodifiedBaptizedContacts: [
+                ...newState.unmodifiedBaptizedContacts,
+                {
+                  name: baptizedContact.name,
+                  value: baptizedContact.value
+                }
+              ]
+            };
+          }
+        });
+
+      }
+      if (newState.contact.coached_by) {
+
+        // Clear collection
+        newState = {
+          ...newState,
+          coachedByContacts: []
+        };
+
+        newState.contact.coached_by.values.forEach((coachedByContact) => {
+          const foundcoachedBy = newState.usersContacts.find((user) => user.value === coachedByContact.value);
+          if (!foundcoachedBy) {
+            // Add non existent contact coachedBy to list (user does not have access permission to this contacts)
+            newState = {
+              ...newState,
+              coachedByContacts: [
+                ...newState.coachedByContacts,
+                {
+                  name: coachedByContact.name,
+                  value: coachedByContact.value
+                }
+              ],
+              unmodifiedCoachedByContacts: [
+                ...newState.unmodifiedCoachedByContacts,
+                {
+                  name: coachedByContact.name,
+                  value: coachedByContact.value
+                }
+              ]
+            };
+          }
+        });
+
+      }
+      if (newState.contact.coaching) {
+
+        // Clear collection
+        newState = {
+          ...newState,
+          coachedContacts: []
+        };
+
+        newState.contact.coaching.values.forEach((coachedContact) => {
+          const foundCoached = newState.usersContacts.find((user) => user.value === coachedContact.value);
+          if (!foundCoached) {
+            // Add non existent contact coached to list (user does not have access permission to this contacts)
+            newState = {
+              ...newState,
+              coachedContacts: [
+                ...newState.coachedContacts,
+                {
+                  name: coachedContact.name,
+                  value: coachedContact.value
+                }
+              ],
+              unmodifiedCoachedContacts: [
+                ...newState.unmodifiedCoachedContacts,
+                {
+                  name: coachedContact.name,
+                  value: coachedContact.value
+                }
+              ]
+            };
+          }
+        });
+
+      }
+      if (newState.contact.groups) {
+
+        // Clear collection
+        newState = {
+          ...newState,
+          connectionGroups: []
+        };
+
+        newState.contact.groups.values.forEach((groupConnection) => {
+          const foundGroup = newState.groups.find((group) => group.value === groupConnection.value);
+          if (!foundGroup) {
+            // Add non existent group to list (user does not have access permission to this groups)
+            newState = {
+              ...newState,
+              connectionGroups: [
+                ...newState.connectionGroups,
+                {
+                  name: groupConnection.name,
+                  value: groupConnection.value
+                }
+              ],
+              unmodifiedConnectionGroups: [
+                ...newState.unmodifiedConnectionGroups,
+                {
+                  name: groupConnection.name,
+                  value: groupConnection.value
+                }
+              ]
+            };
+          }
+        });
+
+      }
+      if (newState.contact.assigned_to) {
+
+        // Clear collection
+        newState = {
+          ...newState,
+          assignedToContacts: []
+        };
+
+        let foundAssigned = newState.users.find((user) => user.key === newState.contact.assigned_to.key);
+          if (!foundAssigned) {
+            // Add non existent group to list (user does not have access permission to this groups)
+            newState = {
+              ...newState,
+              assignedToContacts: [
+                ...newState.assignedToContacts,
+                {
+                  label: foundAssigned.label,
+                  key: foundAssigned.key
+                }
+              ],
+              unmodifedAssignedToContacts: [
+                ...newState.unmodifedAssignedToContacts,
+                {
+                  label: foundAssigned.label,
+                  key: foundAssigned.key
+                }
+              ]
+            };
+          }
+
       }
     }
 
@@ -1003,8 +1246,7 @@ class ContactDetailScreen extends React.Component {
       })),
       loadedLocal: true,
       sources: [...sourcesList],
-      unmodifiedSources: [...sourcesList],
-      unmodifiedSubassigned: [...userContactsList]
+      unmodifiedSources: [...sourcesList]
     };
 
     this.setState(newState, () => {
@@ -1072,7 +1314,17 @@ class ContactDetailScreen extends React.Component {
   };
 
   onDisableEdit = () => {
-    const { unmodifiedContact, unmodifiedSources, unmodifiedSubassigned } = this.state;
+    const { unmodifiedContact,
+      unmodifiedSources,
+      unmodifiedSubAssignedContacts,
+      unmodifiedRelationContacts,
+      unmodifiedBaptizedByContacts,
+      unmodifiedBaptizedContacts,
+      unmodifiedCoachedByContacts,
+      unmodifiedCoachedContacts,
+      unmodifiedConnectionGroups,
+      unmodifedAssignedToContacts
+    } = this.state;
     this.setState((state) => {
       const indexFix =
         state.tabViewConfig.index > 1 ? state.tabViewConfig.index + 1 : state.tabViewConfig.index;
@@ -1090,7 +1342,14 @@ class ContactDetailScreen extends React.Component {
           routes: [...tabViewRoutes],
         },
         sources: [...unmodifiedSources],
-        usersContacts: [...unmodifiedSubassigned]
+        subAssignedContacts: [...unmodifiedSubAssignedContacts],
+        relationContacts: [...unmodifiedRelationContacts],
+        baptizedByContacts: [...unmodifiedBaptizedByContacts],
+        baptizedContacts: [...unmodifiedBaptizedContacts],
+        coachedByContacts: [...unmodifiedCoachedByContacts],
+        coachedContacts: [...unmodifiedCoachedContacts],
+        connectionGroups: [...unmodifiedConnectionGroups],
+        assignedToContacts: [...unmodifedAssignedToContacts]
       };
     });
     this.props.navigation.setParams({ hideTabBar: false, onlyView: true });
@@ -1267,6 +1526,12 @@ class ContactDetailScreen extends React.Component {
             contactToSave = {
               ...contactToSave,
               ID: this.state.contact.ID,
+            };
+          }
+          if(contactToSave.assigned_to) {
+            contactToSave = {
+              ...contactToSave,
+              assigned_to: `user-${contactToSave.assigned_to.key}`,
             };
           }
           this.props.saveContact(
@@ -1558,7 +1823,7 @@ class ContactDetailScreen extends React.Component {
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
                 </Col>
-                <Col>{this.showAssignedUser()}</Col>
+                <Col>{(this.state.contact.assigned_to) ? this.showAssignedUser() : null}</Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={styles.formLabel}>
                     {this.props.contactSettings.fields.assigned_to.name}
@@ -2027,12 +2292,10 @@ class ContactDetailScreen extends React.Component {
                   <Col style={[styles.contactTextRoundField, { paddingRight: 10 }]}>
                     <Picker
                       selectedValue={
-                        this.state.contact.assigned_to
-                          ? parseInt(this.state.contact.assigned_to.replace('user-', ''))
-                          : ''
+                        this.state.contact.assigned_to ? this.state.contact.assigned_to.key : null
                       }
                       onValueChange={this.onSelectAssignedTo}>
-                      {this.renderPickerItems(this.state.users)}
+                      {this.renderPickerItems([...this.state.users, ...this.state.assignedToContacts])}
                     </Picker>
                   </Col>
                 </Row>
@@ -2065,10 +2328,10 @@ class ContactDetailScreen extends React.Component {
                       subAssignedSelectizeRef = selectize;
                     }}
                     itemId="value"
-                    items={this.state.usersContacts}
+                    items={[...this.state.subAssignedContacts, ...this.state.usersContacts]}
                     selectedItems={this.getSelectizeItems(
                       this.state.contact.subassigned,
-                      this.state.usersContacts,
+                      [...this.state.subAssignedContacts, ...this.state.usersContacts],
                     )}
                     textInputProps={{
                       placeholder: i18n.t('contactDetailScreen.subAssignThisContact'),
@@ -2078,19 +2341,15 @@ class ContactDetailScreen extends React.Component {
                         key={id}
                         iconStyle={iconStyle}
                         onClose={(props) => {
-                          const nonExistingSsubassignedList = [...this.state.nonExistingSubassigned];
-                          let foundNonExistingSubassigned = nonExistingSsubassignedList.findIndex(
-                            (subassigned) => subassigned.value === id,
+                          let foundSubassignedIndex = this.state.subAssignedContacts.findIndex(
+                            (subassigned) => subassigned.value === id
                           );
-                          if (foundNonExistingSubassigned > -1) {
-                            // Remove subassigned from select list
-                            const usersContactsList = [...this.state.usersContacts];
-                            let foundSubassignIndex = usersContactsList.findIndex(
-                              (subassigned) => subassigned.value === id,
-                            );
-                            usersContactsList.splice(foundSubassignIndex, 1);
+                          if (foundSubassignedIndex > -1) {
+                            // Remove subassigned from list
+                            const subAssignedContacts = [...this.state.subAssignedContacts];
+                            subAssignedContacts.splice(foundSubassignedIndex, 1);
                             this.setState({
-                              usersContacts: [...usersContactsList],
+                              subAssignedContacts: [...subAssignedContacts],
                             });
                           }
                           onClose(props);
@@ -3083,28 +3342,15 @@ class ContactDetailScreen extends React.Component {
                     ]}>
                     {this.state.contact.groups ? (
                       this.state.contact.groups.values.map((group, index) =>
-                        safeFind(
-                          this.state.groups.find((groupItem) => groupItem.value === group.value),
-                          'name',
-                        ).length > 0 ? (
-                            <TouchableOpacity
-                              key={index.toString()}
-                              activeOpacity={0.5}
-                              onPress={() => this.goToGroupDetailScreen(group.value)}>
-                              <Text style={styles.linkingText}>
-                                {safeFind(
-                                  this.state.groups.find(
-                                    (groupItem) => groupItem.value === group.value,
-                                  ),
-                                  'name',
-                                )}
-                              </Text>
-                            </TouchableOpacity>
-                          ) : (
-                            <Text></Text>
-                          ),
-                      )
-                    ) : (
+                        <TouchableOpacity
+                          key={index.toString()}
+                          activeOpacity={0.5}
+                          onPress={() => this.goToGroupDetailScreen(group.value)}>
+                          <Text style={styles.linkingText}>
+                            {group.name}
+                          </Text>
+                        </TouchableOpacity>
+                      )) : (
                         <Text></Text>
                       )}
                   </View>
@@ -3127,31 +3373,16 @@ class ContactDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.relation ? (
-                      this.state.contact.relation.values.map((relation, index) =>
-                        safeFind(
-                          this.state.usersContacts.find(
-                            (userItem) => userItem.value === relation.value,
-                          ),
-                          'name',
-                        ).length > 0 ? (
-                            <TouchableOpacity
-                              key={index.toString()}
-                              activeOpacity={0.5}
-                              onPress={() => this.goToContactDetailScreen(relation.value)}>
-                              <Text style={styles.linkingText}>
-                                {safeFind(
-                                  this.state.usersContacts.find(
-                                    (userItem) => userItem.value === relation.value,
-                                  ),
-                                  'name',
-                                )}
-                              </Text>
-                            </TouchableOpacity>
-                          ) : (
-                            <Text></Text>
-                          ),
-                      )
-                    ) : (
+                      this.state.contact.relation.values.map((contact, index) =>
+                        <TouchableOpacity
+                          key={index.toString()}
+                          activeOpacity={0.5}
+                          onPress={() => this.goToContactDetailScreen(contact.value)}>
+                          <Text style={styles.linkingText}>
+                            {contact.name}
+                          </Text>
+                        </TouchableOpacity>
+                      )) : (
                         <Text></Text>
                       )}
                   </View>
@@ -3174,31 +3405,16 @@ class ContactDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.baptized_by ? (
-                      this.state.contact.baptized_by.values.map((baptizedBy, index) =>
-                        safeFind(
-                          this.state.usersContacts.find(
-                            (userItem) => userItem.value === baptizedBy.value,
-                          ),
-                          'name',
-                        ).length > 0 ? (
-                            <TouchableOpacity
-                              key={index.toString()}
-                              activeOpacity={0.5}
-                              onPress={() => this.goToContactDetailScreen(baptizedBy.value)}>
-                              <Text style={styles.linkingText}>
-                                {safeFind(
-                                  this.state.usersContacts.find(
-                                    (userItem) => userItem.value === baptizedBy.value,
-                                  ),
-                                  'name',
-                                )}
-                              </Text>
-                            </TouchableOpacity>
-                          ) : (
-                            <Text></Text>
-                          ),
-                      )
-                    ) : (
+                      this.state.contact.baptized_by.values.map((contact, index) =>
+                        <TouchableOpacity
+                          key={index.toString()}
+                          activeOpacity={0.5}
+                          onPress={() => this.goToContactDetailScreen(contact.value)}>
+                          <Text style={styles.linkingText}>
+                            {contact.name}
+                          </Text>
+                        </TouchableOpacity>
+                      )) : (
                         <Text></Text>
                       )}
                   </View>
@@ -3225,31 +3441,16 @@ class ContactDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.baptized ? (
-                      this.state.contact.baptized.values.map((baptized, index) =>
-                        safeFind(
-                          this.state.usersContacts.find(
-                            (userItem) => userItem.value === baptized.value,
-                          ),
-                          'name',
-                        ).length > 0 ? (
-                            <TouchableOpacity
-                              key={index.toString()}
-                              activeOpacity={0.5}
-                              onPress={() => this.goToContactDetailScreen(baptized.value)}>
-                              <Text style={styles.linkingText}>
-                                {safeFind(
-                                  this.state.usersContacts.find(
-                                    (userItem) => userItem.value === baptized.value,
-                                  ),
-                                  'name',
-                                )}
-                              </Text>
-                            </TouchableOpacity>
-                          ) : (
-                            <Text></Text>
-                          ),
-                      )
-                    ) : (
+                      this.state.contact.baptized.values.map((contact, index) =>
+                        <TouchableOpacity
+                          key={index.toString()}
+                          activeOpacity={0.5}
+                          onPress={() => this.goToContactDetailScreen(contact.value)}>
+                          <Text style={styles.linkingText}>
+                            {contact.name}
+                          </Text>
+                        </TouchableOpacity>
+                      )) : (
                         <Text></Text>
                       )}
                   </View>
@@ -3276,31 +3477,16 @@ class ContactDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.coached_by ? (
-                      this.state.contact.coached_by.values.map((coachedBy, index) =>
-                        safeFind(
-                          this.state.usersContacts.find(
-                            (userItem) => userItem.value === coachedBy.value,
-                          ),
-                          'name',
-                        ).length > 0 ? (
-                            <TouchableOpacity
-                              key={index.toString()}
-                              activeOpacity={0.5}
-                              onPress={() => this.goToContactDetailScreen(coachedBy.value)}>
-                              <Text style={styles.linkingText}>
-                                {safeFind(
-                                  this.state.usersContacts.find(
-                                    (userItem) => userItem.value === coachedBy.value,
-                                  ),
-                                  'name',
-                                )}
-                              </Text>
-                            </TouchableOpacity>
-                          ) : (
-                            <Text></Text>
-                          ),
-                      )
-                    ) : (
+                      this.state.contact.coached_by.values.map((contact, index) =>
+                        <TouchableOpacity
+                          key={index.toString()}
+                          activeOpacity={0.5}
+                          onPress={() => this.goToContactDetailScreen(contact.value)}>
+                          <Text style={styles.linkingText}>
+                            {contact.name}
+                          </Text>
+                        </TouchableOpacity>
+                      )) : (
                         <Text></Text>
                       )}
                   </View>
@@ -3327,31 +3513,16 @@ class ContactDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.contact.coaching ? (
-                      this.state.contact.coaching.values.map((coaching, index) =>
-                        safeFind(
-                          this.state.usersContacts.find(
-                            (userItem) => userItem.value === coaching.value,
-                          ),
-                          'name',
-                        ).length > 0 ? (
-                            <TouchableOpacity
-                              key={index.toString()}
-                              activeOpacity={0.5}
-                              onPress={() => this.goToContactDetailScreen(coaching.value)}>
-                              <Text style={styles.linkingText}>
-                                {safeFind(
-                                  this.state.usersContacts.find(
-                                    (userItem) => userItem.value === coaching.value,
-                                  ),
-                                  'name',
-                                )}
-                              </Text>
-                            </TouchableOpacity>
-                          ) : (
-                            <Text></Text>
-                          ),
-                      )
-                    ) : (
+                      this.state.contact.coaching.values.map((contact, index) =>
+                        <TouchableOpacity
+                          key={index.toString()}
+                          activeOpacity={0.5}
+                          onPress={() => this.goToContactDetailScreen(contact.value)}>
+                          <Text style={styles.linkingText}>
+                            {contact.name}
+                          </Text>
+                        </TouchableOpacity>
+                      )) : (
                         <Text></Text>
                       )}
                   </View>
@@ -3402,10 +3573,10 @@ class ContactDetailScreen extends React.Component {
                       groupsSelectizeRef = selectize;
                     }}
                     itemId="value"
-                    items={this.state.groups}
+                    items={[...this.state.connectionGroups, ...this.state.groups]}
                     selectedItems={this.getSelectizeItems(
                       this.state.contact.groups,
-                      this.state.groups,
+                      [...this.state.connectionGroups, ...this.state.groups],
                     )}
                     textInputProps={{
                       placeholder: i18n.t('contactDetailScreen.addGroup'),
@@ -3448,7 +3619,20 @@ class ContactDetailScreen extends React.Component {
                       <Chip
                         key={id}
                         iconStyle={iconStyle}
-                        onClose={onClose}
+                        onClose={(props) => {
+                          let foundGroupIndex = this.state.connectionGroups.findIndex(
+                            (groupConnection) => groupConnection.value === id
+                          );
+                          if (foundGroupIndex > -1) {
+                            // Remove group from list
+                            const connectionGroups = [...this.state.connectionGroups];
+                            connectionGroups.splice(foundGroupIndex, 1);
+                            this.setState({
+                              connectionGroups: [...connectionGroups],
+                            });
+                          }
+                          onClose(props);
+                        }}
                         text={item.name}
                         style={style}
                       />
@@ -3486,10 +3670,10 @@ class ContactDetailScreen extends React.Component {
                       connectionsSelectizeRef = selectize;
                     }}
                     itemId="value"
-                    items={this.state.usersContacts}
+                    items={[...this.state.relationContacts, ...this.state.usersContacts]}
                     selectedItems={this.getSelectizeItems(
                       this.state.contact.relation,
-                      this.state.usersContacts,
+                      [...this.state.relationContacts, ...this.state.usersContacts],
                     )}
                     textInputProps={{
                       placeholder: i18n.t('contactDetailScreen.addConnection'),
@@ -3532,7 +3716,20 @@ class ContactDetailScreen extends React.Component {
                       <Chip
                         key={id}
                         iconStyle={iconStyle}
-                        onClose={onClose}
+                        onClose={(props) => {
+                          let foundRelationIndex = this.state.relationContacts.findIndex(
+                            (relation) => relation.value === id
+                          );
+                          if (foundRelationIndex > -1) {
+                            // Remove relation from list
+                            const relationContacts = [...this.state.relationContacts];
+                            relationContacts.splice(foundRelationIndex, 1);
+                            this.setState({
+                              relationContacts: [...relationContacts],
+                            });
+                          }
+                          onClose(props);
+                        }}
                         text={item.name}
                         style={style}
                       />
@@ -3570,10 +3767,10 @@ class ContactDetailScreen extends React.Component {
                       baptizedBySelectizeRef = selectize;
                     }}
                     itemId="value"
-                    items={this.state.usersContacts}
+                    items={[...this.state.baptizedByContacts, ...this.state.usersContacts]}
                     selectedItems={this.getSelectizeItems(
                       this.state.contact.baptized_by,
-                      this.state.usersContacts,
+                      [...this.state.baptizedByContacts, ...this.state.usersContacts],
                     )}
                     textInputProps={{
                       placeholder: i18n.t('contactDetailScreen.addBaptizedBy'),
@@ -3616,7 +3813,20 @@ class ContactDetailScreen extends React.Component {
                       <Chip
                         key={id}
                         iconStyle={iconStyle}
-                        onClose={onClose}
+                        onClose={(props) => {
+                          let foundBaptizedByIndex = this.state.baptizedByContacts.findIndex(
+                            (baptized) => baptized.value === id
+                          );
+                          if (foundBaptizedByIndex > -1) {
+                            // Remove baptized from list
+                            const baptizedByContacts = [...this.state.baptizedByContacts];
+                            baptizedByContacts.splice(foundBaptizedByIndex, 1);
+                            this.setState({
+                              baptizedByContacts: [...baptizedByContacts],
+                            });
+                          }
+                          onClose(props);
+                        }}
                         text={item.name}
                         style={style}
                       />
@@ -3654,10 +3864,10 @@ class ContactDetailScreen extends React.Component {
                       baptizedSelectizeRef = selectize;
                     }}
                     itemId="value"
-                    items={this.state.usersContacts}
+                    items={[...this.state.baptizedContacts, ...this.state.usersContacts]}
                     selectedItems={this.getSelectizeItems(
                       this.state.contact.baptized,
-                      this.state.usersContacts,
+                      [...this.state.baptizedContacts, ...this.state.usersContacts],
                     )}
                     textInputProps={{
                       placeholder: i18n.t('contactDetailScreen.addBaptized'),
@@ -3700,7 +3910,20 @@ class ContactDetailScreen extends React.Component {
                       <Chip
                         key={id}
                         iconStyle={iconStyle}
-                        onClose={onClose}
+                        onClose={(props) => {
+                          let foundBaptizedIndex = this.state.baptizedContacts.findIndex(
+                            (baptized) => baptized.value === id
+                          );
+                          if (foundBaptizedIndex > -1) {
+                            // Remove baptized from list
+                            const baptizedContacts = [...this.state.baptizedContacts];
+                            baptizedContacts.splice(foundBaptizedIndex, 1);
+                            this.setState({
+                              baptizedContacts: [...baptizedContacts],
+                            });
+                          }
+                          onClose(props);
+                        }}
                         text={item.name}
                         style={style}
                       />
@@ -3738,10 +3961,10 @@ class ContactDetailScreen extends React.Component {
                       coachedSelectizeRef = selectize;
                     }}
                     itemId="value"
-                    items={this.state.usersContacts}
+                    items={[...this.state.coachedByContacts, ...this.state.usersContacts]}
                     selectedItems={this.getSelectizeItems(
                       this.state.contact.coached_by,
-                      this.state.usersContacts,
+                      [...this.state.coachedByContacts, ...this.state.usersContacts],
                     )}
                     textInputProps={{
                       placeholder: i18n.t('contactDetailScreen.addCoachedBy'),
@@ -3784,7 +4007,20 @@ class ContactDetailScreen extends React.Component {
                       <Chip
                         key={id}
                         iconStyle={iconStyle}
-                        onClose={onClose}
+                        onClose={(props) => {
+                          let foundCoachedByIndex = this.state.coachedByContacts.findIndex(
+                            (coachedBy) => coachedBy.value === id
+                          );
+                          if (foundCoachedByIndex > -1) {
+                            // Remove coachedBy from list
+                            const coachedByContacts = [...this.state.coachedByContacts];
+                            coachedByContacts.splice(foundCoachedByIndex, 1);
+                            this.setState({
+                              coachedByContacts: [...coachedByContacts],
+                            });
+                          }
+                          onClose(props);
+                        }}
                         text={item.name}
                         style={style}
                       />
@@ -3822,10 +4058,10 @@ class ContactDetailScreen extends React.Component {
                       coachingSelectizeRef = selectize;
                     }}
                     itemId="value"
-                    items={this.state.usersContacts}
+                    items={[...this.state.coachedContacts, ...this.state.usersContacts]}
                     selectedItems={this.getSelectizeItems(
                       this.state.contact.coaching,
-                      this.state.usersContacts,
+                      [...this.state.coachedContacts, ...this.state.usersContacts],
                     )}
                     textInputProps={{
                       placeholder: i18n.t('contactDetailScreen.addCoaching'),
@@ -3868,7 +4104,20 @@ class ContactDetailScreen extends React.Component {
                       <Chip
                         key={id}
                         iconStyle={iconStyle}
-                        onClose={onClose}
+                        onClose={(props) => {
+                          let foundCoachedIndex = this.state.coachedContacts.findIndex(
+                            (coached) => coached.value === id
+                          );
+                          if (foundCoachedIndex > -1) {
+                            // Remove coached from list
+                            const coachedContacts = [...this.state.coachedContacts];
+                            coachedContacts.splice(foundCoachedIndex, 1);
+                            this.setState({
+                              coachedContacts: [...coachedContacts],
+                            });
+                          }
+                          onClose(props);
+                        }}
                         text={item.name}
                         style={style}
                       />
@@ -4341,9 +4590,15 @@ class ContactDetailScreen extends React.Component {
     this.setState((prevState) => ({
       contact: {
         ...prevState.contact,
-        assigned_to: `user-${value}`,
+        assigned_to: {
+          key: value,
+          label: [...this.state.users, ...this.state.assignedToContacts].find(
+            (user) => user.key === value,
+          ).label
+        },
       },
       showAssignedToModal: false,
+      assignedToContacts: [] // Clear non existing assigentToContacts list
     }));
   };
 
@@ -4354,8 +4609,8 @@ class ContactDetailScreen extends React.Component {
   };
 
   showAssignedUser = () => {
-    const foundUser = this.state.users.find(
-      (user) => `user-${user.key}` === this.state.contact.assigned_to,
+    const foundUser = [...this.state.users, ...this.state.assignedToContacts].find(
+      (user) => user.key === this.state.contact.assigned_to.key,
     );
     return (
       <Text
@@ -4363,7 +4618,7 @@ class ContactDetailScreen extends React.Component {
           { marginTop: 'auto', marginBottom: 'auto', fontSize: 15 },
           this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
         ]}>
-        {foundUser ? foundUser.label : ''}
+        {foundUser.label}
       </Text>
     );
   };
@@ -5745,8 +6000,8 @@ ContactDetailScreen.propTypes = {
         }),
       }),
       assigned_to: PropTypes.shape({
-        name: PropTypes.string,
-        values: PropTypes.shape({}),
+        key: PropTypes.number,
+        label: PropTypes.string,
       }),
       subassigned: PropTypes.shape({
         name: PropTypes.string,
