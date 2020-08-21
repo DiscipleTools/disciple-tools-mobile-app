@@ -9,6 +9,7 @@ import { Asset } from 'expo-asset';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import Reactotron from 'reactotron-react-native';
+import * as Sentry from 'sentry-expo';
 
 import AppNavigator from './navigation/AppNavigator';
 import { store, persistor } from './store/store';
@@ -17,6 +18,12 @@ import sharedTools from './shared';
 // notifications
 
 import { setNetworkConnectivity } from './store/actions/networkConnectivity.actions';
+
+Sentry.init({
+  dsn: 'https://aaa9d833ba5942d59c69e290ffbd3f36@o424480.ingest.sentry.io/5356329',
+  enableInExpoDevelopment: true,
+  debug: true,
+});
 
 // Styles
 const styles = StyleSheet.create({

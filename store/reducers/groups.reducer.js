@@ -1,5 +1,6 @@
 import * as actions from '../actions/groups.actions';
 import * as userActions from '../actions/user.actions';
+import { Html5Entities } from 'html-entities';
 
 const initialState = {
   loading: false,
@@ -37,6 +38,7 @@ export default function groupsReducer(state = initialState, action) {
     saved: false,
     foundGeonames: null,
   };
+  const entities = new Html5Entities();
   switch (action.type) {
     case actions.GROUPS_GET_LOCATIONS_START:
       return {
@@ -110,16 +112,21 @@ export default function groupsReducer(state = initialState, action) {
                   return;
                 }
                 case '[object Number]': {
-                  mappedGroup[key] = value;
+                  if (key === 'ID') {
+                    mappedGroup[key] = value.toString();
+                  } else {
+                    mappedGroup[key] = value;
+                  }
                   return;
                 }
                 case '[object String]': {
                   if (value.includes('quick_button')) {
                     mappedGroup[key] = parseInt(value, 10);
                   } else if (key === 'post_title') {
-                    mappedGroup.title = value;
+                    // Decode HTML strings
+                    mappedGroup.title = entities.decode(value);
                   } else {
-                    mappedGroup[key] = value;
+                    mappedGroup[key] = entities.decode(value);
                   }
                   return;
                 }
@@ -135,7 +142,10 @@ export default function groupsReducer(state = initialState, action) {
                     mappedGroup[key] = value.timestamp;
                   } else if (key === 'assigned_to') {
                     // assigned-to property
-                    mappedGroup[key] = value['assigned-to'];
+                    mappedGroup[key] = {
+                      key: parseInt(value['assigned-to'].replace('user-', '')),
+                      label: value['display']
+                    };
                   }
                   return;
                 }
@@ -148,19 +158,18 @@ export default function groupsReducer(state = initialState, action) {
                           // connection
                           let object = {
                             value: valueTwo.ID.toString(),
+                            name: entities.decode(valueTwo.post_title)
                           };
                           // groups
-                          if (
-                            Object.prototype.hasOwnProperty.call(
-                              valueTwo,
-                              'baptized_member_count',
-                            ) &&
-                            Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')
-                          ) {
+                          if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {
                             object = {
                               ...object,
-                              post_title: valueTwo.post_title,
                               baptized_member_count: valueTwo.baptized_member_count,
+                            };
+                          }
+                          if(Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                            object = {
+                              ...object,
                               member_count: valueTwo.member_count,
                             };
                           }
@@ -264,16 +273,21 @@ export default function groupsReducer(state = initialState, action) {
                 return;
               }
               case '[object Number]': {
-                mappedGroup[key] = value;
+                if (key === 'ID') {
+                  mappedGroup[key] = value.toString();
+                } else {
+                  mappedGroup[key] = value;
+                }
                 return;
               }
               case '[object String]': {
                 if (value.includes('quick_button')) {
                   mappedGroup[key] = parseInt(value, 10);
                 } else if (key === 'post_title') {
-                  mappedGroup.title = value;
+                  // Decode HTML strings
+                  mappedGroup.title = entities.decode(value);
                 } else {
-                  mappedGroup[key] = value;
+                  mappedGroup[key] = entities.decode(value);
                 }
                 return;
               }
@@ -289,7 +303,10 @@ export default function groupsReducer(state = initialState, action) {
                   mappedGroup[key] = value.timestamp;
                 } else if (key === 'assigned_to') {
                   // assigned-to property
-                  mappedGroup[key] = value['assigned-to'];
+                  mappedGroup[key] = {
+                    key: parseInt(value['assigned-to'].replace('user-', '')),
+                    label: value['display']
+                  };
                 }
                 return;
               }
@@ -301,18 +318,19 @@ export default function groupsReducer(state = initialState, action) {
                       if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                         // connection
                         let object = {
-                          name: valueTwo.post_title,
                           value: valueTwo.ID.toString(),
+                          name: entities.decode(valueTwo.post_title)
                         };
                         // groups
-                        if (
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') &&
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')
-                        ) {
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {
                           object = {
                             ...object,
-                            post_title: valueTwo.post_title,
                             baptized_member_count: valueTwo.baptized_member_count,
+                          };
+                        }
+                        if(Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                          object = {
+                            ...object,
                             member_count: valueTwo.member_count,
                           };
                         }
@@ -563,16 +581,21 @@ export default function groupsReducer(state = initialState, action) {
                 return;
               }
               case '[object Number]': {
-                mappedGroup[key] = value;
+                if (key === 'ID') {
+                  mappedGroup[key] = value.toString();
+                } else {
+                  mappedGroup[key] = value;
+                }
                 return;
               }
               case '[object String]': {
                 if (value.includes('quick_button')) {
                   mappedGroup[key] = parseInt(value, 10);
                 } else if (key === 'post_title') {
-                  mappedGroup.title = value;
+                  // Decode HTML strings
+                  mappedGroup.title = entities.decode(value);
                 } else {
-                  mappedGroup[key] = value;
+                  mappedGroup[key] = entities.decode(value);
                 }
                 return;
               }
@@ -588,7 +611,10 @@ export default function groupsReducer(state = initialState, action) {
                   mappedGroup[key] = value.timestamp;
                 } else if (key === 'assigned_to') {
                   // assigned-to property
-                  mappedGroup[key] = value['assigned-to'];
+                  mappedGroup[key] = {
+                    key: parseInt(value['assigned-to'].replace('user-', '')),
+                    label: value['display']
+                  };
                 }
                 return;
               }
@@ -600,18 +626,19 @@ export default function groupsReducer(state = initialState, action) {
                       if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
                         // connection
                         let object = {
-                          name: valueTwo.post_title,
                           value: valueTwo.ID.toString(),
+                          name: entities.decode(valueTwo.post_title)
                         };
                         // groups
-                        if (
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count') &&
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')
-                        ) {
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {
                           object = {
                             ...object,
-                            post_title: valueTwo.post_title,
                             baptized_member_count: valueTwo.baptized_member_count,
+                          };
+                        }
+                        if(Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                          object = {
+                            ...object,
                             member_count: valueTwo.member_count,
                           };
                         }
@@ -733,9 +760,10 @@ export default function groupsReducer(state = initialState, action) {
         ...newState,
         comments: comments.map((comment) => ({
           ID: comment.comment_ID,
-          date: `${comment.comment_date.replace(' ', 'T')}Z`,
+          date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
           author: comment.comment_author,
-          content: comment.comment_content,
+          // Decode HTML strings
+          content: entities.decode(comment.comment_content),
           gravatar: comment.gravatar,
         })),
         totalComments: total,
@@ -788,8 +816,9 @@ export default function groupsReducer(state = initialState, action) {
           newComment: {
             ID: comment.comment_ID,
             author: comment.comment_author,
-            date: `${comment.comment_date.replace(' ', 'T')}Z`,
-            content: comment.comment_content,
+            date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
+            // Decode HTML strings
+            content: entities.decode(comment.comment_content),
             gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
           },
           loadingComments: false,
@@ -814,7 +843,8 @@ export default function groupsReducer(state = initialState, action) {
         activities: action.activities.map((activity) => ({
           ID: activity.histid,
           date: new Date(parseInt(activity.hist_time, 10) * 1000).toISOString(),
-          object_note: activity.object_note,
+          // Decode HTML strings
+          object_note: entities.decode(activity.object_note),
           gravatar:
             activity.gravatar === ''
               ? 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g'

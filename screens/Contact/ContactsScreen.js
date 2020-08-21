@@ -8,12 +8,17 @@ import {
   StyleSheet,
   Text,
   Image,
+  Platform,
+  ScrollView,
+  Dimensions,
 } from 'react-native';
-import { Fab, Container } from 'native-base';
+import { Fab, Container, Item, Input } from 'native-base';
 import { Row } from 'react-native-easy-grid';
+import { MaterialIcons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
-import { SearchBar } from 'react-native-elements';
+import Accordion from 'react-native-collapsible/Accordion';
+import { CheckBox } from 'react-native-elements';
 
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
@@ -24,7 +29,7 @@ import sharedTools from '../../shared';
 
 const styles = StyleSheet.create({
   flatListItem: {
-    height: 77,
+    height: 40,
     backgroundColor: 'white',
     margin: 20,
   },
@@ -44,20 +49,29 @@ const styles = StyleSheet.create({
   searchBarContainer: {
     borderBottomWidth: 1,
     backgroundColor: Colors.tabBar,
-    borderTopColor: '#FFF',
     borderBottomColor: '#FFF',
-    borderColor: '#F2F2F2',
+  },
+  searchBarScrollView: {
     paddingBottom: 10,
-    marginBottom: 1,
-    elevation: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingTop: 9,
+    minHeight: 60,
+  },
+  searchBarItem: {
+    borderColor: '#DDDDDD',
+    borderRadius: 3,
+    borderWidth: 10,
+  },
+  searchBarIcons: {
+    fontSize: 20,
+    color: 'gray',
+    padding: 10,
   },
   searchBarInput: {
-    marginLeft: 10,
-    marginRight: 10,
-    backgroundColor: 'white',
-    borderColor: '#DDDDDD',
-    borderBottomWidth: 1,
-    borderWidth: 1,
+    color: 'gray',
+    height: 41,
+    fontSize: 18,
   },
   offlineBar: {
     height: 20,
@@ -105,6 +119,7 @@ const styles = StyleSheet.create({
 });
 let toastError,
   statusCircleSize = 15;
+const windowHeight = Dimensions.get('window').height;
 
 class ContactsScreen extends React.Component {
   state = {
@@ -114,9 +129,15 @@ class ContactsScreen extends React.Component {
     dataSourceContactsFiltered: [],
     haveContacts: true,
     offset: 0,
-    limit: 100,
+    limit: 5000,
     sort: '-last_modified',
     contacts: [],
+    searchBarFilter: {
+      toggle: false,
+      options: {},
+      currentFilter: '',
+    },
+    activeSections: [],
   };
 
   componentDidUpdate(prevProps) {
@@ -192,10 +213,10 @@ class ContactsScreen extends React.Component {
             <Text style={styles.contactSubtitle}>
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status]
                 ? this.props.contactSettings.fields.overall_status.values[contact.overall_status]
-                    .label
+                  .label
                 : ''}
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status] &&
-              this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
+                this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
                 ? ' • '
                 : ''}
               {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
@@ -236,6 +257,11 @@ class ContactsScreen extends React.Component {
           offset: prevState.offset + prevState.limit,
           filtered: false,
           search: '',
+          searchBarFilter: {
+            ...prevState.searchBarFilter,
+            toggle: false,
+            currentFilter: '',
+          },
         }),
         () => {
           this.props.getAllContacts(
@@ -249,10 +275,15 @@ class ContactsScreen extends React.Component {
       );
     } else {
       this.setState(
-        () => ({
+        (prevState) => ({
           offset: 0,
           filtered: false,
           search: '',
+          searchBarFilter: {
+            ...prevState.searchBarFilter,
+            toggle: false,
+            currentFilter: '',
+          },
         }),
         () => {
           this.props.getAllContacts(
@@ -287,18 +318,249 @@ class ContactsScreen extends React.Component {
     }
   };
 
+  showFiltersPanel = () => {
+    this.setState((previousState) => ({
+      searchBarFilter: {
+        ...previousState.searchBarFilter,
+        toggle: !previousState.searchBarFilter.toggle,
+      },
+    }));
+  };
+
+  renderSectionHeader = (section, index, isActive, sections) => {
+    return (
+      <View
+        style={[
+          {
+            backgroundColor: isActive ? Colors.primary : '#FFFFFF',
+            height: 50,
+            paddingLeft: 15,
+            paddingRight: 15,
+            flexDirection: 'row',
+            borderWidth: 1,
+            borderColor: Colors.grayLight,
+          },
+        ]}>
+        <Text
+          style={{
+            color: isActive ? '#FFFFFF' : Colors.primary,
+            marginTop: 'auto',
+            marginBottom: 'auto',
+            fontWeight: 'bold',
+          }}>
+          {section.label}
+        </Text>
+        {section.count ? (
+          <Text
+            style={{
+              color: isActive ? '#FFFFFF' : Colors.primary,
+              marginTop: 'auto',
+              marginBottom: 'auto',
+            }}>
+            {` (${section.count})`}
+          </Text>
+        ) : null}
+        <Text
+          style={{
+            color: isActive ? '#FFFFFF' : Colors.primary,
+            marginTop: 'auto',
+            marginBottom: 'auto',
+            marginLeft: 'auto',
+          }}>
+          {isActive ? '-' : '+'}
+        </Text>
+      </View>
+    );
+  };
+
+  renderSectionContent = (section, index, isActive, sections) => {
+    let content = this.props.contactFilters.filters.filter(
+      (filter) => filter.tab === section.key && !filter.type,
+    );
+    return (
+      <View
+        key={index}
+        style={{
+          borderWidth: 1,
+          borderColor: Colors.grayLight,
+          padding: 15,
+        }}>
+        {content.map((filter) => (
+          <TouchableOpacity
+            key={filter.ID}
+            activeOpacity={0.5}
+            onPress={() => {
+              this.setState(
+                (prevState) => ({
+                  searchBarFilter: {
+                    ...prevState.searchBarFilter,
+                    currentFilter: filter.ID,
+                    dataSourceContactsFiltered: [],
+                  },
+                  // Set input search filters as initial value
+                  refresh: false,
+                  filtered: false,
+                  search: '',
+                }),
+                () => {
+                  let queryFilter = {
+                    ...filter.query,
+                  };
+                  let contactList = [...this.props.contacts];
+                  //filter prop does not exist in any object of collection
+                  Object.keys(filter.query).forEach((key) => {
+                    if (
+                      contactList.filter((contact) =>
+                        Object.prototype.hasOwnProperty.call(contact, key),
+                      ).length === 0
+                    ) {
+                      delete queryFilter[key];
+                    }
+                  });
+                  let queryFilterTwo = {};
+                  // Map json to got 'key: String/Boolean' format
+                  Object.keys(queryFilter).forEach((key) => {
+                    let value = queryFilter[key];
+                    let valueType = Object.prototype.toString.call(value);
+                    if (valueType === '[object Array]') {
+                      //queryFilterTwo[key] = contact => contact[key] == value[0];
+                      queryFilterTwo[key] = value[0];
+                    }
+                    if (queryFilterTwo[key] === 'me') {
+                      if (key == 'assigned_to') {
+                        queryFilterTwo[key] = `user-${this.props.userData.id}`;
+                      } else {
+                        queryFilterTwo[key] = this.props.userData.id.toString();
+                      }
+                    }
+                  });
+                  // Remove subassigned query because contacts does not have this value
+                  if(Object.prototype.hasOwnProperty.call(queryFilterTwo, "subassigned")) {
+                    delete queryFilterTwo.subassigned;
+                  }
+                  // Filter contacts according to 'queryFilterTwo' filters
+                  let itemsFiltered = contactList.filter((contact) => {
+                    let resp = [];
+                    for (let key in queryFilterTwo) {
+                      let result = false;
+                      //Property exist in object
+                      if (Object.prototype.hasOwnProperty.call(contact, key)) {
+                        // Value is to 'omit' contacts (-closed)
+                        if (queryFilterTwo[key].toString().startsWith('-')) {
+                          if (contact[key] !== queryFilterTwo[key].replace("-", "")) {
+                            result = true;
+                          }
+                          // Same value as filter
+                        } else if (queryFilterTwo[key] === contact[key]) {
+                          result = true;
+                        }
+                      }
+                      resp.push(result);
+                    }
+                    return resp.every((respValue) => respValue);
+                  });
+                  this.setState({
+                    refresh: true,
+                    dataSourceContactsFiltered: itemsFiltered,
+                    filtered: true,
+                    activeSections: [], //Close accordeon (removing open acordeon indexes from array)
+                  });
+                },
+              );
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                height: 50,
+                paddingLeft: filter.subfilter ? 20 : 0,
+              }}>
+              <CheckBox
+                checked={filter.ID === this.state.searchBarFilter.currentFilter}
+                checkedIcon="dot-circle-o"
+                uncheckedIcon="circle-o"
+                containerStyle={{
+                  padding: 0,
+                  margin: 0,
+                }}
+              />
+              <Text
+                style={{
+                  paddingTop: Platform.OS === 'ios' ? 4 : 0,
+                }}>
+                {filter.name}
+              </Text>
+              <Text
+                style={{
+                  marginLeft: 'auto',
+                  paddingTop: Platform.OS === 'ios' ? 4 : 0,
+                }}>
+                {filter.count}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
+
+  updateSections = (activeSections) => {
+    this.setState({ activeSections });
+  };
+
   renderHeader = () => {
     return (
-      <View>
-        <SearchBar
-          placeholder={i18n.t('global.search')}
-          onChangeText={(text) => this.SearchFilterFunction(text)}
-          autoCorrect={false}
-          value={this.state.search}
-          containerStyle={styles.searchBarContainer}
-          inputContainerStyle={styles.searchBarInput}
-        />
-        {!this.state.haveContacts && this.noContactsRender()}
+      <View
+        style={[
+          styles.searchBarContainer,
+          Platform.OS == 'ios'
+            ? { borderBottomColor: Colors.grayLight, borderBottomWidth: 1 }
+            : { elevation: 5 },
+          {},
+        ]}>
+        <ScrollView style={styles.searchBarScrollView}>
+          <Item regular style={styles.searchBarItem}>
+            <MaterialIcons name="search" style={styles.searchBarIcons} />
+            <Input
+              placeholder={i18n.t('global.search')}
+              onChangeText={(text) => this.filterContactsByText(text)}
+              autoCorrect={false}
+              value={this.state.search}
+              style={styles.searchBarInput}
+            />
+            {this.state.search.length > 0 ? (
+              <MaterialIcons
+                name="clear"
+                style={[styles.searchBarIcons, { marginRight: 10 }]}
+                onPress={() =>
+                  this.setState({
+                    // Set input search filters as initial value
+                    refresh: false,
+                    filtered: false,
+                    search: '',
+                  })
+                }
+              />
+            ) : null}
+            <MaterialIcons
+              name="filter-list"
+              style={styles.searchBarIcons}
+              onPress={() => this.showFiltersPanel()}
+            />
+          </Item>
+          {this.state.searchBarFilter.toggle ? (
+            <View style={{ marginTop: 20, marginBottom: 20 }}>
+              <Accordion
+                activeSections={this.state.activeSections}
+                sections={this.props.contactFilters.tabs.filter(
+                  (filter) => filter.key !== 'custom',
+                )}
+                renderHeader={this.renderSectionHeader}
+                renderContent={this.renderSectionContent}
+                onChange={this.updateSections}
+              />
+            </View>
+          ) : null}
+        </ScrollView>
       </View>
     );
   };
@@ -324,7 +586,7 @@ class ContactsScreen extends React.Component {
     </View>
   );
 
-  SearchFilterFunction(text) {
+  filterContactsByText(text) {
     const itemsFiltered = [];
     if (text.length > 0) {
       this.props.contacts.filter(function (item) {
@@ -368,26 +630,38 @@ class ContactsScreen extends React.Component {
         return itemsFiltered;
       });
       if (itemsFiltered.length > 0) {
-        this.setState({
+        this.setState((prevState) => ({
           refresh: true,
           dataSourceContactsFiltered: itemsFiltered,
           filtered: true,
           search: text,
-        });
+          searchBarFilter: {
+            ...prevState.searchBarFilter,
+            currentFilter: '',
+          },
+        }));
       } else {
-        this.setState({
+        this.setState((prevState) => ({
           refresh: true,
           filtered: true,
           search: text,
-        });
+          searchBarFilter: {
+            ...prevState.searchBarFilter,
+            currentFilter: '',
+          },
+        }));
       }
     } else {
-      this.setState({
+      this.setState((prevState) => ({
         refresh: false,
         filtered: false,
         search: '',
         dataSourceContactsFiltered: [],
-      });
+        searchBarFilter: {
+          ...prevState.searchBarFilter,
+          currentFilter: '',
+        },
+      }));
     }
   }
 
@@ -407,19 +681,21 @@ class ContactsScreen extends React.Component {
       <Container>
         <View style={{ flex: 1 }}>
           {!this.props.isConnected && this.offlineBarRender()}
-          <FlatList
-            ListHeaderComponent={this.renderHeader}
-            data={this.state.dataSourceContact}
-            extraData={this.state.loading}
-            renderItem={(item) => this.renderRow(item.item)}
-            ItemSeparatorComponent={this.flatListItemSeparator}
-            keyboardShouldPersistTaps="always"
-            refreshControl={
-              <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
-            }
-            ListFooterComponent={this.renderFooter}
-            keyExtractor={(item) => item.ID.toString()}
-          />
+          {this.renderHeader()}
+          {
+            <FlatList
+              data={this.state.dataSourceContact}
+              extraData={this.state.loading}
+              renderItem={(item) => this.renderRow(item.item)}
+              ItemSeparatorComponent={this.flatListItemSeparator}
+              keyboardShouldPersistTaps="always"
+              refreshControl={
+                <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
+              }
+              ListFooterComponent={this.renderFooter}
+              keyExtractor={(item) => item.ID.toString()}
+            />
+          }
           <Fab
             style={{ backgroundColor: Colors.tintColor }}
             position="bottomRight"
@@ -489,6 +765,7 @@ const mapStateToProps = (state) => ({
   contactSettings: state.contactsReducer.settings,
   isConnected: state.networkConnectivityReducer.isConnected,
   offset: state.contactsReducer.offset,
+  contactFilters: state.usersReducer.contactFilters,
 });
 const mapDispatchToProps = (dispatch) => ({
   getAllContacts: (domain, token, offset, limit, sort) => {

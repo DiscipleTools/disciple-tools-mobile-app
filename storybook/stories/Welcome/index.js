@@ -31,8 +31,8 @@ export default class Welcome extends React.Component {
         </Text>
         <Text style={this.styles.content}>
           We have added some stories inside the &quot;storybook/stories&quot; directory for
-          examples. Try editing the &quot;storybook/stories/Welcome.js&quot; file to edit
-          this message.
+          examples. Try editing the &quot;storybook/stories/Welcome.js&quot; file to edit this
+          message.
         </Text>
       </View>
     );

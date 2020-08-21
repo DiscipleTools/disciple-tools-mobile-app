@@ -8,31 +8,21 @@ configure({ adapter: new Adapter() });
 
 describe('Initialization', () => {
   it('sets value', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[{ value: 'My test value' }]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple items={[{ value: 'My test value' }]} onChange={() => {}} />,
+    );
 
-    expect(wrapper
-      .find(Input).first()
-      .prop('value')).toEqual('My test value');
+    expect(wrapper.find(Input).first().prop('value')).toEqual('My test value');
   });
 
   it('sets placeholder', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      placeholder="Enter a value"
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(<TextFieldMultiple placeholder="Enter a value" onChange={() => {}} />);
 
-    expect(wrapper
-      .find(Input)
-      .prop('placeholder')).toEqual('Enter a value');
+    expect(wrapper.find(Input).prop('placeholder')).toEqual('Enter a value');
   });
 
   it('sets value to empty string if value prop is undefined', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(<TextFieldMultiple onChange={() => {}} />);
     const instance = wrapper.instance();
     expect(instance.state.values.length).toBe(1);
     expect(instance.state.values[0].value).toBe('');
@@ -41,15 +31,12 @@ describe('Initialization', () => {
     expect(wrapper.find(Input).length).toEqual(1);
 
     // test first item
-    expect(wrapper
-      .find(Input)
-      .prop('value')).toEqual('');
+    expect(wrapper.find(Input).prop('value')).toEqual('');
   });
   it('sets edit state', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[{ value: 'My test value' }]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple items={[{ value: 'My test value' }]} onChange={() => {}} />,
+    );
     const instance = wrapper.instance();
     expect(instance.state.values.length).toBe(2);
     expect(instance.state.values[0].value).toBe('My test value');
@@ -59,26 +46,24 @@ describe('Initialization', () => {
     expect(wrapper.find(Input).length).toEqual(2);
 
     // test first item
-    expect(wrapper
-      .find(Input).first()
-      .prop('value')).toEqual('My test value');
+    expect(wrapper.find(Input).first().prop('value')).toEqual('My test value');
     // test second item
-    expect(wrapper
-      .find(Input).last()
-      .prop('value')).toEqual('');
+    expect(wrapper.find(Input).last().prop('value')).toEqual('');
   });
 });
 
 describe('onRemoveItem', () => {
   it('removes item 1 of 3', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[
-        { value: '432', key: 234 },
-        { value: '2345', key: 213 },
-        { value: '653', key: 323 },
-      ]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple
+        items={[
+          { value: '432', key: 234 },
+          { value: '2345', key: 213 },
+          { value: '653', key: 323 },
+        ]}
+        onChange={() => {}}
+      />,
+    );
     const instance = wrapper.instance();
     expect(instance.state.values[0].delete).toBeFalsy();
     expect(instance.state.values[1].delete).toBeFalsy();
@@ -92,14 +77,16 @@ describe('onRemoveItem', () => {
   });
 
   it('removes item 3 of 3', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[
-        { value: '432', key: 234 },
-        { value: '2345', key: 213 },
-        { value: '653', key: 323 },
-      ]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple
+        items={[
+          { value: '432', key: 234 },
+          { value: '2345', key: 213 },
+          { value: '653', key: 323 },
+        ]}
+        onChange={() => {}}
+      />,
+    );
     const instance = wrapper.instance();
     expect(instance.state.values[0].delete).toBeFalsy();
     expect(instance.state.values[1].delete).toBeFalsy();
@@ -113,12 +100,9 @@ describe('onRemoveItem', () => {
   });
 
   it('removes item 1 of 1', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[
-        { value: '432', key: 234 },
-      ]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple items={[{ value: '432', key: 234 }]} onChange={() => {}} />,
+    );
     const instance = wrapper.instance();
     expect(instance.state.values[0].delete).toBeFalsy();
 
@@ -128,15 +112,17 @@ describe('onRemoveItem', () => {
   });
 
   it('removes item 1 of 3 with deleted', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[
-        { value: '432', key: 234 },
-        { value: '2345', key: 213 },
-        { value: '653', key: 323, delete: true },
-        { value: '653', key: 323 },
-      ]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple
+        items={[
+          { value: '432', key: 234 },
+          { value: '2345', key: 213 },
+          { value: '653', key: 323, delete: true },
+          { value: '653', key: 323 },
+        ]}
+        onChange={() => {}}
+      />,
+    );
     const instance = wrapper.instance();
     expect(instance.state.values[0].delete).toBeFalsy();
     expect(instance.state.values[1].delete).toBeFalsy();
@@ -152,15 +138,17 @@ describe('onRemoveItem', () => {
   });
 
   it('removes item 3 of 3 with deleted', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[
-        { value: '432', key: 234 },
-        { value: '2345', key: 213 },
-        { value: '653', key: 323, delete: true },
-        { value: '653', key: 323 },
-      ]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple
+        items={[
+          { value: '432', key: 234 },
+          { value: '2345', key: 213 },
+          { value: '653', key: 323, delete: true },
+          { value: '653', key: 323 },
+        ]}
+        onChange={() => {}}
+      />,
+    );
     const instance = wrapper.instance();
     expect(instance.state.values[0].delete).toBeFalsy();
     expect(instance.state.values[1].delete).toBeFalsy();
@@ -176,12 +164,9 @@ describe('onRemoveItem', () => {
   });
 
   it('removes item 1 of 1 with deleted', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[
-        { value: '653', key: 323, delete: true },
-      ]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple items={[{ value: '653', key: 323, delete: true }]} onChange={() => {}} />,
+    );
     const instance = wrapper.instance();
     expect(instance.state.values[0].delete).toBeTruthy();
 
@@ -193,14 +178,16 @@ describe('onRemoveItem', () => {
 
 describe('onFieldChange', () => {
   it('change item 1 of 3', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[
-        { value: '432', index: 0 },
-        { value: '2345', index: 1 },
-        { value: '653', index: 2 },
-      ]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple
+        items={[
+          { value: '432', index: 0 },
+          { value: '2345', index: 1 },
+          { value: '653', index: 2 },
+        ]}
+        onChange={() => {}}
+      />,
+    );
     const instance = wrapper.instance();
     expect(instance.state.values[0].value).toBe('432');
     expect(instance.state.values[1].value).toBe('2345');
@@ -214,14 +201,16 @@ describe('onFieldChange', () => {
   });
 
   it('change item 2 of 3', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[
-        { value: '432', index: 0 },
-        { value: '2345', index: 1 },
-        { value: '653', index: 2 },
-      ]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple
+        items={[
+          { value: '432', index: 0 },
+          { value: '2345', index: 1 },
+          { value: '653', index: 2 },
+        ]}
+        onChange={() => {}}
+      />,
+    );
     const instance = wrapper.instance();
     expect(instance.state.values[0].value).toBe('432');
     expect(instance.state.values[1].value).toBe('2345');
@@ -235,14 +224,16 @@ describe('onFieldChange', () => {
   });
 
   it('change item 3 of 3', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[
-        { value: '432', index: 0 },
-        { value: '2345', index: 1 },
-        { value: '653', index: 2 },
-      ]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple
+        items={[
+          { value: '432', index: 0 },
+          { value: '2345', index: 1 },
+          { value: '653', index: 2 },
+        ]}
+        onChange={() => {}}
+      />,
+    );
     const instance = wrapper.instance();
     expect(instance.state.values[0].value).toBe('432');
     expect(instance.state.values[1].value).toBe('2345');
@@ -256,14 +247,16 @@ describe('onFieldChange', () => {
   });
 
   it('changes final empty item', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[
-        { value: '432', index: 0 },
-        { value: '2345', index: 1 },
-        { value: '653', index: 2 },
-      ]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple
+        items={[
+          { value: '432', index: 0 },
+          { value: '2345', index: 1 },
+          { value: '653', index: 2 },
+        ]}
+        onChange={() => {}}
+      />,
+    );
     const instance = wrapper.instance();
     expect(instance.state.values[0].value).toBe('432');
     expect(instance.state.values[1].value).toBe('2345');
@@ -278,14 +271,16 @@ describe('onFieldChange', () => {
   });
 
   it('adds empty item', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[
-        { value: '432', index: 0 },
-        { value: '2345', index: 1 },
-        { value: '653', index: 2 },
-      ]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple
+        items={[
+          { value: '432', index: 0 },
+          { value: '2345', index: 1 },
+          { value: '653', index: 2 },
+        ]}
+        onChange={() => {}}
+      />,
+    );
     const instance = wrapper.instance();
     expect(instance.state.values[0].value).toBe('432');
     expect(instance.state.values[1].value).toBe('2345');
@@ -302,15 +297,17 @@ describe('onFieldChange', () => {
   });
 
   it('adds empty item', () => {
-    const wrapper = shallow(<TextFieldMultiple
-      items={[
-        { value: '432', index: 0 },
-        { value: '2345', index: 1, delete: true },
-        { value: '653', index: 2 },
-        { value: '5322', index: 3 },
-      ]}
-      onChange={() => {}}
-    />);
+    const wrapper = shallow(
+      <TextFieldMultiple
+        items={[
+          { value: '432', index: 0 },
+          { value: '2345', index: 1, delete: true },
+          { value: '653', index: 2 },
+          { value: '5322', index: 3 },
+        ]}
+        onChange={() => {}}
+      />,
+    );
     const instance = wrapper.instance();
     expect(instance.state.values[0].value).toBe('432');
     expect(instance.state.values[1].value).toBe('2345');
