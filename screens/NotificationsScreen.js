@@ -333,7 +333,7 @@ class NotificationsScreen extends React.Component {
             <Text
               style={[styles.prettyTime, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
               {moment(notification.date_notified).fromNow() +
-                ' | ' +
+                ' ~ ' +
                 moment(notification.date_notified).format('L')}
             </Text>
           </View>
