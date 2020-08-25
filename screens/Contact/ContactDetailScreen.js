@@ -5358,6 +5358,7 @@ class ContactDetailScreen extends React.Component {
                           this.onSaveQuickAction('quick_button_no_answer');
                         }}
                         size={40}
+                        buttonColor={Colors.colorNo}
                         nativeFeedbackRippleColor="rgba(0,0,0,0)"
                         textStyle={{ color: Colors.tintColor, fontSize: 15 }}
                         textContainerStyle={{ height: 'auto' }}>
@@ -5371,6 +5372,7 @@ class ContactDetailScreen extends React.Component {
                           this.onSaveQuickAction('quick_button_contact_established');
                         }}
                         size={40}
+                        buttonColor={Colors.colorYes}
                         nativeFeedbackRippleColor="rgba(0,0,0,0)"
                         textStyle={{ color: Colors.tintColor, fontSize: 15 }}
                         textContainerStyle={{ height: 'auto' }}>
@@ -5387,6 +5389,7 @@ class ContactDetailScreen extends React.Component {
                         onPress={() => {
                           this.onSaveQuickAction('quick_button_meeting_scheduled');
                         }}
+                        buttonColor={Colors.colorWait}
                         size={40}
                         nativeFeedbackRippleColor="rgba(0,0,0,0)"
                         textStyle={{ color: Colors.tintColor, fontSize: 15 }}
@@ -5403,6 +5406,7 @@ class ContactDetailScreen extends React.Component {
                           this.onMeetingComplete(this.props);
                         }}
                         size={40}
+                        buttonColor={Colors.colorYes}
                         nativeFeedbackRippleColor="rgba(0,0,0,0)"
                         textStyle={{ color: Colors.tintColor, fontSize: 15 }}
                         textContainerStyle={{ height: 'auto' }}>
@@ -5418,6 +5422,7 @@ class ContactDetailScreen extends React.Component {
                           this.onSaveQuickAction('quick_button_no_show');
                         }}
                         size={40}
+                        buttonColor={Colors.colorNo}
                         nativeFeedbackRippleColor="rgba(0,0,0,0)"
                         textStyle={{ color: Colors.tintColor, fontSize: 15 }}
                         textContainerStyle={{ height: 'auto' }}>

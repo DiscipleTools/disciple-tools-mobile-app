@@ -26,4 +26,8 @@ export default {
   warningText: '#ffa0aa',
   noticeBackground: tintColor,
   noticeText: '#fff',
+
+  colorYes: '#2ABE1E',
+  colorNo: '#C70039',
+  colorWait: '#FFC300',
 };
