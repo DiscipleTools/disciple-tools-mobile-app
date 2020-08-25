@@ -7,11 +7,9 @@ const initialState = {
   error: null,
   contacts: [],
   contact: null,
-  comments: [],
-  newComment: null,
-  activities: [],
-  totalComments: null,
-  totalActivities: null,
+  comments: {},
+  newComment: false,
+  activities: {},
   loadingComments: false,
   loadingActivities: false,
   saved: false,
@@ -23,12 +21,8 @@ export default function contactsReducer(state = initialState, action) {
   let newState = {
     ...state,
     contact: null,
-    newComment: null,
+    newComment: false,
     error: null,
-    comments: null,
-    totalComments: null,
-    activities: null,
-    totalActivities: null,
     saved: false,
   };
   const entities = new Html5Entities();
@@ -62,7 +56,7 @@ export default function contactsReducer(state = initialState, action) {
                   return;
                 }
                 case '[object Number]': {
-                  if(key === 'ID') {
+                  if (key === 'ID') {
                     mappedContact[key] = value.toString();
                   } else {
                     mappedContact[key] = value;
@@ -201,7 +195,7 @@ export default function contactsReducer(state = initialState, action) {
                 return;
               }
               case '[object Number]': {
-                if(key === 'ID') {
+                if (key === 'ID') {
                   mappedContact[key] = value.toString();
                 } else {
                   mappedContact[key] = value;
@@ -475,7 +469,7 @@ export default function contactsReducer(state = initialState, action) {
                 return;
               }
               case '[object Number]': {
-                if(key === 'ID') {
+                if (key === 'ID') {
                   mappedContact[key] = value.toString();
                 } else {
                   mappedContact[key] = value;
@@ -600,49 +594,39 @@ export default function contactsReducer(state = initialState, action) {
         loadingComments: true,
       };
     case actions.CONTACTS_GET_COMMENTS_SUCCESS: {
-      const { comments, total, offline } = action;
-      if (offline) {
-        const date = new Date();
-        const year = date.getUTCFullYear();
-        let day = date.getUTCDate();
-        let month = date.getUTCMonth() + 1;
-        if (day < 10) day = `0${day}`;
-        if (month < 10) month = `0${month}`;
-        const curDay = `${year}-${month}-${day}`;
-        let hours = date.getUTCHours();
-        let minutes = date.getUTCMinutes();
-        let seconds = date.getUTCSeconds();
-        if (hours < 10) hours = `0${hours}`;
-        if (minutes < 10) minutes = `0${minutes}`;
-        if (seconds < 10) seconds = `0${seconds}`;
-        const currentDate = `${curDay}T${hours}:${minutes}:${seconds}Z`;
-        return {
-          ...newState,
-          comments: comments.map((comment) => ({
-            ID: comment.ID,
-            author: comment.author,
-            date: currentDate,
-            content: comment.comment,
-            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
-            contactId: comment.contactId,
-          })),
-          totalComments: total,
-          loadingComments: false,
-        };
+      const { comments, contactId, pagination } = action;
+
+      let mappedComments = comments.map((comment) => ({
+        ID: comment.comment_ID,
+        date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
+        author: comment.comment_author,
+        // Decode HTML strings
+        content: entities.decode(comment.comment_content),
+        gravatar: comment.gravatar,
+      }));
+      // Check previous records existence; Only retrieve previous data if pagination its active (offset > 0)
+      let previousComments = [];
+      if (pagination.offset > 0 && newState.comments[contactId]) {
+        previousComments = newState.comments[contactId].data;
       }
+
+      let newCommentState = {
+        ...newState.comments,
+        [contactId]: {
+          data: [...previousComments, ...mappedComments],
+          pagination: {
+            ...pagination,
+            offset: pagination.offset + pagination.limit // UPDATE OFFSET
+          }
+        }
+      };
+
       return {
         ...newState,
-        comments: comments.map((comment) => ({
-          ID: comment.comment_ID,
-          date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
-          author: comment.comment_author,
-          // Decode HTML strings
-          content: entities.decode(comment.comment_content),
-          gravatar: comment.gravatar,
-        })),
-        totalComments: total,
+        comments: newCommentState,
         loadingComments: false,
-      };
+      }
+
     }
     case actions.CONTACTS_GET_COMMENTS_FAILURE:
       return {
@@ -656,7 +640,8 @@ export default function contactsReducer(state = initialState, action) {
         loadingComments: true,
       };
     case actions.CONTACTS_SAVE_COMMENT_SUCCESS: {
-      const { comment, offline } = action;
+      const { comment, contactId, offline } = action;
+      let newComment;
       if (offline) {
         const date = new Date();
         const year = date.getUTCFullYear();
@@ -672,33 +657,51 @@ export default function contactsReducer(state = initialState, action) {
         if (minutes < 10) minutes = `0${minutes}`;
         if (seconds < 10) seconds = `0${seconds}`;
         const currentDate = `${curDay}T${hours}:${minutes}:${seconds}Z`;
-        newState = {
-          ...newState,
-          newComment: {
-            ID: comment.ID,
-            author: comment.author,
-            date: currentDate,
-            content: comment.comment,
-            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
-            contactID: comment.contactID,
-          },
-          loadingComments: false,
+        newComment = {
+          ID: comment.ID,
+          author: comment.author,
+          date: currentDate,
+          content: comment.comment,
+          gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
         };
       } else {
-        newState = {
-          ...newState,
-          newComment: {
-            ID: comment.comment_ID,
-            author: comment.comment_author,
-            date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
-            // Decode HTML strings
-            content: entities.decode(comment.comment_content),
-            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
-          },
-          loadingComments: false,
-        };
+        newComment = {
+          ID: comment.comment_ID,
+          author: comment.comment_author,
+          date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
+          // Decode HTML strings
+          content: entities.decode(comment.comment_content),
+          gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
+        }
       }
-      return newState;
+
+      // Check previous records/pagination existence and return it
+      let previousComments = [], pagination = {
+        limit: 10,
+        offset: 0,
+        total: 0
+      };
+      if (newState.comments[contactId]) {
+        previousComments = newState.comments[contactId].data;
+        pagination = newState.comments[contactId].pagination;
+      }
+
+      // Add new comment
+      let newCommentState = {
+        ...newState.comments,
+        [contactId]: {
+          data: [...previousComments, newComment],
+          pagination
+        }
+      };
+
+      return {
+        ...newState,
+        comments: newCommentState,
+        newComment: true,
+        loadingComments: false,
+      };
+      
     }
     case actions.CONTACTS_SAVE_COMMENT_FAILURE:
       return {
@@ -711,25 +714,46 @@ export default function contactsReducer(state = initialState, action) {
         ...newState,
         loadingActivities: true,
       };
-    case actions.CONTACTS_GET_ACTIVITIES_SUCCESS:
+    case actions.CONTACTS_GET_ACTIVITIES_SUCCESS: {
+      const { activities, contactId, pagination } = action;
+
+      let mappedActivities = activities.map((activity) => ({
+        ID: activity.histid,
+        date: new Date(parseInt(activity.hist_time, 10) * 1000).toISOString(),
+        // Decode HTML strings
+        object_note: entities.decode(activity.object_note),
+        gravatar:
+          activity.gravatar === ''
+            ? 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g'
+            : activity.gravatar,
+        meta_id: activity.meta_id,
+        meta_key: activity.meta_key,
+        name: activity.name,
+      }))
+      // Check previous records existence; Only retrieve previous data if pagination its active (offset > 0)
+      let previousActivities = [];
+      if (pagination.offset > 0 && newState.activities[contactId]) {
+        previousActivities = newState.activities[contactId].data;
+      }
+
+      let newActivityState = {
+        ...newState.activities,
+        [contactId]: {
+          data: [...previousActivities, ...mappedActivities],
+          pagination: {
+            ...pagination,
+            offset: pagination.offset + pagination.limit // UPDATE OFFSET
+          }
+        }
+      };
+
       return {
         ...newState,
-        activities: action.activities.map((activity) => ({
-          ID: activity.histid,
-          date: new Date(parseInt(activity.hist_time, 10) * 1000).toISOString(),
-          // Decode HTML strings
-          object_note: entities.decode(activity.object_note),
-          gravatar:
-            activity.gravatar === ''
-              ? 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g'
-              : activity.gravatar,
-          meta_id: activity.meta_id,
-          meta_key: activity.meta_key,
-          name: activity.name,
-        })),
-        totalActivities: action.total,
+        activities: newActivityState,
         loadingActivities: false,
-      };
+      }
+
+    }
     case actions.CONTACTS_GET_ACTIVITIES_FAILURE:
       return {
         ...newState,

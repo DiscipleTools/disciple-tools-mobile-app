@@ -89,14 +89,13 @@ export function getByIdEnd() {
   };
 }
 
-export function getCommentsByContact(domain, token, contactId, offset, limit) {
+export function getCommentsByContact(domain, token, contactId, pagination) {
   return {
     type: CONTACTS_GET_COMMENTS,
     domain,
     token,
     contactId,
-    offset,
-    limit,
+    pagination
   };
 }
 
@@ -110,14 +109,13 @@ export function saveComment(domain, token, contactId, commentData) {
   };
 }
 
-export function getActivitiesByContact(domain, token, contactId, offset, limit) {
+export function getActivitiesByContact(domain, token, contactId, pagination) {
   return {
     type: CONTACTS_GET_ACTIVITIES,
     domain,
     token,
     contactId,
-    offset,
-    limit,
+    pagination
   };
 }
 

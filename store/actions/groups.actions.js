@@ -106,14 +106,13 @@ export function getByIdEnd() {
   };
 }
 
-export function getCommentsByGroup(domain, token, groupId, offset, limit) {
+export function getCommentsByGroup(domain, token, groupId, pagination) {
   return {
     type: GROUPS_GET_COMMENTS,
     domain,
     token,
     groupId,
-    offset,
-    limit,
+    pagination
   };
 }
 
@@ -143,14 +142,13 @@ export function getPeopleGroups(domain, token) {
   };
 }
 
-export function getActivitiesByGroup(domain, token, groupId, offset, limit) {
+export function getActivitiesByGroup(domain, token, groupId, pagination) {
   return {
     type: GROUPS_GET_ACTIVITIES,
     domain,
     token,
     groupId,
-    offset,
-    limit,
+    pagination
   };
 }
 

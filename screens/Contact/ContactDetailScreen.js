@@ -224,9 +224,8 @@ const styles = StyleSheet.create({
   },
   noCommentsContainer: {
     padding: 20,
-    textAlignVertical: 'top',
-    textAlign: 'center',
-    height: 300,
+    height: '90%',
+    transform: [{ scaleY: -1 }]
   },
   noCommentsImage: {
     opacity: 0.5,
@@ -235,19 +234,10 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   noCommentsText: {
-    textAlignVertical: 'center',
     textAlign: 'center',
     fontWeight: 'bold',
     color: '#A8A8A8',
-    padding: 5,
-  },
-  noCommentsTextOffilne: {
-    textAlignVertical: 'center',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: '#A8A8A8',
-    backgroundColor: '#fff2ac',
-    padding: 5,
+    marginTop: 10
   },
   contactTextField: {
     borderBottomWidth: 1,
@@ -331,18 +321,26 @@ const initialState = {
   peopleGroups: [],
   geonames: [],
   loadedLocal: false,
-  comments: [],
+  comments: {
+    data: [],
+    pagination: {
+      limit: 10,
+      offset: 0,
+      total: 0
+    }
+  },
   loadComments: false,
   loadingMoreComments: false,
-  totalComments: 0,
-  commentsOffset: 0,
-  commentsLimit: 10,
-  activities: [],
+  activities: {
+    data: [],
+    pagination: {
+      limit: 10,
+      offset: 0,
+      total: 0
+    }
+  },
   loadActivities: false,
   loadingMoreActivities: false,
-  totalActivities: 0,
-  activitiesOffset: 0,
-  activitiesLimit: 10,
   comment: '',
   progressBarValue: 0,
   overallStatusBackgroundColor: '#ffffff',
@@ -551,35 +549,23 @@ class ContactDetailScreen extends React.Component {
       contact,
       loading,
       comments,
-      totalComments,
       loadingComments,
       activities,
-      totalActivities,
       loadingActivities,
-      newComment,
       foundGeonames,
+      newComment
     } = nextProps;
     let newState = {
       ...prevState,
       loading,
-      comments: comments || prevState.comments,
-      totalComments: totalComments || prevState.totalComments,
+      comments: prevState.comments,
       loadComments: loadingComments,
-      activities: activities || prevState.activities,
-      totalActivities: totalActivities || prevState.totalActivities,
+      activities: prevState.activities,
       loadActivities: loadingActivities,
       contact: prevState.contact,
       unmodifiedContact: prevState.unmodifiedContact,
     };
 
-    // NEW COMMENT
-    if (newComment) {
-      newState.comments.unshift(newComment);
-      newState = {
-        ...newState,
-        comments: newState.comments,
-      };
-    }
     // SAVE / GET BY ID
     if (contact) {
       newState = {
@@ -902,62 +888,70 @@ class ContactDetailScreen extends React.Component {
         };
 
         let foundAssigned = newState.users.find((user) => user.key === newState.contact.assigned_to.key);
-          if (!foundAssigned) {
-            // Add non existent group to list (user does not have access permission to this groups)
-            newState = {
-              ...newState,
-              assignedToContacts: [
-                ...newState.assignedToContacts,
-                {
-                  label: foundAssigned.label,
-                  key: foundAssigned.key
-                }
-              ],
-              unmodifedAssignedToContacts: [
-                ...newState.unmodifedAssignedToContacts,
-                {
-                  label: foundAssigned.label,
-                  key: foundAssigned.key
-                }
-              ]
-            };
-          }
+        if (!foundAssigned) {
+          // Add non existent group to list (user does not have access permission to this groups)
+          newState = {
+            ...newState,
+            assignedToContacts: [
+              ...newState.assignedToContacts,
+              {
+                label: newState.contact.assigned_to.label,
+                key: newState.contact.assigned_to.key
+              }
+            ],
+            unmodifedAssignedToContacts: [
+              ...newState.unmodifedAssignedToContacts,
+              {
+                label: newState.contact.assigned_to.label,
+                key: newState.contact.assigned_to.key
+              }
+            ]
+          };
+        }
 
       }
     }
 
     // GET COMMENTS
     if (comments) {
-      // NEW COMMENTS (PAGINATION)
-      if (prevState.commentsOffset > 0) {
+      if (newState.contact.ID && Object.prototype.hasOwnProperty.call(comments, newState.contact.ID)) {
+        // NEW COMMENTS (PAGINATION)
+        if (comments[newState.contact.ID].pagination.offset > 0) {
+          newState = {
+            ...newState,
+            loadingMoreComments: false,
+          };
+        }
+        // ONLINE MODE: USE STATE PAGINATION - OFFLINE MODE: USE STORE PAGINATION
+        // UPDATE OFFSET
         newState = {
           ...newState,
-          comments: prevState.comments.concat(comments),
-          loadingMoreComments: false,
+          comments: {
+            ...comments[newState.contact.ID]
+          },
         };
       }
-      newState = {
-        // UPDATE OFFSET
-        ...newState,
-        commentsOffset: prevState.commentsOffset + prevState.commentsLimit,
-      };
     }
 
-    // GET ACTIVITITES
+    // GET ACTIVITIES
     if (activities) {
-      // NEW ACTIVITIES (PAGINATION)
-      if (prevState.activitiesOffset > 0) {
+      if (newState.contact.ID && Object.prototype.hasOwnProperty.call(activities, newState.contact.ID)) {
+        // NEW ACTIVITIES (PAGINATION)
+        if (activities[newState.contact.ID].pagination.offset > 0) {
+          newState = {
+            ...newState,
+            loadingMoreActivities: false,
+          };
+        }
+        // ONLINE MODE: USE STATE PAGINATION - OFFLINE MODE: USE STORE PAGINATION
+        // UPDATE OFFSET
         newState = {
           ...newState,
-          activities: prevState.activities.concat(activities),
-          loadingMoreActivities: false,
+          activities: {
+            ...activities[newState.contact.ID]
+          },
         };
       }
-      newState = {
-        // UPDATE OFFSET
-        ...newState,
-        activitiesOffset: prevState.activitiesOffset + prevState.activitiesLimit,
-      };
     }
 
     // GET FILTERED LOCATIONS
@@ -1176,25 +1170,15 @@ class ContactDetailScreen extends React.Component {
   onRefresh(contactId) {
     if (!self.state.loading) {
       self.getContactById(contactId);
-      self.onRefreshCommentsActivities(contactId);
+      self.onRefreshCommentsActivities(contactId, true);
     }
   }
 
-  onRefreshCommentsActivities(contactId) {
-    this.setState(
-      {
-        comments: [],
-        activities: [],
-        commentsOffset: 0,
-        activitiesOffset: 0,
-      },
-      () => {
-        this.getContactComments(contactId);
-        if (this.props.isConnected) {
-          this.getContactActivities(contactId);
-        }
-      },
-    );
+  onRefreshCommentsActivities(contactId, resetPagination = false) {
+
+    this.getContactComments(contactId, resetPagination);
+    this.getContactActivities(contactId, resetPagination);
+
   }
 
   getLists = async (contactId) => {
@@ -1265,27 +1249,61 @@ class ContactDetailScreen extends React.Component {
     this.props.getByIdEnd();
   }
 
-  getContactComments(contactId) {
-    if (!this.state.loadComments) {
-      this.props.getComments(
-        this.props.userData.domain,
-        this.props.userData.token,
-        contactId,
-        this.state.commentsOffset,
-        this.state.commentsLimit,
-      );
+  getContactComments(contactId, resetPagination = false) {
+    if (this.props.isConnected) {
+      if (resetPagination) {
+        this.props.getComments(
+          this.props.userData.domain,
+          this.props.userData.token,
+          contactId,
+          {
+            offset: 0,
+            limit: 10
+          },
+        );
+      } else {
+        //ONLY GET DATA IF THERE IS MORE DATA TO GET
+        if (
+          !this.state.loadComments &&
+          this.state.comments.pagination.offset < this.state.comments.pagination.total
+        ) {
+          this.props.getComments(
+            this.props.userData.domain,
+            this.props.userData.token,
+            contactId,
+            this.state.comments.pagination,
+          );
+        }
+      }
     }
   }
 
-  getContactActivities(contactId) {
-    if (!this.state.loadActivities) {
-      this.props.getActivities(
-        this.props.userData.domain,
-        this.props.userData.token,
-        contactId,
-        this.state.activitiesOffset,
-        this.state.activitiesLimit,
-      );
+  getContactActivities(contactId, resetPagination = false) {
+    if (this.props.isConnected) {
+      if (resetPagination) {
+        this.props.getActivities(
+          this.props.userData.domain,
+          this.props.userData.token,
+          contactId,
+          {
+            offset: 0,
+            limit: 10
+          },
+        );
+      } else {
+        //ONLY GET DATA IF THERE IS MORE DATA TO GET
+        if (
+          !this.state.loadActivities &&
+          this.state.activities.pagination.offset < this.state.activities.pagination.total
+        ) {
+          this.props.getActivities(
+            this.props.userData.domain,
+            this.props.userData.token,
+            contactId,
+            this.state.activities.pagination,
+          );
+        }
+      }
     }
   }
 
@@ -1528,7 +1546,7 @@ class ContactDetailScreen extends React.Component {
               ID: this.state.contact.ID,
             };
           }
-          if(contactToSave.assigned_to) {
+          if (contactToSave.assigned_to) {
             contactToSave = {
               ...contactToSave,
               assigned_to: `user-${contactToSave.assigned_to.key}`,
@@ -1653,7 +1671,7 @@ class ContactDetailScreen extends React.Component {
 
   getCommentsAndActivities() {
     const { comments, activities } = this.state;
-    const list = comments.concat(activities);
+    const list = comments.data.concat(activities.data);
     return list
       .filter((item, index) => list.indexOf(item) === index)
       .sort((a, b) => new Date(a.date).getTime() < new Date(b.date).getTime());
@@ -1751,22 +1769,37 @@ class ContactDetailScreen extends React.Component {
   };
 
   noCommentsRender = () => (
-    <View style={styles.noCommentsContainer}>
-      <Row style={{ justifyContent: 'center' }}>
-        <Image style={styles.noCommentsImage} source={dtIcon} />
-      </Row>
-      <Text style={styles.noCommentsText}>
-        {i18n.t('contactDetailScreen.noContactCommentPlacheHolder')}
-      </Text>
-      <Text style={styles.noCommentsText}>
-        {i18n.t('contactDetailScreen.noContactCommentPlacheHolder1')}
-      </Text>
-      {!this.props.isConnected && (
-        <Text style={styles.noCommentsTextOffilne}>
-          {i18n.t('contactDetailScreen.noContactCommentPlacheHolderOffline')}
-        </Text>
-      )}
-    </View>
+    <ScrollView style={styles.noCommentsContainer} refreshControl={
+      <RefreshControl
+        refreshing={this.state.loadComments || this.state.loadActivities}
+        onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID, true)}
+      />
+    }>
+      <Grid style={{ transform: [{ scaleY: -1 }] }}>
+        <Col>
+          <Row style={{ justifyContent: 'center' }}>
+            <Image style={styles.noCommentsImage} source={dtIcon} />
+          </Row>
+          <Row>
+            <Text style={styles.noCommentsText}>
+              {i18n.t('contactDetailScreen.noContactCommentPlacheHolder')}
+            </Text>
+          </Row>
+          <Row>
+            <Text style={styles.noCommentsText}>
+              {i18n.t('contactDetailScreen.noContactCommentPlacheHolder1')}
+            </Text>
+          </Row>
+          {!this.props.isConnected && (
+            <Row>
+              <Text style={[styles.noCommentsText, { backgroundColor: '#fff2ac' }]}>
+                {i18n.t('contactDetailScreen.noContactCommentPlacheHolderOffline')}
+              </Text>
+            </Row>
+          )}
+        </Col>
+      </Grid>
+    </ScrollView>
   );
 
   detailView = () => (
@@ -3178,77 +3211,56 @@ class ContactDetailScreen extends React.Component {
 
   commentsView = () => (
     <View style={{ flex: 1, paddingBottom: this.state.footerHeight + this.state.footerLocation }}>
-      {this.state.comments.length == 0 &&
-        this.state.activities.length == 0 &&
+      {this.state.comments.data.length == 0 &&
+        this.state.activities.data.length == 0 &&
         !this.state.loadComments &&
-        !this.state.loadActivities &&
-        this.noCommentsRender()}
-      <FlatList
-        style={{
-          backgroundColor: '#ffffff',
-        }}
-        ref={(flatList) => {
-          commentsFlatList = flatList;
-        }}
-        data={this.getCommentsAndActivities()}
-        extraData={!this.state.loadingMoreComments || !this.state.loadingMoreActivities}
-        inverted
-        ItemSeparatorComponent={() => (
-          <View
+        !this.state.loadActivities ?
+        this.noCommentsRender() : (
+          <FlatList
             style={{
-              height: 1,
-              backgroundColor: '#CCCCCC',
+              backgroundColor: '#ffffff',
+            }}
+            ref={(flatList) => {
+              commentsFlatList = flatList;
+            }}
+            data={this.getCommentsAndActivities()}
+            extraData={!this.state.loadingMoreComments || !this.state.loadingMoreActivities}
+            inverted
+            ItemSeparatorComponent={() => (
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: '#CCCCCC',
+                }}
+              />
+            )}
+            keyExtractor={(item, index) => String(index)}
+            renderItem={(item) => {
+              const commentOrActivity = item.item;
+              return this.renderActivityOrCommentRow(commentOrActivity);
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.loadComments || this.state.loadActivities}
+                onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID, true)}
+              />
+            }
+            onScroll={({ nativeEvent }) => {
+              sharedTools.onlyExecuteLastCall({}, () => {
+                const flatList = nativeEvent;
+                const contentOffsetY = flatList.contentOffset.y;
+                const layoutMeasurementHeight = flatList.layoutMeasurement.height;
+                const contentSizeHeight = flatList.contentSize.height;
+                const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
+                const distanceToStart = contentSizeHeight - heightOffsetSum;
+                if (distanceToStart < 100) {
+                  this.getContactComments(this.state.contact.ID);
+                  this.getContactActivities(this.state.contact.ID);
+                }
+              }, 500);
             }}
           />
         )}
-        keyExtractor={(item, index) => String(index)}
-        renderItem={(item) => {
-          const commentOrActivity = item.item;
-          return this.renderActivityOrCommentRow(commentOrActivity);
-        }}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.loadComments || this.state.loadActivities}
-            onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID)}
-          />
-        }
-        onScroll={({ nativeEvent }) => {
-          const { loadingMoreComments, commentsOffset, activitiesOffset } = this.state;
-          const flatList = nativeEvent;
-          const contentOffsetY = flatList.contentOffset.y;
-          const layoutMeasurementHeight = flatList.layoutMeasurement.height;
-          const contentSizeHeight = flatList.contentSize.height;
-          const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
-          const distanceToStart = contentSizeHeight - heightOffsetSum;
-
-          if (distanceToStart < 100) {
-            if (!loadingMoreComments) {
-              if (commentsOffset < this.state.totalComments) {
-                this.setState(
-                  {
-                    loadingMoreComments: true,
-                  },
-                  () => {
-                    this.getContactComments(this.state.contact.ID);
-                  },
-                );
-              }
-            }
-            if (!this.state.loadingMoreActivities) {
-              if (activitiesOffset < this.state.totalActivities) {
-                this.setState(
-                  {
-                    loadingMoreActivities: true,
-                  },
-                  () => {
-                    this.getContactActivities(this.state.contact.ID);
-                  },
-                );
-              }
-            }
-          }
-        }}
-      />
       <View style={{ backgroundColor: '#FFFFFF' }}>
         <MentionsTextInput
           editable={!this.state.loadComments}
@@ -5925,13 +5937,7 @@ ContactDetailScreen.propTypes = {
     code: PropTypes.any,
     message: PropTypes.any,
   }),
-  newComment: PropTypes.shape({
-    ID: PropTypes.string,
-    author: PropTypes.string,
-    content: PropTypes.string,
-    date: PropTypes.string,
-    gravatar: PropTypes.string,
-  }),
+  newComment: PropTypes.bool,
   contactsReducerError: PropTypes.shape({
     code: PropTypes.any,
     message: PropTypes.any,
@@ -6096,14 +6102,14 @@ const mapDispatchToProps = (dispatch) => ({
   getByIdEnd: () => {
     dispatch(getByIdEnd());
   },
-  getComments: (domain, token, contactId, offset, limit) => {
-    dispatch(getCommentsByContact(domain, token, contactId, offset, limit));
+  getComments: (domain, token, contactId, pagination) => {
+    dispatch(getCommentsByContact(domain, token, contactId, pagination));
   },
   saveComment: (domain, token, contactId, commentData) => {
     dispatch(saveComment(domain, token, contactId, commentData));
   },
-  getActivities: (domain, token, contactId, offset, limit) => {
-    dispatch(getActivitiesByContact(domain, token, contactId, offset, limit));
+  getActivities: (domain, token, contactId, pagination) => {
+    dispatch(getActivitiesByContact(domain, token, contactId, pagination));
   },
   endSaveContact: () => {
     dispatch(saveEnd());
