@@ -346,9 +346,8 @@ const styles = StyleSheet.create({
   },
   noCommentsContainer: {
     padding: 20,
-    textAlignVertical: 'top',
-    textAlign: 'center',
-    height: 300,
+    height: '90%',
+    transform: [{ scaleY: -1 }]
   },
   noCommentsImage: {
     opacity: 0.5,
@@ -357,19 +356,10 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   noCommentsText: {
-    textAlignVertical: 'center',
     textAlign: 'center',
     fontWeight: 'bold',
     color: '#A8A8A8',
-    padding: 5,
-  },
-  noCommentsTextOffilne: {
-    textAlignVertical: 'center',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: '#A8A8A8',
-    backgroundColor: '#fff2ac',
-    padding: 5,
+    marginTop: 10
   },
   membersCount: {
     color: Colors.tintColor,
@@ -472,18 +462,26 @@ const initialState = {
   geonames: [],
   peopleGroups: [],
   groups: [],
-  comments: [],
+  comments: {
+    data: [],
+    pagination: {
+      limit: 10,
+      offset: 0,
+      total: 0
+    }
+  },
   loadComments: false,
   loadMoreComments: false,
-  totalComments: 0,
-  commentsOffset: 0,
-  commentsLimit: 10,
-  activities: [],
+  activities: {
+    data: [],
+    pagination: {
+      limit: 10,
+      offset: 0,
+      total: 0
+    }
+  },
   loadActivities: false,
   loadMoreActivities: false,
-  totalActivities: 0,
-  activitiesOffset: 0,
-  activitiesLimit: 10,
   showAssignedToModal: false,
   groupStatusBackgroundColor: '#ffffff',
   loading: false,
@@ -684,10 +682,8 @@ class GroupDetailScreen extends React.Component {
       group,
       loading,
       comments,
-      totalComments,
       loadingComments,
       activities,
-      totalActivities,
       loadingActivities,
       newComment,
       foundGeonames,
@@ -696,24 +692,13 @@ class GroupDetailScreen extends React.Component {
     let newState = {
       ...prevState,
       loading,
-      comments: comments || prevState.comments,
-      totalComments: totalComments || prevState.totalComments,
+      comments: prevState.comments,
       loadComments: loadingComments,
-      activities: activities || prevState.activities,
-      totalActivities: totalActivities || prevState.totalActivities,
+      activities: prevState.activities,
       loadActivities: loadingActivities,
       group: prevState.group,
       unmodifiedGroup: prevState.unmodifiedGroup,
     };
-
-    // NEW COMMENT
-    if (newComment) {
-      newState.comments.unshift(newComment);
-      newState = {
-        ...newState,
-        comments: newState.comments,
-      };
-    }
 
     // SAVE / GET BY ID
     if (group) {
@@ -972,15 +957,15 @@ class GroupDetailScreen extends React.Component {
             assignedToContacts: [
               ...newState.assignedToContacts,
               {
-                label: foundAssigned.label,
-                key: foundAssigned.key
+                label: newState.group.assigned_to.label,
+                key: newState.group.assigned_to.key
               }
             ],
             unmodifedAssignedToContacts: [
               ...newState.unmodifedAssignedToContacts,
               {
-                label: foundAssigned.label,
-                key: foundAssigned.key
+                label: newState.group.assigned_to.label,
+                key: newState.group.assigned_to.key
               }
             ]
           };
@@ -991,36 +976,44 @@ class GroupDetailScreen extends React.Component {
 
     // GET COMMENTS
     if (comments) {
-      // NEW COMMENTS (PAGINATION)
-      if (prevState.commentsOffset > 0) {
+      if (newState.group.ID && Object.prototype.hasOwnProperty.call(comments, newState.group.ID)) {
+        // NEW COMMENTS (PAGINATION)
+        if (comments[newState.group.ID].pagination.offset > 0) {
+          newState = {
+            ...newState,
+            loadingMoreComments: false,
+          };
+        }
+        // ONLINE MODE: USE STATE PAGINATION - OFFLINE MODE: USE STORE PAGINATION
+        // UPDATE OFFSET
         newState = {
           ...newState,
-          comments: prevState.comments.concat(comments),
-          loadMoreComments: false,
+          comments: {
+            ...comments[newState.group.ID]
+          },
         };
       }
-      newState = {
-        // UPDATE OFFSET
-        ...newState,
-        commentsOffset: prevState.commentsOffset + prevState.commentsLimit,
-      };
     }
 
     // GET ACTIVITITES
     if (activities) {
-      // NEW ACTIVITIES (PAGINATION)
-      if (prevState.activitiesOffset > 0) {
+      if (newState.group.ID && Object.prototype.hasOwnProperty.call(activities, newState.group.ID)) {
+        // NEW ACTIVITIES (PAGINATION)
+        if (activities[newState.group.ID].pagination.offset > 0) {
+          newState = {
+            ...newState,
+            loadingMoreActivities: false,
+          };
+        }
+        // ONLINE MODE: USE STATE PAGINATION - OFFLINE MODE: USE STORE PAGINATION
+        // UPDATE OFFSET
         newState = {
           ...newState,
-          activities: prevState.activities.concat(activities),
-          loadMoreActivities: false,
+          activities: {
+            ...activities[newState.group.ID]
+          },
         };
       }
-      newState = {
-        // UPDATE OFFSET
-        ...newState,
-        activitiesOffset: prevState.activitiesOffset + prevState.activitiesLimit,
-      };
     }
 
     // GET FILTERED LOCATIONS
@@ -1227,24 +1220,14 @@ class GroupDetailScreen extends React.Component {
 
   onRefresh(groupId) {
     this.getGroupById(groupId);
-    this.onRefreshCommentsActivities(groupId);
+    this.onRefreshCommentsActivities(groupId, true);
   }
 
-  onRefreshCommentsActivities(groupId) {
-    this.setState(
-      {
-        comments: [],
-        activities: [],
-        commentsOffset: 0,
-        activitiesOffset: 0,
-      },
-      () => {
-        this.getGroupComments(groupId);
-        if (this.props.isConnected) {
-          this.getGroupActivities(groupId);
-        }
-      },
-    );
+  onRefreshCommentsActivities(groupId, resetPagination = false) {
+
+    this.getGroupComments(groupId, resetPagination);
+    this.getGroupActivities(groupId, resetPagination);
+
   }
 
   getLists = async (groupId) => {
@@ -1306,27 +1289,61 @@ class GroupDetailScreen extends React.Component {
     this.props.getByIdEnd();
   }
 
-  getGroupComments(groupId) {
-    if (!this.state.loadComments) {
-      this.props.getComments(
-        this.props.userData.domain,
-        this.props.userData.token,
-        groupId,
-        this.state.commentsOffset,
-        this.state.commentsLimit,
-      );
+  getGroupComments(groupId, resetPagination = false) {
+    if (this.props.isConnected) {
+      if (resetPagination) {
+        this.props.getComments(
+          this.props.userData.domain,
+          this.props.userData.token,
+          groupId,
+          {
+            offset: 0,
+            limit: 10
+          },
+        );
+      } else {
+        //ONLY GET DATA IF THERE IS MORE DATA TO GET
+        if (
+          !this.state.loadComments &&
+          this.state.comments.pagination.offset < this.state.comments.pagination.total
+        ) {
+          this.props.getComments(
+            this.props.userData.domain,
+            this.props.userData.token,
+            groupId,
+            this.state.comments.pagination,
+          );
+        }
+      }
     }
   }
 
-  getGroupActivities(groupId) {
-    if (!this.state.loadActivities) {
-      this.props.getActivities(
-        this.props.userData.domain,
-        this.props.userData.token,
-        groupId,
-        this.state.activitiesOffset,
-        this.state.activitiesLimit,
-      );
+  getGroupActivities(groupId, resetPagination = false) {
+    if (this.props.isConnected) {
+      if (resetPagination) {
+        this.props.getActivities(
+          this.props.userData.domain,
+          this.props.userData.token,
+          groupId,
+          {
+            offset: 0,
+            limit: 10
+          },
+        );
+      } else {
+        //ONLY GET DATA IF THERE IS MORE DATA TO GET
+        if (
+          !this.state.loadActivities &&
+          this.state.activities.pagination.offset < this.state.activities.pagination.total
+        ) {
+          this.props.getActivities(
+            this.props.userData.domain,
+            this.props.userData.token,
+            groupId,
+            this.state.activities.pagination,
+          );
+        }
+      }
     }
   }
 
@@ -1452,7 +1469,7 @@ class GroupDetailScreen extends React.Component {
 
   getCommentsAndActivities() {
     const { comments, activities } = this.state;
-    const list = comments.concat(activities);
+    const list = comments.data.concat(activities.data);
     return list
       .filter((item, index) => list.indexOf(item) === index)
       .sort((a, b) => new Date(a.date).getTime() < new Date(b.date).getTime());
@@ -2057,22 +2074,37 @@ class GroupDetailScreen extends React.Component {
   );
 
   noCommentsRender = () => (
-    <View style={styles.noCommentsContainer}>
-      <Row style={{ justifyContent: 'center' }}>
-        <Image style={styles.noCommentsImage} source={dtIcon} />
-      </Row>
-      <Text style={styles.noCommentsText}>
-        {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder')}
-      </Text>
-      <Text style={styles.noCommentsText}>
-        {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder1')}
-      </Text>
-      {!this.props.isConnected && (
-        <Text style={styles.noCommentsTextOffilne}>
-          {i18n.t('groupDetailScreen.noGroupCommentPlacheHolderOffline')}
-        </Text>
-      )}
-    </View>
+    <ScrollView style={styles.noCommentsContainer} refreshControl={
+      <RefreshControl
+        refreshing={this.state.loadComments || this.state.loadActivities}
+        onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID, true)}
+      />
+    }>
+      <Grid style={{ transform: [{ scaleY: -1 }] }}>
+        <Col>
+          <Row style={{ justifyContent: 'center' }}>
+            <Image style={styles.noCommentsImage} source={dtIcon} />
+          </Row>
+          <Row>
+            <Text style={styles.noCommentsText}>
+              {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder')}
+            </Text>
+          </Row>
+          <Row>
+            <Text style={styles.noCommentsText}>
+              {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder1')}
+            </Text>
+          </Row>
+          {!this.props.isConnected && (
+            <Row>
+              <Text style={[styles.noCommentsText, { backgroundColor: '#fff2ac' }]}>
+                {i18n.t('groupDetailScreen.noGroupCommentPlacheHolderOffline')}
+              </Text>
+            </Row>
+          )}
+        </Col>
+      </Grid>
+    </ScrollView>
   );
 
   detailView = () => (
@@ -3002,82 +3034,56 @@ class GroupDetailScreen extends React.Component {
 
   commentsView = () => (
     <View style={{ flex: 1, paddingBottom: this.state.footerHeight + this.state.footerLocation }}>
-      {this.state.comments.length == 0 &&
-        this.state.activities.length == 0 &&
+      {this.state.comments.data.length == 0 &&
+        this.state.activities.data.length == 0 &&
         !this.state.loadComments &&
-        !this.state.loadActivities &&
-        this.noCommentsRender()}
-      <FlatList
-        style={{
-          backgroundColor: '#ffffff',
-        }}
-        ref={(flatList) => {
-          commentsFlatList = flatList;
-        }}
-        data={this.getCommentsAndActivities()}
-        extraData={!this.state.loadMoreComments || !this.state.loadMoreActivities}
-        inverted
-        ItemSeparatorComponent={() => (
-          <View
+        !this.state.loadActivities ?
+        this.noCommentsRender() : (
+          <FlatList
             style={{
-              height: 1,
-              backgroundColor: '#CCCCCC',
+              backgroundColor: '#ffffff',
+            }}
+            ref={(flatList) => {
+              commentsFlatList = flatList;
+            }}
+            data={this.getCommentsAndActivities()}
+            extraData={!this.state.loadMoreComments || !this.state.loadMoreActivities}
+            inverted
+            ItemSeparatorComponent={() => (
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: '#CCCCCC',
+                }}
+              />
+            )}
+            keyExtractor={(item, index) => String(index)}
+            renderItem={(item) => {
+              const commentOrActivity = item.item;
+              return this.renderActivityOrCommentRow(commentOrActivity);
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.loadComments || this.state.loadActivities}
+                onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID, true)}
+              />
+            }
+            onScroll={({ nativeEvent }) => {
+              sharedTools.onlyExecuteLastCall({}, () => {
+                const flatList = nativeEvent;
+                const contentOffsetY = flatList.contentOffset.y;
+                const layoutMeasurementHeight = flatList.layoutMeasurement.height;
+                const contentSizeHeight = flatList.contentSize.height;
+                const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
+                const distanceToStart = contentSizeHeight - heightOffsetSum;
+                if (distanceToStart < 100) {
+                  this.getGroupComments(this.state.group.ID);
+                  this.getGroupActivities(this.state.group.ID);
+                }
+              }, 500);
             }}
           />
         )}
-        keyExtractor={(item, index) => String(index)}
-        renderItem={(item) => {
-          const commentOrActivity = item.item;
-          return this.renderActivityOrCommentRow(commentOrActivity);
-        }}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.loadComments || this.state.loadActivities}
-            onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID)}
-          />
-        }
-        onScroll={({ nativeEvent }) => {
-          const {
-            loadMoreComments,
-            commentsOffset,
-            loadMoreActivities,
-            activitiesOffset,
-          } = this.state;
-          const fL = nativeEvent;
-          const contentOffsetY = fL.contentOffset.y;
-          const layoutMeasurementHeight = fL.layoutMeasurement.height;
-          const contentSizeHeight = fL.contentSize.height;
-          const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
-          const distanceToStart = contentSizeHeight - heightOffsetSum;
-
-          if (distanceToStart < 100) {
-            if (!loadMoreComments) {
-              if (commentsOffset < this.state.totalComments) {
-                this.setState(
-                  {
-                    loadMoreComments: true,
-                  },
-                  () => {
-                    this.getGroupComments(this.state.group.ID);
-                  },
-                );
-              }
-            }
-            if (!loadMoreActivities) {
-              if (activitiesOffset < this.state.totalActivities) {
-                this.setState(
-                  {
-                    loadMoreActivities: true,
-                  },
-                  () => {
-                    this.getGroupActivities(this.state.group.ID);
-                  },
-                );
-              }
-            }
-          }
-        }}
-      />
       <View style={{ backgroundColor: '#FFFFFF' }}>
         <MentionsTextInput
           editable={!this.state.loadComments}
@@ -4516,13 +4522,7 @@ GroupDetailScreen.propTypes = {
     code: PropTypes.any,
     message: PropTypes.string,
   }),
-  newComment: PropTypes.shape({
-    ID: PropTypes.string,
-    author: PropTypes.string,
-    content: PropTypes.string,
-    date: PropTypes.string,
-    gravatar: PropTypes.string,
-  }),
+  newComment: PropTypes.bool,
   groupsReducerError: PropTypes.shape({
     code: PropTypes.any,
     message: PropTypes.string,
@@ -4660,14 +4660,14 @@ const mapDispatchToProps = (dispatch) => ({
   getById: (domain, token, groupId) => {
     dispatch(getById(domain, token, groupId));
   },
-  getComments: (domain, token, groupId, offset, limit) => {
-    dispatch(getCommentsByGroup(domain, token, groupId, offset, limit));
+  getComments: (domain, token, groupId, pagination) => {
+    dispatch(getCommentsByGroup(domain, token, groupId, pagination));
   },
   saveComment: (domain, token, groupId, commentData) => {
     dispatch(saveComment(domain, token, groupId, commentData));
   },
-  getActivities: (domain, token, groupId, offset, limit) => {
-    dispatch(getActivitiesByGroup(domain, token, groupId, offset, limit));
+  getActivities: (domain, token, groupId, pagination) => {
+    dispatch(getActivitiesByGroup(domain, token, groupId, pagination));
   },
   getByIdEnd: () => {
     dispatch(getByIdEnd());
