@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  BackHandler,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Swiper from 'react-native-swiper';
 import {
   Body,
@@ -14,11 +22,13 @@ import {
   Radio,
   Right,
 } from 'native-base';
+import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 import Colors from '../constants/Colors';
 import i18n from '../languages';
 import {
+  getQuestionnaireById,
   resetState,
   setQuestion,
   submitQuestionnaire,
@@ -218,64 +228,124 @@ const NextButton = ({ currIdx, lastIdx, swipeRight, onSubmit }) => {
   );
 };
 
-/*
-const Form = ({ idx, form, handleFormChange }) => {
-  // TODO: refactor now that we're not using local state
-  const [questions, setQuestions] = useState(form.questions);
-  const handleQuestionChange = (question) => {
-    const questions_p = questions.map((existing_question) => {
-      if (existing_question.seq === question.seq) {
-        return question;
-      }
-      return existing_question;
-    });
-    setQuestions(questions_p);
-    handleFormChange({
-      ...form,
-      questions: questions_p
-    });
-  }
-  return(
-    <React.Fragment>
-      <Text style={{ fontWeight: "bold", fontSize: 20, marginTop: 30 }}>{ idx + ". " + form.title }</Text>
-      <ScrollView style={{ marginBottom: 150 }}>
-        { questions ? questions.map((question, idx) => (
-          <View key={idx} style={{marginTop: 20, marginBottom: 20}}>
-            <Question question={question} />
-          </View>
-        )) : (
-          <View key={idx}>
-            <Text>No Questions</Text>
-          </View>
-        )}
-      </ScrollView>
-    </React.Fragment>
-  )
-}
-*/
-
 const Questionnaire = ({ navigation }) => {
   const dispatch = useDispatch();
+  const q_id = navigation.getParam('q_id');
+  const userData = navigation.getParam('userData');
+  const domain = userData.domain;
+  const token = userData.token;
+  const user_id = userData.id;
+  const contact_id = navigation.getParam('contact').ID;
+
+  const questionnaireState = useSelector((state) => state.questionnaireReducer);
+  const questionnaire = questionnaireState.questionnaire;
+  const save = questionnaireState.save;
+  const error = questionnaireState.error;
+  if (questionnaire != null) {
+    questionnaire.forms.sort(
+      (a, b) => parseInt(a.seq.replace('.', '')) - parseInt(b.seq.replace('.', '')),
+    );
+  }
+
+  useEffect(() => {
+    dispatch(getQuestionnaireById(domain, token, q_id));
+  }, []);
+
+  useEffect(() => {
+    if (save != null) {
+      toastSaveRef.current.show(
+        <View>
+          <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
+        </View>,
+        1000,
+        () => {
+          dispatch(resetState());
+          goToContactDetailScreen(navigation);
+        },
+      );
+    }
+  }, [save]);
+
+  useEffect(() => {
+    if (error != null) {
+      toastErrorRef.current.show(
+        <View>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
+        </View>,
+        3000,
+        () => {
+          dispatch(resetState());
+        },
+      );
+    }
+  }, [error]);
+
   /*
   useEffect(() => { 
-    navigation.setParams({ 
-      headerTitle: "Jane Doe" //someVariableThatComesFromExternalCall 
-    }) 
+    hardwareBackPressListener = BackHandler.addEventListener('hardwareBackPress', () => {
+      sharedTools.onlyExecuteLastCall(
+        null,
+        () => {
+          this.backButtonTap();
+        },
+        1000,
+      );
+      return true;
+    });
   }, [])
   */
-  const questionnaire = useSelector((state) => state.questionnaireReducer.questionnaire);
-  questionnaire.forms.sort(
-    (a, b) => parseInt(a.seq.replace('.', '')) - parseInt(b.seq.replace('.', '')),
+
+  /*
+  let toastSuccess;
+  const successToast = (
+    <Toast
+      ref={(toast) => {
+        toastSuccess = toast;
+      }}
+      style={{ backgroundColor: Colors.successBackground }}
+      positionValue={250}
+    />
   );
+
+  let toastError;
+  const errorToast = (
+    <Toast
+      ref={(toast) => {
+        toastError = toast;
+      }}
+      style={{ backgroundColor: Colors.errorBackground }}
+      positionValue={300}
+    />
+  );
+*/
+
   const onSubmit = () => {
     // TODO: confirm required fields are selected, or give error feedback
-    dispatch(submitQuestionnaire(questionnaire));
+    dispatch(
+      submitQuestionnaire(domain, token, {
+        fields: {
+          q_id,
+          user_id,
+          contact_id,
+          data: JSON.stringify({ questionnaire: questionnaire }),
+        },
+      }),
+    );
   };
   const swiperRef = useRef(null);
   const swipeRight = () => {
     // TODO: confirm required fields are selected, or give error feedback
     swiperRef.current.scrollBy(1, true);
   };
+  const toastSaveRef = useRef();
+  const toastErrorRef = useRef();
   return (
     <Swiper
       ref={swiperRef}
@@ -305,7 +375,7 @@ const Questionnaire = ({ navigation }) => {
       }
       paginationStyle={{ bottom: 30 }}
       loop={false}>
-      {questionnaire.forms ? (
+      {questionnaire != null && questionnaire.forms ? (
         questionnaire.forms.map((form, idx) => (
           <View key={idx} style={styles.formContainer}>
             <Text style={{ fontWeight: 'bold', fontSize: 20, marginTop: 30, marginBottom: 30 }}>
@@ -330,20 +400,52 @@ const Questionnaire = ({ navigation }) => {
               swipeRight={swipeRight}
               onSubmit={onSubmit}
             />
+            <Toast
+              ref={toastSaveRef}
+              style={{ backgroundColor: Colors.successBackground }}
+              positionValue={250}
+            />
+            <Toast
+              ref={toastErrorRef}
+              style={{ backgroundColor: Colors.errorBackground }}
+              positionValue={300}
+            />
           </View>
         ))
       ) : (
-        <View>
-          <Text>Hello, world!</Text>
-        </View>
+        <ScrollView refreshControl={<RefreshControl refreshing={true} />}>
+          <Text></Text>
+        </ScrollView>
       )}
     </Swiper>
   );
 };
 
+const goToContactDetailScreen = (navigation) => {
+  const contactData = navigation.getParam('contact');
+  navigation.navigate('ContactDetail', {
+    contactId: contactData.ID,
+    onlyView: true,
+    contactName: contactData.title,
+    previousList: [],
+    onGoBack: null,
+  });
+};
+
 Questionnaire.navigationOptions = ({ navigation }) => {
+  let headerLeft = () => (
+    <Icon
+      type="Feather"
+      name="arrow-left"
+      onPress={() => {
+        goToContactDetailScreen(navigation);
+      }}
+      style={{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }}
+    />
+  );
   return {
-    title: 'Jane Doe', //navigation.getParam("headerTitle"),
+    title: navigation.getParam('contact').title,
+    headerLeft,
     headerStyle: {
       backgroundColor: Colors.tintColor,
     },

@@ -42,6 +42,7 @@ import {
 import { getUsers, getContactFilters } from '../store/actions/users.actions';
 import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
 import { logout } from '../store/actions/user.actions';
+import { getActiveQuestionnaires } from '../store/actions/questionnaire.actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -567,6 +568,7 @@ class LoginScreen extends React.Component {
     this.props.getLocationModifiedDate(this.props.userData.domain, this.props.userData.token);
     this.props.getUsers(this.props.userData.domain, this.props.userData.token);
     this.props.getContactFilters(this.props.userData.domain, this.props.userData.token);
+    this.props.getActiveQuestionnaires(this.props.userData.domain, this.props.userData.token);
   };
 
   getUserInfo = () => {
@@ -1063,6 +1065,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getContactFilters: (domain, token) => {
     dispatch(getContactFilters(domain, token));
+  },
+  getActiveQuestionnaires: (domain, token) => {
+    dispatch(getActiveQuestionnaires(domain, token));
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
