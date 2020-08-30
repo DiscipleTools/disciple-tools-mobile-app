@@ -369,6 +369,19 @@ export default function requestReducer(state = initialState, action) {
       } else if (actionToModify.data.method === 'GET') {
         // filter out redundant GET requests
         queue = queue.filter((existing) => existing.url !== actionToModify.url);
+      } else if (actionToModify.data.method === 'DELETE') {
+        if (!actionToModify.isConnected) {
+          // OFFLINE DELETE (i.e: comments)
+          let id = actionToModify.url.split('/');
+          id = id[id.length - 1];
+          let urlWithoutId = actionToModify.url.replace(id, '');
+          queue = queue.filter((existing) => existing.url !== urlWithoutId);
+          return {
+            ...newState,
+            queue: [...queue],
+            currentAction: actionToModify,
+          }
+        }
       }
       newState = {
         ...newState,
@@ -407,7 +420,6 @@ export default function requestReducer(state = initialState, action) {
         queue: [],
         currentAction: {},
       };
-      return newState;
     default:
       return newState;
   }

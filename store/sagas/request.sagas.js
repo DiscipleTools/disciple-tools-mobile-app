@@ -162,6 +162,12 @@ export default function* requestSaga() {
               payload: { data: {}, status: 200 },
             });
           }
+          if (payload.data.method === 'DELETE' && payload.action.includes('DELETE')) {
+            // Offline entity delete (send "last request" as response)
+            /* eslint-disable */
+            yield put({ type: payload.action, payload: { data: true, status: 200 } });
+            /* eslint-enable */
+          }
         }
       }
     } else if (request) {

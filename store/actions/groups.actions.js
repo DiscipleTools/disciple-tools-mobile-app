@@ -68,6 +68,12 @@ export const GROUPS_LOCATIONS_MODIFIED_DATE_SUCCESS = 'GROUPS_LOCATIONS_MODIFIED
 export const GROUPS_LOCATIONS_MODIFIED_DATE_RESPONSE = 'GROUPS_LOCATIONS_MODIFIED_DATE_RESPONSE';
 export const GROUPS_LOCATIONS_MODIFIED_DATE_FAILURE = 'GROUPS_LOCATIONS_MODIFIED_DATE_FAILURE';
 
+export const GROUPS_DELETE_COMMENT = 'GROUPS_DELETE_COMMENT';
+export const GROUPS_DELETE_COMMENT_START = 'GROUPS_DELETE_COMMENT_START';
+export const GROUPS_DELETE_COMMENT_SUCCESS = 'GROUPS_DELETE_COMMENT_SUCCESS';
+export const GROUPS_DELETE_COMMENT_RESPONSE = 'GROUPS_DELETE_COMMENT_RESPONSE';
+export const GROUPS_DELETE_COMMENT_FAILURE = 'GROUPS_DELETE_COMMENT_FAILURE';
+
 /**
  * Action Creators
  */
@@ -174,5 +180,15 @@ export function getLocationListLastModifiedDate(domain, token) {
     type: GROUPS_LOCATIONS_MODIFIED_DATE,
     domain,
     token,
+  };
+}
+
+export function deleteComment(domain, token, groupId, commentId) {
+  return {
+    type: GROUPS_DELETE_COMMENT,
+    domain,
+    token,
+    groupId,
+    commentId,
   };
 }

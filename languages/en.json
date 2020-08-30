@@ -25,7 +25,9 @@
     "membersActivity": "Members",
     "moreFields": "More Fields",
     "nameRequired": "Name required",
-    "close": "Close"
+    "close": "Close",
+    "editComment": "Edit Comment",
+    "deleteComment": "Delete Comment"
   },
   "appRestart": {
     "message": "The application will be restarted to apply the following configuration:",

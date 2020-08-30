@@ -45,6 +45,12 @@ export const CONTACTS_GET_SETTINGS_SUCCESS = 'CONTACTS_GET_SETTINGS_SUCCESS';
 export const CONTACTS_GET_SETTINGS_RESPONSE = 'CONTACTS_GET_SETTINGS_RESPONSE';
 export const CONTACTS_GET_SETTINGS_FAILURE = 'CONTACTS_GET_SETTINGS_FAILURE';
 
+export const CONTACTS_DELETE_COMMENT = 'CONTACTS_DELETE_COMMENT';
+export const CONTACTS_DELETE_COMMENT_START = 'CONTACTS_DELETE_COMMENT_START';
+export const CONTACTS_DELETE_COMMENT_SUCCESS = 'CONTACTS_DELETE_COMMENT_SUCCESS';
+export const CONTACTS_DELETE_COMMENT_RESPONSE = 'CONTACTS_DELETE_COMMENT_RESPONSE';
+export const CONTACTS_DELETE_COMMENT_FAILURE = 'CONTACTS_DELETE_COMMENT_FAILURE';
+
 /*
  * Action Creators
  */
@@ -124,5 +130,15 @@ export function getContactSettings(domain, token) {
     type: CONTACTS_GET_SETTINGS,
     domain,
     token,
+  };
+}
+
+export function deleteComment(domain, token, contactId, commentId) {
+  return {
+    type: CONTACTS_DELETE_COMMENT,
+    domain,
+    token,
+    contactId,
+    commentId,
   };
 }
