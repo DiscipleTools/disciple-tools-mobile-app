@@ -250,14 +250,18 @@ export function* saveComment({ domain, token, groupId, commentData }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments`,
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments/${commentData.ID ? commentData.ID : ''}`,
       data: {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(commentData),
+        body: JSON.stringify({
+          comment: commentData.ID ? commentData.content : commentData.comment,
+          comment_type: 'comment',
+          ID: commentData.ID ? commentData.ID : undefined
+        }),
       },
       isConnected,
       action: actions.GROUPS_SAVE_COMMENT_RESPONSE,
@@ -272,7 +276,7 @@ export function* saveComment({ domain, token, groupId, commentData }) {
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_SAVE_COMMENT_SUCCESS,
-          comment: jsonData,
+          comment: commentData.ID ? commentData : jsonData,
           groupId
         });
       } else {
@@ -292,7 +296,7 @@ export function* saveComment({ domain, token, groupId, commentData }) {
       };
       yield put({
         type: actions.GROUPS_SAVE_COMMENT_SUCCESS,
-        comment: jsonData,
+        comment: commentData.ID ? commentData : jsonData,
         groupId,
         offline: true,
       });
@@ -593,6 +597,67 @@ export function* getLocationListLastModifiedDate({ domain, token }) {
   }
 }
 
+export function* deleteComment({ domain, token, groupId, commentId }) {
+
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+
+  yield put({ type: actions.GROUPS_DELETE_COMMENT_START });
+
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments/${commentId}`,
+      data: {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      isConnected,
+      action: actions.GROUPS_DELETE_COMMENT_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.GROUPS_DELETE_COMMENT_RESPONSE);
+    response = response.payload;
+    let jsonData = response.data;
+    if (isConnected) {
+      if (response.status === 200) {
+        yield put({
+          type: actions.GROUPS_DELETE_COMMENT_SUCCESS,
+          groupId,
+          commentId
+        });
+      } else {
+        yield put({
+          type: actions.GROUPS_DELETE_COMMENT_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
+      }
+    } else {
+      yield put({
+        type: actions.GROUPS_DELETE_COMMENT_SUCCESS,
+        groupId,
+        commentId
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.GROUPS_DELETE_COMMENT_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+
+}
+
 export default function* groupsSaga() {
   yield all([
     takeEvery(actions.GROUPS_SAVE, saveGroup),
@@ -606,5 +671,6 @@ export default function* groupsSaga() {
     takeEvery(actions.GROUPS_GET_SETTINGS, getSettings),
     takeEvery(actions.GROUPS_LOCATIONS_SEARCH, searchLocations),
     takeEvery(actions.GROUPS_LOCATIONS_MODIFIED_DATE, getLocationListLastModifiedDate),
+    takeEvery(actions.GROUPS_DELETE_COMMENT, deleteComment)
   ]);
 }

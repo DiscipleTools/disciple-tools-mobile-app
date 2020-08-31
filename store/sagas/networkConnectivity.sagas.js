@@ -13,8 +13,8 @@ export default function* networkConnectivitySaga() {
         ...action,
       };
       // Only process POST and SAVE requests
-      if (action.data.method === 'POST') {
-        if (action.action.includes('SAVE')) {
+      if (action.data.method === 'POST' || action.data.method === 'DELETE') {
+        if (action.action.includes('SAVE') || action.action.includes('DELETE')) {
           mappedRequest = {
             ...mappedRequest,
             isConnected: true,

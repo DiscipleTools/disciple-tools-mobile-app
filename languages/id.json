@@ -25,7 +25,9 @@
     "membersActivity": "Anggota",
     "moreFields": "Lebih banyak bidang",
     "nameRequired": "Nama (wajib",
-    "close": "Menutup"
+    "close": "Menutup",
+    "editComment": "",
+    "deleteComment": ""
   },
   "appRestart": {
     "message": "Aplikasi akan dihidupkan ulang untuk menerapkan konfigurasi berikut:",

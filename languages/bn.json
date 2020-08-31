@@ -25,7 +25,9 @@
     "membersActivity": "সদস্য",
     "moreFields": "আরও ক্ষেত্র",
     "nameRequired": "নাম (প্রয়োজন",
-    "close": "ঘনিষ্ঠ"
+    "close": "ঘনিষ্ঠ",
+    "editComment": "",
+    "deleteComment": ""
   },
   "appRestart": {
     "message": "নিম্নলিখিত কনফিগারেশন প্রয়োগ করার জন্য অ্যাপ্লিকেশনটি আবার শুরু হবে:",

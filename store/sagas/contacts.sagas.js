@@ -211,14 +211,18 @@ export function* saveComment({ domain, token, contactId, commentData }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments`,
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments/${commentData.ID ? commentData.ID : ''}`,
       data: {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(commentData),
+        body: JSON.stringify({
+          comment: commentData.ID ? commentData.content : commentData.comment,
+          comment_type: 'comment',
+          ID: commentData.ID ? commentData.ID : undefined
+        }),
       },
       isConnected,
       action: actions.CONTACTS_SAVE_COMMENT_RESPONSE,
@@ -233,7 +237,7 @@ export function* saveComment({ domain, token, contactId, commentData }) {
       if (response.status === 200) {
         yield put({
           type: actions.CONTACTS_SAVE_COMMENT_SUCCESS,
-          comment: jsonData,
+          comment: commentData.ID ? commentData : jsonData,
           contactId
         });
       } else {
@@ -253,7 +257,7 @@ export function* saveComment({ domain, token, contactId, commentData }) {
       };
       yield put({
         type: actions.CONTACTS_SAVE_COMMENT_SUCCESS,
-        comment: jsonData,
+        comment: commentData.ID ? commentData : jsonData,
         contactId,
         offline: true,
       });
@@ -425,6 +429,67 @@ export function* getSettings({ domain, token }) {
   }
 }
 
+export function* deleteComment({ domain, token, contactId, commentId }) {
+
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+
+  yield put({ type: actions.CONTACTS_DELETE_COMMENT_START });
+
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments/${commentId}`,
+      data: {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      isConnected,
+      action: actions.CONTACTS_DELETE_COMMENT_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.CONTACTS_DELETE_COMMENT_RESPONSE);
+    response = response.payload;
+    let jsonData = response.data;
+    if (isConnected) {
+      if (response.status === 200) {
+        yield put({
+          type: actions.CONTACTS_DELETE_COMMENT_SUCCESS,
+          contactId,
+          commentId
+        });
+      } else {
+        yield put({
+          type: actions.CONTACTS_DELETE_COMMENT_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
+      }
+    } else {
+      yield put({
+        type: actions.CONTACTS_DELETE_COMMENT_SUCCESS,
+        contactId,
+        commentId
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.CONTACTS_DELETE_COMMENT_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+
+}
+
 export default function* contactsSaga() {
   yield all([
     takeLatest(actions.CONTACTS_GETALL, getAll),
@@ -434,5 +499,6 @@ export default function* contactsSaga() {
     takeEvery(actions.CONTACTS_SAVE_COMMENT, saveComment),
     takeEvery(actions.CONTACTS_GET_ACTIVITIES, getActivitiesByContact),
     takeEvery(actions.CONTACTS_GET_SETTINGS, getSettings),
+    takeEvery(actions.CONTACTS_DELETE_COMMENT, deleteComment)
   ]);
 }

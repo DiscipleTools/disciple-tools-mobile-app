@@ -25,7 +25,9 @@
     "membersActivity": "Membres",
     "moreFields": "Plus de champs",
     "nameRequired": "Nom obligatoire",
-    "close": "proche"
+    "close": "proche",
+    "editComment": "",
+    "deleteComment": ""
   },
   "appRestart": {
     "message": "L'application sera redémarrée pour appliquer la configuration suivante:",

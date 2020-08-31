@@ -25,7 +25,9 @@
     "membersActivity": "leden",
     "moreFields": "Meer velden",
     "nameRequired": "Naam (vereist",
-    "close": "Dichtbij"
+    "close": "Dichtbij",
+    "editComment": "",
+    "deleteComment": ""
   },
   "appRestart": {
     "message": "De applicatie wordt opnieuw opgestart om de volgende configuratie toe te passen:",

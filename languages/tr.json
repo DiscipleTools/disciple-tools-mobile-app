@@ -25,7 +25,9 @@
     "membersActivity": "Üyeler",
     "moreFields": "Diğer Alanlar",
     "nameRequired": "İsim (gerekli",
-    "close": "Kapat"
+    "close": "Kapat",
+    "editComment": "",
+    "deleteComment": ""
   },
   "appRestart": {
     "message": "Aşağıdaki yapılandırmayı uygulamak için uygulama yeniden başlatılır:",

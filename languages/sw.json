@@ -25,7 +25,9 @@
     "membersActivity": "Wajumbe",
     "moreFields": "Mashamba Zaidi",
     "nameRequired": "Jina linalohitajika",
-    "close": "Karibu"
+    "close": "Karibu",
+    "editComment": "",
+    "deleteComment": ""
   },
   "appRestart": {
     "message": "Maombi yataanza tena kutumia usanidi ufuatao:",

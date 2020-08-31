@@ -25,7 +25,9 @@
     "membersActivity": "Члены",
     "moreFields": "Больше полей",
     "nameRequired": "Имя обязательно",
-    "close": "близко"
+    "close": "близко",
+    "editComment": "",
+    "deleteComment": ""
   },
   "appRestart": {
     "message": "Приложение будет перезапущено для применения следующей конфигурации:",

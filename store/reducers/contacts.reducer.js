@@ -642,38 +642,6 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_SAVE_COMMENT_SUCCESS: {
       const { comment, contactId, offline } = action;
       let newComment;
-      if (offline) {
-        const date = new Date();
-        const year = date.getUTCFullYear();
-        let day = date.getUTCDate();
-        let month = date.getUTCMonth() + 1;
-        if (day < 10) day = `0${day}`;
-        if (month < 10) month = `0${month}`;
-        const curDay = `${year}-${month}-${day}`;
-        let hours = date.getUTCHours();
-        let minutes = date.getUTCMinutes();
-        let seconds = date.getUTCSeconds();
-        if (hours < 10) hours = `0${hours}`;
-        if (minutes < 10) minutes = `0${minutes}`;
-        if (seconds < 10) seconds = `0${seconds}`;
-        const currentDate = `${curDay}T${hours}:${minutes}:${seconds}Z`;
-        newComment = {
-          ID: comment.ID,
-          author: comment.author,
-          date: currentDate,
-          content: comment.comment,
-          gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
-        };
-      } else {
-        newComment = {
-          ID: comment.comment_ID,
-          author: comment.comment_author,
-          date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
-          // Decode HTML strings
-          content: entities.decode(comment.comment_content),
-          gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
-        }
-      }
 
       // Check previous records/pagination existence and return it
       let previousComments = [], pagination = {
@@ -685,23 +653,83 @@ export default function contactsReducer(state = initialState, action) {
         previousComments = newState.comments[contactId].data;
         pagination = newState.comments[contactId].pagination;
       }
+      // Search existent comment with ID (update comment)
+      let foundCommentIndex = previousComments.findIndex(previousComment => previousComment.ID === (comment.ID ? comment.ID : comment.comment_ID));
 
-      // Add new comment
-      let newCommentState = {
-        ...newState.comments,
-        [contactId]: {
-          data: [...previousComments, newComment],
-          pagination
+      if (offline) {
+        if (foundCommentIndex > -1) {
+          newComment = {
+            ...comment
+          };
+        } else {
+          const date = new Date();
+          const year = date.getUTCFullYear();
+          let day = date.getUTCDate();
+          let month = date.getUTCMonth() + 1;
+          if (day < 10) day = `0${day}`;
+          if (month < 10) month = `0${month}`;
+          const curDay = `${year}-${month}-${day}`;
+          let hours = date.getUTCHours();
+          let minutes = date.getUTCMinutes();
+          let seconds = date.getUTCSeconds();
+          if (hours < 10) hours = `0${hours}`;
+          if (minutes < 10) minutes = `0${minutes}`;
+          if (seconds < 10) seconds = `0${seconds}`;
+          const currentDate = `${curDay}T${hours}:${minutes}:${seconds}Z`;
+          newComment = {
+            ID: comment.ID,
+            author: comment.author,
+            date: currentDate,
+            content: comment.comment,
+            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
+          };
         }
-      };
+      } else {
+        if (foundCommentIndex > -1) {
+          newComment = {
+            ...comment
+          };
+        } else {
+          newComment = {
+            ID: comment.comment_ID,
+            author: comment.comment_author,
+            date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
+            // Decode HTML strings
+            content: entities.decode(comment.comment_content),
+            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
+          }
+        }
+      }
 
+      let newCommentState;
+      if (foundCommentIndex > -1) {
+        previousComments[foundCommentIndex] = newComment;
+
+        newCommentState = {
+          ...newState.comments,
+          [contactId]: {
+            data: [...previousComments],
+            pagination
+          }
+        };
+      } else {
+        // Add new comment
+        newCommentState = {
+          ...newState.comments,
+          [contactId]: {
+            data: [...previousComments, newComment],
+            pagination
+          }
+        };
+      }
+      
       return {
         ...newState,
         comments: newCommentState,
         newComment: true,
         loadingComments: false,
       };
-      
+
     }
     case actions.CONTACTS_SAVE_COMMENT_FAILURE:
       return {
@@ -825,6 +853,52 @@ export default function contactsReducer(state = initialState, action) {
         ...newState,
         settings: null,
         contacts: [],
+      };
+    case actions.CONTACTS_DELETE_COMMENT_START:
+      return {
+        ...newState,
+        loadingComments: true,
+      };
+    case actions.CONTACTS_DELETE_COMMENT_SUCCESS: {
+      const { contactId, commentId } = action;
+
+      // Check previous records/pagination existence and return it
+      let previousComments = [], pagination = {
+        limit: 10,
+        offset: 0,
+        total: 0
+      };
+      if (newState.comments[contactId]) {
+        previousComments = newState.comments[contactId].data;
+        pagination = newState.comments[contactId].pagination;
+      }
+      // Search existent comment with ID (update comment)
+      let foundCommentIndex = previousComments.findIndex(previousComment => previousComment.ID === commentId);
+
+      // Delete comment
+      if (foundCommentIndex > -1) {
+        previousComments.splice(foundCommentIndex, 1);
+      }
+
+      let newCommentState = {
+        ...newState.comments,
+        [contactId]: {
+          data: [...previousComments],
+          pagination
+        }
+      };
+      return {
+        ...newState,
+        comments: newCommentState,
+        loadingComments: false,
+      };
+
+    }
+    case actions.CONTACTS_DELETE_COMMENT_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+        loadingComments: false,
       };
     default:
       return newState;

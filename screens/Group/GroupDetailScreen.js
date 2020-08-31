@@ -14,12 +14,13 @@ import {
   TouchableHighlight,
   BackHandler,
   ActivityIndicator,
+  KeyboardAvoidingView
 } from 'react-native';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
-import { Label, Input, Icon, Picker, DatePicker } from 'native-base';
+import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Chip, Selectize } from 'react-native-material-selectize';
@@ -29,6 +30,7 @@ import { NavigationActions, StackActions } from 'react-navigation';
 import MentionsTextInput from 'react-native-mentions';
 import ParsedText from 'react-native-parsed-text';
 import * as Sentry from 'sentry-expo';
+import { BlurView } from 'expo-blur';
 
 import moment from '../../languages/moment';
 import sharedTools from '../../shared';
@@ -40,6 +42,7 @@ import {
   getActivitiesByGroup,
   getByIdEnd,
   searchLocations,
+  deleteComment
 } from '../../store/actions/groups.actions';
 import Colors from '../../constants/Colors';
 import baptismIcon from '../../assets/icons/baptism.png';
@@ -74,6 +77,7 @@ const windowWidth = Dimensions.get('window').width;
 const spacing = windowWidth * 0.025;
 const sideSize = windowWidth - 2 * spacing;
 const circleSideSize = windowWidth / 3 + 20;
+const windowHeight = Dimensions.get('window').height;
 let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBackPressListener;
 //const hasNotch = Platform.OS === 'android' && StatusBar.currentHeight > 25;
 //const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
@@ -449,6 +453,37 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'rgba(0,0,0,0.6)',
   },
+  // Edit/Delete comment dialog
+  dialogBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  dialogBox: {
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    height: windowHeight - (windowHeight * 0.55),
+    width: windowWidth - (windowWidth * 0.10),
+    marginTop: windowHeight * 0.10,
+  },
+  dialogButton: {
+    backgroundColor: Colors.tintColor,
+    borderRadius: 5,
+    width: 100,
+    marginTop: 20,
+    marginLeft: 'auto',
+    marginRight: 'auto'
+  },
+  dialogContent: {
+    height: '100%',
+    width: '100%',
+    fontSize: 20,
+    textAlign: 'center',
+    color: Colors.grayDark,
+    marginBottom: 5,
+  },
 });
 
 const initialState = {
@@ -509,7 +544,12 @@ const initialState = {
   membersContacts: [],
   unmodifiedMembersContacts: [],
   assignedToContacts: [],
-  unmodifedAssignedToContacts: []
+  unmodifedAssignedToContacts: [],
+  commentDialog: {
+    toggle: false,
+    data: {},
+    delete: false
+  }
 };
 
 const safeFind = (found, prop) => {
@@ -1072,7 +1112,7 @@ class GroupDetailScreen extends React.Component {
         (group.oldID && group.oldID.toString() === this.state.group.ID.toString())
       ) {
         // Highlight Updates -> Compare this.state.contact with contact and show differences
-        this.onRefreshCommentsActivities(group.ID);
+        this.onRefreshCommentsActivities(group.ID, true);
         toastSuccess.show(
           <View>
             <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
@@ -1609,6 +1649,35 @@ class GroupDetailScreen extends React.Component {
             ? commentOrActivity.content
             : this.formatActivityDate(commentOrActivity.object_note)}
         </ParsedText>
+        {// Comment and its their own comment
+          Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') &&
+          commentOrActivity.author === this.props.userData.username && (
+            <Grid style={{ marginTop: 20 }}>
+              <Row>
+                <Row onPress={() => { this.openCommentDialog(commentOrActivity); }}>
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="pencil"
+                    style={{ color: Colors.primary, fontSize: 25, marginLeft: 'auto' }}
+                  />
+                  <Text
+                    style={{ color: Colors.primary, fontSize: 14, marginRight: 'auto', marginTop: 'auto', marginBottom: 'auto' }}
+                  >{i18n.t('global.edit')}</Text>
+                </Row>
+                <Row onPress={() => { this.openCommentDialog(commentOrActivity, true); }}>
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="delete"
+                    style={{ color: Colors.primary, fontSize: 25, marginLeft: 'auto' }}
+                  />
+                  <Text
+                    style={{ color: Colors.primary, fontSize: 14, marginRight: 'auto', marginTop: 'auto', marginBottom: 'auto' }}
+                  >{i18n.t('settingsScreen.remove')}</Text>
+                </Row>
+              </Row>
+            </Grid>
+          )
+        }
       </View>
     </View>
   );
@@ -2017,6 +2086,46 @@ class GroupDetailScreen extends React.Component {
       }
     }
   };
+
+  openCommentDialog = (comment, deleteComment = false) => {
+    this.setState({
+      commentDialog: {
+        toggle: true,
+        data: comment,
+        delete: deleteComment
+      }
+    });
+  }
+
+  onCloseCommentDialog() {
+    this.setState({
+      commentDialog: {
+        toggle: false,
+        data: {},
+        delete: false
+      }
+    });
+  }
+
+  onUpdateComment(commentData) {
+    this.props.saveComment(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.group.ID,
+      commentData,
+    );
+    this.onCloseCommentDialog();
+  }
+
+  onDeleteComment(commentData) {
+    this.props.deleteComment(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.group.ID,
+      commentData.ID,
+    );
+    this.onCloseCommentDialog();
+  }
 
   showAssignedUser = () => {
     const foundUser = [...this.state.users, ...this.state.assignedToContacts].find(
@@ -4438,6 +4547,102 @@ class GroupDetailScreen extends React.Component {
                     onIndexChange={this.tabChanged}
                     initialLayout={{ width: windowWidth }}
                   />
+                  {this.state.commentDialog.toggle ? (
+                    <BlurView
+                      tint="dark"
+                      intensity={50}
+                      style={[
+                        styles.dialogBackground,
+                        {
+                          width: windowWidth,
+                          height: windowHeight,
+                        },
+                      ]}>
+                      <KeyboardAvoidingView
+                        behavior={'position'}
+                        contentContainerStyle={{
+                          height: windowHeight / 1.5,
+                        }}
+                      >
+                        <View style={styles.dialogBox}>
+                          <Grid>
+                            <Row>
+                              {this.state.commentDialog.delete ? (
+                                <View style={styles.dialogContent}>
+                                  <Row style={{ height: 30 }}>
+                                    <Label style={[styles.name, { marginBottom: 5 }]}>
+                                      {i18n.t('global.deleteComment')}
+                                    </Label>
+                                  </Row>
+                                  <Row>
+                                    <Text style={{ fontSize: 15 }}>{this.state.commentDialog.data.content}</Text>
+                                  </Row>
+                                </View>
+                              ) : (
+                                  <View style={styles.dialogContent}>
+                                    <Grid>
+                                      <Row style={{ height: 30 }}>
+                                        <Label style={[styles.name, { marginBottom: 5 }]}>
+                                          {i18n.t('global.editComment')}
+                                        </Label>
+                                      </Row>
+                                      <Row>
+                                        <Input
+                                          multiline
+                                          value={this.state.commentDialog.data.content}
+                                          onChangeText={(value) => {
+                                            this.setState(prevState => ({
+                                              commentDialog: {
+                                                ...prevState.commentDialog,
+                                                data: {
+                                                  ...prevState.commentDialog.data,
+                                                  content: value
+                                                },
+                                              }
+                                            }));
+                                          }}
+                                          style={[styles.groupTextField, { height: 'auto', minHeight: 50 }]}
+                                        />
+                                      </Row>
+                                    </Grid>
+                                  </View>
+                                )}
+                            </Row>
+                            <Row style={{ height: 60 }}>
+                              <Button
+                                transparent
+                                style={{
+                                  marginTop: 20,
+                                  marginLeft: 'auto',
+                                  marginRight: 'auto',
+                                  marginBottom: 'auto',
+                                  paddingLeft: 25,
+                                  paddingRight: 25,
+                                }}
+                                onPress={() => {
+                                  this.onCloseCommentDialog();
+                                }}>
+                                <Text style={{ color: Colors.primary }}>{i18n.t('settingsScreen.close')}</Text>
+                              </Button>
+                              {this.state.commentDialog.delete ? (
+                                <Button
+                                  block
+                                  style={[styles.dialogButton, { backgroundColor: '#d9534f' }]}
+                                  onPress={() => { this.onDeleteComment(this.state.commentDialog.data) }}
+                                >
+                                  <Text style={{ color: '#FFFFFF' }}>{i18n.t('settingsScreen.remove')}</Text>
+                                </Button>
+                              ) : (
+                                  <Button block style={styles.dialogButton} onPress={() => { this.onUpdateComment(this.state.commentDialog.data); }}>
+                                    <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.save')}</Text>
+                                  </Button>
+                                )}
+                            </Row>
+                          </Grid>
+                        </View>
+                      </KeyboardAvoidingView>
+                    </BlurView>
+                  ) : null}
                 </View>
               </View>
             ) : (
@@ -4675,6 +4880,9 @@ const mapDispatchToProps = (dispatch) => ({
   searchLocations: (domain, token, queryText) => {
     dispatch(searchLocations(domain, token, queryText));
   },
+  deleteComment: (domain, token, groupId, commentId) => {
+    dispatch(deleteComment(domain, token, groupId, commentId))
+  }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(GroupDetailScreen);

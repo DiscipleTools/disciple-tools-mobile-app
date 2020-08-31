@@ -25,7 +25,9 @@
     "membersActivity": "会员",
     "moreFields": "更多领域",
     "nameRequired": "姓名必填",
-    "close": "关"
+    "close": "关",
+    "editComment": "",
+    "deleteComment": ""
   },
   "appRestart": {
     "message": "该应用程序将重新启动以应用以下配置：",
