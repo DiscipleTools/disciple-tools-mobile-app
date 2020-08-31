@@ -428,7 +428,7 @@ class ContactsScreen extends React.Component {
                     }
                     if (queryFilterTwo[key] === 'me') {
                       if (key == 'assigned_to') {
-                        queryFilterTwo[key] = `user-${this.props.userData.id}`;
+                        queryFilterTwo[key] = this.props.userData.id;
                       } else {
                         queryFilterTwo[key] = this.props.userData.id.toString();
                       }
@@ -453,6 +453,10 @@ class ContactsScreen extends React.Component {
                           // Same value as filter
                         } else if (queryFilterTwo[key] === contact[key]) {
                           result = true;
+                        } else if (key == 'assigned_to') {
+                          if(queryFilterTwo[key] === contact[key].key) {
+                            result = true;
+                          }
                         }
                       }
                       resp.push(result);
