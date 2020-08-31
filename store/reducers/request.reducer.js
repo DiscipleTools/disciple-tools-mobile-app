@@ -375,10 +375,19 @@ export default function requestReducer(state = initialState, action) {
           let id = actionToModify.url.split('/');
           id = id[id.length - 1];
           let urlWithoutId = actionToModify.url.replace(id, '');
+          // Delete previous CREATE/EDIT request to the comment
           queue = queue.filter((existing) => existing.url !== urlWithoutId);
+          
+          // Add delete request ONLY if its ONLINE comment (not LOCAL)
+          if(isNaN(id)) {
+            queue = [...queue]
+          } else {
+            queue = [...queue, actionToModify]
+          }
+
           return {
             ...newState,
-            queue: [...queue],
+            queue: queue,
             currentAction: actionToModify,
           }
         }
