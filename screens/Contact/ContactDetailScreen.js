@@ -120,7 +120,11 @@ const styles = StyleSheet.create({
   textStyle: { color: 'gray' },
   addRemoveIcons: {
     fontSize: 30,
+    marginRight: 0,
+    color: Colors.addRemoveIcons,
   },
+  addIcons: { color: 'green' },
+  removeIcons: { color: 'red' },
   // Social Media Field
   socialMediaNames: {
     color: Colors.grayDark,
@@ -2431,7 +2435,7 @@ class ContactDetailScreen extends React.Component {
                 <Icon
                   android="md-add"
                   ios="ios-add"
-                  style={[styles.formIcon, styles.addRemoveIcons]}
+                  style={[styles.addRemoveIcons, styles.addIcons]}
                   onPress={this.onAddPhoneField}
                 />
               </Col>
@@ -2439,7 +2443,7 @@ class ContactDetailScreen extends React.Component {
             {this.state.contact.contact_phone ? (
               this.state.contact.contact_phone.map((phone, index) =>
                 !phone.delete ? (
-                  <Row key={index.toString()} style={{ marginRight: 10, marginBottom: 10 }}>
+                  <Row key={index.toString()} style={{ marginBottom: 10 }}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon
@@ -2463,7 +2467,7 @@ class ContactDetailScreen extends React.Component {
                       <Icon
                         android="md-remove"
                         ios="ios-remove"
-                        style={[styles.formIcon, styles.addRemoveIcons]}
+                        style={[styles.formIcon, styles.addRemoveIcons, styles.removeIcons]}
                         onPress={() => {
                           this.onRemovePhoneField(index, this);
                         }}
@@ -2490,7 +2494,7 @@ class ContactDetailScreen extends React.Component {
                 <Icon
                   android="md-add"
                   ios="ios-add"
-                  style={[styles.formIcon, styles.addRemoveIcons]}
+                  style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
                   onPress={this.onAddEmailField}
                 />
               </Col>
@@ -2498,7 +2502,7 @@ class ContactDetailScreen extends React.Component {
             {this.state.contact.contact_email ? (
               this.state.contact.contact_email.map((email, index) =>
                 !email.delete ? (
-                  <Row key={index.toString()} style={{ marginRight: 10, marginBottom: 10 }}>
+                  <Row key={index.toString()} style={{ marginBottom: 10 }}>
                     <Col style={styles.formIconLabelCol}>
                       <View style={styles.formIconLabelView}>
                         <Icon
@@ -2522,7 +2526,7 @@ class ContactDetailScreen extends React.Component {
                       <Icon
                         android="md-remove"
                         ios="ios-remove"
-                        style={[styles.formIcon, styles.addRemoveIcons]}
+                        style={[styles.formIcon, styles.addRemoveIcons, styles.removeIcons]}
                         onPress={() => {
                           this.onRemoveEmailField(index, this);
                         }}
@@ -2547,7 +2551,7 @@ class ContactDetailScreen extends React.Component {
                 <Icon
                   android="md-add"
                   ios="ios-add"
-                  style={[styles.formIcon, styles.addRemoveIcons]}
+                  style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
                   onPress={this.onAddSocialMediaField}
                 />
               </Col>
@@ -2615,7 +2619,7 @@ class ContactDetailScreen extends React.Component {
                 <Icon
                   android="md-add"
                   ios="ios-add"
-                  style={[styles.formIcon, styles.addRemoveIcons]}
+                  style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
                   onPress={this.onAddAddressField}
                 />
               </Col>
@@ -2643,7 +2647,7 @@ class ContactDetailScreen extends React.Component {
                       <Icon
                         android="md-remove"
                         ios="ios-remove"
-                        style={[styles.formIcon, styles.addRemoveIcons, { marginRight: 10 }]}
+                        style={[styles.formIcon, styles.addRemoveIcons, styles.removeIcons]}
                         onPress={() => {
                           this.onRemoveAddressField(index, this);
                         }}
@@ -5193,7 +5197,7 @@ class ContactDetailScreen extends React.Component {
         <Icon
           android="md-remove"
           ios="ios-remove"
-          style={[styles.formIcon, styles.addRemoveIcons, { marginRight: 10 }]}
+          style={[styles.formIcon, styles.addRemoveIcons, styles.removeIcons]}
           onPress={() => {
             this.onRemoveSocialMediaField(propertyName, socialMediaIndex, this);
           }}
@@ -5556,7 +5560,7 @@ class ContactDetailScreen extends React.Component {
                         <Icon
                           android="md-add"
                           ios="ios-add"
-                          style={[styles.formIcon, styles.addRemoveIcons]}
+                          style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
                           onPress={this.onAddSocialMediaField}
                         />
                       </Col>
@@ -5825,7 +5829,7 @@ class ContactDetailScreen extends React.Component {
                             <Icon
                               android="md-add"
                               ios="ios-add"
-                              style={[styles.formIcon, styles.addRemoveIcons]}
+                              style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
                               onPress={this.onAddAddressField}
                             />
                           </Col>
@@ -5860,7 +5864,7 @@ class ContactDetailScreen extends React.Component {
                                     style={[
                                       styles.formIcon,
                                       styles.addRemoveIcons,
-                                      { marginRight: 10 },
+                                      styles.removeIcons,
                                     ]}
                                     onPress={() => {
                                       this.onRemoveAddressField(index, this);

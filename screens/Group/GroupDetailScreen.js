@@ -153,7 +153,10 @@ const styles = StyleSheet.create({
   addRemoveIcons: {
     fontSize: 30,
     marginRight: 0,
+    color: Colors.addRemoveIcons,
   },
+  addIcons: { color: 'green' },
+  removeIcons: { color: 'red' },
   // Comments Section
   container: {
     paddingLeft: 19,
@@ -2757,7 +2760,12 @@ class GroupDetailScreen extends React.Component {
                 <Icon
                   android="md-add"
                   ios="ios-add"
-                  style={[styles.formIcon, { fontSize: 30, marginRight: 0 }]}
+                  style={[
+                    styles.formIcon,
+                    styles.addRemoveIcons,
+                    styles.addIcons,
+                    { marginRight: 10 },
+                  ]}
                   onPress={this.onAddAddressField}
                 />
               </Col>
@@ -2785,7 +2793,12 @@ class GroupDetailScreen extends React.Component {
                       <Icon
                         android="md-remove"
                         ios="ios-remove"
-                        style={[styles.formIcon, styles.addRemoveIcons, { marginRight: 10 }]}
+                        style={[
+                          styles.formIcon,
+                          styles.addRemoveIcons,
+                          styles.removeIcons,
+                          { marginRight: 10 },
+                        ]}
                         onPress={() => {
                           this.onRemoveAddressField(index, this);
                         }}
