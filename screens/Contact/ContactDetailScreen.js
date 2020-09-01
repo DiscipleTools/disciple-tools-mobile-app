@@ -5615,7 +5615,6 @@ class ContactDetailScreen extends React.Component {
                         style={[styles.contactTextRoundField, { width: '100%' }]}
                       />
                     </Row>
-
                     <TouchableOpacity
                       activeOpacity={0.6}
                       onPress={this.showMoreFields}
@@ -5717,7 +5716,6 @@ class ContactDetailScreen extends React.Component {
                             </Picker>
                           </Col>
                         </Row>
-
                         <Row style={styles.formFieldMargin}>
                           <Col style={styles.formIconLabelCol}>
                             <View style={styles.formIconLabelView}>
