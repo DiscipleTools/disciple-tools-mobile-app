@@ -1780,16 +1780,27 @@ class ContactDetailScreen extends React.Component {
                 onRefresh={() => this.onRefresh(this.state.contact.ID)}
               />
             }>
-            <View style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
-              <Label
-                style={{
-                  color: Colors.tintColor,
-                  fontSize: 12,
-                  fontWeight: 'bold',
-                  marginTop: 10,
-                }}>
-                {this.props.contactSettings.fields.overall_status.name}
-              </Label>
+            <View // contactDetailScreen
+              style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
+              <Row style={[styles.formRow, { paddingTop: 15 }]}>
+                <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                  <Image
+                    source={statusIcon}
+                    style={[styles.groupIcons, { width: 20, height: 20 }]}
+                  />
+                </Col>
+                <Col>
+                  <Label
+                    style={{
+                      color: Colors.tintColor,
+                      fontSize: 12,
+                      fontWeight: 'bold',
+                      marginTop: 0,
+                    }}>
+                    {this.props.contactSettings.fields.overall_status.name}
+                  </Label>
+                </Col>
+              </Row>
               <Row style={[styles.formRow, { paddingTop: 5 }]} pointerEvents="none">
                 <Col
                   style={[
@@ -2175,19 +2186,27 @@ class ContactDetailScreen extends React.Component {
           keyboardOpeningTime={0}
           extraScrollHeight={150}
           keyboardShouldPersistTaps="handled">
-          <View style={styles.formContainer}>
-            <Label
-              style={[
-                {
-                  color: Colors.tintColor,
-                  fontSize: 12,
-                  fontWeight: 'bold',
-                },
-                styles.formFieldMargin,
-              ]}>
-              {this.props.contactSettings.fields.overall_status.name}
-            </Label>
-            <Row>
+          <View // contactDetailScreen editable
+            style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
+            <Row style={[styles.formRow, { paddingTop: 15 }]}>
+              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                <Image source={statusIcon} style={[styles.groupIcons, { width: 20, height: 20 }]} />
+              </Col>
+              <Col>
+                <Label
+                  style={[
+                    {
+                      color: Colors.tintColor,
+                      fontSize: 12,
+                      fontWeight: 'bold',
+                      marginTop: 0,
+                    },
+                  ]}>
+                  {this.props.contactSettings.fields.overall_status.name}
+                </Label>
+              </Col>
+            </Row>
+            <Row style={[styles.formRow, { paddingTop: 5 }]}>
               <Col
                 style={[
                   styles.statusFieldContainer,
