@@ -5703,7 +5703,11 @@ class ContactDetailScreen extends React.Component {
                         <Row style={styles.formFieldMargin}>
                           <Col style={styles.formIconLabelCol}>
                             <View style={styles.formIconLabelView}>
-                              <Icon type="FontAwesome5" name="user-clock" style={styles.formIcon} />
+                              <Icon
+                                type="FontAwesome5"
+                                name="user-clock"
+                                style={[styles.formIcon, { fontSize: 40 }]}
+                              />
                             </View>
                           </Col>
                           <Col>
@@ -5718,7 +5722,7 @@ class ContactDetailScreen extends React.Component {
                               <Icon
                                 type="FontAwesome5"
                                 name="user-clock"
-                                style={[styles.formIcon, { opacity: 0 }]}
+                                style={[styles.formIcon, { opacity: 0, fontSize: 40 }]}
                               />
                             </View>
                           </Col>
