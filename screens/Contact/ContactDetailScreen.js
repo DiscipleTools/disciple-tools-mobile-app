@@ -5597,10 +5597,17 @@ class ContactDetailScreen extends React.Component {
                           </Col>
                         );
                       })}
-                    <Row>
-                      <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                        {i18n.t('contactDetailScreen.initialComment')}
-                      </Label>
+                    <Row style={styles.formFieldMargin}>
+                      <Col style={styles.formIconLabelCol}>
+                        <View style={styles.formIconLabelView}>
+                          <Icon type="FontAwesome" name="comment" style={styles.formIcon} />
+                        </View>
+                      </Col>
+                      <Col>
+                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                          {i18n.t('contactDetailScreen.initialComment')}
+                        </Label>
+                      </Col>
                     </Row>
                     <Row>
                       <Textarea
