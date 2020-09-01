@@ -151,8 +151,8 @@ const styles = StyleSheet.create({
   tabStyle: { backgroundColor: '#FFFFFF' },
   textStyle: { color: 'gray' },
   fieldsIcons: {
-    height: 20,
-    width: 20,
+    height: 22,
+    width: 22,
   },
   addRemoveIcons: {
     fontSize: 30,
@@ -217,8 +217,8 @@ const styles = StyleSheet.create({
     paddingRight: containerPadding,
   },
   formRow: {
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: 15,
+    paddingBottom: 15,
     width: '100%',
   },
   formIconLabel: { marginLeft: 10, width: 'auto' },
@@ -2108,9 +2108,10 @@ class GroupDetailScreen extends React.Component {
                     style={[
                       {
                         color: Colors.tintColor,
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: 'bold',
-                        marginTop: 0,
+                        marginTop: 'auto',
+                        marginBottom: 'auto',
                       },
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
@@ -2321,8 +2322,8 @@ class GroupDetailScreen extends React.Component {
                       : ''}
                   </Text>
                 </Col>
-                <Col style={styles.formParentLabel}>
-                  <Label style={styles.formLabel}>
+                <Col style={[styles.formParentLabel, { flex: 2 }]}>
+                  <Label style={[styles.formLabel, {}]}>
                     {this.props.groupSettings.fields.church_start_date.name}
                   </Label>
                 </Col>

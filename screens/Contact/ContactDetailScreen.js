@@ -119,8 +119,8 @@ const styles = StyleSheet.create({
   tabStyle: { backgroundColor: '#FFFFFF' },
   textStyle: { color: 'gray' },
   fieldsIcons: {
-    height: 20,
-    width: 20,
+    height: 22,
+    width: 22,
   },
   addRemoveIcons: {
     fontSize: 30,
@@ -142,8 +142,8 @@ const styles = StyleSheet.create({
     paddingRight: containerPadding,
   },
   formRow: {
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: 15,
+    paddingBottom: 15,
     width: '100%',
   },
   formIconLabel: {
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   },
   formIcon: {
     color: Colors.tintColor,
-    fontSize: 20,
+    fontSize: 22,
     marginTop: 'auto',
     marginBottom: 'auto',
   },
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   formLabel: {
     color: Colors.tintColor,
     fontSize: 12,
-    //marginTop: 'auto',
+    marginTop: 'auto',
     marginBottom: 'auto',
   },
   formDivider: {
@@ -1801,7 +1801,8 @@ class ContactDetailScreen extends React.Component {
                       color: Colors.tintColor,
                       fontSize: 12,
                       fontWeight: 'bold',
-                      marginTop: 0,
+                      marginTop: 'auto',
+                      marginBottom: 'auto',
                     }}>
                     {this.props.contactSettings.fields.overall_status.name}
                   </Label>
@@ -3042,7 +3043,7 @@ class ContactDetailScreen extends React.Component {
                 />
               </View>
               <View style={styles.formDivider} />
-              <Row style={[styles.formRow, { paddingTop: 0 }]}>
+              <Row style={[styles.formRow, { paddingTop: 10 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Icon type="Octicons" name="milestone" style={styles.formIcon} />
                 </Col>
@@ -3050,7 +3051,7 @@ class ContactDetailScreen extends React.Component {
                   <Label
                     style={[
                       styles.formLabel,
-                      { fontWeight: 'bold', marginBottom: 10, marginTop: 10 },
+                      { fontWeight: 'bold', marginBottom: 'auto', marginTop: 'auto' },
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.props.contactSettings.fields.milestones.name}
