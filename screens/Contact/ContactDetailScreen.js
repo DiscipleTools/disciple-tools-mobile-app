@@ -3040,14 +3040,21 @@ class ContactDetailScreen extends React.Component {
                 />
               </View>
               <View style={styles.formDivider} />
-              <Label
-                style={[
-                  styles.formLabel,
-                  { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
-                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                ]}>
-                {this.props.contactSettings.fields.milestones.name}
-              </Label>
+              <Row style={[styles.formRow, { paddingTop: 0 }]}>
+                <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                  <Icon type="Octicons" name="milestone" style={styles.formIcon} />
+                </Col>
+                <Col>
+                  <Label
+                    style={[
+                      styles.formLabel,
+                      { fontWeight: 'bold', marginBottom: 10, marginTop: 10 },
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
+                    {this.props.contactSettings.fields.milestones.name}
+                  </Label>
+                </Col>
+              </Row>
               {this.renderfaithMilestones()}
               {this.renderCustomFaithMilestones()}
               <Grid style={{ marginTop: 25 }}>
@@ -3120,10 +3127,20 @@ class ContactDetailScreen extends React.Component {
                 </Picker>
               </Col>
             </Row>
-            <Label
-              style={[styles.formLabel, { fontWeight: 'bold', marginBottom: 10, marginTop: 20 }]}>
-              {this.props.contactSettings.fields.milestones.name}
-            </Label>
+            <Row style={[styles.formRow, { paddingTop: 0 }]}>
+              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                <Icon type="Octicons" name="milestone" style={styles.formIcon} />
+              </Col>
+              <Col>
+                <Label
+                  style={[
+                    styles.formLabel,
+                    { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
+                  ]}>
+                  {this.props.contactSettings.fields.milestones.name}
+                </Label>
+              </Col>
+            </Row>
             {this.renderfaithMilestones()}
             {this.renderCustomFaithMilestones()}
             <Row style={styles.formFieldMargin}>
