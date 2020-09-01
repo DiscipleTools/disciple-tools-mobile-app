@@ -44,6 +44,7 @@ import {
   getActivitiesByContact,
   saveEnd,
 } from '../../store/actions/contacts.actions';
+import statusIcon from '../../assets/icons/status.png';
 import Colors from '../../constants/Colors';
 import hasBibleIcon from '../../assets/icons/book-bookmark.png';
 import readingBibleIcon from '../../assets/icons/word.png';

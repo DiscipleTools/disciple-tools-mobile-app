@@ -42,6 +42,7 @@ import {
   searchLocations,
 } from '../../store/actions/groups.actions';
 import Colors from '../../constants/Colors';
+import statusIcon from '../../assets/icons/status.png';
 import baptismIcon from '../../assets/icons/baptism.png';
 import bibleStudyIcon from '../../assets/icons/word.png';
 import communionIcon from '../../assets/icons/communion.png';
