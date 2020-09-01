@@ -150,6 +150,10 @@ const styles = StyleSheet.create({
   },
   tabStyle: { backgroundColor: '#FFFFFF' },
   textStyle: { color: 'gray' },
+  fieldsIcons: {
+    height: 20,
+    width: 20,
+  },
   addRemoveIcons: {
     fontSize: 30,
     marginRight: 0,
@@ -2097,10 +2101,7 @@ class GroupDetailScreen extends React.Component {
               style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Image
-                    source={statusIcon}
-                    style={[styles.groupIcons, { width: 20, height: 20 }]}
-                  />
+                  <Image source={statusIcon} style={[styles.fieldsIcons, {}]} />
                 </Col>
                 <Col>
                   <Label
@@ -2363,7 +2364,7 @@ class GroupDetailScreen extends React.Component {
             style={styles.formContainer}>
             <Row style={[styles.formRow, { paddingTop: 15 }]}>
               <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                <Image source={statusIcon} style={[styles.groupIcons, { width: 20, height: 20 }]} />
+                <Image source={statusIcon} style={[styles.fieldsIcons, {}]} />
               </Col>
               <Col>
                 <Label

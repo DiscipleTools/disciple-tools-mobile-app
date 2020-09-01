@@ -118,6 +118,10 @@ const styles = StyleSheet.create({
   },
   tabStyle: { backgroundColor: '#FFFFFF' },
   textStyle: { color: 'gray' },
+  fieldsIcons: {
+    height: 20,
+    width: 20,
+  },
   addRemoveIcons: {
     fontSize: 30,
     marginRight: 0,
@@ -145,10 +149,11 @@ const styles = StyleSheet.create({
   formIconLabel: {
     marginLeft: 10,
     width: 'auto',
+    marginBottom: 'auto',
   },
   formIcon: {
     color: Colors.tintColor,
-    fontSize: 25,
+    fontSize: 20,
     marginTop: 'auto',
     marginBottom: 'auto',
   },
@@ -158,7 +163,7 @@ const styles = StyleSheet.create({
   formLabel: {
     color: Colors.tintColor,
     fontSize: 12,
-    marginTop: 'auto',
+    //marginTop: 'auto',
     marginBottom: 'auto',
   },
   formDivider: {
@@ -1788,10 +1793,7 @@ class ContactDetailScreen extends React.Component {
               style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Image
-                    source={statusIcon}
-                    style={[styles.groupIcons, { width: 20, height: 20 }]}
-                  />
+                  <Image source={statusIcon} style={[styles.fieldsIcons, {}]} />
                 </Col>
                 <Col>
                   <Label
@@ -2194,7 +2196,7 @@ class ContactDetailScreen extends React.Component {
             style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
             <Row style={[styles.formRow, { paddingTop: 15 }]}>
               <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                <Image source={statusIcon} style={[styles.groupIcons, { width: 20, height: 20 }]} />
+                <Image source={statusIcon} style={[styles.fieldIcons, {}]} />
               </Col>
               <Col>
                 <Label
