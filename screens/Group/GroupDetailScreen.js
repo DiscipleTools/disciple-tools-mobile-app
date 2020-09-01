@@ -4448,9 +4448,16 @@ class GroupDetailScreen extends React.Component {
                 <View style={styles.formContainer}>
                   <Grid>
                     <Row>
-                      <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                        {i18n.t('groupDetailScreen.groupName.label')}
-                      </Label>
+                      <Col style={styles.formIconLabelCol}>
+                        <View style={styles.formIconLabelView}>
+                          <Icon type="FontAwesome" name="users" style={styles.formIcon} />
+                        </View>
+                      </Col>
+                      <Col>
+                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                          {i18n.t('groupDetailScreen.groupName.label')}
+                        </Label>
+                      </Col>
                     </Row>
                     <Row
                       style={
@@ -4478,9 +4485,16 @@ class GroupDetailScreen extends React.Component {
                       </Text>
                     ) : null}
                     <Row>
-                      <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                        {this.props.groupSettings.fields.group_type.name}
-                      </Label>
+                      <Col style={styles.formIconLabelCol}>
+                        <View style={styles.formIconLabelView}>
+                          <Image source={groupTypeIcon} style={styles.groupIcons} />
+                        </View>
+                      </Col>
+                      <Col>
+                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                          {this.props.groupSettings.fields.group_type.name}
+                        </Label>
+                      </Col>
                     </Row>
                     <Row style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
                       <Picker
