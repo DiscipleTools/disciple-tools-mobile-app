@@ -29,7 +29,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { NavigationActions, StackActions } from 'react-navigation';
 import MentionsTextInput from 'react-native-mentions';
 import ParsedText from 'react-native-parsed-text';
-import * as Sentry from 'sentry-expo';
+//import * as Sentry from 'sentry-expo';
 import { BlurView } from 'expo-blur';
 
 import moment from '../../languages/moment';
@@ -707,7 +707,7 @@ class GroupDetailScreen extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    Sentry.captureException(errorInfo);
+    //Sentry.captureException(errorInfo);
   }
 
   componentWillUnmount() {
@@ -1423,7 +1423,7 @@ class GroupDetailScreen extends React.Component {
     } = this.state;
     this.setState((state) => {
       const indexFix =
-        state.tabViewConfig.index > 1 ? state.tabViewConfig.index + 1 : state.tabViewConfig.index;
+        state.tabViewConfig.index > 1 && !state.onlyView ? state.tabViewConfig.index + 1 : state.tabViewConfig.index;
       return {
         onlyView: true,
         group: {
@@ -1871,23 +1871,25 @@ class GroupDetailScreen extends React.Component {
   };
 
   onSetLeader = (selectedValue) => {
-    let leadersListCopy = [...this.state.group.leaders.values];
-    const leaderModified = {
-      ...selectedValue,
-      delete:
-        this.state.group.leaders &&
-          leadersListCopy.find((leader) => leader.value === selectedValue.value)
-          ? true
-          : false,
-    };
-    const foundLeader = leadersListCopy.find((leader) => leader.value === selectedValue.value);
-    if (foundLeader) {
-      const foundLeaderIndex = leadersListCopy.indexOf(foundLeader);
-      leadersListCopy[foundLeaderIndex] = {
-        ...leaderModified,
-      };
+    let leadersListCopy = (this.state.group.leaders) ? [...this.state.group.leaders.values] : [];
+    const foundLeaderIndex = leadersListCopy.findIndex((leader) => leader.value === selectedValue.value);
+    if (foundLeaderIndex > -1) {
+      // 3 Remove leader 'deletion'
+      if(leadersListCopy[foundLeaderIndex].delete) {
+        leadersListCopy[foundLeaderIndex] = {
+          ...selectedValue,
+          delete: false
+        };
+      } else {
+        // 2 Delete leader
+        leadersListCopy[foundLeaderIndex] = {
+          ...selectedValue,
+          delete: true
+        };
+      }
     } else {
-      leadersListCopy.push(leaderModified);
+      // 1 Add leader
+      leadersListCopy.push(selectedValue);
     }
     this.setState((prevState) => ({
       group: {
@@ -3314,7 +3316,7 @@ class GroupDetailScreen extends React.Component {
                     styles.membersLeaderIcon,
                     this.state.group.leaders &&
                       this.state.group.leaders.values.find(
-                        (leader) => leader.value === membersGroup.value,
+                        (leader) => leader.value === membersGroup.value && !leader.delete,
                       )
                       ? styles.membersIconActive
                       : styles.membersIconInactive,
