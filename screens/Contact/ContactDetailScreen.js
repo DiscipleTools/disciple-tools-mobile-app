@@ -1378,7 +1378,7 @@ class ContactDetailScreen extends React.Component {
     } = this.state;
     this.setState((state) => {
       const indexFix =
-        state.tabViewConfig.index > 1 ? state.tabViewConfig.index + 1 : state.tabViewConfig.index;
+        state.tabViewConfig.index > 1 && !state.onlyView ? state.tabViewConfig.index + 1 : state.tabViewConfig.index;
       return {
         onlyView: true,
         contact: {
