@@ -25,18 +25,6 @@
       "googleServicesFile": "./google-services.json",
       "versionCode": 170
     },
-    "description": "",
-    "hooks": {
-      "postPublish": [
-        {
-          "file": "sentry-expo/upload-sourcemaps",
-          "config": {
-            "organization": "Disciple Tools",
-            "project": "DT Mobile",
-            "authToken": ""
-          }
-        }
-      ]
-    }
+    "description": ""
   }
 }

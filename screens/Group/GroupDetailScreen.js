@@ -29,7 +29,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { NavigationActions, StackActions } from 'react-navigation';
 import MentionsTextInput from 'react-native-mentions';
 import ParsedText from 'react-native-parsed-text';
-import * as Sentry from 'sentry-expo';
+//import * as Sentry from 'sentry-expo';
 import { BlurView } from 'expo-blur';
 
 import moment from '../../languages/moment';
@@ -707,7 +707,7 @@ class GroupDetailScreen extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    Sentry.captureException(errorInfo);
+    //Sentry.captureException(errorInfo);
   }
 
   componentWillUnmount() {
