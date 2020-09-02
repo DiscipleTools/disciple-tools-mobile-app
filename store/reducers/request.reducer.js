@@ -377,19 +377,19 @@ export default function requestReducer(state = initialState, action) {
           let urlWithoutId = actionToModify.url.replace(id, '');
           // Delete previous CREATE/EDIT request to the comment
           queue = queue.filter((existing) => existing.url !== urlWithoutId);
-          
+
           // Add delete request ONLY if its ONLINE comment (not LOCAL)
-          if(isNaN(id)) {
-            queue = [...queue]
+          if (isNaN(id)) {
+            queue = [...queue];
           } else {
-            queue = [...queue, actionToModify]
+            queue = [...queue, actionToModify];
           }
 
           return {
             ...newState,
             queue: queue,
             currentAction: actionToModify,
-          }
+          };
         }
       }
       newState = {
