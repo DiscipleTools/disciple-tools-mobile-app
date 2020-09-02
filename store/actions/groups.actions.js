@@ -118,7 +118,7 @@ export function getCommentsByGroup(domain, token, groupId, pagination) {
     domain,
     token,
     groupId,
-    pagination
+    pagination,
   };
 }
 
@@ -154,7 +154,7 @@ export function getActivitiesByGroup(domain, token, groupId, pagination) {
     domain,
     token,
     groupId,
-    pagination
+    pagination,
   };
 }
 

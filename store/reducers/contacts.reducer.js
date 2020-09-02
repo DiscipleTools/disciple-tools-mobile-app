@@ -88,7 +88,7 @@ export default function contactsReducer(state = initialState, action) {
                     // assigned-to property
                     mappedContact[key] = {
                       key: parseInt(value['assigned-to'].replace('user-', '')),
-                      label: value['display']
+                      label: value['display'],
                     };
                   }
                   return;
@@ -102,7 +102,7 @@ export default function contactsReducer(state = initialState, action) {
                           // connection
                           return {
                             value: valueTwo.ID.toString(),
-                            name: entities.decode(valueTwo.post_title)
+                            name: entities.decode(valueTwo.post_title),
                           };
                         }
                         if (
@@ -227,7 +227,7 @@ export default function contactsReducer(state = initialState, action) {
                   // assigned-to property
                   mappedContact[key] = {
                     key: parseInt(value['assigned-to'].replace('user-', '')),
-                    label: value['display']
+                    label: value['display'],
                   };
                 }
                 return;
@@ -241,7 +241,7 @@ export default function contactsReducer(state = initialState, action) {
                         // connection
                         return {
                           value: valueTwo.ID.toString(),
-                          name: entities.decode(valueTwo.post_title)
+                          name: entities.decode(valueTwo.post_title),
                         };
                       }
                       if (
@@ -501,7 +501,7 @@ export default function contactsReducer(state = initialState, action) {
                   // assigned-to property
                   mappedContact[key] = {
                     key: parseInt(value['assigned-to'].replace('user-', '')),
-                    label: value['display']
+                    label: value['display'],
                   };
                 }
                 return;
@@ -515,7 +515,7 @@ export default function contactsReducer(state = initialState, action) {
                         // connection
                         return {
                           value: valueTwo.ID.toString(),
-                          name: entities.decode(valueTwo.post_title)
+                          name: entities.decode(valueTwo.post_title),
                         };
                       }
                       if (
@@ -616,17 +616,16 @@ export default function contactsReducer(state = initialState, action) {
           data: [...previousComments, ...mappedComments],
           pagination: {
             ...pagination,
-            offset: pagination.offset + pagination.limit // UPDATE OFFSET
-          }
-        }
+            offset: pagination.offset + pagination.limit, // UPDATE OFFSET
+          },
+        },
       };
 
       return {
         ...newState,
         comments: newCommentState,
         loadingComments: false,
-      }
-
+      };
     }
     case actions.CONTACTS_GET_COMMENTS_FAILURE:
       return {
@@ -644,22 +643,25 @@ export default function contactsReducer(state = initialState, action) {
       let newComment;
 
       // Check previous records/pagination existence and return it
-      let previousComments = [], pagination = {
-        limit: 10,
-        offset: 0,
-        total: 0
-      };
+      let previousComments = [],
+        pagination = {
+          limit: 10,
+          offset: 0,
+          total: 0,
+        };
       if (newState.comments[contactId]) {
         previousComments = newState.comments[contactId].data;
         pagination = newState.comments[contactId].pagination;
       }
       // Search existent comment with ID (update comment)
-      let foundCommentIndex = previousComments.findIndex(previousComment => previousComment.ID === (comment.ID ? comment.ID : comment.comment_ID));
+      let foundCommentIndex = previousComments.findIndex(
+        (previousComment) => previousComment.ID === (comment.ID ? comment.ID : comment.comment_ID),
+      );
 
       if (offline) {
         if (foundCommentIndex > -1) {
           newComment = {
-            ...comment
+            ...comment,
           };
         } else {
           const date = new Date();
@@ -687,7 +689,7 @@ export default function contactsReducer(state = initialState, action) {
       } else {
         if (foundCommentIndex > -1) {
           newComment = {
-            ...comment
+            ...comment,
           };
         } else {
           newComment = {
@@ -697,7 +699,7 @@ export default function contactsReducer(state = initialState, action) {
             // Decode HTML strings
             content: entities.decode(comment.comment_content),
             gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
-          }
+          };
         }
       }
 
@@ -709,8 +711,8 @@ export default function contactsReducer(state = initialState, action) {
           ...newState.comments,
           [contactId]: {
             data: [...previousComments],
-            pagination
-          }
+            pagination,
+          },
         };
       } else {
         // Add new comment
@@ -718,18 +720,17 @@ export default function contactsReducer(state = initialState, action) {
           ...newState.comments,
           [contactId]: {
             data: [...previousComments, newComment],
-            pagination
-          }
+            pagination,
+          },
         };
       }
-      
+
       return {
         ...newState,
         comments: newCommentState,
         newComment: true,
         loadingComments: false,
       };
-
     }
     case actions.CONTACTS_SAVE_COMMENT_FAILURE:
       return {
@@ -757,7 +758,7 @@ export default function contactsReducer(state = initialState, action) {
         meta_id: activity.meta_id,
         meta_key: activity.meta_key,
         name: activity.name,
-      }))
+      }));
       // Check previous records existence; Only retrieve previous data if pagination its active (offset > 0)
       let previousActivities = [];
       if (pagination.offset > 0 && newState.activities[contactId]) {
@@ -770,17 +771,16 @@ export default function contactsReducer(state = initialState, action) {
           data: [...previousActivities, ...mappedActivities],
           pagination: {
             ...pagination,
-            offset: pagination.offset + pagination.limit // UPDATE OFFSET
-          }
-        }
+            offset: pagination.offset + pagination.limit, // UPDATE OFFSET
+          },
+        },
       };
 
       return {
         ...newState,
         activities: newActivityState,
         loadingActivities: false,
-      }
-
+      };
     }
     case actions.CONTACTS_GET_ACTIVITIES_FAILURE:
       return {
@@ -863,17 +863,20 @@ export default function contactsReducer(state = initialState, action) {
       const { contactId, commentId } = action;
 
       // Check previous records/pagination existence and return it
-      let previousComments = [], pagination = {
-        limit: 10,
-        offset: 0,
-        total: 0
-      };
+      let previousComments = [],
+        pagination = {
+          limit: 10,
+          offset: 0,
+          total: 0,
+        };
       if (newState.comments[contactId]) {
         previousComments = newState.comments[contactId].data;
         pagination = newState.comments[contactId].pagination;
       }
       // Search existent comment with ID (update comment)
-      let foundCommentIndex = previousComments.findIndex(previousComment => previousComment.ID === commentId);
+      let foundCommentIndex = previousComments.findIndex(
+        (previousComment) => previousComment.ID === commentId,
+      );
 
       // Delete comment
       if (foundCommentIndex > -1) {
@@ -884,15 +887,14 @@ export default function contactsReducer(state = initialState, action) {
         ...newState.comments,
         [contactId]: {
           data: [...previousComments],
-          pagination
-        }
+          pagination,
+        },
       };
       return {
         ...newState,
         comments: newCommentState,
         loadingComments: false,
       };
-
     }
     case actions.CONTACTS_DELETE_COMMENT_FAILURE:
       return {
