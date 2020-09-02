@@ -101,7 +101,7 @@ export function getCommentsByContact(domain, token, contactId, pagination) {
     domain,
     token,
     contactId,
-    pagination,
+    pagination
   };
 }
 
@@ -121,7 +121,7 @@ export function getActivitiesByContact(domain, token, contactId, pagination) {
     domain,
     token,
     contactId,
-    pagination,
+    pagination
   };
 }
 

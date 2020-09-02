@@ -26,16 +26,4 @@ export default {
   warningText: '#ffa0aa',
   noticeBackground: tintColor,
   noticeText: '#fff',
-
-  colorYes: '#2ABE1E',
-  //colorYes: tintColor,
-  colorNo: '#C70039',
-  //colorNo: tintColor,
-  // colorWait: '#FFC300',
-  colorWait: tintColor,
-
-  addRemoveIcons: 'black',
-  addRemoveIcons: tintColor,
-  addIcons: 'green',
-  removeIcons: 'red',
 };
