@@ -3,7 +3,7 @@
 //   -- https://redux-saga.js.org/docs/advanced/Channels.html
 
 import { take, fork, call, put, race, actionChannel, select } from 'redux-saga/effects';
-import * as Sentry from 'sentry-expo';
+//import * as Sentry from 'sentry-expo';
 
 function* sendRequest(url, data) {
   let genericErrorResponse = {
@@ -40,11 +40,11 @@ function* sendRequest(url, data) {
             var isHTML = RegExp.prototype.test.bind(/(<([^>]+)>)/i);
             if (isHTML(errorJSON)) {
               // Back-end error response in (HTML)
-              Sentry.captureException(errorJSON);
+              //Sentry.captureException(errorJSON);
               return genericErrorResponse;
             } else {
               // Back-end error response in (JSON)
-              Sentry.captureException(errorJSON);
+              //Sentry.captureException(errorJSON);
               errorJSON = JSON.parse(errorJSON);
               return {
                 status: errorJSON.data && errorJSON.data.status ? errorJSON.data.status : '',
@@ -56,13 +56,13 @@ function* sendRequest(url, data) {
             }
           },
           (error) => {
-            Sentry.captureException(error);
+            //Sentry.captureException(error);
             // Catch if 'text() method' or 'JSON.parse()' throw error
             return genericErrorResponse;
           },
         );
       } else {
-        Sentry.captureException(error);
+        //Sentry.captureException(error);
         // Catch if 'text() method' or 'JSON.parse()' throw error
         return genericErrorResponse;
       }
