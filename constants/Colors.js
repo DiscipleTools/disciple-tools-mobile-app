@@ -28,8 +28,11 @@ export default {
   noticeText: '#fff',
 
   colorYes: '#2ABE1E',
+  //colorYes: tintColor,
   colorNo: '#C70039',
-  colorWait: '#FFC300',
+  //colorNo: tintColor,
+  // colorWait: '#FFC300',
+  colorWait: tintColor,
 
   addRemoveIcons: 'black',
   addRemoveIcons: tintColor,

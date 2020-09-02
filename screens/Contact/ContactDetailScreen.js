@@ -17,7 +17,6 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
 } from 'react-native';
-
 import { connect } from 'react-redux';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
@@ -181,9 +180,12 @@ const styles = StyleSheet.create({
   },
   formIconLabelView: {
     alignItems: 'center',
+    marginTop: 'auto',
+    marginBottom: 'auto',
   },
   formFieldMargin: {
-    marginTop: 20,
+    marginTop: 10,
+    marginBottom: 5,
   },
   // Progress Section
   progressIcon: { height: '100%', width: '100%' },
@@ -1993,7 +1995,7 @@ class ContactDetailScreen extends React.Component {
                   <Icon
                     type="FontAwesome"
                     name="envelope"
-                    style={[styles.formIcon, { marginTop: 0 }]}
+                    style={[styles.formIcon, { marginTop: 0, fontSize: 20 }]}
                   />
                 </Col>
                 <Col>
@@ -2030,7 +2032,7 @@ class ContactDetailScreen extends React.Component {
                   <Icon
                     type="Ionicons"
                     name="chatboxes"
-                    style={[styles.formIcon, { marginTop: 0 }]}
+                    style={[styles.formIcon, { marginTop: 0, fontSize: 25 }]}
                   />
                 </Col>
                 <Col>
@@ -2077,7 +2079,7 @@ class ContactDetailScreen extends React.Component {
                     })}
                 </Col>
                 <Col style={styles.formParentLabel}>
-                  <Label style={[styles.formLabel, { marginTop: 5 }]}>
+                  <Label style={[styles.formLabel, {}]}>
                     {i18n.t('contactDetailScreen.socialMedia')}
                   </Label>
                 </Col>
@@ -2178,7 +2180,11 @@ class ContactDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome5" name="user-clock" style={styles.formIcon} />
+                  <Icon
+                    type="FontAwesome5"
+                    name="user-clock"
+                    style={[styles.formIcon, { fontSize: 20 }]}
+                  />
                 </Col>
                 <Col>
                   <Text
@@ -2201,7 +2207,7 @@ class ContactDetailScreen extends React.Component {
                   <Icon
                     type="MaterialCommunityIcons"
                     name="gender-male-female"
-                    style={styles.formIcon}
+                    style={[styles.formIcon, { fontSize: 25 }]}
                   />
                 </Col>
                 <Col>
@@ -2266,7 +2272,7 @@ class ContactDetailScreen extends React.Component {
             style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
             <Row style={[styles.formRow, { paddingTop: 15 }]}>
               <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                <Image source={statusIcon} style={[styles.fieldIcons, {}]} />
+                <Image source={statusIcon} style={[styles.fieldsIcons, {}]} />
               </Col>
               <Col>
                 <Label
@@ -2554,7 +2560,11 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="envelope" style={styles.formIcon} />
+                  <Icon
+                    type="FontAwesome"
+                    name="envelope"
+                    style={[styles.formIcon, { fontSize: 20 }]}
+                  />
                 </View>
               </Col>
               <Col>
@@ -2613,7 +2623,11 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon type="Ionicons" name="chatboxes" style={styles.formIcon} />
+                  <Icon
+                    type="Ionicons"
+                    name="chatboxes"
+                    style={[styles.formIcon, { fontSize: 25 }]}
+                  />
                 </View>
               </Col>
               <Col>
@@ -2881,7 +2895,11 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome5" name="user-clock" style={styles.formIcon} />
+                  <Icon
+                    type="FontAwesome5"
+                    name="user-clock"
+                    style={[styles.formIcon, { fontSize: 20 }]}
+                  />
                 </View>
               </Col>
               <Col>
@@ -2916,7 +2934,7 @@ class ContactDetailScreen extends React.Component {
                   <Icon
                     type="MaterialCommunityIcons"
                     name="gender-male-female"
-                    style={styles.formIcon}
+                    style={[styles.formIcon, { fontSize: 25 }]}
                   />
                 </View>
               </Col>
@@ -3120,7 +3138,7 @@ class ContactDetailScreen extends React.Component {
                   <Label
                     style={[
                       styles.formLabel,
-                      { fontWeight: 'bold', marginBottom: 'auto', marginTop: 'auto' },
+                      { fontWeight: 'bold' },
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.props.contactSettings.fields.milestones.name}
@@ -3199,16 +3217,12 @@ class ContactDetailScreen extends React.Component {
                 </Picker>
               </Col>
             </Row>
-            <Row style={[styles.formRow, { paddingTop: 0 }]}>
+            <Row style={[styles.formRow, { paddingTop: 10 }]}>
               <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                 <Icon type="Octicons" name="milestone" style={styles.formIcon} />
               </Col>
               <Col>
-                <Label
-                  style={[
-                    styles.formLabel,
-                    { fontWeight: 'bold', marginBottom: 10, marginTop: 20 },
-                  ]}>
+                <Label style={[styles.formLabel, { fontWeight: 'bold' }]}>
                   {this.props.contactSettings.fields.milestones.name}
                 </Label>
               </Col>
@@ -5762,7 +5776,7 @@ class ContactDetailScreen extends React.Component {
                         </View>
                       </Col>
                       <Col>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                        <Label style={[styles.formLabel, {}]}>
                           {i18n.t('contactDetailScreen.fullName.label')}
                         </Label>
                       </Col>
@@ -5799,7 +5813,7 @@ class ContactDetailScreen extends React.Component {
                         </View>
                       </Col>
                       <Col>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                        <Label style={[styles.formLabel, {}]}>
                           {i18n.t('contactDetailScreen.phoneNumber')}
                         </Label>
                       </Col>
@@ -5818,7 +5832,7 @@ class ContactDetailScreen extends React.Component {
                         </View>
                       </Col>
                       <Col>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                        <Label style={[styles.formLabel, {}]}>
                           {this.props.contactSettings.channels.email.label}
                         </Label>
                       </Col>
@@ -5833,7 +5847,11 @@ class ContactDetailScreen extends React.Component {
                     <Row style={styles.formFieldMargin}>
                       <Col style={styles.formIconLabelCol}>
                         <View style={styles.formIconLabelView}>
-                          <Icon type="Ionicons" name="chatboxes" style={styles.formIcon} />
+                          <Icon
+                            type="Ionicons"
+                            name="chatboxes"
+                            style={[styles.formIcon, { fontSize: 25 }]}
+                          />
                         </View>
                       </Col>
                       <Col>
@@ -5913,7 +5931,7 @@ class ContactDetailScreen extends React.Component {
                         </View>
                       </Col>
                       <Col>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                        <Label style={[styles.formLabel, {}]}>
                           {i18n.t('contactDetailScreen.initialComment')}
                         </Label>
                       </Col>
@@ -5948,7 +5966,7 @@ class ContactDetailScreen extends React.Component {
                               <Icon
                                 type="MaterialCommunityIcons"
                                 name="gender-male-female"
-                                style={styles.formIcon}
+                                style={[styles.formIcon, { fontSize: 25 }]}
                               />
                             </View>
                           </Col>
@@ -5991,7 +6009,7 @@ class ContactDetailScreen extends React.Component {
                               <Icon
                                 type="FontAwesome5"
                                 name="user-clock"
-                                style={[styles.formIcon, { fontSize: 40 }]}
+                                style={[[styles.formIcon, { fontSize: 20 }]]}
                               />
                             </View>
                           </Col>
@@ -6007,7 +6025,7 @@ class ContactDetailScreen extends React.Component {
                               <Icon
                                 type="FontAwesome5"
                                 name="user-clock"
-                                style={[styles.formIcon, { opacity: 0, fontSize: 40 }]}
+                                style={[styles.formIcon, { opacity: 0 }]}
                               />
                             </View>
                           </Col>
@@ -6037,77 +6055,33 @@ class ContactDetailScreen extends React.Component {
                           </Col>
                           <Col>
                             <Label style={styles.formLabel}>
-                              {this.props.contactSettings.channels.address.label}
+                              {this.props.contactSettings.fields.people_groups.name}
                             </Label>
                           </Col>
-                          <Col style={styles.formIconLabel}>
-                            <Icon
-                              android="md-add"
-                              ios="ios-add"
-                              style={[styles.formIcon, styles.addRemoveIcons]}
-                              onPress={this.onAddAddressField}
-                            />
+                        </Row>
+                        <Row>
+                          <Col style={styles.formIconLabelCol}>
+                            <View style={styles.formIconLabelView}>
+                              <Icon
+                                type="FontAwesome"
+                                name="globe"
+                                style={[styles.formIcon, { opacity: 0 }]}
+                              />
+                            </View>
                           </Col>
-                        </Row>
-                        {this.state.contact.contact_address ? (
-                          this.state.contact.contact_address.map((address, index) =>
-                            !address.delete ? (
-                              <Row key={index.toString()} style={{ marginBottom: 10 }}>
-                                <Col style={styles.formIconLabelCol}>
-                                  <View style={styles.formIconLabelView}>
-                                    <Icon
-                                      type="Entypo"
-                                      name="home"
-                                      style={[styles.formIcon, { opacity: 0 }]}
-                                    />
-                                  </View>
-                                </Col>
-                                <Col>
-                                  <Input
-                                    multiline
-                                    value={address.value}
-                                    onChangeText={(value) => {
-                                      this.onAddressFieldChange(value, index, address.key, this);
-                                    }}
-                                    style={styles.contactTextField}
-                                  />
-                                </Col>
-                                <Col style={styles.formIconLabel}>
-                                  <Icon
-                                    android="md-remove"
-                                    ios="ios-remove"
-                                    style={[
-                                      styles.formIcon,
-                                      styles.addRemoveIcons,
-                                      { marginRight: 10 },
-                                    ]}
-                                    onPress={() => {
-                                      this.onRemoveAddressField(index, this);
-                                    }}
-                                  />
-                                </Col>
-                              </Row>
-                            ) : null,
-                          )
-                        ) : (
-                          <Text />
-                        )}
-                        <Row>
-                          <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
-                            {this.props.contactSettings.fields.location_grid.name}
-                          </Label>
-                        </Row>
-                        <Row>
                           <Col>
                             <Selectize
                               ref={(selectize) => {
-                                geonamesSelectizeRef = selectize;
+                                peopleGroupsSelectizeRef = selectize;
                               }}
                               itemId="value"
-                              items={this.state.foundGeonames}
-                              selectedItems={[]}
+                              items={this.state.peopleGroups}
+                              selectedItems={this.getSelectizeItems(
+                                this.state.contact.people_groups,
+                                this.state.peopleGroups,
+                              )}
                               textInputProps={{
-                                placeholder: i18n.t('contactDetailScreen.selectLocations'),
+                                placeholder: i18n.t('global.selectPeopleGroups'),
                               }}
                               renderRow={(id, onPress, item) => (
                                 <TouchableOpacity
@@ -6144,9 +6118,6 @@ class ContactDetailScreen extends React.Component {
                               )}
                               filterOnKey="name"
                               inputContainerStyle={styles.selectizeField}
-                              textInputProps={{
-                                onChangeText: this.searchLocationsDelayed,
-                              }}
                             />
                           </Col>
                         </Row>
@@ -6220,7 +6191,7 @@ class ContactDetailScreen extends React.Component {
                             </View>
                           </Col>
                           <Col>
-                            <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                            <Label style={[styles.formLabel, {}]}>
                               {this.props.contactSettings.fields.location_grid.name}
                             </Label>
                           </Col>
@@ -6285,7 +6256,7 @@ class ContactDetailScreen extends React.Component {
                             </View>
                           </Col>
                           <Col>
-                            <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                            <Label style={[styles.formLabel, {}]}>
                               {this.props.contactSettings.fields.sources.name}
                             </Label>
                           </Col>
