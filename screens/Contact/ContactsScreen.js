@@ -213,10 +213,10 @@ class ContactsScreen extends React.Component {
             <Text style={styles.contactSubtitle}>
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status]
                 ? this.props.contactSettings.fields.overall_status.values[contact.overall_status]
-                  .label
+                    .label
                 : ''}
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status] &&
-                this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
+              this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
                 ? ' • '
                 : ''}
               {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
@@ -428,14 +428,14 @@ class ContactsScreen extends React.Component {
                     }
                     if (queryFilterTwo[key] === 'me') {
                       if (key == 'assigned_to') {
-                        queryFilterTwo[key] = `user-${this.props.userData.id}`;
+                        queryFilterTwo[key] = this.props.userData.id;
                       } else {
                         queryFilterTwo[key] = this.props.userData.id.toString();
                       }
                     }
                   });
                   // Remove subassigned query because contacts does not have this value
-                  if(Object.prototype.hasOwnProperty.call(queryFilterTwo, "subassigned")) {
+                  if (Object.prototype.hasOwnProperty.call(queryFilterTwo, 'subassigned')) {
                     delete queryFilterTwo.subassigned;
                   }
                   // Filter contacts according to 'queryFilterTwo' filters
@@ -447,12 +447,16 @@ class ContactsScreen extends React.Component {
                       if (Object.prototype.hasOwnProperty.call(contact, key)) {
                         // Value is to 'omit' contacts (-closed)
                         if (queryFilterTwo[key].toString().startsWith('-')) {
-                          if (contact[key] !== queryFilterTwo[key].replace("-", "")) {
+                          if (contact[key] !== queryFilterTwo[key].replace('-', '')) {
                             result = true;
                           }
                           // Same value as filter
                         } else if (queryFilterTwo[key] === contact[key]) {
                           result = true;
+                        } else if (key == 'assigned_to') {
+                          if (queryFilterTwo[key] === contact[key].key) {
+                            result = true;
+                          }
                         }
                       }
                       resp.push(result);

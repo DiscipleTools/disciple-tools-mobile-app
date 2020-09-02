@@ -14,12 +14,13 @@ import {
   TouchableHighlight,
   BackHandler,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
-import { Label, Input, Icon, Picker, DatePicker } from 'native-base';
+import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Chip, Selectize } from 'react-native-material-selectize';
@@ -29,6 +30,7 @@ import { NavigationActions, StackActions } from 'react-navigation';
 import MentionsTextInput from 'react-native-mentions';
 import ParsedText from 'react-native-parsed-text';
 import * as Sentry from 'sentry-expo';
+import { BlurView } from 'expo-blur';
 
 import moment from '../../languages/moment';
 import sharedTools from '../../shared';
@@ -40,6 +42,7 @@ import {
   getActivitiesByGroup,
   getByIdEnd,
   searchLocations,
+  deleteComment,
 } from '../../store/actions/groups.actions';
 import Colors from '../../constants/Colors';
 import statusIcon from '../../assets/icons/status.png';
@@ -75,6 +78,7 @@ const windowWidth = Dimensions.get('window').width;
 const spacing = windowWidth * 0.025;
 const sideSize = windowWidth - 2 * spacing;
 const circleSideSize = windowWidth / 3 + 20;
+const windowHeight = Dimensions.get('window').height;
 let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBackPressListener;
 //const hasNotch = Platform.OS === 'android' && StatusBar.currentHeight > 25;
 //const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
@@ -354,9 +358,8 @@ const styles = StyleSheet.create({
   },
   noCommentsContainer: {
     padding: 20,
-    textAlignVertical: 'top',
-    textAlign: 'center',
-    height: 300,
+    height: '90%',
+    transform: [{ scaleY: -1 }],
   },
   noCommentsImage: {
     opacity: 0.5,
@@ -365,19 +368,10 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   noCommentsText: {
-    textAlignVertical: 'center',
     textAlign: 'center',
     fontWeight: 'bold',
     color: '#A8A8A8',
-    padding: 5,
-  },
-  noCommentsTextOffilne: {
-    textAlignVertical: 'center',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: '#A8A8A8',
-    backgroundColor: '#fff2ac',
-    padding: 5,
+    marginTop: 10,
   },
   membersCount: {
     color: Colors.tintColor,
@@ -467,6 +461,37 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'rgba(0,0,0,0.6)',
   },
+  // Edit/Delete comment dialog
+  dialogBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  dialogBox: {
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    height: windowHeight - windowHeight * 0.55,
+    width: windowWidth - windowWidth * 0.1,
+    marginTop: windowHeight * 0.1,
+  },
+  dialogButton: {
+    backgroundColor: Colors.tintColor,
+    borderRadius: 5,
+    width: 100,
+    marginTop: 20,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  dialogContent: {
+    height: '100%',
+    width: '100%',
+    fontSize: 20,
+    textAlign: 'center',
+    color: Colors.grayDark,
+    marginBottom: 5,
+  },
 });
 
 const initialState = {
@@ -480,18 +505,26 @@ const initialState = {
   geonames: [],
   peopleGroups: [],
   groups: [],
-  comments: [],
+  comments: {
+    data: [],
+    pagination: {
+      limit: 10,
+      offset: 0,
+      total: 0,
+    },
+  },
   loadComments: false,
   loadMoreComments: false,
-  totalComments: 0,
-  commentsOffset: 0,
-  commentsLimit: 10,
-  activities: [],
+  activities: {
+    data: [],
+    pagination: {
+      limit: 10,
+      offset: 0,
+      total: 0,
+    },
+  },
   loadActivities: false,
   loadMoreActivities: false,
-  totalActivities: 0,
-  activitiesOffset: 0,
-  activitiesLimit: 10,
   showAssignedToModal: false,
   groupStatusBackgroundColor: '#ffffff',
   loading: false,
@@ -520,6 +553,11 @@ const initialState = {
   unmodifiedMembersContacts: [],
   assignedToContacts: [],
   unmodifedAssignedToContacts: [],
+  commentDialog: {
+    toggle: false,
+    data: {},
+    delete: false,
+  },
 };
 
 const safeFind = (found, prop) => {
@@ -692,10 +730,8 @@ class GroupDetailScreen extends React.Component {
       group,
       loading,
       comments,
-      totalComments,
       loadingComments,
       activities,
-      totalActivities,
       loadingActivities,
       newComment,
       foundGeonames,
@@ -704,24 +740,13 @@ class GroupDetailScreen extends React.Component {
     let newState = {
       ...prevState,
       loading,
-      comments: comments || prevState.comments,
-      totalComments: totalComments || prevState.totalComments,
+      comments: prevState.comments,
       loadComments: loadingComments,
-      activities: activities || prevState.activities,
-      totalActivities: totalActivities || prevState.totalActivities,
+      activities: prevState.activities,
       loadActivities: loadingActivities,
       group: prevState.group,
       unmodifiedGroup: prevState.unmodifiedGroup,
     };
-
-    // NEW COMMENT
-    if (newComment) {
-      newState.comments.unshift(newComment);
-      newState = {
-        ...newState,
-        comments: newState.comments,
-      };
-    }
 
     // SAVE / GET BY ID
     if (group) {
@@ -979,15 +1004,15 @@ class GroupDetailScreen extends React.Component {
             assignedToContacts: [
               ...newState.assignedToContacts,
               {
-                label: foundAssigned.label,
-                key: foundAssigned.key,
+                label: newState.group.assigned_to.label,
+                key: newState.group.assigned_to.key,
               },
             ],
             unmodifedAssignedToContacts: [
               ...newState.unmodifedAssignedToContacts,
               {
-                label: foundAssigned.label,
-                key: foundAssigned.key,
+                label: newState.group.assigned_to.label,
+                key: newState.group.assigned_to.key,
               },
             ],
           };
@@ -997,36 +1022,47 @@ class GroupDetailScreen extends React.Component {
 
     // GET COMMENTS
     if (comments) {
-      // NEW COMMENTS (PAGINATION)
-      if (prevState.commentsOffset > 0) {
+      if (newState.group.ID && Object.prototype.hasOwnProperty.call(comments, newState.group.ID)) {
+        // NEW COMMENTS (PAGINATION)
+        if (comments[newState.group.ID].pagination.offset > 0) {
+          newState = {
+            ...newState,
+            loadingMoreComments: false,
+          };
+        }
+        // ONLINE MODE: USE STATE PAGINATION - OFFLINE MODE: USE STORE PAGINATION
+        // UPDATE OFFSET
         newState = {
           ...newState,
-          comments: prevState.comments.concat(comments),
-          loadMoreComments: false,
+          comments: {
+            ...comments[newState.group.ID],
+          },
         };
       }
-      newState = {
-        // UPDATE OFFSET
-        ...newState,
-        commentsOffset: prevState.commentsOffset + prevState.commentsLimit,
-      };
     }
 
     // GET ACTIVITITES
     if (activities) {
-      // NEW ACTIVITIES (PAGINATION)
-      if (prevState.activitiesOffset > 0) {
+      if (
+        newState.group.ID &&
+        Object.prototype.hasOwnProperty.call(activities, newState.group.ID)
+      ) {
+        // NEW ACTIVITIES (PAGINATION)
+        if (activities[newState.group.ID].pagination.offset > 0) {
+          newState = {
+            ...newState,
+            loadingMoreActivities: false,
+          };
+        }
+        // ONLINE MODE: USE STATE PAGINATION - OFFLINE MODE: USE STORE PAGINATION
+        // UPDATE OFFSET
         newState = {
           ...newState,
-          activities: prevState.activities.concat(activities),
-          loadMoreActivities: false,
+          activities: {
+            ...activities[newState.group.ID],
+          },
         };
       }
-      newState = {
-        // UPDATE OFFSET
-        ...newState,
-        activitiesOffset: prevState.activitiesOffset + prevState.activitiesLimit,
-      };
     }
 
     // GET FILTERED LOCATIONS
@@ -1085,7 +1121,7 @@ class GroupDetailScreen extends React.Component {
         (group.oldID && group.oldID.toString() === this.state.group.ID.toString())
       ) {
         // Highlight Updates -> Compare this.state.contact with contact and show differences
-        this.onRefreshCommentsActivities(group.ID);
+        this.onRefreshCommentsActivities(group.ID, true);
         toastSuccess.show(
           <View>
             <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
@@ -1233,24 +1269,12 @@ class GroupDetailScreen extends React.Component {
 
   onRefresh(groupId) {
     this.getGroupById(groupId);
-    this.onRefreshCommentsActivities(groupId);
+    this.onRefreshCommentsActivities(groupId, true);
   }
 
-  onRefreshCommentsActivities(groupId) {
-    this.setState(
-      {
-        comments: [],
-        activities: [],
-        commentsOffset: 0,
-        activitiesOffset: 0,
-      },
-      () => {
-        this.getGroupComments(groupId);
-        if (this.props.isConnected) {
-          this.getGroupActivities(groupId);
-        }
-      },
-    );
+  onRefreshCommentsActivities(groupId, resetPagination = false) {
+    this.getGroupComments(groupId, resetPagination);
+    this.getGroupActivities(groupId, resetPagination);
   }
 
   getLists = async (groupId) => {
@@ -1312,27 +1336,51 @@ class GroupDetailScreen extends React.Component {
     this.props.getByIdEnd();
   }
 
-  getGroupComments(groupId) {
-    if (!this.state.loadComments) {
-      this.props.getComments(
-        this.props.userData.domain,
-        this.props.userData.token,
-        groupId,
-        this.state.commentsOffset,
-        this.state.commentsLimit,
-      );
+  getGroupComments(groupId, resetPagination = false) {
+    if (this.props.isConnected) {
+      if (resetPagination) {
+        this.props.getComments(this.props.userData.domain, this.props.userData.token, groupId, {
+          offset: 0,
+          limit: 10,
+        });
+      } else {
+        //ONLY GET DATA IF THERE IS MORE DATA TO GET
+        if (
+          !this.state.loadComments &&
+          this.state.comments.pagination.offset < this.state.comments.pagination.total
+        ) {
+          this.props.getComments(
+            this.props.userData.domain,
+            this.props.userData.token,
+            groupId,
+            this.state.comments.pagination,
+          );
+        }
+      }
     }
   }
 
-  getGroupActivities(groupId) {
-    if (!this.state.loadActivities) {
-      this.props.getActivities(
-        this.props.userData.domain,
-        this.props.userData.token,
-        groupId,
-        this.state.activitiesOffset,
-        this.state.activitiesLimit,
-      );
+  getGroupActivities(groupId, resetPagination = false) {
+    if (this.props.isConnected) {
+      if (resetPagination) {
+        this.props.getActivities(this.props.userData.domain, this.props.userData.token, groupId, {
+          offset: 0,
+          limit: 10,
+        });
+      } else {
+        //ONLY GET DATA IF THERE IS MORE DATA TO GET
+        if (
+          !this.state.loadActivities &&
+          this.state.activities.pagination.offset < this.state.activities.pagination.total
+        ) {
+          this.props.getActivities(
+            this.props.userData.domain,
+            this.props.userData.token,
+            groupId,
+            this.state.activities.pagination,
+          );
+        }
+      }
     }
   }
 
@@ -1458,7 +1506,7 @@ class GroupDetailScreen extends React.Component {
 
   getCommentsAndActivities() {
     const { comments, activities } = this.state;
-    const list = comments.concat(activities);
+    const list = comments.data.concat(activities.data);
     return list
       .filter((item, index) => list.indexOf(item) === index)
       .sort((a, b) => new Date(a.date).getTime() < new Date(b.date).getTime());
@@ -1602,6 +1650,56 @@ class GroupDetailScreen extends React.Component {
             ? commentOrActivity.content
             : this.formatActivityDate(commentOrActivity.object_note)}
         </ParsedText>
+        {
+          // Comment and its their own comment
+          Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') &&
+            commentOrActivity.author === this.props.userData.username && (
+              <Grid style={{ marginTop: 20 }}>
+                <Row>
+                  <Row
+                    onPress={() => {
+                      this.openCommentDialog(commentOrActivity);
+                    }}>
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="pencil"
+                      style={{ color: Colors.primary, fontSize: 25, marginLeft: 'auto' }}
+                    />
+                    <Text
+                      style={{
+                        color: Colors.primary,
+                        fontSize: 14,
+                        marginRight: 'auto',
+                        marginTop: 'auto',
+                        marginBottom: 'auto',
+                      }}>
+                      {i18n.t('global.edit')}
+                    </Text>
+                  </Row>
+                  <Row
+                    onPress={() => {
+                      this.openCommentDialog(commentOrActivity, true);
+                    }}>
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="delete"
+                      style={{ color: Colors.primary, fontSize: 25, marginLeft: 'auto' }}
+                    />
+                    <Text
+                      style={{
+                        color: Colors.primary,
+                        fontSize: 14,
+                        marginRight: 'auto',
+                        marginTop: 'auto',
+                        marginBottom: 'auto',
+                      }}>
+                      {i18n.t('settingsScreen.remove')}
+                    </Text>
+                  </Row>
+                </Row>
+              </Grid>
+            )
+        }
       </View>
     </View>
   );
@@ -2011,6 +2109,46 @@ class GroupDetailScreen extends React.Component {
     }
   };
 
+  openCommentDialog = (comment, deleteComment = false) => {
+    this.setState({
+      commentDialog: {
+        toggle: true,
+        data: comment,
+        delete: deleteComment,
+      },
+    });
+  };
+
+  onCloseCommentDialog() {
+    this.setState({
+      commentDialog: {
+        toggle: false,
+        data: {},
+        delete: false,
+      },
+    });
+  }
+
+  onUpdateComment(commentData) {
+    this.props.saveComment(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.group.ID,
+      commentData,
+    );
+    this.onCloseCommentDialog();
+  }
+
+  onDeleteComment(commentData) {
+    this.props.deleteComment(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.group.ID,
+      commentData.ID,
+    );
+    this.onCloseCommentDialog();
+  }
+
   showAssignedUser = () => {
     const foundUser = [...this.state.users, ...this.state.assignedToContacts].find(
       (user) => user.key === this.state.group.assigned_to.key,
@@ -2067,22 +2205,39 @@ class GroupDetailScreen extends React.Component {
   );
 
   noCommentsRender = () => (
-    <View style={styles.noCommentsContainer}>
-      <Row style={{ justifyContent: 'center' }}>
-        <Image style={styles.noCommentsImage} source={dtIcon} />
-      </Row>
-      <Text style={styles.noCommentsText}>
-        {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder')}
-      </Text>
-      <Text style={styles.noCommentsText}>
-        {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder1')}
-      </Text>
-      {!this.props.isConnected && (
-        <Text style={styles.noCommentsTextOffilne}>
-          {i18n.t('groupDetailScreen.noGroupCommentPlacheHolderOffline')}
-        </Text>
-      )}
-    </View>
+    <ScrollView
+      style={styles.noCommentsContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={this.state.loadComments || this.state.loadActivities}
+          onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID, true)}
+        />
+      }>
+      <Grid style={{ transform: [{ scaleY: -1 }] }}>
+        <Col>
+          <Row style={{ justifyContent: 'center' }}>
+            <Image style={styles.noCommentsImage} source={dtIcon} />
+          </Row>
+          <Row>
+            <Text style={styles.noCommentsText}>
+              {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder')}
+            </Text>
+          </Row>
+          <Row>
+            <Text style={styles.noCommentsText}>
+              {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder1')}
+            </Text>
+          </Row>
+          {!this.props.isConnected && (
+            <Row>
+              <Text style={[styles.noCommentsText, { backgroundColor: '#fff2ac' }]}>
+                {i18n.t('groupDetailScreen.noGroupCommentPlacheHolderOffline')}
+              </Text>
+            </Row>
+          )}
+        </Col>
+      </Grid>
+    </ScrollView>
   );
 
   detailView = () => (
@@ -3043,82 +3198,61 @@ class GroupDetailScreen extends React.Component {
 
   commentsView = () => (
     <View style={{ flex: 1, paddingBottom: this.state.footerHeight + this.state.footerLocation }}>
-      {this.state.comments.length == 0 &&
-        this.state.activities.length == 0 &&
-        !this.state.loadComments &&
-        !this.state.loadActivities &&
-        this.noCommentsRender()}
-      <FlatList
-        style={{
-          backgroundColor: '#ffffff',
-        }}
-        ref={(flatList) => {
-          commentsFlatList = flatList;
-        }}
-        data={this.getCommentsAndActivities()}
-        extraData={!this.state.loadMoreComments || !this.state.loadMoreActivities}
-        inverted
-        ItemSeparatorComponent={() => (
-          <View
-            style={{
-              height: 1,
-              backgroundColor: '#CCCCCC',
-            }}
-          />
-        )}
-        keyExtractor={(item, index) => String(index)}
-        renderItem={(item) => {
-          const commentOrActivity = item.item;
-          return this.renderActivityOrCommentRow(commentOrActivity);
-        }}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.loadComments || this.state.loadActivities}
-            onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID)}
-          />
-        }
-        onScroll={({ nativeEvent }) => {
-          const {
-            loadMoreComments,
-            commentsOffset,
-            loadMoreActivities,
-            activitiesOffset,
-          } = this.state;
-          const fL = nativeEvent;
-          const contentOffsetY = fL.contentOffset.y;
-          const layoutMeasurementHeight = fL.layoutMeasurement.height;
-          const contentSizeHeight = fL.contentSize.height;
-          const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
-          const distanceToStart = contentSizeHeight - heightOffsetSum;
-
-          if (distanceToStart < 100) {
-            if (!loadMoreComments) {
-              if (commentsOffset < this.state.totalComments) {
-                this.setState(
-                  {
-                    loadMoreComments: true,
-                  },
-                  () => {
-                    this.getGroupComments(this.state.group.ID);
-                  },
-                );
-              }
-            }
-            if (!loadMoreActivities) {
-              if (activitiesOffset < this.state.totalActivities) {
-                this.setState(
-                  {
-                    loadMoreActivities: true,
-                  },
-                  () => {
-                    this.getGroupActivities(this.state.group.ID);
-                  },
-                );
-              }
-            }
+      {this.state.comments.data.length == 0 &&
+      this.state.activities.data.length == 0 &&
+      !this.state.loadComments &&
+      !this.state.loadActivities ? (
+        this.noCommentsRender()
+      ) : (
+        <FlatList
+          style={{
+            backgroundColor: '#ffffff',
+          }}
+          ref={(flatList) => {
+            commentsFlatList = flatList;
+          }}
+          data={this.getCommentsAndActivities()}
+          extraData={!this.state.loadMoreComments || !this.state.loadMoreActivities}
+          inverted
+          ItemSeparatorComponent={() => (
+            <View
+              style={{
+                height: 1,
+                backgroundColor: '#CCCCCC',
+              }}
+            />
+          )}
+          keyExtractor={(item, index) => String(index)}
+          renderItem={(item) => {
+            const commentOrActivity = item.item;
+            return this.renderActivityOrCommentRow(commentOrActivity);
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.loadComments || this.state.loadActivities}
+              onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID, true)}
+            />
           }
-        }}
-      />
+          onScroll={({ nativeEvent }) => {
+            sharedTools.onlyExecuteLastCall(
+              {},
+              () => {
+                const flatList = nativeEvent;
+                const contentOffsetY = flatList.contentOffset.y;
+                const layoutMeasurementHeight = flatList.layoutMeasurement.height;
+                const contentSizeHeight = flatList.contentSize.height;
+                const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
+                const distanceToStart = contentSizeHeight - heightOffsetSum;
+                if (distanceToStart < 100) {
+                  this.getGroupComments(this.state.group.ID);
+                  this.getGroupActivities(this.state.group.ID);
+                }
+              },
+              500,
+            );
+          }}
+        />
+      )}
       <View style={{ backgroundColor: '#FFFFFF' }}>
         <MentionsTextInput
           editable={!this.state.loadComments}
@@ -4475,6 +4609,116 @@ class GroupDetailScreen extends React.Component {
                     onIndexChange={this.tabChanged}
                     initialLayout={{ width: windowWidth }}
                   />
+                  {this.state.commentDialog.toggle ? (
+                    <BlurView
+                      tint="dark"
+                      intensity={50}
+                      style={[
+                        styles.dialogBackground,
+                        {
+                          width: windowWidth,
+                          height: windowHeight,
+                        },
+                      ]}>
+                      <KeyboardAvoidingView
+                        behavior={'position'}
+                        contentContainerStyle={{
+                          height: windowHeight / 1.5,
+                        }}>
+                        <View style={styles.dialogBox}>
+                          <Grid>
+                            <Row>
+                              {this.state.commentDialog.delete ? (
+                                <View style={styles.dialogContent}>
+                                  <Row style={{ height: 30 }}>
+                                    <Label style={[styles.name, { marginBottom: 5 }]}>
+                                      {i18n.t('global.deleteComment')}
+                                    </Label>
+                                  </Row>
+                                  <Row>
+                                    <Text style={{ fontSize: 15 }}>
+                                      {this.state.commentDialog.data.content}
+                                    </Text>
+                                  </Row>
+                                </View>
+                              ) : (
+                                <View style={styles.dialogContent}>
+                                  <Grid>
+                                    <Row style={{ height: 30 }}>
+                                      <Label style={[styles.name, { marginBottom: 5 }]}>
+                                        {i18n.t('global.editComment')}
+                                      </Label>
+                                    </Row>
+                                    <Row>
+                                      <Input
+                                        multiline
+                                        value={this.state.commentDialog.data.content}
+                                        onChangeText={(value) => {
+                                          this.setState((prevState) => ({
+                                            commentDialog: {
+                                              ...prevState.commentDialog,
+                                              data: {
+                                                ...prevState.commentDialog.data,
+                                                content: value,
+                                              },
+                                            },
+                                          }));
+                                        }}
+                                        style={[
+                                          styles.groupTextField,
+                                          { height: 'auto', minHeight: 50 },
+                                        ]}
+                                      />
+                                    </Row>
+                                  </Grid>
+                                </View>
+                              )}
+                            </Row>
+                            <Row style={{ height: 60 }}>
+                              <Button
+                                transparent
+                                style={{
+                                  marginTop: 20,
+                                  marginLeft: 'auto',
+                                  marginRight: 'auto',
+                                  marginBottom: 'auto',
+                                  paddingLeft: 25,
+                                  paddingRight: 25,
+                                }}
+                                onPress={() => {
+                                  this.onCloseCommentDialog();
+                                }}>
+                                <Text style={{ color: Colors.primary }}>
+                                  {i18n.t('settingsScreen.close')}
+                                </Text>
+                              </Button>
+                              {this.state.commentDialog.delete ? (
+                                <Button
+                                  block
+                                  style={[styles.dialogButton, { backgroundColor: '#d9534f' }]}
+                                  onPress={() => {
+                                    this.onDeleteComment(this.state.commentDialog.data);
+                                  }}>
+                                  <Text style={{ color: '#FFFFFF' }}>
+                                    {i18n.t('settingsScreen.remove')}
+                                  </Text>
+                                </Button>
+                              ) : (
+                                <Button
+                                  block
+                                  style={styles.dialogButton}
+                                  onPress={() => {
+                                    this.onUpdateComment(this.state.commentDialog.data);
+                                  }}>
+                                  <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.save')}</Text>
+                                </Button>
+                              )}
+                            </Row>
+                          </Grid>
+                        </View>
+                      </KeyboardAvoidingView>
+                    </BlurView>
+                  ) : null}
                 </View>
               </View>
             ) : (
@@ -4573,13 +4817,7 @@ GroupDetailScreen.propTypes = {
     code: PropTypes.any,
     message: PropTypes.string,
   }),
-  newComment: PropTypes.shape({
-    ID: PropTypes.string,
-    author: PropTypes.string,
-    content: PropTypes.string,
-    date: PropTypes.string,
-    gravatar: PropTypes.string,
-  }),
+  newComment: PropTypes.bool,
   groupsReducerError: PropTypes.shape({
     code: PropTypes.any,
     message: PropTypes.string,
@@ -4717,20 +4955,23 @@ const mapDispatchToProps = (dispatch) => ({
   getById: (domain, token, groupId) => {
     dispatch(getById(domain, token, groupId));
   },
-  getComments: (domain, token, groupId, offset, limit) => {
-    dispatch(getCommentsByGroup(domain, token, groupId, offset, limit));
+  getComments: (domain, token, groupId, pagination) => {
+    dispatch(getCommentsByGroup(domain, token, groupId, pagination));
   },
   saveComment: (domain, token, groupId, commentData) => {
     dispatch(saveComment(domain, token, groupId, commentData));
   },
-  getActivities: (domain, token, groupId, offset, limit) => {
-    dispatch(getActivitiesByGroup(domain, token, groupId, offset, limit));
+  getActivities: (domain, token, groupId, pagination) => {
+    dispatch(getActivitiesByGroup(domain, token, groupId, pagination));
   },
   getByIdEnd: () => {
     dispatch(getByIdEnd());
   },
   searchLocations: (domain, token, queryText) => {
     dispatch(searchLocations(domain, token, queryText));
+  },
+  deleteComment: (domain, token, groupId, commentId) => {
+    dispatch(deleteComment(domain, token, groupId, commentId));
   },
 });
 

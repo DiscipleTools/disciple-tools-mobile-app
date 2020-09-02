@@ -25,7 +25,9 @@
     "membersActivity": "Miembros",
     "moreFields": "Más Campos",
     "nameRequired": "Nombre requerido",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "editComment": "Editar Comentario",
+    "deleteComment": "Eliminar Comentario"
   },
   "appRestart": {
     "message": "La aplicación sera reiniciada para aplicar la siguiente configuración:",

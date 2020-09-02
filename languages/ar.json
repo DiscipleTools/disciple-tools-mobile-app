@@ -25,7 +25,9 @@
     "membersActivity": "أفراد",
     "moreFields": "المزيد من الحقول",
     "nameRequired": "الاسم مطلوب",
-    "close": "قريب"
+    "close": "قريب",
+    "editComment": "",
+    "deleteComment": ""
   },
   "appRestart": {
     "message": "سيتم إعادة تشغيل التطبيق لتطبيق التكوين التالي:",

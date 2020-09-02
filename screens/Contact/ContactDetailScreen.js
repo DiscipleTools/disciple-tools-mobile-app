@@ -15,13 +15,14 @@ import {
   Linking,
   BackHandler,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import { connect } from 'react-redux';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Label, Input, Icon, Picker, DatePicker, Textarea } from 'native-base';
+import { Label, Input, Icon, Picker, DatePicker, Textarea, Button } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
@@ -32,6 +33,7 @@ import { NavigationActions, StackActions } from 'react-navigation';
 import MentionsTextInput from 'react-native-mentions';
 import ParsedText from 'react-native-parsed-text';
 import * as Sentry from 'sentry-expo';
+import { BlurView } from 'expo-blur';
 
 import moment from '../../languages/moment';
 import sharedTools from '../../shared';
@@ -43,6 +45,7 @@ import {
   getByIdEnd,
   getActivitiesByContact,
   saveEnd,
+  deleteComment,
 } from '../../store/actions/contacts.actions';
 import statusIcon from '../../assets/icons/status.png';
 import Colors from '../../constants/Colors';
@@ -65,6 +68,7 @@ const containerPadding = 35;
 const windowWidth = Dimensions.get('window').width;
 const progressBarWidth = windowWidth - 100;
 const milestonesGridSize = windowWidth + 5;
+const windowHeight = Dimensions.get('window').height;
 let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBackPressListener;
 //const hasNotch = Platform.OS === 'android' && StatusBar.currentHeight > 25;
 //const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
@@ -234,9 +238,8 @@ const styles = StyleSheet.create({
   },
   noCommentsContainer: {
     padding: 20,
-    textAlignVertical: 'top',
-    textAlign: 'center',
-    height: 300,
+    height: '90%',
+    transform: [{ scaleY: -1 }],
   },
   noCommentsImage: {
     opacity: 0.5,
@@ -245,19 +248,10 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   noCommentsText: {
-    textAlignVertical: 'center',
     textAlign: 'center',
     fontWeight: 'bold',
     color: '#A8A8A8',
-    padding: 5,
-  },
-  noCommentsTextOffilne: {
-    textAlignVertical: 'center',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: '#A8A8A8',
-    backgroundColor: '#fff2ac',
-    padding: 5,
+    marginTop: 10,
   },
   contactTextField: {
     borderBottomWidth: 1,
@@ -330,6 +324,37 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'rgba(0,0,0,0.6)',
   },
+  // Edit/Delete comment dialog
+  dialogBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  dialogBox: {
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    height: windowHeight - windowHeight * 0.55,
+    width: windowWidth - windowWidth * 0.1,
+    marginTop: windowHeight * 0.1,
+  },
+  dialogButton: {
+    backgroundColor: Colors.tintColor,
+    borderRadius: 5,
+    width: 100,
+    marginTop: 20,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  dialogContent: {
+    height: '100%',
+    width: '100%',
+    fontSize: 20,
+    textAlign: 'center',
+    color: Colors.grayDark,
+    marginBottom: 5,
+  },
 });
 
 const initialState = {
@@ -341,18 +366,26 @@ const initialState = {
   peopleGroups: [],
   geonames: [],
   loadedLocal: false,
-  comments: [],
+  comments: {
+    data: [],
+    pagination: {
+      limit: 10,
+      offset: 0,
+      total: 0,
+    },
+  },
   loadComments: false,
   loadingMoreComments: false,
-  totalComments: 0,
-  commentsOffset: 0,
-  commentsLimit: 10,
-  activities: [],
+  activities: {
+    data: [],
+    pagination: {
+      limit: 10,
+      offset: 0,
+      total: 0,
+    },
+  },
   loadActivities: false,
   loadingMoreActivities: false,
-  totalActivities: 0,
-  activitiesOffset: 0,
-  activitiesLimit: 10,
   comment: '',
   progressBarValue: 0,
   overallStatusBackgroundColor: '#ffffff',
@@ -391,6 +424,11 @@ const initialState = {
   unmodifiedConnectionGroups: [],
   assignedToContacts: [],
   unmodifedAssignedToContacts: [],
+  commentDialog: {
+    toggle: false,
+    data: {},
+    delete: false,
+  },
 };
 
 const safeFind = (found, prop) => {
@@ -561,35 +599,23 @@ class ContactDetailScreen extends React.Component {
       contact,
       loading,
       comments,
-      totalComments,
       loadingComments,
       activities,
-      totalActivities,
       loadingActivities,
-      newComment,
       foundGeonames,
+      newComment,
     } = nextProps;
     let newState = {
       ...prevState,
       loading,
-      comments: comments || prevState.comments,
-      totalComments: totalComments || prevState.totalComments,
+      comments: prevState.comments,
       loadComments: loadingComments,
-      activities: activities || prevState.activities,
-      totalActivities: totalActivities || prevState.totalActivities,
+      activities: prevState.activities,
       loadActivities: loadingActivities,
       contact: prevState.contact,
       unmodifiedContact: prevState.unmodifiedContact,
     };
 
-    // NEW COMMENT
-    if (newComment) {
-      newState.comments.unshift(newComment);
-      newState = {
-        ...newState,
-        comments: newState.comments,
-      };
-    }
     // SAVE / GET BY ID
     if (contact) {
       newState = {
@@ -918,15 +944,15 @@ class ContactDetailScreen extends React.Component {
             assignedToContacts: [
               ...newState.assignedToContacts,
               {
-                label: foundAssigned.label,
-                key: foundAssigned.key,
+                label: newState.contact.assigned_to.label,
+                key: newState.contact.assigned_to.key,
               },
             ],
             unmodifedAssignedToContacts: [
               ...newState.unmodifedAssignedToContacts,
               {
-                label: foundAssigned.label,
-                key: foundAssigned.key,
+                label: newState.contact.assigned_to.label,
+                key: newState.contact.assigned_to.key,
               },
             ],
           };
@@ -936,36 +962,50 @@ class ContactDetailScreen extends React.Component {
 
     // GET COMMENTS
     if (comments) {
-      // NEW COMMENTS (PAGINATION)
-      if (prevState.commentsOffset > 0) {
+      if (
+        newState.contact.ID &&
+        Object.prototype.hasOwnProperty.call(comments, newState.contact.ID)
+      ) {
+        // NEW COMMENTS (PAGINATION)
+        if (comments[newState.contact.ID].pagination.offset > 0) {
+          newState = {
+            ...newState,
+            loadingMoreComments: false,
+          };
+        }
+        // ONLINE MODE: USE STATE PAGINATION - OFFLINE MODE: USE STORE PAGINATION
+        // UPDATE OFFSET
         newState = {
           ...newState,
-          comments: prevState.comments.concat(comments),
-          loadingMoreComments: false,
+          comments: {
+            ...comments[newState.contact.ID],
+          },
         };
       }
-      newState = {
-        // UPDATE OFFSET
-        ...newState,
-        commentsOffset: prevState.commentsOffset + prevState.commentsLimit,
-      };
     }
 
-    // GET ACTIVITITES
+    // GET ACTIVITIES
     if (activities) {
-      // NEW ACTIVITIES (PAGINATION)
-      if (prevState.activitiesOffset > 0) {
+      if (
+        newState.contact.ID &&
+        Object.prototype.hasOwnProperty.call(activities, newState.contact.ID)
+      ) {
+        // NEW ACTIVITIES (PAGINATION)
+        if (activities[newState.contact.ID].pagination.offset > 0) {
+          newState = {
+            ...newState,
+            loadingMoreActivities: false,
+          };
+        }
+        // ONLINE MODE: USE STATE PAGINATION - OFFLINE MODE: USE STORE PAGINATION
+        // UPDATE OFFSET
         newState = {
           ...newState,
-          activities: prevState.activities.concat(activities),
-          loadingMoreActivities: false,
+          activities: {
+            ...activities[newState.contact.ID],
+          },
         };
       }
-      newState = {
-        // UPDATE OFFSET
-        ...newState,
-        activitiesOffset: prevState.activitiesOffset + prevState.activitiesLimit,
-      };
     }
 
     // GET FILTERED LOCATIONS
@@ -1032,7 +1072,7 @@ class ContactDetailScreen extends React.Component {
         contact.ID.toString() === this.state.contact.ID.toString() ||
         (contact.oldID && contact.oldID === this.state.contact.ID.toString())
       ) {
-        this.onRefreshCommentsActivities(contact.ID);
+        this.onRefreshCommentsActivities(contact.ID, true);
         toastSuccess.show(
           <View>
             <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
@@ -1184,25 +1224,13 @@ class ContactDetailScreen extends React.Component {
   onRefresh(contactId) {
     if (!self.state.loading) {
       self.getContactById(contactId);
-      self.onRefreshCommentsActivities(contactId);
+      self.onRefreshCommentsActivities(contactId, true);
     }
   }
 
-  onRefreshCommentsActivities(contactId) {
-    this.setState(
-      {
-        comments: [],
-        activities: [],
-        commentsOffset: 0,
-        activitiesOffset: 0,
-      },
-      () => {
-        this.getContactComments(contactId);
-        if (this.props.isConnected) {
-          this.getContactActivities(contactId);
-        }
-      },
-    );
+  onRefreshCommentsActivities(contactId, resetPagination = false) {
+    this.getContactComments(contactId, resetPagination);
+    this.getContactActivities(contactId, resetPagination);
   }
 
   getLists = async (contactId) => {
@@ -1273,27 +1301,51 @@ class ContactDetailScreen extends React.Component {
     this.props.getByIdEnd();
   }
 
-  getContactComments(contactId) {
-    if (!this.state.loadComments) {
-      this.props.getComments(
-        this.props.userData.domain,
-        this.props.userData.token,
-        contactId,
-        this.state.commentsOffset,
-        this.state.commentsLimit,
-      );
+  getContactComments(contactId, resetPagination = false) {
+    if (this.props.isConnected) {
+      if (resetPagination) {
+        this.props.getComments(this.props.userData.domain, this.props.userData.token, contactId, {
+          offset: 0,
+          limit: 10,
+        });
+      } else {
+        //ONLY GET DATA IF THERE IS MORE DATA TO GET
+        if (
+          !this.state.loadComments &&
+          this.state.comments.pagination.offset < this.state.comments.pagination.total
+        ) {
+          this.props.getComments(
+            this.props.userData.domain,
+            this.props.userData.token,
+            contactId,
+            this.state.comments.pagination,
+          );
+        }
+      }
     }
   }
 
-  getContactActivities(contactId) {
-    if (!this.state.loadActivities) {
-      this.props.getActivities(
-        this.props.userData.domain,
-        this.props.userData.token,
-        contactId,
-        this.state.activitiesOffset,
-        this.state.activitiesLimit,
-      );
+  getContactActivities(contactId, resetPagination = false) {
+    if (this.props.isConnected) {
+      if (resetPagination) {
+        this.props.getActivities(this.props.userData.domain, this.props.userData.token, contactId, {
+          offset: 0,
+          limit: 10,
+        });
+      } else {
+        //ONLY GET DATA IF THERE IS MORE DATA TO GET
+        if (
+          !this.state.loadActivities &&
+          this.state.activities.pagination.offset < this.state.activities.pagination.total
+        ) {
+          this.props.getActivities(
+            this.props.userData.domain,
+            this.props.userData.token,
+            contactId,
+            this.state.activities.pagination,
+          );
+        }
+      }
     }
   }
 
@@ -1662,7 +1714,7 @@ class ContactDetailScreen extends React.Component {
 
   getCommentsAndActivities() {
     const { comments, activities } = this.state;
-    const list = comments.concat(activities);
+    const list = comments.data.concat(activities.data);
     return list
       .filter((item, index) => list.indexOf(item) === index)
       .sort((a, b) => new Date(a.date).getTime() < new Date(b.date).getTime());
@@ -1760,22 +1812,39 @@ class ContactDetailScreen extends React.Component {
   };
 
   noCommentsRender = () => (
-    <View style={styles.noCommentsContainer}>
-      <Row style={{ justifyContent: 'center' }}>
-        <Image style={styles.noCommentsImage} source={dtIcon} />
-      </Row>
-      <Text style={styles.noCommentsText}>
-        {i18n.t('contactDetailScreen.noContactCommentPlacheHolder')}
-      </Text>
-      <Text style={styles.noCommentsText}>
-        {i18n.t('contactDetailScreen.noContactCommentPlacheHolder1')}
-      </Text>
-      {!this.props.isConnected && (
-        <Text style={styles.noCommentsTextOffilne}>
-          {i18n.t('contactDetailScreen.noContactCommentPlacheHolderOffline')}
-        </Text>
-      )}
-    </View>
+    <ScrollView
+      style={styles.noCommentsContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={this.state.loadComments || this.state.loadActivities}
+          onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID, true)}
+        />
+      }>
+      <Grid style={{ transform: [{ scaleY: -1 }] }}>
+        <Col>
+          <Row style={{ justifyContent: 'center' }}>
+            <Image style={styles.noCommentsImage} source={dtIcon} />
+          </Row>
+          <Row>
+            <Text style={styles.noCommentsText}>
+              {i18n.t('contactDetailScreen.noContactCommentPlacheHolder')}
+            </Text>
+          </Row>
+          <Row>
+            <Text style={styles.noCommentsText}>
+              {i18n.t('contactDetailScreen.noContactCommentPlacheHolder1')}
+            </Text>
+          </Row>
+          {!this.props.isConnected && (
+            <Row>
+              <Text style={[styles.noCommentsText, { backgroundColor: '#fff2ac' }]}>
+                {i18n.t('contactDetailScreen.noContactCommentPlacheHolderOffline')}
+              </Text>
+            </Row>
+          )}
+        </Col>
+      </Grid>
+    </ScrollView>
   );
 
   detailView = () => (
@@ -3223,77 +3292,61 @@ class ContactDetailScreen extends React.Component {
 
   commentsView = () => (
     <View style={{ flex: 1, paddingBottom: this.state.footerHeight + this.state.footerLocation }}>
-      {this.state.comments.length == 0 &&
-        this.state.activities.length == 0 &&
-        !this.state.loadComments &&
-        !this.state.loadActivities &&
-        this.noCommentsRender()}
-      <FlatList
-        style={{
-          backgroundColor: '#ffffff',
-        }}
-        ref={(flatList) => {
-          commentsFlatList = flatList;
-        }}
-        data={this.getCommentsAndActivities()}
-        extraData={!this.state.loadingMoreComments || !this.state.loadingMoreActivities}
-        inverted
-        ItemSeparatorComponent={() => (
-          <View
-            style={{
-              height: 1,
-              backgroundColor: '#CCCCCC',
-            }}
-          />
-        )}
-        keyExtractor={(item, index) => String(index)}
-        renderItem={(item) => {
-          const commentOrActivity = item.item;
-          return this.renderActivityOrCommentRow(commentOrActivity);
-        }}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.loadComments || this.state.loadActivities}
-            onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID)}
-          />
-        }
-        onScroll={({ nativeEvent }) => {
-          const { loadingMoreComments, commentsOffset, activitiesOffset } = this.state;
-          const flatList = nativeEvent;
-          const contentOffsetY = flatList.contentOffset.y;
-          const layoutMeasurementHeight = flatList.layoutMeasurement.height;
-          const contentSizeHeight = flatList.contentSize.height;
-          const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
-          const distanceToStart = contentSizeHeight - heightOffsetSum;
-
-          if (distanceToStart < 100) {
-            if (!loadingMoreComments) {
-              if (commentsOffset < this.state.totalComments) {
-                this.setState(
-                  {
-                    loadingMoreComments: true,
-                  },
-                  () => {
-                    this.getContactComments(this.state.contact.ID);
-                  },
-                );
-              }
-            }
-            if (!this.state.loadingMoreActivities) {
-              if (activitiesOffset < this.state.totalActivities) {
-                this.setState(
-                  {
-                    loadingMoreActivities: true,
-                  },
-                  () => {
-                    this.getContactActivities(this.state.contact.ID);
-                  },
-                );
-              }
-            }
+      {this.state.comments.data.length == 0 &&
+      this.state.activities.data.length == 0 &&
+      !this.state.loadComments &&
+      !this.state.loadActivities ? (
+        this.noCommentsRender()
+      ) : (
+        <FlatList
+          style={{
+            backgroundColor: '#ffffff',
+          }}
+          ref={(flatList) => {
+            commentsFlatList = flatList;
+          }}
+          data={this.getCommentsAndActivities()}
+          extraData={!this.state.loadingMoreComments || !this.state.loadingMoreActivities}
+          inverted
+          ItemSeparatorComponent={() => (
+            <View
+              style={{
+                height: 1,
+                backgroundColor: '#CCCCCC',
+              }}
+            />
+          )}
+          keyExtractor={(item, index) => String(index)}
+          renderItem={(item) => {
+            const commentOrActivity = item.item;
+            return this.renderActivityOrCommentRow(commentOrActivity);
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.loadComments || this.state.loadActivities}
+              onRefresh={() => this.onRefreshCommentsActivities(this.state.contact.ID, true)}
+            />
           }
-        }}
-      />
+          onScroll={({ nativeEvent }) => {
+            sharedTools.onlyExecuteLastCall(
+              {},
+              () => {
+                const flatList = nativeEvent;
+                const contentOffsetY = flatList.contentOffset.y;
+                const layoutMeasurementHeight = flatList.layoutMeasurement.height;
+                const contentSizeHeight = flatList.contentSize.height;
+                const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
+                const distanceToStart = contentSizeHeight - heightOffsetSum;
+                if (distanceToStart < 100) {
+                  this.getContactComments(this.state.contact.ID);
+                  this.getContactActivities(this.state.contact.ID);
+                }
+              },
+              500,
+            );
+          }}
+        />
+      )}
       <View style={{ backgroundColor: '#FFFFFF' }}>
         <MentionsTextInput
           editable={!this.state.loadComments}
@@ -4303,6 +4356,16 @@ class ContactDetailScreen extends React.Component {
     return transformedContact;
   };
 
+  openCommentDialog = (comment, deleteComment = false) => {
+    this.setState({
+      commentDialog: {
+        toggle: true,
+        data: comment,
+        delete: deleteComment,
+      },
+    });
+  };
+
   renderActivityOrCommentRow = (commentOrActivity) => (
     <View
       style={{
@@ -4401,6 +4464,56 @@ class ContactDetailScreen extends React.Component {
             ? commentOrActivity.content
             : this.formatActivityDate(commentOrActivity.object_note)}
         </ParsedText>
+        {
+          // Comment and its their own comment
+          Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') &&
+            commentOrActivity.author === this.props.userData.username && (
+              <Grid style={{ marginTop: 20 }}>
+                <Row>
+                  <Row
+                    onPress={() => {
+                      this.openCommentDialog(commentOrActivity);
+                    }}>
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="pencil"
+                      style={{ color: Colors.primary, fontSize: 25, marginLeft: 'auto' }}
+                    />
+                    <Text
+                      style={{
+                        color: Colors.primary,
+                        fontSize: 14,
+                        marginRight: 'auto',
+                        marginTop: 'auto',
+                        marginBottom: 'auto',
+                      }}>
+                      {i18n.t('global.edit')}
+                    </Text>
+                  </Row>
+                  <Row
+                    onPress={() => {
+                      this.openCommentDialog(commentOrActivity, true);
+                    }}>
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="delete"
+                      style={{ color: Colors.primary, fontSize: 25, marginLeft: 'auto' }}
+                    />
+                    <Text
+                      style={{
+                        color: Colors.primary,
+                        fontSize: 14,
+                        marginRight: 'auto',
+                        marginTop: 'auto',
+                        marginBottom: 'auto',
+                      }}>
+                      {i18n.t('settingsScreen.remove')}
+                    </Text>
+                  </Row>
+                </Row>
+              </Grid>
+            )
+        }
       </View>
     </View>
   );
@@ -4749,6 +4862,36 @@ class ContactDetailScreen extends React.Component {
       },
     }));
   };
+
+  onCloseCommentDialog() {
+    this.setState({
+      commentDialog: {
+        toggle: false,
+        data: {},
+        delete: false,
+      },
+    });
+  }
+
+  onUpdateComment(commentData) {
+    this.props.saveComment(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.contact.ID,
+      commentData,
+    );
+    this.onCloseCommentDialog();
+  }
+
+  onDeleteComment(commentData) {
+    this.props.deleteComment(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.contact.ID,
+      commentData.ID,
+    );
+    this.onCloseCommentDialog();
+  }
 
   renderfaithMilestones() {
     return (
@@ -5243,23 +5386,35 @@ class ContactDetailScreen extends React.Component {
     this.props.searchLocations(this.props.userData.domain, this.props.userData.token, queryText);
   };
 
-  onMeetingComplete = (props) => {
-    /*
-    if (true) {
-      this.props.navigation.navigate(NavigationActions.navigate({
-        routeName: 'Questionnaire',
-        action: NavigationActions.navigate({
-          routeName: 'Question', params: {
-            userData: this.state.userData,
-            contact: this.state.contact,
-          },
-        })
-      }));
-    } else {
-      this.onSaveQuickAction('quick_button_meeting_complete');
-    }
-    */
+  onMeetingComplete = () => {
     this.onSaveQuickAction('quick_button_meeting_complete');
+    var isQuestionnaireEnabled = false;
+    var q_id = null;
+    // loop thru all (active) questionnaires, and check whether 'contact'->'meeting_complete' is enabled
+    this.props.questionnaires.map((questionnaire) => {
+      if (
+        questionnaire.trigger_type == 'contact' &&
+        questionnaire.trigger_value == 'meeting_complete'
+      ) {
+        isQuestionnaireEnabled = true;
+        q_id = questionnaire.id;
+      }
+    });
+    if (isQuestionnaireEnabled) {
+      this.props.navigation.navigate(
+        NavigationActions.navigate({
+          routeName: 'Questionnaire',
+          action: NavigationActions.navigate({
+            routeName: 'Question',
+            params: {
+              userData: this.props.userData,
+              contact: this.state.contact,
+              q_id,
+            },
+          }),
+        }),
+      );
+    }
   };
 
   onSaveQuickAction = (quickActionPropertyName) => {
@@ -5447,7 +5602,7 @@ class ContactDetailScreen extends React.Component {
                       <ActionButton.Item
                         title={this.props.contactSettings.fields.quick_button_meeting_complete.name}
                         onPress={() => {
-                          this.onMeetingComplete(this.props);
+                          this.onMeetingComplete();
                         }}
                         size={40}
                         buttonColor={Colors.colorYes}
@@ -5478,6 +5633,116 @@ class ContactDetailScreen extends React.Component {
                       </ActionButton.Item>
                     </ActionButton>
                   )}
+                  {this.state.commentDialog.toggle ? (
+                    <BlurView
+                      tint="dark"
+                      intensity={50}
+                      style={[
+                        styles.dialogBackground,
+                        {
+                          width: windowWidth,
+                          height: windowHeight,
+                        },
+                      ]}>
+                      <KeyboardAvoidingView
+                        behavior={'position'}
+                        contentContainerStyle={{
+                          height: windowHeight / 1.5,
+                        }}>
+                        <View style={styles.dialogBox}>
+                          <Grid>
+                            <Row>
+                              {this.state.commentDialog.delete ? (
+                                <View style={styles.dialogContent}>
+                                  <Row style={{ height: 30 }}>
+                                    <Label style={[styles.name, { marginBottom: 5 }]}>
+                                      {i18n.t('global.deleteComment')}
+                                    </Label>
+                                  </Row>
+                                  <Row>
+                                    <Text style={{ fontSize: 15 }}>
+                                      {this.state.commentDialog.data.content}
+                                    </Text>
+                                  </Row>
+                                </View>
+                              ) : (
+                                <View style={styles.dialogContent}>
+                                  <Grid>
+                                    <Row style={{ height: 30 }}>
+                                      <Label style={[styles.name, { marginBottom: 5 }]}>
+                                        {i18n.t('global.editComment')}
+                                      </Label>
+                                    </Row>
+                                    <Row>
+                                      <Input
+                                        multiline
+                                        value={this.state.commentDialog.data.content}
+                                        onChangeText={(value) => {
+                                          this.setState((prevState) => ({
+                                            commentDialog: {
+                                              ...prevState.commentDialog,
+                                              data: {
+                                                ...prevState.commentDialog.data,
+                                                content: value,
+                                              },
+                                            },
+                                          }));
+                                        }}
+                                        style={[
+                                          styles.contactTextField,
+                                          { height: 'auto', minHeight: 50 },
+                                        ]}
+                                      />
+                                    </Row>
+                                  </Grid>
+                                </View>
+                              )}
+                            </Row>
+                            <Row style={{ height: 60 }}>
+                              <Button
+                                transparent
+                                style={{
+                                  marginTop: 20,
+                                  marginLeft: 'auto',
+                                  marginRight: 'auto',
+                                  marginBottom: 'auto',
+                                  paddingLeft: 25,
+                                  paddingRight: 25,
+                                }}
+                                onPress={() => {
+                                  this.onCloseCommentDialog();
+                                }}>
+                                <Text style={{ color: Colors.primary }}>
+                                  {i18n.t('settingsScreen.close')}
+                                </Text>
+                              </Button>
+                              {this.state.commentDialog.delete ? (
+                                <Button
+                                  block
+                                  style={[styles.dialogButton, { backgroundColor: '#d9534f' }]}
+                                  onPress={() => {
+                                    this.onDeleteComment(this.state.commentDialog.data);
+                                  }}>
+                                  <Text style={{ color: '#FFFFFF' }}>
+                                    {i18n.t('settingsScreen.remove')}
+                                  </Text>
+                                </Button>
+                              ) : (
+                                <Button
+                                  block
+                                  style={styles.dialogButton}
+                                  onPress={() => {
+                                    this.onUpdateComment(this.state.commentDialog.data);
+                                  }}>
+                                  <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.save')}</Text>
+                                </Button>
+                              )}
+                            </Row>
+                          </Grid>
+                        </View>
+                      </KeyboardAvoidingView>
+                    </BlurView>
+                  ) : null}
                 </View>
               </View>
             ) : (
@@ -5772,33 +6037,77 @@ class ContactDetailScreen extends React.Component {
                           </Col>
                           <Col>
                             <Label style={styles.formLabel}>
-                              {this.props.contactSettings.fields.people_groups.name}
+                              {this.props.contactSettings.channels.address.label}
                             </Label>
                           </Col>
+                          <Col style={styles.formIconLabel}>
+                            <Icon
+                              android="md-add"
+                              ios="ios-add"
+                              style={[styles.formIcon, styles.addRemoveIcons]}
+                              onPress={this.onAddAddressField}
+                            />
+                          </Col>
+                        </Row>
+                        {this.state.contact.contact_address ? (
+                          this.state.contact.contact_address.map((address, index) =>
+                            !address.delete ? (
+                              <Row key={index.toString()} style={{ marginBottom: 10 }}>
+                                <Col style={styles.formIconLabelCol}>
+                                  <View style={styles.formIconLabelView}>
+                                    <Icon
+                                      type="Entypo"
+                                      name="home"
+                                      style={[styles.formIcon, { opacity: 0 }]}
+                                    />
+                                  </View>
+                                </Col>
+                                <Col>
+                                  <Input
+                                    multiline
+                                    value={address.value}
+                                    onChangeText={(value) => {
+                                      this.onAddressFieldChange(value, index, address.key, this);
+                                    }}
+                                    style={styles.contactTextField}
+                                  />
+                                </Col>
+                                <Col style={styles.formIconLabel}>
+                                  <Icon
+                                    android="md-remove"
+                                    ios="ios-remove"
+                                    style={[
+                                      styles.formIcon,
+                                      styles.addRemoveIcons,
+                                      { marginRight: 10 },
+                                    ]}
+                                    onPress={() => {
+                                      this.onRemoveAddressField(index, this);
+                                    }}
+                                  />
+                                </Col>
+                              </Row>
+                            ) : null,
+                          )
+                        ) : (
+                          <Text />
+                        )}
+                        <Row>
+                          <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                            {this.props.contactSettings.fields.location_grid.name}
+                          </Label>
                         </Row>
                         <Row>
-                          <Col style={styles.formIconLabelCol}>
-                            <View style={styles.formIconLabelView}>
-                              <Icon
-                                type="FontAwesome"
-                                name="globe"
-                                style={[styles.formIcon, { opacity: 0 }]}
-                              />
-                            </View>
-                          </Col>
                           <Col>
                             <Selectize
                               ref={(selectize) => {
-                                peopleGroupsSelectizeRef = selectize;
+                                geonamesSelectizeRef = selectize;
                               }}
                               itemId="value"
-                              items={this.state.peopleGroups}
-                              selectedItems={this.getSelectizeItems(
-                                this.state.contact.people_groups,
-                                this.state.peopleGroups,
-                              )}
+                              items={this.state.foundGeonames}
+                              selectedItems={[]}
                               textInputProps={{
-                                placeholder: i18n.t('global.selectPeopleGroups'),
+                                placeholder: i18n.t('contactDetailScreen.selectLocations'),
                               }}
                               renderRow={(id, onPress, item) => (
                                 <TouchableOpacity
@@ -5835,6 +6144,9 @@ class ContactDetailScreen extends React.Component {
                               )}
                               filterOnKey="name"
                               inputContainerStyle={styles.selectizeField}
+                              textInputProps={{
+                                onChangeText: this.searchLocationsDelayed,
+                              }}
                             />
                           </Col>
                         </Row>
@@ -6015,13 +6327,7 @@ ContactDetailScreen.propTypes = {
     code: PropTypes.any,
     message: PropTypes.any,
   }),
-  newComment: PropTypes.shape({
-    ID: PropTypes.string,
-    author: PropTypes.string,
-    content: PropTypes.string,
-    date: PropTypes.string,
-    gravatar: PropTypes.string,
-  }),
+  newComment: PropTypes.bool,
   contactsReducerError: PropTypes.shape({
     code: PropTypes.any,
     message: PropTypes.any,
@@ -6152,6 +6458,7 @@ ContactDetailScreen.defaultProps = {
   isConnected: null,
   contactSettings: null,
   isRTL: false,
+  questionnaires: [],
 };
 
 const mapStateToProps = (state) => ({
@@ -6174,6 +6481,7 @@ const mapStateToProps = (state) => ({
   groupsList: state.groupsReducer.groups,
   contactsList: state.contactsReducer.contacts,
   isRTL: state.i18nReducer.isRTL,
+  questionnaires: state.questionnaireReducer.questionnaires,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -6186,20 +6494,23 @@ const mapDispatchToProps = (dispatch) => ({
   getByIdEnd: () => {
     dispatch(getByIdEnd());
   },
-  getComments: (domain, token, contactId, offset, limit) => {
-    dispatch(getCommentsByContact(domain, token, contactId, offset, limit));
+  getComments: (domain, token, contactId, pagination) => {
+    dispatch(getCommentsByContact(domain, token, contactId, pagination));
   },
   saveComment: (domain, token, contactId, commentData) => {
     dispatch(saveComment(domain, token, contactId, commentData));
   },
-  getActivities: (domain, token, contactId, offset, limit) => {
-    dispatch(getActivitiesByContact(domain, token, contactId, offset, limit));
+  getActivities: (domain, token, contactId, pagination) => {
+    dispatch(getActivitiesByContact(domain, token, contactId, pagination));
   },
   endSaveContact: () => {
     dispatch(saveEnd());
   },
   searchLocations: (domain, token, queryText) => {
     dispatch(searchLocations(domain, token, queryText));
+  },
+  deleteComment: (domain, token, contactId, commentId) => {
+    dispatch(deleteComment(domain, token, contactId, commentId));
   },
 });
 

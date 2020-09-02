@@ -7,18 +7,16 @@ const initialState = {
   error: null,
   groups: [],
   group: null,
-  comments: null,
-  newComment: null,
-  activities: null,
-  geonames: [],
-  peopleGroups: null,
-  totalComments: null,
-  totalActivities: null,
+  comments: {},
+  newComment: false,
+  activities: {},
   loadingComments: false,
   loadingActivities: false,
   saved: false,
   settings: null,
   offset: 0,
+  peopleGroups: null,
+  geonames: [],
   foundGeonames: [],
   geonamesLastModifiedDate: null,
   geonamesLength: 0,
@@ -28,14 +26,10 @@ export default function groupsReducer(state = initialState, action) {
   let newState = {
     ...state,
     group: null,
-    peopleGroups: null,
-    newComment: null,
+    newComment: false,
     error: null,
-    comments: null,
-    totalComments: null,
-    activities: null,
-    totalActivities: null,
     saved: false,
+    peopleGroups: null,
     foundGeonames: null,
   };
   const entities = new Html5Entities();
@@ -144,7 +138,7 @@ export default function groupsReducer(state = initialState, action) {
                     // assigned-to property
                     mappedGroup[key] = {
                       key: parseInt(value['assigned-to'].replace('user-', '')),
-                      label: value['display']
+                      label: value['display'],
                     };
                   }
                   return;
@@ -158,16 +152,18 @@ export default function groupsReducer(state = initialState, action) {
                           // connection
                           let object = {
                             value: valueTwo.ID.toString(),
-                            name: entities.decode(valueTwo.post_title)
+                            name: entities.decode(valueTwo.post_title),
                           };
                           // groups
-                          if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {
+                          if (
+                            Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')
+                          ) {
                             object = {
                               ...object,
                               baptized_member_count: valueTwo.baptized_member_count,
                             };
                           }
-                          if(Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                          if (Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
                             object = {
                               ...object,
                               member_count: valueTwo.member_count,
@@ -305,7 +301,7 @@ export default function groupsReducer(state = initialState, action) {
                   // assigned-to property
                   mappedGroup[key] = {
                     key: parseInt(value['assigned-to'].replace('user-', '')),
-                    label: value['display']
+                    label: value['display'],
                   };
                 }
                 return;
@@ -319,16 +315,18 @@ export default function groupsReducer(state = initialState, action) {
                         // connection
                         let object = {
                           value: valueTwo.ID.toString(),
-                          name: entities.decode(valueTwo.post_title)
+                          name: entities.decode(valueTwo.post_title),
                         };
                         // groups
-                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {
+                        if (
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')
+                        ) {
                           object = {
                             ...object,
                             baptized_member_count: valueTwo.baptized_member_count,
                           };
                         }
-                        if(Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
                           object = {
                             ...object,
                             member_count: valueTwo.member_count,
@@ -613,7 +611,7 @@ export default function groupsReducer(state = initialState, action) {
                   // assigned-to property
                   mappedGroup[key] = {
                     key: parseInt(value['assigned-to'].replace('user-', '')),
-                    label: value['display']
+                    label: value['display'],
                   };
                 }
                 return;
@@ -627,16 +625,18 @@ export default function groupsReducer(state = initialState, action) {
                         // connection
                         let object = {
                           value: valueTwo.ID.toString(),
-                          name: entities.decode(valueTwo.post_title)
+                          name: entities.decode(valueTwo.post_title),
                         };
                         // groups
-                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {
+                        if (
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')
+                        ) {
                           object = {
                             ...object,
                             baptized_member_count: valueTwo.baptized_member_count,
                           };
                         }
-                        if(Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
                           object = {
                             ...object,
                             member_count: valueTwo.member_count,
@@ -726,47 +726,36 @@ export default function groupsReducer(state = initialState, action) {
         loadingComments: true,
       };
     case actions.GROUPS_GET_COMMENTS_SUCCESS: {
-      const { comments, total, offline } = action;
-      if (offline) {
-        const date = new Date();
-        const year = date.getUTCFullYear();
-        let day = date.getUTCDate();
-        let month = date.getUTCMonth() + 1;
-        if (day < 10) day = `0${day}`;
-        if (month < 10) month = `0${month}`;
-        const curDay = `${year}-${month}-${day}`;
-        let hours = date.getUTCHours();
-        let minutes = date.getUTCMinutes();
-        let seconds = date.getUTCSeconds();
-        if (hours < 10) hours = `0${hours}`;
-        if (minutes < 10) minutes = `0${minutes}`;
-        if (seconds < 10) seconds = `0${seconds}`;
-        const currentDate = `${curDay}T${hours}:${minutes}:${seconds}Z`;
-        return {
-          ...newState,
-          comments: comments.map((comment) => ({
-            ID: comment.ID,
-            author: comment.author,
-            date: currentDate,
-            content: comment.comment,
-            gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
-            contactId: comment.contactId,
-          })),
-          totalComments: total,
-          loadingComments: false,
-        };
+      const { comments, groupId, pagination } = action;
+
+      let mappedComments = comments.map((comment) => ({
+        ID: comment.comment_ID,
+        date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
+        author: comment.comment_author,
+        // Decode HTML strings
+        content: entities.decode(comment.comment_content),
+        gravatar: comment.gravatar,
+      }));
+      // Check previous records existence; Only retrieve previous data if pagination its active (offset > 0)
+      let previousComments = [];
+      if (pagination.offset > 0 && newState.comments[groupId]) {
+        previousComments = newState.comments[groupId].data;
       }
+
+      let newCommentState = {
+        ...newState.comments,
+        [groupId]: {
+          data: [...previousComments, ...mappedComments],
+          pagination: {
+            ...pagination,
+            offset: pagination.offset + pagination.limit, // UPDATE OFFSET
+          },
+        },
+      };
+
       return {
         ...newState,
-        comments: comments.map((comment) => ({
-          ID: comment.comment_ID,
-          date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
-          author: comment.comment_author,
-          // Decode HTML strings
-          content: entities.decode(comment.comment_content),
-          gravatar: comment.gravatar,
-        })),
-        totalComments: total,
+        comments: newCommentState,
         loadingComments: false,
       };
     }
@@ -782,49 +771,98 @@ export default function groupsReducer(state = initialState, action) {
         loadingComments: true,
       };
     case actions.GROUPS_SAVE_COMMENT_SUCCESS: {
-      const { comment, offline } = action;
+      const { comment, groupId, offline } = action;
+      let newComment;
+
+      // Check previous records/pagination existence and return it
+      let previousComments = [],
+        pagination = {
+          limit: 10,
+          offset: 0,
+          total: 0,
+        };
+      if (newState.comments[groupId]) {
+        previousComments = newState.comments[groupId].data;
+        pagination = newState.comments[groupId].pagination;
+      }
+      // Search existent comment with ID (update comment)
+      let foundCommentIndex = previousComments.findIndex(
+        (previousComment) => previousComment.ID === (comment.ID ? comment.ID : comment.comment_ID),
+      );
+
       if (offline) {
-        const date = new Date();
-        const year = date.getUTCFullYear();
-        let day = date.getUTCDate();
-        let month = date.getUTCMonth() + 1;
-        if (day < 10) day = `0${day}`;
-        if (month < 10) month = `0${month}`;
-        const curDay = `${year}-${month}-${day}`;
-        let hours = date.getUTCHours();
-        let minutes = date.getUTCMinutes();
-        let seconds = date.getUTCSeconds();
-        if (hours < 10) hours = `0${hours}`;
-        if (minutes < 10) minutes = `0${minutes}`;
-        if (seconds < 10) seconds = `0${seconds}`;
-        const currentDate = `${curDay}T${hours}:${minutes}:${seconds}Z`;
-        newState = {
-          ...newState,
-          newComment: {
+        if (foundCommentIndex > -1) {
+          newComment = {
+            ...comment,
+          };
+        } else {
+          const date = new Date();
+          const year = date.getUTCFullYear();
+          let day = date.getUTCDate();
+          let month = date.getUTCMonth() + 1;
+          if (day < 10) day = `0${day}`;
+          if (month < 10) month = `0${month}`;
+          const curDay = `${year}-${month}-${day}`;
+          let hours = date.getUTCHours();
+          let minutes = date.getUTCMinutes();
+          let seconds = date.getUTCSeconds();
+          if (hours < 10) hours = `0${hours}`;
+          if (minutes < 10) minutes = `0${minutes}`;
+          if (seconds < 10) seconds = `0${seconds}`;
+          const currentDate = `${curDay}T${hours}:${minutes}:${seconds}Z`;
+          newComment = {
             ID: comment.ID,
             author: comment.author,
             date: currentDate,
             content: comment.comment,
             gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
-            contactID: comment.contactID,
-          },
-          loadingComments: false,
-        };
+          };
+        }
       } else {
-        newState = {
-          ...newState,
-          newComment: {
+        if (foundCommentIndex > -1) {
+          newComment = {
+            ...comment,
+          };
+        } else {
+          newComment = {
             ID: comment.comment_ID,
             author: comment.comment_author,
             date: `${comment.comment_date_gmt.replace(' ', 'T')}Z`,
             // Decode HTML strings
             content: entities.decode(comment.comment_content),
             gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
+          };
+        }
+      }
+
+      let newCommentState;
+      if (foundCommentIndex > -1) {
+        previousComments[foundCommentIndex] = newComment;
+
+        newCommentState = {
+          ...newState.comments,
+          [groupId]: {
+            data: [...previousComments],
+            pagination,
           },
-          loadingComments: false,
+        };
+      } else {
+        // Add new comment
+        newCommentState = {
+          ...newState.comments,
+          [groupId]: {
+            data: [...previousComments, newComment],
+            pagination,
+          },
         };
       }
-      return newState;
+
+      return {
+        ...newState,
+        comments: newCommentState,
+        newComment: true,
+        loadingComments: false,
+      };
     }
     case actions.GROUPS_SAVE_COMMENT_FAILURE:
       return {
@@ -837,25 +875,45 @@ export default function groupsReducer(state = initialState, action) {
         ...newState,
         loadingActivities: true,
       };
-    case actions.GROUPS_GET_ACTIVITIES_SUCCESS:
+    case actions.GROUPS_GET_ACTIVITIES_SUCCESS: {
+      const { activities, groupId, pagination } = action;
+
+      let mappedActivities = activities.map((activity) => ({
+        ID: activity.histid,
+        date: new Date(parseInt(activity.hist_time, 10) * 1000).toISOString(),
+        // Decode HTML strings
+        object_note: entities.decode(activity.object_note),
+        gravatar:
+          activity.gravatar === ''
+            ? 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g'
+            : activity.gravatar,
+        meta_id: activity.meta_id,
+        meta_key: activity.meta_key,
+        name: activity.name,
+      }));
+      // Check previous records existence; Only retrieve previous data if pagination its active (offset > 0)
+      let previousActivities = [];
+      if (pagination.offset > 0 && newState.activities[groupId]) {
+        previousActivities = newState.activities[groupId].data;
+      }
+
+      let newActivityState = {
+        ...newState.activities,
+        [groupId]: {
+          data: [...previousActivities, ...mappedActivities],
+          pagination: {
+            ...pagination,
+            offset: pagination.offset + pagination.limit, // UPDATE OFFSET
+          },
+        },
+      };
+
       return {
         ...newState,
-        activities: action.activities.map((activity) => ({
-          ID: activity.histid,
-          date: new Date(parseInt(activity.hist_time, 10) * 1000).toISOString(),
-          // Decode HTML strings
-          object_note: entities.decode(activity.object_note),
-          gravatar:
-            activity.gravatar === ''
-              ? 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g'
-              : activity.gravatar,
-          meta_id: activity.meta_id,
-          meta_key: activity.meta_key,
-          name: activity.name,
-        })),
-        totalActivities: action.total,
+        activities: newActivityState,
         loadingActivities: false,
       };
+    }
     case actions.GROUPS_GET_ACTIVITIES_FAILURE:
       return {
         ...newState,
@@ -978,6 +1036,54 @@ export default function groupsReducer(state = initialState, action) {
         error: action.error,
       };
     }
+    case actions.GROUPS_DELETE_COMMENT_START:
+      return {
+        ...newState,
+        loadingComments: true,
+      };
+    case actions.GROUPS_DELETE_COMMENT_SUCCESS: {
+      const { groupId, commentId } = action;
+
+      // Check previous records/pagination existence and return it
+      let previousComments = [],
+        pagination = {
+          limit: 10,
+          offset: 0,
+          total: 0,
+        };
+      if (newState.comments[groupId]) {
+        previousComments = newState.comments[groupId].data;
+        pagination = newState.comments[groupId].pagination;
+      }
+      // Search existent comment with ID (update comment)
+      let foundCommentIndex = previousComments.findIndex(
+        (previousComment) => previousComment.ID === commentId,
+      );
+
+      // Delete comment
+      if (foundCommentIndex > -1) {
+        previousComments.splice(foundCommentIndex, 1);
+      }
+
+      let newCommentState = {
+        ...newState.comments,
+        [groupId]: {
+          data: [...previousComments],
+          pagination,
+        },
+      };
+      return {
+        ...newState,
+        comments: newCommentState,
+        loadingComments: false,
+      };
+    }
+    case actions.CONTACTS_DELETE_COMMENT_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+        loadingComments: false,
+      };
     default:
       return newState;
   }

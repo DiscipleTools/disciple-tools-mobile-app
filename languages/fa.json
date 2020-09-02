@@ -25,7 +25,9 @@
     "membersActivity": "اعضا",
     "moreFields": "زمینه های بیشتر",
     "nameRequired": "نام لازم است",
-    "close": "نزدیک"
+    "close": "نزدیک",
+    "editComment": "",
+    "deleteComment": ""
   },
   "appRestart": {
     "message": "برنامه برای اجرای پیکربندی زیر مجدداً راه اندازی می شود:",
