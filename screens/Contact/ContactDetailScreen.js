@@ -181,6 +181,8 @@ const styles = StyleSheet.create({
   },
   formIconLabelView: {
     alignItems: 'center',
+    marginTop: 'auto',
+    marginBottom: 'auto',
   },
   formFieldMargin: {
     marginTop: 20,
@@ -1388,6 +1390,7 @@ class ContactDetailScreen extends React.Component {
       unmodifedAssignedToContacts,
     } = this.state;
     this.setState((state) => {
+      // Set correct index in Tab position according to view mode and current tab position
       const indexFix =
         state.tabViewConfig.index > 1 && !state.onlyView
           ? state.tabViewConfig.index + 1

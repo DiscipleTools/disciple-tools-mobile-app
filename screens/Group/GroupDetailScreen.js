@@ -1420,6 +1420,7 @@ class GroupDetailScreen extends React.Component {
       unmodifedAssignedToContacts,
     } = this.state;
     this.setState((state) => {
+      // Set correct index in Tab position according to view mode and current tab position
       const indexFix =
         state.tabViewConfig.index > 1 && !state.onlyView
           ? state.tabViewConfig.index + 1
@@ -2553,10 +2554,15 @@ class GroupDetailScreen extends React.Component {
                   selectedValue={this.state.group.group_status}
                   onValueChange={this.setGroupStatus}
                   style={[
-                    styles.statusFieldContainer,
                     Platform.select({
-                      default: { borderColor: this.state.groupStatusBackgroundColor },
-                      ios: {},
+                      android: {
+                        color: '#ffffff',
+                        backgroundColor: this.state.groupStatusBackgroundColor,
+                        width: '100%',
+                      },
+                      default: {
+                        backgroundColor: this.state.groupStatusBackgroundColor,
+                      },
                     }),
                     this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                   ]}
@@ -2801,8 +2807,7 @@ class GroupDetailScreen extends React.Component {
                       }}>
                       <View
                         style={{
-                          paddingVertical: 8,
-                          paddingHorizontal: 10,
+                          flexDirection: 'row',
                         }}>
                         <Text
                           style={{
