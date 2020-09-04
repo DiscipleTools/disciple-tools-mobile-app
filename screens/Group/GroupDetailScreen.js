@@ -749,15 +749,6 @@ class GroupDetailScreen extends React.Component {
       unmodifiedGroup: prevState.unmodifiedGroup,
     };
 
-    // NEW COMMENT
-    if (newComment) {
-      newState.comments.unshift(newComment);
-      newState = {
-        ...newState,
-        comments: newState.comments,
-      };
-    }
-
     // SAVE / GET BY ID
     if (group) {
       newState = {

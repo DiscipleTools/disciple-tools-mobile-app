@@ -617,14 +617,6 @@ class ContactDetailScreen extends React.Component {
       unmodifiedContact: prevState.unmodifiedContact,
     };
 
-    // NEW COMMENT
-    if (newComment) {
-      newState.comments.unshift(newComment);
-      newState = {
-        ...newState,
-        comments: newState.comments,
-      };
-    }
     // SAVE / GET BY ID
     if (contact) {
       newState = {
