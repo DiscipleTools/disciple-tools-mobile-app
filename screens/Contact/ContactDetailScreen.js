@@ -2576,7 +2576,7 @@ class ContactDetailScreen extends React.Component {
                 <Icon
                   android="md-add"
                   ios="ios-add"
-                  style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
+                  style={[styles.addRemoveIcons, styles.addIcons]}
                   onPress={this.onAddEmailField}
                 />
               </Col>
@@ -2633,7 +2633,7 @@ class ContactDetailScreen extends React.Component {
                 <Icon
                   android="md-add"
                   ios="ios-add"
-                  style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
+                  style={[styles.addRemoveIcons, styles.addIcons]}
                   onPress={this.onAddSocialMediaField}
                 />
               </Col>
@@ -2701,7 +2701,7 @@ class ContactDetailScreen extends React.Component {
                 <Icon
                   android="md-add"
                   ios="ios-add"
-                  style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
+                  style={[styles.addRemoveIcons, styles.addIcons]}
                   onPress={this.onAddAddressField}
                 />
               </Col>
@@ -5759,7 +5759,7 @@ class ContactDetailScreen extends React.Component {
                 </View>
               </View>
             ) : (
-              <KeyboardAwareScrollView /*_editable_*/
+              <KeyboardAwareScrollView /*_addnew_ _editable_*/
                 enableAutomaticScroll
                 enableOnAndroid
                 keyboardOpeningTime={0}
@@ -5775,7 +5775,7 @@ class ContactDetailScreen extends React.Component {
                         </View>
                       </Col>
                       <Col>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                        <Label style={[styles.formLabel, {}]}>
                           {i18n.t('contactDetailScreen.fullName.label')}
                         </Label>
                       </Col>
@@ -5808,11 +5808,15 @@ class ContactDetailScreen extends React.Component {
                     <Row style={styles.formFieldMargin}>
                       <Col style={styles.formIconLabelCol}>
                         <View style={styles.formIconLabelView}>
-                          <Icon type="FontAwesome" name="phone" style={styles.formIcon} />
+                          <Icon
+                            type="FontAwesome"
+                            name="phone"
+                            style={[styles.formIcon, { fontSize: 20 }]}
+                          />
                         </View>
                       </Col>
                       <Col>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                        <Label style={[styles.formLabel, {}]}>
                           {i18n.t('contactDetailScreen.phoneNumber')}
                         </Label>
                       </Col>
@@ -5831,7 +5835,7 @@ class ContactDetailScreen extends React.Component {
                         </View>
                       </Col>
                       <Col>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                        <Label style={[styles.formLabel, {}]}>
                           {this.props.contactSettings.channels.email.label}
                         </Label>
                       </Col>
@@ -5846,7 +5850,11 @@ class ContactDetailScreen extends React.Component {
                     <Row style={styles.formFieldMargin}>
                       <Col style={styles.formIconLabelCol}>
                         <View style={styles.formIconLabelView}>
-                          <Icon type="Ionicons" name="chatboxes" style={styles.formIcon} />
+                          <Icon
+                            type="Ionicons"
+                            name="chatboxes"
+                            style={[styles.formIcon, { fontSize: 25 }]}
+                          />
                         </View>
                       </Col>
                       <Col>
@@ -5858,7 +5866,7 @@ class ContactDetailScreen extends React.Component {
                         <Icon
                           android="md-add"
                           ios="ios-add"
-                          style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
+                          style={[styles.addRemoveIcons, styles.addIcons]}
                           onPress={this.onAddSocialMediaField}
                         />
                       </Col>
@@ -5926,7 +5934,7 @@ class ContactDetailScreen extends React.Component {
                         </View>
                       </Col>
                       <Col>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                        <Label style={[styles.formLabel, {}]}>
                           {i18n.t('contactDetailScreen.initialComment')}
                         </Label>
                       </Col>
@@ -5961,7 +5969,7 @@ class ContactDetailScreen extends React.Component {
                               <Icon
                                 type="MaterialCommunityIcons"
                                 name="gender-male-female"
-                                style={styles.formIcon}
+                                style={[styles.formIcon, { fontSize: 25 }]}
                               />
                             </View>
                           </Col>
@@ -6004,7 +6012,7 @@ class ContactDetailScreen extends React.Component {
                               <Icon
                                 type="FontAwesome5"
                                 name="user-clock"
-                                style={[styles.formIcon, { fontSize: 40 }]}
+                                style={[styles.formIcon, { fontSize: 20 }]}
                               />
                             </View>
                           </Col>
@@ -6131,7 +6139,7 @@ class ContactDetailScreen extends React.Component {
                             <Icon
                               android="md-add"
                               ios="ios-add"
-                              style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
+                              style={[styles.addRemoveIcons, styles.addIcons]}
                               onPress={this.onAddAddressField}
                             />
                           </Col>

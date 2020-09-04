@@ -267,6 +267,7 @@ const styles = StyleSheet.create({
   },
   formIconLabelCol: {
     width: 35,
+    marginRight: 10,
   },
   formIconLabelView: {
     alignItems: 'center',
@@ -2927,7 +2928,7 @@ class GroupDetailScreen extends React.Component {
                 <Icon
                   android="md-add"
                   ios="ios-add"
-                  style={[styles.formIcon, { fontSize: 30, marginRight: 0 }]}
+                  style={[styles.addRemoveIcons, styles.addIcons]}
                   onPress={this.onAddAddressField}
                 />
               </Col>
@@ -2955,7 +2956,7 @@ class GroupDetailScreen extends React.Component {
                       <Icon
                         android="md-remove"
                         ios="ios-remove"
-                        style={[styles.formIcon, styles.addRemoveIcons, { marginRight: 10 }]}
+                        style={[styles.addRemoveIcons, styles.removeIcons]}
                         onPress={() => {
                           this.onRemoveAddressField(index, this);
                         }}
@@ -4738,18 +4739,18 @@ class GroupDetailScreen extends React.Component {
                 </View>
               </View>
             ) : (
-              <ScrollView>
+              <ScrollView /*_addnew_ _editable_*/>
                 {!this.props.isConnected && this.offlineBarRender()}
                 <View style={styles.formContainer}>
                   <Grid>
-                    <Row>
+                    <Row style={styles.formRow}>
                       <Col style={styles.formIconLabelCol}>
                         <View style={styles.formIconLabelView}>
                           <Icon type="FontAwesome" name="users" style={styles.formIcon} />
                         </View>
                       </Col>
                       <Col>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                        <Label style={[styles.formLabel, {}]}>
                           {i18n.t('groupDetailScreen.groupName.label')}
                         </Label>
                       </Col>
@@ -4779,14 +4780,14 @@ class GroupDetailScreen extends React.Component {
                         {i18n.t('groupDetailScreen.groupName.error')}
                       </Text>
                     ) : null}
-                    <Row>
+                    <Row style={styles.formRow}>
                       <Col style={styles.formIconLabelCol}>
                         <View style={styles.formIconLabelView}>
                           <Image source={groupTypeIcon} style={styles.groupIcons} />
                         </View>
                       </Col>
                       <Col>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                        <Label style={[styles.formLabel, {}]}>
                           {this.props.groupSettings.fields.group_type.name}
                         </Label>
                       </Col>
