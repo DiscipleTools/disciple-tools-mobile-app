@@ -4,6 +4,12 @@ const tintColorRGBA = 'rgba(54,93,134,1)';
 const grayLight = '#eeeeee';
 const gray = '#cccccc';
 const grayDark = '#666666';
+const colorYes = '#2ABE1E';
+const colorNo = '#C70039';
+const colorWait = tintColor;
+const addRemoveIcons = tintColor;
+const addIcons = 'green';
+const removeIcons = 'red';
 
 export default {
   primary: tintColor,
@@ -26,4 +32,7 @@ export default {
   warningText: '#ffa0aa',
   noticeBackground: tintColor,
   noticeText: '#fff',
+  colorYes: '#2ABE1E',
+  colorNo: '#C70039',
+  colorWait: tintColor,
 };
