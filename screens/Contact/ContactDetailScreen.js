@@ -3144,7 +3144,9 @@ class ContactDetailScreen extends React.Component {
                   <Col>
                     <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                       {this.state.contact.baptism_date
-                        ? moment(new Date(this.state.contact.baptism_date * 1000)).format('LL')
+                        ? moment(new Date(this.state.contact.baptism_date * 1000))
+                            .utc()
+                            .format('LL')
                         : ''}
                     </Text>
                   </Col>

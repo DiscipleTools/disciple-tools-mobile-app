@@ -2459,7 +2459,9 @@ class GroupDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.start_date
-                      ? moment(new Date(this.state.group.start_date * 1000)).format('LL')
+                      ? moment(new Date(this.state.group.start_date * 1000))
+                          .utc()
+                          .format('LL')
                       : ''}
                   </Text>
                 </Col>
@@ -2481,7 +2483,9 @@ class GroupDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.church_start_date
-                      ? moment(new Date(this.state.group.church_start_date * 1000)).format('LL')
+                      ? moment(new Date(this.state.group.church_start_date * 1000))
+                          .utc()
+                          .format('LL')
                       : ''}
                   </Text>
                 </Col>
@@ -2503,7 +2507,9 @@ class GroupDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.end_date
-                      ? moment(new Date(this.state.group.end_date * 1000)).format('LL')
+                      ? moment(new Date(this.state.group.end_date * 1000))
+                          .utc()
+                          .format('LL')
                       : ''}
                   </Text>
                 </Col>
