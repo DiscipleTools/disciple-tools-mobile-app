@@ -22,7 +22,7 @@ import { CheckBox } from 'react-native-elements';
 
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
-import { getAll } from '../../store/actions/contacts.actions';
+import { getAll, updatePrevious } from '../../store/actions/contacts.actions';
 import dtIcon from '../../assets/images/dt-icon.png';
 import i18n from '../../languages';
 import sharedTools from '../../shared';
@@ -250,70 +250,55 @@ class ContactsScreen extends React.Component {
     />
   );
 
-  onRefresh = (pagination = false) => {
-    if (pagination) {
-      this.setState(
-        (prevState) => ({
-          offset: prevState.offset + prevState.limit,
-          filtered: false,
-          search: '',
-          searchBarFilter: {
-            ...prevState.searchBarFilter,
-            toggle: false,
-            currentFilter: '',
-          },
-        }),
-        () => {
-          this.props.getAllContacts(
-            this.props.userData.domain,
-            this.props.userData.token,
-            this.state.offset,
-            this.state.limit,
-            this.state.sort,
-          );
-        },
-      );
-    } else {
-      this.setState(
-        (prevState) => ({
-          offset: 0,
-          filtered: false,
-          search: '',
-          searchBarFilter: {
-            ...prevState.searchBarFilter,
-            toggle: false,
-            currentFilter: '',
-          },
-        }),
-        () => {
-          this.props.getAllContacts(
-            this.props.userData.domain,
-            this.props.userData.token,
-            this.state.offset,
-            this.state.limit,
-            this.state.sort,
-          );
-        },
-      );
-    }
+  onRefresh = (increasePagination = false, returnFromDetail = false) => {
+    let newState = {
+      offset: increasePagination ? this.state.offset + this.state.limit : 0,
+      filtered: false,
+      search: '',
+      searchBarFilter: {
+        ...this.state.searchBarFilter,
+        toggle: false,
+        currentFilter: '',
+      },
+    };
+    this.setState(
+      (prevState) => {
+        return returnFromDetail ? prevState : newState;
+      },
+      () => {
+        this.props.getAllContacts(
+          this.props.userData.domain,
+          this.props.userData.token,
+          this.state.offset,
+          this.state.limit,
+          this.state.sort,
+        );
+      },
+    );
   };
 
   goToContactDetailScreen = (contactData = null) => {
     if (contactData) {
+      this.props.updatePrevious([
+        {
+          contactId: parseInt(contactData.ID),
+          onlyView: true,
+          contactName: contactData.title,
+        },
+      ]);
       // Detail
       this.props.navigation.navigate('ContactDetail', {
         contactId: contactData.ID,
         onlyView: true,
         contactName: contactData.title,
-        previousList: [],
-        onGoBack: () => this.onRefresh(),
+        onGoBack: () => this.onRefresh(false, true),
       });
     } else {
+      this.props.updatePrevious([]);
       // Create
       this.props.navigation.navigate('ContactDetail', {
-        previousList: [],
         onlyView: true,
-        onGoBack: () => this.onRefresh(),
+        onGoBack: () => this.onRefresh(false, true),
       });
     }
   };
@@ -774,6 +759,9 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getAllContacts: (domain, token, offset, limit, sort) => {
     dispatch(getAll(domain, token, offset, limit, sort));
+  },
+  updatePrevious: (previousContacts) => {
+    dispatch(updatePrevious(previousContacts));
   },
 });
 

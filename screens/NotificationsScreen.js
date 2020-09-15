@@ -292,7 +292,6 @@ class NotificationsScreen extends React.Component {
       [`${prop}Id`]: entityId,
       onlyView: true,
       [`${prop}Name`]: entityTitle,
-      previousList: [],
       fromNotificationView: true,
     });
   };

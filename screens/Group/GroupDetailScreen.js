@@ -43,7 +43,10 @@ import {
   getByIdEnd,
   searchLocations,
   deleteComment,
+  loadingFalse,
+  updatePrevious,
 } from '../../store/actions/groups.actions';
+import { updatePrevious as updatePreviousContacts } from '../../store/actions/contacts.actions';
 import Colors from '../../constants/Colors';
 import statusIcon from '../../assets/icons/status.png';
 import baptismIcon from '../../assets/icons/baptism.png';
@@ -617,9 +620,7 @@ class GroupDetailScreen extends React.Component {
           <Icon
             type="Feather"
             name="arrow-left"
-            onPress={() => {
-              params.backButtonTap();
-            }}
+            onPress={params.backButtonTap}
             style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }]}
           />
         );
@@ -673,12 +674,22 @@ class GroupDetailScreen extends React.Component {
   componentDidMount() {
     const { navigation } = this.props;
     this.onLoad();
-    navigation.setParams({
-      onEnableEdit: this.onEnableEdit,
-      onDisableEdit: this.onDisableEdit,
-      onSaveGroup: this.onSaveGroup,
-      backButtonTap: this.backButtonTap,
-    });
+
+    let params = {
+      onEnableEdit: this.onEnableEdit.bind(this),
+      onDisableEdit: this.onDisableEdit.bind(this),
+      onSaveGroup: this.onSaveGroup.bind(this),
+      backButtonTap: this.backButtonTap.bind(this),
+    };
+    // Add afterBack param to execute 'parents' functions (ContactsView, NotificationsView)
+    if (!navigation.state.params.afterBack) {
+      params = {
+        ...params,
+        afterBack: this.afterBack.bind(this),
+      };
+    }
+    navigation.setParams(params);
+
     keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       this.keyboardDidShow.bind(this),
@@ -688,28 +699,15 @@ class GroupDetailScreen extends React.Component {
       this.keyboardDidHide.bind(this),
     );
     focusListener = navigation.addListener('didFocus', () => {
-      if (
-        typeof this.props.navigation.state.params.groupId !== 'undefined' &&
-        this.state.loadedLocal
-      ) {
-        this.setState(
-          {
-            loading: false,
-          },
-          () => {
-            this.onRefresh(this.props.navigation.state.params.groupId);
-          },
-        );
+      //Focus on 'detail mode' (going back or open detail view)
+      if (typeof this.props.navigation.state.params.groupId !== 'undefined') {
+        this.props.loadingFalse();
+        this.onRefresh(this.props.navigation.state.params.groupId, true);
       }
     });
+    // Android bottom back button listener
     hardwareBackPressListener = BackHandler.addEventListener('hardwareBackPress', () => {
-      sharedTools.onlyExecuteLastCall(
-        null,
-        () => {
-          this.backButtonTap();
-        },
-        1000,
-      );
+      this.props.navigation.state.params.backButtonTap();
       return true;
     });
   }
@@ -733,7 +731,6 @@ class GroupDetailScreen extends React.Component {
       loadingComments,
       activities,
       loadingActivities,
-      newComment,
       foundGeonames,
       isConnected,
     } = nextProps;
@@ -759,9 +756,6 @@ class GroupDetailScreen extends React.Component {
           ...group,
         },
       };
-      if (newState.group.oldID) {
-        delete newState.group.oldID;
-      }
       if (newState.group.group_status) {
         newState = {
           ...newState,
@@ -1097,15 +1091,30 @@ class GroupDetailScreen extends React.Component {
       // Update group data only in these conditions:
       // Same group created (offline/online)
       // Same group updated (offline/online)
-      // Sane offline group created in DB (AutoID to DBID)
+      // Same offline group created in DB (AutoID to DBID)
       if (
         (typeof group.ID !== 'undefined' && typeof this.state.group.ID === 'undefined') ||
-        group.ID.toString() === this.state.group.ID.toString() ||
-        (group.oldID && group.oldID.toString() === this.state.group.ID.toString())
+        (group.ID && group.ID.toString() === this.state.group.ID.toString()) ||
+        (group.oldID && group.oldID === this.state.group.ID.toString())
       ) {
         // Highlight Updates -> Compare this.state.group with group and show differences
         navigation.setParams({ groupName: group.title, groupId: group.ID });
         this.getGroupByIdEnd();
+        // Add group to 'previousGroups' array on creation
+        if (
+          !this.props.previousGroups.find(
+            (previousGroup) => parseInt(previousGroup.groupId) === parseInt(group.ID),
+          )
+        ) {
+          this.props.updatePrevious([
+            ...this.props.previousGroups,
+            {
+              groupId: parseInt(group.ID),
+              onlyView: true,
+              groupName: group.title,
+            },
+          ]);
+        }
       }
     }
 
@@ -1117,8 +1126,8 @@ class GroupDetailScreen extends React.Component {
       // Sane offline group created in DB (AutoID to DBID)
       if (
         (typeof group.ID !== 'undefined' && typeof this.state.group.ID === 'undefined') ||
-        group.ID.toString() === this.state.group.ID.toString() ||
-        (group.oldID && group.oldID.toString() === this.state.group.ID.toString())
+        (group.ID && group.ID.toString() === this.state.group.ID.toString()) ||
+        (group.oldID && group.oldID === this.state.group.ID.toString())
       ) {
         // Highlight Updates -> Compare this.state.contact with contact and show differences
         this.onRefreshCommentsActivities(group.ID, true);
@@ -1152,11 +1161,12 @@ class GroupDetailScreen extends React.Component {
         3000,
       );
     }
-
+    // Fix to press back button in comments tab
     if (prevProps.navigation.state.params.hideTabBar !== navigation.state.params.hideTabBar) {
       if (!navigation.state.params.hideTabBar && this.state.executingBack) {
         setTimeout(() => {
-          this.executeBack(navigation, navigation.state.params);
+          navigation.goBack(null);
+          navigation.state.params.afterBack();
         }, 1000);
       }
     }
@@ -1189,15 +1199,35 @@ class GroupDetailScreen extends React.Component {
         },
       );
     } else {
-      this.executeBack(navigation, params);
+      //Fix to returning using Android back button! -> goBack(null)
+      navigation.goBack(null);
+      navigation.state.params.afterBack();
     }
   };
 
-  executeBack = (navigation, params) => {
-    if (params.previousList.length > 0) {
-      navigation.goBack();
-      params.onBackFromSameScreen();
-    } else if (params.fromNotificationView) {
+  afterBack = () => {
+    let { navigation } = this.props;
+    let newPreviousGroups = [...this.props.previousGroups];
+    newPreviousGroups.pop();
+    this.props.updatePrevious(newPreviousGroups);
+    if (newPreviousGroups.length > 0) {
+      this.props.loadingFalse();
+      let currentParams = {
+        ...newPreviousGroups[newPreviousGroups.length - 1],
+      };
+      this.setState({
+        group: {
+          ID: currentParams.groupId,
+          title: currentParams.groupName,
+          group_type: 'group',
+        },
+        groupStatusBackgroundColor: '#ffffff',
+      });
+      navigation.setParams({
+        ...currentParams,
+      });
+      this.onRefresh(currentParams.groupId, true);
+    } else if (navigation.state.params.fromNotificationView) {
       const resetAction = StackActions.reset({
         index: 0,
         actions: [NavigationActions.navigate({ routeName: 'GroupList' })],
@@ -1207,8 +1237,8 @@ class GroupDetailScreen extends React.Component {
     } else {
       navigation.goBack();
       // Prevent error when view loaded from ContactDetailScreen.js
-      if (typeof params.onGoBack === 'function') {
-        params.onGoBack();
+      if (typeof navigation.state.params.onGoBack === 'function') {
+        navigation.state.params.onGoBack();
       }
     }
   };
@@ -1267,9 +1297,11 @@ class GroupDetailScreen extends React.Component {
     });
   };
 
-  onRefresh(groupId) {
-    this.getGroupById(groupId);
-    this.onRefreshCommentsActivities(groupId, true);
+  onRefresh(groupId, forceRefresh = false) {
+    if (!self.state.loading || forceRefresh) {
+      this.getGroupById(groupId);
+      this.onRefreshCommentsActivities(groupId, true);
+    }
   }
 
   onRefreshCommentsActivities(groupId, resetPagination = false) {
@@ -1421,7 +1453,9 @@ class GroupDetailScreen extends React.Component {
     this.setState((state) => {
       // Set correct index in Tab position according to view mode and current tab position
       const indexFix =
-        state.tabViewConfig.index > 1 && !state.onlyView ? state.tabViewConfig.index + 1 : state.tabViewConfig.index;
+        state.tabViewConfig.index > 1 && !state.onlyView
+          ? state.tabViewConfig.index + 1
+          : state.tabViewConfig.index;
       return {
         onlyView: true,
         group: {
@@ -1558,15 +1592,18 @@ class GroupDetailScreen extends React.Component {
     </View>
   );
 
-  goToContactDetailScreen = (contactID) => {
+  goToContactDetailScreen = (contactID, name) => {
+    this.props.updatePreviousContacts([
+      {
+        contactId: contactID,
+        onlyView: true,
+        contactName: name,
+      },
+    ]);
     this.props.navigation.navigate('ContactDetail', {
       contactId: contactID,
       onlyView: true,
-      contactName: safeFind(
-        this.state.usersContacts.find((user) => user.value === contactID),
-        'name',
-      ),
-      previousList: [],
+      contactName: name,
     });
   };
 
@@ -1894,20 +1931,22 @@ class GroupDetailScreen extends React.Component {
   };
 
   onSetLeader = (selectedValue) => {
-    let leadersListCopy = (this.state.group.leaders) ? [...this.state.group.leaders.values] : [];
-    const foundLeaderIndex = leadersListCopy.findIndex((leader) => leader.value === selectedValue.value);
+    let leadersListCopy = this.state.group.leaders ? [...this.state.group.leaders.values] : [];
+    const foundLeaderIndex = leadersListCopy.findIndex(
+      (leader) => leader.value === selectedValue.value,
+    );
     if (foundLeaderIndex > -1) {
       // 3 Remove leader 'deletion'
-      if(leadersListCopy[foundLeaderIndex].delete) {
+      if (leadersListCopy[foundLeaderIndex].delete) {
         leadersListCopy[foundLeaderIndex] = {
           ...selectedValue,
-          delete: false
+          delete: false,
         };
       } else {
         // 2 Delete leader
         leadersListCopy[foundLeaderIndex] = {
           ...selectedValue,
-          delete: true
+          delete: true,
         };
       }
     } else {
@@ -2157,33 +2196,34 @@ class GroupDetailScreen extends React.Component {
       (user) => user.key === this.state.group.assigned_to.key,
     );
     return (
-      <Text
-        style={[
-          { marginTop: 'auto', marginBottom: 'auto', fontSize: 15 },
-          this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-        ]}>
-        {foundUser.label}
-      </Text>
+      <TouchableOpacity
+        activeOpacity={0.5}
+        onPress={() => this.goToContactDetailScreen(foundUser.key, foundUser.label)}>
+        <Text style={styles.linkingText}>{foundUser.label}</Text>
+      </TouchableOpacity>
     );
   };
 
-  goToGroupDetailScreen = (groupData) => {
-    const { navigation } = this.props;
+  goToGroupDetailScreen = (groupID, name) => {
+    let { navigation } = this.props;
     /* eslint-disable */
-    const { params } = navigation.state;
-    const { ID, title } = this.state.group;
-    params.previousList.push({
-      groupId: ID,
-      onlyView: true,
-      groupName: title,
-    });
+    // Save new group in 'previousGroups' array
+    if (!this.props.previousGroups.find((previousGroup) => previousGroup.groupId === groupID)) {
+      // Add contact to 'previousGroups' array on creation
+      this.props.updatePrevious([
+        ...this.props.previousGroups,
+        {
+          groupId: groupID,
+          onlyView: true,
+          groupName: name,
+        },
+      ]);
+    }
     navigation.push('GroupDetail', {
-      ...params, // previousList, onGoBack()
-      groupId: groupData.value,
+      groupId: groupID,
       onlyView: true,
-      groupName: groupData.name,
-      backButtonTap: this.backButtonTap.bind(this),
-      onBackFromSameScreen: this.onBackFromSameScreen.bind(this),
+      groupName: name,
+      afterBack: () => this.afterBack(),
     });
     /* eslint-enable */
   };
@@ -2345,7 +2385,7 @@ class GroupDetailScreen extends React.Component {
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value)}>
+                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
                           <Text style={styles.linkingText}>{contact.name}</Text>
                         </TouchableOpacity>
                       ))
@@ -3350,7 +3390,7 @@ class GroupDetailScreen extends React.Component {
           </Col>
           <Col>
             <TouchableOpacity
-              onPress={() => this.goToContactDetailScreen(membersGroup.value)}
+              onPress={() => this.goToContactDetailScreen(membersGroup.value, membersGroup.name)}
               key={membersGroup.value}
               style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               <Text
@@ -3366,44 +3406,44 @@ class GroupDetailScreen extends React.Component {
           </Col>
         </Grid>
       ) : (
-          <Grid style={{ marginTop: 10, marginBottom: 10 }}>
-            <Col style={{ width: 20 }}>
-              <TouchableOpacity
-                onPress={() => this.onSetLeader(membersGroup)}
-                key={membersGroup.value}>
-                <Image
-                  source={footprint}
-                  style={[
-                    styles.membersLeaderIcon,
-                    this.state.group.leaders &&
-                      this.state.group.leaders.values.find(
-                        (leader) => leader.value === membersGroup.value && !leader.delete,
-                      )
-                      ? styles.membersIconActive
-                      : styles.membersIconInactive,
-                  ]}
-                />
-              </TouchableOpacity>
-            </Col>
-            <Col>
-              <TouchableOpacity
-                onPress={() => this.goToContactDetailScreen(membersGroup.value)}
-                key={membersGroup.value}
-                style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                <Text style={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: 15, padding: 5 }}>
-                  {membersGroup.name}
-                </Text>
-              </TouchableOpacity>
-            </Col>
-            <Col style={{ width: 20 }}>
-              <TouchableOpacity
-                onPress={() => this.onRemoveMember(membersGroup)}
-                key={membersGroup.value}>
-                <Icon type="MaterialCommunityIcons" name="close" style={styles.membersCloseIcon} />
-              </TouchableOpacity>
-            </Col>
-          </Grid>
-        )}
+        <Grid style={{ marginTop: 10, marginBottom: 10 }}>
+          <Col style={{ width: 20 }}>
+            <TouchableOpacity
+              onPress={() => this.onSetLeader(membersGroup)}
+              key={membersGroup.value}>
+              <Image
+                source={footprint}
+                style={[
+                  styles.membersLeaderIcon,
+                  this.state.group.leaders &&
+                  this.state.group.leaders.values.find(
+                    (leader) => leader.value === membersGroup.value && !leader.delete,
+                  )
+                    ? styles.membersIconActive
+                    : styles.membersIconInactive,
+                ]}
+              />
+            </TouchableOpacity>
+          </Col>
+          <Col>
+            <TouchableOpacity
+              onPress={() => this.goToContactDetailScreen(membersGroup.value, membersGroup.name)}
+              key={membersGroup.value}
+              style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: 15, padding: 5 }}>
+                {membersGroup.name}
+              </Text>
+            </TouchableOpacity>
+          </Col>
+          <Col style={{ width: 20 }}>
+            <TouchableOpacity
+              onPress={() => this.onRemoveMember(membersGroup)}
+              key={membersGroup.value}>
+              <Icon type="MaterialCommunityIcons" name="close" style={styles.membersCloseIcon} />
+            </TouchableOpacity>
+          </Col>
+        </Grid>
+      )}
     </View>
   );
 
@@ -3550,7 +3590,9 @@ class GroupDetailScreen extends React.Component {
                       <Col
                         key={index.toString()}
                         style={styles.groupCircleContainer}
-                        onPress={() => this.goToGroupDetailScreen(parentGroup)}>
+                        onPress={() =>
+                          this.goToGroupDetailScreen(parentGroup.value, parentGroup.name)
+                        }>
                         {Object.prototype.hasOwnProperty.call(parentGroup, 'is_church') &&
                         parentGroup.is_church ? (
                           <Image source={groupCircleIcon} style={styles.groupCircle} />
@@ -3595,7 +3637,7 @@ class GroupDetailScreen extends React.Component {
                       <Col
                         key={index.toString()}
                         style={styles.groupCircleContainer}
-                        onPress={() => this.goToGroupDetailScreen(peerGroup)}>
+                        onPress={() => this.goToGroupDetailScreen(peerGroup.value, peerGroup.name)}>
                         {Object.prototype.hasOwnProperty.call(peerGroup, 'is_church') &&
                         peerGroup.is_church ? (
                           <Image source={groupCircleIcon} style={styles.groupCircle} />
@@ -3638,7 +3680,9 @@ class GroupDetailScreen extends React.Component {
                       <Col
                         key={index.toString()}
                         style={styles.groupCircleContainer}
-                        onPress={() => this.goToGroupDetailScreen(childGroup)}>
+                        onPress={() =>
+                          this.goToGroupDetailScreen(childGroup.value, childGroup.name)
+                        }>
                         {Object.prototype.hasOwnProperty.call(childGroup, 'is_church') &&
                         childGroup.is_church ? (
                           <Image source={groupCircleIcon} style={styles.groupCircle} />
@@ -4949,6 +4993,8 @@ const mapStateToProps = (state) => ({
   groupsList: state.groupsReducer.groups,
   contactsList: state.contactsReducer.contacts,
   isRTL: state.i18nReducer.isRTL,
+  previousGroups: state.groupsReducer.previousGroups,
+  previousContacts: state.contactsReducer.previousContacts,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -4975,6 +5021,15 @@ const mapDispatchToProps = (dispatch) => ({
   },
   deleteComment: (domain, token, groupId, commentId) => {
     dispatch(deleteComment(domain, token, groupId, commentId));
+  },
+  loadingFalse: () => {
+    dispatch(loadingFalse());
+  },
+  updatePrevious: (previousGroups) => {
+    dispatch(updatePrevious(previousGroups));
+  },
+  updatePreviousContacts: (previousContacts) => {
+    dispatch(updatePreviousContacts(previousContacts));
   },
 });
 

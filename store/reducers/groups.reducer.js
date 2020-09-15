@@ -20,6 +20,7 @@ const initialState = {
   foundGeonames: [],
   geonamesLastModifiedDate: null,
   geonamesLength: 0,
+  previousGroups: [],
 };
 
 export default function groupsReducer(state = initialState, action) {
@@ -535,12 +536,14 @@ export default function groupsReducer(state = initialState, action) {
       }
       return {
         ...newState,
+        loading: false,
       };
     }
     case actions.GROUPS_SAVE_FAILURE:
       return {
         ...newState,
         error: action.error,
+        loading: false,
       };
     case actions.GROUPS_GETBYID_START:
       return {
@@ -554,9 +557,12 @@ export default function groupsReducer(state = initialState, action) {
         const foundGroup = newState.groups.find(
           (groupItem) => groupItem.ID.toString() === group.ID,
         );
-        group = {
-          ...foundGroup,
-        };
+        // Fix to error when App try to get detail of non existing group (browsing between several groups) in OFFLINE mode
+        if (foundGroup) {
+          group = {
+            ...foundGroup,
+          };
+        }
       } else {
         const mappedGroup = {};
         // MAP GROUP TO CAN SAVE IT LATER
@@ -705,6 +711,9 @@ export default function groupsReducer(state = initialState, action) {
           newState.groups[groupIndex] = {
             ...group,
           };
+        } else {
+          // Add retrieved group to groups array (persist to OFFLINE mode)
+          newState.groups.unshift(group);
         }
       }
       newState = {
@@ -1078,12 +1087,24 @@ export default function groupsReducer(state = initialState, action) {
         loadingComments: false,
       };
     }
-    case actions.CONTACTS_DELETE_COMMENT_FAILURE:
+    case actions.GROUPS_DELETE_COMMENT_FAILURE:
       return {
         ...newState,
         error: action.error,
         loadingComments: false,
       };
+    case actions.GROUPS_LOADING_FALSE:
+      return {
+        ...newState,
+        loading: false,
+      };
+    case actions.GROUPS_UPDATE_PREVIOUS: {
+      let { previousGroups } = action;
+      return {
+        ...newState,
+        previousGroups,
+      };
+    }
     default:
       return newState;
   }

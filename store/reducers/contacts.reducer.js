@@ -15,6 +15,7 @@ const initialState = {
   saved: false,
   settings: null,
   offset: 0,
+  previousContacts: [],
 };
 
 export default function contactsReducer(state = initialState, action) {
@@ -427,12 +428,14 @@ export default function contactsReducer(state = initialState, action) {
       }
       return {
         ...newState,
+        loading: false,
       };
     }
     case actions.CONTACTS_SAVE_FAILURE:
       return {
         ...newState,
         error: action.error,
+        loading: false,
       };
     case actions.CONTACTS_GETBYID_START:
       return {
@@ -446,9 +449,12 @@ export default function contactsReducer(state = initialState, action) {
         const foundContact = newState.contacts.find(
           (contactItem) => contactItem.ID.toString() === contact.ID,
         );
-        contact = {
-          ...foundContact,
-        };
+        // Fix to error when App try to get detail of non existing contact (browsing between several contacts) in OFFLINE mode
+        if (foundContact) {
+          contact = {
+            ...foundContact,
+          };
+        }
       } else {
         const mappedContact = {};
         // MAP CONTACT TO CAN SAVE IT LATER
@@ -573,6 +579,9 @@ export default function contactsReducer(state = initialState, action) {
           newState.contacts[contactIndex] = {
             ...contact,
           };
+        } else {
+          // Add retrieved contact to contacts array (persist to OFFLINE mode)
+          newState.contacts.unshift(contact);
         }
       }
       newState = {
@@ -902,6 +911,18 @@ export default function contactsReducer(state = initialState, action) {
         error: action.error,
         loadingComments: false,
       };
+    case actions.CONTACTS_LOADING_FALSE:
+      return {
+        ...newState,
+        loading: false,
+      };
+    case actions.CONTACTS_UPDATE_PREVIOUS: {
+      let { previousContacts } = action;
+      return {
+        ...newState,
+        previousContacts,
+      };
+    }
     default:
       return newState;
   }
