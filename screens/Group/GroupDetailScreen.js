@@ -270,6 +270,7 @@ const styles = StyleSheet.create({
   },
   formIconLabelCol: {
     width: 35,
+    marginRight: 10,
   },
   formIconLabelView: {
     alignItems: 'center',
@@ -2284,6 +2285,7 @@ class GroupDetailScreen extends React.Component {
   );
 
   detailView = () => (
+    /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
@@ -2295,8 +2297,7 @@ class GroupDetailScreen extends React.Component {
                 onRefresh={() => this.onRefresh(this.state.group.ID)}
               />
             }>
-            <View // groupDetailScreen
-              style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
+            <View style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Image source={statusIcon} style={[styles.fieldsIcons, {}]} />
@@ -2494,7 +2495,9 @@ class GroupDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.start_date
-                      ? moment(new Date(this.state.group.start_date * 1000)).format('LL')
+                      ? moment(new Date(this.state.group.start_date * 1000))
+                          .utc()
+                          .format('LL')
                       : ''}
                   </Text>
                 </Col>
@@ -2516,7 +2519,9 @@ class GroupDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.church_start_date
-                      ? moment(new Date(this.state.group.church_start_date * 1000)).format('LL')
+                      ? moment(new Date(this.state.group.church_start_date * 1000))
+                          .utc()
+                          .format('LL')
                       : ''}
                   </Text>
                 </Col>
@@ -2538,7 +2543,9 @@ class GroupDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.end_date
-                      ? moment(new Date(this.state.group.end_date * 1000)).format('LL')
+                      ? moment(new Date(this.state.group.end_date * 1000))
+                          .utc()
+                          .format('LL')
                       : ''}
                   </Text>
                 </Col>
@@ -2559,8 +2566,7 @@ class GroupDetailScreen extends React.Component {
           keyboardOpeningTime={0}
           extraScrollHeight={150}
           keyboardShouldPersistTaps="handled">
-          <View // groupDetailScreen editable
-            style={styles.formContainer}>
+          <View style={styles.formContainer}>
             <Row style={[styles.formRow, { paddingTop: 15 }]}>
               <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                 <Image source={statusIcon} style={[styles.fieldsIcons, {}]} />
@@ -2960,12 +2966,7 @@ class GroupDetailScreen extends React.Component {
                 <Icon
                   android="md-add"
                   ios="ios-add"
-                  style={[
-                    styles.formIcon,
-                    styles.addRemoveIcons,
-                    styles.addIcons,
-                    { marginRight: 10 },
-                  ]}
+                  style={[styles.addRemoveIcons, styles.addIcons]}
                   onPress={this.onAddAddressField}
                 />
               </Col>
@@ -2993,12 +2994,7 @@ class GroupDetailScreen extends React.Component {
                       <Icon
                         android="md-remove"
                         ios="ios-remove"
-                        style={[
-                          styles.formIcon,
-                          styles.addRemoveIcons,
-                          styles.removeIcons,
-                          { marginRight: 10 },
-                        ]}
+                        style={[styles.addRemoveIcons, styles.removeIcons]}
                         onPress={() => {
                           this.onRemoveAddressField(index, this);
                         }}
@@ -3100,6 +3096,7 @@ class GroupDetailScreen extends React.Component {
   );
 
   progressView = () => (
+    /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
@@ -3136,17 +3133,23 @@ class GroupDetailScreen extends React.Component {
                 </Col>
               </Row>
               <View style={styles.formDivider} />
-              <Label
-                style={[styles.formLabel, { fontWeight: 'bold', marginBottom: 10, marginTop: 20 }]}>
-                {this.props.groupSettings.fields.health_metrics.name}
-              </Label>
+              <Row style={[styles.formRow, { paddingTop: 10 }]}>
+                <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                  <Icon type="MaterialCommunityIcons" name="church" style={[styles.formIcon, {}]} />
+                </Col>
+                <Col>
+                  <Label style={[styles.formLabel, { fontWeight: 'bold' }]}>
+                    {this.props.groupSettings.fields.health_metrics.name}
+                  </Label>
+                </Col>
+              </Row>
             </View>
             {this.renderHealthMilestones()}
             {this.renderCustomHealthMilestones()}
           </ScrollView>
         </View>
       ) : (
-        <KeyboardAwareScrollView
+        <KeyboardAwareScrollView /*_editable_*/
           enableAutomaticScroll
           enableOnAndroid
           keyboardOpeningTime={0}
@@ -3187,10 +3190,16 @@ class GroupDetailScreen extends React.Component {
                 </Picker>
               </Col>
             </Row>
-            <Label
-              style={[styles.formLabel, { fontWeight: 'bold', marginBottom: 10, marginTop: 20 }]}>
-              {this.props.groupSettings.fields.health_metrics.name}
-            </Label>
+            <Row style={[styles.formRow, { paddingTop: 10 }]}>
+              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                <Icon type="MaterialCommunityIcons" name="church" style={[styles.formIcon, {}]} />
+              </Col>
+              <Col>
+                <Label style={[styles.formLabel, { fontWeight: 'bold' }]}>
+                  {this.props.groupSettings.fields.health_metrics.name}
+                </Label>
+              </Col>
+            </Row>
           </View>
           {this.renderHealthMilestones()}
           {this.renderCustomHealthMilestones()}
@@ -3240,6 +3249,7 @@ class GroupDetailScreen extends React.Component {
   }
 
   commentsView = () => (
+    /*_viewable_*/
     <View style={{ flex: 1, paddingBottom: this.state.footerHeight + this.state.footerLocation }}>
       {this.state.comments.data.length == 0 &&
       this.state.activities.data.length == 0 &&
@@ -3448,6 +3458,7 @@ class GroupDetailScreen extends React.Component {
   );
 
   membersView = () => {
+    /*_viewable_*/
     return this.state.onlyView ? (
       <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
         <ScrollView
@@ -3470,7 +3481,7 @@ class GroupDetailScreen extends React.Component {
         </ScrollView>
       </View>
     ) : (
-      <KeyboardAwareScrollView
+      <KeyboardAwareScrollView /*_editable_*/
         enableAutomaticScroll
         enableOnAndroid
         keyboardOpeningTime={0}
@@ -3558,6 +3569,7 @@ class GroupDetailScreen extends React.Component {
   };
 
   groupsView = () => (
+    /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
@@ -3711,7 +3723,7 @@ class GroupDetailScreen extends React.Component {
           </ScrollView>
         </View>
       ) : (
-        <KeyboardAwareScrollView
+        <KeyboardAwareScrollView /*_editable_*/
           enableAutomaticScroll
           enableOnAndroid
           keyboardOpeningTime={0}
@@ -4769,18 +4781,18 @@ class GroupDetailScreen extends React.Component {
                 </View>
               </View>
             ) : (
-              <ScrollView>
+              <ScrollView /*_addnew_ _editable_*/>
                 {!this.props.isConnected && this.offlineBarRender()}
                 <View style={styles.formContainer}>
                   <Grid>
-                    <Row>
+                    <Row style={styles.formRow}>
                       <Col style={styles.formIconLabelCol}>
                         <View style={styles.formIconLabelView}>
                           <Icon type="FontAwesome" name="users" style={styles.formIcon} />
                         </View>
                       </Col>
                       <Col>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                        <Label style={[styles.formLabel, {}]}>
                           {i18n.t('groupDetailScreen.groupName.label')}
                         </Label>
                       </Col>
@@ -4810,14 +4822,14 @@ class GroupDetailScreen extends React.Component {
                         {i18n.t('groupDetailScreen.groupName.error')}
                       </Text>
                     ) : null}
-                    <Row>
+                    <Row style={styles.formRow}>
                       <Col style={styles.formIconLabelCol}>
                         <View style={styles.formIconLabelView}>
                           <Image source={groupTypeIcon} style={styles.groupIcons} />
                         </View>
                       </Col>
                       <Col>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                        <Label style={[styles.formLabel, {}]}>
                           {this.props.groupSettings.fields.group_type.name}
                         </Label>
                       </Col>

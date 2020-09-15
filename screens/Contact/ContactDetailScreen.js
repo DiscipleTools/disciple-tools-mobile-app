@@ -49,8 +49,8 @@ import {
   updatePrevious,
 } from '../../store/actions/contacts.actions';
 import { updatePrevious as updatePreviousGroups } from '../../store/actions/groups.actions';
-import statusIcon from '../../assets/icons/status.png';
 import Colors from '../../constants/Colors';
+import statusIcon from '../../assets/icons/status.png';
 import hasBibleIcon from '../../assets/icons/book-bookmark.png';
 import readingBibleIcon from '../../assets/icons/word.png';
 import statesBeliefIcon from '../../assets/icons/language.png';
@@ -187,8 +187,8 @@ const styles = StyleSheet.create({
     marginBottom: 'auto',
   },
   formFieldMargin: {
-    marginTop: 10,
-    marginBottom: 5,
+    marginTop: 20,
+    marginBottom: 10,
   },
   // Progress Section
   progressIcon: { height: '100%', width: '100%' },
@@ -1884,6 +1884,7 @@ class ContactDetailScreen extends React.Component {
   );
 
   detailView = () => (
+    /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
@@ -1894,8 +1895,7 @@ class ContactDetailScreen extends React.Component {
                 onRefresh={() => this.onRefresh(this.state.contact.ID)}
               />
             }>
-            <View // contactDetailScreen
-              style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
+            <View style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Image source={statusIcon} style={[styles.fieldsIcons, {}]} />
@@ -2300,14 +2300,13 @@ class ContactDetailScreen extends React.Component {
           </ScrollView>
         </View>
       ) : (
-        <KeyboardAwareScrollView
+        <KeyboardAwareScrollView /*_editable_*/
           enableAutomaticScroll
           enableOnAndroid
           keyboardOpeningTime={0}
           extraScrollHeight={150}
           keyboardShouldPersistTaps="handled">
-          <View // contactDetailScreen editable
-            style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
+          <View style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
             <Row style={[styles.formRow, { paddingTop: 15 }]}>
               <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                 <Image source={statusIcon} style={[styles.fieldsIcons, {}]} />
@@ -2614,7 +2613,7 @@ class ContactDetailScreen extends React.Component {
                 <Icon
                   android="md-add"
                   ios="ios-add"
-                  style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
+                  style={[styles.addRemoveIcons, styles.addIcons]}
                   onPress={this.onAddEmailField}
                 />
               </Col>
@@ -2675,7 +2674,7 @@ class ContactDetailScreen extends React.Component {
                 <Icon
                   android="md-add"
                   ios="ios-add"
-                  style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
+                  style={[styles.addRemoveIcons, styles.addIcons]}
                   onPress={this.onAddSocialMediaField}
                 />
               </Col>
@@ -2743,7 +2742,7 @@ class ContactDetailScreen extends React.Component {
                 <Icon
                   android="md-add"
                   ios="ios-add"
-                  style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
+                  style={[styles.addRemoveIcons, styles.addIcons]}
                   onPress={this.onAddAddressField}
                 />
               </Col>
@@ -3117,6 +3116,7 @@ class ContactDetailScreen extends React.Component {
   );
 
   progressView = () => (
+    /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
@@ -3128,7 +3128,7 @@ class ContactDetailScreen extends React.Component {
               />
             }>
             <View style={[styles.formContainer, { marginTop: 10 }]}>
-              <Row style={[styles.formRow, { paddingTop: 15 }]}>
+              <Row style={[styles.formRow, { marginBottom: 10 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Icon
                     type="MaterialCommunityIcons"
@@ -3176,7 +3176,7 @@ class ContactDetailScreen extends React.Component {
                   <Label
                     style={[
                       styles.formLabel,
-                      { fontWeight: 'bold' },
+                      { fontWeight: 'bold', marginBottom: 'auto', marginTop: 'auto' },
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.props.contactSettings.fields.milestones.name}
@@ -3194,7 +3194,9 @@ class ContactDetailScreen extends React.Component {
                   <Col>
                     <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                       {this.state.contact.baptism_date
-                        ? moment(new Date(this.state.contact.baptism_date * 1000)).format('LL')
+                        ? moment(new Date(this.state.contact.baptism_date * 1000))
+                            .utc()
+                            .format('LL')
                         : ''}
                     </Text>
                   </Col>
@@ -3209,14 +3211,14 @@ class ContactDetailScreen extends React.Component {
           </ScrollView>
         </View>
       ) : (
-        <KeyboardAwareScrollView
+        <KeyboardAwareScrollView /*_editable_*/
           enableAutomaticScroll
           enableOnAndroid
           keyboardOpeningTime={0}
           extraScrollHeight={150}
           keyboardShouldPersistTaps="handled">
           <View style={styles.formContainer}>
-            <Row style={styles.formFieldMargin}>
+            <Row style={[styles.formFieldMargin, {}]}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
                   <Icon
@@ -3257,10 +3259,14 @@ class ContactDetailScreen extends React.Component {
             </Row>
             <Row style={[styles.formRow, { paddingTop: 10 }]}>
               <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                <Icon type="Octicons" name="milestone" style={styles.formIcon} />
+                <Icon type="Octicons" name="milestone" style={[styles.formIcon, {}]} />
               </Col>
               <Col>
-                <Label style={[styles.formLabel, { fontWeight: 'bold' }]}>
+                <Label
+                  style={[
+                    styles.formLabel,
+                    { fontWeight: 'bold', marginBottom: 'auto', marginTop: 'auto' },
+                  ]}>
                   {this.props.contactSettings.fields.milestones.name}
                 </Label>
               </Col>
@@ -3343,6 +3349,7 @@ class ContactDetailScreen extends React.Component {
   }
 
   commentsView = () => (
+    /*_viewable_*/
     <View style={{ flex: 1, paddingBottom: this.state.footerHeight + this.state.footerLocation }}>
       {this.state.comments.data.length == 0 &&
       this.state.activities.data.length == 0 &&
@@ -3464,6 +3471,7 @@ class ContactDetailScreen extends React.Component {
   );
 
   connectionsView = () => (
+    /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
@@ -3682,7 +3690,7 @@ class ContactDetailScreen extends React.Component {
           </ScrollView>
         </View>
       ) : (
-        <KeyboardAwareScrollView
+        <KeyboardAwareScrollView /*_editable_*/
           enableAutomaticScroll
           enableOnAndroid
           keyboardOpeningTime={0}
@@ -5839,7 +5847,7 @@ class ContactDetailScreen extends React.Component {
                 </View>
               </View>
             ) : (
-              <KeyboardAwareScrollView
+              <KeyboardAwareScrollView /*_addnew_ _editable_*/
                 enableAutomaticScroll
                 enableOnAndroid
                 keyboardOpeningTime={0}
@@ -5888,7 +5896,11 @@ class ContactDetailScreen extends React.Component {
                     <Row style={styles.formFieldMargin}>
                       <Col style={styles.formIconLabelCol}>
                         <View style={styles.formIconLabelView}>
-                          <Icon type="FontAwesome" name="phone" style={styles.formIcon} />
+                          <Icon
+                            type="FontAwesome"
+                            name="phone"
+                            style={[styles.formIcon, { fontSize: 20 }]}
+                          />
                         </View>
                       </Col>
                       <Col>
@@ -5942,7 +5954,7 @@ class ContactDetailScreen extends React.Component {
                         <Icon
                           android="md-add"
                           ios="ios-add"
-                          style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
+                          style={[styles.addRemoveIcons, styles.addIcons]}
                           onPress={this.onAddSocialMediaField}
                         />
                       </Col>
@@ -6088,7 +6100,7 @@ class ContactDetailScreen extends React.Component {
                               <Icon
                                 type="FontAwesome5"
                                 name="user-clock"
-                                style={[[styles.formIcon, { fontSize: 20 }]]}
+                                style={[styles.formIcon, { fontSize: 20 }]}
                               />
                             </View>
                           </Col>
@@ -6215,7 +6227,7 @@ class ContactDetailScreen extends React.Component {
                             <Icon
                               android="md-add"
                               ios="ios-add"
-                              style={[styles.formIcon, styles.addRemoveIcons, styles.addIcons]}
+                              style={[styles.addRemoveIcons, styles.addIcons]}
                               onPress={this.onAddAddressField}
                             />
                           </Col>
@@ -6270,7 +6282,7 @@ class ContactDetailScreen extends React.Component {
                             </View>
                           </Col>
                           <Col>
-                            <Label style={[styles.formLabel, {}]}>
+                            <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
                               {this.props.contactSettings.fields.location_grid.name}
                             </Label>
                           </Col>
@@ -6335,7 +6347,7 @@ class ContactDetailScreen extends React.Component {
                             </View>
                           </Col>
                           <Col>
-                            <Label style={[styles.formLabel, {}]}>
+                            <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
                               {this.props.contactSettings.fields.sources.name}
                             </Label>
                           </Col>

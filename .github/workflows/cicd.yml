@@ -7,18 +7,18 @@ on:
       - development
 jobs:
   publish:
-    name: CI/CD 
+    name: CI/CD
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - uses: microsoft/variable-substitution@v1
-        with:
-          files: './app.json'
-        env:
-          expo.hooks.postPublish.0.config.authToken: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      #- uses: microsoft/variable-substitution@v1
+      #  with:
+      #    files: './app.json'
+      #  env:
+      #    expo.hooks.postPublish.0.config.authToken: ${{ secrets.SENTRY_AUTH_TOKEN }}
       - uses: microsoft/variable-substitution@v1
         with:
           files: './google-services.json'
