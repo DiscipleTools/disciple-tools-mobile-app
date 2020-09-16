@@ -224,7 +224,6 @@ const styles = StyleSheet.create({
   // Form
   formContainer: {
     paddingTop: 10,
-    paddingBottom: 10,
     paddingLeft: containerPadding,
     paddingRight: containerPadding,
   },
@@ -2374,7 +2373,11 @@ class GroupDetailScreen extends React.Component {
               </Row>
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="briefcase-account"
+                    style={styles.formIcon}
+                  />
                 </Col>
                 <Col>{this.state.group.assigned_to ? this.showAssignedUser() : null}</Col>
                 <Col style={styles.formParentLabel}>
@@ -2690,7 +2693,11 @@ class GroupDetailScreen extends React.Component {
               <Row style={styles.formFieldPadding}>
                 <Col style={styles.formIconLabelCol}>
                   <View style={styles.formIconLabelView}>
-                    <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="briefcase-account"
+                      style={styles.formIcon}
+                    />
                   </View>
                 </Col>
                 <Col>
@@ -2703,8 +2710,8 @@ class GroupDetailScreen extends React.Component {
                 <Col style={styles.formIconLabelCol}>
                   <View style={styles.formIconLabelView}>
                     <Icon
-                      type="FontAwesome"
-                      name="user-circle"
+                      type="MaterialCommunityIcons"
+                      name="briefcase-account"
                       style={[styles.formIcon, { opacity: 0 }]}
                     />
                   </View>
@@ -3135,7 +3142,7 @@ class GroupDetailScreen extends React.Component {
                 onRefresh={() => this.onRefresh(this.state.group.ID)}
               />
             }>
-            <View style={[styles.formContainer, { marginTop: 10 }]}>
+            <View style={[styles.formContainer, { marginTop: 0, paddingBottom: 0 }]}>
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Image source={groupTypeIcon} style={styles.groupIcons} />
