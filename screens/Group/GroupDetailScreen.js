@@ -1698,7 +1698,8 @@ class GroupDetailScreen extends React.Component {
         {
           // Comment and its their own comment
           Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') &&
-            commentOrActivity.author === this.props.userData.username && (
+            commentOrActivity.author.toLowerCase() ===
+              this.props.userData.username.toLowerCase() && (
               <Grid style={{ marginTop: 20 }}>
                 <Row>
                   <Row
