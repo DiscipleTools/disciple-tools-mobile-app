@@ -74,6 +74,9 @@ export const GROUPS_DELETE_COMMENT_SUCCESS = 'GROUPS_DELETE_COMMENT_SUCCESS';
 export const GROUPS_DELETE_COMMENT_RESPONSE = 'GROUPS_DELETE_COMMENT_RESPONSE';
 export const GROUPS_DELETE_COMMENT_FAILURE = 'GROUPS_DELETE_COMMENT_FAILURE';
 
+export const GROUPS_LOADING_FALSE = 'GROUPS_LOADING_FALSE';
+export const GROUPS_UPDATE_PREVIOUS = 'GROUPS_UPDATE_PREVIOUS';
+
 /**
  * Action Creators
  */
@@ -118,7 +121,7 @@ export function getCommentsByGroup(domain, token, groupId, pagination) {
     domain,
     token,
     groupId,
-    pagination
+    pagination,
   };
 }
 
@@ -154,7 +157,7 @@ export function getActivitiesByGroup(domain, token, groupId, pagination) {
     domain,
     token,
     groupId,
-    pagination
+    pagination,
   };
 }
 
@@ -190,5 +193,18 @@ export function deleteComment(domain, token, groupId, commentId) {
     token,
     groupId,
     commentId,
+  };
+}
+
+export function loadingFalse() {
+  return {
+    type: GROUPS_LOADING_FALSE,
+  };
+}
+
+export function updatePrevious(previousGroups) {
+  return {
+    type: GROUPS_UPDATE_PREVIOUS,
+    previousGroups,
   };
 }

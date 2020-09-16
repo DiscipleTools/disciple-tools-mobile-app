@@ -51,6 +51,9 @@ export const CONTACTS_DELETE_COMMENT_SUCCESS = 'CONTACTS_DELETE_COMMENT_SUCCESS'
 export const CONTACTS_DELETE_COMMENT_RESPONSE = 'CONTACTS_DELETE_COMMENT_RESPONSE';
 export const CONTACTS_DELETE_COMMENT_FAILURE = 'CONTACTS_DELETE_COMMENT_FAILURE';
 
+export const CONTACTS_LOADING_FALSE = 'CONTACTS_LOADING_FALSE';
+export const CONTACTS_UPDATE_PREVIOUS = 'CONTACTS_UPDATE_PREVIOUS';
+
 /*
  * Action Creators
  */
@@ -101,7 +104,7 @@ export function getCommentsByContact(domain, token, contactId, pagination) {
     domain,
     token,
     contactId,
-    pagination
+    pagination,
   };
 }
 
@@ -121,7 +124,7 @@ export function getActivitiesByContact(domain, token, contactId, pagination) {
     domain,
     token,
     contactId,
-    pagination
+    pagination,
   };
 }
 
@@ -140,5 +143,18 @@ export function deleteComment(domain, token, contactId, commentId) {
     token,
     contactId,
     commentId,
+  };
+}
+
+export function loadingFalse() {
+  return {
+    type: CONTACTS_LOADING_FALSE,
+  };
+}
+
+export function updatePrevious(previousContacts) {
+  return {
+    type: CONTACTS_UPDATE_PREVIOUS,
+    previousContacts,
   };
 }
