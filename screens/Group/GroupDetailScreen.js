@@ -24,6 +24,7 @@ import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Chip, Selectize } from 'react-native-material-selectize';
+import ActionButton from 'react-native-action-button';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { NavigationActions, StackActions } from 'react-navigation';
@@ -201,6 +202,10 @@ const styles = StyleSheet.create({
   time: {
     color: Colors.tintColor,
     fontSize: 10,
+  },
+  groupFABIcon: {
+    color: 'white',
+    fontSize: 20,
   },
   separator: {
     height: 1,
@@ -531,6 +536,7 @@ const initialState = {
   loadMoreActivities: false,
   showAssignedToModal: false,
   groupStatusBackgroundColor: '#ffffff',
+  renderFab: true,
   loading: false,
   tabViewConfig: {
     index: 0,
@@ -1996,93 +2002,104 @@ class GroupDetailScreen extends React.Component {
     return itemsToSave;
   };
 
-  transformGroupObject = (group) => {
+  transformGroupObject = (group, quickAction = {}) => {
     let transformedGroup = {
       ...group,
     };
-    // if property exist, get from json, otherwise, send empty array
-    if (coachesSelectizeRef) {
+    if (
+      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_scheduled') ||
+      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_postponed') ||
+      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_complete')
+    ) {
       transformedGroup = {
         ...transformedGroup,
-        coaches: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.coaches ? transformedGroup.coaches.values : [],
-            coachesSelectizeRef,
-          ),
-        },
+        ...quickAction,
       };
-    }
-    if (geonamesSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        location_grid: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.location_grid ? transformedGroup.location_grid.values : [],
-            geonamesSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (peopleGroupsSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        people_groups: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.people_groups ? transformedGroup.people_groups.values : [],
-            peopleGroupsSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (parentGroupsSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        parent_groups: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.parent_groups ? transformedGroup.parent_groups.values : [],
-            parentGroupsSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (peerGroupsSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        peer_groups: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.peer_groups ? transformedGroup.peer_groups.values : [],
-            peerGroupsSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (childGroupsSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        child_groups: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.child_groups ? transformedGroup.child_groups.values : [],
-            childGroupsSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (addMembersSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        members: {
-          values: this.getSelectizeValuesToSave(
-            this.state.unmodifiedGroup.members ? this.state.unmodifiedGroup.members.values : [],
-            null,
-            transformedGroup.members ? transformedGroup.members.values : [],
-          ),
-        },
-      };
+    } else {
+      // if property exist, get from json, otherwise, send empty array
+      if (coachesSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          coaches: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.coaches ? transformedGroup.coaches.values : [],
+              coachesSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (geonamesSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          location_grid: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.location_grid ? transformedGroup.location_grid.values : [],
+              geonamesSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (peopleGroupsSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          people_groups: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.people_groups ? transformedGroup.people_groups.values : [],
+              peopleGroupsSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (parentGroupsSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          parent_groups: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.parent_groups ? transformedGroup.parent_groups.values : [],
+              parentGroupsSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (peerGroupsSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          peer_groups: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.peer_groups ? transformedGroup.peer_groups.values : [],
+              peerGroupsSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (childGroupsSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          child_groups: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.child_groups ? transformedGroup.child_groups.values : [],
+              childGroupsSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (addMembersSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          members: {
+            values: this.getSelectizeValuesToSave(
+              this.state.unmodifiedGroup.members ? this.state.unmodifiedGroup.members.values : [],
+              null,
+              transformedGroup.members ? transformedGroup.members.values : [],
+            ),
+          },
+        };
+      }
     }
     return transformedGroup;
   };
 
-  onSaveGroup = () => {
+  onSaveGroup = (quickAction = {}) => {
     this.setState(
       {
         nameRequired: false,
@@ -2091,7 +2108,7 @@ class GroupDetailScreen extends React.Component {
         Keyboard.dismiss();
         if (this.state.group.title) {
           const { unmodifiedGroup } = this.state;
-          const group = this.transformGroupObject(this.state.group);
+          const group = this.transformGroupObject(this.state.group, quickAction);
           let groupToSave = {
             ...sharedTools.diff(unmodifiedGroup, group),
             title: this.state.group.title,
@@ -2239,6 +2256,7 @@ class GroupDetailScreen extends React.Component {
         ...prevState.tabViewConfig,
         index,
       },
+      renderFab: !(index === 2),
     }));
   };
 
@@ -4605,6 +4623,101 @@ class GroupDetailScreen extends React.Component {
     this.props.searchLocations(this.props.userData.domain, this.props.userData.token, queryText);
   };
 
+  onSaveQuickAction = (quickActionPropertyName) => {
+    let newActionValue = this.state.group[quickActionPropertyName]
+      ? parseInt(this.state.group[quickActionPropertyName], 10) + 1
+      : 1;
+    /*
+    if (this.props.isConnected) {
+      // ONLINE mode
+      this.onSaveGroup({
+        [quickActionPropertyName]: newActionValue,
+      });
+    } else {
+      // OFFLINE mode
+    }
+    */
+    var comment = '';
+    switch (quickActionPropertyName) {
+      case 'quick_button_meeting_scheduled':
+        comment = i18n.t('groupDetailScreen.fab.quick_button_meeting_scheduled');
+        break;
+      case 'quick_button_meeting_postponed':
+        comment = i18n.t('groupDetailScreen.fab.quick_button_meeting_postponed');
+        break;
+      case 'quick_button_meeting_complete':
+        comment = i18n.t('groupDetailScreen.fab.quick_button_meeting_complete');
+        break;
+      default:
+        comment = '';
+    }
+    // TODO: temporarily save a Comment until supported by D.T as an Activity w/ count
+    if (comment != '') {
+      this.props.saveComment(
+        this.props.userData.domain,
+        this.props.userData.token,
+        this.state.group.ID,
+        {
+          comment,
+        },
+      );
+      // TODO: saveComment doesn't display Toast on normal `Comments and Activities` tabView, so we mock it
+      toastSuccess.show(
+        <View>
+          <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
+        </View>,
+        3000,
+      );
+    }
+  };
+
+  /*
+  onMeetingComplete = () => {
+    // determine whether there is an existing 'meeting_complete' questionnaire,
+    // if so, proxy from Attendance to Questionnaire, else back to GroupDetails
+    var isQuestionnaireEnabled = false;
+    var q_id = null;
+    // loop thru all (active) questionnaires, and check whether 'group'->'meeting_complete' is enabled
+    this.props.questionnaires.map((questionnaire) => {
+      if (
+        questionnaire.trigger_type == 'group' &&
+        questionnaire.trigger_value == 'meeting_complete'
+      ) {
+        isQuestionnaireEnabled = true;
+        q_id = questionnaire.id;
+      }
+    });
+    /*
+    this.props.navigation.navigate(
+      NavigationActions.navigate({
+        routeName: 'Attendance',
+        action: NavigationActions.navigate({
+          routeName: 'Attendance',
+          params: {
+            userData: this.props.userData,
+            group: this.state.group,
+            q_id,
+          },
+        }),
+      }),
+    );
+    this.props.navigation.navigate(
+      NavigationActions.navigate({
+        routeName: 'Questionnaire',
+        action: NavigationActions.navigate({
+          routeName: 'Question',
+          params: {
+            userData: this.props.userData,
+            group: this.state.group,
+            title: this.state.group.title,
+            q_id,
+          },
+        }),
+      }),
+    );
+  };
+  */
+
   render() {
     const successToast = (
       <Toast
@@ -4668,6 +4781,82 @@ class GroupDetailScreen extends React.Component {
                     onIndexChange={this.tabChanged}
                     initialLayout={{ width: windowWidth }}
                   />
+                  {this.state.renderFab && (
+                    <ActionButton
+                      buttonColor={Colors.primaryRGBA}
+                      renderIcon={(active) =>
+                        active ? (
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="close"
+                            style={{ color: 'white', fontSize: 22 }}
+                          />
+                        ) : (
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="comment-plus"
+                            style={{ color: 'white', fontSize: 25 }}
+                          />
+                        )
+                      }
+                      degrees={0}
+                      activeOpacity={0}
+                      bgColor="rgba(0,0,0,0.5)"
+                      nativeFeedbackRippleColor="rgba(0,0,0,0)">
+                      <ActionButton.Item
+                        buttonColor={Colors.colorWait}
+                        //title={this.props.groupSettings.fields.quick_button_meeting_scheduled.name}
+                        title={i18n.t('groupDetailScreen.fab.quick_button_meeting_scheduled')}
+                        onPress={() => {
+                          this.onSaveQuickAction('quick_button_meeting_scheduled');
+                        }}
+                        size={40}
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                        textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                        textContainerStyle={{ height: 'auto' }}>
+                        <Icon
+                          type="MaterialCommunityIcons"
+                          name="calendar-plus"
+                          style={styles.groupFABIcon}
+                        />
+                      </ActionButton.Item>
+                      <ActionButton.Item
+                        buttonColor={Colors.colorYes}
+                        //title={this.props.groupSettings.fields.quick_button_meeting_complete.name}
+                        title={i18n.t('groupDetailScreen.fab.quick_button_meeting_complete')}
+                        onPress={() => {
+                          //this.onMeetingComplete();
+                          this.onSaveQuickAction('quick_button_meeting_complete');
+                        }}
+                        size={40}
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                        textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                        textContainerStyle={{ height: 'auto' }}>
+                        <Icon
+                          type="MaterialCommunityIcons"
+                          name="calendar-check"
+                          style={styles.groupFABIcon}
+                        />
+                      </ActionButton.Item>
+                      <ActionButton.Item
+                        buttonColor={Colors.colorNo}
+                        //title={this.props.groupSettings.fields.quick_button_meeting_postponed.name}
+                        title={i18n.t('groupDetailScreen.fab.quick_button_meeting_postponed')}
+                        onPress={() => {
+                          this.onSaveQuickAction('quick_button_meeting_postponed');
+                        }}
+                        size={40}
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                        textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                        textContainerStyle={{ height: 'auto' }}>
+                        <Icon
+                          type="MaterialCommunityIcons"
+                          name="calendar-minus"
+                          style={styles.groupFABIcon}
+                        />
+                      </ActionButton.Item>
+                    </ActionButton>
+                  )}
                   {this.state.commentDialog.toggle ? (
                     <BlurView
                       tint="dark"
