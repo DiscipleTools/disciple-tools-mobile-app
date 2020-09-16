@@ -13,7 +13,6 @@ function* sendRequest(url, data) {
       message: 'Unable to process the request. Please try again later.',
     },
   };
-
   const request = yield fetch(url, data)
     .then((response) => {
       if (response.status >= 200 && response.status < 300) {

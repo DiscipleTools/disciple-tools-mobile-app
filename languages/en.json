@@ -123,6 +123,11 @@
     "groupName": {
       "label": "Group Name",
       "error": "Name is required"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "Meeting Scheduled",
+      "quick_button_meeting_postponed": "Meeting Postponed",
+      "quick_button_meeting_complete": "Meeting Complete"
     }
   },
   "notificationsScreen": {

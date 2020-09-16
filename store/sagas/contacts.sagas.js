@@ -136,10 +136,9 @@ export function* save({ domain, token, contactData }) {
           ...jsonData,
           assigned_to: {
             key: assignedToId,
-            label: usersList.find((user) => user.key === assignedToId).label
-          }
+            label: usersList.find((user) => user.key === assignedToId).label,
+          },
         };
-
       }
       yield put({
         type: actions.CONTACTS_SAVE_SUCCESS,
@@ -211,7 +210,9 @@ export function* saveComment({ domain, token, contactId, commentData }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments/${commentData.ID ? commentData.ID : ''}`,
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/comments/${
+        commentData.ID ? commentData.ID : ''
+      }`,
       data: {
         method: 'POST',
         headers: {
@@ -221,7 +222,7 @@ export function* saveComment({ domain, token, contactId, commentData }) {
         body: JSON.stringify({
           comment: commentData.ID ? commentData.content : commentData.comment,
           comment_type: 'comment',
-          ID: commentData.ID ? commentData.ID : undefined
+          ID: commentData.ID ? commentData.ID : undefined,
         }),
       },
       isConnected,
@@ -238,7 +239,7 @@ export function* saveComment({ domain, token, contactId, commentData }) {
         yield put({
           type: actions.CONTACTS_SAVE_COMMENT_SUCCESS,
           comment: commentData.ID ? commentData : jsonData,
-          contactId
+          contactId,
         });
       } else {
         yield put({
@@ -301,8 +302,8 @@ export function* getCommentsByContact({ domain, token, contactId, pagination }) 
         contactId: contactId,
         pagination: {
           ...pagination,
-          total: jsonData.total
-        }
+          total: jsonData.total,
+        },
       });
     } else {
       yield put({
@@ -358,8 +359,8 @@ export function* getActivitiesByContact({ domain, token, contactId, pagination }
           contactId: contactId,
           pagination: {
             ...pagination,
-            total: jsonData.total
-          }
+            total: jsonData.total,
+          },
         });
       } else {
         yield put({
@@ -430,7 +431,6 @@ export function* getSettings({ domain, token }) {
 }
 
 export function* deleteComment({ domain, token, contactId, commentId }) {
-
   const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
 
   yield put({ type: actions.CONTACTS_DELETE_COMMENT_START });
@@ -460,7 +460,7 @@ export function* deleteComment({ domain, token, contactId, commentId }) {
         yield put({
           type: actions.CONTACTS_DELETE_COMMENT_SUCCESS,
           contactId,
-          commentId
+          commentId,
         });
       } else {
         yield put({
@@ -475,7 +475,7 @@ export function* deleteComment({ domain, token, contactId, commentId }) {
       yield put({
         type: actions.CONTACTS_DELETE_COMMENT_SUCCESS,
         contactId,
-        commentId
+        commentId,
       });
     }
   } catch (error) {
@@ -487,7 +487,6 @@ export function* deleteComment({ domain, token, contactId, commentId }) {
       },
     });
   }
-
 }
 
 export default function* contactsSaga() {
@@ -499,6 +498,6 @@ export default function* contactsSaga() {
     takeEvery(actions.CONTACTS_SAVE_COMMENT, saveComment),
     takeEvery(actions.CONTACTS_GET_ACTIVITIES, getActivitiesByContact),
     takeEvery(actions.CONTACTS_GET_SETTINGS, getSettings),
-    takeEvery(actions.CONTACTS_DELETE_COMMENT, deleteComment)
+    takeEvery(actions.CONTACTS_DELETE_COMMENT, deleteComment),
   ]);
 }

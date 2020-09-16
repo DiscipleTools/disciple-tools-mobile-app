@@ -35,4 +35,7 @@ export default {
   colorYes: '#2ABE1E',
   colorNo: '#C70039',
   colorWait: tintColor,
+  addRemoveIcons: tintColor,
+  addIcons: 'green',
+  removeIcons: 'red',
 };

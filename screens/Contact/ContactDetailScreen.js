@@ -17,7 +17,6 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
 } from 'react-native';
-
 import { connect } from 'react-redux';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
@@ -46,7 +45,10 @@ import {
   getActivitiesByContact,
   saveEnd,
   deleteComment,
+  loadingFalse,
+  updatePrevious,
 } from '../../store/actions/contacts.actions';
+import { updatePrevious as updatePreviousGroups } from '../../store/actions/groups.actions';
 import Colors from '../../constants/Colors';
 import statusIcon from '../../assets/icons/status.png';
 import hasBibleIcon from '../../assets/icons/book-bookmark.png';
@@ -490,9 +492,7 @@ class ContactDetailScreen extends React.Component {
           <Icon
             type="Feather"
             name="arrow-left"
-            onPress={() => {
-              params.backButtonTap();
-            }}
+            onPress={params.backButtonTap}
             style={{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }}
           />
         );
@@ -545,12 +545,22 @@ class ContactDetailScreen extends React.Component {
   componentDidMount() {
     const { navigation } = this.props;
     this.onLoad();
-    navigation.setParams({
-      onEnableEdit: this.onEnableEdit,
-      onDisableEdit: this.onDisableEdit,
-      onSaveContact: this.onSaveContact,
-      backButtonTap: this.backButtonTap,
-    });
+
+    let params = {
+      onEnableEdit: this.onEnableEdit.bind(this),
+      onDisableEdit: this.onDisableEdit.bind(this),
+      onSaveContact: this.onSaveContact.bind(this),
+      backButtonTap: this.backButtonTap.bind(this),
+    };
+    // Add afterBack param to execute 'parents' functions (ContactsView, NotificationsView)
+    if (!navigation.state.params.afterBack) {
+      params = {
+        ...params,
+        afterBack: this.afterBack.bind(this),
+      };
+    }
+    navigation.setParams(params);
+
     keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       this.keyboardDidShow.bind(this),
@@ -560,28 +570,15 @@ class ContactDetailScreen extends React.Component {
       this.keyboardDidHide.bind(this),
     );
     focusListener = navigation.addListener('didFocus', () => {
-      if (
-        typeof this.props.navigation.state.params.contactId !== 'undefined' &&
-        this.state.loadedLocal
-      ) {
-        this.setState(
-          {
-            loading: false,
-          },
-          () => {
-            this.onRefresh(this.props.navigation.state.params.contactId);
-          },
-        );
+      //Focus on 'detail mode' (going back or open detail view)
+      if (typeof this.props.navigation.state.params.contactId !== 'undefined') {
+        this.props.loadingFalse();
+        this.onRefresh(this.props.navigation.state.params.contactId, true);
       }
     });
+    // Android bottom back button listener
     hardwareBackPressListener = BackHandler.addEventListener('hardwareBackPress', () => {
-      sharedTools.onlyExecuteLastCall(
-        null,
-        () => {
-          this.backButtonTap();
-        },
-        1000,
-      );
+      this.props.navigation.state.params.backButtonTap();
       return true;
     });
   }
@@ -606,7 +603,6 @@ class ContactDetailScreen extends React.Component {
       activities,
       loadingActivities,
       foundGeonames,
-      newComment,
     } = nextProps;
     let newState = {
       ...prevState,
@@ -630,9 +626,6 @@ class ContactDetailScreen extends React.Component {
           ...contact,
         },
       };
-      if (newState.contact.oldID) {
-        delete newState.contact.oldID;
-      }
       if (newState.contact.overall_status) {
         newState = {
           ...newState,
@@ -1049,7 +1042,7 @@ class ContactDetailScreen extends React.Component {
       // Same offline contact created in DB (AutoID to DBID)
       if (
         (typeof contact.ID !== 'undefined' && typeof this.state.contact.ID === 'undefined') ||
-        contact.ID.toString() === this.state.contact.ID.toString() ||
+        (contact.ID && contact.ID.toString() === this.state.contact.ID.toString()) ||
         (contact.oldID && contact.oldID === this.state.contact.ID.toString())
       ) {
         // Highlight Updates -> Compare this.state.contact with contact and show differences
@@ -1061,6 +1054,21 @@ class ContactDetailScreen extends React.Component {
           this.onSaveComment();
         }
         this.getContactByIdEnd();
+        // Add contact to 'previousContacts' array on creation
+        if (
+          !this.props.previousContacts.find(
+            (previousContact) => previousContact.contactId === parseInt(contact.ID),
+          )
+        ) {
+          this.props.updatePrevious([
+            ...this.props.previousContacts,
+            {
+              contactId: parseInt(contact.ID),
+              onlyView: true,
+              contactName: contact.title,
+            },
+          ]);
+        }
       }
     }
 
@@ -1072,9 +1080,10 @@ class ContactDetailScreen extends React.Component {
       // Same offline contact created in DB (AutoID to DBID)
       if (
         (typeof contact.ID !== 'undefined' && typeof this.state.contact.ID === 'undefined') ||
-        contact.ID.toString() === this.state.contact.ID.toString() ||
+        (contact.ID && contact.ID.toString() === this.state.contact.ID.toString()) ||
         (contact.oldID && contact.oldID === this.state.contact.ID.toString())
       ) {
+        // Highlight Updates -> Compare this.state.group with group and show differences
         this.onRefreshCommentsActivities(contact.ID, true);
         toastSuccess.show(
           <View>
@@ -1107,11 +1116,12 @@ class ContactDetailScreen extends React.Component {
         3000,
       );
     }
-
+    // Fix to press back button in comments tab
     if (prevProps.navigation.state.params.hideTabBar !== navigation.state.params.hideTabBar) {
       if (!navigation.state.params.hideTabBar && this.state.executingBack) {
         setTimeout(() => {
-          this.executeBack(navigation, navigation.state.params);
+          navigation.goBack(null);
+          navigation.state.params.afterBack();
         }, 1000);
       }
     }
@@ -1200,15 +1210,42 @@ class ContactDetailScreen extends React.Component {
         },
       );
     } else {
-      this.executeBack(navigation, params);
+      //Fix to returning using Android back button! -> goBack(null)
+      navigation.goBack(null);
+      navigation.state.params.afterBack();
     }
   };
 
-  executeBack = (navigation, params) => {
-    if (params.previousList.length > 0) {
-      navigation.goBack();
-      params.onBackFromSameScreen();
-    } else if (params.fromNotificationView) {
+  afterBack = () => {
+    let { navigation } = this.props;
+    let newPreviousContacts = [...this.props.previousContacts];
+    newPreviousContacts.pop();
+    this.props.updatePrevious(newPreviousContacts);
+    if (newPreviousContacts.length > 0) {
+      this.props.loadingFalse();
+      let currentParams = {
+        ...newPreviousContacts[newPreviousContacts.length - 1],
+      };
+      this.setState({
+        contact: {
+          ID: currentParams.contactId,
+          title: currentParams.contactName,
+          sources: {
+            values: [
+              {
+                value: 'personal',
+              },
+            ],
+          },
+          seeker_path: 'none',
+        },
+        overallStatusBackgroundColor: '#ffffff',
+      });
+      navigation.setParams({
+        ...currentParams,
+      });
+      this.onRefresh(currentParams.contactId, true);
+    } else if (navigation.state.params.fromNotificationView) {
       const resetAction = StackActions.reset({
         index: 0,
         actions: [NavigationActions.navigate({ routeName: 'ContactList' })],
@@ -1216,16 +1253,15 @@ class ContactDetailScreen extends React.Component {
       navigation.dispatch(resetAction);
       navigation.navigate('NotificationList');
     } else {
-      navigation.goBack();
       // Prevent error when view loaded from GroupDetailScreen.js
-      if (typeof params.onGoBack === 'function') {
-        params.onGoBack();
+      if (typeof navigation.state.params.onGoBack === 'function') {
+        navigation.state.params.onGoBack();
       }
     }
   };
 
-  onRefresh(contactId) {
-    if (!self.state.loading) {
+  onRefresh(contactId, forceRefresh = false) {
+    if (!self.state.loading || forceRefresh) {
       self.getContactById(contactId);
       self.onRefreshCommentsActivities(contactId, true);
     }
@@ -1246,6 +1282,7 @@ class ContactDetailScreen extends React.Component {
         users: JSON.parse(users).map((user) => ({
           key: user.ID,
           label: user.name,
+          contactID: parseInt(user.contact_id),
         })),
       };
     }
@@ -1766,54 +1803,47 @@ class ContactDetailScreen extends React.Component {
     </View>
   );
 
-  onBackFromSameScreen = () => {
-    const { navigation } = this.props;
-    const { params } = navigation.state;
-    const newPreviousList = params.previousList;
-    const previousParams = newPreviousList[newPreviousList.length - 1];
-    newPreviousList.pop();
-    navigation.setParams({
-      ...previousParams,
-      previousList: newPreviousList,
-    });
-    this.setState(initialState, () => {
-      this.onLoad();
-    });
-  };
-
-  goToContactDetailScreen = (contactID) => {
-    const { navigation } = this.props;
+  goToContactDetailScreen = (contactID, name) => {
+    let { navigation } = this.props;
     /* eslint-disable */
-    const { params } = navigation.state;
-    const { ID, title } = this.state.contact;
-    params.previousList.push({
-      contactId: ID,
-      onlyView: true,
-      contactName: title,
-    });
+    // Save new contact in 'previousContacts' array
+    if (
+      !this.props.previousContacts.find(
+        (previousContact) => previousContact.contactId === contactID,
+      )
+    ) {
+      // Add contact to 'previousContacts' array on creation
+      this.props.updatePrevious([
+        ...this.props.previousContacts,
+        {
+          contactId: contactID,
+          onlyView: true,
+          contactName: name,
+        },
+      ]);
+    }
     navigation.push('ContactDetail', {
-      ...params, // previousList, onGoBack()
       contactId: contactID,
       onlyView: true,
-      contactName: safeFind(
-        this.state.usersContacts.find((user) => user.value === contactID),
-        'name',
-      ),
-      backButtonTap: this.backButtonTap.bind(this),
-      onBackFromSameScreen: this.onBackFromSameScreen.bind(this),
+      contactName: name,
+      afterBack: () => this.afterBack(),
     });
     /* eslint-enable */
   };
 
-  goToGroupDetailScreen = (groupID) => {
+  goToGroupDetailScreen = (groupID, name) => {
+    // Clean 'previousContacts' array
+    this.props.updatePreviousGroups([
+      {
+        groupId: groupID,
+        onlyView: true,
+        groupName: name,
+      },
+    ]);
     this.props.navigation.navigate('GroupDetail', {
       groupId: groupID,
       onlyView: true,
-      groupName: safeFind(
-        this.state.groups.find((groupItem) => groupItem.value === groupID),
-        'name',
-      ),
-      previousList: [],
+      groupName: name,
     });
   };
 
@@ -1916,7 +1946,11 @@ class ContactDetailScreen extends React.Component {
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
                 </Col>
-                <Col>{this.state.contact.assigned_to ? this.showAssignedUser() : null}</Col>
+                <Col>
+                  {this.state.contact.assigned_to
+                    ? this.renderContactLink(this.state.contact.assigned_to)
+                    : null}
+                </Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={styles.formLabel}>
                     {this.props.contactSettings.fields.assigned_to.name}
@@ -1943,7 +1977,7 @@ class ContactDetailScreen extends React.Component {
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value)}>
+                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
                           <Text style={styles.linkingText}>{contact.name}</Text>
                         </TouchableOpacity>
                       ))
@@ -1999,7 +2033,7 @@ class ContactDetailScreen extends React.Component {
                   <Icon
                     type="FontAwesome"
                     name="envelope"
-                    style={[styles.formIcon, { marginTop: 0 }]}
+                    style={[styles.formIcon, { marginTop: 0, fontSize: 20 }]}
                   />
                 </Col>
                 <Col>
@@ -2036,7 +2070,7 @@ class ContactDetailScreen extends React.Component {
                   <Icon
                     type="Ionicons"
                     name="chatboxes"
-                    style={[styles.formIcon, { marginTop: 0 }]}
+                    style={[styles.formIcon, { marginTop: 0, fontSize: 25 }]}
                   />
                 </Col>
                 <Col>
@@ -2083,7 +2117,7 @@ class ContactDetailScreen extends React.Component {
                     })}
                 </Col>
                 <Col style={styles.formParentLabel}>
-                  <Label style={[styles.formLabel, { marginTop: 5 }]}>
+                  <Label style={[styles.formLabel, {}]}>
                     {i18n.t('contactDetailScreen.socialMedia')}
                   </Label>
                 </Col>
@@ -2184,7 +2218,11 @@ class ContactDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome5" name="user-clock" style={styles.formIcon} />
+                  <Icon
+                    type="FontAwesome5"
+                    name="user-clock"
+                    style={[styles.formIcon, { fontSize: 20 }]}
+                  />
                 </Col>
                 <Col>
                   <Text
@@ -2207,7 +2245,7 @@ class ContactDetailScreen extends React.Component {
                   <Icon
                     type="MaterialCommunityIcons"
                     name="gender-male-female"
-                    style={styles.formIcon}
+                    style={[styles.formIcon, { fontSize: 25 }]}
                   />
                 </Col>
                 <Col>
@@ -2559,7 +2597,11 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="envelope" style={styles.formIcon} />
+                  <Icon
+                    type="FontAwesome"
+                    name="envelope"
+                    style={[styles.formIcon, { fontSize: 20 }]}
+                  />
                 </View>
               </Col>
               <Col>
@@ -2618,7 +2660,11 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon type="Ionicons" name="chatboxes" style={styles.formIcon} />
+                  <Icon
+                    type="Ionicons"
+                    name="chatboxes"
+                    style={[styles.formIcon, { fontSize: 25 }]}
+                  />
                 </View>
               </Col>
               <Col>
@@ -2886,7 +2932,11 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome5" name="user-clock" style={styles.formIcon} />
+                  <Icon
+                    type="FontAwesome5"
+                    name="user-clock"
+                    style={[styles.formIcon, { fontSize: 20 }]}
+                  />
                 </View>
               </Col>
               <Col>
@@ -2921,7 +2971,7 @@ class ContactDetailScreen extends React.Component {
                   <Icon
                     type="MaterialCommunityIcons"
                     name="gender-male-female"
-                    style={styles.formIcon}
+                    style={[styles.formIcon, { fontSize: 25 }]}
                   />
                 </View>
               </Col>
@@ -3120,7 +3170,7 @@ class ContactDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={[styles.formRow, { paddingTop: 10 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="Octicons" name="milestone" style={[styles.formIcon, {}]} />
+                  <Icon type="Octicons" name="milestone" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Label
@@ -3144,7 +3194,9 @@ class ContactDetailScreen extends React.Component {
                   <Col>
                     <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                       {this.state.contact.baptism_date
-                        ? moment(new Date(this.state.contact.baptism_date * 1000)).format('LL')
+                        ? moment(new Date(this.state.contact.baptism_date * 1000))
+                            .utc()
+                            .format('LL')
                         : ''}
                     </Text>
                   </Col>
@@ -3451,7 +3503,7 @@ class ContactDetailScreen extends React.Component {
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
-                          onPress={() => this.goToGroupDetailScreen(group.value)}>
+                          onPress={() => this.goToGroupDetailScreen(group.value, group.name)}>
                           <Text style={styles.linkingText}>{group.name}</Text>
                         </TouchableOpacity>
                       ))
@@ -3482,7 +3534,7 @@ class ContactDetailScreen extends React.Component {
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value)}>
+                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
                           <Text style={styles.linkingText}>{contact.name}</Text>
                         </TouchableOpacity>
                       ))
@@ -3513,7 +3565,7 @@ class ContactDetailScreen extends React.Component {
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value)}>
+                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
                           <Text style={styles.linkingText}>{contact.name}</Text>
                         </TouchableOpacity>
                       ))
@@ -3548,7 +3600,7 @@ class ContactDetailScreen extends React.Component {
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value)}>
+                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
                           <Text style={styles.linkingText}>{contact.name}</Text>
                         </TouchableOpacity>
                       ))
@@ -3583,7 +3635,7 @@ class ContactDetailScreen extends React.Component {
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value)}>
+                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
                           <Text style={styles.linkingText}>{contact.name}</Text>
                         </TouchableOpacity>
                       ))
@@ -3618,7 +3670,7 @@ class ContactDetailScreen extends React.Component {
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value)}>
+                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
                           <Text style={styles.linkingText}>{contact.name}</Text>
                         </TouchableOpacity>
                       ))
@@ -4475,7 +4527,8 @@ class ContactDetailScreen extends React.Component {
         {
           // Comment and its their own comment
           Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') &&
-            commentOrActivity.author === this.props.userData.username && (
+            commentOrActivity.author.toLowerCase() ===
+              this.props.userData.username.toLowerCase() && (
               <Grid style={{ marginTop: 20 }}>
                 <Row>
                   <Row
@@ -4768,19 +4821,60 @@ class ContactDetailScreen extends React.Component {
     });
   };
 
-  showAssignedUser = () => {
-    const foundUser = [...this.state.users, ...this.state.assignedToContacts].find(
-      (user) => user.key === this.state.contact.assigned_to.key,
+  renderContactLink = (assignedTo) => {
+    let foundContact, valueToSearch, nameToShow;
+    if (assignedTo.key) {
+      valueToSearch = assignedTo.key;
+      nameToShow = assignedTo.label;
+    } else if (assignedTo.value) {
+      valueToSearch = assignedTo.value;
+      nameToShow = assignedTo.name;
+    }
+    foundContact = this.state.users.find(
+      (user) => user.key === parseInt(valueToSearch) || user.contactID === parseInt(valueToSearch),
     );
-    return (
-      <Text
-        style={[
-          { marginTop: 'auto', marginBottom: 'auto', fontSize: 15 },
-          this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-        ]}>
-        {foundUser.label}
-      </Text>
-    );
+    if (!foundContact) {
+      foundContact = this.state.usersContacts.find(
+        (user) => user.value === valueToSearch.toString(),
+      );
+    }
+    // User have accesss to this assigned_to user/contact
+    if (foundContact && foundContact.contactID) {
+      // Contact exist in 'this.state.users' list
+      return (
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={() => this.goToContactDetailScreen(foundContact.contactID, nameToShow)}>
+          <Text
+            style={[styles.linkingText, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+            {nameToShow}
+          </Text>
+        </TouchableOpacity>
+      );
+    } else if (foundContact) {
+      // Contact exist in 'this.state.usersContacts' list
+      return (
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={() => this.goToContactDetailScreen(valueToSearch, nameToShow)}>
+          <Text
+            style={[styles.linkingText, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+            {nameToShow}
+          </Text>
+        </TouchableOpacity>
+      );
+    } else {
+      // User does not exist in any list
+      return (
+        <Text
+          style={[
+            { marginTop: 4, marginBottom: 4, fontSize: 15 },
+            this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+          ]}>
+          {nameToShow}
+        </Text>
+      );
+    }
   };
 
   socialMediaKeyIsDB = (key) => key;
@@ -6428,6 +6522,7 @@ ContactDetailScreen.defaultProps = {
   contactSettings: null,
   isRTL: false,
   questionnaires: [],
+  previousContacts: [],
 };
 
 const mapStateToProps = (state) => ({
@@ -6451,6 +6546,8 @@ const mapStateToProps = (state) => ({
   contactsList: state.contactsReducer.contacts,
   isRTL: state.i18nReducer.isRTL,
   questionnaires: state.questionnaireReducer.questionnaires,
+  previousContacts: state.contactsReducer.previousContacts,
+  previousGroups: state.groupsReducer.previousGroups,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -6480,6 +6577,15 @@ const mapDispatchToProps = (dispatch) => ({
   },
   deleteComment: (domain, token, contactId, commentId) => {
     dispatch(deleteComment(domain, token, contactId, commentId));
+  },
+  loadingFalse: () => {
+    dispatch(loadingFalse());
+  },
+  updatePrevious: (previousContacts) => {
+    dispatch(updatePrevious(previousContacts));
+  },
+  updatePreviousGroups: (previousGroups) => {
+    dispatch(updatePreviousGroups(previousGroups));
   },
 });
 

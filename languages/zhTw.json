@@ -123,6 +123,11 @@
     "groupName": {
       "label": "組的名字",
       "error": "名稱為必填項"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "",
+      "quick_button_meeting_postponed": "",
+      "quick_button_meeting_complete": ""
     }
   },
   "notificationsScreen": {

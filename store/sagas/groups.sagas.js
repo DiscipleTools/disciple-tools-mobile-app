@@ -122,10 +122,9 @@ export function* saveGroup({ domain, token, groupData }) {
           ...jsonData,
           assigned_to: {
             key: assignedToId,
-            label: usersList.find((user) => user.key === assignedToId).label
-          }
+            label: usersList.find((user) => user.key === assignedToId).label,
+          },
         };
-
       }
       yield put({
         type: actions.GROUPS_SAVE_SUCCESS,
@@ -219,8 +218,8 @@ export function* getCommentsByGroup({ domain, token, groupId, pagination }) {
         groupId: groupId,
         pagination: {
           ...pagination,
-          total: jsonData.total
-        }
+          total: jsonData.total,
+        },
       });
     } else {
       yield put({
@@ -250,7 +249,9 @@ export function* saveComment({ domain, token, groupId, commentData }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments/${commentData.ID ? commentData.ID : ''}`,
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments/${
+        commentData.ID ? commentData.ID : ''
+      }`,
       data: {
         method: 'POST',
         headers: {
@@ -260,7 +261,7 @@ export function* saveComment({ domain, token, groupId, commentData }) {
         body: JSON.stringify({
           comment: commentData.ID ? commentData.content : commentData.comment,
           comment_type: 'comment',
-          ID: commentData.ID ? commentData.ID : undefined
+          ID: commentData.ID ? commentData.ID : undefined,
         }),
       },
       isConnected,
@@ -277,7 +278,7 @@ export function* saveComment({ domain, token, groupId, commentData }) {
         yield put({
           type: actions.GROUPS_SAVE_COMMENT_SUCCESS,
           comment: commentData.ID ? commentData : jsonData,
-          groupId
+          groupId,
         });
       } else {
         yield put({
@@ -435,8 +436,8 @@ export function* getActivitiesByGroup({ domain, token, groupId, pagination }) {
         groupId: groupId,
         pagination: {
           ...pagination,
-          total: jsonData.total
-        }
+          total: jsonData.total,
+        },
       });
     } else {
       yield put({
@@ -598,7 +599,6 @@ export function* getLocationListLastModifiedDate({ domain, token }) {
 }
 
 export function* deleteComment({ domain, token, groupId, commentId }) {
-
   const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
 
   yield put({ type: actions.GROUPS_DELETE_COMMENT_START });
@@ -628,7 +628,7 @@ export function* deleteComment({ domain, token, groupId, commentId }) {
         yield put({
           type: actions.GROUPS_DELETE_COMMENT_SUCCESS,
           groupId,
-          commentId
+          commentId,
         });
       } else {
         yield put({
@@ -643,7 +643,7 @@ export function* deleteComment({ domain, token, groupId, commentId }) {
       yield put({
         type: actions.GROUPS_DELETE_COMMENT_SUCCESS,
         groupId,
-        commentId
+        commentId,
       });
     }
   } catch (error) {
@@ -655,7 +655,6 @@ export function* deleteComment({ domain, token, groupId, commentId }) {
       },
     });
   }
-
 }
 
 export default function* groupsSaga() {
@@ -671,6 +670,6 @@ export default function* groupsSaga() {
     takeEvery(actions.GROUPS_GET_SETTINGS, getSettings),
     takeEvery(actions.GROUPS_LOCATIONS_SEARCH, searchLocations),
     takeEvery(actions.GROUPS_LOCATIONS_MODIFIED_DATE, getLocationListLastModifiedDate),
-    takeEvery(actions.GROUPS_DELETE_COMMENT, deleteComment)
+    takeEvery(actions.GROUPS_DELETE_COMMENT, deleteComment),
   ]);
 }

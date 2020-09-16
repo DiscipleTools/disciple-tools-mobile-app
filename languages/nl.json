@@ -123,6 +123,11 @@
     "groupName": {
       "label": "Groepsnaam",
       "error": "Naam is vereist"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "",
+      "quick_button_meeting_postponed": "",
+      "quick_button_meeting_complete": ""
     }
   },
   "notificationsScreen": {

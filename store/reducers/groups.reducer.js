@@ -20,6 +20,7 @@ const initialState = {
   foundGeonames: [],
   geonamesLastModifiedDate: null,
   geonamesLength: 0,
+  previousGroups: [],
 };
 
 export default function groupsReducer(state = initialState, action) {
@@ -138,7 +139,7 @@ export default function groupsReducer(state = initialState, action) {
                     // assigned-to property
                     mappedGroup[key] = {
                       key: parseInt(value['assigned-to'].replace('user-', '')),
-                      label: value['display']
+                      label: value['display'],
                     };
                   }
                   return;
@@ -152,10 +153,12 @@ export default function groupsReducer(state = initialState, action) {
                           // connection
                           let object = {
                             value: valueTwo.ID.toString(),
-                            name: entities.decode(valueTwo.post_title)
+                            name: entities.decode(valueTwo.post_title),
                           };
                           // groups
-                          if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {
+                          if (
+                            Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')
+                          ) {
                             object = {
                               ...object,
                               baptized_member_count: valueTwo.baptized_member_count,
@@ -299,7 +302,7 @@ export default function groupsReducer(state = initialState, action) {
                   // assigned-to property
                   mappedGroup[key] = {
                     key: parseInt(value['assigned-to'].replace('user-', '')),
-                    label: value['display']
+                    label: value['display'],
                   };
                 }
                 return;
@@ -313,10 +316,12 @@ export default function groupsReducer(state = initialState, action) {
                         // connection
                         let object = {
                           value: valueTwo.ID.toString(),
-                          name: entities.decode(valueTwo.post_title)
+                          name: entities.decode(valueTwo.post_title),
                         };
                         // groups
-                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {
+                        if (
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')
+                        ) {
                           object = {
                             ...object,
                             baptized_member_count: valueTwo.baptized_member_count,
@@ -531,12 +536,14 @@ export default function groupsReducer(state = initialState, action) {
       }
       return {
         ...newState,
+        loading: false,
       };
     }
     case actions.GROUPS_SAVE_FAILURE:
       return {
         ...newState,
         error: action.error,
+        loading: false,
       };
     case actions.GROUPS_GETBYID_START:
       return {
@@ -550,9 +557,12 @@ export default function groupsReducer(state = initialState, action) {
         const foundGroup = newState.groups.find(
           (groupItem) => groupItem.ID.toString() === group.ID,
         );
-        group = {
-          ...foundGroup,
-        };
+        // Fix to error when App try to get detail of non existing group (browsing between several groups) in OFFLINE mode
+        if (foundGroup) {
+          group = {
+            ...foundGroup,
+          };
+        }
       } else {
         const mappedGroup = {};
         // MAP GROUP TO CAN SAVE IT LATER
@@ -607,7 +617,7 @@ export default function groupsReducer(state = initialState, action) {
                   // assigned-to property
                   mappedGroup[key] = {
                     key: parseInt(value['assigned-to'].replace('user-', '')),
-                    label: value['display']
+                    label: value['display'],
                   };
                 }
                 return;
@@ -621,10 +631,12 @@ export default function groupsReducer(state = initialState, action) {
                         // connection
                         let object = {
                           value: valueTwo.ID.toString(),
-                          name: entities.decode(valueTwo.post_title)
+                          name: entities.decode(valueTwo.post_title),
                         };
                         // groups
-                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {
+                        if (
+                          Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')
+                        ) {
                           object = {
                             ...object,
                             baptized_member_count: valueTwo.baptized_member_count,
@@ -699,6 +711,9 @@ export default function groupsReducer(state = initialState, action) {
           newState.groups[groupIndex] = {
             ...group,
           };
+        } else {
+          // Add retrieved group to groups array (persist to OFFLINE mode)
+          newState.groups.unshift(group);
         }
       }
       newState = {
@@ -742,9 +757,9 @@ export default function groupsReducer(state = initialState, action) {
           data: [...previousComments, ...mappedComments],
           pagination: {
             ...pagination,
-            offset: pagination.offset + pagination.limit // UPDATE OFFSET
-          }
-        }
+            offset: pagination.offset + pagination.limit, // UPDATE OFFSET
+          },
+        },
       };
 
       return {
@@ -752,7 +767,6 @@ export default function groupsReducer(state = initialState, action) {
         comments: newCommentState,
         loadingComments: false,
       };
-
     }
     case actions.GROUPS_GET_COMMENTS_FAILURE:
       return {
@@ -770,22 +784,25 @@ export default function groupsReducer(state = initialState, action) {
       let newComment;
 
       // Check previous records/pagination existence and return it
-      let previousComments = [], pagination = {
-        limit: 10,
-        offset: 0,
-        total: 0
-      };
+      let previousComments = [],
+        pagination = {
+          limit: 10,
+          offset: 0,
+          total: 0,
+        };
       if (newState.comments[groupId]) {
         previousComments = newState.comments[groupId].data;
         pagination = newState.comments[groupId].pagination;
       }
       // Search existent comment with ID (update comment)
-      let foundCommentIndex = previousComments.findIndex(previousComment => previousComment.ID === (comment.ID ? comment.ID : comment.comment_ID));
+      let foundCommentIndex = previousComments.findIndex(
+        (previousComment) => previousComment.ID === (comment.ID ? comment.ID : comment.comment_ID),
+      );
 
       if (offline) {
         if (foundCommentIndex > -1) {
           newComment = {
-            ...comment
+            ...comment,
           };
         } else {
           const date = new Date();
@@ -813,7 +830,7 @@ export default function groupsReducer(state = initialState, action) {
       } else {
         if (foundCommentIndex > -1) {
           newComment = {
-            ...comment
+            ...comment,
           };
         } else {
           newComment = {
@@ -823,7 +840,7 @@ export default function groupsReducer(state = initialState, action) {
             // Decode HTML strings
             content: entities.decode(comment.comment_content),
             gravatar: 'https://secure.gravatar.com/avatar/?s=16&d=mm&r=g',
-          }
+          };
         }
       }
 
@@ -835,8 +852,8 @@ export default function groupsReducer(state = initialState, action) {
           ...newState.comments,
           [groupId]: {
             data: [...previousComments],
-            pagination
-          }
+            pagination,
+          },
         };
       } else {
         // Add new comment
@@ -844,8 +861,8 @@ export default function groupsReducer(state = initialState, action) {
           ...newState.comments,
           [groupId]: {
             data: [...previousComments, newComment],
-            pagination
-          }
+            pagination,
+          },
         };
       }
 
@@ -855,7 +872,6 @@ export default function groupsReducer(state = initialState, action) {
         newComment: true,
         loadingComments: false,
       };
-
     }
     case actions.GROUPS_SAVE_COMMENT_FAILURE:
       return {
@@ -883,7 +899,7 @@ export default function groupsReducer(state = initialState, action) {
         meta_id: activity.meta_id,
         meta_key: activity.meta_key,
         name: activity.name,
-      }))
+      }));
       // Check previous records existence; Only retrieve previous data if pagination its active (offset > 0)
       let previousActivities = [];
       if (pagination.offset > 0 && newState.activities[groupId]) {
@@ -896,9 +912,9 @@ export default function groupsReducer(state = initialState, action) {
           data: [...previousActivities, ...mappedActivities],
           pagination: {
             ...pagination,
-            offset: pagination.offset + pagination.limit // UPDATE OFFSET
-          }
-        }
+            offset: pagination.offset + pagination.limit, // UPDATE OFFSET
+          },
+        },
       };
 
       return {
@@ -906,7 +922,6 @@ export default function groupsReducer(state = initialState, action) {
         activities: newActivityState,
         loadingActivities: false,
       };
-
     }
     case actions.GROUPS_GET_ACTIVITIES_FAILURE:
       return {
@@ -1039,17 +1054,20 @@ export default function groupsReducer(state = initialState, action) {
       const { groupId, commentId } = action;
 
       // Check previous records/pagination existence and return it
-      let previousComments = [], pagination = {
-        limit: 10,
-        offset: 0,
-        total: 0
-      };
+      let previousComments = [],
+        pagination = {
+          limit: 10,
+          offset: 0,
+          total: 0,
+        };
       if (newState.comments[groupId]) {
         previousComments = newState.comments[groupId].data;
         pagination = newState.comments[groupId].pagination;
       }
       // Search existent comment with ID (update comment)
-      let foundCommentIndex = previousComments.findIndex(previousComment => previousComment.ID === commentId);
+      let foundCommentIndex = previousComments.findIndex(
+        (previousComment) => previousComment.ID === commentId,
+      );
 
       // Delete comment
       if (foundCommentIndex > -1) {
@@ -1060,22 +1078,33 @@ export default function groupsReducer(state = initialState, action) {
         ...newState.comments,
         [groupId]: {
           data: [...previousComments],
-          pagination
-        }
+          pagination,
+        },
       };
       return {
         ...newState,
         comments: newCommentState,
         loadingComments: false,
       };
-
     }
-    case actions.CONTACTS_DELETE_COMMENT_FAILURE:
+    case actions.GROUPS_DELETE_COMMENT_FAILURE:
       return {
         ...newState,
         error: action.error,
         loadingComments: false,
       };
+    case actions.GROUPS_LOADING_FALSE:
+      return {
+        ...newState,
+        loading: false,
+      };
+    case actions.GROUPS_UPDATE_PREVIOUS: {
+      let { previousGroups } = action;
+      return {
+        ...newState,
+        previousGroups,
+      };
+    }
     default:
       return newState;
   }

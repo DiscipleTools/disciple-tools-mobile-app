@@ -123,6 +123,11 @@
     "groupName": {
       "label": "দলের নাম",
       "error": "নাম প্রয়োজন"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "",
+      "quick_button_meeting_postponed": "",
+      "quick_button_meeting_complete": ""
     }
   },
   "notificationsScreen": {

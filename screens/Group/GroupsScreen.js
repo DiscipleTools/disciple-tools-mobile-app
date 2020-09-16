@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Text,
   Image,
-  Platform
+  Platform,
 } from 'react-native';
 import { Fab, Container } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -17,7 +17,7 @@ import { Row } from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 import { SearchBar } from 'react-native-elements';
 import Colors from '../../constants/Colors';
-import { getAll } from '../../store/actions/groups.actions';
+import { getAll, updatePrevious } from '../../store/actions/groups.actions';
 import i18n from '../../languages';
 import dtIcon from '../../assets/images/dt-icon.png';
 import sharedTools from '../../shared';
@@ -233,60 +233,55 @@ class GroupsScreen extends React.Component {
     />
   );
 
-  onRefresh = (pagination = false) => {
-    if (pagination) {
-      this.setState(
-        (prevState) => ({
-          offset: prevState.offset + prevState.limit,
-          filtered: false,
-          search: '',
-        }),
-        () => {
-          this.props.getAllGroups(
-            this.props.userData.domain,
-            this.props.userData.token,
-            this.state.offset,
-            this.state.limit,
-            this.state.sort,
-          );
-        },
-      );
-    } else {
-      this.setState(
-        () => ({
-          offset: 0,
-          filtered: false,
-          search: '',
-        }),
-        () => {
-          this.props.getAllGroups(
-            this.props.userData.domain,
-            this.props.userData.token,
-            this.state.offset,
-            this.state.limit,
-            this.state.sort,
-          );
-        },
-      );
-    }
+  onRefresh = (increasePagination = false, returnFromDetail = false) => {
+    let newState = {
+      offset: increasePagination ? this.state.offset + this.state.limit : 0,
+      filtered: false,
+      search: '',
+      searchBarFilter: {
+        ...this.state.searchBarFilter,
+        toggle: false,
+        currentFilter: '',
+      },
+    };
+    this.setState(
+      (prevState) => {
+        return returnFromDetail ? prevState : newState;
+      },
+      () => {
+        this.props.getAllGroups(
+          this.props.userData.domain,
+          this.props.userData.token,
+          this.state.offset,
+          this.state.limit,
+          this.state.sort,
+        );
+      },
+    );
   };
 
   goToGroupDetailScreen = (groupData = null) => {
     if (groupData) {
+      this.props.updatePrevious([
+        {
+          groupId: parseInt(groupData.ID),
+          onlyView: true,
+          groupName: groupData.title,
+        },
+      ]);
       // Detail
       this.props.navigation.navigate('GroupDetail', {
         groupId: groupData.ID,
         onlyView: true,
         groupName: groupData.title,
-        previousList: [],
-        onGoBack: () => this.onRefresh(),
+        onGoBack: () => this.onRefresh(false, true),
       });
     } else {
+      this.props.updatePrevious([]);
       // Create
       this.props.navigation.navigate('GroupDetail', {
-        previousList: [],
         onlyView: true,
-        onGoBack: () => this.onRefresh(),
+        onGoBack: () => this.onRefresh(false, true),
       });
     }
   };
@@ -299,7 +294,12 @@ class GroupsScreen extends React.Component {
           onChangeText={(text) => this.SearchFilterFunction(text)}
           autoCorrect={false}
           value={this.state.search}
-          containerStyle={[styles.searchBarContainer, Platform.OS == "ios" ? { borderBottomColor: Colors.grayLight, borderBottomWidth: 1 } : { elevation: 5 }]}
+          containerStyle={[
+            styles.searchBarContainer,
+            Platform.OS == 'ios'
+              ? { borderBottomColor: Colors.grayLight, borderBottomWidth: 1 }
+              : { elevation: 5 },
+          ]}
           inputContainerStyle={styles.searchBarInput}
         />
         {!this.state.haveGroups && this.noGroupsRender()}
@@ -460,6 +460,9 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getAllGroups: (domain, token, offset, limit, sort) => {
     dispatch(getAll(domain, token, offset, limit, sort));
+  },
+  updatePrevious: (previousGroups) => {
+    dispatch(updatePrevious(previousGroups));
   },
 });
 
