@@ -2505,7 +2505,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Image source={dateIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome" name="calendar" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Text
@@ -2529,7 +2529,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Image source={dateSuccessIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome5" name="calendar-check" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Text
@@ -2553,7 +2553,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Image source={dateEndIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome5" name="calendar-times" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Text
@@ -3028,7 +3028,7 @@ class GroupDetailScreen extends React.Component {
             <Row style={styles.formFieldPadding}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Image source={dateIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome" name="calendar" style={styles.formIcon} />
                 </View>
               </Col>
               <Col>
@@ -3055,7 +3055,7 @@ class GroupDetailScreen extends React.Component {
             <Row style={styles.formFieldPadding}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Image source={dateSuccessIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome5" name="calendar-check" style={styles.formIcon} />
                 </View>
               </Col>
               <Col>
@@ -3067,7 +3067,11 @@ class GroupDetailScreen extends React.Component {
             <Row>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Image source={dateSuccessIcon} style={[styles.dateIcons, { opacity: 0 }]} />
+                  <Icon
+                    type="FontAwesome5"
+                    name="calendar-check"
+                    style={[styles.formIcon, { opacity: 0 }]}
+                  />
                 </View>
               </Col>
               <Col>
@@ -3084,7 +3088,7 @@ class GroupDetailScreen extends React.Component {
             <Row style={styles.formFieldPadding}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Image source={dateEndIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome" name="calendar" style={styles.formIcon} />
                 </View>
               </Col>
               <Col>
@@ -3096,7 +3100,11 @@ class GroupDetailScreen extends React.Component {
             <Row>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Image source={dateEndIcon} style={[styles.dateIcons, { opacity: 0 }]} />
+                  <Icon
+                    type="FontAwesome5"
+                    name="calendar-times"
+                    style={[styles.formIcon, { opacity: 0 }]}
+                  />
                 </View>
               </Col>
               <Col>
