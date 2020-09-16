@@ -224,6 +224,7 @@ const styles = StyleSheet.create({
   // Form
   formContainer: {
     paddingTop: 10,
+    paddingBottom: 100,
     paddingLeft: containerPadding,
     paddingRight: containerPadding,
   },
