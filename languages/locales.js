@@ -41,12 +41,12 @@ export default [
   },
   {
     code: 'pt-BR',
-    name: 'Português',
+    name: 'Português do Brasil',
     rtl: false,
   },
   {
     code: 'ru-RU',
-    name: 'русский язык',
+    name: 'русский',
     rtl: false,
   },
   {
