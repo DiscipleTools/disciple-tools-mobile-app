@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   // Form
   formContainer: {
     paddingTop: 10,
-    paddingBottom: 80,
+    paddingBottom: 100,
     paddingLeft: containerPadding,
     paddingRight: containerPadding,
   },
@@ -1895,7 +1895,7 @@ class ContactDetailScreen extends React.Component {
                 onRefresh={() => this.onRefresh(this.state.contact.ID)}
               />
             }>
-            <View style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
+            <View style={[styles.formContainer, { marginTop: 0, paddingTop: 0 }]}>
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Image source={statusIcon} style={[styles.fieldsIcons, {}]} />
@@ -1944,7 +1944,11 @@ class ContactDetailScreen extends React.Component {
               </Row>
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="briefcase-account"
+                    style={styles.formIcon}
+                  />
                 </Col>
                 <Col>
                   {this.state.contact.assigned_to
@@ -1961,8 +1965,8 @@ class ContactDetailScreen extends React.Component {
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Icon
-                    type="Ionicons"
-                    name="md-people"
+                    type="MaterialCommunityIcons"
+                    name="briefcase-download"
                     style={[styles.formIcon, { marginTop: 0 }]}
                   />
                 </Col>
@@ -2407,7 +2411,11 @@ class ContactDetailScreen extends React.Component {
               <Row style={styles.formFieldMargin}>
                 <Col style={styles.formIconLabelCol}>
                   <View style={styles.formIconLabelView}>
-                    <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="briefcase-account"
+                      style={styles.formIcon}
+                    />
                   </View>
                 </Col>
                 <Col>
@@ -2420,8 +2428,8 @@ class ContactDetailScreen extends React.Component {
                 <Col style={styles.formIconLabelCol}>
                   <View style={styles.formIconLabelView}>
                     <Icon
-                      type="FontAwesome"
-                      name="user-circle"
+                      type="MaterialCommunityIcons"
+                      name="briefcase-account"
                       style={[styles.formIcon, { opacity: 0 }]}
                     />
                   </View>
@@ -2443,7 +2451,11 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon type="Ionicons" name="md-people" style={styles.formIcon} />
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="briefcase-download"
+                    style={styles.formIcon}
+                  />
                 </View>
               </Col>
               <Col>
@@ -2456,8 +2468,8 @@ class ContactDetailScreen extends React.Component {
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
                   <Icon
-                    type="Ionicons"
-                    name="md-people"
+                    type="MaterialCommunityIcons"
+                    name="briefcase-download"
                     style={[styles.formIcon, { opacity: 0 }]}
                   />
                 </View>
@@ -3127,7 +3139,7 @@ class ContactDetailScreen extends React.Component {
                 onRefresh={() => this.onRefresh(this.state.contact.ID)}
               />
             }>
-            <View style={[styles.formContainer, { marginTop: 10 }]}>
+            <View style={[styles.formContainer, { marginTop: 0 }]}>
               <Row style={[styles.formRow, { marginBottom: 10 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Icon
@@ -3483,7 +3495,7 @@ class ContactDetailScreen extends React.Component {
                 onRefresh={() => this.onRefresh(this.state.contact.ID)}
               />
             }>
-            <View style={[styles.formContainer, { marginTop: 10 }]}>
+            <View style={[styles.formContainer, { marginTop: 0 }]}>
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Icon
@@ -3521,7 +3533,11 @@ class ContactDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="Entypo" name="network" style={[styles.formIcon, { marginTop: 0 }]} />
+                  <Icon
+                    type="FontAwesome5"
+                    name="user-friends"
+                    style={[styles.formIcon, { marginTop: 0 }]}
+                  />
                 </Col>
                 <Col>
                   <View
@@ -3797,7 +3813,7 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon type="Entypo" name="network" style={styles.formIcon} />
+                  <Icon type="FontAwesome5" name="user-friends" style={styles.formIcon} />
                 </View>
               </Col>
               <Col>
@@ -4548,7 +4564,7 @@ class ContactDetailScreen extends React.Component {
                         marginTop: 'auto',
                         marginBottom: 'auto',
                       }}>
-                      {i18n.t('global.edit')}
+                      {i18n.t('global.editComment')}
                     </Text>
                   </Row>
                   <Row
@@ -4568,7 +4584,7 @@ class ContactDetailScreen extends React.Component {
                         marginTop: 'auto',
                         marginBottom: 'auto',
                       }}>
-                      {i18n.t('settingsScreen.remove')}
+                      {i18n.t('global.deleteComment')}
                     </Text>
                   </Row>
                 </Row>

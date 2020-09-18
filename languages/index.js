@@ -12,6 +12,9 @@ import * as id from './id.json';
 import * as nl from './nl.json';
 import * as ptBR from './pt.json';
 import * as ru from './ru.json';
+import * as sr from './sr.json';
+import * as sl from './sl.json';
+import * as hr from './hr.json';
 import * as sw from './sw.json';
 import * as tr from './tr.json';
 import * as zhCn from './zhCn.json';
@@ -32,6 +35,9 @@ i18n.translations = {
   'nl-NL': nl,
   'pt-BR': ptBR,
   'ru-RU': ru,
+  sr,
+  sl,
+  hr,
   sw,
   'tr-TR': tr,
   'zh-CN': zhCn,

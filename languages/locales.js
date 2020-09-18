@@ -41,12 +41,27 @@ export default [
   },
   {
     code: 'pt-BR',
-    name: 'Português',
+    name: 'Português do Brasil',
     rtl: false,
   },
   {
     code: 'ru-RU',
-    name: 'русский язык',
+    name: 'русский',
+    rtl: false,
+  },
+  {
+    code: 'sr',
+    name: 'српски',
+    rtl: false,
+  },
+  {
+    code: 'sl',
+    name: 'slovenščina',
+    rtl: false,
+  },
+  {
+    code: 'hr',
+    name: 'hrvatski',
     rtl: false,
   },
   {
