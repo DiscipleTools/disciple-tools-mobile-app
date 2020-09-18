@@ -4546,7 +4546,7 @@ class ContactDetailScreen extends React.Component {
             commentOrActivity.author.toLowerCase() ===
               this.props.userData.username.toLowerCase() && (
               <Grid style={{ marginTop: 20 }}>
-                <Row>
+                <Row style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                   <Row
                     onPress={() => {
                       this.openCommentDialog(commentOrActivity);
@@ -4554,7 +4554,7 @@ class ContactDetailScreen extends React.Component {
                     <Icon
                       type="MaterialCommunityIcons"
                       name="pencil"
-                      style={{ color: Colors.primary, fontSize: 25, marginLeft: 'auto' }}
+                      style={{ color: Colors.primary, fontSize: 20, marginLeft: 'auto' }}
                     />
                     <Text
                       style={{
@@ -4574,7 +4574,7 @@ class ContactDetailScreen extends React.Component {
                     <Icon
                       type="MaterialCommunityIcons"
                       name="delete"
-                      style={{ color: Colors.primary, fontSize: 25, marginLeft: 'auto' }}
+                      style={{ color: Colors.primary, fontSize: 20, marginLeft: 'auto' }}
                     />
                     <Text
                       style={{
