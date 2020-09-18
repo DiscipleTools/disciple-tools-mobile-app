@@ -1701,45 +1701,55 @@ class GroupDetailScreen extends React.Component {
             commentOrActivity.author.toLowerCase() ===
               this.props.userData.username.toLowerCase() && (
               <Grid style={{ marginTop: 20 }}>
-                <Row>
+                <Row
+                  style={{
+                    marginTop: 'auto',
+                    marginBottom: 'auto',
+                  }}>
                   <Row
-                    onPress={() => {
-                      this.openCommentDialog(commentOrActivity);
-                    }}>
-                    <Icon
-                      type="MaterialCommunityIcons"
-                      name="pencil"
-                      style={{ color: Colors.primary, fontSize: 25, marginLeft: 'auto' }}
-                    />
-                    <Text
-                      style={{
-                        color: Colors.primary,
-                        fontSize: 14,
-                        marginRight: 'auto',
-                        marginTop: 'auto',
-                        marginBottom: 'auto',
-                      }}>
-                      {i18n.t('global.editComment')}
-                    </Text>
-                  </Row>
-                  <Row
+                    style={{ marginLeft: 0, marginRight: 'auto' }}
                     onPress={() => {
                       this.openCommentDialog(commentOrActivity, true);
                     }}>
                     <Icon
                       type="MaterialCommunityIcons"
                       name="delete"
-                      style={{ color: Colors.primary, fontSize: 25, marginLeft: 'auto' }}
+                      style={{
+                        color: Colors.iconDelete,
+                        fontSize: 20,
+                      }}
                     />
                     <Text
                       style={{
                         color: Colors.primary,
                         fontSize: 14,
-                        marginRight: 'auto',
-                        marginTop: 'auto',
-                        marginBottom: 'auto',
                       }}>
-                      {i18n.t('global.deleteComment')}
+                      {i18n.t('global.delete')}
+                    </Text>
+                  </Row>
+                  <Row
+                    style={{
+                      marginLeft: 'auto',
+                      marginRight: 0,
+                    }}
+                    onPress={() => {
+                      this.openCommentDialog(commentOrActivity);
+                    }}>
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="pencil"
+                      style={{
+                        color: Colors.primary,
+                        fontSize: 20,
+                        marginLeft: 'auto',
+                      }}
+                    />
+                    <Text
+                      style={{
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}>
+                      {i18n.t('global.edit')}
                     </Text>
                   </Row>
                 </Row>
@@ -4897,7 +4907,7 @@ class GroupDetailScreen extends React.Component {
                                 <View style={styles.dialogContent}>
                                   <Row style={{ height: 30 }}>
                                     <Label style={[styles.name, { marginBottom: 5 }]}>
-                                      {i18n.t('global.deleteComment')}
+                                      {i18n.t('global.delete')}
                                     </Label>
                                   </Row>
                                   <Row>
@@ -4911,7 +4921,7 @@ class GroupDetailScreen extends React.Component {
                                   <Grid>
                                     <Row style={{ height: 30 }}>
                                       <Label style={[styles.name, { marginBottom: 5 }]}>
-                                        {i18n.t('global.editComment')}
+                                        {i18n.t('global.edit')}
                                       </Label>
                                     </Row>
                                     <Row>
@@ -4954,18 +4964,21 @@ class GroupDetailScreen extends React.Component {
                                   this.onCloseCommentDialog();
                                 }}>
                                 <Text style={{ color: Colors.primary }}>
-                                  {i18n.t('settingsScreen.close')}
+                                  {i18n.t('global.close')}
                                 </Text>
                               </Button>
                               {this.state.commentDialog.delete ? (
                                 <Button
                                   block
-                                  style={[styles.dialogButton, { backgroundColor: '#d9534f' }]}
+                                  style={[
+                                    styles.dialogButton,
+                                    { backgroundColor: Colors.buttonDelete },
+                                  ]}
                                   onPress={() => {
                                     this.onDeleteComment(this.state.commentDialog.data);
                                   }}>
-                                  <Text style={{ color: '#FFFFFF' }}>
-                                    {i18n.t('settingsScreen.remove')}
+                                  <Text style={{ color: Colors.buttonText }}>
+                                    {i18n.t('global.delete')}
                                   </Text>
                                 </Button>
                               ) : (
@@ -4975,7 +4988,9 @@ class GroupDetailScreen extends React.Component {
                                   onPress={() => {
                                     this.onUpdateComment(this.state.commentDialog.data);
                                   }}>
-                                  <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.save')}</Text>
+                                  <Text style={{ color: Colors.buttonText }}>
+                                    {i18n.t('global.save')}
+                                  </Text>
                                 </Button>
                               )}
                             </Row>
