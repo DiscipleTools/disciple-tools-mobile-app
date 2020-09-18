@@ -18,16 +18,15 @@
     "edit": "Edit",
     "cancel": "Cancel",
     "save": "Save",
+    "delete": "Delete",
+    "close": "Close",
     "online": "Online",
     "offline": "offline",
     "language": "Language",
     "search": "Search",
     "membersActivity": "Members",
     "moreFields": "More Fields",
-    "nameRequired": "Name required",
-    "close": "Close",
-    "editComment": "Edit",
-    "deleteComment": "Delete"
+    "nameRequired": "Name required"
   },
   "loginScreen": {
     "domain": {

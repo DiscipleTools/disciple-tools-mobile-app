@@ -24,6 +24,8 @@ export default {
   tabIconDefault: gray,
   tabIconSelected: tintColor,
   tabBar: '#fefefe',
+  headerTintColor: '#FFFFFF',
+  onPressIcons: '#FFFFFF',
   successBackground: 'rgba(229, 229, 229, 0.85)',
   sucessText: '#000',
   errorBackground: 'rgba(228, 132, 129, 0.85)',
@@ -38,4 +40,9 @@ export default {
   addRemoveIcons: tintColor,
   addIcons: 'green',
   removeIcons: 'red',
+  button: tintColor,
+  buttonText: '#FFFFFF',
+  dialogButton: '#FFFFFF',
+  buttonDelete: '#d9534f',
+  iconDelete: '#d9534f',
 };
