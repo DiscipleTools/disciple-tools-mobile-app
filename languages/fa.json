@@ -26,14 +26,8 @@
     "moreFields": "زمینه های بیشتر",
     "nameRequired": "نام لازم است",
     "close": "نزدیک",
-    "editComment": "",
-    "deleteComment": ""
-  },
-  "appRestart": {
-    "message": "برنامه برای اجرای پیکربندی زیر مجدداً راه اندازی می شود:",
-    "button": "خوب",
-    "textDirection": "جهت متن",
-    "selectedLanguage": "زبان انتخاب شده"
+    "editComment": "ویرایش کنید",
+    "deleteComment": "حذف"
   },
   "loginScreen": {
     "domain": {
@@ -73,14 +67,14 @@
     "rememberPassword": "به یاد داشته باشید کلمه کلیدی",
     "rememberPasswordActive": "فعال شوید",
     "rememberPasswordInactive": "وارد سیستم غیرفعال شوید",
-    "remove": "کد پین را حذف کنید",
-    "set": "کد پین را تنظیم کنید",
+    "remove": "برداشتن",
+    "set": "تنظیم",
     "pinCode": "کد پین",
-    "enterPin": "کد پین را وارد کنید",
-    "setPin": "پین جدید را تنظیم کنید",
-    "incorrectPin": "کد پین نادرست",
-    "savedPinCode": "کد پین با موفقیت ذخیره شد!",
-    "removedPinCode": "کد پین با موفقیت حذف شد!",
+    "enterPin": "پین را وارد کنید",
+    "setPin": "تنظیم پین جدید",
+    "incorrectPin": "پین نادرست",
+    "savedPinCode": "کد پین با موفقیت ذخیره شد",
+    "removedPinCode": "کد پین با موفقیت حذف شد",
     "close": "نزدیک"
   },
   "contactDetailScreen": {
@@ -125,9 +119,9 @@
       "error": "نام لازم است"
     },
     "fab": {
-      "quick_button_meeting_scheduled": "",
-      "quick_button_meeting_postponed": "",
-      "quick_button_meeting_complete": ""
+      "quick_button_meeting_scheduled": "جلسه برنامه ریزی شده",
+      "quick_button_meeting_postponed": "جلسه به تعویق افتاد",
+      "quick_button_meeting_complete": "جلسه کامل است"
     }
   },
   "notificationsScreen": {
@@ -144,5 +138,11 @@
     "noGroupPlacheHolder": "در حال حاضر هیچ گروهی موجود نیست",
     "noGroupPlacheHolder1": "ممکن است مشکلی در گرفتن آنها از سایت شما وجود داشته باشد. پایین بکشید تا سعی کنید تازه کنید و دوباره امتحان کنید.",
     "noGroupPlacheHolderOffline": "شما در حال حاضر آفلاین هستید. برای اطمینان از گروه های خود ، اطمینان حاصل کنید که به داده های wifi یا تلفن همراه وصل شده اید."
+  },
+  "appRestart": {
+    "message": "برنامه برای اجرای پیکربندی زیر مجدداً راه اندازی می شود:",
+    "button": "خوب",
+    "textDirection": "جهت متن",
+    "selectedLanguage": "زبان انتخاب شده"
   }
 }

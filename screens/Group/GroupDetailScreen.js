@@ -1719,7 +1719,7 @@ class GroupDetailScreen extends React.Component {
                         marginTop: 'auto',
                         marginBottom: 'auto',
                       }}>
-                      {i18n.t('global.edit')}
+                      {i18n.t('global.editComment')}
                     </Text>
                   </Row>
                   <Row
@@ -1739,7 +1739,7 @@ class GroupDetailScreen extends React.Component {
                         marginTop: 'auto',
                         marginBottom: 'auto',
                       }}>
-                      {i18n.t('settingsScreen.remove')}
+                      {i18n.t('global.deleteComment')}
                     </Text>
                   </Row>
                 </Row>

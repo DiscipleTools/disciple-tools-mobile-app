@@ -50,6 +50,21 @@ export default [
     rtl: false,
   },
   {
+    code: 'sr',
+    name: 'српски',
+    rtl: false,
+  },
+  {
+    code: 'sl',
+    name: 'slovenščina',
+    rtl: false,
+  },
+  {
+    code: 'hr',
+    name: 'hrvatski',
+    rtl: false,
+  },
+  {
     code: 'sw',
     name: 'Kiswahili',
     rtl: false,
