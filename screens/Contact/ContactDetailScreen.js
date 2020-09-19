@@ -1978,18 +1978,21 @@ class ContactDetailScreen extends React.Component {
                   />
                 </Col>
                 <Col>
-                  <View
-                    style={[
-                      { marginTop: 'auto', marginBottom: 'auto' },
-                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                    ]}>
+                  <View>
                     {this.state.contact.subassigned ? (
                       this.state.contact.subassigned.values.map((contact, index) => (
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
                           onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text style={styles.linkingText}>{contact.name}</Text>
+                          <Text
+                            style={[
+                              styles.linkingText,
+                              { marginTop: 'auto', marginBottom: 'auto' },
+                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                            ]}>
+                            {contact.name}
+                          </Text>
                         </TouchableOpacity>
                       ))
                     ) : (
@@ -2013,11 +2016,7 @@ class ContactDetailScreen extends React.Component {
                   />
                 </Col>
                 <Col>
-                  <View
-                    style={[
-                      { marginTop: 'auto', marginBottom: 'auto' },
-                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                    ]}>
+                  <View>
                     {this.state.contact.contact_phone ? (
                       this.state.contact.contact_phone
                         .filter((phone) => !phone.delete)
@@ -2026,7 +2025,14 @@ class ContactDetailScreen extends React.Component {
                             key={index.toString()}
                             activeOpacity={0.5}
                             onPress={() => this.linkingPhoneDialer(phone.value)}>
-                            <Text style={styles.linkingText}>{phone.value}</Text>
+                            <Text
+                              style={[
+                                styles.linkingText,
+                                { marginTop: 'auto', marginBottom: 'auto' },
+                                this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                              ]}>
+                              {phone.value}
+                            </Text>
                           </TouchableOpacity>
                         ))
                     ) : (
@@ -2048,18 +2054,18 @@ class ContactDetailScreen extends React.Component {
                   />
                 </Col>
                 <Col>
-                  <View
-                    style={[
-                      { marginTop: 'auto', marginBottom: 'auto' },
-                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                    ]}>
+                  <View>
                     {this.state.contact.contact_email ? (
                       this.state.contact.contact_email
                         .filter((email) => !email.delete)
                         .map((email, index) => (
                           <Text
                             key={index.toString()}
-                            style={styles.linkingText}
+                            style={[
+                              styles.linkingText,
+                              { marginTop: 'auto', marginBottom: 'auto' },
+                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                            ]}
                             onPress={() => Linking.openURL('mailto:' + email.value)}>
                             {email.value}
                           </Text>
@@ -2280,7 +2286,11 @@ class ContactDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="Foundation" name="arrow-right" style={styles.formIcon} />
+                  <Icon
+                    type="Foundation"
+                    name={this.props.isRTL ? 'arrow-left' : 'arrow-right'}
+                    style={styles.formIcon}
+                  />
                 </Col>
                 <Col>
                   <Text
