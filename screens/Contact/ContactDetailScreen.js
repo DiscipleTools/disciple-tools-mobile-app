@@ -3522,18 +3522,21 @@ class ContactDetailScreen extends React.Component {
                   />
                 </Col>
                 <Col>
-                  <View
-                    style={[
-                      { marginTop: 'auto', marginBottom: 'auto' },
-                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                    ]}>
+                  <View>
                     {this.state.contact.groups ? (
                       this.state.contact.groups.values.map((group, index) => (
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
                           onPress={() => this.goToGroupDetailScreen(group.value, group.name)}>
-                          <Text style={styles.linkingText}>{group.name}</Text>
+                          <Text
+                            style={[
+                              styles.linkingText,
+                              { marginTop: 'auto', marginBottom: 'auto' },
+                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                            ]}>
+                            {group.name}
+                          </Text>
                         </TouchableOpacity>
                       ))
                     ) : (
@@ -3557,18 +3560,21 @@ class ContactDetailScreen extends React.Component {
                   />
                 </Col>
                 <Col>
-                  <View
-                    style={[
-                      { marginTop: 'auto', marginBottom: 'auto' },
-                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                    ]}>
+                  <View>
                     {this.state.contact.relation ? (
                       this.state.contact.relation.values.map((contact, index) => (
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
                           onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text style={styles.linkingText}>{contact.name}</Text>
+                          <Text
+                            style={[
+                              styles.linkingText,
+                              { marginTop: 'auto', marginBottom: 'auto' },
+                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                            ]}>
+                            {contact.name}
+                          </Text>
                         </TouchableOpacity>
                       ))
                     ) : (
@@ -3588,18 +3594,21 @@ class ContactDetailScreen extends React.Component {
                   <Icon type="Entypo" name="water" style={[styles.formIcon, { marginTop: 0 }]} />
                 </Col>
                 <Col>
-                  <View
-                    style={[
-                      { marginTop: 'auto', marginBottom: 'auto' },
-                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                    ]}>
+                  <View>
                     {this.state.contact.baptized_by ? (
                       this.state.contact.baptized_by.values.map((contact, index) => (
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
                           onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text style={styles.linkingText}>{contact.name}</Text>
+                          <Text
+                            style={[
+                              styles.linkingText,
+                              { marginTop: 'auto', marginBottom: 'auto' },
+                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                            ]}>
+                            {contact.name}
+                          </Text>
                         </TouchableOpacity>
                       ))
                     ) : (
@@ -3623,18 +3632,21 @@ class ContactDetailScreen extends React.Component {
                   />
                 </Col>
                 <Col>
-                  <View
-                    style={[
-                      { marginTop: 'auto', marginBottom: 'auto' },
-                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                    ]}>
+                  <View>
                     {this.state.contact.baptized ? (
                       this.state.contact.baptized.values.map((contact, index) => (
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
                           onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text style={styles.linkingText}>{contact.name}</Text>
+                          <Text
+                            style={[
+                              styles.linkingText,
+                              { marginTop: 'auto', marginBottom: 'auto' },
+                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                            ]}>
+                            {contact.name}
+                          </Text>
                         </TouchableOpacity>
                       ))
                     ) : (
@@ -3658,18 +3670,21 @@ class ContactDetailScreen extends React.Component {
                   />
                 </Col>
                 <Col>
-                  <View
-                    style={[
-                      { marginTop: 'auto', marginBottom: 'auto' },
-                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                    ]}>
+                  <View>
                     {this.state.contact.coached_by ? (
                       this.state.contact.coached_by.values.map((contact, index) => (
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
                           onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text style={styles.linkingText}>{contact.name}</Text>
+                          <Text
+                            style={[
+                              styles.linkingText,
+                              { marginTop: 'auto', marginBottom: 'auto' },
+                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                            ]}>
+                            {contact.name}
+                          </Text>
                         </TouchableOpacity>
                       ))
                     ) : (
@@ -3693,18 +3708,21 @@ class ContactDetailScreen extends React.Component {
                   />
                 </Col>
                 <Col>
-                  <View
-                    style={[
-                      { marginTop: 'auto', marginBottom: 'auto' },
-                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                    ]}>
+                  <View>
                     {this.state.contact.coaching ? (
                       this.state.contact.coaching.values.map((contact, index) => (
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
                           onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text style={styles.linkingText}>{contact.name}</Text>
+                          <Text
+                            style={[
+                              styles.linkingText,
+                              { marginTop: 'auto', marginBottom: 'auto' },
+                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                            ]}>
+                            {contact.name}
+                          </Text>
                         </TouchableOpacity>
                       ))
                     ) : (
