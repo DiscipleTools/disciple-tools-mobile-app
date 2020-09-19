@@ -1909,13 +1909,16 @@ class ContactDetailScreen extends React.Component {
                 </Col>
                 <Col>
                   <Label
-                    style={{
-                      color: Colors.tintColor,
-                      fontSize: 12,
-                      fontWeight: 'bold',
-                      marginTop: 'auto',
-                      marginBottom: 'auto',
-                    }}>
+                    style={[
+                      {
+                        color: Colors.tintColor,
+                        fontSize: 12,
+                        fontWeight: 'bold',
+                        marginTop: 'auto',
+                        marginBottom: 'auto',
+                      },
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
                     {this.props.contactSettings.fields.overall_status.name}
                   </Label>
                 </Col>
@@ -2341,6 +2344,7 @@ class ContactDetailScreen extends React.Component {
                       fontWeight: 'bold',
                       marginTop: 0,
                     },
+                    this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                   ]}>
                   {this.props.contactSettings.fields.overall_status.name}
                 </Label>
@@ -2407,11 +2411,12 @@ class ContactDetailScreen extends React.Component {
                   <Input
                     value={this.state.contact.title}
                     onChangeText={this.setContactTitle}
-                    style={
+                    style={[
                       this.state.nameRequired
                         ? [styles.contactTextField, { borderBottomWidth: 0 }]
-                        : styles.contactTextField
-                    }
+                        : styles.contactTextField,
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}
                   />
                 </Col>
                 {this.state.nameRequired ? (
@@ -2451,7 +2456,12 @@ class ContactDetailScreen extends React.Component {
                     />
                   </View>
                 </Col>
-                <Col style={[styles.contactTextRoundField, { paddingRight: 10 }]}>
+                <Col
+                  style={[
+                    styles.contactTextRoundField,
+                    { paddingRight: 10 },
+                    this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                  ]}>
                   <Picker
                     selectedValue={
                       this.state.contact.assigned_to ? this.state.contact.assigned_to.key : null
