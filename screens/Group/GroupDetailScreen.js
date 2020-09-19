@@ -1701,13 +1701,8 @@ class GroupDetailScreen extends React.Component {
             commentOrActivity.author.toLowerCase() ===
               this.props.userData.username.toLowerCase() && (
               <Grid style={{ marginTop: 20 }}>
-                <Row
-                  style={{
-                    marginTop: 'auto',
-                    marginBottom: 'auto',
-                  }}>
+                <Row>
                   <Row
-                    style={{ marginLeft: 0, marginRight: 'auto' }}
                     onPress={() => {
                       this.openCommentDialog(commentOrActivity, true);
                     }}>
@@ -1728,10 +1723,6 @@ class GroupDetailScreen extends React.Component {
                     </Text>
                   </Row>
                   <Row
-                    style={{
-                      marginLeft: 'auto',
-                      marginRight: 0,
-                    }}
                     onPress={() => {
                       this.openCommentDialog(commentOrActivity);
                     }}>
@@ -2228,7 +2219,9 @@ class GroupDetailScreen extends React.Component {
       <TouchableOpacity
         activeOpacity={0.5}
         onPress={() => this.goToContactDetailScreen(foundUser.key, foundUser.label)}>
-        <Text style={styles.linkingText}>{foundUser.label}</Text>
+        <Text style={[styles.linkingText, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+          {foundUser.label}
+        </Text>
       </TouchableOpacity>
     );
   };
@@ -2409,18 +2402,21 @@ class GroupDetailScreen extends React.Component {
                   </View>
                 </Col>
                 <Col>
-                  <View
-                    style={[
-                      { marginTop: 'auto', marginBottom: 'auto' },
-                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                    ]}>
+                  <View>
                     {this.state.group.coaches ? (
                       this.state.group.coaches.values.map((contact, index) => (
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
                           onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text style={styles.linkingText}>{contact.name}</Text>
+                          <Text
+                            style={[
+                              styles.linkingText,
+                              { marginTop: 'auto', marginBottom: 'auto' },
+                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                            ]}>
+                            {contact.name}
+                          </Text>
                         </TouchableOpacity>
                       ))
                     ) : (
@@ -2606,12 +2602,16 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Label
-                  style={{
-                    color: Colors.tintColor,
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                    marginTop: 0,
-                  }}>
+                  style={[
+                    {
+                      color: Colors.tintColor,
+                      fontSize: 14,
+                      fontWeight: 'bold',
+                      marginTop: 'auto',
+                      marginBottom: 'auto',
+                    },
+                    this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                  ]}>
                   {this.props.groupSettings.fields.group_status.name}
                 </Label>
               </Col>
