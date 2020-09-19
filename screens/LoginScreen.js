@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: Colors.tintColor,
     width: '100%',
-    paddingTop: 100,
+    padding: 20,
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
@@ -62,7 +62,6 @@ const styles = StyleSheet.create({
     width: 250,
     resizeMode: 'contain',
     padding: 20,
-    marginBottom: 20,
   },
   formContainer: {
     alignSelf: 'stretch',
@@ -70,9 +69,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   signInButton: {
-    marginTop: 20,
+    marginTop: 10,
     backgroundColor: Colors.tintColor,
-    borderRadius: 2,
+    borderRadius: 20,
   },
   signInButtonText: {
     color: 'white',
@@ -142,11 +141,11 @@ const styles = StyleSheet.create({
   },
   textBox: {
     fontSize: 16,
-    height: 45,
     paddingRight: 30,
     paddingLeft: 8,
     paddingVertical: 0,
     flex: 1,
+    textAlign: 'left',
   },
   touachableButton: {
     position: 'absolute',
@@ -723,6 +722,7 @@ class LoginScreen extends React.Component {
               keyboardType="url"
               disabled={this.state.loading}
               placeholder={i18n.t('loginScreen.domain.placeholder')}
+              style={{ textAlign: 'left' }}
             />
             {domainErrorMessage}
             <TextField
@@ -737,6 +737,7 @@ class LoginScreen extends React.Component {
               textContentType="emailAddress"
               keyboardType="email-address"
               disabled={this.state.loading}
+              style={{ textAlign: 'left' }}
             />
             {userErrorMessage}
             <View style={[passwordStyle]}>
