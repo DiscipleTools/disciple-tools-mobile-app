@@ -14,21 +14,24 @@ import {
   TouchableHighlight,
   BackHandler,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
-import { Label, Input, Icon, Picker, DatePicker } from 'native-base';
+import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Chip, Selectize } from 'react-native-material-selectize';
+import ActionButton from 'react-native-action-button';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { NavigationActions, StackActions } from 'react-navigation';
 import MentionsTextInput from 'react-native-mentions';
 import ParsedText from 'react-native-parsed-text';
-import * as Sentry from 'sentry-expo';
+//import * as Sentry from 'sentry-expo';
+import { BlurView } from 'expo-blur';
 
 import moment from '../../languages/moment';
 import sharedTools from '../../shared';
@@ -40,8 +43,13 @@ import {
   getActivitiesByGroup,
   getByIdEnd,
   searchLocations,
+  deleteComment,
+  loadingFalse,
+  updatePrevious,
 } from '../../store/actions/groups.actions';
+import { updatePrevious as updatePreviousContacts } from '../../store/actions/contacts.actions';
 import Colors from '../../constants/Colors';
+import statusIcon from '../../assets/icons/status.png';
 import baptismIcon from '../../assets/icons/baptism.png';
 import bibleStudyIcon from '../../assets/icons/word.png';
 import communionIcon from '../../assets/icons/communion.png';
@@ -69,11 +77,12 @@ import i18n from '../../languages';
 
 let toastSuccess;
 let toastError;
-const containerPadding = 35;
+const containerPadding = 20;
 const windowWidth = Dimensions.get('window').width;
 const spacing = windowWidth * 0.025;
 const sideSize = windowWidth - 2 * spacing;
 const circleSideSize = windowWidth / 3 + 20;
+const windowHeight = Dimensions.get('window').height;
 let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBackPressListener;
 //const hasNotch = Platform.OS === 'android' && StatusBar.currentHeight > 25;
 //const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
@@ -149,10 +158,17 @@ const styles = StyleSheet.create({
   },
   tabStyle: { backgroundColor: '#FFFFFF' },
   textStyle: { color: 'gray' },
+  fieldsIcons: {
+    height: 22,
+    width: 22,
+  },
   addRemoveIcons: {
     fontSize: 30,
     marginRight: 0,
+    color: Colors.addRemoveIcons,
   },
+  addIcons: { color: 'green' },
+  removeIcons: { color: 'red' },
   // Comments Section
   container: {
     paddingLeft: 19,
@@ -187,6 +203,10 @@ const styles = StyleSheet.create({
     color: Colors.tintColor,
     fontSize: 10,
   },
+  groupFABIcon: {
+    color: 'white',
+    fontSize: 20,
+  },
   separator: {
     height: 1,
     backgroundColor: '#CCCCCC',
@@ -204,13 +224,13 @@ const styles = StyleSheet.create({
   // Form
   formContainer: {
     paddingTop: 10,
-    paddingBottom: 10,
+    paddingBottom: 100,
     paddingLeft: containerPadding,
     paddingRight: containerPadding,
   },
   formRow: {
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: 15,
+    paddingBottom: 15,
     width: '100%',
   },
   formIconLabel: { marginLeft: 10, width: 'auto' },
@@ -240,8 +260,6 @@ const styles = StyleSheet.create({
   formDivider: {
     borderBottomColor: '#CCCCCC',
     borderBottomWidth: 1,
-    marginLeft: 10,
-    marginRight: 10,
   },
   formDivider2: {
     marginTop: 25,
@@ -255,6 +273,7 @@ const styles = StyleSheet.create({
   },
   formIconLabelCol: {
     width: 35,
+    marginRight: 10,
   },
   formIconLabelView: {
     alignItems: 'center',
@@ -346,9 +365,8 @@ const styles = StyleSheet.create({
   },
   noCommentsContainer: {
     padding: 20,
-    textAlignVertical: 'top',
-    textAlign: 'center',
-    height: 300,
+    height: '90%',
+    transform: [{ scaleY: -1 }],
   },
   noCommentsImage: {
     opacity: 0.5,
@@ -357,19 +375,10 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   noCommentsText: {
-    textAlignVertical: 'center',
     textAlign: 'center',
     fontWeight: 'bold',
     color: '#A8A8A8',
-    padding: 5,
-  },
-  noCommentsTextOffilne: {
-    textAlignVertical: 'center',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: '#A8A8A8',
-    backgroundColor: '#fff2ac',
-    padding: 5,
+    marginTop: 10,
   },
   membersCount: {
     color: Colors.tintColor,
@@ -459,6 +468,37 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'rgba(0,0,0,0.6)',
   },
+  // Edit/Delete comment dialog
+  dialogBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  dialogBox: {
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    height: windowHeight - windowHeight * 0.55,
+    width: windowWidth - windowWidth * 0.1,
+    marginTop: windowHeight * 0.1,
+  },
+  dialogButton: {
+    backgroundColor: Colors.tintColor,
+    borderRadius: 5,
+    width: 100,
+    marginTop: 20,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  dialogContent: {
+    height: '100%',
+    width: '100%',
+    fontSize: 20,
+    textAlign: 'center',
+    color: Colors.grayDark,
+    marginBottom: 5,
+  },
 });
 
 const initialState = {
@@ -472,18 +512,26 @@ const initialState = {
   geonames: [],
   peopleGroups: [],
   groups: [],
-  comments: [],
+  comments: {
+    data: [],
+    pagination: {
+      limit: 10,
+      offset: 0,
+      total: 0,
+    },
+  },
   loadComments: false,
   loadMoreComments: false,
-  totalComments: 0,
-  commentsOffset: 0,
-  commentsLimit: 10,
-  activities: [],
+  activities: {
+    data: [],
+    pagination: {
+      limit: 10,
+      offset: 0,
+      total: 0,
+    },
+  },
   loadActivities: false,
   loadMoreActivities: false,
-  totalActivities: 0,
-  activitiesOffset: 0,
-  activitiesLimit: 10,
   showAssignedToModal: false,
   groupStatusBackgroundColor: '#ffffff',
   loading: false,
@@ -511,7 +559,12 @@ const initialState = {
   membersContacts: [],
   unmodifiedMembersContacts: [],
   assignedToContacts: [],
-  unmodifedAssignedToContacts: []
+  unmodifedAssignedToContacts: [],
+  commentDialog: {
+    toggle: false,
+    data: {},
+    delete: false,
+  },
 };
 
 const safeFind = (found, prop) => {
@@ -571,9 +624,7 @@ class GroupDetailScreen extends React.Component {
           <Icon
             type="Feather"
             name="arrow-left"
-            onPress={() => {
-              params.backButtonTap();
-            }}
+            onPress={params.backButtonTap}
             style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }]}
           />
         );
@@ -608,13 +659,13 @@ class GroupDetailScreen extends React.Component {
         fontWeight: 'bold',
         width: params.onlyView
           ? Platform.select({
-            android: 200,
-            ios: 180,
-          })
+              android: 200,
+              ios: 180,
+            })
           : Platform.select({
-            android: 180,
-            ios: 140,
-          }),
+              android: 180,
+              ios: 140,
+            }),
         marginLeft: params.onlyView ? undefined : 25,
       },
     };
@@ -627,12 +678,22 @@ class GroupDetailScreen extends React.Component {
   componentDidMount() {
     const { navigation } = this.props;
     this.onLoad();
-    navigation.setParams({
-      onEnableEdit: this.onEnableEdit,
-      onDisableEdit: this.onDisableEdit,
-      onSaveGroup: this.onSaveGroup,
-      backButtonTap: this.backButtonTap,
-    });
+
+    let params = {
+      onEnableEdit: this.onEnableEdit.bind(this),
+      onDisableEdit: this.onDisableEdit.bind(this),
+      onSaveGroup: this.onSaveGroup.bind(this),
+      backButtonTap: this.backButtonTap.bind(this),
+    };
+    // Add afterBack param to execute 'parents' functions (ContactsView, NotificationsView)
+    if (!navigation.state.params.afterBack) {
+      params = {
+        ...params,
+        afterBack: this.afterBack.bind(this),
+      };
+    }
+    navigation.setParams(params);
+
     keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       this.keyboardDidShow.bind(this),
@@ -642,34 +703,21 @@ class GroupDetailScreen extends React.Component {
       this.keyboardDidHide.bind(this),
     );
     focusListener = navigation.addListener('didFocus', () => {
-      if (
-        typeof this.props.navigation.state.params.groupId !== 'undefined' &&
-        this.state.loadedLocal
-      ) {
-        this.setState(
-          {
-            loading: false,
-          },
-          () => {
-            this.onRefresh(this.props.navigation.state.params.groupId);
-          },
-        );
+      //Focus on 'detail mode' (going back or open detail view)
+      if (typeof this.props.navigation.state.params.groupId !== 'undefined') {
+        this.props.loadingFalse();
+        this.onRefresh(this.props.navigation.state.params.groupId, true);
       }
     });
+    // Android bottom back button listener
     hardwareBackPressListener = BackHandler.addEventListener('hardwareBackPress', () => {
-      sharedTools.onlyExecuteLastCall(
-        null,
-        () => {
-          this.backButtonTap();
-        },
-        1000,
-      );
+      this.props.navigation.state.params.backButtonTap();
       return true;
     });
   }
 
   componentDidCatch(error, errorInfo) {
-    Sentry.captureException(errorInfo);
+    //Sentry.captureException(errorInfo);
   }
 
   componentWillUnmount() {
@@ -684,36 +732,22 @@ class GroupDetailScreen extends React.Component {
       group,
       loading,
       comments,
-      totalComments,
       loadingComments,
       activities,
-      totalActivities,
       loadingActivities,
-      newComment,
       foundGeonames,
       isConnected,
     } = nextProps;
     let newState = {
       ...prevState,
       loading,
-      comments: comments || prevState.comments,
-      totalComments: totalComments || prevState.totalComments,
+      comments: prevState.comments,
       loadComments: loadingComments,
-      activities: activities || prevState.activities,
-      totalActivities: totalActivities || prevState.totalActivities,
+      activities: prevState.activities,
       loadActivities: loadingActivities,
       group: prevState.group,
       unmodifiedGroup: prevState.unmodifiedGroup,
     };
-
-    // NEW COMMENT
-    if (newComment) {
-      newState.comments.unshift(newComment);
-      newState = {
-        ...newState,
-        comments: newState.comments,
-      };
-    }
 
     // SAVE / GET BY ID
     if (group) {
@@ -726,9 +760,6 @@ class GroupDetailScreen extends React.Component {
           ...group,
         },
       };
-      if (newState.group.oldID) {
-        delete newState.group.oldID;
-      }
       if (newState.group.group_status) {
         newState = {
           ...newState,
@@ -792,15 +823,16 @@ class GroupDetailScreen extends React.Component {
         };
       }
       if (newState.group.coaches) {
-
         // Clear collection
         newState = {
           ...newState,
-          groupCoachContacts: []
+          groupCoachContacts: [],
         };
 
         newState.group.coaches.values.forEach((coachContact) => {
-          const foundCoachContact = newState.usersContacts.find((user) => user.value === coachContact.value);
+          const foundCoachContact = newState.usersContacts.find(
+            (user) => user.value === coachContact.value,
+          );
           if (!foundCoachContact) {
             // Add non existent coach contact in usersContacts list (user does not have access permission to this contacts)
             newState = {
@@ -809,31 +841,31 @@ class GroupDetailScreen extends React.Component {
                 ...newState.groupCoachContacts,
                 {
                   name: coachContact.name,
-                  value: coachContact.value
-                }
+                  value: coachContact.value,
+                },
               ],
               unmodifiedGroupCoachContacts: [
                 ...newState.unmodifiedGroupCoachContacts,
                 {
                   name: coachContact.name,
-                  value: coachContact.value
-                }
-              ]
+                  value: coachContact.value,
+                },
+              ],
             };
           }
         });
-
       }
       if (newState.group.parent_groups) {
-
         // Clear collection
         newState = {
           ...newState,
-          parentGroups: []
+          parentGroups: [],
         };
 
         newState.group.parent_groups.values.forEach((parentGroup) => {
-          const foundParentGroup = newState.groups.find((groups) => groups.value === parentGroup.value);
+          const foundParentGroup = newState.groups.find(
+            (groups) => groups.value === parentGroup.value,
+          );
           if (!foundParentGroup) {
             // Add non existent parent group in groups list (user does not have access permission to this group/s)
             newState = {
@@ -842,27 +874,25 @@ class GroupDetailScreen extends React.Component {
                 ...newState.parentGroups,
                 {
                   name: parentGroup.name,
-                  value: parentGroup.value
-                }
+                  value: parentGroup.value,
+                },
               ],
               unmodifiedParentGroups: [
                 ...newState.unmodifiedParentGroups,
                 {
                   name: parentGroup.name,
-                  value: parentGroup.value
-                }
-              ]
+                  value: parentGroup.value,
+                },
+              ],
             };
           }
         });
-
       }
       if (newState.group.peer_groups) {
-
         // Clear collection
         newState = {
           ...newState,
-          peerGroups: []
+          peerGroups: [],
         };
 
         newState.group.peer_groups.values.forEach((peerGroup) => {
@@ -875,31 +905,31 @@ class GroupDetailScreen extends React.Component {
                 ...newState.peerGroups,
                 {
                   name: peerGroup.name,
-                  value: peerGroup.value
-                }
+                  value: peerGroup.value,
+                },
               ],
               unmodifiedPeerGroups: [
                 ...newState.unmodifiedPeerGroups,
                 {
                   name: peerGroup.name,
-                  value: peerGroup.value
-                }
-              ]
+                  value: peerGroup.value,
+                },
+              ],
             };
           }
         });
-
       }
       if (newState.group.child_groups) {
-
         // Clear collection
         newState = {
           ...newState,
-          childGroups: []
+          childGroups: [],
         };
 
         newState.group.child_groups.values.forEach((childGroup) => {
-          const foundChildGroup = newState.groups.find((groups) => groups.value === childGroup.value);
+          const foundChildGroup = newState.groups.find(
+            (groups) => groups.value === childGroup.value,
+          );
           if (!foundChildGroup) {
             // Add non existent child group in groups list (user does not have access permission to this group/s)
             newState = {
@@ -908,31 +938,31 @@ class GroupDetailScreen extends React.Component {
                 ...newState.childGroups,
                 {
                   name: childGroup.name,
-                  value: childGroup.value
-                }
+                  value: childGroup.value,
+                },
               ],
               unmodifiedChildGroups: [
                 ...newState.unmodifiedChildGroups,
                 {
                   name: childGroup.name,
-                  value: childGroup.value
-                }
-              ]
+                  value: childGroup.value,
+                },
+              ],
             };
           }
         });
-
       }
       if (newState.group.members) {
-
         // Clear collection
         newState = {
           ...newState,
-          membersContacts: []
+          membersContacts: [],
         };
 
         newState.group.members.values.forEach((member) => {
-          const foundMember = newState.usersContacts.find((contact) => contact.value === member.value);
+          const foundMember = newState.usersContacts.find(
+            (contact) => contact.value === member.value,
+          );
           if (!foundMember) {
             // Add non existent member contact in members list (user does not have access permission to this contact/s)
             newState = {
@@ -941,30 +971,30 @@ class GroupDetailScreen extends React.Component {
                 ...newState.membersContacts,
                 {
                   name: member.name,
-                  value: member.value
-                }
+                  value: member.value,
+                },
               ],
               unmodifiedMembersContacts: [
                 ...newState.unmodifiedMembersContacts,
                 {
                   name: member.name,
-                  value: member.value
-                }
-              ]
+                  value: member.value,
+                },
+              ],
             };
           }
         });
-
       }
       if (newState.group.assigned_to) {
-
         // Clear collection
         newState = {
           ...newState,
-          assignedToContacts: []
+          assignedToContacts: [],
         };
 
-        let foundAssigned = newState.users.find((user) => user.key === newState.group.assigned_to.key);
+        let foundAssigned = newState.users.find(
+          (user) => user.key === newState.group.assigned_to.key,
+        );
         if (!foundAssigned) {
           // Add non existent group to list (user does not have access permission to this groups)
           newState = {
@@ -972,55 +1002,65 @@ class GroupDetailScreen extends React.Component {
             assignedToContacts: [
               ...newState.assignedToContacts,
               {
-                label: foundAssigned.label,
-                key: foundAssigned.key
-              }
+                label: newState.group.assigned_to.label,
+                key: newState.group.assigned_to.key,
+              },
             ],
             unmodifedAssignedToContacts: [
               ...newState.unmodifedAssignedToContacts,
               {
-                label: foundAssigned.label,
-                key: foundAssigned.key
-              }
-            ]
+                label: newState.group.assigned_to.label,
+                key: newState.group.assigned_to.key,
+              },
+            ],
           };
         }
-
       }
     }
 
     // GET COMMENTS
     if (comments) {
-      // NEW COMMENTS (PAGINATION)
-      if (prevState.commentsOffset > 0) {
+      if (newState.group.ID && Object.prototype.hasOwnProperty.call(comments, newState.group.ID)) {
+        // NEW COMMENTS (PAGINATION)
+        if (comments[newState.group.ID].pagination.offset > 0) {
+          newState = {
+            ...newState,
+            loadingMoreComments: false,
+          };
+        }
+        // ONLINE MODE: USE STATE PAGINATION - OFFLINE MODE: USE STORE PAGINATION
+        // UPDATE OFFSET
         newState = {
           ...newState,
-          comments: prevState.comments.concat(comments),
-          loadMoreComments: false,
+          comments: {
+            ...comments[newState.group.ID],
+          },
         };
       }
-      newState = {
-        // UPDATE OFFSET
-        ...newState,
-        commentsOffset: prevState.commentsOffset + prevState.commentsLimit,
-      };
     }
 
     // GET ACTIVITITES
     if (activities) {
-      // NEW ACTIVITIES (PAGINATION)
-      if (prevState.activitiesOffset > 0) {
+      if (
+        newState.group.ID &&
+        Object.prototype.hasOwnProperty.call(activities, newState.group.ID)
+      ) {
+        // NEW ACTIVITIES (PAGINATION)
+        if (activities[newState.group.ID].pagination.offset > 0) {
+          newState = {
+            ...newState,
+            loadingMoreActivities: false,
+          };
+        }
+        // ONLINE MODE: USE STATE PAGINATION - OFFLINE MODE: USE STORE PAGINATION
+        // UPDATE OFFSET
         newState = {
           ...newState,
-          activities: prevState.activities.concat(activities),
-          loadMoreActivities: false,
+          activities: {
+            ...activities[newState.group.ID],
+          },
         };
       }
-      newState = {
-        // UPDATE OFFSET
-        ...newState,
-        activitiesOffset: prevState.activitiesOffset + prevState.activitiesLimit,
-      };
     }
 
     // GET FILTERED LOCATIONS
@@ -1055,15 +1095,30 @@ class GroupDetailScreen extends React.Component {
       // Update group data only in these conditions:
       // Same group created (offline/online)
       // Same group updated (offline/online)
-      // Sane offline group created in DB (AutoID to DBID)
+      // Same offline group created in DB (AutoID to DBID)
       if (
         (typeof group.ID !== 'undefined' && typeof this.state.group.ID === 'undefined') ||
-        group.ID.toString() === this.state.group.ID.toString() ||
-        (group.oldID && group.oldID.toString() === this.state.group.ID.toString())
+        (group.ID && group.ID.toString() === this.state.group.ID.toString()) ||
+        (group.oldID && group.oldID === this.state.group.ID.toString())
       ) {
         // Highlight Updates -> Compare this.state.group with group and show differences
         navigation.setParams({ groupName: group.title, groupId: group.ID });
         this.getGroupByIdEnd();
+        // Add group to 'previousGroups' array on creation
+        if (
+          !this.props.previousGroups.find(
+            (previousGroup) => parseInt(previousGroup.groupId) === parseInt(group.ID),
+          )
+        ) {
+          this.props.updatePrevious([
+            ...this.props.previousGroups,
+            {
+              groupId: parseInt(group.ID),
+              onlyView: true,
+              groupName: group.title,
+            },
+          ]);
+        }
       }
     }
 
@@ -1075,11 +1130,11 @@ class GroupDetailScreen extends React.Component {
       // Sane offline group created in DB (AutoID to DBID)
       if (
         (typeof group.ID !== 'undefined' && typeof this.state.group.ID === 'undefined') ||
-        group.ID.toString() === this.state.group.ID.toString() ||
-        (group.oldID && group.oldID.toString() === this.state.group.ID.toString())
+        (group.ID && group.ID.toString() === this.state.group.ID.toString()) ||
+        (group.oldID && group.oldID === this.state.group.ID.toString())
       ) {
         // Highlight Updates -> Compare this.state.contact with contact and show differences
-        this.onRefreshCommentsActivities(group.ID);
+        this.onRefreshCommentsActivities(group.ID, true);
         toastSuccess.show(
           <View>
             <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
@@ -1110,11 +1165,12 @@ class GroupDetailScreen extends React.Component {
         3000,
       );
     }
-
+    // Fix to press back button in comments tab
     if (prevProps.navigation.state.params.hideTabBar !== navigation.state.params.hideTabBar) {
       if (!navigation.state.params.hideTabBar && this.state.executingBack) {
         setTimeout(() => {
-          this.executeBack(navigation, navigation.state.params);
+          navigation.goBack(null);
+          navigation.state.params.afterBack();
         }, 1000);
       }
     }
@@ -1147,15 +1203,35 @@ class GroupDetailScreen extends React.Component {
         },
       );
     } else {
-      this.executeBack(navigation, params);
+      //Fix to returning using Android back button! -> goBack(null)
+      navigation.goBack(null);
+      navigation.state.params.afterBack();
     }
   };
 
-  executeBack = (navigation, params) => {
-    if (params.previousList.length > 0) {
-      navigation.goBack();
-      params.onBackFromSameScreen();
-    } else if (params.fromNotificationView) {
+  afterBack = () => {
+    let { navigation } = this.props;
+    let newPreviousGroups = [...this.props.previousGroups];
+    newPreviousGroups.pop();
+    this.props.updatePrevious(newPreviousGroups);
+    if (newPreviousGroups.length > 0) {
+      this.props.loadingFalse();
+      let currentParams = {
+        ...newPreviousGroups[newPreviousGroups.length - 1],
+      };
+      this.setState({
+        group: {
+          ID: currentParams.groupId,
+          title: currentParams.groupName,
+          group_type: 'group',
+        },
+        groupStatusBackgroundColor: '#ffffff',
+      });
+      navigation.setParams({
+        ...currentParams,
+      });
+      this.onRefresh(currentParams.groupId, true);
+    } else if (navigation.state.params.fromNotificationView) {
       const resetAction = StackActions.reset({
         index: 0,
         actions: [NavigationActions.navigate({ routeName: 'GroupList' })],
@@ -1165,8 +1241,8 @@ class GroupDetailScreen extends React.Component {
     } else {
       navigation.goBack();
       // Prevent error when view loaded from ContactDetailScreen.js
-      if (typeof params.onGoBack === 'function') {
-        params.onGoBack();
+      if (typeof navigation.state.params.onGoBack === 'function') {
+        navigation.state.params.onGoBack();
       }
     }
   };
@@ -1225,26 +1301,16 @@ class GroupDetailScreen extends React.Component {
     });
   };
 
-  onRefresh(groupId) {
-    this.getGroupById(groupId);
-    this.onRefreshCommentsActivities(groupId);
+  onRefresh(groupId, forceRefresh = false) {
+    if (!self.state.loading || forceRefresh) {
+      this.getGroupById(groupId);
+      this.onRefreshCommentsActivities(groupId, true);
+    }
   }
 
-  onRefreshCommentsActivities(groupId) {
-    this.setState(
-      {
-        comments: [],
-        activities: [],
-        commentsOffset: 0,
-        activitiesOffset: 0,
-      },
-      () => {
-        this.getGroupComments(groupId);
-        if (this.props.isConnected) {
-          this.getGroupActivities(groupId);
-        }
-      },
-    );
+  onRefreshCommentsActivities(groupId, resetPagination = false) {
+    this.getGroupComments(groupId, resetPagination);
+    this.getGroupActivities(groupId, resetPagination);
   }
 
   getLists = async (groupId) => {
@@ -1306,27 +1372,51 @@ class GroupDetailScreen extends React.Component {
     this.props.getByIdEnd();
   }
 
-  getGroupComments(groupId) {
-    if (!this.state.loadComments) {
-      this.props.getComments(
-        this.props.userData.domain,
-        this.props.userData.token,
-        groupId,
-        this.state.commentsOffset,
-        this.state.commentsLimit,
-      );
+  getGroupComments(groupId, resetPagination = false) {
+    if (this.props.isConnected) {
+      if (resetPagination) {
+        this.props.getComments(this.props.userData.domain, this.props.userData.token, groupId, {
+          offset: 0,
+          limit: 10,
+        });
+      } else {
+        //ONLY GET DATA IF THERE IS MORE DATA TO GET
+        if (
+          !this.state.loadComments &&
+          this.state.comments.pagination.offset < this.state.comments.pagination.total
+        ) {
+          this.props.getComments(
+            this.props.userData.domain,
+            this.props.userData.token,
+            groupId,
+            this.state.comments.pagination,
+          );
+        }
+      }
     }
   }
 
-  getGroupActivities(groupId) {
-    if (!this.state.loadActivities) {
-      this.props.getActivities(
-        this.props.userData.domain,
-        this.props.userData.token,
-        groupId,
-        this.state.activitiesOffset,
-        this.state.activitiesLimit,
-      );
+  getGroupActivities(groupId, resetPagination = false) {
+    if (this.props.isConnected) {
+      if (resetPagination) {
+        this.props.getActivities(this.props.userData.domain, this.props.userData.token, groupId, {
+          offset: 0,
+          limit: 10,
+        });
+      } else {
+        //ONLY GET DATA IF THERE IS MORE DATA TO GET
+        if (
+          !this.state.loadActivities &&
+          this.state.activities.pagination.offset < this.state.activities.pagination.total
+        ) {
+          this.props.getActivities(
+            this.props.userData.domain,
+            this.props.userData.token,
+            groupId,
+            this.state.activities.pagination,
+          );
+        }
+      }
     }
   }
 
@@ -1362,11 +1452,14 @@ class GroupDetailScreen extends React.Component {
       unmodifiedPeerGroups,
       unmodifiedChildGroups,
       unmodifiedMembersContacts,
-      unmodifedAssignedToContacts
+      unmodifedAssignedToContacts,
     } = this.state;
     this.setState((state) => {
+      // Set correct index in Tab position according to view mode and current tab position
       const indexFix =
-        state.tabViewConfig.index > 1 ? state.tabViewConfig.index + 1 : state.tabViewConfig.index;
+        state.tabViewConfig.index > 1 && !state.onlyView
+          ? state.tabViewConfig.index + 1
+          : state.tabViewConfig.index;
       return {
         onlyView: true,
         group: {
@@ -1383,7 +1476,7 @@ class GroupDetailScreen extends React.Component {
         peerGroups: [...unmodifiedPeerGroups],
         childGroups: [...unmodifiedChildGroups],
         membersContacts: [...unmodifiedMembersContacts],
-        assignedToContacts: [...unmodifedAssignedToContacts]
+        assignedToContacts: [...unmodifedAssignedToContacts],
       };
     });
     this.props.navigation.setParams({ hideTabBar: false, onlyView: true });
@@ -1452,7 +1545,7 @@ class GroupDetailScreen extends React.Component {
 
   getCommentsAndActivities() {
     const { comments, activities } = this.state;
-    const list = comments.concat(activities);
+    const list = comments.data.concat(activities.data);
     return list
       .filter((item, index) => list.indexOf(item) === index)
       .sort((a, b) => new Date(a.date).getTime() < new Date(b.date).getTime());
@@ -1479,17 +1572,17 @@ class GroupDetailScreen extends React.Component {
             {this.state.group.member_count}
           </Text>
         ) : (
-            <Text
-              style={{
-                color: Colors.tintColor,
-                fontSize: 13,
-                textAlign: 'left',
-                fontWeight: 'bold',
-              }}>
-              {' '}
+          <Text
+            style={{
+              color: Colors.tintColor,
+              fontSize: 13,
+              textAlign: 'left',
+              fontWeight: 'bold',
+            }}>
+            {' '}
             0{' '}
-            </Text>
-          )}
+          </Text>
+        )}
       </Row>
       {!this.state.group.member_count || parseInt(this.state.group.member_count) === 0 ? (
         <View>
@@ -1498,20 +1591,23 @@ class GroupDetailScreen extends React.Component {
           </Text>
         </View>
       ) : (
-          <View></View>
-        )}
+        <View></View>
+      )}
     </View>
   );
 
-  goToContactDetailScreen = (contactID) => {
+  goToContactDetailScreen = (contactID, name) => {
+    this.props.updatePreviousContacts([
+      {
+        contactId: contactID,
+        onlyView: true,
+        contactName: name,
+      },
+    ]);
     this.props.navigation.navigate('ContactDetail', {
       contactId: contactID,
       onlyView: true,
-      contactName: safeFind(
-        this.state.usersContacts.find((user) => user.value === contactID),
-        'name',
-      ),
-      previousList: [],
+      contactName: name,
     });
   };
 
@@ -1536,7 +1632,8 @@ class GroupDetailScreen extends React.Component {
       <Image style={styles.image} source={{ uri: commentOrActivity.gravatar }} />
       <View style={styles.content}>
         <View style={styles.contentHeader}>
-          {// Comment
+          {
+            // Comment
             Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') && (
               <Grid>
                 <Row>
@@ -1554,8 +1651,10 @@ class GroupDetailScreen extends React.Component {
                   </Col>
                 </Row>
               </Grid>
-            )}
-          {// Activity
+            )
+          }
+          {
+            // Activity
             Object.prototype.hasOwnProperty.call(commentOrActivity, 'object_note') && (
               <Grid>
                 <Row>
@@ -1573,7 +1672,8 @@ class GroupDetailScreen extends React.Component {
                   </Col>
                 </Row>
               </Grid>
-            )}
+            )
+          }
         </View>
         <ParsedText
           style={
@@ -1592,6 +1692,58 @@ class GroupDetailScreen extends React.Component {
             ? commentOrActivity.content
             : this.formatActivityDate(commentOrActivity.object_note)}
         </ParsedText>
+        {
+          // Comment and its their own comment
+          Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') &&
+            commentOrActivity.author.toLowerCase() ===
+              this.props.userData.username.toLowerCase() && (
+              <Grid style={{ marginTop: 20 }}>
+                <Row>
+                  <Row
+                    onPress={() => {
+                      this.openCommentDialog(commentOrActivity, true);
+                    }}>
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="delete"
+                      style={{
+                        color: Colors.iconDelete,
+                        fontSize: 20,
+                      }}
+                    />
+                    <Text
+                      style={{
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}>
+                      {i18n.t('global.delete')}
+                    </Text>
+                  </Row>
+                  <Row
+                    onPress={() => {
+                      this.openCommentDialog(commentOrActivity);
+                    }}>
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="pencil"
+                      style={{
+                        color: Colors.primary,
+                        fontSize: 20,
+                        marginLeft: 'auto',
+                      }}
+                    />
+                    <Text
+                      style={{
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}>
+                      {i18n.t('global.edit')}
+                    </Text>
+                  </Row>
+                </Row>
+              </Grid>
+            )
+        }
       </View>
     </View>
   );
@@ -1610,11 +1762,11 @@ class GroupDetailScreen extends React.Component {
           key: value,
           label: [...this.state.users, ...this.state.assignedToContacts].find(
             (user) => user.key === value,
-          ).label
+          ).label,
         },
       },
       showAssignedToModal: false,
-      assignedToContacts: [] // Clear non existing assigentToContacts list
+      assignedToContacts: [], // Clear non existing assigentToContacts list
     }));
   };
 
@@ -1765,7 +1917,7 @@ class GroupDetailScreen extends React.Component {
       const foundMemberIndex = membersListCopy.indexOf(foundMember);
       membersListCopy.splice(foundMemberIndex, 1);
       let foundMemberContactIndex = this.state.membersContacts.findIndex(
-        (memberContact) => memberContact.value === selectedValue.value
+        (memberContact) => memberContact.value === selectedValue.value,
       );
       let membersContacts = [...this.state.membersContacts];
       if (foundMemberContactIndex > -1) {
@@ -1779,29 +1931,33 @@ class GroupDetailScreen extends React.Component {
           },
         },
         // Remove member contact from list
-        membersContacts: membersContacts
+        membersContacts: membersContacts,
       }));
     }
   };
 
   onSetLeader = (selectedValue) => {
-    let leadersListCopy = [...this.state.group.leaders.values];
-    const leaderModified = {
-      ...selectedValue,
-      delete:
-        this.state.group.leaders &&
-          leadersListCopy.find((leader) => leader.value === selectedValue.value)
-          ? true
-          : false,
-    };
-    const foundLeader = leadersListCopy.find((leader) => leader.value === selectedValue.value);
-    if (foundLeader) {
-      const foundLeaderIndex = leadersListCopy.indexOf(foundLeader);
-      leadersListCopy[foundLeaderIndex] = {
-        ...leaderModified,
-      };
+    let leadersListCopy = this.state.group.leaders ? [...this.state.group.leaders.values] : [];
+    const foundLeaderIndex = leadersListCopy.findIndex(
+      (leader) => leader.value === selectedValue.value,
+    );
+    if (foundLeaderIndex > -1) {
+      // 3 Remove leader 'deletion'
+      if (leadersListCopy[foundLeaderIndex].delete) {
+        leadersListCopy[foundLeaderIndex] = {
+          ...selectedValue,
+          delete: false,
+        };
+      } else {
+        // 2 Delete leader
+        leadersListCopy[foundLeaderIndex] = {
+          ...selectedValue,
+          delete: true,
+        };
+      }
     } else {
-      leadersListCopy.push(leaderModified);
+      // 1 Add leader
+      leadersListCopy.push(selectedValue);
     }
     this.setState((prevState) => ({
       group: {
@@ -1845,93 +2001,104 @@ class GroupDetailScreen extends React.Component {
     return itemsToSave;
   };
 
-  transformGroupObject = (group) => {
+  transformGroupObject = (group, quickAction = {}) => {
     let transformedGroup = {
       ...group,
     };
-    // if property exist, get from json, otherwise, send empty array
-    if (coachesSelectizeRef) {
+    if (
+      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_scheduled') ||
+      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_postponed') ||
+      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_complete')
+    ) {
       transformedGroup = {
         ...transformedGroup,
-        coaches: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.coaches ? transformedGroup.coaches.values : [],
-            coachesSelectizeRef,
-          ),
-        },
+        ...quickAction,
       };
-    }
-    if (geonamesSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        location_grid: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.location_grid ? transformedGroup.location_grid.values : [],
-            geonamesSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (peopleGroupsSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        people_groups: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.people_groups ? transformedGroup.people_groups.values : [],
-            peopleGroupsSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (parentGroupsSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        parent_groups: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.parent_groups ? transformedGroup.parent_groups.values : [],
-            parentGroupsSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (peerGroupsSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        peer_groups: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.peer_groups ? transformedGroup.peer_groups.values : [],
-            peerGroupsSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (childGroupsSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        child_groups: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.child_groups ? transformedGroup.child_groups.values : [],
-            childGroupsSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (addMembersSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        members: {
-          values: this.getSelectizeValuesToSave(
-            this.state.unmodifiedGroup.members ? this.state.unmodifiedGroup.members.values : [],
-            null,
-            transformedGroup.members ? transformedGroup.members.values : [],
-          ),
-        },
-      };
+    } else {
+      // if property exist, get from json, otherwise, send empty array
+      if (coachesSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          coaches: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.coaches ? transformedGroup.coaches.values : [],
+              coachesSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (geonamesSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          location_grid: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.location_grid ? transformedGroup.location_grid.values : [],
+              geonamesSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (peopleGroupsSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          people_groups: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.people_groups ? transformedGroup.people_groups.values : [],
+              peopleGroupsSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (parentGroupsSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          parent_groups: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.parent_groups ? transformedGroup.parent_groups.values : [],
+              parentGroupsSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (peerGroupsSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          peer_groups: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.peer_groups ? transformedGroup.peer_groups.values : [],
+              peerGroupsSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (childGroupsSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          child_groups: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.child_groups ? transformedGroup.child_groups.values : [],
+              childGroupsSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (addMembersSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          members: {
+            values: this.getSelectizeValuesToSave(
+              this.state.unmodifiedGroup.members ? this.state.unmodifiedGroup.members.values : [],
+              null,
+              transformedGroup.members ? transformedGroup.members.values : [],
+            ),
+          },
+        };
+      }
     }
     return transformedGroup;
   };
 
-  onSaveGroup = () => {
+  onSaveGroup = (quickAction = {}) => {
     this.setState(
       {
         nameRequired: false,
@@ -1940,7 +2107,7 @@ class GroupDetailScreen extends React.Component {
         Keyboard.dismiss();
         if (this.state.group.title) {
           const { unmodifiedGroup } = this.state;
-          const group = this.transformGroupObject(this.state.group);
+          const group = this.transformGroupObject(this.state.group, quickAction);
           let groupToSave = {
             ...sharedTools.diff(unmodifiedGroup, group),
             title: this.state.group.title,
@@ -2001,38 +2168,81 @@ class GroupDetailScreen extends React.Component {
     }
   };
 
+  openCommentDialog = (comment, deleteComment = false) => {
+    this.setState({
+      commentDialog: {
+        toggle: true,
+        data: comment,
+        delete: deleteComment,
+      },
+    });
+  };
+
+  onCloseCommentDialog() {
+    this.setState({
+      commentDialog: {
+        toggle: false,
+        data: {},
+        delete: false,
+      },
+    });
+  }
+
+  onUpdateComment(commentData) {
+    this.props.saveComment(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.group.ID,
+      commentData,
+    );
+    this.onCloseCommentDialog();
+  }
+
+  onDeleteComment(commentData) {
+    this.props.deleteComment(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.group.ID,
+      commentData.ID,
+    );
+    this.onCloseCommentDialog();
+  }
+
   showAssignedUser = () => {
     const foundUser = [...this.state.users, ...this.state.assignedToContacts].find(
       (user) => user.key === this.state.group.assigned_to.key,
     );
     return (
-      <Text
-        style={[
-          { marginTop: 'auto', marginBottom: 'auto', fontSize: 15 },
-          this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-        ]}>
-        {foundUser.label}
-      </Text>
+      <TouchableOpacity
+        activeOpacity={0.5}
+        onPress={() => this.goToContactDetailScreen(foundUser.key, foundUser.label)}>
+        <Text style={[styles.linkingText, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+          {foundUser.label}
+        </Text>
+      </TouchableOpacity>
     );
   };
 
-  goToGroupDetailScreen = (groupData) => {
-    const { navigation } = this.props;
+  goToGroupDetailScreen = (groupID, name) => {
+    let { navigation } = this.props;
     /* eslint-disable */
-    const { params } = navigation.state;
-    const { ID, title } = this.state.group;
-    params.previousList.push({
-      groupId: ID,
-      onlyView: true,
-      groupName: title,
-    });
+    // Save new group in 'previousGroups' array
+    if (!this.props.previousGroups.find((previousGroup) => previousGroup.groupId === groupID)) {
+      // Add contact to 'previousGroups' array on creation
+      this.props.updatePrevious([
+        ...this.props.previousGroups,
+        {
+          groupId: groupID,
+          onlyView: true,
+          groupName: name,
+        },
+      ]);
+    }
     navigation.push('GroupDetail', {
-      ...params, // previousList, onGoBack()
-      groupId: groupData.value,
+      groupId: groupID,
       onlyView: true,
-      groupName: groupData.name,
-      backButtonTap: this.backButtonTap.bind(this),
-      onBackFromSameScreen: this.onBackFromSameScreen.bind(this),
+      groupName: name,
+      afterBack: () => this.afterBack(),
     });
     /* eslint-enable */
   };
@@ -2057,25 +2267,43 @@ class GroupDetailScreen extends React.Component {
   );
 
   noCommentsRender = () => (
-    <View style={styles.noCommentsContainer}>
-      <Row style={{ justifyContent: 'center' }}>
-        <Image style={styles.noCommentsImage} source={dtIcon} />
-      </Row>
-      <Text style={styles.noCommentsText}>
-        {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder')}
-      </Text>
-      <Text style={styles.noCommentsText}>
-        {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder1')}
-      </Text>
-      {!this.props.isConnected && (
-        <Text style={styles.noCommentsTextOffilne}>
-          {i18n.t('groupDetailScreen.noGroupCommentPlacheHolderOffline')}
-        </Text>
-      )}
-    </View>
+    <ScrollView
+      style={styles.noCommentsContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={this.state.loadComments || this.state.loadActivities}
+          onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID, true)}
+        />
+      }>
+      <Grid style={{ transform: [{ scaleY: -1 }] }}>
+        <Col>
+          <Row style={{ justifyContent: 'center' }}>
+            <Image style={styles.noCommentsImage} source={dtIcon} />
+          </Row>
+          <Row>
+            <Text style={styles.noCommentsText}>
+              {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder')}
+            </Text>
+          </Row>
+          <Row>
+            <Text style={styles.noCommentsText}>
+              {i18n.t('groupDetailScreen.noGroupCommentPlacheHolder1')}
+            </Text>
+          </Row>
+          {!this.props.isConnected && (
+            <Row>
+              <Text style={[styles.noCommentsText, { backgroundColor: '#fff2ac' }]}>
+                {i18n.t('groupDetailScreen.noGroupCommentPlacheHolderOffline')}
+              </Text>
+            </Row>
+          )}
+        </Col>
+      </Grid>
+    </ScrollView>
   );
 
   detailView = () => (
+    /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
@@ -2088,18 +2316,26 @@ class GroupDetailScreen extends React.Component {
               />
             }>
             <View style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
-              <Label
-                style={[
-                  {
-                    color: Colors.tintColor,
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                    marginTop: 10,
-                  },
-                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                ]}>
-                {this.props.groupSettings.fields.group_status.name}
-              </Label>
+              <Row style={[styles.formRow, { paddingTop: 15 }]}>
+                <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                  <Image source={statusIcon} style={[styles.fieldsIcons, {}]} />
+                </Col>
+                <Col>
+                  <Label
+                    style={[
+                      {
+                        color: Colors.tintColor,
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                        marginTop: 'auto',
+                        marginBottom: 'auto',
+                      },
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
+                    {this.props.groupSettings.fields.group_status.name}
+                  </Label>
+                </Col>
+              </Row>
               <Row style={[styles.formRow, { paddingTop: 5 }]} pointerEvents="none">
                 <Col
                   style={[
@@ -2137,9 +2373,13 @@ class GroupDetailScreen extends React.Component {
               </Row>
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="briefcase-account"
+                    style={styles.formIcon}
+                  />
                 </Col>
-                <Col>{(this.state.group.assigned_to) ? this.showAssignedUser() : null}</Col>
+                <Col>{this.state.group.assigned_to ? this.showAssignedUser() : null}</Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={styles.formLabel}>
                     {this.props.groupSettings.fields.assigned_to.name}
@@ -2149,31 +2389,35 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon
-                    type="FontAwesome"
-                    name="black-tie"
-                    style={[styles.formIcon, { marginTop: 0 }]}
-                  />
+                  <View style={styles.formIconLabelView}>
+                    <Icon
+                      type="FontAwesome"
+                      name="black-tie"
+                      style={[styles.formIcon, { marginTop: 0 }]}
+                    />
+                  </View>
                 </Col>
                 <Col>
-                  <View
-                    style={[
-                      { marginTop: 'auto', marginBottom: 'auto' },
-                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                    ]}>
+                  <View>
                     {this.state.group.coaches ? (
-                      this.state.group.coaches.values.map((contact, index) =>
+                      this.state.group.coaches.values.map((contact, index) => (
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value)}>
-                          <Text style={styles.linkingText}>
+                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
+                          <Text
+                            style={[
+                              styles.linkingText,
+                              { marginTop: 'auto', marginBottom: 'auto' },
+                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                            ]}>
                             {contact.name}
                           </Text>
                         </TouchableOpacity>
-                      )) : (
-                        <Text></Text>
-                      )}
+                      ))
+                    ) : (
+                      <Text></Text>
+                    )}
                   </View>
                 </Col>
                 <Col style={{ width: 100 }}>
@@ -2195,14 +2439,14 @@ class GroupDetailScreen extends React.Component {
                     ]}>
                     {this.state.group.location_grid
                       ? this.state.group.location_grid.values
-                        .map(
-                          (location) =>
-                            this.state.geonames.find(
-                              (geoname) => geoname.value === location.value,
-                            ).name,
-                        )
-                        .filter(String)
-                        .join(', ')
+                          .map(
+                            (location) =>
+                              this.state.geonames.find(
+                                (geoname) => geoname.value === location.value,
+                              ).name,
+                          )
+                          .filter(String)
+                          .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -2225,14 +2469,14 @@ class GroupDetailScreen extends React.Component {
                     ]}>
                     {this.state.group.people_groups
                       ? this.state.group.people_groups.values
-                        .map(
-                          (peopleGroup) =>
-                            this.state.peopleGroups.find(
-                              (person) => person.value === peopleGroup.value,
-                            ).name,
-                        )
-                        .filter(String)
-                        .join(', ')
+                          .map(
+                            (peopleGroup) =>
+                              this.state.peopleGroups.find(
+                                (person) => person.value === peopleGroup.value,
+                              ).name,
+                          )
+                          .filter(String)
+                          .join(', ')
                       : ''}
                   </Text>
                 </Col>
@@ -2267,7 +2511,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Image source={dateIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome" name="calendar" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Text
@@ -2276,7 +2520,9 @@ class GroupDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.start_date
-                      ? moment(new Date(this.state.group.start_date * 1000)).format('LL')
+                      ? moment(new Date(this.state.group.start_date * 1000))
+                          .utc()
+                          .format('LL')
                       : ''}
                   </Text>
                 </Col>
@@ -2289,7 +2535,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Image source={dateSuccessIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome5" name="calendar-check" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Text
@@ -2298,12 +2544,14 @@ class GroupDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.church_start_date
-                      ? moment(new Date(this.state.group.church_start_date * 1000)).format('LL')
+                      ? moment(new Date(this.state.group.church_start_date * 1000))
+                          .utc()
+                          .format('LL')
                       : ''}
                   </Text>
                 </Col>
-                <Col style={styles.formParentLabel}>
-                  <Label style={styles.formLabel}>
+                <Col style={{ width: 100 }}>
+                  <Label style={[styles.formLabel, { textAlign: 'right' }]}>
                     {this.props.groupSettings.fields.church_start_date.name}
                   </Label>
                 </Col>
@@ -2311,7 +2559,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Image source={dateEndIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome5" name="calendar-times" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Text
@@ -2320,7 +2568,9 @@ class GroupDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.end_date
-                      ? moment(new Date(this.state.group.end_date * 1000)).format('LL')
+                      ? moment(new Date(this.state.group.end_date * 1000))
+                          .utc()
+                          .format('LL')
                       : ''}
                   </Text>
                 </Col>
@@ -2335,149 +2585,131 @@ class GroupDetailScreen extends React.Component {
           </ScrollView>
         </View>
       ) : (
-          <KeyboardAwareScrollView
-            enableAutomaticScroll
-            enableOnAndroid
-            keyboardOpeningTime={0}
-            extraScrollHeight={150}
-            keyboardShouldPersistTaps="handled">
-            <View style={styles.formContainer}>
-              <Label
-                style={{
-                  color: Colors.tintColor,
-                  fontSize: 12,
-                  fontWeight: 'bold',
-                  marginTop: 10,
-                }}>
-                {this.props.groupSettings.fields.group_status.name}
-              </Label>
-              <Row style={{ paddingBottom: 30 }}>
-                <Col
+        <KeyboardAwareScrollView
+          enableAutomaticScroll
+          enableOnAndroid
+          keyboardOpeningTime={0}
+          extraScrollHeight={150}
+          keyboardShouldPersistTaps="handled">
+          <View style={styles.formContainer}>
+            <Row style={[styles.formRow, { paddingTop: 15 }]}>
+              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                <Image source={statusIcon} style={[styles.fieldsIcons, {}]} />
+              </Col>
+              <Col>
+                <Label
                   style={[
-                    styles.statusFieldContainer,
-                    Platform.select({
-                      default: { borderColor: this.state.groupStatusBackgroundColor },
-                      ios: {},
-                    }),
+                    {
+                      color: Colors.tintColor,
+                      fontSize: 14,
+                      fontWeight: 'bold',
+                      marginTop: 'auto',
+                      marginBottom: 'auto',
+                    },
+                    this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                   ]}>
-                  <Picker
-                    selectedValue={this.state.group.group_status}
-                    onValueChange={this.setGroupStatus}
-                    style={[
-                      Platform.select({
-                        android: {
-                          color: '#ffffff',
-                          backgroundColor: this.state.groupStatusBackgroundColor,
-                          width: '100%',
-                        },
-                        default: {
-                          backgroundColor: this.state.groupStatusBackgroundColor,
-                        },
-                      }),
-                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                    ]}
-                    textStyle={{
-                      color: '#ffffff',
-                    }}>
-                    {Object.keys(this.props.groupSettings.fields.group_status.values).map((key) => {
-                      const optionData = this.props.groupSettings.fields.group_status.values[key];
-                      return <Picker.Item key={key} label={optionData.label} value={key} />;
-                    })}
-                  </Picker>
-                </Col>
-              </Row>
-              <Row>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Icon type="FontAwesome" name="user" style={styles.formIcon} />
-                  </View>
-                </Col>
-                <Col>
-                  <Label style={styles.formLabel}>
-                    {i18n.t('groupDetailScreen.groupName.label')}
-                  </Label>
-                </Col>
-              </Row>
-              <Row>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Icon type="FontAwesome" name="user" style={[styles.formIcon, { opacity: 0 }]} />
-                  </View>
-                </Col>
-                <Col>
-                  <Col
-                    style={
-                      this.state.nameRequired
-                        ? {
+                  {this.props.groupSettings.fields.group_status.name}
+                </Label>
+              </Col>
+            </Row>
+            <Row style={{ paddingBottom: 30 }}>
+              <Col
+                style={[
+                  styles.statusFieldContainer,
+                  Platform.select({
+                    default: { borderColor: this.state.groupStatusBackgroundColor },
+                    ios: {},
+                  }),
+                ]}>
+                <Picker
+                  selectedValue={this.state.group.group_status}
+                  onValueChange={this.setGroupStatus}
+                  style={[
+                    Platform.select({
+                      android: {
+                        color: '#ffffff',
+                        backgroundColor: this.state.groupStatusBackgroundColor,
+                        width: '100%',
+                      },
+                      default: {
+                        backgroundColor: this.state.groupStatusBackgroundColor,
+                      },
+                    }),
+                    this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                  ]}
+                  textStyle={{
+                    color: '#ffffff',
+                  }}>
+                  {Object.keys(this.props.groupSettings.fields.group_status.values).map((key) => {
+                    const optionData = this.props.groupSettings.fields.group_status.values[key];
+                    return <Picker.Item key={key} label={optionData.label} value={key} />;
+                  })}
+                </Picker>
+              </Col>
+            </Row>
+            <Row>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon type="FontAwesome" name="users" style={styles.formIcon} />
+                </View>
+              </Col>
+              <Col>
+                <Label style={styles.formLabel}>
+                  {i18n.t('groupDetailScreen.groupName.label')}
+                </Label>
+              </Col>
+            </Row>
+            <Row>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon type="FontAwesome" name="user" style={[styles.formIcon, { opacity: 0 }]} />
+                </View>
+              </Col>
+              <Col>
+                <Col
+                  style={
+                    this.state.nameRequired
+                      ? {
                           backgroundColor: '#FFE6E6',
                           borderWidth: 2,
                           borderColor: Colors.errorBackground,
                         }
-                        : null
-                    }>
-                    <Input
-                      value={this.state.group.title}
-                      onChangeText={this.setGroupTitle}
-                      style={
-                        this.state.nameRequired
-                          ? [styles.groupTextField, { borderBottomWidth: 0 }]
-                          : styles.groupTextField
-                      }
-                    />
-                  </Col>
-                  {this.state.nameRequired ? (
-                    <Text style={styles.validationErrorMessage}>
-                      {i18n.t('groupDetailScreen.groupName.error')}
-                    </Text>
-                  ) : null}
+                      : null
+                  }>
+                  <Input
+                    value={this.state.group.title}
+                    onChangeText={this.setGroupTitle}
+                    style={
+                      this.state.nameRequired
+                        ? [styles.groupTextField, { borderBottomWidth: 0 }]
+                        : styles.groupTextField
+                    }
+                  />
                 </Col>
-              </Row>
-              <TouchableOpacity
-                onPress={() => {
-                  this.updateShowAssignedToModal(true);
-                }}>
-                <Row style={styles.formFieldPadding}>
-                  <Col style={styles.formIconLabelCol}>
-                    <View style={styles.formIconLabelView}>
-                      <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
-                    </View>
-                  </Col>
-                  <Col>
-                    <Label style={styles.formLabel}>
-                      {this.props.groupSettings.fields.assigned_to.name}
-                    </Label>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col style={styles.formIconLabelCol}>
-                    <View style={styles.formIconLabelView}>
-                      <Icon
-                        type="FontAwesome"
-                        name="user-circle"
-                        style={[styles.formIcon, { opacity: 0 }]}
-                      />
-                    </View>
-                  </Col>
-                  <Col style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
-                    <Picker
-                      selectedValue={
-                        this.state.group.assigned_to ? this.state.group.assigned_to.key : null
-                      }
-                      onValueChange={this.onSelectAssignedTo}>
-                      {this.renderPickerItems([...this.state.users, ...this.state.assignedToContacts])}
-                    </Picker>
-                  </Col>
-                </Row>
-              </TouchableOpacity>
+                {this.state.nameRequired ? (
+                  <Text style={styles.validationErrorMessage}>
+                    {i18n.t('groupDetailScreen.groupName.error')}
+                  </Text>
+                ) : null}
+              </Col>
+            </Row>
+            <TouchableOpacity
+              onPress={() => {
+                this.updateShowAssignedToModal(true);
+              }}>
               <Row style={styles.formFieldPadding}>
                 <Col style={styles.formIconLabelCol}>
                   <View style={styles.formIconLabelView}>
-                    <Icon type="FontAwesome" name="black-tie" style={styles.formIcon} />
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="briefcase-account"
+                      style={styles.formIcon}
+                    />
                   </View>
                 </Col>
                 <Col>
                   <Label style={styles.formLabel}>
-                    {this.props.groupSettings.fields.coaches.name}
+                    {this.props.groupSettings.fields.assigned_to.name}
                   </Label>
                 </Col>
               </Row>
@@ -2485,382 +2717,427 @@ class GroupDetailScreen extends React.Component {
                 <Col style={styles.formIconLabelCol}>
                   <View style={styles.formIconLabelView}>
                     <Icon
-                      type="FontAwesome"
-                      name="black-tie"
+                      type="MaterialCommunityIcons"
+                      name="briefcase-account"
                       style={[styles.formIcon, { opacity: 0 }]}
                     />
                   </View>
                 </Col>
-                <Col>
-                  <Selectize
-                    ref={(selectize) => {
-                      coachesSelectizeRef = selectize;
-                    }}
-                    itemId="value"
-                    items={[...this.state.groupCoachContacts, ...this.state.usersContacts]}
-                    selectedItems={this.getSelectizeItems(
-                      this.state.group.coaches,
-                      [...this.state.groupCoachContacts, ...this.state.usersContacts],
-                    )}
-                    textInputProps={{
-                      placeholder: i18n.t('groupDetailScreen.selectCoaches'),
-                    }}
-                    renderRow={(id, onPress, item) => (
-                      <TouchableOpacity
-                        activeOpacity={0.6}
-                        key={id}
-                        onPress={onPress}
+                <Col style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
+                  <Picker
+                    selectedValue={
+                      this.state.group.assigned_to ? this.state.group.assigned_to.key : null
+                    }
+                    onValueChange={this.onSelectAssignedTo}>
+                    {this.renderPickerItems([
+                      ...this.state.users,
+                      ...this.state.assignedToContacts,
+                    ])}
+                  </Picker>
+                </Col>
+              </Row>
+            </TouchableOpacity>
+            <Row style={styles.formFieldPadding}>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon type="FontAwesome" name="black-tie" style={styles.formIcon} />
+                </View>
+              </Col>
+              <Col>
+                <Label style={styles.formLabel}>
+                  {this.props.groupSettings.fields.coaches.name}
+                </Label>
+              </Col>
+            </Row>
+            <Row>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon
+                    type="FontAwesome"
+                    name="black-tie"
+                    style={[styles.formIcon, { opacity: 0 }]}
+                  />
+                </View>
+              </Col>
+              <Col>
+                <Selectize
+                  ref={(selectize) => {
+                    coachesSelectizeRef = selectize;
+                  }}
+                  itemId="value"
+                  items={[...this.state.groupCoachContacts, ...this.state.usersContacts]}
+                  selectedItems={this.getSelectizeItems(this.state.group.coaches, [
+                    ...this.state.groupCoachContacts,
+                    ...this.state.usersContacts,
+                  ])}
+                  textInputProps={{
+                    placeholder: i18n.t('groupDetailScreen.selectCoaches'),
+                  }}
+                  renderRow={(id, onPress, item) => (
+                    <TouchableOpacity
+                      activeOpacity={0.6}
+                      key={id}
+                      onPress={onPress}
+                      style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 10,
+                      }}>
+                      <View
                         style={{
-                          paddingVertical: 8,
-                          paddingHorizontal: 10,
+                          flexDirection: 'row',
                         }}>
-                        <View
+                        <Text
                           style={{
-                            flexDirection: 'row',
+                            color: 'rgba(0, 0, 0, 0.87)',
+                            fontSize: 14,
+                            lineHeight: 21,
                           }}>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.87)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {item.name}
-                          </Text>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.54)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {' '}
+                          {item.name}
+                        </Text>
+                        <Text
+                          style={{
+                            color: 'rgba(0, 0, 0, 0.54)',
+                            fontSize: 14,
+                            lineHeight: 21,
+                          }}>
+                          {' '}
                           (#
                           {id})
                         </Text>
-                        </View>
-                      </TouchableOpacity>
-                    )}
-                    renderChip={(id, onClose, item, style, iconStyle) => (
-                      <Chip
-                        key={id}
-                        iconStyle={iconStyle}
-                        onClose={(props) => {
-                          let foundCoachIndex = this.state.groupCoachContacts.findIndex(
-                            (coach) => coach.value === id
-                          );
-                          if (foundCoachIndex > -1) {
-                            // Remove coach from list
-                            const groupCoachContacts = [...this.state.groupCoachContacts];
-                            groupCoachContacts.splice(foundCoachIndex, 1);
-                            this.setState({
-                              groupCoachContacts: [...groupCoachContacts],
-                            });
-                          }
-                          onClose(props);
-                        }}
-                        text={item.name}
-                        style={style}
-                      />
-                    )}
-                    filterOnKey="name"
-                    keyboardShouldPersistTaps
-                    inputContainerStyle={styles.selectizeField}
-                  />
-                </Col>
-              </Row>
-              <Row style={styles.formFieldPadding}>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Icon type="FontAwesome" name="map-marker" style={styles.formIcon} />
-                  </View>
-                </Col>
-                <Col>
-                  <Label style={styles.formLabel}>
-                    {this.props.groupSettings.fields.location_grid.name}
-                  </Label>
-                </Col>
-              </Row>
-              <Row>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Icon
-                      type="FontAwesome"
-                      name="map-marker"
-                      style={[styles.formIcon, { opacity: 0 }]}
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  renderChip={(id, onClose, item, style, iconStyle) => (
+                    <Chip
+                      key={id}
+                      iconStyle={iconStyle}
+                      onClose={(props) => {
+                        let foundCoachIndex = this.state.groupCoachContacts.findIndex(
+                          (coach) => coach.value === id,
+                        );
+                        if (foundCoachIndex > -1) {
+                          // Remove coach from list
+                          const groupCoachContacts = [...this.state.groupCoachContacts];
+                          groupCoachContacts.splice(foundCoachIndex, 1);
+                          this.setState({
+                            groupCoachContacts: [...groupCoachContacts],
+                          });
+                        }
+                        onClose(props);
+                      }}
+                      text={item.name}
+                      style={style}
                     />
-                  </View>
-                </Col>
-                <Col>
-                  <Selectize
-                    ref={(selectize) => {
-                      geonamesSelectizeRef = selectize;
-                    }}
-                    itemId="value"
-                    items={this.state.foundGeonames}
-                    selectedItems={this.getSelectizeItems(
-                      this.state.group.location_grid,
-                      this.state.geonames,
-                    )}
-                    textInputProps={{
-                      placeholder: i18n.t('groupDetailScreen.selectLocations'),
-                    }}
-                    renderRow={(id, onPress, item) => (
-                      <TouchableOpacity
-                        activeOpacity={0.6}
-                        key={id}
-                        onPress={onPress}
-                        style={{
-                          paddingVertical: 8,
-                          paddingHorizontal: 10,
-                        }}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                          }}>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.87)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {item.name}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                    )}
-                    renderChip={(id, onClose, item, style, iconStyle) => (
-                      <Chip
-                        key={id}
-                        iconStyle={iconStyle}
-                        onClose={onClose}
-                        text={item.name}
-                        style={style}
-                      />
-                    )}
-                    filterOnKey="name"
-                    keyboardShouldPersistTaps
-                    inputContainerStyle={styles.selectizeField}
-                    textInputProps={{
-                      onChangeText: this.searchLocationsDelayed,
-                    }}
-                  />
-                </Col>
-              </Row>
-              <Row style={styles.formFieldPadding}>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Icon type="FontAwesome" name="globe" style={styles.formIcon} />
-                  </View>
-                </Col>
-                <Col>
-                  <Label style={styles.formLabel}>
-                    {this.props.groupSettings.fields.people_groups.name}
-                  </Label>
-                </Col>
-              </Row>
-              <Row>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Icon type="FontAwesome" name="globe" style={[styles.formIcon, { opacity: 0 }]} />
-                  </View>
-                </Col>
-                <Col>
-                  <Selectize
-                    ref={(selectize) => {
-                      peopleGroupsSelectizeRef = selectize;
-                    }}
-                    itemId="value"
-                    items={this.state.peopleGroups}
-                    selectedItems={this.getSelectizeItems(
-                      this.state.group.people_groups,
-                      this.state.peopleGroups,
-                    )}
-                    textInputProps={{
-                      placeholder: i18n.t('global.selectPeopleGroups'),
-                    }}
-                    renderRow={(id, onPress, item) => (
-                      <TouchableOpacity
-                        activeOpacity={0.6}
-                        key={id}
-                        onPress={onPress}
-                        style={{
-                          paddingVertical: 8,
-                          paddingHorizontal: 10,
-                        }}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                          }}>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.87)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {item.name}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                    )}
-                    renderChip={(id, onClose, item, style, iconStyle) => (
-                      <Chip
-                        key={id}
-                        iconStyle={iconStyle}
-                        onClose={onClose}
-                        text={item.name}
-                        style={style}
-                      />
-                    )}
-                    filterOnKey="name"
-                    keyboardShouldPersistTaps
-                    inputContainerStyle={styles.selectizeField}
-                  />
-                </Col>
-              </Row>
-              <Row style={styles.formFieldPadding}>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Icon type="Entypo" name="home" style={styles.formIcon} />
-                  </View>
-                </Col>
-                <Col>
-                  <Label style={styles.formLabel}>
-                    {this.props.groupSettings.channels.address.label}
-                  </Label>
-                </Col>
-                <Col style={styles.formIconLabel}>
+                  )}
+                  filterOnKey="name"
+                  keyboardShouldPersistTaps
+                  inputContainerStyle={styles.selectizeField}
+                />
+              </Col>
+            </Row>
+            <Row style={styles.formFieldPadding}>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon type="FontAwesome" name="map-marker" style={styles.formIcon} />
+                </View>
+              </Col>
+              <Col>
+                <Label style={styles.formLabel}>
+                  {this.props.groupSettings.fields.location_grid.name}
+                </Label>
+              </Col>
+            </Row>
+            <Row>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
                   <Icon
-                    android="md-add"
-                    ios="ios-add"
-                    style={[styles.formIcon, { fontSize: 30, marginRight: 0 }]}
-                    onPress={this.onAddAddressField}
+                    type="FontAwesome"
+                    name="map-marker"
+                    style={[styles.formIcon, { opacity: 0 }]}
                   />
-                </Col>
-              </Row>
-              {this.state.group.contact_address ? (
-                this.state.group.contact_address.map((address, index) =>
-                  !address.delete ? (
-                    <Row key={index.toString()} style={{ marginBottom: 10 }}>
-                      <Col style={styles.formIconLabelCol}>
-                        <View style={styles.formIconLabelView}>
-                          <Icon type="Entypo" name="home" style={[styles.formIcon, { opacity: 0 }]} />
-                        </View>
-                      </Col>
-                      <Col>
-                        <Input
-                          multiline
-                          value={address.value}
-                          onChangeText={(value) => {
-                            this.onAddressFieldChange(value, index, address.key, this);
-                          }}
-                          style={styles.groupTextField}
-                        />
-                      </Col>
-                      <Col style={styles.formIconLabel}>
-                        <Icon
-                          android="md-remove"
-                          ios="ios-remove"
-                          style={[styles.formIcon, styles.addRemoveIcons, { marginRight: 10 }]}
-                          onPress={() => {
-                            this.onRemoveAddressField(index, this);
-                          }}
-                        />
-                      </Col>
-                    </Row>
-                  ) : null,
-                )
-              ) : (
-                  <Text />
-                )}
-              <Row style={styles.formFieldPadding}>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Image source={dateIcon} style={styles.dateIcons} />
-                  </View>
-                </Col>
-                <Col>
-                  <Label style={styles.formLabel}>
-                    {this.props.groupSettings.fields.start_date.name}
-                  </Label>
-                </Col>
-              </Row>
-              <Row>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Image source={dateIcon} style={[styles.dateIcons, { opacity: 0 }]} />
-                  </View>
-                </Col>
-                <Col>
-                  <DatePicker
-                    onDateChange={this.setGroupStartDate}
-                    defaultDate={
-                      this.state.group.start_date ? new Date(this.state.group.start_date * 1000) : ''
-                    }
+                </View>
+              </Col>
+              <Col>
+                <Selectize
+                  ref={(selectize) => {
+                    geonamesSelectizeRef = selectize;
+                  }}
+                  itemId="value"
+                  items={this.state.foundGeonames}
+                  selectedItems={this.getSelectizeItems(
+                    this.state.group.location_grid,
+                    this.state.geonames,
+                  )}
+                  textInputProps={{
+                    placeholder: i18n.t('groupDetailScreen.selectLocations'),
+                  }}
+                  renderRow={(id, onPress, item) => (
+                    <TouchableOpacity
+                      activeOpacity={0.6}
+                      key={id}
+                      onPress={onPress}
+                      style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 10,
+                      }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                        }}>
+                        <Text
+                          style={{
+                            color: 'rgba(0, 0, 0, 0.87)',
+                            fontSize: 14,
+                            lineHeight: 21,
+                          }}>
+                          {item.name}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  renderChip={(id, onClose, item, style, iconStyle) => (
+                    <Chip
+                      key={id}
+                      iconStyle={iconStyle}
+                      onClose={onClose}
+                      text={item.name}
+                      style={style}
+                    />
+                  )}
+                  filterOnKey="name"
+                  keyboardShouldPersistTaps
+                  inputContainerStyle={styles.selectizeField}
+                  textInputProps={{
+                    onChangeText: this.searchLocationsDelayed,
+                  }}
+                />
+              </Col>
+            </Row>
+            <Row style={styles.formFieldPadding}>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon type="FontAwesome" name="globe" style={styles.formIcon} />
+                </View>
+              </Col>
+              <Col>
+                <Label style={styles.formLabel}>
+                  {this.props.groupSettings.fields.people_groups.name}
+                </Label>
+              </Col>
+            </Row>
+            <Row>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon type="FontAwesome" name="globe" style={[styles.formIcon, { opacity: 0 }]} />
+                </View>
+              </Col>
+              <Col>
+                <Selectize
+                  ref={(selectize) => {
+                    peopleGroupsSelectizeRef = selectize;
+                  }}
+                  itemId="value"
+                  items={this.state.peopleGroups}
+                  selectedItems={this.getSelectizeItems(
+                    this.state.group.people_groups,
+                    this.state.peopleGroups,
+                  )}
+                  textInputProps={{
+                    placeholder: i18n.t('global.selectPeopleGroups'),
+                  }}
+                  renderRow={(id, onPress, item) => (
+                    <TouchableOpacity
+                      activeOpacity={0.6}
+                      key={id}
+                      onPress={onPress}
+                      style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 10,
+                      }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                        }}>
+                        <Text
+                          style={{
+                            color: 'rgba(0, 0, 0, 0.87)',
+                            fontSize: 14,
+                            lineHeight: 21,
+                          }}>
+                          {item.name}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  renderChip={(id, onClose, item, style, iconStyle) => (
+                    <Chip
+                      key={id}
+                      iconStyle={iconStyle}
+                      onClose={onClose}
+                      text={item.name}
+                      style={style}
+                    />
+                  )}
+                  filterOnKey="name"
+                  keyboardShouldPersistTaps
+                  inputContainerStyle={styles.selectizeField}
+                />
+              </Col>
+            </Row>
+            <Row style={styles.formFieldPadding}>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon type="Entypo" name="home" style={styles.formIcon} />
+                </View>
+              </Col>
+              <Col>
+                <Label style={styles.formLabel}>
+                  {this.props.groupSettings.channels.address.label}
+                </Label>
+              </Col>
+              <Col style={styles.formIconLabel}>
+                <Icon
+                  android="md-add"
+                  ios="ios-add"
+                  style={[styles.addRemoveIcons, styles.addIcons]}
+                  onPress={this.onAddAddressField}
+                />
+              </Col>
+            </Row>
+            {this.state.group.contact_address ? (
+              this.state.group.contact_address.map((address, index) =>
+                !address.delete ? (
+                  <Row key={index.toString()} style={{ marginBottom: 10 }}>
+                    <Col style={styles.formIconLabelCol}>
+                      <View style={styles.formIconLabelView}>
+                        <Icon type="Entypo" name="home" style={[styles.formIcon, { opacity: 0 }]} />
+                      </View>
+                    </Col>
+                    <Col>
+                      <Input
+                        multiline
+                        value={address.value}
+                        onChangeText={(value) => {
+                          this.onAddressFieldChange(value, index, address.key, this);
+                        }}
+                        style={styles.groupTextField}
+                      />
+                    </Col>
+                    <Col style={styles.formIconLabel}>
+                      <Icon
+                        android="md-remove"
+                        ios="ios-remove"
+                        style={[styles.addRemoveIcons, styles.removeIcons]}
+                        onPress={() => {
+                          this.onRemoveAddressField(index, this);
+                        }}
+                      />
+                    </Col>
+                  </Row>
+                ) : null,
+              )
+            ) : (
+              <Text />
+            )}
+            <Row style={styles.formFieldPadding}>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon type="FontAwesome" name="calendar" style={styles.formIcon} />
+                </View>
+              </Col>
+              <Col>
+                <Label style={styles.formLabel}>
+                  {this.props.groupSettings.fields.start_date.name}
+                </Label>
+              </Col>
+            </Row>
+            <Row>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Image source={dateIcon} style={[styles.dateIcons, { opacity: 0 }]} />
+                </View>
+              </Col>
+              <Col>
+                <DatePicker
+                  onDateChange={this.setGroupStartDate}
+                  defaultDate={
+                    this.state.group.start_date ? new Date(this.state.group.start_date * 1000) : ''
+                  }
+                />
+              </Col>
+            </Row>
+            <Row style={styles.formFieldPadding}>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon type="FontAwesome5" name="calendar-check" style={styles.formIcon} />
+                </View>
+              </Col>
+              <Col>
+                <Label style={styles.formLabel}>
+                  {this.props.groupSettings.fields.church_start_date.name}
+                </Label>
+              </Col>
+            </Row>
+            <Row>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon
+                    type="FontAwesome5"
+                    name="calendar-check"
+                    style={[styles.formIcon, { opacity: 0 }]}
                   />
-                </Col>
-              </Row>
-              <Row style={styles.formFieldPadding}>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Image source={dateSuccessIcon} style={styles.dateIcons} />
-                  </View>
-                </Col>
-                <Col>
-                  <Label style={styles.formLabel}>
-                    {this.props.groupSettings.fields.church_start_date.name}
-                  </Label>
-                </Col>
-              </Row>
-              <Row>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Image source={dateSuccessIcon} style={[styles.dateIcons, { opacity: 0 }]} />
-                  </View>
-                </Col>
-                <Col>
-                  <DatePicker
-                    onDateChange={this.setChurchStartDate}
-                    defaultDate={
-                      this.state.group.church_start_date
-                        ? new Date(this.state.group.church_start_date * 1000)
-                        : ''
-                    }
+                </View>
+              </Col>
+              <Col>
+                <DatePicker
+                  onDateChange={this.setChurchStartDate}
+                  defaultDate={
+                    this.state.group.church_start_date
+                      ? new Date(this.state.group.church_start_date * 1000)
+                      : ''
+                  }
+                />
+              </Col>
+            </Row>
+            <Row style={styles.formFieldPadding}>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon type="FontAwesome" name="calendar" style={styles.formIcon} />
+                </View>
+              </Col>
+              <Col>
+                <Label style={styles.formLabel}>
+                  {this.props.groupSettings.fields.end_date.name}
+                </Label>
+              </Col>
+            </Row>
+            <Row>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon
+                    type="FontAwesome5"
+                    name="calendar-times"
+                    style={[styles.formIcon, { opacity: 0 }]}
                   />
-                </Col>
-              </Row>
-              <Row style={styles.formFieldPadding}>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Image source={dateEndIcon} style={styles.dateIcons} />
-                  </View>
-                </Col>
-                <Col>
-                  <Label style={styles.formLabel}>
-                    {this.props.groupSettings.fields.end_date.name}
-                  </Label>
-                </Col>
-              </Row>
-              <Row>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Image source={dateEndIcon} style={[styles.dateIcons, { opacity: 0 }]} />
-                  </View>
-                </Col>
-                <Col>
-                  <DatePicker
-                    onDateChange={this.setEndDate}
-                    defaultDate={
-                      this.state.group.end_date ? new Date(this.state.group.end_date * 1000) : ''
-                    }
-                  />
-                </Col>
-              </Row>
-            </View>
-          </KeyboardAwareScrollView>
-        )}
+                </View>
+              </Col>
+              <Col>
+                <DatePicker
+                  onDateChange={this.setEndDate}
+                  defaultDate={
+                    this.state.group.end_date ? new Date(this.state.group.end_date * 1000) : ''
+                  }
+                />
+              </Col>
+            </Row>
+          </View>
+        </KeyboardAwareScrollView>
+      )}
     </View>
   );
 
   progressView = () => (
+    /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
@@ -2872,7 +3149,7 @@ class GroupDetailScreen extends React.Component {
                 onRefresh={() => this.onRefresh(this.state.group.ID)}
               />
             }>
-            <View style={[styles.formContainer, { marginTop: 10 }]}>
+            <View style={[styles.formContainer, { marginTop: 0, paddingBottom: 0 }]}>
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Image source={groupTypeIcon} style={styles.groupIcons} />
@@ -2885,8 +3162,8 @@ class GroupDetailScreen extends React.Component {
                     ]}>
                     {this.state.group.group_type
                       ? this.props.groupSettings.fields.group_type.values[
-                        this.state.group.group_type
-                      ].label
+                          this.state.group.group_type
+                        ].label
                       : ''}
                   </Text>
                 </Col>
@@ -2897,66 +3174,78 @@ class GroupDetailScreen extends React.Component {
                 </Col>
               </Row>
               <View style={styles.formDivider} />
-              <Label
-                style={[styles.formLabel, { fontWeight: 'bold', marginBottom: 10, marginTop: 20 }]}>
-                {this.props.groupSettings.fields.health_metrics.name}
-              </Label>
+              <Row style={[styles.formRow, { paddingTop: 10 }]}>
+                <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                  <Icon type="MaterialCommunityIcons" name="church" style={[styles.formIcon, {}]} />
+                </Col>
+                <Col>
+                  <Label style={[styles.formLabel, { fontWeight: 'bold' }]}>
+                    {this.props.groupSettings.fields.health_metrics.name}
+                  </Label>
+                </Col>
+              </Row>
             </View>
             {this.renderHealthMilestones()}
             {this.renderCustomHealthMilestones()}
           </ScrollView>
         </View>
       ) : (
-          <KeyboardAwareScrollView
-            enableAutomaticScroll
-            enableOnAndroid
-            keyboardOpeningTime={0}
-            extraScrollHeight={150}
-            keyboardShouldPersistTaps="handled">
-            <View style={styles.formContainer}>
-              <Row style={styles.formFieldPadding}>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Image source={groupTypeIcon} style={styles.groupIcons} />
-                  </View>
-                </Col>
-                <Col>
-                  <Label style={styles.formLabel}>
-                    {this.props.groupSettings.fields.group_type.name}
-                  </Label>
-                </Col>
-              </Row>
-              <Row>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Icon
-                      android="md-people"
-                      ios="ios-people"
-                      style={[styles.formIcon, { opacity: 0 }]}
-                    />
-                  </View>
-                </Col>
-                <Col style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
-                  <Picker
-                    mode="dropdown"
-                    selectedValue={this.state.group.group_type}
-                    onValueChange={this.setGroupType}>
-                    {Object.keys(this.props.groupSettings.fields.group_type.values).map((key) => {
-                      const optionData = this.props.groupSettings.fields.group_type.values[key];
-                      return <Picker.Item key={key} label={optionData.label} value={key} />;
-                    })}
-                  </Picker>
-                </Col>
-              </Row>
-              <Label
-                style={[styles.formLabel, { fontWeight: 'bold', marginBottom: 10, marginTop: 20 }]}>
-                {this.props.groupSettings.fields.health_metrics.name}
-              </Label>
-            </View>
-            {this.renderHealthMilestones()}
-            {this.renderCustomHealthMilestones()}
-          </KeyboardAwareScrollView>
-        )}
+        <KeyboardAwareScrollView /*_editable_*/
+          enableAutomaticScroll
+          enableOnAndroid
+          keyboardOpeningTime={0}
+          extraScrollHeight={150}
+          keyboardShouldPersistTaps="handled">
+          <View style={styles.formContainer}>
+            <Row style={styles.formFieldPadding}>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Image source={groupTypeIcon} style={styles.groupIcons} />
+                </View>
+              </Col>
+              <Col>
+                <Label style={styles.formLabel}>
+                  {this.props.groupSettings.fields.group_type.name}
+                </Label>
+              </Col>
+            </Row>
+            <Row>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon
+                    android="md-people"
+                    ios="ios-people"
+                    style={[styles.formIcon, { opacity: 0 }]}
+                  />
+                </View>
+              </Col>
+              <Col style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
+                <Picker
+                  mode="dropdown"
+                  selectedValue={this.state.group.group_type}
+                  onValueChange={this.setGroupType}>
+                  {Object.keys(this.props.groupSettings.fields.group_type.values).map((key) => {
+                    const optionData = this.props.groupSettings.fields.group_type.values[key];
+                    return <Picker.Item key={key} label={optionData.label} value={key} />;
+                  })}
+                </Picker>
+              </Col>
+            </Row>
+            <Row style={[styles.formRow, { paddingTop: 10 }]}>
+              <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                <Icon type="MaterialCommunityIcons" name="church" style={[styles.formIcon, {}]} />
+              </Col>
+              <Col>
+                <Label style={[styles.formLabel, { fontWeight: 'bold' }]}>
+                  {this.props.groupSettings.fields.health_metrics.name}
+                </Label>
+              </Col>
+            </Row>
+          </View>
+          {this.renderHealthMilestones()}
+          {this.renderCustomHealthMilestones()}
+        </KeyboardAwareScrollView>
+      )}
     </View>
   );
 
@@ -3001,83 +3290,63 @@ class GroupDetailScreen extends React.Component {
   }
 
   commentsView = () => (
+    /*_viewable_*/
     <View style={{ flex: 1, paddingBottom: this.state.footerHeight + this.state.footerLocation }}>
-      {this.state.comments.length == 0 &&
-        this.state.activities.length == 0 &&
-        !this.state.loadComments &&
-        !this.state.loadActivities &&
-        this.noCommentsRender()}
-      <FlatList
-        style={{
-          backgroundColor: '#ffffff',
-        }}
-        ref={(flatList) => {
-          commentsFlatList = flatList;
-        }}
-        data={this.getCommentsAndActivities()}
-        extraData={!this.state.loadMoreComments || !this.state.loadMoreActivities}
-        inverted
-        ItemSeparatorComponent={() => (
-          <View
-            style={{
-              height: 1,
-              backgroundColor: '#CCCCCC',
-            }}
-          />
-        )}
-        keyExtractor={(item, index) => String(index)}
-        renderItem={(item) => {
-          const commentOrActivity = item.item;
-          return this.renderActivityOrCommentRow(commentOrActivity);
-        }}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.loadComments || this.state.loadActivities}
-            onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID)}
-          />
-        }
-        onScroll={({ nativeEvent }) => {
-          const {
-            loadMoreComments,
-            commentsOffset,
-            loadMoreActivities,
-            activitiesOffset,
-          } = this.state;
-          const fL = nativeEvent;
-          const contentOffsetY = fL.contentOffset.y;
-          const layoutMeasurementHeight = fL.layoutMeasurement.height;
-          const contentSizeHeight = fL.contentSize.height;
-          const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
-          const distanceToStart = contentSizeHeight - heightOffsetSum;
-
-          if (distanceToStart < 100) {
-            if (!loadMoreComments) {
-              if (commentsOffset < this.state.totalComments) {
-                this.setState(
-                  {
-                    loadMoreComments: true,
-                  },
-                  () => {
-                    this.getGroupComments(this.state.group.ID);
-                  },
-                );
-              }
-            }
-            if (!loadMoreActivities) {
-              if (activitiesOffset < this.state.totalActivities) {
-                this.setState(
-                  {
-                    loadMoreActivities: true,
-                  },
-                  () => {
-                    this.getGroupActivities(this.state.group.ID);
-                  },
-                );
-              }
-            }
+      {this.state.comments.data.length == 0 &&
+      this.state.activities.data.length == 0 &&
+      !this.state.loadComments &&
+      !this.state.loadActivities ? (
+        this.noCommentsRender()
+      ) : (
+        <FlatList
+          style={{
+            backgroundColor: '#ffffff',
+          }}
+          ref={(flatList) => {
+            commentsFlatList = flatList;
+          }}
+          data={this.getCommentsAndActivities()}
+          extraData={!this.state.loadMoreComments || !this.state.loadMoreActivities}
+          inverted
+          ItemSeparatorComponent={() => (
+            <View
+              style={{
+                height: 1,
+                backgroundColor: '#CCCCCC',
+              }}
+            />
+          )}
+          keyExtractor={(item, index) => String(index)}
+          renderItem={(item) => {
+            const commentOrActivity = item.item;
+            return this.renderActivityOrCommentRow(commentOrActivity);
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.loadComments || this.state.loadActivities}
+              onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID, true)}
+            />
           }
-        }}
-      />
+          onScroll={({ nativeEvent }) => {
+            sharedTools.onlyExecuteLastCall(
+              {},
+              () => {
+                const flatList = nativeEvent;
+                const contentOffsetY = flatList.contentOffset.y;
+                const layoutMeasurementHeight = flatList.layoutMeasurement.height;
+                const contentSizeHeight = flatList.contentSize.height;
+                const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
+                const distanceToStart = contentSizeHeight - heightOffsetSum;
+                if (distanceToStart < 100) {
+                  this.getGroupComments(this.state.group.ID);
+                  this.getGroupActivities(this.state.group.ID);
+                }
+              },
+              500,
+            );
+          }}
+        />
+      )}
       <View style={{ backgroundColor: '#FFFFFF' }}>
         <MentionsTextInput
           editable={!this.state.loadComments}
@@ -3162,9 +3431,9 @@ class GroupDetailScreen extends React.Component {
               style={[
                 styles.membersLeaderIcon,
                 this.state.group.leaders &&
-                  this.state.group.leaders.values.find(
-                    (leader) => leader.value === membersGroup.value,
-                  )
+                this.state.group.leaders.values.find(
+                  (leader) => leader.value === membersGroup.value,
+                )
                   ? styles.membersIconActive
                   : styles.membersIconInactive,
               ]}
@@ -3172,7 +3441,7 @@ class GroupDetailScreen extends React.Component {
           </Col>
           <Col>
             <TouchableOpacity
-              onPress={() => this.goToContactDetailScreen(membersGroup.value)}
+              onPress={() => this.goToContactDetailScreen(membersGroup.value, membersGroup.name)}
               key={membersGroup.value}
               style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               <Text
@@ -3188,48 +3457,49 @@ class GroupDetailScreen extends React.Component {
           </Col>
         </Grid>
       ) : (
-          <Grid style={{ marginTop: 10, marginBottom: 10 }}>
-            <Col style={{ width: 20 }}>
-              <TouchableOpacity
-                onPress={() => this.onSetLeader(membersGroup)}
-                key={membersGroup.value}>
-                <Image
-                  source={footprint}
-                  style={[
-                    styles.membersLeaderIcon,
-                    this.state.group.leaders &&
-                      this.state.group.leaders.values.find(
-                        (leader) => leader.value === membersGroup.value,
-                      )
-                      ? styles.membersIconActive
-                      : styles.membersIconInactive,
-                  ]}
-                />
-              </TouchableOpacity>
-            </Col>
-            <Col>
-              <TouchableOpacity
-                onPress={() => this.goToContactDetailScreen(membersGroup.value)}
-                key={membersGroup.value}
-                style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                <Text style={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: 15, padding: 5 }}>
-                  {membersGroup.name}
-                </Text>
-              </TouchableOpacity>
-            </Col>
-            <Col style={{ width: 20 }}>
-              <TouchableOpacity
-                onPress={() => this.onRemoveMember(membersGroup)}
-                key={membersGroup.value}>
-                <Icon type="MaterialCommunityIcons" name="close" style={styles.membersCloseIcon} />
-              </TouchableOpacity>
-            </Col>
-          </Grid>
-        )}
+        <Grid style={{ marginTop: 10, marginBottom: 10 }}>
+          <Col style={{ width: 20 }}>
+            <TouchableOpacity
+              onPress={() => this.onSetLeader(membersGroup)}
+              key={membersGroup.value}>
+              <Image
+                source={footprint}
+                style={[
+                  styles.membersLeaderIcon,
+                  this.state.group.leaders &&
+                  this.state.group.leaders.values.find(
+                    (leader) => leader.value === membersGroup.value && !leader.delete,
+                  )
+                    ? styles.membersIconActive
+                    : styles.membersIconInactive,
+                ]}
+              />
+            </TouchableOpacity>
+          </Col>
+          <Col>
+            <TouchableOpacity
+              onPress={() => this.goToContactDetailScreen(membersGroup.value, membersGroup.name)}
+              key={membersGroup.value}
+              style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              <Text style={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: 15, padding: 5 }}>
+                {membersGroup.name}
+              </Text>
+            </TouchableOpacity>
+          </Col>
+          <Col style={{ width: 20 }}>
+            <TouchableOpacity
+              onPress={() => this.onRemoveMember(membersGroup)}
+              key={membersGroup.value}>
+              <Icon type="MaterialCommunityIcons" name="close" style={styles.membersCloseIcon} />
+            </TouchableOpacity>
+          </Col>
+        </Grid>
+      )}
     </View>
   );
 
   membersView = () => {
+    /*_viewable_*/
     return this.state.onlyView ? (
       <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
         <ScrollView
@@ -3252,94 +3522,95 @@ class GroupDetailScreen extends React.Component {
         </ScrollView>
       </View>
     ) : (
-        <KeyboardAwareScrollView
-          enableAutomaticScroll
-          enableOnAndroid
-          keyboardOpeningTime={0}
-          extraScrollHeight={150}
-          keyboardShouldPersistTaps="handled">
-          <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
-            <ScrollView keyboardShouldPersistTaps="handled">
-              <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'left' }}>
-                {i18n.t('global.membersActivity')}
-              </Text>
-              <FlatList
-                data={this.state.group.members ? this.state.group.members.values : []}
-                extraData={this.state.updateMembersList}
-                renderItem={(item) => this.membersRow(item.item)}
-                ItemSeparatorComponent={this.flatListItemSeparator}
-              />
-              <Grid>
-                <Row>
-                  <Col style={{ width: 40, marginTop: 5, marginLeft: 0 }}>
-                    <Icon type="Entypo" name="add-user" style={{ color: '#CCCCCC' }} />
-                  </Col>
-                  <Col style={{ paddingBottom: 200 }}>
-                    <Selectize
-                      ref={(selectize) => {
-                        addMembersSelectizeRef = selectize;
-                      }}
-                      itemId="value"
-                      items={[...this.state.membersContacts, ...this.state.usersContacts].filter(
-                        (userContact) =>
-                          this.state.group.members &&
-                          !this.state.group.members.values.find(
-                            (member) => member.value === userContact.value,
-                          ),
-                      )}
-                      selectedItems={[]}
-                      textInputProps={{
-                        placeholder: i18n.t('groupDetailScreen.addMember'),
-                        leftIcon: { type: 'Entypo', name: 'add-user' },
-                      }}
-                      renderRow={(id, onPress, item) => (
-                        <TouchableOpacity
-                          activeOpacity={0.6}
-                          key={id}
-                          onPress={() => this.onAddMember(item)}
+      <KeyboardAwareScrollView /*_editable_*/
+        enableAutomaticScroll
+        enableOnAndroid
+        keyboardOpeningTime={0}
+        extraScrollHeight={150}
+        keyboardShouldPersistTaps="handled">
+        <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
+          <ScrollView keyboardShouldPersistTaps="handled">
+            <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'left' }}>
+              {i18n.t('global.membersActivity')}
+            </Text>
+            <FlatList
+              data={this.state.group.members ? this.state.group.members.values : []}
+              extraData={this.state.updateMembersList}
+              renderItem={(item) => this.membersRow(item.item)}
+              ItemSeparatorComponent={this.flatListItemSeparator}
+            />
+            <Grid>
+              <Row>
+                <Col style={{ width: 40, marginTop: 5, marginLeft: 0 }}>
+                  <Icon type="Entypo" name="add-user" style={{ color: '#CCCCCC' }} />
+                </Col>
+                <Col style={{ paddingBottom: 200 }}>
+                  <Selectize
+                    ref={(selectize) => {
+                      addMembersSelectizeRef = selectize;
+                    }}
+                    itemId="value"
+                    items={[...this.state.membersContacts, ...this.state.usersContacts].filter(
+                      (userContact) =>
+                        this.state.group.members &&
+                        !this.state.group.members.values.find(
+                          (member) => member.value === userContact.value,
+                        ),
+                    )}
+                    selectedItems={[]}
+                    textInputProps={{
+                      placeholder: i18n.t('groupDetailScreen.addMember'),
+                      leftIcon: { type: 'Entypo', name: 'add-user' },
+                    }}
+                    renderRow={(id, onPress, item) => (
+                      <TouchableOpacity
+                        activeOpacity={0.6}
+                        key={id}
+                        onPress={() => this.onAddMember(item)}
+                        style={{
+                          paddingVertical: 8,
+                          paddingHorizontal: 10,
+                        }}>
+                        <View
                           style={{
-                            paddingVertical: 8,
-                            paddingHorizontal: 10,
+                            flexDirection: 'row',
                           }}>
-                          <View
+                          <Text
                             style={{
-                              flexDirection: 'row',
+                              color: 'rgba(0, 0, 0, 0.87)',
+                              fontSize: 14,
+                              lineHeight: 21,
                             }}>
-                            <Text
-                              style={{
-                                color: 'rgba(0, 0, 0, 0.87)',
-                                fontSize: 14,
-                                lineHeight: 21,
-                              }}>
-                              {item.name}
-                            </Text>
-                            <Text
-                              style={{
-                                color: 'rgba(0, 0, 0, 0.54)',
-                                fontSize: 14,
-                                lineHeight: 21,
-                              }}>
-                              {' '}
-                          (#
-                          {id})
-                        </Text>
-                          </View>
-                        </TouchableOpacity>
-                      )}
-                      filterOnKey="name"
-                      keyboardShouldPersistTaps
-                      inputContainerStyle={styles.selectizeField}
-                    />
-                  </Col>
-                </Row>
-              </Grid>
-            </ScrollView>
-          </View>
-        </KeyboardAwareScrollView>
-      );
+                            {item.name}
+                          </Text>
+                          <Text
+                            style={{
+                              color: 'rgba(0, 0, 0, 0.54)',
+                              fontSize: 14,
+                              lineHeight: 21,
+                            }}>
+                            {' '}
+                            (#
+                            {id})
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    )}
+                    filterOnKey="name"
+                    keyboardShouldPersistTaps
+                    inputContainerStyle={styles.selectizeField}
+                  />
+                </Col>
+              </Row>
+            </Grid>
+          </ScrollView>
+        </View>
+      </KeyboardAwareScrollView>
+    );
   };
 
   groupsView = () => (
+    /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
         <View>
@@ -3372,13 +3643,15 @@ class GroupDetailScreen extends React.Component {
                       <Col
                         key={index.toString()}
                         style={styles.groupCircleContainer}
-                        onPress={() => this.goToGroupDetailScreen(parentGroup)}>
+                        onPress={() =>
+                          this.goToGroupDetailScreen(parentGroup.value, parentGroup.name)
+                        }>
                         {Object.prototype.hasOwnProperty.call(parentGroup, 'is_church') &&
-                          parentGroup.is_church ? (
-                            <Image source={groupCircleIcon} style={styles.groupCircle} />
-                          ) : (
-                            <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
-                          )}
+                        parentGroup.is_church ? (
+                          <Image source={groupCircleIcon} style={styles.groupCircle} />
+                        ) : (
+                          <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
+                        )}
                         <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
                         <Row style={styles.groupCircleName}>
                           <Text style={styles.groupCircleNameText}>{parentGroup.name}</Text>
@@ -3392,8 +3665,8 @@ class GroupDetailScreen extends React.Component {
                       </Col>
                     ))
                   ) : (
-                      <Text />
-                    )}
+                    <Text />
+                  )}
                 </ScrollView>
               </Row>
               <View style={[styles.formDivider, styles.formDivider2Margin]} />
@@ -3417,13 +3690,13 @@ class GroupDetailScreen extends React.Component {
                       <Col
                         key={index.toString()}
                         style={styles.groupCircleContainer}
-                        onPress={() => this.goToGroupDetailScreen(peerGroup)}>
+                        onPress={() => this.goToGroupDetailScreen(peerGroup.value, peerGroup.name)}>
                         {Object.prototype.hasOwnProperty.call(peerGroup, 'is_church') &&
-                          peerGroup.is_church ? (
-                            <Image source={groupCircleIcon} style={styles.groupCircle} />
-                          ) : (
-                            <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
-                          )}
+                        peerGroup.is_church ? (
+                          <Image source={groupCircleIcon} style={styles.groupCircle} />
+                        ) : (
+                          <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
+                        )}
                         <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
                         <Row style={styles.groupCircleName}>
                           <Text style={styles.groupCircleNameText}>{peerGroup.name}</Text>
@@ -3437,8 +3710,8 @@ class GroupDetailScreen extends React.Component {
                       </Col>
                     ))
                   ) : (
-                      <Text />
-                    )}
+                    <Text />
+                  )}
                 </ScrollView>
               </Row>
               <View style={[styles.formDivider, styles.formDivider2Margin]} />
@@ -3460,13 +3733,15 @@ class GroupDetailScreen extends React.Component {
                       <Col
                         key={index.toString()}
                         style={styles.groupCircleContainer}
-                        onPress={() => this.goToGroupDetailScreen(childGroup)}>
+                        onPress={() =>
+                          this.goToGroupDetailScreen(childGroup.value, childGroup.name)
+                        }>
                         {Object.prototype.hasOwnProperty.call(childGroup, 'is_church') &&
-                          childGroup.is_church ? (
-                            <Image source={groupCircleIcon} style={styles.groupCircle} />
-                          ) : (
-                            <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
-                          )}
+                        childGroup.is_church ? (
+                          <Image source={groupCircleIcon} style={styles.groupCircle} />
+                        ) : (
+                          <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
+                        )}
                         <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
                         <Row style={styles.groupCircleName}>
                           <Text style={styles.groupCircleNameText}>{childGroup.name}</Text>
@@ -3480,8 +3755,8 @@ class GroupDetailScreen extends React.Component {
                       </Col>
                     ))
                   ) : (
-                      <Text />
-                    )}
+                    <Text />
+                  )}
                 </ScrollView>
               </Row>
               <View style={[styles.formDivider, styles.formDivider2Margin]} />
@@ -3489,298 +3764,298 @@ class GroupDetailScreen extends React.Component {
           </ScrollView>
         </View>
       ) : (
-          <KeyboardAwareScrollView
-            enableAutomaticScroll
-            enableOnAndroid
-            keyboardOpeningTime={0}
-            extraScrollHeight={150}
-            keyboardShouldPersistTaps="handled">
-            <View style={styles.formContainer}>
-              <Row style={styles.formFieldPadding}>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Image source={groupParentIcon} style={styles.groupIcons} />
-                  </View>
-                </Col>
-                <Col>
-                  <Label style={styles.formLabel}>
-                    {this.props.groupSettings.fields.parent_groups.name}
-                  </Label>
-                </Col>
-              </Row>
-              <Row>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Icon type="FontAwesome" name="users" style={[styles.formIcon, { opacity: 0 }]} />
-                  </View>
-                </Col>
-                <Col>
-                  <Selectize
-                    ref={(selectize) => {
-                      parentGroupsSelectizeRef = selectize;
-                    }}
-                    itemId="value"
-                    items={[...this.state.groups, ...this.state.parentGroups]}
-                    selectedItems={this.getSelectizeItems(
-                      this.state.group.parent_groups,
-                      [...this.state.groups, ...this.state.parentGroups],
-                    )}
-                    textInputProps={{
-                      placeholder: i18n.t('groupDetailScreen.searchGroups'),
-                    }}
-                    renderRow={(id, onPress, item) => (
-                      <TouchableOpacity
-                        activeOpacity={0.6}
-                        key={id}
-                        onPress={onPress}
+        <KeyboardAwareScrollView /*_editable_*/
+          enableAutomaticScroll
+          enableOnAndroid
+          keyboardOpeningTime={0}
+          extraScrollHeight={150}
+          keyboardShouldPersistTaps="handled">
+          <View style={styles.formContainer}>
+            <Row style={styles.formFieldPadding}>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Image source={groupParentIcon} style={styles.groupIcons} />
+                </View>
+              </Col>
+              <Col>
+                <Label style={styles.formLabel}>
+                  {this.props.groupSettings.fields.parent_groups.name}
+                </Label>
+              </Col>
+            </Row>
+            <Row>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon type="FontAwesome" name="users" style={[styles.formIcon, { opacity: 0 }]} />
+                </View>
+              </Col>
+              <Col>
+                <Selectize
+                  ref={(selectize) => {
+                    parentGroupsSelectizeRef = selectize;
+                  }}
+                  itemId="value"
+                  items={[...this.state.groups, ...this.state.parentGroups]}
+                  selectedItems={this.getSelectizeItems(this.state.group.parent_groups, [
+                    ...this.state.groups,
+                    ...this.state.parentGroups,
+                  ])}
+                  textInputProps={{
+                    placeholder: i18n.t('groupDetailScreen.searchGroups'),
+                  }}
+                  renderRow={(id, onPress, item) => (
+                    <TouchableOpacity
+                      activeOpacity={0.6}
+                      key={id}
+                      onPress={onPress}
+                      style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 10,
+                      }}>
+                      <View
                         style={{
-                          paddingVertical: 8,
-                          paddingHorizontal: 10,
+                          flexDirection: 'row',
                         }}>
-                        <View
+                        <Text
                           style={{
-                            flexDirection: 'row',
+                            color: 'rgba(0, 0, 0, 0.87)',
+                            fontSize: 14,
+                            lineHeight: 21,
                           }}>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.87)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {item.name}
-                          </Text>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.54)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {' '}
+                          {item.name}
+                        </Text>
+                        <Text
+                          style={{
+                            color: 'rgba(0, 0, 0, 0.54)',
+                            fontSize: 14,
+                            lineHeight: 21,
+                          }}>
+                          {' '}
                           (#
                           {id})
                         </Text>
-                        </View>
-                      </TouchableOpacity>
-                    )}
-                    renderChip={(id, onClose, item, style, iconStyle) => (
-                      <Chip
-                        key={id}
-                        iconStyle={iconStyle}
-                        onClose={(props) => {
-                          let foundParentGroupIndex = this.state.parentGroups.findIndex(
-                            (parentGroup) => parentGroup.value === id
-                          );
-                          if (foundParentGroupIndex > -1) {
-                            // Remove parent group from list
-                            const parentGroups = [...this.state.parentGroups];
-                            parentGroups.splice(foundParentGroupIndex, 1);
-                            this.setState({
-                              parentGroups: [...parentGroups],
-                            });
-                          }
-                          onClose(props);
-                        }}
-                        text={item.name}
-                        style={style}
-                      />
-                    )}
-                    filterOnKey="name"
-                    keyboardShouldPersistTaps
-                    inputContainerStyle={styles.selectizeField}
-                  />
-                </Col>
-              </Row>
-              <Row style={styles.formFieldPadding}>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Image source={groupPeerIcon} style={styles.groupIcons} />
-                  </View>
-                </Col>
-                <Col>
-                  <Label style={styles.formLabel}>
-                    {this.props.groupSettings.fields.peer_groups.name}
-                  </Label>
-                </Col>
-              </Row>
-              <Row>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Icon type="FontAwesome" name="users" style={[styles.formIcon, { opacity: 0 }]} />
-                  </View>
-                </Col>
-                <Col>
-                  <Selectize
-                    ref={(selectize) => {
-                      peerGroupsSelectizeRef = selectize;
-                    }}
-                    itemId="value"
-                    items={[...this.state.groups, this.state.peerGroups]}
-                    selectedItems={this.getSelectizeItems(
-                      this.state.group.peer_groups,
-                      [...this.state.groups, this.state.peerGroups],
-                    )}
-                    textInputProps={{
-                      placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
-                    }}
-                    renderRow={(id, onPress, item) => (
-                      <TouchableOpacity
-                        activeOpacity={0.6}
-                        key={id}
-                        onPress={onPress}
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  renderChip={(id, onClose, item, style, iconStyle) => (
+                    <Chip
+                      key={id}
+                      iconStyle={iconStyle}
+                      onClose={(props) => {
+                        let foundParentGroupIndex = this.state.parentGroups.findIndex(
+                          (parentGroup) => parentGroup.value === id,
+                        );
+                        if (foundParentGroupIndex > -1) {
+                          // Remove parent group from list
+                          const parentGroups = [...this.state.parentGroups];
+                          parentGroups.splice(foundParentGroupIndex, 1);
+                          this.setState({
+                            parentGroups: [...parentGroups],
+                          });
+                        }
+                        onClose(props);
+                      }}
+                      text={item.name}
+                      style={style}
+                    />
+                  )}
+                  filterOnKey="name"
+                  keyboardShouldPersistTaps
+                  inputContainerStyle={styles.selectizeField}
+                />
+              </Col>
+            </Row>
+            <Row style={styles.formFieldPadding}>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Image source={groupPeerIcon} style={styles.groupIcons} />
+                </View>
+              </Col>
+              <Col>
+                <Label style={styles.formLabel}>
+                  {this.props.groupSettings.fields.peer_groups.name}
+                </Label>
+              </Col>
+            </Row>
+            <Row>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon type="FontAwesome" name="users" style={[styles.formIcon, { opacity: 0 }]} />
+                </View>
+              </Col>
+              <Col>
+                <Selectize
+                  ref={(selectize) => {
+                    peerGroupsSelectizeRef = selectize;
+                  }}
+                  itemId="value"
+                  items={[...this.state.groups, this.state.peerGroups]}
+                  selectedItems={this.getSelectizeItems(this.state.group.peer_groups, [
+                    ...this.state.groups,
+                    this.state.peerGroups,
+                  ])}
+                  textInputProps={{
+                    placeholder: i18n.t('groupDetailScreen.searchPeerGroups'),
+                  }}
+                  renderRow={(id, onPress, item) => (
+                    <TouchableOpacity
+                      activeOpacity={0.6}
+                      key={id}
+                      onPress={onPress}
+                      style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 10,
+                      }}>
+                      <View
                         style={{
-                          paddingVertical: 8,
-                          paddingHorizontal: 10,
+                          flexDirection: 'row',
                         }}>
-                        <View
+                        <Text
                           style={{
-                            flexDirection: 'row',
+                            color: 'rgba(0, 0, 0, 0.87)',
+                            fontSize: 14,
+                            lineHeight: 21,
                           }}>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.87)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {item.name}
-                          </Text>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.54)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {' '}
+                          {item.name}
+                        </Text>
+                        <Text
+                          style={{
+                            color: 'rgba(0, 0, 0, 0.54)',
+                            fontSize: 14,
+                            lineHeight: 21,
+                          }}>
+                          {' '}
                           (#
                           {id})
                         </Text>
-                        </View>
-                      </TouchableOpacity>
-                    )}
-                    renderChip={(id, onClose, item, style, iconStyle) => (
-                      <Chip
-                        key={id}
-                        iconStyle={iconStyle}
-                        onClose={(props) => {
-                          let foundPeerGroupIndex = this.state.peerGroups.findIndex(
-                            (peerGroup) => peerGroup.value === id
-                          );
-                          if (foundPeerGroupIndex > -1) {
-                            // Remove peer group from list
-                            const peerGroups = [...this.state.peerGroups];
-                            peerGroups.splice(foundPeerGroupIndex, 1);
-                            this.setState({
-                              peerGroups: [...peerGroups],
-                            });
-                          }
-                          onClose(props);
-                        }}
-                        text={item.name}
-                        style={style}
-                      />
-                    )}
-                    filterOnKey="name"
-                    keyboardShouldPersistTaps
-                    inputContainerStyle={styles.selectizeField}
-                  />
-                </Col>
-              </Row>
-              <Row style={styles.formFieldPadding}>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Image source={groupChildIcon} style={styles.groupIcons} />
-                  </View>
-                </Col>
-                <Col>
-                  <Label style={styles.formLabel}>
-                    {this.props.groupSettings.fields.child_groups.name}
-                  </Label>
-                </Col>
-              </Row>
-              <Row>
-                <Col style={styles.formIconLabelCol}>
-                  <View style={styles.formIconLabelView}>
-                    <Icon type="FontAwesome" name="users" style={[styles.formIcon, { opacity: 0 }]} />
-                  </View>
-                </Col>
-                <Col>
-                  <Selectize
-                    ref={(selectize) => {
-                      childGroupsSelectizeRef = selectize;
-                    }}
-                    itemId="value"
-                    items={[...this.state.groups, ...this.state.childGroups]}
-                    selectedItems={this.getSelectizeItems(
-                      this.state.group.child_groups,
-                      [...this.state.groups, ...this.state.childGroups],
-                    )}
-                    textInputProps={{
-                      placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
-                    }}
-                    renderRow={(id, onPress, item) => (
-                      <TouchableOpacity
-                        activeOpacity={0.6}
-                        key={id}
-                        onPress={onPress}
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  renderChip={(id, onClose, item, style, iconStyle) => (
+                    <Chip
+                      key={id}
+                      iconStyle={iconStyle}
+                      onClose={(props) => {
+                        let foundPeerGroupIndex = this.state.peerGroups.findIndex(
+                          (peerGroup) => peerGroup.value === id,
+                        );
+                        if (foundPeerGroupIndex > -1) {
+                          // Remove peer group from list
+                          const peerGroups = [...this.state.peerGroups];
+                          peerGroups.splice(foundPeerGroupIndex, 1);
+                          this.setState({
+                            peerGroups: [...peerGroups],
+                          });
+                        }
+                        onClose(props);
+                      }}
+                      text={item.name}
+                      style={style}
+                    />
+                  )}
+                  filterOnKey="name"
+                  keyboardShouldPersistTaps
+                  inputContainerStyle={styles.selectizeField}
+                />
+              </Col>
+            </Row>
+            <Row style={styles.formFieldPadding}>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Image source={groupChildIcon} style={styles.groupIcons} />
+                </View>
+              </Col>
+              <Col>
+                <Label style={styles.formLabel}>
+                  {this.props.groupSettings.fields.child_groups.name}
+                </Label>
+              </Col>
+            </Row>
+            <Row>
+              <Col style={styles.formIconLabelCol}>
+                <View style={styles.formIconLabelView}>
+                  <Icon type="FontAwesome" name="users" style={[styles.formIcon, { opacity: 0 }]} />
+                </View>
+              </Col>
+              <Col>
+                <Selectize
+                  ref={(selectize) => {
+                    childGroupsSelectizeRef = selectize;
+                  }}
+                  itemId="value"
+                  items={[...this.state.groups, ...this.state.childGroups]}
+                  selectedItems={this.getSelectizeItems(this.state.group.child_groups, [
+                    ...this.state.groups,
+                    ...this.state.childGroups,
+                  ])}
+                  textInputProps={{
+                    placeholder: i18n.t('groupDetailScreen.searchChildGroups'),
+                  }}
+                  renderRow={(id, onPress, item) => (
+                    <TouchableOpacity
+                      activeOpacity={0.6}
+                      key={id}
+                      onPress={onPress}
+                      style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 10,
+                      }}>
+                      <View
                         style={{
-                          paddingVertical: 8,
-                          paddingHorizontal: 10,
+                          flexDirection: 'row',
                         }}>
-                        <View
+                        <Text
                           style={{
-                            flexDirection: 'row',
+                            color: 'rgba(0, 0, 0, 0.87)',
+                            fontSize: 14,
+                            lineHeight: 21,
                           }}>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.87)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {item.name}
-                          </Text>
-                          <Text
-                            style={{
-                              color: 'rgba(0, 0, 0, 0.54)',
-                              fontSize: 14,
-                              lineHeight: 21,
-                            }}>
-                            {' '}
+                          {item.name}
+                        </Text>
+                        <Text
+                          style={{
+                            color: 'rgba(0, 0, 0, 0.54)',
+                            fontSize: 14,
+                            lineHeight: 21,
+                          }}>
+                          {' '}
                           (#
                           {id})
                         </Text>
-                        </View>
-                      </TouchableOpacity>
-                    )}
-                    renderChip={(id, onClose, item, style, iconStyle) => (
-                      <Chip
-                        key={id}
-                        iconStyle={iconStyle}
-                        onClose={(props) => {
-                          let foundChildGroupIndex = this.state.childGroups.findIndex(
-                            (childGroup) => childGroup.value === id
-                          );
-                          if (foundChildGroupIndex > -1) {
-                            // Remove child group from list
-                            const childGroups = [...this.state.childGroups];
-                            childGroups.splice(foundChildGroupIndex, 1);
-                            this.setState({
-                              childGroups: [...childGroups],
-                            });
-                          }
-                          onClose(props);
-                        }}
-                        text={item.name}
-                        style={style}
-                      />
-                    )}
-                    filterOnKey="name"
-                    keyboardShouldPersistTaps
-                    inputContainerStyle={styles.selectizeField}
-                  />
-                </Col>
-              </Row>
-            </View>
-          </KeyboardAwareScrollView>
-        )}
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  renderChip={(id, onClose, item, style, iconStyle) => (
+                    <Chip
+                      key={id}
+                      iconStyle={iconStyle}
+                      onClose={(props) => {
+                        let foundChildGroupIndex = this.state.childGroups.findIndex(
+                          (childGroup) => childGroup.value === id,
+                        );
+                        if (foundChildGroupIndex > -1) {
+                          // Remove child group from list
+                          const childGroups = [...this.state.childGroups];
+                          childGroups.splice(foundChildGroupIndex, 1);
+                          this.setState({
+                            childGroups: [...childGroups],
+                          });
+                        }
+                        onClose(props);
+                      }}
+                      text={item.name}
+                      style={style}
+                    />
+                  )}
+                  filterOnKey="name"
+                  keyboardShouldPersistTaps
+                  inputContainerStyle={styles.selectizeField}
+                />
+              </Col>
+            </Row>
+          </View>
+        </KeyboardAwareScrollView>
+      )}
     </View>
   );
 
@@ -4256,7 +4531,9 @@ class GroupDetailScreen extends React.Component {
 
   renderPickerItems = (items) =>
     items.map((item) => {
-      return <Picker.Item key={item.key} label={item.label + ' (#' + item.key + ')'} value={item.key} />;
+      return (
+        <Picker.Item key={item.key} label={item.label + ' (#' + item.key + ')'} value={item.key} />
+      );
     });
 
   renderCustomHealthMilestones() {
@@ -4369,6 +4646,101 @@ class GroupDetailScreen extends React.Component {
     this.props.searchLocations(this.props.userData.domain, this.props.userData.token, queryText);
   };
 
+  onSaveQuickAction = (quickActionPropertyName) => {
+    let newActionValue = this.state.group[quickActionPropertyName]
+      ? parseInt(this.state.group[quickActionPropertyName], 10) + 1
+      : 1;
+    /*
+    if (this.props.isConnected) {
+      // ONLINE mode
+      this.onSaveGroup({
+        [quickActionPropertyName]: newActionValue,
+      });
+    } else {
+      // OFFLINE mode
+    }
+    */
+    var comment = '';
+    switch (quickActionPropertyName) {
+      case 'quick_button_meeting_scheduled':
+        comment = i18n.t('groupDetailScreen.fab.quick_button_meeting_scheduled');
+        break;
+      case 'quick_button_meeting_postponed':
+        comment = i18n.t('groupDetailScreen.fab.quick_button_meeting_postponed');
+        break;
+      case 'quick_button_meeting_complete':
+        comment = i18n.t('groupDetailScreen.fab.quick_button_meeting_complete');
+        break;
+      default:
+        comment = '';
+    }
+    // TODO: temporarily save a Comment until supported by D.T as an Activity w/ count
+    if (comment != '') {
+      this.props.saveComment(
+        this.props.userData.domain,
+        this.props.userData.token,
+        this.state.group.ID,
+        {
+          comment,
+        },
+      );
+      // TODO: saveComment doesn't display Toast on normal `Comments and Activities` tabView, so we mock it
+      toastSuccess.show(
+        <View>
+          <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
+        </View>,
+        3000,
+      );
+    }
+  };
+
+  /*
+  onMeetingComplete = () => {
+    // determine whether there is an existing 'meeting_complete' questionnaire,
+    // if so, proxy from Attendance to Questionnaire, else back to GroupDetails
+    var isQuestionnaireEnabled = false;
+    var q_id = null;
+    // loop thru all (active) questionnaires, and check whether 'group'->'meeting_complete' is enabled
+    this.props.questionnaires.map((questionnaire) => {
+      if (
+        questionnaire.trigger_type == 'group' &&
+        questionnaire.trigger_value == 'meeting_complete'
+      ) {
+        isQuestionnaireEnabled = true;
+        q_id = questionnaire.id;
+      }
+    });
+    /*
+    this.props.navigation.navigate(
+      NavigationActions.navigate({
+        routeName: 'Attendance',
+        action: NavigationActions.navigate({
+          routeName: 'Attendance',
+          params: {
+            userData: this.props.userData,
+            group: this.state.group,
+            q_id,
+          },
+        }),
+      }),
+    );
+    this.props.navigation.navigate(
+      NavigationActions.navigate({
+        routeName: 'Questionnaire',
+        action: NavigationActions.navigate({
+          routeName: 'Question',
+          params: {
+            userData: this.props.userData,
+            group: this.state.group,
+            title: this.state.group.title,
+            q_id,
+          },
+        }),
+      }),
+    );
+  };
+  */
+
   render() {
     const successToast = (
       <Toast
@@ -4432,67 +4804,272 @@ class GroupDetailScreen extends React.Component {
                     onIndexChange={this.tabChanged}
                     initialLayout={{ width: windowWidth }}
                   />
+                  {this.state.onlyView && this.state.tabViewConfig.index != 2 && (
+                    <ActionButton
+                      buttonColor={Colors.primaryRGBA}
+                      renderIcon={(active) =>
+                        active ? (
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="close"
+                            style={{ color: 'white', fontSize: 22 }}
+                          />
+                        ) : (
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="comment-plus"
+                            style={{ color: 'white', fontSize: 25 }}
+                          />
+                        )
+                      }
+                      degrees={0}
+                      activeOpacity={0}
+                      bgColor="rgba(0,0,0,0.5)"
+                      nativeFeedbackRippleColor="rgba(0,0,0,0)">
+                      <ActionButton.Item
+                        buttonColor={Colors.colorWait}
+                        //title={this.props.groupSettings.fields.quick_button_meeting_scheduled.name}
+                        title={i18n.t('groupDetailScreen.fab.quick_button_meeting_scheduled')}
+                        onPress={() => {
+                          this.onSaveQuickAction('quick_button_meeting_scheduled');
+                        }}
+                        size={40}
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                        textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                        textContainerStyle={{ height: 'auto' }}>
+                        <Icon
+                          type="MaterialCommunityIcons"
+                          name="calendar-plus"
+                          style={styles.groupFABIcon}
+                        />
+                      </ActionButton.Item>
+                      <ActionButton.Item
+                        buttonColor={Colors.colorYes}
+                        //title={this.props.groupSettings.fields.quick_button_meeting_complete.name}
+                        title={i18n.t('groupDetailScreen.fab.quick_button_meeting_complete')}
+                        onPress={() => {
+                          //this.onMeetingComplete();
+                          this.onSaveQuickAction('quick_button_meeting_complete');
+                        }}
+                        size={40}
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                        textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                        textContainerStyle={{ height: 'auto' }}>
+                        <Icon
+                          type="MaterialCommunityIcons"
+                          name="calendar-check"
+                          style={styles.groupFABIcon}
+                        />
+                      </ActionButton.Item>
+                      <ActionButton.Item
+                        buttonColor={Colors.colorNo}
+                        //title={this.props.groupSettings.fields.quick_button_meeting_postponed.name}
+                        title={i18n.t('groupDetailScreen.fab.quick_button_meeting_postponed')}
+                        onPress={() => {
+                          this.onSaveQuickAction('quick_button_meeting_postponed');
+                        }}
+                        size={40}
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                        textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                        textContainerStyle={{ height: 'auto' }}>
+                        <Icon
+                          type="MaterialCommunityIcons"
+                          name="calendar-minus"
+                          style={styles.groupFABIcon}
+                        />
+                      </ActionButton.Item>
+                    </ActionButton>
+                  )}
+                  {this.state.commentDialog.toggle ? (
+                    <BlurView
+                      tint="dark"
+                      intensity={50}
+                      style={[
+                        styles.dialogBackground,
+                        {
+                          width: windowWidth,
+                          height: windowHeight,
+                        },
+                      ]}>
+                      <KeyboardAvoidingView
+                        behavior={'position'}
+                        contentContainerStyle={{
+                          height: windowHeight / 1.5,
+                        }}>
+                        <View style={styles.dialogBox}>
+                          <Grid>
+                            <Row>
+                              {this.state.commentDialog.delete ? (
+                                <View style={styles.dialogContent}>
+                                  <Row style={{ height: 30 }}>
+                                    <Label style={[styles.name, { marginBottom: 5 }]}>
+                                      {i18n.t('global.delete')}
+                                    </Label>
+                                  </Row>
+                                  <Row>
+                                    <Text style={{ fontSize: 15 }}>
+                                      {this.state.commentDialog.data.content}
+                                    </Text>
+                                  </Row>
+                                </View>
+                              ) : (
+                                <View style={styles.dialogContent}>
+                                  <Grid>
+                                    <Row style={{ height: 30 }}>
+                                      <Label style={[styles.name, { marginBottom: 5 }]}>
+                                        {i18n.t('global.edit')}
+                                      </Label>
+                                    </Row>
+                                    <Row>
+                                      <Input
+                                        multiline
+                                        value={this.state.commentDialog.data.content}
+                                        onChangeText={(value) => {
+                                          this.setState((prevState) => ({
+                                            commentDialog: {
+                                              ...prevState.commentDialog,
+                                              data: {
+                                                ...prevState.commentDialog.data,
+                                                content: value,
+                                              },
+                                            },
+                                          }));
+                                        }}
+                                        style={[
+                                          styles.groupTextField,
+                                          { height: 'auto', minHeight: 50 },
+                                        ]}
+                                      />
+                                    </Row>
+                                  </Grid>
+                                </View>
+                              )}
+                            </Row>
+                            <Row style={{ height: 60 }}>
+                              <Button
+                                transparent
+                                style={{
+                                  marginTop: 20,
+                                  marginLeft: 'auto',
+                                  marginRight: 'auto',
+                                  marginBottom: 'auto',
+                                  paddingLeft: 25,
+                                  paddingRight: 25,
+                                }}
+                                onPress={() => {
+                                  this.onCloseCommentDialog();
+                                }}>
+                                <Text style={{ color: Colors.primary }}>
+                                  {i18n.t('global.close')}
+                                </Text>
+                              </Button>
+                              {this.state.commentDialog.delete ? (
+                                <Button
+                                  block
+                                  style={[
+                                    styles.dialogButton,
+                                    { backgroundColor: Colors.buttonDelete },
+                                  ]}
+                                  onPress={() => {
+                                    this.onDeleteComment(this.state.commentDialog.data);
+                                  }}>
+                                  <Text style={{ color: Colors.buttonText }}>
+                                    {i18n.t('global.delete')}
+                                  </Text>
+                                </Button>
+                              ) : (
+                                <Button
+                                  block
+                                  style={styles.dialogButton}
+                                  onPress={() => {
+                                    this.onUpdateComment(this.state.commentDialog.data);
+                                  }}>
+                                  <Text style={{ color: Colors.buttonText }}>
+                                    {i18n.t('global.save')}
+                                  </Text>
+                                </Button>
+                              )}
+                            </Row>
+                          </Grid>
+                        </View>
+                      </KeyboardAvoidingView>
+                    </BlurView>
+                  ) : null}
                 </View>
               </View>
             ) : (
-                <ScrollView>
-                  {!this.props.isConnected && this.offlineBarRender()}
-                  <View style={styles.formContainer}>
-                    <Grid>
-                      <Row>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+              <ScrollView /*_addnew_ _editable_*/>
+                {!this.props.isConnected && this.offlineBarRender()}
+                <View style={styles.formContainer}>
+                  <Grid>
+                    <Row style={styles.formRow}>
+                      <Col style={styles.formIconLabelCol}>
+                        <View style={styles.formIconLabelView}>
+                          <Icon type="FontAwesome" name="users" style={styles.formIcon} />
+                        </View>
+                      </Col>
+                      <Col>
+                        <Label style={[styles.formLabel, {}]}>
                           {i18n.t('groupDetailScreen.groupName.label')}
                         </Label>
-                      </Row>
-                      <Row
-                        style={
-                          this.state.nameRequired
-                            ? {
+                      </Col>
+                    </Row>
+                    <Row
+                      style={
+                        this.state.nameRequired
+                          ? {
                               backgroundColor: '#FFE6E6',
                               borderWidth: 2,
                               borderColor: Colors.errorBackground,
                             }
-                            : null
-                        }>
-                        <Input
-                          placeholder={i18n.t('global.requiredField')}
-                          onChangeText={this.setGroupTitle}
-                          style={
-                            this.state.nameRequired
-                              ? [styles.groupTextField, { borderBottomWidth: 0 }]
-                              : styles.groupTextField
-                          }
-                        />
-                      </Row>
-                      {this.state.nameRequired ? (
-                        <Text style={styles.validationErrorMessage}>
-                          {i18n.t('groupDetailScreen.groupName.error')}
-                        </Text>
-                      ) : null}
-                      <Row>
-                        <Label style={[styles.formLabel, { marginTop: 10, marginBottom: 5 }]}>
+                          : null
+                      }>
+                      <Input
+                        placeholder={i18n.t('global.requiredField')}
+                        onChangeText={this.setGroupTitle}
+                        style={
+                          this.state.nameRequired
+                            ? [styles.groupTextField, { borderBottomWidth: 0 }]
+                            : styles.groupTextField
+                        }
+                      />
+                    </Row>
+                    {this.state.nameRequired ? (
+                      <Text style={styles.validationErrorMessage}>
+                        {i18n.t('groupDetailScreen.groupName.error')}
+                      </Text>
+                    ) : null}
+                    <Row style={styles.formRow}>
+                      <Col style={styles.formIconLabelCol}>
+                        <View style={styles.formIconLabelView}>
+                          <Image source={groupTypeIcon} style={styles.groupIcons} />
+                        </View>
+                      </Col>
+                      <Col>
+                        <Label style={[styles.formLabel, {}]}>
                           {this.props.groupSettings.fields.group_type.name}
                         </Label>
-                      </Row>
-                      <Row style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
-                        <Picker
-                          mode="dropdown"
-                          selectedValue={this.state.group.group_type}
-                          onValueChange={this.setGroupType}>
-                          {Object.keys(this.props.groupSettings.fields.group_type.values).map(
-                            (key) => {
-                              const optionData = this.props.groupSettings.fields.group_type.values[
-                                key
-                              ];
-                              return <Picker.Item key={key} label={optionData.label} value={key} />;
-                            },
-                          )}
-                        </Picker>
-                      </Row>
-                    </Grid>
-                  </View>
-                </ScrollView>
-              )}
+                      </Col>
+                    </Row>
+                    <Row style={[styles.groupTextRoundField, { paddingRight: 10 }]}>
+                      <Picker
+                        mode="dropdown"
+                        selectedValue={this.state.group.group_type}
+                        onValueChange={this.setGroupType}>
+                        {Object.keys(this.props.groupSettings.fields.group_type.values).map(
+                          (key) => {
+                            const optionData = this.props.groupSettings.fields.group_type.values[
+                              key
+                            ];
+                            return <Picker.Item key={key} label={optionData.label} value={key} />;
+                          },
+                        )}
+                      </Picker>
+                    </Row>
+                  </Grid>
+                </View>
+              </ScrollView>
+            )}
           </View>
         )}
         {successToast}
@@ -4516,13 +5093,7 @@ GroupDetailScreen.propTypes = {
     code: PropTypes.any,
     message: PropTypes.string,
   }),
-  newComment: PropTypes.shape({
-    ID: PropTypes.string,
-    author: PropTypes.string,
-    content: PropTypes.string,
-    date: PropTypes.string,
-    gravatar: PropTypes.string,
-  }),
+  newComment: PropTypes.bool,
   groupsReducerError: PropTypes.shape({
     code: PropTypes.any,
     message: PropTypes.string,
@@ -4651,6 +5222,8 @@ const mapStateToProps = (state) => ({
   groupsList: state.groupsReducer.groups,
   contactsList: state.contactsReducer.contacts,
   isRTL: state.i18nReducer.isRTL,
+  previousGroups: state.groupsReducer.previousGroups,
+  previousContacts: state.contactsReducer.previousContacts,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -4660,20 +5233,32 @@ const mapDispatchToProps = (dispatch) => ({
   getById: (domain, token, groupId) => {
     dispatch(getById(domain, token, groupId));
   },
-  getComments: (domain, token, groupId, offset, limit) => {
-    dispatch(getCommentsByGroup(domain, token, groupId, offset, limit));
+  getComments: (domain, token, groupId, pagination) => {
+    dispatch(getCommentsByGroup(domain, token, groupId, pagination));
   },
   saveComment: (domain, token, groupId, commentData) => {
     dispatch(saveComment(domain, token, groupId, commentData));
   },
-  getActivities: (domain, token, groupId, offset, limit) => {
-    dispatch(getActivitiesByGroup(domain, token, groupId, offset, limit));
+  getActivities: (domain, token, groupId, pagination) => {
+    dispatch(getActivitiesByGroup(domain, token, groupId, pagination));
   },
   getByIdEnd: () => {
     dispatch(getByIdEnd());
   },
   searchLocations: (domain, token, queryText) => {
     dispatch(searchLocations(domain, token, queryText));
+  },
+  deleteComment: (domain, token, groupId, commentId) => {
+    dispatch(deleteComment(domain, token, groupId, commentId));
+  },
+  loadingFalse: () => {
+    dispatch(loadingFalse());
+  },
+  updatePrevious: (previousGroups) => {
+    dispatch(updatePrevious(previousGroups));
+  },
+  updatePreviousContacts: (previousContacts) => {
+    dispatch(updatePreviousContacts(previousContacts));
   },
 });
 

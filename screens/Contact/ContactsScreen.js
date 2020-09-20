@@ -22,16 +22,18 @@ import { CheckBox } from 'react-native-elements';
 
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
-import { getAll } from '../../store/actions/contacts.actions';
+import { getAll, updatePrevious } from '../../store/actions/contacts.actions';
 import dtIcon from '../../assets/images/dt-icon.png';
 import i18n from '../../languages';
 import sharedTools from '../../shared';
 
 const styles = StyleSheet.create({
   flatListItem: {
-    height: 40,
+    height: 40 /* this needs auto sizing */,
     backgroundColor: 'white',
     margin: 20,
+    marginTop: 10,
+    paddingBottom: 10,
   },
   contactSubtitle: {
     flex: 1,
@@ -207,16 +209,24 @@ class ContactsScreen extends React.Component {
       <View style={{ flexDirection: 'row', height: '100%' }}>
         <View style={{ flexDirection: 'column', flexGrow: 1 }}>
           <View style={{ flexDirection: 'row' }}>
-            <Text style={{ flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }}>{contact.title}</Text>
+            <Text style={[{ textAlign: 'left', flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }]}>
+              {contact.title}
+            </Text>
           </View>
           <View style={{ flexDirection: 'row' }}>
-            <Text style={styles.contactSubtitle}>
+            <Text
+              style={[
+                styles.contactSubtitle,
+                {
+                  textAlign: 'left',
+                },
+              ]}>
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status]
                 ? this.props.contactSettings.fields.overall_status.values[contact.overall_status]
-                  .label
+                    .label
                 : ''}
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status] &&
-                this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
+              this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
                 ? ' • '
                 : ''}
               {this.props.contactSettings.fields.seeker_path.values[contact.seeker_path]
@@ -225,7 +235,17 @@ class ContactsScreen extends React.Component {
             </Text>
           </View>
         </View>
-        <View style={{ flexDirection: 'column', width: statusCircleSize }}>
+        <View
+          style={[
+            {
+              flexDirection: 'column',
+              width: statusCircleSize,
+              paddingTop: 0,
+              marginTop: 'auto',
+              marginBottom: 'auto',
+            },
+            this.props.isRTL ? { marginRight: 5 } : { marginLeft: 5 },
+          ]}>
           <View
             style={{
               width: statusCircleSize,
@@ -246,74 +266,60 @@ class ContactsScreen extends React.Component {
         height: 1,
         width: '100%',
         backgroundColor: '#dddddd',
+        marginTop: 5,
       }}
     />
   );
 
-  onRefresh = (pagination = false) => {
-    if (pagination) {
-      this.setState(
-        (prevState) => ({
-          offset: prevState.offset + prevState.limit,
-          filtered: false,
-          search: '',
-          searchBarFilter: {
-            ...prevState.searchBarFilter,
-            toggle: false,
-            currentFilter: '',
-          },
-        }),
-        () => {
-          this.props.getAllContacts(
-            this.props.userData.domain,
-            this.props.userData.token,
-            this.state.offset,
-            this.state.limit,
-            this.state.sort,
-          );
-        },
-      );
-    } else {
-      this.setState(
-        (prevState) => ({
-          offset: 0,
-          filtered: false,
-          search: '',
-          searchBarFilter: {
-            ...prevState.searchBarFilter,
-            toggle: false,
-            currentFilter: '',
-          },
-        }),
-        () => {
-          this.props.getAllContacts(
-            this.props.userData.domain,
-            this.props.userData.token,
-            this.state.offset,
-            this.state.limit,
-            this.state.sort,
-          );
-        },
-      );
-    }
+  onRefresh = (increasePagination = false, returnFromDetail = false) => {
+    let newState = {
+      offset: increasePagination ? this.state.offset + this.state.limit : 0,
+      filtered: false,
+      search: '',
+      searchBarFilter: {
+        ...this.state.searchBarFilter,
+        toggle: false,
+        currentFilter: '',
+      },
+    };
+    this.setState(
+      (prevState) => {
+        return returnFromDetail ? prevState : newState;
+      },
+      () => {
+        this.props.getAllContacts(
+          this.props.userData.domain,
+          this.props.userData.token,
+          this.state.offset,
+          this.state.limit,
+          this.state.sort,
+        );
+      },
+    );
   };
 
   goToContactDetailScreen = (contactData = null) => {
     if (contactData) {
+      this.props.updatePrevious([
+        {
+          contactId: parseInt(contactData.ID),
+          onlyView: true,
+          contactName: contactData.title,
+        },
+      ]);
       // Detail
       this.props.navigation.navigate('ContactDetail', {
         contactId: contactData.ID,
         onlyView: true,
         contactName: contactData.title,
-        previousList: [],
-        onGoBack: () => this.onRefresh(),
+        onGoBack: () => this.onRefresh(false, true),
       });
     } else {
+      this.props.updatePrevious([]);
       // Create
       this.props.navigation.navigate('ContactDetail', {
-        previousList: [],
         onlyView: true,
-        onGoBack: () => this.onRefresh(),
+        onGoBack: () => this.onRefresh(false, true),
       });
     }
   };
@@ -428,14 +434,14 @@ class ContactsScreen extends React.Component {
                     }
                     if (queryFilterTwo[key] === 'me') {
                       if (key == 'assigned_to') {
-                        queryFilterTwo[key] = `user-${this.props.userData.id}`;
+                        queryFilterTwo[key] = this.props.userData.id;
                       } else {
                         queryFilterTwo[key] = this.props.userData.id.toString();
                       }
                     }
                   });
                   // Remove subassigned query because contacts does not have this value
-                  if(Object.prototype.hasOwnProperty.call(queryFilterTwo, "subassigned")) {
+                  if (Object.prototype.hasOwnProperty.call(queryFilterTwo, 'subassigned')) {
                     delete queryFilterTwo.subassigned;
                   }
                   // Filter contacts according to 'queryFilterTwo' filters
@@ -447,12 +453,16 @@ class ContactsScreen extends React.Component {
                       if (Object.prototype.hasOwnProperty.call(contact, key)) {
                         // Value is to 'omit' contacts (-closed)
                         if (queryFilterTwo[key].toString().startsWith('-')) {
-                          if (contact[key] !== queryFilterTwo[key].replace("-", "")) {
+                          if (contact[key] !== queryFilterTwo[key].replace('-', '')) {
                             result = true;
                           }
                           // Same value as filter
                         } else if (queryFilterTwo[key] === contact[key]) {
                           result = true;
+                        } else if (key == 'assigned_to') {
+                          if (queryFilterTwo[key] === contact[key].key) {
+                            result = true;
+                          }
                         }
                       }
                       resp.push(result);
@@ -770,6 +780,9 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getAllContacts: (domain, token, offset, limit, sort) => {
     dispatch(getAll(domain, token, offset, limit, sort));
+  },
+  updatePrevious: (previousContacts) => {
+    dispatch(updatePrevious(previousContacts));
   },
 });
 

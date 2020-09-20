@@ -16,22 +16,19 @@
     "writeYourCommentNoteHere": "Write your comment or note here",
     "requiredField": "Required field",
     "edit": "Edit",
+    "delete": "Delete",
     "cancel": "Cancel",
     "save": "Save",
     "online": "Online",
-    "offline": "offline",
+    "offline": "Offline",
     "language": "Language",
     "search": "Search",
     "membersActivity": "Members",
     "moreFields": "More Fields",
     "nameRequired": "Name required",
-    "close": "Close"
-  },
-  "appRestart": {
-    "message": "The application will be restarted to apply the following configuration:",
-    "button": "Ok",
-    "textDirection": "Text direction",
-    "selectedLanguage": "Selected language"
+    "close": "Close",
+    "editComment": "Edit",
+    "deleteComment": "Delete"
   },
   "loginScreen": {
     "domain": {
@@ -121,6 +118,11 @@
     "groupName": {
       "label": "Group Name",
       "error": "Name is required"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "Meeting Scheduled",
+      "quick_button_meeting_postponed": "Meeting Postponed",
+      "quick_button_meeting_complete": "Meeting Complete"
     }
   },
   "notificationsScreen": {
@@ -137,5 +139,11 @@
     "noGroupPlacheHolder": "There are not any groups currently available.",
     "noGroupPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
     "noGroupPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your groups."
+  },
+  "appRestart": {
+    "message": "The application will be restarted to apply the following configuration:",
+    "button": "Ok",
+    "textDirection": "Text direction",
+    "selectedLanguage": "Selected language"
   }
 }

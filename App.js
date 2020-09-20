@@ -8,8 +8,8 @@ import * as Font from 'expo-font';
 import { Asset } from 'expo-asset';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import Reactotron from 'reactotron-react-native';
-import * as Sentry from 'sentry-expo';
+//import Reactotron from 'reactotron-react-native';
+//import * as Sentry from 'sentry-expo';
 
 import AppNavigator from './navigation/AppNavigator';
 import { store, persistor } from './store/store';
@@ -19,11 +19,11 @@ import sharedTools from './shared';
 
 import { setNetworkConnectivity } from './store/actions/networkConnectivity.actions';
 
-Sentry.init({
+/*Sentry.init({
   dsn: 'https://aaa9d833ba5942d59c69e290ffbd3f36@o424480.ingest.sentry.io/5356329',
   enableInExpoDevelopment: true,
   debug: true,
-});
+});*/
 
 // Styles
 const styles = StyleSheet.create({
@@ -59,9 +59,9 @@ class App extends React.Component {
       // If Reactotron gets no connection, this is the solution that worked for me (cairocoder01: 2019-08-15)
       // https://github.com/expo/expo-cli/issues/153#issuecomment-358925525
       // May need to then run this before `npm start`: `adb reverse tcp:9090 tcp:9090`
-      Reactotron.configure() // controls connection & communication settings
-        .useReactNative() // add all built-in react native plugins
-        .connect(); // let's connect!
+      //Reactotron.configure() // controls connection & communication settings
+      //  .useReactNative() // add all built-in react native plugins
+      //  .connect(); // let's connect!
     }
 
     // Handle notifications that are received or selected while the app

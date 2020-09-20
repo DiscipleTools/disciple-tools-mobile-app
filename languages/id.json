@@ -16,6 +16,7 @@
     "writeYourCommentNoteHere": "Tulis komentar atau komentar Anda di sini",
     "requiredField": "kolom yang harus diisi",
     "edit": "Edit",
+    "delete": "Menghapus",
     "cancel": "Membatalkan",
     "save": "Menyimpan",
     "online": "On line",
@@ -25,13 +26,9 @@
     "membersActivity": "Anggota",
     "moreFields": "Lebih banyak bidang",
     "nameRequired": "Nama (wajib",
-    "close": "Menutup"
-  },
-  "appRestart": {
-    "message": "Aplikasi akan dihidupkan ulang untuk menerapkan konfigurasi berikut:",
-    "button": "baik",
-    "textDirection": "Arah teks",
-    "selectedLanguage": "Bahasa yang dipilih"
+    "close": "Menutup",
+    "editComment": "Edit",
+    "deleteComment": "Menghapus"
   },
   "loginScreen": {
     "domain": {
@@ -71,14 +68,14 @@
     "rememberPassword": "ingat kata Sandi",
     "rememberPasswordActive": "Tetap masuk log diaktifkan",
     "rememberPasswordInactive": "Tetap masuk log dinonaktifkan",
-    "remove": "Hapus kode PIN",
-    "set": "Setel kode PIN",
+    "remove": "Menghapus",
+    "set": "Set",
     "pinCode": "Kode PIN",
-    "enterPin": "Masukkan kode PIN",
-    "setPin": "Tetapkan PIN baru",
-    "incorrectPin": "Kode PIN salah",
-    "savedPinCode": "Kode PIN berhasil disimpan!",
-    "removedPinCode": "Kode PIN berhasil dihapus!",
+    "enterPin": "Masukkan PIN",
+    "setPin": "Setel PIN baru",
+    "incorrectPin": "PIN salah",
+    "savedPinCode": "Kode PIN berhasil disimpan",
+    "removedPinCode": "Kode PIN berhasil dihapus",
     "close": "Menutup"
   },
   "contactDetailScreen": {
@@ -121,6 +118,11 @@
     "groupName": {
       "label": "Nama grup",
       "error": "Nama harus diisi"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "Rapat Terjadwal",
+      "quick_button_meeting_postponed": "Rapat Ditunda",
+      "quick_button_meeting_complete": "Rapat Selesai"
     }
   },
   "notificationsScreen": {
@@ -137,5 +139,11 @@
     "noGroupPlacheHolder": "Tidak ada grup yang tersedia saat ini.",
     "noGroupPlacheHolder1": "Mungkin ada masalah saat mendapatkannya dari situs Anda. Seret ke bawah untuk mencoba menyegarkan dan coba lagi.",
     "noGroupPlacheHolderOffline": "Anda sedang offline. Pastikan Anda terhubung ke wifi atau data seluler untuk menyegarkan dan mendapatkan grup Anda."
+  },
+  "appRestart": {
+    "message": "Aplikasi akan dimulai ulang untuk menerapkan konfigurasi berikut:",
+    "button": "Baik",
+    "textDirection": "Arah teks",
+    "selectedLanguage": "Bahasa yang dipilih"
   }
 }

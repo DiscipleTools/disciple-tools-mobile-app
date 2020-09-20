@@ -3,7 +3,7 @@
 //   -- https://redux-saga.js.org/docs/advanced/Channels.html
 
 import { take, fork, call, put, race, actionChannel, select } from 'redux-saga/effects';
-import * as Sentry from 'sentry-expo';
+//import * as Sentry from 'sentry-expo';
 
 function* sendRequest(url, data) {
   let genericErrorResponse = {
@@ -13,7 +13,6 @@ function* sendRequest(url, data) {
       message: 'Unable to process the request. Please try again later.',
     },
   };
-
   const request = yield fetch(url, data)
     .then((response) => {
       if (response.status >= 200 && response.status < 300) {
@@ -40,11 +39,11 @@ function* sendRequest(url, data) {
             var isHTML = RegExp.prototype.test.bind(/(<([^>]+)>)/i);
             if (isHTML(errorJSON)) {
               // Back-end error response in (HTML)
-              Sentry.captureException(errorJSON);
+              //Sentry.captureException(errorJSON);
               return genericErrorResponse;
             } else {
               // Back-end error response in (JSON)
-              Sentry.captureException(errorJSON);
+              //Sentry.captureException(errorJSON);
               errorJSON = JSON.parse(errorJSON);
               return {
                 status: errorJSON.data && errorJSON.data.status ? errorJSON.data.status : '',
@@ -56,13 +55,13 @@ function* sendRequest(url, data) {
             }
           },
           (error) => {
-            Sentry.captureException(error);
+            //Sentry.captureException(error);
             // Catch if 'text() method' or 'JSON.parse()' throw error
             return genericErrorResponse;
           },
         );
       } else {
-        Sentry.captureException(error);
+        //Sentry.captureException(error);
         // Catch if 'text() method' or 'JSON.parse()' throw error
         return genericErrorResponse;
       }
@@ -161,6 +160,12 @@ export default function* requestSaga() {
               type: payload.action,
               payload: { data: {}, status: 200 },
             });
+          }
+          if (payload.data.method === 'DELETE' && payload.action.includes('DELETE')) {
+            // Offline entity delete (send "last request" as response)
+            /* eslint-disable */
+            yield put({ type: payload.action, payload: { data: true, status: 200 } });
+            /* eslint-enable */
           }
         }
       }

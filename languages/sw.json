@@ -16,6 +16,7 @@
     "writeYourCommentNoteHere": "Andika maoni yako au daftari hapa",
     "requiredField": "Sehemu inayohitajika",
     "edit": "Hariri",
+    "delete": "Futa",
     "cancel": "Ghairi",
     "save": "Okoa",
     "online": "Mtandaoni",
@@ -25,13 +26,9 @@
     "membersActivity": "Wajumbe",
     "moreFields": "Mashamba Zaidi",
     "nameRequired": "Jina linalohitajika",
-    "close": "Karibu"
-  },
-  "appRestart": {
-    "message": "Maombi yataanza tena kutumia usanidi ufuatao:",
-    "button": "sawa",
-    "textDirection": "Miongozo ya maandishi",
-    "selectedLanguage": "Lugha iliyochaguliwa"
+    "close": "Karibu",
+    "editComment": "Hariri",
+    "deleteComment": "Futa"
   },
   "loginScreen": {
     "domain": {
@@ -71,15 +68,15 @@
     "rememberPassword": "Kumbuka Nenosiri",
     "rememberPasswordActive": "Endelea kuwezeshwa",
     "rememberPasswordInactive": "Endelea kuwa umelemazwa",
-    "remove": "Ondoa msimbo wa Pini",
-    "set": "Weka nambari ya PIN",
+    "remove": "Ondoa",
+    "set": "Weka",
     "pinCode": "Nambari ya siri",
-    "enterPin": "Ingiza msimbo wa pini",
+    "enterPin": "Ingiza PIN",
     "setPin": "Weka PIN mpya",
-    "incorrectPin": "Nambari ya Pini isiyo sahihi",
-    "savedPinCode": "Nambari ya pini iliyohifadhiwa kikamilifu!",
-    "removedPinCode": "Nambari ya pini imeondolewa vyema!",
-    "close": "karibu"
+    "incorrectPin": "PIN isiyo sahihi",
+    "savedPinCode": "Nambari ya siri imehifadhiwa kwa mafanikio",
+    "removedPinCode": "Nambari ya siri imeondolewa kwa mafanikio",
+    "close": "Funga"
   },
   "contactDetailScreen": {
     "addNewContact": "Ongeza Mawasiliano Mpya",
@@ -121,6 +118,11 @@
     "groupName": {
       "label": "Jina la Kikundi",
       "error": "Jina inahitajika"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "Mkutano Umepangwa",
+      "quick_button_meeting_postponed": "Mkutano Ulihairishwa",
+      "quick_button_meeting_complete": "Mkutano Umekamilika"
     }
   },
   "notificationsScreen": {
@@ -137,5 +139,11 @@
     "noGroupPlacheHolder": "Hakuna vikundi yoyote vinavyopatikana kwa sasa.",
     "noGroupPlacheHolder1": "Kunaweza kuwa na shida kuzipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
     "noGroupPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate vikundi vyako."
+  },
+  "appRestart": {
+    "message": "Programu itaanza tena kutumia usanidi ufuatao:",
+    "button": "Sawa",
+    "textDirection": "Mwelekeo wa maandishi",
+    "selectedLanguage": "Lugha iliyochaguliwa"
   }
 }

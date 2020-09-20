@@ -16,6 +16,7 @@
     "writeYourCommentNoteHere": "اكتب تعليقك أو ملاحظتك هنا",
     "requiredField": "حقل مطلوب",
     "edit": "تغيير",
+    "delete": "حذف",
     "cancel": "إلغاء",
     "save": "حفظ",
     "online": "متصل بالأنترنت",
@@ -25,13 +26,9 @@
     "membersActivity": "أفراد",
     "moreFields": "المزيد من الحقول",
     "nameRequired": "الاسم مطلوب",
-    "close": "قريب"
-  },
-  "appRestart": {
-    "message": "سيتم إعادة تشغيل التطبيق لتطبيق التكوين التالي:",
-    "button": "حسنا",
-    "textDirection": "اتجاه النص",
-    "selectedLanguage": "اللغة المختارة"
+    "close": "قريب",
+    "editComment": "تعديل",
+    "deleteComment": "حذف"
   },
   "loginScreen": {
     "domain": {
@@ -71,15 +68,15 @@
     "rememberPassword": "تذكر كلمة المرور",
     "rememberPasswordActive": "تمكين تسجيل الدخول باستمرار",
     "rememberPasswordInactive": "حافظ على تسجيل الدخول معطلة",
-    "remove": "إزالة رمز PIN",
-    "set": "قم بتعيين رمز PIN",
+    "remove": "إزالة",
+    "set": "جلس",
     "pinCode": "كود PIN",
-    "enterPin": "أدخل رمز PIN",
+    "enterPin": "أدخل رقم التعريف الشخصي",
     "setPin": "قم بتعيين رقم تعريف شخصي جديد",
-    "incorrectPin": "رمز PIN غير صحيح",
-    "savedPinCode": "تم حفظ رمز PIN بنجاح!",
-    "removedPinCode": "تمت إزالة رمز PIN بنجاح!",
-    "close": "أغلق"
+    "incorrectPin": "رقم التعريف الشخصي غير صحيح",
+    "savedPinCode": "تم حفظ رمز PIN بنجاح",
+    "removedPinCode": "تمت إزالة رمز PIN بنجاح",
+    "close": "قريب"
   },
   "contactDetailScreen": {
     "addNewContact": "إضافة جهة اتصال جديدة",
@@ -121,6 +118,11 @@
     "groupName": {
       "label": "أسم المجموعة",
       "error": "مطلوب اسم"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "جدول الاجتماع",
+      "quick_button_meeting_postponed": "تم تأجيل الاجتماع",
+      "quick_button_meeting_complete": "اكتمل الاجتماع"
     }
   },
   "notificationsScreen": {
@@ -137,5 +139,11 @@
     "noGroupPlacheHolder": "لا توجد أي مجموعات متاحة حاليًا.",
     "noGroupPlacheHolder1": "ربما كانت هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث والمحاولة مرة أخرى.",
     "noGroupPlacheHolderOffline": "أنت غير متصل حاليًا. تأكد من اتصالك بشبكة wifi أو بيانات الجوال من أجل التحديث والحصول على مجموعاتك."
+  },
+  "appRestart": {
+    "message": "سيتم إعادة تشغيل التطبيق لتطبيق التكوين التالي:",
+    "button": "حسنا",
+    "textDirection": "اتجاه النص",
+    "selectedLanguage": "اللغة المختارة"
   }
 }

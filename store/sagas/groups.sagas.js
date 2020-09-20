@@ -122,10 +122,9 @@ export function* saveGroup({ domain, token, groupData }) {
           ...jsonData,
           assigned_to: {
             key: assignedToId,
-            label: usersList.find((user) => user.key === assignedToId).label
-          }
+            label: usersList.find((user) => user.key === assignedToId).label,
+          },
         };
-
       }
       yield put({
         type: actions.GROUPS_SAVE_SUCCESS,
@@ -191,66 +190,45 @@ export function* getById({ domain, token, groupId }) {
   }
 }
 
-export function* getCommentsByGroup({ domain, token, groupId, offset, limit }) {
+export function* getCommentsByGroup({ domain, token, groupId, pagination }) {
   const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
   yield put({ type: actions.GROUPS_GET_COMMENTS_START });
-
   try {
-    if (!isConnected || isNaN(groupId)) {
-      let queue = yield select((state) => state.requestReducer.queue);
-      const authorName = yield select((state) => state.userReducer.userData.username);
-      queue = queue.filter(
-        (requestQueue) =>
-          requestQueue.data.method === 'POST' &&
-          requestQueue.action === 'GROUPS_SAVE_COMMENT_RESPONSE' &&
-          requestQueue.url.includes(`groups/${groupId}/comments`),
-      );
+    yield put({
+      type: 'REQUEST',
+      payload: {
+        url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments?number=${pagination.limit}&offset=${pagination.offset}`,
+        data: {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+        action: actions.GROUPS_GET_COMMENTS_RESPONSE,
+      },
+    });
+    let response = yield take(actions.GROUPS_GET_COMMENTS_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
       yield put({
         type: actions.GROUPS_GET_COMMENTS_SUCCESS,
-        comments: queue.map((request) => {
-          const requestBody = JSON.parse(request.data.body);
-          return {
-            ...requestBody,
-            author: authorName,
-            groupId,
-          };
-        }),
-        total: queue.length,
-        offline: true,
+        comments: jsonData.comments,
+        groupId: groupId,
+        pagination: {
+          ...pagination,
+          total: jsonData.total,
+        },
       });
     } else {
       yield put({
-        type: 'REQUEST',
-        payload: {
-          url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments?number=${limit}&offset=${offset}`,
-          data: {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          },
-          action: actions.GROUPS_GET_COMMENTS_RESPONSE,
+        type: actions.GROUPS_GET_COMMENTS_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
         },
       });
-      let response = yield take(actions.GROUPS_GET_COMMENTS_RESPONSE);
-      response = response.payload;
-      const jsonData = response.data;
-      if (response.status === 200) {
-        yield put({
-          type: actions.GROUPS_GET_COMMENTS_SUCCESS,
-          comments: jsonData.comments,
-          total: jsonData.total,
-        });
-      } else {
-        yield put({
-          type: actions.GROUPS_GET_COMMENTS_FAILURE,
-          error: {
-            code: jsonData.code,
-            message: jsonData.message,
-          },
-        });
-      }
     }
   } catch (error) {
     yield put({
@@ -271,14 +249,20 @@ export function* saveComment({ domain, token, groupId, commentData }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments`,
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments/${
+        commentData.ID ? commentData.ID : ''
+      }`,
       data: {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(commentData),
+        body: JSON.stringify({
+          comment: commentData.ID ? commentData.content : commentData.comment,
+          comment_type: 'comment',
+          ID: commentData.ID ? commentData.ID : undefined,
+        }),
       },
       isConnected,
       action: actions.GROUPS_SAVE_COMMENT_RESPONSE,
@@ -293,7 +277,8 @@ export function* saveComment({ domain, token, groupId, commentData }) {
       if (response.status === 200) {
         yield put({
           type: actions.GROUPS_SAVE_COMMENT_SUCCESS,
-          comment: jsonData,
+          comment: commentData.ID ? commentData : jsonData,
+          groupId,
         });
       } else {
         yield put({
@@ -309,11 +294,11 @@ export function* saveComment({ domain, token, groupId, commentData }) {
       jsonData = {
         ...response,
         author: authorName,
-        groupId,
       };
       yield put({
         type: actions.GROUPS_SAVE_COMMENT_SUCCESS,
-        comment: jsonData,
+        comment: commentData.ID ? commentData : jsonData,
+        groupId,
         offline: true,
       });
     }
@@ -422,13 +407,13 @@ export function* getPeopleGroups({ domain, token }) {
   }
 }
 
-export function* getActivitiesByGroup({ domain, token, groupId, offset, limit }) {
+export function* getActivitiesByGroup({ domain, token, groupId, pagination }) {
   yield put({ type: actions.GROUPS_GET_ACTIVITIES_START });
 
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/activity?number=${limit}&offset=${offset}`,
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/activity?number=${pagination.limit}&offset=${pagination.offset}`,
       data: {
         method: 'GET',
         headers: {
@@ -448,7 +433,11 @@ export function* getActivitiesByGroup({ domain, token, groupId, offset, limit })
       yield put({
         type: actions.GROUPS_GET_ACTIVITIES_SUCCESS,
         activities: jsonData.activity,
-        total: jsonData.total,
+        groupId: groupId,
+        pagination: {
+          ...pagination,
+          total: jsonData.total,
+        },
       });
     } else {
       yield put({
@@ -609,6 +598,65 @@ export function* getLocationListLastModifiedDate({ domain, token }) {
   }
 }
 
+export function* deleteComment({ domain, token, groupId, commentId }) {
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+
+  yield put({ type: actions.GROUPS_DELETE_COMMENT_START });
+
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/comments/${commentId}`,
+      data: {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      isConnected,
+      action: actions.GROUPS_DELETE_COMMENT_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.GROUPS_DELETE_COMMENT_RESPONSE);
+    response = response.payload;
+    let jsonData = response.data;
+    if (isConnected) {
+      if (response.status === 200) {
+        yield put({
+          type: actions.GROUPS_DELETE_COMMENT_SUCCESS,
+          groupId,
+          commentId,
+        });
+      } else {
+        yield put({
+          type: actions.GROUPS_DELETE_COMMENT_FAILURE,
+          error: {
+            code: jsonData.code,
+            message: jsonData.message,
+          },
+        });
+      }
+    } else {
+      yield put({
+        type: actions.GROUPS_DELETE_COMMENT_SUCCESS,
+        groupId,
+        commentId,
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.GROUPS_DELETE_COMMENT_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
 export default function* groupsSaga() {
   yield all([
     takeEvery(actions.GROUPS_SAVE, saveGroup),
@@ -622,5 +670,6 @@ export default function* groupsSaga() {
     takeEvery(actions.GROUPS_GET_SETTINGS, getSettings),
     takeEvery(actions.GROUPS_LOCATIONS_SEARCH, searchLocations),
     takeEvery(actions.GROUPS_LOCATIONS_MODIFIED_DATE, getLocationListLastModifiedDate),
+    takeEvery(actions.GROUPS_DELETE_COMMENT, deleteComment),
   ]);
 }

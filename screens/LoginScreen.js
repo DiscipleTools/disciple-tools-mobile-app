@@ -42,6 +42,7 @@ import {
 import { getUsers, getContactFilters } from '../store/actions/users.actions';
 import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
 import { logout } from '../store/actions/user.actions';
+import { getActiveQuestionnaires } from '../store/actions/questionnaire.actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: Colors.tintColor,
     width: '100%',
-    paddingTop: 100,
+    padding: 35,
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
@@ -61,7 +62,6 @@ const styles = StyleSheet.create({
     width: 250,
     resizeMode: 'contain',
     padding: 20,
-    marginBottom: 20,
   },
   formContainer: {
     alignSelf: 'stretch',
@@ -69,9 +69,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   signInButton: {
-    marginTop: 20,
+    marginTop: 10,
     backgroundColor: Colors.tintColor,
-    borderRadius: 2,
+    borderRadius: 10,
   },
   signInButtonText: {
     color: 'white',
@@ -141,7 +141,6 @@ const styles = StyleSheet.create({
   },
   textBox: {
     fontSize: 16,
-    height: 45,
     paddingRight: 30,
     paddingLeft: 8,
     paddingVertical: 0,
@@ -567,6 +566,7 @@ class LoginScreen extends React.Component {
     this.props.getLocationModifiedDate(this.props.userData.domain, this.props.userData.token);
     this.props.getUsers(this.props.userData.domain, this.props.userData.token);
     this.props.getContactFilters(this.props.userData.domain, this.props.userData.token);
+    this.props.getActiveQuestionnaires(this.props.userData.domain, this.props.userData.token);
   };
 
   getUserInfo = () => {
@@ -713,6 +713,7 @@ class LoginScreen extends React.Component {
               iconName="ios-globe"
               label={i18n.t('loginScreen.domain.label')}
               onChangeText={(text) => this.cleanDomainWiteSpace(text)}
+              textAlign={this.props.i18n.isRTL ? 'right' : 'left'}
               autoCapitalize="none"
               autoCorrect={false}
               value={this.state.domain}
@@ -728,6 +729,7 @@ class LoginScreen extends React.Component {
               iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
               label={i18n.t('loginScreen.username.label')}
               onChangeText={(text) => this.setState({ username: text })}
+              textAlign={this.props.i18n.isRTL ? 'right' : 'left'}
               autoCapitalize="none"
               autoCorrect={false}
               value={this.state.username}
@@ -1063,6 +1065,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getContactFilters: (domain, token) => {
     dispatch(getContactFilters(domain, token));
+  },
+  getActiveQuestionnaires: (domain, token) => {
+    dispatch(getActiveQuestionnaires(domain, token));
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

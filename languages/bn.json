@@ -16,6 +16,7 @@
     "writeYourCommentNoteHere": "আপনার মন্তব্য বা নোট এখানে লিখুন",
     "requiredField": "প্রয়োজনীয় ক্ষেত্র",
     "edit": "সম্পাদন করা",
+    "delete": "মুছে ফেলা",
     "cancel": "বাতিল",
     "save": "সংরক্ষণ করুন",
     "online": "অনলাইন",
@@ -25,13 +26,9 @@
     "membersActivity": "সদস্য",
     "moreFields": "আরও ক্ষেত্র",
     "nameRequired": "নাম (প্রয়োজন",
-    "close": "ঘনিষ্ঠ"
-  },
-  "appRestart": {
-    "message": "নিম্নলিখিত কনফিগারেশন প্রয়োগ করার জন্য অ্যাপ্লিকেশনটি আবার শুরু হবে:",
-    "button": "ঠিক আছে",
-    "textDirection": "লেখার দিকবিন্যাস",
-    "selectedLanguage": "নির্বাচিত ভাষা"
+    "close": "ঘনিষ্ঠ",
+    "editComment": "সম্পাদনা করুন",
+    "deleteComment": "মুছে ফেলা"
   },
   "loginScreen": {
     "domain": {
@@ -71,15 +68,15 @@
     "rememberPassword": "পাসওয়ার্ড মনে",
     "rememberPasswordActive": "সক্ষম থাকা লগ ইন করুন",
     "rememberPasswordInactive": "লগ ইন অক্ষম রাখুন",
-    "remove": "পিন কোড সরান",
-    "set": "পিন কোড সেট করুন",
+    "remove": "অপসারণ",
+    "set": "সেট",
     "pinCode": "পিনকোড",
-    "enterPin": "পিন কোড প্রবেশ করান",
+    "enterPin": "পিন প্রবেশ করান",
     "setPin": "নতুন পিন সেট করুন",
-    "incorrectPin": "ভুল পিন কোড",
-    "savedPinCode": "পিন কোড সফলভাবে সংরক্ষণ করা হয়েছে!",
-    "removedPinCode": "পিন কোড সফলভাবে সরানো হয়েছে!",
-    "close": "ঘনিষ্ঠ"
+    "incorrectPin": "ভুল পিন",
+    "savedPinCode": "পিন কোড সাফল্যের সাথে সংরক্ষিত হয়েছে",
+    "removedPinCode": "পিন কোড সফলভাবে সরানো হয়েছে",
+    "close": "বন্ধ"
   },
   "contactDetailScreen": {
     "addNewContact": "নতুন পরিচিতি যোগ করুন",
@@ -121,6 +118,11 @@
     "groupName": {
       "label": "দলের নাম",
       "error": "নাম প্রয়োজন"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "সভা নির্ধারিত",
+      "quick_button_meeting_postponed": "সভা স্থগিত",
+      "quick_button_meeting_complete": "সভা সম্পূর্ণ"
     }
   },
   "notificationsScreen": {
@@ -137,5 +139,11 @@
     "noGroupPlacheHolder": "বর্তমানে কোনও গোষ্ঠী উপলব্ধ নেই।",
     "noGroupPlacheHolder1": "আপনার সাইট থেকে এগুলি পেতে কোনও সমস্যা হতে পারে। রিফ্রেশ করার চেষ্টা করতে নীচে টানুন এবং আবার চেষ্টা করুন।",
     "noGroupPlacheHolderOffline": "আপনি বর্তমানে অফলাইন আপনার গ্রুপগুলি রিফ্রেশ করার জন্য আপনি ওয়াইফাই বা মোবাইল ডেটার সাথে সংযুক্ত আছেন তা নিশ্চিত করুন।"
+  },
+  "appRestart": {
+    "message": "নিম্নলিখিত কনফিগারেশন প্রয়োগ করার জন্য অ্যাপ্লিকেশনটি পুনরায় শুরু হবে:",
+    "button": "ঠিক আছে",
+    "textDirection": "লেখার দিকবিন্যাস",
+    "selectedLanguage": "নির্বাচিত ভাষা"
   }
 }

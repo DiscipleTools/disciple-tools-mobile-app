@@ -16,6 +16,7 @@
     "writeYourCommentNoteHere": "Schrijf hier je reactie of opmerking",
     "requiredField": "verplicht veld",
     "edit": "Bewerk",
+    "delete": "Verwijderen",
     "cancel": "annuleren",
     "save": "Opslaan",
     "online": "Online",
@@ -25,13 +26,9 @@
     "membersActivity": "leden",
     "moreFields": "Meer velden",
     "nameRequired": "Naam (vereist",
-    "close": "Dichtbij"
-  },
-  "appRestart": {
-    "message": "De applicatie wordt opnieuw opgestart om de volgende configuratie toe te passen:",
-    "button": "OK",
-    "textDirection": "Tekstrichting",
-    "selectedLanguage": "Geselecteerde taal"
+    "close": "Dichtbij",
+    "editComment": "Bewerk",
+    "deleteComment": "Verwijderen"
   },
   "loginScreen": {
     "domain": {
@@ -71,15 +68,15 @@
     "rememberPassword": "Onthoud wachtwoord",
     "rememberPasswordActive": "Blijf ingelogd ingeschakeld",
     "rememberPasswordInactive": "Blijf ingelogd uitgeschakeld",
-    "remove": "PIN-code verwijderen",
-    "set": "Pincode instellen",
+    "remove": "Verwijderen",
+    "set": "Set",
     "pinCode": "Pincode",
-    "enterPin": "Voer pincode in",
-    "setPin": "Nieuwe pincode instellen",
+    "enterPin": "Voer Pin-code in",
+    "setPin": "Stel een nieuwe pincode in",
     "incorrectPin": "Onjuiste pincode",
-    "savedPinCode": "PIN-code succesvol opgeslagen!",
-    "removedPinCode": "PIN-code succesvol verwijderd!",
-    "close": "dichtbij"
+    "savedPinCode": "PIN-code succesvol opgeslagen",
+    "removedPinCode": "PIN-code succesvol verwijderd",
+    "close": "Dichtbij"
   },
   "contactDetailScreen": {
     "addNewContact": "Voeg nieuw contact toe",
@@ -121,6 +118,11 @@
     "groupName": {
       "label": "Groepsnaam",
       "error": "Naam is vereist"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "Vergadering gepland",
+      "quick_button_meeting_postponed": "Vergadering uitgesteld",
+      "quick_button_meeting_complete": "Vergadering voltooid"
     }
   },
   "notificationsScreen": {
@@ -137,5 +139,11 @@
     "noGroupPlacheHolder": "Er zijn momenteel geen groepen beschikbaar.",
     "noGroupPlacheHolder1": "Er is mogelijk een probleem opgetreden bij het ophalen van uw site. Sleep omlaag om te proberen te vernieuwen en probeer het opnieuw.",
     "noGroupPlacheHolderOffline": "U bent momenteel offline. Zorg ervoor dat u bent verbonden met wifi of mobiele gegevens om uw groepen te vernieuwen en op te halen."
+  },
+  "appRestart": {
+    "message": "De applicatie wordt opnieuw gestart om de volgende configuratie toe te passen:",
+    "button": "OK",
+    "textDirection": "Tekstrichting",
+    "selectedLanguage": "Geselecteerde taal"
   }
 }

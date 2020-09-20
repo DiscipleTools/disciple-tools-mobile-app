@@ -68,6 +68,15 @@ export const GROUPS_LOCATIONS_MODIFIED_DATE_SUCCESS = 'GROUPS_LOCATIONS_MODIFIED
 export const GROUPS_LOCATIONS_MODIFIED_DATE_RESPONSE = 'GROUPS_LOCATIONS_MODIFIED_DATE_RESPONSE';
 export const GROUPS_LOCATIONS_MODIFIED_DATE_FAILURE = 'GROUPS_LOCATIONS_MODIFIED_DATE_FAILURE';
 
+export const GROUPS_DELETE_COMMENT = 'GROUPS_DELETE_COMMENT';
+export const GROUPS_DELETE_COMMENT_START = 'GROUPS_DELETE_COMMENT_START';
+export const GROUPS_DELETE_COMMENT_SUCCESS = 'GROUPS_DELETE_COMMENT_SUCCESS';
+export const GROUPS_DELETE_COMMENT_RESPONSE = 'GROUPS_DELETE_COMMENT_RESPONSE';
+export const GROUPS_DELETE_COMMENT_FAILURE = 'GROUPS_DELETE_COMMENT_FAILURE';
+
+export const GROUPS_LOADING_FALSE = 'GROUPS_LOADING_FALSE';
+export const GROUPS_UPDATE_PREVIOUS = 'GROUPS_UPDATE_PREVIOUS';
+
 /**
  * Action Creators
  */
@@ -106,14 +115,13 @@ export function getByIdEnd() {
   };
 }
 
-export function getCommentsByGroup(domain, token, groupId, offset, limit) {
+export function getCommentsByGroup(domain, token, groupId, pagination) {
   return {
     type: GROUPS_GET_COMMENTS,
     domain,
     token,
     groupId,
-    offset,
-    limit,
+    pagination,
   };
 }
 
@@ -143,14 +151,13 @@ export function getPeopleGroups(domain, token) {
   };
 }
 
-export function getActivitiesByGroup(domain, token, groupId, offset, limit) {
+export function getActivitiesByGroup(domain, token, groupId, pagination) {
   return {
     type: GROUPS_GET_ACTIVITIES,
     domain,
     token,
     groupId,
-    offset,
-    limit,
+    pagination,
   };
 }
 
@@ -176,5 +183,28 @@ export function getLocationListLastModifiedDate(domain, token) {
     type: GROUPS_LOCATIONS_MODIFIED_DATE,
     domain,
     token,
+  };
+}
+
+export function deleteComment(domain, token, groupId, commentId) {
+  return {
+    type: GROUPS_DELETE_COMMENT,
+    domain,
+    token,
+    groupId,
+    commentId,
+  };
+}
+
+export function loadingFalse() {
+  return {
+    type: GROUPS_LOADING_FALSE,
+  };
+}
+
+export function updatePrevious(previousGroups) {
+  return {
+    type: GROUPS_UPDATE_PREVIOUS,
+    previousGroups,
   };
 }

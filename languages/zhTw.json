@@ -16,6 +16,7 @@
     "writeYourCommentNoteHere": "在這裡寫下您的評論或註釋",
     "requiredField": "必填項目",
     "edit": "編輯",
+    "delete": "刪除",
     "cancel": "取消",
     "save": "保存",
     "online": "線上",
@@ -25,13 +26,9 @@
     "membersActivity": "會員",
     "moreFields": "更多領域",
     "nameRequired": "姓名必填",
-    "close": "關"
-  },
-  "appRestart": {
-    "message": "該應用程序將重新啟動以應用以下配置：",
-    "button": "好",
-    "textDirection": "文字方向",
-    "selectedLanguage": "所選語言"
+    "close": "關",
+    "editComment": "編輯",
+    "deleteComment": "刪除"
   },
   "loginScreen": {
     "domain": {
@@ -71,14 +68,14 @@
     "rememberPassword": "記住密碼",
     "rememberPasswordActive": "保持登錄狀態",
     "rememberPasswordInactive": "保持登錄狀態已禁用",
-    "remove": "刪除PIN碼",
-    "set": "設置PIN碼",
+    "remove": "去掉",
+    "set": "組",
     "pinCode": "PIN碼",
-    "enterPin": "輸入PIN碼",
+    "enterPin": "輸入密碼",
     "setPin": "設置新密碼",
-    "incorrectPin": "PIN碼不正確",
-    "savedPinCode": "PIN碼已成功保存！",
-    "removedPinCode": "PIN碼已成功刪除！",
+    "incorrectPin": "PIN碼錯誤",
+    "savedPinCode": "PIN碼已成功保存",
+    "removedPinCode": "PIN碼已成功刪除",
     "close": "關"
   },
   "contactDetailScreen": {
@@ -121,6 +118,11 @@
     "groupName": {
       "label": "組的名字",
       "error": "名稱為必填項"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "會議預定",
+      "quick_button_meeting_postponed": "會議推遲",
+      "quick_button_meeting_complete": "會議完成"
     }
   },
   "notificationsScreen": {
@@ -137,5 +139,11 @@
     "noGroupPlacheHolder": "當前沒有任何組。",
     "noGroupPlacheHolder1": "從您的網站獲取它們可能存在問題。向下拖動以嘗試刷新，然後重試。",
     "noGroupPlacheHolderOffline": "您目前離線。確保您已連接到wifi或移動數據，以便刷新並分組。"
+  },
+  "appRestart": {
+    "message": "該應用程序將重新啟動以應用以下配置：",
+    "button": "好",
+    "textDirection": "文字方向",
+    "selectedLanguage": "所選語言"
   }
 }

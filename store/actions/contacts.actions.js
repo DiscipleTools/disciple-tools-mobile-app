@@ -45,6 +45,15 @@ export const CONTACTS_GET_SETTINGS_SUCCESS = 'CONTACTS_GET_SETTINGS_SUCCESS';
 export const CONTACTS_GET_SETTINGS_RESPONSE = 'CONTACTS_GET_SETTINGS_RESPONSE';
 export const CONTACTS_GET_SETTINGS_FAILURE = 'CONTACTS_GET_SETTINGS_FAILURE';
 
+export const CONTACTS_DELETE_COMMENT = 'CONTACTS_DELETE_COMMENT';
+export const CONTACTS_DELETE_COMMENT_START = 'CONTACTS_DELETE_COMMENT_START';
+export const CONTACTS_DELETE_COMMENT_SUCCESS = 'CONTACTS_DELETE_COMMENT_SUCCESS';
+export const CONTACTS_DELETE_COMMENT_RESPONSE = 'CONTACTS_DELETE_COMMENT_RESPONSE';
+export const CONTACTS_DELETE_COMMENT_FAILURE = 'CONTACTS_DELETE_COMMENT_FAILURE';
+
+export const CONTACTS_LOADING_FALSE = 'CONTACTS_LOADING_FALSE';
+export const CONTACTS_UPDATE_PREVIOUS = 'CONTACTS_UPDATE_PREVIOUS';
+
 /*
  * Action Creators
  */
@@ -89,14 +98,13 @@ export function getByIdEnd() {
   };
 }
 
-export function getCommentsByContact(domain, token, contactId, offset, limit) {
+export function getCommentsByContact(domain, token, contactId, pagination) {
   return {
     type: CONTACTS_GET_COMMENTS,
     domain,
     token,
     contactId,
-    offset,
-    limit,
+    pagination,
   };
 }
 
@@ -110,14 +118,13 @@ export function saveComment(domain, token, contactId, commentData) {
   };
 }
 
-export function getActivitiesByContact(domain, token, contactId, offset, limit) {
+export function getActivitiesByContact(domain, token, contactId, pagination) {
   return {
     type: CONTACTS_GET_ACTIVITIES,
     domain,
     token,
     contactId,
-    offset,
-    limit,
+    pagination,
   };
 }
 
@@ -126,5 +133,28 @@ export function getContactSettings(domain, token) {
     type: CONTACTS_GET_SETTINGS,
     domain,
     token,
+  };
+}
+
+export function deleteComment(domain, token, contactId, commentId) {
+  return {
+    type: CONTACTS_DELETE_COMMENT,
+    domain,
+    token,
+    contactId,
+    commentId,
+  };
+}
+
+export function loadingFalse() {
+  return {
+    type: CONTACTS_LOADING_FALSE,
+  };
+}
+
+export function updatePrevious(previousContacts) {
+  return {
+    type: CONTACTS_UPDATE_PREVIOUS,
+    previousContacts,
   };
 }

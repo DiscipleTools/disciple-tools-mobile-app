@@ -16,6 +16,7 @@
     "writeYourCommentNoteHere": "Écrivez votre commentaire ou note ici",
     "requiredField": "champs requis",
     "edit": "modifier",
+    "delete": "Supprimer",
     "cancel": "Annuler",
     "save": "sauver",
     "online": "En ligne",
@@ -25,13 +26,9 @@
     "membersActivity": "Membres",
     "moreFields": "Plus de champs",
     "nameRequired": "Nom obligatoire",
-    "close": "proche"
-  },
-  "appRestart": {
-    "message": "L'application sera redémarrée pour appliquer la configuration suivante:",
-    "button": "D'accord",
-    "textDirection": "Direction du texte",
-    "selectedLanguage": "Langue choisie"
+    "close": "proche",
+    "editComment": "Éditer",
+    "deleteComment": "Supprimer"
   },
   "loginScreen": {
     "domain": {
@@ -71,14 +68,14 @@
     "rememberPassword": "se souvenir du mot de passe",
     "rememberPasswordActive": "Rester connecté activé",
     "rememberPasswordInactive": "Rester connecté désactivé",
-    "remove": "Supprimer le code PIN",
-    "set": "Définir le code PIN",
+    "remove": "Retirer",
+    "set": "Ensemble",
     "pinCode": "Code PIN",
     "enterPin": "Entrez le code PIN",
     "setPin": "Définir un nouveau code PIN",
-    "incorrectPin": "Code PIN incorrect",
-    "savedPinCode": "Le code PIN a été enregistré avec succès!",
-    "removedPinCode": "Le code PIN a été supprimé avec succès!",
+    "incorrectPin": "PIN incorrect",
+    "savedPinCode": "Code PIN enregistré avec succès",
+    "removedPinCode": "Code PIN supprimé avec succès",
     "close": "Fermer"
   },
   "contactDetailScreen": {
@@ -121,6 +118,11 @@
     "groupName": {
       "label": "Nom de groupe",
       "error": "Nom obligatoire"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "Réunion programmée",
+      "quick_button_meeting_postponed": "Réunion reportée",
+      "quick_button_meeting_complete": "Réunion terminée"
     }
   },
   "notificationsScreen": {
@@ -137,5 +139,11 @@
     "noGroupPlacheHolder": "Aucun groupe n'est actuellement disponible.",
     "noGroupPlacheHolder1": "Il peut y avoir eu un problème pour les obtenir à partir de votre site. Faites glisser vers le bas pour essayer de rafraîchir et réessayez.",
     "noGroupPlacheHolderOffline": "Vous êtes actuellement hors ligne. Assurez-vous que vous êtes connecté au wifi ou aux données mobiles afin de rafraîchir et d'obtenir vos groupes."
+  },
+  "appRestart": {
+    "message": "L'application sera redémarrée pour appliquer la configuration suivante:",
+    "button": "D'accord",
+    "textDirection": "Direction du texte",
+    "selectedLanguage": "Langue sélectionnée"
   }
 }
