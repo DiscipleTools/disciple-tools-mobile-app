@@ -162,4 +162,5 @@ App.propTypes = {
 App.defaultProps = {
   skipLoadingScreen: false,
 };
+console.disableYellowBox = true;
 export default App;
