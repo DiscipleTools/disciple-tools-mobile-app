@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: Colors.tintColor,
     width: '100%',
-    padding: 20,
+    padding: 35,
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   signInButton: {
     marginTop: 10,
     backgroundColor: Colors.tintColor,
-    borderRadius: 20,
+    borderRadius: 10,
   },
   signInButtonText: {
     color: 'white',
@@ -145,7 +145,6 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     paddingVertical: 0,
     flex: 1,
-    textAlign: 'left',
   },
   touachableButton: {
     position: 'absolute',
@@ -714,6 +713,7 @@ class LoginScreen extends React.Component {
               iconName="ios-globe"
               label={i18n.t('loginScreen.domain.label')}
               onChangeText={(text) => this.cleanDomainWiteSpace(text)}
+              textAlign={this.props.i18n.isRTL ? 'right' : 'left'}
               autoCapitalize="none"
               autoCorrect={false}
               value={this.state.domain}
@@ -722,7 +722,6 @@ class LoginScreen extends React.Component {
               keyboardType="url"
               disabled={this.state.loading}
               placeholder={i18n.t('loginScreen.domain.placeholder')}
-              style={{ textAlign: 'left' }}
             />
             {domainErrorMessage}
             <TextField
@@ -730,6 +729,7 @@ class LoginScreen extends React.Component {
               iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
               label={i18n.t('loginScreen.username.label')}
               onChangeText={(text) => this.setState({ username: text })}
+              textAlign={this.props.i18n.isRTL ? 'right' : 'left'}
               autoCapitalize="none"
               autoCorrect={false}
               value={this.state.username}
@@ -737,7 +737,6 @@ class LoginScreen extends React.Component {
               textContentType="emailAddress"
               keyboardType="email-address"
               disabled={this.state.loading}
-              style={{ textAlign: 'left' }}
             />
             {userErrorMessage}
             <View style={[passwordStyle]}>
