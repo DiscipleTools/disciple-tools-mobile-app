@@ -77,7 +77,7 @@ import i18n from '../../languages';
 
 let toastSuccess;
 let toastError;
-const containerPadding = 35;
+const containerPadding = 20;
 const windowWidth = Dimensions.get('window').width;
 const spacing = windowWidth * 0.025;
 const sideSize = windowWidth - 2 * spacing;
@@ -260,8 +260,6 @@ const styles = StyleSheet.create({
   formDivider: {
     borderBottomColor: '#CCCCCC',
     borderBottomWidth: 1,
-    marginLeft: 10,
-    marginRight: 10,
   },
   formDivider2: {
     marginTop: 25,

@@ -66,7 +66,7 @@ import { searchLocations } from '../../store/actions/groups.actions';
 
 let toastSuccess;
 let toastError;
-const containerPadding = 35;
+const containerPadding = 20;
 const windowWidth = Dimensions.get('window').width;
 const progressBarWidth = windowWidth - 100;
 const milestonesGridSize = windowWidth + 5;
@@ -175,8 +175,6 @@ const styles = StyleSheet.create({
   formDivider: {
     borderBottomColor: '#CCCCCC',
     borderBottomWidth: 1,
-    marginLeft: 10,
-    marginRight: 10,
   },
   formIconLabelCol: {
     width: 35,
