@@ -534,7 +534,6 @@ const initialState = {
   loadMoreActivities: false,
   showAssignedToModal: false,
   groupStatusBackgroundColor: '#ffffff',
-  renderFab: true,
   loading: false,
   tabViewConfig: {
     index: 0,
@@ -2258,7 +2257,6 @@ class GroupDetailScreen extends React.Component {
         ...prevState.tabViewConfig,
         index,
       },
-      renderFab: !(index === 2),
     }));
   };
 
@@ -4806,7 +4804,7 @@ class GroupDetailScreen extends React.Component {
                     onIndexChange={this.tabChanged}
                     initialLayout={{ width: windowWidth }}
                   />
-                  {this.state.renderFab && (
+                  {this.state.onlyView && this.state.tabViewConfig.index != 2 && (
                     <ActionButton
                       buttonColor={Colors.primaryRGBA}
                       renderIcon={(active) =>
