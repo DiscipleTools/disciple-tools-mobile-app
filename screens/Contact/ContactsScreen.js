@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
     margin: 20,
     marginTop: 10,
     paddingBottom: 10,
-    //backgroundColor: 'green', /* used for testing the positioning */
   },
   contactSubtitle: {
     flex: 1,
@@ -220,7 +219,6 @@ class ContactsScreen extends React.Component {
                 styles.contactSubtitle,
                 {
                   textAlign: 'left',
-                  //backgroundColor: 'blue', /* used for testing the positioning */
                 },
               ]}>
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status]
@@ -243,9 +241,10 @@ class ContactsScreen extends React.Component {
               flexDirection: 'column',
               width: statusCircleSize,
               paddingTop: 0,
-              //backgroundColor: 'red' /* used for testing the positioning */,
+              marginTop: 'auto',
+              marginBottom: 'auto',
             },
-            this.props.isRTL ? { paddingRight: 8 } : { paddingLeft: 8 },
+            this.props.isRTL ? { marginRight: 5 } : { marginLeft: 5 },
           ]}>
           <View
             style={{
@@ -255,7 +254,6 @@ class ContactsScreen extends React.Component {
               backgroundColor: sharedTools.getSelectorColor(contact.overall_status),
               marginTop: 'auto',
               marginBottom: 'auto',
-              paddingTop: 0,
             }}></View>
         </View>
       </View>
