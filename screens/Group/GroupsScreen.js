@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     margin: 20,
     marginTop: 10,
     paddingBottom: 10,
-    //backgroundColor: 'green', /* used for testing the positioning */
   },
   groupSubtitle: {
     flex: 1,
@@ -199,7 +198,6 @@ class GroupsScreen extends React.Component {
                 styles.groupSubtitle,
                 {
                   textAlign: 'left',
-                  //backgroundColor: 'blue', /* used for testing the positioning */
                 },
               ]}>
               {this.props.groupSettings.fields.group_status.values[group.group_status]
@@ -225,8 +223,11 @@ class GroupsScreen extends React.Component {
             {
               flexDirection: 'column',
               width: statusCircleSize,
+              paddingTop: 0,
+              marginTop: 'auto',
+              marginBottom: 'auto',
             },
-            this.props.isRTL ? { paddingRight: 8 } : { paddingLeft: 8 },
+            this.props.isRTL ? { marginRight: 5 } : { marginLeft: 5 },
           ]}>
           <View
             style={{
