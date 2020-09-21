@@ -399,7 +399,6 @@ const initialState = {
   comment: '',
   progressBarValue: 0,
   overallStatusBackgroundColor: '#ffffff',
-  renderFab: true,
   showAssignedToModal: false,
   loading: false,
   moreFields: false,
@@ -4676,7 +4675,6 @@ class ContactDetailScreen extends React.Component {
         ...prevState.tabViewConfig,
         index,
       },
-      renderFab: !(index === 2),
     }));
   };
 
@@ -5700,7 +5698,7 @@ class ContactDetailScreen extends React.Component {
                     onIndexChange={this.tabChanged}
                     initialLayout={{ width: windowWidth }}
                   />
-                  {this.state.renderFab && (
+                  {this.state.onlyView && this.state.tabViewConfig.index != 2 && (
                     <ActionButton
                       buttonColor={Colors.primaryRGBA}
                       renderIcon={(active) =>
