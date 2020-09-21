@@ -123,7 +123,9 @@
     "groupName": {
       "label": "اسم گروه",
       "error": "نام لازم است"
-    }
+    },
+    "memberCount": "",
+    "memberList": ""
   },
   "notificationsScreen": {
     "notifications": "اطلاعیه",

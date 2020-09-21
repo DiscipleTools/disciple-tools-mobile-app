@@ -123,7 +123,9 @@
     "groupName": {
       "label": "组的名字",
       "error": "名称为必填项"
-    }
+    },
+    "memberCount": "",
+    "memberList": ""
   },
   "notificationsScreen": {
     "notifications": "通知事项",

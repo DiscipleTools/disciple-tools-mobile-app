@@ -818,6 +818,38 @@ class GroupDetailScreen extends React.Component {
           ...newState,
           updateMembersList: !newState.updateMembersList,
         };
+
+        // Clear collection
+        newState = {
+          ...newState,
+          membersContacts: [],
+        };
+
+        newState.group.members.values.forEach((member) => {
+          const foundMember = newState.usersContacts.find(
+            (contact) => contact.value === member.value,
+          );
+          if (!foundMember) {
+            // Add non existent member contact in members list (user does not have access permission to this contact/s)
+            newState = {
+              ...newState,
+              membersContacts: [
+                ...newState.membersContacts,
+                {
+                  name: member.name,
+                  value: member.value,
+                },
+              ],
+              unmodifiedMembersContacts: [
+                ...newState.unmodifiedMembersContacts,
+                {
+                  name: member.name,
+                  value: member.value,
+                },
+              ],
+            };
+          }
+        });
       }
       if (newState.group.coaches) {
         // Clear collection
@@ -943,39 +975,6 @@ class GroupDetailScreen extends React.Component {
                 {
                   name: childGroup.name,
                   value: childGroup.value,
-                },
-              ],
-            };
-          }
-        });
-      }
-      if (newState.group.members) {
-        // Clear collection
-        newState = {
-          ...newState,
-          membersContacts: [],
-        };
-
-        newState.group.members.values.forEach((member) => {
-          const foundMember = newState.usersContacts.find(
-            (contact) => contact.value === member.value,
-          );
-          if (!foundMember) {
-            // Add non existent member contact in members list (user does not have access permission to this contact/s)
-            newState = {
-              ...newState,
-              membersContacts: [
-                ...newState.membersContacts,
-                {
-                  name: member.name,
-                  value: member.value,
-                },
-              ],
-              unmodifiedMembersContacts: [
-                ...newState.unmodifiedMembersContacts,
-                {
-                  name: member.name,
-                  value: member.value,
                 },
               ],
             };
@@ -1581,7 +1580,7 @@ class GroupDetailScreen extends React.Component {
           </Text>
         )}
       </Row>
-      {!this.state.group.member_count || parseInt(this.state.group.member_count) === 0 ? (
+      {!this.state.group.members || this.state.group.members.values.length === 0 ? (
         <View>
           <Text style={styles.addMembersHyperlink} onPress={() => this.onEnableEdit()}>
             {i18n.t('groupDetailScreen.noMembersMessage')}
@@ -2238,6 +2237,15 @@ class GroupDetailScreen extends React.Component {
       tabViewConfig: {
         ...prevState.tabViewConfig,
         index,
+      },
+    }));
+  };
+
+  setGroupMemberCount = (value) => {
+    this.setState((prevState) => ({
+      group: {
+        ...prevState.group,
+        member_count: value,
       },
     }));
   };
@@ -3489,8 +3497,41 @@ class GroupDetailScreen extends React.Component {
         keyboardShouldPersistTaps="handled">
         <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
           <ScrollView keyboardShouldPersistTaps="handled">
-            <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'left' }}>
-              {i18n.t('global.membersActivity')}
+            <View>
+              <Row style={[styles.formRow, { paddingBottom: 0 }]}>
+                <Col>
+                  <Label
+                    style={{
+                      color: Colors.tintColor,
+                      fontSize: 12,
+                      marginTop: 0,
+                    }}>
+                    {i18n.t('groupDetailScreen.memberCount')}
+                  </Label>
+                </Col>
+              </Row>
+              <Row style={[styles.formRow, { paddingTop: 5 }]}>
+                <Col>
+                  <Input
+                    keyboardType={'numeric'}
+                    value={this.state.group.member_count}
+                    onChangeText={this.setGroupMemberCount}
+                    style={styles.groupTextField}
+                  />
+                </Col>
+              </Row>
+            </View>
+            <Text
+              style={[
+                {
+                  color: Colors.tintColor,
+                  fontSize: 12,
+                  textAlign: 'left',
+                  paddingBottom: 15,
+                  paddingTop: 5,
+                },
+              ]}>
+              {i18n.t('groupDetailScreen.memberList')}
             </Text>
             <FlatList
               data={this.state.group.members ? this.state.group.members.values : []}

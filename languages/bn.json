@@ -123,7 +123,9 @@
     "groupName": {
       "label": "দলের নাম",
       "error": "নাম প্রয়োজন"
-    }
+    },
+    "memberCount": "",
+    "memberList": ""
   },
   "notificationsScreen": {
     "notifications": "বিজ্ঞপ্তিগুলি",

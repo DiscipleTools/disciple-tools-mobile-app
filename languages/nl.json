@@ -123,7 +123,9 @@
     "groupName": {
       "label": "Groepsnaam",
       "error": "Naam is vereist"
-    }
+    },
+    "memberCount": "",
+    "memberList": ""
   },
   "notificationsScreen": {
     "notifications": "meldingen",

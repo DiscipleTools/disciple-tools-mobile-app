@@ -390,7 +390,6 @@ export default function groupsReducer(state = initialState, action) {
       }
 
       const oldId = mappedGroup.oldID ? mappedGroup.oldID : null;
-
       newState = {
         ...newState,
         group: mappedGroup,
@@ -478,7 +477,7 @@ export default function groupsReducer(state = initialState, action) {
             }
           });
           // Update members length in OFFLINE mode
-          if (
+          /*if (
             newGroupData.members &&
             newGroupData.members.values &&
             newGroupData.members.values.length != parseInt(newGroupData.member_count)
@@ -487,7 +486,7 @@ export default function groupsReducer(state = initialState, action) {
               ...newGroupData,
               member_count: newGroupData.members.values.length.toString(),
             };
-          }
+          }*/
         } else {
           newGroupData = {
             ...newState.groups[groupIndex],

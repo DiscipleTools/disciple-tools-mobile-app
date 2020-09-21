@@ -123,7 +123,9 @@
     "groupName": {
       "label": "Имя группы",
       "error": "Имя обязательно"
-    }
+    },
+    "memberCount": "",
+    "memberList": ""
   },
   "notificationsScreen": {
     "notifications": "Уведомления",

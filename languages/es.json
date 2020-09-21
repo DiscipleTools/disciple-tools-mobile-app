@@ -123,7 +123,9 @@
     "groupName": {
       "label": "Nombre del Grupo",
       "error": "El nombre es requerido"
-    }
+    },
+    "memberCount": "Numero de miembros",
+    "memberList": "Lista de Miembros"
   },
   "notificationsScreen": {
     "notifications": "Notificaciones",
