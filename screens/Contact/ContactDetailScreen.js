@@ -1962,11 +1962,6 @@ class ContactDetailScreen extends React.Component {
                     ? this.renderContactLink(this.state.contact.assigned_to)
                     : null}
                 </Col>
-                <Col>
-                  {this.state.contact.assigned_to
-                    ? this.renderContactLink(this.state.contact.assigned_to)
-                    : null}
-                </Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={styles.formLabel}>
                     {this.props.contactSettings.fields.assigned_to.name}
