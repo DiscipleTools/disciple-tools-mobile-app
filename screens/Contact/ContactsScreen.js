@@ -29,9 +29,11 @@ import sharedTools from '../../shared';
 
 const styles = StyleSheet.create({
   flatListItem: {
-    height: 40,
+    height: 40 /* this needs auto sizing */,
     backgroundColor: 'white',
     margin: 20,
+    marginTop: 10,
+    paddingBottom: 10,
   },
   contactSubtitle: {
     flex: 1,
@@ -207,10 +209,18 @@ class ContactsScreen extends React.Component {
       <View style={{ flexDirection: 'row', height: '100%' }}>
         <View style={{ flexDirection: 'column', flexGrow: 1 }}>
           <View style={{ flexDirection: 'row' }}>
-            <Text style={{ flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }}>{contact.title}</Text>
+            <Text style={[{ textAlign: 'left', flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }]}>
+              {contact.title}
+            </Text>
           </View>
           <View style={{ flexDirection: 'row' }}>
-            <Text style={styles.contactSubtitle}>
+            <Text
+              style={[
+                styles.contactSubtitle,
+                {
+                  textAlign: 'left',
+                },
+              ]}>
               {this.props.contactSettings.fields.overall_status.values[contact.overall_status]
                 ? this.props.contactSettings.fields.overall_status.values[contact.overall_status]
                     .label
@@ -225,7 +235,17 @@ class ContactsScreen extends React.Component {
             </Text>
           </View>
         </View>
-        <View style={{ flexDirection: 'column', width: statusCircleSize }}>
+        <View
+          style={[
+            {
+              flexDirection: 'column',
+              width: statusCircleSize,
+              paddingTop: 0,
+              marginTop: 'auto',
+              marginBottom: 'auto',
+            },
+            this.props.isRTL ? { marginRight: 5 } : { marginLeft: 5 },
+          ]}>
           <View
             style={{
               width: statusCircleSize,
@@ -246,6 +266,7 @@ class ContactsScreen extends React.Component {
         height: 1,
         width: '100%',
         backgroundColor: '#dddddd',
+        marginTop: 5,
       }}
     />
   );

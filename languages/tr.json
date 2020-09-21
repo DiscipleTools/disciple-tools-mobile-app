@@ -16,6 +16,7 @@
     "writeYourCommentNoteHere": "Yorumunu veya notunu buraya yaz",
     "requiredField": "Gerekli alan",
     "edit": "Düzenle",
+    "delete": "Sil",
     "cancel": "İptal et",
     "save": "kaydet",
     "online": "Çevrimiçi",
@@ -26,14 +27,8 @@
     "moreFields": "Diğer Alanlar",
     "nameRequired": "İsim (gerekli",
     "close": "Kapat",
-    "editComment": "",
-    "deleteComment": ""
-  },
-  "appRestart": {
-    "message": "Aşağıdaki yapılandırmayı uygulamak için uygulama yeniden başlatılır:",
-    "button": "tamam",
-    "textDirection": "Metin yönü",
-    "selectedLanguage": "Seçilen dil"
+    "editComment": "Düzenle",
+    "deleteComment": "Sil"
   },
   "loginScreen": {
     "domain": {
@@ -73,15 +68,15 @@
     "rememberPassword": "şifre hatırlamak",
     "rememberPasswordActive": "Oturum açmayı etkin tut",
     "rememberPasswordInactive": "Giriş yapmayı devre dışı bırak",
-    "remove": "PIN kodunu kaldır",
-    "set": "PIN kodunu ayarla",
+    "remove": "Kaldırmak",
+    "set": "Ayarlamak",
     "pinCode": "PIN kodu",
-    "enterPin": "PIN kodunu girin",
-    "setPin": "Yeni PIN ayarla",
-    "incorrectPin": "Yanlış PIN kodu",
-    "savedPinCode": "PIN kodu başarıyla kaydedildi!",
-    "removedPinCode": "PIN kodu başarıyla kaldırıldı!",
-    "close": "kapat"
+    "enterPin": "PIN girin",
+    "setPin": "Yeni PIN belirleyin",
+    "incorrectPin": "Yanlış PIN",
+    "savedPinCode": "PIN kodu başarıyla kaydedildi",
+    "removedPinCode": "PIN kodu başarıyla kaldırıldı",
+    "close": "Kapat"
   },
   "contactDetailScreen": {
     "addNewContact": "Yeni bağlantı ekle",
@@ -125,7 +120,12 @@
       "error": "İsim gerekli"
     },
     "memberCount": "",
-    "memberList": ""
+    "memberList": "",
+    "fab": {
+      "quick_button_meeting_scheduled": "Toplantı Planlandı",
+      "quick_button_meeting_postponed": "Toplantı Ertelendi",
+      "quick_button_meeting_complete": "Toplantı Tamamlandı"
+    }
   },
   "notificationsScreen": {
     "notifications": "Bildirim",
@@ -141,5 +141,11 @@
     "noGroupPlacheHolder": "Şu anda kullanılabilir grup yok.",
     "noGroupPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
     "noGroupPlacheHolderOffline": "Şu anda çevrimdışısınız. Gruplarınızı yenilemek ve almak için kablosuz bağlantıya veya mobil verilere bağlı olduğunuzdan emin olun."
+  },
+  "appRestart": {
+    "message": "Aşağıdaki yapılandırmayı uygulamak için uygulama yeniden başlatılacak:",
+    "button": "Tamam",
+    "textDirection": "Metin yönü",
+    "selectedLanguage": "Seçilen dil"
   }
 }

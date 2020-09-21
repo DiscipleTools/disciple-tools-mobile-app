@@ -24,9 +24,11 @@ import sharedTools from '../../shared';
 
 const styles = StyleSheet.create({
   flatListItem: {
-    height: 40,
+    height: 40 /* this needs auto sizing */,
     backgroundColor: 'white',
     margin: 20,
+    marginTop: 10,
+    paddingBottom: 10,
   },
   groupSubtitle: {
     flex: 1,
@@ -186,10 +188,18 @@ class GroupsScreen extends React.Component {
       <View style={{ flexDirection: 'row', height: '100%' }}>
         <View style={{ flexDirection: 'column', flexGrow: 1 }}>
           <View style={{ flexDirection: 'row' }}>
-            <Text style={{ flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }}>{group.title}</Text>
+            <Text style={{ textAlign: 'left', flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }}>
+              {group.title}
+            </Text>
           </View>
           <View style={{ flexDirection: 'row' }}>
-            <Text style={styles.groupSubtitle}>
+            <Text
+              style={[
+                styles.groupSubtitle,
+                {
+                  textAlign: 'left',
+                },
+              ]}>
               {this.props.groupSettings.fields.group_status.values[group.group_status]
                 ? this.props.groupSettings.fields.group_status.values[group.group_status].label
                 : ''}
@@ -208,7 +218,17 @@ class GroupsScreen extends React.Component {
             </Text>
           </View>
         </View>
-        <View style={{ flexDirection: 'column', width: statusCircleSize }}>
+        <View
+          style={[
+            {
+              flexDirection: 'column',
+              width: statusCircleSize,
+              paddingTop: 0,
+              marginTop: 'auto',
+              marginBottom: 'auto',
+            },
+            this.props.isRTL ? { marginRight: 5 } : { marginLeft: 5 },
+          ]}>
           <View
             style={{
               width: statusCircleSize,

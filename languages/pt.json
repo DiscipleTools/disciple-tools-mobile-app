@@ -16,6 +16,7 @@
     "writeYourCommentNoteHere": "Escreva seu comentário ou anotação aqui",
     "requiredField": "Campo obrigatório",
     "edit": "editar",
+    "delete": "Excluir",
     "cancel": "Cancelar",
     "save": "Salvar",
     "online": "online",
@@ -26,14 +27,8 @@
     "moreFields": "Mais campos",
     "nameRequired": "Nome necessário",
     "close": "Fechar",
-    "editComment": "",
-    "deleteComment": ""
-  },
-  "appRestart": {
-    "message": "O aplicativo será reiniciado para aplicar a seguinte configuração:",
-    "button": "Está bem",
-    "textDirection": "Direção do texto",
-    "selectedLanguage": "Idioma selecionado"
+    "editComment": "Editar",
+    "deleteComment": "Excluir"
   },
   "loginScreen": {
     "domain": {
@@ -73,15 +68,15 @@
     "rememberPassword": "Lembrar senha",
     "rememberPasswordActive": "Manter-se logado está ligado",
     "rememberPasswordInactive": "Manter-se logado está desligado",
-    "remove": "Remover código PIN",
-    "set": "Definir código PIN",
+    "remove": "Remover",
+    "set": "Conjunto",
     "pinCode": "Código PIN",
-    "enterPin": "Digite o código PIN",
+    "enterPin": "Entrar no pino",
     "setPin": "Definir novo PIN",
-    "incorrectPin": "Código PIN incorreto",
-    "savedPinCode": "Código PIN salvo com sucesso!",
-    "removedPinCode": "Código PIN removido com sucesso!",
-    "close": "Fechar"
+    "incorrectPin": "PIN incorreto",
+    "savedPinCode": "Código PIN salvo com sucesso",
+    "removedPinCode": "Código PIN removido com sucesso",
+    "close": "Perto"
   },
   "contactDetailScreen": {
     "addNewContact": "Adicionar novo contato",
@@ -125,7 +120,12 @@
       "error": "Nome é necessário"
     },
     "memberCount": "",
-    "memberList": ""
+    "memberList": "",
+    "fab": {
+      "quick_button_meeting_scheduled": "Reunião agendada",
+      "quick_button_meeting_postponed": "Reunião adiada",
+      "quick_button_meeting_complete": "Reunião Completa"
+    }
   },
   "notificationsScreen": {
     "notifications": "Notificações",
@@ -141,5 +141,11 @@
     "noGroupPlacheHolder": "Não há grupos disponíveis no momento",
     "noGroupPlacheHolder1": "Pode haver um problema ao removê-los do seu local. Arraste-os para tentar atualizar e tente novamente. ",
     "noGroupPlacheHolderOffline": "Você está offline. Certifique-se de que está conectado à rede Wifi ou dados móveis para atualizar e obter seus grupos."
+  },
+  "appRestart": {
+    "message": "O aplicativo será reiniciado para aplicar a seguinte configuração:",
+    "button": "Está bem",
+    "textDirection": "Direção do texto",
+    "selectedLanguage": "Idioma selecionado"
   }
 }

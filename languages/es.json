@@ -16,6 +16,7 @@
     "writeYourCommentNoteHere": "Escriba su comentario o nota aquí",
     "requiredField": "Campo requerido",
     "edit": "Editar",
+    "delete": "Eliminar",
     "cancel": "Cancelar",
     "save": "Guardar",
     "online": "En línea",
@@ -26,14 +27,8 @@
     "moreFields": "Más Campos",
     "nameRequired": "Nombre requerido",
     "close": "Cerrar",
-    "editComment": "Editar Comentario",
-    "deleteComment": "Eliminar Comentario"
-  },
-  "appRestart": {
-    "message": "La aplicación sera reiniciada para aplicar la siguiente configuración:",
-    "button": "De acuerdo",
-    "textDirection": "Dirección del texto",
-    "selectedLanguage": "Lenguaje seleccionado"
+    "editComment": "Editar",
+    "deleteComment": "Eliminar"
   },
   "loginScreen": {
     "domain": {
@@ -125,7 +120,12 @@
       "error": "El nombre es requerido"
     },
     "memberCount": "Numero de miembros",
-    "memberList": "Lista de Miembros"
+    "memberList": "Lista de Miembros",
+    "fab": {
+      "quick_button_meeting_scheduled": "Reunión Programada",
+      "quick_button_meeting_postponed": "Reunión Pospuso",
+      "quick_button_meeting_complete": "Reunión Completa"
+    }
   },
   "notificationsScreen": {
     "notifications": "Notificaciones",
@@ -141,5 +141,11 @@
     "noGroupPlacheHolder": "No hay grupos disponibles actualmente.",
     "noGroupPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
     "noGroupPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener sus grupos."
+  },
+  "appRestart": {
+    "message": "La aplicación sera reiniciada para aplicar la siguiente configuración:",
+    "button": "De acuerdo",
+    "textDirection": "Dirección del texto",
+    "selectedLanguage": "Lenguaje seleccionado"
   }
 }

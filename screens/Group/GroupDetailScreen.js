@@ -24,6 +24,7 @@ import { Label, Input, Icon, Picker, DatePicker, Button } from 'native-base';
 import Toast from 'react-native-easy-toast';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Chip, Selectize } from 'react-native-material-selectize';
+import ActionButton from 'react-native-action-button';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { NavigationActions, StackActions } from 'react-navigation';
@@ -76,7 +77,7 @@ import i18n from '../../languages';
 
 let toastSuccess;
 let toastError;
-const containerPadding = 35;
+const containerPadding = 20;
 const windowWidth = Dimensions.get('window').width;
 const spacing = windowWidth * 0.025;
 const sideSize = windowWidth - 2 * spacing;
@@ -202,6 +203,10 @@ const styles = StyleSheet.create({
     color: Colors.tintColor,
     fontSize: 10,
   },
+  groupFABIcon: {
+    color: 'white',
+    fontSize: 20,
+  },
   separator: {
     height: 1,
     backgroundColor: '#CCCCCC',
@@ -219,7 +224,7 @@ const styles = StyleSheet.create({
   // Form
   formContainer: {
     paddingTop: 10,
-    paddingBottom: 10,
+    paddingBottom: 100,
     paddingLeft: containerPadding,
     paddingRight: containerPadding,
   },
@@ -255,8 +260,6 @@ const styles = StyleSheet.create({
   formDivider: {
     borderBottomColor: '#CCCCCC',
     borderBottomWidth: 1,
-    marginLeft: 10,
-    marginRight: 10,
   },
   formDivider2: {
     marginTop: 25,
@@ -1691,29 +1694,10 @@ class GroupDetailScreen extends React.Component {
         {
           // Comment and its their own comment
           Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') &&
-            commentOrActivity.author === this.props.userData.username && (
+            commentOrActivity.author.toLowerCase() ===
+              this.props.userData.username.toLowerCase() && (
               <Grid style={{ marginTop: 20 }}>
                 <Row>
-                  <Row
-                    onPress={() => {
-                      this.openCommentDialog(commentOrActivity);
-                    }}>
-                    <Icon
-                      type="MaterialCommunityIcons"
-                      name="pencil"
-                      style={{ color: Colors.primary, fontSize: 25, marginLeft: 'auto' }}
-                    />
-                    <Text
-                      style={{
-                        color: Colors.primary,
-                        fontSize: 14,
-                        marginRight: 'auto',
-                        marginTop: 'auto',
-                        marginBottom: 'auto',
-                      }}>
-                      {i18n.t('global.edit')}
-                    </Text>
-                  </Row>
                   <Row
                     onPress={() => {
                       this.openCommentDialog(commentOrActivity, true);
@@ -1721,17 +1705,38 @@ class GroupDetailScreen extends React.Component {
                     <Icon
                       type="MaterialCommunityIcons"
                       name="delete"
-                      style={{ color: Colors.primary, fontSize: 25, marginLeft: 'auto' }}
+                      style={{
+                        color: Colors.iconDelete,
+                        fontSize: 20,
+                      }}
                     />
                     <Text
                       style={{
                         color: Colors.primary,
                         fontSize: 14,
-                        marginRight: 'auto',
-                        marginTop: 'auto',
-                        marginBottom: 'auto',
                       }}>
-                      {i18n.t('settingsScreen.remove')}
+                      {i18n.t('global.delete')}
+                    </Text>
+                  </Row>
+                  <Row
+                    onPress={() => {
+                      this.openCommentDialog(commentOrActivity);
+                    }}>
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="pencil"
+                      style={{
+                        color: Colors.primary,
+                        fontSize: 20,
+                        marginLeft: 'auto',
+                      }}
+                    />
+                    <Text
+                      style={{
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}>
+                      {i18n.t('global.edit')}
                     </Text>
                   </Row>
                 </Row>
@@ -1995,93 +2000,104 @@ class GroupDetailScreen extends React.Component {
     return itemsToSave;
   };
 
-  transformGroupObject = (group) => {
+  transformGroupObject = (group, quickAction = {}) => {
     let transformedGroup = {
       ...group,
     };
-    // if property exist, get from json, otherwise, send empty array
-    if (coachesSelectizeRef) {
+    if (
+      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_scheduled') ||
+      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_postponed') ||
+      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_complete')
+    ) {
       transformedGroup = {
         ...transformedGroup,
-        coaches: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.coaches ? transformedGroup.coaches.values : [],
-            coachesSelectizeRef,
-          ),
-        },
+        ...quickAction,
       };
-    }
-    if (geonamesSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        location_grid: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.location_grid ? transformedGroup.location_grid.values : [],
-            geonamesSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (peopleGroupsSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        people_groups: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.people_groups ? transformedGroup.people_groups.values : [],
-            peopleGroupsSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (parentGroupsSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        parent_groups: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.parent_groups ? transformedGroup.parent_groups.values : [],
-            parentGroupsSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (peerGroupsSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        peer_groups: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.peer_groups ? transformedGroup.peer_groups.values : [],
-            peerGroupsSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (childGroupsSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        child_groups: {
-          values: this.getSelectizeValuesToSave(
-            transformedGroup.child_groups ? transformedGroup.child_groups.values : [],
-            childGroupsSelectizeRef,
-          ),
-        },
-      };
-    }
-    if (addMembersSelectizeRef) {
-      transformedGroup = {
-        ...transformedGroup,
-        members: {
-          values: this.getSelectizeValuesToSave(
-            this.state.unmodifiedGroup.members ? this.state.unmodifiedGroup.members.values : [],
-            null,
-            transformedGroup.members ? transformedGroup.members.values : [],
-          ),
-        },
-      };
+    } else {
+      // if property exist, get from json, otherwise, send empty array
+      if (coachesSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          coaches: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.coaches ? transformedGroup.coaches.values : [],
+              coachesSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (geonamesSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          location_grid: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.location_grid ? transformedGroup.location_grid.values : [],
+              geonamesSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (peopleGroupsSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          people_groups: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.people_groups ? transformedGroup.people_groups.values : [],
+              peopleGroupsSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (parentGroupsSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          parent_groups: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.parent_groups ? transformedGroup.parent_groups.values : [],
+              parentGroupsSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (peerGroupsSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          peer_groups: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.peer_groups ? transformedGroup.peer_groups.values : [],
+              peerGroupsSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (childGroupsSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          child_groups: {
+            values: this.getSelectizeValuesToSave(
+              transformedGroup.child_groups ? transformedGroup.child_groups.values : [],
+              childGroupsSelectizeRef,
+            ),
+          },
+        };
+      }
+      if (addMembersSelectizeRef) {
+        transformedGroup = {
+          ...transformedGroup,
+          members: {
+            values: this.getSelectizeValuesToSave(
+              this.state.unmodifiedGroup.members ? this.state.unmodifiedGroup.members.values : [],
+              null,
+              transformedGroup.members ? transformedGroup.members.values : [],
+            ),
+          },
+        };
+      }
     }
     return transformedGroup;
   };
 
-  onSaveGroup = () => {
+  onSaveGroup = (quickAction = {}) => {
     this.setState(
       {
         nameRequired: false,
@@ -2090,7 +2106,7 @@ class GroupDetailScreen extends React.Component {
         Keyboard.dismiss();
         if (this.state.group.title) {
           const { unmodifiedGroup } = this.state;
-          const group = this.transformGroupObject(this.state.group);
+          const group = this.transformGroupObject(this.state.group, quickAction);
           let groupToSave = {
             ...sharedTools.diff(unmodifiedGroup, group),
             title: this.state.group.title,
@@ -2199,7 +2215,9 @@ class GroupDetailScreen extends React.Component {
       <TouchableOpacity
         activeOpacity={0.5}
         onPress={() => this.goToContactDetailScreen(foundUser.key, foundUser.label)}>
-        <Text style={styles.linkingText}>{foundUser.label}</Text>
+        <Text style={[styles.linkingText, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+          {foundUser.label}
+        </Text>
       </TouchableOpacity>
     );
   };
@@ -2363,7 +2381,11 @@ class GroupDetailScreen extends React.Component {
               </Row>
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="briefcase-account"
+                    style={styles.formIcon}
+                  />
                 </Col>
                 <Col>{this.state.group.assigned_to ? this.showAssignedUser() : null}</Col>
                 <Col style={styles.formParentLabel}>
@@ -2384,18 +2406,21 @@ class GroupDetailScreen extends React.Component {
                   </View>
                 </Col>
                 <Col>
-                  <View
-                    style={[
-                      { marginTop: 'auto', marginBottom: 'auto' },
-                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                    ]}>
+                  <View>
                     {this.state.group.coaches ? (
                       this.state.group.coaches.values.map((contact, index) => (
                         <TouchableOpacity
                           key={index.toString()}
                           activeOpacity={0.5}
                           onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text style={styles.linkingText}>{contact.name}</Text>
+                          <Text
+                            style={[
+                              styles.linkingText,
+                              { marginTop: 'auto', marginBottom: 'auto' },
+                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                            ]}>
+                            {contact.name}
+                          </Text>
                         </TouchableOpacity>
                       ))
                     ) : (
@@ -2494,7 +2519,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Image source={dateIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome" name="calendar" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Text
@@ -2518,7 +2543,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Image source={dateSuccessIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome5" name="calendar-check" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Text
@@ -2542,7 +2567,7 @@ class GroupDetailScreen extends React.Component {
               <View style={styles.formDivider} />
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Image source={dateEndIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome5" name="calendar-times" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Text
@@ -2581,12 +2606,16 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Label
-                  style={{
-                    color: Colors.tintColor,
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                    marginTop: 0,
-                  }}>
+                  style={[
+                    {
+                      color: Colors.tintColor,
+                      fontSize: 14,
+                      fontWeight: 'bold',
+                      marginTop: 'auto',
+                      marginBottom: 'auto',
+                    },
+                    this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                  ]}>
                   {this.props.groupSettings.fields.group_status.name}
                 </Label>
               </Col>
@@ -2679,7 +2708,11 @@ class GroupDetailScreen extends React.Component {
               <Row style={styles.formFieldPadding}>
                 <Col style={styles.formIconLabelCol}>
                   <View style={styles.formIconLabelView}>
-                    <Icon type="FontAwesome" name="user-circle" style={styles.formIcon} />
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="briefcase-account"
+                      style={styles.formIcon}
+                    />
                   </View>
                 </Col>
                 <Col>
@@ -2692,8 +2725,8 @@ class GroupDetailScreen extends React.Component {
                 <Col style={styles.formIconLabelCol}>
                   <View style={styles.formIconLabelView}>
                     <Icon
-                      type="FontAwesome"
-                      name="user-circle"
+                      type="MaterialCommunityIcons"
+                      name="briefcase-account"
                       style={[styles.formIcon, { opacity: 0 }]}
                     />
                   </View>
@@ -3017,7 +3050,7 @@ class GroupDetailScreen extends React.Component {
             <Row style={styles.formFieldPadding}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Image source={dateIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome" name="calendar" style={styles.formIcon} />
                 </View>
               </Col>
               <Col>
@@ -3044,7 +3077,7 @@ class GroupDetailScreen extends React.Component {
             <Row style={styles.formFieldPadding}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Image source={dateSuccessIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome5" name="calendar-check" style={styles.formIcon} />
                 </View>
               </Col>
               <Col>
@@ -3056,7 +3089,11 @@ class GroupDetailScreen extends React.Component {
             <Row>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Image source={dateSuccessIcon} style={[styles.dateIcons, { opacity: 0 }]} />
+                  <Icon
+                    type="FontAwesome5"
+                    name="calendar-check"
+                    style={[styles.formIcon, { opacity: 0 }]}
+                  />
                 </View>
               </Col>
               <Col>
@@ -3073,7 +3110,7 @@ class GroupDetailScreen extends React.Component {
             <Row style={styles.formFieldPadding}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Image source={dateEndIcon} style={styles.dateIcons} />
+                  <Icon type="FontAwesome" name="calendar" style={styles.formIcon} />
                 </View>
               </Col>
               <Col>
@@ -3085,7 +3122,11 @@ class GroupDetailScreen extends React.Component {
             <Row>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Image source={dateEndIcon} style={[styles.dateIcons, { opacity: 0 }]} />
+                  <Icon
+                    type="FontAwesome5"
+                    name="calendar-times"
+                    style={[styles.formIcon, { opacity: 0 }]}
+                  />
                 </View>
               </Col>
               <Col>
@@ -3116,7 +3157,7 @@ class GroupDetailScreen extends React.Component {
                 onRefresh={() => this.onRefresh(this.state.group.ID)}
               />
             }>
-            <View style={[styles.formContainer, { marginTop: 10 }]}>
+            <View style={[styles.formContainer, { marginTop: 0, paddingBottom: 0 }]}>
               <Row style={[styles.formRow, { paddingTop: 15 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
                   <Image source={groupTypeIcon} style={styles.groupIcons} />
@@ -4646,6 +4687,101 @@ class GroupDetailScreen extends React.Component {
     this.props.searchLocations(this.props.userData.domain, this.props.userData.token, queryText);
   };
 
+  onSaveQuickAction = (quickActionPropertyName) => {
+    let newActionValue = this.state.group[quickActionPropertyName]
+      ? parseInt(this.state.group[quickActionPropertyName], 10) + 1
+      : 1;
+    /*
+    if (this.props.isConnected) {
+      // ONLINE mode
+      this.onSaveGroup({
+        [quickActionPropertyName]: newActionValue,
+      });
+    } else {
+      // OFFLINE mode
+    }
+    */
+    var comment = '';
+    switch (quickActionPropertyName) {
+      case 'quick_button_meeting_scheduled':
+        comment = i18n.t('groupDetailScreen.fab.quick_button_meeting_scheduled');
+        break;
+      case 'quick_button_meeting_postponed':
+        comment = i18n.t('groupDetailScreen.fab.quick_button_meeting_postponed');
+        break;
+      case 'quick_button_meeting_complete':
+        comment = i18n.t('groupDetailScreen.fab.quick_button_meeting_complete');
+        break;
+      default:
+        comment = '';
+    }
+    // TODO: temporarily save a Comment until supported by D.T as an Activity w/ count
+    if (comment != '') {
+      this.props.saveComment(
+        this.props.userData.domain,
+        this.props.userData.token,
+        this.state.group.ID,
+        {
+          comment,
+        },
+      );
+      // TODO: saveComment doesn't display Toast on normal `Comments and Activities` tabView, so we mock it
+      toastSuccess.show(
+        <View>
+          <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
+        </View>,
+        3000,
+      );
+    }
+  };
+
+  /*
+  onMeetingComplete = () => {
+    // determine whether there is an existing 'meeting_complete' questionnaire,
+    // if so, proxy from Attendance to Questionnaire, else back to GroupDetails
+    var isQuestionnaireEnabled = false;
+    var q_id = null;
+    // loop thru all (active) questionnaires, and check whether 'group'->'meeting_complete' is enabled
+    this.props.questionnaires.map((questionnaire) => {
+      if (
+        questionnaire.trigger_type == 'group' &&
+        questionnaire.trigger_value == 'meeting_complete'
+      ) {
+        isQuestionnaireEnabled = true;
+        q_id = questionnaire.id;
+      }
+    });
+    /*
+    this.props.navigation.navigate(
+      NavigationActions.navigate({
+        routeName: 'Attendance',
+        action: NavigationActions.navigate({
+          routeName: 'Attendance',
+          params: {
+            userData: this.props.userData,
+            group: this.state.group,
+            q_id,
+          },
+        }),
+      }),
+    );
+    this.props.navigation.navigate(
+      NavigationActions.navigate({
+        routeName: 'Questionnaire',
+        action: NavigationActions.navigate({
+          routeName: 'Question',
+          params: {
+            userData: this.props.userData,
+            group: this.state.group,
+            title: this.state.group.title,
+            q_id,
+          },
+        }),
+      }),
+    );
+  };
+  */
+
   render() {
     const successToast = (
       <Toast
@@ -4709,6 +4845,82 @@ class GroupDetailScreen extends React.Component {
                     onIndexChange={this.tabChanged}
                     initialLayout={{ width: windowWidth }}
                   />
+                  {this.state.onlyView && this.state.tabViewConfig.index != 2 && (
+                    <ActionButton
+                      buttonColor={Colors.primaryRGBA}
+                      renderIcon={(active) =>
+                        active ? (
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="close"
+                            style={{ color: 'white', fontSize: 22 }}
+                          />
+                        ) : (
+                          <Icon
+                            type="MaterialCommunityIcons"
+                            name="comment-plus"
+                            style={{ color: 'white', fontSize: 25 }}
+                          />
+                        )
+                      }
+                      degrees={0}
+                      activeOpacity={0}
+                      bgColor="rgba(0,0,0,0.5)"
+                      nativeFeedbackRippleColor="rgba(0,0,0,0)">
+                      <ActionButton.Item
+                        buttonColor={Colors.colorWait}
+                        //title={this.props.groupSettings.fields.quick_button_meeting_scheduled.name}
+                        title={i18n.t('groupDetailScreen.fab.quick_button_meeting_scheduled')}
+                        onPress={() => {
+                          this.onSaveQuickAction('quick_button_meeting_scheduled');
+                        }}
+                        size={40}
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                        textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                        textContainerStyle={{ height: 'auto' }}>
+                        <Icon
+                          type="MaterialCommunityIcons"
+                          name="calendar-plus"
+                          style={styles.groupFABIcon}
+                        />
+                      </ActionButton.Item>
+                      <ActionButton.Item
+                        buttonColor={Colors.colorYes}
+                        //title={this.props.groupSettings.fields.quick_button_meeting_complete.name}
+                        title={i18n.t('groupDetailScreen.fab.quick_button_meeting_complete')}
+                        onPress={() => {
+                          //this.onMeetingComplete();
+                          this.onSaveQuickAction('quick_button_meeting_complete');
+                        }}
+                        size={40}
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                        textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                        textContainerStyle={{ height: 'auto' }}>
+                        <Icon
+                          type="MaterialCommunityIcons"
+                          name="calendar-check"
+                          style={styles.groupFABIcon}
+                        />
+                      </ActionButton.Item>
+                      <ActionButton.Item
+                        buttonColor={Colors.colorNo}
+                        //title={this.props.groupSettings.fields.quick_button_meeting_postponed.name}
+                        title={i18n.t('groupDetailScreen.fab.quick_button_meeting_postponed')}
+                        onPress={() => {
+                          this.onSaveQuickAction('quick_button_meeting_postponed');
+                        }}
+                        size={40}
+                        nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                        textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+                        textContainerStyle={{ height: 'auto' }}>
+                        <Icon
+                          type="MaterialCommunityIcons"
+                          name="calendar-minus"
+                          style={styles.groupFABIcon}
+                        />
+                      </ActionButton.Item>
+                    </ActionButton>
+                  )}
                   {this.state.commentDialog.toggle ? (
                     <BlurView
                       tint="dark"
@@ -4732,7 +4944,7 @@ class GroupDetailScreen extends React.Component {
                                 <View style={styles.dialogContent}>
                                   <Row style={{ height: 30 }}>
                                     <Label style={[styles.name, { marginBottom: 5 }]}>
-                                      {i18n.t('global.deleteComment')}
+                                      {i18n.t('global.delete')}
                                     </Label>
                                   </Row>
                                   <Row>
@@ -4746,7 +4958,7 @@ class GroupDetailScreen extends React.Component {
                                   <Grid>
                                     <Row style={{ height: 30 }}>
                                       <Label style={[styles.name, { marginBottom: 5 }]}>
-                                        {i18n.t('global.editComment')}
+                                        {i18n.t('global.edit')}
                                       </Label>
                                     </Row>
                                     <Row>
@@ -4789,18 +5001,21 @@ class GroupDetailScreen extends React.Component {
                                   this.onCloseCommentDialog();
                                 }}>
                                 <Text style={{ color: Colors.primary }}>
-                                  {i18n.t('settingsScreen.close')}
+                                  {i18n.t('global.close')}
                                 </Text>
                               </Button>
                               {this.state.commentDialog.delete ? (
                                 <Button
                                   block
-                                  style={[styles.dialogButton, { backgroundColor: '#d9534f' }]}
+                                  style={[
+                                    styles.dialogButton,
+                                    { backgroundColor: Colors.buttonDelete },
+                                  ]}
                                   onPress={() => {
                                     this.onDeleteComment(this.state.commentDialog.data);
                                   }}>
-                                  <Text style={{ color: '#FFFFFF' }}>
-                                    {i18n.t('settingsScreen.remove')}
+                                  <Text style={{ color: Colors.buttonText }}>
+                                    {i18n.t('global.delete')}
                                   </Text>
                                 </Button>
                               ) : (
@@ -4810,7 +5025,9 @@ class GroupDetailScreen extends React.Component {
                                   onPress={() => {
                                     this.onUpdateComment(this.state.commentDialog.data);
                                   }}>
-                                  <Text style={{ color: '#FFFFFF' }}>{i18n.t('global.save')}</Text>
+                                  <Text style={{ color: Colors.buttonText }}>
+                                    {i18n.t('global.save')}
+                                  </Text>
                                 </Button>
                               )}
                             </Row>
