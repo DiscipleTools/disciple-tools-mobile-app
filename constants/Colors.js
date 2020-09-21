@@ -26,6 +26,8 @@ export default {
   tabBar: '#fefefe',
   headerTintColor: '#FFFFFF',
   onPressIcons: '#FFFFFF',
+  mainBackgroundColor: '#F3F3F3',
+  contentBackgroundColor: '#FFFFFF',
   successBackground: 'rgba(229, 229, 229, 0.85)',
   sucessText: '#000',
   errorBackground: 'rgba(228, 132, 129, 0.85)',

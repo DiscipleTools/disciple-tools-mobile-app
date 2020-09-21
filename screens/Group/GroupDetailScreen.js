@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     flexDirection: 'row',
     alignItems: 'flex-start',
+    backgroundColor: Colors.mainBackgroundColor,
   },
   image: {
     height: 16,
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
     width: 16,
   },
   content: {
-    backgroundColor: '#F3F3F3',
+    backgroundColor: Colors.contentBackgroundColor,
     borderRadius: 5,
     flex: 1,
     marginLeft: 16,
@@ -1645,7 +1646,10 @@ class GroupDetailScreen extends React.Component {
                   </Col>
                   <Col style={{ width: 110 }}>
                     <Text
-                      style={[styles.time, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                      style={[
+                        styles.time,
+                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right' },
+                      ]}>
                       {this.onFormatDateToView(commentOrActivity.date)}
                     </Text>
                   </Col>
@@ -1666,7 +1670,10 @@ class GroupDetailScreen extends React.Component {
                   </Col>
                   <Col style={{ width: 110 }}>
                     <Text
-                      style={[styles.time, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                      style={[
+                        styles.time,
+                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right' },
+                      ]}>
                       {this.onFormatDateToView(commentOrActivity.date)}
                     </Text>
                   </Col>
@@ -3347,7 +3354,7 @@ class GroupDetailScreen extends React.Component {
           }}
         />
       )}
-      <View style={{ backgroundColor: '#FFFFFF' }}>
+      <View style={{ backgroundColor: Colors.mainBackgroundColor }}>
         <MentionsTextInput
           editable={!this.state.loadComments}
           placeholder={i18n.t('global.writeYourCommentNoteHere')}

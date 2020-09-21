@@ -202,6 +202,31 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   // Comments Section
+  container: {
+    paddingLeft: 19,
+    paddingRight: 16,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: Colors.mainBackgroundColor,
+  },
+  image: {
+    height: 16,
+    marginTop: 10,
+    width: 16,
+  },
+  content: {
+    backgroundColor: Colors.contentBackgroundColor,
+    borderRadius: 5,
+    flex: 1,
+    marginLeft: 16,
+    padding: 10,
+  },
+  contentHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
   name: {
     color: Colors.tintColor,
     fontSize: 13,
@@ -3442,7 +3467,7 @@ class ContactDetailScreen extends React.Component {
           }}
         />
       )}
-      <View style={{ backgroundColor: '#FFFFFF' }}>
+      <View style={{ backgroundColor: Colors.mainBackgroundColor }}>
         <MentionsTextInput
           editable={!this.state.loadComments}
           placeholder={i18n.t('global.writeYourCommentNoteHere')}
@@ -4485,36 +4510,10 @@ class ContactDetailScreen extends React.Component {
   };
 
   renderActivityOrCommentRow = (commentOrActivity) => (
-    <View
-      style={{
-        paddingLeft: 19,
-        paddingRight: 16,
-        paddingVertical: 12,
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-      }}>
-      <Image
-        style={{
-          height: 16,
-          marginTop: 10,
-          width: 16,
-        }}
-        source={{ uri: commentOrActivity.gravatar }}
-      />
-      <View
-        style={{
-          backgroundColor: '#F3F3F3',
-          borderRadius: 5,
-          flex: 1,
-          marginLeft: 16,
-          padding: 10,
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 6,
-          }}>
+    <View style={styles.container}>
+      <Image style={styles.image} source={{ uri: commentOrActivity.gravatar }} />
+      <View style={styles.content}>
+        <View style={styles.contentHeader}>
           {
             // Comment
             Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') && (
@@ -4527,7 +4526,11 @@ class ContactDetailScreen extends React.Component {
                     </Text>
                   </Col>
                   <Col style={{ width: 110 }}>
-                    <Text style={styles.time}>
+                    <Text
+                      style={[
+                        styles.time,
+                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right' },
+                      ]}>
                       {this.onFormatDateToView(commentOrActivity.date)}
                     </Text>
                   </Col>
@@ -4547,7 +4550,11 @@ class ContactDetailScreen extends React.Component {
                     </Text>
                   </Col>
                   <Col style={{ width: 110 }}>
-                    <Text style={styles.time}>
+                    <Text
+                      style={[
+                        styles.time,
+                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right' },
+                      ]}>
                       {this.onFormatDateToView(commentOrActivity.date)}
                     </Text>
                   </Col>
