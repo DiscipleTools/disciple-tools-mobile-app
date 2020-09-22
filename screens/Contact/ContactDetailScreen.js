@@ -202,6 +202,31 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   // Comments Section
+  container: {
+    paddingLeft: 19,
+    paddingRight: 16,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: Colors.mainBackgroundColor,
+  },
+  image: {
+    height: 16,
+    marginTop: 10,
+    width: 16,
+  },
+  content: {
+    backgroundColor: Colors.contentBackgroundColor,
+    borderRadius: 5,
+    flex: 1,
+    marginLeft: 16,
+    padding: 10,
+  },
+  contentHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
   name: {
     color: Colors.tintColor,
     fontSize: 13,
@@ -458,14 +483,14 @@ class ContactDetailScreen extends React.Component {
       : i18n.t('contactDetailScreen.addNewContact');
     let headerRight = () => (
       <Row onPress={params.onSaveContact}>
-        <Text style={{ color: Colors.onPressIcons, marginTop: 'auto', marginBottom: 'auto' }}>
+        <Text style={{ color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' }}>
           {i18n.t('global.save')}
         </Text>
         <Icon
           type="Feather"
           name="check"
           style={[
-            { color: Colors.onPressIcons, marginTop: 'auto', marginBottom: 'auto' },
+            { color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' },
             self && self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
           ]}
         />
@@ -477,14 +502,15 @@ class ContactDetailScreen extends React.Component {
       if (params.onEnableEdit && params.contactId && params.onlyView) {
         headerRight = () => (
           <Row onPress={params.onEnableEdit}>
-            <Text style={{ color: Colors.onPressIcons, marginTop: 'auto', marginBottom: 'auto' }}>
+            <Text
+              style={{ color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' }}>
               {i18n.t('global.edit')}
             </Text>
             <Icon
               type="MaterialCommunityIcons"
               name="pencil"
               style={[
-                { color: Colors.onPressIcons, marginTop: 'auto', marginBottom: 'auto' },
+                { color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' },
                 self && self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
               ]}
             />
@@ -497,7 +523,7 @@ class ContactDetailScreen extends React.Component {
             type="Feather"
             name="arrow-left"
             onPress={params.backButtonTap}
-            style={{ paddingLeft: 16, color: Colors.onPressIcons, paddingRight: 16 }}
+            style={{ paddingLeft: 16, color: Colors.headerTintColor, paddingRight: 16 }}
           />
         );
       } else {
@@ -507,11 +533,12 @@ class ContactDetailScreen extends React.Component {
               type="AntDesign"
               name="close"
               style={[
-                { color: Colors.onPressIcons, marginTop: 'auto', marginBottom: 'auto' },
+                { color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' },
                 self && self.props.isRTL ? { paddingRight: 16 } : { paddingLeft: 16 },
               ]}
             />
-            <Text style={{ color: Colors.onPressIcons, marginTop: 'auto', marginBottom: 'auto' }}>
+            <Text
+              style={{ color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' }}>
               {i18n.t('global.cancel')}
             </Text>
           </Row>
@@ -525,7 +552,7 @@ class ContactDetailScreen extends React.Component {
       headerStyle: {
         backgroundColor: Colors.tintColor,
       },
-      headerTintColor: '#FFFFFF',
+      headerTintColor: Colors.headerTintColor,
       headerTitleStyle: {
         fontWeight: 'bold',
         width: params.onlyView
@@ -3442,7 +3469,7 @@ class ContactDetailScreen extends React.Component {
           }}
         />
       )}
-      <View style={{ backgroundColor: '#FFFFFF' }}>
+      <View style={{ backgroundColor: Colors.mainBackgroundColor }}>
         <MentionsTextInput
           editable={!this.state.loadComments}
           placeholder={i18n.t('global.writeYourCommentNoteHere')}
@@ -4485,36 +4512,10 @@ class ContactDetailScreen extends React.Component {
   };
 
   renderActivityOrCommentRow = (commentOrActivity) => (
-    <View
-      style={{
-        paddingLeft: 19,
-        paddingRight: 16,
-        paddingVertical: 12,
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-      }}>
-      <Image
-        style={{
-          height: 16,
-          marginTop: 10,
-          width: 16,
-        }}
-        source={{ uri: commentOrActivity.gravatar }}
-      />
-      <View
-        style={{
-          backgroundColor: '#F3F3F3',
-          borderRadius: 5,
-          flex: 1,
-          marginLeft: 16,
-          padding: 10,
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 6,
-          }}>
+    <View style={styles.container}>
+      <Image style={styles.image} source={{ uri: commentOrActivity.gravatar }} />
+      <View style={styles.content}>
+        <View style={styles.contentHeader}>
           {
             // Comment
             Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') && (
@@ -4527,7 +4528,11 @@ class ContactDetailScreen extends React.Component {
                     </Text>
                   </Col>
                   <Col style={{ width: 110 }}>
-                    <Text style={styles.time}>
+                    <Text
+                      style={[
+                        styles.time,
+                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right' },
+                      ]}>
                       {this.onFormatDateToView(commentOrActivity.date)}
                     </Text>
                   </Col>
@@ -4547,7 +4552,11 @@ class ContactDetailScreen extends React.Component {
                     </Text>
                   </Col>
                   <Col style={{ width: 110 }}>
-                    <Text style={styles.time}>
+                    <Text
+                      style={[
+                        styles.time,
+                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right' },
+                      ]}>
                       {this.onFormatDateToView(commentOrActivity.date)}
                     </Text>
                   </Col>

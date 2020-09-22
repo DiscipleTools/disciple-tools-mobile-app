@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     flexDirection: 'row',
     alignItems: 'flex-start',
+    backgroundColor: Colors.mainBackgroundColor,
   },
   image: {
     height: 16,
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
     width: 16,
   },
   content: {
-    backgroundColor: '#F3F3F3',
+    backgroundColor: Colors.contentBackgroundColor,
     borderRadius: 5,
     flex: 1,
     marginLeft: 16,
@@ -585,14 +586,14 @@ class GroupDetailScreen extends React.Component {
       : i18n.t('groupDetailScreen.addNewGroup');
     let headerRight = () => (
       <Row onPress={params.onSaveGroup}>
-        <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+        <Text style={{ color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' }}>
           {i18n.t('global.save')}
         </Text>
         <Icon
           type="Feather"
           name="check"
           style={[
-            { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+            { color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' },
             self && self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
           ]}
         />
@@ -604,14 +605,15 @@ class GroupDetailScreen extends React.Component {
       if (params.onEnableEdit && params.groupId && params.onlyView) {
         headerRight = () => (
           <Row onPress={params.onEnableEdit}>
-            <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+            <Text
+              style={{ color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' }}>
               {i18n.t('global.edit')}
             </Text>
             <Icon
               type="MaterialCommunityIcons"
               name="pencil"
               style={[
-                { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                { color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' },
                 self && self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
               ]}
             />
@@ -625,7 +627,7 @@ class GroupDetailScreen extends React.Component {
             type="Feather"
             name="arrow-left"
             onPress={params.backButtonTap}
-            style={[{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }]}
+            style={[{ paddingLeft: 16, color: Colors.headerTintColor, paddingRight: 16 }]}
           />
         );
       } else {
@@ -635,11 +637,12 @@ class GroupDetailScreen extends React.Component {
               type="AntDesign"
               name="close"
               style={[
-                { color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' },
+                { color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' },
                 self && self.props.isRTL ? { paddingRight: 16 } : { paddingLeft: 16 },
               ]}
             />
-            <Text style={{ color: '#FFFFFF', marginTop: 'auto', marginBottom: 'auto' }}>
+            <Text
+              style={{ color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' }}>
               {i18n.t('global.cancel')}
             </Text>
           </Row>
@@ -654,7 +657,7 @@ class GroupDetailScreen extends React.Component {
       headerStyle: {
         backgroundColor: Colors.tintColor,
       },
-      headerTintColor: '#FFFFFF',
+      headerTintColor: Colors.headerTintColor,
       headerTitleStyle: {
         fontWeight: 'bold',
         width: params.onlyView
@@ -1645,7 +1648,10 @@ class GroupDetailScreen extends React.Component {
                   </Col>
                   <Col style={{ width: 110 }}>
                     <Text
-                      style={[styles.time, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                      style={[
+                        styles.time,
+                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right' },
+                      ]}>
                       {this.onFormatDateToView(commentOrActivity.date)}
                     </Text>
                   </Col>
@@ -1666,7 +1672,10 @@ class GroupDetailScreen extends React.Component {
                   </Col>
                   <Col style={{ width: 110 }}>
                     <Text
-                      style={[styles.time, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+                      style={[
+                        styles.time,
+                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right' },
+                      ]}>
                       {this.onFormatDateToView(commentOrActivity.date)}
                     </Text>
                   </Col>
@@ -3347,7 +3356,7 @@ class GroupDetailScreen extends React.Component {
           }}
         />
       )}
-      <View style={{ backgroundColor: '#FFFFFF' }}>
+      <View style={{ backgroundColor: Colors.mainBackgroundColor }}>
         <MentionsTextInput
           editable={!this.state.loadComments}
           placeholder={i18n.t('global.writeYourCommentNoteHere')}

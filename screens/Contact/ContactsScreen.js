@@ -30,7 +30,6 @@ import sharedTools from '../../shared';
 const styles = StyleSheet.create({
   flatListItem: {
     height: 40 /* this needs auto sizing */,
-    backgroundColor: 'white',
     margin: 20,
     marginTop: 10,
     paddingBottom: 10,
@@ -704,6 +703,7 @@ class ContactsScreen extends React.Component {
               }
               ListFooterComponent={this.renderFooter}
               keyExtractor={(item) => item.ID.toString()}
+              style={{ backgroundColor: Colors.mainBackgroundColor }}
             />
           }
           <Fab
