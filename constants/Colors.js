@@ -25,7 +25,6 @@ export default {
   tabIconSelected: tintColor,
   tabBar: '#fefefe',
   headerTintColor: '#FFFFFF',
-  onPressIcons: '#FFFFFF',
   mainBackgroundColor: '#F3F3F3',
   contentBackgroundColor: '#FFFFFF',
   successBackground: 'rgba(229, 229, 229, 0.85)',

@@ -483,14 +483,14 @@ class ContactDetailScreen extends React.Component {
       : i18n.t('contactDetailScreen.addNewContact');
     let headerRight = () => (
       <Row onPress={params.onSaveContact}>
-        <Text style={{ color: Colors.onPressIcons, marginTop: 'auto', marginBottom: 'auto' }}>
+        <Text style={{ color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' }}>
           {i18n.t('global.save')}
         </Text>
         <Icon
           type="Feather"
           name="check"
           style={[
-            { color: Colors.onPressIcons, marginTop: 'auto', marginBottom: 'auto' },
+            { color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' },
             self && self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
           ]}
         />
@@ -502,14 +502,15 @@ class ContactDetailScreen extends React.Component {
       if (params.onEnableEdit && params.contactId && params.onlyView) {
         headerRight = () => (
           <Row onPress={params.onEnableEdit}>
-            <Text style={{ color: Colors.onPressIcons, marginTop: 'auto', marginBottom: 'auto' }}>
+            <Text
+              style={{ color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' }}>
               {i18n.t('global.edit')}
             </Text>
             <Icon
               type="MaterialCommunityIcons"
               name="pencil"
               style={[
-                { color: Colors.onPressIcons, marginTop: 'auto', marginBottom: 'auto' },
+                { color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' },
                 self && self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
               ]}
             />
@@ -522,7 +523,7 @@ class ContactDetailScreen extends React.Component {
             type="Feather"
             name="arrow-left"
             onPress={params.backButtonTap}
-            style={{ paddingLeft: 16, color: Colors.onPressIcons, paddingRight: 16 }}
+            style={{ paddingLeft: 16, color: Colors.headerTintColor, paddingRight: 16 }}
           />
         );
       } else {
@@ -532,11 +533,12 @@ class ContactDetailScreen extends React.Component {
               type="AntDesign"
               name="close"
               style={[
-                { color: Colors.onPressIcons, marginTop: 'auto', marginBottom: 'auto' },
+                { color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' },
                 self && self.props.isRTL ? { paddingRight: 16 } : { paddingLeft: 16 },
               ]}
             />
-            <Text style={{ color: Colors.onPressIcons, marginTop: 'auto', marginBottom: 'auto' }}>
+            <Text
+              style={{ color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' }}>
               {i18n.t('global.cancel')}
             </Text>
           </Row>
@@ -550,7 +552,7 @@ class ContactDetailScreen extends React.Component {
       headerStyle: {
         backgroundColor: Colors.tintColor,
       },
-      headerTintColor: '#FFFFFF',
+      headerTintColor: Colors.headerTintColor,
       headerTitleStyle: {
         fontWeight: 'bold',
         width: params.onlyView
