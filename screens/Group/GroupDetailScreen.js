@@ -1560,7 +1560,7 @@ class GroupDetailScreen extends React.Component {
           style={[
             { color: Colors.tintColor, fontSize: 13, textAlign: 'left', fontWeight: 'bold' },
           ]}>
-          {i18n.t('global.membersActivity')}:
+          {i18n.t('groupDetailScreen.memberCount')}:
         </Text>
         {this.state.group.member_count ? (
           <Text
