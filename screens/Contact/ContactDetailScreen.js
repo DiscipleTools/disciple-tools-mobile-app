@@ -1101,7 +1101,6 @@ class ContactDetailScreen extends React.Component {
             },
           ]);
         }
-        console.log(contact);
       }
     }
 
