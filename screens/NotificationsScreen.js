@@ -315,7 +315,7 @@ class NotificationsScreen extends React.Component {
         style={
           notification.is_new === '1'
             ? { backgroundColor: 'rgba(63, 114, 155, 0.19)' }
-            : { backgroundColor: 'white' }
+            : { backgroundColor: Colors.mainBackgroundColor }
         }>
         <View style={[styles.notificationContainer, { flex: 1, flexDirection: 'row' }]}>
           <View style={{ flex: 1 }}>
@@ -473,6 +473,7 @@ class NotificationsScreen extends React.Component {
               <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
             }
             ListFooterComponent={this.renderFooter}
+            style={{ backgroundColor: Colors.mainBackgroundColor }}
           />
         </View>
       </Container>
