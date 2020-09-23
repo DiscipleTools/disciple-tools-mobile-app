@@ -71,8 +71,8 @@ import groupTypeIcon from '../../assets/icons/group-type.png';
 import footprint from '../../assets/icons/footprint.png';
 import dtIcon from '../../assets/images/dt-icon.png';
 import dateIcon from '../../assets/icons/date.png';
-import dateSuccessIcon from '../../assets/icons/date-success.png';
-import dateEndIcon from '../../assets/icons/date-end.png';
+//import dateSuccessIcon from '../../assets/icons/date-success.png';
+//import dateEndIcon from '../../assets/icons/date-end.png';
 import i18n from '../../languages';
 
 let toastSuccess;
@@ -95,7 +95,10 @@ let commentsFlatList,
   addMembersSelectizeRef,
   parentGroupsSelectizeRef,
   peerGroupsSelectizeRef,
-  childGroupsSelectizeRef;
+  childGroupsSelectizeRef,
+  startDatePickerRef,
+  endDatePickerRef,
+  churchStartDatePickerRef;
 /* eslint-enable */
 const defaultHealthMilestones = [
   'church_baptism',
@@ -1518,29 +1521,47 @@ class GroupDetailScreen extends React.Component {
     }));
   };
 
-  setGroupStartDate = (value) => {
+  setGroupStartDate = (date = null) => {
+    if (!date) {
+      // Clean DatePicker value
+      startDatePickerRef.state.chosenDate = null;
+      startDatePickerRef.state.defaultDate = null;
+      this.forceUpdate();
+    }
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
-        start_date: sharedTools.formatDateToBackEnd(value),
+        start_date: date ? sharedTools.formatDateToBackEnd(date) : '',
       },
     }));
   };
 
-  setEndDate = (value) => {
+  setEndDate = (date = null) => {
+    if (!date) {
+      // Clean DatePicker value
+      endDatePickerRef.state.chosenDate = null;
+      endDatePickerRef.state.defaultDate = null;
+      this.forceUpdate();
+    }
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
-        end_date: sharedTools.formatDateToBackEnd(value),
+        end_date: date ? sharedTools.formatDateToBackEnd(date) : '',
       },
     }));
   };
 
-  setChurchStartDate = (value) => {
+  setChurchStartDate = (date = null) => {
+    if (!date) {
+      // Clean DatePicker value
+      churchStartDatePickerRef.state.chosenDate = null;
+      churchStartDatePickerRef.state.defaultDate = null;
+      this.forceUpdate();
+    }
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
-        church_start_date: sharedTools.formatDateToBackEnd(value),
+        church_start_date: date ? sharedTools.formatDateToBackEnd(date) : '',
       },
     }));
   };
@@ -2536,7 +2557,7 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.group.start_date
+                    {this.state.group.start_date && this.state.group.start_date.length > 0
                       ? moment(new Date(this.state.group.start_date * 1000))
                           .utc()
                           .format('LL')
@@ -2560,7 +2581,8 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.group.church_start_date
+                    {this.state.group.church_start_date &&
+                    this.state.group.church_start_date.length > 0
                       ? moment(new Date(this.state.group.church_start_date * 1000))
                           .utc()
                           .format('LL')
@@ -2584,7 +2606,7 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.group.end_date
+                    {this.state.group.end_date && this.state.group.end_date.length > 0
                       ? moment(new Date(this.state.group.end_date * 1000))
                           .utc()
                           .format('LL')
@@ -3076,10 +3098,21 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <DatePicker
+                  ref={(ref) => (startDatePickerRef = ref)}
                   onDateChange={this.setGroupStartDate}
                   defaultDate={
-                    this.state.group.start_date ? new Date(this.state.group.start_date * 1000) : ''
+                    this.state.group.start_date && this.state.group.start_date.length > 0
+                      ? new Date(this.state.group.start_date * 1000)
+                      : ''
                   }
+                />
+              </Col>
+              <Col style={[styles.formIconLabel, { marginTop: 'auto', marginBottom: 'auto' }]}>
+                <Icon
+                  type="AntDesign"
+                  name="close"
+                  style={[styles.formIcon, styles.addRemoveIcons, styles.removeIcons]}
+                  onPress={() => this.setGroupStartDate()}
                 />
               </Col>
             </Row>
@@ -3107,12 +3140,22 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <DatePicker
+                  ref={(ref) => (churchStartDatePickerRef = ref)}
                   onDateChange={this.setChurchStartDate}
                   defaultDate={
-                    this.state.group.church_start_date
+                    this.state.group.church_start_date &&
+                    this.state.group.church_start_date.length > 0
                       ? new Date(this.state.group.church_start_date * 1000)
                       : ''
                   }
+                />
+              </Col>
+              <Col style={[styles.formIconLabel, { marginTop: 'auto', marginBottom: 'auto' }]}>
+                <Icon
+                  type="AntDesign"
+                  name="close"
+                  style={[styles.formIcon, styles.addRemoveIcons, styles.removeIcons]}
+                  onPress={() => this.setChurchStartDate()}
                 />
               </Col>
             </Row>
@@ -3140,10 +3183,21 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <DatePicker
+                  ref={(ref) => (endDatePickerRef = ref)}
                   onDateChange={this.setEndDate}
                   defaultDate={
-                    this.state.group.end_date ? new Date(this.state.group.end_date * 1000) : ''
+                    this.state.group.end_date && this.state.group.end_date.length > 0
+                      ? new Date(this.state.group.end_date * 1000)
+                      : ''
                   }
+                />
+              </Col>
+              <Col style={[styles.formIconLabel, { marginTop: 'auto', marginBottom: 'auto' }]}>
+                <Icon
+                  type="AntDesign"
+                  name="close"
+                  style={[styles.formIcon, styles.addRemoveIcons, styles.removeIcons]}
+                  onPress={() => this.setEndDate()}
                 />
               </Col>
             </Row>

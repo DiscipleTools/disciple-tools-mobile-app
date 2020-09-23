@@ -86,7 +86,8 @@ let commentsFlatList,
   baptizedBySelectizeRef,
   coachedSelectizeRef,
   baptizedSelectizeRef,
-  coachingSelectizeRef;
+  coachingSelectizeRef,
+  datePickerRef;
 /* eslint-enable */
 const defaultFaithMilestones = [
   'milestone_has_bible',
@@ -1100,6 +1101,7 @@ class ContactDetailScreen extends React.Component {
             },
           ]);
         }
+        console.log(contact);
       }
     }
 
@@ -1603,12 +1605,18 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  setBaptismDate = (date) => {
+  setBaptismDate = (date = null) => {
     // (event, date) => {
+    if (!date) {
+      // Clean DatePicker value
+      datePickerRef.state.chosenDate = null;
+      datePickerRef.state.defaultDate = null;
+      this.forceUpdate();
+    }
     this.setState((prevState) => ({
       contact: {
         ...prevState.contact,
-        baptism_date: sharedTools.formatDateToBackEnd(date),
+        baptism_date: date ? sharedTools.formatDateToBackEnd(date) : '',
       },
     }));
   };
@@ -3256,7 +3264,7 @@ class ContactDetailScreen extends React.Component {
                   </Col>
                   <Col>
                     <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                      {this.state.contact.baptism_date
+                      {this.state.contact.baptism_date && this.state.contact.baptism_date.length > 0
                         ? moment(new Date(this.state.contact.baptism_date * 1000))
                             .utc()
                             .format('LL')
@@ -3348,7 +3356,7 @@ class ContactDetailScreen extends React.Component {
                 </Label>
               </Col>
             </Row>
-            <Row>
+            <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
                   <Icon type="Entypo" name="water" style={[styles.formIcon, { opacity: 0 }]} />
@@ -3356,12 +3364,21 @@ class ContactDetailScreen extends React.Component {
               </Col>
               <Col>
                 <DatePicker
+                  ref={(ref) => (datePickerRef = ref)}
                   onDateChange={this.setBaptismDate}
                   defaultDate={
-                    this.state.contact.baptism_date
+                    this.state.contact.baptism_date && this.state.contact.baptism_date.length > 0
                       ? new Date(this.state.contact.baptism_date * 1000)
                       : ''
                   }
+                />
+              </Col>
+              <Col style={[styles.formIconLabel, { marginTop: 'auto', marginBottom: 'auto' }]}>
+                <Icon
+                  type="AntDesign"
+                  name="close"
+                  style={[styles.formIcon, styles.addRemoveIcons, styles.removeIcons]}
+                  onPress={() => this.setBaptismDate()}
                 />
               </Col>
             </Row>
