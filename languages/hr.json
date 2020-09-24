@@ -119,6 +119,8 @@
       "label": "Grupno ime",
       "error": "Ime je obavezno"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Sastanak zakazan",
       "quick_button_meeting_postponed": "Sastanak odgođen",

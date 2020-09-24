@@ -41,4 +41,9 @@ export default {
   addRemoveIcons: tintColor,
   addIcons: 'green',
   removeIcons: 'red',
+  button: tintColor,
+  buttonText: '#FFFFFF',
+  dialogButton: '#FFFFFF',
+  buttonDelete: '#d9534f',
+  iconDelete: '#d9534f',
 };
