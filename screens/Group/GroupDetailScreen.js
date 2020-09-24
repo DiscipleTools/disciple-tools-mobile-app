@@ -1576,7 +1576,7 @@ class GroupDetailScreen extends React.Component {
 
   showMembersCount = () => (
     <View>
-      <Row style={{ paddingBottom: 10 }}>
+      <Row style={{ paddingBottom: 10, paddingTop: 20 }}>
         <Text
           style={[
             { color: Colors.tintColor, fontSize: 13, textAlign: 'left', fontWeight: 'bold' },
@@ -1918,23 +1918,26 @@ class GroupDetailScreen extends React.Component {
   };
 
   onAddMember = (selectedValue) => {
-    this.setState((prevState) => ({
-      group: {
-        ...prevState.group,
-        members: {
-          values: [
-            ...prevState.group.members.values,
-            {
-              name: safeFind(
-                prevState.usersContacts.find((user) => user.value === selectedValue.value),
-                'name',
-              ), // Show name in list while request its processed
-              value: selectedValue.value,
-            },
-          ],
+    this.setState((prevState) => {
+      let previousMembers = prevState.group.members ? prevState.group.members.values : [];
+      return {
+        group: {
+          ...prevState.group,
+          members: {
+            values: [
+              ...previousMembers,
+              {
+                name: safeFind(
+                  prevState.usersContacts.find((user) => user.value === selectedValue.value),
+                  'name',
+                ), // Show name in list while request its processed
+                value: selectedValue.value,
+              },
+            ],
+          },
         },
-      },
-    }));
+      };
+    });
   };
 
   onRemoveMember = (selectedValue) => {
@@ -3572,7 +3575,7 @@ class GroupDetailScreen extends React.Component {
   membersView = () => {
     /*_viewable_*/
     return this.state.onlyView ? (
-      <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
+      <View style={{ flex: 1 }}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           refreshControl={
@@ -3580,7 +3583,11 @@ class GroupDetailScreen extends React.Component {
               refreshing={this.state.loading}
               onRefresh={() => this.onRefresh(this.state.group.ID)}
             />
-          }>
+          }
+          style={{
+            paddingLeft: containerPadding,
+            paddingRight: containerPadding,
+          }}>
           {this.showMembersCount()}
           <FlatList
             data={(this.state.group.members ? this.state.group.members.values : []).filter(
@@ -3655,11 +3662,19 @@ class GroupDetailScreen extends React.Component {
                     }}
                     itemId="value"
                     items={[...this.state.membersContacts, ...this.state.usersContacts].filter(
-                      (userContact) =>
-                        this.state.group.members &&
-                        !this.state.group.members.values.find(
-                          (member) => member.value === userContact.value,
-                        ),
+                      (userContact) => {
+                        // Filter members to get only members no added to group
+                        if (
+                          this.state.group.members &&
+                          this.state.group.members.values.find(
+                            (member) => member.value === userContact.value,
+                          ) !== undefined
+                        ) {
+                          return false;
+                        } else {
+                          return true;
+                        }
+                      },
                     )}
                     selectedItems={[]}
                     textInputProps={{

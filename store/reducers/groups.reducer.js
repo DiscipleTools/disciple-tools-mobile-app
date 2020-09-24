@@ -403,6 +403,9 @@ export default function groupsReducer(state = initialState, action) {
         let newGroupData;
         if (offline) {
           // Editing D.B. entity in OFFLINE mode
+          let oldGroupData = {
+            ...newState.groups[groupIndex],
+          };
           newGroupData = {
             ...newState.groups[groupIndex],
           };
@@ -476,17 +479,26 @@ export default function groupsReducer(state = initialState, action) {
               };
             }
           });
-          // Update members length in OFFLINE mode
-          /*if (
-            newGroupData.members &&
-            newGroupData.members.values &&
-            newGroupData.members.values.length != parseInt(newGroupData.member_count)
-          ) {
+          // Update member_count according to current members list.
+          let oldMembersListLength = oldGroupData.members ? oldGroupData.members.values.length : 0;
+          if (newGroupData.members && newGroupData.members.values.length !== oldMembersListLength) {
+            let newMemberCount;
+            // If member list length > oldMembersListLength -> set newMemberCount as member list length
+            if (newGroupData.members.values.length > oldMembersListLength) {
+              newMemberCount = newGroupData.members.values.length.toString();
+            }
+            // If member list length < oldMembersListLength -> set newMemberCount as current member count minus removed members
+            if (newGroupData.members.values.length < oldMembersListLength) {
+              let difference = oldMembersListLength - newGroupData.members.values.length;
+              newMemberCount = newGroupData.member_count
+                ? parseInt(newGroupData.member_count) - difference
+                : newGroupData.members.values.length;
+            }
             newGroupData = {
               ...newGroupData,
-              member_count: newGroupData.members.values.length.toString(),
+              member_count: newMemberCount,
             };
-          }*/
+          }
         } else {
           newGroupData = {
             ...newState.groups[groupIndex],
