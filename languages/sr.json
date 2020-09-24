@@ -119,6 +119,8 @@
       "label": "Назив групе",
       "error": "Име је обавезно"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Састанак заказан",
       "quick_button_meeting_postponed": "Састанак одложен",

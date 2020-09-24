@@ -119,6 +119,8 @@
       "label": "দলের নাম",
       "error": "নাম প্রয়োজন"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "সভা নির্ধারিত",
       "quick_button_meeting_postponed": "সভা স্থগিত",

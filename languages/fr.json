@@ -119,6 +119,8 @@
       "label": "Nom de groupe",
       "error": "Nom obligatoire"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Réunion programmée",
       "quick_button_meeting_postponed": "Réunion reportée",

@@ -9,6 +9,7 @@ import {
   Text,
   Image,
   Platform,
+  Dimensions,
 } from 'react-native';
 import { Fab, Container } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -16,6 +17,8 @@ import Toast from 'react-native-easy-toast';
 import { Row } from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 import { SearchBar } from 'react-native-elements';
+import { Header } from 'react-navigation-stack';
+
 import Colors from '../../constants/Colors';
 import { getAll, updatePrevious } from '../../store/actions/groups.actions';
 import i18n from '../../languages';
@@ -107,6 +110,9 @@ const styles = StyleSheet.create({
 let toastError,
   statusCircleSize = 15;
 
+const windowHeight = Dimensions.get('window').height,
+  headerHeight = Header.HEIGHT;
+
 class GroupsScreen extends React.Component {
   state = {
     refresh: false,
@@ -118,6 +124,7 @@ class GroupsScreen extends React.Component {
     offset: 0,
     limit: 100,
     sort: '-last_modified',
+    fixFABIndex: false,
   };
 
   componentDidUpdate(prevProps) {
@@ -307,7 +314,15 @@ class GroupsScreen extends React.Component {
 
   renderHeader = () => {
     return (
-      <View>
+      <View
+        onLayout={(event) => {
+          let viewHeight = event.nativeEvent.layout.height;
+          // headerHeight * 2 = headerHeight + bottomBarNavigation height
+          this.setState({
+            fixFABIndex:
+              windowHeight - (viewHeight + headerHeight * 2) < 100 && Platform.OS == 'android',
+          });
+        }}>
         <SearchBar
           placeholder={i18n.t('global.search')}
           onChangeText={(text) => this.SearchFilterFunction(text)}
@@ -411,7 +426,10 @@ class GroupsScreen extends React.Component {
             style={{ backgroundColor: Colors.mainBackgroundColor }}
           />
           <Fab
-            style={{ backgroundColor: Colors.tintColor }}
+            style={[
+              { backgroundColor: Colors.tintColor },
+              this.state.fixFABIndex ? { zIndex: -1 } : {},
+            ]}
             position="bottomRight"
             onPress={() => this.goToGroupDetailScreen()}>
             <Icon name="md-add" />

@@ -119,6 +119,8 @@
       "label": "Group Name",
       "error": "Name is required"
     },
+    "memberCount": "Member Count",
+    "memberList": "Member List",
     "fab": {
       "quick_button_meeting_scheduled": "Meeting Scheduled",
       "quick_button_meeting_postponed": "Meeting Postponed",

@@ -119,6 +119,8 @@
       "label": "Nama grup",
       "error": "Nama harus diisi"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Rapat Terjadwal",
       "quick_button_meeting_postponed": "Rapat Ditunda",

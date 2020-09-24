@@ -19,6 +19,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
 import Accordion from 'react-native-collapsible/Accordion';
 import { CheckBox } from 'react-native-elements';
+import { Header } from 'react-navigation-stack';
 
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
@@ -120,7 +121,8 @@ const styles = StyleSheet.create({
 });
 let toastError,
   statusCircleSize = 15;
-const windowHeight = Dimensions.get('window').height;
+const windowHeight = Dimensions.get('window').height,
+  headerHeight = Header.HEIGHT;
 
 class ContactsScreen extends React.Component {
   state = {
@@ -139,6 +141,7 @@ class ContactsScreen extends React.Component {
       currentFilter: '',
     },
     activeSections: [],
+    fixFABIndex: false,
   };
 
   componentDidUpdate(prevProps) {
@@ -519,6 +522,14 @@ class ContactsScreen extends React.Component {
   renderHeader = () => {
     return (
       <View
+        onLayout={(event) => {
+          let viewHeight = event.nativeEvent.layout.height;
+          // headerHeight * 2 = headerHeight + bottomBarNavigation height
+          this.setState({
+            fixFABIndex:
+              windowHeight - (viewHeight + headerHeight * 2) < 100 && Platform.OS == 'android',
+          });
+        }}
         style={[
           styles.searchBarContainer,
           Platform.OS == 'ios'
@@ -707,7 +718,10 @@ class ContactsScreen extends React.Component {
             />
           }
           <Fab
-            style={{ backgroundColor: Colors.tintColor }}
+            style={[
+              { backgroundColor: Colors.tintColor },
+              this.state.fixFABIndex ? { zIndex: -1 } : {},
+            ]}
             position="bottomRight"
             onPress={() => this.goToContactDetailScreen()}>
             <Icon name="md-add" />

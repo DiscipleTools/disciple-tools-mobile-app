@@ -119,6 +119,8 @@
       "label": "أسم المجموعة",
       "error": "مطلوب اسم"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "جدول الاجتماع",
       "quick_button_meeting_postponed": "تم تأجيل الاجتماع",

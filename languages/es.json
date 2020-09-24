@@ -119,6 +119,8 @@
       "label": "Nombre del Grupo",
       "error": "El nombre es requerido"
     },
+    "memberCount": "Numero de miembros",
+    "memberList": "Lista de Miembros",
     "fab": {
       "quick_button_meeting_scheduled": "Reunión Programada",
       "quick_button_meeting_postponed": "Reunión Pospuso",

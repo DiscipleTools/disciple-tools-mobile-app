@@ -119,6 +119,8 @@
       "label": "组的名字",
       "error": "名称为必填项"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "会议预定",
       "quick_button_meeting_postponed": "会议推迟",

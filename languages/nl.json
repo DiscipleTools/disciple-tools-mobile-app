@@ -119,6 +119,8 @@
       "label": "Groepsnaam",
       "error": "Naam is vereist"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Vergadering gepland",
       "quick_button_meeting_postponed": "Vergadering uitgesteld",

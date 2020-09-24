@@ -119,6 +119,8 @@
       "label": "Grup ismi",
       "error": "İsim gerekli"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Toplantı Planlandı",
       "quick_button_meeting_postponed": "Toplantı Ertelendi",

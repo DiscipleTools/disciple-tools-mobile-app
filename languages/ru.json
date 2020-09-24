@@ -119,6 +119,8 @@
       "label": "Имя группы",
       "error": "Имя обязательно"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Встреча запланирована",
       "quick_button_meeting_postponed": "Встреча отложена",

@@ -71,8 +71,8 @@ import groupTypeIcon from '../../assets/icons/group-type.png';
 import footprint from '../../assets/icons/footprint.png';
 import dtIcon from '../../assets/images/dt-icon.png';
 import dateIcon from '../../assets/icons/date.png';
-import dateSuccessIcon from '../../assets/icons/date-success.png';
-import dateEndIcon from '../../assets/icons/date-end.png';
+//import dateSuccessIcon from '../../assets/icons/date-success.png';
+//import dateEndIcon from '../../assets/icons/date-end.png';
 import i18n from '../../languages';
 
 let toastSuccess;
@@ -95,7 +95,10 @@ let commentsFlatList,
   addMembersSelectizeRef,
   parentGroupsSelectizeRef,
   peerGroupsSelectizeRef,
-  childGroupsSelectizeRef;
+  childGroupsSelectizeRef,
+  startDatePickerRef,
+  endDatePickerRef,
+  churchStartDatePickerRef;
 /* eslint-enable */
 const defaultHealthMilestones = [
   'church_baptism',
@@ -824,6 +827,38 @@ class GroupDetailScreen extends React.Component {
           ...newState,
           updateMembersList: !newState.updateMembersList,
         };
+
+        // Clear collection
+        newState = {
+          ...newState,
+          membersContacts: [],
+        };
+
+        newState.group.members.values.forEach((member) => {
+          const foundMember = newState.usersContacts.find(
+            (contact) => contact.value === member.value,
+          );
+          if (!foundMember) {
+            // Add non existent member contact in members list (user does not have access permission to this contact/s)
+            newState = {
+              ...newState,
+              membersContacts: [
+                ...newState.membersContacts,
+                {
+                  name: member.name,
+                  value: member.value,
+                },
+              ],
+              unmodifiedMembersContacts: [
+                ...newState.unmodifiedMembersContacts,
+                {
+                  name: member.name,
+                  value: member.value,
+                },
+              ],
+            };
+          }
+        });
       }
       if (newState.group.coaches) {
         // Clear collection
@@ -949,39 +984,6 @@ class GroupDetailScreen extends React.Component {
                 {
                   name: childGroup.name,
                   value: childGroup.value,
-                },
-              ],
-            };
-          }
-        });
-      }
-      if (newState.group.members) {
-        // Clear collection
-        newState = {
-          ...newState,
-          membersContacts: [],
-        };
-
-        newState.group.members.values.forEach((member) => {
-          const foundMember = newState.usersContacts.find(
-            (contact) => contact.value === member.value,
-          );
-          if (!foundMember) {
-            // Add non existent member contact in members list (user does not have access permission to this contact/s)
-            newState = {
-              ...newState,
-              membersContacts: [
-                ...newState.membersContacts,
-                {
-                  name: member.name,
-                  value: member.value,
-                },
-              ],
-              unmodifiedMembersContacts: [
-                ...newState.unmodifiedMembersContacts,
-                {
-                  name: member.name,
-                  value: member.value,
                 },
               ],
             };
@@ -1519,29 +1521,47 @@ class GroupDetailScreen extends React.Component {
     }));
   };
 
-  setGroupStartDate = (value) => {
+  setGroupStartDate = (date = null) => {
+    if (!date) {
+      // Clean DatePicker value
+      startDatePickerRef.state.chosenDate = null;
+      startDatePickerRef.state.defaultDate = null;
+      this.forceUpdate();
+    }
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
-        start_date: sharedTools.formatDateToBackEnd(value),
+        start_date: date ? sharedTools.formatDateToBackEnd(date) : '',
       },
     }));
   };
 
-  setEndDate = (value) => {
+  setEndDate = (date = null) => {
+    if (!date) {
+      // Clean DatePicker value
+      endDatePickerRef.state.chosenDate = null;
+      endDatePickerRef.state.defaultDate = null;
+      this.forceUpdate();
+    }
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
-        end_date: sharedTools.formatDateToBackEnd(value),
+        end_date: date ? sharedTools.formatDateToBackEnd(date) : '',
       },
     }));
   };
 
-  setChurchStartDate = (value) => {
+  setChurchStartDate = (date = null) => {
+    if (!date) {
+      // Clean DatePicker value
+      churchStartDatePickerRef.state.chosenDate = null;
+      churchStartDatePickerRef.state.defaultDate = null;
+      this.forceUpdate();
+    }
     this.setState((prevState) => ({
       group: {
         ...prevState.group,
-        church_start_date: sharedTools.formatDateToBackEnd(value),
+        church_start_date: date ? sharedTools.formatDateToBackEnd(date) : '',
       },
     }));
   };
@@ -1561,7 +1581,7 @@ class GroupDetailScreen extends React.Component {
           style={[
             { color: Colors.tintColor, fontSize: 13, textAlign: 'left', fontWeight: 'bold' },
           ]}>
-          {i18n.t('global.membersActivity')}:
+          {i18n.t('groupDetailScreen.memberCount')}:
         </Text>
         {this.state.group.member_count ? (
           <Text
@@ -1587,7 +1607,7 @@ class GroupDetailScreen extends React.Component {
           </Text>
         )}
       </Row>
-      {!this.state.group.member_count || parseInt(this.state.group.member_count) === 0 ? (
+      {!this.state.group.members || this.state.group.members.values.length === 0 ? (
         <View>
           <Text style={styles.addMembersHyperlink} onPress={() => this.onEnableEdit()}>
             {i18n.t('groupDetailScreen.noMembersMessage')}
@@ -2269,6 +2289,15 @@ class GroupDetailScreen extends React.Component {
     }));
   };
 
+  setGroupMemberCount = (value) => {
+    this.setState((prevState) => ({
+      group: {
+        ...prevState.group,
+        member_count: value,
+      },
+    }));
+  };
+
   offlineBarRender = () => (
     <View style={[styles.offlineBar]}>
       <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
@@ -2528,7 +2557,7 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.group.start_date
+                    {this.state.group.start_date && this.state.group.start_date.length > 0
                       ? moment(new Date(this.state.group.start_date * 1000))
                           .utc()
                           .format('LL')
@@ -2552,7 +2581,8 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.group.church_start_date
+                    {this.state.group.church_start_date &&
+                    this.state.group.church_start_date.length > 0
                       ? moment(new Date(this.state.group.church_start_date * 1000))
                           .utc()
                           .format('LL')
@@ -2576,7 +2606,7 @@ class GroupDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.group.end_date
+                    {this.state.group.end_date && this.state.group.end_date.length > 0
                       ? moment(new Date(this.state.group.end_date * 1000))
                           .utc()
                           .format('LL')
@@ -3068,10 +3098,21 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <DatePicker
+                  ref={(ref) => (startDatePickerRef = ref)}
                   onDateChange={this.setGroupStartDate}
                   defaultDate={
-                    this.state.group.start_date ? new Date(this.state.group.start_date * 1000) : ''
+                    this.state.group.start_date && this.state.group.start_date.length > 0
+                      ? new Date(this.state.group.start_date * 1000)
+                      : ''
                   }
+                />
+              </Col>
+              <Col style={[styles.formIconLabel, { marginTop: 'auto', marginBottom: 'auto' }]}>
+                <Icon
+                  type="AntDesign"
+                  name="close"
+                  style={[styles.formIcon, styles.addRemoveIcons, styles.removeIcons]}
+                  onPress={() => this.setGroupStartDate()}
                 />
               </Col>
             </Row>
@@ -3099,12 +3140,22 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <DatePicker
+                  ref={(ref) => (churchStartDatePickerRef = ref)}
                   onDateChange={this.setChurchStartDate}
                   defaultDate={
-                    this.state.group.church_start_date
+                    this.state.group.church_start_date &&
+                    this.state.group.church_start_date.length > 0
                       ? new Date(this.state.group.church_start_date * 1000)
                       : ''
                   }
+                />
+              </Col>
+              <Col style={[styles.formIconLabel, { marginTop: 'auto', marginBottom: 'auto' }]}>
+                <Icon
+                  type="AntDesign"
+                  name="close"
+                  style={[styles.formIcon, styles.addRemoveIcons, styles.removeIcons]}
+                  onPress={() => this.setChurchStartDate()}
                 />
               </Col>
             </Row>
@@ -3132,10 +3183,21 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <DatePicker
+                  ref={(ref) => (endDatePickerRef = ref)}
                   onDateChange={this.setEndDate}
                   defaultDate={
-                    this.state.group.end_date ? new Date(this.state.group.end_date * 1000) : ''
+                    this.state.group.end_date && this.state.group.end_date.length > 0
+                      ? new Date(this.state.group.end_date * 1000)
+                      : ''
                   }
+                />
+              </Col>
+              <Col style={[styles.formIconLabel, { marginTop: 'auto', marginBottom: 'auto' }]}>
+                <Icon
+                  type="AntDesign"
+                  name="close"
+                  style={[styles.formIcon, styles.addRemoveIcons, styles.removeIcons]}
+                  onPress={() => this.setEndDate()}
                 />
               </Col>
             </Row>
@@ -3539,8 +3601,41 @@ class GroupDetailScreen extends React.Component {
         keyboardShouldPersistTaps="handled">
         <View style={[styles.formContainer, { flex: 1, marginTop: 10, marginBottom: 10 }]}>
           <ScrollView keyboardShouldPersistTaps="handled">
-            <Text style={{ color: Colors.tintColor, fontSize: 15, textAlign: 'left' }}>
-              {i18n.t('global.membersActivity')}
+            <View>
+              <Row style={[styles.formRow, { paddingBottom: 0 }]}>
+                <Col>
+                  <Label
+                    style={{
+                      color: Colors.tintColor,
+                      fontSize: 12,
+                      marginTop: 0,
+                    }}>
+                    {i18n.t('groupDetailScreen.memberCount')}
+                  </Label>
+                </Col>
+              </Row>
+              <Row style={[styles.formRow, { paddingTop: 5 }]}>
+                <Col>
+                  <Input
+                    keyboardType={'numeric'}
+                    value={this.state.group.member_count}
+                    onChangeText={this.setGroupMemberCount}
+                    style={styles.groupTextField}
+                  />
+                </Col>
+              </Row>
+            </View>
+            <Text
+              style={[
+                {
+                  color: Colors.tintColor,
+                  fontSize: 12,
+                  textAlign: 'left',
+                  paddingBottom: 15,
+                  paddingTop: 5,
+                },
+              ]}>
+              {i18n.t('groupDetailScreen.memberList')}
             </Text>
             <FlatList
               data={this.state.group.members ? this.state.group.members.values : []}

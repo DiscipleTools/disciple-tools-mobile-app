@@ -119,6 +119,8 @@
       "label": "Nome do Grupo",
       "error": "Nome é necessário"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Reunião agendada",
       "quick_button_meeting_postponed": "Reunião adiada",
