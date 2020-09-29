@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import TabBarIcon from '../components/TabBarIcon';
+import { View } from 'native-base';
 
 // import HomeScreen from "../screens/HomeScreen";
 import SettingsScreen from '../screens/SettingsScreen';
@@ -11,6 +12,7 @@ import NotificationsScreen from '../screens/NotificationsScreen';
 import Storybook from '../storybook';
 import ContactStack from '../screens/Contact/index';
 import GroupStack from '../screens/Group/index';
+import NotificationBadge from '../components/NotificationBadge';
 
 import Colors from '../constants/Colors';
 import i18n from '../languages';
@@ -46,7 +48,12 @@ const NotificationsStack = createStackNavigator({
   Storybook,
 });
 function NotificationsIcon({ focused }) {
-  return <TabBarIcon type="FontAwesome" name="bell" focused={focused} />;
+  return (
+    <View style={{ flex: 1 }}>
+      <NotificationBadge></NotificationBadge>
+      <TabBarIcon type="FontAwesome" name="bell" focused={focused} />
+    </View>
+  );
 }
 NotificationsIcon.propTypes = {
   focused: PropTypes.bool.isRequired,

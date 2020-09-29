@@ -10,7 +10,6 @@ import {
   Image,
 } from 'react-native';
 import { Fab, Container } from 'native-base';
-import { Row } from 'react-native-easy-grid';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
 import SearchBar from '../../components/SearchBar';
@@ -18,7 +17,6 @@ import SearchBar from '../../components/SearchBar';
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
 import { getAll, updatePrevious } from '../../store/actions/contacts.actions';
-import dtIcon from '../../assets/images/dt-icon.png';
 import i18n from '../../languages';
 import sharedTools from '../../shared';
 
