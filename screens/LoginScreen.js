@@ -43,7 +43,8 @@ import { getUsers, getContactFilters, getGroupFilters } from '../store/actions/u
 import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
 import { logout } from '../store/actions/user.actions';
 import { getActiveQuestionnaires } from '../store/actions/questionnaire.actions';
-
+import { getNotificationsCount } from '../store/actions/notifications.actions';
+//
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'flex-end',
@@ -191,12 +192,6 @@ class LoginScreen extends React.Component {
   state = {
     loading: false,
     modalVisible: false,
-    contactSettingsRetrieved: false,
-    groupSettingsRetrieved: false,
-    geonamesRetrieved: false,
-    peopleGroupsRetrieved: false,
-    usersRetrieved: false,
-    appLanguageSet: false,
     offset: 0,
     limit: 5000,
     sort: '-last_modified',
@@ -207,11 +202,18 @@ class LoginScreen extends React.Component {
     userData: {
       token: null,
     },
-    userDataRetrieved: false,
     geonamesLength: 0,
     toggleRestartDialog: false,
+    contactSettingsRetrieved: false,
+    groupSettingsRetrieved: false,
+    peopleGroupsRetrieved: false,
+    usersRetrieved: false,
+    appLanguageSet: false,
+    userDataRetrieved: false,
+    geonamesRetrieved: false,
     contactFiltersRetrieved: false,
     groupFiltersRetrieved: false,
+    notificationsCountRetrieved: false,
   };
 
   constructor(props) {
@@ -267,6 +269,7 @@ class LoginScreen extends React.Component {
       geonamesLength,
       contactFilters,
       groupFilters,
+      notificationsCount,
     } = nextProps;
     let newState = {
       ...prevState,
@@ -334,6 +337,12 @@ class LoginScreen extends React.Component {
           groupFiltersRetrieved: true,
         };
       }
+      if (notificationsCount !== null) {
+        newState = {
+          ...newState,
+          notificationsCountRetrieved: true,
+        };
+      }
     }
 
     const error =
@@ -359,6 +368,9 @@ class LoginScreen extends React.Component {
         appLanguageSet: false,
         userDataRetrieved: false,
         geonamesRetrieved: false,
+        contactFiltersRetrieved: false,
+        groupFiltersRetrieved: false,
+        notificationsCountRetrieved: false,
       });
     });
     this.initLoginScreen();
@@ -402,13 +414,14 @@ class LoginScreen extends React.Component {
               this.setState({
                 contactSettingsRetrieved: true,
                 groupSettingsRetrieved: true,
-                geonamesRetrieved: true,
                 peopleGroupsRetrieved: true,
                 usersRetrieved: true,
                 appLanguageSet: true,
                 userDataRetrieved: true,
+                geonamesRetrieved: true,
                 contactFiltersRetrieved: true,
                 groupFiltersRetrieved: true,
+                notificationsCountRetrieved: true,
               });
             },
           );
@@ -441,6 +454,8 @@ class LoginScreen extends React.Component {
       usersRetrieved,
       contactFiltersRetrieved,
       groupFiltersRetrieved,
+      notificationsCountRetrieved,
+      userDataRetrieved,
     } = this.state;
 
     // User logged successfully
@@ -480,12 +495,14 @@ class LoginScreen extends React.Component {
     if (
       contactSettingsRetrieved &&
       groupSettingsRetrieved &&
-      appLanguageSet &&
-      geonamesRetrieved &&
       peopleGroupsRetrieved &&
       usersRetrieved &&
+      appLanguageSet &&
+      userDataRetrieved &&
+      geonamesRetrieved &&
       contactFiltersRetrieved &&
-      groupFiltersRetrieved
+      groupFiltersRetrieved &&
+      notificationsCountRetrieved
     ) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
@@ -579,6 +596,7 @@ class LoginScreen extends React.Component {
     this.props.getContactFilters(this.props.userData.domain, this.props.userData.token);
     this.props.getActiveQuestionnaires(this.props.userData.domain, this.props.userData.token);
     this.props.getGroupFilters(this.props.userData.domain, this.props.userData.token);
+    this.props.getNotificationsCount(this.props.userData.domain, this.props.userData.token);
   };
 
   getUserInfo = () => {
@@ -996,6 +1014,7 @@ LoginScreen.propTypes = {
   getGroups: PropTypes.func.isRequired,
   getUserInfo: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
+  getNotificationsCount: PropTypes.func.isRequired,
 };
 LoginScreen.defaultProps = {
   userData: {
@@ -1038,6 +1057,7 @@ const mapStateToProps = (state) => ({
   geonamesLength: state.groupsReducer.geonamesLength,
   contactFilters: state.usersReducer.contactFilters,
   groupFilters: state.usersReducer.groupFilters,
+  notificationsCount: state.notificationsReducer.notificationsCount,
 });
 const mapDispatchToProps = (dispatch) => ({
   loginDispatch: (domain, username, password) => {
@@ -1084,6 +1104,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getGroupFilters: (domain, token) => {
     dispatch(getGroupFilters(domain, token));
+  },
+  getNotificationsCount: (domain, token) => {
+    dispatch(getNotificationsCount(domain, token));
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
