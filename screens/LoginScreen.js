@@ -44,7 +44,7 @@ import { getContactSettings, getAll as getAllContacts } from '../store/actions/c
 import { logout } from '../store/actions/user.actions';
 import { getActiveQuestionnaires } from '../store/actions/questionnaire.actions';
 import { getNotificationsCount } from '../store/actions/notifications.actions';
-
+//
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'flex-end',
