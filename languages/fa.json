@@ -28,7 +28,8 @@
     "nameRequired": "نام لازم است",
     "close": "نزدیک",
     "editComment": "ویرایش کنید",
-    "deleteComment": "حذف"
+    "deleteComment": "حذف",
+    "sortByLastModified": ""
   },
   "loginScreen": {
     "domain": {

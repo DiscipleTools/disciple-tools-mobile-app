@@ -28,7 +28,8 @@
     "nameRequired": "Nom obligatoire",
     "close": "proche",
     "editComment": "Éditer",
-    "deleteComment": "Supprimer"
+    "deleteComment": "Supprimer",
+    "sortByLastModified": ""
   },
   "loginScreen": {
     "domain": {

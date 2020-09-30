@@ -28,7 +28,8 @@
     "nameRequired": "Jina linalohitajika",
     "close": "Karibu",
     "editComment": "Hariri",
-    "deleteComment": "Futa"
+    "deleteComment": "Futa",
+    "sortByLastModified": ""
   },
   "loginScreen": {
     "domain": {

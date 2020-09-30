@@ -28,7 +28,8 @@
     "nameRequired": "Naam (vereist",
     "close": "Dichtbij",
     "editComment": "Bewerk",
-    "deleteComment": "Verwijderen"
+    "deleteComment": "Verwijderen",
+    "sortByLastModified": ""
   },
   "loginScreen": {
     "domain": {

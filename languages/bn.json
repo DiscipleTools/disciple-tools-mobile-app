@@ -28,7 +28,8 @@
     "nameRequired": "নাম (প্রয়োজন",
     "close": "ঘনিষ্ঠ",
     "editComment": "সম্পাদনা করুন",
-    "deleteComment": "মুছে ফেলা"
+    "deleteComment": "মুছে ফেলা",
+    "sortByLastModified": ""
   },
   "loginScreen": {
     "domain": {

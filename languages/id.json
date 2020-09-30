@@ -28,7 +28,8 @@
     "nameRequired": "Nama (wajib",
     "close": "Menutup",
     "editComment": "Edit",
-    "deleteComment": "Menghapus"
+    "deleteComment": "Menghapus",
+    "sortByLastModified": ""
   },
   "loginScreen": {
     "domain": {

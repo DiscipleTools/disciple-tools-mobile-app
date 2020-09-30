@@ -28,7 +28,8 @@
     "nameRequired": "Ime (obavezno",
     "close": "Zatvoriti",
     "editComment": "Uredi",
-    "deleteComment": "Izbrisati"
+    "deleteComment": "Izbrisati",
+    "sortByLastModified": ""
   },
   "loginScreen": {
     "domain": {

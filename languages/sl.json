@@ -28,7 +28,8 @@
     "nameRequired": "Ime je potrebno",
     "close": "Zapri",
     "editComment": "Uredi",
-    "deleteComment": "Izbriši"
+    "deleteComment": "Izbriši",
+    "sortByLastModified": ""
   },
   "loginScreen": {
     "domain": {
