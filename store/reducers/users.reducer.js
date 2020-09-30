@@ -5,6 +5,7 @@ const initialState = {
   users: null,
   loading: null,
   contactFilters: {},
+  groupFilters: {},
 };
 
 export default function usersReducer(state = initialState, action) {
@@ -36,13 +37,37 @@ export default function usersReducer(state = initialState, action) {
         ...newState,
         loading: true,
       };
-    case actions.GET_CONTACT_FILTERS_SUCCESS:
+    case actions.GET_CONTACT_FILTERS_SUCCESS: {
+      let contactFilters = { ...action.contactFilters };
+      contactFilters = {
+        ...contactFilters,
+        tabs: contactFilters.tabs.filter((filter) => filter.key !== 'custom'),
+      };
       return {
         ...newState,
-        contactFilters: action.contactFilters,
+        contactFilters,
         loading: false,
       };
+    }
     case actions.GET_CONTACT_FILTERS_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+        loading: false,
+      };
+    case actions.GET_GROUP_FILTERS_SUCCESS: {
+      let groupFilters = { ...action.groupFilters };
+      groupFilters = {
+        ...groupFilters,
+        tabs: groupFilters.tabs.filter((filter) => filter.key !== 'custom'),
+      };
+      return {
+        ...newState,
+        groupFilters,
+        loading: false,
+      };
+    }
+    case actions.GET_GROUP_FILTERS_FAILURE:
       return {
         ...newState,
         error: action.error,

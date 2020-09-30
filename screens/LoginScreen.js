@@ -39,7 +39,7 @@ import {
   getAll as getAllGroups,
   getLocationListLastModifiedDate,
 } from '../store/actions/groups.actions';
-import { getUsers, getContactFilters } from '../store/actions/users.actions';
+import { getUsers, getContactFilters, getGroupFilters } from '../store/actions/users.actions';
 import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
 import { logout } from '../store/actions/user.actions';
 import { getActiveQuestionnaires } from '../store/actions/questionnaire.actions';
@@ -211,6 +211,7 @@ class LoginScreen extends React.Component {
     geonamesLength: 0,
     toggleRestartDialog: false,
     contactFiltersRetrieved: false,
+    groupFiltersRetrieved: false,
   };
 
   constructor(props) {
@@ -265,6 +266,7 @@ class LoginScreen extends React.Component {
       geonamesLastModifiedDate,
       geonamesLength,
       contactFilters,
+      groupFilters,
     } = nextProps;
     let newState = {
       ...prevState,
@@ -324,6 +326,12 @@ class LoginScreen extends React.Component {
         newState = {
           ...newState,
           contactFiltersRetrieved: true,
+        };
+      }
+      if (groupFilters) {
+        newState = {
+          ...newState,
+          groupFiltersRetrieved: true,
         };
       }
     }
@@ -400,6 +408,7 @@ class LoginScreen extends React.Component {
                 appLanguageSet: true,
                 userDataRetrieved: true,
                 contactFiltersRetrieved: true,
+                groupFiltersRetrieved: true,
               });
             },
           );
@@ -431,6 +440,7 @@ class LoginScreen extends React.Component {
       peopleGroupsRetrieved,
       usersRetrieved,
       contactFiltersRetrieved,
+      groupFiltersRetrieved,
     } = this.state;
 
     // User logged successfully
@@ -474,7 +484,8 @@ class LoginScreen extends React.Component {
       geonamesRetrieved &&
       peopleGroupsRetrieved &&
       usersRetrieved &&
-      contactFiltersRetrieved
+      contactFiltersRetrieved &&
+      groupFiltersRetrieved
     ) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
@@ -567,6 +578,7 @@ class LoginScreen extends React.Component {
     this.props.getUsers(this.props.userData.domain, this.props.userData.token);
     this.props.getContactFilters(this.props.userData.domain, this.props.userData.token);
     this.props.getActiveQuestionnaires(this.props.userData.domain, this.props.userData.token);
+    this.props.getGroupFilters(this.props.userData.domain, this.props.userData.token);
   };
 
   getUserInfo = () => {
@@ -1025,6 +1037,7 @@ const mapStateToProps = (state) => ({
   geonamesLastModifiedDate: state.groupsReducer.geonamesLastModifiedDate,
   geonamesLength: state.groupsReducer.geonamesLength,
   contactFilters: state.usersReducer.contactFilters,
+  groupFilters: state.usersReducer.groupFilters,
 });
 const mapDispatchToProps = (dispatch) => ({
   loginDispatch: (domain, username, password) => {
@@ -1068,6 +1081,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getActiveQuestionnaires: (domain, token) => {
     dispatch(getActiveQuestionnaires(domain, token));
+  },
+  getGroupFilters: (domain, token) => {
+    dispatch(getGroupFilters(domain, token));
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
