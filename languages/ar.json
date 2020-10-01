@@ -28,7 +28,8 @@
     "nameRequired": "الاسم مطلوب",
     "close": "قريب",
     "editComment": "تعديل",
-    "deleteComment": "حذف"
+    "deleteComment": "حذف",
+    "sortByLastModified": ""
   },
   "loginScreen": {
     "domain": {

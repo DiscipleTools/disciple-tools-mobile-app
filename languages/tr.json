@@ -28,7 +28,8 @@
     "nameRequired": "İsim (gerekli",
     "close": "Kapat",
     "editComment": "Düzenle",
-    "deleteComment": "Sil"
+    "deleteComment": "Sil",
+    "sortByLastModified": ""
   },
   "loginScreen": {
     "domain": {

@@ -28,7 +28,8 @@
     "nameRequired": "Name required",
     "close": "Close",
     "editComment": "Edit",
-    "deleteComment": "Delete"
+    "deleteComment": "Delete",
+    "sortByLastModified": "Sorting By: Date Modified"
   },
   "loginScreen": {
     "domain": {

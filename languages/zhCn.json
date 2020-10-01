@@ -28,7 +28,8 @@
     "nameRequired": "姓名必填",
     "close": "关",
     "editComment": "编辑",
-    "deleteComment": "删除"
+    "deleteComment": "删除",
+    "sortByLastModified": ""
   },
   "loginScreen": {
     "domain": {

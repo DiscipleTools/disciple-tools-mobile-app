@@ -45,6 +45,15 @@ const styles = StyleSheet.create({
     height: 41,
     fontSize: 18,
   },
+  chip: {
+    borderColor: '#c2e0ff',
+    borderWidth: 1,
+    backgroundColor: '#ecf5fc',
+    borderRadius: 2,
+    padding: 4,
+    marginRight: 4,
+    marginBottom: 4,
+  },
 });
 
 const windowHeight = Dimensions.get('window').height,
@@ -54,8 +63,9 @@ let initialState = {
   search: '',
   filter: {
     toggle: false,
-    currentFilter: '',
+    ID: '',
     query: {},
+    name: '',
   },
   sections: [],
   activeSections: [],
@@ -82,15 +92,16 @@ class SearchBar extends React.Component {
     );
   };
 
-  filterByOption = (filterId, filterQuery) => {
+  filterByOption = (filterId, filterQuery, filterName) => {
     this.setState(
       {
         filter: {
-          currentFilter: filterId,
+          ID: filterId,
           toggle: false,
           query: {
             ...filterQuery,
           },
+          name: filterName,
         },
         activeSections: initialState.activeSections,
         // Reset text filter to their initial state
@@ -131,8 +142,8 @@ class SearchBar extends React.Component {
   refreshFilter = () => {
     if (this.state.search.length > 0) {
       this.filterByText(this.state.search);
-    } else if (this.state.filter.currentFilter.length > 0) {
-      this.filterByOption(this.state.filter.currentFilter, this.state.filter.query);
+    } else if (this.state.filter.ID.length > 0) {
+      this.filterByOption(this.state.filter.ID, this.state.filter.query, this.state.filter.name);
     }
   };
 
@@ -199,7 +210,7 @@ class SearchBar extends React.Component {
             key={filter.ID}
             activeOpacity={0.5}
             onPress={() => {
-              this.filterByOption(filter.ID, filter.query);
+              this.filterByOption(filter.ID, filter.query, filter.name);
             }}>
             <View
               style={{
@@ -208,7 +219,7 @@ class SearchBar extends React.Component {
                 paddingLeft: filter.subfilter ? 20 : 0,
               }}>
               <CheckBox
-                checked={filter.ID === this.state.filter.currentFilter}
+                checked={filter.ID === this.state.filter.ID}
                 checkedIcon="dot-circle-o"
                 uncheckedIcon="circle-o"
                 containerStyle={{
@@ -289,6 +300,18 @@ class SearchBar extends React.Component {
               onPress={() => this.showFiltersPanel()}
             />
           </Item>
+          {!this.state.filter.toggle &&
+            (this.state.search.length > 0 || this.state.filter.name.length > 0) && (
+              <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', marginTop: 10 }}>
+                {this.state.search.length > 0 && (
+                  <Text style={styles.chip}>{this.state.search}</Text>
+                )}
+                {this.state.filter.name.length > 0 && (
+                  <Text style={styles.chip}>{this.state.filter.name}</Text>
+                )}
+                <Text style={styles.chip}>{i18n.t('global.sortByLastModified')}</Text>
+              </View>
+            )}
           {this.state.filter.toggle ? (
             <View style={{ marginTop: 20, marginBottom: 20 }}>
               <Accordion

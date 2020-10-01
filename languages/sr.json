@@ -28,7 +28,8 @@
     "nameRequired": "Име (обавезно",
     "close": "Близу",
     "editComment": "Уредити",
-    "deleteComment": "Избриши"
+    "deleteComment": "Избриши",
+    "sortByLastModified": ""
   },
   "loginScreen": {
     "domain": {
