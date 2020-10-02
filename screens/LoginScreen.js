@@ -25,12 +25,13 @@ import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import { BlurView } from 'expo-blur';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Localization from 'expo-localization';
+import { Row } from 'react-native-easy-grid';
 
 import i18n from '../languages';
 import locales from '../languages/locales';
 import Colors from '../constants/Colors';
 import { login, getUserInfo } from '../store/actions/user.actions';
-import { setLanguage } from '../store/actions/i18n.actions';
+import { setLanguage, cancelSetLanguage } from '../store/actions/i18n.actions';
 import TextField from '../components/TextField';
 import {
   getLocations,
@@ -693,6 +694,14 @@ class LoginScreen extends React.Component {
     }, 1000);
   };
 
+  cancelSetLanguage = () => {
+    i18n.setLocale(this.props.i18n.previousLocale, this.props.i18n.previousIsRTL);
+    this.props.cancelSetLanguage();
+    this.setState({
+      toggleRestartDialog: false,
+    });
+  };
+
   // TODO: How to disable iCloud save password feature?
   render() {
     const errorToast = (
@@ -937,9 +946,31 @@ class LoginScreen extends React.Component {
                   ': ' +
                   (this.props.i18n.isRTL ? 'RTL' : 'LTR')}
               </Text>
-              <Button block style={styles.dialogButton} onPress={this.restartApp}>
-                <Text style={{ color: '#FFFFFF' }}>{i18n.t('appRestart.button')}</Text>
-              </Button>
+              <Row style={{ height: 60 }}>
+                <Button
+                  block
+                  style={[
+                    styles.dialogButton,
+                    {
+                      backgroundColor: '#ffffff',
+                      width: 120,
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                    },
+                  ]}
+                  onPress={this.cancelSetLanguage}>
+                  <Text style={{ color: Colors.tintColor }}>{i18n.t('global.cancel')}</Text>
+                </Button>
+                <Button
+                  block
+                  style={[
+                    styles.dialogButton,
+                    { width: 120, marginLeft: 'auto', marginRight: 'auto' },
+                  ]}
+                  onPress={this.restartApp}>
+                  <Text style={{ color: '#FFFFFF' }}>{i18n.t('appRestart.button')}</Text>
+                </Button>
+              </Row>
             </View>
           </BlurView>
         ) : null}
@@ -1107,6 +1138,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getNotificationsCount: (domain, token) => {
     dispatch(getNotificationsCount(domain, token));
+  },
+  cancelSetLanguage: () => {
+    dispatch(cancelSetLanguage());
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
