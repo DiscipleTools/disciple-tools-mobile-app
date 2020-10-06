@@ -29,7 +29,12 @@
     "close": "близко",
     "editComment": "редактировать",
     "deleteComment": "Удалить",
-    "sortByLastModified": ""
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": ""
   },
   "loginScreen": {
     "domain": {

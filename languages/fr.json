@@ -29,7 +29,12 @@
     "close": "proche",
     "editComment": "Éditer",
     "deleteComment": "Supprimer",
-    "sortByLastModified": ""
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": ""
   },
   "loginScreen": {
     "domain": {

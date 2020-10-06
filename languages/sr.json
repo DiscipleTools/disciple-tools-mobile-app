@@ -29,7 +29,12 @@
     "close": "Близу",
     "editComment": "Уредити",
     "deleteComment": "Избриши",
-    "sortByLastModified": ""
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": ""
   },
   "loginScreen": {
     "domain": {

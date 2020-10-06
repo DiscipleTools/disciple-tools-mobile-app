@@ -29,7 +29,12 @@
     "close": "قريب",
     "editComment": "تعديل",
     "deleteComment": "حذف",
-    "sortByLastModified": ""
+    "sortByLastModified": "",
+    "reset": "إعادة تعيين",
+    "apply": "تطبيق",
+    "showing": "عرض",
+    "comments": "تعليقات",
+    "activity": "النشاط"
   },
   "loginScreen": {
     "domain": {

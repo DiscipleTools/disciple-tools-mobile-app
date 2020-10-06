@@ -29,7 +29,12 @@
     "close": "نزدیک",
     "editComment": "ویرایش کنید",
     "deleteComment": "حذف",
-    "sortByLastModified": ""
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": ""
   },
   "loginScreen": {
     "domain": {

@@ -29,7 +29,12 @@
     "close": "Karibu",
     "editComment": "Hariri",
     "deleteComment": "Futa",
-    "sortByLastModified": ""
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": ""
   },
   "loginScreen": {
     "domain": {

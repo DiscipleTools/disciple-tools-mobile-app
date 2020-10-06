@@ -29,7 +29,12 @@
     "close": "Menutup",
     "editComment": "Edit",
     "deleteComment": "Menghapus",
-    "sortByLastModified": ""
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": ""
   },
   "loginScreen": {
     "domain": {

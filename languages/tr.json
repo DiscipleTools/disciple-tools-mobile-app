@@ -29,7 +29,12 @@
     "close": "Kapat",
     "editComment": "Düzenle",
     "deleteComment": "Sil",
-    "sortByLastModified": ""
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": ""
   },
   "loginScreen": {
     "domain": {

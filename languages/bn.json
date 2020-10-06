@@ -29,7 +29,12 @@
     "close": "ঘনিষ্ঠ",
     "editComment": "সম্পাদনা করুন",
     "deleteComment": "মুছে ফেলা",
-    "sortByLastModified": ""
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": ""
   },
   "loginScreen": {
     "domain": {

@@ -29,7 +29,12 @@
     "close": "Close",
     "editComment": "Edit",
     "deleteComment": "Delete",
-    "sortByLastModified": "Sorting By: Date Modified"
+    "sortByLastModified": "Sorting By: Date Modified",
+    "reset": "Reset",
+    "apply": "Apply",
+    "showing": "Showing",
+    "comments": "Comments",
+    "activity": "Activity"
   },
   "loginScreen": {
     "domain": {
