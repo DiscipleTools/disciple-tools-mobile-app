@@ -2281,7 +2281,9 @@ class ContactDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.contact.age ? this.state.contact.age : ''}
+                    {this.state.contact.age && this.state.contact.age !== 'not-set'
+                      ? this.state.contact.age
+                      : ''}
                   </Text>
                 </Col>
                 <Col style={styles.formParentLabel}>
