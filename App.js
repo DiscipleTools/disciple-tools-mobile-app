@@ -17,7 +17,7 @@ import sharedTools from './shared';
 
 // notifications
 
-import { setNetworkConnectivity } from './store/actions/networkConnectivity.actions';
+import { networkStatus, setNetworkConnectivity } from './store/actions/networkConnectivity.actions';
 
 /*Sentry.init({
   dsn: 'https://aaa9d833ba5942d59c69e290ffbd3f36@o424480.ingest.sentry.io/5356329',
@@ -84,12 +84,15 @@ class App extends React.Component {
       fetch('https://8.8.8.8')
         .then(() => {
           store.dispatch(setNetworkConnectivity(true));
+          store.dispatch(networkStatus(true));
         })
         .catch(() => {
           store.dispatch(setNetworkConnectivity(false));
+          store.dispatch(networkStatus(false));
         });
     } else {
       store.dispatch(setNetworkConnectivity(false));
+      store.dispatch(networkStatus(false));
     }
   };
 

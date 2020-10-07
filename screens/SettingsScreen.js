@@ -232,11 +232,13 @@ class SettingsScreen extends React.Component {
   };
 
   onFABPress = () => {
-    const toastMsg = this.props.isConnected
-      ? i18n.t('settingsScreen.networkUnavailable')
-      : i18n.t('settingsScreen.networkAvailable');
-    this.toast.show(toastMsg, 3000);
-    this.props.toggleNetworkConnectivity(this.props.isConnected);
+    if (this.props.networkStatus) {
+      const toastMsg = this.props.isConnected
+        ? i18n.t('settingsScreen.networkUnavailable')
+        : i18n.t('settingsScreen.networkAvailable');
+      this.toast.show(toastMsg, 3000);
+      this.props.toggleNetworkConnectivity(this.props.isConnected);
+    }
   };
 
   draftNewSupportEmail = () => {
@@ -422,7 +424,11 @@ class SettingsScreen extends React.Component {
               </Text>
             </Body>
             <Right>
-              <Switch value={this.props.isConnected} onChange={this.onFABPress} />
+              <Switch
+                value={this.props.isConnected}
+                onChange={this.onFABPress}
+                disabled={!this.props.networkStatus}
+              />
             </Right>
           </ListItem>
           {/* === Language === */}
@@ -701,6 +707,7 @@ const mapStateToProps = (state) => ({
   rememberPassword: state.userReducer.rememberPassword,
   pinCode: state.userReducer.pinCode,
   userReducerError: state.userReducer.error,
+  networkStatus: state.networkConnectivityReducer.networkStatus,
 });
 const mapDispatchToProps = (dispatch) => ({
   toggleNetworkConnectivity: (isConnected) => {
