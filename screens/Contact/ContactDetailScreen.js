@@ -1818,9 +1818,7 @@ class ContactDetailScreen extends React.Component {
     if (filtersSettings.showActivities) {
       list = list.concat(activities.data);
     }
-    return list
-      .filter((item, index) => list.indexOf(item) === index)
-      .sort((a, b) => new Date(a.date).getTime() < new Date(b.date).getTime());
+    return sharedTools.groupCommentsActivities(list);
   }
 
   getSelectizeItems = (contactList, localList) => {
@@ -4717,144 +4715,131 @@ class ContactDetailScreen extends React.Component {
 
   renderActivityOrCommentRow = (commentOrActivity) => (
     <View style={styles.container}>
-      <Image style={styles.image} source={{ uri: commentOrActivity.gravatar }} />
+      <Image style={styles.image} source={{ uri: commentOrActivity.data[0].gravatar }} />
       <View style={styles.content}>
-        <View style={styles.contentHeader}>
-          {
-            // Comment
-            Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text
-                      style={[styles.name, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
-                      {commentOrActivity.author}
-                    </Text>
-                  </Col>
-                  <Col style={{ width: 110 }}>
-                    <Text
-                      style={[
-                        styles.time,
-                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right' },
-                      ]}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )
-          }
-          {
-            // Activity
-            Object.prototype.hasOwnProperty.call(commentOrActivity, 'object_note') && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text
-                      style={[styles.name, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
-                      {commentOrActivity.name}
-                    </Text>
-                  </Col>
-                  <Col style={{ width: 110 }}>
-                    <Text
-                      style={[
-                        styles.time,
-                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right' },
-                      ]}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )
-          }
-        </View>
-        <ParsedText
-          style={[
-            commentOrActivity.content
-              ? {
-                  paddingLeft: 10,
-                  paddingRight: 10,
-                }
-              : {
-                  paddingLeft: 10,
-                  paddingRight: 10,
-                  color: '#B4B4B4',
-                  fontStyle: 'italic',
-                },
-            this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-          ]}
-          parse={[
-            {
-              pattern: sharedTools.mentionPattern,
-              style: { color: Colors.primary },
-              renderText: sharedTools.renderMention,
-            },
-          ]}>
-          {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
-            ? commentOrActivity.content
-            : this.formatActivityDate(commentOrActivity.object_note)}
-        </ParsedText>
         {
-          // Comment and its their own comment
-          Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') &&
-            commentOrActivity.author.toLowerCase() ===
-              this.props.userData.username.toLowerCase() && (
-              <Grid style={{ marginTop: 20 }}>
-                <Row
-                  style={{
-                    marginTop: 'auto',
-                    marginBottom: 'auto',
-                  }}>
-                  <Row
-                    style={{ marginLeft: 0, marginRight: 'auto' }}
-                    onPress={() => {
-                      this.openCommentDialog(commentOrActivity, true);
-                    }}>
-                    <Icon
-                      type="MaterialCommunityIcons"
-                      name="delete"
-                      style={{
-                        color: Colors.iconDelete,
-                        fontSize: 20,
-                      }}
-                    />
-                    <Text
-                      style={{
-                        color: Colors.primary,
-                        fontSize: 14,
-                      }}>
-                      {i18n.t('global.delete')}
-                    </Text>
-                  </Row>
-                  <Row
-                    style={{
-                      marginLeft: 'auto',
-                      marginRight: 0,
-                    }}
-                    onPress={() => {
-                      this.openCommentDialog(commentOrActivity);
-                    }}>
-                    <Icon
-                      type="MaterialCommunityIcons"
-                      name="pencil"
-                      style={{
-                        color: Colors.primary,
-                        fontSize: 20,
-                        marginLeft: 'auto',
-                      }}
-                    />
-                    <Text
-                      style={{
-                        color: Colors.primary,
-                        fontSize: 14,
-                      }}>
-                      {i18n.t('global.edit')}
-                    </Text>
-                  </Row>
-                </Row>
-              </Grid>
-            )
+          // Comment
+          commentOrActivity.data
+            .sort((a, b) => {
+              // Sort comments/activities group 'asc'
+              return new Date(a.date) > new Date(b.date);
+            })
+            .map((item, index) => {
+              return (
+                <View>
+                  {index === 0 && (
+                    <View style={styles.contentHeader}>
+                      <Grid>
+                        <Row>
+                          <Col>
+                            <Text
+                              style={[
+                                styles.name,
+                                this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                              ]}>
+                              {Object.prototype.hasOwnProperty.call(item, 'content')
+                                ? item.author
+                                : item.name}
+                            </Text>
+                          </Col>
+                          <Col style={{ width: 110 }}>
+                            <Text
+                              style={[
+                                styles.time,
+                                this.props.isRTL
+                                  ? { textAlign: 'left', flex: 1 }
+                                  : { textAlign: 'right' },
+                              ]}>
+                              {this.onFormatDateToView(item.date)}
+                            </Text>
+                          </Col>
+                        </Row>
+                      </Grid>
+                    </View>
+                  )}
+                  <ParsedText
+                    style={[
+                      {
+                        paddingLeft: 10,
+                        paddingRight: 10,
+                      },
+                      Object.prototype.hasOwnProperty.call(item, 'object_note')
+                        ? { color: '#B4B4B4', fontStyle: 'italic' }
+                        : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      index > 0 ? { marginTop: 20 } : {},
+                    ]}
+                    parse={[
+                      {
+                        pattern: sharedTools.mentionPattern,
+                        style: { color: Colors.primary },
+                        renderText: sharedTools.renderMention,
+                      },
+                    ]}>
+                    {Object.prototype.hasOwnProperty.call(item, 'content')
+                      ? item.content
+                      : this.formatActivityDate(item.object_note)}
+                  </ParsedText>
+                  {Object.prototype.hasOwnProperty.call(item, 'content') &&
+                    item.author.toLowerCase() === this.props.userData.username.toLowerCase() && (
+                      <Grid style={{ marginTop: 20 }}>
+                        <Row
+                          style={{
+                            marginTop: 'auto',
+                            marginBottom: 'auto',
+                          }}>
+                          <Row
+                            style={{ marginLeft: 0, marginRight: 'auto' }}
+                            onPress={() => {
+                              this.openCommentDialog(item, true);
+                            }}>
+                            <Icon
+                              type="MaterialCommunityIcons"
+                              name="delete"
+                              style={{
+                                color: Colors.iconDelete,
+                                fontSize: 20,
+                              }}
+                            />
+                            <Text
+                              style={{
+                                color: Colors.primary,
+                                fontSize: 14,
+                              }}>
+                              {i18n.t('global.delete')}
+                            </Text>
+                          </Row>
+                          <Row
+                            style={{
+                              marginLeft: 'auto',
+                              marginRight: 0,
+                            }}
+                            onPress={() => {
+                              this.openCommentDialog(item);
+                            }}>
+                            <Icon
+                              type="MaterialCommunityIcons"
+                              name="pencil"
+                              style={{
+                                color: Colors.primary,
+                                fontSize: 20,
+                                marginLeft: 'auto',
+                              }}
+                            />
+                            <Text
+                              style={{
+                                color: Colors.primary,
+                                fontSize: 14,
+                              }}>
+                              {i18n.t('global.edit')}
+                            </Text>
+                          </Row>
+                        </Row>
+                      </Grid>
+                    )}
+                </View>
+              );
+            })
         }
       </View>
     </View>
