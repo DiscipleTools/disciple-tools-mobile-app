@@ -29,7 +29,12 @@
     "close": "關",
     "editComment": "編輯",
     "deleteComment": "刪除",
-    "sortByLastModified": ""
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": ""
   },
   "loginScreen": {
     "domain": {

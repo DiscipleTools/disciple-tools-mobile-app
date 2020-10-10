@@ -29,7 +29,12 @@
     "close": "Cerrar",
     "editComment": "Editar",
     "deleteComment": "Eliminar",
-    "sortByLastModified": "Clasificación por: Fecha modificada"
+    "sortByLastModified": "Clasificación por: Fecha modificada",
+    "reset": "Restablecer",
+    "apply": "Aplicar",
+    "showing": "Mostrando",
+    "comments": "Comentarios",
+    "activity": "Actividad"
   },
   "loginScreen": {
     "domain": {

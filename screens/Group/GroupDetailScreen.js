@@ -32,6 +32,8 @@ import MentionsTextInput from 'react-native-mentions';
 import ParsedText from 'react-native-parsed-text';
 //import * as Sentry from 'sentry-expo';
 import { BlurView } from 'expo-blur';
+import { CheckBox } from 'react-native-elements';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import moment from '../../languages/moment';
 import sharedTools from '../../shared';
@@ -503,6 +505,15 @@ const styles = StyleSheet.create({
     color: Colors.grayDark,
     marginBottom: 5,
   },
+  commentsActionButtons: {
+    borderRadius: 80,
+    height: 40,
+    width: 40,
+    marginBottom: 10,
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+  },
 });
 
 const initialState = {
@@ -568,6 +579,11 @@ const initialState = {
     toggle: false,
     data: {},
     delete: false,
+  },
+  showFilterView: false,
+  filtersSettings: {
+    showComments: true,
+    showActivities: true,
   },
 };
 
@@ -1567,11 +1583,15 @@ class GroupDetailScreen extends React.Component {
   };
 
   getCommentsAndActivities() {
-    const { comments, activities } = this.state;
-    const list = comments.data.concat(activities.data);
-    return list
-      .filter((item, index) => list.indexOf(item) === index)
-      .sort((a, b) => new Date(a.date).getTime() < new Date(b.date).getTime());
+    const { comments, activities, filtersSettings } = this.state;
+    let list = [];
+    if (filtersSettings.showComments) {
+      list = list.concat(comments.data);
+    }
+    if (filtersSettings.showActivities) {
+      list = list.concat(activities.data);
+    }
+    return sharedTools.groupCommentsActivities(list);
   }
 
   showMembersCount = () => (
@@ -1652,126 +1672,131 @@ class GroupDetailScreen extends React.Component {
 
   renderActivityOrCommentRow = (commentOrActivity) => (
     <View style={styles.container}>
-      <Image style={styles.image} source={{ uri: commentOrActivity.gravatar }} />
+      <Image style={styles.image} source={{ uri: commentOrActivity.data[0].gravatar }} />
       <View style={styles.content}>
-        <View style={styles.contentHeader}>
-          {
-            // Comment
-            Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text
-                      style={[styles.name, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
-                      {commentOrActivity.author}
-                    </Text>
-                  </Col>
-                  <Col style={{ width: 110 }}>
-                    <Text
-                      style={[
-                        styles.time,
-                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right' },
-                      ]}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )
-          }
-          {
-            // Activity
-            Object.prototype.hasOwnProperty.call(commentOrActivity, 'object_note') && (
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text
-                      style={[styles.name, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
-                      {commentOrActivity.name}
-                    </Text>
-                  </Col>
-                  <Col style={{ width: 110 }}>
-                    <Text
-                      style={[
-                        styles.time,
-                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right' },
-                      ]}>
-                      {this.onFormatDateToView(commentOrActivity.date)}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
-            )
-          }
-        </View>
-        <ParsedText
-          style={
-            commentOrActivity.content
-              ? [styles.commentMessage, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]
-              : [styles.activityMessage, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]
-          }
-          parse={[
-            {
-              pattern: sharedTools.mentionPattern,
-              style: { color: Colors.primary },
-              renderText: sharedTools.renderMention,
-            },
-          ]}>
-          {Object.prototype.hasOwnProperty.call(commentOrActivity, 'content')
-            ? commentOrActivity.content
-            : this.formatActivityDate(commentOrActivity.object_note)}
-        </ParsedText>
         {
-          // Comment and its their own comment
-          Object.prototype.hasOwnProperty.call(commentOrActivity, 'content') &&
-            commentOrActivity.author.toLowerCase() ===
-              this.props.userData.username.toLowerCase() && (
-              <Grid style={{ marginTop: 20 }}>
-                <Row>
-                  <Row
-                    onPress={() => {
-                      this.openCommentDialog(commentOrActivity, true);
-                    }}>
-                    <Icon
-                      type="MaterialCommunityIcons"
-                      name="delete"
-                      style={{
-                        color: Colors.iconDelete,
-                        fontSize: 20,
-                      }}
-                    />
-                    <Text
-                      style={{
-                        color: Colors.primary,
-                        fontSize: 14,
-                      }}>
-                      {i18n.t('global.delete')}
-                    </Text>
-                  </Row>
-                  <Row
-                    onPress={() => {
-                      this.openCommentDialog(commentOrActivity);
-                    }}>
-                    <Icon
-                      type="MaterialCommunityIcons"
-                      name="pencil"
-                      style={{
-                        color: Colors.primary,
-                        fontSize: 20,
-                        marginLeft: 'auto',
-                      }}
-                    />
-                    <Text
-                      style={{
-                        color: Colors.primary,
-                        fontSize: 14,
-                      }}>
-                      {i18n.t('global.edit')}
-                    </Text>
-                  </Row>
-                </Row>
-              </Grid>
-            )
+          // Comment
+          commentOrActivity.data
+            .sort((a, b) => {
+              // Sort comments/activities group 'asc'
+              return new Date(a.date) > new Date(b.date);
+            })
+            .map((item, index) => {
+              return (
+                <View>
+                  {index === 0 && (
+                    <View style={styles.contentHeader}>
+                      <Grid>
+                        <Row>
+                          <Col>
+                            <Text
+                              style={[
+                                styles.name,
+                                this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                              ]}>
+                              {Object.prototype.hasOwnProperty.call(item, 'content')
+                                ? item.author
+                                : item.name}
+                            </Text>
+                          </Col>
+                          <Col style={{ width: 110 }}>
+                            <Text
+                              style={[
+                                styles.time,
+                                this.props.isRTL
+                                  ? { textAlign: 'left', flex: 1 }
+                                  : { textAlign: 'right' },
+                              ]}>
+                              {this.onFormatDateToView(item.date)}
+                            </Text>
+                          </Col>
+                        </Row>
+                      </Grid>
+                    </View>
+                  )}
+                  <ParsedText
+                    style={[
+                      {
+                        paddingLeft: 10,
+                        paddingRight: 10,
+                      },
+                      Object.prototype.hasOwnProperty.call(item, 'object_note')
+                        ? { color: '#B4B4B4', fontStyle: 'italic' }
+                        : {},
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      index > 0 ? { marginTop: 20 } : {},
+                    ]}
+                    parse={[
+                      {
+                        pattern: sharedTools.mentionPattern,
+                        style: { color: Colors.primary },
+                        renderText: sharedTools.renderMention,
+                      },
+                    ]}>
+                    {Object.prototype.hasOwnProperty.call(item, 'content')
+                      ? item.content
+                      : this.formatActivityDate(item.object_note)}
+                  </ParsedText>
+                  {Object.prototype.hasOwnProperty.call(item, 'content') &&
+                    item.author.toLowerCase() === this.props.userData.username.toLowerCase() && (
+                      <Grid style={{ marginTop: 20 }}>
+                        <Row
+                          style={{
+                            marginTop: 'auto',
+                            marginBottom: 'auto',
+                          }}>
+                          <Row
+                            style={{ marginLeft: 0, marginRight: 'auto' }}
+                            onPress={() => {
+                              this.openCommentDialog(item, true);
+                            }}>
+                            <Icon
+                              type="MaterialCommunityIcons"
+                              name="delete"
+                              style={{
+                                color: Colors.iconDelete,
+                                fontSize: 20,
+                              }}
+                            />
+                            <Text
+                              style={{
+                                color: Colors.primary,
+                                fontSize: 14,
+                              }}>
+                              {i18n.t('global.delete')}
+                            </Text>
+                          </Row>
+                          <Row
+                            style={{
+                              marginLeft: 'auto',
+                              marginRight: 0,
+                            }}
+                            onPress={() => {
+                              this.openCommentDialog(item);
+                            }}>
+                            <Icon
+                              type="MaterialCommunityIcons"
+                              name="pencil"
+                              style={{
+                                color: Colors.primary,
+                                fontSize: 20,
+                                marginLeft: 'auto',
+                              }}
+                            />
+                            <Text
+                              style={{
+                                color: Colors.primary,
+                                fontSize: 14,
+                              }}>
+                              {i18n.t('global.edit')}
+                            </Text>
+                          </Row>
+                        </Row>
+                      </Grid>
+                    )}
+                </View>
+              );
+            })
         }
       </View>
     </View>
@@ -2297,6 +2322,35 @@ class GroupDetailScreen extends React.Component {
       group: {
         ...prevState.group,
         member_count: value,
+      },
+    }));
+  };
+
+  toggleFilterView = () => {
+    this.setState((prevState) => ({
+      showFilterView: !prevState.showFilterView,
+    }));
+  };
+
+  resetFilters = () => {
+    this.setState(
+      {
+        filtersSettings: {
+          showComments: true,
+          showActivities: true,
+        },
+      },
+      () => {
+        this.toggleFilterView();
+      },
+    );
+  };
+
+  toggleFilter = (value, filterName) => {
+    this.setState((prevState) => ({
+      filtersSettings: {
+        ...prevState.filtersSettings,
+        [filterName]: !value,
       },
     }));
   };
@@ -3363,127 +3417,261 @@ class GroupDetailScreen extends React.Component {
     );
   }
 
-  commentsView = () => (
-    /*_viewable_*/
-    <View style={{ flex: 1, paddingBottom: this.state.footerHeight + this.state.footerLocation }}>
-      {this.state.comments.data.length == 0 &&
-      this.state.activities.data.length == 0 &&
-      !this.state.loadComments &&
-      !this.state.loadActivities ? (
-        this.noCommentsRender()
-      ) : (
-        <FlatList
-          style={{
-            backgroundColor: '#ffffff',
-          }}
-          ref={(flatList) => {
-            commentsFlatList = flatList;
-          }}
-          data={this.getCommentsAndActivities()}
-          extraData={!this.state.loadMoreComments || !this.state.loadMoreActivities}
-          inverted
-          ItemSeparatorComponent={() => (
+  commentsView = () => {
+    if (this.state.showFilterView) {
+      return (
+        <View style={{ flex: 1 }}>
+          <Text
+            style={[
+              {
+                color: Colors.tintColor,
+                fontSize: 18,
+                textAlign: 'left',
+                fontWeight: 'bold',
+                marginBottom: 20,
+                marginTop: 20,
+                marginLeft: 10,
+              },
+            ]}>
+            {i18n.t('global.showing')}:
+          </Text>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() =>
+              this.toggleFilter(this.state.filtersSettings.showComments, 'showComments')
+            }>
             <View
               style={{
-                height: 1,
-                backgroundColor: '#CCCCCC',
+                flexDirection: 'row',
+                height: 50,
+              }}>
+              <Text
+                style={{
+                  marginRight: 'auto',
+                  marginLeft: 10,
+                }}>
+                {i18n.t('global.comments')} ({this.state.comments.data.length})
+              </Text>
+              <CheckBox
+                Component={TouchableWithoutFeedback}
+                checked={this.state.filtersSettings.showComments}
+                containerStyle={{
+                  padding: 0,
+                  margin: 0,
+                }}
+                checkedColor={Colors.tintColor}
+              />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() =>
+              this.toggleFilter(this.state.filtersSettings.showActivities, 'showActivities')
+            }>
+            <View
+              style={{
+                flexDirection: 'row',
+                height: 50,
+              }}>
+              <Text
+                style={{
+                  marginRight: 'auto',
+                  marginLeft: 10,
+                }}>
+                {i18n.t('global.activity')} ({this.state.activities.data.length})
+              </Text>
+              <CheckBox
+                Component={TouchableWithoutFeedback}
+                checked={this.state.filtersSettings.showActivities}
+                containerStyle={{
+                  padding: 0,
+                  margin: 0,
+                }}
+                checkedColor={Colors.tintColor}
+              />
+            </View>
+          </TouchableOpacity>
+          <View style={{ position: 'absolute', bottom: 0, flexDirection: 'row' }}>
+            <Button
+              style={{
+                height: 75,
+                width: windowWidth / 2,
+                backgroundColor: '#FFFFFF',
+              }}
+              onPress={() => this.resetFilters()}>
+              <Text
+                style={{
+                  color: Colors.primary,
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                }}>
+                {i18n.t('global.reset')}
+              </Text>
+            </Button>
+            <Button
+              style={{
+                height: 75,
+                width: windowWidth / 2,
+                backgroundColor: Colors.primary,
+              }}
+              onPress={() => this.toggleFilterView()}>
+              <Text
+                style={{
+                  color: '#FFFFFF',
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                }}>
+                {i18n.t('global.apply')}
+              </Text>
+            </Button>
+          </View>
+        </View>
+      );
+    } else {
+      return (
+        <View
+          style={{ flex: 1, paddingBottom: this.state.footerHeight + this.state.footerLocation }}>
+          {this.state.comments.data.length == 0 &&
+          this.state.activities.data.length == 0 &&
+          !this.state.loadComments &&
+          !this.state.loadActivities ? (
+            this.noCommentsRender()
+          ) : (
+            <FlatList
+              style={{
+                backgroundColor: '#ffffff',
+              }}
+              ref={(flatList) => {
+                commentsFlatList = flatList;
+              }}
+              data={this.getCommentsAndActivities()}
+              extraData={!this.state.loadMoreComments || !this.state.loadMoreActivities}
+              inverted
+              ItemSeparatorComponent={() => (
+                <View
+                  style={{
+                    height: 1,
+                    backgroundColor: '#CCCCCC',
+                  }}
+                />
+              )}
+              keyExtractor={(item, index) => String(index)}
+              renderItem={(item) => {
+                const commentOrActivity = item.item;
+                return this.renderActivityOrCommentRow(commentOrActivity);
+              }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.loadComments || this.state.loadActivities}
+                  onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID, true)}
+                />
+              }
+              onScroll={({ nativeEvent }) => {
+                sharedTools.onlyExecuteLastCall(
+                  {},
+                  () => {
+                    const flatList = nativeEvent;
+                    const contentOffsetY = flatList.contentOffset.y;
+                    const layoutMeasurementHeight = flatList.layoutMeasurement.height;
+                    const contentSizeHeight = flatList.contentSize.height;
+                    const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
+                    const distanceToStart = contentSizeHeight - heightOffsetSum;
+                    if (distanceToStart < 100) {
+                      this.getGroupComments(this.state.group.ID);
+                      this.getGroupActivities(this.state.group.ID);
+                    }
+                  },
+                  500,
+                );
               }}
             />
           )}
-          keyExtractor={(item, index) => String(index)}
-          renderItem={(item) => {
-            const commentOrActivity = item.item;
-            return this.renderActivityOrCommentRow(commentOrActivity);
-          }}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.loadComments || this.state.loadActivities}
-              onRefresh={() => this.onRefreshCommentsActivities(this.state.group.ID, true)}
+          <View style={{ backgroundColor: Colors.mainBackgroundColor }}>
+            <MentionsTextInput
+              editable={!this.state.loadComments}
+              placeholder={i18n.t('global.writeYourCommentNoteHere')}
+              value={this.state.comment}
+              onChangeText={this.setComment}
+              style={this.props.isRTL ? { textAlign: 'right', flex: 1 } : {}}
+              textInputStyle={{
+                borderColor: '#B4B4B4',
+                borderRadius: 5,
+                borderWidth: 1,
+                padding: 5,
+                margin: 10,
+                width: windowWidth - 120,
+                backgroundColor: this.state.loadComments ? '#e6e6e6' : '#FFFFFF',
+              }}
+              loadingComponent={() => (
+                <View
+                  style={{
+                    flex: 1,
+                    width: windowWidth,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <ActivityIndicator />
+                </View>
+              )}
+              textInputMinHeight={40}
+              textInputMaxHeight={80}
+              trigger={'@'}
+              triggerLocation={'new-word-only'}
+              triggerCallback={this.filterUsers.bind(this)}
+              renderSuggestionsRow={this.renderSuggestionsRow.bind(this)}
+              suggestionsData={this.state.suggestedUsers}
+              keyExtractor={(item, index) => item.key.toString()}
+              suggestionRowHeight={45}
+              horizontal={false}
+              MaxVisibleRowCount={3}
             />
-          }
-          onScroll={({ nativeEvent }) => {
-            sharedTools.onlyExecuteLastCall(
-              {},
-              () => {
-                const flatList = nativeEvent;
-                const contentOffsetY = flatList.contentOffset.y;
-                const layoutMeasurementHeight = flatList.layoutMeasurement.height;
-                const contentSizeHeight = flatList.contentSize.height;
-                const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
-                const distanceToStart = contentSizeHeight - heightOffsetSum;
-                if (distanceToStart < 100) {
-                  this.getGroupComments(this.state.group.ID);
-                  this.getGroupActivities(this.state.group.ID);
-                }
-              },
-              500,
-            );
-          }}
-        />
-      )}
-      <View style={{ backgroundColor: Colors.mainBackgroundColor }}>
-        <MentionsTextInput
-          editable={!this.state.loadComments}
-          placeholder={i18n.t('global.writeYourCommentNoteHere')}
-          value={this.state.comment}
-          onChangeText={this.setComment}
-          style={this.props.isRTL ? { textAlign: 'right', flex: 1 } : {}}
-          textInputStyle={{
-            borderColor: '#B4B4B4',
-            borderRadius: 5,
-            borderWidth: 1,
-            padding: 5,
-            margin: 10,
-            width: windowWidth - 80,
-            backgroundColor: this.state.loadComments ? '#e6e6e6' : '#FFFFFF',
-          }}
-          loadingComponent={() => (
-            <View
-              style={{
-                flex: 1,
-                width: windowWidth,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <ActivityIndicator />
-            </View>
-          )}
-          textInputMinHeight={40}
-          textInputMaxHeight={80}
-          trigger={'@'}
-          triggerLocation={'new-word-only'}
-          triggerCallback={this.filterUsers.bind(this)}
-          renderSuggestionsRow={this.renderSuggestionsRow.bind(this)}
-          suggestionsData={this.state.suggestedUsers}
-          keyExtractor={(item, index) => item.key.toString()}
-          suggestionRowHeight={45}
-          horizontal={false}
-          MaxVisibleRowCount={3}
-        />
-        <TouchableOpacity
-          onPress={() => this.onSaveComment()}
-          style={[
-            {
-              borderRadius: 80,
-              height: 40,
-              width: 40,
-              paddingTop: 7,
-              marginRight: 10,
-              marginBottom: 10,
-              position: 'absolute',
-              right: 0,
-              bottom: 0,
-            },
-            this.state.loadComments
-              ? { backgroundColor: '#e6e6e6' }
-              : { backgroundColor: Colors.tintColor },
-            this.props.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
-          ]}>
-          <Icon android="md-send" ios="ios-send" style={[{ color: 'white', fontSize: 25 }]} />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+            <TouchableOpacity
+              onPress={() => this.onSaveComment()}
+              style={[
+                styles.commentsActionButtons,
+                {
+                  paddingTop: 7,
+                  marginRight: 60,
+                },
+                this.state.loadComments
+                  ? { backgroundColor: '#e6e6e6' }
+                  : { backgroundColor: Colors.tintColor },
+                this.props.isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
+              ]}>
+              <Icon android="md-send" ios="ios-send" style={[{ color: 'white', fontSize: 25 }]} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => this.toggleFilterView()}
+              style={[
+                styles.commentsActionButtons,
+                {
+                  marginRight: 10,
+                },
+              ]}>
+              <Icon
+                type="FontAwesome"
+                name="filter"
+                style={[
+                  {
+                    color: Colors.tintColor,
+                    fontSize: 35,
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    marginTop: 'auto',
+                    marginBottom: 'auto',
+                  },
+                ]}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    }
+  };
 
   flatListItemSeparator = () => (
     <View

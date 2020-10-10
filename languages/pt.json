@@ -29,7 +29,12 @@
     "close": "Fechar",
     "editComment": "Editar",
     "deleteComment": "Excluir",
-    "sortByLastModified": ""
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": ""
   },
   "loginScreen": {
     "domain": {

@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 const diff = (obj1, obj2) => {
   // Make sure an object to compare is provided
   if (!obj2 || Object.prototype.toString.call(obj2) !== '[object Object]') {
@@ -207,6 +209,51 @@ const renderMention = (matchingString, matches) => {
   return `@${mentionText}`;
 };
 
+// Sort Comments and Acitivities by date, and group it by type (comment, activity) and user
+const groupCommentsActivities = (list) => {
+  // Sort list by: new to old
+  list = _.orderBy(list, 'date', 'desc');
+  let groupedList = [];
+  list.forEach((item, index, array) => {
+    if (index > 0) {
+      let previousCommentActivity = { ...array[index - 1] };
+      let previousGroupedCommentActivity = groupedList[groupedList.length - 1];
+      let lastGroupedCommentActivity =
+        previousGroupedCommentActivity.data[previousGroupedCommentActivity.data.length - 1];
+      let differenceBetweenDates = new Date(lastGroupedCommentActivity.date) - new Date(item.date),
+        hourOnMilliseconds = 3600000;
+      let authorName = item.author ? item.author : item.name,
+        previousAuthorName = previousCommentActivity.author
+          ? previousCommentActivity.author
+          : previousCommentActivity.name;
+      // current comment/activity same previous comment/activity, same type and current comment/activity date less than 1 day of difference
+      if (previousAuthorName === authorName && differenceBetweenDates < hourOnMilliseconds) {
+        groupedList[groupedList.length - 1] = {
+          ...previousGroupedCommentActivity,
+          data: [...previousGroupedCommentActivity.data, { ...item }],
+        };
+      } else {
+        groupedList.push({
+          data: [
+            {
+              ...item,
+            },
+          ],
+        });
+      }
+    } else {
+      groupedList.push({
+        data: [
+          {
+            ...item,
+          },
+        ],
+      });
+    }
+  });
+  return groupedList;
+};
+
 export default {
   diff,
   formatDateToBackEnd,
@@ -217,4 +264,5 @@ export default {
   onlyExecuteLastCall,
   mentionPattern,
   renderMention,
+  groupCommentsActivities,
 };

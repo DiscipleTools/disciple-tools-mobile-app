@@ -177,16 +177,16 @@ class SettingsScreen extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { rememberPassword, userData, userReducerError, i18n } = this.props;
+    const { rememberPassword, userData, userReducerError } = this.props;
 
     // Updated user locale setting
     if (userData && prevProps.userData !== userData && userData.locale !== this.props.i18n.locale) {
       // Only update app language on user profile language update (not cancel language change)
-      if (!i18n.canceledLocaleChange) {
+      if (!this.props.i18n.canceledLocaleChange) {
         this.changeLanguage(userData.locale.replace('_', '-'));
       }
     } else {
-      if (i18n.canceledLocaleChange) {
+      if (this.props.i18n.canceledLocaleChange) {
         this.props.setCancelFalse();
         this.updateUserInfo({
           locale: prevProps.i18n.previousLocale.replace('-', '_'),
@@ -195,7 +195,7 @@ class SettingsScreen extends React.Component {
     }
 
     // Updated locale on store
-    if (prevProps.i18n.locale !== this.props.i18n.locale && !i18n.canceledLocaleChange) {
+    if (prevProps.i18n.locale !== this.props.i18n.locale && !this.props.i18n.canceledLocaleChange) {
       this.showRestartDialog();
     }
 
@@ -232,11 +232,13 @@ class SettingsScreen extends React.Component {
   };
 
   onFABPress = () => {
-    const toastMsg = this.props.isConnected
-      ? i18n.t('settingsScreen.networkUnavailable')
-      : i18n.t('settingsScreen.networkAvailable');
-    this.toast.show(toastMsg, 3000);
-    this.props.toggleNetworkConnectivity(this.props.isConnected);
+    if (this.props.networkStatus) {
+      const toastMsg = this.props.isConnected
+        ? i18n.t('settingsScreen.networkUnavailable')
+        : i18n.t('settingsScreen.networkAvailable');
+      this.toast.show(toastMsg, 3000);
+      this.props.toggleNetworkConnectivity(this.props.isConnected);
+    }
   };
 
   draftNewSupportEmail = () => {
@@ -422,7 +424,11 @@ class SettingsScreen extends React.Component {
               </Text>
             </Body>
             <Right>
-              <Switch value={this.props.isConnected} onChange={this.onFABPress} />
+              <Switch
+                value={this.props.isConnected}
+                onChange={this.onFABPress}
+                disabled={!this.props.networkStatus}
+              />
             </Right>
           </ListItem>
           {/* === Language === */}
@@ -701,6 +707,7 @@ const mapStateToProps = (state) => ({
   rememberPassword: state.userReducer.rememberPassword,
   pinCode: state.userReducer.pinCode,
   userReducerError: state.userReducer.error,
+  networkStatus: state.networkConnectivityReducer.networkStatus,
 });
 const mapDispatchToProps = (dispatch) => ({
   toggleNetworkConnectivity: (isConnected) => {

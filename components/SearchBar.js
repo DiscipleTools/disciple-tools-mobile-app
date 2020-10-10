@@ -16,6 +16,7 @@ import Accordion from 'react-native-collapsible/Accordion';
 import PropTypes from 'prop-types';
 import { CheckBox } from 'react-native-elements';
 import { Header } from 'react-navigation-stack';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   searchBarContainer: {
@@ -219,6 +220,7 @@ class SearchBar extends React.Component {
                 paddingLeft: filter.subfilter ? 20 : 0,
               }}>
               <CheckBox
+                Component={TouchableWithoutFeedback}
                 checked={filter.ID === this.state.filter.ID}
                 checkedIcon="dot-circle-o"
                 uncheckedIcon="circle-o"

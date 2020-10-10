@@ -29,7 +29,12 @@
     "close": "Dichtbij",
     "editComment": "Bewerk",
     "deleteComment": "Verwijderen",
-    "sortByLastModified": ""
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": ""
   },
   "loginScreen": {
     "domain": {

@@ -29,7 +29,12 @@
     "close": "Zapri",
     "editComment": "Uredi",
     "deleteComment": "Izbriši",
-    "sortByLastModified": ""
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": ""
   },
   "loginScreen": {
     "domain": {
