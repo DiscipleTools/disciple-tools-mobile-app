@@ -34,7 +34,8 @@
     "apply": "Aplicar",
     "showing": "Mostrando",
     "comments": "Comentarios",
-    "activity": "Actividad"
+    "activity": "Actividad",
+    "submit": "Enviar"
   },
   "loginScreen": {
     "domain": {
