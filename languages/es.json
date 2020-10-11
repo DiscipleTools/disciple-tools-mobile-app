@@ -131,6 +131,13 @@
       "quick_button_meeting_scheduled": "Reunión Programada",
       "quick_button_meeting_postponed": "Reunión Pospuso",
       "quick_button_meeting_complete": "Reunión Completa"
+    },
+    "attendance": {
+      "header": "Asistencia a la reunión",
+      "didAttendComment": "Grupo atendido",
+      "didNotAttendComment": "No asistió al grupo",
+      "groupCommentLabel": "Comentario de la reunión",
+      "groupComment": "Reunión Completa"
     }
   },
   "notificationsScreen": {

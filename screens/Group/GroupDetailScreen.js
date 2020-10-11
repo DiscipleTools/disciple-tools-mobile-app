@@ -5001,7 +5001,6 @@ class GroupDetailScreen extends React.Component {
     }
   };
 
-  /*
   onMeetingComplete = () => {
     // determine whether there is an existing 'meeting_complete' questionnaire,
     // if so, proxy from Attendance to Questionnaire, else back to GroupDetails
@@ -5017,7 +5016,6 @@ class GroupDetailScreen extends React.Component {
         q_id = questionnaire.id;
       }
     });
-    /*
     this.props.navigation.navigate(
       NavigationActions.navigate({
         routeName: 'Attendance',
@@ -5031,6 +5029,7 @@ class GroupDetailScreen extends React.Component {
         }),
       }),
     );
+    /*
     this.props.navigation.navigate(
       NavigationActions.navigate({
         routeName: 'Questionnaire',
@@ -5045,8 +5044,8 @@ class GroupDetailScreen extends React.Component {
         }),
       }),
     );
+    */
   };
-  */
 
   render() {
     const successToast = (
@@ -5155,8 +5154,7 @@ class GroupDetailScreen extends React.Component {
                         //title={this.props.groupSettings.fields.quick_button_meeting_complete.name}
                         title={i18n.t('groupDetailScreen.fab.quick_button_meeting_complete')}
                         onPress={() => {
-                          //this.onMeetingComplete();
-                          this.onSaveQuickAction('quick_button_meeting_complete');
+                          this.onMeetingComplete();
                         }}
                         size={40}
                         nativeFeedbackRippleColor="rgba(0,0,0,0)"
@@ -5507,6 +5505,7 @@ GroupDetailScreen.defaultProps = {
   saved: null,
   isConnected: null,
   groupSettings: null,
+  questionnaires: [],
 };
 
 const mapStateToProps = (state) => ({
@@ -5531,6 +5530,7 @@ const mapStateToProps = (state) => ({
   isRTL: state.i18nReducer.isRTL,
   previousGroups: state.groupsReducer.previousGroups,
   previousContacts: state.contactsReducer.previousContacts,
+  questionnaires: state.questionnaireReducer.questionnaires,
 });
 
 const mapDispatchToProps = (dispatch) => ({

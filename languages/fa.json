@@ -131,6 +131,13 @@
       "quick_button_meeting_scheduled": "جلسه برنامه ریزی شده",
       "quick_button_meeting_postponed": "جلسه به تعویق افتاد",
       "quick_button_meeting_complete": "جلسه کامل است"
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
     }
   },
   "notificationsScreen": {

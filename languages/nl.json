@@ -131,6 +131,13 @@
       "quick_button_meeting_scheduled": "Vergadering gepland",
       "quick_button_meeting_postponed": "Vergadering uitgesteld",
       "quick_button_meeting_complete": "Vergadering voltooid"
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
     }
   },
   "notificationsScreen": {

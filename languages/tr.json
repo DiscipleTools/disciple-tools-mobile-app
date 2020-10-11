@@ -131,6 +131,13 @@
       "quick_button_meeting_scheduled": "Toplantı Planlandı",
       "quick_button_meeting_postponed": "Toplantı Ertelendi",
       "quick_button_meeting_complete": "Toplantı Tamamlandı"
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
     }
   },
   "notificationsScreen": {

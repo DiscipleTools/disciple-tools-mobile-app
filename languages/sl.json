@@ -131,6 +131,13 @@
       "quick_button_meeting_scheduled": "Načrtovan sestanek",
       "quick_button_meeting_postponed": "Seja prestavljena",
       "quick_button_meeting_complete": "Sestanek končan"
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
     }
   },
   "notificationsScreen": {

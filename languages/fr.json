@@ -131,6 +131,13 @@
       "quick_button_meeting_scheduled": "Réunion programmée",
       "quick_button_meeting_postponed": "Réunion reportée",
       "quick_button_meeting_complete": "Réunion terminée"
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
     }
   },
   "notificationsScreen": {

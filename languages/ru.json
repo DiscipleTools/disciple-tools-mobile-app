@@ -131,6 +131,13 @@
       "quick_button_meeting_scheduled": "Встреча запланирована",
       "quick_button_meeting_postponed": "Встреча отложена",
       "quick_button_meeting_complete": "Встреча завершена"
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
     }
   },
   "notificationsScreen": {

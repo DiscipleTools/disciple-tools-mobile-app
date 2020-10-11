@@ -131,6 +131,13 @@
       "quick_button_meeting_scheduled": "会议预定",
       "quick_button_meeting_postponed": "会议推迟",
       "quick_button_meeting_complete": "会议完成"
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
     }
   },
   "notificationsScreen": {

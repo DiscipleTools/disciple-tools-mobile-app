@@ -131,6 +131,13 @@
       "quick_button_meeting_scheduled": "Састанак заказан",
       "quick_button_meeting_postponed": "Састанак одложен",
       "quick_button_meeting_complete": "Састанак завршен"
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
     }
   },
   "notificationsScreen": {
