@@ -34,7 +34,8 @@
     "apply": "Apply",
     "showing": "Showing",
     "comments": "Comments",
-    "activity": "Activity"
+    "activity": "Activity",
+    "submit": "Submit"
   },
   "loginScreen": {
     "domain": {
@@ -131,6 +132,13 @@
       "quick_button_meeting_scheduled": "Meeting Scheduled",
       "quick_button_meeting_postponed": "Meeting Postponed",
       "quick_button_meeting_complete": "Meeting Complete"
+    },
+    "attendance": {
+      "header": "Meeting Attendance",
+      "didAttendComment": "Attended Group",
+      "didNotAttendComment": "Did Not Attend Group",
+      "groupCommentLabel": "Meeting Comment",
+      "groupComment": "Meeting Complete"
     }
   },
   "notificationsScreen": {

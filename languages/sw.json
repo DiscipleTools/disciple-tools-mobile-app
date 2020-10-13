@@ -34,7 +34,8 @@
     "apply": "",
     "showing": "",
     "comments": "",
-    "activity": ""
+    "activity": "",
+    "submit": ""
   },
   "loginScreen": {
     "domain": {
@@ -131,6 +132,13 @@
       "quick_button_meeting_scheduled": "Mkutano Umepangwa",
       "quick_button_meeting_postponed": "Mkutano Ulihairishwa",
       "quick_button_meeting_complete": "Mkutano Umekamilika"
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
     }
   },
   "notificationsScreen": {

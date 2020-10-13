@@ -34,7 +34,8 @@
     "apply": "",
     "showing": "",
     "comments": "",
-    "activity": ""
+    "activity": "",
+    "submit": ""
   },
   "loginScreen": {
     "domain": {
@@ -131,6 +132,13 @@
       "quick_button_meeting_scheduled": "Sastanak zakazan",
       "quick_button_meeting_postponed": "Sastanak odgođen",
       "quick_button_meeting_complete": "Sastanak završen"
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
     }
   },
   "notificationsScreen": {

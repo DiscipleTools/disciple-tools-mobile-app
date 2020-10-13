@@ -34,7 +34,8 @@
     "apply": "تطبيق",
     "showing": "عرض",
     "comments": "تعليقات",
-    "activity": "النشاط"
+    "activity": "النشاط",
+    "submit": "إرسال"
   },
   "loginScreen": {
     "domain": {
@@ -131,6 +132,13 @@
       "quick_button_meeting_scheduled": "جدول الاجتماع",
       "quick_button_meeting_postponed": "تم تأجيل الاجتماع",
       "quick_button_meeting_complete": "اكتمل الاجتماع"
+    },
+    "attendance": {
+      "header": "حضور الاجتماع",
+      "didAttendComment": "حضر المجموعة",
+      "didNotAttendComment": "لم يحضر المجموعة",
+      "groupcommentLabel": "تعليق الاجتماع",
+      "groupComment": "اكتمل الاجتماع"
     }
   },
   "notificationsScreen": {

@@ -34,7 +34,8 @@
     "apply": "",
     "showing": "",
     "comments": "",
-    "activity": ""
+    "activity": "",
+    "submit": ""
   },
   "loginScreen": {
     "domain": {
@@ -131,6 +132,13 @@
       "quick_button_meeting_scheduled": "會議預定",
       "quick_button_meeting_postponed": "會議推遲",
       "quick_button_meeting_complete": "會議完成"
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
     }
   },
   "notificationsScreen": {
