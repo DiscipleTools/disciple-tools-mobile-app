@@ -35,6 +35,7 @@ import ParsedText from 'react-native-parsed-text';
 import { BlurView } from 'expo-blur';
 import { CheckBox } from 'react-native-elements';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { Html5Entities } from 'html-entities';
 
 import moment from '../../languages/moment';
 import sharedTools from '../../shared';
@@ -91,6 +92,7 @@ let commentsFlatList,
   coachingSelectizeRef,
   datePickerRef;
 /* eslint-enable */
+const entities = new Html5Entities();
 const defaultFaithMilestones = [
   'milestone_has_bible',
   'milestone_reading_bible',
@@ -1665,10 +1667,7 @@ class ContactDetailScreen extends React.Component {
             });
           let contactToSave = {
             ...sharedTools.diff(unmodifiedContact, contact),
-          };
-          contactToSave = {
-            ...contactToSave,
-            title: this.state.contact.title,
+            title: entities.encode(this.state.contact.title),
           };
           // Remove empty arrays
           Object.keys(contactToSave).forEach((key) => {
