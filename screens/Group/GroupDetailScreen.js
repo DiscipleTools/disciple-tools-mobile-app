@@ -34,6 +34,7 @@ import ParsedText from 'react-native-parsed-text';
 import { BlurView } from 'expo-blur';
 import { CheckBox } from 'react-native-elements';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { Html5Entities } from 'html-entities';
 
 import moment from '../../languages/moment';
 import sharedTools from '../../shared';
@@ -102,6 +103,7 @@ let commentsFlatList,
   endDatePickerRef,
   churchStartDatePickerRef;
 /* eslint-enable */
+const entities = new Html5Entities();
 const defaultHealthMilestones = [
   'church_baptism',
   'church_bible',
@@ -2167,7 +2169,7 @@ class GroupDetailScreen extends React.Component {
           const group = this.transformGroupObject(this.state.group, quickAction);
           let groupToSave = {
             ...sharedTools.diff(unmodifiedGroup, group),
-            title: this.state.group.title,
+            title: entities.encode(this.state.group.title),
           };
           if (this.state.group.ID) {
             groupToSave = {
