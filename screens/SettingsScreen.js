@@ -593,7 +593,8 @@ class SettingsScreen extends React.Component {
                 <SmoothPinCodeInput
                   password
                   mask="﹡"
-                  cellSize={60}
+                  cellSize={42}
+                  codeLength={6}
                   ref={this.pinInput}
                   value={this.state.pin}
                   onTextChange={(pin) => {
