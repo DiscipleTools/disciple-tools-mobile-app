@@ -3745,7 +3745,13 @@ class GroupDetailScreen extends React.Component {
               onPress={() => this.goToContactDetailScreen(membersGroup.value, membersGroup.name)}
               key={membersGroup.value}
               style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              <Text style={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: 15, padding: 5 }}>
+              <Text
+                style={[
+                  { marginTop: 'auto', marginBottom: 'auto', padding: 5 },
+                  this.props.isRTL
+                    ? { textAlign: 'left', flex: 1, marginRight: 15 }
+                    : { marginLeft: 15 },
+                ]}>
                 {membersGroup.name}
               </Text>
             </TouchableOpacity>
@@ -3842,7 +3848,11 @@ class GroupDetailScreen extends React.Component {
             />
             <Grid>
               <Row>
-                <Col style={{ width: 40, marginTop: 5, marginLeft: 0 }}>
+                <Col
+                  style={[
+                    { width: 40, marginTop: 5, marginLeft: 0 },
+                    this.props.isRTL ? { marginRight: 10 } : {},
+                  ]}>
                   <Icon type="Entypo" name="add-user" style={{ color: '#CCCCCC' }} />
                 </Col>
                 <Col style={{ paddingBottom: 200 }}>
