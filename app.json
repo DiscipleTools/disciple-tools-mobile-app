@@ -23,7 +23,8 @@
     "android": {
       "package": "tools.disciple.app",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 190
+      "versionCode": 190,
+      "useNextNotificationsApi": true
     },
     "description": ""
   }

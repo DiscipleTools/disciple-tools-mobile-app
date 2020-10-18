@@ -2,7 +2,7 @@ import { put, take, takeLatest, all, takeEvery } from 'redux-saga/effects';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Permissions from 'expo-permissions';
-import { Notifications } from 'expo';
+import * as Notifications from 'expo-notifications';
 import * as actions from '../actions/user.actions';
 
 export function* login({ domain, username, password }) {
