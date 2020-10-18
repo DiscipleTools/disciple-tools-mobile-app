@@ -824,7 +824,7 @@ class LoginScreen extends React.Component {
             </View>
             {passwordErrorMessage}
             {this.state.loading ? (
-              <ActivityIndicator style={{ margin: 20 }} size="small" />
+              <ActivityIndicator color={Colors.tintColor} style={{ margin: 20 }} size="small" />
             ) : (
               <View>
                 <Button style={styles.signInButton} onPress={this.onLoginPress} block>
