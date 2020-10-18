@@ -5,7 +5,6 @@ import {
   Body,
   Button as NbButton,
   Container,
-  Content,
   Icon,
   Left,
   ListItem,
@@ -356,62 +355,40 @@ class SettingsScreen extends React.Component {
     return (
       <Container style={styles.container}>
         {!this.props.isConnected && this.offlineBarRender()}
-        <Content>
-          <ListItem itemHeader first avatar style={styles.header}>
-            <Left>
-              <Thumbnail source={require('../assets/images/gravatar-default.png')} />
-            </Left>
-            <Body style={styles.headerBody}>
-              <Text
-                style={[
-                  {
-                    writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
-                    textAlign: this.props.i18n.isRTL ? 'right' : 'left',
-                  },
-                  styles.username,
-                ]}>
-                {this.props.userData.displayName}
-              </Text>
-              <Text
-                style={[
-                  {
-                    writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
-                    textAlign: this.props.i18n.isRTL ? 'right' : 'left',
-                  },
-                  styles.domain,
-                ]}>
-                {this.props.userData.domain}
-              </Text>
-            </Body>
-          </ListItem>
+        <ListItem itemHeader first avatar style={styles.header}>
+          <Left>
+            <Thumbnail source={require('../assets/images/gravatar-default.png')} />
+          </Left>
+          <Body style={styles.headerBody}>
+            <Text
+              style={[
+                {
+                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+                },
+                styles.username,
+              ]}>
+              {this.props.userData.displayName}
+            </Text>
+            <Text
+              style={[
+                {
+                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+                },
+                styles.domain,
+              ]}>
+              {this.props.userData.domain}
+            </Text>
+          </Body>
+        </ListItem>
 
-          {/* === Storybook === */}
-          {__DEV__ && (
-            <ListItem icon onPress={() => this.props.navigation.navigate('Storybook')}>
-              <Left>
-                <NbButton onPress={() => this.props.navigation.navigate('Storybook')}>
-                  <Icon active name="flask" />
-                </NbButton>
-              </Left>
-              <Body style={styles.body}>
-                <Text
-                  style={{
-                    writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
-                    textAlign: this.props.i18n.isRTL ? 'right' : 'left',
-                  }}>
-                  {i18n.t('settingsScreen.storybook')}
-                </Text>
-              </Body>
-              <Right>
-                <Icon active name={this.props.i18n.isRTL ? 'arrow-back' : 'arrow-forward'} />
-              </Right>
-            </ListItem>
-          )}
-          {/* === Online === */}
-          <ListItem icon onPress={this.onFABPress}>
+        {/* === Storybook === */}
+        {__DEV__ && (
+          <ListItem icon onPress={() => this.props.navigation.navigate('Storybook')}>
             <Left>
-              <NbButton onPress={this.onFABPress}>
-                <Icon active name="ios-flash" />
+              <NbButton onPress={() => this.props.navigation.navigate('Storybook')}>
+                <Icon active name="flask" />
               </NbButton>
             </Left>
             <Body style={styles.body}>
@@ -420,121 +397,141 @@ class SettingsScreen extends React.Component {
                   writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
                   textAlign: this.props.i18n.isRTL ? 'right' : 'left',
                 }}>
-                {i18n.t('global.online')}
-              </Text>
-            </Body>
-            <Right>
-              <Switch
-                value={this.props.isConnected}
-                onChange={this.onFABPress}
-                disabled={!this.props.networkStatus}
-              />
-            </Right>
-          </ListItem>
-          {/* === Language === */}
-          <ListItem icon>
-            <Left>
-              <NbButton>
-                <Icon active type="FontAwesome" name="language" />
-              </NbButton>
-            </Left>
-            <Body style={styles.body}>
-              <Text
-                style={{
-                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
-                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
-                }}>
-                {i18n.t('global.language')}
-              </Text>
-            </Body>
-            <Right>
-              <Picker
-                style={{ width: 150 }}
-                selectedValue={this.props.i18n.locale}
-                onValueChange={this.selectLanguage}>
-                {this.renderLanguagePickerItems()}
-              </Picker>
-            </Right>
-          </ListItem>
-          {/* === Remember password === */}
-          <ListItem icon>
-            <Left>
-              <NbButton>
-                <Icon active type="MaterialCommunityIcons" name="onepassword" />
-              </NbButton>
-            </Left>
-            <Body style={styles.body}>
-              <Text
-                style={{
-                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
-                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
-                }}>
-                {i18n.t('settingsScreen.rememberPassword')}
-              </Text>
-            </Body>
-            <Right>
-              <Switch value={this.props.rememberPassword} onChange={this.toggleRememberPassword} />
-            </Right>
-          </ListItem>
-          {/* === PIN Code === */}
-          <ListItem icon onPress={this.toggleShowPIN}>
-            <Left>
-              <NbButton>
-                <Icon active type="MaterialCommunityIcons" name="security" />
-              </NbButton>
-            </Left>
-            <Body style={styles.body}>
-              <Text
-                style={{
-                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
-                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
-                }}>
-                {`${
-                  this.props.pinCode.enabled
-                    ? i18n.t('settingsScreen.remove')
-                    : i18n.t('settingsScreen.set')
-                } ${i18n.t('settingsScreen.pinCode')}`}
-              </Text>
-            </Body>
-          </ListItem>
-          {/* === Help / Support === */}
-          <ListItem icon onPress={this.draftNewSupportEmail}>
-            <Left>
-              <NbButton>
-                <Icon active name="help-circle" />
-              </NbButton>
-            </Left>
-            <Body style={styles.body}>
-              <Text
-                style={{
-                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
-                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
-                }}>
-                {i18n.t('settingsScreen.helpSupport')}
-              </Text>
-            </Body>
-          </ListItem>
-          {/* === Logout === */}
-          <ListItem icon onPress={this.signOutAsync}>
-            <Left>
-              <NbButton>
-                <Icon active name="log-out" />
-              </NbButton>
-            </Left>
-            <Body style={styles.body}>
-              <Text
-                style={{
-                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
-                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
-                }}>
-                {i18n.t('settingsScreen.logout')}
+                {i18n.t('settingsScreen.storybook')}
               </Text>
             </Body>
             <Right>
               <Icon active name={this.props.i18n.isRTL ? 'arrow-back' : 'arrow-forward'} />
             </Right>
           </ListItem>
-        </Content>
+        )}
+        {/* === Online === */}
+        <ListItem icon onPress={this.onFABPress}>
+          <Left>
+            <NbButton onPress={this.onFABPress}>
+              <Icon active name="ios-flash" />
+            </NbButton>
+          </Left>
+          <Body style={styles.body}>
+            <Text
+              style={{
+                writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+              }}>
+              {i18n.t('global.online')}
+            </Text>
+          </Body>
+          <Right>
+            <Switch
+              value={this.props.isConnected}
+              onChange={this.onFABPress}
+              disabled={!this.props.networkStatus}
+            />
+          </Right>
+        </ListItem>
+        {/* === Language === */}
+        <ListItem icon>
+          <Left>
+            <NbButton>
+              <Icon active type="FontAwesome" name="language" />
+            </NbButton>
+          </Left>
+          <Body style={styles.body}>
+            <Text
+              style={{
+                writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+              }}>
+              {i18n.t('global.language')}
+            </Text>
+          </Body>
+          <Right>
+            <Picker
+              style={{ width: 150 }}
+              selectedValue={this.props.i18n.locale}
+              onValueChange={this.selectLanguage}>
+              {this.renderLanguagePickerItems()}
+            </Picker>
+          </Right>
+        </ListItem>
+        {/* === Remember password === */}
+        <ListItem icon>
+          <Left>
+            <NbButton>
+              <Icon active type="MaterialCommunityIcons" name="onepassword" />
+            </NbButton>
+          </Left>
+          <Body style={styles.body}>
+            <Text
+              style={{
+                writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+              }}>
+              {i18n.t('settingsScreen.rememberPassword')}
+            </Text>
+          </Body>
+          <Right>
+            <Switch value={this.props.rememberPassword} onChange={this.toggleRememberPassword} />
+          </Right>
+        </ListItem>
+        {/* === PIN Code === */}
+        <ListItem icon onPress={this.toggleShowPIN}>
+          <Left>
+            <NbButton>
+              <Icon active type="MaterialCommunityIcons" name="security" />
+            </NbButton>
+          </Left>
+          <Body style={styles.body}>
+            <Text
+              style={{
+                writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+              }}>
+              {`${
+                this.props.pinCode.enabled
+                  ? i18n.t('settingsScreen.remove')
+                  : i18n.t('settingsScreen.set')
+              } ${i18n.t('settingsScreen.pinCode')}`}
+            </Text>
+          </Body>
+        </ListItem>
+        {/* === Help / Support === */}
+        <ListItem icon onPress={this.draftNewSupportEmail}>
+          <Left>
+            <NbButton>
+              <Icon active name="help-circle" />
+            </NbButton>
+          </Left>
+          <Body style={styles.body}>
+            <Text
+              style={{
+                writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+              }}>
+              {i18n.t('settingsScreen.helpSupport')}
+            </Text>
+          </Body>
+        </ListItem>
+        {/* === Logout === */}
+        <ListItem icon onPress={this.signOutAsync}>
+          <Left>
+            <NbButton>
+              <Icon active name="log-out" />
+            </NbButton>
+          </Left>
+          <Body style={styles.body}>
+            <Text
+              style={{
+                writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+              }}>
+              {i18n.t('settingsScreen.logout')}
+            </Text>
+          </Body>
+          <Right>
+            <Icon active name={this.props.i18n.isRTL ? 'arrow-back' : 'arrow-forward'} />
+          </Right>
+        </ListItem>
         <Text style={styles.versionText}>{Constants.manifest.version}</Text>
         <Toast
           ref={(c) => {
