@@ -1,4 +1,5 @@
 import { actionChannel, take, select, put } from 'redux-saga/effects';
+import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 
 export default function* networkConnectivitySaga() {
   const onlineChannel = yield actionChannel('ONLINE');
@@ -137,6 +138,48 @@ export default function* networkConnectivitySaga() {
             yield put({
               type: mappedRequest.action.replace('RESPONSE', 'SUCCESS'),
               ...JSON.parse(mappedRequest.data.body),
+            });
+          } else {
+            let jsonData = response.data;
+
+            yield put({
+              type: mappedRequest.action.replace('RESPONSE', 'FAILURE'),
+              error: {
+                code: jsonData.code,
+                message: jsonData.message,
+              },
+            });
+          }
+        } else if (
+          action.action.includes('ADD_USER_SHARE') ||
+          action.action.includes('REMOVE_SHARED_USER')
+        ) {
+          yield put({
+            type: 'REQUEST',
+            payload: mappedRequest,
+          });
+
+          let response = yield take(mappedRequest.action);
+          response = response.payload;
+
+          if (response.status === 200) {
+            let parsedBody = JSON.parse(mappedRequest.data.body);
+
+            let usersList = yield ExpoFileSystemStorage.getItem('usersList');
+            (usersList = JSON.parse(usersList).map((user) => ({
+              value: parseInt(user.ID),
+              name: user.name,
+            }))),
+              (userData = usersList.find((user) => user.value === parseInt(parsedBody.user_id)));
+
+            let urlSplit = mappedRequest.url.split('/');
+
+            let contactId = urlSplit[urlSplit.length - 2];
+
+            yield put({
+              type: mappedRequest.action.replace('RESPONSE', 'SUCCESS'),
+              userData,
+              contactId,
             });
           } else {
             let jsonData = response.data;

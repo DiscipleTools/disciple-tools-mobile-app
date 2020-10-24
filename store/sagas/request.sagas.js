@@ -155,24 +155,49 @@ export default function* requestSaga() {
               payload: { data: { location_grid: list }, status: 200 },
             });
           }
-          if (payload.data.method === 'POST' && payload.action.includes('UPDATE_USER_INFO')) {
+          if (
+            payload.data.method === 'POST' &&
+            (payload.action.includes('UPDATE_USER_INFO') ||
+              payload.action.includes('ADD_USER_SHARE'))
+          ) {
             yield put({
               type: payload.action,
               payload: { data: {}, status: 200 },
             });
           }
-          if (payload.data.method === 'DELETE' && payload.action.includes('DELETE')) {
+          if (
+            (payload.data.method === 'DELETE' && payload.action.includes('DELETE')) ||
+            payload.action.includes('REMOVE_SHARED_USER')
+          ) {
             // Offline entity delete (send "last request" as response)
             /* eslint-disable */
             yield put({ type: payload.action, payload: { data: true, status: 200 } });
             /* eslint-enable */
+          }
+          if (payload.data.method === 'GET' && payload.action.includes('GET_SHARE_SETTINGS')) {
+            const entityName = payload.action.substr(0, payload.action.indexOf('_')).toLowerCase();
+            const list = yield select((state) => {
+              let urlSplit = payload.url.split('/');
+              let contactId = urlSplit[urlSplit.length - 2];
+              let list = [];
+              if (
+                Object.prototype.hasOwnProperty.call(
+                  state[`${entityName}Reducer`]['shareSettings'],
+                  `${contactId}`,
+                )
+              ) {
+                list = state[`${entityName}Reducer`]['shareSettings'][`${contactId}`];
+              }
+              return list;
+            });
+            yield put({ type: payload.action, payload: { data: list, status: 200 } });
           }
         }
       }
     } else if (request) {
       // ONLINE request
       // Get current queue, compare it with last request (if exist, fork it)
-      const queue = yield select((state) => state.requestReducer.queue);
+      let queue = yield select((state) => state.requestReducer.queue);
       let requestIndex;
       if (request.payload.data.method === 'POST') {
         requestIndex = queue.findIndex(

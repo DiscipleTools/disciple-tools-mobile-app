@@ -77,6 +77,24 @@ export const GROUPS_DELETE_COMMENT_FAILURE = 'GROUPS_DELETE_COMMENT_FAILURE';
 export const GROUPS_LOADING_FALSE = 'GROUPS_LOADING_FALSE';
 export const GROUPS_UPDATE_PREVIOUS = 'GROUPS_UPDATE_PREVIOUS';
 
+export const GROUPS_GET_SHARE_SETTINGS = 'GROUPS_GET_SHARE_SETTINGS';
+export const GROUPS_GET_SHARE_SETTINGS_START = 'GROUPS_GET_SHARE_SETTINGS_START';
+export const GROUPS_GET_SHARE_SETTINGS_RESPONSE = 'GROUPS_GET_SHARE_SETTINGS_RESPONSE';
+export const GROUPS_GET_SHARE_SETTINGS_SUCCESS = 'GROUPS_GET_SHARE_SETTINGS_SUCCESS';
+export const GROUPS_GET_SHARE_SETTINGS_FAILURE = 'GROUPS_GET_SHARE_SETTINGS_FAILURE';
+
+export const GROUPS_ADD_USER_SHARE = 'GROUPS_ADD_USER_SHARE';
+export const GROUPS_ADD_USER_SHARE_START = 'GROUPS_ADD_USER_SHARE_START';
+export const GROUPS_ADD_USER_SHARE_RESPONSE = 'GROUPS_ADD_USER_SHARE_RESPONSE';
+export const GROUPS_ADD_USER_SHARE_SUCCESS = 'GROUPS_ADD_USER_SHARE_SUCCESS';
+export const GROUPS_ADD_USER_SHARE_FAILURE = 'GROUPS_ADD_USER_SHARE_FAILURE';
+
+export const GROUPS_REMOVE_SHARED_USER = 'GROUPS_REMOVE_SHARED_USER';
+export const GROUPS_REMOVE_SHARED_USER_START = 'GROUPS_REMOVE_SHARED_USER_START';
+export const GROUPS_REMOVE_SHARED_USER_RESPONSE = 'GROUPS_REMOVE_SHARED_USER_RESPONSE';
+export const GROUPS_REMOVE_SHARED_USER_SUCCESS = 'GROUPS_REMOVE_SHARED_USER_SUCCESS';
+export const GROUPS_REMOVE_SHARED_USER_FAILURE = 'GROUPS_REMOVE_SHARED_USER_FAILURE';
+
 /**
  * Action Creators
  */
@@ -206,5 +224,34 @@ export function updatePrevious(previousGroups) {
   return {
     type: GROUPS_UPDATE_PREVIOUS,
     previousGroups,
+  };
+}
+
+export function getShareSettings(domain, token, groupId) {
+  return {
+    type: GROUPS_GET_SHARE_SETTINGS,
+    domain,
+    token,
+    groupId,
+  };
+}
+
+export function addUserToShare(domain, token, groupId, userId) {
+  return {
+    type: GROUPS_ADD_USER_SHARE,
+    domain,
+    token,
+    groupId,
+    userId,
+  };
+}
+
+export function removeUserToShare(domain, token, groupId, userId) {
+  return {
+    type: GROUPS_REMOVE_SHARED_USER,
+    domain,
+    token,
+    groupId,
+    userId,
   };
 }

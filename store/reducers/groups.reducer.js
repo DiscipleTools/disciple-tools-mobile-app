@@ -21,6 +21,9 @@ const initialState = {
   geonamesLastModifiedDate: null,
   geonamesLength: 0,
   previousGroups: [],
+  loadingShare: false,
+  shareSettings: {},
+  savedShare: false,
 };
 
 export default function groupsReducer(state = initialState, action) {
@@ -32,6 +35,7 @@ export default function groupsReducer(state = initialState, action) {
     saved: false,
     peopleGroups: null,
     foundGeonames: null,
+    savedShare: false,
   };
   const entities = new Html5Entities();
   switch (action.type) {
@@ -559,6 +563,7 @@ export default function groupsReducer(state = initialState, action) {
     case actions.GROUPS_GETBYID_START:
       return {
         ...newState,
+        group: null,
         loading: true,
       };
     case actions.GROUPS_GETBYID_SUCCESS: {
@@ -1114,6 +1119,122 @@ export default function groupsReducer(state = initialState, action) {
       return {
         ...newState,
         previousGroups,
+      };
+    }
+    case actions.GROUPS_GET_SHARE_SETTINGS_START: {
+      return {
+        ...newState,
+        loadingShare: true,
+      };
+    }
+    case actions.GROUPS_GET_SHARE_SETTINGS_SUCCESS: {
+      const { shareSettings, groupId, isConnected } = action;
+
+      let mappedUsers = [];
+
+      if (isConnected) {
+        mappedUsers = shareSettings.map((user) => {
+          return {
+            name: user.display_name,
+            value: parseInt(user.user_id),
+          };
+        });
+      } else {
+        mappedUsers = [...shareSettings];
+      }
+
+      let newShareSettings = {
+        ...newState.shareSettings,
+        [groupId]: mappedUsers,
+      };
+
+      return {
+        ...newState,
+        shareSettings: newShareSettings,
+        loadingShare: false,
+      };
+    }
+    case actions.GROUPS_GET_SHARE_SETTINGS_FAILURE: {
+      return {
+        ...newState,
+        error: action.error,
+        loadingShare: false,
+      };
+    }
+    case actions.GROUPS_ADD_USER_SHARE_START: {
+      return {
+        ...newState,
+        loadingShare: true,
+      };
+    }
+    case actions.GROUPS_ADD_USER_SHARE_SUCCESS: {
+      const { userData, groupId } = action;
+
+      // Check previous records existence;
+      let newSharedUsers = [];
+      if (newState.shareSettings[groupId]) {
+        newSharedUsers = newState.shareSettings[groupId];
+      }
+
+      // Only add new values
+      if (!newSharedUsers.find((user) => user.value === userData.value)) {
+        newSharedUsers.push(userData);
+      }
+
+      let newShareSettings = {
+        ...newState.shareSettings,
+        [groupId]: newSharedUsers,
+      };
+
+      return {
+        ...newState,
+        shareSettings: newShareSettings,
+        savedShare: true,
+        loadingShare: false,
+      };
+    }
+    case actions.GROUPS_ADD_USER_SHARE_FAILURE: {
+      return {
+        ...newState,
+        error: action.error,
+        loadingShare: false,
+      };
+    }
+    case actions.GROUPS_REMOVE_SHARED_USER_START: {
+      return {
+        ...newState,
+        loadingShare: true,
+      };
+    }
+    case actions.GROUPS_REMOVE_SHARED_USER_SUCCESS: {
+      const { userData, groupId } = action;
+
+      let newSharedUsers = [...newState.shareSettings[groupId]];
+
+      let index = newSharedUsers.findIndex((user) => user.value === userData.value);
+
+      // Only remove value if its found
+      if (index > 0) {
+        newSharedUsers.splice(index, 1);
+      }
+
+      let newShareSettings = {
+        ...newState.shareSettings,
+        [groupId]: newSharedUsers,
+      };
+
+      return {
+        ...newState,
+        shareSettings: newShareSettings,
+        savedShare: true,
+        loadingShare: false,
+      };
+    }
+    case actions.GROUPS_REMOVE_SHARED_USER_FAILURE: {
+      return {
+        ...newState,
+        error: action.error,
+        loadingShare: false,
       };
     }
     default:

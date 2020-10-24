@@ -35,7 +35,10 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": ""
   },
   "loginScreen": {
     "domain": {
@@ -107,7 +110,8 @@
       "error": "Имя обязательно"
     },
     "noContactCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Попытайтесь еще раз (обновите экран, потянув его вниз).",
-    "noContactCommentPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить свой контактный комментарий."
+    "noContactCommentPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить свой контактный комментарий.",
+    "contactSharedWith": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Добавить новую группу",
@@ -139,7 +143,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Уведомления",

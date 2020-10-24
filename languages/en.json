@@ -35,7 +35,10 @@
     "showing": "Showing",
     "comments": "Comments",
     "activity": "Activity",
-    "submit": "Submit"
+    "submit": "Submit",
+    "share": "Share",
+    "shareSettings": "Share settings",
+    "searchUsers": "Search Users"
   },
   "loginScreen": {
     "domain": {
@@ -107,7 +110,8 @@
       "error": "Name is required"
     },
     "noContactCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
-    "noContactCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your contact comment."
+    "noContactCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your contact comment.",
+    "contactSharedWith": "This contact is shared with"
   },
   "groupDetailScreen": {
     "addNewGroup": "Add New Group",
@@ -139,7 +143,8 @@
       "didNotAttendComment": "Did Not Attend Group",
       "groupCommentLabel": "Meeting Comment",
       "groupComment": "Meeting Complete"
-    }
+    },
+    "groupSharedWith": "This group is shared with"
   },
   "notificationsScreen": {
     "notifications": "Notifications",

@@ -35,7 +35,10 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": ""
   },
   "loginScreen": {
     "domain": {
@@ -107,7 +110,8 @@
       "error": "Nom obligatoire"
     },
     "noContactCommentPlacheHolder1": "Il peut y avoir eu un problème pour les obtenir à partir de votre site. Faites glisser vers le bas pour essayer de rafraîchir et réessayez.",
-    "noContactCommentPlacheHolderOffline": "Vous êtes actuellement hors ligne. Assurez-vous que vous êtes connecté au wifi ou aux données mobiles afin de vous rafraîchir et d'obtenir votre commentaire de contact."
+    "noContactCommentPlacheHolderOffline": "Vous êtes actuellement hors ligne. Assurez-vous que vous êtes connecté au wifi ou aux données mobiles afin de vous rafraîchir et d'obtenir votre commentaire de contact.",
+    "contactSharedWith": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Ajouter un nouveau groupe",
@@ -139,7 +143,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Notifications",

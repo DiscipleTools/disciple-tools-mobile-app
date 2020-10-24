@@ -489,6 +489,180 @@ export function* deleteComment({ domain, token, contactId, commentId }) {
   }
 }
 
+export function* getShareSettings({ domain, token, contactId }) {
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+
+  yield put({ type: actions.CONTACTS_GET_SHARE_SETTINGS_START });
+
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/shares`,
+      data: {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      action: actions.CONTACTS_GET_SHARE_SETTINGS_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.CONTACTS_GET_SHARE_SETTINGS_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.CONTACTS_GET_SHARE_SETTINGS_SUCCESS,
+        shareSettings: jsonData,
+        contactId,
+        isConnected,
+      });
+    } else {
+      yield put({
+        type: actions.CONTACTS_GET_SHARE_SETTINGS_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.CONTACTS_GET_SHARE_SETTINGS_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
+export function* addUserToShare({ domain, token, contactId, userId }) {
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+
+  yield put({ type: actions.CONTACTS_ADD_USER_SHARE_START });
+
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/shares`,
+      data: {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          user_id: userId,
+        }),
+      },
+      isConnected,
+      action: actions.CONTACTS_ADD_USER_SHARE_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.CONTACTS_ADD_USER_SHARE_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      let usersList = yield ExpoFileSystemStorage.getItem('usersList');
+      (usersList = JSON.parse(usersList).map((user) => ({
+        value: parseInt(user.ID),
+        name: user.name,
+      }))),
+        (userData = usersList.find((user) => user.value === parseInt(userId)));
+
+      yield put({
+        type: actions.CONTACTS_ADD_USER_SHARE_SUCCESS,
+        userData,
+        contactId,
+      });
+    } else {
+      yield put({
+        type: actions.CONTACTS_ADD_USER_SHARE_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.CONTACTS_ADD_USER_SHARE_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
+export function* removeSharedUser({ domain, token, contactId, userId }) {
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+
+  yield put({ type: actions.CONTACTS_REMOVE_SHARED_USER_START });
+
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/shares`,
+      data: {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          user_id: userId,
+        }),
+      },
+      isConnected,
+      action: actions.CONTACTS_REMOVE_SHARED_USER_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.CONTACTS_REMOVE_SHARED_USER_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+
+    if (response.status === 200) {
+      let usersList = yield ExpoFileSystemStorage.getItem('usersList');
+      (usersList = JSON.parse(usersList).map((user) => ({
+        value: parseInt(user.ID),
+        name: user.name,
+      }))),
+        (userData = usersList.find((user) => user.value === parseInt(userId)));
+
+      yield put({
+        type: actions.CONTACTS_REMOVE_SHARED_USER_SUCCESS,
+        userData,
+        contactId,
+      });
+    } else {
+      yield put({
+        type: actions.CONTACTS_REMOVE_SHARED_USER_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.CONTACTS_REMOVE_SHARED_USER_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
 export default function* contactsSaga() {
   yield all([
     takeLatest(actions.CONTACTS_GETALL, getAll),
@@ -499,5 +673,8 @@ export default function* contactsSaga() {
     takeEvery(actions.CONTACTS_GET_ACTIVITIES, getActivitiesByContact),
     takeEvery(actions.CONTACTS_GET_SETTINGS, getSettings),
     takeEvery(actions.CONTACTS_DELETE_COMMENT, deleteComment),
+    takeEvery(actions.CONTACTS_GET_SHARE_SETTINGS, getShareSettings),
+    takeEvery(actions.CONTACTS_ADD_USER_SHARE, addUserToShare),
+    takeEvery(actions.CONTACTS_REMOVE_SHARED_USER, removeSharedUser),
   ]);
 }
