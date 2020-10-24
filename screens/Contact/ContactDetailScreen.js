@@ -6235,115 +6235,117 @@ class ContactDetailScreen extends React.Component {
                       </KeyboardAvoidingView>
                     </BlurView>
                   ) : null}
+                  {this.state.showShareView ? (
+                    <BlurView
+                      tint="dark"
+                      intensity={50}
+                      style={[
+                        styles.dialogBackground,
+                        {
+                          width: windowWidth,
+                          height: windowHeight,
+                        },
+                      ]}>
+                      <KeyboardAvoidingView behavior={'position'} keyboardVerticalOffset={-50}>
+                        <View style={[styles.dialogBox, { height: windowHeight * 0.65 }]}>
+                          <Grid>
+                            <Row>
+                              <ScrollView keyboardShouldPersistTaps="handled">
+                                <Text
+                                  style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 10 }}>
+                                  {i18n.t('global.shareSettings')}
+                                </Text>
+                                <Text>{i18n.t('contactDetailScreen.contactSharedWith')}:</Text>
+                                <Selectize
+                                  ref={(selectize) => {
+                                    shareContactSelectizeRef = selectize;
+                                  }}
+                                  itemId="value"
+                                  items={this.state.users.map((user) => ({
+                                    name: user.label,
+                                    value: user.key,
+                                  }))}
+                                  selectedItems={this.getSelectizeItems(
+                                    { values: [...this.state.sharedUsers] },
+                                    this.state.users.map((user) => ({
+                                      name: user.label,
+                                      value: user.key,
+                                    })),
+                                  )}
+                                  textInputProps={{
+                                    placeholder: i18n.t('global.searchUsers'),
+                                  }}
+                                  renderChip={(id, onClose, item, style, iconStyle) => (
+                                    <Chip
+                                      key={id}
+                                      iconStyle={iconStyle}
+                                      onClose={(props) => {
+                                        this.removeUserToShare(item.value);
+                                        onClose(props);
+                                      }}
+                                      text={item.name}
+                                      style={style}
+                                    />
+                                  )}
+                                  renderRow={(id, onPress, item) => (
+                                    <TouchableOpacity
+                                      activeOpacity={0.6}
+                                      key={id}
+                                      onPress={(props) => {
+                                        this.addUserToShare(parseInt(item.value));
+                                        onPress(props);
+                                      }}
+                                      style={{
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 10,
+                                      }}>
+                                      <View
+                                        style={{
+                                          flexDirection: 'row',
+                                        }}>
+                                        <Text
+                                          style={{
+                                            color: 'rgba(0, 0, 0, 0.87)',
+                                            fontSize: 14,
+                                            lineHeight: 21,
+                                          }}>
+                                          {item.name}
+                                        </Text>
+                                        <Text
+                                          style={{
+                                            color: 'rgba(0, 0, 0, 0.54)',
+                                            fontSize: 14,
+                                            lineHeight: 21,
+                                          }}>
+                                          {' '}
+                                          (#
+                                          {id})
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  )}
+                                  filterOnKey="name"
+                                  inputContainerStyle={[styles.selectizeField]}
+                                  showItems="onFocus"
+                                />
+                              </ScrollView>
+                            </Row>
+                            <Row style={{ height: 60, borderColor: '#B4B4B4', borderTopWidth: 1 }}>
+                              <Button
+                                block
+                                style={styles.dialogButton}
+                                onPress={this.toggleShareView}>
+                                <Text style={{ color: Colors.buttonText }}>
+                                  {i18n.t('global.close')}
+                                </Text>
+                              </Button>
+                            </Row>
+                          </Grid>
+                        </View>
+                      </KeyboardAvoidingView>
+                    </BlurView>
+                  ) : null}
                 </View>
-                {this.state.showShareView ? (
-                  <BlurView
-                    tint="dark"
-                    intensity={50}
-                    style={[
-                      styles.dialogBackground,
-                      {
-                        width: windowWidth,
-                        height: windowHeight,
-                      },
-                    ]}>
-                    <KeyboardAvoidingView
-                      behavior={'position'}
-                      contentContainerStyle={{
-                        height: windowHeight / 1.5,
-                      }}>
-                      <View style={[styles.dialogBox, { height: windowHeight * 0.65 }]}>
-                        <ScrollView
-                          style={styles.dialogContent}
-                          keyboardShouldPersistTaps="handled">
-                          <Text style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 10 }}>
-                            {i18n.t('global.shareSettings')}
-                          </Text>
-                          <Text>{i18n.t('contactDetailScreen.contactSharedWith')}:</Text>
-                          <Selectize
-                            ref={(selectize) => {
-                              shareContactSelectizeRef = selectize;
-                            }}
-                            itemId="value"
-                            items={this.state.users.map((user) => ({
-                              name: user.label,
-                              value: user.key,
-                            }))}
-                            selectedItems={this.getSelectizeItems(
-                              { values: [...this.state.sharedUsers] },
-                              this.state.users.map((user) => ({
-                                name: user.label,
-                                value: user.key,
-                              })),
-                            )}
-                            textInputProps={{
-                              placeholder: i18n.t('global.searchUsers'),
-                            }}
-                            renderChip={(id, onClose, item, style, iconStyle) => (
-                              <Chip
-                                key={id}
-                                iconStyle={iconStyle}
-                                onClose={(props) => {
-                                  this.removeUserToShare(item.value);
-                                  onClose(props);
-                                }}
-                                text={item.name}
-                                style={style}
-                              />
-                            )}
-                            renderRow={(id, onPress, item) => (
-                              <TouchableOpacity
-                                activeOpacity={0.6}
-                                key={id}
-                                onPress={(props) => {
-                                  this.addUserToShare(parseInt(item.value));
-                                  onPress(props);
-                                }}
-                                style={{
-                                  paddingVertical: 8,
-                                  paddingHorizontal: 10,
-                                }}>
-                                <View
-                                  style={{
-                                    flexDirection: 'row',
-                                  }}>
-                                  <Text
-                                    style={{
-                                      color: 'rgba(0, 0, 0, 0.87)',
-                                      fontSize: 14,
-                                      lineHeight: 21,
-                                    }}>
-                                    {item.name}
-                                  </Text>
-                                  <Text
-                                    style={{
-                                      color: 'rgba(0, 0, 0, 0.54)',
-                                      fontSize: 14,
-                                      lineHeight: 21,
-                                    }}>
-                                    {' '}
-                                    (#
-                                    {id})
-                                  </Text>
-                                </View>
-                              </TouchableOpacity>
-                            )}
-                            filterOnKey="name"
-                            inputContainerStyle={[styles.selectizeField]}
-                            showItems="onFocus"
-                          />
-                        </ScrollView>
-                        <Row style={{ height: 60, borderColor: '#B4B4B4', borderTopWidth: 1 }}>
-                          <Button block style={styles.dialogButton} onPress={this.toggleShareView}>
-                            <Text style={{ color: Colors.buttonText }}>
-                              {i18n.t('global.close')}
-                            </Text>
-                          </Button>
-                        </Row>
-                      </View>
-                    </KeyboardAvoidingView>
-                  </BlurView>
-                ) : null}
               </View>
             ) : (
               <KeyboardAwareScrollView /*_addnew_ _editable_*/
@@ -6866,8 +6868,8 @@ class ContactDetailScreen extends React.Component {
             )}
           </View>
         )}
-        {successToast}
-        {errorToast}
+        {/*successToast*/}
+        {/*errorToast*/}
       </View>
     );
   }
