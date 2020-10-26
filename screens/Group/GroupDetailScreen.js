@@ -3828,6 +3828,7 @@ class GroupDetailScreen extends React.Component {
               style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               <Text
                 style={[
+                  styles.linkingText,
                   { marginTop: 'auto', marginBottom: 'auto', padding: 5 },
                   this.props.isRTL
                     ? { textAlign: 'left', flex: 1, marginRight: 15 }
@@ -3865,6 +3866,7 @@ class GroupDetailScreen extends React.Component {
               style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               <Text
                 style={[
+                  styles.linkingText,
                   { marginTop: 'auto', marginBottom: 'auto', padding: 5 },
                   this.props.isRTL
                     ? { textAlign: 'left', flex: 1, marginRight: 15 }
