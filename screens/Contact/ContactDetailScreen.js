@@ -6333,6 +6333,7 @@ class ContactDetailScreen extends React.Component {
                                   )}
                                   filterOnKey="name"
                                   inputContainerStyle={[styles.selectizeField]}
+                                  showItems="onFocus"
                                 />
                               </ScrollView>
                             </Row>
