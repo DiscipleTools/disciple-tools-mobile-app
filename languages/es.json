@@ -35,7 +35,10 @@
     "showing": "Mostrando",
     "comments": "Comentarios",
     "activity": "Actividad",
-    "submit": "Enviar"
+    "submit": "Enviar",
+    "share": "Compartir",
+    "shareSettings": "Compartir Configuraciones",
+    "searchUsers": "Buscar usuarios"
   },
   "loginScreen": {
     "domain": {
@@ -107,7 +110,8 @@
       "error": "El nombre es requerido"
     },
     "noContactCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
-    "noContactCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener su comentario de contacto."
+    "noContactCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener su comentario de contacto.",
+    "contactSharedWith": "Este contacto se comparte con"
   },
   "groupDetailScreen": {
     "addNewGroup": "Crear grupo",
@@ -139,7 +143,8 @@
       "didNotAttendComment": "No asistió al grupo",
       "groupCommentLabel": "Comentario de la reunión",
       "groupComment": "Reunión Completa"
-    }
+    },
+    "groupSharedWith": "Este grupo se comparte con"
   },
   "notificationsScreen": {
     "notifications": "Notificaciones",

@@ -35,7 +35,10 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": ""
   },
   "loginScreen": {
     "domain": {
@@ -107,7 +110,8 @@
       "error": "İsim gerekli"
     },
     "noContactCommentPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
-    "noContactCommentPlacheHolderOffline": "Şu anda çevrimdışısınız. İrtibat yorumunuzu yenilemek ve almak için wifi veya mobil verilere bağlı olduğunuzdan emin olun."
+    "noContactCommentPlacheHolderOffline": "Şu anda çevrimdışısınız. İrtibat yorumunuzu yenilemek ve almak için wifi veya mobil verilere bağlı olduğunuzdan emin olun.",
+    "contactSharedWith": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Grup Ekle",
@@ -139,7 +143,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Bildirim",

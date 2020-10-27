@@ -16,15 +16,18 @@ const initialState = {
   settings: null,
   offset: 0,
   previousContacts: [],
+  loadingShare: false,
+  shareSettings: {},
+  savedShare: false,
 };
 
 export default function contactsReducer(state = initialState, action) {
   let newState = {
     ...state,
-    contact: null,
     newComment: false,
     error: null,
     saved: false,
+    savedShare: false,
   };
   const entities = new Html5Entities();
   switch (action.type) {
@@ -440,6 +443,7 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_GETBYID_START:
       return {
         ...newState,
+        contact: null,
         loading: true,
       };
     case actions.CONTACTS_GETBYID_SUCCESS: {
@@ -921,6 +925,122 @@ export default function contactsReducer(state = initialState, action) {
       return {
         ...newState,
         previousContacts,
+      };
+    }
+    case actions.CONTACTS_GET_SHARE_SETTINGS_START: {
+      return {
+        ...newState,
+        loadingShare: true,
+      };
+    }
+    case actions.CONTACTS_GET_SHARE_SETTINGS_SUCCESS: {
+      const { shareSettings, contactId, isConnected } = action;
+
+      let mappedUsers = [];
+
+      if (isConnected) {
+        mappedUsers = shareSettings.map((user) => {
+          return {
+            name: user.display_name,
+            value: parseInt(user.user_id),
+          };
+        });
+      } else {
+        mappedUsers = [...shareSettings];
+      }
+
+      let newShareSettings = {
+        ...newState.shareSettings,
+        [contactId]: mappedUsers,
+      };
+
+      return {
+        ...newState,
+        shareSettings: newShareSettings,
+        loadingShare: false,
+      };
+    }
+    case actions.CONTACTS_GET_SHARE_SETTINGS_FAILURE: {
+      return {
+        ...newState,
+        error: action.error,
+        loadingShare: false,
+      };
+    }
+    case actions.CONTACTS_ADD_USER_SHARE_START: {
+      return {
+        ...newState,
+        loadingShare: true,
+      };
+    }
+    case actions.CONTACTS_ADD_USER_SHARE_SUCCESS: {
+      const { userData, contactId } = action;
+
+      // Check previous records existence;
+      let newSharedUsers = [];
+      if (newState.shareSettings[contactId]) {
+        newSharedUsers = newState.shareSettings[contactId];
+      }
+
+      // Only add new values
+      if (!newSharedUsers.find((user) => user.value === userData.value)) {
+        newSharedUsers.push(userData);
+      }
+
+      let newShareSettings = {
+        ...newState.shareSettings,
+        [contactId]: newSharedUsers,
+      };
+
+      return {
+        ...newState,
+        shareSettings: newShareSettings,
+        savedShare: true,
+        loadingShare: false,
+      };
+    }
+    case actions.CONTACTS_ADD_USER_SHARE_FAILURE: {
+      return {
+        ...newState,
+        error: action.error,
+        loadingShare: false,
+      };
+    }
+    case actions.CONTACTS_REMOVE_SHARED_USER_START: {
+      return {
+        ...newState,
+        loadingShare: true,
+      };
+    }
+    case actions.CONTACTS_REMOVE_SHARED_USER_SUCCESS: {
+      const { userData, contactId } = action;
+
+      let newSharedUsers = [...newState.shareSettings[contactId]];
+
+      let index = newSharedUsers.findIndex((user) => user.value === userData.value);
+
+      // Only remove value if its found
+      if (index > 0) {
+        newSharedUsers.splice(index, 1);
+      }
+
+      let newShareSettings = {
+        ...newState.shareSettings,
+        [contactId]: newSharedUsers,
+      };
+
+      return {
+        ...newState,
+        shareSettings: newShareSettings,
+        savedShare: true,
+        loadingShare: false,
+      };
+    }
+    case actions.CONTACTS_REMOVE_SHARED_USER_FAILURE: {
+      return {
+        ...newState,
+        error: action.error,
+        loadingShare: false,
       };
     }
     default:

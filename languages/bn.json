@@ -35,7 +35,10 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": ""
   },
   "loginScreen": {
     "domain": {
@@ -107,7 +110,8 @@
       "error": "নাম প্রয়োজন"
     },
     "noContactCommentPlacheHolder1": "আপনার সাইট থেকে এগুলি পেতে কোনও সমস্যা হতে পারে। রিফ্রেশ করার চেষ্টা করতে নীচে টানুন এবং আবার চেষ্টা করুন।",
-    "noContactCommentPlacheHolderOffline": "আপনি বর্তমানে অফলাইন আপনার যোগাযোগের মন্তব্যটি রিফ্রেশ করার জন্য এবং আপনি ওয়াইফাই বা মোবাইল ডেটার সাথে সংযুক্ত আছেন তা নিশ্চিত করুন।"
+    "noContactCommentPlacheHolderOffline": "আপনি বর্তমানে অফলাইন আপনার যোগাযোগের মন্তব্যটি রিফ্রেশ করার জন্য এবং আপনি ওয়াইফাই বা মোবাইল ডেটার সাথে সংযুক্ত আছেন তা নিশ্চিত করুন।",
+    "contactSharedWith": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "নতুন গ্রুপ যুক্ত করুন",
@@ -139,7 +143,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "বিজ্ঞপ্তিগুলি",

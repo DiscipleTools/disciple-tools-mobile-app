@@ -35,7 +35,10 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": ""
   },
   "loginScreen": {
     "domain": {
@@ -107,7 +110,8 @@
       "error": "Ime je obavezno"
     },
     "noContactCommentPlacheHolder1": "Možda je došlo do problema pri preuzimanju s vaše web lokacije. Povucite prema dolje da biste se pokušali osvježiti i pokušajte ponovo.",
-    "noContactCommentPlacheHolderOffline": "Trenutno ste offline. Provjerite jeste li povezani na WiFi ili mobilne podatke kako biste osvježili i dobili komentar na kontakt."
+    "noContactCommentPlacheHolderOffline": "Trenutno ste offline. Provjerite jeste li povezani na WiFi ili mobilne podatke kako biste osvježili i dobili komentar na kontakt.",
+    "contactSharedWith": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Dodaj novu grupu",
@@ -139,7 +143,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Obavijesti",

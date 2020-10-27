@@ -35,6 +35,7 @@ import { BlurView } from 'expo-blur';
 import { CheckBox } from 'react-native-elements';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Html5Entities } from 'html-entities';
+import Menu, { MenuItem } from 'react-native-material-menu';
 
 import moment from '../../languages/moment';
 import sharedTools from '../../shared';
@@ -49,6 +50,9 @@ import {
   deleteComment,
   loadingFalse,
   updatePrevious,
+  getShareSettings,
+  addUserToShare,
+  removeUserToShare,
 } from '../../store/actions/groups.actions';
 import { updatePrevious as updatePreviousContacts } from '../../store/actions/contacts.actions';
 import Colors from '../../constants/Colors';
@@ -91,7 +95,7 @@ let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBac
 //const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
 const isIOS = Platform.OS === 'ios';
 /* eslint-disable */
-let commentsFlatList,
+let commentsFlatListRef,
   coachesSelectizeRef,
   geonamesSelectizeRef,
   peopleGroupsSelectizeRef,
@@ -101,7 +105,8 @@ let commentsFlatList,
   childGroupsSelectizeRef,
   startDatePickerRef,
   endDatePickerRef,
-  churchStartDatePickerRef;
+  churchStartDatePickerRef,
+  shareGroupSelectizeRef;
 /* eslint-enable */
 const entities = new Html5Entities();
 const defaultHealthMilestones = [
@@ -587,6 +592,8 @@ const initialState = {
     showComments: true,
     showActivities: true,
   },
+  showShareView: false,
+  sharedUsers: [],
 };
 
 const safeFind = (found, prop) => {
@@ -625,19 +632,61 @@ class GroupDetailScreen extends React.Component {
     if (params) {
       if (params.onEnableEdit && params.groupId && params.onlyView) {
         headerRight = () => (
-          <Row onPress={params.onEnableEdit}>
-            <Text
-              style={{ color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' }}>
-              {i18n.t('global.edit')}
-            </Text>
-            <Icon
-              type="MaterialCommunityIcons"
-              name="pencil"
-              style={[
-                { color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' },
-                self && self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
-              ]}
-            />
+          <Row>
+            <Row onPress={params.onEnableEdit}>
+              <Text
+                style={{ color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' }}>
+                {i18n.t('global.edit')}
+              </Text>
+              <Icon
+                type="MaterialCommunityIcons"
+                name="pencil"
+                style={{
+                  color: Colors.headerTintColor,
+                  marginTop: 'auto',
+                  marginBottom: 'auto',
+                  fontSize: 24,
+                }}
+              />
+            </Row>
+            <Row
+              onPress={() => {
+                params.toggleMenu(true, menuRef);
+              }}>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                }}>
+                <Menu
+                  ref={(menu) => {
+                    if (menu) {
+                      menuRef = menu;
+                    }
+                  }}
+                  button={
+                    <Icon
+                      type="Entypo"
+                      name="dots-three-vertical"
+                      style={{
+                        color: Colors.headerTintColor,
+                        fontSize: 20,
+                      }}
+                    />
+                  }>
+                  <MenuItem
+                    onPress={() => {
+                      params.toggleMenu(false, menuRef);
+                      params.toggleShareView();
+                    }}>
+                    {i18n.t('global.share')}
+                  </MenuItem>
+                </Menu>
+              </View>
+            </Row>
           </Row>
         );
       }
@@ -683,8 +732,8 @@ class GroupDetailScreen extends React.Component {
         fontWeight: 'bold',
         width: params.onlyView
           ? Platform.select({
-              android: 200,
-              ios: 180,
+              android: 180,
+              ios: 140,
             })
           : Platform.select({
               android: 180,
@@ -708,6 +757,8 @@ class GroupDetailScreen extends React.Component {
       onDisableEdit: this.onDisableEdit.bind(this),
       onSaveGroup: this.onSaveGroup.bind(this),
       backButtonTap: this.backButtonTap.bind(this),
+      toggleMenu: this.toggleMenu.bind(this),
+      toggleShareView: this.toggleShareView.bind(this),
     };
     // Add afterBack param to execute 'parents' functions (ContactsView, NotificationsView)
     if (!navigation.state.params.afterBack) {
@@ -761,10 +812,12 @@ class GroupDetailScreen extends React.Component {
       loadingActivities,
       foundGeonames,
       isConnected,
+      loadingShare,
+      shareSettings,
     } = nextProps;
     let newState = {
       ...prevState,
-      loading,
+      loading: loading || loadingShare,
       comments: prevState.comments,
       loadComments: loadingComments,
       activities: prevState.activities,
@@ -1094,6 +1147,18 @@ class GroupDetailScreen extends React.Component {
       };
     }
 
+    if (shareSettings) {
+      if (
+        newState.group.ID &&
+        Object.prototype.hasOwnProperty.call(shareSettings, newState.group.ID)
+      ) {
+        newState = {
+          ...newState,
+          sharedUsers: shareSettings[newState.group.ID],
+        };
+      }
+    }
+
     return newState;
   }
 
@@ -1105,11 +1170,12 @@ class GroupDetailScreen extends React.Component {
       newComment,
       groupsReducerError,
       saved,
+      savedShare,
     } = this.props;
 
     // NEW COMMENT
     if (newComment && prevProps.newComment !== newComment) {
-      commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
+      commentsFlatListRef.scrollToOffset({ animated: true, offset: 0 });
       this.setComment('');
     }
 
@@ -1143,6 +1209,18 @@ class GroupDetailScreen extends React.Component {
           ]);
         }
       }
+    }
+
+    // Share Contact with user
+    if (savedShare && prevProps.savedShare !== savedShare) {
+      // Highlight Updates -> Compare this.state.group with current group and show differences
+      this.onRefreshCommentsActivities(this.state.group.ID, true);
+      toastSuccess.show(
+        <View>
+          <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
+        </View>,
+        3000,
+      );
     }
 
     // GROUP SAVE
@@ -1326,8 +1404,9 @@ class GroupDetailScreen extends React.Component {
 
   onRefresh(groupId, forceRefresh = false) {
     if (!self.state.loading || forceRefresh) {
-      this.getGroupById(groupId);
-      this.onRefreshCommentsActivities(groupId, true);
+      self.getGroupById(groupId);
+      self.onRefreshCommentsActivities(groupId, true);
+      self.getShareSettings(groupId);
     }
   }
 
@@ -1441,6 +1520,31 @@ class GroupDetailScreen extends React.Component {
         }
       }
     }
+  }
+
+  getShareSettings(groupId) {
+    this.props.getShareSettings(this.props.userData.domain, this.props.userData.token, groupId);
+    if (this.state.showShareView) {
+      this.toggleShareView();
+    }
+  }
+
+  addUserToShare(userId) {
+    this.props.addUserToShare(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.group.ID,
+      userId,
+    );
+  }
+
+  removeUserToShare(userId) {
+    this.props.removeUserToShare(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.group.ID,
+      userId,
+    );
   }
 
   onEnableEdit = () => {
@@ -2354,6 +2458,20 @@ class GroupDetailScreen extends React.Component {
         ...prevState.filtersSettings,
         [filterName]: !value,
       },
+    }));
+  };
+
+  toggleMenu = (value, menuRef) => {
+    if (value) {
+      menuRef.show();
+    } else {
+      menuRef.hide();
+    }
+  };
+
+  toggleShareView = () => {
+    this.setState((prevState) => ({
+      showShareView: !prevState.showShareView,
     }));
   };
 
@@ -3548,7 +3666,7 @@ class GroupDetailScreen extends React.Component {
                 backgroundColor: '#ffffff',
               }}
               ref={(flatList) => {
-                commentsFlatList = flatList;
+                commentsFlatListRef = flatList;
               }}
               data={this.getCommentsAndActivities()}
               extraData={!this.state.loadMoreComments || !this.state.loadMoreActivities}
@@ -3710,6 +3828,7 @@ class GroupDetailScreen extends React.Component {
               style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               <Text
                 style={[
+                  styles.linkingText,
                   { marginTop: 'auto', marginBottom: 'auto', padding: 5 },
                   this.props.isRTL
                     ? { textAlign: 'left', flex: 1, marginRight: 15 }
@@ -3747,6 +3866,7 @@ class GroupDetailScreen extends React.Component {
               style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               <Text
                 style={[
+                  styles.linkingText,
                   { marginTop: 'auto', marginBottom: 'auto', padding: 5 },
                   this.props.isRTL
                     ? { textAlign: 'left', flex: 1, marginRight: 15 }
@@ -5312,6 +5432,118 @@ class GroupDetailScreen extends React.Component {
                       </KeyboardAvoidingView>
                     </BlurView>
                   ) : null}
+                  {this.state.showShareView ? (
+                    <BlurView
+                      tint="dark"
+                      intensity={50}
+                      style={[
+                        styles.dialogBackground,
+                        {
+                          width: windowWidth,
+                          height: windowHeight,
+                        },
+                      ]}>
+                      <KeyboardAvoidingView behavior={'position'} keyboardVerticalOffset={-50}>
+                        <View style={[styles.dialogBox, { height: windowHeight * 0.65 }]}>
+                          <Grid>
+                            <Row>
+                              <ScrollView
+                                style={styles.dialogContent}
+                                keyboardShouldPersistTaps="handled">
+                                <Text
+                                  style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 10 }}>
+                                  {i18n.t('global.shareSettings')}
+                                </Text>
+                                <Text>{i18n.t('groupDetailScreen.groupSharedWith')}:</Text>
+                                <Selectize
+                                  ref={(selectize) => {
+                                    shareGroupSelectizeRef = selectize;
+                                  }}
+                                  itemId="value"
+                                  items={this.state.users.map((user) => ({
+                                    name: user.label,
+                                    value: user.key,
+                                  }))}
+                                  selectedItems={this.getSelectizeItems(
+                                    { values: [...this.state.sharedUsers] },
+                                    this.state.users.map((user) => ({
+                                      name: user.label,
+                                      value: user.key,
+                                    })),
+                                  )}
+                                  textInputProps={{
+                                    placeholder: i18n.t('global.searchUsers'),
+                                  }}
+                                  renderChip={(id, onClose, item, style, iconStyle) => (
+                                    <Chip
+                                      key={id}
+                                      iconStyle={iconStyle}
+                                      onClose={(props) => {
+                                        this.removeUserToShare(item.value);
+                                        onClose(props);
+                                      }}
+                                      text={item.name}
+                                      style={style}
+                                    />
+                                  )}
+                                  renderRow={(id, onPress, item) => (
+                                    <TouchableOpacity
+                                      activeOpacity={0.6}
+                                      key={id}
+                                      onPress={(props) => {
+                                        this.addUserToShare(parseInt(item.value));
+                                        onPress(props);
+                                      }}
+                                      style={{
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 10,
+                                      }}>
+                                      <View
+                                        style={{
+                                          flexDirection: 'row',
+                                        }}>
+                                        <Text
+                                          style={{
+                                            color: 'rgba(0, 0, 0, 0.87)',
+                                            fontSize: 14,
+                                            lineHeight: 21,
+                                          }}>
+                                          {item.name}
+                                        </Text>
+                                        <Text
+                                          style={{
+                                            color: 'rgba(0, 0, 0, 0.54)',
+                                            fontSize: 14,
+                                            lineHeight: 21,
+                                          }}>
+                                          {' '}
+                                          (#
+                                          {id})
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  )}
+                                  filterOnKey="name"
+                                  inputContainerStyle={[styles.selectizeField]}
+                                  showItems="onFocus"
+                                />
+                              </ScrollView>
+                            </Row>
+                            <Row style={{ height: 60, borderColor: '#B4B4B4', borderTopWidth: 1 }}>
+                              <Button
+                                block
+                                style={styles.dialogButton}
+                                onPress={this.toggleShareView}>
+                                <Text style={{ color: Colors.buttonText }}>
+                                  {i18n.t('global.close')}
+                                </Text>
+                              </Button>
+                            </Row>
+                          </Grid>
+                        </View>
+                      </KeyboardAvoidingView>
+                    </BlurView>
+                  ) : null}
                 </View>
               </View>
             ) : (
@@ -5543,6 +5775,9 @@ const mapStateToProps = (state) => ({
   previousGroups: state.groupsReducer.previousGroups,
   previousContacts: state.contactsReducer.previousContacts,
   questionnaires: state.questionnaireReducer.questionnaires,
+  loadingShare: state.groupsReducer.loadingShare,
+  shareSettings: state.groupsReducer.shareSettings,
+  savedShare: state.groupsReducer.savedShare,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -5578,6 +5813,15 @@ const mapDispatchToProps = (dispatch) => ({
   },
   updatePreviousContacts: (previousContacts) => {
     dispatch(updatePreviousContacts(previousContacts));
+  },
+  getShareSettings: (domain, token, contactId) => {
+    dispatch(getShareSettings(domain, token, contactId));
+  },
+  addUserToShare: (domain, token, contactId, userId) => {
+    dispatch(addUserToShare(domain, token, contactId, userId));
+  },
+  removeUserToShare: (domain, token, contactId, userData) => {
+    dispatch(removeUserToShare(domain, token, contactId, userData));
   },
 });
 

@@ -35,7 +35,10 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": ""
   },
   "loginScreen": {
     "domain": {
@@ -107,7 +110,8 @@
       "error": "名称为必填项"
     },
     "noContactCommentPlacheHolder1": "从您的网站获取它们可能存在问题。向下拖动以尝试刷新，然后重试。",
-    "noContactCommentPlacheHolderOffline": "您目前离线。确保您已连接到wifi或移动数据，以便刷新并获取联系评论。"
+    "noContactCommentPlacheHolderOffline": "您目前离线。确保您已连接到wifi或移动数据，以便刷新并获取联系评论。",
+    "contactSharedWith": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "新增群组",
@@ -139,7 +143,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "通知事项",

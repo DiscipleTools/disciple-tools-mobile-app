@@ -35,7 +35,10 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": ""
   },
   "loginScreen": {
     "domain": {
@@ -107,7 +110,8 @@
       "error": "Nome é necessário"
     },
     "noContactCommentPlacheHolder1": "Pode haver um problema ao removê-los do seu local. Arraste-os para tentar atualizar e tente novamente.  ",
-    "noContactCommentPlacheHolderOffline": "Você está atualmente offline. Verifique se você está conectado a dados móveis ou Wi-Fi para atualizar e obter seu comentário de contato."
+    "noContactCommentPlacheHolderOffline": "Você está atualmente offline. Verifique se você está conectado a dados móveis ou Wi-Fi para atualizar e obter seu comentário de contato.",
+    "contactSharedWith": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Adicionar novo grupo",
@@ -139,7 +143,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Notificações",

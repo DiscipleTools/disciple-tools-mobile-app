@@ -36,6 +36,7 @@ import { BlurView } from 'expo-blur';
 import { CheckBox } from 'react-native-elements';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Html5Entities } from 'html-entities';
+import Menu, { MenuItem } from 'react-native-material-menu';
 
 import moment from '../../languages/moment';
 import sharedTools from '../../shared';
@@ -50,8 +51,14 @@ import {
   deleteComment,
   loadingFalse,
   updatePrevious,
+  getShareSettings,
+  addUserToShare,
+  removeUserToShare,
 } from '../../store/actions/contacts.actions';
-import { updatePrevious as updatePreviousGroups } from '../../store/actions/groups.actions';
+import {
+  updatePrevious as updatePreviousGroups,
+  searchLocations,
+} from '../../store/actions/groups.actions';
 import Colors from '../../constants/Colors';
 import statusIcon from '../../assets/icons/status.png';
 import hasBibleIcon from '../../assets/icons/book-bookmark.png';
@@ -65,7 +72,6 @@ import inChurchIcon from '../../assets/icons/group.png';
 import dtIcon from '../../assets/images/dt-icon.png';
 import startingChurchesIcon from '../../assets/icons/group-starting.png';
 import i18n from '../../languages';
-import { searchLocations } from '../../store/actions/groups.actions';
 
 let toastSuccess;
 let toastError;
@@ -79,7 +85,7 @@ let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBac
 //const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
 const isIOS = Platform.OS === 'ios';
 /* eslint-disable */
-let commentsFlatList,
+let commentsFlatListRef,
   subAssignedSelectizeRef,
   geonamesSelectizeRef,
   peopleGroupsSelectizeRef,
@@ -90,7 +96,9 @@ let commentsFlatList,
   coachedSelectizeRef,
   baptizedSelectizeRef,
   coachingSelectizeRef,
-  datePickerRef;
+  datePickerRef,
+  menuRef,
+  shareContactSelectizeRef;
 /* eslint-enable */
 const entities = new Html5Entities();
 const defaultFaithMilestones = [
@@ -482,6 +490,8 @@ const initialState = {
     showComments: true,
     showActivities: true,
   },
+  showShareView: false,
+  sharedUsers: [],
 };
 
 const safeFind = (found, prop) => {
@@ -520,19 +530,61 @@ class ContactDetailScreen extends React.Component {
     if (params) {
       if (params.onEnableEdit && params.contactId && params.onlyView) {
         headerRight = () => (
-          <Row onPress={params.onEnableEdit}>
-            <Text
-              style={{ color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' }}>
-              {i18n.t('global.edit')}
-            </Text>
-            <Icon
-              type="MaterialCommunityIcons"
-              name="pencil"
-              style={[
-                { color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' },
-                self && self.props.isRTL ? { paddingLeft: 16 } : { paddingRight: 16 },
-              ]}
-            />
+          <Row>
+            <Row onPress={params.onEnableEdit}>
+              <Text
+                style={{ color: Colors.headerTintColor, marginTop: 'auto', marginBottom: 'auto' }}>
+                {i18n.t('global.edit')}
+              </Text>
+              <Icon
+                type="MaterialCommunityIcons"
+                name="pencil"
+                style={{
+                  color: Colors.headerTintColor,
+                  marginTop: 'auto',
+                  marginBottom: 'auto',
+                  fontSize: 24,
+                }}
+              />
+            </Row>
+            <Row
+              onPress={() => {
+                params.toggleMenu(true, menuRef);
+              }}>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                }}>
+                <Menu
+                  ref={(menu) => {
+                    if (menu) {
+                      menuRef = menu;
+                    }
+                  }}
+                  button={
+                    <Icon
+                      type="Entypo"
+                      name="dots-three-vertical"
+                      style={{
+                        color: Colors.headerTintColor,
+                        fontSize: 20,
+                      }}
+                    />
+                  }>
+                  <MenuItem
+                    onPress={() => {
+                      params.toggleMenu(false, menuRef);
+                      params.toggleShareView();
+                    }}>
+                    {i18n.t('global.share')}
+                  </MenuItem>
+                </Menu>
+              </View>
+            </Row>
           </Row>
         );
       }
@@ -576,8 +628,8 @@ class ContactDetailScreen extends React.Component {
         fontWeight: 'bold',
         width: params.onlyView
           ? Platform.select({
-              android: 200,
-              ios: 180,
+              android: 180,
+              ios: 140,
             })
           : Platform.select({
               android: 180,
@@ -601,6 +653,8 @@ class ContactDetailScreen extends React.Component {
       onDisableEdit: this.onDisableEdit.bind(this),
       onSaveContact: this.onSaveContact.bind(this),
       backButtonTap: this.backButtonTap.bind(this),
+      toggleMenu: this.toggleMenu.bind(this),
+      toggleShareView: this.toggleShareView.bind(this),
     };
     // Add afterBack param to execute 'parents' functions (ContactsView, NotificationsView)
     if (!navigation.state.params.afterBack) {
@@ -653,10 +707,12 @@ class ContactDetailScreen extends React.Component {
       activities,
       loadingActivities,
       foundGeonames,
+      loadingShare,
+      shareSettings,
     } = nextProps;
     let newState = {
       ...prevState,
-      loading,
+      loading: loading || loadingShare,
       comments: prevState.comments,
       loadComments: loadingComments,
       activities: prevState.activities,
@@ -1062,6 +1118,18 @@ class ContactDetailScreen extends React.Component {
       };
     }
 
+    if (shareSettings) {
+      if (
+        newState.contact.ID &&
+        Object.prototype.hasOwnProperty.call(shareSettings, newState.contact.ID)
+      ) {
+        newState = {
+          ...newState,
+          sharedUsers: shareSettings[newState.contact.ID],
+        };
+      }
+    }
+
     return newState;
   }
 
@@ -1073,13 +1141,14 @@ class ContactDetailScreen extends React.Component {
       newComment,
       contactsReducerError,
       saved,
+      savedShare,
     } = this.props;
 
     // NEW COMMENT
     if (newComment && prevProps.newComment !== newComment) {
       // Only do scroll when element its rendered
-      if (commentsFlatList) {
-        commentsFlatList.scrollToOffset({ animated: true, offset: 0 });
+      if (commentsFlatListRef) {
+        commentsFlatListRef.scrollToOffset({ animated: true, offset: 0 });
       }
       this.setComment('');
     }
@@ -1133,7 +1202,7 @@ class ContactDetailScreen extends React.Component {
         (contact.ID && contact.ID.toString() === this.state.contact.ID.toString()) ||
         (contact.oldID && contact.oldID === this.state.contact.ID.toString())
       ) {
-        // Highlight Updates -> Compare this.state.group with group and show differences
+        // Highlight Updates -> Compare this.state.contact with current contact and show differences
         this.onRefreshCommentsActivities(contact.ID, true);
         toastSuccess.show(
           <View>
@@ -1144,6 +1213,18 @@ class ContactDetailScreen extends React.Component {
         this.onDisableEdit();
         this.props.endSaveContact();
       }
+    }
+
+    // Share Contact with user
+    if (savedShare && prevProps.savedShare !== savedShare) {
+      // Highlight Updates -> Compare this.state.contact with current contact and show differences
+      this.onRefreshCommentsActivities(this.state.contact.ID, true);
+      toastSuccess.show(
+        <View>
+          <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
+        </View>,
+        3000,
+      );
     }
 
     // ERROR
@@ -1314,6 +1395,7 @@ class ContactDetailScreen extends React.Component {
     if (!self.state.loading || forceRefresh) {
       self.getContactById(contactId);
       self.onRefreshCommentsActivities(contactId, true);
+      self.getShareSettings(contactId);
     }
   }
 
@@ -1437,6 +1519,31 @@ class ContactDetailScreen extends React.Component {
         }
       }
     }
+  }
+
+  getShareSettings(contactId) {
+    this.props.getShareSettings(this.props.userData.domain, this.props.userData.token, contactId);
+    if (this.state.showShareView) {
+      this.toggleShareView();
+    }
+  }
+
+  addUserToShare(userId) {
+    this.props.addUserToShare(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.contact.ID,
+      userId,
+    );
+  }
+
+  removeUserToShare(userId) {
+    this.props.removeUserToShare(
+      this.props.userData.domain,
+      this.props.userData.token,
+      this.state.contact.ID,
+      userId,
+    );
   }
 
   onEnableEdit = () => {
@@ -1966,6 +2073,20 @@ class ContactDetailScreen extends React.Component {
         ...prevState.filtersSettings,
         [filterName]: !value,
       },
+    }));
+  };
+
+  toggleMenu = (value, menuRef) => {
+    if (value) {
+      menuRef.show();
+    } else {
+      menuRef.hide();
+    }
+  };
+
+  toggleShareView = () => {
+    this.setState((prevState) => ({
+      showShareView: !prevState.showShareView,
     }));
   };
 
@@ -3607,7 +3728,7 @@ class ContactDetailScreen extends React.Component {
                 backgroundColor: '#ffffff',
               }}
               ref={(flatList) => {
-                commentsFlatList = flatList;
+                commentsFlatListRef = flatList;
               }}
               data={this.getCommentsAndActivities()}
               extraData={!this.state.loadingMoreComments || !this.state.loadingMoreActivities}
@@ -6114,6 +6235,116 @@ class ContactDetailScreen extends React.Component {
                       </KeyboardAvoidingView>
                     </BlurView>
                   ) : null}
+                  {this.state.showShareView ? (
+                    <BlurView
+                      tint="dark"
+                      intensity={50}
+                      style={[
+                        styles.dialogBackground,
+                        {
+                          width: windowWidth,
+                          height: windowHeight,
+                        },
+                      ]}>
+                      <KeyboardAvoidingView behavior={'position'} keyboardVerticalOffset={-50}>
+                        <View style={[styles.dialogBox, { height: windowHeight * 0.65 }]}>
+                          <Grid>
+                            <Row>
+                              <ScrollView keyboardShouldPersistTaps="handled">
+                                <Text
+                                  style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 10 }}>
+                                  {i18n.t('global.shareSettings')}
+                                </Text>
+                                <Text>{i18n.t('contactDetailScreen.contactSharedWith')}:</Text>
+                                <Selectize
+                                  ref={(selectize) => {
+                                    shareContactSelectizeRef = selectize;
+                                  }}
+                                  itemId="value"
+                                  items={this.state.users.map((user) => ({
+                                    name: user.label,
+                                    value: user.key,
+                                  }))}
+                                  selectedItems={this.getSelectizeItems(
+                                    { values: [...this.state.sharedUsers] },
+                                    this.state.users.map((user) => ({
+                                      name: user.label,
+                                      value: user.key,
+                                    })),
+                                  )}
+                                  textInputProps={{
+                                    placeholder: i18n.t('global.searchUsers'),
+                                  }}
+                                  renderChip={(id, onClose, item, style, iconStyle) => (
+                                    <Chip
+                                      key={id}
+                                      iconStyle={iconStyle}
+                                      onClose={(props) => {
+                                        this.removeUserToShare(item.value);
+                                        onClose(props);
+                                      }}
+                                      text={item.name}
+                                      style={style}
+                                    />
+                                  )}
+                                  renderRow={(id, onPress, item) => (
+                                    <TouchableOpacity
+                                      activeOpacity={0.6}
+                                      key={id}
+                                      onPress={(props) => {
+                                        this.addUserToShare(parseInt(item.value));
+                                        onPress(props);
+                                      }}
+                                      style={{
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 10,
+                                      }}>
+                                      <View
+                                        style={{
+                                          flexDirection: 'row',
+                                        }}>
+                                        <Text
+                                          style={{
+                                            color: 'rgba(0, 0, 0, 0.87)',
+                                            fontSize: 14,
+                                            lineHeight: 21,
+                                          }}>
+                                          {item.name}
+                                        </Text>
+                                        <Text
+                                          style={{
+                                            color: 'rgba(0, 0, 0, 0.54)',
+                                            fontSize: 14,
+                                            lineHeight: 21,
+                                          }}>
+                                          {' '}
+                                          (#
+                                          {id})
+                                        </Text>
+                                      </View>
+                                    </TouchableOpacity>
+                                  )}
+                                  filterOnKey="name"
+                                  inputContainerStyle={[styles.selectizeField]}
+                                  showItems="onFocus"
+                                />
+                              </ScrollView>
+                            </Row>
+                            <Row style={{ height: 60, borderColor: '#B4B4B4', borderTopWidth: 1 }}>
+                              <Button
+                                block
+                                style={styles.dialogButton}
+                                onPress={this.toggleShareView}>
+                                <Text style={{ color: Colors.buttonText }}>
+                                  {i18n.t('global.close')}
+                                </Text>
+                              </Button>
+                            </Row>
+                          </Grid>
+                        </View>
+                      </KeyboardAvoidingView>
+                    </BlurView>
+                  ) : null}
                 </View>
               </View>
             ) : (
@@ -6637,8 +6868,8 @@ class ContactDetailScreen extends React.Component {
             )}
           </View>
         )}
-        {successToast}
-        {errorToast}
+        {/*successToast*/}
+        {/*errorToast*/}
       </View>
     );
   }
@@ -6817,6 +7048,9 @@ const mapStateToProps = (state) => ({
   questionnaires: state.questionnaireReducer.questionnaires,
   previousContacts: state.contactsReducer.previousContacts,
   previousGroups: state.groupsReducer.previousGroups,
+  loadingShare: state.contactsReducer.loadingShare,
+  shareSettings: state.contactsReducer.shareSettings,
+  savedShare: state.contactsReducer.savedShare,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -6855,6 +7089,15 @@ const mapDispatchToProps = (dispatch) => ({
   },
   updatePreviousGroups: (previousGroups) => {
     dispatch(updatePreviousGroups(previousGroups));
+  },
+  getShareSettings: (domain, token, contactId) => {
+    dispatch(getShareSettings(domain, token, contactId));
+  },
+  addUserToShare: (domain, token, contactId, userId) => {
+    dispatch(addUserToShare(domain, token, contactId, userId));
+  },
+  removeUserToShare: (domain, token, contactId, userData) => {
+    dispatch(removeUserToShare(domain, token, contactId, userData));
   },
 });
 

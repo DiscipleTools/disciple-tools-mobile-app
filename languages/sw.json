@@ -35,7 +35,10 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": ""
   },
   "loginScreen": {
     "domain": {
@@ -107,7 +110,8 @@
       "error": "Jina inahitajika"
     },
     "noContactCommentPlacheHolder1": "Kunaweza kuwa na shida kuipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
-    "noContactCommentPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate maoni yako ya mawasiliano."
+    "noContactCommentPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate maoni yako ya mawasiliano.",
+    "contactSharedWith": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Ongeza Kundi Mpya",
@@ -139,7 +143,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Arifa",

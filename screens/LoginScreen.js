@@ -741,8 +741,8 @@ class LoginScreen extends React.Component {
         enableOnAndroid
         keyboardOpeningTime={0}
         extraScrollHeight={0}
-        keyboardShouldPersistTaps="handled">
-        <ScrollView contentContainerStyle={styles.container}>
+        keyboardShouldPersistTaps={'always'}>
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps={'always'}>
           <View style={styles.header}>
             <Image source={require('../assets/images/dt-icon.png')} style={styles.welcomeImage} />
           </View>
