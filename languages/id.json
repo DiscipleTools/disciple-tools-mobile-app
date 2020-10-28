@@ -111,7 +111,8 @@
     },
     "noContactCommentPlacheHolder1": "Mungkin ada masalah saat mendapatkannya dari situs Anda. Seret ke bawah untuk mencoba menyegarkan dan coba lagi.",
     "noContactCommentPlacheHolderOffline": "Anda sedang offline. Pastikan Anda terhubung ke wifi atau data seluler untuk menyegarkan dan mendapatkan komentar kontak Anda.",
-    "contactSharedWith": ""
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Tambahkan Grup Baru",

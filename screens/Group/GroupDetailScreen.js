@@ -1789,7 +1789,7 @@ class GroupDetailScreen extends React.Component {
             })
             .map((item, index) => {
               return (
-                <View>
+                <View key={index.toString()}>
                   {index === 0 && (
                     <View style={styles.contentHeader}>
                       <Grid>

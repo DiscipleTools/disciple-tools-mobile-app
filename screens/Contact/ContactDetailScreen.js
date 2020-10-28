@@ -2450,8 +2450,10 @@ class ContactDetailScreen extends React.Component {
                       { marginTop: 'auto', marginBottom: 'auto' },
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
-                    {this.state.contact.age && this.state.contact.age !== 'not-set'
-                      ? this.state.contact.age
+                    {this.state.contact.age === 'not-set'
+                      ? i18n.t('contactDetailScreen.ageNotSet')
+                      : this.props.contactSettings.fields.age.values[this.state.contact.age]
+                      ? this.props.contactSettings.fields.age.values[this.state.contact.age].label
                       : ''}
                   </Text>
                 </Col>
@@ -4853,7 +4855,7 @@ class ContactDetailScreen extends React.Component {
             })
             .map((item, index) => {
               return (
-                <View>
+                <View key={index.toString()}>
                   {index === 0 && (
                     <View style={styles.contentHeader}>
                       <Grid>
@@ -6875,8 +6877,8 @@ class ContactDetailScreen extends React.Component {
             )}
           </View>
         )}
-        {/*successToast*/}
-        {/*errorToast*/}
+        {successToast}
+        {errorToast}
       </View>
     );
   }

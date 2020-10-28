@@ -111,7 +111,8 @@
     },
     "noContactCommentPlacheHolder1": "Можда је дошло до проблема при преузимању са ваше веб локације. Превуците надоле да бисте покушали да освежите и покушајте поново.",
     "noContactCommentPlacheHolderOffline": "Тренутно сте ван мреже. Уверите се да сте повезани на ВиФи или мобилне податке како бисте освежили и добили коментар на контакт.",
-    "contactSharedWith": ""
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Додај нову групу",

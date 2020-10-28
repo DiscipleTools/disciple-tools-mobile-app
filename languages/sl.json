@@ -111,7 +111,8 @@
     },
     "noContactCommentPlacheHolder1": "Morda je prišlo do težave pri pridobivanju le-teh z vašega spletnega mesta. Povlecite navzdol, da se poskusite osvežiti in poskusite znova.",
     "noContactCommentPlacheHolderOffline": "Trenutno ste brez povezave. Zagotovite, da ste povezani z wifi ali mobilnimi podatki, da osvežite in dobite komentar.",
-    "contactSharedWith": ""
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Dodaj novo skupino",

@@ -111,7 +111,8 @@
     },
     "noContactCommentPlacheHolder1": "Mogelijk is er een probleem opgetreden bij het ophalen van uw site. Sleep naar beneden om te proberen te vernieuwen en probeer het opnieuw.",
     "noContactCommentPlacheHolderOffline": "Je bent momenteel offline. Zorg ervoor dat je verbonden bent met wifi of mobiele data om te vernieuwen en je contactcommentaar te krijgen.",
-    "contactSharedWith": ""
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Nieuwe groep toevoegen",
