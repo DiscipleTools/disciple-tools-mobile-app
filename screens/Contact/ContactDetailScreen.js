@@ -2709,7 +2709,14 @@ class ContactDetailScreen extends React.Component {
                     subAssignedSelectizeRef = selectize;
                   }}
                   itemId="value"
-                  items={[...this.state.subAssignedContacts, ...this.state.usersContacts]}
+                  items={[
+                    ...this.state.subAssignedContacts,
+                    ...this.state.usersContacts,
+                    ...this.state.users.map((user) => ({
+                      name: user.label,
+                      value: user.key.toString(),
+                    })),
+                  ]}
                   selectedItems={this.getSelectizeItems(this.state.contact.subassigned, [
                     ...this.state.subAssignedContacts,
                     ...this.state.usersContacts,
