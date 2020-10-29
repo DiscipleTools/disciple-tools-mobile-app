@@ -111,7 +111,8 @@
     },
     "noContactCommentPlacheHolder1": "ممکن است مشکلی در گرفتن آنها از سایت شما وجود داشته باشد. پایین بکشید تا سعی کنید تازه کنید و دوباره امتحان کنید.",
     "noContactCommentPlacheHolderOffline": "شما در حال حاضر آفلاین هستید. اطمینان حاصل کنید که برای تازه کردن و گرفتن نظر مخاطب خود به داده های wifi یا تلفن همراه وصل شده اید.",
-    "contactSharedWith": ""
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "گروه جدید را اضافه کنید",

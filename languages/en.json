@@ -111,7 +111,8 @@
     },
     "noContactCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
     "noContactCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your contact comment.",
-    "contactSharedWith": "This contact is shared with"
+    "contactSharedWith": "This contact is shared with",
+    "ageNotSet": "No age set"
   },
   "groupDetailScreen": {
     "addNewGroup": "Add New Group",

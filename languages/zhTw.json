@@ -111,7 +111,8 @@
     },
     "noContactCommentPlacheHolder1": "從您的網站獲取它們可能存在問題。向下拖動以嘗試刷新，然後重試。",
     "noContactCommentPlacheHolderOffline": "您目前離線。確保您已連接到wifi或移動數據，以便刷新並獲取聯繫評論。",
-    "contactSharedWith": ""
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "新增群組",

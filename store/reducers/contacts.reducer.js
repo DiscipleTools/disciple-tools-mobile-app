@@ -28,6 +28,7 @@ export default function contactsReducer(state = initialState, action) {
     error: null,
     saved: false,
     savedShare: false,
+    contact: null,
   };
   const entities = new Html5Entities();
   switch (action.type) {
@@ -443,7 +444,6 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_GETBYID_START:
       return {
         ...newState,
-        contact: null,
         loading: true,
       };
     case actions.CONTACTS_GETBYID_SUCCESS: {

@@ -111,7 +111,8 @@
     },
     "noContactCommentPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
     "noContactCommentPlacheHolderOffline": "Şu anda çevrimdışısınız. İrtibat yorumunuzu yenilemek ve almak için wifi veya mobil verilere bağlı olduğunuzdan emin olun.",
-    "contactSharedWith": ""
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Grup Ekle",

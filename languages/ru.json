@@ -111,7 +111,8 @@
     },
     "noContactCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Попытайтесь еще раз (обновите экран, потянув его вниз).",
     "noContactCommentPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить свой контактный комментарий.",
-    "contactSharedWith": ""
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Добавить новую группу",
