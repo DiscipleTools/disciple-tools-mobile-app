@@ -1646,8 +1646,8 @@ class GroupDetailScreen extends React.Component {
   setGroupStartDate = (date = null) => {
     if (!date) {
       // Clean DatePicker value
-      startDatePickerRef.state.chosenDate = null;
-      startDatePickerRef.state.defaultDate = null;
+      startDatePickerRef.state.chosenDate = undefined;
+      startDatePickerRef.state.defaultDate = new Date();
       this.forceUpdate();
     }
     this.setState((prevState) => ({
@@ -1661,8 +1661,8 @@ class GroupDetailScreen extends React.Component {
   setEndDate = (date = null) => {
     if (!date) {
       // Clean DatePicker value
-      endDatePickerRef.state.chosenDate = null;
-      endDatePickerRef.state.defaultDate = null;
+      endDatePickerRef.state.chosenDate = undefined;
+      endDatePickerRef.state.defaultDate = new Date();
       this.forceUpdate();
     }
     this.setState((prevState) => ({
@@ -1676,8 +1676,8 @@ class GroupDetailScreen extends React.Component {
   setChurchStartDate = (date = null) => {
     if (!date) {
       // Clean DatePicker value
-      churchStartDatePickerRef.state.chosenDate = null;
-      churchStartDatePickerRef.state.defaultDate = null;
+      churchStartDatePickerRef.state.chosenDate = undefined;
+      churchStartDatePickerRef.state.defaultDate = new Date();
       this.forceUpdate();
     }
     this.setState((prevState) => ({
