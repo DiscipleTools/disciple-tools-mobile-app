@@ -2128,8 +2128,10 @@ class ContactDetailScreen extends React.Component {
                   style={[
                     styles.statusFieldContainer,
                     Platform.select({
-                      default: { borderColor: this.state.overallStatusBackgroundColor },
-                      ios: {},
+                      android: {
+                        borderColor: this.state.overallStatusBackgroundColor,
+                        backgroundColor: this.state.overallStatusBackgroundColor,
+                      },
                     }),
                   ]}>
                   <Picker
@@ -2138,10 +2140,8 @@ class ContactDetailScreen extends React.Component {
                     style={Platform.select({
                       android: {
                         color: '#ffffff',
-                        backgroundColor: this.state.overallStatusBackgroundColor,
-                        width: '100%',
                       },
-                      default: {
+                      ios: {
                         backgroundColor: this.state.overallStatusBackgroundColor,
                       },
                     })}
@@ -2559,8 +2559,10 @@ class ContactDetailScreen extends React.Component {
                 style={[
                   styles.statusFieldContainer,
                   Platform.select({
-                    default: { borderColor: this.state.overallStatusBackgroundColor },
-                    ios: {},
+                    android: {
+                      borderColor: this.state.overallStatusBackgroundColor,
+                      backgroundColor: this.state.overallStatusBackgroundColor,
+                    },
                   }),
                 ]}>
                 <Picker
@@ -2569,10 +2571,8 @@ class ContactDetailScreen extends React.Component {
                   style={Platform.select({
                     android: {
                       color: '#ffffff',
-                      backgroundColor: this.state.overallStatusBackgroundColor,
-                      width: '100%',
                     },
-                    default: {
+                    ios: {
                       backgroundColor: this.state.overallStatusBackgroundColor,
                     },
                   })}
