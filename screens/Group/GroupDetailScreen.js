@@ -2556,8 +2556,10 @@ class GroupDetailScreen extends React.Component {
                   style={[
                     styles.statusFieldContainer,
                     Platform.select({
-                      default: { borderColor: this.state.groupStatusBackgroundColor },
-                      ios: {},
+                      android: {
+                        borderColor: this.state.groupStatusBackgroundColor,
+                        backgroundColor: this.state.groupStatusBackgroundColor,
+                      },
                     }),
                   ]}>
                   <Picker
@@ -2567,10 +2569,8 @@ class GroupDetailScreen extends React.Component {
                       Platform.select({
                         android: {
                           color: '#ffffff',
-                          backgroundColor: this.state.groupStatusBackgroundColor,
-                          width: '100%',
                         },
-                        default: {
+                        ios: {
                           backgroundColor: this.state.groupStatusBackgroundColor,
                         },
                       }),
@@ -2833,8 +2833,10 @@ class GroupDetailScreen extends React.Component {
                 style={[
                   styles.statusFieldContainer,
                   Platform.select({
-                    default: { borderColor: this.state.groupStatusBackgroundColor },
-                    ios: {},
+                    android: {
+                      borderColor: this.state.groupStatusBackgroundColor,
+                      backgroundColor: this.state.groupStatusBackgroundColor,
+                    },
                   }),
                 ]}>
                 <Picker
@@ -2844,10 +2846,8 @@ class GroupDetailScreen extends React.Component {
                     Platform.select({
                       android: {
                         color: '#ffffff',
-                        backgroundColor: this.state.groupStatusBackgroundColor,
-                        width: '100%',
                       },
-                      default: {
+                      ios: {
                         backgroundColor: this.state.groupStatusBackgroundColor,
                       },
                     }),
