@@ -30,7 +30,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { NavigationActions, StackActions } from 'react-navigation';
 import MentionsTextInput from 'react-native-mentions';
 import ParsedText from 'react-native-parsed-text';
-//import * as Sentry from 'sentry-expo';
+// //import * as Sentry from 'sentry-expo';
 import { BlurView } from 'expo-blur';
 import { CheckBox } from 'react-native-elements';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
