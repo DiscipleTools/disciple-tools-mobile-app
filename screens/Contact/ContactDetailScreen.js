@@ -1732,9 +1732,9 @@ class ContactDetailScreen extends React.Component {
   setBaptismDate = (date = null) => {
     // (event, date) => {
     if (!date) {
-      // Clean DatePicker value
-      datePickerRef.state.chosenDate = null;
-      datePickerRef.state.defaultDate = null;
+      // Clear DatePicker value
+      datePickerRef.state.chosenDate = undefined;
+      datePickerRef.state.defaultDate = new Date();
       this.forceUpdate();
     }
     this.setState((prevState) => ({
