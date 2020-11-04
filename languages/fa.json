@@ -59,7 +59,10 @@
     "forgotPassword": "رمزعبور خود را گم کردید؟",
     "errors": {
       "invalidUsername": "نام کاربری ناشناخته دوباره بررسی کنید یا آدرس ایمیل خود را امتحان کنید.",
-      "incorrectPassword": "گذرواژه‌ای که برای نام کاربری خود وارد کردید اشتباه است"
+      "incorrectPassword": "گذرواژه‌ای که برای نام کاربری خود وارد کردید اشتباه است",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {

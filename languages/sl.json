@@ -59,7 +59,10 @@
     "forgotPassword": "Pozabili geslo?",
     "errors": {
       "invalidUsername": "Neznano uporabniško ime. Ponovno preverite ali poskusite svoj e-poštni naslov.",
-      "incorrectPassword": "Geslo, ki ste ga vnesli za uporabniško ime, ni pravilno"
+      "incorrectPassword": "Geslo, ki ste ga vnesli za uporabniško ime, ni pravilno",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {

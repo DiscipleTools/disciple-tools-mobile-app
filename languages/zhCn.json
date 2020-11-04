@@ -59,7 +59,10 @@
     "forgotPassword": "忘记密码？",
     "errors": {
       "invalidUsername": "未知的用户名。再次检查或尝试您的电子邮件地址。",
-      "incorrectPassword": "您输入的用户名密码不正确"
+      "incorrectPassword": "您输入的用户名密码不正确",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {

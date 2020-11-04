@@ -59,7 +59,10 @@
     "forgotPassword": "Lost your password?",
     "errors": {
       "invalidUsername": "Unknown username. Check again or try your email address.",
-      "incorrectPassword": "The password you entered for username is incorrect"
+      "incorrectPassword": "The password you entered for username is incorrect",
+      "configurationNeededOn": "Configuration needed on",
+      "mobileAppPluginRequiredOne": "The Mobile App Plugin is required and does not seem to be activated on your Disciple.Tools.",
+      "mobileAppPluginRequiredTwo": "Tap here for more information."
     }
   },
   "contactsScreen": {

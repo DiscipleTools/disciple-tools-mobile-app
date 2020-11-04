@@ -59,7 +59,10 @@
     "forgotPassword": "Заборавили сте лозинку?",
     "errors": {
       "invalidUsername": "Непознато корисничко име. Проверите поново или испробајте своју адресу е-поште.",
-      "incorrectPassword": "Лозинка коју сте унели за корисничко име је нетачна"
+      "incorrectPassword": "Лозинка коју сте унели за корисничко име је нетачна",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {

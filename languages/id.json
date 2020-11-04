@@ -59,7 +59,10 @@
     "forgotPassword": "Kehilangan password?",
     "errors": {
       "invalidUsername": "Nama pengguna tidak dikenal. Periksa lagi atau coba alamat email Anda.",
-      "incorrectPassword": "Kata sandi yang Anda masukkan untuk nama pengguna salah"
+      "incorrectPassword": "Kata sandi yang Anda masukkan untuk nama pengguna salah",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
