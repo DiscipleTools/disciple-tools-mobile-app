@@ -59,7 +59,10 @@
     "forgotPassword": "Umepoteza nenosiri lako?",
     "errors": {
       "invalidUsername": "Jina la mtumiaji lisilojulikana. Angalia tena au jaribu anwani yako ya barua pepe.",
-      "incorrectPassword": "Nenosiri uliloliingiza jina la mtumiaji sio sahihi"
+      "incorrectPassword": "Nenosiri uliloliingiza jina la mtumiaji sio sahihi",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {

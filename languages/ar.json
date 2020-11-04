@@ -59,7 +59,10 @@
     "forgotPassword": "فقدت كلمة المرور الخاصة بك؟",
     "errors": {
       "invalidUsername": "اسم مستخدم غير معروف. تحقق مرة أخرى أو حاول عنوان بريدك الإلكتروني.",
-      "incorrectPassword": "كلمة المرور التي أدخلتها لاسم المستخدم غير صحيحة"
+      "incorrectPassword": "كلمة المرور التي أدخلتها لاسم المستخدم غير صحيحة",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {

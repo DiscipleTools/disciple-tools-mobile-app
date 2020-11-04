@@ -215,6 +215,7 @@ class LoginScreen extends React.Component {
     contactFiltersRetrieved: false,
     groupFiltersRetrieved: false,
     notificationsCountRetrieved: false,
+    mobileAppRequired: false,
   };
 
   constructor(props) {
@@ -353,6 +354,24 @@ class LoginScreen extends React.Component {
         ...newState,
         loading: false,
       };
+
+      let mobileAppRequired = false;
+
+      switch (error.code) {
+        case 'rest_no_route': {
+          mobileAppRequired = true;
+          break;
+        }
+        default: {
+          mobileAppRequired = false;
+          break;
+        }
+      }
+
+      newState = {
+        ...newState,
+        mobileAppRequired,
+      };
     }
 
     return newState;
@@ -457,6 +476,7 @@ class LoginScreen extends React.Component {
       groupFiltersRetrieved,
       notificationsCountRetrieved,
       userDataRetrieved,
+      domain,
     } = this.state;
 
     // User logged successfully
@@ -520,53 +540,41 @@ class LoginScreen extends React.Component {
 
     if (userError || groupsError || usersError || contactsError) {
       const error = userError || groupsError || usersError;
-      if (error.code === '[jwt_auth] incorrect_password') {
-        toastError.show(
-          <View>
-            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-              {i18n.t('global.error.code')}
-            </Text>
-            <Text style={{ color: Colors.errorText }}>{error.code}</Text>
-            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-              {i18n.t('global.error.message')}
-            </Text>
-            <Text style={{ color: Colors.errorText }}>
-              {i18n.t('loginScreen.errors.incorrectPassword')}
-            </Text>
-          </View>,
-          3000,
-        );
-      } else if (error.code === '[jwt_auth] invalid_username') {
-        toastError.show(
-          <View>
-            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-              {i18n.t('global.error.code')}
-            </Text>
-            <Text style={{ color: Colors.errorText }}>{error.code}</Text>
-            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-              {i18n.t('global.error.message')}
-            </Text>
-            <Text style={{ color: Colors.errorText }}>
-              {i18n.t('loginScreen.errors.invalidUsername')}
-            </Text>
-          </View>,
-          3000,
-        );
-      } else {
-        toastError.show(
-          <View>
-            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-              {i18n.t('global.error.code')}
-            </Text>
-            <Text style={{ color: Colors.errorText }}>{error.code}</Text>
-            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-              {i18n.t('global.error.message')}
-            </Text>
-            <Text style={{ color: Colors.errorText }}>{error.message}</Text>
-          </View>,
-          3000,
-        );
+
+      let errorMessage;
+
+      switch (error.code) {
+        case '[jwt_auth] incorrect_password': {
+          errorMessage = i18n.t('loginScreen.errors.incorrectPassword');
+          break;
+        }
+        case '[jwt_auth] invalid_username': {
+          errorMessage = i18n.t('loginScreen.errors.invalidUsername');
+          break;
+        }
+        case 'rest_no_route': {
+          errorMessage = i18n.t('loginScreen.errors.configurationNeededOn') + ` ${domain}`;
+          break;
+        }
+        default: {
+          errorMessage = error.message;
+          break;
+        }
       }
+
+      toastError.show(
+        <View>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{errorMessage}</Text>
+        </View>,
+        3000,
+      );
     }
   }
 
@@ -614,17 +622,24 @@ class LoginScreen extends React.Component {
 
   onLoginPress = () => {
     Keyboard.dismiss();
-    const { domain, username, password } = this.state;
-    if (domain && username && password) {
-      const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
-      this.props.loginDispatch(cleanedDomain, username, password);
-    } else {
-      this.setState({
-        domainValidation: !domain,
-        userValidation: !username,
-        passwordValidation: !password,
-      });
-    }
+    this.setState(
+      {
+        mobileAppRequired: false,
+      },
+      () => {
+        const { domain, username, password } = this.state;
+        if (domain && username && password) {
+          const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
+          this.props.loginDispatch(cleanedDomain, username, password);
+        } else {
+          this.setState({
+            domainValidation: !domain,
+            userValidation: !username,
+            passwordValidation: !password,
+          });
+        }
+      },
+    );
   };
 
   static navigationOptions = {
@@ -702,6 +717,10 @@ class LoginScreen extends React.Component {
     });
   };
 
+  openDocsLink = () => {
+    Linking.openURL(`https://disciple-tools.readthedocs.io/en/latest/app`);
+  };
+
   // TODO: How to disable iCloud save password feature?
   render() {
     const errorToast = (
@@ -747,6 +766,23 @@ class LoginScreen extends React.Component {
             <Image source={require('../assets/images/dt-icon.png')} style={styles.welcomeImage} />
           </View>
           <View style={styles.formContainer}>
+            {this.state.mobileAppRequired ? (
+              <TouchableOpacity activeOpacity={0.8} style={{}} onPress={this.openDocsLink}>
+                <View
+                  style={{
+                    borderColor: '#c2e0ff',
+                    borderWidth: 1,
+                    backgroundColor: '#ecf5fc',
+                    borderRadius: 2,
+                    padding: 10,
+                  }}>
+                  <Text>{i18n.t('loginScreen.errors.mobileAppPluginRequiredOne')}</Text>
+                  <Text style={{ fontWeight: 'bold' }}>
+                    {i18n.t('loginScreen.errors.mobileAppPluginRequiredTwo')}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ) : null}
             <TextField
               containerStyle={domainStyle}
               iconName="ios-globe"

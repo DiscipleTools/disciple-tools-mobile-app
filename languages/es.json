@@ -59,7 +59,10 @@
     "forgotPassword": "Perdiste tu contraseña?",
     "errors": {
       "invalidUsername": "Nombre de usuario desconocido. Vuelve a consultar o prueba tu dirección de correo electrónico.",
-      "incorrectPassword": "La contraseña que ingresó para el usuario es incorrecta"
+      "incorrectPassword": "La contraseña que ingresó para el usuario es incorrecta",
+      "configurationNeededOn": "Se necesita configuración en",
+      "mobileAppPluginRequiredOne": "El Plugin de Disciple Tools Mobile es requerido y no parece estar activado en tu Disciple.Tools.",
+      "mobileAppPluginRequiredTwo": "Toque aquí para obtener más información."
     }
   },
   "contactsScreen": {
