@@ -89,7 +89,8 @@
     "incorrectPin": "رقم التعريف الشخصي غير صحيح",
     "savedPinCode": "تم حفظ رمز PIN بنجاح",
     "removedPinCode": "تمت إزالة رمز PIN بنجاح",
-    "close": "قريب"
+    "close": "قريب",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "إضافة جهة اتصال جديدة",

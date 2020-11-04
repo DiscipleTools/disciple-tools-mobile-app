@@ -89,7 +89,8 @@
     "incorrectPin": "PIN incorrect",
     "savedPinCode": "Code PIN enregistré avec succès",
     "removedPinCode": "Code PIN supprimé avec succès",
-    "close": "Fermer"
+    "close": "Fermer",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Ajouter un nouveau contact",

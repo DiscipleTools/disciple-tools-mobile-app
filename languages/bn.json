@@ -89,7 +89,8 @@
     "incorrectPin": "ভুল পিন",
     "savedPinCode": "পিন কোড সাফল্যের সাথে সংরক্ষিত হয়েছে",
     "removedPinCode": "পিন কোড সফলভাবে সরানো হয়েছে",
-    "close": "বন্ধ"
+    "close": "বন্ধ",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "নতুন পরিচিতি যোগ করুন",

@@ -89,7 +89,8 @@
     "incorrectPin": "PIN isiyo sahihi",
     "savedPinCode": "Nambari ya siri imehifadhiwa kwa mafanikio",
     "removedPinCode": "Nambari ya siri imeondolewa kwa mafanikio",
-    "close": "Funga"
+    "close": "Funga",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Ongeza Mawasiliano Mpya",

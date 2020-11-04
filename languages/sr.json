@@ -89,7 +89,8 @@
     "incorrectPin": "Нетачан ПИН",
     "savedPinCode": "ПИН код је успешно сачуван",
     "removedPinCode": "ПИН код је успешно уклоњен",
-    "close": "Близу"
+    "close": "Близу",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Додај нови контакт",

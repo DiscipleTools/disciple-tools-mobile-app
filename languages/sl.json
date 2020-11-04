@@ -89,7 +89,8 @@
     "incorrectPin": "Napačna koda PIN",
     "savedPinCode": "Koda PIN je bila uspešno shranjena",
     "removedPinCode": "Koda PIN je bila uspešno odstranjena",
-    "close": "Zapri"
+    "close": "Zapri",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Dodaj nov stik",

@@ -89,7 +89,8 @@
     "incorrectPin": "PIN码错误",
     "savedPinCode": "PIN码已成功保存",
     "removedPinCode": "PIN码已成功删除",
-    "close": "关"
+    "close": "关",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "新增联络人",

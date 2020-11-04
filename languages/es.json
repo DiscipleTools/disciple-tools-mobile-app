@@ -89,7 +89,8 @@
     "incorrectPin": "PIN incorrecto",
     "savedPinCode": "El código PIN se ha guardado correctamente!.",
     "removedPinCode": "El código PIN se ha removido correctamente!.",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "confirmPin": "Confirme el nuevo PIN"
   },
   "contactDetailScreen": {
     "addNewContact": "Crear contacto",

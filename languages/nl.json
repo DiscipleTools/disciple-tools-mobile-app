@@ -89,7 +89,8 @@
     "incorrectPin": "Onjuiste pincode",
     "savedPinCode": "PIN-code succesvol opgeslagen",
     "removedPinCode": "PIN-code succesvol verwijderd",
-    "close": "Dichtbij"
+    "close": "Dichtbij",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Voeg nieuw contact toe",

@@ -89,7 +89,8 @@
     "incorrectPin": "پین نادرست",
     "savedPinCode": "کد پین با موفقیت ذخیره شد",
     "removedPinCode": "کد پین با موفقیت حذف شد",
-    "close": "نزدیک"
+    "close": "نزدیک",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "مخاطب جدید اضافه کنید",
