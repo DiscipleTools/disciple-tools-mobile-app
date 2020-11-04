@@ -332,9 +332,8 @@ class ContactsScreen extends React.Component {
   };
 
   filterByText = (text) => {
-    const itemsFiltered = [];
     if (text.length > 0) {
-      this.props.contacts.filter(function (item) {
+      let itemsFiltered = this.props.contacts.filter((item) => {
         let filterByPhone = false;
         let filterByEmail = false;
         const textData = text
@@ -364,30 +363,16 @@ class ContactsScreen extends React.Component {
             }
           });
         }
-        if (filterByTitle === true) {
-          itemsFiltered.push(item);
-        } else if (filterByPhone === true) {
-          itemsFiltered.push(item);
-        } else if (filterByEmail === true) {
-          itemsFiltered.push(item);
-        }
-
-        return itemsFiltered;
+        return filterByTitle || filterByPhone || filterByEmail;
       });
-      if (itemsFiltered.length > 0) {
-        this.setState({
-          dataSourceContactsFiltered: itemsFiltered,
-          filtered: true,
-        });
-      } else {
-        this.setState({
-          filtered: true,
-        });
-      }
+      this.setState({
+        dataSourceContactsFiltered: itemsFiltered,
+        filtered: true,
+      });
     } else {
       this.setState({
-        filtered: false,
         dataSourceContactsFiltered: [],
+        filtered: false,
       });
     }
   };

@@ -323,9 +323,8 @@ class GroupsScreen extends React.Component {
   };
 
   filterByText = (text) => {
-    const itemsFiltered = [];
     if (text.length > 0) {
-      this.props.groups.filter(function (item) {
+      let itemsFiltered = this.props.groups.filter(function (item) {
         const textData = text
           .toUpperCase()
           .normalize('NFD')
@@ -334,26 +333,16 @@ class GroupsScreen extends React.Component {
           .toUpperCase()
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '');
-        const filterByTitle = itemDataTitle.includes(textData);
-        if (filterByTitle === true) {
-          itemsFiltered.push(item);
-        }
-        return itemsFiltered;
+        return itemDataTitle.includes(textData);
       });
-      if (itemsFiltered.length > 0) {
-        this.setState({
-          dataSourceGroupsFiltered: itemsFiltered,
-          filtered: true,
-        });
-      } else {
-        this.setState({
-          filtered: true,
-        });
-      }
+      this.setState({
+        dataSourceGroupsFiltered: itemsFiltered,
+        filtered: true,
+      });
     } else {
       this.setState({
-        filtered: false,
         dataSourceGroupsFiltered: [],
+        filtered: false,
       });
     }
   };
