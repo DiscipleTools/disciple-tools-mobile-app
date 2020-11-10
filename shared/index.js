@@ -254,6 +254,140 @@ const groupCommentsActivities = (list) => {
   return groupedList;
 };
 
+const filterExistInEntity = (valueType, filterValue, value) => {
+  let result = false;
+
+  // Check if value exists in property
+  switch (valueType) {
+    case '[object Boolean]': {
+      if (filterValue === value) {
+        result = true;
+      }
+      break;
+    }
+    case '[object Number]': {
+      if (filterValue === value) {
+        result = true;
+      }
+      break;
+    }
+    case '[object String]': {
+      if (filterValue === value) {
+        result = true;
+      }
+      break;
+    }
+    case '[object Object]': {
+      if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+        value['values'].forEach((object) => {
+          if (filterValue === object['name']) {
+            result = true;
+          }
+        });
+      } else if (
+        Object.prototype.hasOwnProperty.call(value, 'key') &&
+        Object.prototype.hasOwnProperty.call(value, 'label')
+      ) {
+        if (filterValue === value['label']) {
+          result = true;
+        }
+      }
+      break;
+    }
+  }
+
+  return result;
+};
+
+const contactsByFilter = (contactsList, query) => {
+  return contactsList.filter((contact) => {
+    let resp = [];
+    for (let key in query) {
+      let result = false;
+      //Property exist in object
+      if (Object.prototype.hasOwnProperty.call(contact, key)) {
+        const value = contact[key];
+        const valueType = Object.prototype.toString.call(value);
+        const filterValue = query[key];
+
+        result = filterExistInEntity(valueType, filterValue, value);
+
+        // Return contacts with status different of '-closed'
+        if (filterValue.toString().startsWith('-')) {
+          if (value !== filterValue.replace('-', '')) {
+            result = true;
+          }
+          // Detect 'assigned_to' or 'subassigned' value
+        } else if (key == 'assigned_to') {
+          if (filterValue === value.label) {
+            result = true;
+          } else if (
+            Object.prototype.hasOwnProperty.call(contact, 'subassigned') &&
+            Object.prototype.hasOwnProperty.call(query, 'subassigned')
+          ) {
+            // If contact has not 'assigned_to' value, search by 'subassigned'
+            contact['subassigned'].values.forEach((subassignedContact) => {
+              if (query['subassigned'] === subassignedContact.name) {
+                result = true;
+              }
+            });
+          }
+        } else if (key == 'subassigned') {
+          value.values.forEach((subassignedContact) => {
+            if (filterValue === subassignedContact.name) {
+              result = true;
+            }
+          });
+          if (
+            !result &&
+            Object.prototype.hasOwnProperty.call(contact, 'assigned_to') &&
+            Object.prototype.hasOwnProperty.call(query, 'assigned_to')
+          ) {
+            // If contact has not 'subassigned' value, search by 'assigned_to'
+            if (query['assigned_to'] === contact['assigned_to'].label) {
+              result = true;
+            }
+          }
+        }
+      }
+      resp.push(result);
+    }
+    return resp.every((respValue) => respValue);
+  });
+};
+
+const groupsByFilter = (groupsList, query) => {
+  return groupsList.filter((group) => {
+    let resp = [];
+
+    for (let key in query) {
+      let result = false;
+      //Property exist in object
+      if (Object.prototype.hasOwnProperty.call(group, key)) {
+        const value = group[key];
+        const valueType = Object.prototype.toString.call(value);
+        const filterValue = query[key];
+
+        result = filterExistInEntity(valueType, filterValue, value);
+
+        // Return groups with status different of '-closed'
+        if (filterValue.toString().startsWith('-')) {
+          if (value !== filterValue.replace('-', '')) {
+            result = true;
+          }
+          // Same value as filter
+        } else if (key == 'assigned_to') {
+          if (filterValue === value.label) {
+            result = true;
+          }
+        }
+      }
+      resp.push(result);
+    }
+    return resp.every((respValue) => respValue);
+  });
+};
+
 export default {
   diff,
   formatDateToBackEnd,
@@ -265,4 +399,7 @@ export default {
   mentionPattern,
   renderMention,
   groupCommentsActivities,
+  filterExistInEntity,
+  contactsByFilter,
+  groupsByFilter,
 };

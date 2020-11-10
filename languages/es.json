@@ -38,7 +38,8 @@
     "submit": "Enviar",
     "share": "Compartir",
     "shareSettings": "Compartir Configuraciones",
-    "searchUsers": "Buscar usuarios"
+    "searchUsers": "Buscar usuarios",
+    "noFilters": "No hay filtros"
   },
   "loginScreen": {
     "domain": {

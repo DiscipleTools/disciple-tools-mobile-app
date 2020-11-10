@@ -38,7 +38,8 @@
     "submit": "Submit",
     "share": "Share",
     "shareSettings": "Share settings",
-    "searchUsers": "Search Users"
+    "searchUsers": "Search Users",
+    "noFilters": "No filters"
   },
   "loginScreen": {
     "domain": {

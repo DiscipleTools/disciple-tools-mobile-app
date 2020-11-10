@@ -266,67 +266,11 @@ class ContactsScreen extends React.Component {
   };
 
   selectFilter = (selectedFilter) => {
-    let queryFilter = {
-      ...selectedFilter,
-    };
-    let contactList = [...this.props.contacts];
-    //filter prop does not exist in any object of collection
-    Object.keys(selectedFilter).forEach((key) => {
-      if (
-        contactList.filter((contact) => Object.prototype.hasOwnProperty.call(contact, key))
-          .length === 0
-      ) {
-        delete queryFilter[key];
-      }
-    });
-    let queryFilterTwo = {};
-    // Map json to got 'key: String/Boolean' format
-    Object.keys(queryFilter).forEach((key) => {
-      let value = queryFilter[key];
-      let valueType = Object.prototype.toString.call(value);
-      if (valueType === '[object Array]') {
-        //queryFilterTwo[key] = contact => contact[key] == value[0];
-        queryFilterTwo[key] = value[0];
-      }
-      if (queryFilterTwo[key] === 'me') {
-        if (key == 'assigned_to') {
-          queryFilterTwo[key] = this.props.userData.id;
-        } else {
-          queryFilterTwo[key] = this.props.userData.id.toString();
-        }
-      }
-    });
-    // Remove subassigned query because contacts does not have this value
-    if (Object.prototype.hasOwnProperty.call(queryFilterTwo, 'subassigned')) {
-      delete queryFilterTwo.subassigned;
-    }
-    // Filter contacts according to 'queryFilterTwo' filters
-    let itemsFiltered = contactList.filter((contact) => {
-      let resp = [];
-      for (let key in queryFilterTwo) {
-        let result = false;
-        //Property exist in object
-        if (Object.prototype.hasOwnProperty.call(contact, key)) {
-          // Value is to 'omit' contacts (-closed)
-          if (queryFilterTwo[key].toString().startsWith('-')) {
-            if (contact[key] !== queryFilterTwo[key].replace('-', '')) {
-              result = true;
-            }
-            // Same value as filter
-          } else if (queryFilterTwo[key] === contact[key]) {
-            result = true;
-          } else if (key == 'assigned_to') {
-            if (queryFilterTwo[key] === contact[key].key) {
-              result = true;
-            }
-          }
-        }
-        resp.push(result);
-      }
-      return resp.every((respValue) => respValue);
-    });
     this.setState({
-      dataSourceContactsFiltered: itemsFiltered,
+      dataSourceContactsFiltered: sharedTools.contactsByFilter(
+        [...this.props.contacts],
+        selectedFilter,
+      ),
       filtered: true,
     });
   };

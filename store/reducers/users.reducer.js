@@ -1,4 +1,5 @@
 import * as actions from '../actions/users.actions';
+import sharedTools from '../../shared';
 
 const initialState = {
   error: null,
@@ -38,11 +39,76 @@ export default function usersReducer(state = initialState, action) {
         loading: true,
       };
     case actions.GET_CONTACT_FILTERS_SUCCESS: {
-      let contactFilters = { ...action.contactFilters };
+      let { contactFilters, isConnected, contactList, userData } = action;
+
+      // Map filters
       contactFilters = {
         ...contactFilters,
-        tabs: contactFilters.tabs.filter((filter) => filter.key !== 'custom'),
+        filters: contactFilters.filters.map((filter) => {
+          let mappedFilter = {
+            ...filter,
+          };
+
+          let newQuery = {};
+
+          Object.keys(filter.query).forEach((key) => {
+            let value = filter.query[key];
+            let valueType = Object.prototype.toString.call(value);
+            if (valueType === '[object Array]') {
+              value = value[0];
+            }
+
+            // Replace 'me' value with user name
+            if (value === 'me') {
+              value = userData.displayName;
+            }
+
+            newQuery = {
+              ...newQuery,
+              [key]: value,
+            };
+          });
+
+          delete newQuery.sort;
+          delete newQuery.combine;
+
+          return {
+            ...mappedFilter,
+            query: newQuery,
+          };
+        }),
       };
+
+      // Only return filters that exist in data (contact[prop] exist)
+      contactFilters = {
+        ...contactFilters,
+        filters: contactFilters.filters.filter((filter) => {
+          let newQuery = { ...filter.query };
+          Object.keys(filter.query).forEach((key) => {
+            if (
+              contactList.filter((contact) => Object.prototype.hasOwnProperty.call(contact, key))
+                .length === 0
+            ) {
+              delete newQuery[key];
+            }
+          });
+          return {
+            ...filter,
+            query: newQuery,
+          };
+        }),
+      };
+
+      // Only return filters that return data (result > 0) ONLY IN OFFLINE MODE
+      if (!isConnected) {
+        contactFilters = {
+          ...contactFilters,
+          filters: contactFilters.filters.filter((filter) => {
+            return sharedTools.contactsByFilter(contactList, filter.query).length > 0;
+          }),
+        };
+      }
+
       return {
         ...newState,
         contactFilters,
@@ -56,11 +122,76 @@ export default function usersReducer(state = initialState, action) {
         loading: false,
       };
     case actions.GET_GROUP_FILTERS_SUCCESS: {
-      let groupFilters = { ...action.groupFilters };
+      let { groupFilters, isConnected, groupList, userData } = action;
+
+      // Map filters
       groupFilters = {
         ...groupFilters,
-        tabs: groupFilters.tabs.filter((filter) => filter.key !== 'custom'),
+        filters: groupFilters.filters.map((filter) => {
+          let mappedFilter = {
+            ...filter,
+          };
+
+          let newQuery = {};
+
+          Object.keys(filter.query).forEach((key) => {
+            let value = filter.query[key];
+            let valueType = Object.prototype.toString.call(value);
+            if (valueType === '[object Array]') {
+              value = value[0];
+            }
+
+            // Replace 'me' value with user name
+            if (value === 'me') {
+              value = userData.displayName;
+            }
+
+            newQuery = {
+              ...newQuery,
+              [key]: value,
+            };
+          });
+
+          delete newQuery.sort;
+          delete newQuery.combine;
+
+          return {
+            ...mappedFilter,
+            query: newQuery,
+          };
+        }),
       };
+
+      // Only return filters that exist in data (group[prop] exist)
+      groupFilters = {
+        ...groupFilters,
+        filters: groupFilters.filters.filter((filter) => {
+          let newQuery = { ...filter.query };
+          Object.keys(filter.query).forEach((key) => {
+            if (
+              groupList.filter((group) => Object.prototype.hasOwnProperty.call(group, key))
+                .length === 0
+            ) {
+              delete newQuery[key];
+            }
+          });
+          return {
+            ...filter,
+            query: newQuery,
+          };
+        }),
+      };
+
+      // Only return filters that return data (result > 0) ONLY IN OFFLINE MODE
+      if (!isConnected) {
+        groupFilters = {
+          ...groupFilters,
+          filters: groupFilters.filters.filter((filter) => {
+            return sharedTools.groupsByFilter(groupList, filter.query).length > 0;
+          }),
+        };
+      }
+
       return {
         ...newState,
         groupFilters,
