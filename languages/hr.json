@@ -38,7 +38,8 @@
     "submit": "",
     "share": "",
     "shareSettings": "",
-    "searchUsers": ""
+    "searchUsers": "",
+    "noFilters": ""
   },
   "loginScreen": {
     "domain": {
@@ -89,7 +90,8 @@
     "incorrectPin": "Neispravan PIN",
     "savedPinCode": "PIN kod je uspješno spremljen",
     "removedPinCode": "PIN kod je uspješno uklonjen",
-    "close": "Zatvoriti"
+    "close": "Zatvoriti",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Dodaj novi kontakt",

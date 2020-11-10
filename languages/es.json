@@ -38,7 +38,8 @@
     "submit": "Enviar",
     "share": "Compartir",
     "shareSettings": "Compartir Configuraciones",
-    "searchUsers": "Buscar usuarios"
+    "searchUsers": "Buscar usuarios",
+    "noFilters": "No hay filtros"
   },
   "loginScreen": {
     "domain": {
@@ -89,7 +90,8 @@
     "incorrectPin": "PIN incorrecto",
     "savedPinCode": "El código PIN se ha guardado correctamente!.",
     "removedPinCode": "El código PIN se ha removido correctamente!.",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "confirmPin": "Confirme el nuevo PIN"
   },
   "contactDetailScreen": {
     "addNewContact": "Crear contacto",

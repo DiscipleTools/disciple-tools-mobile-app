@@ -143,6 +143,8 @@ class SettingsScreen extends React.Component {
   state = {
     toggleShowPIN: false,
     pin: '',
+    confirmPin: false,
+    confirmPinValue: '',
     incorrectPin: false,
     toggleRestartDialog: false,
     selectedNewRTLDirection: false,
@@ -267,6 +269,8 @@ class SettingsScreen extends React.Component {
       toggleShowPIN: !prevState.toggleShowPIN,
       pin: '',
       incorrectPin: false,
+      confirmPin: false,
+      confirmPinValue: '',
     }));
   };
 
@@ -572,7 +576,9 @@ class SettingsScreen extends React.Component {
                     color: Colors.gray,
                     marginBottom: 5,
                   }}>
-                  {this.props.pinCode.enabled
+                  {this.state.confirmPin
+                    ? i18n.t('settingsScreen.confirmPin')
+                    : this.props.pinCode.enabled
                     ? i18n.t('settingsScreen.enterPin')
                     : i18n.t('settingsScreen.setPin')}
                 </Text>
@@ -603,15 +609,42 @@ class SettingsScreen extends React.Component {
                   onFulfill={(pin) => {
                     if (!this.props.pinCode.value) {
                       //New code
-                      this.savePINCode(pin);
-                      this.showToast(i18n.t('settingsScreen.savedPinCode'));
-                      this.toggleShowPIN();
+                      if (this.state.confirmPin) {
+                        if (this.state.confirmPinValue === pin) {
+                          // PIN Confirmation success
+                          this.setState(
+                            {
+                              confirmPin: false,
+                              confirmPinValue: '',
+                            },
+                            () => {
+                              this.savePINCode(pin);
+                              this.showToast(i18n.t('settingsScreen.savedPinCode'));
+                              this.toggleShowPIN();
+                            },
+                          );
+                        } else {
+                          // Error on confirm PIN
+                          this.setState({
+                            incorrectPin: true,
+                            pin: '',
+                          });
+                        }
+                      } else {
+                        // Enable PIN confirmation
+                        this.setState({
+                          confirmPin: true,
+                          confirmPinValue: pin,
+                          pin: '',
+                        });
+                      }
                     } else if (pin === this.props.pinCode.value) {
-                      //input correct pin
+                      // Remove PIN
                       this.removePINCode();
                       this.showToast(i18n.t('settingsScreen.removedPinCode'));
                       this.toggleShowPIN();
                     } else {
+                      // Error on set PIN
                       this.setState({
                         incorrectPin: true,
                         pin: '',

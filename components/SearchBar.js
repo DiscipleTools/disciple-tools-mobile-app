@@ -195,9 +195,7 @@ class SearchBar extends React.Component {
   };
 
   renderSectionContent = (section, index, isActive, sections) => {
-    let content = this.props.filterConfig.filters.filter(
-      (filter) => filter.tab === section.key && !filter.type,
-    );
+    let content = this.props.filterConfig.filters.filter((filter) => filter.tab === section.key);
     return (
       <View
         key={index}
@@ -206,45 +204,49 @@ class SearchBar extends React.Component {
           borderColor: Colors.grayLight,
           padding: 15,
         }}>
-        {content.map((filter) => (
-          <TouchableOpacity
-            key={filter.ID}
-            activeOpacity={0.5}
-            onPress={() => {
-              this.filterByOption(filter.ID, filter.query, filter.name);
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                height: 50,
-                paddingLeft: filter.subfilter ? 20 : 0,
+        {content.length > 0 ? (
+          content.map((filter) => (
+            <TouchableOpacity
+              key={filter.ID}
+              activeOpacity={0.5}
+              onPress={() => {
+                this.filterByOption(filter.ID, filter.query, filter.name);
               }}>
-              <CheckBox
-                Component={TouchableWithoutFeedback}
-                checked={filter.ID === this.state.filter.ID}
-                checkedIcon="dot-circle-o"
-                uncheckedIcon="circle-o"
-                containerStyle={{
-                  padding: 0,
-                  margin: 0,
-                }}
-              />
-              <Text
+              <View
                 style={{
-                  paddingTop: Platform.OS === 'ios' ? 4 : 0,
+                  flexDirection: 'row',
+                  height: 50,
+                  paddingLeft: filter.subfilter ? 20 : 0,
                 }}>
-                {filter.name}
-              </Text>
-              <Text
-                style={{
-                  marginLeft: 'auto',
-                  paddingTop: Platform.OS === 'ios' ? 4 : 0,
-                }}>
-                {filter.count}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+                <CheckBox
+                  Component={TouchableWithoutFeedback}
+                  checked={filter.ID === this.state.filter.ID}
+                  checkedIcon="dot-circle-o"
+                  uncheckedIcon="circle-o"
+                  containerStyle={{
+                    padding: 0,
+                    margin: 0,
+                  }}
+                />
+                <Text
+                  style={{
+                    paddingTop: Platform.OS === 'ios' ? 4 : 0,
+                  }}>
+                  {filter.name}
+                </Text>
+                <Text
+                  style={{
+                    marginLeft: 'auto',
+                    paddingTop: Platform.OS === 'ios' ? 4 : 0,
+                  }}>
+                  {filter.count}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text>{i18n.t('global.noFilters')}</Text>
+        )}
       </View>
     );
   };

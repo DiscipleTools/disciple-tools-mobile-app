@@ -38,7 +38,8 @@
     "submit": "",
     "share": "",
     "shareSettings": "",
-    "searchUsers": ""
+    "searchUsers": "",
+    "noFilters": ""
   },
   "loginScreen": {
     "domain": {
@@ -89,7 +90,8 @@
     "incorrectPin": "Неверный PIN-код",
     "savedPinCode": "PIN-код успешно сохранен",
     "removedPinCode": "PIN-код успешно удален",
-    "close": "близко"
+    "close": "близко",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Добавить новый контакт",

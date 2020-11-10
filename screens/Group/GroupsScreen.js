@@ -262,70 +262,15 @@ class GroupsScreen extends React.Component {
   };
 
   selectFilter = (selectedFilter) => {
-    let queryFilter = {
-      ...selectedFilter,
-    };
-    let groupList = [...this.props.groups];
-    //filter prop does not exist in any object of collection
-    Object.keys(selectedFilter).forEach((key) => {
-      if (
-        groupList.filter((group) => Object.prototype.hasOwnProperty.call(group, key)).length === 0
-      ) {
-        delete queryFilter[key];
-      }
-    });
-    let queryFilterTwo = {};
-    // Map json to got 'key: String/Boolean' format
-    Object.keys(queryFilter).forEach((key) => {
-      let value = queryFilter[key];
-      let valueType = Object.prototype.toString.call(value);
-      if (valueType === '[object Array]') {
-        //queryFilterTwo[key] = group => group[key] == value[0];
-        queryFilterTwo[key] = value[0];
-      }
-      if (queryFilterTwo[key] === 'me') {
-        if (key == 'assigned_to') {
-          queryFilterTwo[key] = this.props.userData.id;
-        } else {
-          queryFilterTwo[key] = this.props.userData.id.toString();
-        }
-      }
-    });
-    // Filter groups according to 'queryFilterTwo' filters
-    let itemsFiltered = groupList.filter((group) => {
-      let resp = [];
-      for (let key in queryFilterTwo) {
-        let result = false;
-        //Property exist in object
-        if (Object.prototype.hasOwnProperty.call(group, key)) {
-          // Value is to 'omit' groups (-closed)
-          if (queryFilterTwo[key].toString().startsWith('-')) {
-            if (group[key] !== queryFilterTwo[key].replace('-', '')) {
-              result = true;
-            }
-            // Same value as filter
-          } else if (queryFilterTwo[key] === group[key]) {
-            result = true;
-          } else if (key == 'assigned_to') {
-            if (queryFilterTwo[key] === group[key].key) {
-              result = true;
-            }
-          }
-        }
-        resp.push(result);
-      }
-      return resp.every((respValue) => respValue);
-    });
     this.setState({
-      dataSourceGroupsFiltered: itemsFiltered,
+      dataSourceGroupsFiltered: sharedTools.groupsByFilter([...this.props.groups], selectedFilter),
       filtered: true,
     });
   };
 
   filterByText = (text) => {
-    const itemsFiltered = [];
     if (text.length > 0) {
-      this.props.groups.filter(function (item) {
+      let itemsFiltered = this.props.groups.filter(function (item) {
         const textData = text
           .toUpperCase()
           .normalize('NFD')
@@ -334,26 +279,16 @@ class GroupsScreen extends React.Component {
           .toUpperCase()
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '');
-        const filterByTitle = itemDataTitle.includes(textData);
-        if (filterByTitle === true) {
-          itemsFiltered.push(item);
-        }
-        return itemsFiltered;
+        return itemDataTitle.includes(textData);
       });
-      if (itemsFiltered.length > 0) {
-        this.setState({
-          dataSourceGroupsFiltered: itemsFiltered,
-          filtered: true,
-        });
-      } else {
-        this.setState({
-          filtered: true,
-        });
-      }
+      this.setState({
+        dataSourceGroupsFiltered: itemsFiltered,
+        filtered: true,
+      });
     } else {
       this.setState({
-        filtered: false,
         dataSourceGroupsFiltered: [],
+        filtered: false,
       });
     }
   };

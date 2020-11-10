@@ -38,7 +38,8 @@
     "submit": "",
     "share": "",
     "shareSettings": "",
-    "searchUsers": ""
+    "searchUsers": "",
+    "noFilters": ""
   },
   "loginScreen": {
     "domain": {
@@ -89,7 +90,8 @@
     "incorrectPin": "Yanlış PIN",
     "savedPinCode": "PIN kodu başarıyla kaydedildi",
     "removedPinCode": "PIN kodu başarıyla kaldırıldı",
-    "close": "Kapat"
+    "close": "Kapat",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Yeni bağlantı ekle",

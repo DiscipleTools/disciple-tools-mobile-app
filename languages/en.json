@@ -38,7 +38,8 @@
     "submit": "Submit",
     "share": "Share",
     "shareSettings": "Share settings",
-    "searchUsers": "Search Users"
+    "searchUsers": "Search Users",
+    "noFilters": "No filters"
   },
   "loginScreen": {
     "domain": {
@@ -89,7 +90,8 @@
     "incorrectPin": "Incorrect PIN",
     "savedPinCode": "PIN code saved successfully!.",
     "removedPinCode": "PIN code removed successfully!.",
-    "close": "Close"
+    "close": "Close",
+    "confirmPin": "Confirm the new PIN"
   },
   "contactDetailScreen": {
     "addNewContact": "Add New Contact",

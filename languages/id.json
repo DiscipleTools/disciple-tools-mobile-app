@@ -38,7 +38,8 @@
     "submit": "",
     "share": "",
     "shareSettings": "",
-    "searchUsers": ""
+    "searchUsers": "",
+    "noFilters": ""
   },
   "loginScreen": {
     "domain": {
@@ -89,7 +90,8 @@
     "incorrectPin": "PIN salah",
     "savedPinCode": "Kode PIN berhasil disimpan",
     "removedPinCode": "Kode PIN berhasil dihapus",
-    "close": "Menutup"
+    "close": "Menutup",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Tambahkan Kontak Baru",
