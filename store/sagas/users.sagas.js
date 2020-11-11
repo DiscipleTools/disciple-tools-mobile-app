@@ -152,6 +152,7 @@ export function* getGroupFilters({ domain, token }) {
       });
     }
   } catch (error) {
+    console.log(error);
     yield put({
       type: actions.GET_GROUP_FILTERS_FAILURE,
       error: {
