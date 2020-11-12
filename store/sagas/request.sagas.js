@@ -192,6 +192,18 @@ export default function* requestSaga() {
             });
             yield put({ type: payload.action, payload: { data: list, status: 200 } });
           }
+          if (payload.data.method === 'GET' && payload.action.includes('GET_CONTACT_FILTERS')) {
+            const contactFilters = yield select((state) => {
+              return state['usersReducer']['contactFilters'];
+            });
+            yield put({ type: payload.action, payload: { data: contactFilters, status: 200 } });
+          }
+          if (payload.data.method === 'GET' && payload.action.includes('GET_GROUP_FILTERS')) {
+            const groupFilters = yield select((state) => {
+              return state['usersReducer']['groupFilters'];
+            });
+            yield put({ type: payload.action, payload: { data: groupFilters, status: 200 } });
+          }
         }
       }
     } else if (request) {
