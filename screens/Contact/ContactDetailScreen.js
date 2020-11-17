@@ -2140,6 +2140,7 @@ class ContactDetailScreen extends React.Component {
                     style={Platform.select({
                       android: {
                         color: '#ffffff',
+                        backgroundColor: 'transparent',
                       },
                       ios: {
                         backgroundColor: this.state.overallStatusBackgroundColor,

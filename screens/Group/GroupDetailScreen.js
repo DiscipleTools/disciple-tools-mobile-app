@@ -2569,6 +2569,7 @@ class GroupDetailScreen extends React.Component {
                       Platform.select({
                         android: {
                           color: '#ffffff',
+                          backgroundColor: 'transparent',
                         },
                         ios: {
                           backgroundColor: this.state.groupStatusBackgroundColor,
