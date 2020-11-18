@@ -402,4 +402,5 @@ export default {
   filterExistInEntity,
   contactsByFilter,
   groupsByFilter,
+  paginationLimit: 1000,
 };

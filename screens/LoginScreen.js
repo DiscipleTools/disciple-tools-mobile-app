@@ -45,6 +45,7 @@ import { getContactSettings, getAll as getAllContacts } from '../store/actions/c
 import { logout } from '../store/actions/user.actions';
 import { getActiveQuestionnaires } from '../store/actions/questionnaire.actions';
 import { getNotificationsCount } from '../store/actions/notifications.actions';
+import sharedTools from '../shared';
 //
 const styles = StyleSheet.create({
   container: {
@@ -194,7 +195,7 @@ class LoginScreen extends React.Component {
     loading: false,
     modalVisible: false,
     offset: 0,
-    limit: 5000,
+    limit: sharedTools.paginationLimit,
     sort: '-last_modified',
     toggleShowPIN: false,
     pin: '',
