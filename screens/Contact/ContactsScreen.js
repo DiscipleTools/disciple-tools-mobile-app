@@ -66,7 +66,7 @@ class ContactsScreen extends React.Component {
     dataSourceContact: [],
     dataSourceContactsFiltered: [],
     offset: 0,
-    limit: 5000,
+    limit: sharedTools.paginationLimit,
     sort: '-last_modified',
     filtered: false,
     fixFABIndex: false,

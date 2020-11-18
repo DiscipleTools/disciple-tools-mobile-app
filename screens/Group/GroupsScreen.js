@@ -59,7 +59,7 @@ class GroupsScreen extends React.Component {
     dataSourceGroups: [],
     dataSourceGroupsFiltered: [],
     offset: 0,
-    limit: 100,
+    limit: sharedTools.paginationLimit,
     sort: '-last_modified',
     filtered: false,
     fixFABIndex: false,
