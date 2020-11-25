@@ -2123,7 +2123,9 @@ class ContactDetailScreen extends React.Component {
                   </Label>
                 </Col>
               </Row>
-              <Row style={[styles.formRow, { paddingTop: 5 }]} pointerEvents="none">
+              <Row
+                style={[styles.formRow, { paddingTop: 5, paddingBottom: 5 }]}
+                pointerEvents="none">
                 <Col
                   style={[
                     styles.statusFieldContainer,
@@ -2152,6 +2154,23 @@ class ContactDetailScreen extends React.Component {
                     {this.renderStatusPickerItems()}
                   </Picker>
                 </Col>
+              </Row>
+              <Row>
+                {Object.prototype.hasOwnProperty.call(
+                  this.state.contact,
+                  `reason_${this.state.contact.overall_status}`,
+                ) ? (
+                  <Text>
+                    (
+                    {
+                      this.props.contactSettings.fields[
+                        `reason_${this.state.contact.overall_status}`
+                      ].values[this.state.contact[`reason_${this.state.contact.overall_status}`]]
+                        .label
+                    }
+                    )
+                  </Text>
+                ) : null}
               </Row>
               <Row style={styles.formRow}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
