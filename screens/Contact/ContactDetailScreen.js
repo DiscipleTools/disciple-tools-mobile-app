@@ -115,19 +115,19 @@ const defaultFaithMilestones = [
 let tabViewRoutes = [
   {
     key: 'details',
-    title: 'global.details',
+    title: i18n.t('global.details'),
   },
   {
-    key: 'progress',
-    title: 'global.progress',
+    key: 'faith',
+    title: i18n.t('global.progress'),
   },
   {
     key: 'comments',
-    title: 'global.commentsActivity',
+    title: i18n.t('global.commentsActivity'),
   },
   {
-    key: 'connections',
-    title: 'contactDetailScreen.connections',
+    key: 'relationships',
+    title: i18n.t('contactDetailScreen.connections'),
   },
 ];
 let self;
@@ -642,7 +642,34 @@ class ContactDetailScreen extends React.Component {
 
   state = {
     ...initialState,
+    tabViewConfig: {
+      ...initialState.tabViewConfig,
+      routes: this.getRoutesWithRender(),
+    },
   };
+
+  getRoutesWithRender() {
+    return [
+      ...initialState.tabViewConfig.routes.map((route) => {
+        return {
+          key: route.key,
+          title: route.title,
+          render: () => {
+            return this[`${route.key}View`]();
+          },
+        };
+      }),
+      ...this.props.contactSettings.tiles.map((tile) => {
+        return {
+          key: tile.name,
+          title: tile.label,
+          render: () => {
+            return this.renderCustomView(tile.fields);
+          },
+        };
+      }),
+    ];
+  }
 
   componentDidMount() {
     const { navigation } = this.props;
@@ -1060,6 +1087,7 @@ class ContactDetailScreen extends React.Component {
           };
         }
       }
+      console.log(contact);
     }
 
     // GET COMMENTS
@@ -1559,7 +1587,7 @@ class ContactDetailScreen extends React.Component {
         tabViewConfig: {
           ...state.tabViewConfig,
           index: indexFix,
-          routes: state.tabViewConfig.routes.filter((route) => route.key !== 'comments'),
+          routes: this.getRoutesWithRender().filter((route) => route.key !== 'comments'),
         },
       };
     });
@@ -1600,7 +1628,7 @@ class ContactDetailScreen extends React.Component {
         tabViewConfig: {
           ...state.tabViewConfig,
           index: indexFix,
-          routes: [...tabViewRoutes],
+          routes: this.getRoutesWithRender(),
         },
         sources: [...unmodifiedSources],
         subAssignedContacts: [...unmodifiedSubAssignedContacts],
@@ -1798,6 +1826,8 @@ class ContactDetailScreen extends React.Component {
               assigned_to: `user-${contactToSave.assigned_to.key}`,
             };
           }
+          console.log('contactToSave');
+          console.log(contactToSave);
           this.props.saveContact(
             this.props.userData.domain,
             this.props.userData.token,
@@ -2090,7 +2120,7 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  detailView = () => (
+  detailsView = () => (
     /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
@@ -3385,7 +3415,7 @@ class ContactDetailScreen extends React.Component {
     </View>
   );
 
-  progressView = () => (
+  faithView = () => (
     /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
@@ -3884,7 +3914,7 @@ class ContactDetailScreen extends React.Component {
     }
   };
 
-  connectionsView = () => (
+  relationshipsView = () => (
     /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
@@ -5985,6 +6015,303 @@ class ContactDetailScreen extends React.Component {
     }
   };
 
+  renderCustomView = (fields) => (
+    <View style={{ flex: 1 }}>
+      {this.state.onlyView ? (
+        <View>
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.loading}
+                onRefresh={() => this.onRefresh(this.state.contact.ID)}
+              />
+            }>
+            <View style={[styles.formContainer, { marginTop: 0 }]}>
+              {fields.map((field, index) => (
+                <View key={index.toString()}>
+                  <Row style={[styles.formRow, { paddingTop: 15 }]}>
+                    <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                      <Icon
+                        type="FontAwesome"
+                        name="users"
+                        style={[styles.formIcon, { marginTop: 0 }]}
+                      />
+                    </Col>
+                    <Col>
+                      <View>{this.renderFieldValue(field)}</View>
+                    </Col>
+                    <Col style={styles.formParentLabel}>
+                      <Label style={styles.formLabel}>{field.label}</Label>
+                    </Col>
+                  </Row>
+                  <View style={styles.formDivider} />
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+      ) : (
+        <KeyboardAwareScrollView /*_editable_*/
+          enableAutomaticScroll
+          enableOnAndroid
+          keyboardOpeningTime={0}
+          extraScrollHeight={150}
+          keyboardShouldPersistTaps="handled">
+          <View style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
+            {fields.map((field, index) => (
+              <View key={index.toString()}>
+                <Row style={styles.formFieldMargin}>
+                  <Col style={styles.formIconLabelCol}>
+                    <View style={styles.formIconLabelView}>
+                      <Icon type="FontAwesome" name="users" style={styles.formIcon} />
+                    </View>
+                  </Col>
+                  <Col>
+                    <Label style={styles.formLabel}>{field.label}</Label>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col style={styles.formIconLabelCol}>
+                    <View style={styles.formIconLabelView}>
+                      <Icon
+                        type="FontAwesome"
+                        name="user"
+                        style={[styles.formIcon, { opacity: 0 }]}
+                      />
+                    </View>
+                  </Col>
+                  <Col>{this.renderField(field)}</Col>
+                </Row>
+              </View>
+            ))}
+          </View>
+        </KeyboardAwareScrollView>
+      )}
+    </View>
+  );
+
+  renderFieldValue = (field) => {
+    let propExist = Object.prototype.hasOwnProperty.call(this.state.contact, field.name);
+    let mappedValue = <Text></Text>;
+    let value = this.state.contact[field.name],
+      valueType = field.type;
+    let postType;
+    if (Object.prototype.hasOwnProperty.call(field, 'post_type')) {
+      postType = field.post_type;
+    }
+    switch (valueType) {
+      case 'location': {
+        if (propExist) {
+          mappedValue = <Text>{value.values.map((location) => location.name).join(', ')}</Text>;
+        }
+        break;
+      }
+      case 'date': {
+        if (propExist) {
+          mappedValue = (
+            <Text>
+              {moment(new Date(parseInt(value) * 1000))
+                .utc()
+                .format('LL')}
+            </Text>
+          );
+        }
+        break;
+      }
+      case 'connection': {
+        if (propExist) {
+          mappedValue = value.values.map((connection, index) => (
+            <TouchableOpacity
+              key={index.toString()}
+              activeOpacity={0.5}
+              onPress={() => {
+                switch (postType) {
+                  case 'contacts': {
+                    this.goToContactDetailScreen(connection.value, connection.name);
+                    break;
+                  }
+                  case 'groups': {
+                    this.goToGroupDetailScreen(connection.value, connection.name);
+                    break;
+                  }
+                  default: {
+                    break;
+                  }
+                }
+              }}>
+              <Text
+                style={[
+                  styles.linkingText,
+                  { marginTop: 'auto', marginBottom: 'auto' },
+                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                ]}>
+                {connection.name}
+              </Text>
+            </TouchableOpacity>
+          ));
+        }
+        break;
+      }
+      case 'multi_select': {
+        mappedValue = (
+          <Row style={{ flexWrap: 'wrap' }}>
+            {Object.keys(field.default).map((value, index) =>
+              this.renderMultiSelectField(field, value, index),
+            )}
+          </Row>
+        );
+        break;
+      }
+      default: {
+        if (propExist) {
+          mappedValue = <Text>{value}</Text>;
+        }
+        break;
+      }
+    }
+    return mappedValue;
+  };
+
+  renderMultiSelectField = (field, value, index) => (
+    <TouchableOpacity
+      key={index.toString()}
+      onPress={() => {
+        //this.onMilestoneChange(value);
+      }}
+      activeOpacity={1}
+      underlayColor={
+        this.onCheckMultiSelectFieldValue(field.name, value) ? Colors.tintColor : Colors.gray
+      }
+      style={{
+        borderRadius: 10,
+        backgroundColor: this.onCheckMultiSelectFieldValue(field.name, value)
+          ? Colors.tintColor
+          : Colors.gray,
+        padding: 10,
+        marginRight: 10,
+        marginBottom: 10,
+      }}>
+      <Text
+        style={[
+          styles.progressIconText,
+          {
+            color: this.onCheckMultiSelectFieldValue(field.name, value) ? '#FFFFFF' : '#000000',
+          },
+        ]}>
+        {field.default[value].label}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  onCheckMultiSelectFieldValue = (fieldName, fieldValue) => {
+    if (Object.prototype.hasOwnProperty.call(this.state.contact, fieldName)) {
+      const activeValues = [...this.state.contact[fieldName].values];
+      // get milestones that exist in the list and are not deleted
+      const foundValue = activeValues.some((activeValue) => activeValue.value == fieldValue);
+      return foundValue;
+    } else {
+      return false;
+    }
+  };
+
+  renderField = (field) => {
+    let value = this.state.contact[field.name],
+      valueType = field.type;
+    let postType;
+    if (Object.prototype.hasOwnProperty.call(field, 'post_type')) {
+      postType = field.post_type;
+    }
+    switch (valueType) {
+      case 'number': {
+        return (
+          <Input
+            value={value}
+            keyboardType="numeric"
+            onChangeText={(value) => this.setContactCustomFieldValue(field.name, value)}
+            style={[
+              styles.contactTextField,
+              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+            ]}
+          />
+        );
+      }
+      case 'text': {
+        return (
+          <Input
+            value={value}
+            onChangeText={(value) => this.setContactCustomFieldValue(field.name, value)}
+            style={[
+              styles.contactTextField,
+              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+            ]}
+          />
+        );
+      }
+      case 'date': {
+        return (
+          <Row>
+            <DatePicker
+              ref={(ref) => {
+                this[`${field.name}Ref`] = ref;
+              }}
+              onDateChange={(dateValue) => {
+                this.setContactCustomFieldValue(field.name, dateValue, valueType);
+              }}
+              defaultDate={
+                this.state.contact[field.name] && this.state.contact[field.name].length > 0
+                  ? new Date(this.state.contact[field.name] * 1000)
+                  : ''
+              }
+            />
+            <Icon
+              type="AntDesign"
+              name="close"
+              style={[
+                styles.formIcon,
+                styles.addRemoveIcons,
+                styles.removeIcons,
+                { marginLeft: 'auto' },
+              ]}
+              onPress={() => this.setContactCustomFieldValue(field.name, null, valueType)}
+            />
+          </Row>
+        );
+      }
+      default:
+        return <Text>{field.label}</Text>;
+    }
+  };
+
+  setContactCustomFieldValue = (fieldName, value, fieldType = null) => {
+    console.log('fieldName');
+    console.log(fieldName);
+    console.log('value before');
+    console.log(value);
+    console.log('fieldType');
+    console.log(fieldType);
+
+    if (fieldType == 'date') {
+      if (!value) {
+        // Clear DatePicker value
+        this[`${fieldName}Ref`].state.chosenDate = undefined;
+        this[`${fieldName}Ref`].state.defaultDate = new Date();
+        this.forceUpdate();
+      }
+      value = value ? sharedTools.formatDateToBackEnd(value) : '';
+    }
+
+    console.log('value after');
+    console.log(value);
+
+    this.setState((prevState) => ({
+      contact: {
+        ...prevState.contact,
+        [fieldName]: value,
+      },
+    }));
+  };
+
   render() {
     const successToast = (
       <Toast
@@ -6024,23 +6351,12 @@ class ContactDetailScreen extends React.Component {
                         tabStyle={{ width: 'auto' }}
                         indicatorStyle={styles.tabBarUnderlineStyle}
                         renderLabel={({ route, color }) => (
-                          <Text style={{ color, fontWeight: 'bold' }}>{i18n.t(route.title)}</Text>
+                          <Text style={{ color, fontWeight: 'bold' }}>{route.title}</Text>
                         )}
                       />
                     )}
                     renderScene={({ route }) => {
-                      switch (route.key) {
-                        case 'details':
-                          return this.detailView();
-                        case 'progress':
-                          return this.progressView();
-                        case 'comments':
-                          return this.commentsView();
-                        case 'connections':
-                          return this.connectionsView();
-                        default:
-                          return null;
-                      }
+                      return route.render();
                     }}
                     onIndexChange={this.tabChanged}
                     initialLayout={{ width: windowWidth }}

@@ -131,13 +131,9 @@ export default function contactsReducer(state = initialState, action) {
                         break;
                       }
                       case '[object String]': {
-                        if (key === 'sources' || key === 'milestones') {
-                          // source or milestone
-                          return {
-                            value: valueTwo,
-                          };
-                        }
-                        return valueTwo;
+                        return {
+                          value: valueTwo,
+                        };
                       }
                       default:
                     }
@@ -270,13 +266,9 @@ export default function contactsReducer(state = initialState, action) {
                       break;
                     }
                     case '[object String]': {
-                      if (key === 'sources' || key === 'milestones') {
-                        // source or milestone
-                        return {
-                          value: valueTwo,
-                        };
-                      }
-                      return valueTwo;
+                      return {
+                        value: valueTwo,
+                      };
                     }
                     default:
                   }
@@ -549,13 +541,9 @@ export default function contactsReducer(state = initialState, action) {
                       break;
                     }
                     case '[object String]': {
-                      if (key === 'sources' || key === 'milestones') {
-                        // source or milestone
-                        return {
-                          value: valueTwo,
-                        };
-                      }
-                      return valueTwo;
+                      return {
+                        value: valueTwo,
+                      };
                     }
                     default:
                   }
@@ -845,12 +833,50 @@ export default function contactsReducer(state = initialState, action) {
           },
         };
       });
+
+      let tileList = [];
+      if (Object.prototype.hasOwnProperty.call(settings, 'tiles')) {
+        Object.keys(settings.tiles).forEach((tileName) => {
+          let fieldList = [];
+          Object.keys(settings.fields).forEach((fieldName) => {
+            let value = settings.fields[fieldName];
+            if (Object.prototype.hasOwnProperty.call(value, 'tile') && value.tile === tileName) {
+              let newField = {
+                name: fieldName,
+                label: value.name,
+                type: value.type,
+              };
+              if (Object.prototype.hasOwnProperty.call(value, 'post_type')) {
+                newField = {
+                  ...newField,
+                  post_type: value.post_type,
+                };
+              }
+              if (Object.prototype.hasOwnProperty.call(value, 'default')) {
+                newField = {
+                  ...newField,
+                  default: value.default,
+                };
+              }
+              fieldList.push(newField);
+            }
+          });
+          tileList.push({
+            name: tileName,
+            label: settings.tiles[tileName].label,
+            fields: fieldList,
+          });
+        });
+      }
+      console.log('tileList');
+      console.log(tileList);
       return {
         ...newState,
         settings: {
           fields: fieldList,
           channels,
           labelPlural: settings.label_plural,
+          tiles: tileList,
         },
         loading: false,
       };
