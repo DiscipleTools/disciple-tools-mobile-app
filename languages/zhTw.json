@@ -39,7 +39,8 @@
     "share": "",
     "shareSettings": "",
     "searchUsers": "",
-    "noFilters": ""
+    "noFilters": "",
+    "searchContacts": ""
   },
   "loginScreen": {
     "domain": {

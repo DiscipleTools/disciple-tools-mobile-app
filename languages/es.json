@@ -39,7 +39,8 @@
     "share": "Compartir",
     "shareSettings": "Compartir Configuraciones",
     "searchUsers": "Buscar usuarios",
-    "noFilters": "No hay filtros"
+    "noFilters": "No hay filtros",
+    "searchContacts": "Buscar contactos"
   },
   "loginScreen": {
     "domain": {
