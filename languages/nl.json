@@ -40,7 +40,8 @@
     "shareSettings": "",
     "searchUsers": "",
     "noFilters": "",
-    "searchContacts": ""
+    "searchContacts": "",
+    "selectLocations": "Selecteer locaties"
   },
   "loginScreen": {
     "domain": {
@@ -98,7 +99,6 @@
     "addNewContact": "Voeg nieuw contact toe",
     "subAssignThisContact": "Wijs deze contactpersoon toe",
     "mobile": "mobiel",
-    "selectLocations": "Selecteer locaties",
     "selectSources": "Selecteer bronnen",
     "connections": "aansluitingen",
     "addGroup": "Groep toevoegen",
@@ -131,7 +131,6 @@
     "noGroupCommentPlacheHolder": "Er zijn momenteel geen groepsreacties beschikbaar.",
     "noGroupCommentPlacheHolder1": "Er is mogelijk een probleem opgetreden bij het ophalen van uw site. Sleep omlaag om te proberen te vernieuwen en probeer het opnieuw.",
     "noGroupCommentPlacheHolderOffline": "U bent momenteel offline. Zorg ervoor dat je bent verbonden met wifi of mobiele gegevens om te vernieuwen en je groepsreactie te ontvangen.",
-    "selectLocations": "Selecteer locaties",
     "noMembersMessage": "Geen leden",
     "groupName": {
       "label": "Groepsnaam",

@@ -40,7 +40,8 @@
     "shareSettings": "",
     "searchUsers": "",
     "noFilters": "",
-    "searchContacts": ""
+    "searchContacts": "",
+    "selectLocations": "Izberite Lokacije"
   },
   "loginScreen": {
     "domain": {
@@ -98,7 +99,6 @@
     "addNewContact": "Dodaj nov stik",
     "subAssignThisContact": "Pododelite ta stik",
     "mobile": "Mobilni",
-    "selectLocations": "Izberite Lokacije",
     "selectSources": "Izberite vire",
     "connections": "Povezave",
     "addGroup": "Dodaj skupino",
@@ -131,7 +131,6 @@
     "noGroupCommentPlacheHolder": "Trenutno ni na voljo nobenih komentarjev skupin.",
     "noGroupCommentPlacheHolder1": "Morda je prišlo do težave pri pridobivanju le-teh z vašega spletnega mesta. Povlecite navzdol, da se poskusite osvežiti in poskusite znova.",
     "noGroupCommentPlacheHolderOffline": "Trenutno ste brez povezave. Zagotovite, da ste povezani z wifi ali mobilnimi podatki, da osvežite in dobite komentar svoje skupine.",
-    "selectLocations": "Izberite Lokacije",
     "noMembersMessage": "Ni članov",
     "groupName": {
       "label": "Ime skupine",

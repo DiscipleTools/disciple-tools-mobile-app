@@ -40,7 +40,8 @@
     "shareSettings": "",
     "searchUsers": "",
     "noFilters": "",
-    "searchContacts": ""
+    "searchContacts": "",
+    "selectLocations": "Pilih lokasi"
   },
   "loginScreen": {
     "domain": {
@@ -98,7 +99,6 @@
     "addNewContact": "Tambahkan Kontak Baru",
     "subAssignThisContact": "Sub-assign kontak ini",
     "mobile": "Mobile",
-    "selectLocations": "Pilih lokasi",
     "selectSources": "Pilih sumber",
     "connections": "Koneksi",
     "addGroup": "Tambahkan Grup",
@@ -131,7 +131,6 @@
     "noGroupCommentPlacheHolder": "Tidak ada komentar grup yang tersedia saat ini.",
     "noGroupCommentPlacheHolder1": "Mungkin ada masalah saat mendapatkannya dari situs Anda. Seret ke bawah untuk mencoba menyegarkan dan coba lagi.",
     "noGroupCommentPlacheHolderOffline": "Anda sedang offline. Pastikan Anda terhubung ke wifi atau data seluler untuk menyegarkan dan mendapatkan komentar grup Anda.",
-    "selectLocations": "Pilih Lokasi",
     "noMembersMessage": "noMembersMessage",
     "groupName": {
       "label": "Nama grup",

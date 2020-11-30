@@ -96,17 +96,10 @@ let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBac
 const isIOS = Platform.OS === 'ios';
 /* eslint-disable */
 let commentsFlatListRef,
-  coachesSelectizeRef,
-  geonamesSelectizeRef,
-  peopleGroupsSelectizeRef,
   addMembersSelectizeRef,
-  parentGroupsSelectizeRef,
-  peerGroupsSelectizeRef,
-  childGroupsSelectizeRef,
   startDatePickerRef,
   endDatePickerRef,
-  churchStartDatePickerRef,
-  shareGroupSelectizeRef;
+  churchStartDatePickerRef;
 /* eslint-enable */
 const entities = new Html5Entities();
 const defaultHealthMilestones = [
@@ -123,23 +116,23 @@ const defaultHealthMilestones = [
 const tabViewRoutes = [
   {
     key: 'details',
-    title: 'global.details',
+    title: i18n.t('global.details'),
   },
   {
-    key: 'progress',
-    title: 'global.progress',
+    key: 'healthMetrics',
+    title: i18n.t('global.progress'),
   },
   {
     key: 'comments',
-    title: 'global.commentsActivity',
+    title: i18n.t('global.commentsActivity'),
   },
   {
-    key: 'members',
-    title: 'global.membersActivity',
+    key: 'relationships',
+    title: i18n.t('global.membersActivity'),
   },
   {
     key: 'groups',
-    title: 'global.groups',
+    title: i18n.t('global.groups'),
   },
 ];
 let self;
@@ -521,6 +514,10 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
+  formFieldMargin: {
+    marginTop: 20,
+    marginBottom: 10,
+  },
 });
 
 const initialState = {
@@ -746,7 +743,34 @@ class GroupDetailScreen extends React.Component {
 
   state = {
     ...initialState,
+    tabViewConfig: {
+      ...initialState.tabViewConfig,
+      routes: this.getRoutesWithRender(),
+    },
   };
+
+  getRoutesWithRender() {
+    return [
+      ...initialState.tabViewConfig.routes.map((route) => {
+        return {
+          key: route.key,
+          title: route.title,
+          render: () => {
+            return this[`${route.key}View`]();
+          },
+        };
+      }),
+      ...this.props.groupSettings.tiles.map((tile) => {
+        return {
+          key: tile.name,
+          title: tile.label,
+          render: () => {
+            return this.renderCustomView(tile.fields);
+          },
+        };
+      }),
+    ];
+  }
 
   componentDidMount() {
     const { navigation } = this.props;
@@ -1234,7 +1258,7 @@ class GroupDetailScreen extends React.Component {
         (group.ID && group.ID.toString() === this.state.group.ID.toString()) ||
         (group.oldID && group.oldID === this.state.group.ID.toString())
       ) {
-        // Highlight Updates -> Compare this.state.contact with contact and show differences
+        // Highlight Updates -> Compare this.state.group with contact and show differences
         this.onRefreshCommentsActivities(group.ID, true);
         toastSuccess.show(
           <View>
@@ -1560,7 +1584,7 @@ class GroupDetailScreen extends React.Component {
         tabViewConfig: {
           ...state.tabViewConfig,
           index: indexFix,
-          routes: state.tabViewConfig.routes.filter((route) => route.key !== 'comments'),
+          routes: this.getRoutesWithRender().filter((route) => route.key !== 'comments'),
         },
       };
     });
@@ -1596,7 +1620,7 @@ class GroupDetailScreen extends React.Component {
         tabViewConfig: {
           ...state.tabViewConfig,
           index: indexFix,
-          routes: [...tabViewRoutes],
+          routes: this.getRoutesWithRender(),
         },
         groupCoachContacts: [...unmodifiedGroupCoachContacts],
         parentGroups: [...unmodifiedParentGroups],
@@ -2132,18 +2156,9 @@ class GroupDetailScreen extends React.Component {
     }));
   };
 
-  getSelectizeValuesToSave = (dbData, selectizeRef, selectedValues = null) => {
+  getSelectizeValuesToSave = (dbData, selectedValues) => {
     const dbItems = [...dbData];
-    let localItems = [];
-    if (selectedValues) {
-      localItems = [...selectedValues];
-    } else {
-      selectedValues = selectizeRef.getSelectedItems();
-      Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-        const item = selectedValues.entities.item[itemValue];
-        localItems.push(item);
-      });
-    }
+    let localItems = [...selectedValues];
     const itemsToSave = localItems
       .filter((localItem) => {
         const foundLocalInDatabase = dbItems.find((dbItem) => dbItem.value === localItem.value);
@@ -2164,103 +2179,6 @@ class GroupDetailScreen extends React.Component {
     return itemsToSave;
   };
 
-  transformGroupObject = (group, quickAction = {}) => {
-    let transformedGroup = {
-      ...group,
-    };
-    if (
-      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_scheduled') ||
-      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_postponed') ||
-      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_complete')
-    ) {
-      transformedGroup = {
-        ...transformedGroup,
-        ...quickAction,
-      };
-    } else {
-      // if property exist, get from json, otherwise, send empty array
-      if (coachesSelectizeRef) {
-        transformedGroup = {
-          ...transformedGroup,
-          coaches: {
-            values: this.getSelectizeValuesToSave(
-              transformedGroup.coaches ? transformedGroup.coaches.values : [],
-              coachesSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (geonamesSelectizeRef) {
-        transformedGroup = {
-          ...transformedGroup,
-          location_grid: {
-            values: this.getSelectizeValuesToSave(
-              transformedGroup.location_grid ? transformedGroup.location_grid.values : [],
-              geonamesSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (peopleGroupsSelectizeRef) {
-        transformedGroup = {
-          ...transformedGroup,
-          people_groups: {
-            values: this.getSelectizeValuesToSave(
-              transformedGroup.people_groups ? transformedGroup.people_groups.values : [],
-              peopleGroupsSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (parentGroupsSelectizeRef) {
-        transformedGroup = {
-          ...transformedGroup,
-          parent_groups: {
-            values: this.getSelectizeValuesToSave(
-              transformedGroup.parent_groups ? transformedGroup.parent_groups.values : [],
-              parentGroupsSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (peerGroupsSelectizeRef) {
-        transformedGroup = {
-          ...transformedGroup,
-          peer_groups: {
-            values: this.getSelectizeValuesToSave(
-              transformedGroup.peer_groups ? transformedGroup.peer_groups.values : [],
-              peerGroupsSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (childGroupsSelectizeRef) {
-        transformedGroup = {
-          ...transformedGroup,
-          child_groups: {
-            values: this.getSelectizeValuesToSave(
-              transformedGroup.child_groups ? transformedGroup.child_groups.values : [],
-              childGroupsSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (addMembersSelectizeRef) {
-        transformedGroup = {
-          ...transformedGroup,
-          members: {
-            values: this.getSelectizeValuesToSave(
-              this.state.unmodifiedGroup.members ? this.state.unmodifiedGroup.members.values : [],
-              null,
-              transformedGroup.members ? transformedGroup.members.values : [],
-            ),
-          },
-        };
-      }
-    }
-    return transformedGroup;
-  };
-
   onSaveGroup = (quickAction = {}) => {
     this.setState(
       {
@@ -2270,23 +2188,45 @@ class GroupDetailScreen extends React.Component {
         Keyboard.dismiss();
         if (this.state.group.title) {
           const { unmodifiedGroup } = this.state;
-          const group = this.transformGroupObject(this.state.group, quickAction);
           let groupToSave = {
-            ...sharedTools.diff(unmodifiedGroup, group),
-            title: entities.encode(this.state.group.title),
+            ...this.state.group,
           };
-          if (this.state.group.ID) {
+          if (
+            Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_scheduled') ||
+            Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_postponed') ||
+            Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_complete')
+          ) {
             groupToSave = {
               ...groupToSave,
-              ID: this.state.group.ID,
+              ...quickAction,
             };
+          } else {
+            // if property exist, get from json, otherwise, send empty array
+            if (addMembersSelectizeRef) {
+              groupToSave = {
+                ...groupToSave,
+                members: {
+                  values: this.getSelectizeValuesToSave(
+                    unmodifiedGroup.members ? unmodifiedGroup.members.values : [],
+                    groupToSave.members ? groupToSave.members.values : [],
+                  ),
+                },
+              };
+            }
           }
+          groupToSave = {
+            ...sharedTools.diff(unmodifiedGroup, groupToSave),
+            title: entities.encode(this.state.group.title),
+            ID: this.state.group.ID,
+          };
           if (groupToSave.assigned_to) {
             groupToSave = {
               ...groupToSave,
               assigned_to: `user-${groupToSave.assigned_to.key}`,
             };
           }
+          console.log('groupToSave');
+          console.log(groupToSave);
           this.props.saveGroup(this.props.userData.domain, this.props.userData.token, groupToSave);
         } else {
           //Empty contact title/name
@@ -2517,7 +2457,7 @@ class GroupDetailScreen extends React.Component {
     </ScrollView>
   );
 
-  detailView = () => (
+  detailsView = () => (
     /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
@@ -2978,9 +2918,6 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    coachesSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={[...this.state.groupCoachContacts, ...this.state.usersContacts]}
                   selectedItems={this.getSelectizeItems(this.state.group.coaches, [
@@ -3047,6 +2984,9 @@ class GroupDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('coaches', selectedItems)
+                  }
                   keyboardShouldPersistTaps
                   inputContainerStyle={styles.selectizeField}
                 />
@@ -3076,9 +3016,6 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    geonamesSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={this.state.foundGeonames}
                   selectedItems={this.getSelectizeItems(
@@ -3086,7 +3023,7 @@ class GroupDetailScreen extends React.Component {
                     this.state.geonames,
                   )}
                   textInputProps={{
-                    placeholder: i18n.t('groupDetailScreen.selectLocations'),
+                    placeholder: i18n.t('global.selectLocations'),
                   }}
                   renderRow={(id, onPress, item) => (
                     <TouchableOpacity
@@ -3122,6 +3059,9 @@ class GroupDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('location_grid', selectedItems)
+                  }
                   keyboardShouldPersistTaps
                   inputContainerStyle={styles.selectizeField}
                   textInputProps={{
@@ -3150,9 +3090,6 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    peopleGroupsSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={this.state.peopleGroups}
                   selectedItems={this.getSelectizeItems(
@@ -3196,6 +3133,9 @@ class GroupDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('people_groups', selectedItems)
+                  }
                   keyboardShouldPersistTaps
                   inputContainerStyle={styles.selectizeField}
                 />
@@ -3385,7 +3325,7 @@ class GroupDetailScreen extends React.Component {
     </View>
   );
 
-  progressView = () => (
+  healthMetricsView = () => (
     /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
@@ -3889,7 +3829,7 @@ class GroupDetailScreen extends React.Component {
     </View>
   );
 
-  membersView = () => {
+  relationshipsView = () => {
     /*_viewable_*/
     return this.state.onlyView ? (
       <View style={{ flex: 1 }}>
@@ -4231,9 +4171,6 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    parentGroupsSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={[...this.state.groups, ...this.state.parentGroups]}
                   selectedItems={this.getSelectizeItems(this.state.group.parent_groups, [
@@ -4300,6 +4237,9 @@ class GroupDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('parent_groups', selectedItems)
+                  }
                   keyboardShouldPersistTaps
                   inputContainerStyle={styles.selectizeField}
                 />
@@ -4325,9 +4265,6 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    peerGroupsSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={[...this.state.groups, this.state.peerGroups]}
                   selectedItems={this.getSelectizeItems(this.state.group.peer_groups, [
@@ -4394,6 +4331,9 @@ class GroupDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('peer_groups', selectedItems)
+                  }
                   keyboardShouldPersistTaps
                   inputContainerStyle={styles.selectizeField}
                 />
@@ -4419,9 +4359,6 @@ class GroupDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    childGroupsSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={[...this.state.groups, ...this.state.childGroups]}
                   selectedItems={this.getSelectizeItems(this.state.group.child_groups, [
@@ -4488,6 +4425,9 @@ class GroupDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('child_groups', selectedItems)
+                  }
                   keyboardShouldPersistTaps
                   inputContainerStyle={styles.selectizeField}
                 />
@@ -5087,10 +5027,9 @@ class GroupDetailScreen extends React.Component {
   };
 
   onSaveQuickAction = (quickActionPropertyName) => {
-    let newActionValue = this.state.group[quickActionPropertyName]
+    /*let newActionValue = this.state.group[quickActionPropertyName]
       ? parseInt(this.state.group[quickActionPropertyName], 10) + 1
       : 1;
-    /*
     if (this.props.isConnected) {
       // ONLINE mode
       this.onSaveGroup({
@@ -5180,6 +5119,517 @@ class GroupDetailScreen extends React.Component {
     */
   };
 
+  renderCustomView = (fields) => (
+    <View style={{ flex: 1 }}>
+      {this.state.onlyView ? (
+        <View>
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.loading}
+                onRefresh={() => this.onRefresh(this.state.group.ID)}
+              />
+            }>
+            <View style={[styles.formContainer, { marginTop: 0 }]}>
+              {fields.map((field, index) => (
+                <View key={index.toString()}>
+                  <Row style={[styles.formRow, { paddingTop: 15 }]}>
+                    <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                      <Icon
+                        type="FontAwesome"
+                        name="users"
+                        style={[styles.formIcon, { marginTop: 0 }]}
+                      />
+                    </Col>
+                    <Col>
+                      <View>{this.renderFieldValue(field)}</View>
+                    </Col>
+                    <Col style={styles.formParentLabel}>
+                      <Label style={styles.formLabel}>{field.label}</Label>
+                    </Col>
+                  </Row>
+                  <View style={styles.formDivider} />
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+      ) : (
+        <KeyboardAwareScrollView /*_editable_*/
+          enableAutomaticScroll
+          enableOnAndroid
+          keyboardOpeningTime={0}
+          extraScrollHeight={150}
+          keyboardShouldPersistTaps="handled">
+          <View style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
+            {fields.map((field, index) => (
+              <View key={index.toString()}>
+                <Row style={styles.formFieldMargin}>
+                  <Col style={styles.formIconLabelCol}>
+                    <View style={styles.formIconLabelView}>
+                      <Icon type="FontAwesome" name="users" style={styles.formIcon} />
+                    </View>
+                  </Col>
+                  <Col>
+                    <Label style={styles.formLabel}>{field.label}</Label>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col style={styles.formIconLabelCol}>
+                    <View style={styles.formIconLabelView}>
+                      <Icon
+                        type="FontAwesome"
+                        name="user"
+                        style={[styles.formIcon, { opacity: 0 }]}
+                      />
+                    </View>
+                  </Col>
+                  <Col
+                    style={
+                      field.type == 'key_select'
+                        ? [styles.groupTextRoundField, { paddingRight: 10 }]
+                        : []
+                    }>
+                    {this.renderField(field)}
+                  </Col>
+                </Row>
+              </View>
+            ))}
+          </View>
+        </KeyboardAwareScrollView>
+      )}
+    </View>
+  );
+
+  renderFieldValue = (field) => {
+    let propExist = Object.prototype.hasOwnProperty.call(this.state.group, field.name);
+    let mappedValue = <Text></Text>;
+    let value = this.state.group[field.name],
+      valueType = field.type;
+    let postType;
+    if (Object.prototype.hasOwnProperty.call(field, 'post_type')) {
+      postType = field.post_type;
+    }
+    switch (valueType) {
+      case 'location': {
+        if (propExist) {
+          mappedValue = <Text>{value.values.map((location) => location.name).join(', ')}</Text>;
+        }
+        break;
+      }
+      case 'date': {
+        if (propExist) {
+          mappedValue = (
+            <Text>
+              {moment(new Date(parseInt(value) * 1000))
+                .utc()
+                .format('LL')}
+            </Text>
+          );
+        }
+        break;
+      }
+      case 'connection': {
+        if (propExist) {
+          mappedValue = value.values.map((connection, index) => (
+            <TouchableOpacity
+              key={index.toString()}
+              activeOpacity={0.5}
+              onPress={() => {
+                switch (postType) {
+                  case 'contacts': {
+                    this.goToContactDetailScreen(connection.value, connection.name);
+                    break;
+                  }
+                  case 'groups': {
+                    this.goToGroupDetailScreen(connection.value, connection.name);
+                    break;
+                  }
+                  default: {
+                    break;
+                  }
+                }
+              }}>
+              <Text
+                style={[
+                  styles.linkingText,
+                  { marginTop: 'auto', marginBottom: 'auto' },
+                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                ]}>
+                {connection.name}
+              </Text>
+            </TouchableOpacity>
+          ));
+        }
+        break;
+      }
+      case 'multi_select': {
+        mappedValue = (
+          <Row style={{ flexWrap: 'wrap' }}>
+            {Object.keys(field.default).map((value, index) =>
+              this.renderMultiSelectField(field, value, index),
+            )}
+          </Row>
+        );
+        break;
+      }
+      default: {
+        if (propExist) {
+          mappedValue = <Text>{value}</Text>;
+        }
+        break;
+      }
+    }
+    return mappedValue;
+  };
+
+  renderMultiSelectField = (field, value, index) => (
+    <TouchableOpacity
+      key={index.toString()}
+      onPress={() => {
+        if (!this.state.onlyView) {
+          this.onMilestoneChange(value, field.name);
+        }
+      }}
+      activeOpacity={1}
+      underlayColor={
+        this.onCheckExistingMilestone(value, field.name) ? Colors.tintColor : Colors.gray
+      }
+      style={{
+        borderRadius: 10,
+        backgroundColor: this.onCheckExistingMilestone(value, field.name)
+          ? Colors.tintColor
+          : Colors.gray,
+        padding: 10,
+        marginRight: 10,
+        marginBottom: 10,
+      }}>
+      <Text
+        style={[
+          styles.progressIconText,
+          {
+            color: this.onCheckExistingMilestone(value, field.name) ? '#FFFFFF' : '#000000',
+          },
+        ]}>
+        {field.default[value].label}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  onMilestoneChange = (milestoneName, customProp) => {
+    let list = this.state.group[customProp];
+    let propName = customProp;
+    const milestonesList = list ? [...list.values] : [];
+    const foundMilestone = milestonesList.find((milestone) => milestone.value === milestoneName);
+    if (foundMilestone) {
+      const milestoneIndex = milestonesList.indexOf(foundMilestone);
+      if (foundMilestone.delete) {
+        const milestoneModified = {
+          ...foundMilestone,
+        };
+        delete milestoneModified.delete;
+        milestonesList[milestoneIndex] = milestoneModified;
+      } else {
+        milestonesList[milestoneIndex] = {
+          ...foundMilestone,
+          delete: true,
+        };
+      }
+    } else {
+      milestonesList.push({
+        value: milestoneName,
+      });
+    }
+    this.setState((prevState) => ({
+      group: {
+        ...prevState.group,
+        [propName]: {
+          values: milestonesList,
+        },
+      },
+    }));
+  };
+
+  onCheckExistingMilestone = (milestoneName, customProp) => {
+    let list = this.state.group[customProp];
+    const milestonesList = list ? [...list.values] : [];
+    // Return 'boolean' acording to milestone existing in the 'milestonesList'
+    return milestonesList.some(
+      (milestone) => milestone.value === milestoneName && !milestone.delete,
+    );
+  };
+
+  renderField = (field) => {
+    let value = this.state.group[field.name],
+      valueType = field.type;
+    let postType;
+    if (Object.prototype.hasOwnProperty.call(field, 'post_type')) {
+      postType = field.post_type;
+    }
+
+    switch (valueType) {
+      case 'number': {
+        return (
+          <Input
+            value={value}
+            keyboardType="numeric"
+            onChangeText={(value) => this.setGroupCustomFieldValue(field.name, value)}
+            style={[styles.groupTextField, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}
+          />
+        );
+      }
+      case 'text': {
+        return (
+          <Input
+            value={value}
+            onChangeText={(value) => this.setGroupCustomFieldValue(field.name, value)}
+            style={[styles.groupTextField, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}
+          />
+        );
+      }
+      case 'date': {
+        return (
+          <Row>
+            <DatePicker
+              ref={(ref) => {
+                this[`${field.name}Ref`] = ref;
+              }}
+              onDateChange={(dateValue) =>
+                this.setGroupCustomFieldValue(field.name, dateValue, valueType)
+              }
+              defaultDate={
+                this.state.group[field.name] && this.state.group[field.name].length > 0
+                  ? new Date(this.state.group[field.name] * 1000)
+                  : ''
+              }
+            />
+            <Icon
+              type="AntDesign"
+              name="close"
+              style={[
+                styles.formIcon,
+                styles.addRemoveIcons,
+                styles.removeIcons,
+                { marginLeft: 'auto' },
+              ]}
+              onPress={() => this.setGroupCustomFieldValue(field.name, null, valueType)}
+            />
+          </Row>
+        );
+      }
+      case 'location': {
+        return (
+          <Selectize
+            itemId="value"
+            items={this.state.foundGeonames}
+            selectedItems={this.getSelectizeItems(
+              this.state.group[field.name],
+              this.state.geonames,
+            )}
+            textInputProps={{
+              placeholder: i18n.t('global.selectLocations'),
+              onChangeText: this.searchLocationsDelayed,
+            }}
+            renderChip={(id, onClose, item, style, iconStyle) => (
+              <Chip
+                key={id}
+                iconStyle={iconStyle}
+                onClose={onClose}
+                text={item.name}
+                style={style}
+              />
+            )}
+            renderRow={(id, onPress, item) => (
+              <TouchableOpacity
+                activeOpacity={0.6}
+                key={id}
+                onPress={onPress}
+                style={{
+                  paddingVertical: 8,
+                  paddingHorizontal: 10,
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                  }}>
+                  <Text
+                    style={{
+                      color: 'rgba(0, 0, 0, 0.87)',
+                      fontSize: 14,
+                      lineHeight: 21,
+                    }}>
+                    {item.name}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            filterOnKey="name"
+            onChangeSelectedItems={(selectedItems) =>
+              this.onSelectizeValueChange(field.name, selectedItems)
+            }
+            inputContainerStyle={styles.selectizeField}
+          />
+        );
+      }
+      case 'connection': {
+        let listItems = [],
+          placeholder = '';
+
+        switch (postType) {
+          case 'contacts': {
+            listItems = [...this.state.usersContacts];
+            placeholder = i18n.t('global.searchContacts');
+            break;
+          }
+          case 'groups': {
+            listItems = [...this.state.groups];
+            placeholder = i18n.t('groupDetailScreen.searchGroups');
+            break;
+          }
+          default:
+        }
+
+        return (
+          <Selectize
+            itemId="value"
+            items={listItems}
+            selectedItems={this.getSelectizeItems(this.state.group[field.name], listItems)}
+            textInputProps={{
+              placeholder: placeholder,
+            }}
+            renderRow={(id, onPress, item) => (
+              <TouchableOpacity
+                activeOpacity={0.6}
+                key={id}
+                onPress={onPress}
+                style={{
+                  paddingVertical: 8,
+                  paddingHorizontal: 10,
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                  }}>
+                  <Text
+                    style={{
+                      color: 'rgba(0, 0, 0, 0.87)',
+                      fontSize: 14,
+                      lineHeight: 21,
+                    }}>
+                    {item.name}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            renderChip={(id, onClose, item, style, iconStyle) => (
+              <Chip
+                key={id}
+                iconStyle={iconStyle}
+                onClose={onClose}
+                text={item.name}
+                style={style}
+              />
+            )}
+            filterOnKey="name"
+            onChangeSelectedItems={(selectedItems) =>
+              this.onSelectizeValueChange(field.name, selectedItems)
+            }
+            inputContainerStyle={styles.selectizeField}
+          />
+        );
+      }
+      case 'multi_select': {
+        return (
+          <Row style={{ flexWrap: 'wrap' }}>
+            {Object.keys(field.default).map((value, index) =>
+              this.renderMultiSelectField(field, value, index),
+            )}
+          </Row>
+        );
+      }
+      case 'key_select': {
+        return (
+          <Picker
+            mode="dropdown"
+            selectedValue={this.state.group[field.name]}
+            onValueChange={(value) => this.setGroupCustomFieldValue(field.name, value)}
+            textStyle={{ color: Colors.tintColor }}>
+            {Object.keys(field.default).map((key) => {
+              const optionData = field.default[key];
+              return <Picker.Item key={key} label={optionData.label} value={key} />;
+            })}
+          </Picker>
+        );
+      }
+      default:
+        return <Text>{field.label}</Text>;
+    }
+  };
+
+  onSelectizeValueChange = (propName, selectedItems) => {
+    this.setState((prevState) => {
+      if (propName == 'members') {
+        return {
+          group: {
+            ...prevState.group,
+            [propName]: {
+              values: sharedTools.getSelectizeValuesToSave(
+                [...this.state.membersContacts, ...this.state.usersContacts].filter(
+                  (userContact) => {
+                    // Filter members to get only members no added to group
+                    if (
+                      this.state.group.members &&
+                      this.state.group.members.values.find(
+                        (member) => member.value === userContact.value,
+                      ) !== undefined
+                    ) {
+                      return false;
+                    } else {
+                      return true;
+                    }
+                  },
+                ),
+                selectedItems,
+              ),
+            },
+          },
+        };
+      } else {
+        return {
+          group: {
+            ...prevState.group,
+            [propName]: {
+              values: sharedTools.getSelectizeValuesToSave(
+                prevState.group[propName] ? prevState.group[propName].values : [],
+                selectedItems,
+              ),
+            },
+          },
+        };
+      }
+    });
+  };
+
+  setGroupCustomFieldValue = (fieldName, value, fieldType = null) => {
+    if (fieldType == 'date') {
+      if (!value) {
+        // Clear DatePicker value
+        this[`${fieldName}Ref`].state.chosenDate = undefined;
+        this[`${fieldName}Ref`].state.defaultDate = new Date();
+        this.forceUpdate();
+      }
+      value = value ? sharedTools.formatDateToBackEnd(value) : '';
+    }
+
+    this.setState((prevState) => ({
+      group: {
+        ...prevState.group,
+        [fieldName]: value,
+      },
+    }));
+  };
+
   render() {
     const successToast = (
       <Toast
@@ -5220,25 +5670,12 @@ class GroupDetailScreen extends React.Component {
                         tabStyle={{ width: 'auto' }}
                         indicatorStyle={styles.tabBarUnderlineStyle}
                         renderLabel={({ route, color }) => (
-                          <Text style={{ color, fontWeight: 'bold' }}>{i18n.t(route.title)}</Text>
+                          <Text style={{ color, fontWeight: 'bold' }}>{route.title}</Text>
                         )}
                       />
                     )}
                     renderScene={({ route }) => {
-                      switch (route.key) {
-                        case 'details':
-                          return this.detailView();
-                        case 'progress':
-                          return this.progressView();
-                        case 'comments':
-                          return this.commentsView();
-                        case 'members':
-                          return this.membersView();
-                        case 'groups':
-                          return this.groupsView();
-                        default:
-                          return null;
-                      }
+                      return route.render();
                     }}
                     onIndexChange={this.tabChanged}
                     initialLayout={{ width: windowWidth }}
@@ -5457,9 +5894,6 @@ class GroupDetailScreen extends React.Component {
                                 </Text>
                                 <Text>{i18n.t('groupDetailScreen.groupSharedWith')}:</Text>
                                 <Selectize
-                                  ref={(selectize) => {
-                                    shareGroupSelectizeRef = selectize;
-                                  }}
                                   itemId="value"
                                   items={this.state.users.map((user) => ({
                                     name: user.label,

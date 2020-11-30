@@ -992,11 +992,24 @@ export default function groupsReducer(state = initialState, action) {
           Object.keys(settings.fields).forEach((fieldName) => {
             let value = settings.fields[fieldName];
             if (Object.prototype.hasOwnProperty.call(value, 'tile') && value.tile === tileName) {
-              fieldList.push({
+              let newField = {
                 name: fieldName,
                 label: value.name,
                 type: value.type,
-              });
+              };
+              if (Object.prototype.hasOwnProperty.call(value, 'post_type')) {
+                newField = {
+                  ...newField,
+                  post_type: value.post_type,
+                };
+              }
+              if (Object.prototype.hasOwnProperty.call(value, 'default')) {
+                newField = {
+                  ...newField,
+                  default: value.default,
+                };
+              }
+              fieldList.push(newField);
             }
           });
           tileList.push({
@@ -1006,7 +1019,8 @@ export default function groupsReducer(state = initialState, action) {
           });
         });
       }
-
+      console.log('groups tileList');
+      console.log(tileList);
       return {
         ...newState,
         settings: {

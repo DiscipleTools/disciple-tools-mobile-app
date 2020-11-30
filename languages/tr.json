@@ -40,7 +40,8 @@
     "shareSettings": "",
     "searchUsers": "",
     "noFilters": "",
-    "searchContacts": ""
+    "searchContacts": "",
+    "selectLocations": "Konumları seç"
   },
   "loginScreen": {
     "domain": {
@@ -98,7 +99,6 @@
     "addNewContact": "Yeni bağlantı ekle",
     "subAssignThisContact": "Bu bağlantıya alt görev ata",
     "mobile": "Mobil",
-    "selectLocations": "Konumları seç",
     "selectSources": "Kaynak seç",
     "connections": "Bağlantılar",
     "addGroup": "Grup Ekle",
@@ -131,7 +131,6 @@
     "noGroupCommentPlacheHolder": "Şu anda hiçbir grup yorumu mevcut değil.",
     "noGroupCommentPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
     "noGroupCommentPlacheHolderOffline": "Şu anda çevrimdışısınız. Grup yorumunuzu yenilemek ve almak için kablosuz bağlantıya veya mobil verilere bağlı olduğunuzdan emin olun.",
-    "selectLocations": "Konumları Seçin",
     "noMembersMessage": "Üye yok. Bu gruba bazı üyeler eklemek için burayı veya Değiştir'i tıklayın.",
     "groupName": {
       "label": "Grup ismi",

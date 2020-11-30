@@ -40,7 +40,8 @@
     "shareSettings": "",
     "searchUsers": "",
     "noFilters": "",
-    "searchContacts": ""
+    "searchContacts": "",
+    "selectLocations": "Sélectionnez des emplacements"
   },
   "loginScreen": {
     "domain": {
@@ -98,7 +99,6 @@
     "addNewContact": "Ajouter un nouveau contact",
     "subAssignThisContact": "Sous-affecter ce contact",
     "mobile": "Mobile",
-    "selectLocations": "Sélectionnez des emplacements",
     "selectSources": "Sélectionnez les sources",
     "connections": "Les liaisons",
     "addGroup": "Ajouter un groupe",
@@ -131,7 +131,6 @@
     "noGroupCommentPlacheHolder": "Aucun commentaire de groupe n'est actuellement disponible.",
     "noGroupCommentPlacheHolder1": "Il peut y avoir eu un problème pour les obtenir à partir de votre site. Faites glisser vers le bas pour essayer de rafraîchir et réessayez.",
     "noGroupCommentPlacheHolderOffline": "Vous êtes actuellement hors ligne. Assurez-vous que vous êtes connecté au wifi ou aux données mobiles afin de vous rafraîchir et d'obtenir les commentaires de votre groupe.",
-    "selectLocations": "Sélectionner des emplacements",
     "noMembersMessage": "Aucun membre. Appuyez ici ou sur Modifier pour ajouter des membres à ce groupe.",
     "groupName": {
       "label": "Nom de groupe",

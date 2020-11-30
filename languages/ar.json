@@ -40,7 +40,8 @@
     "shareSettings": "",
     "searchUsers": "",
     "noFilters": "",
-    "searchContacts": ""
+    "searchContacts": "",
+    "selectLocations": "تحديد المواقع"
   },
   "loginScreen": {
     "domain": {
@@ -98,7 +99,6 @@
     "addNewContact": "إضافة جهة اتصال جديدة",
     "subAssignThisContact": "تعيين جهة الاتصال",
     "mobile": "الهاتف",
-    "selectLocations": "تحديد المواقع",
     "selectSources": "اختر المصادر",
     "connections": "الروابط",
     "addGroup": "إضافة مجموعة",
@@ -131,7 +131,6 @@
     "noGroupCommentPlacheHolder": "لا توجد أي تعليقات جماعية متاحة حاليًا.",
     "noGroupCommentPlacheHolder1": "ربما كانت هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث والمحاولة مرة أخرى.",
     "noGroupCommentPlacheHolderOffline": "أنت غير متصل حاليًا. تأكد من اتصالك بشبكة wifi أو بيانات الجوال من أجل التحديث والحصول على تعليق مجموعتك.",
-    "selectLocations": "اختر المواقع",
     "noMembersMessage": "لا يوجد أعضاء. انقر هنا أو على \"تعديل\" لإضافة بعض الأعضاء إلى هذه المجموعة.",
     "groupName": {
       "label": "أسم المجموعة",

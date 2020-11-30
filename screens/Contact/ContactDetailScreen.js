@@ -1677,41 +1677,12 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  getSelectizeValuesToSave = (dbData, selectedValues) => {
-    const dbItems = [...dbData];
-    const localItems = [];
-
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const item = selectedValues.entities.item[itemValue];
-      localItems.push(item);
-    });
-
-    const itemsToSave = localItems
-      .filter((localItem) => {
-        const foundLocalInDatabase = dbItems.find((dbItem) => dbItem.value === localItem.value);
-        return foundLocalInDatabase === undefined;
-      })
-      .map((localItem) => ({ value: localItem.value }));
-
-    dbItems.forEach((dbItem) => {
-      const foundDatabaseInLocal = localItems.find((localItem) => dbItem.value === localItem.value);
-      if (!foundDatabaseInLocal) {
-        itemsToSave.push({
-          ...dbItem,
-          delete: true,
-        });
-      }
-    });
-
-    return itemsToSave;
-  };
-
   onSelectizeValueChange = (propName, selectedItems) => {
     this.setState((prevState) => ({
       contact: {
         ...prevState.contact,
         [propName]: {
-          values: this.getSelectizeValuesToSave(
+          values: sharedTools.getSelectizeValuesToSave(
             prevState.contact[propName] ? prevState.contact[propName].values : [],
             selectedItems,
           ),
@@ -3114,7 +3085,7 @@ class ContactDetailScreen extends React.Component {
                     this.state.geonames,
                   )}
                   textInputProps={{
-                    placeholder: i18n.t('contactDetailScreen.selectLocations'),
+                    placeholder: i18n.t('global.selectLocations'),
                     onChangeText: this.searchLocationsDelayed,
                   }}
                   renderChip={(id, onClose, item, style, iconStyle) => (
@@ -5949,7 +5920,14 @@ class ContactDetailScreen extends React.Component {
                       />
                     </View>
                   </Col>
-                  <Col>{this.renderField(field)}</Col>
+                  <Col
+                    style={
+                      field.type == 'key_select'
+                        ? [styles.contactTextRoundField, { paddingRight: 10 }]
+                        : []
+                    }>
+                    {this.renderField(field)}
+                  </Col>
                 </Row>
               </View>
             ))}
@@ -6044,7 +6022,11 @@ class ContactDetailScreen extends React.Component {
   renderMultiSelectField = (field, value, index) => (
     <TouchableOpacity
       key={index.toString()}
-      onPress={() => this.onMilestoneChange(value, field.name)}
+      onPress={() => {
+        if (!this.state.onlyView) {
+          this.onMilestoneChange(value, field.name);
+        }
+      }}
       activeOpacity={1}
       underlayColor={
         this.onCheckExistingMilestone(value, field.name) ? Colors.tintColor : Colors.gray
@@ -6144,7 +6126,7 @@ class ContactDetailScreen extends React.Component {
               this.state.geonames,
             )}
             textInputProps={{
-              placeholder: i18n.t('contactDetailScreen.selectLocations'),
+              placeholder: i18n.t('global.selectLocations'),
               onChangeText: this.searchLocationsDelayed,
             }}
             renderChip={(id, onClose, item, style, iconStyle) => (
@@ -7127,7 +7109,7 @@ class ContactDetailScreen extends React.Component {
                               items={this.state.foundGeonames}
                               selectedItems={[]}
                               textInputProps={{
-                                placeholder: i18n.t('contactDetailScreen.selectLocations'),
+                                placeholder: i18n.t('global.selectLocations'),
                                 onChangeText: this.searchLocationsDelayed,
                               }}
                               renderRow={(id, onPress, item) => (

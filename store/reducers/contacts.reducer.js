@@ -868,8 +868,7 @@ export default function contactsReducer(state = initialState, action) {
           });
         });
       }
-      console.log('tileList');
-      console.log(tileList);
+
       return {
         ...newState,
         settings: {

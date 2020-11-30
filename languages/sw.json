@@ -40,7 +40,8 @@
     "shareSettings": "",
     "searchUsers": "",
     "noFilters": "",
-    "searchContacts": ""
+    "searchContacts": "",
+    "selectLocations": "Chagua Maeneo"
   },
   "loginScreen": {
     "domain": {
@@ -98,7 +99,6 @@
     "addNewContact": "Ongeza Mawasiliano Mpya",
     "subAssignThisContact": "Pana anwani hii",
     "mobile": "Rununu",
-    "selectLocations": "Chagua Maeneo",
     "selectSources": "Chagua vyanzo",
     "connections": "Viunganisho",
     "addGroup": "Ongeza Kikundi",
@@ -131,7 +131,6 @@
     "noGroupCommentPlacheHolder": "Hakuna maoni yoyote ya kikundi yanayopatikana kwa sasa.",
     "noGroupCommentPlacheHolder1": "Kunaweza kuwa na shida kuzipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
     "noGroupCommentPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate maoni ya kikundi chako.",
-    "selectLocations": "Chagua Maeneo",
     "noMembersMessage": "Hakuna Wajumbe",
     "groupName": {
       "label": "Jina la Kikundi",

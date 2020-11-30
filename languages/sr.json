@@ -40,7 +40,8 @@
     "shareSettings": "",
     "searchUsers": "",
     "noFilters": "",
-    "searchContacts": ""
+    "searchContacts": "",
+    "selectLocations": "Изаберите Лоцатионс"
   },
   "loginScreen": {
     "domain": {
@@ -98,7 +99,6 @@
     "addNewContact": "Додај нови контакт",
     "subAssignThisContact": "Пододелите овај контакт",
     "mobile": "Телефон",
-    "selectLocations": "Изаберите Лоцатионс",
     "selectSources": "Изаберите изворе",
     "connections": "Везе",
     "addGroup": "Додај групу",
@@ -131,7 +131,6 @@
     "noGroupCommentPlacheHolder": "Тренутно нема доступних коментара групе.",
     "noGroupCommentPlacheHolder1": "Можда је дошло до проблема при преузимању са ваше веб локације. Превуците надоле да бисте покушали да освежите и покушајте поново.",
     "noGroupCommentPlacheHolderOffline": "Тренутно сте ван мреже. Уверите се да сте повезани на ВиФи или мобилне податке како бисте освежили и добили коментар групе.",
-    "selectLocations": "Изаберите Лоцатионс",
     "noMembersMessage": "Нема чланова. Додирните овде или на Уреди да бисте додали неке чланове у ову групу.",
     "groupName": {
       "label": "Назив групе",
