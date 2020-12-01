@@ -39,7 +39,9 @@
     "share": "",
     "shareSettings": "",
     "searchUsers": "",
-    "noFilters": ""
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "مکان ها را انتخاب کنید"
   },
   "loginScreen": {
     "domain": {
@@ -97,7 +99,6 @@
     "addNewContact": "مخاطب جدید اضافه کنید",
     "subAssignThisContact": "این مخاطب را اختصاص دهید",
     "mobile": "سیار",
-    "selectLocations": "مکان ها را انتخاب کنید",
     "selectSources": "منابع را انتخاب کنید",
     "connections": "اتصالات",
     "addGroup": "افزودن گروه",
@@ -130,7 +131,6 @@
     "noGroupCommentPlacheHolder": "هیچ نظر گروهی در حال حاضر موجود نیست",
     "noGroupCommentPlacheHolder1": "ممکن است مشکلی در گرفتن آنها از سایت شما وجود داشته باشد. پایین بکشید تا سعی کنید تازه کنید و دوباره امتحان کنید.",
     "noGroupCommentPlacheHolderOffline": "شما در حال حاضر آفلاین هستید. اطمینان حاصل کنید که به منظور تازه کردن و اظهار نظر گروه خود ، به داده های wifi یا تلفن همراه وصل شده اید.",
-    "selectLocations": "مکان ها را انتخاب کنید",
     "noMembersMessage": "هیچ عضو برای افزودن برخی از اعضا به این گروه ، اینجا یا بر روی ویرایش ضربه بزنید.",
     "groupName": {
       "label": "اسم گروه",

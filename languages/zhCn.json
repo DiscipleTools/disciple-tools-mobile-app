@@ -39,7 +39,9 @@
     "share": "",
     "shareSettings": "",
     "searchUsers": "",
-    "noFilters": ""
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "选择地点"
   },
   "loginScreen": {
     "domain": {
@@ -97,7 +99,6 @@
     "addNewContact": "新增联络人",
     "subAssignThisContact": "分配此联系人",
     "mobile": "移动",
-    "selectLocations": "选择地点",
     "selectSources": "选择来源",
     "connections": "连接数",
     "addGroup": "新增群组",
@@ -130,7 +131,6 @@
     "noGroupCommentPlacheHolder": "当前没有任何组注释。",
     "noGroupCommentPlacheHolder1": "从您的网站获取它们可能存在问题。向下拖动以尝试刷新，然后重试。",
     "noGroupCommentPlacheHolderOffline": "您目前离线。确保您已连接到wifi或移动数据，以便刷新并获取群组评论。",
-    "selectLocations": "选择地点",
     "noMembersMessage": "没有成员。 单击此处或单击“更改”以将一些成员添加到该组。",
     "groupName": {
       "label": "组的名字",

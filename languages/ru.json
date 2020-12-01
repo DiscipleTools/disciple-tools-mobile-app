@@ -39,7 +39,9 @@
     "share": "",
     "shareSettings": "",
     "searchUsers": "",
-    "noFilters": ""
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "Выберите места"
   },
   "loginScreen": {
     "domain": {
@@ -97,7 +99,6 @@
     "addNewContact": "Добавить новый контакт",
     "subAssignThisContact": "Под-назначить этот контакт",
     "mobile": "Мобильный",
-    "selectLocations": "Выберите места",
     "selectSources": "Выберите источники",
     "connections": "Связи",
     "addGroup": "Добавить группу",
@@ -130,7 +131,6 @@
     "noGroupCommentPlacheHolder": "В настоящее время нет групповых комментариев.",
     "noGroupCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Попытайтесь еще раз (обновите экран, потянув его вниз).",
     "noGroupCommentPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить комментарий группы.",
-    "selectLocations": "Выберите места",
     "noMembersMessage": "Нет участников. Нажмите здесь или на Редактировать, чтобы добавить участников в эту группу.",
     "groupName": {
       "label": "Имя группы",

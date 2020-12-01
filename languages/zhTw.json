@@ -39,7 +39,9 @@
     "share": "",
     "shareSettings": "",
     "searchUsers": "",
-    "noFilters": ""
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "選擇地點"
   },
   "loginScreen": {
     "domain": {
@@ -97,7 +99,6 @@
     "addNewContact": "新增聯絡人",
     "subAssignThisContact": "分配此聯繫人",
     "mobile": "移動",
-    "selectLocations": "選擇地點",
     "selectSources": "選擇來源",
     "connections": "連接數",
     "addGroup": "新增群組",
@@ -130,7 +131,6 @@
     "noGroupCommentPlacheHolder": "當前沒有任何組註釋。",
     "noGroupCommentPlacheHolder1": "從您的網站獲取它們可能存在問題。向下拖動以嘗試刷新，然後重試。",
     "noGroupCommentPlacheHolderOffline": "您目前離線。確保您已連接到wifi或移動數據，以便刷新並獲取群組評論。",
-    "selectLocations": "選擇地點",
     "noMembersMessage": "沒有成員。 單擊此處或單擊“更改”以將一些成員添加到該組。",
     "groupName": {
       "label": "組的名字",

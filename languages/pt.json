@@ -39,7 +39,9 @@
     "share": "",
     "shareSettings": "",
     "searchUsers": "",
-    "noFilters": ""
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "Selecionar locais"
   },
   "loginScreen": {
     "domain": {
@@ -97,7 +99,6 @@
     "addNewContact": "Adicionar novo contato",
     "subAssignThisContact": "Sub-assinar este contato",
     "mobile": "Móvel",
-    "selectLocations": "Selecionar locais",
     "selectSources": "Selecionar fontes",
     "connections": "Nome do líder que tem contato",
     "addGroup": "Adicionar Grupo",
@@ -130,7 +131,6 @@
     "noGroupCommentPlacheHolder": "Não há comentários de grupos disponíveis atualmente.",
     "noGroupCommentPlacheHolder1": "Pode haver um problema ao removê-los do seu local. Arraste-os para tentar atualizar e tente novamente. ",
     "noGroupCommentPlacheHolderOffline": "Você está offline. Certifique-se de que está conectado à rede Wifi ou dados móveis para atualizar e obter seus comentários de grupos. ",
-    "selectLocations": "Selecionar locais",
     "noMembersMessage": "Não há membros. Clique aqui em Editar para adicionar membros a este grupo.",
     "groupName": {
       "label": "Nome do Grupo",

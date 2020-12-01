@@ -84,22 +84,6 @@ let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBac
 //const hasNotch = Platform.OS === 'android' && StatusBar.currentHeight > 25;
 //const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
 const isIOS = Platform.OS === 'ios';
-/* eslint-disable */
-let commentsFlatListRef,
-  subAssignedSelectizeRef,
-  geonamesSelectizeRef,
-  peopleGroupsSelectizeRef,
-  sourcesSelectizeRef,
-  groupsSelectizeRef,
-  connectionsSelectizeRef,
-  baptizedBySelectizeRef,
-  coachedSelectizeRef,
-  baptizedSelectizeRef,
-  coachingSelectizeRef,
-  datePickerRef,
-  menuRef,
-  shareContactSelectizeRef;
-/* eslint-enable */
 const entities = new Html5Entities();
 const defaultFaithMilestones = [
   'milestone_has_bible',
@@ -115,19 +99,19 @@ const defaultFaithMilestones = [
 let tabViewRoutes = [
   {
     key: 'details',
-    title: 'global.details',
+    title: i18n.t('global.details'),
   },
   {
-    key: 'progress',
-    title: 'global.progress',
+    key: 'faith',
+    title: i18n.t('global.progress'),
   },
   {
     key: 'comments',
-    title: 'global.commentsActivity',
+    title: i18n.t('global.commentsActivity'),
   },
   {
-    key: 'connections',
-    title: 'contactDetailScreen.connections',
+    key: 'relationships',
+    title: i18n.t('contactDetailScreen.connections'),
   },
 ];
 let self;
@@ -549,7 +533,7 @@ class ContactDetailScreen extends React.Component {
             </Row>
             <Row
               onPress={() => {
-                params.toggleMenu(true, menuRef);
+                params.toggleMenu(true, this.menuRef);
               }}>
               <View
                 style={{
@@ -562,7 +546,7 @@ class ContactDetailScreen extends React.Component {
                 <Menu
                   ref={(menu) => {
                     if (menu) {
-                      menuRef = menu;
+                      this.menuRef = menu;
                     }
                   }}
                   button={
@@ -577,7 +561,7 @@ class ContactDetailScreen extends React.Component {
                   }>
                   <MenuItem
                     onPress={() => {
-                      params.toggleMenu(false, menuRef);
+                      params.toggleMenu(false, this.menuRef);
                       params.toggleShareView();
                     }}>
                     {i18n.t('global.share')}
@@ -642,7 +626,34 @@ class ContactDetailScreen extends React.Component {
 
   state = {
     ...initialState,
+    tabViewConfig: {
+      ...initialState.tabViewConfig,
+      routes: this.getRoutesWithRender(),
+    },
   };
+
+  getRoutesWithRender() {
+    return [
+      ...initialState.tabViewConfig.routes.map((route) => {
+        return {
+          key: route.key,
+          title: route.title,
+          render: () => {
+            return this[`${route.key}View`]();
+          },
+        };
+      }),
+      ...this.props.contactSettings.tiles.map((tile) => {
+        return {
+          key: tile.name,
+          title: tile.label,
+          render: () => {
+            return this.renderCustomView(tile.fields);
+          },
+        };
+      }),
+    ];
+  }
 
   componentDidMount() {
     const { navigation } = this.props;
@@ -1147,8 +1158,8 @@ class ContactDetailScreen extends React.Component {
     // NEW COMMENT
     if (newComment && prevProps.newComment !== newComment) {
       // Only do scroll when element its rendered
-      if (commentsFlatListRef) {
-        commentsFlatListRef.scrollToOffset({ animated: true, offset: 0 });
+      if (this.commentsFlatListRef) {
+        this.commentsFlatListRef.scrollToOffset({ animated: true, offset: 0 });
       }
       this.setComment('');
     }
@@ -1559,7 +1570,7 @@ class ContactDetailScreen extends React.Component {
         tabViewConfig: {
           ...state.tabViewConfig,
           index: indexFix,
-          routes: state.tabViewConfig.routes.filter((route) => route.key !== 'comments'),
+          routes: this.getRoutesWithRender().filter((route) => route.key !== 'comments'),
         },
       };
     });
@@ -1600,7 +1611,7 @@ class ContactDetailScreen extends React.Component {
         tabViewConfig: {
           ...state.tabViewConfig,
           index: indexFix,
-          routes: [...tabViewRoutes],
+          routes: this.getRoutesWithRender(),
         },
         sources: [...unmodifiedSources],
         subAssignedContacts: [...unmodifiedSubAssignedContacts],
@@ -1666,35 +1677,18 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  getSelectizeValuesToSave = (dbData, selectizeRef) => {
-    const dbItems = [...dbData];
-    const localItems = [];
-
-    const selectedValues = selectizeRef.getSelectedItems();
-
-    Object.keys(selectedValues.entities.item).forEach((itemValue) => {
-      const item = selectedValues.entities.item[itemValue];
-      localItems.push(item);
-    });
-
-    const itemsToSave = localItems
-      .filter((localItem) => {
-        const foundLocalInDatabase = dbItems.find((dbItem) => dbItem.value === localItem.value);
-        return foundLocalInDatabase === undefined;
-      })
-      .map((localItem) => ({ value: localItem.value }));
-
-    dbItems.forEach((dbItem) => {
-      const foundDatabaseInLocal = localItems.find((localItem) => dbItem.value === localItem.value);
-      if (!foundDatabaseInLocal) {
-        itemsToSave.push({
-          ...dbItem,
-          delete: true,
-        });
-      }
-    });
-
-    return itemsToSave;
+  onSelectizeValueChange = (propName, selectedItems) => {
+    this.setState((prevState) => ({
+      contact: {
+        ...prevState.contact,
+        [propName]: {
+          values: sharedTools.getSelectizeValuesToSave(
+            prevState.contact[propName] ? prevState.contact[propName].values : [],
+            selectedItems,
+          ),
+        },
+      },
+    }));
   };
 
   setContactInitialComment = (value) => {
@@ -1733,8 +1727,8 @@ class ContactDetailScreen extends React.Component {
     // (event, date) => {
     if (!date) {
       // Clear DatePicker value
-      datePickerRef.state.chosenDate = undefined;
-      datePickerRef.state.defaultDate = new Date();
+      this.datePickerRef.state.chosenDate = undefined;
+      this.datePickerRef.state.defaultDate = new Date();
       this.forceUpdate();
     }
     this.setState((prevState) => ({
@@ -1754,27 +1748,42 @@ class ContactDetailScreen extends React.Component {
         Keyboard.dismiss();
         if (this.state.contact.title) {
           const { unmodifiedContact } = this.state;
-          let contact = this.transformContactObject(this.state.contact, quickAction);
+          let contactToSave = {
+            ...this.state.contact,
+          };
+          if (
+            Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_no_answer') ||
+            Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_contact_established') ||
+            Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_scheduled') ||
+            Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_complete') ||
+            Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_no_show')
+          ) {
+            contactToSave = {
+              ...contactToSave,
+              ...quickAction,
+            };
+          }
           // Do not save fields with empty values
-          Object.keys(contact)
+          Object.keys(contactToSave)
             .filter(
               (key) =>
                 key.includes('contact_') &&
-                Object.prototype.toString.call(contact[key]) === '[object Array]' &&
-                contact[key].length > 0,
+                Object.prototype.toString.call(contactToSave[key]) === '[object Array]' &&
+                contactToSave[key].length > 0,
             )
             .forEach((key) => {
-              contact = {
-                ...contact,
-                [key]: contact[key].filter(
+              contactToSave = {
+                ...contactToSave,
+                [key]: contactToSave[key].filter(
                   (socialMedia) =>
                     socialMedia.delete || (!socialMedia.delete && socialMedia.value.length > 0),
                 ),
               };
             });
-          let contactToSave = {
-            ...sharedTools.diff(unmodifiedContact, contact),
+          contactToSave = {
+            ...sharedTools.diff(unmodifiedContact, contactToSave),
             title: entities.encode(this.state.contact.title),
+            ID: this.state.contact.ID,
           };
           // Remove empty arrays
           Object.keys(contactToSave).forEach((key) => {
@@ -1786,18 +1795,13 @@ class ContactDetailScreen extends React.Component {
               delete contactToSave[key];
             }
           });
-          if (this.state.contact.ID) {
-            contactToSave = {
-              ...contactToSave,
-              ID: this.state.contact.ID,
-            };
-          }
           if (contactToSave.assigned_to) {
             contactToSave = {
               ...contactToSave,
               assigned_to: `user-${contactToSave.assigned_to.key}`,
             };
           }
+
           this.props.saveContact(
             this.props.userData.domain,
             this.props.userData.token,
@@ -1852,21 +1856,19 @@ class ContactDetailScreen extends React.Component {
     }
   };
 
-  onCheckExistingMilestone = (milestoneName) => {
-    const milestones = this.state.contact.milestones
-      ? [...this.state.contact.milestones.values]
-      : [];
-    // get milestones that exist in the list and are not deleted
-    const foundMilestone = milestones.some(
+  onCheckExistingMilestone = (milestoneName, customProp = null) => {
+    let list = customProp ? this.state.contact[customProp] : this.state.contact.milestones;
+    const milestonesList = list ? [...list.values] : [];
+    // Return 'boolean' acording to milestone existing in the 'milestonesList'
+    return milestonesList.some(
       (milestone) => milestone.value === milestoneName && !milestone.delete,
     );
-    return foundMilestone;
   };
 
-  onMilestoneChange = (milestoneName) => {
-    const milestonesList = this.state.contact.milestones
-      ? [...this.state.contact.milestones.values]
-      : [];
+  onMilestoneChange = (milestoneName, customProp = null) => {
+    let list = customProp ? this.state.contact[customProp] : this.state.contact.milestones;
+    let propName = customProp ? customProp : 'milestones';
+    const milestonesList = list ? [...list.values] : [];
     const foundMilestone = milestonesList.find((milestone) => milestone.value === milestoneName);
     if (foundMilestone) {
       const milestoneIndex = milestonesList.indexOf(foundMilestone);
@@ -1890,7 +1892,7 @@ class ContactDetailScreen extends React.Component {
     this.setState((prevState) => ({
       contact: {
         ...prevState.contact,
-        milestones: {
+        [propName]: {
           values: milestonesList,
         },
       },
@@ -2090,7 +2092,7 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
-  detailView = () => (
+  detailsView = () => (
     /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
@@ -2727,9 +2729,6 @@ class ContactDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    subAssignedSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={[
                     ...this.state.subAssignedContacts,
@@ -2803,6 +2802,9 @@ class ContactDetailScreen extends React.Component {
                     </TouchableOpacity>
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('subassigned', selectedItems)
+                  }
                   inputContainerStyle={styles.selectizeField}
                 />
               </Col>
@@ -3076,9 +3078,6 @@ class ContactDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    geonamesSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={this.state.foundGeonames}
                   selectedItems={this.getSelectizeItems(
@@ -3086,7 +3085,8 @@ class ContactDetailScreen extends React.Component {
                     this.state.geonames,
                   )}
                   textInputProps={{
-                    placeholder: i18n.t('contactDetailScreen.selectLocations'),
+                    placeholder: i18n.t('global.selectLocations'),
+                    onChangeText: this.searchLocationsDelayed,
                   }}
                   renderChip={(id, onClose, item, style, iconStyle) => (
                     <Chip
@@ -3122,10 +3122,10 @@ class ContactDetailScreen extends React.Component {
                     </TouchableOpacity>
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('location_grid', selectedItems)
+                  }
                   inputContainerStyle={styles.selectizeField}
-                  textInputProps={{
-                    onChangeText: this.searchLocationsDelayed,
-                  }}
                 />
               </Col>
             </Row>
@@ -3149,9 +3149,6 @@ class ContactDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    peopleGroupsSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={this.state.peopleGroups}
                   selectedItems={this.getSelectizeItems(
@@ -3195,6 +3192,9 @@ class ContactDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('people_groups', selectedItems)
+                  }
                   inputContainerStyle={styles.selectizeField}
                 />
               </Col>
@@ -3297,9 +3297,6 @@ class ContactDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    sourcesSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={this.state.sources}
                   selectedItems={
@@ -3375,6 +3372,9 @@ class ContactDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('sources', selectedItems)
+                  }
                   inputContainerStyle={styles.selectizeField}
                 />
               </Col>
@@ -3385,7 +3385,7 @@ class ContactDetailScreen extends React.Component {
     </View>
   );
 
-  progressView = () => (
+  faithView = () => (
     /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
@@ -3563,7 +3563,7 @@ class ContactDetailScreen extends React.Component {
               </Col>
               <Col>
                 <DatePicker
-                  ref={(ref) => (datePickerRef = ref)}
+                  ref={(ref) => (this.datePickerRef = ref)}
                   onDateChange={this.setBaptismDate}
                   defaultDate={
                     this.state.contact.baptism_date && this.state.contact.baptism_date.length > 0
@@ -3757,7 +3757,7 @@ class ContactDetailScreen extends React.Component {
                 backgroundColor: '#ffffff',
               }}
               ref={(flatList) => {
-                commentsFlatListRef = flatList;
+                this.commentsFlatListRef = flatList;
               }}
               data={this.getCommentsAndActivities()}
               extraData={!this.state.loadingMoreComments || !this.state.loadingMoreActivities}
@@ -3884,7 +3884,7 @@ class ContactDetailScreen extends React.Component {
     }
   };
 
-  connectionsView = () => (
+  relationshipsView = () => (
     /*_viewable_*/
     <View style={{ flex: 1 }}>
       {this.state.onlyView ? (
@@ -4157,9 +4157,6 @@ class ContactDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    groupsSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={[...this.state.connectionGroups, ...this.state.groups]}
                   selectedItems={this.getSelectizeItems(this.state.contact.groups, [
@@ -4226,6 +4223,9 @@ class ContactDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('groups', selectedItems)
+                  }
                   inputContainerStyle={styles.selectizeField}
                 />
               </Col>
@@ -4254,9 +4254,6 @@ class ContactDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    connectionsSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={[...this.state.relationContacts, ...this.state.usersContacts]}
                   selectedItems={this.getSelectizeItems(this.state.contact.relation, [
@@ -4323,6 +4320,9 @@ class ContactDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('relation', selectedItems)
+                  }
                   inputContainerStyle={styles.selectizeField}
                 />
               </Col>
@@ -4351,9 +4351,6 @@ class ContactDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    baptizedBySelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={[...this.state.baptizedByContacts, ...this.state.usersContacts]}
                   selectedItems={this.getSelectizeItems(this.state.contact.baptized_by, [
@@ -4420,6 +4417,9 @@ class ContactDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('baptized_by', selectedItems)
+                  }
                   inputContainerStyle={styles.selectizeField}
                 />
               </Col>
@@ -4448,9 +4448,6 @@ class ContactDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    baptizedSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={[...this.state.baptizedContacts, ...this.state.usersContacts]}
                   selectedItems={this.getSelectizeItems(this.state.contact.baptized, [
@@ -4517,6 +4514,9 @@ class ContactDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('baptized', selectedItems)
+                  }
                   inputContainerStyle={styles.selectizeField}
                 />
               </Col>
@@ -4545,9 +4545,6 @@ class ContactDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    coachedSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={[...this.state.coachedByContacts, ...this.state.usersContacts]}
                   selectedItems={this.getSelectizeItems(this.state.contact.coached_by, [
@@ -4614,6 +4611,9 @@ class ContactDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('coached_by', selectedItems)
+                  }
                   inputContainerStyle={styles.selectizeField}
                 />
               </Col>
@@ -4642,9 +4642,6 @@ class ContactDetailScreen extends React.Component {
               </Col>
               <Col>
                 <Selectize
-                  ref={(selectize) => {
-                    coachingSelectizeRef = selectize;
-                  }}
                   itemId="value"
                   items={[...this.state.coachedContacts, ...this.state.usersContacts]}
                   selectedItems={this.getSelectizeItems(this.state.contact.coaching, [
@@ -4711,6 +4708,9 @@ class ContactDetailScreen extends React.Component {
                     />
                   )}
                   filterOnKey="name"
+                  onChangeSelectedItems={(selectedItems) =>
+                    this.onSelectizeValueChange('coaching', selectedItems)
+                  }
                   inputContainerStyle={styles.selectizeField}
                 />
               </Col>
@@ -4720,137 +4720,6 @@ class ContactDetailScreen extends React.Component {
       )}
     </View>
   );
-
-  transformContactObject = (contact, quickAction = {}) => {
-    let transformedContact = {
-      ...contact,
-    };
-    if (
-      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_no_answer') ||
-      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_contact_established') ||
-      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_scheduled') ||
-      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_complete') ||
-      Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_no_show')
-    ) {
-      transformedContact = {
-        ...transformedContact,
-        ...quickAction,
-      };
-    } else {
-      // if property exist, get from json, otherwise, send empty array
-      if (subAssignedSelectizeRef) {
-        transformedContact = {
-          ...transformedContact,
-          subassigned: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.subassigned ? transformedContact.subassigned.values : [],
-              subAssignedSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (geonamesSelectizeRef) {
-        transformedContact = {
-          ...transformedContact,
-          location_grid: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.location_grid ? transformedContact.location_grid.values : [],
-              geonamesSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (peopleGroupsSelectizeRef) {
-        transformedContact = {
-          ...transformedContact,
-          people_groups: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.people_groups ? transformedContact.people_groups.values : [],
-              peopleGroupsSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (sourcesSelectizeRef) {
-        transformedContact = {
-          ...transformedContact,
-          sources: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.sources ? transformedContact.sources.values : [],
-              sourcesSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (groupsSelectizeRef) {
-        transformedContact = {
-          ...transformedContact,
-          groups: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.groups ? transformedContact.groups.values : [],
-              groupsSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (connectionsSelectizeRef) {
-        transformedContact = {
-          ...transformedContact,
-          relation: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.relation ? transformedContact.relation.values : [],
-              connectionsSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (baptizedBySelectizeRef) {
-        transformedContact = {
-          ...transformedContact,
-          baptized_by: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.baptized_by ? transformedContact.baptized_by.values : [],
-              baptizedBySelectizeRef,
-            ),
-          },
-        };
-      }
-      if (baptizedSelectizeRef) {
-        transformedContact = {
-          ...transformedContact,
-          baptized: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.baptized ? transformedContact.baptized.values : [],
-              baptizedSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (coachedSelectizeRef) {
-        transformedContact = {
-          ...transformedContact,
-          coached_by: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.coached_by ? transformedContact.coached_by.values : [],
-              coachedSelectizeRef,
-            ),
-          },
-        };
-      }
-      if (coachingSelectizeRef) {
-        transformedContact = {
-          ...transformedContact,
-          coaching: {
-            values: this.getSelectizeValuesToSave(
-              transformedContact.coaching ? transformedContact.coaching.values : [],
-              coachingSelectizeRef,
-            ),
-          },
-        };
-      }
-    }
-    return transformedContact;
-  };
 
   openCommentDialog = (comment, deleteComment = false) => {
     this.setState({
@@ -5985,6 +5854,442 @@ class ContactDetailScreen extends React.Component {
     }
   };
 
+  renderCustomView = (fields) => (
+    <View style={{ flex: 1 }}>
+      {this.state.onlyView ? (
+        <View>
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.loading}
+                onRefresh={() => this.onRefresh(this.state.contact.ID)}
+              />
+            }>
+            <View style={[styles.formContainer, { marginTop: 0 }]}>
+              {fields.map((field, index) => (
+                <View key={index.toString()}>
+                  <Row style={[styles.formRow, { paddingTop: 15 }]}>
+                    <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                      <Icon
+                        type="FontAwesome"
+                        name="users"
+                        style={[styles.formIcon, { marginTop: 0 }]}
+                      />
+                    </Col>
+                    <Col>
+                      <View>{this.renderFieldValue(field)}</View>
+                    </Col>
+                    <Col style={styles.formParentLabel}>
+                      <Label style={styles.formLabel}>{field.label}</Label>
+                    </Col>
+                  </Row>
+                  <View style={styles.formDivider} />
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+      ) : (
+        <KeyboardAwareScrollView /*_editable_*/
+          enableAutomaticScroll
+          enableOnAndroid
+          keyboardOpeningTime={0}
+          extraScrollHeight={150}
+          keyboardShouldPersistTaps="handled">
+          <View style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
+            {fields.map((field, index) => (
+              <View key={index.toString()}>
+                <Row style={styles.formFieldMargin}>
+                  <Col style={styles.formIconLabelCol}>
+                    <View style={styles.formIconLabelView}>
+                      <Icon type="FontAwesome" name="users" style={styles.formIcon} />
+                    </View>
+                  </Col>
+                  <Col>
+                    <Label style={styles.formLabel}>{field.label}</Label>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col style={styles.formIconLabelCol}>
+                    <View style={styles.formIconLabelView}>
+                      <Icon
+                        type="FontAwesome"
+                        name="user"
+                        style={[styles.formIcon, { opacity: 0 }]}
+                      />
+                    </View>
+                  </Col>
+                  <Col
+                    style={
+                      field.type == 'key_select'
+                        ? [styles.contactTextRoundField, { paddingRight: 10 }]
+                        : []
+                    }>
+                    {this.renderField(field)}
+                  </Col>
+                </Row>
+              </View>
+            ))}
+          </View>
+        </KeyboardAwareScrollView>
+      )}
+    </View>
+  );
+
+  renderFieldValue = (field) => {
+    let propExist = Object.prototype.hasOwnProperty.call(this.state.contact, field.name);
+    let mappedValue;
+    let value = this.state.contact[field.name],
+      valueType = field.type;
+    let postType;
+    if (Object.prototype.hasOwnProperty.call(field, 'post_type')) {
+      postType = field.post_type;
+    }
+    switch (valueType) {
+      case 'location': {
+        if (propExist) {
+          mappedValue = (
+            <Text style={this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}}>
+              {value.values.map((location) => location.name).join(', ')}
+            </Text>
+          );
+        }
+        break;
+      }
+      case 'date': {
+        if (propExist && value.length > 0) {
+          mappedValue = (
+            <Text>
+              {moment(new Date(parseInt(value) * 1000))
+                .utc()
+                .format('LL')}
+            </Text>
+          );
+        }
+        break;
+      }
+      case 'connection': {
+        if (propExist) {
+          mappedValue = value.values.map((connection, index) => (
+            <TouchableOpacity
+              key={index.toString()}
+              activeOpacity={0.5}
+              onPress={() => {
+                switch (postType) {
+                  case 'contacts': {
+                    this.goToContactDetailScreen(connection.value, connection.name);
+                    break;
+                  }
+                  case 'groups': {
+                    this.goToGroupDetailScreen(connection.value, connection.name);
+                    break;
+                  }
+                  default: {
+                    break;
+                  }
+                }
+              }}>
+              <Text
+                style={[
+                  styles.linkingText,
+                  { marginTop: 'auto', marginBottom: 'auto' },
+                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                ]}>
+                {connection.name}
+              </Text>
+            </TouchableOpacity>
+          ));
+        }
+        break;
+      }
+      case 'multi_select': {
+        mappedValue = (
+          <Row style={{ flexWrap: 'wrap' }}>
+            {Object.keys(field.default).map((value, index) =>
+              this.renderMultiSelectField(field, value, index),
+            )}
+          </Row>
+        );
+        break;
+      }
+      default: {
+        if (propExist) {
+          mappedValue = (
+            <Text style={this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}}>{value}</Text>
+          );
+        }
+        break;
+      }
+    }
+    return mappedValue;
+  };
+
+  renderMultiSelectField = (field, value, index) => (
+    <TouchableOpacity
+      key={index.toString()}
+      onPress={() => {
+        if (!this.state.onlyView) {
+          this.onMilestoneChange(value, field.name);
+        }
+      }}
+      activeOpacity={1}
+      underlayColor={
+        this.onCheckExistingMilestone(value, field.name) ? Colors.tintColor : Colors.gray
+      }
+      style={{
+        borderRadius: 10,
+        backgroundColor: this.onCheckExistingMilestone(value, field.name)
+          ? Colors.tintColor
+          : Colors.gray,
+        padding: 10,
+        marginRight: 10,
+        marginBottom: 10,
+      }}>
+      <Text
+        style={[
+          styles.progressIconText,
+          {
+            color: this.onCheckExistingMilestone(value, field.name) ? '#FFFFFF' : '#000000',
+          },
+        ]}>
+        {field.default[value].label}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  renderField = (field) => {
+    let value = this.state.contact[field.name],
+      valueType = field.type;
+    let postType;
+    if (Object.prototype.hasOwnProperty.call(field, 'post_type')) {
+      postType = field.post_type;
+    }
+
+    switch (valueType) {
+      case 'number': {
+        return (
+          <Input
+            value={value}
+            keyboardType="numeric"
+            onChangeText={(value) => this.setContactCustomFieldValue(field.name, value)}
+            style={[
+              styles.contactTextField,
+              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+            ]}
+          />
+        );
+      }
+      case 'text': {
+        return (
+          <Input
+            value={value}
+            onChangeText={(value) => this.setContactCustomFieldValue(field.name, value)}
+            style={[
+              styles.contactTextField,
+              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+            ]}
+          />
+        );
+      }
+      case 'date': {
+        return (
+          <Row>
+            <DatePicker
+              ref={(ref) => {
+                this[`${field.name}Ref`] = ref;
+              }}
+              onDateChange={(dateValue) =>
+                this.setContactCustomFieldValue(field.name, dateValue, valueType)
+              }
+              defaultDate={
+                this.state.contact[field.name] && this.state.contact[field.name].length > 0
+                  ? new Date(this.state.contact[field.name] * 1000)
+                  : ''
+              }
+            />
+            <Icon
+              type="AntDesign"
+              name="close"
+              style={[
+                styles.formIcon,
+                styles.addRemoveIcons,
+                styles.removeIcons,
+                { marginLeft: 'auto' },
+              ]}
+              onPress={() => this.setContactCustomFieldValue(field.name, null, valueType)}
+            />
+          </Row>
+        );
+      }
+      case 'location': {
+        return (
+          <Selectize
+            itemId="value"
+            items={this.state.foundGeonames}
+            selectedItems={this.getSelectizeItems(
+              this.state.contact[field.name],
+              this.state.geonames,
+            )}
+            textInputProps={{
+              placeholder: i18n.t('global.selectLocations'),
+              onChangeText: this.searchLocationsDelayed,
+            }}
+            renderChip={(id, onClose, item, style, iconStyle) => (
+              <Chip
+                key={id}
+                iconStyle={iconStyle}
+                onClose={onClose}
+                text={item.name}
+                style={style}
+              />
+            )}
+            renderRow={(id, onPress, item) => (
+              <TouchableOpacity
+                activeOpacity={0.6}
+                key={id}
+                onPress={onPress}
+                style={{
+                  paddingVertical: 8,
+                  paddingHorizontal: 10,
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                  }}>
+                  <Text
+                    style={{
+                      color: 'rgba(0, 0, 0, 0.87)',
+                      fontSize: 14,
+                      lineHeight: 21,
+                    }}>
+                    {item.name}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            filterOnKey="name"
+            onChangeSelectedItems={(selectedItems) =>
+              this.onSelectizeValueChange(field.name, selectedItems)
+            }
+            inputContainerStyle={styles.selectizeField}
+          />
+        );
+      }
+      case 'connection': {
+        let listItems = [],
+          placeholder = '';
+
+        switch (postType) {
+          case 'contacts': {
+            listItems = [...this.state.usersContacts];
+            placeholder = i18n.t('global.searchContacts');
+            break;
+          }
+          case 'groups': {
+            listItems = [...this.state.groups];
+            placeholder = i18n.t('groupDetailScreen.searchGroups');
+            break;
+          }
+          default:
+        }
+
+        return (
+          <Selectize
+            itemId="value"
+            items={listItems}
+            selectedItems={this.getSelectizeItems(this.state.contact[field.name], listItems)}
+            textInputProps={{
+              placeholder: placeholder,
+            }}
+            renderRow={(id, onPress, item) => (
+              <TouchableOpacity
+                activeOpacity={0.6}
+                key={id}
+                onPress={onPress}
+                style={{
+                  paddingVertical: 8,
+                  paddingHorizontal: 10,
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                  }}>
+                  <Text
+                    style={{
+                      color: 'rgba(0, 0, 0, 0.87)',
+                      fontSize: 14,
+                      lineHeight: 21,
+                    }}>
+                    {item.name}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            renderChip={(id, onClose, item, style, iconStyle) => (
+              <Chip
+                key={id}
+                iconStyle={iconStyle}
+                onClose={onClose}
+                text={item.name}
+                style={style}
+              />
+            )}
+            filterOnKey="name"
+            onChangeSelectedItems={(selectedItems) =>
+              this.onSelectizeValueChange(field.name, selectedItems)
+            }
+            inputContainerStyle={styles.selectizeField}
+          />
+        );
+      }
+      case 'multi_select': {
+        return (
+          <Row style={{ flexWrap: 'wrap' }}>
+            {Object.keys(field.default).map((value, index) =>
+              this.renderMultiSelectField(field, value, index),
+            )}
+          </Row>
+        );
+      }
+      case 'key_select': {
+        return (
+          <Picker
+            mode="dropdown"
+            selectedValue={this.state.contact[field.name]}
+            onValueChange={(value) => this.setContactCustomFieldValue(field.name, value)}
+            textStyle={{ color: Colors.tintColor }}>
+            {Object.keys(field.default).map((key) => {
+              const optionData = field.default[key];
+              return <Picker.Item key={key} label={optionData.label} value={key} />;
+            })}
+          </Picker>
+        );
+      }
+      default:
+        return <Text>{field.label}</Text>;
+    }
+  };
+
+  setContactCustomFieldValue = (fieldName, value, fieldType = null) => {
+    if (fieldType == 'date') {
+      if (!value) {
+        // Clear DatePicker value
+        this[`${fieldName}Ref`].state.chosenDate = undefined;
+        this[`${fieldName}Ref`].state.defaultDate = new Date();
+        this.forceUpdate();
+      }
+      value = value ? sharedTools.formatDateToBackEnd(value) : '';
+    }
+
+    this.setState((prevState) => ({
+      contact: {
+        ...prevState.contact,
+        [fieldName]: value,
+      },
+    }));
+  };
+
   render() {
     const successToast = (
       <Toast
@@ -6024,23 +6329,12 @@ class ContactDetailScreen extends React.Component {
                         tabStyle={{ width: 'auto' }}
                         indicatorStyle={styles.tabBarUnderlineStyle}
                         renderLabel={({ route, color }) => (
-                          <Text style={{ color, fontWeight: 'bold' }}>{i18n.t(route.title)}</Text>
+                          <Text style={{ color, fontWeight: 'bold' }}>{route.title}</Text>
                         )}
                       />
                     )}
                     renderScene={({ route }) => {
-                      switch (route.key) {
-                        case 'details':
-                          return this.detailView();
-                        case 'progress':
-                          return this.progressView();
-                        case 'comments':
-                          return this.commentsView();
-                        case 'connections':
-                          return this.connectionsView();
-                        default:
-                          return null;
-                      }
+                      return route.render();
                     }}
                     onIndexChange={this.tabChanged}
                     initialLayout={{ width: windowWidth }}
@@ -6286,9 +6580,6 @@ class ContactDetailScreen extends React.Component {
                                 </Text>
                                 <Text>{i18n.t('contactDetailScreen.contactSharedWith')}:</Text>
                                 <Selectize
-                                  ref={(selectize) => {
-                                    shareContactSelectizeRef = selectize;
-                                  }}
                                   itemId="value"
                                   items={this.state.users.map((user) => ({
                                     name: user.label,
@@ -6692,9 +6983,6 @@ class ContactDetailScreen extends React.Component {
                           </Col>
                           <Col>
                             <Selectize
-                              ref={(selectize) => {
-                                peopleGroupsSelectizeRef = selectize;
-                              }}
                               itemId="value"
                               items={this.state.peopleGroups}
                               selectedItems={this.getSelectizeItems(
@@ -6738,6 +7026,9 @@ class ContactDetailScreen extends React.Component {
                                 />
                               )}
                               filterOnKey="name"
+                              onChangeSelectedItems={(selectedItems) =>
+                                this.onSelectizeValueChange('people_groups', selectedItems)
+                              }
                               inputContainerStyle={styles.selectizeField}
                             />
                           </Col>
@@ -6820,14 +7111,12 @@ class ContactDetailScreen extends React.Component {
                         <Row>
                           <Col>
                             <Selectize
-                              ref={(selectize) => {
-                                geonamesSelectizeRef = selectize;
-                              }}
                               itemId="value"
                               items={this.state.foundGeonames}
                               selectedItems={[]}
                               textInputProps={{
-                                placeholder: i18n.t('contactDetailScreen.selectLocations'),
+                                placeholder: i18n.t('global.selectLocations'),
+                                onChangeText: this.searchLocationsDelayed,
                               }}
                               renderRow={(id, onPress, item) => (
                                 <TouchableOpacity
@@ -6863,10 +7152,10 @@ class ContactDetailScreen extends React.Component {
                                 />
                               )}
                               filterOnKey="name"
+                              onChangeSelectedItems={(selectedItems) =>
+                                this.onSelectizeValueChange('location_grid', selectedItems)
+                              }
                               inputContainerStyle={styles.selectizeField}
-                              textInputProps={{
-                                onChangeText: this.searchLocationsDelayed,
-                              }}
                             />
                           </Col>
                         </Row>

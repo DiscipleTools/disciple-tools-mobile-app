@@ -203,13 +203,9 @@ export default function groupsReducer(state = initialState, action) {
                         break;
                       }
                       case '[object String]': {
-                        if (key === 'sources' || key === 'health_metrics') {
-                          // source or health_metric
-                          return {
-                            value: valueTwo,
-                          };
-                        }
-                        return valueTwo;
+                        return {
+                          value: valueTwo,
+                        };
                       }
                       default:
                     }
@@ -366,13 +362,9 @@ export default function groupsReducer(state = initialState, action) {
                       break;
                     }
                     case '[object String]': {
-                      if (key === 'sources' || key === 'health_metrics') {
-                        // source or health_metric
-                        return {
-                          value: valueTwo,
-                        };
-                      }
-                      return valueTwo;
+                      return {
+                        value: valueTwo,
+                      };
                     }
                     default:
                   }
@@ -693,13 +685,9 @@ export default function groupsReducer(state = initialState, action) {
                       break;
                     }
                     case '[object String]': {
-                      if (key === 'sources' || key === 'health_metrics') {
-                        // source or health_metric
-                        return {
-                          value: valueTwo,
-                        };
-                      }
-                      return valueTwo;
+                      return {
+                        value: valueTwo,
+                      };
                     }
                     default:
                   }
@@ -996,16 +984,59 @@ export default function groupsReducer(state = initialState, action) {
           },
         };
       });
+
+      let tileList = [];
+      if (Object.prototype.hasOwnProperty.call(settings, 'tiles')) {
+        Object.keys(settings.tiles).forEach((tileName) => {
+          let fieldList = [];
+          Object.keys(settings.fields).forEach((fieldName) => {
+            let value = settings.fields[fieldName];
+            if (Object.prototype.hasOwnProperty.call(value, 'tile') && value.tile === tileName) {
+              let newField = {
+                name: fieldName,
+                label: value.name,
+                type: value.type,
+              };
+              if (Object.prototype.hasOwnProperty.call(value, 'post_type')) {
+                newField = {
+                  ...newField,
+                  post_type: value.post_type,
+                };
+              }
+              if (Object.prototype.hasOwnProperty.call(value, 'default')) {
+                newField = {
+                  ...newField,
+                  default: value.default,
+                };
+              }
+              fieldList.push(newField);
+            }
+          });
+          tileList.push({
+            name: tileName,
+            label: settings.tiles[tileName].label,
+            fields: fieldList,
+          });
+        });
+      }
+
       return {
         ...newState,
         settings: {
           fields: fieldList,
           channels,
           labelPlural: settings.label_plural,
+          tiles: tileList,
         },
         loading: false,
       };
     }
+    case actions.GROUPS_GET_SETTINGS_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+        loading: false,
+      };
     case actions.GROUPS_LOCATIONS_SEARCH_SUCCESS: {
       const { offline, filteredGeonames, queryText } = action;
       let foundGeonames = [],
