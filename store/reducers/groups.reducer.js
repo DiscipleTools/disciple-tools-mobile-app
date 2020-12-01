@@ -1019,8 +1019,7 @@ export default function groupsReducer(state = initialState, action) {
           });
         });
       }
-      console.log('groups tileList');
-      console.log(tileList);
+
       return {
         ...newState,
         settings: {

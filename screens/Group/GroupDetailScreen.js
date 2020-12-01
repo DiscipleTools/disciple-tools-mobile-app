@@ -2225,8 +2225,6 @@ class GroupDetailScreen extends React.Component {
               assigned_to: `user-${groupToSave.assigned_to.key}`,
             };
           }
-          console.log('groupToSave');
-          console.log(groupToSave);
           this.props.saveGroup(this.props.userData.domain, this.props.userData.token, groupToSave);
         } else {
           //Empty contact title/name
