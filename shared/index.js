@@ -431,6 +431,6 @@ export default {
   filterExistInEntity,
   contactsByFilter,
   groupsByFilter,
-  paginationLimit: 50,
+  paginationLimit: 1000,
   getSelectizeValuesToSave,
 };
