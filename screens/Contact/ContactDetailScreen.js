@@ -5958,7 +5958,7 @@ class ContactDetailScreen extends React.Component {
         break;
       }
       case 'date': {
-        if (propExist) {
+        if (propExist && value.length > 0) {
           mappedValue = (
             <Text>
               {moment(new Date(parseInt(value) * 1000))
