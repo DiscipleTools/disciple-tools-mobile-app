@@ -785,9 +785,10 @@ class LoginScreen extends React.Component {
               </TouchableOpacity>
             ) : null}
             <TextField
+              accessibilityLabel={i18n.t('loginScreen.domain.label')}
+              label={i18n.t('loginScreen.domain.label')}
               containerStyle={domainStyle}
               iconName="ios-globe"
-              label={i18n.t('loginScreen.domain.label')}
               onChangeText={(text) => this.cleanDomainWiteSpace(text)}
               textAlign={this.props.i18n.isRTL ? 'right' : 'left'}
               autoCapitalize="none"
@@ -801,9 +802,10 @@ class LoginScreen extends React.Component {
             />
             {domainErrorMessage}
             <TextField
+              accessibilityLabel={i18n.t('loginScreen.username.label')}
+              label={i18n.t('loginScreen.username.label')}
               containerStyle={userStyle}
               iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
-              label={i18n.t('loginScreen.username.label')}
               onChangeText={(text) => this.setState({ username: text })}
               textAlign={this.props.i18n.isRTL ? 'right' : 'left'}
               autoCapitalize="none"
@@ -827,6 +829,7 @@ class LoginScreen extends React.Component {
                     style={{ marginBottom: 'auto', marginTop: 'auto' }}
                   />
                   <TextInput
+                    accessibilityLabel={i18n.t('loginScreen.password.label')}
                     underlineColorAndroid="transparent"
                     secureTextEntry={this.state.hidePassword}
                     style={styles.textBox}
@@ -864,7 +867,11 @@ class LoginScreen extends React.Component {
               <ActivityIndicator color={Colors.tintColor} style={{ margin: 20 }} size="small" />
             ) : (
               <View>
-                <Button style={styles.signInButton} onPress={this.onLoginPress} block>
+                <Button
+                  accessibilityLabel={i18n.t('loginScreen.logIn')}
+                  style={styles.signInButton}
+                  onPress={this.onLoginPress}
+                  block>
                   <Text style={styles.signInButtonText}>{i18n.t('loginScreen.logIn')}</Text>
                 </Button>
                 <TouchableOpacity
