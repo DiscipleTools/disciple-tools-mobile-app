@@ -5939,7 +5939,7 @@ class ContactDetailScreen extends React.Component {
 
   renderFieldValue = (field) => {
     let propExist = Object.prototype.hasOwnProperty.call(this.state.contact, field.name);
-    let mappedValue = <Text></Text>;
+    let mappedValue;
     let value = this.state.contact[field.name],
       valueType = field.type;
     let postType;
@@ -5949,7 +5949,11 @@ class ContactDetailScreen extends React.Component {
     switch (valueType) {
       case 'location': {
         if (propExist) {
-          mappedValue = <Text>{value.values.map((location) => location.name).join(', ')}</Text>;
+          mappedValue = (
+            <Text style={this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}}>
+              {value.values.map((location) => location.name).join(', ')}
+            </Text>
+          );
         }
         break;
       }
@@ -6011,7 +6015,9 @@ class ContactDetailScreen extends React.Component {
       }
       default: {
         if (propExist) {
-          mappedValue = <Text>{value}</Text>;
+          mappedValue = (
+            <Text style={this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}}>{value}</Text>
+          );
         }
         break;
       }
