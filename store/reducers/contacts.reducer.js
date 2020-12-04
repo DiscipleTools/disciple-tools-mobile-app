@@ -1,6 +1,7 @@
 import * as actions from '../actions/contacts.actions';
 import * as userActions from '../actions/user.actions';
 import { Html5Entities } from 'html-entities';
+import { REHYDRATE } from 'redux-persist/lib/constants';
 
 const initialState = {
   loading: false,
@@ -19,6 +20,7 @@ const initialState = {
   loadingShare: false,
   shareSettings: {},
   savedShare: false,
+  tags: [],
 };
 
 export default function contactsReducer(state = initialState, action) {
@@ -28,21 +30,29 @@ export default function contactsReducer(state = initialState, action) {
     error: null,
     saved: false,
     savedShare: false,
-    contact: null,
   };
+
   const entities = new Html5Entities();
   switch (action.type) {
+    case REHYDRATE: {
+      return {
+        ...newState,
+        loading: false,
+      };
+    }
     case actions.CONTACTS_GETALL_START:
       return {
         ...newState,
         loading: true,
       };
     case actions.CONTACTS_GETALL_SUCCESS: {
-      let { contacts } = action;
-      const { offline, offset } = action;
-      const localContacts = newState.contacts.filter((localContact) => isNaN(localContact.ID));
-      if (!offline) {
-        const dataBaseContacts = [...action.contacts].map((contact) => {
+      let { contacts, offline, offset } = action,
+        newContacts = [],
+        currentContacts = newState.contacts ? [...newState.contacts] : [];
+      if (offline) {
+        newContacts = [...contacts];
+      } else {
+        let dataBaseContacts = contacts.map((contact) => {
           const mappedContact = {};
           Object.keys(contact).forEach((key) => {
             // Omit restricted properties
@@ -154,14 +164,16 @@ export default function contactsReducer(state = initialState, action) {
           });
           return mappedContact;
         });
-        contacts = localContacts.concat(dataBaseContacts);
-      }
-      if (offset > 0) {
-        contacts = newState.contacts.concat(contacts);
+        let localContacts = currentContacts.filter((localContact) => isNaN(localContact.ID));
+        if (offset > 0) {
+          newContacts = [...localContacts, ...currentContacts, ...dataBaseContacts];
+        } else {
+          newContacts = [...localContacts, ...dataBaseContacts];
+        }
       }
       return {
         ...newState,
-        contacts,
+        contacts: newContacts,
         loading: false,
       };
     }
@@ -436,6 +448,7 @@ export default function contactsReducer(state = initialState, action) {
     case actions.CONTACTS_GETBYID_START:
       return {
         ...newState,
+        contact: null,
         loading: true,
       };
     case actions.CONTACTS_GETBYID_SUCCESS: {
@@ -588,6 +601,11 @@ export default function contactsReducer(state = initialState, action) {
         ...newState,
         error: action.error,
         loading: false,
+      };
+    case actions.CONTACTS_GETBYID_END:
+      return {
+        ...newState,
+        contact: null,
       };
     case actions.CONTACTS_GET_COMMENTS_START:
       return {
@@ -1068,6 +1086,23 @@ export default function contactsReducer(state = initialState, action) {
         loadingShare: false,
       };
     }
+    case actions.CONTACTS_GET_TAGS_START:
+      return {
+        ...newState,
+        loading: true,
+      };
+    case actions.CONTACTS_GET_TAGS_SUCCESS:
+      return {
+        ...newState,
+        tags: action.tags,
+        loading: false,
+      };
+    case actions.CONTACTS_GET_TAGS_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+        loading: false,
+      };
     default:
       return newState;
   }

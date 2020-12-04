@@ -41,7 +41,8 @@
     "searchUsers": "",
     "noFilters": "",
     "searchContacts": "",
-    "selectLocations": "تحديد المواقع"
+    "selectLocations": "تحديد المواقع",
+    "other": ""
   },
   "loginScreen": {
     "domain": {

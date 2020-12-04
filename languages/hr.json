@@ -41,7 +41,8 @@
     "searchUsers": "",
     "noFilters": "",
     "searchContacts": "",
-    "selectLocations": "Odaberite Lokacije"
+    "selectLocations": "Odaberite Lokacije",
+    "other": ""
   },
   "loginScreen": {
     "domain": {

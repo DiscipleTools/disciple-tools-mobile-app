@@ -41,7 +41,11 @@ import {
   getLocationListLastModifiedDate,
 } from '../store/actions/groups.actions';
 import { getUsers, getContactFilters, getGroupFilters } from '../store/actions/users.actions';
-import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
+import {
+  getContactSettings,
+  getAll as getAllContacts,
+  getTags,
+} from '../store/actions/contacts.actions';
 import { logout } from '../store/actions/user.actions';
 import { getActiveQuestionnaires } from '../store/actions/questionnaire.actions';
 import { getNotificationsCount } from '../store/actions/notifications.actions';
@@ -217,6 +221,7 @@ class LoginScreen extends React.Component {
     groupFiltersRetrieved: false,
     notificationsCountRetrieved: false,
     mobileAppRequired: false,
+    tagsRetrieved: false,
   };
 
   constructor(props) {
@@ -273,6 +278,7 @@ class LoginScreen extends React.Component {
       contactFilters,
       groupFilters,
       notificationsCount,
+      tags,
     } = nextProps;
     let newState = {
       ...prevState,
@@ -346,6 +352,12 @@ class LoginScreen extends React.Component {
           notificationsCountRetrieved: true,
         };
       }
+      if (tags) {
+        newState = {
+          ...newState,
+          tagsRetrieved: true,
+        };
+      }
     }
 
     const error =
@@ -392,6 +404,7 @@ class LoginScreen extends React.Component {
         contactFiltersRetrieved: false,
         groupFiltersRetrieved: false,
         notificationsCountRetrieved: false,
+        tagsRetrieved: false,
       });
     });
     this.initLoginScreen();
@@ -443,6 +456,7 @@ class LoginScreen extends React.Component {
                 contactFiltersRetrieved: true,
                 groupFiltersRetrieved: true,
                 notificationsCountRetrieved: true,
+                tagsRetrieved: true,
               });
             },
           );
@@ -478,6 +492,7 @@ class LoginScreen extends React.Component {
       notificationsCountRetrieved,
       userDataRetrieved,
       domain,
+      tagsRetrieved,
     } = this.state;
 
     // User logged successfully
@@ -524,7 +539,8 @@ class LoginScreen extends React.Component {
       geonamesRetrieved &&
       contactFiltersRetrieved &&
       groupFiltersRetrieved &&
-      notificationsCountRetrieved
+      notificationsCountRetrieved &&
+      tagsRetrieved
     ) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
@@ -607,6 +623,7 @@ class LoginScreen extends React.Component {
     this.props.getActiveQuestionnaires(this.props.userData.domain, this.props.userData.token);
     this.props.getGroupFilters(this.props.userData.domain, this.props.userData.token);
     this.props.getNotificationsCount(this.props.userData.domain, this.props.userData.token);
+    this.props.getTags(this.props.userData.domain, this.props.userData.token);
   };
 
   getUserInfo = () => {
@@ -1134,6 +1151,7 @@ const mapStateToProps = (state) => ({
   contactFilters: state.usersReducer.contactFilters,
   groupFilters: state.usersReducer.groupFilters,
   notificationsCount: state.notificationsReducer.notificationsCount,
+  tags: state.contactsReducer.tags,
 });
 const mapDispatchToProps = (dispatch) => ({
   loginDispatch: (domain, username, password) => {
@@ -1186,6 +1204,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   cancelSetLanguage: () => {
     dispatch(cancelSetLanguage());
+  },
+  getTags: (domain, token) => {
+    dispatch(getTags(domain, token));
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

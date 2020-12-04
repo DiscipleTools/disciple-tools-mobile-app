@@ -1,5 +1,6 @@
 import * as actions from '../actions/users.actions';
 import sharedTools from '../../shared';
+import { REHYDRATE } from 'redux-persist/lib/constants';
 
 const initialState = {
   error: null,
@@ -16,6 +17,12 @@ export default function usersReducer(state = initialState, action) {
     users: null,
   };
   switch (action.type) {
+    case REHYDRATE: {
+      return {
+        ...newState,
+        loading: false,
+      };
+    }
     case actions.GET_USERS_START:
       return {
         ...newState,

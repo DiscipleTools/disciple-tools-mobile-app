@@ -1,6 +1,7 @@
 import * as actions from '../actions/groups.actions';
 import * as userActions from '../actions/user.actions';
 import { Html5Entities } from 'html-entities';
+import { REHYDRATE } from 'redux-persist/lib/constants';
 
 const initialState = {
   loading: false,
@@ -29,7 +30,6 @@ const initialState = {
 export default function groupsReducer(state = initialState, action) {
   let newState = {
     ...state,
-    group: null,
     newComment: false,
     error: null,
     saved: false,
@@ -39,6 +39,12 @@ export default function groupsReducer(state = initialState, action) {
   };
   const entities = new Html5Entities();
   switch (action.type) {
+    case REHYDRATE: {
+      return {
+        ...newState,
+        loading: false,
+      };
+    }
     case actions.GROUPS_GET_LOCATIONS_START:
       return {
         ...newState,
@@ -86,11 +92,13 @@ export default function groupsReducer(state = initialState, action) {
         loading: true,
       };
     case actions.GROUPS_GETALL_SUCCESS: {
-      let { groups } = action;
-      const { offline, offset } = action;
-      const localGroups = newState.groups.filter((localGroup) => isNaN(localGroup.ID));
-      if (!offline) {
-        const dataBaseGroups = [...groups].map((group) => {
+      let { groups, offline, offset } = action,
+        newGroups = [],
+        currentGroups = newState.groups ? [...newState.groups] : [];
+      if (offline) {
+        newGroups = [...groups];
+      } else {
+        let dataBaseGroups = groups.map((group) => {
           const mappedGroup = {};
           Object.keys(group).forEach((key) => {
             // Omit restricted properties
@@ -226,14 +234,16 @@ export default function groupsReducer(state = initialState, action) {
           });
           return mappedGroup;
         });
-        groups = localGroups.concat(dataBaseGroups);
-      }
-      if (offset > 0) {
-        groups = newState.groups.concat(groups);
+        let localGroups = currentGroups.filter((localGroup) => isNaN(localGroup.ID));
+        if (offset > 0) {
+          newGroups = [...localGroups, ...currentGroups, ...dataBaseGroups];
+        } else {
+          newGroups = [...localGroups, ...dataBaseGroups];
+        }
       }
       return {
         ...newState,
-        groups,
+        groups: newGroups,
         loading: false,
       };
     }
@@ -732,6 +742,11 @@ export default function groupsReducer(state = initialState, action) {
         ...newState,
         error: action.error,
         loading: false,
+      };
+    case actions.GROUPS_GETBYID_END:
+      return {
+        ...newState,
+        group: null,
       };
     case actions.GROUPS_GET_COMMENTS_START:
       return {

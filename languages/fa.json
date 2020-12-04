@@ -41,7 +41,8 @@
     "searchUsers": "",
     "noFilters": "",
     "searchContacts": "",
-    "selectLocations": "مکان ها را انتخاب کنید"
+    "selectLocations": "مکان ها را انتخاب کنید",
+    "other": ""
   },
   "loginScreen": {
     "domain": {
