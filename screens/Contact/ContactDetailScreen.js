@@ -1829,6 +1829,7 @@ class ContactDetailScreen extends React.Component {
               assigned_to: `user-${contactToSave.assigned_to.key}`,
             };
           }
+
           this.props.saveContact(
             this.props.userData.domain,
             this.props.userData.token,

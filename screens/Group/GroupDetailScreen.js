@@ -2247,9 +2247,27 @@ class GroupDetailScreen extends React.Component {
           if (Object.prototype.hasOwnProperty.call(this.state.group, 'ID')) {
             groupToSave = {
               ...groupToSave,
-              ID: this.state.group.ID,
+              ...quickAction,
             };
+          } else {
+            // if property exist, get from json, otherwise, send empty array
+            if (addMembersSelectizeRef) {
+              groupToSave = {
+                ...groupToSave,
+                members: {
+                  values: this.getSelectizeValuesToSave(
+                    unmodifiedGroup.members ? unmodifiedGroup.members.values : [],
+                    groupToSave.members ? groupToSave.members.values : [],
+                  ),
+                },
+              };
+            }
           }
+          groupToSave = {
+            ...sharedTools.diff(unmodifiedGroup, groupToSave),
+            title: entities.encode(this.state.group.title),
+            ID: this.state.group.ID,
+          };
           if (groupToSave.assigned_to) {
             groupToSave = {
               ...groupToSave,
