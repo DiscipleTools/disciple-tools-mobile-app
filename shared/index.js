@@ -282,6 +282,9 @@ const filterExistInEntity = (valueType, filterValue, value) => {
         value['values'].forEach((object) => {
           if (filterValue === object['name']) {
             result = true;
+            //Detect custom values (tags)
+          } else if (filterValue === object['value']) {
+            result = true;
           }
         });
       } else if (

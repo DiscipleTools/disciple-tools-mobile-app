@@ -76,22 +76,12 @@ class GroupsScreen extends React.Component {
     },
   };
 
-  componentDidUpdate(prevProps) {
-    const { error } = this.props;
-    if (prevProps.error !== error && error) {
-      toastError.show(
-        <View>
-          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-            {i18n.t('global.error.code')}
-          </Text>
-          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-            {i18n.t('global.error.message')}
-          </Text>
-          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
-        </View>,
-        3000,
-      );
+  componentDidMount() {
+    // Recieve custom filters (tag) as param
+    const { params } = this.props.navigation.state;
+    if (params) {
+      const { customFilter } = params;
+      this.selectFilter(customFilter);
     }
   }
 
@@ -117,6 +107,25 @@ class GroupsScreen extends React.Component {
     }
 
     return newState;
+  }
+
+  componentDidUpdate(prevProps) {
+    const { error } = this.props;
+    if (prevProps.error !== error && error) {
+      toastError.show(
+        <View>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
+        </View>,
+        3000,
+      );
+    }
   }
 
   renderFooter = () => {

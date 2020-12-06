@@ -663,6 +663,53 @@ export function* removeSharedUser({ domain, token, contactId, userId }) {
   }
 }
 
+export function* getTags({ domain, token }) {
+  yield put({ type: actions.CONTACTS_GET_TAGS_START });
+
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts/multi-select-values?field=tags`,
+      data: {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      action: actions.CONTACTS_GET_TAGS_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.CONTACTS_GET_TAGS_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.CONTACTS_GET_TAGS_SUCCESS,
+        tags: jsonData,
+      });
+    } else {
+      yield put({
+        type: actions.CONTACTS_GET_TAGS_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.CONTACTS_GET_TAGS_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
 export default function* contactsSaga() {
   yield all([
     takeLatest(actions.CONTACTS_GETALL, getAll),
@@ -676,5 +723,6 @@ export default function* contactsSaga() {
     takeEvery(actions.CONTACTS_GET_SHARE_SETTINGS, getShareSettings),
     takeEvery(actions.CONTACTS_ADD_USER_SHARE, addUserToShare),
     takeEvery(actions.CONTACTS_REMOVE_SHARED_USER, removeSharedUser),
+    takeEvery(actions.CONTACTS_GET_TAGS, getTags),
   ]);
 }

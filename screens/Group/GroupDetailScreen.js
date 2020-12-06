@@ -134,6 +134,10 @@ const tabViewRoutes = [
     key: 'groups',
     title: i18n.t('global.groups'),
   },
+  {
+    key: 'other',
+    title: i18n.t('global.other'),
+  },
 ];
 let self;
 const styles = StyleSheet.create({
@@ -803,7 +807,7 @@ class GroupDetailScreen extends React.Component {
     );
     focusListener = navigation.addListener('didFocus', () => {
       //Focus on 'detail mode' (going back or open detail view)
-      if (typeof this.props.navigation.state.params.groupId !== 'undefined') {
+      if (this.groupIsCreated()) {
         this.props.loadingFalse();
         this.onRefresh(this.props.navigation.state.params.groupId, true);
       }
@@ -838,6 +842,7 @@ class GroupDetailScreen extends React.Component {
       isConnected,
       loadingShare,
       shareSettings,
+      navigation,
     } = nextProps;
     let newState = {
       ...prevState,
@@ -1120,9 +1125,12 @@ class GroupDetailScreen extends React.Component {
 
     // GET COMMENTS
     if (comments) {
-      if (newState.group.ID && Object.prototype.hasOwnProperty.call(comments, newState.group.ID)) {
+      if (
+        navigation.state.params.groupId &&
+        Object.prototype.hasOwnProperty.call(comments, navigation.state.params.groupId)
+      ) {
         // NEW COMMENTS (PAGINATION)
-        if (comments[newState.group.ID].pagination.offset > 0) {
+        if (comments[navigation.state.params.groupId].pagination.offset > 0) {
           newState = {
             ...newState,
             loadingMoreComments: false,
@@ -1133,7 +1141,14 @@ class GroupDetailScreen extends React.Component {
         newState = {
           ...newState,
           comments: {
-            ...comments[newState.group.ID],
+            ...comments[navigation.state.params.groupId],
+          },
+        };
+      } else {
+        newState = {
+          ...newState,
+          comments: {
+            ...initialState.comments,
           },
         };
       }
@@ -1142,11 +1157,11 @@ class GroupDetailScreen extends React.Component {
     // GET ACTIVITITES
     if (activities) {
       if (
-        newState.group.ID &&
-        Object.prototype.hasOwnProperty.call(activities, newState.group.ID)
+        navigation.state.params.groupId &&
+        Object.prototype.hasOwnProperty.call(activities, navigation.state.params.groupId)
       ) {
         // NEW ACTIVITIES (PAGINATION)
-        if (activities[newState.group.ID].pagination.offset > 0) {
+        if (activities[navigation.state.params.groupId].pagination.offset > 0) {
           newState = {
             ...newState,
             loadingMoreActivities: false,
@@ -1157,7 +1172,14 @@ class GroupDetailScreen extends React.Component {
         newState = {
           ...newState,
           activities: {
-            ...activities[newState.group.ID],
+            ...activities[navigation.state.params.groupId],
+          },
+        };
+      } else {
+        newState = {
+          ...newState,
+          activities: {
+            ...initialState.activities,
           },
         };
       }
@@ -1173,12 +1195,12 @@ class GroupDetailScreen extends React.Component {
 
     if (shareSettings) {
       if (
-        newState.group.ID &&
-        Object.prototype.hasOwnProperty.call(shareSettings, newState.group.ID)
+        navigation.state.params.groupId &&
+        Object.prototype.hasOwnProperty.call(shareSettings, navigation.state.params.groupId)
       ) {
         newState = {
           ...newState,
-          sharedUsers: shareSettings[newState.group.ID],
+          sharedUsers: shareSettings[navigation.state.params.groupId],
         };
       }
     }
@@ -1210,9 +1232,12 @@ class GroupDetailScreen extends React.Component {
       // Same group updated (offline/online)
       // Same offline group created in DB (AutoID to DBID)
       if (
-        (typeof group.ID !== 'undefined' && typeof this.state.group.ID === 'undefined') ||
-        (group.ID && group.ID.toString() === this.state.group.ID.toString()) ||
-        (group.oldID && group.oldID === this.state.group.ID.toString())
+        (Object.prototype.hasOwnProperty.call(group, 'ID') &&
+          !Object.prototype.hasOwnProperty.call(this.state.group, 'ID')) ||
+        (Object.prototype.hasOwnProperty.call(group, 'ID') &&
+          group.ID.toString() === this.state.group.ID.toString()) ||
+        (Object.prototype.hasOwnProperty.call(group, 'oldID') &&
+          group.oldID === this.state.group.ID.toString())
       ) {
         // Highlight Updates -> Compare this.state.group with group and show differences
         navigation.setParams({ groupName: group.title, groupId: group.ID });
@@ -1372,11 +1397,14 @@ class GroupDetailScreen extends React.Component {
     }
   };
 
+  groupIsCreated = () =>
+    Object.prototype.hasOwnProperty.call(this.props.navigation.state.params, 'groupId');
+
   onLoad() {
     const { navigation } = this.props;
     const { groupId, onlyView, groupName } = navigation.state.params;
     let newState = {};
-    if (groupId) {
+    if (this.groupIsCreated()) {
       newState = {
         group: {
           ...this.state.group,
@@ -1401,14 +1429,9 @@ class GroupDetailScreen extends React.Component {
         onlyView,
       };
     }
-    this.setState(
-      {
-        ...newState,
-      },
-      () => {
-        this.getLists(groupId || null);
-      },
-    );
+    this.setState(newState, () => {
+      this.getLists();
+    });
   }
 
   onBackFromSameScreen = () => {
@@ -1439,7 +1462,7 @@ class GroupDetailScreen extends React.Component {
     this.getGroupActivities(groupId, resetPagination);
   }
 
-  getLists = async (groupId) => {
+  getLists = async () => {
     let newState = {};
 
     const users = await ExpoFileSystemStorage.getItem('usersList');
@@ -1484,8 +1507,8 @@ class GroupDetailScreen extends React.Component {
 
     this.setState(newState, () => {
       // Only execute in detail mode
-      if (groupId) {
-        this.onRefresh(groupId);
+      if (this.groupIsCreated()) {
+        this.onRefresh(this.state.group.ID);
       }
     });
   };
@@ -1584,7 +1607,9 @@ class GroupDetailScreen extends React.Component {
         tabViewConfig: {
           ...state.tabViewConfig,
           index: indexFix,
-          routes: this.getRoutesWithRender().filter((route) => route.key !== 'comments'),
+          routes: this.getRoutesWithRender().filter(
+            (route) => route.key !== 'comments' && route.key !== 'other',
+          ),
         },
       };
     });
@@ -2217,6 +2242,30 @@ class GroupDetailScreen extends React.Component {
           groupToSave = {
             ...sharedTools.diff(unmodifiedGroup, groupToSave),
             title: entities.encode(this.state.group.title),
+          };
+          //After 'sharedTools.diff()' method, ID is removed, then we add it again
+          if (Object.prototype.hasOwnProperty.call(this.state.group, 'ID')) {
+            groupToSave = {
+              ...groupToSave,
+              ...quickAction,
+            };
+          } else {
+            // if property exist, get from json, otherwise, send empty array
+            if (addMembersSelectizeRef) {
+              groupToSave = {
+                ...groupToSave,
+                members: {
+                  values: this.getSelectizeValuesToSave(
+                    unmodifiedGroup.members ? unmodifiedGroup.members.values : [],
+                    groupToSave.members ? groupToSave.members.values : [],
+                  ),
+                },
+              };
+            }
+          }
+          groupToSave = {
+            ...sharedTools.diff(unmodifiedGroup, groupToSave),
+            title: entities.encode(this.state.group.title),
             ID: this.state.group.ID,
           };
           if (groupToSave.assigned_to) {
@@ -2455,6 +2504,113 @@ class GroupDetailScreen extends React.Component {
     </ScrollView>
   );
 
+  renderContactLink = (assignedTo) => {
+    let foundContact, valueToSearch, nameToShow;
+    if (assignedTo.key) {
+      valueToSearch = assignedTo.key;
+      nameToShow = assignedTo.label;
+    } else if (assignedTo.value) {
+      valueToSearch = assignedTo.value;
+      nameToShow = assignedTo.name;
+    }
+    foundContact = this.state.users.find(
+      (user) => user.key === parseInt(valueToSearch) || user.contactID === parseInt(valueToSearch),
+    );
+    if (!foundContact) {
+      foundContact = this.state.usersContacts.find(
+        (user) => user.value === valueToSearch.toString(),
+      );
+    }
+    // User have accesss to this assigned_to user/contact
+    if (foundContact && foundContact.contactID) {
+      // Contact exist in 'this.state.users' list
+      return (
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={() => this.goToContactDetailScreen(foundContact.contactID, nameToShow)}>
+          <Text
+            style={[styles.linkingText, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+            {nameToShow}
+          </Text>
+        </TouchableOpacity>
+      );
+    } else if (foundContact) {
+      // Contact exist in 'this.state.usersContacts' list
+      return (
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={() => this.goToContactDetailScreen(valueToSearch, nameToShow)}>
+          <Text
+            style={[styles.linkingText, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+            {nameToShow}
+          </Text>
+        </TouchableOpacity>
+      );
+    } else {
+      // User does not exist in any list
+      return (
+        <Text
+          style={[
+            { marginTop: 4, marginBottom: 4, fontSize: 15 },
+            this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+          ]}>
+          {nameToShow}
+        </Text>
+      );
+    }
+  };
+
+  renderConnectionLink = (
+    connectionList,
+    list,
+    isGroup = false,
+    search = false,
+    keyName = null,
+  ) => {
+    let collection;
+    if (this.isConnected) {
+      collection = [...connectionList.values];
+    } else {
+      collection = this.getSelectizeItems(connectionList, list);
+    }
+    return collection.map((entity, index) => (
+      <TouchableOpacity
+        key={index.toString()}
+        activeOpacity={0.5}
+        onPress={() => {
+          if (search) {
+            const resetAction = StackActions.reset({
+              index: 0,
+              actions: [
+                NavigationActions.navigate({
+                  routeName: 'GroupList',
+                  params: {
+                    customFilter: {
+                      [keyName]: entity.value,
+                    },
+                  },
+                }),
+              ],
+            });
+            this.props.navigation.dispatch(resetAction);
+          } else if (isGroup) {
+            this.goToGroupDetailScreen(entity.value, entity.name);
+          } else {
+            this.goToContactDetailScreen(entity.value, entity.name);
+          }
+        }}>
+        <Text
+          style={[
+            styles.linkingText,
+            { marginTop: 'auto', marginBottom: 'auto' },
+            this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+          ]}>
+          {entity.name}
+        </Text>
+      </TouchableOpacity>
+    ));
+  };
+
   detailsView = () => (
     /*_viewable_*/
     <View style={{ flex: 1 }}>
@@ -2533,7 +2689,15 @@ class GroupDetailScreen extends React.Component {
                     style={styles.formIcon}
                   />
                 </Col>
-                <Col>{this.state.group.assigned_to ? this.showAssignedUser() : null}</Col>
+                <Col>
+                  <View>
+                    {this.state.group.assigned_to ? (
+                      this.renderContactLink(this.state.group.assigned_to)
+                    ) : (
+                      <Text></Text>
+                    )}
+                  </View>
+                </Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={styles.formLabel}>
                     {this.props.groupSettings.fields.assigned_to.name}
@@ -5234,35 +5398,23 @@ class GroupDetailScreen extends React.Component {
       }
       case 'connection': {
         if (propExist) {
-          mappedValue = value.values.map((connection, index) => (
-            <TouchableOpacity
-              key={index.toString()}
-              activeOpacity={0.5}
-              onPress={() => {
-                switch (postType) {
-                  case 'contacts': {
-                    this.goToContactDetailScreen(connection.value, connection.name);
-                    break;
-                  }
-                  case 'groups': {
-                    this.goToGroupDetailScreen(connection.value, connection.name);
-                    break;
-                  }
-                  default: {
-                    break;
-                  }
-                }
-              }}>
-              <Text
-                style={[
-                  styles.linkingText,
-                  { marginTop: 'auto', marginBottom: 'auto' },
-                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                ]}>
-                {connection.name}
-              </Text>
-            </TouchableOpacity>
-          ));
+          let collection = [],
+            isGroup = false;
+          switch (postType) {
+            case 'contacts': {
+              collection = [...this.state.usersContacts];
+              break;
+            }
+            case 'groups': {
+              collection = [...this.state.groups];
+              isGroup = true;
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+          mappedValue = this.renderConnectionLink(value, collection, isGroup);
         }
         break;
       }
@@ -5633,6 +5785,51 @@ class GroupDetailScreen extends React.Component {
       },
     }));
   };
+
+  otherView = () => (
+    <View style={{ flex: 1 }}>
+      {this.state.onlyView ? (
+        <View>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.loading}
+                onRefresh={() => this.onRefresh(this.state.group.ID)}
+              />
+            }>
+            <View style={[styles.formContainer, { marginTop: 0 }]}>
+              <Row style={styles.formRow}>
+                <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                  <Icon type="FontAwesome" name="tag" style={styles.formIcon} />
+                </Col>
+                <Col>
+                  <View>
+                    {this.state.group.tags ? (
+                      this.renderConnectionLink(
+                        this.state.group.tags,
+                        this.props.tags.map((tag) => ({ value: tag, name: tag })),
+                        false,
+                        true,
+                        'tags',
+                      )
+                    ) : (
+                      <Text></Text>
+                    )}
+                  </View>
+                </Col>
+                <Col style={styles.formParentLabel}>
+                  <Label style={styles.formLabel}>
+                    {this.props.groupSettings.fields.tags.name}
+                  </Label>
+                </Col>
+              </Row>
+              <View style={styles.formDivider} />
+            </View>
+          </ScrollView>
+        </View>
+      ) : null}
+    </View>
+  );
 
   render() {
     const successToast = (
@@ -6217,6 +6414,7 @@ const mapStateToProps = (state) => ({
   loadingShare: state.groupsReducer.loadingShare,
   shareSettings: state.groupsReducer.shareSettings,
   savedShare: state.groupsReducer.savedShare,
+  tags: state.contactsReducer.tags,
 });
 
 const mapDispatchToProps = (dispatch) => ({

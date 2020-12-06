@@ -41,7 +41,8 @@
     "searchUsers": "",
     "noFilters": "",
     "searchContacts": "",
-    "selectLocations": "Выберите места"
+    "selectLocations": "Выберите места",
+    "other": ""
   },
   "loginScreen": {
     "domain": {

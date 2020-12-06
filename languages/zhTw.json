@@ -41,7 +41,8 @@
     "searchUsers": "",
     "noFilters": "",
     "searchContacts": "",
-    "selectLocations": "選擇地點"
+    "selectLocations": "選擇地點",
+    "other": ""
   },
   "loginScreen": {
     "domain": {

@@ -1,4 +1,5 @@
 import * as actions from '../actions/user.actions';
+import { REHYDRATE } from 'redux-persist/lib/constants';
 
 const userDataInitialState = {
   domain: null,
@@ -31,6 +32,12 @@ export default function userReducer(state = initialState, action) {
     error: null,
   };
   switch (action.type) {
+    case REHYDRATE: {
+      return {
+        ...newState,
+        loading: false,
+      };
+    }
     case actions.USER_LOGIN_START:
       return {
         ...newState,

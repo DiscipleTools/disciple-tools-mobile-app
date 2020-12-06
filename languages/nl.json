@@ -41,7 +41,8 @@
     "searchUsers": "",
     "noFilters": "",
     "searchContacts": "",
-    "selectLocations": "Selecteer locaties"
+    "selectLocations": "Selecteer locaties",
+    "other": ""
   },
   "loginScreen": {
     "domain": {

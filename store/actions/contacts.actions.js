@@ -72,6 +72,12 @@ export const CONTACTS_REMOVE_SHARED_USER_RESPONSE = 'CONTACTS_REMOVE_SHARED_USER
 export const CONTACTS_REMOVE_SHARED_USER_SUCCESS = 'CONTACTS_REMOVE_SHARED_USER_SUCCESS';
 export const CONTACTS_REMOVE_SHARED_USER_FAILURE = 'CONTACTS_REMOVE_SHARED_USER_FAILURE';
 
+export const CONTACTS_GET_TAGS = 'CONTACTS_GET_TAGS';
+export const CONTACTS_GET_TAGS_START = 'CONTACTS_GET_TAGS_START';
+export const CONTACTS_GET_TAGS_RESPONSE = 'CONTACTS_GET_TAGS_RESPONSE';
+export const CONTACTS_GET_TAGS_SUCCESS = 'CONTACTS_GET_TAGS_SUCCESS';
+export const CONTACTS_GET_TAGS_FAILURE = 'CONTACTS_GET_TAGS_FAILURE';
+
 /*
  * Action Creators
  */
@@ -203,5 +209,13 @@ export function removeUserToShare(domain, token, contactId, userId) {
     token,
     contactId,
     userId,
+  };
+}
+
+export function getTags(domain, token) {
+  return {
+    type: CONTACTS_GET_TAGS,
+    domain,
+    token,
   };
 }

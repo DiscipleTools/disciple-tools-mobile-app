@@ -113,6 +113,10 @@ let tabViewRoutes = [
     key: 'relationships',
     title: i18n.t('contactDetailScreen.connections'),
   },
+  {
+    key: 'other',
+    title: i18n.t('global.other'),
+  },
 ];
 let self;
 const styles = StyleSheet.create({
@@ -686,7 +690,7 @@ class ContactDetailScreen extends React.Component {
     );
     focusListener = navigation.addListener('didFocus', () => {
       //Focus on 'detail mode' (going back or open detail view)
-      if (typeof this.props.navigation.state.params.contactId !== 'undefined') {
+      if (this.contactIsCreated()) {
         this.props.loadingFalse();
         this.onRefresh(this.props.navigation.state.params.contactId, true);
       }
@@ -720,6 +724,7 @@ class ContactDetailScreen extends React.Component {
       foundGeonames,
       loadingShare,
       shareSettings,
+      navigation,
     } = nextProps;
     let newState = {
       ...prevState,
@@ -1076,11 +1081,11 @@ class ContactDetailScreen extends React.Component {
     // GET COMMENTS
     if (comments) {
       if (
-        newState.contact.ID &&
-        Object.prototype.hasOwnProperty.call(comments, newState.contact.ID)
+        navigation.state.params.contactId &&
+        Object.prototype.hasOwnProperty.call(comments, navigation.state.params.contactId)
       ) {
         // NEW COMMENTS (PAGINATION)
-        if (comments[newState.contact.ID].pagination.offset > 0) {
+        if (comments[navigation.state.params.contactId].pagination.offset > 0) {
           newState = {
             ...newState,
             loadingMoreComments: false,
@@ -1091,7 +1096,14 @@ class ContactDetailScreen extends React.Component {
         newState = {
           ...newState,
           comments: {
-            ...comments[newState.contact.ID],
+            ...comments[navigation.state.params.contactId],
+          },
+        };
+      } else {
+        newState = {
+          ...newState,
+          comments: {
+            ...initialState.comments,
           },
         };
       }
@@ -1100,11 +1112,11 @@ class ContactDetailScreen extends React.Component {
     // GET ACTIVITIES
     if (activities) {
       if (
-        newState.contact.ID &&
-        Object.prototype.hasOwnProperty.call(activities, newState.contact.ID)
+        navigation.state.params.contactId &&
+        Object.prototype.hasOwnProperty.call(activities, navigation.state.params.contactId)
       ) {
         // NEW ACTIVITIES (PAGINATION)
-        if (activities[newState.contact.ID].pagination.offset > 0) {
+        if (activities[navigation.state.params.contactId].pagination.offset > 0) {
           newState = {
             ...newState,
             loadingMoreActivities: false,
@@ -1115,7 +1127,14 @@ class ContactDetailScreen extends React.Component {
         newState = {
           ...newState,
           activities: {
-            ...activities[newState.contact.ID],
+            ...activities[navigation.state.params.contactId],
+          },
+        };
+      } else {
+        newState = {
+          ...newState,
+          activities: {
+            ...initialState.activities,
           },
         };
       }
@@ -1131,12 +1150,12 @@ class ContactDetailScreen extends React.Component {
 
     if (shareSettings) {
       if (
-        newState.contact.ID &&
-        Object.prototype.hasOwnProperty.call(shareSettings, newState.contact.ID)
+        navigation.state.params.contactId &&
+        Object.prototype.hasOwnProperty.call(shareSettings, navigation.state.params.contactId)
       ) {
         newState = {
           ...newState,
-          sharedUsers: shareSettings[newState.contact.ID],
+          sharedUsers: shareSettings[navigation.state.params.contactId],
         };
       }
     }
@@ -1171,9 +1190,12 @@ class ContactDetailScreen extends React.Component {
       // Same contact updated (offline/online)
       // Same offline contact created in DB (AutoID to DBID)
       if (
-        (typeof contact.ID !== 'undefined' && typeof this.state.contact.ID === 'undefined') ||
-        (contact.ID && contact.ID.toString() === this.state.contact.ID.toString()) ||
-        (contact.oldID && contact.oldID === this.state.contact.ID.toString())
+        (Object.prototype.hasOwnProperty.call(contact, 'ID') &&
+          !Object.prototype.hasOwnProperty.call(this.state.contact, 'ID')) ||
+        (Object.prototype.hasOwnProperty.call(contact, 'ID') &&
+          contact.ID.toString() === this.state.contact.ID.toString()) ||
+        (Object.prototype.hasOwnProperty.call(contact, 'oldID') &&
+          contact.oldID === this.state.contact.ID.toString())
       ) {
         // Highlight Updates -> Compare this.state.contact with contact and show differences
         navigation.setParams({ contactName: contact.title, contactId: contact.ID });
@@ -1269,11 +1291,14 @@ class ContactDetailScreen extends React.Component {
     }
   }
 
+  contactIsCreated = () =>
+    Object.prototype.hasOwnProperty.call(this.props.navigation.state.params, 'contactId');
+
   onLoad() {
     const { navigation } = this.props;
     const { onlyView, contactId, contactName } = navigation.state.params;
     let newState = {};
-    if (contactId) {
+    if (this.contactIsCreated()) {
       newState = {
         contact: {
           ID: contactId,
@@ -1315,14 +1340,9 @@ class ContactDetailScreen extends React.Component {
         onlyView,
       };
     }
-    this.setState(
-      {
-        ...newState,
-      },
-      () => {
-        this.getLists(contactId || null);
-      },
-    );
+    this.setState(newState, () => {
+      this.getLists();
+    });
   }
 
   keyboardDidShow(event) {
@@ -1415,7 +1435,7 @@ class ContactDetailScreen extends React.Component {
     this.getContactActivities(contactId, resetPagination);
   }
 
-  getLists = async (contactId) => {
+  getLists = async () => {
     let newState = {};
 
     const users = await ExpoFileSystemStorage.getItem('usersList');
@@ -1470,8 +1490,8 @@ class ContactDetailScreen extends React.Component {
 
     this.setState(newState, () => {
       // Only execute in detail mode
-      if (contactId) {
-        this.onRefresh(contactId);
+      if (this.contactIsCreated()) {
+        this.onRefresh(this.state.contact.ID);
       }
     });
   };
@@ -1570,7 +1590,9 @@ class ContactDetailScreen extends React.Component {
         tabViewConfig: {
           ...state.tabViewConfig,
           index: indexFix,
-          routes: this.getRoutesWithRender().filter((route) => route.key !== 'comments'),
+          routes: this.getRoutesWithRender().filter(
+            (route) => route.key !== 'comments' && route.key !== 'other',
+          ),
         },
       };
     });
@@ -1780,11 +1802,6 @@ class ContactDetailScreen extends React.Component {
                 ),
               };
             });
-          contactToSave = {
-            ...sharedTools.diff(unmodifiedContact, contactToSave),
-            title: entities.encode(this.state.contact.title),
-            ID: this.state.contact.ID,
-          };
           // Remove empty arrays
           Object.keys(contactToSave).forEach((key) => {
             const value = contactToSave[key];
@@ -1795,6 +1812,17 @@ class ContactDetailScreen extends React.Component {
               delete contactToSave[key];
             }
           });
+          contactToSave = {
+            ...sharedTools.diff(unmodifiedContact, contactToSave),
+            title: entities.encode(this.state.contact.title),
+          };
+          //After 'sharedTools.diff()' method, ID is removed, then we add it again
+          if (Object.prototype.hasOwnProperty.call(this.state.contact, 'ID')) {
+            contactToSave = {
+              ...contactToSave,
+              ID: this.state.contact.ID,
+            };
+          }
           if (contactToSave.assigned_to) {
             contactToSave = {
               ...contactToSave,
@@ -2092,6 +2120,57 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
+  renderConnectionLink = (
+    connectionList,
+    list,
+    isGroup = false,
+    search = false,
+    keyName = null,
+  ) => {
+    let collection;
+    if (this.isConnected) {
+      collection = [...connectionList.values];
+    } else {
+      collection = this.getSelectizeItems(connectionList, list);
+    }
+    return collection.map((entity, index) => (
+      <TouchableOpacity
+        key={index.toString()}
+        activeOpacity={0.5}
+        onPress={() => {
+          if (search) {
+            const resetAction = StackActions.reset({
+              index: 0,
+              actions: [
+                NavigationActions.navigate({
+                  routeName: 'ContactList',
+                  params: {
+                    customFilter: {
+                      [keyName]: entity.value,
+                    },
+                  },
+                }),
+              ],
+            });
+            this.props.navigation.dispatch(resetAction);
+          } else if (isGroup) {
+            this.goToGroupDetailScreen(entity.value, entity.name);
+          } else {
+            this.goToContactDetailScreen(entity.value, entity.name);
+          }
+        }}>
+        <Text
+          style={[
+            styles.linkingText,
+            { marginTop: 'auto', marginBottom: 'auto' },
+            this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+          ]}>
+          {entity.name}
+        </Text>
+      </TouchableOpacity>
+    ));
+  };
+
   detailsView = () => (
     /*_viewable_*/
     <View style={{ flex: 1 }}>
@@ -2183,9 +2262,11 @@ class ContactDetailScreen extends React.Component {
                   />
                 </Col>
                 <Col>
-                  {this.state.contact.assigned_to
-                    ? this.renderContactLink(this.state.contact.assigned_to)
-                    : null}
+                  {this.state.contact.assigned_to ? (
+                    this.renderContactLink(this.state.contact.assigned_to)
+                  ) : (
+                    <Text></Text>
+                  )}
                 </Col>
                 <Col style={styles.formParentLabel}>
                   <Label style={styles.formLabel}>
@@ -2205,21 +2286,10 @@ class ContactDetailScreen extends React.Component {
                 <Col>
                   <View>
                     {this.state.contact.subassigned ? (
-                      this.state.contact.subassigned.values.map((contact, index) => (
-                        <TouchableOpacity
-                          key={index.toString()}
-                          activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text
-                            style={[
-                              styles.linkingText,
-                              { marginTop: 'auto', marginBottom: 'auto' },
-                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                            ]}>
-                            {contact.name}
-                          </Text>
-                        </TouchableOpacity>
-                      ))
+                      this.renderConnectionLink(this.state.contact.subassigned, [
+                        ...this.state.subAssignedContacts,
+                        ...this.state.usersContacts,
+                      ])
                     ) : (
                       <Text></Text>
                     )}
@@ -3909,21 +3979,11 @@ class ContactDetailScreen extends React.Component {
                 <Col>
                   <View>
                     {this.state.contact.groups ? (
-                      this.state.contact.groups.values.map((group, index) => (
-                        <TouchableOpacity
-                          key={index.toString()}
-                          activeOpacity={0.5}
-                          onPress={() => this.goToGroupDetailScreen(group.value, group.name)}>
-                          <Text
-                            style={[
-                              styles.linkingText,
-                              { marginTop: 'auto', marginBottom: 'auto' },
-                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                            ]}>
-                            {group.name}
-                          </Text>
-                        </TouchableOpacity>
-                      ))
+                      this.renderConnectionLink(
+                        this.state.contact.groups,
+                        [...this.state.connectionGroups, ...this.state.groups],
+                        true,
+                      )
                     ) : (
                       <Text></Text>
                     )}
@@ -3947,21 +4007,10 @@ class ContactDetailScreen extends React.Component {
                 <Col>
                   <View>
                     {this.state.contact.relation ? (
-                      this.state.contact.relation.values.map((contact, index) => (
-                        <TouchableOpacity
-                          key={index.toString()}
-                          activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text
-                            style={[
-                              styles.linkingText,
-                              { marginTop: 'auto', marginBottom: 'auto' },
-                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                            ]}>
-                            {contact.name}
-                          </Text>
-                        </TouchableOpacity>
-                      ))
+                      this.renderConnectionLink(this.state.contact.relation, [
+                        ...this.state.relationContacts,
+                        ...this.state.usersContacts,
+                      ])
                     ) : (
                       <Text></Text>
                     )}
@@ -3981,21 +4030,10 @@ class ContactDetailScreen extends React.Component {
                 <Col>
                   <View>
                     {this.state.contact.baptized_by ? (
-                      this.state.contact.baptized_by.values.map((contact, index) => (
-                        <TouchableOpacity
-                          key={index.toString()}
-                          activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text
-                            style={[
-                              styles.linkingText,
-                              { marginTop: 'auto', marginBottom: 'auto' },
-                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                            ]}>
-                            {contact.name}
-                          </Text>
-                        </TouchableOpacity>
-                      ))
+                      this.renderConnectionLink(this.state.contact.baptized_by, [
+                        ...this.state.baptizedByContacts,
+                        ...this.state.usersContacts,
+                      ])
                     ) : (
                       <Text></Text>
                     )}
@@ -4019,21 +4057,10 @@ class ContactDetailScreen extends React.Component {
                 <Col>
                   <View>
                     {this.state.contact.baptized ? (
-                      this.state.contact.baptized.values.map((contact, index) => (
-                        <TouchableOpacity
-                          key={index.toString()}
-                          activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text
-                            style={[
-                              styles.linkingText,
-                              { marginTop: 'auto', marginBottom: 'auto' },
-                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                            ]}>
-                            {contact.name}
-                          </Text>
-                        </TouchableOpacity>
-                      ))
+                      this.renderConnectionLink(this.state.contact.baptized, [
+                        ...this.state.baptizedByContacts,
+                        ...this.state.usersContacts,
+                      ])
                     ) : (
                       <Text></Text>
                     )}
@@ -4057,21 +4084,10 @@ class ContactDetailScreen extends React.Component {
                 <Col>
                   <View>
                     {this.state.contact.coached_by ? (
-                      this.state.contact.coached_by.values.map((contact, index) => (
-                        <TouchableOpacity
-                          key={index.toString()}
-                          activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text
-                            style={[
-                              styles.linkingText,
-                              { marginTop: 'auto', marginBottom: 'auto' },
-                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                            ]}>
-                            {contact.name}
-                          </Text>
-                        </TouchableOpacity>
-                      ))
+                      this.renderConnectionLink(this.state.contact.coached_by, [
+                        ...this.state.coachedByContacts,
+                        ...this.state.usersContacts,
+                      ])
                     ) : (
                       <Text></Text>
                     )}
@@ -4095,21 +4111,10 @@ class ContactDetailScreen extends React.Component {
                 <Col>
                   <View>
                     {this.state.contact.coaching ? (
-                      this.state.contact.coaching.values.map((contact, index) => (
-                        <TouchableOpacity
-                          key={index.toString()}
-                          activeOpacity={0.5}
-                          onPress={() => this.goToContactDetailScreen(contact.value, contact.name)}>
-                          <Text
-                            style={[
-                              styles.linkingText,
-                              { marginTop: 'auto', marginBottom: 'auto' },
-                              this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                            ]}>
-                            {contact.name}
-                          </Text>
-                        </TouchableOpacity>
-                      ))
+                      this.renderConnectionLink(this.state.contact.coaching, [
+                        ...this.state.coachedContacts,
+                        ...this.state.usersContacts,
+                      ])
                     ) : (
                       <Text></Text>
                     )}
@@ -5971,35 +5976,30 @@ class ContactDetailScreen extends React.Component {
       }
       case 'connection': {
         if (propExist) {
-          mappedValue = value.values.map((connection, index) => (
-            <TouchableOpacity
-              key={index.toString()}
-              activeOpacity={0.5}
-              onPress={() => {
-                switch (postType) {
-                  case 'contacts': {
-                    this.goToContactDetailScreen(connection.value, connection.name);
-                    break;
-                  }
-                  case 'groups': {
-                    this.goToGroupDetailScreen(connection.value, connection.name);
-                    break;
-                  }
-                  default: {
-                    break;
-                  }
-                }
-              }}>
-              <Text
-                style={[
-                  styles.linkingText,
-                  { marginTop: 'auto', marginBottom: 'auto' },
-                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                ]}>
-                {connection.name}
-              </Text>
-            </TouchableOpacity>
-          ));
+          let collection = [],
+            isGroup = false;
+          switch (postType) {
+            case 'contacts': {
+              collection = [
+                ...this.state.subAssignedContacts,
+                ...this.state.relationContacts,
+                ...this.state.baptizedByContacts,
+                ...this.state.coachedByContacts,
+                ...this.state.coachedContacts,
+                ...this.state.usersContacts,
+              ];
+              break;
+            }
+            case 'groups': {
+              collection = [...this.state.connectionGroups, ...this.state.groups];
+              isGroup = true;
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+          mappedValue = this.renderConnectionLink(value, collection, isGroup);
         }
         break;
       }
@@ -6290,6 +6290,51 @@ class ContactDetailScreen extends React.Component {
     }));
   };
 
+  otherView = () => (
+    <View style={{ flex: 1 }}>
+      {this.state.onlyView ? (
+        <View>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.loading}
+                onRefresh={() => this.onRefresh(this.state.contact.ID)}
+              />
+            }>
+            <View style={[styles.formContainer, { marginTop: 0 }]}>
+              <Row style={styles.formRow}>
+                <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
+                  <Icon type="FontAwesome" name="tag" style={styles.formIcon} />
+                </Col>
+                <Col>
+                  <View>
+                    {this.state.contact.tags ? (
+                      this.renderConnectionLink(
+                        this.state.contact.tags,
+                        this.props.tags.map((tag) => ({ value: tag, name: tag })),
+                        false,
+                        true,
+                        'tags',
+                      )
+                    ) : (
+                      <Text></Text>
+                    )}
+                  </View>
+                </Col>
+                <Col style={styles.formParentLabel}>
+                  <Label style={styles.formLabel}>
+                    {this.props.contactSettings.fields.tags.name}
+                  </Label>
+                </Col>
+              </Row>
+              <View style={styles.formDivider} />
+            </View>
+          </ScrollView>
+        </View>
+      ) : null}
+    </View>
+  );
+
   render() {
     const successToast = (
       <Toast
@@ -6313,7 +6358,7 @@ class ContactDetailScreen extends React.Component {
       <View style={{ flex: 1 }}>
         {this.state.loadedLocal && (
           <View style={{ flex: 1 }}>
-            {this.state.contact.ID ? (
+            {this.contactIsCreated() ? (
               <View style={{ flex: 1 }}>
                 <View style={{ flex: 1 }}>
                   {!this.props.isConnected && this.offlineBarRender()}
@@ -7369,6 +7414,7 @@ const mapStateToProps = (state) => ({
   loadingShare: state.contactsReducer.loadingShare,
   shareSettings: state.contactsReducer.shareSettings,
   savedShare: state.contactsReducer.savedShare,
+  tags: state.contactsReducer.tags,
 });
 
 const mapDispatchToProps = (dispatch) => ({

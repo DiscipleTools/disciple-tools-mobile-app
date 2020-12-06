@@ -41,7 +41,8 @@
     "searchUsers": "",
     "noFilters": "",
     "searchContacts": "",
-    "selectLocations": "Chagua Maeneo"
+    "selectLocations": "Chagua Maeneo",
+    "other": ""
   },
   "loginScreen": {
     "domain": {

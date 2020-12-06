@@ -41,7 +41,8 @@
     "searchUsers": "",
     "noFilters": "",
     "searchContacts": "",
-    "selectLocations": "Pilih lokasi"
+    "selectLocations": "Pilih lokasi",
+    "other": ""
   },
   "loginScreen": {
     "domain": {

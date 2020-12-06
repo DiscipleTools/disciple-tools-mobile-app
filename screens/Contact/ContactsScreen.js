@@ -1,14 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  View,
-  FlatList,
-  TouchableOpacity,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  Image,
-} from 'react-native';
+import { View, FlatList, TouchableOpacity, RefreshControl, StyleSheet, Text } from 'react-native';
 import { Fab, Container } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
@@ -83,22 +75,12 @@ class ContactsScreen extends React.Component {
     },
   };
 
-  componentDidUpdate(prevProps) {
-    const { error } = this.props;
-    if (prevProps.error !== error && error) {
-      toastError.show(
-        <View>
-          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-            {i18n.t('global.error.code')}
-          </Text>
-          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-            {i18n.t('global.error.message')}
-          </Text>
-          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
-        </View>,
-        3000,
-      );
+  componentDidMount() {
+    // Recieve custom filters (tag) as param
+    const { params } = this.props.navigation.state;
+    if (params) {
+      const { customFilter } = params;
+      this.selectFilter(customFilter);
     }
   }
 
@@ -124,6 +106,25 @@ class ContactsScreen extends React.Component {
     }
 
     return newState;
+  }
+
+  componentDidUpdate(prevProps) {
+    const { error } = this.props;
+    if (prevProps.error !== error && error) {
+      toastError.show(
+        <View>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.message}</Text>
+        </View>,
+        3000,
+      );
+    }
   }
 
   renderFooter = () => {
@@ -423,6 +424,7 @@ ContactsScreen.defaultProps = {
   loading: false,
   contactSettings: null,
   isConnected: null,
+  contacts: [],
 };
 
 const mapStateToProps = (state) => ({

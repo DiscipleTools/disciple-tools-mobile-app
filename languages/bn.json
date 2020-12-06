@@ -41,7 +41,8 @@
     "searchUsers": "",
     "noFilters": "",
     "searchContacts": "",
-    "selectLocations": "অবস্থান নির্বাচন করুন"
+    "selectLocations": "অবস্থান নির্বাচন করুন",
+    "other": ""
   },
   "loginScreen": {
     "domain": {
