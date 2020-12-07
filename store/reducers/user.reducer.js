@@ -45,7 +45,7 @@ export default function userReducer(state = initialState, action) {
       };
     case actions.USER_LOGIN_SUCCESS: {
       let state = { ...newState };
-      if (newState.userData.username !== action.user.user_nicename) {
+      if (newState.userData.username !== action.user.username) {
         state = {
           ...state,
           pinCode: {
@@ -59,7 +59,7 @@ export default function userReducer(state = initialState, action) {
         userData: {
           domain: action.domain,
           token: action.user.token,
-          username: action.user.user_nicename,
+          username: action.user.username,
           password: action.user.password,
           displayName: action.user.user_display_name,
           email: action.user.user_email,
