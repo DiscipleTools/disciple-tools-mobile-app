@@ -31,7 +31,11 @@ export function* login({ domain, username, password }) {
     const jsonData = response.data;
 
     if (response.status === 200) {
-      yield put({ type: actions.USER_LOGIN_SUCCESS, domain, user: { ...jsonData, password } });
+      yield put({
+        type: actions.USER_LOGIN_SUCCESS,
+        domain,
+        user: { ...jsonData, username, password },
+      });
       yield put({ type: actions.USER_GET_PUSH_TOKEN, domain, token: jsonData.token });
     } else {
       yield put({
