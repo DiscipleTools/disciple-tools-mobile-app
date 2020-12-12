@@ -42,7 +42,9 @@
     "noFilters": "",
     "searchContacts": "",
     "selectLocations": "Выберите места",
-    "other": ""
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {

@@ -42,7 +42,9 @@
     "noFilters": "",
     "searchContacts": "",
     "selectLocations": "مکان ها را انتخاب کنید",
-    "other": ""
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {

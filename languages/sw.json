@@ -42,7 +42,9 @@
     "noFilters": "",
     "searchContacts": "",
     "selectLocations": "Chagua Maeneo",
-    "other": ""
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {

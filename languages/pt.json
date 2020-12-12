@@ -42,7 +42,9 @@
     "noFilters": "",
     "searchContacts": "",
     "selectLocations": "Selecionar locais",
-    "other": ""
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {

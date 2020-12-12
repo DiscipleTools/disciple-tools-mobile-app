@@ -814,21 +814,20 @@ export default function contactsReducer(state = initialState, action) {
       Object.keys(settings.fields).forEach((fieldName) => {
         const fieldData = settings.fields[fieldName];
         if (fieldData.type === 'key_select' || fieldData.type === 'multi_select') {
-          let fieldValues = {};
-          Object.keys(fieldData.default).forEach((value) => {
-            fieldValues = {
-              ...fieldValues,
-              [value]: {
-                label: fieldData.default[value].label,
-              },
+          let newFieldData = {
+            name: fieldData.name,
+            description: fieldData.name,
+            values: fieldData.default,
+          };
+          if (Object.prototype.hasOwnProperty.call(fieldData, 'description')) {
+            newFieldData = {
+              ...newFieldData,
+              description: fieldData.description,
             };
-          });
+          }
           fieldList = {
             ...fieldList,
-            [fieldName]: {
-              name: fieldData.name,
-              values: fieldValues,
-            },
+            [fieldName]: newFieldData,
           };
         } else {
           fieldList = {
@@ -855,7 +854,7 @@ export default function contactsReducer(state = initialState, action) {
       let tileList = [];
       if (Object.prototype.hasOwnProperty.call(settings, 'tiles')) {
         Object.keys(settings.tiles).forEach((tileName) => {
-          let fieldList = [];
+          let tileFields = [];
           Object.keys(settings.fields).forEach((fieldName) => {
             let value = settings.fields[fieldName];
             if (Object.prototype.hasOwnProperty.call(value, 'tile') && value.tile === tileName) {
@@ -876,13 +875,13 @@ export default function contactsReducer(state = initialState, action) {
                   default: value.default,
                 };
               }
-              fieldList.push(newField);
+              tileFields.push(newField);
             }
           });
           tileList.push({
             name: tileName,
             label: settings.tiles[tileName].label,
-            fields: fieldList,
+            fields: tileFields,
           });
         });
       }
