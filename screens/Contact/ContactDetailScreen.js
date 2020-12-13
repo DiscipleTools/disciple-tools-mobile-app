@@ -480,6 +480,11 @@ const initialState = {
   },
   showShareView: false,
   sharedUsers: [],
+  showReasonStatusView: false,
+  selectedReasonStatus: {
+    key: null,
+    value: null,
+  },
 };
 
 const safeFind = (found, prop) => {
@@ -755,6 +760,25 @@ class ContactDetailScreen extends React.Component {
             newState.contact.overall_status,
           ),
         };
+        let contactReasonStatusKey = `reason_${newState.contact.overall_status}`;
+        // CONTACT HAS STATUS WITH REASON
+        let contactHasStatusReason = Object.prototype.hasOwnProperty.call(
+          newState.contact,
+          contactReasonStatusKey,
+        );
+        if (contactHasStatusReason) {
+          newState = {
+            ...newState,
+            selectedReasonStatus: {
+              key: contactReasonStatusKey,
+              value: newState.contact[contactReasonStatusKey],
+            },
+            unmodifiedSelectedReasonStatus: {
+              key: contactReasonStatusKey,
+              value: newState.contact[contactReasonStatusKey],
+            },
+          };
+        }
       }
       if (prevState.contact.initial_comment) {
         newState = {
@@ -1615,14 +1639,16 @@ class ContactDetailScreen extends React.Component {
       unmodifiedCoachedContacts,
       unmodifiedConnectionGroups,
       unmodifedAssignedToContacts,
+      unmodifiedSelectedReasonStatus,
     } = this.state;
-    this.setState((state) => {
+    this.setState((prevState) => {
       // Set correct index in Tab position according to view mode and current tab position
       const indexFix =
-        state.tabViewConfig.index > 1 && !state.onlyView
-          ? state.tabViewConfig.index + 1
-          : state.tabViewConfig.index;
-      return {
+        prevState.tabViewConfig.index > 1 && !prevState.onlyView
+          ? prevState.tabViewConfig.index + 1
+          : prevState.tabViewConfig.index;
+
+      let newState = {
         onlyView: true,
         contact: {
           ...unmodifiedContact,
@@ -1631,7 +1657,7 @@ class ContactDetailScreen extends React.Component {
           unmodifiedContact.overall_status,
         ),
         tabViewConfig: {
-          ...state.tabViewConfig,
+          ...prevState.tabViewConfig,
           index: indexFix,
           routes: this.getRoutesWithRender(),
         },
@@ -1645,6 +1671,28 @@ class ContactDetailScreen extends React.Component {
         connectionGroups: [...unmodifiedConnectionGroups],
         assignedToContacts: [...unmodifedAssignedToContacts],
       };
+
+      let contactReasonStatusKey = `reason_${unmodifiedContact.overall_status}`;
+      let contactHasStatusReason = Object.prototype.hasOwnProperty.call(
+        unmodifiedContact,
+        contactReasonStatusKey,
+      );
+      // CONTACT HAS STATUS WITH REASON
+      if (contactHasStatusReason) {
+        newState = {
+          ...newState,
+          selectedReasonStatus: unmodifiedSelectedReasonStatus,
+        };
+      } else {
+        newState = {
+          ...newState,
+          selectedReasonStatus: {
+            key: null,
+            value: null,
+          },
+        };
+      }
+      return newState;
     });
     this.props.navigation.setParams({ hideTabBar: false, onlyView: true });
   };
@@ -1723,13 +1771,34 @@ class ContactDetailScreen extends React.Component {
   };
 
   setContactStatus = (value) => {
-    this.setState((prevState) => ({
-      contact: {
-        ...prevState.contact,
-        overall_status: value,
-      },
-      overallStatusBackgroundColor: sharedTools.getSelectorColor(value),
-    }));
+    let contactHaveReason = Object.prototype.hasOwnProperty.call(
+      this.props.contactSettings.fields,
+      `reason_${value}`,
+    );
+    this.setState((prevState) => {
+      let newState = {
+        contact: {
+          ...prevState.contact,
+          overall_status: value,
+        },
+        overallStatusBackgroundColor: sharedTools.getSelectorColor(value),
+        showReasonStatusView: contactHaveReason,
+      };
+
+      if (contactHaveReason) {
+        // SET FIRST REASON STATUS AS DEFAULT SELECTED OPTION
+        let reasonValues = Object.keys(this.props.contactSettings.fields[`reason_${value}`].values);
+        newState = {
+          ...newState,
+          selectedReasonStatus: {
+            key: `reason_${value}`,
+            value: reasonValues[0],
+          },
+        };
+      }
+
+      return newState;
+    });
   };
 
   setContactSeekerPath = (value) => {
@@ -2675,6 +2744,32 @@ class ContactDetailScreen extends React.Component {
                 </Picker>
               </Col>
             </Row>
+            {Object.prototype.hasOwnProperty.call(
+              this.state.contact,
+              `reason_${this.state.contact.overall_status}`,
+            ) ? (
+              <TouchableOpacity activeOpacity={0.6} onPress={this.toggleReasonStatusView}>
+                <Row>
+                  <Text>
+                    (
+                    {
+                      this.props.contactSettings.fields[
+                        `reason_${this.state.contact.overall_status}`
+                      ].values[this.state.contact[`reason_${this.state.contact.overall_status}`]]
+                        .label
+                    }
+                    )
+                  </Text>
+                  <Icon
+                    type="MaterialCommunityIcons"
+                    name="pencil"
+                    style={{
+                      fontSize: 21,
+                    }}
+                  />
+                </Row>
+              </TouchableOpacity>
+            ) : null}
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
@@ -6335,6 +6430,41 @@ class ContactDetailScreen extends React.Component {
     </View>
   );
 
+  toggleReasonStatusView = (confirmReasonChange = false) => {
+    this.setState((prevState) => {
+      let newState = {
+        showReasonStatusView: !prevState.showReasonStatusView,
+      };
+      if (confirmReasonChange) {
+        // Save selected reason on contact detail
+        newState = {
+          ...newState,
+          contact: {
+            ...prevState.contact,
+            [prevState.selectedReasonStatus.key]: prevState.selectedReasonStatus.value,
+          },
+        };
+      } else {
+        // Revert selectedReasonStatus to current cotnact   reasonStatus
+        newState = {
+          ...newState,
+          selectedReasonStatus: {
+            key: `reason_${this.state.contact.overall_status}`,
+            value: this.state.contact[`reason_${this.state.contact.overall_status}`],
+          },
+        };
+      }
+      return newState;
+    });
+  };
+
+  renderReasonStatusPickerItems = (collection) => {
+    return Object.keys(collection).map((key) => {
+      let value = collection[key];
+      return <Picker.Item key={key} label={value.label} value={key} />;
+    });
+  };
+
   render() {
     const successToast = (
       <Toast
@@ -6708,6 +6838,81 @@ class ContactDetailScreen extends React.Component {
                           </Grid>
                         </View>
                       </KeyboardAvoidingView>
+                    </BlurView>
+                  ) : null}
+                  {this.state.showReasonStatusView ? (
+                    <BlurView
+                      tint="dark"
+                      intensity={50}
+                      style={[
+                        styles.dialogBackground,
+                        {
+                          width: windowWidth,
+                          height: windowHeight,
+                        },
+                      ]}>
+                      <View
+                        style={[styles.dialogBox, { height: windowHeight - windowHeight * 0.4 }]}>
+                        <Grid>
+                          <Row>
+                            <View>
+                              <Text style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 20 }}>
+                                {
+                                  this.props.contactSettings.fields[
+                                    `reason_${this.state.contact.overall_status}`
+                                  ].name
+                                }
+                              </Text>
+                              <Text style={{ marginBottom: 20 }}>
+                                {
+                                  this.props.contactSettings.fields[
+                                    `reason_${this.state.contact.overall_status}`
+                                  ].description
+                                }
+                              </Text>
+                              <Text style={{ marginBottom: 20 }}>
+                                {i18n.t('global.chooseOption')}:
+                              </Text>
+                              <View style={styles.contactTextRoundField}>
+                                <Picker
+                                  selectedValue={this.state.selectedReasonStatus.value}
+                                  onValueChange={(value) => {
+                                    this.setState({
+                                      selectedReasonStatus: {
+                                        key: `reason_${this.state.contact.overall_status}`,
+                                        value,
+                                      },
+                                    });
+                                  }}>
+                                  {this.renderReasonStatusPickerItems(
+                                    this.props.contactSettings.fields[
+                                      `reason_${this.state.contact.overall_status}`
+                                    ].values,
+                                  )}
+                                </Picker>
+                              </View>
+                            </View>
+                          </Row>
+                          <Row style={{ height: 60, borderColor: '#B4B4B4', borderTopWidth: 1 }}>
+                            <Button
+                              block
+                              style={[styles.dialogButton, { backgroundColor: '#FFFFFF' }]}
+                              onPress={() => this.toggleReasonStatusView()}>
+                              <Text style={{ color: Colors.primary }}>
+                                {i18n.t('global.cancel')}
+                              </Text>
+                            </Button>
+                            <Button
+                              block
+                              style={styles.dialogButton}
+                              onPress={() => this.toggleReasonStatusView(true)}>
+                              <Text style={{ color: Colors.buttonText }}>
+                                {i18n.t('global.confirm')}
+                              </Text>
+                            </Button>
+                          </Row>
+                        </Grid>
+                      </View>
                     </BlurView>
                   ) : null}
                 </View>
