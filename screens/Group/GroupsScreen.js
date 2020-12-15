@@ -62,6 +62,8 @@ class GroupsScreen extends React.Component {
     limit: sharedTools.paginationLimit,
     sort: '-last_modified',
     filtered: false,
+    filterOption: null,
+    filterText: null,
     fixFABIndex: false,
   };
 
@@ -81,23 +83,41 @@ class GroupsScreen extends React.Component {
     const { params } = this.props.navigation.state;
     if (params) {
       const { customFilter } = params;
-      this.selectFilter(customFilter);
+      this.selectOptionFilter(customFilter);
     }
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const { groups } = nextProps;
+    let { filtered, filterOption, filterText } = prevState;
 
     let newState = {
       ...prevState,
     };
 
     if (groups) {
-      if (prevState.filtered) {
-        newState = {
-          ...prevState,
-          dataSourceGroups: prevState.dataSourceGroupsFiltered,
-        };
+      if (filtered) {
+        if (filterOption) {
+          newState = {
+            ...newState,
+            dataSourceGroups: sharedTools.groupsByFilter([...groups], filterOption),
+          };
+        } else if (filterText) {
+          newState = {
+            ...newState,
+            dataSourceGroups: groups.filter(function (item) {
+              const textData = filterText
+                .toUpperCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+              const itemDataTitle = item.title
+                .toUpperCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+              return itemDataTitle.includes(textData);
+            }),
+          };
+        }
       } else {
         newState = {
           ...newState,
@@ -219,15 +239,9 @@ class GroupsScreen extends React.Component {
   onRefresh = (increasePagination = false, returnFromDetail = false) => {
     let newState = {
       offset: increasePagination ? this.state.offset + this.state.limit : 0,
-      filtered: false,
     };
-    if (returnFromDetail) {
-      // Execute filter again to update render of current filter!
-      searchBarRef.refreshFilter();
-    } else {
-      // Only clean filters on refresh
-      searchBarRef.resetFilters();
-    }
+    // Execute filter again to update render of current filter!
+    searchBarRef.refreshFilter();
     this.setState(
       (prevState) => {
         return returnFromDetail ? prevState : newState;
@@ -270,34 +284,26 @@ class GroupsScreen extends React.Component {
     }
   };
 
-  selectFilter = (selectedFilter) => {
+  selectOptionFilter = (selectedFilter) => {
     this.setState({
-      dataSourceGroupsFiltered: sharedTools.groupsByFilter([...this.props.groups], selectedFilter),
       filtered: true,
+      filterText: null,
+      filterOption: selectedFilter,
     });
   };
 
   filterByText = (text) => {
     if (text.length > 0) {
-      let itemsFiltered = this.props.groups.filter(function (item) {
-        const textData = text
-          .toUpperCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
-        const itemDataTitle = item.title
-          .toUpperCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
-        return itemDataTitle.includes(textData);
-      });
       this.setState({
-        dataSourceGroupsFiltered: itemsFiltered,
         filtered: true,
+        filterText: text,
+        filterOption: null,
       });
     } else {
       this.setState({
-        dataSourceGroupsFiltered: [],
         filtered: false,
+        filterText: null,
+        filterOption: null,
       });
     }
   };
@@ -326,7 +332,7 @@ class GroupsScreen extends React.Component {
               searchBarRef = ref;
             }}
             filterConfig={this.props.groupFilters}
-            onSelectFilter={this.selectFilter}
+            onSelectFilter={this.selectOptionFilter}
             onTextFilter={this.filterByText}
             onClearTextFilter={this.filterByText}
             onLayout={this.onLayout}></SearchBar>

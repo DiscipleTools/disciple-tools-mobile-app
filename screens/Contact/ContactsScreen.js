@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     color: '#3f729b',
   },
 });
+
 let toastError,
   statusCircleSize = 15,
   searchBarRef;
@@ -61,6 +62,8 @@ class ContactsScreen extends React.Component {
     limit: sharedTools.paginationLimit,
     sort: '-last_modified',
     filtered: false,
+    filterOption: null,
+    filterText: null,
     fixFABIndex: false,
   };
 
@@ -80,23 +83,63 @@ class ContactsScreen extends React.Component {
     const { params } = this.props.navigation.state;
     if (params) {
       const { customFilter } = params;
-      this.selectFilter(customFilter);
+      this.selectOptionFilter(customFilter);
     }
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const { contacts } = nextProps;
+    let { filtered, filterOption, filterText } = prevState;
 
     let newState = {
       ...prevState,
     };
 
     if (contacts) {
-      if (prevState.filtered) {
-        newState = {
-          ...newState,
-          dataSourceContact: prevState.dataSourceContactsFiltered,
-        };
+      if (filtered) {
+        if (filterOption) {
+          // Filter data and set to 'dataSourceContact'
+          newState = {
+            ...newState,
+            dataSourceContact: sharedTools.contactsByFilter([...contacts], filterOption),
+          };
+        } else if (filterText) {
+          newState = {
+            ...newState,
+            dataSourceContact: contacts.filter((item) => {
+              let filterByPhone = false;
+              let filterByEmail = false;
+              const textData = filterText
+                .toUpperCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+              const itemDataTitle = item.title
+                .toUpperCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+              const filterByTitle = itemDataTitle.includes(textData);
+
+              if (item.contact_phone !== undefined) {
+                item.contact_phone.forEach((elements) => {
+                  const itemDataPhone = elements.value.toUpperCase();
+                  if (filterByPhone === false) {
+                    filterByPhone = itemDataPhone.includes(textData);
+                  }
+                });
+              }
+
+              if (item.contact_email !== undefined) {
+                item.contact_email.forEach((elements) => {
+                  const itemDataEmail = elements.value.toUpperCase();
+                  if (filterByEmail === false) {
+                    filterByEmail = itemDataEmail.includes(textData);
+                  }
+                });
+              }
+              return filterByTitle || filterByPhone || filterByEmail;
+            }),
+          };
+        }
       } else {
         newState = {
           ...newState,
@@ -215,15 +258,9 @@ class ContactsScreen extends React.Component {
   onRefresh = (increasePagination = false, returnFromDetail = false) => {
     let newState = {
       offset: increasePagination ? this.state.offset + this.state.limit : 0,
-      filtered: false,
     };
-    if (returnFromDetail) {
-      // Execute filter again to update render of current filter!
-      searchBarRef.refreshFilter();
-    } else {
-      // Only clean filters on refresh
-      searchBarRef.resetFilters();
-    }
+    // Execute filter again to update render of current filter!
+    searchBarRef.refreshFilter();
     this.setState(
       (prevState) => {
         return returnFromDetail ? prevState : newState;
@@ -266,58 +303,26 @@ class ContactsScreen extends React.Component {
     }
   };
 
-  selectFilter = (selectedFilter) => {
+  selectOptionFilter = (selectedFilter) => {
     this.setState({
-      dataSourceContactsFiltered: sharedTools.contactsByFilter(
-        [...this.props.contacts],
-        selectedFilter,
-      ),
       filtered: true,
+      filterText: null,
+      filterOption: selectedFilter,
     });
   };
 
   filterByText = (text) => {
     if (text.length > 0) {
-      let itemsFiltered = this.props.contacts.filter((item) => {
-        let filterByPhone = false;
-        let filterByEmail = false;
-        const textData = text
-          .toUpperCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
-        const itemDataTitle = item.title
-          .toUpperCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
-        const filterByTitle = itemDataTitle.includes(textData);
-
-        if (item.contact_phone !== undefined) {
-          item.contact_phone.forEach((elements) => {
-            const itemDataPhone = elements.value.toUpperCase();
-            if (filterByPhone === false) {
-              filterByPhone = itemDataPhone.includes(textData);
-            }
-          });
-        }
-
-        if (item.contact_email !== undefined) {
-          item.contact_email.forEach((elements) => {
-            const itemDataEmail = elements.value.toUpperCase();
-            if (filterByEmail === false) {
-              filterByEmail = itemDataEmail.includes(textData);
-            }
-          });
-        }
-        return filterByTitle || filterByPhone || filterByEmail;
-      });
       this.setState({
-        dataSourceContactsFiltered: itemsFiltered,
         filtered: true,
+        filterText: text,
+        filterOption: null,
       });
     } else {
       this.setState({
-        dataSourceContactsFiltered: [],
         filtered: false,
+        filterText: null,
+        filterOption: null,
       });
     }
   };
@@ -346,7 +351,7 @@ class ContactsScreen extends React.Component {
               searchBarRef = ref;
             }}
             filterConfig={this.props.contactFilters}
-            onSelectFilter={this.selectFilter}
+            onSelectFilter={this.selectOptionFilter}
             onTextFilter={this.filterByText}
             onClearTextFilter={this.filterByText}
             onLayout={this.onLayout}></SearchBar>
