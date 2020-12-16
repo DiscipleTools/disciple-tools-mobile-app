@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Kod: ",
-      "message": "Mesaj: "
+      "message": "Mesaj: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Başarıyla kayıt edildi!"

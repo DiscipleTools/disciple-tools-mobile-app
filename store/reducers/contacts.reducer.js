@@ -2,6 +2,7 @@ import * as actions from '../actions/contacts.actions';
 import * as userActions from '../actions/user.actions';
 import { Html5Entities } from 'html-entities';
 import { REHYDRATE } from 'redux-persist/lib/constants';
+import sharedTools from '../../shared';
 
 const initialState = {
   loading: false,
@@ -46,130 +47,33 @@ export default function contactsReducer(state = initialState, action) {
         loading: true,
       };
     case actions.CONTACTS_GETALL_SUCCESS: {
-      let { contacts, offline, offset } = action,
+      let { contacts, offline } = action,
         newContacts = [],
         currentContacts = newState.contacts ? [...newState.contacts] : [];
       if (offline) {
         newContacts = [...contacts];
       } else {
-        let dataBaseContacts = contacts.map((contact) => {
-          const mappedContact = {};
-          Object.keys(contact).forEach((key) => {
-            // Omit restricted properties
-            if (
-              key !== '_sample' &&
-              key !== 'geonames' &&
-              key !== 'created_date' &&
-              key !== 'permalink' &&
-              key !== 'last_modified'
-            ) {
-              const value = contact[key];
-              const valueType = Object.prototype.toString.call(value);
-              switch (valueType) {
-                case '[object Boolean]': {
-                  mappedContact[key] = value;
-                  return;
-                }
-                case '[object Number]': {
-                  if (key === 'ID') {
-                    mappedContact[key] = value.toString();
-                  } else {
-                    mappedContact[key] = value;
-                  }
-                  return;
-                }
-                case '[object String]': {
-                  if (value.includes('quick_button')) {
-                    mappedContact[key] = parseInt(value, 10);
-                  } else if (key === 'post_title') {
-                    // Decode HTML strings
-                    mappedContact.title = entities.decode(value);
-                  } else {
-                    mappedContact[key] = entities.decode(value);
-                  }
-                  return;
-                }
-                case '[object Object]': {
-                  if (
-                    Object.prototype.hasOwnProperty.call(value, 'key') &&
-                    Object.prototype.hasOwnProperty.call(value, 'label')
-                  ) {
-                    // key_select
-                    mappedContact[key] = value.key;
-                  } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
-                    // date
-                    mappedContact[key] = value.timestamp;
-                  } else if (key === 'assigned_to') {
-                    // assigned-to property
-                    mappedContact[key] = {
-                      key: parseInt(value['assigned-to'].replace('user-', '')),
-                      label: value['display'],
-                    };
-                  }
-                  return;
-                }
-                case '[object Array]': {
-                  const mappedValue = value.map((valueTwo) => {
-                    const valueTwoType = Object.prototype.toString.call(valueTwo);
-                    switch (valueTwoType) {
-                      case '[object Object]': {
-                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
-                          // connection
-                          return {
-                            value: valueTwo.ID.toString(),
-                            name: entities.decode(valueTwo.post_title),
-                          };
-                        }
-                        if (
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'value')
-                        ) {
-                          return {
-                            key: valueTwo.key,
-                            value: valueTwo.value,
-                          };
-                        }
-                        if (
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'label')
-                        ) {
-                          return {
-                            value: valueTwo.id.toString(),
-                            name: valueTwo.label,
-                          };
-                        }
-                        break;
-                      }
-                      case '[object String]': {
-                        return {
-                          value: valueTwo,
-                        };
-                      }
-                      default:
-                    }
-                    return valueTwo;
-                  });
-                  if (key.includes('contact_')) {
-                    mappedContact[key] = mappedValue;
-                  } else {
-                    mappedContact[key] = {
-                      values: mappedValue,
-                    };
-                  }
-                  break;
-                }
-                default:
-              }
-            }
-          });
-          return mappedContact;
+        let mappedContacts = sharedTools.mapContacts(contacts, entities),
+          persistedMappedContacts = currentContacts
+            // Only contacts with numeric ID (D.B)
+            .filter((currentContact) => sharedTools.isNumeric(currentContact.ID))
+            // Only add contacts not persisted in the app
+            .filter(
+              (currentContact) =>
+                mappedContacts.findIndex(
+                  (mappedContact) => currentContact.ID === mappedContact.ID,
+                ) < 0,
+            ),
+          // Only contacts with numeric Autogenerated ID (local)
+          localContacts = currentContacts.filter(
+            (currentContact) => !sharedTools.isNumeric(currentContact.ID),
+          );
+        // Merge persisted contacts with db contacts
+        let dataBaseContacts = [...persistedMappedContacts, ...mappedContacts].sort((a, b) => {
+          // Sort contacts 'desc'
+          return new Date(parseInt(a.last_modified)) < new Date(parseInt(b.last_modified));
         });
-        let localContacts = currentContacts.filter((localContact) => isNaN(localContact.ID));
-        if (offset > 0) {
-          newContacts = [...localContacts, ...currentContacts, ...dataBaseContacts];
-        } else {
-          newContacts = [...localContacts, ...dataBaseContacts];
-        }
+        newContacts = [...localContacts, ...dataBaseContacts];
       }
       return {
         ...newState,
@@ -191,114 +95,7 @@ export default function contactsReducer(state = initialState, action) {
           ...contact,
         };
       } else {
-        Object.keys(contact).forEach((key) => {
-          // Omit restricted properties
-          if (
-            key !== '_sample' &&
-            key !== 'geonames' &&
-            key !== 'created_date' &&
-            key !== 'permalink' &&
-            key !== 'last_modified'
-          ) {
-            const value = contact[key];
-            const valueType = Object.prototype.toString.call(value);
-            switch (valueType) {
-              case '[object Boolean]': {
-                mappedContact[key] = value;
-                return;
-              }
-              case '[object Number]': {
-                if (key === 'ID') {
-                  mappedContact[key] = value.toString();
-                } else {
-                  mappedContact[key] = value;
-                }
-                return;
-              }
-              case '[object String]': {
-                if (value.includes('quick_button')) {
-                  mappedContact[key] = parseInt(value, 10);
-                } else if (key === 'post_title') {
-                  // Decode HTML strings
-                  mappedContact.title = entities.decode(value);
-                } else {
-                  mappedContact[key] = entities.decode(value);
-                }
-                return;
-              }
-              case '[object Object]': {
-                if (
-                  Object.prototype.hasOwnProperty.call(value, 'key') &&
-                  Object.prototype.hasOwnProperty.call(value, 'label')
-                ) {
-                  // key_select
-                  mappedContact[key] = value.key;
-                } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
-                  // date
-                  mappedContact[key] = value.timestamp;
-                } else if (key === 'assigned_to') {
-                  // assigned-to property
-                  mappedContact[key] = {
-                    key: parseInt(value['assigned-to'].replace('user-', '')),
-                    label: value['display'],
-                  };
-                }
-                return;
-              }
-              case '[object Array]': {
-                const mappedValue = value.map((valueTwo) => {
-                  const valueTwoType = Object.prototype.toString.call(valueTwo);
-                  switch (valueTwoType) {
-                    case '[object Object]': {
-                      if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
-                        // connection
-                        return {
-                          value: valueTwo.ID.toString(),
-                          name: entities.decode(valueTwo.post_title),
-                        };
-                      }
-                      if (
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'value')
-                      ) {
-                        return {
-                          key: valueTwo.key,
-                          value: valueTwo.value,
-                        };
-                      }
-                      if (
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'label')
-                      ) {
-                        return {
-                          value: valueTwo.id.toString(),
-                          name: valueTwo.label,
-                        };
-                      }
-                      break;
-                    }
-                    case '[object String]': {
-                      return {
-                        value: valueTwo,
-                      };
-                    }
-                    default:
-                  }
-                  return valueTwo;
-                });
-                if (key.includes('contact_')) {
-                  mappedContact[key] = mappedValue;
-                } else {
-                  mappedContact[key] = {
-                    values: mappedValue,
-                  };
-                }
-                break;
-              }
-              default:
-            }
-          }
-        });
+        mappedContact = sharedTools.mapContact(contact, entities);
       }
       const oldId = mappedContact.oldID ? mappedContact.oldID : null;
       newState = {
@@ -465,117 +262,7 @@ export default function contactsReducer(state = initialState, action) {
           };
         }
       } else {
-        const mappedContact = {};
-        // MAP CONTACT TO CAN SAVE IT LATER
-        Object.keys(contact).forEach((key) => {
-          // Omit restricted properties
-          if (
-            key !== '_sample' &&
-            key !== 'geonames' &&
-            key !== 'created_date' &&
-            key !== 'permalink' &&
-            key !== 'last_modified'
-          ) {
-            const value = contact[key];
-            const valueType = Object.prototype.toString.call(value);
-            switch (valueType) {
-              case '[object Boolean]': {
-                mappedContact[key] = value;
-                return;
-              }
-              case '[object Number]': {
-                if (key === 'ID') {
-                  mappedContact[key] = value.toString();
-                } else {
-                  mappedContact[key] = value;
-                }
-                return;
-              }
-              case '[object String]': {
-                if (value.includes('quick_button')) {
-                  mappedContact[key] = parseInt(value, 10);
-                } else if (key === 'post_title') {
-                  // Decode HTML strings
-                  mappedContact.title = entities.decode(value);
-                } else {
-                  mappedContact[key] = entities.decode(value);
-                }
-                return;
-              }
-              case '[object Object]': {
-                if (
-                  Object.prototype.hasOwnProperty.call(value, 'key') &&
-                  Object.prototype.hasOwnProperty.call(value, 'label')
-                ) {
-                  // key_select
-                  mappedContact[key] = value.key;
-                } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
-                  // date
-                  mappedContact[key] = value.timestamp;
-                } else if (key === 'assigned_to') {
-                  // assigned-to property
-                  mappedContact[key] = {
-                    key: parseInt(value['assigned-to'].replace('user-', '')),
-                    label: value['display'],
-                  };
-                }
-                return;
-              }
-              case '[object Array]': {
-                const mappedValue = value.map((valueTwo) => {
-                  const valueTwoType = Object.prototype.toString.call(valueTwo);
-                  switch (valueTwoType) {
-                    case '[object Object]': {
-                      if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
-                        // connection
-                        return {
-                          value: valueTwo.ID.toString(),
-                          name: entities.decode(valueTwo.post_title),
-                        };
-                      }
-                      if (
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'value')
-                      ) {
-                        return {
-                          key: valueTwo.key,
-                          value: valueTwo.value,
-                        };
-                      }
-                      if (
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'label')
-                      ) {
-                        return {
-                          value: valueTwo.id.toString(),
-                          name: valueTwo.label,
-                        };
-                      }
-                      break;
-                    }
-                    case '[object String]': {
-                      return {
-                        value: valueTwo,
-                      };
-                    }
-                    default:
-                  }
-                  return valueTwo;
-                });
-                if (key.includes('contact_')) {
-                  mappedContact[key] = mappedValue;
-                } else {
-                  mappedContact[key] = {
-                    values: mappedValue,
-                  };
-                }
-                break;
-              }
-              default:
-            }
-          }
-        });
-        contact = mappedContact;
+        contact = sharedTools.mapContact(contact, entities);
         // Update localContact with dbContact
         const contactIndex = newState.contacts.findIndex(
           (contactItem) => contactItem.ID.toString() === contact.ID,
@@ -1097,6 +784,48 @@ export default function contactsReducer(state = initialState, action) {
         loading: false,
       };
     case actions.CONTACTS_GET_TAGS_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+        loading: false,
+      };
+    case actions.CONTACTS_SEARCH_TEXT_START:
+      return {
+        ...newState,
+        loading: true,
+      };
+    case actions.CONTACTS_SEARCH_TEXT_SUCCESS: {
+      let { contacts } = action,
+        newContacts = [],
+        currentContacts = newState.contacts ? [...newState.contacts] : [];
+
+      let mappedContacts = sharedTools.mapContacts(contacts, entities),
+        persistedMappedContacts = currentContacts
+          // Only contacts with numeric ID (D.B)
+          .filter((currentContact) => sharedTools.isNumeric(currentContact.ID))
+          // Only add contacts not persisted in the app
+          .filter(
+            (currentContact) =>
+              mappedContacts.findIndex((mappedContact) => currentContact.ID === mappedContact.ID) <
+              0,
+          ),
+        // Only contacts with numeric Autogenerated ID (local)
+        localContacts = currentContacts.filter(
+          (currentContact) => !sharedTools.isNumeric(currentContact.ID),
+        );
+      let dataBaseContacts = [...persistedMappedContacts, ...mappedContacts].sort((a, b) => {
+        // Sort contacts 'desc'
+        return new Date(parseInt(a.last_modified)) < new Date(parseInt(b.last_modified));
+      });
+      newContacts = [...localContacts, ...dataBaseContacts];
+
+      return {
+        ...newState,
+        contacts: newContacts,
+        loading: false,
+      };
+    }
+    case actions.CONTACTS_SEARCH_TEXT_FAILURE:
       return {
         ...newState,
         error: action.error,

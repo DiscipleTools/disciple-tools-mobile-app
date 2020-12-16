@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Código: ",
-      "message": "Mensagem: "
+      "message": "Mensagem: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Dados salvos com sucesso!"

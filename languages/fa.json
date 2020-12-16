@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "کد: ",
-      "message": "پیام: "
+      "message": "پیام: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "داده با موفقیت ذخیره شد!"

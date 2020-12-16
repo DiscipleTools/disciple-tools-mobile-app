@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Kode: ",
-      "message": "Pesan: "
+      "message": "Pesan: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Data berhasil disimpan!"

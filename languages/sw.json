@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Nambari: ",
-      "message": "Ujumbe: "
+      "message": "Ujumbe: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Takwimu zimehifadhiwa vizuri!"

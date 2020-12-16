@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "码： ",
-      "message": "信息： "
+      "message": "信息： ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "数据保存成功！"

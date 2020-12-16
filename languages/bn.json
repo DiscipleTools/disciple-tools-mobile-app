@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "কোড: ",
-      "message": "বার্তা: "
+      "message": "বার্তা: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "ডেটা সাফল্যের সাথে সংরক্ষিত হয়েছে!"
