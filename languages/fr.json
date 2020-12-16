@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Code: ",
-      "message": "Message: "
+      "message": "Message: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Les données ont bien été enregistrées!"

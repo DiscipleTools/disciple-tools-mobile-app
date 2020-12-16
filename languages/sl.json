@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Koda: ",
-      "message": "Sporočilo: "
+      "message": "Sporočilo: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Podatki so bili uspešno shranjeni!"

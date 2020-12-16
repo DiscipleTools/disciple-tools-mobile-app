@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Kodirati: ",
-      "message": "Poruka: "
+      "message": "Poruka: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Podaci su uspješno spremljeni!"

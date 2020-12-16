@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "الكود: ",
-      "message": "الرسالة: "
+      "message": "الرسالة: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "!تم حفظ البيانات بنجاح"

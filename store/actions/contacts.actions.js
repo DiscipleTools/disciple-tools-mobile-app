@@ -78,6 +78,12 @@ export const CONTACTS_GET_TAGS_RESPONSE = 'CONTACTS_GET_TAGS_RESPONSE';
 export const CONTACTS_GET_TAGS_SUCCESS = 'CONTACTS_GET_TAGS_SUCCESS';
 export const CONTACTS_GET_TAGS_FAILURE = 'CONTACTS_GET_TAGS_FAILURE';
 
+export const CONTACTS_SEARCH_TEXT = 'CONTACTS_SEARCH_TEXT';
+export const CONTACTS_SEARCH_TEXT_START = 'CONTACTS_SEARCH_TEXT_START';
+export const CONTACTS_SEARCH_TEXT_SUCCESS = 'CONTACTS_SEARCH_TEXT_SUCCESS';
+export const CONTACTS_SEARCH_TEXT_RESPONSE = 'CONTACTS_SEARCH_TEXT_RESPONSE';
+export const CONTACTS_SEARCH_TEXT_FAILURE = 'CONTACTS_SEARCH_TEXT_FAILURE';
+
 /*
  * Action Creators
  */
@@ -217,5 +223,15 @@ export function getTags(domain, token) {
     type: CONTACTS_GET_TAGS,
     domain,
     token,
+  };
+}
+
+export function searchContactsByText(domain, token, text, sort) {
+  return {
+    type: CONTACTS_SEARCH_TEXT,
+    domain,
+    token,
+    text,
+    sort,
   };
 }

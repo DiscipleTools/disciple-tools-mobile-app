@@ -8,7 +8,7 @@ import SearchBar from '../../components/SearchBar';
 
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
-import { getAll, updatePrevious } from '../../store/actions/contacts.actions';
+import { getAll, searchContactsByText, updatePrevious } from '../../store/actions/contacts.actions';
 import i18n from '../../languages';
 import sharedTools from '../../shared';
 
@@ -65,6 +65,7 @@ class ContactsScreen extends React.Component {
     filterOption: null,
     filterText: null,
     fixFABIndex: false,
+    isConnected: false,
   };
 
   static navigationOptions = {
@@ -88,11 +89,12 @@ class ContactsScreen extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const { contacts } = nextProps;
+    const { contacts, isConnected } = nextProps;
     let { filtered, filterOption, filterText } = prevState;
 
     let newState = {
       ...prevState,
+      isConnected,
     };
 
     if (contacts) {
@@ -139,6 +141,17 @@ class ContactsScreen extends React.Component {
               return filterByTitle || filterByPhone || filterByEmail;
             }),
           };
+          if (newState.dataSourceContact.length === 0 && !isConnected) {
+            toastError.show(
+              <View>
+                <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+                  {i18n.t('global.error.text')}
+                </Text>
+                <Text style={{ color: Colors.errorText }}>{i18n.t('global.error.noRecords')}</Text>
+              </View>,
+              6000,
+            );
+          }
         }
       } else {
         newState = {
@@ -311,13 +324,26 @@ class ContactsScreen extends React.Component {
     });
   };
 
-  filterByText = (text) => {
-    if (text.length > 0) {
-      this.setState({
-        filtered: true,
-        filterText: text,
-        filterOption: null,
-      });
+  filterByText = sharedTools.debounce((queryText) => {
+    if (queryText.length > 0) {
+      this.setState(
+        {
+          filtered: true,
+          filterText: queryText,
+          filterOption: null,
+        },
+        () => {
+          // Only do request if phone is ONLINE
+          if (this.props.isConnected) {
+            this.props.searchContactsByText(
+              this.props.userData.domain,
+              this.props.userData.token,
+              queryText,
+              this.state.sort,
+            );
+          }
+        },
+      );
     } else {
       this.setState({
         filtered: false,
@@ -325,7 +351,7 @@ class ContactsScreen extends React.Component {
         filterOption: null,
       });
     }
-  };
+  }, 750);
 
   onLayout = (fabIndexFix) => {
     if (fabIndexFix !== this.state.fixFABIndex) {
@@ -381,7 +407,7 @@ class ContactsScreen extends React.Component {
               toastError = toast;
             }}
             style={{ backgroundColor: Colors.errorBackground }}
-            positionValue={210}
+            positionValue={290}
           />
         </View>
       </Container>
@@ -447,6 +473,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   updatePrevious: (previousContacts) => {
     dispatch(updatePrevious(previousContacts));
+  },
+  searchContactsByText: (domain, token, text, sort) => {
+    dispatch(searchContactsByText(domain, token, text, sort));
   },
 });
 

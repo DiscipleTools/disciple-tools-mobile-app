@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Code: ",
-      "message": "Bericht: "
+      "message": "Bericht: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Gegevens succesvol opgeslagen!"

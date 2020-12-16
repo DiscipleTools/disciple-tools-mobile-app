@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Code: ",
-      "message": "Message: "
+      "message": "Message: ",
+      "text": "Error: ",
+      "noRecords": "Unable to locate your record in local device storage. Either: 1) Create a new record and merge once online, or 2) Get online and try your search again."
     },
     "success": {
       "save": "Data saved successfully!"

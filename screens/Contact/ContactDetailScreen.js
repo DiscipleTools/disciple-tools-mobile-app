@@ -1854,6 +1854,10 @@ class ContactDetailScreen extends React.Component {
               ...quickAction,
             };
           }
+          contactToSave = {
+            ...sharedTools.diff(unmodifiedContact, contactToSave),
+            title: entities.encode(this.state.contact.title),
+          };
           // Do not save fields with empty values
           Object.keys(contactToSave)
             .filter(
@@ -1881,10 +1885,6 @@ class ContactDetailScreen extends React.Component {
               delete contactToSave[key];
             }
           });
-          contactToSave = {
-            ...sharedTools.diff(unmodifiedContact, contactToSave),
-            title: entities.encode(this.state.contact.title),
-          };
           //After 'sharedTools.diff()' method, ID is removed, then we add it again
           if (Object.prototype.hasOwnProperty.call(this.state.contact, 'ID')) {
             contactToSave = {
@@ -1898,7 +1898,6 @@ class ContactDetailScreen extends React.Component {
               assigned_to: `user-${contactToSave.assigned_to.key}`,
             };
           }
-
           this.props.saveContact(
             this.props.userData.domain,
             this.props.userData.token,

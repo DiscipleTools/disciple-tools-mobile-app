@@ -26,12 +26,18 @@ export function* getAll({ domain, token, offset, limit, sort }) {
     response = response.payload;
     const jsonData = response.data;
     if (response.status === 200) {
-      yield put({
-        type: actions.GROUPS_GETALL_SUCCESS,
-        groups: jsonData.posts,
-        offset,
-        offline: !isConnected,
-      });
+      if (isConnected) {
+        yield put({
+          type: actions.GROUPS_GETALL_SUCCESS,
+          groups: jsonData.posts,
+        });
+      } else {
+        yield put({
+          type: actions.GROUPS_GETALL_SUCCESS,
+          groups: jsonData.posts,
+          offline: true,
+        });
+      }
     } else {
       yield put({
         type: actions.GROUPS_GETALL_FAILURE,
@@ -831,6 +837,59 @@ export function* removeSharedUser({ domain, token, groupId, userId }) {
   }
 }
 
+export function* searchGroupsByText({ domain, token, text, sort }) {
+  yield put({ type: actions.GROUPS_SEARCH_TEXT_START });
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/groups?text=${text}&sort=${sort}`,
+      data: {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      action: actions.GROUPS_SEARCH_TEXT_RESPONSE,
+    },
+  });
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+  try {
+    let response = yield take(actions.GROUPS_SEARCH_TEXT_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      if (jsonData.posts) {
+        yield put({
+          type: actions.GROUPS_SEARCH_TEXT_SUCCESS,
+          groups: jsonData.posts,
+        });
+      } else {
+        yield put({
+          type: actions.GROUPS_SEARCH_TEXT_SUCCESS,
+          groups: [],
+        });
+      }
+    } else if (isConnected) {
+      yield put({
+        type: actions.GROUPS_SEARCH_TEXT_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.GROUPS_SEARCH_TEXT_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
 export default function* groupsSaga() {
   yield all([
     takeEvery(actions.GROUPS_SAVE, saveGroup),
@@ -848,5 +907,6 @@ export default function* groupsSaga() {
     takeEvery(actions.GROUPS_GET_SHARE_SETTINGS, getShareSettings),
     takeEvery(actions.GROUPS_ADD_USER_SHARE, addUserToShare),
     takeEvery(actions.GROUPS_REMOVE_SHARED_USER, removeSharedUser),
+    takeLatest(actions.GROUPS_SEARCH_TEXT, searchGroupsByText),
   ]);
 }

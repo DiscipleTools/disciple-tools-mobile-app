@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import SearchBar from '../../components/SearchBar';
 
 import Colors from '../../constants/Colors';
-import { getAll, updatePrevious } from '../../store/actions/groups.actions';
+import { getAll, searchGroupsByText, updatePrevious } from '../../store/actions/groups.actions';
 import i18n from '../../languages';
 import sharedTools from '../../shared';
 
@@ -65,6 +65,7 @@ class GroupsScreen extends React.Component {
     filterOption: null,
     filterText: null,
     fixFABIndex: false,
+    isConnected: false,
   };
 
   static navigationOptions = {
@@ -88,16 +89,18 @@ class GroupsScreen extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const { groups } = nextProps;
+    const { groups, isConnected } = nextProps;
     let { filtered, filterOption, filterText } = prevState;
 
     let newState = {
       ...prevState,
+      isConnected,
     };
 
     if (groups) {
       if (filtered) {
         if (filterOption) {
+          // Filter data and set to 'dataSourceGroups'
           newState = {
             ...newState,
             dataSourceGroups: sharedTools.groupsByFilter([...groups], filterOption),
@@ -117,6 +120,17 @@ class GroupsScreen extends React.Component {
               return itemDataTitle.includes(textData);
             }),
           };
+          if (newState.dataSourceGroups.length === 0 && !isConnected) {
+            toastError.show(
+              <View>
+                <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+                  {i18n.t('global.error.text')}
+                </Text>
+                <Text style={{ color: Colors.errorText }}>{i18n.t('global.error.noRecords')}</Text>
+              </View>,
+              6000,
+            );
+          }
         }
       } else {
         newState = {
@@ -292,13 +306,26 @@ class GroupsScreen extends React.Component {
     });
   };
 
-  filterByText = (text) => {
-    if (text.length > 0) {
-      this.setState({
-        filtered: true,
-        filterText: text,
-        filterOption: null,
-      });
+  filterByText = sharedTools.debounce((queryText) => {
+    if (queryText.length > 0) {
+      this.setState(
+        {
+          filtered: true,
+          filterText: queryText,
+          filterOption: null,
+        },
+        () => {
+          // Only do request if phone is ONLINE
+          if (this.props.isConnected) {
+            this.props.searchGroupsByText(
+              this.props.userData.domain,
+              this.props.userData.token,
+              queryText,
+              this.state.sort,
+            );
+          }
+        },
+      );
     } else {
       this.setState({
         filtered: false,
@@ -306,7 +333,7 @@ class GroupsScreen extends React.Component {
         filterOption: null,
       });
     }
-  };
+  }, 750);
 
   onLayout = (fabIndexFix) => {
     if (fabIndexFix !== this.state.fixFABIndex) {
@@ -362,7 +389,7 @@ class GroupsScreen extends React.Component {
               toastError = toast;
             }}
             style={{ backgroundColor: Colors.errorBackground }}
-            positionValue={210}
+            positionValue={290}
           />
         </View>
       </Container>
@@ -425,6 +452,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   updatePrevious: (previousGroups) => {
     dispatch(updatePrevious(previousGroups));
+  },
+  searchGroupsByText: (domain, token, text, sort) => {
+    dispatch(searchGroupsByText(domain, token, text, sort));
   },
 });
 

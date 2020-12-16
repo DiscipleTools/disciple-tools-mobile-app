@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Шифра: ",
-      "message": "Порука: "
+      "message": "Порука: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Подаци су успешно сачувани!"

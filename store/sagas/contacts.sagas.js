@@ -30,7 +30,6 @@ export function* getAll({ domain, token, offset, limit, sort }) {
           yield put({
             type: actions.CONTACTS_GETALL_SUCCESS,
             contacts: jsonData.posts,
-            offset,
           });
         } else {
           yield put({
@@ -710,6 +709,59 @@ export function* getTags({ domain, token }) {
   }
 }
 
+export function* searchContactsByText({ domain, token, text, sort }) {
+  yield put({ type: actions.CONTACTS_SEARCH_TEXT_START });
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts?text=${text}&sort=${sort}`,
+      data: {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      action: actions.CONTACTS_SEARCH_TEXT_RESPONSE,
+    },
+  });
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+  try {
+    let response = yield take(actions.CONTACTS_SEARCH_TEXT_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      if (jsonData.posts) {
+        yield put({
+          type: actions.CONTACTS_SEARCH_TEXT_SUCCESS,
+          contacts: jsonData.posts,
+        });
+      } else {
+        yield put({
+          type: actions.CONTACTS_SEARCH_TEXT_SUCCESS,
+          contacts: [],
+        });
+      }
+    } else if (isConnected) {
+      yield put({
+        type: actions.CONTACTS_SEARCH_TEXT_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.CONTACTS_SEARCH_TEXT_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
 export default function* contactsSaga() {
   yield all([
     takeLatest(actions.CONTACTS_GETALL, getAll),
@@ -724,5 +776,6 @@ export default function* contactsSaga() {
     takeEvery(actions.CONTACTS_ADD_USER_SHARE, addUserToShare),
     takeEvery(actions.CONTACTS_REMOVE_SHARED_USER, removeSharedUser),
     takeEvery(actions.CONTACTS_GET_TAGS, getTags),
+    takeLatest(actions.CONTACTS_SEARCH_TEXT, searchContactsByText),
   ]);
 }

@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Código: ",
-      "message": "Mensaje: "
+      "message": "Mensaje: ",
+      "text": "Error: ",
+      "noRecords": "No se puede ubicar su registro en el almacenamiento del dispositivo local. O bien: 1) Cree un nuevo registro y combínelo una vez en línea, o 2) Conéctese y vuelva a intentar la búsqueda."
     },
     "success": {
       "save": "Datos guardados correctamente!"
