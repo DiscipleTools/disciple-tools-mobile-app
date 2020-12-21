@@ -22,6 +22,7 @@ const initialState = {
   shareSettings: {},
   savedShare: false,
   tags: [],
+  total: 0,
 };
 
 export default function contactsReducer(state = initialState, action) {
@@ -47,9 +48,10 @@ export default function contactsReducer(state = initialState, action) {
         loading: true,
       };
     case actions.CONTACTS_GETALL_SUCCESS: {
-      let { contacts, offline } = action,
+      let { contacts, offline, offset, total } = action,
         newContacts = [],
-        currentContacts = newState.contacts ? [...newState.contacts] : [];
+        currentContacts = newState.contacts ? [...newState.contacts] : [],
+        newTotal = total ? total : newState.total;
       if (offline) {
         newContacts = [...contacts];
       } else {
@@ -68,6 +70,9 @@ export default function contactsReducer(state = initialState, action) {
           localContacts = currentContacts.filter(
             (currentContact) => !sharedTools.isNumeric(currentContact.ID),
           );
+        if (offset === 0) {
+          persistedMappedContacts = [];
+        }
         // Merge persisted contacts with db contacts
         let dataBaseContacts = [...persistedMappedContacts, ...mappedContacts].sort((a, b) => {
           // Sort contacts 'desc'
@@ -78,6 +83,7 @@ export default function contactsReducer(state = initialState, action) {
       return {
         ...newState,
         contacts: newContacts,
+        total: newTotal,
         loading: false,
       };
     }

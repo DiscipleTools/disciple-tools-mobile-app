@@ -30,6 +30,8 @@ export function* getAll({ domain, token, offset, limit, sort }) {
           yield put({
             type: actions.CONTACTS_GETALL_SUCCESS,
             contacts: jsonData.posts,
+            offset,
+            total: parseInt(jsonData.total),
           });
         } else {
           yield put({
