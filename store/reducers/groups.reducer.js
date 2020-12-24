@@ -26,6 +26,7 @@ const initialState = {
   loadingShare: false,
   shareSettings: {},
   savedShare: false,
+  total: 0,
 };
 
 export default function groupsReducer(state = initialState, action) {
@@ -93,9 +94,10 @@ export default function groupsReducer(state = initialState, action) {
         loading: true,
       };
     case actions.GROUPS_GETALL_SUCCESS: {
-      let { groups, offline } = action,
+      let { groups, offline, offset, total } = action,
         newGroups = [],
-        currentGroups = newState.groups ? [...newState.groups] : [];
+        currentGroups = newState.groups ? [...newState.groups] : [],
+        newTotal = total ? total : newState.total;
       if (offline) {
         newGroups = [...groups];
       } else {
@@ -112,6 +114,9 @@ export default function groupsReducer(state = initialState, action) {
           localGroups = currentGroups.filter(
             (currentGroup) => !sharedTools.isNumeric(currentGroup.ID),
           );
+        if (offset === 0) {
+          persistedMappedGroups = [];
+        }
         // Merge persisted groups with db groups
         let dataBaseGroups = [...persistedMappedGroups, ...mappedGroups].sort((a, b) => {
           // Sort contacts 'desc'
@@ -122,6 +127,7 @@ export default function groupsReducer(state = initialState, action) {
       return {
         ...newState,
         groups: newGroups,
+        total: newTotal,
         loading: false,
       };
     }

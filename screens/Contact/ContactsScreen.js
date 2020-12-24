@@ -186,14 +186,18 @@ class ContactsScreen extends React.Component {
   renderFooter = () => {
     return (
       <View style={styles.loadMoreFooterText}>
-        {this.props.isConnected && !this.state.filtered && (
-          <TouchableOpacity
-            onPress={() => {
-              this.onRefresh(true);
-            }}>
-            <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
-          </TouchableOpacity>
-        )}
+        {this.props.isConnected &&
+          !this.state.filtered &&
+          this.state.offset + this.state.limit < this.props.totalContacts && (
+            <TouchableOpacity
+              onPress={() => {
+                this.onRefresh(true);
+              }}>
+              <Text style={styles.loadMoreFooterText}>
+                {i18n.t('notificationsScreen.loadMore')}
+              </Text>
+            </TouchableOpacity>
+          )}
       </View>
     );
   };
@@ -466,6 +470,7 @@ const mapStateToProps = (state) => ({
   contactSettings: state.contactsReducer.settings,
   isConnected: state.networkConnectivityReducer.isConnected,
   contactFilters: state.usersReducer.contactFilters,
+  totalContacts: state.contactsReducer.total,
 });
 const mapDispatchToProps = (dispatch) => ({
   getAllContacts: (domain, token, offset, limit, sort) => {

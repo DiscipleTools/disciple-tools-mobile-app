@@ -165,14 +165,18 @@ class GroupsScreen extends React.Component {
   renderFooter = () => {
     return (
       <View style={styles.loadMoreFooterText}>
-        {this.props.isConnected && !this.state.filtered && (
-          <TouchableOpacity
-            onPress={() => {
-              this.onRefresh(true);
-            }}>
-            <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
-          </TouchableOpacity>
-        )}
+        {this.props.isConnected &&
+          !this.state.filtered &&
+          this.state.offset + this.state.limit < this.props.totalGroups && (
+            <TouchableOpacity
+              onPress={() => {
+                this.onRefresh(true);
+              }}>
+              <Text style={styles.loadMoreFooterText}>
+                {i18n.t('notificationsScreen.loadMore')}
+              </Text>
+            </TouchableOpacity>
+          )}
       </View>
     );
   };
@@ -445,6 +449,7 @@ const mapStateToProps = (state) => ({
   groupSettings: state.groupsReducer.settings,
   isConnected: state.networkConnectivityReducer.isConnected,
   groupFilters: state.usersReducer.groupFilters,
+  totalGroups: state.groupsReducer.total,
 });
 const mapDispatchToProps = (dispatch) => ({
   getAllGroups: (domain, token, offset, limit, sort) => {
