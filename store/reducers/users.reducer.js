@@ -47,7 +47,6 @@ export default function usersReducer(state = initialState, action) {
       };
     case actions.GET_CONTACT_FILTERS_SUCCESS: {
       let { contactFilters, isConnected, contactList, userData } = action;
-
       // Map filters
       contactFilters = {
         ...contactFilters,
@@ -55,37 +54,31 @@ export default function usersReducer(state = initialState, action) {
           let mappedFilter = {
             ...filter,
           };
-
           let newQuery = {};
-
           Object.keys(filter.query).forEach((key) => {
-            let value = filter.query[key];
-            let valueType = Object.prototype.toString.call(value);
-            if (valueType === '[object Array]') {
-              value = value[0];
+            let filterValue = filter.query[key];
+            let filterValueType = Object.prototype.toString.call(filterValue);
+            if (filterValueType === '[object Array]') {
+              filterValue.forEach((value, index) => {
+                // Replace 'me' value with user name
+                if (value === 'me') {
+                  filterValue[index] = userData.displayName;
+                }
+              });
             }
-
-            // Replace 'me' value with user name
-            if (value === 'me') {
-              value = userData.displayName;
-            }
-
             newQuery = {
               ...newQuery,
-              [key]: value,
+              [key]: filterValue,
             };
           });
-
           delete newQuery.sort;
           delete newQuery.combine;
-
           return {
             ...mappedFilter,
             query: newQuery,
           };
         }),
       };
-
       // Only return filters that exist in data (contact[prop] exist)
       contactFilters = {
         ...contactFilters,
@@ -105,7 +98,6 @@ export default function usersReducer(state = initialState, action) {
           };
         }),
       };
-
       // Only return filters that return data (result > 0) ONLY IN OFFLINE MODE
       if (!isConnected) {
         contactFilters = {
@@ -115,7 +107,6 @@ export default function usersReducer(state = initialState, action) {
           }),
         };
       }
-
       return {
         ...newState,
         contactFilters,
@@ -128,9 +119,13 @@ export default function usersReducer(state = initialState, action) {
         error: action.error,
         loading: false,
       };
+    case actions.GET_GROUP_FILTERS_START:
+      return {
+        ...newState,
+        loading: true,
+      };
     case actions.GET_GROUP_FILTERS_SUCCESS: {
       let { groupFilters, isConnected, groupList, userData } = action;
-
       // Map filters
       groupFilters = {
         ...groupFilters,
@@ -138,37 +133,31 @@ export default function usersReducer(state = initialState, action) {
           let mappedFilter = {
             ...filter,
           };
-
           let newQuery = {};
-
           Object.keys(filter.query).forEach((key) => {
-            let value = filter.query[key];
-            let valueType = Object.prototype.toString.call(value);
-            if (valueType === '[object Array]') {
-              value = value[0];
+            let filterValue = filter.query[key];
+            let filterValueType = Object.prototype.toString.call(filterValue);
+            if (filterValueType === '[object Array]') {
+              filterValue.forEach((value, index) => {
+                // Replace 'me' value with user name
+                if (value === 'me') {
+                  filterValue[index] = userData.displayName;
+                }
+              });
             }
-
-            // Replace 'me' value with user name
-            if (value === 'me') {
-              value = userData.displayName;
-            }
-
             newQuery = {
               ...newQuery,
-              [key]: value,
+              [key]: filterValue,
             };
           });
-
           delete newQuery.sort;
           delete newQuery.combine;
-
           return {
             ...mappedFilter,
             query: newQuery,
           };
         }),
       };
-
       // Only return filters that exist in data (group[prop] exist)
       groupFilters = {
         ...groupFilters,
@@ -188,7 +177,6 @@ export default function usersReducer(state = initialState, action) {
           };
         }),
       };
-
       // Only return filters that return data (result > 0) ONLY IN OFFLINE MODE
       if (!isConnected) {
         groupFilters = {
@@ -198,7 +186,6 @@ export default function usersReducer(state = initialState, action) {
           }),
         };
       }
-
       return {
         ...newState,
         groupFilters,
