@@ -360,6 +360,21 @@ const contactsByFilter = (contactsList, query) => {
                   result = true;
                 }
               });
+              // If record does not match 'assigned_to' value, search by 'subassigned'
+              if (
+                !result &&
+                Object.prototype.hasOwnProperty.call(query, 'subassigned') &&
+                Object.prototype.hasOwnProperty.call(contact, 'subassigned')
+              ) {
+                // Search in 'subassigned'
+                query['subassigned'].forEach((filterValue) => {
+                  contact['subassigned'].values.forEach((subassignedContact) => {
+                    if (filterValue === subassignedContact.value) {
+                      result = true;
+                    }
+                  });
+                });
+              }
             } else if (key == 'subassigned') {
               // Search in 'subassigned'
               filterValues.forEach((filterValue) => {
@@ -369,6 +384,22 @@ const contactsByFilter = (contactsList, query) => {
                   }
                 });
               });
+              // If record does not match 'subassigned' value, search by 'assigned_to'
+              if (
+                !result &&
+                Object.prototype.hasOwnProperty.call(query, 'assigned_to') &&
+                Object.prototype.hasOwnProperty.call(contact, 'assigned_to')
+              ) {
+                // Search in 'assigned_to'
+                query['assigned_to'].forEach((assignedContact) => {
+                  if (
+                    assignedContact === contact['assigned_to'].label ||
+                    parseInt(assignedContact) === contact['assigned_to'].key
+                  ) {
+                    result = true;
+                  }
+                });
+              }
             }
             // Exit for to stop doing unnecessary loops
             if (result) {
