@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from '../languages/moment';
 
 const diff = (obj1, obj2) => {
   // Make sure an object to compare is provided
@@ -160,6 +161,19 @@ const formatDateToBackEnd = (dateString) => {
   const day = dateObject.getDate() < 10 ? `0${dateObject.getDate()}` : dateObject.getDate();
   const newDate = `${year}-${month}-${day}`;
   return newDate;
+};
+
+const formatDateToView = (date) => {
+  return moment(new Date(date)).utc().format('LL');
+};
+
+const formatDateToDatePicker = (timestamp = null) => {
+  let date = timestamp ? new Date(timestamp) : new Date();
+  // Keep date value to current timezone
+  date = new Date(
+    date.getTime() + date.getTimezoneOffset() * 60 * 1000 * Math.sign(date.getTimezoneOffset()),
+  );
+  return date;
 };
 
 const getSelectorColor = (status) => {
@@ -805,4 +819,6 @@ export default {
   isNumeric,
   mapGroups,
   mapGroup,
+  formatDateToView,
+  formatDateToDatePicker,
 };
