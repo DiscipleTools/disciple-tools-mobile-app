@@ -1597,10 +1597,15 @@ class GroupDetailScreen extends React.Component {
   onEnableEdit = () => {
     this.setState((state) => {
       let indexFix;
-      if (state.tabViewConfig.index < 3) {
+      if (state.tabViewConfig.index < 2) {
+        // index = 0 or 1
         indexFix = state.tabViewConfig.index;
-      } else if (state.tabViewConfig.index > 2) {
+      } else if (state.tabViewConfig.index < 5) {
+        // index = 2, 3 or 4
         indexFix = state.tabViewConfig.index - 1;
+      } else if (state.tabViewConfig.index > 4) {
+        // index = 4 or +4
+        indexFix = state.tabViewConfig.index - 2;
       }
       return {
         onlyView: false,
@@ -1632,10 +1637,17 @@ class GroupDetailScreen extends React.Component {
     } = this.state;
     this.setState((state) => {
       // Set correct index in Tab position according to view mode and current tab position
-      const indexFix =
-        state.tabViewConfig.index > 1 && !state.onlyView
-          ? state.tabViewConfig.index + 1
-          : state.tabViewConfig.index;
+      let indexFix;
+      if (state.tabViewConfig.index < 2) {
+        // index = 0 or 1
+        indexFix = state.tabViewConfig.index;
+      } else if (state.tabViewConfig.index < 4) {
+        // index = 2, 3
+        indexFix = state.tabViewConfig.index + 1;
+      } else if (state.tabViewConfig.index > 3) {
+        // index = 4 or +4
+        indexFix = state.tabViewConfig.index + 2;
+      }
       return {
         onlyView: true,
         group: {
@@ -1862,7 +1874,7 @@ class GroupDetailScreen extends React.Component {
                                   ? { textAlign: 'left', flex: 1 }
                                   : { textAlign: 'right' },
                               ]}>
-                              {this.onFormatDateToView(item.date)}
+                              {sharedTools.formatDateToView(item.date)}
                             </Text>
                           </Col>
                         </Row>
@@ -2267,20 +2279,14 @@ class GroupDetailScreen extends React.Component {
     );
   };
 
-  onFormatDateToView = (date) => {
-    return moment(new Date(date)).format('LLL');
-  };
-
   formatActivityDate = (comment) => {
     let baptismDateRegex = /\{(\d+)\}+/;
     if (baptismDateRegex.test(comment)) {
-      comment = comment.replace(baptismDateRegex, this.formatTimestampToDate);
+      comment = comment.replace(baptismDateRegex, (match, timestamp) =>
+        sharedTools.formatDateToView(timestamp * 1000),
+      );
     }
     return comment;
-  };
-
-  formatTimestampToDate = (match, timestamp) => {
-    return moment(new Date(timestamp * 1000)).format('LL');
   };
 
   onSaveComment = () => {
@@ -2820,9 +2826,11 @@ class GroupDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.start_date && this.state.group.start_date.length > 0
-                      ? moment(new Date(this.state.group.start_date * 1000))
-                          .utc()
-                          .format('LL')
+                      ? sharedTools.formatDateToView(
+                          sharedTools.isNumeric(this.state.group.start_date)
+                            ? this.state.group.start_date * 1000
+                            : this.state.group.start_date,
+                        )
                       : ''}
                   </Text>
                 </Col>
@@ -2845,9 +2853,11 @@ class GroupDetailScreen extends React.Component {
                     ]}>
                     {this.state.group.church_start_date &&
                     this.state.group.church_start_date.length > 0
-                      ? moment(new Date(this.state.group.church_start_date * 1000))
-                          .utc()
-                          .format('LL')
+                      ? sharedTools.formatDateToView(
+                          sharedTools.isNumeric(this.state.group.church_start_date)
+                            ? this.state.group.church_start_date * 1000
+                            : this.state.group.church_start_date,
+                        )
                       : ''}
                   </Text>
                 </Col>
@@ -2869,9 +2879,11 @@ class GroupDetailScreen extends React.Component {
                       this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
                     ]}>
                     {this.state.group.end_date && this.state.group.end_date.length > 0
-                      ? moment(new Date(this.state.group.end_date * 1000))
-                          .utc()
-                          .format('LL')
+                      ? sharedTools.formatDateToView(
+                          sharedTools.isNumeric(this.state.group.end_date)
+                            ? this.state.group.end_date * 1000
+                            : this.state.group.end_date,
+                        )
                       : ''}
                   </Text>
                 </Col>
@@ -3364,7 +3376,7 @@ class GroupDetailScreen extends React.Component {
                   onDateChange={this.setGroupStartDate}
                   defaultDate={
                     this.state.group.start_date && this.state.group.start_date.length > 0
-                      ? new Date(this.state.group.start_date * 1000)
+                      ? sharedTools.formatDateToDatePicker(this.state.group.start_date * 1000)
                       : ''
                   }
                 />
@@ -3407,7 +3419,9 @@ class GroupDetailScreen extends React.Component {
                   defaultDate={
                     this.state.group.church_start_date &&
                     this.state.group.church_start_date.length > 0
-                      ? new Date(this.state.group.church_start_date * 1000)
+                      ? sharedTools.formatDateToDatePicker(
+                          this.state.group.church_start_date * 1000,
+                        )
                       : ''
                   }
                 />
@@ -3449,7 +3463,7 @@ class GroupDetailScreen extends React.Component {
                   onDateChange={this.setEndDate}
                   defaultDate={
                     this.state.group.end_date && this.state.group.end_date.length > 0
-                      ? new Date(this.state.group.end_date * 1000)
+                      ? sharedTools.formatDateToDatePicker(this.state.group.end_date * 1000)
                       : ''
                   }
                 />
@@ -5370,9 +5384,9 @@ class GroupDetailScreen extends React.Component {
         if (propExist && value.length > 0) {
           mappedValue = (
             <Text>
-              {moment(new Date(parseInt(value) * 1000))
-                .utc()
-                .format('LL')}
+              {sharedTools.formatDateToView(
+                sharedTools.isNumeric(value) ? parseInt(value) * 1000 : value,
+              )}
             </Text>
           );
         }
@@ -5538,7 +5552,7 @@ class GroupDetailScreen extends React.Component {
               }
               defaultDate={
                 this.state.group[field.name] && this.state.group[field.name].length > 0
-                  ? new Date(this.state.group[field.name] * 1000)
+                  ? sharedTools.formatDateToDatePicker(this.state.group[field.name] * 1000)
                   : ''
               }
             />

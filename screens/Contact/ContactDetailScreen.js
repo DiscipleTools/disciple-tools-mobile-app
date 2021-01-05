@@ -17,6 +17,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
 } from 'react-native';
+
 import { connect } from 'react-redux';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import PropTypes from 'prop-types';
@@ -38,7 +39,6 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Html5Entities } from 'html-entities';
 import Menu, { MenuItem } from 'react-native-material-menu';
 
-import moment from '../../languages/moment';
 import sharedTools from '../../shared';
 import {
   save,
@@ -1604,10 +1604,15 @@ class ContactDetailScreen extends React.Component {
   onEnableEdit = () => {
     this.setState((state) => {
       let indexFix;
-      if (state.tabViewConfig.index < 3) {
+      if (state.tabViewConfig.index < 2) {
+        // index = 0 or 1
         indexFix = state.tabViewConfig.index;
-      } else if (state.tabViewConfig.index > 2) {
+      } else if (state.tabViewConfig.index < 4) {
+        // index = 2 or 3
         indexFix = state.tabViewConfig.index - 1;
+      } else if (state.tabViewConfig.index > 3) {
+        // index = 4 or +4
+        indexFix = state.tabViewConfig.index - 2;
       }
       return {
         onlyView: false,
@@ -1643,11 +1648,17 @@ class ContactDetailScreen extends React.Component {
     } = this.state;
     this.setState((prevState) => {
       // Set correct index in Tab position according to view mode and current tab position
-      const indexFix =
-        prevState.tabViewConfig.index > 1 && !prevState.onlyView
-          ? prevState.tabViewConfig.index + 1
-          : prevState.tabViewConfig.index;
-
+      let indexFix;
+      if (prevState.tabViewConfig.index < 2) {
+        // index = 0 or 1
+        indexFix = prevState.tabViewConfig.index;
+      } else if (prevState.tabViewConfig.index < 3) {
+        // index = 2
+        indexFix = prevState.tabViewConfig.index + 1;
+      } else if (prevState.tabViewConfig.index > 2) {
+        // index = 3 or +3
+        indexFix = prevState.tabViewConfig.index + 2;
+      }
       let newState = {
         onlyView: true,
         contact: {
@@ -1913,20 +1924,14 @@ class ContactDetailScreen extends React.Component {
     );
   };
 
-  onFormatDateToView = (date) => {
-    return moment(new Date(date)).format('LLL');
-  };
-
   formatActivityDate = (comment) => {
     let baptismDateRegex = /\{(\d+)\}+/;
     if (baptismDateRegex.test(comment)) {
-      comment = comment.replace(baptismDateRegex, this.formatTimestampToDate);
+      comment = comment.replace(baptismDateRegex, (match, timestamp) =>
+        sharedTools.formatDateToView(timestamp * 1000),
+      );
     }
     return comment;
-  };
-
-  formatTimestampToDate = (match, timestamp) => {
-    return moment(new Date(timestamp * 1000)).format('LL');
   };
 
   setComment = (value) => {
@@ -3628,9 +3633,11 @@ class ContactDetailScreen extends React.Component {
                   <Col>
                     <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                       {this.state.contact.baptism_date && this.state.contact.baptism_date.length > 0
-                        ? moment(new Date(this.state.contact.baptism_date * 1000))
-                            .utc()
-                            .format('LL')
+                        ? sharedTools.formatDateToView(
+                            sharedTools.isNumeric(this.state.contact.baptism_date)
+                              ? this.state.contact.baptism_date * 1000
+                              : this.state.contact.baptism_date,
+                          )
                         : ''}
                     </Text>
                   </Col>
@@ -3731,7 +3738,7 @@ class ContactDetailScreen extends React.Component {
                   onDateChange={this.setBaptismDate}
                   defaultDate={
                     this.state.contact.baptism_date && this.state.contact.baptism_date.length > 0
-                      ? new Date(this.state.contact.baptism_date * 1000)
+                      ? sharedTools.formatDateToDatePicker(this.state.contact.baptism_date * 1000)
                       : ''
                   }
                 />
@@ -4867,7 +4874,7 @@ class ContactDetailScreen extends React.Component {
                                   ? { textAlign: 'left', flex: 1 }
                                   : { textAlign: 'right' },
                               ]}>
-                              {this.onFormatDateToView(item.date)}
+                              {sharedTools.formatDateToView(item.date)}
                             </Text>
                           </Col>
                         </Row>
@@ -6060,9 +6067,9 @@ class ContactDetailScreen extends React.Component {
         if (propExist && value.length > 0) {
           mappedValue = (
             <Text>
-              {moment(new Date(parseInt(value) * 1000))
-                .utc()
-                .format('LL')}
+              {sharedTools.formatDateToView(
+                sharedTools.isNumeric(value) ? parseInt(value) * 1000 : value,
+              )}
             </Text>
           );
         }
@@ -6198,7 +6205,7 @@ class ContactDetailScreen extends React.Component {
               }
               defaultDate={
                 this.state.contact[field.name] && this.state.contact[field.name].length > 0
-                  ? new Date(this.state.contact[field.name] * 1000)
+                  ? sharedTools.formatDateToDatePicker(this.state.contact[field.name] * 1000)
                   : ''
               }
             />
