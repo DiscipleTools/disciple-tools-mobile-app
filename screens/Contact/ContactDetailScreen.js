@@ -1466,11 +1466,23 @@ class ContactDetailScreen extends React.Component {
     if (users !== null) {
       newState = {
         ...newState,
-        users: JSON.parse(users).map((user) => ({
-          key: user.ID,
-          label: user.name,
-          contactID: parseInt(user.contact_id),
-        })),
+        users: JSON.parse(users).map((user) => {
+          let newUser = {
+            key: user.ID,
+            label: user.name,
+          };
+          // Prevent 'null' values
+          if (
+            Object.prototype.hasOwnProperty.call(user, 'contact_id') &&
+            sharedTools.isNumeric(user.contact_id)
+          ) {
+            newUser = {
+              ...newUser,
+              contactID: parseInt(user.contact_id),
+            };
+          }
+          return newUser;
+        }),
       };
     }
 
@@ -2902,10 +2914,12 @@ class ContactDetailScreen extends React.Component {
                   items={[
                     ...this.state.subAssignedContacts,
                     ...this.state.usersContacts,
-                    ...this.state.users.map((user) => ({
-                      name: user.label,
-                      value: user.key.toString(),
-                    })),
+                    ...this.state.users
+                      .filter((user) => Object.prototype.hasOwnProperty.call(user, 'contactID'))
+                      .map((user) => ({
+                        name: user.label,
+                        value: user.contactID.toString(),
+                      })),
                   ]}
                   selectedItems={this.getSelectizeItems(this.state.contact.subassigned, [
                     ...this.state.subAssignedContacts,
