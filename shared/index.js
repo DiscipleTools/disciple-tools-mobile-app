@@ -512,30 +512,22 @@ const groupsByFilter = (groupsList, query) => {
 const getSelectizeValuesToSave = (dbData, selectedValues) => {
   const dbItems = [...dbData];
   const localItems = [];
-
+  // Map selectize value to get selected options
   Object.keys(selectedValues.entities.item).forEach((itemValue) => {
     const item = selectedValues.entities.item[itemValue];
     localItems.push(item);
   });
-
-  const itemsToSave = localItems
-    .filter((localItem) => {
-      const foundLocalInDatabase = dbItems.find((dbItem) => dbItem.value === localItem.value);
-      return foundLocalInDatabase === undefined;
-    })
-    .map((localItem) => ({ value: localItem.value }));
-
+  // Remove of D.B items that were removed of the field
   dbItems.forEach((dbItem) => {
     const foundDatabaseInLocal = localItems.find((localItem) => dbItem.value === localItem.value);
     if (!foundDatabaseInLocal) {
-      itemsToSave.push({
+      localItems.push({
         ...dbItem,
         delete: true,
       });
     }
   });
-
-  return itemsToSave;
+  return localItems;
 };
 
 const mapContacts = (contacts, entities) => {
