@@ -16,7 +16,7 @@ import {
 import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
 
-import { Updates } from 'expo';
+import * as Updates from 'expo-updates';
 import Constants from 'expo-constants';
 import * as MailComposer from 'expo-mail-composer';
 import Colors from '../constants/Colors';

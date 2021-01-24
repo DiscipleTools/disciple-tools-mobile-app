@@ -506,29 +506,35 @@ export default function contactsReducer(state = initialState, action) {
       // Get fieldlist
       Object.keys(settings.fields).forEach((fieldName) => {
         const fieldData = settings.fields[fieldName];
-        if (fieldData.type === 'key_select' || fieldData.type === 'multi_select') {
-          let newFieldData = {
-            name: fieldData.name,
-            description: fieldData.name,
-            values: fieldData.default,
-          };
-          if (Object.prototype.hasOwnProperty.call(fieldData, 'description')) {
-            newFieldData = {
-              ...newFieldData,
-              description: fieldData.description,
+        // omit fields with { "hidden": true }
+        if (
+          !Object.prototype.hasOwnProperty.call(fieldData, 'hidden') ||
+          (Object.prototype.hasOwnProperty.call(fieldData, 'hidden') && fieldData.hidden === false)
+        ) {
+          if (fieldData.type === 'key_select' || fieldData.type === 'multi_select') {
+            let newFieldData = {
+              name: fieldData.name,
+              description: fieldData.name,
+              values: fieldData.default,
+            };
+            if (Object.prototype.hasOwnProperty.call(fieldData, 'description')) {
+              newFieldData = {
+                ...newFieldData,
+                description: fieldData.description,
+              };
+            }
+            fieldList = {
+              ...fieldList,
+              [fieldName]: newFieldData,
+            };
+          } else {
+            fieldList = {
+              ...fieldList,
+              [fieldName]: {
+                name: fieldData.name,
+              },
             };
           }
-          fieldList = {
-            ...fieldList,
-            [fieldName]: newFieldData,
-          };
-        } else {
-          fieldList = {
-            ...fieldList,
-            [fieldName]: {
-              name: fieldData.name,
-            },
-          };
         }
       });
       // Get channels
@@ -549,36 +555,65 @@ export default function contactsReducer(state = initialState, action) {
         Object.keys(settings.tiles).forEach((tileName) => {
           let tileFields = [];
           Object.keys(settings.fields).forEach((fieldName) => {
-            let value = settings.fields[fieldName];
-            if (Object.prototype.hasOwnProperty.call(value, 'tile') && value.tile === tileName) {
-              let newField = {
-                name: fieldName,
-                label: value.name,
-                type: value.type,
-              };
-              if (Object.prototype.hasOwnProperty.call(value, 'post_type')) {
-                newField = {
-                  ...newField,
-                  post_type: value.post_type,
+            let fieldValue = settings.fields[fieldName];
+            if (
+              Object.prototype.hasOwnProperty.call(fieldValue, 'tile') &&
+              fieldValue.tile === tileName
+            ) {
+              // Get only fields with hidden: false
+              if (
+                !Object.prototype.hasOwnProperty.call(fieldValue, 'hidden') ||
+                (Object.prototype.hasOwnProperty.call(fieldValue, 'hidden') &&
+                  fieldValue.hidden === false)
+              ) {
+                let newField = {
+                  name: fieldName,
+                  label: fieldValue.name,
+                  type: fieldValue.type,
                 };
+                if (Object.prototype.hasOwnProperty.call(fieldValue, 'post_type')) {
+                  newField = {
+                    ...newField,
+                    post_type: fieldValue.post_type,
+                  };
+                }
+                if (Object.prototype.hasOwnProperty.call(fieldValue, 'default')) {
+                  newField = {
+                    ...newField,
+                    default: fieldValue.default,
+                  };
+                }
+                if (Object.prototype.hasOwnProperty.call(fieldValue, 'in_create_form')) {
+                  newField = {
+                    ...newField,
+                    in_create_form: fieldValue.in_create_form,
+                  };
+                }
+                if (Object.prototype.hasOwnProperty.call(fieldValue, 'required')) {
+                  newField = {
+                    ...newField,
+                    required: fieldValue.required,
+                  };
+                }
+                /*if (Object.prototype.hasOwnProperty.call(fieldValue, 'icon')) {
+                  newField = {
+                    ...newField,
+                    icon: fieldValue.icon,
+                  };
+                }*/
+                tileFields.push(newField);
               }
-              if (Object.prototype.hasOwnProperty.call(value, 'default')) {
-                newField = {
-                  ...newField,
-                  default: value.default,
-                };
-              }
-              tileFields.push(newField);
             }
           });
           tileList.push({
             name: tileName,
             label: settings.tiles[tileName].label,
+            tile_priority: settings.tiles[tileName].tile_priority,
             fields: tileFields,
           });
+          tileList.sort((a, b) => a.tile_priority - b.tile_priority);
         });
       }
-
       return {
         ...newState,
         settings: {

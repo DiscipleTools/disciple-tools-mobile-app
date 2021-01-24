@@ -804,7 +804,7 @@ export default {
   filterExistInEntity,
   contactsByFilter,
   groupsByFilter,
-  paginationLimit: 1000,
+  paginationLimit: 100,
   getSelectizeValuesToSave,
   mapContacts,
   mapContact,
