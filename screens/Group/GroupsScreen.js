@@ -190,7 +190,7 @@ class GroupsScreen extends React.Component {
         <View style={{ flexDirection: 'column', flexGrow: 1 }}>
           <View style={{ flexDirection: 'row' }}>
             <Text style={{ textAlign: 'left', flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }}>
-              {group.title}
+              {Object.prototype.hasOwnProperty.call(group, 'name') ? group.name : group.title}
             </Text>
           </View>
           <View style={{ flexDirection: 'row' }}>

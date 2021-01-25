@@ -211,7 +211,7 @@ class ContactsScreen extends React.Component {
         <View style={{ flexDirection: 'column', flexGrow: 1 }}>
           <View style={{ flexDirection: 'row' }}>
             <Text style={[{ textAlign: 'left', flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }]}>
-              {contact.title}
+              {Object.prototype.hasOwnProperty.call(contact, 'name') ? contact.name : contact.title}
             </Text>
           </View>
           <View style={{ flexDirection: 'row' }}>
