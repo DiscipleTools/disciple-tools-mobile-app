@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Nambari: ",
-      "message": "Ujumbe: "
+      "message": "Ujumbe: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Takwimu zimehifadhiwa vizuri!"
@@ -35,7 +37,16 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": "",
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "Chagua Maeneo",
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {
@@ -56,7 +67,10 @@
     "forgotPassword": "Umepoteza nenosiri lako?",
     "errors": {
       "invalidUsername": "Jina la mtumiaji lisilojulikana. Angalia tena au jaribu anwani yako ya barua pepe.",
-      "incorrectPassword": "Nenosiri uliloliingiza jina la mtumiaji sio sahihi"
+      "incorrectPassword": "Nenosiri uliloliingiza jina la mtumiaji sio sahihi",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
@@ -83,13 +97,13 @@
     "incorrectPin": "PIN isiyo sahihi",
     "savedPinCode": "Nambari ya siri imehifadhiwa kwa mafanikio",
     "removedPinCode": "Nambari ya siri imeondolewa kwa mafanikio",
-    "close": "Funga"
+    "close": "Funga",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Ongeza Mawasiliano Mpya",
     "subAssignThisContact": "Pana anwani hii",
     "mobile": "Rununu",
-    "selectLocations": "Chagua Maeneo",
     "selectSources": "Chagua vyanzo",
     "connections": "Viunganisho",
     "addGroup": "Ongeza Kikundi",
@@ -107,7 +121,9 @@
       "error": "Jina inahitajika"
     },
     "noContactCommentPlacheHolder1": "Kunaweza kuwa na shida kuipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
-    "noContactCommentPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate maoni yako ya mawasiliano."
+    "noContactCommentPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate maoni yako ya mawasiliano.",
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Ongeza Kundi Mpya",
@@ -120,7 +136,6 @@
     "noGroupCommentPlacheHolder": "Hakuna maoni yoyote ya kikundi yanayopatikana kwa sasa.",
     "noGroupCommentPlacheHolder1": "Kunaweza kuwa na shida kuzipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
     "noGroupCommentPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate maoni ya kikundi chako.",
-    "selectLocations": "Chagua Maeneo",
     "noMembersMessage": "Hakuna Wajumbe",
     "groupName": {
       "label": "Jina la Kikundi",
@@ -139,7 +154,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Arifa",

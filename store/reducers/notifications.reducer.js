@@ -1,5 +1,6 @@
 import * as actions from '../actions/notifications.actions';
 import * as userActions from '../actions/user.actions';
+import { REHYDRATE } from 'redux-persist/lib/constants';
 
 const initialState = {
   loading: false,
@@ -15,6 +16,12 @@ export default function notificationsReducer(state = initialState, action) {
     notifications: null,
   };
   switch (action.type) {
+    case REHYDRATE: {
+      return {
+        ...newState,
+        loading: false,
+      };
+    }
     case actions.NOTIFICATIONS_BY_USER_START:
       return {
         ...newState,

@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Code: ",
-      "message": "Message: "
+      "message": "Message: ",
+      "text": "Error: ",
+      "noRecords": "Unable to locate your record in local device storage. Either: 1) Create a new record and merge once online, or 2) Get online and try your search again."
     },
     "success": {
       "save": "Data saved successfully!"
@@ -35,7 +37,16 @@
     "showing": "Showing",
     "comments": "Comments",
     "activity": "Activity",
-    "submit": "Submit"
+    "submit": "Submit",
+    "share": "Share",
+    "shareSettings": "Share settings",
+    "searchUsers": "Search Users",
+    "noFilters": "No filters",
+    "searchContacts": "Search Contacts",
+    "selectLocations": "Select Locations",
+    "other": "Other",
+    "chooseOption": "Choose an option",
+    "confirm": "Confirm"
   },
   "loginScreen": {
     "domain": {
@@ -56,7 +67,10 @@
     "forgotPassword": "Lost your password?",
     "errors": {
       "invalidUsername": "Unknown username. Check again or try your email address.",
-      "incorrectPassword": "The password you entered for username is incorrect"
+      "incorrectPassword": "The password you entered for username is incorrect",
+      "configurationNeededOn": "Configuration needed on",
+      "mobileAppPluginRequiredOne": "The Mobile App Plugin is required and does not seem to be activated on your Disciple.Tools.",
+      "mobileAppPluginRequiredTwo": "Tap here for more information."
     }
   },
   "contactsScreen": {
@@ -83,13 +97,13 @@
     "incorrectPin": "Incorrect PIN",
     "savedPinCode": "PIN code saved successfully!.",
     "removedPinCode": "PIN code removed successfully!.",
-    "close": "Close"
+    "close": "Close",
+    "confirmPin": "Confirm the new PIN"
   },
   "contactDetailScreen": {
     "addNewContact": "Add New Contact",
     "subAssignThisContact": "Sub-assign this contact",
     "mobile": "Phone",
-    "selectLocations": "Select Locations",
     "selectSources": "Select sources",
     "connections": "Connections",
     "addGroup": "Add Group",
@@ -107,7 +121,9 @@
       "error": "Name is required"
     },
     "noContactCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
-    "noContactCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your contact comment."
+    "noContactCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your contact comment.",
+    "contactSharedWith": "This contact is shared with",
+    "ageNotSet": "No age set"
   },
   "groupDetailScreen": {
     "addNewGroup": "Add New Group",
@@ -120,7 +136,6 @@
     "noGroupCommentPlacheHolder": "There are not any group comments currently available.",
     "noGroupCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
     "noGroupCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your group comment.",
-    "selectLocations": "Select Locations",
     "noMembersMessage": "No members. Tap here or on Edit to add some members to this group.",
     "groupName": {
       "label": "Group Name",
@@ -139,7 +154,8 @@
       "didNotAttendComment": "Did Not Attend Group",
       "groupCommentLabel": "Meeting Comment",
       "groupComment": "Meeting Complete"
-    }
+    },
+    "groupSharedWith": "This group is shared with"
   },
   "notificationsScreen": {
     "notifications": "Notifications",

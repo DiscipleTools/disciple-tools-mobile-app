@@ -15,7 +15,7 @@ const sagaMiddleware = createSagaMiddleware();
 const middleware = [sagaMiddleware];
 
 // Transform (reset loading property from states to false)
-const transformState = createTransform(
+/*const transformState = createTransform(
   state => ({ ...state }),
   (state) => {
     if (state.loading) {
@@ -28,7 +28,7 @@ const transformState = createTransform(
       ...state,
     };
   },
-);
+);*/
 
 // Middleware: Redux Persist Config
 const persistConfig = {
@@ -45,19 +45,16 @@ const persistConfig = {
     'counterReducer',
   ], */
   stateReconciler: hardSet,
-  transforms: [
-    transformState,
-  ],
+  //transforms: [
+  //  transformState,
+  //],
 };
 
 // Middleware: Redux Persist Persisted Reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // Redux: Store
-const store = createStore(
-  persistedReducer,
-  applyMiddleware(...middleware),
-);
+const store = createStore(persistedReducer, applyMiddleware(...middleware));
 
 sagaMiddleware.run(rootSaga);
 
@@ -65,7 +62,4 @@ sagaMiddleware.run(rootSaga);
 const persistor = persistStore(store);
 
 // Exports
-export {
-  store,
-  persistor,
-};
+export { store, persistor };

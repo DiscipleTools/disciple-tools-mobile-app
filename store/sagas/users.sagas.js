@@ -1,4 +1,4 @@
-import { put, take, all, takeEvery } from 'redux-saga/effects';
+import { put, take, all, takeEvery, select } from 'redux-saga/effects';
 import * as actions from '../actions/users.actions';
 
 export function* getUsers({ domain, token }) {
@@ -51,6 +51,10 @@ export function* getUsers({ domain, token }) {
 }
 
 export function* getContactFilters({ domain, token }) {
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+  const contactList = yield select((state) => state.contactsReducer.contacts);
+  const userData = yield select((state) => state.userReducer.userData);
+
   yield put({ type: actions.GET_CONTACT_FILTERS_START });
 
   yield put({
@@ -77,6 +81,9 @@ export function* getContactFilters({ domain, token }) {
         yield put({
           type: actions.GET_CONTACT_FILTERS_SUCCESS,
           contactFilters: jsonData,
+          isConnected,
+          contactList,
+          userData,
         });
       }
     } else {
@@ -100,6 +107,10 @@ export function* getContactFilters({ domain, token }) {
 }
 
 export function* getGroupFilters({ domain, token }) {
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+  const groupList = yield select((state) => state.groupsReducer.groups);
+  const userData = yield select((state) => state.userReducer.userData);
+
   yield put({ type: actions.GET_GROUP_FILTERS_START });
 
   yield put({
@@ -126,6 +137,9 @@ export function* getGroupFilters({ domain, token }) {
         yield put({
           type: actions.GET_GROUP_FILTERS_SUCCESS,
           groupFilters: jsonData,
+          isConnected,
+          groupList,
+          userData,
         });
       }
     } else {

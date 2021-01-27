@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Kode: ",
-      "message": "Pesan: "
+      "message": "Pesan: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Data berhasil disimpan!"
@@ -35,7 +37,16 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": "",
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "Pilih lokasi",
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {
@@ -56,7 +67,10 @@
     "forgotPassword": "Kehilangan password?",
     "errors": {
       "invalidUsername": "Nama pengguna tidak dikenal. Periksa lagi atau coba alamat email Anda.",
-      "incorrectPassword": "Kata sandi yang Anda masukkan untuk nama pengguna salah"
+      "incorrectPassword": "Kata sandi yang Anda masukkan untuk nama pengguna salah",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
@@ -83,13 +97,13 @@
     "incorrectPin": "PIN salah",
     "savedPinCode": "Kode PIN berhasil disimpan",
     "removedPinCode": "Kode PIN berhasil dihapus",
-    "close": "Menutup"
+    "close": "Menutup",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Tambahkan Kontak Baru",
     "subAssignThisContact": "Sub-assign kontak ini",
     "mobile": "Mobile",
-    "selectLocations": "Pilih lokasi",
     "selectSources": "Pilih sumber",
     "connections": "Koneksi",
     "addGroup": "Tambahkan Grup",
@@ -107,7 +121,9 @@
       "error": "Nama harus diisi"
     },
     "noContactCommentPlacheHolder1": "Mungkin ada masalah saat mendapatkannya dari situs Anda. Seret ke bawah untuk mencoba menyegarkan dan coba lagi.",
-    "noContactCommentPlacheHolderOffline": "Anda sedang offline. Pastikan Anda terhubung ke wifi atau data seluler untuk menyegarkan dan mendapatkan komentar kontak Anda."
+    "noContactCommentPlacheHolderOffline": "Anda sedang offline. Pastikan Anda terhubung ke wifi atau data seluler untuk menyegarkan dan mendapatkan komentar kontak Anda.",
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Tambahkan Grup Baru",
@@ -120,7 +136,6 @@
     "noGroupCommentPlacheHolder": "Tidak ada komentar grup yang tersedia saat ini.",
     "noGroupCommentPlacheHolder1": "Mungkin ada masalah saat mendapatkannya dari situs Anda. Seret ke bawah untuk mencoba menyegarkan dan coba lagi.",
     "noGroupCommentPlacheHolderOffline": "Anda sedang offline. Pastikan Anda terhubung ke wifi atau data seluler untuk menyegarkan dan mendapatkan komentar grup Anda.",
-    "selectLocations": "Pilih Lokasi",
     "noMembersMessage": "noMembersMessage",
     "groupName": {
       "label": "Nama grup",
@@ -139,7 +154,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Notifikasi",

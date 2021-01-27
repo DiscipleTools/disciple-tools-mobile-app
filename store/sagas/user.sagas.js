@@ -2,7 +2,7 @@ import { put, take, takeLatest, all, takeEvery } from 'redux-saga/effects';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Permissions from 'expo-permissions';
-import { Notifications } from 'expo';
+import * as Notifications from 'expo-notifications';
 import * as actions from '../actions/user.actions';
 
 export function* login({ domain, username, password }) {
@@ -31,7 +31,11 @@ export function* login({ domain, username, password }) {
     const jsonData = response.data;
 
     if (response.status === 200) {
-      yield put({ type: actions.USER_LOGIN_SUCCESS, domain, user: { ...jsonData, password } });
+      yield put({
+        type: actions.USER_LOGIN_SUCCESS,
+        domain,
+        user: { ...jsonData, username, password },
+      });
       yield put({ type: actions.USER_GET_PUSH_TOKEN, domain, token: jsonData.token });
     } else {
       yield put({

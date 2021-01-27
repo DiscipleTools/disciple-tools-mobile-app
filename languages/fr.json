@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Code: ",
-      "message": "Message: "
+      "message": "Message: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Les données ont bien été enregistrées!"
@@ -35,7 +37,16 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": "",
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "Sélectionnez des emplacements",
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {
@@ -56,7 +67,10 @@
     "forgotPassword": "Mot de passe perdu?",
     "errors": {
       "invalidUsername": "Nom d'utilisateur inconnu. Vérifiez à nouveau ou essayez votre adresse e-mail.",
-      "incorrectPassword": "Le mot de passe que vous avez entré pour le nom d'utilisateur est incorrect"
+      "incorrectPassword": "Le mot de passe que vous avez entré pour le nom d'utilisateur est incorrect",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
@@ -83,13 +97,13 @@
     "incorrectPin": "PIN incorrect",
     "savedPinCode": "Code PIN enregistré avec succès",
     "removedPinCode": "Code PIN supprimé avec succès",
-    "close": "Fermer"
+    "close": "Fermer",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Ajouter un nouveau contact",
     "subAssignThisContact": "Sous-affecter ce contact",
     "mobile": "Mobile",
-    "selectLocations": "Sélectionnez des emplacements",
     "selectSources": "Sélectionnez les sources",
     "connections": "Les liaisons",
     "addGroup": "Ajouter un groupe",
@@ -107,7 +121,9 @@
       "error": "Nom obligatoire"
     },
     "noContactCommentPlacheHolder1": "Il peut y avoir eu un problème pour les obtenir à partir de votre site. Faites glisser vers le bas pour essayer de rafraîchir et réessayez.",
-    "noContactCommentPlacheHolderOffline": "Vous êtes actuellement hors ligne. Assurez-vous que vous êtes connecté au wifi ou aux données mobiles afin de vous rafraîchir et d'obtenir votre commentaire de contact."
+    "noContactCommentPlacheHolderOffline": "Vous êtes actuellement hors ligne. Assurez-vous que vous êtes connecté au wifi ou aux données mobiles afin de vous rafraîchir et d'obtenir votre commentaire de contact.",
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Ajouter un nouveau groupe",
@@ -120,7 +136,6 @@
     "noGroupCommentPlacheHolder": "Aucun commentaire de groupe n'est actuellement disponible.",
     "noGroupCommentPlacheHolder1": "Il peut y avoir eu un problème pour les obtenir à partir de votre site. Faites glisser vers le bas pour essayer de rafraîchir et réessayez.",
     "noGroupCommentPlacheHolderOffline": "Vous êtes actuellement hors ligne. Assurez-vous que vous êtes connecté au wifi ou aux données mobiles afin de vous rafraîchir et d'obtenir les commentaires de votre groupe.",
-    "selectLocations": "Sélectionner des emplacements",
     "noMembersMessage": "Aucun membre. Appuyez ici ou sur Modifier pour ajouter des membres à ce groupe.",
     "groupName": {
       "label": "Nom de groupe",
@@ -139,7 +154,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Notifications",

@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Код: ",
-      "message": "Сообщение: "
+      "message": "Сообщение: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Данные успешно сохранены!"
@@ -35,7 +37,16 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": "",
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "Выберите места",
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {
@@ -56,7 +67,10 @@
     "forgotPassword": "Забыли пароль?",
     "errors": {
       "invalidUsername": "Неизвестное имя пользователя. Проверьте еще раз или попробуйте свой адрес электронной почты.",
-      "incorrectPassword": "Неверный пароль для этого пользователя"
+      "incorrectPassword": "Неверный пароль для этого пользователя",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
@@ -83,13 +97,13 @@
     "incorrectPin": "Неверный PIN-код",
     "savedPinCode": "PIN-код успешно сохранен",
     "removedPinCode": "PIN-код успешно удален",
-    "close": "близко"
+    "close": "близко",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Добавить новый контакт",
     "subAssignThisContact": "Под-назначить этот контакт",
     "mobile": "Мобильный",
-    "selectLocations": "Выберите места",
     "selectSources": "Выберите источники",
     "connections": "Связи",
     "addGroup": "Добавить группу",
@@ -107,7 +121,9 @@
       "error": "Имя обязательно"
     },
     "noContactCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Попытайтесь еще раз (обновите экран, потянув его вниз).",
-    "noContactCommentPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить свой контактный комментарий."
+    "noContactCommentPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить свой контактный комментарий.",
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Добавить новую группу",
@@ -120,7 +136,6 @@
     "noGroupCommentPlacheHolder": "В настоящее время нет групповых комментариев.",
     "noGroupCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Попытайтесь еще раз (обновите экран, потянув его вниз).",
     "noGroupCommentPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить комментарий группы.",
-    "selectLocations": "Выберите места",
     "noMembersMessage": "Нет участников. Нажмите здесь или на Редактировать, чтобы добавить участников в эту группу.",
     "groupName": {
       "label": "Имя группы",
@@ -139,7 +154,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Уведомления",

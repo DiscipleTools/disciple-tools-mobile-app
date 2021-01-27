@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Código: ",
-      "message": "Mensagem: "
+      "message": "Mensagem: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Dados salvos com sucesso!"
@@ -35,7 +37,16 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": "",
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "Selecionar locais",
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {
@@ -56,7 +67,10 @@
     "forgotPassword": "Perdeu sua senha?",
     "errors": {
       "invalidUsername": "Nome de Usuário desconhecido. Verifique novamente ou tente seu endereço de e-mail",
-      "incorrectPassword": "A senha que você digitou para o usuário está incorreta"
+      "incorrectPassword": "A senha que você digitou para o usuário está incorreta",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
@@ -83,13 +97,13 @@
     "incorrectPin": "PIN incorreto",
     "savedPinCode": "Código PIN salvo com sucesso",
     "removedPinCode": "Código PIN removido com sucesso",
-    "close": "Perto"
+    "close": "Perto",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Adicionar novo contato",
     "subAssignThisContact": "Sub-assinar este contato",
     "mobile": "Móvel",
-    "selectLocations": "Selecionar locais",
     "selectSources": "Selecionar fontes",
     "connections": "Nome do líder que tem contato",
     "addGroup": "Adicionar Grupo",
@@ -107,7 +121,9 @@
       "error": "Nome é necessário"
     },
     "noContactCommentPlacheHolder1": "Pode haver um problema ao removê-los do seu local. Arraste-os para tentar atualizar e tente novamente.  ",
-    "noContactCommentPlacheHolderOffline": "Você está atualmente offline. Verifique se você está conectado a dados móveis ou Wi-Fi para atualizar e obter seu comentário de contato."
+    "noContactCommentPlacheHolderOffline": "Você está atualmente offline. Verifique se você está conectado a dados móveis ou Wi-Fi para atualizar e obter seu comentário de contato.",
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Adicionar novo grupo",
@@ -120,7 +136,6 @@
     "noGroupCommentPlacheHolder": "Não há comentários de grupos disponíveis atualmente.",
     "noGroupCommentPlacheHolder1": "Pode haver um problema ao removê-los do seu local. Arraste-os para tentar atualizar e tente novamente. ",
     "noGroupCommentPlacheHolderOffline": "Você está offline. Certifique-se de que está conectado à rede Wifi ou dados móveis para atualizar e obter seus comentários de grupos. ",
-    "selectLocations": "Selecionar locais",
     "noMembersMessage": "Não há membros. Clique aqui em Editar para adicionar membros a este grupo.",
     "groupName": {
       "label": "Nome do Grupo",
@@ -139,7 +154,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Notificações",

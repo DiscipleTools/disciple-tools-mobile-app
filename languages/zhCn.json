@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "码： ",
-      "message": "信息： "
+      "message": "信息： ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "数据保存成功！"
@@ -35,7 +37,16 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": "",
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "选择地点",
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {
@@ -56,7 +67,10 @@
     "forgotPassword": "忘记密码？",
     "errors": {
       "invalidUsername": "未知的用户名。再次检查或尝试您的电子邮件地址。",
-      "incorrectPassword": "您输入的用户名密码不正确"
+      "incorrectPassword": "您输入的用户名密码不正确",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
@@ -83,13 +97,13 @@
     "incorrectPin": "PIN码错误",
     "savedPinCode": "PIN码已成功保存",
     "removedPinCode": "PIN码已成功删除",
-    "close": "关"
+    "close": "关",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "新增联络人",
     "subAssignThisContact": "分配此联系人",
     "mobile": "移动",
-    "selectLocations": "选择地点",
     "selectSources": "选择来源",
     "connections": "连接数",
     "addGroup": "新增群组",
@@ -107,7 +121,9 @@
       "error": "名称为必填项"
     },
     "noContactCommentPlacheHolder1": "从您的网站获取它们可能存在问题。向下拖动以尝试刷新，然后重试。",
-    "noContactCommentPlacheHolderOffline": "您目前离线。确保您已连接到wifi或移动数据，以便刷新并获取联系评论。"
+    "noContactCommentPlacheHolderOffline": "您目前离线。确保您已连接到wifi或移动数据，以便刷新并获取联系评论。",
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "新增群组",
@@ -120,7 +136,6 @@
     "noGroupCommentPlacheHolder": "当前没有任何组注释。",
     "noGroupCommentPlacheHolder1": "从您的网站获取它们可能存在问题。向下拖动以尝试刷新，然后重试。",
     "noGroupCommentPlacheHolderOffline": "您目前离线。确保您已连接到wifi或移动数据，以便刷新并获取群组评论。",
-    "selectLocations": "选择地点",
     "noMembersMessage": "没有成员。 单击此处或单击“更改”以将一些成员添加到该组。",
     "groupName": {
       "label": "组的名字",
@@ -139,7 +154,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "通知事项",

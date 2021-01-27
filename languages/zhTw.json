@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "碼： ",
-      "message": "信息： "
+      "message": "信息： ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "數據保存成功！"
@@ -35,7 +37,16 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": "",
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "選擇地點",
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {
@@ -56,7 +67,10 @@
     "forgotPassword": "忘記密碼？",
     "errors": {
       "invalidUsername": "未知的用戶名。再次檢查或嘗試您的電子郵件地址。",
-      "incorrectPassword": "您輸入的用戶名密碼不正確"
+      "incorrectPassword": "您輸入的用戶名密碼不正確",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
@@ -83,13 +97,13 @@
     "incorrectPin": "PIN碼錯誤",
     "savedPinCode": "PIN碼已成功保存",
     "removedPinCode": "PIN碼已成功刪除",
-    "close": "關"
+    "close": "關",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "新增聯絡人",
     "subAssignThisContact": "分配此聯繫人",
     "mobile": "移動",
-    "selectLocations": "選擇地點",
     "selectSources": "選擇來源",
     "connections": "連接數",
     "addGroup": "新增群組",
@@ -107,7 +121,9 @@
       "error": "名稱為必填項"
     },
     "noContactCommentPlacheHolder1": "從您的網站獲取它們可能存在問題。向下拖動以嘗試刷新，然後重試。",
-    "noContactCommentPlacheHolderOffline": "您目前離線。確保您已連接到wifi或移動數據，以便刷新並獲取聯繫評論。"
+    "noContactCommentPlacheHolderOffline": "您目前離線。確保您已連接到wifi或移動數據，以便刷新並獲取聯繫評論。",
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "新增群組",
@@ -120,7 +136,6 @@
     "noGroupCommentPlacheHolder": "當前沒有任何組註釋。",
     "noGroupCommentPlacheHolder1": "從您的網站獲取它們可能存在問題。向下拖動以嘗試刷新，然後重試。",
     "noGroupCommentPlacheHolderOffline": "您目前離線。確保您已連接到wifi或移動數據，以便刷新並獲取群組評論。",
-    "selectLocations": "選擇地點",
     "noMembersMessage": "沒有成員。 單擊此處或單擊“更改”以將一些成員添加到該組。",
     "groupName": {
       "label": "組的名字",
@@ -139,7 +154,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "通知事項",

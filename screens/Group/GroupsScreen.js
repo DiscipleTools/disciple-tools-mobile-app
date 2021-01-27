@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import SearchBar from '../../components/SearchBar';
 
 import Colors from '../../constants/Colors';
-import { getAll, updatePrevious } from '../../store/actions/groups.actions';
+import { getAll, searchGroupsByText, updatePrevious } from '../../store/actions/groups.actions';
 import i18n from '../../languages';
 import sharedTools from '../../shared';
 
@@ -59,10 +59,13 @@ class GroupsScreen extends React.Component {
     dataSourceGroups: [],
     dataSourceGroupsFiltered: [],
     offset: 0,
-    limit: 100,
+    limit: sharedTools.paginationLimit,
     sort: '-last_modified',
     filtered: false,
+    filterOption: null,
+    filterText: null,
     fixFABIndex: false,
+    isConnected: false,
   };
 
   static navigationOptions = {
@@ -75,6 +78,70 @@ class GroupsScreen extends React.Component {
       fontWeight: 'bold',
     },
   };
+
+  componentDidMount() {
+    // Recieve custom filters (tag) as param
+    const { params } = this.props.navigation.state;
+    if (params) {
+      const { customFilter } = params;
+      this.selectOptionFilter(customFilter);
+    }
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { groups, isConnected } = nextProps;
+    let { filtered, filterOption, filterText } = prevState;
+
+    let newState = {
+      ...prevState,
+      isConnected,
+    };
+
+    if (groups) {
+      if (filtered) {
+        if (filterOption) {
+          // Filter data and set to 'dataSourceGroups'
+          newState = {
+            ...newState,
+            dataSourceGroups: sharedTools.groupsByFilter([...groups], filterOption),
+          };
+        } else if (filterText) {
+          newState = {
+            ...newState,
+            dataSourceGroups: groups.filter(function (item) {
+              const textData = filterText
+                .toUpperCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+              const itemDataTitle = item.title
+                .toUpperCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+              return itemDataTitle.includes(textData);
+            }),
+          };
+          if (newState.dataSourceGroups.length === 0 && !isConnected) {
+            toastError.show(
+              <View>
+                <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+                  {i18n.t('global.error.text')}
+                </Text>
+                <Text style={{ color: Colors.errorText }}>{i18n.t('global.error.noRecords')}</Text>
+              </View>,
+              6000,
+            );
+          }
+        }
+      } else {
+        newState = {
+          ...newState,
+          dataSourceGroups: groups,
+        };
+      }
+    }
+
+    return newState;
+  }
 
   componentDidUpdate(prevProps) {
     const { error } = this.props;
@@ -95,41 +162,21 @@ class GroupsScreen extends React.Component {
     }
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { groups } = nextProps;
-
-    let newState = {
-      ...prevState,
-    };
-
-    if (groups) {
-      if (prevState.filtered) {
-        newState = {
-          ...prevState,
-          dataSourceGroups: prevState.dataSourceGroupsFiltered,
-        };
-      } else {
-        newState = {
-          ...newState,
-          dataSourceGroups: groups,
-        };
-      }
-    }
-
-    return newState;
-  }
-
   renderFooter = () => {
     return (
       <View style={styles.loadMoreFooterText}>
-        {this.props.isConnected && !this.state.filtered && (
-          <TouchableOpacity
-            onPress={() => {
-              this.onRefresh(true);
-            }}>
-            <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
-          </TouchableOpacity>
-        )}
+        {this.props.isConnected &&
+          !this.state.filtered &&
+          this.state.offset + this.state.limit < this.props.totalGroups && (
+            <TouchableOpacity
+              onPress={() => {
+                this.onRefresh(true);
+              }}>
+              <Text style={styles.loadMoreFooterText}>
+                {i18n.t('notificationsScreen.loadMore')}
+              </Text>
+            </TouchableOpacity>
+          )}
       </View>
     );
   };
@@ -143,7 +190,7 @@ class GroupsScreen extends React.Component {
         <View style={{ flexDirection: 'column', flexGrow: 1 }}>
           <View style={{ flexDirection: 'row' }}>
             <Text style={{ textAlign: 'left', flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }}>
-              {group.title}
+              {Object.prototype.hasOwnProperty.call(group, 'name') ? group.name : group.title}
             </Text>
           </View>
           <View style={{ flexDirection: 'row' }}>
@@ -210,15 +257,9 @@ class GroupsScreen extends React.Component {
   onRefresh = (increasePagination = false, returnFromDetail = false) => {
     let newState = {
       offset: increasePagination ? this.state.offset + this.state.limit : 0,
-      filtered: false,
     };
-    if (returnFromDetail) {
-      // Execute filter again to update render of current filter!
-      searchBarRef.refreshFilter();
-    } else {
-      // Only clean filters on refresh
-      searchBarRef.resetFilters();
-    }
+    // Execute filter again to update render of current filter!
+    searchBarRef.refreshFilter();
     this.setState(
       (prevState) => {
         return returnFromDetail ? prevState : newState;
@@ -261,102 +302,42 @@ class GroupsScreen extends React.Component {
     }
   };
 
-  selectFilter = (selectedFilter) => {
-    let queryFilter = {
-      ...selectedFilter,
-    };
-    let groupList = [...this.props.groups];
-    //filter prop does not exist in any object of collection
-    Object.keys(selectedFilter).forEach((key) => {
-      if (
-        groupList.filter((group) => Object.prototype.hasOwnProperty.call(group, key)).length === 0
-      ) {
-        delete queryFilter[key];
-      }
-    });
-    let queryFilterTwo = {};
-    // Map json to got 'key: String/Boolean' format
-    Object.keys(queryFilter).forEach((key) => {
-      let value = queryFilter[key];
-      let valueType = Object.prototype.toString.call(value);
-      if (valueType === '[object Array]') {
-        //queryFilterTwo[key] = group => group[key] == value[0];
-        queryFilterTwo[key] = value[0];
-      }
-      if (queryFilterTwo[key] === 'me') {
-        if (key == 'assigned_to') {
-          queryFilterTwo[key] = this.props.userData.id;
-        } else {
-          queryFilterTwo[key] = this.props.userData.id.toString();
-        }
-      }
-    });
-    // Filter groups according to 'queryFilterTwo' filters
-    let itemsFiltered = groupList.filter((group) => {
-      let resp = [];
-      for (let key in queryFilterTwo) {
-        let result = false;
-        //Property exist in object
-        if (Object.prototype.hasOwnProperty.call(group, key)) {
-          // Value is to 'omit' groups (-closed)
-          if (queryFilterTwo[key].toString().startsWith('-')) {
-            if (group[key] !== queryFilterTwo[key].replace('-', '')) {
-              result = true;
-            }
-            // Same value as filter
-          } else if (queryFilterTwo[key] === group[key]) {
-            result = true;
-          } else if (key == 'assigned_to') {
-            if (queryFilterTwo[key] === group[key].key) {
-              result = true;
-            }
-          }
-        }
-        resp.push(result);
-      }
-      return resp.every((respValue) => respValue);
-    });
+  selectOptionFilter = (selectedFilter) => {
     this.setState({
-      dataSourceGroupsFiltered: itemsFiltered,
       filtered: true,
+      filterText: null,
+      filterOption: selectedFilter,
     });
   };
 
-  filterByText = (text) => {
-    const itemsFiltered = [];
-    if (text.length > 0) {
-      this.props.groups.filter(function (item) {
-        const textData = text
-          .toUpperCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
-        const itemDataTitle = item.title
-          .toUpperCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
-        const filterByTitle = itemDataTitle.includes(textData);
-        if (filterByTitle === true) {
-          itemsFiltered.push(item);
-        }
-        return itemsFiltered;
-      });
-      if (itemsFiltered.length > 0) {
-        this.setState({
-          dataSourceGroupsFiltered: itemsFiltered,
+  filterByText = sharedTools.debounce((queryText) => {
+    if (queryText.length > 0) {
+      this.setState(
+        {
           filtered: true,
-        });
-      } else {
-        this.setState({
-          filtered: true,
-        });
-      }
+          filterText: queryText,
+          filterOption: null,
+        },
+        () => {
+          // Only do request if phone is ONLINE
+          if (this.props.isConnected) {
+            this.props.searchGroupsByText(
+              this.props.userData.domain,
+              this.props.userData.token,
+              queryText,
+              this.state.sort,
+            );
+          }
+        },
+      );
     } else {
       this.setState({
         filtered: false,
-        dataSourceGroupsFiltered: [],
+        filterText: null,
+        filterOption: null,
       });
     }
-  };
+  }, 750);
 
   onLayout = (fabIndexFix) => {
     if (fabIndexFix !== this.state.fixFABIndex) {
@@ -382,7 +363,7 @@ class GroupsScreen extends React.Component {
               searchBarRef = ref;
             }}
             filterConfig={this.props.groupFilters}
-            onSelectFilter={this.selectFilter}
+            onSelectFilter={this.selectOptionFilter}
             onTextFilter={this.filterByText}
             onClearTextFilter={this.filterByText}
             onLayout={this.onLayout}></SearchBar>
@@ -412,7 +393,7 @@ class GroupsScreen extends React.Component {
               toastError = toast;
             }}
             style={{ backgroundColor: Colors.errorBackground }}
-            positionValue={210}
+            positionValue={290}
           />
         </View>
       </Container>
@@ -468,6 +449,7 @@ const mapStateToProps = (state) => ({
   groupSettings: state.groupsReducer.settings,
   isConnected: state.networkConnectivityReducer.isConnected,
   groupFilters: state.usersReducer.groupFilters,
+  totalGroups: state.groupsReducer.total,
 });
 const mapDispatchToProps = (dispatch) => ({
   getAllGroups: (domain, token, offset, limit, sort) => {
@@ -475,6 +457,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   updatePrevious: (previousGroups) => {
     dispatch(updatePrevious(previousGroups));
+  },
+  searchGroupsByText: (domain, token, text, sort) => {
+    dispatch(searchGroupsByText(domain, token, text, sort));
   },
 });
 

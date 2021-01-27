@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "کد: ",
-      "message": "پیام: "
+      "message": "پیام: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "داده با موفقیت ذخیره شد!"
@@ -35,7 +37,16 @@
     "showing": "",
     "comments": "",
     "activity": "",
-    "submit": ""
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": "",
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "مکان ها را انتخاب کنید",
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {
@@ -56,7 +67,10 @@
     "forgotPassword": "رمزعبور خود را گم کردید؟",
     "errors": {
       "invalidUsername": "نام کاربری ناشناخته دوباره بررسی کنید یا آدرس ایمیل خود را امتحان کنید.",
-      "incorrectPassword": "گذرواژه‌ای که برای نام کاربری خود وارد کردید اشتباه است"
+      "incorrectPassword": "گذرواژه‌ای که برای نام کاربری خود وارد کردید اشتباه است",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
@@ -83,13 +97,13 @@
     "incorrectPin": "پین نادرست",
     "savedPinCode": "کد پین با موفقیت ذخیره شد",
     "removedPinCode": "کد پین با موفقیت حذف شد",
-    "close": "نزدیک"
+    "close": "نزدیک",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "مخاطب جدید اضافه کنید",
     "subAssignThisContact": "این مخاطب را اختصاص دهید",
     "mobile": "سیار",
-    "selectLocations": "مکان ها را انتخاب کنید",
     "selectSources": "منابع را انتخاب کنید",
     "connections": "اتصالات",
     "addGroup": "افزودن گروه",
@@ -107,7 +121,9 @@
       "error": "نام لازم است"
     },
     "noContactCommentPlacheHolder1": "ممکن است مشکلی در گرفتن آنها از سایت شما وجود داشته باشد. پایین بکشید تا سعی کنید تازه کنید و دوباره امتحان کنید.",
-    "noContactCommentPlacheHolderOffline": "شما در حال حاضر آفلاین هستید. اطمینان حاصل کنید که برای تازه کردن و گرفتن نظر مخاطب خود به داده های wifi یا تلفن همراه وصل شده اید."
+    "noContactCommentPlacheHolderOffline": "شما در حال حاضر آفلاین هستید. اطمینان حاصل کنید که برای تازه کردن و گرفتن نظر مخاطب خود به داده های wifi یا تلفن همراه وصل شده اید.",
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "گروه جدید را اضافه کنید",
@@ -120,7 +136,6 @@
     "noGroupCommentPlacheHolder": "هیچ نظر گروهی در حال حاضر موجود نیست",
     "noGroupCommentPlacheHolder1": "ممکن است مشکلی در گرفتن آنها از سایت شما وجود داشته باشد. پایین بکشید تا سعی کنید تازه کنید و دوباره امتحان کنید.",
     "noGroupCommentPlacheHolderOffline": "شما در حال حاضر آفلاین هستید. اطمینان حاصل کنید که به منظور تازه کردن و اظهار نظر گروه خود ، به داده های wifi یا تلفن همراه وصل شده اید.",
-    "selectLocations": "مکان ها را انتخاب کنید",
     "noMembersMessage": "هیچ عضو برای افزودن برخی از اعضا به این گروه ، اینجا یا بر روی ویرایش ضربه بزنید.",
     "groupName": {
       "label": "اسم گروه",
@@ -139,7 +154,8 @@
       "didNotAttendComment": "",
       "groupCommentLabel": "",
       "groupComment": ""
-    }
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "اطلاعیه",

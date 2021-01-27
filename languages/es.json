@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Código: ",
-      "message": "Mensaje: "
+      "message": "Mensaje: ",
+      "text": "Error: ",
+      "noRecords": "No se puede ubicar su registro en el almacenamiento del dispositivo local. O bien: 1) Cree un nuevo registro y combínelo una vez en línea, o 2) Conéctese y vuelva a intentar la búsqueda."
     },
     "success": {
       "save": "Datos guardados correctamente!"
@@ -35,7 +37,16 @@
     "showing": "Mostrando",
     "comments": "Comentarios",
     "activity": "Actividad",
-    "submit": "Enviar"
+    "submit": "Enviar",
+    "share": "Compartir",
+    "shareSettings": "Compartir Configuraciones",
+    "searchUsers": "Buscar usuarios",
+    "noFilters": "No hay filtros",
+    "searchContacts": "Buscar contactos",
+    "selectLocations": "Seleccionar ubicaciones",
+    "other": "Otro",
+    "chooseOption": "Elije una opción",
+    "confirm": "Confirmar"
   },
   "loginScreen": {
     "domain": {
@@ -56,7 +67,10 @@
     "forgotPassword": "Perdiste tu contraseña?",
     "errors": {
       "invalidUsername": "Nombre de usuario desconocido. Vuelve a consultar o prueba tu dirección de correo electrónico.",
-      "incorrectPassword": "La contraseña que ingresó para el usuario es incorrecta"
+      "incorrectPassword": "La contraseña que ingresó para el usuario es incorrecta",
+      "configurationNeededOn": "Se necesita configuración en",
+      "mobileAppPluginRequiredOne": "El Plugin de Disciple Tools Mobile es requerido y no parece estar activado en tu Disciple.Tools.",
+      "mobileAppPluginRequiredTwo": "Toque aquí para obtener más información."
     }
   },
   "contactsScreen": {
@@ -83,13 +97,13 @@
     "incorrectPin": "PIN incorrecto",
     "savedPinCode": "El código PIN se ha guardado correctamente!.",
     "removedPinCode": "El código PIN se ha removido correctamente!.",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "confirmPin": "Confirme el nuevo PIN"
   },
   "contactDetailScreen": {
     "addNewContact": "Crear contacto",
     "subAssignThisContact": "Subasignar este contacto",
     "mobile": "Telefonos",
-    "selectLocations": "Seleccionar ubicaciones",
     "selectSources": "Seleccionar fuentes",
     "connections": "Conexiones",
     "addGroup": "Buscar Grupos",
@@ -107,7 +121,9 @@
       "error": "El nombre es requerido"
     },
     "noContactCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
-    "noContactCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener su comentario de contacto."
+    "noContactCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener su comentario de contacto.",
+    "contactSharedWith": "Este contacto se comparte con",
+    "ageNotSet": "Edad no asignado"
   },
   "groupDetailScreen": {
     "addNewGroup": "Crear grupo",
@@ -120,7 +136,6 @@
     "noGroupCommentPlacheHolder": "No hay comentarios del grupo disponibles actualmente.",
     "noGroupCommentPlacheHolder1": "Es posible que haya habido un problema para obtenerlos de su sitio. Arrastre hacia abajo para intentar actualizar e intente nuevamente.",
     "noGroupCommentPlacheHolderOffline": "Actualmente estás desconectado. Asegúrese de estar conectado a wifi o datos móviles para actualizar y obtener los comentarios del grupo.",
-    "selectLocations": "Seleccionar ubicaciones",
     "noMembersMessage": "No hay miembros Toque aquí o en Editar para agregar algunos miembros a este grupo",
     "groupName": {
       "label": "Nombre del Grupo",
@@ -139,7 +154,8 @@
       "didNotAttendComment": "No asistió al grupo",
       "groupCommentLabel": "Comentario de la reunión",
       "groupComment": "Reunión Completa"
-    }
+    },
+    "groupSharedWith": "Este grupo se comparte con"
   },
   "notificationsScreen": {
     "notifications": "Notificaciones",
