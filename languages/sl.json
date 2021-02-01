@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Koda: ",
-      "message": "Sporočilo: "
+      "message": "Sporočilo: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Podatki so bili uspešno shranjeni!"
@@ -28,7 +30,23 @@
     "nameRequired": "Ime je potrebno",
     "close": "Zapri",
     "editComment": "Uredi",
-    "deleteComment": "Izbriši"
+    "deleteComment": "Izbriši",
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": "",
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": "",
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "Izberite Lokacije",
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {
@@ -49,7 +67,10 @@
     "forgotPassword": "Pozabili geslo?",
     "errors": {
       "invalidUsername": "Neznano uporabniško ime. Ponovno preverite ali poskusite svoj e-poštni naslov.",
-      "incorrectPassword": "Geslo, ki ste ga vnesli za uporabniško ime, ni pravilno"
+      "incorrectPassword": "Geslo, ki ste ga vnesli za uporabniško ime, ni pravilno",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
@@ -76,13 +97,13 @@
     "incorrectPin": "Napačna koda PIN",
     "savedPinCode": "Koda PIN je bila uspešno shranjena",
     "removedPinCode": "Koda PIN je bila uspešno odstranjena",
-    "close": "Zapri"
+    "close": "Zapri",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Dodaj nov stik",
     "subAssignThisContact": "Pododelite ta stik",
     "mobile": "Mobilni",
-    "selectLocations": "Izberite Lokacije",
     "selectSources": "Izberite vire",
     "connections": "Povezave",
     "addGroup": "Dodaj skupino",
@@ -100,7 +121,9 @@
       "error": "Ime je obvezno"
     },
     "noContactCommentPlacheHolder1": "Morda je prišlo do težave pri pridobivanju le-teh z vašega spletnega mesta. Povlecite navzdol, da se poskusite osvežiti in poskusite znova.",
-    "noContactCommentPlacheHolderOffline": "Trenutno ste brez povezave. Zagotovite, da ste povezani z wifi ali mobilnimi podatki, da osvežite in dobite komentar."
+    "noContactCommentPlacheHolderOffline": "Trenutno ste brez povezave. Zagotovite, da ste povezani z wifi ali mobilnimi podatki, da osvežite in dobite komentar.",
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Dodaj novo skupino",
@@ -113,17 +136,26 @@
     "noGroupCommentPlacheHolder": "Trenutno ni na voljo nobenih komentarjev skupin.",
     "noGroupCommentPlacheHolder1": "Morda je prišlo do težave pri pridobivanju le-teh z vašega spletnega mesta. Povlecite navzdol, da se poskusite osvežiti in poskusite znova.",
     "noGroupCommentPlacheHolderOffline": "Trenutno ste brez povezave. Zagotovite, da ste povezani z wifi ali mobilnimi podatki, da osvežite in dobite komentar svoje skupine.",
-    "selectLocations": "Izberite Lokacije",
     "noMembersMessage": "Ni članov",
     "groupName": {
       "label": "Ime skupine",
       "error": "Ime je obvezno"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Načrtovan sestanek",
       "quick_button_meeting_postponed": "Seja prestavljena",
       "quick_button_meeting_complete": "Sestanek končan"
-    }
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Obvestila",

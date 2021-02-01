@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "কোড: ",
-      "message": "বার্তা: "
+      "message": "বার্তা: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "ডেটা সাফল্যের সাথে সংরক্ষিত হয়েছে!"
@@ -28,7 +30,23 @@
     "nameRequired": "নাম (প্রয়োজন",
     "close": "ঘনিষ্ঠ",
     "editComment": "সম্পাদনা করুন",
-    "deleteComment": "মুছে ফেলা"
+    "deleteComment": "মুছে ফেলা",
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": "",
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": "",
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "অবস্থান নির্বাচন করুন",
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {
@@ -49,7 +67,10 @@
     "forgotPassword": "আপনার পাসওয়ার্ড হারিয়েছেন?",
     "errors": {
       "invalidUsername": "অজানা ব্যবহারকারীর নাম। আবার চেক করুন বা আপনার ইমেল ঠিকানা চেষ্টা করুন।",
-      "incorrectPassword": "আপনি ব্যবহারকারীর জন্য প্রবেশ করা পাসওয়ার্ডটি ভুল"
+      "incorrectPassword": "আপনি ব্যবহারকারীর জন্য প্রবেশ করা পাসওয়ার্ডটি ভুল",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
@@ -76,13 +97,13 @@
     "incorrectPin": "ভুল পিন",
     "savedPinCode": "পিন কোড সাফল্যের সাথে সংরক্ষিত হয়েছে",
     "removedPinCode": "পিন কোড সফলভাবে সরানো হয়েছে",
-    "close": "বন্ধ"
+    "close": "বন্ধ",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "নতুন পরিচিতি যোগ করুন",
     "subAssignThisContact": "এই যোগাযোগটি সাব-এসাইন করুন",
     "mobile": "মোবাইল",
-    "selectLocations": "অবস্থান নির্বাচন করুন",
     "selectSources": "উত্স নির্বাচন করুন",
     "connections": "সংযোগ",
     "addGroup": "গ্রুপ যুক্ত করুন",
@@ -100,7 +121,9 @@
       "error": "নাম প্রয়োজন"
     },
     "noContactCommentPlacheHolder1": "আপনার সাইট থেকে এগুলি পেতে কোনও সমস্যা হতে পারে। রিফ্রেশ করার চেষ্টা করতে নীচে টানুন এবং আবার চেষ্টা করুন।",
-    "noContactCommentPlacheHolderOffline": "আপনি বর্তমানে অফলাইন আপনার যোগাযোগের মন্তব্যটি রিফ্রেশ করার জন্য এবং আপনি ওয়াইফাই বা মোবাইল ডেটার সাথে সংযুক্ত আছেন তা নিশ্চিত করুন।"
+    "noContactCommentPlacheHolderOffline": "আপনি বর্তমানে অফলাইন আপনার যোগাযোগের মন্তব্যটি রিফ্রেশ করার জন্য এবং আপনি ওয়াইফাই বা মোবাইল ডেটার সাথে সংযুক্ত আছেন তা নিশ্চিত করুন।",
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "নতুন গ্রুপ যুক্ত করুন",
@@ -113,17 +136,26 @@
     "noGroupCommentPlacheHolder": "বর্তমানে কোনও গ্রুপ মন্তব্য উপলব্ধ নেই।",
     "noGroupCommentPlacheHolder1": "আপনার সাইট থেকে এগুলি পেতে কোনও সমস্যা হতে পারে। রিফ্রেশ করার চেষ্টা করতে নীচে টানুন এবং আবার চেষ্টা করুন।",
     "noGroupCommentPlacheHolderOffline": "আপনি বর্তমানে অফলাইন আপনার গ্রুপ মন্তব্যটি রিফ্রেশ করার জন্য আপনি ওয়াইফাই বা মোবাইল ডেটাতে সংযুক্ত আছেন তা নিশ্চিত করুন।",
-    "selectLocations": "অবস্থান নির্বাচন করুন",
     "noMembersMessage": "noMembersMessage",
     "groupName": {
       "label": "দলের নাম",
       "error": "নাম প্রয়োজন"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "সভা নির্ধারিত",
       "quick_button_meeting_postponed": "সভা স্থগিত",
       "quick_button_meeting_complete": "সভা সম্পূর্ণ"
-    }
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "বিজ্ঞপ্তিগুলি",

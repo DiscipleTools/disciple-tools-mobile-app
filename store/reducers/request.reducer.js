@@ -1,6 +1,8 @@
 import * as actions from '../actions/request.actions';
 import * as userActions from '../actions/user.actions';
 
+import _ from 'lodash';
+
 const initialState = {
   queue: [],
   currentAction: {},
@@ -21,10 +23,10 @@ export default function requestReducer(state = initialState, action) {
     ...state,
     currentAction: {},
   };
-  let queue = newState.queue.slice(0); // clone array before modifying it
+  let queue = [...newState.queue]; // clone array before modifying it
   const actionToModify = action.payload;
   switch (action.type) {
-    case actions.REQUEST:
+    case actions.REQUEST: {
       // Queue all requests
       if (actionToModify.data.method === 'POST' && actionToModify.action.includes('SAVE')) {
         // Map only POST requests
@@ -367,13 +369,21 @@ export default function requestReducer(state = initialState, action) {
         }
         actionToModify.data.body = JSON.stringify(jsonBody);
       } else if (actionToModify.data.method === 'GET') {
-        // filter out redundant GET requests
-        queue = queue.filter((existing) => existing.url !== actionToModify.url);
+        // filter out redundant GET requests (omit request with same URL and METHOD)
+        queue = _.reject(queue, function (request) {
+          return (
+            request.url === actionToModify.url && request.data.method === actionToModify.data.method
+          );
+        });
       } else if (actionToModify.data.method === 'DELETE') {
-        if (!actionToModify.isConnected) {
-          // OFFLINE DELETE (i.e: comments)
-          let id = actionToModify.url.split('/');
-          id = id[id.length - 1];
+        let urlSplit = actionToModify.url.split('/');
+        // OFFLINE DELETE (comments)
+        if (
+          urlSplit[urlSplit.length - 2] === 'comments' &&
+          Object.prototype.hasOwnProperty.call(actionToModify, 'isConnected') &&
+          !actionToModify.isConnected
+        ) {
+          let id = urlSplit[urlSplit.length - 1];
           let urlWithoutId = actionToModify.url.replace(id, '');
           // Delete previous CREATE/EDIT request to the comment
           queue = queue.filter((existing) => existing.url !== urlWithoutId);
@@ -384,7 +394,6 @@ export default function requestReducer(state = initialState, action) {
           } else {
             queue = [...queue, actionToModify];
           }
-
           return {
             ...newState,
             queue: queue,
@@ -398,7 +407,8 @@ export default function requestReducer(state = initialState, action) {
         currentAction: actionToModify,
       };
       return newState;
-    case actions.RESPONSE:
+    }
+    case actions.RESPONSE: {
       // loop through every item in local storage and filter out the successful request
       /* eslint-disable */
       let newQueue;
@@ -424,6 +434,8 @@ export default function requestReducer(state = initialState, action) {
         ...newState,
         queue: [...newQueue],
       };
+      return newState;
+    }
     case userActions.USER_LOGOUT:
       return {
         queue: [],

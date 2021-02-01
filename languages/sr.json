@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Шифра: ",
-      "message": "Порука: "
+      "message": "Порука: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Подаци су успешно сачувани!"
@@ -28,7 +30,23 @@
     "nameRequired": "Име (обавезно",
     "close": "Близу",
     "editComment": "Уредити",
-    "deleteComment": "Избриши"
+    "deleteComment": "Избриши",
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": "",
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": "",
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "Изаберите Лоцатионс",
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {
@@ -49,7 +67,10 @@
     "forgotPassword": "Заборавили сте лозинку?",
     "errors": {
       "invalidUsername": "Непознато корисничко име. Проверите поново или испробајте своју адресу е-поште.",
-      "incorrectPassword": "Лозинка коју сте унели за корисничко име је нетачна"
+      "incorrectPassword": "Лозинка коју сте унели за корисничко име је нетачна",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
@@ -76,13 +97,13 @@
     "incorrectPin": "Нетачан ПИН",
     "savedPinCode": "ПИН код је успешно сачуван",
     "removedPinCode": "ПИН код је успешно уклоњен",
-    "close": "Близу"
+    "close": "Близу",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Додај нови контакт",
     "subAssignThisContact": "Пододелите овај контакт",
     "mobile": "Телефон",
-    "selectLocations": "Изаберите Лоцатионс",
     "selectSources": "Изаберите изворе",
     "connections": "Везе",
     "addGroup": "Додај групу",
@@ -100,7 +121,9 @@
       "error": "Име је обавезно"
     },
     "noContactCommentPlacheHolder1": "Можда је дошло до проблема при преузимању са ваше веб локације. Превуците надоле да бисте покушали да освежите и покушајте поново.",
-    "noContactCommentPlacheHolderOffline": "Тренутно сте ван мреже. Уверите се да сте повезани на ВиФи или мобилне податке како бисте освежили и добили коментар на контакт."
+    "noContactCommentPlacheHolderOffline": "Тренутно сте ван мреже. Уверите се да сте повезани на ВиФи или мобилне податке како бисте освежили и добили коментар на контакт.",
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Додај нову групу",
@@ -113,17 +136,26 @@
     "noGroupCommentPlacheHolder": "Тренутно нема доступних коментара групе.",
     "noGroupCommentPlacheHolder1": "Можда је дошло до проблема при преузимању са ваше веб локације. Превуците надоле да бисте покушали да освежите и покушајте поново.",
     "noGroupCommentPlacheHolderOffline": "Тренутно сте ван мреже. Уверите се да сте повезани на ВиФи или мобилне податке како бисте освежили и добили коментар групе.",
-    "selectLocations": "Изаберите Лоцатионс",
     "noMembersMessage": "Нема чланова. Додирните овде или на Уреди да бисте додали неке чланове у ову групу.",
     "groupName": {
       "label": "Назив групе",
       "error": "Име је обавезно"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Састанак заказан",
       "quick_button_meeting_postponed": "Састанак одложен",
       "quick_button_meeting_complete": "Састанак завршен"
-    }
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Обавештења",

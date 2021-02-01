@@ -26,12 +26,20 @@ export function* getAll({ domain, token, offset, limit, sort }) {
     response = response.payload;
     const jsonData = response.data;
     if (response.status === 200) {
-      yield put({
-        type: actions.GROUPS_GETALL_SUCCESS,
-        groups: jsonData.posts,
-        offset,
-        offline: !isConnected,
-      });
+      if (isConnected) {
+        yield put({
+          type: actions.GROUPS_GETALL_SUCCESS,
+          groups: jsonData.posts,
+          offset,
+          total: parseInt(jsonData.total),
+        });
+      } else {
+        yield put({
+          type: actions.GROUPS_GETALL_SUCCESS,
+          groups: jsonData.posts,
+          offline: true,
+        });
+      }
     } else {
       yield put({
         type: actions.GROUPS_GETALL_FAILURE,
@@ -657,6 +665,233 @@ export function* deleteComment({ domain, token, groupId, commentId }) {
   }
 }
 
+export function* getShareSettings({ domain, token, groupId }) {
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+
+  yield put({ type: actions.GROUPS_GET_SHARE_SETTINGS_START });
+
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/shares`,
+      data: {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      action: actions.GROUPS_GET_SHARE_SETTINGS_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.GROUPS_GET_SHARE_SETTINGS_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      yield put({
+        type: actions.GROUPS_GET_SHARE_SETTINGS_SUCCESS,
+        shareSettings: jsonData,
+        groupId,
+        isConnected,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_GET_SHARE_SETTINGS_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.GROUPS_GET_SHARE_SETTINGS_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
+export function* addUserToShare({ domain, token, groupId, userId }) {
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+
+  yield put({ type: actions.GROUPS_ADD_USER_SHARE_START });
+
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/shares`,
+      data: {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          user_id: userId,
+        }),
+      },
+      isConnected,
+      action: actions.GROUPS_ADD_USER_SHARE_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.GROUPS_ADD_USER_SHARE_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      let usersList = yield ExpoFileSystemStorage.getItem('usersList');
+      (usersList = JSON.parse(usersList).map((user) => ({
+        value: parseInt(user.ID),
+        name: user.name,
+      }))),
+        (userData = usersList.find((user) => user.value === parseInt(userId)));
+
+      yield put({
+        type: actions.GROUPS_ADD_USER_SHARE_SUCCESS,
+        userData,
+        groupId,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_ADD_USER_SHARE_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.GROUPS_ADD_USER_SHARE_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
+export function* removeSharedUser({ domain, token, groupId, userId }) {
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+
+  yield put({ type: actions.GROUPS_REMOVE_SHARED_USER_START });
+
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/groups/${groupId}/shares`,
+      data: {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          user_id: userId,
+        }),
+      },
+      isConnected,
+      action: actions.GROUPS_REMOVE_SHARED_USER_RESPONSE,
+    },
+  });
+
+  try {
+    let response = yield take(actions.GROUPS_REMOVE_SHARED_USER_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+
+    if (response.status === 200) {
+      let usersList = yield ExpoFileSystemStorage.getItem('usersList');
+      (usersList = JSON.parse(usersList).map((user) => ({
+        value: parseInt(user.ID),
+        name: user.name,
+      }))),
+        (userData = usersList.find((user) => user.value === parseInt(userId)));
+
+      yield put({
+        type: actions.GROUPS_REMOVE_SHARED_USER_SUCCESS,
+        userData,
+        groupId,
+      });
+    } else {
+      yield put({
+        type: actions.GROUPS_REMOVE_SHARED_USER_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.GROUPS_REMOVE_SHARED_USER_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
+export function* searchGroupsByText({ domain, token, text, sort }) {
+  yield put({ type: actions.GROUPS_SEARCH_TEXT_START });
+  yield put({
+    type: 'REQUEST',
+    payload: {
+      url: `https://${domain}/wp-json/dt-posts/v2/groups?text=${text}&sort=${sort}`,
+      data: {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      action: actions.GROUPS_SEARCH_TEXT_RESPONSE,
+    },
+  });
+  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
+  try {
+    let response = yield take(actions.GROUPS_SEARCH_TEXT_RESPONSE);
+    response = response.payload;
+    const jsonData = response.data;
+    if (response.status === 200) {
+      if (jsonData.posts) {
+        yield put({
+          type: actions.GROUPS_SEARCH_TEXT_SUCCESS,
+          groups: jsonData.posts,
+        });
+      } else {
+        yield put({
+          type: actions.GROUPS_SEARCH_TEXT_SUCCESS,
+          groups: [],
+        });
+      }
+    } else if (isConnected) {
+      yield put({
+        type: actions.GROUPS_SEARCH_TEXT_FAILURE,
+        error: {
+          code: jsonData.code,
+          message: jsonData.message,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: actions.GROUPS_SEARCH_TEXT_FAILURE,
+      error: {
+        code: '400',
+        message: 'Unable to process the request. Please try again later.',
+      },
+    });
+  }
+}
+
 export default function* groupsSaga() {
   yield all([
     takeEvery(actions.GROUPS_SAVE, saveGroup),
@@ -671,5 +906,9 @@ export default function* groupsSaga() {
     takeEvery(actions.GROUPS_LOCATIONS_SEARCH, searchLocations),
     takeEvery(actions.GROUPS_LOCATIONS_MODIFIED_DATE, getLocationListLastModifiedDate),
     takeEvery(actions.GROUPS_DELETE_COMMENT, deleteComment),
+    takeEvery(actions.GROUPS_GET_SHARE_SETTINGS, getShareSettings),
+    takeEvery(actions.GROUPS_ADD_USER_SHARE, addUserToShare),
+    takeEvery(actions.GROUPS_REMOVE_SHARED_USER, removeSharedUser),
+    takeLatest(actions.GROUPS_SEARCH_TEXT, searchGroupsByText),
   ]);
 }

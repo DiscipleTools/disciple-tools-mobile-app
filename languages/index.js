@@ -48,7 +48,7 @@ i18n.translations = {
 // To change RTL, use I18nManager.forceRTL(bool) and then refresh the app
 // to see the direction changed.
 
-i18n.setLocale = function setLocale(locale, isRTL) {
+i18n.setLocale = async function setLocale(locale, isRTL) {
   this.locale = locale;
   // Enable/Disable RTL
   I18nManager.allowRTL(isRTL);

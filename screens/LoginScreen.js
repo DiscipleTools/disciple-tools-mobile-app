@@ -25,12 +25,13 @@ import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import { BlurView } from 'expo-blur';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Localization from 'expo-localization';
+import { Row } from 'react-native-easy-grid';
 
 import i18n from '../languages';
 import locales from '../languages/locales';
 import Colors from '../constants/Colors';
 import { login, getUserInfo } from '../store/actions/user.actions';
-import { setLanguage } from '../store/actions/i18n.actions';
+import { setLanguage, cancelSetLanguage } from '../store/actions/i18n.actions';
 import TextField from '../components/TextField';
 import {
   getLocations,
@@ -39,11 +40,17 @@ import {
   getAll as getAllGroups,
   getLocationListLastModifiedDate,
 } from '../store/actions/groups.actions';
-import { getUsers, getContactFilters } from '../store/actions/users.actions';
-import { getContactSettings, getAll as getAllContacts } from '../store/actions/contacts.actions';
+import { getUsers, getContactFilters, getGroupFilters } from '../store/actions/users.actions';
+import {
+  getContactSettings,
+  getAll as getAllContacts,
+  getTags,
+} from '../store/actions/contacts.actions';
 import { logout } from '../store/actions/user.actions';
 import { getActiveQuestionnaires } from '../store/actions/questionnaire.actions';
-
+import { getNotificationsCount } from '../store/actions/notifications.actions';
+import sharedTools from '../shared';
+//
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'flex-end',
@@ -191,14 +198,8 @@ class LoginScreen extends React.Component {
   state = {
     loading: false,
     modalVisible: false,
-    contactSettingsRetrieved: false,
-    groupSettingsRetrieved: false,
-    geonamesRetrieved: false,
-    peopleGroupsRetrieved: false,
-    usersRetrieved: false,
-    appLanguageSet: false,
     offset: 0,
-    limit: 5000,
+    limit: sharedTools.paginationLimit,
     sort: '-last_modified',
     toggleShowPIN: false,
     pin: '',
@@ -207,10 +208,20 @@ class LoginScreen extends React.Component {
     userData: {
       token: null,
     },
-    userDataRetrieved: false,
     geonamesLength: 0,
     toggleRestartDialog: false,
+    contactSettingsRetrieved: false,
+    groupSettingsRetrieved: false,
+    peopleGroupsRetrieved: false,
+    usersRetrieved: false,
+    appLanguageSet: false,
+    userDataRetrieved: false,
+    geonamesRetrieved: false,
     contactFiltersRetrieved: false,
+    groupFiltersRetrieved: false,
+    notificationsCountRetrieved: false,
+    mobileAppRequired: false,
+    tagsRetrieved: false,
   };
 
   constructor(props) {
@@ -265,6 +276,9 @@ class LoginScreen extends React.Component {
       geonamesLastModifiedDate,
       geonamesLength,
       contactFilters,
+      groupFilters,
+      notificationsCount,
+      tags,
     } = nextProps;
     let newState = {
       ...prevState,
@@ -326,6 +340,24 @@ class LoginScreen extends React.Component {
           contactFiltersRetrieved: true,
         };
       }
+      if (groupFilters) {
+        newState = {
+          ...newState,
+          groupFiltersRetrieved: true,
+        };
+      }
+      if (notificationsCount !== null) {
+        newState = {
+          ...newState,
+          notificationsCountRetrieved: true,
+        };
+      }
+      if (tags) {
+        newState = {
+          ...newState,
+          tagsRetrieved: true,
+        };
+      }
     }
 
     const error =
@@ -334,6 +366,24 @@ class LoginScreen extends React.Component {
       newState = {
         ...newState,
         loading: false,
+      };
+
+      let mobileAppRequired = false;
+
+      switch (error.code) {
+        case 'rest_no_route': {
+          mobileAppRequired = true;
+          break;
+        }
+        default: {
+          mobileAppRequired = false;
+          break;
+        }
+      }
+
+      newState = {
+        ...newState,
+        mobileAppRequired,
       };
     }
 
@@ -351,6 +401,10 @@ class LoginScreen extends React.Component {
         appLanguageSet: false,
         userDataRetrieved: false,
         geonamesRetrieved: false,
+        contactFiltersRetrieved: false,
+        groupFiltersRetrieved: false,
+        notificationsCountRetrieved: false,
+        tagsRetrieved: false,
       });
     });
     this.initLoginScreen();
@@ -394,12 +448,15 @@ class LoginScreen extends React.Component {
               this.setState({
                 contactSettingsRetrieved: true,
                 groupSettingsRetrieved: true,
-                geonamesRetrieved: true,
                 peopleGroupsRetrieved: true,
                 usersRetrieved: true,
                 appLanguageSet: true,
                 userDataRetrieved: true,
+                geonamesRetrieved: true,
                 contactFiltersRetrieved: true,
+                groupFiltersRetrieved: true,
+                notificationsCountRetrieved: true,
+                tagsRetrieved: true,
               });
             },
           );
@@ -431,6 +488,11 @@ class LoginScreen extends React.Component {
       peopleGroupsRetrieved,
       usersRetrieved,
       contactFiltersRetrieved,
+      groupFiltersRetrieved,
+      notificationsCountRetrieved,
+      userDataRetrieved,
+      domain,
+      tagsRetrieved,
     } = this.state;
 
     // User logged successfully
@@ -470,11 +532,15 @@ class LoginScreen extends React.Component {
     if (
       contactSettingsRetrieved &&
       groupSettingsRetrieved &&
-      appLanguageSet &&
-      geonamesRetrieved &&
       peopleGroupsRetrieved &&
       usersRetrieved &&
-      contactFiltersRetrieved
+      appLanguageSet &&
+      userDataRetrieved &&
+      geonamesRetrieved &&
+      contactFiltersRetrieved &&
+      groupFiltersRetrieved &&
+      notificationsCountRetrieved &&
+      tagsRetrieved
     ) {
       let listsLastUpdate = new Date().toString();
       listsLastUpdate = new Date(listsLastUpdate).toISOString();
@@ -491,53 +557,41 @@ class LoginScreen extends React.Component {
 
     if (userError || groupsError || usersError || contactsError) {
       const error = userError || groupsError || usersError;
-      if (error.code === '[jwt_auth] incorrect_password') {
-        toastError.show(
-          <View>
-            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-              {i18n.t('global.error.code')}
-            </Text>
-            <Text style={{ color: Colors.errorText }}>{error.code}</Text>
-            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-              {i18n.t('global.error.message')}
-            </Text>
-            <Text style={{ color: Colors.errorText }}>
-              {i18n.t('loginScreen.errors.incorrectPassword')}
-            </Text>
-          </View>,
-          3000,
-        );
-      } else if (error.code === '[jwt_auth] invalid_username') {
-        toastError.show(
-          <View>
-            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-              {i18n.t('global.error.code')}
-            </Text>
-            <Text style={{ color: Colors.errorText }}>{error.code}</Text>
-            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-              {i18n.t('global.error.message')}
-            </Text>
-            <Text style={{ color: Colors.errorText }}>
-              {i18n.t('loginScreen.errors.invalidUsername')}
-            </Text>
-          </View>,
-          3000,
-        );
-      } else {
-        toastError.show(
-          <View>
-            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-              {i18n.t('global.error.code')}
-            </Text>
-            <Text style={{ color: Colors.errorText }}>{error.code}</Text>
-            <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-              {i18n.t('global.error.message')}
-            </Text>
-            <Text style={{ color: Colors.errorText }}>{error.message}</Text>
-          </View>,
-          3000,
-        );
+
+      let errorMessage;
+
+      switch (error.code) {
+        case '[jwt_auth] incorrect_password': {
+          errorMessage = i18n.t('loginScreen.errors.incorrectPassword');
+          break;
+        }
+        case '[jwt_auth] invalid_username': {
+          errorMessage = i18n.t('loginScreen.errors.invalidUsername');
+          break;
+        }
+        case 'rest_no_route': {
+          errorMessage = i18n.t('loginScreen.errors.configurationNeededOn') + ` ${domain}`;
+          break;
+        }
+        default: {
+          errorMessage = error.message;
+          break;
+        }
       }
+
+      toastError.show(
+        <View>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.code')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{error.code}</Text>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.message')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{errorMessage}</Text>
+        </View>,
+        3000,
+      );
     }
   }
 
@@ -567,6 +621,9 @@ class LoginScreen extends React.Component {
     this.props.getUsers(this.props.userData.domain, this.props.userData.token);
     this.props.getContactFilters(this.props.userData.domain, this.props.userData.token);
     this.props.getActiveQuestionnaires(this.props.userData.domain, this.props.userData.token);
+    this.props.getGroupFilters(this.props.userData.domain, this.props.userData.token);
+    this.props.getNotificationsCount(this.props.userData.domain, this.props.userData.token);
+    this.props.getTags(this.props.userData.domain, this.props.userData.token);
   };
 
   getUserInfo = () => {
@@ -583,17 +640,24 @@ class LoginScreen extends React.Component {
 
   onLoginPress = () => {
     Keyboard.dismiss();
-    const { domain, username, password } = this.state;
-    if (domain && username && password) {
-      const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
-      this.props.loginDispatch(cleanedDomain, username, password);
-    } else {
-      this.setState({
-        domainValidation: !domain,
-        userValidation: !username,
-        passwordValidation: !password,
-      });
-    }
+    this.setState(
+      {
+        mobileAppRequired: false,
+      },
+      () => {
+        const { domain, username, password } = this.state;
+        if (domain && username && password) {
+          const cleanedDomain = (domain || '').replace('http://', '').replace('https://', '');
+          this.props.loginDispatch(cleanedDomain, username, password);
+        } else {
+          this.setState({
+            domainValidation: !domain,
+            userValidation: !username,
+            passwordValidation: !password,
+          });
+        }
+      },
+    );
   };
 
   static navigationOptions = {
@@ -663,6 +727,18 @@ class LoginScreen extends React.Component {
     }, 1000);
   };
 
+  cancelSetLanguage = () => {
+    i18n.setLocale(this.props.i18n.previousLocale, this.props.i18n.previousIsRTL);
+    this.props.cancelSetLanguage();
+    this.setState({
+      toggleRestartDialog: false,
+    });
+  };
+
+  openDocsLink = () => {
+    Linking.openURL(`https://disciple-tools.readthedocs.io/en/latest/app`);
+  };
+
   // TODO: How to disable iCloud save password feature?
   render() {
     const errorToast = (
@@ -702,16 +778,34 @@ class LoginScreen extends React.Component {
         enableOnAndroid
         keyboardOpeningTime={0}
         extraScrollHeight={0}
-        keyboardShouldPersistTaps="handled">
-        <ScrollView contentContainerStyle={styles.container}>
+        keyboardShouldPersistTaps={'always'}>
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps={'always'}>
           <View style={styles.header}>
             <Image source={require('../assets/images/dt-icon.png')} style={styles.welcomeImage} />
           </View>
           <View style={styles.formContainer}>
+            {this.state.mobileAppRequired ? (
+              <TouchableOpacity activeOpacity={0.8} style={{}} onPress={this.openDocsLink}>
+                <View
+                  style={{
+                    borderColor: '#c2e0ff',
+                    borderWidth: 1,
+                    backgroundColor: '#ecf5fc',
+                    borderRadius: 2,
+                    padding: 10,
+                  }}>
+                  <Text>{i18n.t('loginScreen.errors.mobileAppPluginRequiredOne')}</Text>
+                  <Text style={{ fontWeight: 'bold' }}>
+                    {i18n.t('loginScreen.errors.mobileAppPluginRequiredTwo')}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ) : null}
             <TextField
+              accessibilityLabel={i18n.t('loginScreen.domain.label')}
+              label={i18n.t('loginScreen.domain.label')}
               containerStyle={domainStyle}
               iconName="ios-globe"
-              label={i18n.t('loginScreen.domain.label')}
               onChangeText={(text) => this.cleanDomainWiteSpace(text)}
               textAlign={this.props.i18n.isRTL ? 'right' : 'left'}
               autoCapitalize="none"
@@ -725,9 +819,10 @@ class LoginScreen extends React.Component {
             />
             {domainErrorMessage}
             <TextField
+              accessibilityLabel={i18n.t('loginScreen.username.label')}
+              label={i18n.t('loginScreen.username.label')}
               containerStyle={userStyle}
               iconName={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
-              label={i18n.t('loginScreen.username.label')}
               onChangeText={(text) => this.setState({ username: text })}
               textAlign={this.props.i18n.isRTL ? 'right' : 'left'}
               autoCapitalize="none"
@@ -751,6 +846,7 @@ class LoginScreen extends React.Component {
                     style={{ marginBottom: 'auto', marginTop: 'auto' }}
                   />
                   <TextInput
+                    accessibilityLabel={i18n.t('loginScreen.password.label')}
                     underlineColorAndroid="transparent"
                     secureTextEntry={this.state.hidePassword}
                     style={styles.textBox}
@@ -785,10 +881,14 @@ class LoginScreen extends React.Component {
             </View>
             {passwordErrorMessage}
             {this.state.loading ? (
-              <ActivityIndicator style={{ margin: 20 }} size="small" />
+              <ActivityIndicator color={Colors.tintColor} style={{ margin: 20 }} size="small" />
             ) : (
               <View>
-                <Button style={styles.signInButton} onPress={this.onLoginPress} block>
+                <Button
+                  accessibilityLabel={i18n.t('loginScreen.logIn')}
+                  style={styles.signInButton}
+                  onPress={this.onLoginPress}
+                  block>
                   <Text style={styles.signInButtonText}>{i18n.t('loginScreen.logIn')}</Text>
                 </Button>
                 <TouchableOpacity
@@ -852,7 +952,8 @@ class LoginScreen extends React.Component {
               <SmoothPinCodeInput
                 password
                 mask="﹡"
-                cellSize={60}
+                cellSize={42}
+                codeLength={6}
                 ref={this.pinInput}
                 value={this.state.pin}
                 onTextChange={(pin) => {
@@ -907,9 +1008,31 @@ class LoginScreen extends React.Component {
                   ': ' +
                   (this.props.i18n.isRTL ? 'RTL' : 'LTR')}
               </Text>
-              <Button block style={styles.dialogButton} onPress={this.restartApp}>
-                <Text style={{ color: '#FFFFFF' }}>{i18n.t('appRestart.button')}</Text>
-              </Button>
+              <Row style={{ height: 60 }}>
+                <Button
+                  block
+                  style={[
+                    styles.dialogButton,
+                    {
+                      backgroundColor: '#ffffff',
+                      width: 120,
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                    },
+                  ]}
+                  onPress={this.cancelSetLanguage}>
+                  <Text style={{ color: Colors.tintColor }}>{i18n.t('global.cancel')}</Text>
+                </Button>
+                <Button
+                  block
+                  style={[
+                    styles.dialogButton,
+                    { width: 120, marginLeft: 'auto', marginRight: 'auto' },
+                  ]}
+                  onPress={this.restartApp}>
+                  <Text style={{ color: '#FFFFFF' }}>{i18n.t('appRestart.button')}</Text>
+                </Button>
+              </Row>
             </View>
           </BlurView>
         ) : null}
@@ -984,6 +1107,7 @@ LoginScreen.propTypes = {
   getGroups: PropTypes.func.isRequired,
   getUserInfo: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
+  getNotificationsCount: PropTypes.func.isRequired,
 };
 LoginScreen.defaultProps = {
   userData: {
@@ -1025,6 +1149,9 @@ const mapStateToProps = (state) => ({
   geonamesLastModifiedDate: state.groupsReducer.geonamesLastModifiedDate,
   geonamesLength: state.groupsReducer.geonamesLength,
   contactFilters: state.usersReducer.contactFilters,
+  groupFilters: state.usersReducer.groupFilters,
+  notificationsCount: state.notificationsReducer.notificationsCount,
+  tags: state.contactsReducer.tags,
 });
 const mapDispatchToProps = (dispatch) => ({
   loginDispatch: (domain, username, password) => {
@@ -1068,6 +1195,18 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getActiveQuestionnaires: (domain, token) => {
     dispatch(getActiveQuestionnaires(domain, token));
+  },
+  getGroupFilters: (domain, token) => {
+    dispatch(getGroupFilters(domain, token));
+  },
+  getNotificationsCount: (domain, token) => {
+    dispatch(getNotificationsCount(domain, token));
+  },
+  cancelSetLanguage: () => {
+    dispatch(cancelSetLanguage());
+  },
+  getTags: (domain, token) => {
+    dispatch(getTags(domain, token));
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

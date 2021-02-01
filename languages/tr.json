@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Kod: ",
-      "message": "Mesaj: "
+      "message": "Mesaj: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Başarıyla kayıt edildi!"
@@ -28,7 +30,23 @@
     "nameRequired": "İsim (gerekli",
     "close": "Kapat",
     "editComment": "Düzenle",
-    "deleteComment": "Sil"
+    "deleteComment": "Sil",
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": "",
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": "",
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "Konumları seç",
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {
@@ -49,7 +67,10 @@
     "forgotPassword": "Parolamı unuttum?",
     "errors": {
       "invalidUsername": "Bilinmeyen kullanıcı adı. Tekrar kontrol edin veya e-posta adresinizi deneyin.",
-      "incorrectPassword": "Kullanıcı adı için girdiğiniz şifre yanlış"
+      "incorrectPassword": "Kullanıcı adı için girdiğiniz şifre yanlış",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
@@ -76,13 +97,13 @@
     "incorrectPin": "Yanlış PIN",
     "savedPinCode": "PIN kodu başarıyla kaydedildi",
     "removedPinCode": "PIN kodu başarıyla kaldırıldı",
-    "close": "Kapat"
+    "close": "Kapat",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Yeni bağlantı ekle",
     "subAssignThisContact": "Bu bağlantıya alt görev ata",
     "mobile": "Mobil",
-    "selectLocations": "Konumları seç",
     "selectSources": "Kaynak seç",
     "connections": "Bağlantılar",
     "addGroup": "Grup Ekle",
@@ -100,7 +121,9 @@
       "error": "İsim gerekli"
     },
     "noContactCommentPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
-    "noContactCommentPlacheHolderOffline": "Şu anda çevrimdışısınız. İrtibat yorumunuzu yenilemek ve almak için wifi veya mobil verilere bağlı olduğunuzdan emin olun."
+    "noContactCommentPlacheHolderOffline": "Şu anda çevrimdışısınız. İrtibat yorumunuzu yenilemek ve almak için wifi veya mobil verilere bağlı olduğunuzdan emin olun.",
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Grup Ekle",
@@ -113,17 +136,26 @@
     "noGroupCommentPlacheHolder": "Şu anda hiçbir grup yorumu mevcut değil.",
     "noGroupCommentPlacheHolder1": "Bunları sitenizden alırken bir sorun olabilir. Yenilemeyi denemek için aşağı sürükleyin ve tekrar deneyin.",
     "noGroupCommentPlacheHolderOffline": "Şu anda çevrimdışısınız. Grup yorumunuzu yenilemek ve almak için kablosuz bağlantıya veya mobil verilere bağlı olduğunuzdan emin olun.",
-    "selectLocations": "Konumları Seçin",
     "noMembersMessage": "Üye yok. Bu gruba bazı üyeler eklemek için burayı veya Değiştir'i tıklayın.",
     "groupName": {
       "label": "Grup ismi",
       "error": "İsim gerekli"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Toplantı Planlandı",
       "quick_button_meeting_postponed": "Toplantı Ertelendi",
       "quick_button_meeting_complete": "Toplantı Tamamlandı"
-    }
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "Bildirim",

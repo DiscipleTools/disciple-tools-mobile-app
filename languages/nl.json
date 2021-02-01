@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Code: ",
-      "message": "Bericht: "
+      "message": "Bericht: ",
+      "text": "",
+      "noRecords": ""
     },
     "success": {
       "save": "Gegevens succesvol opgeslagen!"
@@ -28,7 +30,23 @@
     "nameRequired": "Naam (vereist",
     "close": "Dichtbij",
     "editComment": "Bewerk",
-    "deleteComment": "Verwijderen"
+    "deleteComment": "Verwijderen",
+    "sortByLastModified": "",
+    "reset": "",
+    "apply": "",
+    "showing": "",
+    "comments": "",
+    "activity": "",
+    "submit": "",
+    "share": "",
+    "shareSettings": "",
+    "searchUsers": "",
+    "noFilters": "",
+    "searchContacts": "",
+    "selectLocations": "Selecteer locaties",
+    "other": "",
+    "chooseOption": "",
+    "confirm": ""
   },
   "loginScreen": {
     "domain": {
@@ -49,7 +67,10 @@
     "forgotPassword": "Wachtwoord vergeten?",
     "errors": {
       "invalidUsername": "Onbekende gebruikersnaam. Controleer het opnieuw of probeer uw e-mailadres.",
-      "incorrectPassword": "Het wachtwoord dat u hebt ingevoerd voor de gebruikersnaam is onjuist"
+      "incorrectPassword": "Het wachtwoord dat u hebt ingevoerd voor de gebruikersnaam is onjuist",
+      "configurationNeededOn": "",
+      "mobileAppPluginRequiredOne": "",
+      "mobileAppPluginRequiredTwo": ""
     }
   },
   "contactsScreen": {
@@ -76,13 +97,13 @@
     "incorrectPin": "Onjuiste pincode",
     "savedPinCode": "PIN-code succesvol opgeslagen",
     "removedPinCode": "PIN-code succesvol verwijderd",
-    "close": "Dichtbij"
+    "close": "Dichtbij",
+    "confirmPin": ""
   },
   "contactDetailScreen": {
     "addNewContact": "Voeg nieuw contact toe",
     "subAssignThisContact": "Wijs deze contactpersoon toe",
     "mobile": "mobiel",
-    "selectLocations": "Selecteer locaties",
     "selectSources": "Selecteer bronnen",
     "connections": "aansluitingen",
     "addGroup": "Groep toevoegen",
@@ -100,7 +121,9 @@
       "error": "Naam is vereist"
     },
     "noContactCommentPlacheHolder1": "Mogelijk is er een probleem opgetreden bij het ophalen van uw site. Sleep naar beneden om te proberen te vernieuwen en probeer het opnieuw.",
-    "noContactCommentPlacheHolderOffline": "Je bent momenteel offline. Zorg ervoor dat je verbonden bent met wifi of mobiele data om te vernieuwen en je contactcommentaar te krijgen."
+    "noContactCommentPlacheHolderOffline": "Je bent momenteel offline. Zorg ervoor dat je verbonden bent met wifi of mobiele data om te vernieuwen en je contactcommentaar te krijgen.",
+    "contactSharedWith": "",
+    "ageNotSet": ""
   },
   "groupDetailScreen": {
     "addNewGroup": "Nieuwe groep toevoegen",
@@ -113,17 +136,26 @@
     "noGroupCommentPlacheHolder": "Er zijn momenteel geen groepsreacties beschikbaar.",
     "noGroupCommentPlacheHolder1": "Er is mogelijk een probleem opgetreden bij het ophalen van uw site. Sleep omlaag om te proberen te vernieuwen en probeer het opnieuw.",
     "noGroupCommentPlacheHolderOffline": "U bent momenteel offline. Zorg ervoor dat je bent verbonden met wifi of mobiele gegevens om te vernieuwen en je groepsreactie te ontvangen.",
-    "selectLocations": "Selecteer locaties",
     "noMembersMessage": "Geen leden",
     "groupName": {
       "label": "Groepsnaam",
       "error": "Naam is vereist"
     },
+    "memberCount": "",
+    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Vergadering gepland",
       "quick_button_meeting_postponed": "Vergadering uitgesteld",
       "quick_button_meeting_complete": "Vergadering voltooid"
-    }
+    },
+    "attendance": {
+      "header": "",
+      "didAttendComment": "",
+      "didNotAttendComment": "",
+      "groupCommentLabel": "",
+      "groupComment": ""
+    },
+    "groupSharedWith": ""
   },
   "notificationsScreen": {
     "notifications": "meldingen",

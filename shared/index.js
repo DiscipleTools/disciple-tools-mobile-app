@@ -1,3 +1,6 @@
+import _ from 'lodash';
+import moment from '../languages/moment';
+
 const diff = (obj1, obj2) => {
   // Make sure an object to compare is provided
   if (!obj2 || Object.prototype.toString.call(obj2) !== '[object Object]') {
@@ -160,6 +163,19 @@ const formatDateToBackEnd = (dateString) => {
   return newDate;
 };
 
+const formatDateToView = (date) => {
+  return moment(new Date(date)).utc().format('LL');
+};
+
+const formatDateToDatePicker = (timestamp = null) => {
+  let date = timestamp ? new Date(timestamp) : new Date();
+  // Keep date value to current timezone
+  date = new Date(
+    date.getTime() + date.getTimezoneOffset() * 60 * 1000 * Math.sign(date.getTimezoneOffset()),
+  );
+  return date;
+};
+
 const getSelectorColor = (status) => {
   let newColor;
   if (status === 'new' || status === 'unassigned' || status === 'closed' || status === 'inactive') {
@@ -207,6 +223,573 @@ const renderMention = (matchingString, matches) => {
   return `@${mentionText}`;
 };
 
+// Sort Comments and Acitivities by date, and group it by type (comment, activity) and user
+const groupCommentsActivities = (list) => {
+  // Sort list by: new to old
+  list = _.orderBy(list, 'date', 'desc');
+  let groupedList = [];
+  list.forEach((item, index, array) => {
+    if (index > 0) {
+      let previousCommentActivity = { ...array[index - 1] };
+      let previousGroupedCommentActivity = groupedList[groupedList.length - 1];
+      let lastGroupedCommentActivity =
+        previousGroupedCommentActivity.data[previousGroupedCommentActivity.data.length - 1];
+      let differenceBetweenDates = new Date(lastGroupedCommentActivity.date) - new Date(item.date),
+        hourOnMilliseconds = 3600000;
+      let authorName = item.author ? item.author : item.name,
+        previousAuthorName = previousCommentActivity.author
+          ? previousCommentActivity.author
+          : previousCommentActivity.name;
+      // current comment/activity same previous comment/activity, same type and current comment/activity date less than 1 day of difference
+      if (previousAuthorName === authorName && differenceBetweenDates < hourOnMilliseconds) {
+        groupedList[groupedList.length - 1] = {
+          ...previousGroupedCommentActivity,
+          data: [...previousGroupedCommentActivity.data, { ...item }],
+        };
+      } else {
+        groupedList.push({
+          data: [
+            {
+              ...item,
+            },
+          ],
+        });
+      }
+    } else {
+      groupedList.push({
+        data: [
+          {
+            ...item,
+          },
+        ],
+      });
+    }
+  });
+  return groupedList;
+};
+
+const filterExistInEntity = (filterValueType, filterValue, value) => {
+  let result = false;
+  switch (filterValueType) {
+    case '[object Boolean]': {
+      if (filterValue === value) {
+        result = true;
+      }
+      break;
+    }
+    case '[object Number]': {
+      if (filterValue === value) {
+        result = true;
+      }
+      break;
+    }
+    case '[object String]': {
+      // is date filter
+      if (
+        Object.prototype.hasOwnProperty.call(filterValue, 'start') &&
+        Object.prototype.hasOwnProperty.call(filterValue, 'end')
+      ) {
+        let startDate = new Date(filterValue.start).getTime(),
+          endDate = new Date(filterValue.end).getTime(),
+          valueDate = new Date(parseInt(value) * 1000).getTime();
+        if (valueDate >= startDate && valueDate <= endDate) {
+          result = true;
+        }
+      } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+        // locations - milestones
+        value['values'].forEach((object) => {
+          if (filterValue === object['value']) {
+            result = true;
+          }
+        });
+      } else if (filterValue === value) {
+        result = true;
+      }
+      break;
+    }
+    case '[object Object]': {
+      if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+        value['values'].forEach((object) => {
+          if (filterValue === object['name']) {
+            result = true;
+            //Detect custom values (tags)
+          } else if (filterValue === object['value']) {
+            result = true;
+          }
+        });
+      } else if (
+        Object.prototype.hasOwnProperty.call(value, 'key') &&
+        Object.prototype.hasOwnProperty.call(value, 'label')
+      ) {
+        if (filterValue === value['label']) {
+          result = true;
+        }
+      }
+      break;
+    }
+  }
+
+  return result;
+};
+
+const contactsByFilter = (contactsList, query) => {
+  // Temporal fix => set 'created_on' prop to 'post_date'
+  Object.keys(query).map(function (key) {
+    if (key == 'created_on') {
+      query['post_date'] = query[key];
+      delete query[key];
+    }
+  });
+  return contactsList.filter((contact) => {
+    let resp = [];
+    for (let key in query) {
+      let result = false;
+      //Property exist in object
+      if (Object.prototype.hasOwnProperty.call(contact, key)) {
+        let value = contact[key];
+        let filterValues = query[key];
+        let filterValuesType = Object.prototype.toString.call(filterValues);
+        if (filterValuesType == '[object Array]') {
+          // Use filter with multiple props
+          for (let index = 0; index <= filterValues.length - 1; index++) {
+            let filterValue = filterValues[index];
+            // Boolean props (requires_update)
+            if (filterValue === '0') {
+              filterValue = false;
+            } else if (filterValue === '1') {
+              filterValue = true;
+            }
+            let filterValueType = Object.prototype.toString.call(filterValue);
+            result = filterExistInEntity(filterValueType, filterValue, value);
+            // Return contacts with status different of '-closed'
+            if (filterValue.toString().startsWith('-')) {
+              if (value !== filterValue.replace('-', '')) {
+                result = true;
+              }
+              // Detect 'assigned_to' or 'subassigned' value
+            } else if (key == 'assigned_to') {
+              // Search in 'assigned_to'
+              filterValues.forEach((assignedContact) => {
+                if (assignedContact === value.label || parseInt(assignedContact) === value.key) {
+                  result = true;
+                }
+              });
+              // If record does not match 'assigned_to' value, search by 'subassigned'
+              if (
+                !result &&
+                Object.prototype.hasOwnProperty.call(query, 'subassigned') &&
+                Object.prototype.hasOwnProperty.call(contact, 'subassigned')
+              ) {
+                // Search in 'subassigned'
+                query['subassigned'].forEach((filterValue) => {
+                  contact['subassigned'].values.forEach((subassignedContact) => {
+                    if (filterValue === subassignedContact.value) {
+                      result = true;
+                    }
+                  });
+                });
+              }
+            } else if (key == 'subassigned') {
+              // Search in 'subassigned'
+              filterValues.forEach((filterValue) => {
+                value.values.forEach((subassignedContact) => {
+                  if (filterValue === subassignedContact.value) {
+                    result = true;
+                  }
+                });
+              });
+              // If record does not match 'subassigned' value, search by 'assigned_to'
+              if (
+                !result &&
+                Object.prototype.hasOwnProperty.call(query, 'assigned_to') &&
+                Object.prototype.hasOwnProperty.call(contact, 'assigned_to')
+              ) {
+                // Search in 'assigned_to'
+                query['assigned_to'].forEach((assignedContact) => {
+                  if (
+                    assignedContact === contact['assigned_to'].label ||
+                    parseInt(assignedContact) === contact['assigned_to'].key
+                  ) {
+                    result = true;
+                  }
+                });
+              }
+            }
+            // Exit for to stop doing unnecessary loops
+            if (result) {
+              break;
+            }
+          }
+        } else if (filterValuesType == '[object Object]') {
+          // Date range filter
+          if (
+            Object.prototype.hasOwnProperty.call(filterValues, 'start') &&
+            Object.prototype.hasOwnProperty.call(filterValues, 'end')
+          ) {
+            let startDate = new Date(filterValues.start).getTime(),
+              endDate = new Date(filterValues.end).getTime(),
+              valueDate = new Date(parseInt(value) * 1000).getTime();
+            if (valueDate >= startDate && valueDate <= endDate) {
+              result = true;
+            }
+          }
+        }
+      }
+      resp.push(result);
+    }
+    return resp.every((respValue) => respValue);
+  });
+};
+
+const groupsByFilter = (groupsList, query) => {
+  // Temporal fix => set 'created_on' prop to 'post_date'
+  Object.keys(query).map(function (key) {
+    if (key == 'created_on') {
+      query['post_date'] = query[key];
+      delete query[key];
+    }
+  });
+  return groupsList.filter((group) => {
+    let resp = [];
+    for (let key in query) {
+      let result = false;
+      //Property exist in object
+      if (Object.prototype.hasOwnProperty.call(group, key)) {
+        const value = group[key];
+        const filterValues = query[key];
+        const filterValuesType = Object.prototype.toString.call(filterValues);
+        if (filterValuesType == '[object Array]') {
+          for (let index = 0; index <= filterValues.length - 1; index++) {
+            let filterValue = filterValues[index];
+            // Boolean props (requires_update)
+            if (filterValue === '0') {
+              filterValue = false;
+            } else if (filterValue === '1') {
+              filterValue = true;
+            }
+            let filterValueType = Object.prototype.toString.call(filterValue);
+            result = filterExistInEntity(filterValueType, filterValue, value);
+            // Return groups with status different of '-closed'
+            if (filterValue.toString().startsWith('-')) {
+              if (value !== filterValue.replace('-', '')) {
+                result = true;
+              }
+              // Detect 'assigned_to' or 'subassigned' value
+            } else if (key == 'assigned_to') {
+              // Search in 'assigned_to'
+              filterValues.forEach((assignedContact) => {
+                if (assignedContact === value.label || parseInt(assignedContact) === value.key) {
+                  result = true;
+                }
+              });
+            }
+            // Exit for to stop doing unnecessary loops
+            if (result) {
+              break;
+            }
+          }
+        } else if (filterValuesType == '[object Object]') {
+          // Date range filter
+          if (
+            Object.prototype.hasOwnProperty.call(filterValues, 'start') &&
+            Object.prototype.hasOwnProperty.call(filterValues, 'end')
+          ) {
+            let startDate = new Date(filterValues.start).getTime(),
+              endDate = new Date(filterValues.end).getTime(),
+              valueDate = new Date(parseInt(value) * 1000).getTime();
+            if (valueDate >= startDate && valueDate <= endDate) {
+              result = true;
+            }
+          }
+        }
+      }
+      resp.push(result);
+    }
+    return resp.every((respValue) => respValue);
+  });
+};
+
+const getSelectizeValuesToSave = (dbData, selectedValues) => {
+  const dbItems = [...dbData];
+  const localItems = [];
+  // Map selectize value to get selected options
+  Object.keys(selectedValues.entities.item).forEach((itemValue) => {
+    const item = selectedValues.entities.item[itemValue];
+    localItems.push(item);
+  });
+  // Remove of D.B items that were removed of the field
+  dbItems.forEach((dbItem) => {
+    const foundDatabaseInLocal = localItems.find((localItem) => dbItem.value === localItem.value);
+    if (!foundDatabaseInLocal) {
+      localItems.push({
+        ...dbItem,
+        delete: true,
+      });
+    }
+  });
+  return localItems;
+};
+
+const mapContacts = (contacts, entities) => {
+  return contacts.map((contact) => {
+    const mappedContact = {};
+    Object.keys(contact).forEach((key) => {
+      const value = contact[key];
+      const valueType = Object.prototype.toString.call(value);
+      switch (valueType) {
+        case '[object Boolean]': {
+          mappedContact[key] = value;
+          return;
+        }
+        case '[object Number]': {
+          if (key === 'ID') {
+            mappedContact[key] = value.toString();
+          } else {
+            mappedContact[key] = value;
+          }
+          return;
+        }
+        case '[object String]': {
+          let dateRegex = /^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/;
+          if (value.includes('quick_button')) {
+            mappedContact[key] = parseInt(value, 10);
+          } else if (key === 'post_title') {
+            // Decode HTML strings
+            mappedContact.title = entities.decode(value);
+          } else if (dateRegex.test(value)) {
+            // Date (post_date)
+            var match = value.match(/^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/);
+            var date = new Date(match[1], match[2] - 1, match[3], match[4], match[5], match[6]);
+            mappedContact[key] = (date.getTime() / 1000).toString();
+          } else {
+            mappedContact[key] = entities.decode(value);
+          }
+          return;
+        }
+        case '[object Object]': {
+          if (
+            Object.prototype.hasOwnProperty.call(value, 'key') &&
+            Object.prototype.hasOwnProperty.call(value, 'label')
+          ) {
+            // key_select
+            mappedContact[key] = value.key;
+          } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
+            // date
+            mappedContact[key] = value.timestamp;
+          } else if (key === 'assigned_to') {
+            // assigned-to property
+            mappedContact[key] = {
+              key: parseInt(value['assigned-to'].replace('user-', '')),
+              label: value['display'],
+            };
+          }
+          return;
+        }
+        case '[object Array]': {
+          const mappedValue = value.map((valueTwo) => {
+            const valueTwoType = Object.prototype.toString.call(valueTwo);
+            switch (valueTwoType) {
+              case '[object Object]': {
+                if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
+                  // connection
+                  return {
+                    value: valueTwo.ID.toString(),
+                    name: entities.decode(valueTwo.post_title),
+                  };
+                }
+                if (
+                  Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
+                  Object.prototype.hasOwnProperty.call(valueTwo, 'value')
+                ) {
+                  return {
+                    key: valueTwo.key,
+                    value: valueTwo.value,
+                  };
+                }
+                if (
+                  Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
+                  Object.prototype.hasOwnProperty.call(valueTwo, 'label')
+                ) {
+                  return {
+                    value: valueTwo.id.toString(),
+                    name: valueTwo.label,
+                  };
+                }
+                break;
+              }
+              case '[object String]': {
+                return {
+                  value: valueTwo,
+                };
+              }
+              default:
+            }
+            return valueTwo;
+          });
+          if (key.includes('contact_')) {
+            mappedContact[key] = mappedValue;
+          } else {
+            mappedContact[key] = {
+              values: mappedValue,
+            };
+          }
+          break;
+        }
+        default:
+      }
+    });
+    return mappedContact;
+  });
+};
+
+const mapContact = (contact, entities) => {
+  return mapContacts([contact], entities)[0];
+};
+
+const isNumeric = (string) => {
+  if (typeof string != 'string') return false; // we only process strings!
+  return (
+    !isNaN(string) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+    !isNaN(parseFloat(string))
+  ); // ...and ensure strings of whitespace fail
+};
+
+const mapGroups = (groups, entities) => {
+  return groups.map((group) => {
+    const mappedGroup = {};
+    Object.keys(group).forEach((key) => {
+      const value = group[key];
+      const valueType = Object.prototype.toString.call(value);
+      switch (valueType) {
+        case '[object Boolean]': {
+          mappedGroup[key] = value;
+          return;
+        }
+        case '[object Number]': {
+          if (key === 'ID') {
+            mappedGroup[key] = value.toString();
+          } else {
+            mappedGroup[key] = value;
+          }
+          return;
+        }
+        case '[object String]': {
+          let dateRegex = /^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/;
+          if (value.includes('quick_button')) {
+            mappedGroup[key] = parseInt(value, 10);
+          } else if (key === 'post_title') {
+            // Decode HTML strings
+            mappedGroup.title = entities.decode(value);
+          } else if (dateRegex.test(value)) {
+            // Date (post_date)
+            var match = value.match(/^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/);
+            var date = new Date(match[1], match[2] - 1, match[3], match[4], match[5], match[6]);
+            mappedGroup[key] = (date.getTime() / 1000).toString();
+          } else {
+            mappedGroup[key] = entities.decode(value);
+          }
+          return;
+        }
+        case '[object Object]': {
+          if (
+            Object.prototype.hasOwnProperty.call(value, 'key') &&
+            Object.prototype.hasOwnProperty.call(value, 'label')
+          ) {
+            // key_select
+            mappedGroup[key] = value.key;
+          } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
+            // date
+            mappedGroup[key] = value.timestamp;
+          } else if (key === 'assigned_to') {
+            // assigned-to property
+            mappedGroup[key] = {
+              key: parseInt(value['assigned-to'].replace('user-', '')),
+              label: value['display'],
+            };
+          }
+          return;
+        }
+        case '[object Array]': {
+          const mappedValue = value.map((valueTwo) => {
+            const valueTwoType = Object.prototype.toString.call(valueTwo);
+            switch (valueTwoType) {
+              case '[object Object]': {
+                if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
+                  // connection
+                  let object = {
+                    value: valueTwo.ID.toString(),
+                    name: entities.decode(valueTwo.post_title),
+                  };
+                  // groups
+                  if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {
+                    object = {
+                      ...object,
+                      baptized_member_count: valueTwo.baptized_member_count,
+                    };
+                  }
+                  if (Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
+                    object = {
+                      ...object,
+                      member_count: valueTwo.member_count,
+                    };
+                  }
+                  if (Object.prototype.hasOwnProperty.call(valueTwo, 'is_church')) {
+                    object = {
+                      ...object,
+                      is_church: valueTwo.is_church,
+                    };
+                  }
+                  return object;
+                }
+                if (
+                  Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
+                  Object.prototype.hasOwnProperty.call(valueTwo, 'value')
+                ) {
+                  return {
+                    key: valueTwo.key,
+                    value: valueTwo.value,
+                  };
+                }
+                if (
+                  Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
+                  Object.prototype.hasOwnProperty.call(valueTwo, 'label')
+                ) {
+                  return {
+                    value: valueTwo.id.toString(),
+                    name: valueTwo.label,
+                  };
+                }
+                break;
+              }
+              case '[object String]': {
+                return {
+                  value: valueTwo,
+                };
+              }
+              default:
+            }
+            return valueTwo;
+          });
+          if (key.includes('contact_')) {
+            mappedGroup[key] = mappedValue;
+          } else {
+            mappedGroup[key] = {
+              values: mappedValue,
+            };
+          }
+          break;
+        }
+        default:
+      }
+    });
+    return mappedGroup;
+  });
+};
+
+const mapGroup = (group, entities) => {
+  return mapGroups([group], entities)[0];
+};
+
 export default {
   diff,
   formatDateToBackEnd,
@@ -217,4 +800,17 @@ export default {
   onlyExecuteLastCall,
   mentionPattern,
   renderMention,
+  groupCommentsActivities,
+  filterExistInEntity,
+  contactsByFilter,
+  groupsByFilter,
+  paginationLimit: 100,
+  getSelectizeValuesToSave,
+  mapContacts,
+  mapContact,
+  isNumeric,
+  mapGroups,
+  mapGroup,
+  formatDateToView,
+  formatDateToDatePicker,
 };

@@ -1,6 +1,8 @@
 import * as actions from '../actions/groups.actions';
 import * as userActions from '../actions/user.actions';
 import { Html5Entities } from 'html-entities';
+import { REHYDRATE } from 'redux-persist/lib/constants';
+import sharedTools from '../../shared';
 
 const initialState = {
   loading: false,
@@ -21,20 +23,30 @@ const initialState = {
   geonamesLastModifiedDate: null,
   geonamesLength: 0,
   previousGroups: [],
+  loadingShare: false,
+  shareSettings: {},
+  savedShare: false,
+  total: 0,
 };
 
 export default function groupsReducer(state = initialState, action) {
   let newState = {
     ...state,
-    group: null,
     newComment: false,
     error: null,
     saved: false,
     peopleGroups: null,
     foundGeonames: null,
+    savedShare: false,
   };
   const entities = new Html5Entities();
   switch (action.type) {
+    case REHYDRATE: {
+      return {
+        ...newState,
+        loading: false,
+      };
+    }
     case actions.GROUPS_GET_LOCATIONS_START:
       return {
         ...newState,
@@ -82,158 +94,40 @@ export default function groupsReducer(state = initialState, action) {
         loading: true,
       };
     case actions.GROUPS_GETALL_SUCCESS: {
-      let { groups } = action;
-      const { offline, offset } = action;
-      const localGroups = newState.groups.filter((localGroup) => isNaN(localGroup.ID));
-      if (!offline) {
-        const dataBaseGroups = [...groups].map((group) => {
-          const mappedGroup = {};
-          Object.keys(group).forEach((key) => {
-            // Omit restricted properties
-            if (
-              key !== 'last_modified' &&
-              key !== 'created_from_contact_id' &&
-              key !== '_sample' &&
-              key !== 'geonames' &&
-              key !== 'created_date' &&
-              key !== 'permalink' &&
-              key !== 'baptized_member_count'
-            ) {
-              const value = group[key];
-              const valueType = Object.prototype.toString.call(value);
-              switch (valueType) {
-                case '[object Boolean]': {
-                  mappedGroup[key] = value;
-                  return;
-                }
-                case '[object Number]': {
-                  if (key === 'ID') {
-                    mappedGroup[key] = value.toString();
-                  } else {
-                    mappedGroup[key] = value;
-                  }
-                  return;
-                }
-                case '[object String]': {
-                  if (value.includes('quick_button')) {
-                    mappedGroup[key] = parseInt(value, 10);
-                  } else if (key === 'post_title') {
-                    // Decode HTML strings
-                    mappedGroup.title = entities.decode(value);
-                  } else {
-                    mappedGroup[key] = entities.decode(value);
-                  }
-                  return;
-                }
-                case '[object Object]': {
-                  if (
-                    Object.prototype.hasOwnProperty.call(value, 'key') &&
-                    Object.prototype.hasOwnProperty.call(value, 'label')
-                  ) {
-                    // key_select
-                    mappedGroup[key] = value.key;
-                  } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
-                    // date
-                    mappedGroup[key] = value.timestamp;
-                  } else if (key === 'assigned_to') {
-                    // assigned-to property
-                    mappedGroup[key] = {
-                      key: parseInt(value['assigned-to'].replace('user-', '')),
-                      label: value['display'],
-                    };
-                  }
-                  return;
-                }
-                case '[object Array]': {
-                  const mappedValue = value.map((valueTwo) => {
-                    const valueTwoType = Object.prototype.toString.call(valueTwo);
-                    switch (valueTwoType) {
-                      case '[object Object]': {
-                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
-                          // connection
-                          let object = {
-                            value: valueTwo.ID.toString(),
-                            name: entities.decode(valueTwo.post_title),
-                          };
-                          // groups
-                          if (
-                            Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')
-                          ) {
-                            object = {
-                              ...object,
-                              baptized_member_count: valueTwo.baptized_member_count,
-                            };
-                          }
-                          if (Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
-                            object = {
-                              ...object,
-                              member_count: valueTwo.member_count,
-                            };
-                          }
-                          if (Object.prototype.hasOwnProperty.call(valueTwo, 'is_church')) {
-                            object = {
-                              ...object,
-                              is_church: valueTwo.is_church,
-                            };
-                          }
-                          return object;
-                        }
-                        if (
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'value')
-                        ) {
-                          return {
-                            key: valueTwo.key,
-                            value: valueTwo.value,
-                          };
-                        }
-                        if (
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'label')
-                        ) {
-                          return {
-                            value: valueTwo.id.toString(),
-                            name: valueTwo.label,
-                          };
-                        }
-                        break;
-                      }
-                      case '[object String]': {
-                        if (key === 'sources' || key === 'health_metrics') {
-                          // source or health_metric
-                          return {
-                            value: valueTwo,
-                          };
-                        }
-                        return valueTwo;
-                      }
-                      default:
-                    }
-                    return valueTwo;
-                  });
-                  if (key.includes('contact_')) {
-                    mappedGroup[key] = mappedValue;
-                  } else {
-                    mappedGroup[key] = {
-                      values: mappedValue,
-                    };
-                  }
-                  break;
-                }
-                default:
-              }
-            }
-          });
-          return mappedGroup;
+      let { groups, offline, offset, total } = action,
+        newGroups = [],
+        currentGroups = newState.groups ? [...newState.groups] : [],
+        newTotal = total ? total : newState.total;
+      if (offline) {
+        newGroups = [...groups];
+      } else {
+        let mappedGroups = sharedTools.mapGroups(groups, entities),
+          persistedMappedGroups = currentGroups
+            // Only groups with numeric ID (D.B)
+            .filter((currentGroup) => sharedTools.isNumeric(currentGroup.ID))
+            // Only add groups not persisted in the app
+            .filter(
+              (currentGroup) =>
+                mappedGroups.findIndex((mappedGroup) => currentGroup.ID === mappedGroup.ID) < 0,
+            ),
+          // Only groups with numeric Autogenerated ID (local)
+          localGroups = currentGroups.filter(
+            (currentGroup) => !sharedTools.isNumeric(currentGroup.ID),
+          );
+        if (offset === 0) {
+          persistedMappedGroups = [];
+        }
+        // Merge persisted groups with db groups
+        let dataBaseGroups = [...persistedMappedGroups, ...mappedGroups].sort((a, b) => {
+          // Sort contacts 'desc'
+          return new Date(parseInt(a.last_modified)) < new Date(parseInt(b.last_modified));
         });
-        groups = localGroups.concat(dataBaseGroups);
-      }
-      if (offset > 0) {
-        groups = newState.groups.concat(groups);
+        newGroups = [...localGroups, ...dataBaseGroups];
       }
       return {
         ...newState,
-        groups,
+        groups: newGroups,
+        total: newTotal,
         loading: false,
       };
     }
@@ -251,146 +145,9 @@ export default function groupsReducer(state = initialState, action) {
           ...group,
         };
       } else {
-        Object.keys(group).forEach((key) => {
-          // Omit restricted properties
-          if (
-            key !== 'last_modified' &&
-            key !== 'created_from_contact_id' &&
-            key !== '_sample' &&
-            key !== 'geonames' &&
-            key !== 'created_date' &&
-            key !== 'permalink' &&
-            key !== 'baptized_member_count'
-          ) {
-            const value = group[key];
-            const valueType = Object.prototype.toString.call(value);
-            switch (valueType) {
-              case '[object Boolean]': {
-                mappedGroup[key] = value;
-                return;
-              }
-              case '[object Number]': {
-                if (key === 'ID') {
-                  mappedGroup[key] = value.toString();
-                } else {
-                  mappedGroup[key] = value;
-                }
-                return;
-              }
-              case '[object String]': {
-                if (value.includes('quick_button')) {
-                  mappedGroup[key] = parseInt(value, 10);
-                } else if (key === 'post_title') {
-                  // Decode HTML strings
-                  mappedGroup.title = entities.decode(value);
-                } else {
-                  mappedGroup[key] = entities.decode(value);
-                }
-                return;
-              }
-              case '[object Object]': {
-                if (
-                  Object.prototype.hasOwnProperty.call(value, 'key') &&
-                  Object.prototype.hasOwnProperty.call(value, 'label')
-                ) {
-                  // key_select
-                  mappedGroup[key] = value.key;
-                } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
-                  // date
-                  mappedGroup[key] = value.timestamp;
-                } else if (key === 'assigned_to') {
-                  // assigned-to property
-                  mappedGroup[key] = {
-                    key: parseInt(value['assigned-to'].replace('user-', '')),
-                    label: value['display'],
-                  };
-                }
-                return;
-              }
-              case '[object Array]': {
-                const mappedValue = value.map((valueTwo) => {
-                  const valueTwoType = Object.prototype.toString.call(valueTwo);
-                  switch (valueTwoType) {
-                    case '[object Object]': {
-                      if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
-                        // connection
-                        let object = {
-                          value: valueTwo.ID.toString(),
-                          name: entities.decode(valueTwo.post_title),
-                        };
-                        // groups
-                        if (
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')
-                        ) {
-                          object = {
-                            ...object,
-                            baptized_member_count: valueTwo.baptized_member_count,
-                          };
-                        }
-                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
-                          object = {
-                            ...object,
-                            member_count: valueTwo.member_count,
-                          };
-                        }
-                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'is_church')) {
-                          object = {
-                            ...object,
-                            is_church: valueTwo.is_church,
-                          };
-                        }
-                        return object;
-                      }
-                      if (
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'value')
-                      ) {
-                        return {
-                          key: valueTwo.key,
-                          value: valueTwo.value,
-                        };
-                      }
-                      if (
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'label')
-                      ) {
-                        return {
-                          value: valueTwo.id.toString(),
-                          name: valueTwo.label,
-                        };
-                      }
-                      break;
-                    }
-                    case '[object String]': {
-                      if (key === 'sources' || key === 'health_metrics') {
-                        // source or health_metric
-                        return {
-                          value: valueTwo,
-                        };
-                      }
-                      return valueTwo;
-                    }
-                    default:
-                  }
-                  return valueTwo;
-                });
-                if (key.includes('contact_')) {
-                  mappedGroup[key] = mappedValue;
-                } else {
-                  mappedGroup[key] = {
-                    values: mappedValue,
-                  };
-                }
-                break;
-              }
-              default:
-            }
-          }
-        });
+        mappedGroup = sharedTools.mapGroup(group, entities);
       }
-
       const oldId = mappedGroup.oldID ? mappedGroup.oldID : null;
-
       newState = {
         ...newState,
         group: mappedGroup,
@@ -404,6 +161,9 @@ export default function groupsReducer(state = initialState, action) {
         let newGroupData;
         if (offline) {
           // Editing D.B. entity in OFFLINE mode
+          let oldGroupData = {
+            ...newState.groups[groupIndex],
+          };
           newGroupData = {
             ...newState.groups[groupIndex],
           };
@@ -477,15 +237,24 @@ export default function groupsReducer(state = initialState, action) {
               };
             }
           });
-          // Update members length in OFFLINE mode
-          if (
-            newGroupData.members &&
-            newGroupData.members.values &&
-            newGroupData.members.values.length != parseInt(newGroupData.member_count)
-          ) {
+          // Update member_count according to current members list.
+          let oldMembersListLength = oldGroupData.members ? oldGroupData.members.values.length : 0;
+          if (newGroupData.members && newGroupData.members.values.length !== oldMembersListLength) {
+            let newMemberCount;
+            // If member list length > oldMembersListLength -> set newMemberCount as member list length
+            if (newGroupData.members.values.length > oldMembersListLength) {
+              newMemberCount = newGroupData.members.values.length.toString();
+            }
+            // If member list length < oldMembersListLength -> set newMemberCount as current member count minus removed members
+            if (newGroupData.members.values.length < oldMembersListLength) {
+              let difference = oldMembersListLength - newGroupData.members.values.length;
+              newMemberCount = newGroupData.member_count
+                ? parseInt(newGroupData.member_count) - difference
+                : newGroupData.members.values.length;
+            }
             newGroupData = {
               ...newGroupData,
-              member_count: newGroupData.members.values.length.toString(),
+              member_count: newMemberCount,
             };
           }
         } else {
@@ -548,6 +317,7 @@ export default function groupsReducer(state = initialState, action) {
     case actions.GROUPS_GETBYID_START:
       return {
         ...newState,
+        group: null,
         loading: true,
       };
     case actions.GROUPS_GETBYID_SUCCESS: {
@@ -564,145 +334,7 @@ export default function groupsReducer(state = initialState, action) {
           };
         }
       } else {
-        const mappedGroup = {};
-        // MAP GROUP TO CAN SAVE IT LATER
-        Object.keys(group).forEach((key) => {
-          // Omit restricted properties
-          if (
-            key !== 'last_modified' &&
-            key !== 'created_from_contact_id' &&
-            key !== '_sample' &&
-            key !== 'geonames' &&
-            key !== 'created_date' &&
-            key !== 'permalink' &&
-            key !== 'baptized_member_count'
-          ) {
-            const value = group[key];
-            const valueType = Object.prototype.toString.call(value);
-            switch (valueType) {
-              case '[object Boolean]': {
-                mappedGroup[key] = value;
-                return;
-              }
-              case '[object Number]': {
-                if (key === 'ID') {
-                  mappedGroup[key] = value.toString();
-                } else {
-                  mappedGroup[key] = value;
-                }
-                return;
-              }
-              case '[object String]': {
-                if (value.includes('quick_button')) {
-                  mappedGroup[key] = parseInt(value, 10);
-                } else if (key === 'post_title') {
-                  // Decode HTML strings
-                  mappedGroup.title = entities.decode(value);
-                } else {
-                  mappedGroup[key] = entities.decode(value);
-                }
-                return;
-              }
-              case '[object Object]': {
-                if (
-                  Object.prototype.hasOwnProperty.call(value, 'key') &&
-                  Object.prototype.hasOwnProperty.call(value, 'label')
-                ) {
-                  // key_select
-                  mappedGroup[key] = value.key;
-                } else if (Object.prototype.hasOwnProperty.call(value, 'timestamp')) {
-                  // date
-                  mappedGroup[key] = value.timestamp;
-                } else if (key === 'assigned_to') {
-                  // assigned-to property
-                  mappedGroup[key] = {
-                    key: parseInt(value['assigned-to'].replace('user-', '')),
-                    label: value['display'],
-                  };
-                }
-                return;
-              }
-              case '[object Array]': {
-                const mappedValue = value.map((valueTwo) => {
-                  const valueTwoType = Object.prototype.toString.call(valueTwo);
-                  switch (valueTwoType) {
-                    case '[object Object]': {
-                      if (Object.prototype.hasOwnProperty.call(valueTwo, 'post_title')) {
-                        // connection
-                        let object = {
-                          value: valueTwo.ID.toString(),
-                          name: entities.decode(valueTwo.post_title),
-                        };
-                        // groups
-                        if (
-                          Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')
-                        ) {
-                          object = {
-                            ...object,
-                            baptized_member_count: valueTwo.baptized_member_count,
-                          };
-                        }
-                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'member_count')) {
-                          object = {
-                            ...object,
-                            member_count: valueTwo.member_count,
-                          };
-                        }
-                        if (Object.prototype.hasOwnProperty.call(valueTwo, 'is_church')) {
-                          object = {
-                            ...object,
-                            is_church: valueTwo.is_church,
-                          };
-                        }
-                        return object;
-                      }
-                      if (
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'key') &&
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'value')
-                      ) {
-                        return {
-                          key: valueTwo.key,
-                          value: valueTwo.value,
-                        };
-                      }
-                      if (
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'id') &&
-                        Object.prototype.hasOwnProperty.call(valueTwo, 'label')
-                      ) {
-                        return {
-                          value: valueTwo.id.toString(),
-                          name: valueTwo.label,
-                        };
-                      }
-                      break;
-                    }
-                    case '[object String]': {
-                      if (key === 'sources' || key === 'health_metrics') {
-                        // source or health_metric
-                        return {
-                          value: valueTwo,
-                        };
-                      }
-                      return valueTwo;
-                    }
-                    default:
-                  }
-                  return valueTwo;
-                });
-                if (key.includes('contact_')) {
-                  mappedGroup[key] = mappedValue;
-                } else {
-                  mappedGroup[key] = {
-                    values: mappedValue,
-                  };
-                }
-                break;
-              }
-              default:
-            }
-          }
-        });
-        group = mappedGroup;
+        group = sharedTools.mapGroup(group, entities);
         // Update localGroup with dbGroup
         const groupIndex = newState.groups.findIndex(
           (groupItem) => groupItem.ID.toString() === group.ID,
@@ -728,6 +360,11 @@ export default function groupsReducer(state = initialState, action) {
         ...newState,
         error: action.error,
         loading: false,
+      };
+    case actions.GROUPS_GETBYID_END:
+      return {
+        ...newState,
+        group: null,
       };
     case actions.GROUPS_GET_COMMENTS_START:
       return {
@@ -941,34 +578,41 @@ export default function groupsReducer(state = initialState, action) {
     case actions.GROUPS_GET_SETTINGS_SUCCESS: {
       const { settings } = action;
       let fieldList = {};
+      // Get fieldlist
       Object.keys(settings.fields).forEach((fieldName) => {
         const fieldData = settings.fields[fieldName];
-        if (fieldData.type === 'key_select' || fieldData.type === 'multi_select') {
-          let fieldValues = {};
-          Object.keys(fieldData.default).forEach((value) => {
-            fieldValues = {
-              ...fieldValues,
-              [value]: {
-                label: fieldData.default[value].label,
+        // omit fields with { "hidden": true }
+        if (
+          !Object.prototype.hasOwnProperty.call(fieldData, 'hidden') ||
+          (Object.prototype.hasOwnProperty.call(fieldData, 'hidden') && fieldData.hidden === false)
+        ) {
+          if (fieldData.type === 'key_select' || fieldData.type === 'multi_select') {
+            let newFieldData = {
+              name: fieldData.name,
+              description: fieldData.name,
+              values: fieldData.default,
+            };
+            if (Object.prototype.hasOwnProperty.call(fieldData, 'description')) {
+              newFieldData = {
+                ...newFieldData,
+                description: fieldData.description,
+              };
+            }
+            fieldList = {
+              ...fieldList,
+              [fieldName]: newFieldData,
+            };
+          } else {
+            fieldList = {
+              ...fieldList,
+              [fieldName]: {
+                name: fieldData.name,
               },
             };
-          });
-          fieldList = {
-            ...fieldList,
-            [fieldName]: {
-              name: fieldData.name,
-              values: fieldValues,
-            },
-          };
-        } else {
-          fieldList = {
-            ...fieldList,
-            [fieldName]: {
-              name: fieldData.name,
-            },
-          };
+          }
         }
       });
+      // Get channels
       let channels = {};
       Object.keys(settings.channels).forEach((channelName) => {
         const channelData = settings.channels[channelName];
@@ -980,16 +624,96 @@ export default function groupsReducer(state = initialState, action) {
           },
         };
       });
+
+      let tileList = [];
+      if (Object.prototype.hasOwnProperty.call(settings, 'tiles')) {
+        Object.keys(settings.tiles).forEach((tileName) => {
+          let tileFields = [];
+          Object.keys(settings.fields).forEach((fieldName) => {
+            let fieldValue = settings.fields[fieldName];
+            if (fieldName === 'members') {
+              // <-- added this last condition as workaround to missing 'tile' prop in the 'members' field
+              fieldValue = {
+                ...fieldValue,
+                tile: 'relationships',
+              };
+            }
+            if (
+              Object.prototype.hasOwnProperty.call(fieldValue, 'tile') &&
+              fieldValue.tile === tileName
+            ) {
+              // Get only fields with hidden: false
+              if (
+                !Object.prototype.hasOwnProperty.call(fieldValue, 'hidden') ||
+                (Object.prototype.hasOwnProperty.call(fieldValue, 'hidden') &&
+                  fieldValue.hidden === false)
+              ) {
+                let newField = {
+                  name: fieldName,
+                  label: fieldValue.name,
+                  type: fieldValue.type,
+                };
+                if (Object.prototype.hasOwnProperty.call(fieldValue, 'post_type')) {
+                  newField = {
+                    ...newField,
+                    post_type: fieldValue.post_type,
+                  };
+                }
+                if (Object.prototype.hasOwnProperty.call(fieldValue, 'default')) {
+                  newField = {
+                    ...newField,
+                    default: fieldValue.default,
+                  };
+                }
+                if (Object.prototype.hasOwnProperty.call(fieldValue, 'in_create_form')) {
+                  newField = {
+                    ...newField,
+                    in_create_form: fieldValue.in_create_form,
+                  };
+                }
+                if (Object.prototype.hasOwnProperty.call(fieldValue, 'required')) {
+                  newField = {
+                    ...newField,
+                    required: fieldValue.required,
+                  };
+                }
+                /*if (Object.prototype.hasOwnProperty.call(fieldValue, 'icon')) {
+                  newField = {
+                    ...newField,
+                    icon: fieldValue.icon,
+                  };
+                }*/
+                tileFields.push(newField);
+              }
+            }
+          });
+          tileList.push({
+            name: tileName,
+            label: settings.tiles[tileName].label,
+            tile_priority: settings.tiles[tileName].tile_priority,
+            fields: tileFields,
+          });
+          tileList.sort((a, b) => a.tile_priority - b.tile_priority);
+        });
+      }
+
       return {
         ...newState,
         settings: {
           fields: fieldList,
           channels,
           labelPlural: settings.label_plural,
+          tiles: tileList,
         },
         loading: false,
       };
     }
+    case actions.GROUPS_GET_SETTINGS_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+        loading: false,
+      };
     case actions.GROUPS_LOCATIONS_SEARCH_SUCCESS: {
       const { offline, filteredGeonames, queryText } = action;
       let foundGeonames = [],
@@ -1105,6 +829,163 @@ export default function groupsReducer(state = initialState, action) {
         previousGroups,
       };
     }
+    case actions.GROUPS_GET_SHARE_SETTINGS_START: {
+      return {
+        ...newState,
+        loadingShare: true,
+      };
+    }
+    case actions.GROUPS_GET_SHARE_SETTINGS_SUCCESS: {
+      const { shareSettings, groupId, isConnected } = action;
+
+      let mappedUsers = [];
+
+      if (isConnected) {
+        mappedUsers = shareSettings.map((user) => {
+          return {
+            name: user.display_name,
+            value: parseInt(user.user_id),
+          };
+        });
+      } else {
+        mappedUsers = [...shareSettings];
+      }
+
+      let newShareSettings = {
+        ...newState.shareSettings,
+        [groupId]: mappedUsers,
+      };
+
+      return {
+        ...newState,
+        shareSettings: newShareSettings,
+        loadingShare: false,
+      };
+    }
+    case actions.GROUPS_GET_SHARE_SETTINGS_FAILURE: {
+      return {
+        ...newState,
+        error: action.error,
+        loadingShare: false,
+      };
+    }
+    case actions.GROUPS_ADD_USER_SHARE_START: {
+      return {
+        ...newState,
+        loadingShare: true,
+      };
+    }
+    case actions.GROUPS_ADD_USER_SHARE_SUCCESS: {
+      const { userData, groupId } = action;
+
+      // Check previous records existence;
+      let newSharedUsers = [];
+      if (newState.shareSettings[groupId]) {
+        newSharedUsers = newState.shareSettings[groupId];
+      }
+
+      // Only add new values
+      if (!newSharedUsers.find((user) => user.value === userData.value)) {
+        newSharedUsers.push(userData);
+      }
+
+      let newShareSettings = {
+        ...newState.shareSettings,
+        [groupId]: newSharedUsers,
+      };
+
+      return {
+        ...newState,
+        shareSettings: newShareSettings,
+        savedShare: true,
+        loadingShare: false,
+      };
+    }
+    case actions.GROUPS_ADD_USER_SHARE_FAILURE: {
+      return {
+        ...newState,
+        error: action.error,
+        loadingShare: false,
+      };
+    }
+    case actions.GROUPS_REMOVE_SHARED_USER_START: {
+      return {
+        ...newState,
+        loadingShare: true,
+      };
+    }
+    case actions.GROUPS_REMOVE_SHARED_USER_SUCCESS: {
+      const { userData, groupId } = action;
+
+      let newSharedUsers = [...newState.shareSettings[groupId]];
+
+      let index = newSharedUsers.findIndex((user) => user.value === userData.value);
+
+      // Only remove value if its found
+      if (index > 0) {
+        newSharedUsers.splice(index, 1);
+      }
+
+      let newShareSettings = {
+        ...newState.shareSettings,
+        [groupId]: newSharedUsers,
+      };
+
+      return {
+        ...newState,
+        shareSettings: newShareSettings,
+        savedShare: true,
+        loadingShare: false,
+      };
+    }
+    case actions.GROUPS_REMOVE_SHARED_USER_FAILURE: {
+      return {
+        ...newState,
+        error: action.error,
+        loadingShare: false,
+      };
+    }
+    case actions.GROUPS_SEARCH_TEXT_START:
+      return {
+        ...newState,
+        loading: true,
+      };
+    case actions.GROUPS_SEARCH_TEXT_SUCCESS: {
+      let { groups } = action,
+        newGroups = [],
+        currentGroups = newState.groups ? [...newState.groups] : [];
+
+      let mappedGroups = sharedTools.mapGroups(groups, entities),
+        persistedMappedGroups = currentGroups
+          // Only groups with numeric ID (D.B)
+          .filter((currentGroup) => sharedTools.isNumeric(currentGroup.ID))
+          // Only add groups not persisted in the app
+          .filter(
+            (currentGroup) =>
+              mappedGroups.findIndex((mappedGroup) => currentGroup.ID === mappedGroup.ID) < 0,
+          ),
+        // Only groups with numeric Autogenerated ID (local)
+        localGroups = currentGroups.filter(
+          (currentGroup) => !sharedTools.isNumeric(currentGroup.ID),
+        );
+      let dataBaseGroups = [...persistedMappedGroups, ...mappedGroups].sort((a, b) => {
+        // Sort groups 'desc'
+        return new Date(parseInt(a.last_modified)) < new Date(parseInt(b.last_modified));
+      });
+      newGroups = [...localGroups, ...dataBaseGroups];
+
+      return {
+        ...newState,
+        groups: newGroups,
+        loading: false,
+      };
+    }
+    case actions.GROUPS_SEARCH_TEXT_FAILURE:
+      return {
+        ...newState,
+        error: action.error,
+        loading: false,
+      };
     default:
       return newState;
   }

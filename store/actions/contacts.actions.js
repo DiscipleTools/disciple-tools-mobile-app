@@ -54,6 +54,36 @@ export const CONTACTS_DELETE_COMMENT_FAILURE = 'CONTACTS_DELETE_COMMENT_FAILURE'
 export const CONTACTS_LOADING_FALSE = 'CONTACTS_LOADING_FALSE';
 export const CONTACTS_UPDATE_PREVIOUS = 'CONTACTS_UPDATE_PREVIOUS';
 
+export const CONTACTS_GET_SHARE_SETTINGS = 'CONTACTS_GET_SHARE_SETTINGS';
+export const CONTACTS_GET_SHARE_SETTINGS_START = 'CONTACTS_GET_SHARE_SETTINGS_START';
+export const CONTACTS_GET_SHARE_SETTINGS_RESPONSE = 'CONTACTS_GET_SHARE_SETTINGS_RESPONSE';
+export const CONTACTS_GET_SHARE_SETTINGS_SUCCESS = 'CONTACTS_GET_SHARE_SETTINGS_SUCCESS';
+export const CONTACTS_GET_SHARE_SETTINGS_FAILURE = 'CONTACTS_GET_SHARE_SETTINGS_FAILURE';
+
+export const CONTACTS_ADD_USER_SHARE = 'CONTACTS_ADD_USER_SHARE';
+export const CONTACTS_ADD_USER_SHARE_START = 'CONTACTS_ADD_USER_SHARE_START';
+export const CONTACTS_ADD_USER_SHARE_RESPONSE = 'CONTACTS_ADD_USER_SHARE_RESPONSE';
+export const CONTACTS_ADD_USER_SHARE_SUCCESS = 'CONTACTS_ADD_USER_SHARE_SUCCESS';
+export const CONTACTS_ADD_USER_SHARE_FAILURE = 'CONTACTS_ADD_USER_SHARE_FAILURE';
+
+export const CONTACTS_REMOVE_SHARED_USER = 'CONTACTS_REMOVE_SHARED_USER';
+export const CONTACTS_REMOVE_SHARED_USER_START = 'CONTACTS_REMOVE_SHARED_USER_START';
+export const CONTACTS_REMOVE_SHARED_USER_RESPONSE = 'CONTACTS_REMOVE_SHARED_USER_RESPONSE';
+export const CONTACTS_REMOVE_SHARED_USER_SUCCESS = 'CONTACTS_REMOVE_SHARED_USER_SUCCESS';
+export const CONTACTS_REMOVE_SHARED_USER_FAILURE = 'CONTACTS_REMOVE_SHARED_USER_FAILURE';
+
+export const CONTACTS_GET_TAGS = 'CONTACTS_GET_TAGS';
+export const CONTACTS_GET_TAGS_START = 'CONTACTS_GET_TAGS_START';
+export const CONTACTS_GET_TAGS_RESPONSE = 'CONTACTS_GET_TAGS_RESPONSE';
+export const CONTACTS_GET_TAGS_SUCCESS = 'CONTACTS_GET_TAGS_SUCCESS';
+export const CONTACTS_GET_TAGS_FAILURE = 'CONTACTS_GET_TAGS_FAILURE';
+
+export const CONTACTS_SEARCH_TEXT = 'CONTACTS_SEARCH_TEXT';
+export const CONTACTS_SEARCH_TEXT_START = 'CONTACTS_SEARCH_TEXT_START';
+export const CONTACTS_SEARCH_TEXT_SUCCESS = 'CONTACTS_SEARCH_TEXT_SUCCESS';
+export const CONTACTS_SEARCH_TEXT_RESPONSE = 'CONTACTS_SEARCH_TEXT_RESPONSE';
+export const CONTACTS_SEARCH_TEXT_FAILURE = 'CONTACTS_SEARCH_TEXT_FAILURE';
+
 /*
  * Action Creators
  */
@@ -156,5 +186,52 @@ export function updatePrevious(previousContacts) {
   return {
     type: CONTACTS_UPDATE_PREVIOUS,
     previousContacts,
+  };
+}
+
+export function getShareSettings(domain, token, contactId) {
+  return {
+    type: CONTACTS_GET_SHARE_SETTINGS,
+    domain,
+    token,
+    contactId,
+  };
+}
+
+export function addUserToShare(domain, token, contactId, userId) {
+  return {
+    type: CONTACTS_ADD_USER_SHARE,
+    domain,
+    token,
+    contactId,
+    userId,
+  };
+}
+
+export function removeUserToShare(domain, token, contactId, userId) {
+  return {
+    type: CONTACTS_REMOVE_SHARED_USER,
+    domain,
+    token,
+    contactId,
+    userId,
+  };
+}
+
+export function getTags(domain, token) {
+  return {
+    type: CONTACTS_GET_TAGS,
+    domain,
+    token,
+  };
+}
+
+export function searchContactsByText(domain, token, text, sort) {
+  return {
+    type: CONTACTS_SEARCH_TEXT,
+    domain,
+    token,
+    text,
+    sort,
   };
 }
