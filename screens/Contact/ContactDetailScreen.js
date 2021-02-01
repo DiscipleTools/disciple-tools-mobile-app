@@ -2434,6 +2434,7 @@ class ContactDetailScreen extends React.Component {
                     </View>
                   )}
                   <ParsedText
+                    selectable
                     style={[
                       {
                         paddingLeft: 10,
