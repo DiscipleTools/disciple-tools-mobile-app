@@ -355,9 +355,7 @@ class SearchBar extends React.Component {
                 {this.state.filter.name.length > 0 && (
                   <Text style={styles.chip}>{this.state.filter.name}</Text>
                 )}
-                {fieldName && (
-                  <Text style={styles.chip}>{i18n.t('global.sortBy') + ': ' + fieldName}</Text>
-                )}
+                {fieldName && <Text style={styles.chip}>{fieldName}</Text>}
               </View>
             )}
           {this.state.filter.toggle ? (
