@@ -1712,6 +1712,7 @@ class GroupDetailScreen extends React.Component {
                     </View>
                   )}
                   <ParsedText
+                    selectable
                     style={[
                       {
                         paddingLeft: 10,
