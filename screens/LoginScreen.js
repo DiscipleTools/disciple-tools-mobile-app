@@ -18,7 +18,7 @@ import {
 import PropTypes from 'prop-types';
 import { Button, Icon } from 'native-base';
 import Toast, { DURATION } from 'react-native-easy-toast';
-import { Updates } from 'expo';
+import * as Updates from 'expo-updates';
 import Constants from 'expo-constants';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
@@ -602,20 +602,16 @@ class LoginScreen extends React.Component {
   getDataLists = () => {
     this.props.getContactSettings(this.props.userData.domain, this.props.userData.token);
     this.props.getGroupSettings(this.props.userData.domain, this.props.userData.token);
-    this.props.getContacts(
-      this.props.userData.domain,
-      this.props.userData.token,
-      this.state.offset,
-      this.state.limit,
-      this.state.sort,
-    );
-    this.props.getGroups(
-      this.props.userData.domain,
-      this.props.userData.token,
-      this.state.offset,
-      this.state.limit,
-      this.state.sort,
-    );
+    this.props.getContacts(this.props.userData.domain, this.props.userData.token, {
+      offset: this.state.offset,
+      limit: this.state.limit,
+      sort: this.state.sort,
+    });
+    this.props.getGroups(this.props.userData.domain, this.props.userData.token, {
+      offset: this.state.offset,
+      limit: this.state.limit,
+      sort: this.state.sort,
+    });
     this.props.getPeopleGroups(this.props.userData.domain, this.props.userData.token);
     this.props.getLocationModifiedDate(this.props.userData.domain, this.props.userData.token);
     this.props.getUsers(this.props.userData.domain, this.props.userData.token);

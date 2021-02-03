@@ -8,7 +8,10 @@ import PropTypes from 'prop-types';
 import SearchBar from '../../components/SearchBar';
 
 import Colors from '../../constants/Colors';
-import { getAll, searchGroupsByText, updatePrevious } from '../../store/actions/groups.actions';
+import {
+  getAll /*, searchGroupsByText*/,
+  updatePrevious,
+} from '../../store/actions/groups.actions';
 import i18n from '../../languages';
 import sharedTools from '../../shared';
 
@@ -51,13 +54,13 @@ const styles = StyleSheet.create({
 });
 
 let toastError,
-  statusCircleSize = 15,
-  searchBarRef;
+  statusCircleSize = 15; //,
+//searchBarRef;
 
 class GroupsScreen extends React.Component {
   state = {
     dataSourceGroups: [],
-    dataSourceGroupsFiltered: [],
+    //dataSourceGroupsFiltered: [],
     offset: 0,
     limit: sharedTools.paginationLimit,
     sort: '-last_modified',
@@ -65,7 +68,7 @@ class GroupsScreen extends React.Component {
     filterOption: null,
     filterText: null,
     fixFABIndex: false,
-    isConnected: false,
+    //isConnected: false,
   };
 
   static navigationOptions = {
@@ -89,62 +92,49 @@ class GroupsScreen extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const { groups, isConnected } = nextProps;
-    let { filtered, filterOption, filterText } = prevState;
+    const { groups, filteredGroups } = nextProps;
+    let { filtered } = prevState;
 
     let newState = {
       ...prevState,
-      isConnected,
     };
 
-    if (groups) {
-      if (filtered) {
-        if (filterOption) {
-          // Filter data and set to 'dataSourceGroups'
-          newState = {
-            ...newState,
-            dataSourceGroups: sharedTools.groupsByFilter([...groups], filterOption),
-          };
-        } else if (filterText) {
-          newState = {
-            ...newState,
-            dataSourceGroups: groups.filter(function (item) {
-              const textData = filterText
-                .toUpperCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '');
-              const itemDataTitle = item.title
-                .toUpperCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '');
-              return itemDataTitle.includes(textData);
-            }),
-          };
-          if (newState.dataSourceGroups.length === 0 && !isConnected) {
-            toastError.show(
-              <View>
-                <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-                  {i18n.t('global.error.text')}
-                </Text>
-                <Text style={{ color: Colors.errorText }}>{i18n.t('global.error.noRecords')}</Text>
-              </View>,
-              6000,
-            );
-          }
-        }
-      } else {
-        newState = {
-          ...newState,
-          dataSourceGroups: groups,
-        };
-      }
+    if (filtered) {
+      newState = {
+        ...newState,
+        dataSourceGroups: [...filteredGroups],
+      };
+    } else {
+      newState = {
+        ...newState,
+        dataSourceGroups: [...groups],
+      };
     }
 
     return newState;
   }
 
   componentDidUpdate(prevProps) {
-    const { error } = this.props;
+    const { error, filteredGroups, isConnected } = this.props;
+    const { filtered } = this.state;
+
+    if (
+      filteredGroups &&
+      filteredGroups !== prevProps.filteredGroups &&
+      filteredGroups.length === 0 &&
+      filtered &&
+      !isConnected
+    ) {
+      toastError.show(
+        <View>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.text')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{i18n.t('global.error.noRecords')}</Text>
+        </View>,
+        6000,
+      );
+    }
     if (prevProps.error !== error && error) {
       toastError.show(
         <View>
@@ -165,18 +155,14 @@ class GroupsScreen extends React.Component {
   renderFooter = () => {
     return (
       <View style={styles.loadMoreFooterText}>
-        {this.props.isConnected &&
-          !this.state.filtered &&
-          this.state.offset + this.state.limit < this.props.totalGroups && (
-            <TouchableOpacity
-              onPress={() => {
-                this.onRefresh(true);
-              }}>
-              <Text style={styles.loadMoreFooterText}>
-                {i18n.t('notificationsScreen.loadMore')}
-              </Text>
-            </TouchableOpacity>
-          )}
+        {this.props.isConnected && this.state.offset + this.state.limit < this.props.totalGroups && (
+          <TouchableOpacity
+            onPress={() => {
+              this.onRefresh(true);
+            }}>
+            <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   };
@@ -258,20 +244,41 @@ class GroupsScreen extends React.Component {
     let newState = {
       offset: increasePagination ? this.state.offset + this.state.limit : 0,
     };
-    // Execute filter again to update render of current filter!
-    searchBarRef.refreshFilter();
     this.setState(
       (prevState) => {
         return returnFromDetail ? prevState : newState;
       },
       () => {
-        this.props.getAllGroups(
-          this.props.userData.domain,
-          this.props.userData.token,
-          this.state.offset,
-          this.state.limit,
-          this.state.sort,
-        );
+        let filter = {};
+        // Add pagination on ONLINE mode
+        if (this.props.isConnected) {
+          filter = {
+            offset: this.state.offset,
+            limit: this.state.limit,
+            sort: this.state.sort,
+          };
+        }
+        if (this.state.filtered) {
+          filter = {
+            ...filter,
+            filtered: true,
+          };
+          if (this.state.filterOption) {
+            filter = {
+              ...filter,
+              ...this.state.filterOption,
+              filterOption: true,
+            };
+          } else if (this.state.filterText) {
+            filter = {
+              ...filter,
+              name: this.state.filterText,
+              sort: 'name',
+              filterText: true,
+            };
+          }
+        }
+        this.props.getAllGroups(this.props.userData.domain, this.props.userData.token, filter);
       },
     );
   };
@@ -303,11 +310,16 @@ class GroupsScreen extends React.Component {
   };
 
   selectOptionFilter = (selectedFilter) => {
-    this.setState({
-      filtered: true,
-      filterText: null,
-      filterOption: selectedFilter,
-    });
+    this.setState(
+      {
+        filtered: true,
+        filterText: null,
+        filterOption: selectedFilter,
+      },
+      () => {
+        this.onRefresh(false);
+      },
+    );
   };
 
   filterByText = sharedTools.debounce((queryText) => {
@@ -319,23 +331,20 @@ class GroupsScreen extends React.Component {
           filterOption: null,
         },
         () => {
-          // Only do request if phone is ONLINE
-          if (this.props.isConnected) {
-            this.props.searchGroupsByText(
-              this.props.userData.domain,
-              this.props.userData.token,
-              queryText,
-              this.state.sort,
-            );
-          }
+          this.onRefresh(false);
         },
       );
     } else {
-      this.setState({
-        filtered: false,
-        filterText: null,
-        filterOption: null,
-      });
+      this.setState(
+        {
+          filtered: false,
+          filterText: null,
+          filterOption: null,
+        },
+        () => {
+          this.onRefresh();
+        },
+      );
     }
   }, 750);
 
@@ -359,9 +368,6 @@ class GroupsScreen extends React.Component {
         <View style={{ flex: 1 }}>
           {!this.props.isConnected && this.offlineBarRender()}
           <SearchBar
-            ref={(ref) => {
-              searchBarRef = ref;
-            }}
             filterConfig={this.props.groupFilters}
             onSelectFilter={this.selectOptionFilter}
             onTextFilter={this.filterByText}
@@ -450,6 +456,7 @@ const mapStateToProps = (state) => ({
   isConnected: state.networkConnectivityReducer.isConnected,
   groupFilters: state.usersReducer.groupFilters,
   totalGroups: state.groupsReducer.total,
+  filteredGroups: state.groupsReducer.filteredGroups,
 });
 const mapDispatchToProps = (dispatch) => ({
   getAllGroups: (domain, token, offset, limit, sort) => {
@@ -457,9 +464,6 @@ const mapDispatchToProps = (dispatch) => ({
   },
   updatePrevious: (previousGroups) => {
     dispatch(updatePrevious(previousGroups));
-  },
-  searchGroupsByText: (domain, token, text, sort) => {
-    dispatch(searchGroupsByText(domain, token, text, sort));
   },
 });
 

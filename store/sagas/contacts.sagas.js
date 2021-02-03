@@ -1,14 +1,24 @@
 import { put, take, takeEvery, takeLatest, all, select } from 'redux-saga/effects';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
-
 import * as actions from '../actions/contacts.actions';
+import sharedTools from '../../shared/index';
 
-export function* getAll({ domain, token, offset, limit, sort }) {
+export function* getAll({ domain, token, filter }) {
+  let newFilter = {
+    ...filter,
+  };
+  delete newFilter.filtered;
+  delete newFilter.filterOption;
+  delete newFilter.filterText;
+  const userData = yield select((state) => state.userReducer.userData);
   yield put({ type: actions.CONTACTS_GETALL_START });
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/contacts?offset=${offset}&limit=${limit}&sort=${sort}`,
+      url: `https://${domain}/wp-json/dt-posts/v2/contacts${sharedTools.mapFilterOnQueryParams(
+        newFilter,
+        userData,
+      )}`,
       data: {
         method: 'GET',
         headers: {
@@ -30,13 +40,14 @@ export function* getAll({ domain, token, offset, limit, sort }) {
           yield put({
             type: actions.CONTACTS_GETALL_SUCCESS,
             contacts: jsonData.posts,
-            offset,
+            filter,
             total: parseInt(jsonData.total),
           });
         } else {
           yield put({
             type: actions.CONTACTS_GETALL_SUCCESS,
             contacts: jsonData.posts,
+            filter,
             offline: true,
           });
         }
@@ -44,6 +55,7 @@ export function* getAll({ domain, token, offset, limit, sort }) {
         yield put({
           type: actions.CONTACTS_GETALL_SUCCESS,
           contacts: [],
+          filter,
         });
       }
     } else if (isConnected) {
@@ -711,59 +723,6 @@ export function* getTags({ domain, token }) {
   }
 }
 
-export function* searchContactsByText({ domain, token, text, sort }) {
-  yield put({ type: actions.CONTACTS_SEARCH_TEXT_START });
-  yield put({
-    type: 'REQUEST',
-    payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/contacts?text=${text}&sort=${sort}`,
-      data: {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      },
-      action: actions.CONTACTS_SEARCH_TEXT_RESPONSE,
-    },
-  });
-  const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
-  try {
-    let response = yield take(actions.CONTACTS_SEARCH_TEXT_RESPONSE);
-    response = response.payload;
-    const jsonData = response.data;
-    if (response.status === 200) {
-      if (jsonData.posts) {
-        yield put({
-          type: actions.CONTACTS_SEARCH_TEXT_SUCCESS,
-          contacts: jsonData.posts,
-        });
-      } else {
-        yield put({
-          type: actions.CONTACTS_SEARCH_TEXT_SUCCESS,
-          contacts: [],
-        });
-      }
-    } else if (isConnected) {
-      yield put({
-        type: actions.CONTACTS_SEARCH_TEXT_FAILURE,
-        error: {
-          code: jsonData.code,
-          message: jsonData.message,
-        },
-      });
-    }
-  } catch (error) {
-    yield put({
-      type: actions.CONTACTS_SEARCH_TEXT_FAILURE,
-      error: {
-        code: '400',
-        message: 'Unable to process the request. Please try again later.',
-      },
-    });
-  }
-}
-
 export default function* contactsSaga() {
   yield all([
     takeLatest(actions.CONTACTS_GETALL, getAll),
@@ -778,6 +737,5 @@ export default function* contactsSaga() {
     takeEvery(actions.CONTACTS_ADD_USER_SHARE, addUserToShare),
     takeEvery(actions.CONTACTS_REMOVE_SHARED_USER, removeSharedUser),
     takeEvery(actions.CONTACTS_GET_TAGS, getTags),
-    takeLatest(actions.CONTACTS_SEARCH_TEXT, searchContactsByText),
   ]);
 }

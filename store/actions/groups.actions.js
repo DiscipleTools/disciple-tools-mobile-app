@@ -95,23 +95,22 @@ export const GROUPS_REMOVE_SHARED_USER_RESPONSE = 'GROUPS_REMOVE_SHARED_USER_RES
 export const GROUPS_REMOVE_SHARED_USER_SUCCESS = 'GROUPS_REMOVE_SHARED_USER_SUCCESS';
 export const GROUPS_REMOVE_SHARED_USER_FAILURE = 'GROUPS_REMOVE_SHARED_USER_FAILURE';
 
-export const GROUPS_SEARCH_TEXT = 'GROUPS_SEARCH_TEXT';
-export const GROUPS_SEARCH_TEXT_START = 'GROUPS_SEARCH_TEXT_START';
-export const GROUPS_SEARCH_TEXT_SUCCESS = 'GROUPS_SEARCH_TEXT_SUCCESS';
-export const GROUPS_SEARCH_TEXT_RESPONSE = 'GROUPS_SEARCH_TEXT_RESPONSE';
-export const GROUPS_SEARCH_TEXT_FAILURE = 'GROUPS_SEARCH_TEXT_FAILURE';
-
 /**
  * Action Creators
  */
-export function getAll(domain, token, offset, limit, sort) {
+
+/**
+ *
+ * @param {*} domain
+ * @param {*} token
+ * @param {*} filter { offset: number, limit: number, sort: string, name?: string, ...optionFilter }
+ */
+export function getAll(domain, token, filter) {
   return {
     type: GROUPS_GETALL,
     domain,
     token,
-    offset,
-    limit,
-    sort,
+    filter,
   };
 }
 
@@ -259,15 +258,5 @@ export function removeUserToShare(domain, token, groupId, userId) {
     token,
     groupId,
     userId,
-  };
-}
-
-export function searchGroupsByText(domain, token, text, sort) {
-  return {
-    type: GROUPS_SEARCH_TEXT,
-    domain,
-    token,
-    text,
-    sort,
   };
 }
