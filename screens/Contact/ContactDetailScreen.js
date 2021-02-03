@@ -3681,7 +3681,7 @@ class ContactDetailScreen extends React.Component {
           } else {
             mappedValue = (
               <Text style={this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}}>
-                {field.default[value].label}
+                {field.default[value] ? field.default[value].label : ''}
               </Text>
             );
           }

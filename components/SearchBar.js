@@ -17,6 +17,7 @@ import PropTypes from 'prop-types';
 import { CheckBox } from 'react-native-elements';
 import { Header } from 'react-navigation-stack';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { connect } from 'react-redux';
 
 const styles = StyleSheet.create({
   searchBarContainer: {
@@ -85,6 +86,10 @@ class SearchBar extends React.Component {
         // Reset option filter to their initial state
         filter: {
           ...initialState.filter,
+          query: {
+            ...initialState.filter.query,
+            sort: 'name',
+          },
         },
       },
       () => {
@@ -94,6 +99,18 @@ class SearchBar extends React.Component {
   };
 
   filterByOption = (filterId, filterQuery, filterName) => {
+    // Set 'last_modified' sort by default on OFFLINE mode or filter does not have sort
+    if (
+      (this.props.isConnected && !Object.prototype.hasOwnProperty.call(filterQuery, 'sort')) ||
+      !this.props.isConnected
+    ) {
+      if (!Object.prototype.hasOwnProperty.call(filterQuery, 'sort')) {
+        filterQuery = {
+          ...filterQuery,
+          sort: '-last_modified',
+        };
+      }
+    }
     this.setState(
       {
         filter: {
@@ -265,6 +282,31 @@ class SearchBar extends React.Component {
   };
 
   render() {
+    let fieldName = null;
+    if (this.state.filter.query.sort) {
+      if (
+        Object.prototype.hasOwnProperty.call(
+          this.props.contactSettings.fields,
+          this.state.filter.query.sort.replace('-', ''),
+        )
+      ) {
+        fieldName =
+          i18n.t('global.sortBy') +
+          ': ' +
+          this.props.contactSettings.fields[this.state.filter.query.sort.replace('-', '')].name;
+      } else if (
+        Object.prototype.hasOwnProperty.call(
+          this.props.groupSettings.fields,
+          this.state.filter.query.sort.replace('-', ''),
+        )
+      ) {
+        fieldName =
+          i18n.t('global.sortBy') +
+          ': ' +
+          this.props.groupSettings.fields[this.state.filter.query.sort.replace('-', '')].name;
+      }
+    }
+
     return (
       <View
         style={[
@@ -313,7 +355,9 @@ class SearchBar extends React.Component {
                 {this.state.filter.name.length > 0 && (
                   <Text style={styles.chip}>{this.state.filter.name}</Text>
                 )}
-                <Text style={styles.chip}>{i18n.t('global.sortByLastModified')}</Text>
+                {fieldName && (
+                  <Text style={styles.chip}>{i18n.t('global.sortBy') + ': ' + fieldName}</Text>
+                )}
               </View>
             )}
           {this.state.filter.toggle ? (
@@ -351,4 +395,10 @@ SearchBar.defaultProps = {
   },
 };
 
-export default SearchBar;
+const mapStateToProps = (state) => ({
+  contactSettings: state.contactsReducer.settings,
+  groupSettings: state.groupsReducer.settings,
+  isConnected: state.networkConnectivityReducer.isConnected,
+});
+
+export default connect(mapStateToProps)(SearchBar);

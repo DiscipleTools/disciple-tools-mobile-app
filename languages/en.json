@@ -31,7 +31,7 @@
     "close": "Close",
     "editComment": "Edit",
     "deleteComment": "Delete",
-    "sortByLastModified": "Sorting By: Date Modified",
+    "sortBy": "Sorting By",
     "reset": "Reset",
     "apply": "Apply",
     "showing": "Showing",

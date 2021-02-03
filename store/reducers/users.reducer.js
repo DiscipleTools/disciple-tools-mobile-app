@@ -71,8 +71,6 @@ export default function usersReducer(state = initialState, action) {
               [key]: filterValue,
             };
           });
-          delete newQuery.sort;
-          delete newQuery.combine;
           return {
             ...mappedFilter,
             query: newQuery,
@@ -107,6 +105,9 @@ export default function usersReducer(state = initialState, action) {
           }),
         };
       }
+      console.log('GET_CONTACT_FILTERS_SUCCESS');
+      console.log('contactFilters.filters');
+      console.log(contactFilters.filters);
       return {
         ...newState,
         contactFilters,
@@ -150,8 +151,6 @@ export default function usersReducer(state = initialState, action) {
               [key]: filterValue,
             };
           });
-          delete newQuery.sort;
-          delete newQuery.combine;
           return {
             ...mappedFilter,
             query: newQuery,
