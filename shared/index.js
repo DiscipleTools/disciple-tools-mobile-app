@@ -333,9 +333,6 @@ const filterExistInEntity = (filterValueType, filterValue, value) => {
 };
 
 const contactsByFilter = (contactsList, query) => {
-  console.log('contactsByFilter()');
-  console.log('query');
-  console.log(query);
   // Temporal fix => set 'created_on' prop to 'post_date'
   Object.keys(query).map(function (key) {
     if (key == 'created_on') {

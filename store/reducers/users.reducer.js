@@ -105,9 +105,6 @@ export default function usersReducer(state = initialState, action) {
           }),
         };
       }
-      console.log('GET_CONTACT_FILTERS_SUCCESS');
-      console.log('contactFilters.filters');
-      console.log(contactFilters.filters);
       return {
         ...newState,
         contactFilters,

@@ -3396,8 +3396,6 @@ class ContactDetailScreen extends React.Component {
   );
 
   renderFieldValue = (field) => {
-    console.log(field);
-    console.log('---------');
     let propExist = Object.prototype.hasOwnProperty.call(this.state.contact, field.name);
     let mappedValue;
     let value = this.state.contact[field.name],
