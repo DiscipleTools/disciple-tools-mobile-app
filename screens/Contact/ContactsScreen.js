@@ -8,7 +8,7 @@ import SearchBar from '../../components/SearchBar';
 
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
-import { getAll, searchContactsByText, updatePrevious } from '../../store/actions/contacts.actions';
+import { getAll, updatePrevious } from '../../store/actions/contacts.actions';
 import i18n from '../../languages';
 import sharedTools from '../../shared';
 
@@ -51,13 +51,11 @@ const styles = StyleSheet.create({
 });
 
 let toastError,
-  statusCircleSize = 15,
-  searchBarRef;
+  statusCircleSize = 15;
 
 class ContactsScreen extends React.Component {
   state = {
     dataSourceContact: [],
-    dataSourceContactsFiltered: [],
     offset: 0,
     limit: sharedTools.paginationLimit,
     sort: '-last_modified',
@@ -65,7 +63,6 @@ class ContactsScreen extends React.Component {
     filterOption: null,
     filterText: null,
     fixFABIndex: false,
-    isConnected: false,
   };
 
   static navigationOptions = {
@@ -89,83 +86,49 @@ class ContactsScreen extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const { contacts, isConnected } = nextProps;
-    let { filtered, filterOption, filterText } = prevState;
+    const { contacts, filteredContacts } = nextProps;
+    let { filtered } = prevState;
 
     let newState = {
       ...prevState,
-      isConnected,
     };
 
-    if (contacts) {
-      if (filtered) {
-        if (filterOption) {
-          // Filter data and set to 'dataSourceContact'
-          newState = {
-            ...newState,
-            dataSourceContact: sharedTools.contactsByFilter([...contacts], filterOption),
-          };
-        } else if (filterText) {
-          newState = {
-            ...newState,
-            dataSourceContact: contacts.filter((item) => {
-              let filterByPhone = false;
-              let filterByEmail = false;
-              const textData = filterText
-                .toUpperCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '');
-              const itemDataTitle = item.title
-                .toUpperCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '');
-              const filterByTitle = itemDataTitle.includes(textData);
-
-              if (item.contact_phone !== undefined) {
-                item.contact_phone.forEach((elements) => {
-                  const itemDataPhone = elements.value.toUpperCase();
-                  if (filterByPhone === false) {
-                    filterByPhone = itemDataPhone.includes(textData);
-                  }
-                });
-              }
-
-              if (item.contact_email !== undefined) {
-                item.contact_email.forEach((elements) => {
-                  const itemDataEmail = elements.value.toUpperCase();
-                  if (filterByEmail === false) {
-                    filterByEmail = itemDataEmail.includes(textData);
-                  }
-                });
-              }
-              return filterByTitle || filterByPhone || filterByEmail;
-            }),
-          };
-          if (newState.dataSourceContact.length === 0 && !isConnected) {
-            toastError.show(
-              <View>
-                <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-                  {i18n.t('global.error.text')}
-                </Text>
-                <Text style={{ color: Colors.errorText }}>{i18n.t('global.error.noRecords')}</Text>
-              </View>,
-              6000,
-            );
-          }
-        }
-      } else {
-        newState = {
-          ...newState,
-          dataSourceContact: contacts,
-        };
-      }
+    if (filtered) {
+      newState = {
+        ...newState,
+        dataSourceContact: [...filteredContacts],
+      };
+    } else {
+      newState = {
+        ...newState,
+        dataSourceContact: [...contacts],
+      };
     }
 
     return newState;
   }
 
   componentDidUpdate(prevProps) {
-    const { error } = this.props;
+    const { error, filteredContacts, isConnected } = this.props;
+    const { filtered } = this.state;
+
+    if (
+      filteredContacts &&
+      filteredContacts !== prevProps.filteredContacts &&
+      filteredContacts.length === 0 &&
+      filtered &&
+      !isConnected
+    ) {
+      toastError.show(
+        <View>
+          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
+            {i18n.t('global.error.text')}
+          </Text>
+          <Text style={{ color: Colors.errorText }}>{i18n.t('global.error.noRecords')}</Text>
+        </View>,
+        6000,
+      );
+    }
     if (prevProps.error !== error && error) {
       toastError.show(
         <View>
@@ -186,18 +149,14 @@ class ContactsScreen extends React.Component {
   renderFooter = () => {
     return (
       <View style={styles.loadMoreFooterText}>
-        {this.props.isConnected &&
-          !this.state.filtered &&
-          this.state.offset + this.state.limit < this.props.totalContacts && (
-            <TouchableOpacity
-              onPress={() => {
-                this.onRefresh(true);
-              }}>
-              <Text style={styles.loadMoreFooterText}>
-                {i18n.t('notificationsScreen.loadMore')}
-              </Text>
-            </TouchableOpacity>
-          )}
+        {this.props.isConnected && this.state.offset + this.state.limit < this.props.totalContacts && (
+          <TouchableOpacity
+            onPress={() => {
+              this.onRefresh(true);
+            }}>
+            <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   };
@@ -276,20 +235,41 @@ class ContactsScreen extends React.Component {
     let newState = {
       offset: increasePagination ? this.state.offset + this.state.limit : 0,
     };
-    // Execute filter again to update render of current filter!
-    searchBarRef.refreshFilter();
     this.setState(
       (prevState) => {
         return returnFromDetail ? prevState : newState;
       },
       () => {
-        this.props.getAllContacts(
-          this.props.userData.domain,
-          this.props.userData.token,
-          this.state.offset,
-          this.state.limit,
-          this.state.sort,
-        );
+        let filter = {};
+        // Add pagination on ONLINE mode
+        if (this.props.isConnected) {
+          filter = {
+            offset: this.state.offset,
+            limit: this.state.limit,
+            sort: this.state.sort,
+          };
+        }
+        if (this.state.filtered) {
+          filter = {
+            ...filter,
+            filtered: true,
+          };
+          if (this.state.filterOption) {
+            filter = {
+              ...filter,
+              ...this.state.filterOption,
+              filterOption: true,
+            };
+          } else if (this.state.filterText) {
+            filter = {
+              ...filter,
+              name: this.state.filterText,
+              sort: 'name',
+              filterText: true,
+            };
+          }
+        }
+        this.props.getAllContacts(this.props.userData.domain, this.props.userData.token, filter);
       },
     );
   };
@@ -321,11 +301,16 @@ class ContactsScreen extends React.Component {
   };
 
   selectOptionFilter = (selectedFilter) => {
-    this.setState({
-      filtered: true,
-      filterText: null,
-      filterOption: selectedFilter,
-    });
+    this.setState(
+      {
+        filtered: true,
+        filterText: null,
+        filterOption: selectedFilter,
+      },
+      () => {
+        this.onRefresh(false);
+      },
+    );
   };
 
   filterByText = sharedTools.debounce((queryText) => {
@@ -337,23 +322,20 @@ class ContactsScreen extends React.Component {
           filterOption: null,
         },
         () => {
-          // Only do request if phone is ONLINE
-          if (this.props.isConnected) {
-            this.props.searchContactsByText(
-              this.props.userData.domain,
-              this.props.userData.token,
-              queryText,
-              this.state.sort,
-            );
-          }
+          this.onRefresh(false);
         },
       );
     } else {
-      this.setState({
-        filtered: false,
-        filterText: null,
-        filterOption: null,
-      });
+      this.setState(
+        {
+          filtered: false,
+          filterText: null,
+          filterOption: null,
+        },
+        () => {
+          this.onRefresh();
+        },
+      );
     }
   }, 750);
 
@@ -377,9 +359,6 @@ class ContactsScreen extends React.Component {
         <View style={{ flex: 1 }}>
           {!this.props.isConnected && this.offlineBarRender()}
           <SearchBar
-            ref={(ref) => {
-              searchBarRef = ref;
-            }}
             filterConfig={this.props.contactFilters}
             onSelectFilter={this.selectOptionFilter}
             onTextFilter={this.filterByText}
@@ -471,6 +450,7 @@ const mapStateToProps = (state) => ({
   isConnected: state.networkConnectivityReducer.isConnected,
   contactFilters: state.usersReducer.contactFilters,
   totalContacts: state.contactsReducer.total,
+  filteredContacts: state.contactsReducer.filteredContacts,
 });
 const mapDispatchToProps = (dispatch) => ({
   getAllContacts: (domain, token, offset, limit, sort) => {
@@ -478,9 +458,6 @@ const mapDispatchToProps = (dispatch) => ({
   },
   updatePrevious: (previousContacts) => {
     dispatch(updatePrevious(previousContacts));
-  },
-  searchContactsByText: (domain, token, text, sort) => {
-    dispatch(searchContactsByText(domain, token, text, sort));
   },
 });
 

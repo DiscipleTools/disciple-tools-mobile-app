@@ -3396,8 +3396,6 @@ class ContactDetailScreen extends React.Component {
   );
 
   renderFieldValue = (field) => {
-    console.log(field);
-    console.log('---------');
     let propExist = Object.prototype.hasOwnProperty.call(this.state.contact, field.name);
     let mappedValue;
     let value = this.state.contact[field.name],
@@ -3681,7 +3679,7 @@ class ContactDetailScreen extends React.Component {
           } else {
             mappedValue = (
               <Text style={this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}}>
-                {field.default[value].label}
+                {field.default[value] ? field.default[value].label : ''}
               </Text>
             );
           }

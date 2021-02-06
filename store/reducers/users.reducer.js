@@ -71,8 +71,6 @@ export default function usersReducer(state = initialState, action) {
               [key]: filterValue,
             };
           });
-          delete newQuery.sort;
-          delete newQuery.combine;
           return {
             ...mappedFilter,
             query: newQuery,
@@ -150,8 +148,6 @@ export default function usersReducer(state = initialState, action) {
               [key]: filterValue,
             };
           });
-          delete newQuery.sort;
-          delete newQuery.combine;
           return {
             ...mappedFilter,
             query: newQuery,

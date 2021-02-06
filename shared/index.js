@@ -339,106 +339,114 @@ const contactsByFilter = (contactsList, query) => {
       query['post_date'] = query[key];
       delete query[key];
     }
+    if (key == 'combine' || key == 'sort' || key == 'type') {
+      delete query[key];
+    }
   });
-  return contactsList.filter((contact) => {
-    let resp = [];
-    for (let key in query) {
-      let result = false;
-      //Property exist in object
-      if (Object.prototype.hasOwnProperty.call(contact, key)) {
-        let value = contact[key];
-        let filterValues = query[key];
-        let filterValuesType = Object.prototype.toString.call(filterValues);
-        if (filterValuesType == '[object Array]') {
-          // Use filter with multiple props
-          for (let index = 0; index <= filterValues.length - 1; index++) {
-            let filterValue = filterValues[index];
-            // Boolean props (requires_update)
-            if (filterValue === '0') {
-              filterValue = false;
-            } else if (filterValue === '1') {
-              filterValue = true;
-            }
-            let filterValueType = Object.prototype.toString.call(filterValue);
-            result = filterExistInEntity(filterValueType, filterValue, value);
-            // Return contacts with status different of '-closed'
-            if (filterValue.toString().startsWith('-')) {
-              if (value !== filterValue.replace('-', '')) {
-                result = true;
+  return contactsList
+    .filter((contact) => {
+      let resp = [];
+      for (let key in query) {
+        let result = false;
+        //Property exist in object
+        if (Object.prototype.hasOwnProperty.call(contact, key)) {
+          let value = contact[key];
+          let filterValues = query[key];
+          let filterValuesType = Object.prototype.toString.call(filterValues);
+          if (filterValuesType == '[object Array]') {
+            // Use filter with multiple props
+            for (let index = 0; index <= filterValues.length - 1; index++) {
+              let filterValue = filterValues[index];
+              // Boolean props (requires_update)
+              if (filterValue === '0') {
+                filterValue = false;
+              } else if (filterValue === '1') {
+                filterValue = true;
               }
-              // Detect 'assigned_to' or 'subassigned' value
-            } else if (key == 'assigned_to') {
-              // Search in 'assigned_to'
-              filterValues.forEach((assignedContact) => {
-                if (assignedContact === value.label || parseInt(assignedContact) === value.key) {
+              let filterValueType = Object.prototype.toString.call(filterValue);
+              result = filterExistInEntity(filterValueType, filterValue, value);
+              // Return contacts with status different of '-closed'
+              if (filterValue.toString().startsWith('-')) {
+                if (value !== filterValue.replace('-', '')) {
                   result = true;
                 }
-              });
-              // If record does not match 'assigned_to' value, search by 'subassigned'
-              if (
-                !result &&
-                Object.prototype.hasOwnProperty.call(query, 'subassigned') &&
-                Object.prototype.hasOwnProperty.call(contact, 'subassigned')
-              ) {
+                // Detect 'assigned_to' or 'subassigned' value
+              } else if (key == 'assigned_to') {
+                // Search in 'assigned_to'
+                filterValues.forEach((assignedContact) => {
+                  if (assignedContact === value.label || parseInt(assignedContact) === value.key) {
+                    result = true;
+                  }
+                });
+                // If record does not match 'assigned_to' value, search by 'subassigned'
+                if (
+                  !result &&
+                  Object.prototype.hasOwnProperty.call(query, 'subassigned') &&
+                  Object.prototype.hasOwnProperty.call(contact, 'subassigned')
+                ) {
+                  // Search in 'subassigned'
+                  query['subassigned'].forEach((filterValue) => {
+                    contact['subassigned'].values.forEach((subassignedContact) => {
+                      if (filterValue === subassignedContact.value) {
+                        result = true;
+                      }
+                    });
+                  });
+                }
+              } else if (key == 'subassigned') {
                 // Search in 'subassigned'
-                query['subassigned'].forEach((filterValue) => {
-                  contact['subassigned'].values.forEach((subassignedContact) => {
+                filterValues.forEach((filterValue) => {
+                  value.values.forEach((subassignedContact) => {
                     if (filterValue === subassignedContact.value) {
                       result = true;
                     }
                   });
                 });
+                // If record does not match 'subassigned' value, search by 'assigned_to'
+                if (
+                  !result &&
+                  Object.prototype.hasOwnProperty.call(query, 'assigned_to') &&
+                  Object.prototype.hasOwnProperty.call(contact, 'assigned_to')
+                ) {
+                  // Search in 'assigned_to'
+                  query['assigned_to'].forEach((assignedContact) => {
+                    if (
+                      assignedContact === contact['assigned_to'].label ||
+                      parseInt(assignedContact) === contact['assigned_to'].key
+                    ) {
+                      result = true;
+                    }
+                  });
+                }
               }
-            } else if (key == 'subassigned') {
-              // Search in 'subassigned'
-              filterValues.forEach((filterValue) => {
-                value.values.forEach((subassignedContact) => {
-                  if (filterValue === subassignedContact.value) {
-                    result = true;
-                  }
-                });
-              });
-              // If record does not match 'subassigned' value, search by 'assigned_to'
-              if (
-                !result &&
-                Object.prototype.hasOwnProperty.call(query, 'assigned_to') &&
-                Object.prototype.hasOwnProperty.call(contact, 'assigned_to')
-              ) {
-                // Search in 'assigned_to'
-                query['assigned_to'].forEach((assignedContact) => {
-                  if (
-                    assignedContact === contact['assigned_to'].label ||
-                    parseInt(assignedContact) === contact['assigned_to'].key
-                  ) {
-                    result = true;
-                  }
-                });
+              // Exit for to stop doing unnecessary loops
+              if (result) {
+                break;
               }
             }
-            // Exit for to stop doing unnecessary loops
-            if (result) {
-              break;
-            }
-          }
-        } else if (filterValuesType == '[object Object]') {
-          // Date range filter
-          if (
-            Object.prototype.hasOwnProperty.call(filterValues, 'start') &&
-            Object.prototype.hasOwnProperty.call(filterValues, 'end')
-          ) {
-            let startDate = new Date(filterValues.start).getTime(),
-              endDate = new Date(filterValues.end).getTime(),
-              valueDate = new Date(parseInt(value) * 1000).getTime();
-            if (valueDate >= startDate && valueDate <= endDate) {
-              result = true;
+          } else if (filterValuesType == '[object Object]') {
+            // Date range filter
+            if (
+              Object.prototype.hasOwnProperty.call(filterValues, 'start') &&
+              Object.prototype.hasOwnProperty.call(filterValues, 'end')
+            ) {
+              let startDate = new Date(filterValues.start).getTime(),
+                endDate = new Date(filterValues.end).getTime(),
+                valueDate = new Date(parseInt(value) * 1000).getTime();
+              if (valueDate >= startDate && valueDate <= endDate) {
+                result = true;
+              }
             }
           }
         }
+        resp.push(result);
       }
-      resp.push(result);
-    }
-    return resp.every((respValue) => respValue);
-  });
+      return resp.every((respValue) => respValue);
+    })
+    .sort((a, b) => {
+      // Sort contacts 'desc'
+      return new Date(parseInt(a.last_modified)) < new Date(parseInt(b.last_modified));
+    });
 };
 
 const groupsByFilter = (groupsList, query) => {
@@ -446,6 +454,9 @@ const groupsByFilter = (groupsList, query) => {
   Object.keys(query).map(function (key) {
     if (key == 'created_on') {
       query['post_date'] = query[key];
+      delete query[key];
+    }
+    if (key == 'sort') {
       delete query[key];
     }
   });
@@ -790,6 +801,81 @@ const mapGroup = (group, entities) => {
   return mapGroups([group], entities)[0];
 };
 
+const mapFilterOnQueryParams = (filter, userData) => {
+  let queryParams = '?';
+  Object.keys(filter).forEach((key) => {
+    let filterValue = filter[key];
+    let filterValueType = Object.prototype.toString.call(filterValue);
+    if (filterValueType === '[object Array]') {
+      filterValue.forEach((value) => {
+        queryParams = `${queryParams}${queryParams === '?' ? '' : '&'}${key}%5B%5D=${
+          value === userData.displayName ? 'me' : value
+        }`;
+      });
+    } else if (filterValueType === '[object Object]') {
+      //mapFilterOnQueryParams(filterValue, null, userData);
+    } else {
+      queryParams = `${queryParams}${queryParams === '?' ? '' : '&'}${key}=${
+        filterValue === userData.displayName ? 'me' : filterValue
+      }`;
+    }
+  });
+  return queryParams;
+};
+
+const mergeContactList = (mappedContacts, persistedContacts) => {
+  // Detect if any mappedContacts exist in persistedContacts list
+  let updatedContacts = mappedContacts.filter((mappedContact) => {
+    return (
+      persistedContacts.findIndex((persistedContact) => persistedContact.ID === mappedContact.ID) >
+      -1
+    );
+  });
+  // If exist => update persistedContact with mappedContact changes
+  updatedContacts.forEach((updatedContact) => {
+    let index = persistedContacts.findIndex(
+      (persistedContact) => persistedContact.ID === updatedContact.ID,
+    );
+    persistedContacts[index] = { ...updatedContact };
+  });
+  // Only get newContacts of DataBase. This way we avoid repeated contacts records caused by pagination
+  let newContacts = mappedContacts.filter((mappedContact) => {
+    return (
+      persistedContacts.findIndex(
+        (persistedContact) => persistedContact.ID === mappedContact.ID,
+      ) === -1
+    );
+  });
+  return {
+    persistedContacts,
+    newContacts,
+  };
+};
+
+const mergeGroupList = (mappedGroups, persistedGroups) => {
+  // Detect if any mappedGroups exist in persistedGroups list
+  let updatedGroups = mappedGroups.filter((mappedGroup) => {
+    return persistedGroups.findIndex((persistedGroup) => persistedGroup.ID === mappedGroup.ID) > -1;
+  });
+  // If exist => update persistedGroup with mappedGroup changes
+  updatedGroups.forEach((updatedGroup) => {
+    let index = persistedGroups.findIndex(
+      (persistedGroup) => persistedGroup.ID === updatedGroup.ID,
+    );
+    persistedGroups[index] = { ...updatedGroup };
+  });
+  // Only get newGroups of DataBase. This way we avoid repeated groups records caused by pagination
+  let newGroups = mappedGroups.filter((mappedGroup) => {
+    return (
+      persistedGroups.findIndex((persistedGroup) => persistedGroup.ID === mappedGroup.ID) === -1
+    );
+  });
+  return {
+    persistedGroups,
+    newGroups,
+  };
+};
+
 export default {
   diff,
   formatDateToBackEnd,
@@ -813,4 +899,7 @@ export default {
   mapGroup,
   formatDateToView,
   formatDateToDatePicker,
+  mapFilterOnQueryParams,
+  mergeContactList,
+  mergeGroupList,
 };
