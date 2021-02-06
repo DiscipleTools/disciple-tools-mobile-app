@@ -71,6 +71,7 @@ let initialState = {
   },
   sections: [],
   activeSections: [],
+  count: null,
 };
 
 class SearchBar extends React.Component {
@@ -353,7 +354,9 @@ class SearchBar extends React.Component {
                   <Text style={styles.chip}>{this.state.search}</Text>
                 )}
                 {this.state.filter.name.length > 0 && (
-                  <Text style={styles.chip}>{this.state.filter.name}</Text>
+                  <Text style={styles.chip}>
+                    {this.state.filter.name} ({this.props.count}){' '}
+                  </Text>
                 )}
                 {fieldName && <Text style={styles.chip}>{fieldName}</Text>}
               </View>
