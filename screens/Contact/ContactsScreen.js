@@ -363,7 +363,13 @@ class ContactsScreen extends React.Component {
             onSelectFilter={this.selectOptionFilter}
             onTextFilter={this.filterByText}
             onClearTextFilter={this.filterByText}
-            onLayout={this.onLayout}></SearchBar>
+            onLayout={this.onLayout}
+            count={
+              this.state.dataSourceContact.length % 100 === 0
+                ? `${this.state.dataSourceContact.length}+`
+                : this.state.dataSourceContact.length
+            }
+          />
           <FlatList
             data={this.state.dataSourceContact}
             renderItem={(item) => this.renderRow(item.item)}

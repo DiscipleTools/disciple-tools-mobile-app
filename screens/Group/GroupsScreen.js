@@ -372,7 +372,13 @@ class GroupsScreen extends React.Component {
             onSelectFilter={this.selectOptionFilter}
             onTextFilter={this.filterByText}
             onClearTextFilter={this.filterByText}
-            onLayout={this.onLayout}></SearchBar>
+            onLayout={this.onLayout}
+            count={
+              this.state.dataSourceGroups.length % 100 === 0
+                ? `${this.state.dataSourceGroups.length}+`
+                : this.state.dataSourceGroups.length
+            }
+          />
           <FlatList
             data={this.state.dataSourceGroups}
             renderItem={(item) => this.renderRow(item.item)}
