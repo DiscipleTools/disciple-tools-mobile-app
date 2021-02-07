@@ -3231,17 +3231,46 @@ class ContactDetailScreen extends React.Component {
         break;
       }
       case 'connection': {
-        iconType = 'FontAwesome';
-        iconName = 'users';
+        if (field.name.includes('subassigned')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'briefcase-account-outline';
+        } else if (field.name.includes('relation')) {
+          iconType = 'FontAwesome5';
+          iconName = 'people-arrows';
+        } else if (field.name.includes('people_groups')) {
+          iconType = 'FontAwesome';
+          iconName = 'globe';
+        } else if (field.name.includes('coach')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'teach';
+        } else if (field.name.includes('bapti')) {
+          iconType = 'FontAwesome5';
+          iconName = 'water';
+        } else if (field.name.includes('group')) {
+          iconType = 'MaterialIcons';
+          iconName = 'groups';
+        } else if (field.name.includes('train')) {
+          iconType = 'FontAwesome5';
+          iconName = 'chalkboard-teacher';
+        } else {
+          iconType = 'MaterialIcons';
+          iconName = 'group-work';
+        }
         break;
       }
       case 'multi_select': {
         if (field.name.includes('tag')) {
           iconType = 'AntDesign';
           iconName = 'tags';
+        } else if (field.name.includes('email')) {
+          iconType = 'FontAwesome';
+          iconName = 'envelope';
+        } else if (field.name.includes('sources')) {
+          iconType = 'FontAwesome5';
+          iconName = 'compress-arrows-alt';
         } else {
-          iconType = 'MaterialCommunityIcons';
-          iconName = 'hexagon-multiple';
+          iconType = 'Ionicons';
+          iconName = 'list-circle';
         }
         break;
       }
@@ -3258,6 +3287,15 @@ class ContactDetailScreen extends React.Component {
         } else if (field.name.includes('facebook')) {
           iconType = 'MaterialCommunityIcons';
           iconName = 'facebook';
+        } else if (field.name.includes('instagram')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'instagram';
+        } else if (field.name.includes('whatsapp')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'whatsapp';
+        } else if (field.name.includes('address')) {
+          iconType = 'FontAwesome5';
+          iconName = 'directions';
         } else {
           iconType = 'Feather';
           iconName = 'hash';
@@ -3265,18 +3303,50 @@ class ContactDetailScreen extends React.Component {
         break;
       }
       case 'key_select': {
-        iconType = 'MaterialCommunityIcons';
-        iconName = 'hexagon';
+        if (field.name.includes('faith_status')) {
+          iconType = 'FontAwesome5';
+          iconName = 'cross';
+        } else if (field.name.includes('seeker_path')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'map-marker-path';
+        } else if (field.name.includes('gender')) {
+          iconType = 'FontAwesome5';
+          iconName = 'transgender';
+        } else if (field.name.includes('age')) {
+          iconType = 'FontAwesome5';
+          iconName = 'user-clock';
+        } else {
+          iconType = 'Ionicons';
+          iconName = 'list-circle';
+        }
         break;
       }
       case 'user_select': {
-        iconType = 'FontAwesome';
-        iconName = 'user';
+        if (field.name.includes('assigned_to')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'briefcase-account';
+        } else {
+          iconType = 'FontAwesome';
+          iconName = 'user';
+        }
+        break;
+      }
+      case 'text': {
+        if (field.name.includes('nickname')) {
+          iconType = 'FontAwesome5';
+          iconName = 'user-tag';
+        } else if (field.name.includes('name')) {
+          iconType = 'FontAwesome5';
+          iconName = 'user-alt';
+        } else {
+          iconType = 'Entypo';
+          iconName = 'text';
+        }
         break;
       }
       default: {
-        iconType = 'FontAwesome';
-        iconName = 'user';
+        iconType = 'MaterialCommunityIcons';
+        iconName = 'square-small';
         break;
       }
     }
@@ -4034,7 +4104,7 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="user" style={styles.formIcon} />
+                  <Icon type="Octicons" name="primitive-dot" style={styles.formIcon} />
                 </View>
               </Col>
               <Col>
