@@ -3495,7 +3495,7 @@ class ContactDetailScreen extends React.Component {
             <Col style={{ paddingBottom: 15 }}>
               <Row style={[styles.formRow, { paddingTop: 10 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome" name="user" style={styles.formIcon} />
+                  <Icon type="Octicons" name="milestone" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Label
@@ -3994,7 +3994,7 @@ class ContactDetailScreen extends React.Component {
             <Col style={{ paddingBottom: 15 }}>
               <Row style={[styles.formRow, { paddingTop: 10 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome" name="user" style={styles.formIcon} />
+                  <Icon type="Octicons" name="milestone" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Label
