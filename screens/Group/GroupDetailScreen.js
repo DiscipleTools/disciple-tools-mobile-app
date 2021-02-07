@@ -3477,22 +3477,53 @@ class GroupDetailScreen extends React.Component {
         break;
       }
       case 'date': {
-        iconType = 'MaterialIcons';
-        iconName = 'date-range';
+        if (field.name.includes('church_start_date')) {
+          iconType = 'FontAwesome';
+          iconName = 'calendar-check-o';
+        } else if (field.name.includes('post_date')) {
+          iconType = 'FontAwesome';
+          iconName = 'calendar-o';
+        } else if (field.name.includes('start')) {
+          iconType = 'FontAwesome';
+          iconName = 'calendar-plus-o';
+        } else if (field.name.includes('end')) {
+          iconType = 'FontAwesome';
+          iconName = 'calendar-times-o';
+        } else {
+          iconType = 'FontAwesome';
+          iconName = 'calendar';
+        }
         break;
       }
       case 'connection': {
-        iconType = 'FontAwesome';
-        iconName = 'users';
+        if (field.name.includes('coaches')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'teach';
+        } else if (field.name.includes('members')) {
+          iconType = 'FontAwesome5';
+          iconName = 'list-ol';
+        } else if (field.name.includes('leaders')) {
+          iconType = 'FontAwesome';
+          iconName = 'globe';
+        } else if (field.name.includes('train')) {
+          iconType = 'FontAwesome5';
+          iconName = 'chalkboard-teacher';
+        } else {
+          iconType = 'MaterialIcons';
+          iconName = 'group-work';
+        }
         break;
       }
       case 'multi_select': {
         if (field.name.includes('tag')) {
           iconType = 'AntDesign';
           iconName = 'tags';
+        } else if (field.name.includes('health_metrics')) {
+          iconType = 'FontAwesome5';
+          iconName = 'tachometer-alt';
         } else {
-          iconType = 'MaterialCommunityIcons';
-          iconName = 'hexagon-multiple';
+          iconType = 'Ionicons';
+          iconName = 'list-circle';
         }
         break;
       }
@@ -3509,6 +3540,9 @@ class GroupDetailScreen extends React.Component {
         } else if (field.name.includes('facebook')) {
           iconType = 'MaterialCommunityIcons';
           iconName = 'facebook';
+        } else if (field.name.includes('address')) {
+          iconType = 'FontAwesome5';
+          iconName = 'directions';
         } else {
           iconType = 'Feather';
           iconName = 'hash';
@@ -3516,18 +3550,60 @@ class GroupDetailScreen extends React.Component {
         break;
       }
       case 'key_select': {
-        iconType = 'MaterialCommunityIcons';
-        iconName = 'hexagon';
+        if (field.name.includes('group_status')) {
+          iconType = 'FontAwesome5';
+          iconName = 'crosshairs';
+        } else if (field.name.includes('group_type')) {
+          iconType = 'Entypo';
+          iconName = 'hair-cross';
+        } else if (field.name.includes('group')) {
+          iconType = 'FontAwesome';
+          iconName = 'crosshairs';
+        } else {
+          iconType = 'Ionicons';
+          iconName = 'list-circle';
+        }
         break;
       }
       case 'user_select': {
-        iconType = 'FontAwesome';
-        iconName = 'user';
+        if (field.name.includes('assigned_to')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'briefcase-account';
+        } else {
+          iconType = 'FontAwesome';
+          iconName = 'user';
+        }
+        break;
+      }
+      case 'text': {
+        if (field.name.includes('four_fields')) {
+          iconType = 'FontAwesome5';
+          iconName = 'dice-four';
+        } else if (field.name.includes('name')) {
+          iconType = 'FontAwesome5';
+          iconName = 'sign';
+        } else {
+          iconType = 'Entypo';
+          iconName = 'text';
+        }
+        break;
+      }
+      case 'number': {
+        if (field.name.includes('member')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'dice-d20';
+        } else if (field.name.includes('leader')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'dice-d4';
+        } else {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'poll';
+        }
         break;
       }
       default: {
-        iconType = 'FontAwesome';
-        iconName = 'user';
+        iconType = 'MaterialCommunityIcons';
+        iconName = 'square-small';
         break;
       }
     }
