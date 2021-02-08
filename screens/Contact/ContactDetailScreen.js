@@ -4256,6 +4256,7 @@ class ContactDetailScreen extends React.Component {
               selectedValue={this.state.contact[field.name]}
               onValueChange={(value) => this.setContactCustomFieldValue(field.name, value)}
               textStyle={{ color: Colors.tintColor }}>
+              <Picker.Item key={-1} label={''} value={''} />
               {Object.keys(field.default).map((key) => {
                 const optionData = field.default[key];
                 return <Picker.Item key={key} label={optionData.label} value={key} />;

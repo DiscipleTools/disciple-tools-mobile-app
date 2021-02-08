@@ -4497,6 +4497,7 @@ class GroupDetailScreen extends React.Component {
               selectedValue={this.state.group[field.name]}
               onValueChange={(value) => this.setGroupCustomFieldValue(field.name, value)}
               textStyle={{ color: Colors.tintColor }}>
+              <Picker.Item key={-1} label={''} value={''} />
               {Object.keys(field.default).map((key) => {
                 const optionData = field.default[key];
                 return <Picker.Item key={key} label={optionData.label} value={key} />;
