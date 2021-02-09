@@ -58,7 +58,7 @@ export function* login({ domain, username, password }) {
 }
 
 export function* getExpoPushToken({ domain, token }) {
-  let expoPushToken = '';
+  let expoPushToken = {};
 
   if (Constants.isDevice) {
     // Get permission
