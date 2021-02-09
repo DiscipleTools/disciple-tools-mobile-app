@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { LogBox, Platform, StatusBar, StyleSheet, View } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import PropTypes from 'prop-types';
 import { AppLoading, Notifications } from 'expo';
@@ -166,4 +166,5 @@ App.defaultProps = {
   skipLoadingScreen: false,
 };
 console.disableYellowBox = true;
+LogBox.ignoreLogs(['Warning:', 'Animated:', 'VirtualizedLists', 'console.disableYellowBox']);
 export default App;
