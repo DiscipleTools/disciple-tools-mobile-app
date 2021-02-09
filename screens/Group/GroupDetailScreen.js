@@ -2005,9 +2005,13 @@ class GroupDetailScreen extends React.Component {
             };
           }
           if (groupToSave.assigned_to) {
+            // TODO: this is a (hopefully temprorary workaround)
+            // ref: 'setGroupCustomFieldValue' method AND "case 'user_select':"
+            const assignedTo = groupToSave.assigned_to;
+            const assignedToID = assignedTo.hasOwnProperty('key') ? assignedTo.key : assignedTo;
             groupToSave = {
               ...groupToSave,
-              assigned_to: `user-${groupToSave.assigned_to.key}`,
+              assigned_to: `user-${assignedToID}`,
             };
           }
           this.props.saveGroup(this.props.userData.domain, this.props.userData.token, groupToSave);
@@ -4508,10 +4512,11 @@ class GroupDetailScreen extends React.Component {
         break;
       }
       case 'user_select': {
+        const selectedValue = propExist && value.hasOwnProperty('key') ? value.key : value;
         mappedValue = (
           <Picker
             mode="dropdown"
-            selectedValue={propExist ? value.key : null}
+            selectedValue={propExist ? selectedValue : null}
             onValueChange={(value) => this.setGroupCustomFieldValue(field.name, value)}
             textStyle={{ color: Colors.tintColor }}>
             {[...this.state.users, ...this.state.assignedToContacts].map((item) => {

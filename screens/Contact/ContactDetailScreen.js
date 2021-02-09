@@ -1768,9 +1768,13 @@ class ContactDetailScreen extends React.Component {
             };
           }
           if (contactToSave.assigned_to) {
+            // TODO: this is a (hopefully temprorary workaround)
+            // ref: 'setContactCustomFieldValue' method AND "case 'user_select':" Ln#4273
+            const assignedTo = contactToSave.assigned_to;
+            const assignedToID = assignedTo.hasOwnProperty('key') ? assignedTo.key : assignedTo;
             contactToSave = {
               ...contactToSave,
-              assigned_to: `user-${contactToSave.assigned_to.key}`,
+              assigned_to: `user-${assignedToID}`,
             };
           }
           this.props.saveContact(
@@ -4267,10 +4271,11 @@ class ContactDetailScreen extends React.Component {
         break;
       }
       case 'user_select': {
+        const selectedValue = propExist && value.hasOwnProperty('key') ? value.key : value;
         mappedValue = (
           <Picker
             mode="dropdown"
-            selectedValue={propExist ? value.key : null}
+            selectedValue={propExist ? selectedValue : null}
             onValueChange={(value) => this.setContactCustomFieldValue(field.name, value)}
             textStyle={{ color: Colors.tintColor }}>
             {[...this.state.users, ...this.state.assignedToContacts].map((item) => {
