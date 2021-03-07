@@ -727,16 +727,25 @@ export default function groupsReducer(state = initialState, action) {
               }
             }
           });
-          tileList.push({
-            name: tileName,
-            label: settings.tiles[tileName].label,
-            tile_priority: settings.tiles[tileName].tile_priority,
-            fields: tileFields,
-          });
+          const tileFieldsOrdered = [...tileFields];
+          if (settings.tiles[tileName].hasOwnProperty('order')) {
+            tileFields.map((tileField, idx) => {
+              const orderList = settings.tiles[tileName].order;
+              const orderIdx = orderList.indexOf(tileField.name);
+              tileFieldsOrdered[orderIdx] = tileField;
+            });
+          }
+          if (!settings.tiles[tileName].hidden) {
+            tileList.push({
+              name: tileName,
+              label: settings.tiles[tileName].label,
+              tile_priority: settings.tiles[tileName].tile_priority,
+              fields: tileFieldsOrdered,
+            });
+          }
           tileList.sort((a, b) => a.tile_priority - b.tile_priority);
         });
       }
-
       return {
         ...newState,
         settings: {

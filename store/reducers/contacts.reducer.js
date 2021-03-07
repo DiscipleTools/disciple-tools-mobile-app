@@ -664,18 +664,22 @@ export default function contactsReducer(state = initialState, action) {
               }
             }
           });
-          const tileFieldsOrdered = [];
-          tileFields.map((tileField) => {
-            const orderList = settings.tiles[tileName].order;
-            const idx = orderList.indexOf(tileField.name);
-            tileFieldsOrdered[idx] = tileField;
-          });
-          tileList.push({
-            name: tileName,
-            label: settings.tiles[tileName].label,
-            tile_priority: settings.tiles[tileName].tile_priority,
-            fields: tileFieldsOrdered,
-          });
+          const tileFieldsOrdered = [...tileFields];
+          if (settings.tiles[tileName].hasOwnProperty('order')) {
+            tileFields.map((tileField, idx) => {
+              const orderList = settings.tiles[tileName].order;
+              const orderIdx = orderList.indexOf(tileField.name);
+              tileFieldsOrdered[orderIdx] = tileField;
+            });
+          }
+          if (!settings.tiles[tileName].hidden) {
+            tileList.push({
+              name: tileName,
+              label: settings.tiles[tileName].label,
+              tile_priority: settings.tiles[tileName].tile_priority,
+              fields: tileFieldsOrdered,
+            });
+          }
           tileList.sort((a, b) => a.tile_priority - b.tile_priority);
         });
       }
