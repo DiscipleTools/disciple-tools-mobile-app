@@ -165,6 +165,6 @@ App.propTypes = {
 App.defaultProps = {
   skipLoadingScreen: false,
 };
-console.disableYellowBox = true;
+//LogBox.ignoreAllLogs();
 LogBox.ignoreLogs(['Warning:', 'Animated:', 'VirtualizedLists', 'console.disableYellowBox']);
 export default App;
