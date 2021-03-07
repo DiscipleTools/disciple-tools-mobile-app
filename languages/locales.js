@@ -35,6 +35,11 @@ export default [
     rtl: false,
   },
   {
+    code: 'my',
+    name: 'မြန်မာစာ',
+    rtl: false,
+  },
+  {
     code: 'nl-NL',
     name: 'Nederlands',
     rtl: false,
@@ -45,13 +50,18 @@ export default [
     rtl: false,
   },
   {
-    code: 'ru-RU',
-    name: 'русский',
+    code: 'bs',
+    name: 'bosanski',
     rtl: false,
   },
   {
-    code: 'sr',
-    name: 'српски',
+    code: 'hr',
+    name: 'hrvatski',
+    rtl: false,
+  },
+  {
+    code: 'ro',
+    name: 'limba română',
     rtl: false,
   },
   {
@@ -60,8 +70,13 @@ export default [
     rtl: false,
   },
   {
-    code: 'hr',
-    name: 'hrvatski',
+    code: 'sr',
+    name: 'српски',
+    rtl: false,
+  },
+  {
+    code: 'ru-RU',
+    name: 'русский',
     rtl: false,
   },
   {
@@ -72,6 +87,11 @@ export default [
   {
     code: 'tr-TR',
     name: 'Türkçe',
+    rtl: false,
+  },
+  {
+    code: 'vi',
+    name: 'Tiếng Việt',
     rtl: false,
   },
   {

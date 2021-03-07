@@ -9,7 +9,7 @@
     "success": {
       "save": "Dados salvos com sucesso!"
     },
-    "groups": "grupos",
+    "groups": "Grupos",
     "details": "Detalhes",
     "selectPeopleGroups": "Selecionar grupo de pessoas",
     "address": "Endereço",
@@ -21,7 +21,7 @@
     "delete": "Excluir",
     "cancel": "Cancelar",
     "save": "Salvar",
-    "online": "online",
+    "online": "Online",
     "offline": "offline",
     "language": "Língua",
     "search": "Procurar",
@@ -84,7 +84,7 @@
     "networkUnavailable": "Rede indisponível. Você está no modo offline.",
     "networkAvailable": "Rede encontrada. De volta ao modo Online.",
     "storybook": "Storybook",
-    "logout": "sair",
+    "logout": "Sair",
     "helpSupport": "Ajuda / Suporte",
     "rememberPassword": "Lembrar senha",
     "rememberPasswordActive": "Manter-se logado está ligado",
