@@ -11,6 +11,7 @@ const initialState = {
 export default function i18nReducer(state = initialState, action) {
   let newState = {
     ...state,
+    canceledLocaleChange: false,
   };
   switch (action.type) {
     case actions.I18N_SETLANGUAGE: {
@@ -37,10 +38,7 @@ export default function i18nReducer(state = initialState, action) {
       };
     }
     case actions.I18N_SET_CANCEL_FALSE: {
-      return {
-        ...newState,
-        canceledLocaleChange: false,
-      };
+      return newState;
     }
     default:
       return newState;

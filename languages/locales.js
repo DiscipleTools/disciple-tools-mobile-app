@@ -31,7 +31,7 @@ export default [
   },
   {
     code: 'id-ID',
-    name: 'bahasa Indonesia',
+    name: 'Bahasa Indonesia',
     rtl: false,
   },
   {
@@ -50,33 +50,33 @@ export default [
     rtl: false,
   },
   {
-    code: 'bs',
-    name: 'bosanski',
+    code: 'bs-BA',
+    name: 'Bosanski',
     rtl: false,
   },
   {
     code: 'hr',
-    name: 'hrvatski',
+    name: 'Hrvatski',
     rtl: false,
   },
   {
-    code: 'ro',
-    name: 'limba română',
+    code: 'ro-RO',
+    name: 'Română',
     rtl: false,
   },
   {
-    code: 'sl',
-    name: 'slovenščina',
+    code: 'sl-SI',
+    name: 'Slovenščina',
     rtl: false,
   },
   {
-    code: 'sr',
-    name: 'српски',
+    code: 'sr-BA',
+    name: 'Cрпски',
     rtl: false,
   },
   {
     code: 'ru-RU',
-    name: 'русский',
+    name: 'Pусский',
     rtl: false,
   },
   {

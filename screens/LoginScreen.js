@@ -50,148 +50,8 @@ import { logout } from '../store/actions/user.actions';
 import { getActiveQuestionnaires } from '../store/actions/questionnaire.actions';
 import { getNotificationsCount } from '../store/actions/notifications.actions';
 import sharedTools from '../shared';
-//
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'flex-end',
-    backgroundColor: Colors.canvas,
-    minHeight: Dimensions.get('window').height,
-  },
-  header: {
-    backgroundColor: Colors.tintColor,
-    width: '100%',
-    padding: 35,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  welcomeImage: {
-    height: 60,
-    width: 250,
-    resizeMode: 'contain',
-    padding: 20,
-  },
-  formContainer: {
-    alignSelf: 'stretch',
-    flexGrow: 1,
-    padding: 20,
-  },
-  signInButton: {
-    marginTop: 10,
-    backgroundColor: Colors.tintColor,
-    borderRadius: 10,
-  },
-  signInButtonText: {
-    color: 'white',
-  },
-  forgotButton: {
-    alignSelf: 'stretch',
-    alignItems: 'center',
-    padding: 12,
-    marginLeft: 20,
-    marginRight: 20,
-  },
-  forgotButtonText: {
-    color: Colors.tintColor,
-  },
-  loading: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textField: {
-    backgroundColor: '#ffffff',
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  validationErrorInput: {
-    backgroundColor: '#FFE6E6',
-    borderWidth: 2,
-    borderColor: Colors.errorBackground,
-  },
-  validationErrorMessage: {
-    color: Colors.errorBackground,
-  },
-  languagePickerContainer: {
-    flexDirection: 'row',
-    backgroundColor: Colors.gray,
-    padding: 5,
-    alignItems: 'center',
-  },
-  languagePicker: {
-    flex: 1,
-  },
-  languageIcon: {
-    marginHorizontal: 20,
-  },
-  versionText: {
-    color: Colors.grayDark,
-    fontSize: 12,
-    position: 'absolute',
-    bottom: 15,
-    right: 15,
-  },
-  headerText: {
-    fontSize: 25,
-    textAlign: 'center',
-    margin: 10,
-    color: 'black',
-    fontWeight: 'bold',
-  },
-  textBoxContainer: {
-    position: 'relative',
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-  },
-  textBox: {
-    fontSize: 16,
-    paddingRight: 30,
-    paddingLeft: 8,
-    paddingVertical: 0,
-    flex: 1,
-  },
-  touachableButton: {
-    position: 'absolute',
-    right: 3,
-    height: 40,
-    width: 35,
-    padding: 2,
-  },
-  buttonImage: {
-    resizeMode: 'contain',
-    height: '100%',
-    width: '100%',
-  },
-  dialogBackground: {
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    top: 0,
-    left: 0,
-  },
-  dialogBox: {
-    backgroundColor: '#FFFFFF',
-    padding: 20,
-    marginLeft: 10,
-    marginRight: 10,
-  },
-  dialogButton: {
-    backgroundColor: Colors.tintColor,
-    borderRadius: 5,
-    width: 150,
-    alignSelf: 'center',
-    marginTop: 20,
-  },
-  dialogContent: {
-    fontSize: 20,
-    textAlign: 'center',
-    color: Colors.grayDark,
-    marginBottom: 5,
-  },
-});
+import { styles } from './LoginScreen.styles';
+
 let toastError;
 const { height, width } = Dimensions.get('window');
 class LoginScreen extends React.Component {
@@ -239,22 +99,14 @@ class LoginScreen extends React.Component {
 
     // Set locale in APP
     if (props.i18n.locale) {
-      // Set locale and RTL in i18n Library
-      i18n.setLocale(props.i18n.locale, props.i18n.isRTL);
+      // Set locale per Redux State
+      const locale = props.i18n.locale;
+      i18n.setLocale(locale);
     } else {
-      // On first time app launch
-      let locale = locales.find((item) => {
-        return (
-          item.code === Localization.locale ||
-          item.code.substring(0, 2) === Localization.locale.substring(0, 2)
-        );
-      });
-      // If phone locale does not exist, set English locale
-      if (!locale) locale = locales[0];
-      // Set locale and RTL in i18n Library
-      i18n.setLocale(locale.code, locale.rtl);
-      // Set locale and RTL in State
-      this.props.setLanguage(locale.code, locale.rtl);
+      // Set locale (and Redux State) per Device Settings
+      const locale = Localization.locale;
+      const localeObj = i18n.setLocale(locale);
+      this.props.setLanguage(localeObj.code, localeObj.rtl);
     }
   }
 
@@ -279,11 +131,14 @@ class LoginScreen extends React.Component {
       groupFilters,
       notificationsCount,
       tags,
+      i18n,
     } = nextProps;
     let newState = {
       ...prevState,
       userData,
-      loading: userReducerLoading || groupsReducerLoading || contactsReducerLoading,
+      loading:
+        (userReducerLoading || groupsReducerLoading || contactsReducerLoading) &&
+        !i18n.canceledLocaleChange,
       geonamesLength,
     };
     if (userData.token) {
@@ -495,7 +350,6 @@ class LoginScreen extends React.Component {
       tagsRetrieved,
     } = this.state;
 
-    // User logged successfully
     if (userData && userData.token && prevProps.userData.token !== userData.token) {
       this.getDataLists();
       this.getUserInfo();
@@ -674,21 +528,16 @@ class LoginScreen extends React.Component {
   };
   /* eslint-enable class-methods-use-this, no-console */
 
-  changeLanguage(languageCode, logIn = false) {
-    let locale = locales.find((item) => {
-      return item.code === languageCode;
-    });
-    // Set locale and RTL in i18n Library
-    i18n.setLocale(locale.code, locale.rtl);
-    // Set locale and RTL in State
-    this.props.setLanguage(locale.code, locale.rtl);
-    if (locale.rtl !== this.props.i18n.isRTL) {
+  changeLanguage(locale, logIn = false) {
+    const localeObj = i18n.setLocale(locale);
+    this.props.setLanguage(localeObj.code, localeObj.rtl);
+    if (localeObj.rtl !== this.props.i18n.isRTL) {
       this.showRestartDialog();
     } else if (logIn) {
       this.setState({
         appLanguageSet: true,
       });
-    }
+    } else;
   }
 
   cleanDomainWiteSpace(text) {
@@ -719,16 +568,25 @@ class LoginScreen extends React.Component {
 
   restartApp = () => {
     setTimeout(() => {
-      Updates.reload();
+      Updates.reloadAsync();
     }, 1000);
   };
 
   cancelSetLanguage = () => {
-    i18n.setLocale(this.props.i18n.previousLocale, this.props.i18n.previousIsRTL);
-    this.props.cancelSetLanguage();
+    if (this.props.i18n.previousLocale) {
+      // Set locale per Redux State
+      const locale = this.props.i18n.previousLocale;
+      i18n.setLocale(locale);
+    } else {
+      // Set locale (and Redux State) per Device Settings
+      const locale = Localization.locale;
+      const localeObj = i18n.setLocale(locale);
+      this.props.setLanguage(localeObj.code, localeObj.rtl);
+    }
     this.setState({
       toggleRestartDialog: false,
     });
+    this.props.cancelSetLanguage();
   };
 
   openDocsLink = () => {
@@ -993,14 +851,16 @@ class LoginScreen extends React.Component {
               },
             ]}>
             <View style={styles.dialogBox}>
-              <Text style={styles.dialogContent}>{i18n.t('appRestart.message')}</Text>
               <Text style={styles.dialogContent}>
-                {i18n.t('appRestart.selectedLanguage') +
-                  ': ' +
-                  locales.find((item) => item.code === this.props.i18n.locale).name}
+                {i18n.t('appRestart.message', { locale: this.props.i18n.previousLocale })}
               </Text>
               <Text style={styles.dialogContent}>
-                {i18n.t('appRestart.textDirection') +
+                {i18n.t('appRestart.selectedLanguage', { locale: this.props.i18n.previousLocale }) +
+                  ': ' +
+                  i18n.getLocaleObj(this.props.i18n.locale).name}
+              </Text>
+              <Text style={styles.dialogContent}>
+                {i18n.t('appRestart.textDirection', { locale: this.props.i18n.previousLocale }) +
                   ': ' +
                   (this.props.i18n.isRTL ? 'RTL' : 'LTR')}
               </Text>
@@ -1017,7 +877,9 @@ class LoginScreen extends React.Component {
                     },
                   ]}
                   onPress={this.cancelSetLanguage}>
-                  <Text style={{ color: Colors.tintColor }}>{i18n.t('global.cancel')}</Text>
+                  <Text style={{ color: Colors.tintColor }}>
+                    {i18n.t('global.cancel', { locale: this.props.i18n.previousLocale })}
+                  </Text>
                 </Button>
                 <Button
                   block
@@ -1026,7 +888,9 @@ class LoginScreen extends React.Component {
                     { width: 120, marginLeft: 'auto', marginRight: 'auto' },
                   ]}
                   onPress={this.restartApp}>
-                  <Text style={{ color: '#FFFFFF' }}>{i18n.t('appRestart.button')}</Text>
+                  <Text style={{ color: '#FFFFFF' }}>
+                    {i18n.t('appRestart.button', { locale: this.props.i18n.previousLocale })}
+                  </Text>
                 </Button>
               </Row>
             </View>
