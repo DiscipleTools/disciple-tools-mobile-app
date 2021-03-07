@@ -1,5 +1,5 @@
 import i18n from '.';
-const locale = 'bs';
+const locale = 'bs-BA';
 
 describe('languages/' + locale, () => {
   beforeAll(() => i18n.setLocale(locale, false));

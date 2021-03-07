@@ -1,5 +1,5 @@
 import i18n from '.';
-const locale = 'sl';
+const locale = 'sl-SI';
 
 describe('languages/' + locale, () => {
   beforeAll(() => i18n.setLocale(locale, false));
