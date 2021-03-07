@@ -35,7 +35,7 @@ export default [
     rtl: false,
   },
   {
-    code: 'my',
+    code: 'my-MM',
     name: 'မြန်မာစာ',
     rtl: false,
   },

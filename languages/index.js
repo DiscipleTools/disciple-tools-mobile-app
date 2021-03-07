@@ -35,7 +35,7 @@ i18n.translations = {
   'fa-IR': fa,
   'fr-FR': fr,
   'id-ID': id,
-  my,
+  'my-MM': my,
   'nl-NL': nl,
   'pt-BR': ptBR,
   'bs-BA': bs,
