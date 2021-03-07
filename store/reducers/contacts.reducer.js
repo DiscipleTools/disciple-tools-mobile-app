@@ -664,11 +664,17 @@ export default function contactsReducer(state = initialState, action) {
               }
             }
           });
+          const tileFieldsOrdered = [];
+          tileFields.map((tileField) => {
+            const orderList = settings.tiles[tileName].order;
+            const idx = orderList.indexOf(tileField.name);
+            tileFieldsOrdered[idx] = tileField;
+          });
           tileList.push({
             name: tileName,
             label: settings.tiles[tileName].label,
             tile_priority: settings.tiles[tileName].tile_priority,
-            fields: tileFields,
+            fields: tileFieldsOrdered,
           });
           tileList.sort((a, b) => a.tile_priority - b.tile_priority);
         });
