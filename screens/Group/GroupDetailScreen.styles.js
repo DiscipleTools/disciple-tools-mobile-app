@@ -2,9 +2,9 @@ import { Dimensions, Platform, StyleSheet } from 'react-native';
 import Colors from '../../constants/Colors';
 
 const containerPadding = 20;
-const circleSideSize = windowWidth / 3 + 20;
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+const circleSideSize = windowWidth / 3 + 20;
 export const styles = StyleSheet.create({
   activeImage: {
     opacity: 1,
