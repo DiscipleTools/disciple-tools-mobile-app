@@ -664,13 +664,22 @@ export default function contactsReducer(state = initialState, action) {
               }
             }
           });
-          const tileFieldsOrdered = [...tileFields];
+          let tileFieldsOrdered = [];
           if (settings.tiles[tileName].hasOwnProperty('order')) {
+            const orderList = settings.tiles[tileName].order;
+            let existingFields = [...orderList];
+            let missingFields = [];
             tileFields.map((tileField, idx) => {
-              const orderList = settings.tiles[tileName].order;
               const orderIdx = orderList.indexOf(tileField.name);
-              tileFieldsOrdered[orderIdx] = tileField;
+              if (orderIdx !== -1) {
+                existingFields[orderIdx] = tileField;
+              } else {
+                missingFields.push(tileField);
+              }
             });
+            tileFieldsOrdered = [...existingFields, ...missingFields];
+          } else {
+            tileFieldsOrdered = [...tileFields];
           }
           if (!settings.tiles[tileName].hidden) {
             tileList.push({
