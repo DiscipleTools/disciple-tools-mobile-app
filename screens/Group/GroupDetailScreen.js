@@ -3428,12 +3428,16 @@ class GroupDetailScreen extends React.Component {
               </View>
             );
         } else if (postType === 'groups') {
+          let iconSource = groupParentIcon;
+          const groupFieldLabel = String(field.label);
+          if (groupFieldLabel.toLowerCase().includes('peer')) iconSource = groupPeerIcon;
+          if (groupFieldLabel.toLowerCase().includes('child')) iconSource = groupChildIcon;
           mappedValue = (
             <Grid>
               <Row style={styles.formRow}>
                 <Col style={styles.formIconLabel}>
                   <View style={styles.formIconLabelView}>
-                    <Image source={groupParentIcon} style={styles.groupIcons} />
+                    <Image source={iconSource} style={styles.groupIcons} />
                   </View>
                 </Col>
                 <Col style={styles.formIconLabel}>
