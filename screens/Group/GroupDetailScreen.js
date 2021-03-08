@@ -1246,6 +1246,8 @@ class GroupDetailScreen extends React.Component {
       newColor = '#d9534f';
     } else if (value === 'active') {
       newColor = '#5cb85c';
+    } else if (value === 'paused') {
+      newColor = '#f0ad4e';
     }
     this.setState((prevState) => ({
       group: {
@@ -3225,16 +3227,8 @@ class GroupDetailScreen extends React.Component {
         break;
       }
       case 'number': {
-        if (field.name.includes('member')) {
-          iconType = 'MaterialCommunityIcons';
-          iconName = 'dice-d20';
-        } else if (field.name.includes('leader')) {
-          iconType = 'MaterialCommunityIcons';
-          iconName = 'dice-d4';
-        } else {
-          iconType = 'MaterialCommunityIcons';
-          iconName = 'poll';
-        }
+        iconType = 'Feather';
+        iconName = 'hash';
         break;
       }
       default: {
@@ -4096,9 +4090,7 @@ class GroupDetailScreen extends React.Component {
                   </Label>
                 </Col>
               </Row>
-              <Row
-                style={[styles.formRow, { paddingTop: 5, paddingBottom: 5 }]}
-                pointerEvents="none">
+              <Row style={[styles.formRow, { paddingTop: 5, paddingBottom: 5 }]}>
                 <Col
                   style={[
                     styles.statusFieldContainer,
@@ -4126,6 +4118,7 @@ class GroupDetailScreen extends React.Component {
                     }}>
                     {this.renderStatusPickerItems()}
                   </Picker>
+                  <Icon name="caret-down" size={10} style={styles.pickerIcon} />
                 </Col>
               </Row>
             </Col>

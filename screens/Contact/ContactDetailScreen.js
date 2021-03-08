@@ -3090,6 +3090,11 @@ class ContactDetailScreen extends React.Component {
         }
         break;
       }
+      case 'number': {
+        iconType = 'Feather';
+        iconName = 'hash';
+        break;
+      }
       default: {
         iconType = 'MaterialCommunityIcons';
         iconName = 'square-small';
@@ -3965,6 +3970,7 @@ class ContactDetailScreen extends React.Component {
                     }}>
                     {this.renderStatusPickerItems()}
                   </Picker>
+                  <Icon name="caret-down" size={10} style={styles.pickerIcon} />
                 </Col>
               </Row>
               {Object.prototype.hasOwnProperty.call(

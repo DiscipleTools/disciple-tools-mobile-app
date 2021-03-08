@@ -373,4 +373,11 @@ export const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
   },
+  pickerIcon: {
+    color: Colors.gray,
+    fontSize: 22,
+    right: 18,
+    top: 10,
+    position: 'absolute',
+  },
 });

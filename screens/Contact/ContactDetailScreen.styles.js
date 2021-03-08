@@ -260,4 +260,11 @@ export const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
+  pickerIcon: {
+    color: Colors.gray,
+    fontSize: 22,
+    right: 18,
+    top: 10,
+    position: 'absolute',
+  },
 });
