@@ -1370,7 +1370,9 @@ class GroupDetailScreen extends React.Component {
                       : this.formatActivityDate(item.object_note)}
                   </ParsedText>
                   {Object.prototype.hasOwnProperty.call(item, 'content') &&
-                    item.author.toLowerCase() === this.props.userData.username.toLowerCase() && (
+                    (item.author.toLowerCase() === this.props.userData.username.toLowerCase() ||
+                      item.author.toLowerCase() ===
+                        this.props.userData.displayName.toLowerCase()) && (
                       <Grid style={{ marginTop: 20 }}>
                         <Row
                           style={{
@@ -3227,8 +3229,13 @@ class GroupDetailScreen extends React.Component {
         break;
       }
       case 'number': {
-        iconType = 'Feather';
-        iconName = 'hash';
+        if (field.name.includes('leader')) {
+          iconType = 'FontAwesome5';
+          iconName = 'hashtag';
+        } else {
+          iconType = 'Feather';
+          iconName = 'hash';
+        }
         break;
       }
       default: {
