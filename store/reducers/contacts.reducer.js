@@ -681,6 +681,8 @@ export default function contactsReducer(state = initialState, action) {
           } else {
             tileFieldsOrdered = [...tileFields];
           }
+          // TODO: investigate why "location_grid_meta" was being added as string type
+          tileFieldsOrdered = tileFieldsOrdered.filter((item) => typeof item === 'object');
           if (!settings.tiles[tileName].hidden) {
             tileList.push({
               name: tileName,
