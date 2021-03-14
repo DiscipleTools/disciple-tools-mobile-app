@@ -3397,109 +3397,133 @@ class GroupDetailScreen extends React.Component {
         break;
       }
       case 'connection': {
-        if (field.name === 'members') {
-          mappedValue =
-            propExist && value.values.length > 0 ? (
-              <Col>
-                <Text
-                  style={[
-                    {
-                      color: Colors.tintColor,
-                      fontSize: 12,
-                      textAlign: 'left',
-                      paddingBottom: 15,
-                      paddingTop: 5,
-                      marginTop: 10,
-                    },
-                  ]}>
-                  {field.label}
-                </Text>
-                <FlatList
-                  data={value.values.filter((member) => !member.delete)}
-                  extraData={this.state.updateMembersList}
-                  renderItem={(item) => this.membersRow(item.item)}
-                  ItemSeparatorComponent={this.flatListItemSeparator}
-                />
-              </Col>
-            ) : (
-              <View>
-                <Text style={styles.addMembersHyperlink} onPress={() => this.onEnableEdit()}>
-                  {i18n.t('groupDetailScreen.noMembersMessage')}
-                </Text>
-              </View>
-            );
-        } else if (postType === 'groups') {
-          let iconSource = groupParentIcon;
-          const groupFieldLabel = String(field.label);
-          if (groupFieldLabel.toLowerCase().includes('peer')) iconSource = groupPeerIcon;
-          if (groupFieldLabel.toLowerCase().includes('child')) iconSource = groupChildIcon;
-          mappedValue = (
-            <Grid>
-              <Row style={styles.formRow}>
-                <Col style={styles.formIconLabel}>
-                  <View style={styles.formIconLabelView}>
-                    <Image source={iconSource} style={styles.groupIcons} />
-                  </View>
-                </Col>
-                <Col style={styles.formIconLabel}>
-                  <Label style={styles.formLabel}>{field.label}</Label>
-                </Col>
-                <Col />
-              </Row>
-              <Row
-                style={[
-                  styles.groupCircleParentContainer,
-                  { overflowX: 'auto', marginBottom: 10 },
-                ]}>
-                <ScrollView horizontal>
-                  {propExist && value.values.length > 0
-                    ? value.values.map((group, index) => (
-                        <Col
-                          key={index.toString()}
-                          style={styles.groupCircleContainer}
-                          onPress={() => this.goToGroupDetailScreen(group.value, group.name)}>
-                          {Object.prototype.hasOwnProperty.call(group, 'is_church') &&
-                          group.is_church ? (
-                            <Image source={groupCircleIcon} style={styles.groupCircle} />
-                          ) : (
-                            <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
-                          )}
-                          <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
-                          <Row style={styles.groupCircleName}>
-                            <Text style={styles.groupCircleNameText}>{group.name}</Text>
-                          </Row>
-                          <Row style={styles.groupCircleCounter}>
-                            <Text>{group.baptized_member_count}</Text>
-                          </Row>
-                          <Row style={[styles.groupCircleCounter, { marginTop: '5%' }]}>
-                            <Text>{group.member_count}</Text>
-                          </Row>
-                        </Col>
-                      ))
-                    : null}
-                </ScrollView>
-              </Row>
-              <View style={styles.formDivider} />
-            </Grid>
-          );
-        } else if (propExist) {
+        if (propExist) {
           let collection = [],
             isGroup = false;
-          switch (postType) {
-            case 'contacts': {
-              collection = [...this.state.usersContacts];
-              break;
+          if (field.name === 'people_groups') {
+            mappedValue = (
+              <Text
+                style={[
+                  { marginTop: 'auto', marginBottom: 'auto' },
+                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                ]}>
+                {value.values
+                  .map(
+                    function (peopleGroup) {
+                      return safeFind(
+                        this.state.peopleGroups.find(
+                          (person) => person.value === peopleGroup.value,
+                        ),
+                        'name',
+                      );
+                    }.bind(this),
+                  )
+                  .filter(String)
+                  .join(', ')}
+              </Text>
+            );
+          } else if (field.name === 'members') {
+            mappedValue =
+              propExist && value.values.length > 0 ? (
+                <Col>
+                  <Text
+                    style={[
+                      {
+                        color: Colors.tintColor,
+                        fontSize: 12,
+                        textAlign: 'left',
+                        paddingBottom: 15,
+                        paddingTop: 5,
+                        marginTop: 10,
+                      },
+                    ]}>
+                    {field.label}
+                  </Text>
+                  <FlatList
+                    data={value.values.filter((member) => !member.delete)}
+                    extraData={this.state.updateMembersList}
+                    renderItem={(item) => this.membersRow(item.item)}
+                    ItemSeparatorComponent={this.flatListItemSeparator}
+                  />
+                </Col>
+              ) : (
+                <View>
+                  <Text style={styles.addMembersHyperlink} onPress={() => this.onEnableEdit()}>
+                    {i18n.t('groupDetailScreen.noMembersMessage')}
+                  </Text>
+                </View>
+              );
+          } else if (postType === 'groups') {
+            let iconSource = groupParentIcon;
+            const groupFieldLabel = String(field.label);
+            if (groupFieldLabel.toLowerCase().includes('peer')) iconSource = groupPeerIcon;
+            if (groupFieldLabel.toLowerCase().includes('child')) iconSource = groupChildIcon;
+            mappedValue = (
+              <Grid>
+                <Row style={styles.formRow}>
+                  <Col style={styles.formIconLabel}>
+                    <View style={styles.formIconLabelView}>
+                      <Image source={iconSource} style={styles.groupIcons} />
+                    </View>
+                  </Col>
+                  <Col style={styles.formIconLabel}>
+                    <Label style={styles.formLabel}>{field.label}</Label>
+                  </Col>
+                  <Col />
+                </Row>
+                <Row
+                  style={[
+                    styles.groupCircleParentContainer,
+                    { overflowX: 'auto', marginBottom: 10 },
+                  ]}>
+                  <ScrollView horizontal>
+                    {propExist && value.values.length > 0
+                      ? value.values.map((group, index) => (
+                          <Col
+                            key={index.toString()}
+                            style={styles.groupCircleContainer}
+                            onPress={() => this.goToGroupDetailScreen(group.value, group.name)}>
+                            {Object.prototype.hasOwnProperty.call(group, 'is_church') &&
+                            group.is_church ? (
+                              <Image source={groupCircleIcon} style={styles.groupCircle} />
+                            ) : (
+                              <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
+                            )}
+                            <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
+                            <Row style={styles.groupCircleName}>
+                              <Text style={styles.groupCircleNameText}>{group.name}</Text>
+                            </Row>
+                            <Row style={styles.groupCircleCounter}>
+                              <Text>{group.baptized_member_count}</Text>
+                            </Row>
+                            <Row style={[styles.groupCircleCounter, { marginTop: '5%' }]}>
+                              <Text>{group.member_count}</Text>
+                            </Row>
+                          </Col>
+                        ))
+                      : null}
+                  </ScrollView>
+                </Row>
+                <View style={styles.formDivider} />
+              </Grid>
+            );
+          } else {
+            switch (postType) {
+              case 'contacts': {
+                collection = [...this.state.usersContacts];
+                break;
+              }
+              case 'groups': {
+                collection = [...this.state.groups];
+                isGroup = true;
+                break;
+              }
+              default: {
+                break;
+              }
             }
-            case 'groups': {
-              collection = [...this.state.groups];
-              isGroup = true;
-              break;
-            }
-            default: {
-              break;
-            }
+            mappedValue = this.renderConnectionLink(value, collection, isGroup);
           }
-          mappedValue = this.renderConnectionLink(value, collection, isGroup);
         }
         break;
       }
@@ -3919,6 +3943,11 @@ class GroupDetailScreen extends React.Component {
             case 'groups': {
               listItems = [...this.state.groups];
               placeholder = i18n.t('groupDetailScreen.searchGroups');
+              break;
+            }
+            case 'peoplegroups': {
+              listItems = [...this.state.peopleGroups];
+              placeholder = i18n.t('global.selectPeopleGroups');
               break;
             }
             default:
