@@ -1078,12 +1078,23 @@ class GroupDetailScreen extends React.Component {
       };
     }
 
-    newState = {
-      ...newState,
-      usersContacts: this.props.contactsList.map((contact) => ({
+    const mappedContacts = this.props.contactsList.map((contact) => {
+      return {
         name: contact.title,
         value: contact.ID,
-      })),
+        avatarUri: null,
+      };
+    });
+    const mappedUsers = JSON.parse(users).map((user) => {
+      return {
+        name: user.name,
+        value: String(user.contact_id),
+        avatarUri: user.avatar,
+      };
+    });
+    newState = {
+      ...newState,
+      usersContacts: [...mappedContacts, ...mappedUsers],
       groups: this.props.groupsList.map((group) => ({
         name: group.title,
         value: group.ID,
@@ -3973,6 +3984,9 @@ class GroupDetailScreen extends React.Component {
                     style={{
                       flexDirection: 'row',
                     }}>
+                    {item.avatarUri && (
+                      <Image style={styles.avatar} source={{ uri: item.avatarUri }} />
+                    )}
                     <Text
                       style={{
                         color: 'rgba(0, 0, 0, 0.87)',
@@ -3980,6 +3994,16 @@ class GroupDetailScreen extends React.Component {
                         lineHeight: 21,
                       }}>
                       {item.name}
+                    </Text>
+                    <Text
+                      style={{
+                        color: 'rgba(0, 0, 0, 0.54)',
+                        fontSize: 14,
+                        lineHeight: 21,
+                      }}>
+                      {' '}
+                      (#
+                      {id})
                     </Text>
                   </View>
                 </TouchableOpacity>

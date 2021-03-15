@@ -92,6 +92,11 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-start',
     backgroundColor: Colors.mainBackgroundColor,
   },
+  avatar: {
+    height: 16,
+    width: 16,
+    marginRight: 5,
+  },
   image: {
     height: 16,
     marginTop: 10,

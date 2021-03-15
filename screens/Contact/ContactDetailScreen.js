@@ -1205,14 +1205,23 @@ class ContactDetailScreen extends React.Component {
       value: key,
     }));
 
-    let userContactsList = this.props.contactsList.map((contact) => ({
-      name: contact.title,
-      value: contact.ID,
-    }));
-
+    const mappedContacts = this.props.contactsList.map((contact) => {
+      return {
+        name: contact.title,
+        value: contact.ID,
+        avatarUri: null,
+      };
+    });
+    const mappedUsers = JSON.parse(users).map((user) => {
+      return {
+        name: user.name,
+        value: String(user.contact_id),
+        avatarUri: user.avatar,
+      };
+    });
     newState = {
       ...newState,
-      usersContacts: [...userContactsList],
+      usersContacts: [...mappedContacts, ...mappedUsers],
       groups: this.props.groupsList.map((group) => ({
         name: group.title,
         value: group.ID,
@@ -3700,6 +3709,9 @@ class ContactDetailScreen extends React.Component {
                   style={{
                     flexDirection: 'row',
                   }}>
+                  {item.avatarUri && (
+                    <Image style={styles.avatar} source={{ uri: item.avatarUri }} />
+                  )}
                   <Text
                     style={{
                       color: 'rgba(0, 0, 0, 0.87)',
@@ -3707,6 +3719,16 @@ class ContactDetailScreen extends React.Component {
                       lineHeight: 21,
                     }}>
                     {item.name}
+                  </Text>
+                  <Text
+                    style={{
+                      color: 'rgba(0, 0, 0, 0.54)',
+                      fontSize: 14,
+                      lineHeight: 21,
+                    }}>
+                    {' '}
+                    (#
+                    {id})
                   </Text>
                 </View>
               </TouchableOpacity>
