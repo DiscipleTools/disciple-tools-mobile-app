@@ -3912,6 +3912,9 @@ class GroupDetailScreen extends React.Component {
                             style={{
                               flexDirection: 'row',
                             }}>
+                            {item.avatarUri && (
+                              <Image style={styles.avatar} source={{ uri: item.avatarUri }} />
+                            )}
                             <Text
                               style={{
                                 color: 'rgba(0, 0, 0, 0.87)',
