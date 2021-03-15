@@ -1,5 +1,5 @@
 import i18n from '.';
-const locale = 'sr-BA';
+const locale = 'my-MM';
 
 describe('languages/' + locale, () => {
   beforeAll(() => i18n.setLocale(locale, false));
@@ -9,6 +9,6 @@ describe('languages/' + locale, () => {
   });
 
   test('test global.success.save translation', () => {
-    expect(i18n.t('global.success.save')).toEqual('Подаци су успешно сачувани!');
+    expect(i18n.t('global.success.save')).toEqual('ဒေတာကိုအောင်အောင်မြင်မြင်သိမ်းဆည်းပြီးပါပြီ။');
   });
 });

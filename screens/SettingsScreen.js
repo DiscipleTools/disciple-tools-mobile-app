@@ -57,86 +57,8 @@ const propTypes = {
   }),
 };
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.canvas,
-    height: 100,
-  },
-  header: {
-    borderBottomWidth: 1,
-    backgroundColor: Colors.tabBar,
-    paddingBottom: 10,
-    marginBottom: 10,
+import { styles } from './SettingsScreen.styles';
 
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5,
-  },
-  headerBody: {
-    borderBottomWidth: 0,
-    alignItems: 'flex-start',
-  },
-  username: {
-    fontSize: 24,
-    fontWeight: '500',
-  },
-  domain: {
-    fontStyle: 'italic',
-    color: '#888',
-  },
-  body: {
-    alignItems: 'flex-start',
-  },
-  versionText: {
-    color: Colors.grayDark,
-    fontSize: 12,
-    position: 'absolute',
-    bottom: 15,
-    right: 15,
-  },
-  offlineBar: {
-    height: 20,
-    backgroundColor: '#FCAB10',
-  },
-  offlineBarText: {
-    fontSize: 14,
-    color: 'white',
-    textAlignVertical: 'center',
-    textAlign: 'center',
-  },
-  dialogBackground: {
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    top: 0,
-    left: 0,
-  },
-  dialogBox: {
-    backgroundColor: '#FFFFFF',
-    padding: 20,
-    marginLeft: 10,
-    marginRight: 10,
-  },
-  dialogButton: {
-    backgroundColor: Colors.tintColor,
-    borderRadius: 5,
-    width: 150,
-    alignSelf: 'center',
-    marginTop: 20,
-  },
-  dialogContent: {
-    fontSize: 20,
-    textAlign: 'center',
-    color: Colors.grayDark,
-    marginBottom: 5,
-  },
-});
 let toastError;
 const { height, width } = Dimensions.get('window');
 class SettingsScreen extends React.Component {
@@ -328,12 +250,9 @@ class SettingsScreen extends React.Component {
     this.props.updateUserInfo(this.props.userData.domain, this.props.userData.token, userInfo);
   };
 
-  changeLanguage(languageCode) {
-    let locale = locales.find((item) => {
-      return item.code === languageCode;
-    });
-    // Set locale and RTL in State
-    this.props.setLanguage(locale.code, locale.rtl);
+  changeLanguage(locale) {
+    const localeObj = i18n.setLocale(locale);
+    this.props.setLanguage(localeObj.code, localeObj.rtl);
   }
 
   showRestartDialog = () => {
@@ -343,9 +262,9 @@ class SettingsScreen extends React.Component {
   };
 
   restartApp = () => {
-    i18n.setLocale(this.props.i18n.locale, this.props.i18n.isRTL).then(() => {
-      Updates.reload();
-    });
+    setTimeout(() => {
+      Updates.reloadAsync();
+    }, 1000);
   };
 
   cancelSetLanguage = () => {
@@ -391,7 +310,9 @@ class SettingsScreen extends React.Component {
         {__DEV__ && (
           <ListItem icon onPress={() => this.props.navigation.navigate('Storybook')}>
             <Left>
-              <NbButton onPress={() => this.props.navigation.navigate('Storybook')}>
+              <NbButton
+                style={styles.button}
+                onPress={() => this.props.navigation.navigate('Storybook')}>
                 <Icon active name="flask" />
               </NbButton>
             </Left>
@@ -412,8 +333,8 @@ class SettingsScreen extends React.Component {
         {/* === Online === */}
         <ListItem icon onPress={this.onFABPress}>
           <Left>
-            <NbButton onPress={this.onFABPress}>
-              <Icon active name="ios-flash" />
+            <NbButton style={styles.button} onPress={this.onFABPress}>
+              <Icon name="ios-flash" />
             </NbButton>
           </Left>
           <Body style={styles.body}>
@@ -436,7 +357,7 @@ class SettingsScreen extends React.Component {
         {/* === Language === */}
         <ListItem icon>
           <Left>
-            <NbButton>
+            <NbButton style={styles.button}>
               <Icon active type="FontAwesome" name="language" />
             </NbButton>
           </Left>
@@ -451,7 +372,8 @@ class SettingsScreen extends React.Component {
           </Body>
           <Right>
             <Picker
-              style={{ width: 150 }}
+              iosIcon={<Icon style={styles.pickerIosIcon} name="caret-down" />}
+              style={Platform.OS === 'ios' ? null : { width: 150 }}
               selectedValue={this.props.i18n.locale}
               onValueChange={this.selectLanguage}>
               {this.renderLanguagePickerItems()}
@@ -461,7 +383,7 @@ class SettingsScreen extends React.Component {
         {/* === Remember password === */}
         <ListItem icon>
           <Left>
-            <NbButton>
+            <NbButton style={styles.button}>
               <Icon active type="MaterialCommunityIcons" name="onepassword" />
             </NbButton>
           </Left>
@@ -481,7 +403,7 @@ class SettingsScreen extends React.Component {
         {/* === PIN Code === */}
         <ListItem icon onPress={this.toggleShowPIN}>
           <Left>
-            <NbButton>
+            <NbButton style={styles.button}>
               <Icon active type="MaterialCommunityIcons" name="security" />
             </NbButton>
           </Left>
@@ -502,7 +424,7 @@ class SettingsScreen extends React.Component {
         {/* === Help / Support === */}
         <ListItem icon onPress={this.draftNewSupportEmail}>
           <Left>
-            <NbButton>
+            <NbButton style={styles.button}>
               <Icon active name="help-circle" />
             </NbButton>
           </Left>
@@ -519,7 +441,7 @@ class SettingsScreen extends React.Component {
         {/* === Logout === */}
         <ListItem icon onPress={this.signOutAsync}>
           <Left>
-            <NbButton>
+            <NbButton style={styles.button}>
               <Icon active name="log-out" />
             </NbButton>
           </Left>
@@ -653,16 +575,7 @@ class SettingsScreen extends React.Component {
                   }}
                   autoFocus={true}
                 />
-                <NbButton
-                  block
-                  style={{
-                    backgroundColor: Colors.tintColor,
-                    borderRadius: 5,
-                    width: 150,
-                    alignSelf: 'center',
-                    marginTop: 20,
-                  }}
-                  onPress={this.toggleShowPIN}>
+                <NbButton block style={styles.dialogButton} onPress={this.toggleShowPIN}>
                   <Text style={{ color: '#FFFFFF' }}>{i18n.t('settingsScreen.close')}</Text>
                 </NbButton>
               </View>
@@ -681,15 +594,17 @@ class SettingsScreen extends React.Component {
               },
             ]}>
             <View style={styles.dialogBox}>
-              <Text style={styles.dialogContent}>{i18n.t('appRestart.message')}</Text>
               <Text style={styles.dialogContent}>
-                {i18n.t('appRestart.selectedLanguage') +
+                {i18n.t('appRestart.message', { locale: this.props.i18n.previousLocale })}
+              </Text>
+              <Text style={styles.dialogContent}>
+                {i18n.t('appRestart.selectedLanguage', { locale: this.props.i18n.previousLocale }) +
                   ': ' +
-                  locales.find((item) => item.code === this.props.i18n.locale).name}
+                  i18n.getLocaleObj(this.props.i18n.locale).name}
               </Text>
               {this.state.selectedNewRTLDirection ? (
                 <Text style={styles.dialogContent}>
-                  {i18n.t('appRestart.textDirection') +
+                  {i18n.t('appRestart.textDirection', { locale: this.props.i18n.previousLocale }) +
                     ': ' +
                     (this.props.i18n.isRTL ? 'RTL' : 'LTR')}
                 </Text>
@@ -707,7 +622,9 @@ class SettingsScreen extends React.Component {
                     },
                   ]}
                   onPress={this.cancelSetLanguage}>
-                  <Text style={{ color: Colors.tintColor }}>{i18n.t('global.cancel')}</Text>
+                  <Text style={{ color: Colors.tintColor }}>
+                    {i18n.t('global.cancel', { locale: this.props.i18n.previousLocale })}
+                  </Text>
                 </NbButton>
                 <NbButton
                   block
@@ -716,7 +633,9 @@ class SettingsScreen extends React.Component {
                     { width: 120, marginLeft: 'auto', marginRight: 'auto' },
                   ]}
                   onPress={this.restartApp}>
-                  <Text style={{ color: '#FFFFFF' }}>{i18n.t('appRestart.button')}</Text>
+                  <Text style={{ color: '#FFFFFF' }}>
+                    {i18n.t('appRestart.button', { locale: this.props.i18n.previousLocale })}
+                  </Text>
                 </NbButton>
               </Row>
             </View>

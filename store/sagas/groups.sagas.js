@@ -15,8 +15,10 @@ export function* getAll({ domain, token, filter }) {
   yield put({
     type: 'REQUEST',
     payload: {
-      url: `https://${domain}/wp-json/dt-posts/v2/groups${sharedTools.mapFilterOnQueryParams(
+      url: `https://${domain}/wp-json/dt-posts/v2/groups${sharedTools.recursivelyMapFilterOnQueryParams(
         newFilter,
+        '',
+        '',
         userData,
       )}`,
       data: {

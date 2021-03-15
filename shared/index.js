@@ -801,19 +801,51 @@ const mapGroup = (group, entities) => {
   return mapGroups([group], entities)[0];
 };
 
+const recursivelyMapFilterOnQueryParams = (filter, parentKey, queryParams, userData) => {
+  for (let key in filter) {
+    const val = filter[key];
+    if (typeof val === 'object') {
+      queryParams = recursivelyMapFilterOnQueryParams(val, key, queryParams, userData);
+    } else {
+      const paramVal = filter[key];
+      const paramKey = parentKey.length > 0 ? `${parentKey}%5B%5D` : key;
+      if (paramVal.length !== 0) {
+        queryParams = `${queryParams}${queryParams === '' ? '?' : '&'}${paramKey}=${
+          paramVal === userData.displayName ? 'me' : String(paramVal).trim()
+        }`;
+      }
+    }
+  }
+  return queryParams;
+};
+
+// TODO: deprecate if `recursivelyMapFilterOnQueryParams` works as expected
 const mapFilterOnQueryParams = (filter, userData) => {
   let queryParams = '?';
   Object.keys(filter).forEach((key) => {
     let filterValue = filter[key];
     let filterValueType = Object.prototype.toString.call(filterValue);
     if (filterValueType === '[object Array]') {
-      filterValue.forEach((value) => {
-        queryParams = `${queryParams}${queryParams === '?' ? '' : '&'}${key}%5B%5D=${
-          value === userData.displayName ? 'me' : value
-        }`;
+      filterValue.flat().forEach((value) => {
+        if (typeof value === 'string' && value.length === 0) {
+          // continue
+        } else if (typeof value == 'object') {
+          Object.keys(value).forEach((subkey) => {
+            let subfilterValue = value[subkey];
+            subfilterValue.forEach((subvalue) => {
+              queryParams = `${queryParams}${queryParams === '?' ? '' : '&'}${subkey}%5B%5D=${
+                subvalue === userData.displayName ? 'me' : subvalue.trim()
+              }`;
+            });
+          });
+        } else {
+          if (value.length > 0) {
+            queryParams = `${queryParams}${queryParams === '?' ? '' : '&'}${key}%5B%5D=${
+              value === userData.displayName ? 'me' : value.trim()
+            }`;
+          }
+        }
       });
-    } else if (filterValueType === '[object Object]') {
-      //mapFilterOnQueryParams(filterValue, null, userData);
     } else {
       queryParams = `${queryParams}${queryParams === '?' ? '' : '&'}${key}=${
         filterValue === userData.displayName ? 'me' : filterValue
@@ -900,6 +932,7 @@ export default {
   formatDateToView,
   formatDateToDatePicker,
   mapFilterOnQueryParams,
+  recursivelyMapFilterOnQueryParams,
   mergeContactList,
   mergeGroupList,
 };

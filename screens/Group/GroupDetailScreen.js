@@ -84,12 +84,11 @@ import i18n from '../../languages';
 
 let toastSuccess;
 let toastError;
-const containerPadding = 20;
+
 const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const spacing = windowWidth * 0.025;
 const sideSize = windowWidth - 2 * spacing;
-const circleSideSize = windowWidth / 3 + 20;
-const windowHeight = Dimensions.get('window').height;
 let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBackPressListener;
 //const hasNotch = Platform.OS === 'android' && StatusBar.currentHeight > 25;
 //const extraNotchHeight = hasNotch ? StatusBar.currentHeight : 0;
@@ -110,375 +109,8 @@ const defaultHealthMilestones = [
   'church_sharing',
 ];
 let self;
-const styles = StyleSheet.create({
-  activeImage: {
-    opacity: 1,
-    height: '100%',
-    width: '100%',
-  },
-  inactiveImage: {
-    opacity: 0.15,
-    height: '100%',
-    width: '100%',
-  },
-  toggleText: {
-    textAlign: 'center',
-  },
-  activeToggleText: {
-    color: '#000000',
-    fontSize: 9,
-  },
-  inactiveToggleText: {
-    color: '#D9D5DC',
-    fontSize: 9,
-  },
-  tabBarUnderlineStyle: {
-    backgroundColor: Colors.tintColor,
-  },
-  tabStyle: { backgroundColor: '#FFFFFF' },
-  fieldsIcons: {
-    height: 22,
-    width: 22,
-  },
-  addRemoveIcons: {
-    fontSize: 30,
-    marginRight: 0,
-    color: Colors.addRemoveIcons,
-  },
-  addIcons: { color: 'green' },
-  removeIcons: { color: 'red' },
-  // Comments Section
-  container: {
-    paddingLeft: 19,
-    paddingRight: 16,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: Colors.mainBackgroundColor,
-  },
-  image: {
-    height: 16,
-    marginTop: 10,
-    width: 16,
-  },
-  content: {
-    backgroundColor: Colors.contentBackgroundColor,
-    borderRadius: 5,
-    flex: 1,
-    marginLeft: 16,
-    padding: 10,
-  },
-  contentHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 6,
-  },
-  name: {
-    color: Colors.tintColor,
-    fontSize: 13,
-    fontWeight: 'bold',
-  },
-  time: {
-    color: Colors.tintColor,
-    fontSize: 10,
-  },
-  groupFABIcon: {
-    color: 'white',
-    fontSize: 20,
-  },
-  // Form
-  formContainer: {
-    paddingTop: 10,
-    paddingBottom: 100,
-    paddingLeft: containerPadding,
-    paddingRight: containerPadding,
-  },
-  formRow: {
-    paddingTop: 15,
-    paddingBottom: 15,
-    width: '100%',
-  },
-  formIconLabel: { marginLeft: 10, width: 'auto' },
-  formIconLabelMarginLeft: {
-    marginLeft: containerPadding + 10,
-  },
-  formIconLabelMargin: {
-    marginRight: containerPadding + 10,
-    marginTop: 25,
-    marginBottom: 15,
-  },
-  formIcon: {
-    color: Colors.tintColor,
-    fontSize: 25,
-    marginTop: 'auto',
-    marginBottom: 'auto',
-  },
-  formParentLabel: {
-    width: 'auto',
-    maxWidth: 75,
-  },
-  formLabel: {
-    color: Colors.tintColor,
-    fontSize: 12,
-    marginTop: 'auto',
-    marginBottom: 'auto',
-  },
-  formDivider: {
-    borderBottomColor: '#CCCCCC',
-    borderBottomWidth: 1,
-  },
-  formDivider2: {
-    marginTop: 25,
-    marginBottom: 15,
-  },
-  formDivider2Margin: {
-    marginTop: 25,
-    marginBottom: 15,
-    marginLeft: containerPadding + 10,
-    marginRight: containerPadding + 10,
-  },
-  formIconLabelCol: {
-    width: 35,
-    marginRight: 10,
-  },
-  formIconLabelView: {
-    alignItems: 'center',
-  },
-  formFieldPadding: {
-    paddingTop: 30,
-  },
-  formContainerNoPadding: {
-    paddingLeft: 0,
-    paddingRight: 0,
-    paddingTop: 0,
-  },
-  // Groups section
-  groupCircleParentContainer: {
-    height: circleSideSize,
-  },
-  groupCircleContainer: {
-    height: '100%',
-    width: circleSideSize,
-  },
-  groupCircle: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    position: 'absolute',
-    height: '85%',
-    width: '85%',
-    marginTop: '7.5%',
-    marginRight: '7.5%',
-    marginBottom: '7.5%',
-    marginLeft: '7.5%',
-  },
-  groupCenterIcon: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    position: 'absolute',
-    height: '40%',
-    width: '40%',
-    marginTop: '25%',
-    resizeMode: 'contain',
-  },
-  groupCircleName: {
-    justifyContent: 'center',
-    marginTop: '20%',
-    marginLeft: '20%',
-    marginRight: '20%',
-  },
-  groupCircleNameText: { fontSize: 11, textAlign: 'center' },
-  groupCircleCounter: {
-    justifyContent: 'center',
-    marginTop: '-5%',
-  },
-  groupIcons: {
-    height: 30,
-    width: 32,
-  },
-  progressIconText: {
-    fontSize: 9,
-    textAlign: 'center',
-    width: '100%',
-  },
-  membersIconActive: {
-    opacity: 1,
-  },
-  membersIconInactive: {
-    opacity: 0.15,
-  },
-  membersLeaderIcon: {
-    height: 30,
-    width: 18,
-    marginLeft: 0,
-  },
-  membersCloseIcon: {
-    color: Colors.grayDark,
-    fontSize: 25,
-    marginTop: 'auto',
-    marginBottom: 'auto',
-  },
-  offlineBar: {
-    height: 20,
-    backgroundColor: '#FCAB10',
-  },
-  offlineBarText: {
-    fontSize: 14,
-    color: 'white',
-    textAlignVertical: 'center',
-    textAlign: 'center',
-  },
-  noCommentsContainer: {
-    padding: 20,
-    height: '90%',
-    transform: [{ scaleY: -1 }],
-  },
-  noCommentsImage: {
-    opacity: 0.5,
-    height: 70,
-    width: 70,
-    padding: 10,
-  },
-  noCommentsText: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: '#A8A8A8',
-    marginTop: 10,
-  },
-  membersCount: {
-    color: Colors.tintColor,
-    fontSize: 15,
-  },
-  addMembersHyperlink: {
-    paddingTop: 150,
-    textAlign: 'center',
-    color: '#A8A8A8',
-    fontSize: 18,
-    opacity: 0.7,
-  },
-  groupTextField: {
-    borderBottomWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#B4B4B4',
-    height: 50,
-    fontSize: 15,
-  },
-  groupTextRoundField: {
-    borderWidth: 1,
-    borderRadius: 5,
-    borderStyle: 'solid',
-    borderColor: '#B4B4B4',
-    height: 50,
-    fontSize: 15,
-  },
-  selectizeField: {
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#B4B4B4',
-    borderBottomWidth: 1.5,
-    borderBottomColor: '#B4B4B4',
-    borderRadius: 5,
-    minHeight: 50,
-    marginTop: -15,
-    padding: 10,
-  },
-  statusFieldContainer: Platform.select({
-    default: {
-      borderStyle: 'solid',
-      borderWidth: 2,
-      borderRadius: 3,
-    },
-    ios: {},
-  }),
-  validationErrorMessage: {
-    color: Colors.errorBackground,
-  },
-  dateIcons: {
-    width: 20,
-    height: 20,
-    marginTop: 'auto',
-    marginBottom: 'auto',
-  },
-  linkingText: {
-    paddingTop: 4,
-    paddingBottom: 8,
-    textDecorationLine: 'underline',
-  },
-  suggestionsRowContainer: {
-    flexDirection: 'row',
-  },
-  userIconBox: {
-    height: 45,
-    width: 45,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.tintColor,
-  },
-  usernameInitials: {
-    color: '#fff',
-    fontWeight: '800',
-    fontSize: 14,
-  },
-  userDetailsBox: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingLeft: 10,
-    paddingRight: 15,
-  },
-  displayNameText: {
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  usernameText: {
-    fontSize: 12,
-    color: 'rgba(0,0,0,0.6)',
-  },
-  // Edit/Delete comment dialog
-  dialogBackground: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  },
-  dialogBox: {
-    backgroundColor: '#FFFFFF',
-    padding: 20,
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    height: windowHeight - windowHeight * 0.55,
-    width: windowWidth - windowWidth * 0.1,
-    marginTop: windowHeight * 0.1,
-  },
-  dialogButton: {
-    backgroundColor: Colors.tintColor,
-    borderRadius: 5,
-    width: 100,
-    marginTop: 20,
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  },
-  dialogContent: {
-    height: '100%',
-    width: '100%',
-    fontSize: 20,
-    textAlign: 'center',
-    color: Colors.grayDark,
-    marginBottom: 5,
-  },
-  commentsActionButtons: {
-    borderRadius: 80,
-    height: 40,
-    width: 40,
-    marginBottom: 10,
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-  },
-  formFieldMargin: {
-    marginTop: 20,
-    marginBottom: 10,
-  },
-});
+
+import { styles } from './GroupDetailScreen.styles';
 
 const initialState = {
   group: {},
@@ -1446,12 +1078,23 @@ class GroupDetailScreen extends React.Component {
       };
     }
 
-    newState = {
-      ...newState,
-      usersContacts: this.props.contactsList.map((contact) => ({
+    const mappedContacts = this.props.contactsList.map((contact) => {
+      return {
         name: contact.title,
         value: contact.ID,
-      })),
+        avatarUri: null,
+      };
+    });
+    const mappedUsers = JSON.parse(users).map((user) => {
+      return {
+        name: user.name,
+        value: String(user.contact_id),
+        avatarUri: user.avatar,
+      };
+    });
+    newState = {
+      ...newState,
+      usersContacts: [...mappedContacts, ...mappedUsers],
       groups: this.props.groupsList.map((group) => ({
         name: group.title,
         value: group.ID,
@@ -1614,6 +1257,8 @@ class GroupDetailScreen extends React.Component {
       newColor = '#d9534f';
     } else if (value === 'active') {
       newColor = '#5cb85c';
+    } else if (value === 'paused') {
+      newColor = '#f0ad4e';
     }
     this.setState((prevState) => ({
       group: {
@@ -1736,7 +1381,9 @@ class GroupDetailScreen extends React.Component {
                       : this.formatActivityDate(item.object_note)}
                   </ParsedText>
                   {Object.prototype.hasOwnProperty.call(item, 'content') &&
-                    item.author.toLowerCase() === this.props.userData.username.toLowerCase() && (
+                    (item.author.toLowerCase() === this.props.userData.username.toLowerCase() ||
+                      item.author.toLowerCase() ===
+                        this.props.userData.displayName.toLowerCase()) && (
                       <Grid style={{ marginTop: 20 }}>
                         <Row
                           style={{
@@ -2005,9 +1652,13 @@ class GroupDetailScreen extends React.Component {
             };
           }
           if (groupToSave.assigned_to) {
+            // TODO: this is a (hopefully temprorary workaround)
+            // ref: 'setGroupCustomFieldValue' method AND "case 'user_select':"
+            const assignedTo = groupToSave.assigned_to;
+            const assignedToID = assignedTo.hasOwnProperty('key') ? assignedTo.key : assignedTo;
             groupToSave = {
               ...groupToSave,
-              assigned_to: `user-${groupToSave.assigned_to.key}`,
+              assigned_to: `user-${assignedToID}`,
             };
           }
           this.props.saveGroup(this.props.userData.domain, this.props.userData.token, groupToSave);
@@ -3477,22 +3128,53 @@ class GroupDetailScreen extends React.Component {
         break;
       }
       case 'date': {
-        iconType = 'MaterialIcons';
-        iconName = 'date-range';
+        if (field.name.includes('church_start_date')) {
+          iconType = 'FontAwesome';
+          iconName = 'calendar-check-o';
+        } else if (field.name.includes('post_date')) {
+          iconType = 'FontAwesome';
+          iconName = 'calendar-o';
+        } else if (field.name.includes('start')) {
+          iconType = 'FontAwesome';
+          iconName = 'calendar-plus-o';
+        } else if (field.name.includes('end')) {
+          iconType = 'FontAwesome';
+          iconName = 'calendar-times-o';
+        } else {
+          iconType = 'FontAwesome';
+          iconName = 'calendar';
+        }
         break;
       }
       case 'connection': {
-        iconType = 'FontAwesome';
-        iconName = 'users';
+        if (field.name.includes('coaches')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'teach';
+        } else if (field.name.includes('members')) {
+          iconType = 'FontAwesome5';
+          iconName = 'list-ol';
+        } else if (field.name.includes('leaders')) {
+          iconType = 'FontAwesome';
+          iconName = 'globe';
+        } else if (field.name.includes('train')) {
+          iconType = 'FontAwesome5';
+          iconName = 'chalkboard-teacher';
+        } else {
+          iconType = 'MaterialIcons';
+          iconName = 'group-work';
+        }
         break;
       }
       case 'multi_select': {
         if (field.name.includes('tag')) {
           iconType = 'AntDesign';
           iconName = 'tags';
+        } else if (field.name.includes('health_metrics')) {
+          iconType = 'FontAwesome5';
+          iconName = 'tachometer-alt';
         } else {
-          iconType = 'MaterialCommunityIcons';
-          iconName = 'hexagon-multiple';
+          iconType = 'Ionicons';
+          iconName = 'list-circle';
         }
         break;
       }
@@ -3509,6 +3191,9 @@ class GroupDetailScreen extends React.Component {
         } else if (field.name.includes('facebook')) {
           iconType = 'MaterialCommunityIcons';
           iconName = 'facebook';
+        } else if (field.name.includes('address')) {
+          iconType = 'FontAwesome5';
+          iconName = 'directions';
         } else {
           iconType = 'Feather';
           iconName = 'hash';
@@ -3516,18 +3201,57 @@ class GroupDetailScreen extends React.Component {
         break;
       }
       case 'key_select': {
-        iconType = 'MaterialCommunityIcons';
-        iconName = 'hexagon';
+        if (field.name.includes('group_status')) {
+          iconType = 'FontAwesome5';
+          iconName = 'crosshairs';
+        } else if (field.name.includes('group_type')) {
+          iconType = 'Entypo';
+          iconName = 'hair-cross';
+        } else if (field.name.includes('group')) {
+          iconType = 'FontAwesome';
+          iconName = 'crosshairs';
+        } else {
+          iconType = 'Ionicons';
+          iconName = 'list-circle';
+        }
         break;
       }
       case 'user_select': {
-        iconType = 'FontAwesome';
-        iconName = 'user';
+        if (field.name.includes('assigned_to')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'briefcase-account';
+        } else {
+          iconType = 'FontAwesome';
+          iconName = 'user';
+        }
+        break;
+      }
+      case 'text': {
+        if (field.name.includes('four_fields')) {
+          iconType = 'FontAwesome5';
+          iconName = 'dice-four';
+        } else if (field.name.includes('name')) {
+          iconType = 'FontAwesome5';
+          iconName = 'sign';
+        } else {
+          iconType = 'Entypo';
+          iconName = 'text';
+        }
+        break;
+      }
+      case 'number': {
+        if (field.name.includes('leader')) {
+          iconType = 'FontAwesome5';
+          iconName = 'hashtag';
+        } else {
+          iconType = 'Feather';
+          iconName = 'hash';
+        }
         break;
       }
       default: {
-        iconType = 'FontAwesome';
-        iconName = 'user';
+        iconType = 'MaterialCommunityIcons';
+        iconName = 'square-small';
         break;
       }
     }
@@ -3684,105 +3408,133 @@ class GroupDetailScreen extends React.Component {
         break;
       }
       case 'connection': {
-        if (field.name === 'members') {
-          mappedValue =
-            propExist && value.values.length > 0 ? (
-              <Col>
-                <Text
-                  style={[
-                    {
-                      color: Colors.tintColor,
-                      fontSize: 12,
-                      textAlign: 'left',
-                      paddingBottom: 15,
-                      paddingTop: 5,
-                      marginTop: 10,
-                    },
-                  ]}>
-                  {field.label}
-                </Text>
-                <FlatList
-                  data={value.values.filter((member) => !member.delete)}
-                  extraData={this.state.updateMembersList}
-                  renderItem={(item) => this.membersRow(item.item)}
-                  ItemSeparatorComponent={this.flatListItemSeparator}
-                />
-              </Col>
-            ) : (
-              <View>
-                <Text style={styles.addMembersHyperlink} onPress={() => this.onEnableEdit()}>
-                  {i18n.t('groupDetailScreen.noMembersMessage')}
-                </Text>
-              </View>
-            );
-        } else if (postType === 'groups') {
-          mappedValue = (
-            <Grid>
-              <Row style={styles.formRow}>
-                <Col style={styles.formIconLabel}>
-                  <View style={styles.formIconLabelView}>
-                    <Image source={groupParentIcon} style={styles.groupIcons} />
-                  </View>
-                </Col>
-                <Col style={styles.formIconLabel}>
-                  <Label style={styles.formLabel}>{field.label}</Label>
-                </Col>
-                <Col />
-              </Row>
-              <Row
-                style={[
-                  styles.groupCircleParentContainer,
-                  { overflowX: 'auto', marginBottom: 10 },
-                ]}>
-                <ScrollView horizontal>
-                  {propExist && value.values.length > 0
-                    ? value.values.map((group, index) => (
-                        <Col
-                          key={index.toString()}
-                          style={styles.groupCircleContainer}
-                          onPress={() => this.goToGroupDetailScreen(group.value, group.name)}>
-                          {Object.prototype.hasOwnProperty.call(group, 'is_church') &&
-                          group.is_church ? (
-                            <Image source={groupCircleIcon} style={styles.groupCircle} />
-                          ) : (
-                            <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
-                          )}
-                          <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
-                          <Row style={styles.groupCircleName}>
-                            <Text style={styles.groupCircleNameText}>{group.name}</Text>
-                          </Row>
-                          <Row style={styles.groupCircleCounter}>
-                            <Text>{group.baptized_member_count}</Text>
-                          </Row>
-                          <Row style={[styles.groupCircleCounter, { marginTop: '5%' }]}>
-                            <Text>{group.member_count}</Text>
-                          </Row>
-                        </Col>
-                      ))
-                    : null}
-                </ScrollView>
-              </Row>
-              <View style={styles.formDivider} />
-            </Grid>
-          );
-        } else if (propExist) {
+        if (propExist) {
           let collection = [],
             isGroup = false;
-          switch (postType) {
-            case 'contacts': {
-              collection = [...this.state.usersContacts];
-              break;
+          if (field.name === 'people_groups') {
+            mappedValue = (
+              <Text
+                style={[
+                  { marginTop: 'auto', marginBottom: 'auto' },
+                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                ]}>
+                {value.values
+                  .map(
+                    function (peopleGroup) {
+                      return safeFind(
+                        this.state.peopleGroups.find(
+                          (person) => person.value === peopleGroup.value,
+                        ),
+                        'name',
+                      );
+                    }.bind(this),
+                  )
+                  .filter(String)
+                  .join(', ')}
+              </Text>
+            );
+          } else if (field.name === 'members') {
+            mappedValue =
+              propExist && value.values.length > 0 ? (
+                <Col>
+                  <Text
+                    style={[
+                      {
+                        color: Colors.tintColor,
+                        fontSize: 12,
+                        textAlign: 'left',
+                        paddingBottom: 15,
+                        paddingTop: 5,
+                        marginTop: 10,
+                      },
+                    ]}>
+                    {field.label}
+                  </Text>
+                  <FlatList
+                    data={value.values.filter((member) => !member.delete)}
+                    extraData={this.state.updateMembersList}
+                    renderItem={(item) => this.membersRow(item.item)}
+                    ItemSeparatorComponent={this.flatListItemSeparator}
+                  />
+                </Col>
+              ) : (
+                <View>
+                  <Text style={styles.addMembersHyperlink} onPress={() => this.onEnableEdit()}>
+                    {i18n.t('groupDetailScreen.noMembersMessage')}
+                  </Text>
+                </View>
+              );
+          } else if (postType === 'groups') {
+            let iconSource = groupParentIcon;
+            const groupFieldLabel = String(field.label);
+            if (groupFieldLabel.toLowerCase().includes('peer')) iconSource = groupPeerIcon;
+            if (groupFieldLabel.toLowerCase().includes('child')) iconSource = groupChildIcon;
+            mappedValue = (
+              <Grid>
+                <Row style={styles.formRow}>
+                  <Col style={styles.formIconLabel}>
+                    <View style={styles.formIconLabelView}>
+                      <Image source={iconSource} style={styles.groupIcons} />
+                    </View>
+                  </Col>
+                  <Col style={styles.formIconLabel}>
+                    <Label style={styles.formLabel}>{field.label}</Label>
+                  </Col>
+                  <Col />
+                </Row>
+                <Row
+                  style={[
+                    styles.groupCircleParentContainer,
+                    { overflowX: 'auto', marginBottom: 10 },
+                  ]}>
+                  <ScrollView horizontal>
+                    {propExist && value.values.length > 0
+                      ? value.values.map((group, index) => (
+                          <Col
+                            key={index.toString()}
+                            style={styles.groupCircleContainer}
+                            onPress={() => this.goToGroupDetailScreen(group.value, group.name)}>
+                            {Object.prototype.hasOwnProperty.call(group, 'is_church') &&
+                            group.is_church ? (
+                              <Image source={groupCircleIcon} style={styles.groupCircle} />
+                            ) : (
+                              <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
+                            )}
+                            <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
+                            <Row style={styles.groupCircleName}>
+                              <Text style={styles.groupCircleNameText}>{group.name}</Text>
+                            </Row>
+                            <Row style={styles.groupCircleCounter}>
+                              <Text>{group.baptized_member_count}</Text>
+                            </Row>
+                            <Row style={[styles.groupCircleCounter, { marginTop: '5%' }]}>
+                              <Text>{group.member_count}</Text>
+                            </Row>
+                          </Col>
+                        ))
+                      : null}
+                  </ScrollView>
+                </Row>
+                <View style={styles.formDivider} />
+              </Grid>
+            );
+          } else {
+            switch (postType) {
+              case 'contacts': {
+                collection = [...this.state.usersContacts];
+                break;
+              }
+              case 'groups': {
+                collection = [...this.state.groups];
+                isGroup = true;
+                break;
+              }
+              default: {
+                break;
+              }
             }
-            case 'groups': {
-              collection = [...this.state.groups];
-              isGroup = true;
-              break;
-            }
-            default: {
-              break;
-            }
+            mappedValue = this.renderConnectionLink(value, collection, isGroup);
           }
-          mappedValue = this.renderConnectionLink(value, collection, isGroup);
         }
         break;
       }
@@ -4160,6 +3912,9 @@ class GroupDetailScreen extends React.Component {
                             style={{
                               flexDirection: 'row',
                             }}>
+                            {item.avatarUri && (
+                              <Image style={styles.avatar} source={{ uri: item.avatarUri }} />
+                            )}
                             <Text
                               style={{
                                 color: 'rgba(0, 0, 0, 0.87)',
@@ -4204,6 +3959,11 @@ class GroupDetailScreen extends React.Component {
               placeholder = i18n.t('groupDetailScreen.searchGroups');
               break;
             }
+            case 'peoplegroups': {
+              listItems = [...this.state.peopleGroups];
+              placeholder = i18n.t('global.selectPeopleGroups');
+              break;
+            }
             default:
           }
           mappedValue = (
@@ -4227,6 +3987,9 @@ class GroupDetailScreen extends React.Component {
                     style={{
                       flexDirection: 'row',
                     }}>
+                    {item.avatarUri && (
+                      <Image style={styles.avatar} source={{ uri: item.avatarUri }} />
+                    )}
                     <Text
                       style={{
                         color: 'rgba(0, 0, 0, 0.87)',
@@ -4234,6 +3997,16 @@ class GroupDetailScreen extends React.Component {
                         lineHeight: 21,
                       }}>
                       {item.name}
+                    </Text>
+                    <Text
+                      style={{
+                        color: 'rgba(0, 0, 0, 0.54)',
+                        fontSize: 14,
+                        lineHeight: 21,
+                      }}>
+                      {' '}
+                      (#
+                      {id})
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -4380,9 +4153,7 @@ class GroupDetailScreen extends React.Component {
                   </Label>
                 </Col>
               </Row>
-              <Row
-                style={[styles.formRow, { paddingTop: 5, paddingBottom: 5 }]}
-                pointerEvents="none">
+              <Row style={[styles.formRow, { paddingTop: 5, paddingBottom: 5 }]}>
                 <Col
                   style={[
                     styles.statusFieldContainer,
@@ -4410,6 +4181,7 @@ class GroupDetailScreen extends React.Component {
                     }}>
                     {this.renderStatusPickerItems()}
                   </Picker>
+                  <Icon name="caret-down" size={10} style={styles.pickerIcon} />
                 </Col>
               </Row>
             </Col>
@@ -4421,6 +4193,7 @@ class GroupDetailScreen extends React.Component {
               selectedValue={this.state.group[field.name]}
               onValueChange={(value) => this.setGroupCustomFieldValue(field.name, value)}
               textStyle={{ color: Colors.tintColor }}>
+              <Picker.Item key={-1} label={''} value={''} />
               {Object.keys(field.default).map((key) => {
                 const optionData = field.default[key];
                 return <Picker.Item key={key} label={optionData.label} value={key} />;
@@ -4431,10 +4204,11 @@ class GroupDetailScreen extends React.Component {
         break;
       }
       case 'user_select': {
+        const selectedValue = propExist && value.hasOwnProperty('key') ? value.key : value;
         mappedValue = (
           <Picker
             mode="dropdown"
-            selectedValue={propExist ? value.key : null}
+            selectedValue={propExist ? selectedValue : null}
             onValueChange={(value) => this.setGroupCustomFieldValue(field.name, value)}
             textStyle={{ color: Colors.tintColor }}>
             {[...this.state.users, ...this.state.assignedToContacts].map((item) => {

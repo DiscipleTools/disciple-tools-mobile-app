@@ -31,7 +31,12 @@ export default [
   },
   {
     code: 'id-ID',
-    name: 'bahasa Indonesia',
+    name: 'Bahasa Indonesia',
+    rtl: false,
+  },
+  {
+    code: 'my-MM',
+    name: 'မြန်မာစာ',
     rtl: false,
   },
   {
@@ -45,23 +50,33 @@ export default [
     rtl: false,
   },
   {
-    code: 'ru-RU',
-    name: 'русский',
-    rtl: false,
-  },
-  {
-    code: 'sr',
-    name: 'српски',
-    rtl: false,
-  },
-  {
-    code: 'sl',
-    name: 'slovenščina',
+    code: 'bs-BA',
+    name: 'Bosanski',
     rtl: false,
   },
   {
     code: 'hr',
-    name: 'hrvatski',
+    name: 'Hrvatski',
+    rtl: false,
+  },
+  {
+    code: 'ro-RO',
+    name: 'Română',
+    rtl: false,
+  },
+  {
+    code: 'sl-SI',
+    name: 'Slovenščina',
+    rtl: false,
+  },
+  {
+    code: 'sr-BA',
+    name: 'Cрпски',
+    rtl: false,
+  },
+  {
+    code: 'ru-RU',
+    name: 'Pусский',
     rtl: false,
   },
   {
@@ -72,6 +87,11 @@ export default [
   {
     code: 'tr-TR',
     name: 'Türkçe',
+    rtl: false,
+  },
+  {
+    code: 'vi',
+    name: 'Tiếng Việt',
     rtl: false,
   },
   {

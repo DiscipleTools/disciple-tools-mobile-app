@@ -5,6 +5,25 @@
 import { take, fork, call, put, race, actionChannel, select } from 'redux-saga/effects';
 //import * as Sentry from 'sentry-expo';
 
+const DEFAULT_TIMEOUT = 30000;
+
+const timeout = (ms, promise) => {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error('TIMEOUT'));
+    }, ms);
+    promise
+      .then((value) => {
+        clearTimeout(timer);
+        resolve(value);
+      })
+      .catch((reason) => {
+        clearTimeout(timer);
+        reject(reason);
+      });
+  });
+};
+
 function* sendRequest(url, data) {
   let genericErrorResponse = {
     status: 400,
@@ -13,7 +32,7 @@ function* sendRequest(url, data) {
       message: 'Unable to process the request. Please try again later.',
     },
   };
-  const request = yield fetch(url, data)
+  const request = yield timeout(DEFAULT_TIMEOUT, fetch(url, data))
     .then((response) => {
       if (response.status >= 200 && response.status < 300) {
         return response;
@@ -91,9 +110,7 @@ function* processRequest(request) {
       };
     }
   }
-  const { response } = yield race({
-    response: call(sendRequest, requestCopy.url, requestCopy.data),
-  });
+  const response = yield call(sendRequest, requestCopy.url, requestCopy.data);
   if (response) {
     if (requestCopy.action) {
       yield put({ type: requestCopy.action, payload: oldID ? { ...response, oldID } : response });
@@ -107,9 +124,7 @@ export default function* requestSaga() {
   // buffer all incoming requests
   const requestChannel = yield actionChannel('REQUEST');
   while (true) {
-    const { request } = yield race({
-      request: take(requestChannel),
-    });
+    const request = yield take(requestChannel);
     const isConnected = yield select((state) => state.networkConnectivityReducer.isConnected);
     const localGetById = {
       value: null,

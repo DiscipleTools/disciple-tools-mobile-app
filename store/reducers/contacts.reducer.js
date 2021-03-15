@@ -664,12 +664,33 @@ export default function contactsReducer(state = initialState, action) {
               }
             }
           });
-          tileList.push({
-            name: tileName,
-            label: settings.tiles[tileName].label,
-            tile_priority: settings.tiles[tileName].tile_priority,
-            fields: tileFields,
-          });
+          let tileFieldsOrdered = [];
+          if (settings.tiles[tileName].hasOwnProperty('order')) {
+            const orderList = settings.tiles[tileName].order;
+            let existingFields = [...orderList];
+            let missingFields = [];
+            tileFields.map((tileField, idx) => {
+              const orderIdx = orderList.indexOf(tileField.name);
+              if (orderIdx !== -1) {
+                existingFields[orderIdx] = tileField;
+              } else {
+                missingFields.push(tileField);
+              }
+            });
+            tileFieldsOrdered = [...existingFields, ...missingFields];
+          } else {
+            tileFieldsOrdered = [...tileFields];
+          }
+          // TODO: investigate why "location_grid_meta" was being added as string type
+          tileFieldsOrdered = tileFieldsOrdered.filter((item) => typeof item === 'object');
+          if (!settings.tiles[tileName].hidden) {
+            tileList.push({
+              name: tileName,
+              label: settings.tiles[tileName].label,
+              tile_priority: settings.tiles[tileName].tile_priority,
+              fields: tileFieldsOrdered,
+            });
+          }
           tileList.sort((a, b) => a.tile_priority - b.tile_priority);
         });
       }

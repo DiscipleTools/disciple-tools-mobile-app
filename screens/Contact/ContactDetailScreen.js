@@ -4,7 +4,6 @@ import {
   Text,
   Keyboard,
   View,
-  StyleSheet,
   TouchableOpacity,
   Image,
   Dimensions,
@@ -74,7 +73,6 @@ import i18n from '../../languages';
 
 let toastSuccess;
 let toastError;
-const containerPadding = 20;
 const windowWidth = Dimensions.get('window').width;
 const milestonesGridSize = windowWidth + 5;
 const windowHeight = Dimensions.get('window').height;
@@ -93,263 +91,7 @@ const defaultFaithMilestones = [
   'milestone_planting',
 ];
 let self;
-const styles = StyleSheet.create({
-  tabBarUnderlineStyle: {
-    backgroundColor: Colors.tintColor,
-  },
-  tabStyle: { backgroundColor: '#FFFFFF' },
-  fieldsIcons: {
-    height: 22,
-    width: 22,
-  },
-  addRemoveIcons: {
-    fontSize: 30,
-    marginRight: 0,
-    color: Colors.addRemoveIcons,
-  },
-  addIcons: { color: 'green' },
-  removeIcons: { color: 'red' },
-  // Form
-  formContainer: {
-    paddingTop: 10,
-    paddingBottom: 100,
-    paddingLeft: containerPadding,
-    paddingRight: containerPadding,
-  },
-  formRow: {
-    paddingTop: 15,
-    paddingBottom: 15,
-    width: '100%',
-  },
-  formIconLabel: {
-    marginLeft: 10,
-    width: 'auto',
-    marginBottom: 'auto',
-  },
-  formIcon: {
-    color: Colors.tintColor,
-    fontSize: 22,
-    marginTop: 'auto',
-    marginBottom: 'auto',
-    width: 25,
-  },
-  formParentLabel: {
-    width: 'auto',
-    maxWidth: 100,
-  },
-  formLabel: {
-    color: Colors.tintColor,
-    fontSize: 12,
-    marginTop: 'auto',
-    marginBottom: 'auto',
-  },
-  formDivider: {
-    borderBottomColor: '#CCCCCC',
-    borderBottomWidth: 1,
-  },
-  formIconLabelCol: {
-    width: 35,
-  },
-  formIconLabelView: {
-    alignItems: 'center',
-    marginTop: 'auto',
-    marginBottom: 'auto',
-  },
-  formFieldMargin: {
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  // Progress Section
-  progressIcon: { height: '100%', width: '100%' },
-  progressIconActive: {
-    opacity: 1,
-  },
-  progressIconInactive: {
-    opacity: 0.15,
-  },
-  progressIconText: {
-    fontSize: 9,
-    textAlign: 'center',
-    width: '100%',
-  },
-  // Comments Section
-  container: {
-    paddingLeft: 19,
-    paddingRight: 16,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: Colors.mainBackgroundColor,
-  },
-  image: {
-    height: 16,
-    marginTop: 10,
-    width: 16,
-  },
-  content: {
-    backgroundColor: Colors.contentBackgroundColor,
-    borderRadius: 5,
-    flex: 1,
-    marginLeft: 16,
-    padding: 10,
-  },
-  contentHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 6,
-  },
-  name: {
-    color: Colors.tintColor,
-    fontSize: 13,
-    fontWeight: 'bold',
-  },
-  time: {
-    color: Colors.tintColor,
-    fontSize: 10,
-  },
-  contactFABIcon: {
-    color: 'white',
-    fontSize: 20,
-  },
-  offlineBar: {
-    height: 20,
-    backgroundColor: '#FCAB10',
-  },
-  offlineBarText: {
-    fontSize: 14,
-    color: 'white',
-    textAlignVertical: 'center',
-    textAlign: 'center',
-  },
-  noCommentsContainer: {
-    padding: 20,
-    height: '90%',
-    transform: [{ scaleY: -1 }],
-  },
-  noCommentsImage: {
-    opacity: 0.5,
-    height: 70,
-    width: 70,
-    padding: 10,
-  },
-  noCommentsText: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: '#A8A8A8',
-    marginTop: 10,
-  },
-  contactTextField: {
-    borderBottomWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#B4B4B4',
-    height: 50,
-    fontSize: 15,
-  },
-  contactTextRoundField: {
-    borderWidth: 1,
-    borderRadius: 5,
-    borderStyle: 'solid',
-    borderColor: '#B4B4B4',
-    height: 50,
-    fontSize: 15,
-  },
-  selectizeField: {
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#B4B4B4',
-    borderBottomWidth: 1.5,
-    borderBottomColor: '#B4B4B4',
-    borderRadius: 5,
-    minHeight: 50,
-    marginTop: -15,
-    padding: 10,
-  },
-  linkingText: {
-    paddingTop: 4,
-    paddingBottom: 8,
-    textDecorationLine: 'underline',
-  },
-  statusFieldContainer: Platform.select({
-    default: {
-      borderStyle: 'solid',
-      borderWidth: 2,
-      borderRadius: 3,
-    },
-    ios: {},
-  }),
-  validationErrorMessage: {
-    color: Colors.errorBackground,
-  },
-  suggestionsRowContainer: {
-    flexDirection: 'row',
-  },
-  userIconBox: {
-    height: 45,
-    width: 45,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.tintColor,
-  },
-  usernameInitials: {
-    color: '#fff',
-    fontWeight: '800',
-    fontSize: 14,
-  },
-  userDetailsBox: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingLeft: 10,
-    paddingRight: 15,
-  },
-  displayNameText: {
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  usernameText: {
-    fontSize: 12,
-    color: 'rgba(0,0,0,0.6)',
-  },
-  // Edit/Delete comment dialog
-  dialogBackground: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  },
-  dialogBox: {
-    backgroundColor: '#FFFFFF',
-    padding: 20,
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    height: windowHeight - windowHeight * 0.55,
-    width: windowWidth - windowWidth * 0.1,
-    marginTop: windowHeight * 0.1,
-  },
-  dialogButton: {
-    backgroundColor: Colors.tintColor,
-    borderRadius: 5,
-    width: 100,
-    marginTop: 20,
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  },
-  dialogContent: {
-    height: '100%',
-    width: '100%',
-    fontSize: 20,
-    textAlign: 'center',
-    color: Colors.grayDark,
-    marginBottom: 5,
-  },
-  commentsActionButtons: {
-    borderRadius: 80,
-    height: 40,
-    width: 40,
-    marginBottom: 10,
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-  },
-});
+import { styles } from './ContactDetailScreen.styles';
 
 const initialState = {
   contact: {},
@@ -1463,14 +1205,23 @@ class ContactDetailScreen extends React.Component {
       value: key,
     }));
 
-    let userContactsList = this.props.contactsList.map((contact) => ({
-      name: contact.title,
-      value: contact.ID,
-    }));
-
+    const mappedContacts = this.props.contactsList.map((contact) => {
+      return {
+        name: contact.title,
+        value: contact.ID,
+        avatarUri: null,
+      };
+    });
+    const mappedUsers = JSON.parse(users).map((user) => {
+      return {
+        name: user.name,
+        value: String(user.contact_id),
+        avatarUri: user.avatar,
+      };
+    });
     newState = {
       ...newState,
-      usersContacts: [...userContactsList],
+      usersContacts: [...mappedContacts, ...mappedUsers],
       groups: this.props.groupsList.map((group) => ({
         name: group.title,
         value: group.ID,
@@ -1768,9 +1519,13 @@ class ContactDetailScreen extends React.Component {
             };
           }
           if (contactToSave.assigned_to) {
+            // TODO: this is a (hopefully temprorary workaround)
+            // ref: 'setContactCustomFieldValue' method AND "case 'user_select':" Ln#4273
+            const assignedTo = contactToSave.assigned_to;
+            const assignedToID = assignedTo.hasOwnProperty('key') ? assignedTo.key : assignedTo;
             contactToSave = {
               ...contactToSave,
-              assigned_to: `user-${contactToSave.assigned_to.key}`,
+              assigned_to: `user-${assignedToID}`,
             };
           }
           this.props.saveContact(
@@ -2458,7 +2213,9 @@ class ContactDetailScreen extends React.Component {
                       : this.formatActivityDate(item.object_note)}
                   </ParsedText>
                   {Object.prototype.hasOwnProperty.call(item, 'content') &&
-                    item.author.toLowerCase() === this.props.userData.username.toLowerCase() && (
+                    (item.author.toLowerCase() === this.props.userData.username.toLowerCase() ||
+                      item.author.toLowerCase() ===
+                        this.props.userData.displayName.toLowerCase()) && (
                       <Grid style={{ marginTop: 20 }}>
                         <Row
                           style={{
@@ -3231,17 +2988,46 @@ class ContactDetailScreen extends React.Component {
         break;
       }
       case 'connection': {
-        iconType = 'FontAwesome';
-        iconName = 'users';
+        if (field.name.includes('subassigned')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'briefcase-account-outline';
+        } else if (field.name.includes('relation')) {
+          iconType = 'FontAwesome5';
+          iconName = 'people-arrows';
+        } else if (field.name.includes('people_groups')) {
+          iconType = 'FontAwesome';
+          iconName = 'globe';
+        } else if (field.name.includes('coach')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'teach';
+        } else if (field.name.includes('bapti')) {
+          iconType = 'FontAwesome5';
+          iconName = 'water';
+        } else if (field.name.includes('group')) {
+          iconType = 'MaterialIcons';
+          iconName = 'groups';
+        } else if (field.name.includes('train')) {
+          iconType = 'FontAwesome5';
+          iconName = 'chalkboard-teacher';
+        } else {
+          iconType = 'MaterialIcons';
+          iconName = 'group-work';
+        }
         break;
       }
       case 'multi_select': {
         if (field.name.includes('tag')) {
           iconType = 'AntDesign';
           iconName = 'tags';
+        } else if (field.name.includes('email')) {
+          iconType = 'FontAwesome';
+          iconName = 'envelope';
+        } else if (field.name.includes('sources')) {
+          iconType = 'FontAwesome5';
+          iconName = 'compress-arrows-alt';
         } else {
-          iconType = 'MaterialCommunityIcons';
-          iconName = 'hexagon-multiple';
+          iconType = 'Ionicons';
+          iconName = 'list-circle';
         }
         break;
       }
@@ -3258,6 +3044,15 @@ class ContactDetailScreen extends React.Component {
         } else if (field.name.includes('facebook')) {
           iconType = 'MaterialCommunityIcons';
           iconName = 'facebook';
+        } else if (field.name.includes('instagram')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'instagram';
+        } else if (field.name.includes('whatsapp')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'whatsapp';
+        } else if (field.name.includes('address')) {
+          iconType = 'FontAwesome5';
+          iconName = 'directions';
         } else {
           iconType = 'Feather';
           iconName = 'hash';
@@ -3265,18 +3060,55 @@ class ContactDetailScreen extends React.Component {
         break;
       }
       case 'key_select': {
-        iconType = 'MaterialCommunityIcons';
-        iconName = 'hexagon';
+        if (field.name.includes('faith_status')) {
+          iconType = 'FontAwesome5';
+          iconName = 'cross';
+        } else if (field.name.includes('seeker_path')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'map-marker-path';
+        } else if (field.name.includes('gender')) {
+          iconType = 'FontAwesome5';
+          iconName = 'transgender';
+        } else if (field.name.includes('age')) {
+          iconType = 'FontAwesome5';
+          iconName = 'user-clock';
+        } else {
+          iconType = 'Ionicons';
+          iconName = 'list-circle';
+        }
         break;
       }
       case 'user_select': {
-        iconType = 'FontAwesome';
-        iconName = 'user';
+        if (field.name.includes('assigned_to')) {
+          iconType = 'MaterialCommunityIcons';
+          iconName = 'briefcase-account';
+        } else {
+          iconType = 'FontAwesome';
+          iconName = 'user';
+        }
+        break;
+      }
+      case 'text': {
+        if (field.name.includes('nickname')) {
+          iconType = 'FontAwesome5';
+          iconName = 'user-tag';
+        } else if (field.name.includes('name')) {
+          iconType = 'FontAwesome5';
+          iconName = 'user-alt';
+        } else {
+          iconType = 'Entypo';
+          iconName = 'text';
+        }
+        break;
+      }
+      case 'number': {
+        iconType = 'Feather';
+        iconName = 'hash';
         break;
       }
       default: {
-        iconType = 'FontAwesome';
-        iconName = 'user';
+        iconType = 'MaterialCommunityIcons';
+        iconName = 'square-small';
         break;
       }
     }
@@ -3495,7 +3327,7 @@ class ContactDetailScreen extends React.Component {
             <Col style={{ paddingBottom: 15 }}>
               <Row style={[styles.formRow, { paddingTop: 10 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome" name="user" style={styles.formIcon} />
+                  <Icon type="Octicons" name="milestone" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Label
@@ -3877,6 +3709,9 @@ class ContactDetailScreen extends React.Component {
                   style={{
                     flexDirection: 'row',
                   }}>
+                  {item.avatarUri && (
+                    <Image style={styles.avatar} source={{ uri: item.avatarUri }} />
+                  )}
                   <Text
                     style={{
                       color: 'rgba(0, 0, 0, 0.87)',
@@ -3884,6 +3719,16 @@ class ContactDetailScreen extends React.Component {
                       lineHeight: 21,
                     }}>
                     {item.name}
+                  </Text>
+                  <Text
+                    style={{
+                      color: 'rgba(0, 0, 0, 0.54)',
+                      fontSize: 14,
+                      lineHeight: 21,
+                    }}>
+                    {' '}
+                    (#
+                    {id})
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -3994,7 +3839,7 @@ class ContactDetailScreen extends React.Component {
             <Col style={{ paddingBottom: 15 }}>
               <Row style={[styles.formRow, { paddingTop: 10 }]}>
                 <Col style={[styles.formIconLabel, { marginRight: 10 }]}>
-                  <Icon type="FontAwesome" name="user" style={styles.formIcon} />
+                  <Icon type="Octicons" name="milestone" style={styles.formIcon} />
                 </Col>
                 <Col>
                   <Label
@@ -4034,7 +3879,7 @@ class ContactDetailScreen extends React.Component {
             <Row style={styles.formFieldMargin}>
               <Col style={styles.formIconLabelCol}>
                 <View style={styles.formIconLabelView}>
-                  <Icon type="FontAwesome" name="user" style={styles.formIcon} />
+                  <Icon type="Octicons" name="primitive-dot" style={styles.formIcon} />
                 </View>
               </Col>
               <Col>
@@ -4149,6 +3994,7 @@ class ContactDetailScreen extends React.Component {
                     }}>
                     {this.renderStatusPickerItems()}
                   </Picker>
+                  <Icon name="caret-down" size={10} style={styles.pickerIcon} />
                 </Col>
               </Row>
               {Object.prototype.hasOwnProperty.call(
@@ -4186,6 +4032,7 @@ class ContactDetailScreen extends React.Component {
               selectedValue={this.state.contact[field.name]}
               onValueChange={(value) => this.setContactCustomFieldValue(field.name, value)}
               textStyle={{ color: Colors.tintColor }}>
+              <Picker.Item key={-1} label={''} value={''} />
               {Object.keys(field.default).map((key) => {
                 const optionData = field.default[key];
                 return <Picker.Item key={key} label={optionData.label} value={key} />;
@@ -4196,10 +4043,11 @@ class ContactDetailScreen extends React.Component {
         break;
       }
       case 'user_select': {
+        const selectedValue = propExist && value.hasOwnProperty('key') ? value.key : value;
         mappedValue = (
           <Picker
             mode="dropdown"
-            selectedValue={propExist ? value.key : null}
+            selectedValue={propExist ? selectedValue : null}
             onValueChange={(value) => this.setContactCustomFieldValue(field.name, value)}
             textStyle={{ color: Colors.tintColor }}>
             {[...this.state.users, ...this.state.assignedToContacts].map((item) => {
