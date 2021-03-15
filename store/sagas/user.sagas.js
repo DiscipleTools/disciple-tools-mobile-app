@@ -57,38 +57,48 @@ export function* login({ domain, username, password }) {
   }
 }
 
-export function* getExpoPushToken({ domain, token }) {
-  let expoPushToken = {};
-
+async function registerForPushNotificationsAsync() {
+  let token;
   if (Constants.isDevice) {
-    // Get permission
-    const { status: existingStatus } = yield Permissions.getAsync(Permissions.NOTIFICATIONS);
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
-      const { status } = yield Permissions.askAsync(Permissions.NOTIFICATIONS);
+      const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
     if (finalStatus !== 'granted') {
       console.log('Failed to get push token for push notification!');
       return;
     }
-    // Get push token from expo
-    expoPushToken = yield Notifications.getExpoPushTokenAsync();
-    // Construct a (somewhat) unique identifier for this particular device
-    let uniqueId =
-      (Device.manufacturer || '') +
-      ':' +
-      (Device.modelName || '') +
-      ':' +
-      (Device.deviceYearClass || '') +
-      ':' +
-      (Device.osName || '') +
-      ':' +
-      (Device.osVersion || '');
-    yield put({ type: actions.USER_ADD_PUSH_TOKEN, domain, token, expoPushToken, uniqueId });
+    token = (await Notifications.getExpoPushTokenAsync()).data;
   } else {
     console.log('Must use physical device for Push Notifications');
   }
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+  return token;
+}
+
+export function* getExpoPushToken({ domain, token }) {
+  let expoPushToken = {};
+  // Get push token from expo
+  expoPushToken = yield registerForPushNotificationsAsync();
+  // Construct a (somewhat) unique identifier for this particular device
+  let uniqueId =
+    (Device.manufacturer || '') +
+    ':' +
+    (Device.modelName || '') +
+    ':' +
+    (Device.deviceYearClass || '') +
+    ':' +
+    (Device.osName || '');
+  yield put({ type: actions.USER_ADD_PUSH_TOKEN, domain, token, expoPushToken, uniqueId });
 }
 
 export function* addPushToken({ domain, token, expoPushToken, uniqueId }) {
