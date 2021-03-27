@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { View, FlatList, TouchableOpacity, RefreshControl, StyleSheet, Text } from 'react-native';
-import { Fab, Container } from 'native-base';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Container, Icon } from 'native-base';
+import * as Contacts from 'expo-contacts';
+import ActionButton from 'react-native-action-button';
 import Toast from 'react-native-easy-toast';
 import SearchBar from '../../components/SearchBar';
+import ScreenModal from '../../components/ScreenModal';
 
 import PropTypes from 'prop-types';
 import Colors from '../../constants/Colors';
@@ -27,6 +29,8 @@ class ContactsScreen extends React.Component {
     filterOption: null,
     filterText: null,
     fixFABIndex: false,
+    modalVisible: false,
+    importContactsList: [],
   };
 
   static navigationOptions = {
@@ -122,6 +126,104 @@ class ContactsScreen extends React.Component {
           </TouchableOpacity>
         )}
       </View>
+    );
+  };
+
+  truncateRowChars = (displayValue) => {
+    const threshold = 40;
+    if (displayValue.length > threshold) {
+      return displayValue.substring(0, threshold) + '...';
+    }
+    return displayValue;
+  };
+
+  renderImportContactsRow = (contact) => {
+    // TODO: FINISH - conditional icons
+    let contactExists = contact.exists ? true : false;
+    let contactPhoneDisplay = '';
+    if (contact.contact_phone) {
+      contactPhoneDisplay = contact.contact_phone[0].value;
+      if (contact.contact_phone.length > 1) {
+        contactPhoneDisplay = contactPhoneDisplay + ', ' + contact.contact_phone[1].value;
+      }
+    }
+    let contactEmailDisplay = '';
+    if (contact.contact_email) {
+      contactEmailDisplay = contact.contact_email[0].value;
+      if (contact.contact_email.length > 1) {
+        contactEmailDisplay = contactEmailDisplay + ', ' + contact.contact_email[1].value;
+      }
+    }
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          if (contactExists) {
+            // DISPLAY MODAL TO CONFIRM NAVIGATE TO CONTACT DETAILS
+            console.log('*************');
+            console.log('ASK THE USER!!');
+            //this.goToContactDetailScreen(contact)
+          } else {
+            this.setState({ modalVisible: false });
+            this.goToContactDetailScreen(contact, true);
+          }
+        }}
+        style={styles.flatListItem}
+        key={contact.idx}>
+        <View style={{ flexDirection: 'row', height: '100%' }}>
+          <View style={{ flexDirection: 'column', flexGrow: 1 }}>
+            <View style={{ flexDirection: 'row' }}>
+              <Text style={{ textAlign: 'left', flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }}>
+                {Object.prototype.hasOwnProperty.call(contact, 'name')
+                  ? contact.name
+                  : contact.title}
+              </Text>
+            </View>
+            {contactPhoneDisplay.length > 0 && (
+              <View style={{ flexDirection: 'row' }}>
+                <Text
+                  style={[
+                    styles.contactSubtitle,
+                    {
+                      textAlign: 'left',
+                    },
+                  ]}>
+                  {this.truncateRowChars(contactPhoneDisplay)}
+                </Text>
+              </View>
+            )}
+            {contactEmailDisplay.length > 0 && (
+              <View style={{ flexDirection: 'row' }}>
+                <Text
+                  style={[
+                    styles.contactSubtitle,
+                    {
+                      textAlign: 'left',
+                    },
+                  ]}>
+                  {this.truncateRowChars(contactEmailDisplay)}
+                </Text>
+              </View>
+            )}
+          </View>
+          <View
+            style={[
+              {
+                flexDirection: 'column',
+                width: 35,
+                paddingTop: 0,
+                marginTop: 'auto',
+                marginBottom: 'auto',
+              },
+              this.props.isRTL ? { marginRight: 5 } : { marginLeft: 5 },
+            ]}>
+            <Icon
+              style={{ color: contactExists ? Colors.gray : Colors.tintColor }}
+              type="MaterialIcons"
+              name={contactExists ? 'playlist-add-check' : 'person-add'}
+            />
+          </View>
+        </View>
+      </TouchableOpacity>
     );
   };
 
@@ -238,13 +340,21 @@ class ContactsScreen extends React.Component {
     );
   };
 
-  goToContactDetailScreen = (contactData = null) => {
-    if (contactData) {
+  goToContactDetailScreen = (contactData = null, isPhoneImport = false) => {
+    if (contactData && isPhoneImport) {
+      this.props.updatePrevious([]);
+      this.props.navigation.navigate('ContactDetail', {
+        onlyView: true,
+        importContact: contactData,
+        onGoBack: () => this.onRefresh(false, true),
+      });
+    } else if (contactData) {
       this.props.updatePrevious([
         {
           contactId: parseInt(contactData.ID),
           onlyView: true,
           contactName: contactData.title,
+          importContact: null,
         },
       ]);
       // Detail
@@ -252,6 +362,7 @@ class ContactsScreen extends React.Component {
         contactId: contactData.ID,
         onlyView: true,
         contactName: contactData.title,
+        importContact: null,
         onGoBack: () => this.onRefresh(false, true),
       });
     } else {
@@ -259,6 +370,7 @@ class ContactsScreen extends React.Component {
       // Create
       this.props.navigation.navigate('ContactDetail', {
         onlyView: true,
+        importContact: null,
         onGoBack: () => this.onRefresh(false, true),
       });
     }
@@ -317,10 +429,127 @@ class ContactsScreen extends React.Component {
     </View>
   );
 
+  importContactsRender = () => {
+    // NOTE: Contacts are already indexed by most recently modified,
+    // so we only need to reverse the array. If this ever changes,
+    // then just sort by idx (id)
+    const importContactsList = this.state.importContactsList.reverse();
+    //console.log("*********************")
+    //console.log(`DATA SOURCE LIST COUNT: ${ this.state.dataSourceContact.length }`)
+    //console.log(JSON.stringify(importContactsList[0]));
+    //console.log(JSON.stringify(this.state.dataSourceContact[0]));
+    const existingContactsList = [];
+    this.state.dataSourceContact.map((existingContact) => {
+      importContactsList.map((importContact) => {
+        if (
+          (existingContact.title &&
+            importContact.title &&
+            existingContact.title === importContact.title) ||
+          (existingContact.title &&
+            importContact.name &&
+            existingContact.title === importContact.name) ||
+          (existingContact.name &&
+            importContact.name &&
+            existingContact.name === importContact.name) ||
+          (existingContact.name &&
+            importContact.title &&
+            existingContact.name === importContact.title)
+        ) {
+          importContact['exists'] = true;
+          existingContactsList.push(importContact);
+        }
+      });
+    });
+    console.log('*********************');
+    console.log(`EXISTING COUNT: ${existingContactsList.length}`);
+    console.log(JSON.stringify(existingContactsList[0]));
+    const importContactsFilters = {
+      tabs: [
+        {
+          key: 'default',
+          label: 'Default Filters',
+          order: 1,
+        },
+      ],
+      filters: [
+        {
+          ID: 'all_my_contacts',
+          labels: [
+            {
+              id: 'all',
+              name: 'All Contacts',
+            },
+          ],
+          name: 'All Contacts',
+          query: {
+            sort: '-last_modified',
+          },
+          tab: 'default',
+        },
+        {
+          ID: 'not_yet_imported',
+          labels: [
+            {
+              id: 'notyet',
+              name: 'Not Yet Imported',
+            },
+          ],
+          name: 'Not Yet Imported',
+          query: {
+            sort: '-last_modified',
+          },
+          tab: 'default',
+        },
+        {
+          ID: 'already_imported',
+          labels: [
+            {
+              id: 'already',
+              name: 'Already Imported',
+            },
+          ],
+          name: 'Already Imported',
+          query: {
+            sort: '-last_modified',
+          },
+          tab: 'default',
+        },
+      ],
+    };
+    // TODO: ensure that filtering is working as expected
+    return (
+      <>
+        <SearchBar
+          filterConfig={importContactsFilters}
+          onSelectFilter={this.selectOptionFilter}
+          onTextFilter={this.filterByText}
+          onClearTextFilter={this.filterByText}
+          onLayout={this.onLayout}
+          count={importContactsList.length}
+        />
+        <FlatList
+          data={importContactsList}
+          renderItem={(item) => this.renderImportContactsRow(item.item)}
+          ItemSeparatorComponent={this.flatListItemSeparator}
+          keyboardShouldPersistTaps="always"
+          keyExtractor={(item) => item.index}
+        />
+      </>
+    );
+  };
+
   render() {
     return (
       <Container>
         <View style={{ flex: 1 }}>
+          {this.state.modalVisible && (
+            <ScreenModal
+              modalVisible={this.state.modalVisible}
+              setModalVisible={(modalVisible) => this.setState({ modalVisible })}
+              title={'Import Phone Contacts'}>
+              {this.importContactsRender()}
+            </ScreenModal>
+          )}
           {!this.props.isConnected && this.offlineBarRender()}
           <SearchBar
             filterConfig={this.props.contactFilters}
@@ -346,15 +575,86 @@ class ContactsScreen extends React.Component {
             keyExtractor={(item) => item.ID.toString()}
             style={{ backgroundColor: Colors.mainBackgroundColor }}
           />
-          <Fab
-            style={[
-              { backgroundColor: Colors.tintColor },
-              this.state.fixFABIndex ? { zIndex: -1 } : {},
-            ]}
-            position="bottomRight"
-            onPress={() => this.goToContactDetailScreen()}>
-            <Icon name="md-add" />
-          </Fab>
+          <ActionButton
+            style={[this.state.fixFABIndex ? { zIndex: -1 } : {}]}
+            buttonColor={Colors.primaryRGBA}
+            renderIcon={(active) =>
+              active ? (
+                <Icon type="MaterialIcons" name="close" style={{ color: 'white', fontSize: 22 }} />
+              ) : (
+                <Icon type="MaterialIcons" name="add" style={{ color: 'white', fontSize: 25 }} />
+              )
+            }
+            degrees={0}
+            activeOpacity={0}
+            bgColor="rgba(0,0,0,0.5)"
+            nativeFeedbackRippleColor="rgba(0,0,0,0)">
+            {/* TODO: translate these new fields */}
+            <ActionButton.Item
+              title={'Add New Contact'}
+              onPress={() => {
+                this.goToContactDetailScreen();
+              }}
+              size={40}
+              buttonColor={Colors.tintColor}
+              nativeFeedbackRippleColor="rgba(0,0,0,0)"
+              textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+              textContainerStyle={{ height: 'auto' }}>
+              <Icon type="MaterialIcons" name="add" style={styles.contactFABIcon} />
+            </ActionButton.Item>
+            <ActionButton.Item
+              title={'Import Phone Contact'}
+              onPress={() => {
+                (async () => {
+                  const { status } = await Contacts.requestPermissionsAsync();
+                  if (status === 'granted') {
+                    const importContactsList = [];
+                    const { data } = await Contacts.getContactsAsync({});
+                    data.map((contact) => {
+                      const contactData = {};
+                      if (contact.contactType === 'person') {
+                        contactData['idx'] = contact.id;
+                        contactData['title'] = contact.name;
+                        contactData['name'] = contact.name;
+                        if (contact.hasOwnProperty('emails') && contact.emails.length > 0) {
+                          contactData['contact_email'] = [];
+                          contact.emails.map((email, idx) => {
+                            contactData['contact_email'].push({
+                              key: `contact_email_${idx}`,
+                              value: email.email,
+                            });
+                          });
+                        }
+                        if (
+                          contact.hasOwnProperty('phoneNumbers') &&
+                          contact.phoneNumbers.length > 0
+                        ) {
+                          contactData['contact_phone'] = [];
+                          contact.phoneNumbers.map((phoneNumber, idx) => {
+                            contactData['contact_phone'].push({
+                              key: `contact_phone_${idx}`,
+                              value: phoneNumber.number,
+                            });
+                          });
+                        }
+                        importContactsList.push(contactData);
+                      }
+                    });
+                    this.setState({
+                      modalVisible: true,
+                      importContactsList,
+                    });
+                  }
+                })();
+              }}
+              size={40}
+              buttonColor={Colors.colorYes}
+              nativeFeedbackRippleColor="rgba(0,0,0,0)"
+              textStyle={{ color: Colors.tintColor, fontSize: 15 }}
+              textContainerStyle={{ height: 'auto' }}>
+              <Icon type="MaterialIcons" name="contact-phone" style={styles.contactFABIcon} />
+            </ActionButton.Item>
+          </ActionButton>
           <Toast
             ref={(toast) => {
               toastError = toast;

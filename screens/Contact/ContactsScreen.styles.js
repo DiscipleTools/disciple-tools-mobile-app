@@ -21,6 +21,10 @@ export const styles = StyleSheet.create({
     padding: 20,
     color: 'rgba(0,0,0,0.4)',
   },
+  contactFABIcon: {
+    color: 'white',
+    fontSize: 20,
+  },
   offlineBar: {
     height: 20,
     backgroundColor: '#FCAB10',
@@ -36,5 +40,37 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     color: '#3f729b',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    height: '95%',
+    width: '95%',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });

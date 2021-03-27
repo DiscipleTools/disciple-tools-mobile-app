@@ -1018,9 +1018,28 @@ class ContactDetailScreen extends React.Component {
 
   onLoad() {
     const { navigation } = this.props;
-    const { onlyView, contactId, contactName } = navigation.state.params;
+    const { onlyView, contactId, contactName, importContact } = navigation.state.params;
     let newState = {};
-    if (this.contactIsCreated()) {
+    if (importContact) {
+      newState = {
+        contact: {
+          name: importContact.title,
+          sources: {
+            values: [
+              {
+                value: 'personal',
+              },
+            ],
+          },
+          seeker_path: 'none',
+          contact_phone: importContact.contact_phone,
+          contact_email: importContact.contact_email,
+        },
+      };
+      navigation.setParams({
+        hideTabBar: true,
+      });
+    } else if (this.contactIsCreated()) {
       newState = {
         contact: {
           ID: contactId,
@@ -4603,7 +4622,7 @@ class ContactDetailScreen extends React.Component {
                 ) : null}
               </View>
             ) : (
-              <KeyboardAwareScrollView /*_addnew_ _editable_*/
+              <KeyboardAwareScrollView
                 enableAutomaticScroll
                 enableOnAndroid
                 keyboardOpeningTime={0}
