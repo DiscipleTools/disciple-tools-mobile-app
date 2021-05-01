@@ -3445,6 +3445,26 @@ class ContactDetailScreen extends React.Component {
                   </Text>
                 </TouchableOpacity>
               ));
+          } else if (field.name === 'contact_other') {
+            mappedValue = value
+              .filter((communicationChannel) => !communicationChannel.delete)
+              .map((communicationChannel, index) => (
+                <TouchableOpacity
+                  key={index.toString()}
+                  activeOpacity={0.5}
+                  onPress={() => {
+                    Linking.openURL(communicationChannel.value);
+                  }}>
+                  <Text
+                    style={[
+                      styles.linkingText,
+                      { marginTop: 'auto', marginBottom: 'auto' },
+                      this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                    ]}>
+                    {communicationChannel.value}
+                  </Text>
+                </TouchableOpacity>
+              ));
           } else {
             mappedValue = (
               <Text
