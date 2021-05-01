@@ -12,6 +12,7 @@ import * as es from './es.json';
 import * as fr from './fr.json';
 import * as hi from './hi.json';
 import * as id from './id.json';
+import * as ja from './ja.json';
 import * as my from './my.json';
 import * as nl from './nl.json';
 import * as ptBR from './pt.json';
@@ -37,11 +38,12 @@ i18n.translations = {
   ar,
   'bn-BD': bn,
   'es-ES': es,
-  'de-DE': es,
+  'de-DE': de,
   'fa-IR': fa,
   'fr-FR': fr,
   hi,
   'id-ID': id,
+  ja,
   'my-MM': my,
   'nl-NL': nl,
   'pt-BR': ptBR,
