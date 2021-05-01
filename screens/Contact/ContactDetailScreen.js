@@ -34,7 +34,6 @@ import ParsedText from 'react-native-parsed-text';
 import { BlurView } from 'expo-blur';
 import { CheckBox } from 'react-native-elements';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { Html5Entities } from 'html-entities';
 import Menu, { MenuItem } from 'react-native-material-menu';
 
 import sharedTools from '../../shared';
@@ -78,7 +77,6 @@ const milestonesGridSize = windowWidth + 5;
 const windowHeight = Dimensions.get('window').height;
 let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBackPressListener;
 const isIOS = Platform.OS === 'ios';
-const entities = new Html5Entities();
 const defaultFaithMilestones = [
   'milestone_has_bible',
   'milestone_reading_bible',
@@ -1501,7 +1499,7 @@ class ContactDetailScreen extends React.Component {
           }
           contactToSave = {
             ...sharedTools.diff(unmodifiedContact, contactToSave),
-            name: entities.encode(this.state.contact.name),
+            name: this.state.contact.name,
           };
           // Do not save fields with empty values
           Object.keys(contactToSave)
@@ -3585,7 +3583,7 @@ class ContactDetailScreen extends React.Component {
             color: this.onCheckExistingMilestone(value, field.name) ? '#FFFFFF' : '#000000',
           },
         ]}>
-        {entities.encode(field.default[value].label)}
+        {field.default[value].label}
       </Text>
     </TouchableOpacity>
   );

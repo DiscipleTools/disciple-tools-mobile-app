@@ -33,7 +33,6 @@ import ParsedText from 'react-native-parsed-text';
 import { BlurView } from 'expo-blur';
 import { CheckBox } from 'react-native-elements';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { Html5Entities } from 'html-entities';
 import Menu, { MenuItem } from 'react-native-material-menu';
 
 import sharedTools from '../../shared';
@@ -96,7 +95,6 @@ const isIOS = Platform.OS === 'ios';
 /* eslint-disable */
 let commentsFlatListRef, addMembersSelectizeRef;
 /* eslint-enable */
-const entities = new Html5Entities();
 const defaultHealthMilestones = [
   'church_baptism',
   'church_bible',
@@ -1642,7 +1640,7 @@ class GroupDetailScreen extends React.Component {
           }
           groupToSave = {
             ...sharedTools.diff(unmodifiedGroup, groupToSave),
-            name: entities.encode(this.state.group.name),
+            name: this.state.group.name,
           };
           //After 'sharedTools.diff()' method, ID is removed, then we add it again
           if (Object.prototype.hasOwnProperty.call(this.state.group, 'ID')) {
@@ -3711,7 +3709,7 @@ class GroupDetailScreen extends React.Component {
             color: this.onCheckExistingMilestone(value, field.name) ? '#FFFFFF' : '#000000',
           },
         ]}>
-        {entities.encode(field.default[value].label)}
+        {field.default[value].label}
       </Text>
     </TouchableOpacity>
   );
