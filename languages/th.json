@@ -1,0 +1,148 @@
+{
+  "global": {
+    "error": {
+      "code": "โค้ด",
+      "message": "ข้อความ"
+    },
+    "success": {
+      "save": "บันทึกข้อมูลสําเร็จ"
+    },
+    "groups": "กลุ่ม",
+    "details": "รายละเอียด",
+    "selectPeopleGroups": "เลือกกลุ่มคน",
+    "address": "ที่อยู่",
+    "progress": "ความคืบหน้า ",
+    "commentsActivity": "ความคิดเห็นเเละความเคลื่อนไหว",
+    "writeYourCommentNoteHere": "เขียนความคิดเห็นหรือโน๊ตที่นี่",
+    "requiredField": "ช่องที่ต้องกรอก",
+    "edit": "เเก้ไข้",
+    "cancel": "ยกเลิก",
+    "save": "บันทึก",
+    "online": "ออนไลน์",
+    "offline": "ออฟไลน์",
+    "language": "ภาษา",
+    "search": "ค้นหา",
+    "membersActivity": "สามาชิก",
+    "moreFields": "เพิ่มบรรทัด",
+    "nameRequired": "ต้องกรอกชื่อ",
+    "close": "ปิด",
+    "editComment": "แก้ไข",
+    "deleteComment": "ลบ"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "ตัวอย่าง myteam.mydomain.com",
+      "error": "ต้องกรอกโดเเมน",
+      "errorForgotPass": "กรุณากรอก URL เพื่อกู้รหัสผ่านของคุณ"
+    },
+    "username": {
+      "label": "ชื่อบัญชี",
+      "error": "ต้องกรอกชื่อบัญชี"
+    },
+    "password": {
+      "label": "รหัสผ่าน",
+      "error": "ต้องกรอกรหัสผ่าน"
+    },
+    "logIn": "เข้าใช้",
+    "forgotPassword": "ลืมรหัส",
+    "errors": {
+      "invalidUsername": "ไม่มีชื่อนี้อยู่ในระบบ ตรวจอีกครั้งหรือลองใช้ที่อยู่อีเมลของคุณ",
+      "incorrectPassword": "คุณกรอกรหัสชื่อบัญชีนี้ไม่ถูกต้อง"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "ลายชื่อผู้ติดต่อ",
+    "noContactPlacheHolder": "ขณะนี้ไม่มีรายชื่อไหนว่าง",
+    "noContactPlacheHolder1": "อาจจะมีปัญหาจากการเอาจากไซต์ของคุณ ลากลงเพื่อโหลดใหม่เเละลองอีกครั้ง",
+    "noContactPlacheHolderOffline": "ขณะนี้คุณกําลังออฟไลน์ ตรวจสอบการเชื่อมต่อ wifi หรืออินเตอร์เน็ตเพื่อโหลดใหม่เเละรับลายชื่อผู้ติดต่อ"
+  },
+  "settingsScreen": {
+    "settings": "ตั้งค่า",
+    "networkUnavailable": "ไม่มีสัญญาณ ขณะนี้อยู่ในระบบออฟไลน์",
+    "networkAvailable": "พบสัญญาณเเล้ว กลับสู่ระบบออนไลน์",
+    "storybook": "หนังสือเรื่องราว",
+    "logout": "ออกจากระบบ",
+    "helpSupport": "ช่วยเหลือ / ช่วยเหลือทางเทคนิค",
+    "rememberPassword": "จํารหัสผ่าน",
+    "rememberPasswordActive": "เปิดล็อกอินอัตโนมัติ",
+    "rememberPasswordInactive": "ปิดล็อกอินอัตโนมัติ",
+    "remove": "ลบ",
+    "set": "ชุด",
+    "pinCode": "รหัส PIN",
+    "enterPin": "ป้อน PIN",
+    "setPin": "ตั้ง PIN ใหม่",
+    "incorrectPin": "PIN ไม่ถูกต้อง",
+    "savedPinCode": "บันทึกรหัส PIN เรียบร้อยแล้ว",
+    "removedPinCode": "ลบรหัส PIN เรียบร้อยแล้ว",
+    "close": "ปิด"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "เพิ่มลายชี่อผู้ติดต่อ",
+    "subAssignThisContact": "เพิ่มชื่อสํารอง ",
+    "mobile": "โทรศัพท์",
+    "selectLocations": "เลือกสถานที่",
+    "selectSources": "เลือกที่มา",
+    "connections": "ผู้ที่เชื่อมต่อ",
+    "addGroup": "เพิ่มกลุ่ม",
+    "addConnection": "เพิ่มผู้เชื่อมต่อ",
+    "addBaptizedBy": "เพิ่มชื่อผู้ให้บัพติศมา",
+    "addBaptized": "เพิ่มชื่อผู้รับบัพติศมา",
+    "addCoachedBy": "เพิ่มชื่อโค้ช",
+    "addCoaching": "เพิ่มการโค้ช",
+    "phoneNumber": "เบอร์โทรศัพท์",
+    "initialComment": "ความคิดเห็นเเรก",
+    "socialMedia": "สื่อโซเชียล",
+    "noContactCommentPlacheHolder": "ขณะนี้ไม่มีความคิดเห็นของใคร",
+    "fullName": {
+      "label": "ชื่อเต็ม",
+      "error": "ต้องกรอกชื่อ"
+    },
+    "noContactCommentPlacheHolder1": "อาจมีข้อผิดพลาดเอาจากไซต์ของคุณ ลากลงเพื่อโหลดใหม่เเละลองอีกครั้ง",
+    "noContactCommentPlacheHolderOffline": "ขณะนี้คุณออฟไลน์ ตรวจสอบให้แน่ใจว่าคุณเชื่อมต่อกับ wifi หรือข้อมูลมือถือเพื่อรีเฟรชและรับความคิดเห็นติดต่อของคุณ"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "เพิ่มกลุ่มใหม่",
+    "selectCoaches": "เลือกกลุ่มโค้ช",
+    "searchGroups": "ค้นหากลุ่ม",
+    "searchPeerGroups": "ค้นหากลุ่มเพื่อน",
+    "childGroup": "กลุ่มเด็ก",
+    "searchChildGroups": "ค้นหากลุ่มเด็ก",
+    "addMember": "เพิ่มสามาชิก",
+    "noGroupCommentPlacheHolder": "ขณะนี้ไม่มีความคิดเห็นใดๆจากกลุ่ม",
+    "noGroupCommentPlacheHolder1": "อาจมีข้อผิดพลาดเอาจากไซต์ของคุณ ลากลงเพื่อโหลดใหม่เเละลองอีกครั้ง",
+    "noGroupCommentPlacheHolderOffline": "ขณะนี้คุณกําลังออฟไลน์ ตรวจสอบการเชื่อมต่อ wifi หรืออิเตอร์เน็ตเพื่อโหลดใหม่เเละอ่านความคิดเห็นกลุ่มของคุณ",
+    "selectLocations": "เลือกสถานที่",
+    "noMembersMessage": "ไม่มีสามาชิก กดที่นี้หรือกดเเก้ไข้เพื่อเพิ่มสามาชิกในกลุ่มนี้",
+    "groupName": {
+      "label": "ชื่อกลุ่ม",
+      "error": "ต้องกรอกชื่อ"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "กำหนดการประชุม",
+      "quick_button_meeting_postponed": "เลื่อนการประชุมออกไป",
+      "quick_button_meeting_complete": "การประชุมเสร็จสมบูรณ์"
+    }
+  },
+  "notificationsScreen": {
+    "notifications": "การเเจ้งเตือน",
+    "loadMore": "โหลดเพิ่ม",
+    "new": "ใหม่",
+    "unRead": "ข้อความที่ยังไม่ได้อ่าน",
+    "all": "ทั้งหมด",
+    "markAll": "เช็คทั้งหมด",
+    "dontHaveNotificationsUnread": "ไม่มีการเเจ้งเตือนที่ยังไม่ได้อ่าน",
+    "dontHaveNotifications": "ไม่มีการเเจ้งเตือน"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "ขณะนี้ไม่มีกลุ่มใดว่าง",
+    "noGroupPlacheHolder1": "อาจมีข้อผิดพลาดเอาจากไซต์ของคุณ ลากลงเพื่อโหลดใหม่เเละลองอีกครั้ง",
+    "noGroupPlacheHolderOffline": "ขณะนี้คุณกําลังออฟไลน์ ตรวจสอบการเชื่อมต่อ wifi หรืออินเตอร์เน็ตเพื่อโหลดใหม่เเละรับกลุ่มของคุณ"
+  },
+  "appRestart": {
+    "message": "แอปพลิเคชันจะเริ่มต้นใหม่เพื่อใช้การกำหนดค่าต่อไปนี้:",
+    "button": "ตกลง",
+    "textDirection": "ทิศทางข้อความ",
+    "selectedLanguage": "ภาษาที่เลือก"
+  }
+}

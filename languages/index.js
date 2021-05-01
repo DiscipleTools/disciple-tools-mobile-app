@@ -7,12 +7,15 @@ import locales from './locales';
 import * as en from './en.json';
 import * as ar from './ar.json';
 import * as bn from './bn.json';
+import * as de from './de.json';
 import * as es from './es.json';
 import * as fr from './fr.json';
+import * as hi from './hi.json';
 import * as id from './id.json';
 import * as my from './my.json';
 import * as nl from './nl.json';
 import * as ptBR from './pt.json';
+import * as mk from './mk.json';
 import * as bs from './bs.json';
 import * as hr from './hr.json';
 import * as ro from './ro.json';
@@ -20,6 +23,8 @@ import * as sl from './sl.json';
 import * as sr from './sr.json';
 import * as ru from './ru.json';
 import * as sw from './sw.json';
+import * as th from './th.json';
+import * as tl from './tl.json';
 import * as tr from './tr.json';
 import * as vi from './vi.json';
 import * as zhCn from './zhCn.json';
@@ -32,12 +37,15 @@ i18n.translations = {
   ar,
   'bn-BD': bn,
   'es-ES': es,
+  'de-DE': es,
   'fa-IR': fa,
   'fr-FR': fr,
+  hi,
   'id-ID': id,
   'my-MM': my,
   'nl-NL': nl,
   'pt-BR': ptBR,
+  mk,
   'bs-BA': bs,
   hr,
   'ro-RO': ro,
@@ -45,6 +53,8 @@ i18n.translations = {
   'sr-BA': sr,
   'ru-RU': ru,
   sw,
+  th,
+  tl,
   'tr-TR': tr,
   vi,
   'zh-CN': zhCn,
