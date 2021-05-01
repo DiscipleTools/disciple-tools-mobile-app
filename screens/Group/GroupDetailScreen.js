@@ -12,6 +12,7 @@ import {
   RefreshControl,
   Platform,
   TouchableHighlight,
+  Linking,
   BackHandler,
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -273,6 +274,12 @@ class GroupDetailScreen extends React.Component {
                     }}>
                     {i18n.t('global.share')}
                   </MenuItem>
+                  <MenuItem
+                    onPress={() => {
+                      params.onViewOnMobileWeb();
+                    }}>
+                    {i18n.t('global.viewOnMobileWeb')}
+                  </MenuItem>
                 </Menu>
               </View>
             </Row>
@@ -388,6 +395,7 @@ class GroupDetailScreen extends React.Component {
       backButtonTap: this.backButtonTap.bind(this),
       toggleMenu: this.toggleMenu.bind(this),
       toggleShareView: this.toggleShareView.bind(this),
+      onViewOnMobileWeb: this.onViewOnMobileWeb.bind(this),
     };
     // Add afterBack param to execute 'parents' functions (ContactsView, NotificationsView)
     if (!navigation.state.params.afterBack) {
@@ -1815,6 +1823,12 @@ class GroupDetailScreen extends React.Component {
     this.setState((prevState) => ({
       showShareView: !prevState.showShareView,
     }));
+  };
+
+  onViewOnMobileWeb = () => {
+    const domain = this.props.userData.domain;
+    const id = this.state.group.ID;
+    Linking.openURL(`https://${domain}/groups/${id}/`);
   };
 
   offlineBarRender = () => (

@@ -261,6 +261,12 @@ class ContactDetailScreen extends React.Component {
                     }}>
                     {i18n.t('global.share')}
                   </MenuItem>
+                  <MenuItem
+                    onPress={() => {
+                      params.onViewOnMobileWeb();
+                    }}>
+                    {i18n.t('global.viewOnMobileWeb')}
+                  </MenuItem>
                 </Menu>
               </View>
             </Row>
@@ -374,6 +380,7 @@ class ContactDetailScreen extends React.Component {
       backButtonTap: this.backButtonTap.bind(this),
       toggleMenu: this.toggleMenu.bind(this),
       toggleShareView: this.toggleShareView.bind(this),
+      onViewOnMobileWeb: this.onViewOnMobileWeb.bind(this),
     };
     // Add afterBack param to execute 'parents' functions (ContactsView, NotificationsView)
     if (!navigation.state.params.afterBack) {
@@ -1662,6 +1669,12 @@ class ContactDetailScreen extends React.Component {
       });
     }
     return items;
+  };
+
+  onViewOnMobileWeb = () => {
+    const domain = this.props.userData.domain;
+    const id = this.state.contact.ID;
+    Linking.openURL(`https://${domain}/contacts/${id}/`);
   };
 
   linkingPhoneDialer = (phoneNumber) => {
