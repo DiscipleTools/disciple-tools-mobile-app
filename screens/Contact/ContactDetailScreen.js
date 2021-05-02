@@ -4096,7 +4096,7 @@ class ContactDetailScreen extends React.Component {
         mappedValue = (
           <Picker
             mode="dropdown"
-            selectedValue={propExist ? selectedValue : null}
+            selectedValue={propExist ? selectedValue : this.props.userData?.id}
             onValueChange={(value) => this.setContactCustomFieldValue(field.name, value)}
             textStyle={{ color: Colors.tintColor }}>
             {[...this.state.users, ...this.state.assignedToContacts].map((item) => {
