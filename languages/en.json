@@ -103,6 +103,7 @@
   },
   "contactDetailScreen": {
     "addNewContact": "Add New Contact",
+    "importContact": "Import Phone Contact",
     "subAssignThisContact": "Sub-assign this contact",
     "mobile": "Phone",
     "selectSources": "Select sources",
