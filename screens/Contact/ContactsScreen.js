@@ -421,6 +421,17 @@ class ContactsScreen extends React.Component {
     </View>
   );
 
+  cleansePhone = (phone) => {
+    if (phone.length < 1) return null;
+    // remove all non-numeric chars
+    return phone.replace(/\D/g, '');
+  };
+
+  cleanseEmail = (email) => {
+    if (email.length < 1) return null;
+    return email;
+  };
+
   importContactsRender = () => {
     // NOTE: Contacts are already indexed by most recently modified,
     // so we only need to reverse the array. If this ever changes,
@@ -428,7 +439,27 @@ class ContactsScreen extends React.Component {
     const importContactsList = this.state.importContactsList.reverse();
     const existingContactsList = [];
     this.state.dataSourceContact.map((existingContact) => {
+      const existingContactPhoneList = existingContact?.contact_phone
+        ?.map((phone) => {
+          return this.cleansePhone(phone?.value);
+        })
+        .filter((x) => x);
+      const existingContactEmailList = existingContact?.contact_email
+        ?.map((email) => {
+          return this.cleanseEmail(email?.value);
+        })
+        .filter((x) => x);
       importContactsList.map((importContact) => {
+        const importContactPhoneList = importContact?.contact_phone
+          ?.map((phone) => {
+            return this.cleansePhone(phone?.value);
+          })
+          .filter((x) => x);
+        const importContactEmailList = importContact?.contact_email
+          ?.map((email) => {
+            return this.cleanseEmail(email?.value);
+          })
+          .filter((x) => x);
         if (
           (existingContact.title &&
             importContact.title &&
@@ -441,7 +472,9 @@ class ContactsScreen extends React.Component {
             existingContact.name === importContact.name) ||
           (existingContact.name &&
             importContact.title &&
-            existingContact.name === importContact.title)
+            existingContact.name === importContact.title) ||
+          existingContactPhoneList?.some((item) => importContactPhoneList?.includes(item)) ||
+          existingContactEmailList?.some((item) => importContactEmailList?.includes(item))
         ) {
           importContact['ID'] = existingContact.ID;
           importContact['exists'] = true;
@@ -533,7 +566,7 @@ class ContactsScreen extends React.Component {
             <ScreenModal
               modalVisible={this.state.modalVisible}
               setModalVisible={(modalVisible) => this.setState({ modalVisible })}
-              title={'Import Phone Contacts'}>
+              title={i18n.t('contactDetailScreen.importContact')}>
               {this.importContactsRender()}
             </ScreenModal>
           )}
