@@ -3007,11 +3007,11 @@ class ContactDetailScreen extends React.Component {
     let iconType = '',
       iconName = '';
     switch (field.type) {
-      case 'location': {
+      case 'location':
+      case 'location_meta':
         iconType = 'FontAwesome';
         iconName = 'map-marker';
         break;
-      }
       case 'date': {
         iconType = 'MaterialIcons';
         iconName = 'date-range';
@@ -3046,10 +3046,7 @@ class ContactDetailScreen extends React.Component {
         break;
       }
       case 'multi_select': {
-        if (field.name.includes('tag')) {
-          iconType = 'AntDesign';
-          iconName = 'tags';
-        } else if (field.name.includes('email')) {
+        if (field.name.includes('email')) {
           iconType = 'FontAwesome';
           iconName = 'envelope';
         } else if (field.name.includes('sources')) {
@@ -3116,6 +3113,11 @@ class ContactDetailScreen extends React.Component {
           iconType = 'FontAwesome';
           iconName = 'user';
         }
+        break;
+      }
+      case 'tags': {
+        iconType = 'AntDesign';
+        iconName = 'tags';
         break;
       }
       case 'text': {
@@ -3277,6 +3279,35 @@ class ContactDetailScreen extends React.Component {
         }
         break;
       }
+      case 'location_meta': {
+        if (propExist) {
+          mappedValue = value.values.map((location, idx) => {
+            const mapURL = isIOS
+              ? `http://maps.apple.com/?ll=${location.lat},${location.lng}`
+              : `https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`;
+            return (
+              <>
+                {location?.lat && location?.lng ? (
+                  <TouchableOpacity activeOpacity={0.5} onPress={() => Linking.openURL(mapURL)}>
+                    <Text
+                      style={[
+                        styles.linkingText,
+                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      ]}>
+                      {location.label}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <Text style={this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}}>
+                    {location.label}
+                  </Text>
+                )}
+              </>
+            );
+          });
+        }
+        break;
+      }
       case 'date': {
         if (propExist && value.length > 0) {
           mappedValue = (
@@ -3344,15 +3375,7 @@ class ContactDetailScreen extends React.Component {
       }
       case 'multi_select': {
         // Dont check field existence (propExist) to render all the options
-        if (field.name == 'tags') {
-          mappedValue = this.renderConnectionLink(
-            value,
-            this.props.tags.map((tag) => ({ value: tag, name: tag })),
-            false,
-            true,
-            'tags',
-          );
-        } else if (field.name == 'milestones') {
+        if (field.name == 'milestones') {
           mappedValue = (
             <Col style={{ paddingBottom: 15 }}>
               <Row style={[styles.formRow, { paddingTop: 10 }]}>
@@ -3573,6 +3596,16 @@ class ContactDetailScreen extends React.Component {
         }
         break;
       }
+      case 'tags': {
+        if (propExist) {
+          mappedValue = (
+            <Text style={this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}}>
+              {'"' + value.values.map((tag) => tag.value).join('", "') + '"'}
+            </Text>
+          );
+        }
+        break;
+      }
       default: {
         if (propExist) {
           mappedValue = (
@@ -3682,6 +3715,18 @@ class ContactDetailScreen extends React.Component {
             }
             inputContainerStyle={styles.selectizeField}
           />
+        );
+        break;
+      }
+      case 'location_meta': {
+        // TODO: implement support for editing
+        mappedValue = (
+          <Text
+            style={
+              this.props.isRTL ? { textAlign: 'left', flex: 1, color: '#ccc' } : { color: '#ccc' }
+            }>
+            {value?.values.map((location) => location.label).join(', ')}
+          </Text>
         );
         break;
       }
