@@ -3134,11 +3134,11 @@ class GroupDetailScreen extends React.Component {
     let iconType = '',
       iconName = '';
     switch (field.type) {
-      case 'location': {
+      case 'location':
+      case 'location_meta':
         iconType = 'FontAwesome';
         iconName = 'map-marker';
         break;
-      }
       case 'date': {
         if (field.name.includes('church_start_date')) {
           iconType = 'FontAwesome';
@@ -3178,10 +3178,7 @@ class GroupDetailScreen extends React.Component {
         break;
       }
       case 'multi_select': {
-        if (field.name.includes('tag')) {
-          iconType = 'AntDesign';
-          iconName = 'tags';
-        } else if (field.name.includes('health_metrics')) {
+        if (field.name.includes('health_metrics')) {
           iconType = 'FontAwesome5';
           iconName = 'tachometer-alt';
         } else {
@@ -3236,6 +3233,11 @@ class GroupDetailScreen extends React.Component {
           iconType = 'FontAwesome';
           iconName = 'user';
         }
+        break;
+      }
+      case 'tags': {
+        iconType = 'AntDesign';
+        iconName = 'tags';
         break;
       }
       case 'text': {
@@ -3404,6 +3406,35 @@ class GroupDetailScreen extends React.Component {
               {value.values.map((location) => location.name).join(', ')}
             </Text>
           );
+        }
+        break;
+      }
+      case 'location_meta': {
+        if (propExist) {
+          mappedValue = value.values.map((location, idx) => {
+            const mapURL = isIOS
+              ? `http://maps.apple.com/?ll=${location.lat},${location.lng}`
+              : `https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`;
+            return (
+              <>
+                {location?.lat && location?.lng ? (
+                  <TouchableOpacity activeOpacity={0.5} onPress={() => Linking.openURL(mapURL)}>
+                    <Text
+                      style={[
+                        styles.linkingText,
+                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      ]}>
+                      {location.label}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <Text style={this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}}>
+                    {location.label}
+                  </Text>
+                )}
+              </>
+            );
+          });
         }
         break;
       }
@@ -3681,6 +3712,22 @@ class GroupDetailScreen extends React.Component {
         }
         break;
       }
+      case 'tags': {
+        if (propExist) {
+          mappedValue = value.values.map((tag, idx) => (
+            <>
+              <Text
+                style={[
+                  { marginBottom: 10 },
+                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                ]}>
+                {tag.value}
+              </Text>
+            </>
+          ));
+        }
+        break;
+      }
       default: {
         if (propExist) {
           mappedValue = (
@@ -3833,6 +3880,18 @@ class GroupDetailScreen extends React.Component {
             }
             inputContainerStyle={styles.selectizeField}
           />
+        );
+        break;
+      }
+      case 'location_meta': {
+        // TODO: implement support for editing
+        mappedValue = (
+          <Text
+            style={
+              this.props.isRTL ? { textAlign: 'left', flex: 1, color: '#ccc' } : { color: '#ccc' }
+            }>
+            {value?.values.map((location) => location.label).join(', ')}
+          </Text>
         );
         break;
       }
