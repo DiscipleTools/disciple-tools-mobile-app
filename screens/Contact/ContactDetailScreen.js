@@ -3474,7 +3474,7 @@ class ContactDetailScreen extends React.Component {
               .filter((communicationChannel) => !communicationChannel.delete)
               .map((communicationChannel, index) => (
                 <>
-                  {communicationChannel?.value?.includes('http') ? (
+                  {communicationChannel?.value?.includes('://') ? (
                     <TouchableOpacity
                       key={index.toString()}
                       activeOpacity={0.5}
