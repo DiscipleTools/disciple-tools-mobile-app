@@ -3201,8 +3201,9 @@ class ContactDetailScreen extends React.Component {
           extraScrollHeight={150}
           keyboardShouldPersistTaps="handled">
           <View style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
+            {/* TODO: enable edit of 'tags' and 'campaigns' */}
             {fields
-              .filter((field) => field.name !== 'tags')
+              .filter((field) => field.name !== 'tags' && field.name !== 'campaigns')
               .map((field, index) => (
                 <View key={index.toString()}>
                   {field.name == 'overall_status' ||
@@ -3598,11 +3599,17 @@ class ContactDetailScreen extends React.Component {
       }
       case 'tags': {
         if (propExist) {
-          mappedValue = (
-            <Text style={this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}}>
-              {'"' + value.values.map((tag) => tag.value).join('", "') + '"'}
-            </Text>
-          );
+          mappedValue = value.values.map((tag, idx) => (
+            <>
+              <Text
+                style={[
+                  { marginBottom: 10 },
+                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                ]}>
+                {tag.value}
+              </Text>
+            </>
+          ));
         }
         break;
       }
@@ -3770,12 +3777,21 @@ class ContactDetailScreen extends React.Component {
         } else {
           switch (postType) {
             case 'contacts': {
-              listItems = [...this.state.usersContacts];
+              //listItems = [...this.state.usersContacts];
+              listItems = [
+                ...this.state.subAssignedContacts,
+                ...this.state.relationContacts,
+                ...this.state.baptizedByContacts,
+                ...this.state.coachedByContacts,
+                ...this.state.coachedContacts,
+                ...this.state.usersContacts,
+              ];
               placeholder = i18n.t('global.searchContacts');
               break;
             }
             case 'groups': {
-              listItems = [...this.state.groups];
+              //listItems = [...this.state.groups];
+              listItems = [...this.state.connectionGroups, ...this.state.groups];
               placeholder = i18n.t('groupDetailScreen.searchGroups');
               break;
             }
