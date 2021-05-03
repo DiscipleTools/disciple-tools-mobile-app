@@ -177,8 +177,9 @@ const formatDateToDatePicker = (timestamp = null) => {
 };
 
 const getSelectorColor = (status) => {
+  console.log(`status: ${status}`);
   let newColor;
-  if (status === 'new' || status === 'unassigned' || status === 'closed' || status === 'inactive') {
+  if (status === 'new' || status === 'unassigned' || status === 'inactive') {
     newColor = '#d9534f';
   } else if (status === 'unassignable' || status === 'assigned' || status === 'paused') {
     newColor = '#f0ad4e';
@@ -186,6 +187,8 @@ const getSelectorColor = (status) => {
     newColor = '#5cb85c';
   } else if (status === 'from_facebook') {
     newColor = '#366184';
+  } else if (status === 'closed') {
+    newColor = '#000';
   }
   return newColor;
 };
