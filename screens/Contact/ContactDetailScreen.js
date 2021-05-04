@@ -1668,7 +1668,9 @@ class ContactDetailScreen extends React.Component {
         }
       });
     }
-    return items;
+    // remove dupes
+    const set = new Set(items.map((item) => JSON.stringify(item)));
+    return [...set].map((item) => JSON.parse(item));
   };
 
   onViewOnMobileWeb = () => {
@@ -3777,7 +3779,6 @@ class ContactDetailScreen extends React.Component {
         } else {
           switch (postType) {
             case 'contacts': {
-              //listItems = [...this.state.usersContacts];
               listItems = [
                 ...this.state.subAssignedContacts,
                 ...this.state.relationContacts,

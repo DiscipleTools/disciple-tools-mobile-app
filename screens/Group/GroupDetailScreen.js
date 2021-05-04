@@ -1315,7 +1315,9 @@ class GroupDetailScreen extends React.Component {
         }
       });
     }
-    return items;
+    // remove dupes
+    const set = new Set(items.map((item) => JSON.stringify(item)));
+    return [...set].map((item) => JSON.parse(item));
   };
 
   renderActivityOrCommentRow = (commentOrActivity) => (
@@ -3568,7 +3570,7 @@ class GroupDetailScreen extends React.Component {
                 break;
               }
               case 'groups': {
-                collection = [...this.state.groups];
+                collection = [...this.state.connectionGroups, ...this.state.groups];
                 isGroup = true;
                 break;
               }

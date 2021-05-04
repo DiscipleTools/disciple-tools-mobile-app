@@ -177,7 +177,6 @@ const formatDateToDatePicker = (timestamp = null) => {
 };
 
 const getSelectorColor = (status) => {
-  console.log(`status: ${status}`);
   let newColor;
   if (status === 'new' || status === 'unassigned' || status === 'inactive') {
     newColor = '#d9534f';
