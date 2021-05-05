@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Код: ",
-      "message": "Порака: "
+      "message": "Порака: ",
+      "text": "текст",
+      "noRecords": "noRecords"
     },
     "success": {
       "save": "Податоците беа успешно зачувани!"
@@ -27,7 +29,25 @@
     "nameRequired": "Потребно е име",
     "close": "Затвори",
     "editComment": "Уредување",
-    "deleteComment": "Избриши"
+    "deleteComment": "Избриши",
+    "delete": "избриши",
+    "sortBy": "Сортирај по",
+    "reset": "ресетирање",
+    "apply": "се применуваат",
+    "showing": "покажувајќи",
+    "comments": "коментари",
+    "activity": "активност",
+    "submit": "поднесе",
+    "share": "сподели",
+    "viewOnMobileWeb": "viewOnMobileWeb",
+    "shareSettings": "сподели поставки",
+    "searchUsers": "Корисници на пребарување",
+    "noFilters": "нефилтри",
+    "searchContacts": "пребарувањеКонтакти",
+    "selectLocations": "изберетеЛокации",
+    "other": "други",
+    "chooseOption": "изберете Опција",
+    "confirm": "потврди"
   },
   "loginScreen": {
     "domain": {
@@ -48,7 +68,10 @@
     "forgotPassword": "Ја изгубивте вашата лозинка?",
     "errors": {
       "invalidUsername": "Непознато корисничко име. Проверете повторно или пробајте ја вашата адреса за е-пошта.",
-      "incorrectPassword": "Лозинката што ја внесовте за корисничкото име е неточна"
+      "incorrectPassword": "Лозинката што ја внесовте за корисничкото име е неточна",
+      "configurationNeededOn": "конфигурацијаNeededOn",
+      "mobileAppPluginRequiredOne": "mobileAppPluginRequiredOne",
+      "mobileAppPluginRequiredTwo": "mobileAppPlugin Потребно два"
     }
   },
   "contactsScreen": {
@@ -75,7 +98,8 @@
     "incorrectPin": "Погрешен PIN-код",
     "savedPinCode": "ПИН-кодот е успешно зачуван",
     "removedPinCode": "ПИН-кодот е успешно отстранет",
-    "close": "Затвори"
+    "close": "Затвори",
+    "confirmPin": "потврдиPIN"
   },
   "contactDetailScreen": {
     "addNewContact": "Додадете нов контакт",
@@ -99,7 +123,10 @@
       "error": "Потребно е име"
     },
     "noContactCommentPlacheHolder1": "Можеби имало проблем да ги натераат од вашата страница. Повлечете надолу за да се обидете да освежите и обидете се повторно.",
-    "noContactCommentPlacheHolderOffline": "Во моментов сте офлајн. Осигурете се дека сте поврзани со Wi-Fi или мобилни податоци со цел да се освежите и да добиете коментар за контакт."
+    "noContactCommentPlacheHolderOffline": "Во моментов сте офлајн. Осигурете се дека сте поврзани со Wi-Fi или мобилни податоци со цел да се освежите и да добиете коментар за контакт.",
+    "importContact": "увозКонтактирај",
+    "contactSharedWith": "контактСподелиСо",
+    "ageNotSet": "возрастНеПоставено"
   },
   "groupDetailScreen": {
     "addNewGroup": "Додадете нова група",
@@ -122,7 +149,17 @@
       "quick_button_meeting_scheduled": "Закажан состанок",
       "quick_button_meeting_postponed": "Состанокот е одложен",
       "quick_button_meeting_complete": "Состанокот е завршен"
-    }
+    },
+    "memberCount": "членКонт",
+    "memberList": "член Листа",
+    "attendance": {
+      "header": "заглавие",
+      "didAttendComment": "направијаПретставувањеКоментар",
+      "didNotAttendComment": "не присуствуваше на коментар",
+      "groupCommentLabel": "група Коментар Етикета",
+      "groupComment": "групаКоментар"
+    },
+    "groupSharedWith": "групаСподелиСо"
   },
   "notificationsScreen": {
     "notifications": "Известувања",

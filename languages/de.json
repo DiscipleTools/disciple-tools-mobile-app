@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Code",
-      "message": "Nachricht"
+      "message": "Nachricht",
+      "text": "Text",
+      "noRecords": "keine Aufzeichnungen"
     },
     "success": {
       "save": "Daten erfolgreich gespeichert!"
@@ -27,7 +29,25 @@
     "nameRequired": "Name erforderlich",
     "close": "Schließen",
     "editComment": "Bearbeiten",
-    "deleteComment": "Löschen"
+    "deleteComment": "Löschen",
+    "delete": "löschen",
+    "sortBy": "Sortieren nach",
+    "reset": "zurücksetzen",
+    "apply": "anwenden",
+    "showing": "zeigen",
+    "comments": "Bemerkungen",
+    "activity": "Aktivität",
+    "submit": "einreichen",
+    "share": "Teilen",
+    "viewOnMobileWeb": "viewOnMobileWeb",
+    "shareSettings": "shareSettings",
+    "searchUsers": "searchUsers",
+    "noFilters": "keine Filter",
+    "searchContacts": "Kontakte durchsuchen",
+    "selectLocations": "selectLocations",
+    "other": "andere",
+    "chooseOption": "selectOption",
+    "confirm": "bestätigen"
   },
   "loginScreen": {
     "domain": {
@@ -48,7 +68,10 @@
     "forgotPassword": "Passwort vergessen?",
     "errors": {
       "invalidUsername": "Unbekannter Nutzername. Überprüfen Sie es erneut oder versuchen Sie es mit Ihrer E-Mail-Adresse.",
-      "incorrectPassword": "Das Passwort, das Sie für den Benutzernamen eingegeben haben, ist falsch"
+      "incorrectPassword": "Das Passwort, das Sie für den Benutzernamen eingegeben haben, ist falsch",
+      "configurationNeededOn": "configurationNeededOn",
+      "mobileAppPluginRequiredOne": "mobileAppPluginRequiredOne",
+      "mobileAppPluginRequiredTwo": "mobileAppPluginRequiredTwo"
     }
   },
   "contactsScreen": {
@@ -75,7 +98,8 @@
     "incorrectPin": "Falsche PIN",
     "savedPinCode": "PIN-Code erfolgreich gespeichert",
     "removedPinCode": "PIN-Code erfolgreich entfernt",
-    "close": "Schließen"
+    "close": "Schließen",
+    "confirmPin": "PIN bestätigen"
   },
   "contactDetailScreen": {
     "addNewContact": "Neuen Kontakt Hinzufügen",
@@ -99,7 +123,10 @@
       "error": "Name ist erforderlich"
     },
     "noContactCommentPlacheHolder1": "Möglicherweise ist ein Problem beim Abrufen von Ihrer Website aufgetreten. Ziehen Sie nach unten, um zu versuchen, zu aktualisieren, und versuchen Sie es erneut.",
-    "noContactCommentPlacheHolderOffline": "Sie sind derzeit offline. Stellen Sie sicher, dass Sie mit WLAN oder mobilen Daten verbunden sind, um Ihren Kontaktkommentar zu aktualisieren und zu erhalten."
+    "noContactCommentPlacheHolderOffline": "Sie sind derzeit offline. Stellen Sie sicher, dass Sie mit WLAN oder mobilen Daten verbunden sind, um Ihren Kontaktkommentar zu aktualisieren und zu erhalten.",
+    "importContact": "Kontakt importieren",
+    "contactSharedWith": "contactSharedWith",
+    "ageNotSet": "ageNotSet"
   },
   "groupDetailScreen": {
     "addNewGroup": "Neue Gruppe Hinzufügen",
@@ -122,7 +149,17 @@
       "quick_button_meeting_scheduled": "Besprechung geplant",
       "quick_button_meeting_postponed": "Treffen verschoben",
       "quick_button_meeting_complete": "Besprechung abgeschlossen"
-    }
+    },
+    "memberCount": "memberCount",
+    "memberList": "Mitgliederliste",
+    "attendance": {
+      "header": "Header",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "groupCommentLabel",
+      "groupComment": "groupComment"
+    },
+    "groupSharedWith": "groupSharedWith"
   },
   "notificationsScreen": {
     "notifications": "Benachrichtigungen",

@@ -103,10 +103,10 @@
   },
   "contactDetailScreen": {
     "addNewContact": "Add New Contact",
-    "importContact": "Import Phone Contact",
     "subAssignThisContact": "Sub-assign this contact",
     "mobile": "Phone",
     "selectSources": "Select sources",
+    "selectLocations": "Select locations",
     "connections": "Connections",
     "addGroup": "Add Group",
     "addConnection": "Add Connection",
@@ -124,6 +124,7 @@
     },
     "noContactCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
     "noContactCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your contact comment.",
+    "importContact": "importContact",
     "contactSharedWith": "This contact is shared with",
     "ageNotSet": "No age set"
   },
@@ -138,6 +139,7 @@
     "noGroupCommentPlacheHolder": "There are not any group comments currently available.",
     "noGroupCommentPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
     "noGroupCommentPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your group comment.",
+    "selectLocations": "Select locations",
     "noMembersMessage": "No members. Tap here or on Edit to add some members to this group.",
     "groupName": {
       "label": "Group Name",

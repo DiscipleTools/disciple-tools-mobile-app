@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "コード： ",
-      "message": "メッセージ： "
+      "message": "メッセージ： ",
+      "text": "テキスト",
+      "noRecords": "記録なし"
     },
     "success": {
       "save": "データが正常に保存されました！"
@@ -27,7 +29,25 @@
     "nameRequired": "名前が必要です",
     "close": "閉じる",
     "editComment": "編集する",
-    "deleteComment": "削除する"
+    "deleteComment": "削除する",
+    "delete": "削除",
+    "sortBy": "並び替え",
+    "reset": "リセット",
+    "apply": "適用する",
+    "showing": "表示中",
+    "comments": "コメント",
+    "activity": "アクティビティ",
+    "submit": "参加する",
+    "share": "シェア",
+    "viewOnMobileWeb": "viewOnMobileWeb",
+    "shareSettings": "shareSettings",
+    "searchUsers": "searchUsers",
+    "noFilters": "noFilters",
+    "searchContacts": "searchContacts",
+    "selectLocations": "selectLocations",
+    "other": "その他",
+    "chooseOption": "choiceOption",
+    "confirm": "確認"
   },
   "loginScreen": {
     "domain": {
@@ -48,7 +68,10 @@
     "forgotPassword": "パスワードを忘れましたか？",
     "errors": {
       "invalidUsername": "不明なユーザー名。もう一度確認するか、メールアドレスを試してください。",
-      "incorrectPassword": "ユーザー名に入力したパスワードが正しくありません"
+      "incorrectPassword": "ユーザー名に入力したパスワードが正しくありません",
+      "configurationNeededOn": "configurationNeededOn",
+      "mobileAppPluginRequiredOne": "mobileAppPluginRequiredOne",
+      "mobileAppPluginRequiredTwo": "mobileAppPluginRequiredTwo"
     }
   },
   "contactsScreen": {
@@ -75,7 +98,8 @@
     "incorrectPin": "PINが正しくありません",
     "savedPinCode": "PINコードが正常に保存されました",
     "removedPinCode": "PINコードが正常に削除されました",
-    "close": "閉じる"
+    "close": "閉じる",
+    "confirmPin": "確認ピン"
   },
   "contactDetailScreen": {
     "addNewContact": "新しい連絡先を追加",
@@ -99,7 +123,10 @@
       "error": "名前が必要です"
     },
     "noContactCommentPlacheHolder1": "サイトからそれらを取得する際に問題が発生した可能性があります。下にドラッグして更新し、再試行してください。",
-    "noContactCommentPlacheHolderOffline": "現在オフラインです。更新して連絡先コメントを取得するには、Wi-Fiまたはモバイルデータに接続していることを確認してください。"
+    "noContactCommentPlacheHolderOffline": "現在オフラインです。更新して連絡先コメントを取得するには、Wi-Fiまたはモバイルデータに接続していることを確認してください。",
+    "importContact": "importContact",
+    "contactSharedWith": "contactSharedWith",
+    "ageNotSet": "ageNotSet"
   },
   "groupDetailScreen": {
     "addNewGroup": "新しいグループを追加",
@@ -122,7 +149,17 @@
       "quick_button_meeting_scheduled": "会議の予定",
       "quick_button_meeting_postponed": "会議は延期されました",
       "quick_button_meeting_complete": "会議が完了しました"
-    }
+    },
+    "memberCount": "memberCount",
+    "memberList": "メンバーリスト",
+    "attendance": {
+      "header": "ヘッダ",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "groupCommentLabel",
+      "groupComment": "groupComment"
+    },
+    "groupSharedWith": "groupSharedWith"
   },
   "notificationsScreen": {
     "notifications": "通知",

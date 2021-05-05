@@ -3,8 +3,8 @@
     "error": {
       "code": "Nambari: ",
       "message": "Ujumbe: ",
-      "text": "",
-      "noRecords": ""
+      "text": "maandishi",
+      "noRecords": "hakuna Rekodi"
     },
     "success": {
       "save": "Takwimu zimehifadhiwa vizuri!"
@@ -18,7 +18,6 @@
     "writeYourCommentNoteHere": "Andika maoni yako au daftari hapa",
     "requiredField": "Sehemu inayohitajika",
     "edit": "Hariri",
-    "delete": "Futa",
     "cancel": "Ghairi",
     "save": "Okoa",
     "online": "Mtandaoni",
@@ -31,22 +30,24 @@
     "close": "Karibu",
     "editComment": "Hariri",
     "deleteComment": "Futa",
-    "sortByLastModified": "",
-    "reset": "",
-    "apply": "",
-    "showing": "",
-    "comments": "",
-    "activity": "",
-    "submit": "",
-    "share": "",
-    "shareSettings": "",
-    "searchUsers": "",
-    "noFilters": "",
-    "searchContacts": "",
-    "selectLocations": "Chagua Maeneo",
-    "other": "",
-    "chooseOption": "",
-    "confirm": ""
+    "delete": "futa",
+    "sortBy": "panga kwa",
+    "reset": "weka upya",
+    "apply": "tumia",
+    "showing": "kuonesha",
+    "comments": "maoni",
+    "activity": "shughuli",
+    "submit": "wasilisha",
+    "share": "shiriki",
+    "viewOnMobileWeb": "maoniOnMobileWeb",
+    "shareSettings": "kushirikiMipangilio",
+    "searchUsers": "watumiaji wa utafutaji",
+    "noFilters": "hakunaFilters",
+    "searchContacts": "tafutaMawasiliana",
+    "selectLocations": "chagua Mahali",
+    "other": "nyingine",
+    "chooseOption": "chagua Chaguo",
+    "confirm": "thibitisha"
   },
   "loginScreen": {
     "domain": {
@@ -68,9 +69,9 @@
     "errors": {
       "invalidUsername": "Jina la mtumiaji lisilojulikana. Angalia tena au jaribu anwani yako ya barua pepe.",
       "incorrectPassword": "Nenosiri uliloliingiza jina la mtumiaji sio sahihi",
-      "configurationNeededOn": "",
-      "mobileAppPluginRequiredOne": "",
-      "mobileAppPluginRequiredTwo": ""
+      "configurationNeededOn": "usanidiUnahitajikaOn",
+      "mobileAppPluginRequiredOne": "rununuAppPluginInahitajikaOne",
+      "mobileAppPluginRequiredTwo": "rununuAppPluginInahitajikaTwo"
     }
   },
   "contactsScreen": {
@@ -98,12 +99,13 @@
     "savedPinCode": "Nambari ya siri imehifadhiwa kwa mafanikio",
     "removedPinCode": "Nambari ya siri imeondolewa kwa mafanikio",
     "close": "Funga",
-    "confirmPin": ""
+    "confirmPin": "thibitishaPini"
   },
   "contactDetailScreen": {
     "addNewContact": "Ongeza Mawasiliano Mpya",
     "subAssignThisContact": "Pana anwani hii",
     "mobile": "Rununu",
+    "selectLocations": "Chagua Maeneo",
     "selectSources": "Chagua vyanzo",
     "connections": "Viunganisho",
     "addGroup": "Ongeza Kikundi",
@@ -122,8 +124,9 @@
     },
     "noContactCommentPlacheHolder1": "Kunaweza kuwa na shida kuipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
     "noContactCommentPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate maoni yako ya mawasiliano.",
-    "contactSharedWith": "",
-    "ageNotSet": ""
+    "importContact": "kuagizaContact",
+    "contactSharedWith": "wasilianaSharedWith",
+    "ageNotSet": "umriNotSet"
   },
   "groupDetailScreen": {
     "addNewGroup": "Ongeza Kundi Mpya",
@@ -136,26 +139,27 @@
     "noGroupCommentPlacheHolder": "Hakuna maoni yoyote ya kikundi yanayopatikana kwa sasa.",
     "noGroupCommentPlacheHolder1": "Kunaweza kuwa na shida kuzipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
     "noGroupCommentPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate maoni ya kikundi chako.",
+    "selectLocations": "Chagua Maeneo",
     "noMembersMessage": "Hakuna Wajumbe",
     "groupName": {
       "label": "Jina la Kikundi",
       "error": "Jina inahitajika"
     },
-    "memberCount": "",
-    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Mkutano Umepangwa",
       "quick_button_meeting_postponed": "Mkutano Ulihairishwa",
       "quick_button_meeting_complete": "Mkutano Umekamilika"
     },
+    "memberCount": "mwanachamaHesabu",
+    "memberList": "Orodha ya mwanachama",
     "attendance": {
-      "header": "",
-      "didAttendComment": "",
-      "didNotAttendComment": "",
-      "groupCommentLabel": "",
-      "groupComment": ""
+      "header": "kichwa",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "kikundiCommentLabel",
+      "groupComment": "kikundiMaoni"
     },
-    "groupSharedWith": ""
+    "groupSharedWith": "kikundiSharedWith"
   },
   "notificationsScreen": {
     "notifications": "Arifa",

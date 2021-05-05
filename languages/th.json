@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "โค้ด",
-      "message": "ข้อความ"
+      "message": "ข้อความ",
+      "text": "ข้อความ",
+      "noRecords": "noRecords"
     },
     "success": {
       "save": "บันทึกข้อมูลสําเร็จ"
@@ -27,7 +29,25 @@
     "nameRequired": "ต้องกรอกชื่อ",
     "close": "ปิด",
     "editComment": "แก้ไข",
-    "deleteComment": "ลบ"
+    "deleteComment": "ลบ",
+    "delete": "ลบ",
+    "sortBy": "sortBy",
+    "reset": "รีเซ็ต",
+    "apply": "สมัคร",
+    "showing": "แสดง",
+    "comments": "ความคิดเห็น",
+    "activity": "กิจกรรม",
+    "submit": "ส่ง",
+    "share": "แบ่งปัน",
+    "viewOnMobileWeb": "ดูบนเว็บบนมือถือ",
+    "shareSettings": "shareSettings",
+    "searchUsers": "searchUsers",
+    "noFilters": "noFilters",
+    "searchContacts": "ค้นหา",
+    "selectLocations": "เลือกสถานที่",
+    "other": "อื่น ๆ",
+    "chooseOption": "เลือกตัวเลือก",
+    "confirm": "ยืนยัน"
   },
   "loginScreen": {
     "domain": {
@@ -48,7 +68,10 @@
     "forgotPassword": "ลืมรหัส",
     "errors": {
       "invalidUsername": "ไม่มีชื่อนี้อยู่ในระบบ ตรวจอีกครั้งหรือลองใช้ที่อยู่อีเมลของคุณ",
-      "incorrectPassword": "คุณกรอกรหัสชื่อบัญชีนี้ไม่ถูกต้อง"
+      "incorrectPassword": "คุณกรอกรหัสชื่อบัญชีนี้ไม่ถูกต้อง",
+      "configurationNeededOn": "configurationNeededOn",
+      "mobileAppPluginRequiredOne": "mobileAppPluginRequiredOne",
+      "mobileAppPluginRequiredTwo": "mobileAppPluginRequiredTwo"
     }
   },
   "contactsScreen": {
@@ -75,7 +98,8 @@
     "incorrectPin": "PIN ไม่ถูกต้อง",
     "savedPinCode": "บันทึกรหัส PIN เรียบร้อยแล้ว",
     "removedPinCode": "ลบรหัส PIN เรียบร้อยแล้ว",
-    "close": "ปิด"
+    "close": "ปิด",
+    "confirmPin": "ยืนยันพิน"
   },
   "contactDetailScreen": {
     "addNewContact": "เพิ่มลายชี่อผู้ติดต่อ",
@@ -99,7 +123,10 @@
       "error": "ต้องกรอกชื่อ"
     },
     "noContactCommentPlacheHolder1": "อาจมีข้อผิดพลาดเอาจากไซต์ของคุณ ลากลงเพื่อโหลดใหม่เเละลองอีกครั้ง",
-    "noContactCommentPlacheHolderOffline": "ขณะนี้คุณออฟไลน์ ตรวจสอบให้แน่ใจว่าคุณเชื่อมต่อกับ wifi หรือข้อมูลมือถือเพื่อรีเฟรชและรับความคิดเห็นติดต่อของคุณ"
+    "noContactCommentPlacheHolderOffline": "ขณะนี้คุณออฟไลน์ ตรวจสอบให้แน่ใจว่าคุณเชื่อมต่อกับ wifi หรือข้อมูลมือถือเพื่อรีเฟรชและรับความคิดเห็นติดต่อของคุณ",
+    "importContact": "นำเข้ารายชื่อโทรศัพท์",
+    "contactSharedWith": "contactSharedWith",
+    "ageNotSet": "ageNotSet"
   },
   "groupDetailScreen": {
     "addNewGroup": "เพิ่มกลุ่มใหม่",
@@ -122,7 +149,17 @@
       "quick_button_meeting_scheduled": "กำหนดการประชุม",
       "quick_button_meeting_postponed": "เลื่อนการประชุมออกไป",
       "quick_button_meeting_complete": "การประชุมเสร็จสมบูรณ์"
-    }
+    },
+    "memberCount": "memberCount",
+    "memberList": "memberList",
+    "attendance": {
+      "header": "หัวข้อ",
+      "didAttendComment": "ไม่ได้เข้าร่วมแสดงความคิดเห็น",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "groupCommentLabel",
+      "groupComment": "กลุ่ม"
+    },
+    "groupSharedWith": "groupSharedWith"
   },
   "notificationsScreen": {
     "notifications": "การเเจ้งเตือน",

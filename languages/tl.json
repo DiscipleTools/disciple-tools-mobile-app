@@ -2,7 +2,9 @@
   "global": {
     "error": {
       "code": "Code: ",
-      "message": "Mensahe: "
+      "message": "Mensahe: ",
+      "text": "text",
+      "noRecords": "noRecords"
     },
     "success": {
       "save": "Matagumpay na na-save ang data!"
@@ -27,7 +29,25 @@
     "nameRequired": "Kailangan ng pangalan",
     "close": "Isara",
     "editComment": "I-edit",
-    "deleteComment": "Tanggalin"
+    "deleteComment": "Tanggalin",
+    "delete": "tanggalin",
+    "sortBy": "pag-uuri",
+    "reset": "i-reset",
+    "apply": "mag-apply",
+    "showing": "ipinapakita",
+    "comments": "mga komento",
+    "activity": "aktibidad",
+    "submit": "ipasa",
+    "share": "magbahagi",
+    "viewOnMobileWeb": "viewOnMobileWeb",
+    "shareSettings": "magbahagi ng Mga Setting",
+    "searchUsers": "mga gumagamit ng paghahanap",
+    "noFilters": "noFilters",
+    "searchContacts": "mga contact sa paghahanap",
+    "selectLocations": "selectLocations",
+    "other": "iba pa",
+    "chooseOption": "pumili ng Opsyon",
+    "confirm": "kumpirmahin"
   },
   "loginScreen": {
     "domain": {
@@ -48,7 +68,10 @@
     "forgotPassword": "Nawala ang iyong password?",
     "errors": {
       "invalidUsername": "Hindi kilalang username. Suriing muli o subukan ang iyong email address.",
-      "incorrectPassword": "Ang password na ipinasok mo para sa username ay hindi tama"
+      "incorrectPassword": "Ang password na ipinasok mo para sa username ay hindi tama",
+      "configurationNeededOn": "pagsasaayosNeededOn",
+      "mobileAppPluginRequiredOne": "mobileAppPluginRequiredOne",
+      "mobileAppPluginRequiredTwo": "mobileAppPluginRequiredTwo"
     }
   },
   "contactsScreen": {
@@ -75,7 +98,8 @@
     "incorrectPin": "Maling PIN",
     "savedPinCode": "Matagumpay na na-save ang PIN code",
     "removedPinCode": "Matagumpay na naalis ang PIN code",
-    "close": "Isara"
+    "close": "Isara",
+    "confirmPin": "kumpirmahin"
   },
   "contactDetailScreen": {
     "addNewContact": "Magdagdag ng Bagong Pakikipag-ugnay",
@@ -99,7 +123,10 @@
       "error": "Pangalan ang kailangan"
     },
     "noContactCommentPlacheHolder1": "Maaaring may problema sa pagkuha sa kanila mula sa iyong site. I-drag pababa upang subukang i-refresh at subukang muli.",
-    "noContactCommentPlacheHolderOffline": "Kasalukuyan kang naka-offline. Tiyaking nakakonekta ka sa wifi o mobile data upang mai-refresh at makuha ang iyong komento sa pakikipag-ugnay."
+    "noContactCommentPlacheHolderOffline": "Kasalukuyan kang naka-offline. Tiyaking nakakonekta ka sa wifi o mobile data upang mai-refresh at makuha ang iyong komento sa pakikipag-ugnay.",
+    "importContact": "importContact",
+    "contactSharedWith": "contactSharedWith",
+    "ageNotSet": "ageNotSet"
   },
   "groupDetailScreen": {
     "addNewGroup": "Magdagdag ng Bagong Pangkat",
@@ -122,7 +149,17 @@
       "quick_button_meeting_scheduled": "Nakaiskedyul ang Pagpupulong",
       "quick_button_meeting_postponed": "Ipinagpaliban ang pagpupulong",
       "quick_button_meeting_complete": "Kumpleto na ang pagpupulong"
-    }
+    },
+    "memberCount": "memberCount",
+    "memberList": "memberList",
+    "attendance": {
+      "header": "header",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "groupCommentLabel",
+      "groupComment": "pangkatKomento"
+    },
+    "groupSharedWith": "groupSharedWith"
   },
   "notificationsScreen": {
     "notifications": "Mga Abiso",

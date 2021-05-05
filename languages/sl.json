@@ -3,8 +3,8 @@
     "error": {
       "code": "Koda: ",
       "message": "Sporočilo: ",
-      "text": "",
-      "noRecords": ""
+      "text": "besedilo",
+      "noRecords": "noRecords"
     },
     "success": {
       "save": "Podatki so bili uspešno shranjeni!"
@@ -18,7 +18,6 @@
     "writeYourCommentNoteHere": "Tu napišite svoj komentar ali opombo",
     "requiredField": "Zahtevano polje",
     "edit": "Uredi",
-    "delete": "Izbriši",
     "cancel": "Prekliči",
     "save": "Shrani",
     "online": "Na spletu",
@@ -31,22 +30,24 @@
     "close": "Zapri",
     "editComment": "Uredi",
     "deleteComment": "Izbriši",
-    "sortByLastModified": "",
-    "reset": "",
-    "apply": "",
-    "showing": "",
-    "comments": "",
-    "activity": "",
-    "submit": "",
-    "share": "",
-    "shareSettings": "",
-    "searchUsers": "",
-    "noFilters": "",
-    "searchContacts": "",
-    "selectLocations": "Izberite Lokacije",
-    "other": "",
-    "chooseOption": "",
-    "confirm": ""
+    "delete": "izbriši",
+    "sortBy": "Razvrsti po",
+    "reset": "ponastaviti",
+    "apply": "prijaviti",
+    "showing": "prikaz",
+    "comments": "komentarji",
+    "activity": "dejavnosti",
+    "submit": "oddajte",
+    "share": "deliti",
+    "viewOnMobileWeb": "viewOnMobileWeb",
+    "shareSettings": "shareSettings",
+    "searchUsers": "searchUsers",
+    "noFilters": "noFilters",
+    "searchContacts": "searchContacts",
+    "selectLocations": "selectLocations",
+    "other": "drugo",
+    "chooseOption": "selectOption",
+    "confirm": "potrdite"
   },
   "loginScreen": {
     "domain": {
@@ -68,9 +69,9 @@
     "errors": {
       "invalidUsername": "Neznano uporabniško ime. Ponovno preverite ali poskusite svoj e-poštni naslov.",
       "incorrectPassword": "Geslo, ki ste ga vnesli za uporabniško ime, ni pravilno",
-      "configurationNeededOn": "",
-      "mobileAppPluginRequiredOne": "",
-      "mobileAppPluginRequiredTwo": ""
+      "configurationNeededOn": "configurationNeededOn",
+      "mobileAppPluginRequiredOne": "mobileAppPluginRequiredOne",
+      "mobileAppPluginRequiredTwo": "mobileAppPluginRequiredTwo"
     }
   },
   "contactsScreen": {
@@ -98,12 +99,13 @@
     "savedPinCode": "Koda PIN je bila uspešno shranjena",
     "removedPinCode": "Koda PIN je bila uspešno odstranjena",
     "close": "Zapri",
-    "confirmPin": ""
+    "confirmPin": "potrdiPin"
   },
   "contactDetailScreen": {
     "addNewContact": "Dodaj nov stik",
     "subAssignThisContact": "Pododelite ta stik",
     "mobile": "Mobilni",
+    "selectLocations": "Izberite Lokacije",
     "selectSources": "Izberite vire",
     "connections": "Povezave",
     "addGroup": "Dodaj skupino",
@@ -122,8 +124,9 @@
     },
     "noContactCommentPlacheHolder1": "Morda je prišlo do težave pri pridobivanju le-teh z vašega spletnega mesta. Povlecite navzdol, da se poskusite osvežiti in poskusite znova.",
     "noContactCommentPlacheHolderOffline": "Trenutno ste brez povezave. Zagotovite, da ste povezani z wifi ali mobilnimi podatki, da osvežite in dobite komentar.",
-    "contactSharedWith": "",
-    "ageNotSet": ""
+    "importContact": "importContact",
+    "contactSharedWith": "contactSharedWith",
+    "ageNotSet": "ageNotSet"
   },
   "groupDetailScreen": {
     "addNewGroup": "Dodaj novo skupino",
@@ -136,26 +139,27 @@
     "noGroupCommentPlacheHolder": "Trenutno ni na voljo nobenih komentarjev skupin.",
     "noGroupCommentPlacheHolder1": "Morda je prišlo do težave pri pridobivanju le-teh z vašega spletnega mesta. Povlecite navzdol, da se poskusite osvežiti in poskusite znova.",
     "noGroupCommentPlacheHolderOffline": "Trenutno ste brez povezave. Zagotovite, da ste povezani z wifi ali mobilnimi podatki, da osvežite in dobite komentar svoje skupine.",
+    "selectLocations": "Izberite Lokacije",
     "noMembersMessage": "Ni članov",
     "groupName": {
       "label": "Ime skupine",
       "error": "Ime je obvezno"
     },
-    "memberCount": "",
-    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Načrtovan sestanek",
       "quick_button_meeting_postponed": "Seja prestavljena",
       "quick_button_meeting_complete": "Sestanek končan"
     },
+    "memberCount": "memberCount",
+    "memberList": "memberList",
     "attendance": {
-      "header": "",
-      "didAttendComment": "",
-      "didNotAttendComment": "",
-      "groupCommentLabel": "",
-      "groupComment": ""
+      "header": "glava",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "groupCommentLabel",
+      "groupComment": "groupComment"
     },
-    "groupSharedWith": ""
+    "groupSharedWith": "groupSharedWith"
   },
   "notificationsScreen": {
     "notifications": "Obvestila",
