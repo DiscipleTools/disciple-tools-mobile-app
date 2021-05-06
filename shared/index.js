@@ -187,7 +187,7 @@ const getSelectorColor = (status) => {
   } else if (status === 'from_facebook') {
     newColor = '#366184';
   } else if (status === 'closed') {
-    newColor = '#000';
+    newColor = '#808080';
   }
   return newColor;
 };
