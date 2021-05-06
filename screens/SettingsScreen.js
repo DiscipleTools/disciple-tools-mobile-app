@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, Text, View, KeyboardAvoidingView, Dimensions } from 'react-native';
+import { Text, View, KeyboardAvoidingView, Dimensions, Linking } from 'react-native';
 import {
   Body,
   Button as NbButton,
@@ -283,16 +283,24 @@ class SettingsScreen extends React.Component {
             <Thumbnail source={require('../assets/images/gravatar-default.png')} />
           </Left>
           <Body style={styles.headerBody}>
-            <Text
-              style={[
-                {
-                  writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
-                  textAlign: this.props.i18n.isRTL ? 'right' : 'left',
-                },
-                styles.username,
-              ]}>
-              {this.props.userData.displayName}
-            </Text>
+            <NbButton
+              transparent
+              onPress={() => {
+                const domain = this.props.userData.domain;
+                Linking.openURL(`https://${domain}/settings/`);
+              }}>
+              <Text
+                style={[
+                  {
+                    writingDirection: this.props.i18n.isRTL ? 'rtl' : 'ltr',
+                    textAlign: this.props.i18n.isRTL ? 'right' : 'left',
+                    textDecorationLine: 'underline',
+                  },
+                  styles.username,
+                ]}>
+                {this.props.userData.displayName}
+              </Text>
+            </NbButton>
             <Text
               style={[
                 {

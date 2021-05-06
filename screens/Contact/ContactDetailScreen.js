@@ -34,7 +34,6 @@ import ParsedText from 'react-native-parsed-text';
 import { BlurView } from 'expo-blur';
 import { CheckBox } from 'react-native-elements';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { Html5Entities } from 'html-entities';
 import Menu, { MenuItem } from 'react-native-material-menu';
 
 import sharedTools from '../../shared';
@@ -78,7 +77,6 @@ const milestonesGridSize = windowWidth + 5;
 const windowHeight = Dimensions.get('window').height;
 let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBackPressListener;
 const isIOS = Platform.OS === 'ios';
-const entities = new Html5Entities();
 const defaultFaithMilestones = [
   'milestone_has_bible',
   'milestone_reading_bible',
@@ -263,6 +261,12 @@ class ContactDetailScreen extends React.Component {
                     }}>
                     {i18n.t('global.share')}
                   </MenuItem>
+                  <MenuItem
+                    onPress={() => {
+                      params.onViewOnMobileWeb();
+                    }}>
+                    {i18n.t('global.viewOnMobileWeb')}
+                  </MenuItem>
                 </Menu>
               </View>
             </Row>
@@ -376,6 +380,7 @@ class ContactDetailScreen extends React.Component {
       backButtonTap: this.backButtonTap.bind(this),
       toggleMenu: this.toggleMenu.bind(this),
       toggleShareView: this.toggleShareView.bind(this),
+      onViewOnMobileWeb: this.onViewOnMobileWeb.bind(this),
     };
     // Add afterBack param to execute 'parents' functions (ContactsView, NotificationsView)
     if (!navigation.state.params.afterBack) {
@@ -1501,7 +1506,7 @@ class ContactDetailScreen extends React.Component {
           }
           contactToSave = {
             ...sharedTools.diff(unmodifiedContact, contactToSave),
-            name: entities.encode(this.state.contact.name),
+            name: this.state.contact.name,
           };
           // Do not save fields with empty values
           Object.keys(contactToSave)
@@ -1663,7 +1668,15 @@ class ContactDetailScreen extends React.Component {
         }
       });
     }
-    return items;
+    // remove dupes
+    const set = new Set(items.map((item) => JSON.stringify(item)));
+    return [...set].map((item) => JSON.parse(item));
+  };
+
+  onViewOnMobileWeb = () => {
+    const domain = this.props.userData.domain;
+    const id = this.state.contact.ID;
+    Linking.openURL(`https://${domain}/contacts/${id}/`);
   };
 
   linkingPhoneDialer = (phoneNumber) => {
@@ -2996,11 +3009,11 @@ class ContactDetailScreen extends React.Component {
     let iconType = '',
       iconName = '';
     switch (field.type) {
-      case 'location': {
+      case 'location':
+      case 'location_meta':
         iconType = 'FontAwesome';
         iconName = 'map-marker';
         break;
-      }
       case 'date': {
         iconType = 'MaterialIcons';
         iconName = 'date-range';
@@ -3035,10 +3048,7 @@ class ContactDetailScreen extends React.Component {
         break;
       }
       case 'multi_select': {
-        if (field.name.includes('tag')) {
-          iconType = 'AntDesign';
-          iconName = 'tags';
-        } else if (field.name.includes('email')) {
+        if (field.name.includes('email')) {
           iconType = 'FontAwesome';
           iconName = 'envelope';
         } else if (field.name.includes('sources')) {
@@ -3105,6 +3115,11 @@ class ContactDetailScreen extends React.Component {
           iconType = 'FontAwesome';
           iconName = 'user';
         }
+        break;
+      }
+      case 'tags': {
+        iconType = 'AntDesign';
+        iconName = 'tags';
         break;
       }
       case 'text': {
@@ -3188,8 +3203,9 @@ class ContactDetailScreen extends React.Component {
           extraScrollHeight={150}
           keyboardShouldPersistTaps="handled">
           <View style={[styles.formContainer, { marginTop: 10, paddingTop: 0 }]}>
+            {/* TODO: enable edit of 'tags' and 'campaigns' */}
             {fields
-              .filter((field) => field.name !== 'tags')
+              .filter((field) => field.name !== 'tags' && field.name !== 'campaigns')
               .map((field, index) => (
                 <View key={index.toString()}>
                   {field.name == 'overall_status' ||
@@ -3266,6 +3282,35 @@ class ContactDetailScreen extends React.Component {
         }
         break;
       }
+      case 'location_meta': {
+        if (propExist) {
+          mappedValue = value.values.map((location, idx) => {
+            const mapURL = isIOS
+              ? `http://maps.apple.com/?ll=${location.lat},${location.lng}`
+              : `https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`;
+            return (
+              <>
+                {location?.lat && location?.lng ? (
+                  <TouchableOpacity activeOpacity={0.5} onPress={() => Linking.openURL(mapURL)}>
+                    <Text
+                      style={[
+                        styles.linkingText,
+                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      ]}>
+                      {location.label}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <Text style={this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}}>
+                    {location.label}
+                  </Text>
+                )}
+              </>
+            );
+          });
+        }
+        break;
+      }
       case 'date': {
         if (propExist && value.length > 0) {
           mappedValue = (
@@ -3333,15 +3378,7 @@ class ContactDetailScreen extends React.Component {
       }
       case 'multi_select': {
         // Dont check field existence (propExist) to render all the options
-        if (field.name == 'tags') {
-          mappedValue = this.renderConnectionLink(
-            value,
-            this.props.tags.map((tag) => ({ value: tag, name: tag })),
-            false,
-            true,
-            'tags',
-          );
-        } else if (field.name == 'milestones') {
+        if (field.name == 'milestones') {
           mappedValue = (
             <Col style={{ paddingBottom: 15 }}>
               <Row style={[styles.formRow, { paddingTop: 10 }]}>
@@ -3435,18 +3472,37 @@ class ContactDetailScreen extends React.Component {
                 </TouchableOpacity>
               ));
           } else {
-            mappedValue = (
-              <Text
-                style={[
-                  { marginTop: 'auto', marginBottom: 'auto' },
-                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
-                ]}>
-                {value
-                  .filter((communicationChannel) => !communicationChannel.delete)
-                  .map((communicationChannel) => communicationChannel.value)
-                  .join(', ')}
-              </Text>
-            );
+            mappedValue = value
+              .filter((communicationChannel) => !communicationChannel.delete)
+              .map((communicationChannel, index) => (
+                <>
+                  {communicationChannel?.value?.includes('://') ? (
+                    <TouchableOpacity
+                      key={index.toString()}
+                      activeOpacity={0.5}
+                      onPress={() => {
+                        Linking.openURL(communicationChannel.value);
+                      }}>
+                      <Text
+                        style={[
+                          styles.linkingText,
+                          { marginTop: 'auto', marginBottom: 'auto' },
+                          this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                        ]}>
+                        {communicationChannel.value}
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <Text
+                      style={[
+                        { marginTop: 'auto', marginBottom: 'auto' },
+                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      ]}>
+                      {communicationChannel.value}
+                    </Text>
+                  )}
+                </>
+              ));
           }
         }
         break;
@@ -3543,6 +3599,22 @@ class ContactDetailScreen extends React.Component {
         }
         break;
       }
+      case 'tags': {
+        if (propExist) {
+          mappedValue = value.values.map((tag, idx) => (
+            <>
+              <Text
+                style={[
+                  { marginBottom: 10 },
+                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                ]}>
+                {tag.value}
+              </Text>
+            </>
+          ));
+        }
+        break;
+      }
       default: {
         if (propExist) {
           mappedValue = (
@@ -3585,7 +3657,7 @@ class ContactDetailScreen extends React.Component {
             color: this.onCheckExistingMilestone(value, field.name) ? '#FFFFFF' : '#000000',
           },
         ]}>
-        {entities.encode(field.default[value].label)}
+        {field.default[value].label}
       </Text>
     </TouchableOpacity>
   );
@@ -3655,6 +3727,18 @@ class ContactDetailScreen extends React.Component {
         );
         break;
       }
+      case 'location_meta': {
+        // TODO: implement support for editing
+        mappedValue = (
+          <Text
+            style={
+              this.props.isRTL ? { textAlign: 'left', flex: 1, color: '#ccc' } : { color: '#ccc' }
+            }>
+            {value?.values.map((location) => location.label).join(', ')}
+          </Text>
+        );
+        break;
+      }
       case 'date': {
         mappedValue = (
           <Row>
@@ -3695,12 +3779,20 @@ class ContactDetailScreen extends React.Component {
         } else {
           switch (postType) {
             case 'contacts': {
-              listItems = [...this.state.usersContacts];
+              listItems = [
+                ...this.state.subAssignedContacts,
+                ...this.state.relationContacts,
+                ...this.state.baptizedByContacts,
+                ...this.state.coachedByContacts,
+                ...this.state.coachedContacts,
+                ...this.state.usersContacts,
+              ];
               placeholder = i18n.t('global.searchContacts');
               break;
             }
             case 'groups': {
-              listItems = [...this.state.groups];
+              //listItems = [...this.state.groups];
+              listItems = [...this.state.connectionGroups, ...this.state.groups];
               placeholder = i18n.t('groupDetailScreen.searchGroups');
               break;
             }
@@ -4066,7 +4158,7 @@ class ContactDetailScreen extends React.Component {
         mappedValue = (
           <Picker
             mode="dropdown"
-            selectedValue={propExist ? selectedValue : null}
+            selectedValue={propExist ? selectedValue : this.props.userData?.id}
             onValueChange={(value) => this.setContactCustomFieldValue(field.name, value)}
             textStyle={{ color: Colors.tintColor }}>
             {[...this.state.users, ...this.state.assignedToContacts].map((item) => {

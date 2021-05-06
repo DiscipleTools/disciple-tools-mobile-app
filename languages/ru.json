@@ -3,8 +3,8 @@
     "error": {
       "code": "Код: ",
       "message": "Сообщение: ",
-      "text": "",
-      "noRecords": ""
+      "text": "текст",
+      "noRecords": "нет записей"
     },
     "success": {
       "save": "Данные успешно сохранены!"
@@ -18,7 +18,6 @@
     "writeYourCommentNoteHere": "Напишите свой комментарий или заметку здесь",
     "requiredField": "Обязательное поле",
     "edit": "Редактировать",
-    "delete": "Удалить",
     "cancel": "Отмена",
     "save": "Сохранить",
     "online": "Онлайн",
@@ -31,22 +30,24 @@
     "close": "близко",
     "editComment": "редактировать",
     "deleteComment": "Удалить",
-    "sortByLastModified": "",
-    "reset": "",
-    "apply": "",
-    "showing": "",
-    "comments": "",
-    "activity": "",
-    "submit": "",
-    "share": "",
-    "shareSettings": "",
-    "searchUsers": "",
-    "noFilters": "",
-    "searchContacts": "",
-    "selectLocations": "Выберите места",
-    "other": "",
-    "chooseOption": "",
-    "confirm": ""
+    "delete": "Удалить",
+    "sortBy": "Сортировать по",
+    "reset": "сброс настроек",
+    "apply": "применять",
+    "showing": "показывая",
+    "comments": "Комментарии",
+    "activity": "Мероприятия",
+    "submit": "представить",
+    "share": "Поделиться",
+    "viewOnMobileWeb": "смотреть в мобильном Интернете",
+    "shareSettings": "делиться настройками",
+    "searchUsers": "searchUsers",
+    "noFilters": "noFilters",
+    "searchContacts": "поискКонтакты",
+    "selectLocations": "selectLocations",
+    "other": "Другие",
+    "chooseOption": "selectOption",
+    "confirm": "подтверждать"
   },
   "loginScreen": {
     "domain": {
@@ -68,9 +69,9 @@
     "errors": {
       "invalidUsername": "Неизвестное имя пользователя. Проверьте еще раз или попробуйте свой адрес электронной почты.",
       "incorrectPassword": "Неверный пароль для этого пользователя",
-      "configurationNeededOn": "",
-      "mobileAppPluginRequiredOne": "",
-      "mobileAppPluginRequiredTwo": ""
+      "configurationNeededOn": "configurationNeededOn",
+      "mobileAppPluginRequiredOne": "mobileAppPluginRequiredOne",
+      "mobileAppPluginRequiredTwo": "mobileAppPluginRequiredTwo"
     }
   },
   "contactsScreen": {
@@ -98,12 +99,13 @@
     "savedPinCode": "PIN-код успешно сохранен",
     "removedPinCode": "PIN-код успешно удален",
     "close": "близко",
-    "confirmPin": ""
+    "confirmPin": "confirmPin"
   },
   "contactDetailScreen": {
     "addNewContact": "Добавить новый контакт",
     "subAssignThisContact": "Под-назначить этот контакт",
     "mobile": "Мобильный",
+    "selectLocations": "Выберите места",
     "selectSources": "Выберите источники",
     "connections": "Связи",
     "addGroup": "Добавить группу",
@@ -122,8 +124,9 @@
     },
     "noContactCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Попытайтесь еще раз (обновите экран, потянув его вниз).",
     "noContactCommentPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить свой контактный комментарий.",
-    "contactSharedWith": "",
-    "ageNotSet": ""
+    "importContact": "импортировать контакты",
+    "contactSharedWith": "contactSharedWith",
+    "ageNotSet": "ageNotSet"
   },
   "groupDetailScreen": {
     "addNewGroup": "Добавить новую группу",
@@ -136,26 +139,27 @@
     "noGroupCommentPlacheHolder": "В настоящее время нет групповых комментариев.",
     "noGroupCommentPlacheHolder1": "Возможно, возникла проблема при получении их с вашего сайта. Попытайтесь еще раз (обновите экран, потянув его вниз).",
     "noGroupCommentPlacheHolderOffline": "Вы в настоящее время не в сети. Убедитесь, что вы подключены к Wi-Fi или мобильным данным, чтобы обновить и получить комментарий группы.",
+    "selectLocations": "Выберите места",
     "noMembersMessage": "Нет участников. Нажмите здесь или на Редактировать, чтобы добавить участников в эту группу.",
     "groupName": {
       "label": "Имя группы",
       "error": "Имя обязательно"
     },
-    "memberCount": "",
-    "memberList": "",
     "fab": {
       "quick_button_meeting_scheduled": "Встреча запланирована",
       "quick_button_meeting_postponed": "Встреча отложена",
       "quick_button_meeting_complete": "Встреча завершена"
     },
+    "memberCount": "memberCount",
+    "memberList": "Список членов",
     "attendance": {
-      "header": "",
-      "didAttendComment": "",
-      "didNotAttendComment": "",
-      "groupCommentLabel": "",
-      "groupComment": ""
+      "header": "заголовок",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "groupCommentLabel",
+      "groupComment": "groupComment"
     },
-    "groupSharedWith": ""
+    "groupSharedWith": "groupSharedWith"
   },
   "notificationsScreen": {
     "notifications": "Уведомления",

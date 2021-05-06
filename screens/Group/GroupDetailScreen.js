@@ -12,6 +12,7 @@ import {
   RefreshControl,
   Platform,
   TouchableHighlight,
+  Linking,
   BackHandler,
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -33,7 +34,6 @@ import ParsedText from 'react-native-parsed-text';
 import { BlurView } from 'expo-blur';
 import { CheckBox } from 'react-native-elements';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { Html5Entities } from 'html-entities';
 import Menu, { MenuItem } from 'react-native-material-menu';
 
 import sharedTools from '../../shared';
@@ -96,7 +96,6 @@ const isIOS = Platform.OS === 'ios';
 /* eslint-disable */
 let commentsFlatListRef, addMembersSelectizeRef;
 /* eslint-enable */
-const entities = new Html5Entities();
 const defaultHealthMilestones = [
   'church_baptism',
   'church_bible',
@@ -275,6 +274,12 @@ class GroupDetailScreen extends React.Component {
                     }}>
                     {i18n.t('global.share')}
                   </MenuItem>
+                  <MenuItem
+                    onPress={() => {
+                      params.onViewOnMobileWeb();
+                    }}>
+                    {i18n.t('global.viewOnMobileWeb')}
+                  </MenuItem>
                 </Menu>
               </View>
             </Row>
@@ -390,6 +395,7 @@ class GroupDetailScreen extends React.Component {
       backButtonTap: this.backButtonTap.bind(this),
       toggleMenu: this.toggleMenu.bind(this),
       toggleShareView: this.toggleShareView.bind(this),
+      onViewOnMobileWeb: this.onViewOnMobileWeb.bind(this),
     };
     // Add afterBack param to execute 'parents' functions (ContactsView, NotificationsView)
     if (!navigation.state.params.afterBack) {
@@ -1309,7 +1315,9 @@ class GroupDetailScreen extends React.Component {
         }
       });
     }
-    return items;
+    // remove dupes
+    const set = new Set(items.map((item) => JSON.stringify(item)));
+    return [...set].map((item) => JSON.parse(item));
   };
 
   renderActivityOrCommentRow = (commentOrActivity) => (
@@ -1642,7 +1650,7 @@ class GroupDetailScreen extends React.Component {
           }
           groupToSave = {
             ...sharedTools.diff(unmodifiedGroup, groupToSave),
-            name: entities.encode(this.state.group.name),
+            name: this.state.group.name,
           };
           //After 'sharedTools.diff()' method, ID is removed, then we add it again
           if (Object.prototype.hasOwnProperty.call(this.state.group, 'ID')) {
@@ -1817,6 +1825,12 @@ class GroupDetailScreen extends React.Component {
     this.setState((prevState) => ({
       showShareView: !prevState.showShareView,
     }));
+  };
+
+  onViewOnMobileWeb = () => {
+    const domain = this.props.userData.domain;
+    const id = this.state.group.ID;
+    Linking.openURL(`https://${domain}/groups/${id}/`);
   };
 
   offlineBarRender = () => (
@@ -3122,11 +3136,11 @@ class GroupDetailScreen extends React.Component {
     let iconType = '',
       iconName = '';
     switch (field.type) {
-      case 'location': {
+      case 'location':
+      case 'location_meta':
         iconType = 'FontAwesome';
         iconName = 'map-marker';
         break;
-      }
       case 'date': {
         if (field.name.includes('church_start_date')) {
           iconType = 'FontAwesome';
@@ -3166,10 +3180,7 @@ class GroupDetailScreen extends React.Component {
         break;
       }
       case 'multi_select': {
-        if (field.name.includes('tag')) {
-          iconType = 'AntDesign';
-          iconName = 'tags';
-        } else if (field.name.includes('health_metrics')) {
+        if (field.name.includes('health_metrics')) {
           iconType = 'FontAwesome5';
           iconName = 'tachometer-alt';
         } else {
@@ -3224,6 +3235,11 @@ class GroupDetailScreen extends React.Component {
           iconType = 'FontAwesome';
           iconName = 'user';
         }
+        break;
+      }
+      case 'tags': {
+        iconType = 'AntDesign';
+        iconName = 'tags';
         break;
       }
       case 'text': {
@@ -3395,6 +3411,35 @@ class GroupDetailScreen extends React.Component {
         }
         break;
       }
+      case 'location_meta': {
+        if (propExist) {
+          mappedValue = value.values.map((location, idx) => {
+            const mapURL = isIOS
+              ? `http://maps.apple.com/?ll=${location.lat},${location.lng}`
+              : `https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`;
+            return (
+              <>
+                {location?.lat && location?.lng ? (
+                  <TouchableOpacity activeOpacity={0.5} onPress={() => Linking.openURL(mapURL)}>
+                    <Text
+                      style={[
+                        styles.linkingText,
+                        this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      ]}>
+                      {location.label}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <Text style={this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}}>
+                    {location.label}
+                  </Text>
+                )}
+              </>
+            );
+          });
+        }
+        break;
+      }
       case 'date': {
         if (propExist && value.length > 0) {
           mappedValue = (
@@ -3525,7 +3570,7 @@ class GroupDetailScreen extends React.Component {
                 break;
               }
               case 'groups': {
-                collection = [...this.state.groups];
+                collection = [...this.state.connectionGroups, ...this.state.groups];
                 isGroup = true;
                 break;
               }
@@ -3669,6 +3714,22 @@ class GroupDetailScreen extends React.Component {
         }
         break;
       }
+      case 'tags': {
+        if (propExist) {
+          mappedValue = value.values.map((tag, idx) => (
+            <>
+              <Text
+                style={[
+                  { marginBottom: 10 },
+                  this.props.isRTL ? { textAlign: 'left', flex: 1 } : {},
+                ]}>
+                {tag.value}
+              </Text>
+            </>
+          ));
+        }
+        break;
+      }
       default: {
         if (propExist) {
           mappedValue = (
@@ -3711,7 +3772,7 @@ class GroupDetailScreen extends React.Component {
             color: this.onCheckExistingMilestone(value, field.name) ? '#FFFFFF' : '#000000',
           },
         ]}>
-        {entities.encode(field.default[value].label)}
+        {field.default[value].label}
       </Text>
     </TouchableOpacity>
   );
@@ -3821,6 +3882,18 @@ class GroupDetailScreen extends React.Component {
             }
             inputContainerStyle={styles.selectizeField}
           />
+        );
+        break;
+      }
+      case 'location_meta': {
+        // TODO: implement support for editing
+        mappedValue = (
+          <Text
+            style={
+              this.props.isRTL ? { textAlign: 'left', flex: 1, color: '#ccc' } : { color: '#ccc' }
+            }>
+            {value?.values.map((location) => location.label).join(', ')}
+          </Text>
         );
         break;
       }

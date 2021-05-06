@@ -138,7 +138,6 @@ class ContactsScreen extends React.Component {
   };
 
   renderImportContactsRow = (contact) => {
-    // TODO: FINISH - conditional icons
     let contactExists = contact.exists ? true : false;
     let contactPhoneDisplay = '';
     if (contact.contact_phone) {
@@ -157,15 +156,8 @@ class ContactsScreen extends React.Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          if (contactExists) {
-            // DISPLAY MODAL TO CONFIRM NAVIGATE TO CONTACT DETAILS
-            console.log('*************');
-            console.log('ASK THE USER!!');
-            //this.goToContactDetailScreen(contact)
-          } else {
-            this.setState({ modalVisible: false });
-            this.goToContactDetailScreen(contact, true);
-          }
+          this.setState({ modalVisible: false });
+          this.goToContactDetailScreen(contact, !contactExists);
         }}
         style={styles.flatListItem}
         key={contact.idx}>
@@ -429,18 +421,45 @@ class ContactsScreen extends React.Component {
     </View>
   );
 
+  cleansePhone = (phone) => {
+    if (phone.length < 1) return null;
+    // remove all non-numeric chars
+    return phone.replace(/\D/g, '');
+  };
+
+  cleanseEmail = (email) => {
+    if (email.length < 1) return null;
+    return email;
+  };
+
   importContactsRender = () => {
     // NOTE: Contacts are already indexed by most recently modified,
     // so we only need to reverse the array. If this ever changes,
     // then just sort by idx (id)
     const importContactsList = this.state.importContactsList.reverse();
-    //console.log("*********************")
-    //console.log(`DATA SOURCE LIST COUNT: ${ this.state.dataSourceContact.length }`)
-    //console.log(JSON.stringify(importContactsList[0]));
-    //console.log(JSON.stringify(this.state.dataSourceContact[0]));
     const existingContactsList = [];
     this.state.dataSourceContact.map((existingContact) => {
+      const existingContactPhoneList = existingContact?.contact_phone
+        ?.map((phone) => {
+          return this.cleansePhone(phone?.value);
+        })
+        .filter((x) => x);
+      const existingContactEmailList = existingContact?.contact_email
+        ?.map((email) => {
+          return this.cleanseEmail(email?.value);
+        })
+        .filter((x) => x);
       importContactsList.map((importContact) => {
+        const importContactPhoneList = importContact?.contact_phone
+          ?.map((phone) => {
+            return this.cleansePhone(phone?.value);
+          })
+          .filter((x) => x);
+        const importContactEmailList = importContact?.contact_email
+          ?.map((email) => {
+            return this.cleanseEmail(email?.value);
+          })
+          .filter((x) => x);
         if (
           (existingContact.title &&
             importContact.title &&
@@ -453,16 +472,16 @@ class ContactsScreen extends React.Component {
             existingContact.name === importContact.name) ||
           (existingContact.name &&
             importContact.title &&
-            existingContact.name === importContact.title)
+            existingContact.name === importContact.title) ||
+          existingContactPhoneList?.some((item) => importContactPhoneList?.includes(item)) ||
+          existingContactEmailList?.some((item) => importContactEmailList?.includes(item))
         ) {
+          importContact['ID'] = existingContact.ID;
           importContact['exists'] = true;
           existingContactsList.push(importContact);
         }
       });
     });
-    console.log('*********************');
-    console.log(`EXISTING COUNT: ${existingContactsList.length}`);
-    console.log(JSON.stringify(existingContactsList[0]));
     const importContactsFilters = {
       tabs: [
         {
@@ -516,9 +535,9 @@ class ContactsScreen extends React.Component {
         },
       ],
     };
-    // TODO: ensure that filtering is working as expected
     return (
       <>
+        {/*
         <SearchBar
           filterConfig={importContactsFilters}
           onSelectFilter={this.selectOptionFilter}
@@ -527,6 +546,7 @@ class ContactsScreen extends React.Component {
           onLayout={this.onLayout}
           count={importContactsList.length}
         />
+        */}
         <FlatList
           data={importContactsList}
           renderItem={(item) => this.renderImportContactsRow(item.item)}
@@ -546,7 +566,7 @@ class ContactsScreen extends React.Component {
             <ScreenModal
               modalVisible={this.state.modalVisible}
               setModalVisible={(modalVisible) => this.setState({ modalVisible })}
-              title={'Import Phone Contacts'}>
+              title={i18n.t('contactDetailScreen.importContact')}>
               {this.importContactsRender()}
             </ScreenModal>
           )}
@@ -589,9 +609,8 @@ class ContactsScreen extends React.Component {
             activeOpacity={0}
             bgColor="rgba(0,0,0,0.5)"
             nativeFeedbackRippleColor="rgba(0,0,0,0)">
-            {/* TODO: translate these new fields */}
             <ActionButton.Item
-              title={'Add New Contact'}
+              title={i18n.t('contactDetailScreen.addNewContact')}
               onPress={() => {
                 this.goToContactDetailScreen();
               }}
@@ -603,7 +622,7 @@ class ContactsScreen extends React.Component {
               <Icon type="MaterialIcons" name="add" style={styles.contactFABIcon} />
             </ActionButton.Item>
             <ActionButton.Item
-              title={'Import Phone Contact'}
+              title={i18n.t('contactDetailScreen.importContact')}
               onPress={() => {
                 (async () => {
                   const { status } = await Contacts.requestPermissionsAsync();

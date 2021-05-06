@@ -20,6 +20,11 @@ export default [
     rtl: false,
   },
   {
+    code: 'de-DE',
+    name: 'Deutsch',
+    rtl: false,
+  },
+  {
     code: 'fa-IR',
     name: 'فارسی',
     rtl: true,
@@ -27,6 +32,11 @@ export default [
   {
     code: 'fr-FR',
     name: 'Français',
+    rtl: false,
+  },
+  {
+    code: 'hi',
+    name: 'हिन्दी',
     rtl: false,
   },
   {
@@ -40,6 +50,11 @@ export default [
     rtl: false,
   },
   {
+    code: 'ja',
+    name: '日本語',
+    rtl: false,
+  },
+  {
     code: 'nl-NL',
     name: 'Nederlands',
     rtl: false,
@@ -47,6 +62,11 @@ export default [
   {
     code: 'pt-BR',
     name: 'Português do Brasil',
+    rtl: false,
+  },
+  {
+    code: 'mk',
+    name: 'македонски',
     rtl: false,
   },
   {
@@ -82,6 +102,16 @@ export default [
   {
     code: 'sw',
     name: 'Kiswahili',
+    rtl: false,
+  },
+  {
+    code: 'th',
+    name: 'ภาษาไทย',
+    rtl: false,
+  },
+  {
+    code: 'tl',
+    name: 'Tagalog',
     rtl: false,
   },
   {
