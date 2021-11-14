@@ -1,8 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { StatusBar, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as SplashScreen from "expo-splash-screen";
+
+import PINScreen from 'screens/PINScreen';
+
+const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
@@ -41,23 +45,47 @@ const AppNavigator = () => {
     return null;
   }
 
+  const PINStack = () => {
+    return(
+      <Stack.Navigator
+        screenOptions={({ route, navigation }) => ({
+          headerShown: false
+        })}
+      >
+        <Stack.Screen
+          name="PIN"
+          component={PINScreen}
+          initialParams={{ type: "validate" }}
+        />
+      </Stack.Navigator>
+    );
+  };
+
+  const LoginStack = () => {
+    return(
+      <Stack.Navigator
+        screenOptions={({ route, navigation }) => ({
+          headerShown: false
+        })}
+      >
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{
+            // when logging out, a pop animation feels intuitive
+            //animationTypeForReplace: state.hasValidLoginCNonces ? 'push' : 'pop',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  };
+
   return (
     <SafeAreaProvider>
       <NavigationContainer onReady={onReady}>
-        <View style={styles.container}>
-          <Text>D.T v1.10.0</Text>
-          <StatusBar style="auto" />
-        </View>
+        <PINStack />
       </NavigationContainer>
     </SafeAreaProvider>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
 export default AppNavigator;
