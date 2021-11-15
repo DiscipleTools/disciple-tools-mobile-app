@@ -1,15 +1,15 @@
-import React, { useState, useRef } from 'react';
-import { Image, Text, View } from 'react-native';
+import React, { useState, useRef } from "react";
+import { Image, Text, View } from "react-native";
 //import { useDispatch } from 'react-redux';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import * as SecureStore from 'expo-secure-store';
-import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation, useRoute } from "@react-navigation/native";
+import * as SecureStore from "expo-secure-store";
+import { MaterialIcons } from "@expo/vector-icons";
 //import i18n from 'languages';
-import useToast from 'hooks/useToast';
+import useToast from "hooks/useToast";
 
-import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
+import SmoothPinCodeInput from "react-native-smooth-pincode-input";
 
-import { styles } from './PINScreen.styles';
+import { styles } from "./PINScreen.styles";
 
 /*
 import {
@@ -26,8 +26,8 @@ const PINScreen = () => {
   const { showToast } = useToast();
 
   const [state, setState] = useState({
-    code: '',
-    tmpCode: null
+    code: "",
+    tmpCode: null,
   });
 
   /*
@@ -39,32 +39,57 @@ const PINScreen = () => {
 
   const pinInput = useRef();
 
-  const getPIN= async () => {
+  const getPIN = async () => {
     // TODO: Constants for value
     //return await SecureStore.getItemAsync("pinCode");
     return "111111";
   };
 
   const isRepeating = (code) => {
-    return ["111111","222222","333333","444444","555555","666666","777777","888888","999999","000000"].includes(code);
+    return [
+      "111111",
+      "222222",
+      "333333",
+      "444444",
+      "555555",
+      "666666",
+      "777777",
+      "888888",
+      "999999",
+      "000000",
+    ].includes(code);
   };
 
   const isSequential = (code) => {
-    return ["012345","123456","234567","345678","456789","567890","678901","789012","890123","901234"].includes(code);
+    return [
+      "012345",
+      "123456",
+      "234567",
+      "345678",
+      "456789",
+      "567890",
+      "678901",
+      "789012",
+      "890123",
+      "901234",
+    ].includes(code);
   };
 
-  const handleFulfill = async(code) => {
-    console.log(`code: ${ code }`)
-    const isCompliant = (!isRepeating(code) && !isSequential(code));
+  const handleFulfill = async (code) => {
+    console.log(`code: ${code}`);
+    const isCompliant = !isRepeating(code) && !isSequential(code);
     if (!isCompliant) {
       await pinInput.current.shake();
       // TODO: translate
-      showToast("Error: Repeating (i.e., 444444) or Sequential (i.e., 234567) values are not permitted", true);
+      showToast(
+        "Error: Repeating (i.e., 444444) or Sequential (i.e., 234567) values are not permitted",
+        true
+      );
       setState({
         ...state,
-        code: ''
+        code: "",
       });
-    };
+    }
     /*
     if (isValidate) {
       // TODO: Support for DISTRESS PIN (also solves for when "pinCode" is unavailable)
@@ -149,17 +174,15 @@ const PINScreen = () => {
       return '';
     }
     */
-  }; 
+  };
 
   const displayText = getDisplayText();
   //<ImageBackground source={require('assets/splash.png')} style={{width: '100%', height: '100%'}}>
   // TODO: better way to import images than 'require'?
   return (
     <View style={styles.container}>
-      <Image source={require('assets/dt-icon.png')} style={styles.logo} />
-      <Text style={styles.text}>
-        { displayText }
-      </Text>
+      <Image source={require("assets/dt-icon.png")} style={styles.logo} />
+      <Text style={styles.text}>{displayText}</Text>
       <MaterialIcons name="lock-outline" style={styles.icon} />
       <SmoothPinCodeInput
         ref={pinInput}
