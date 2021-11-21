@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "કોડ: ",
+      "message": "સંદેશ: ",
+      "text": "ટેક્સ્ટ",
+      "noRecords": "noRecords"
+    },
+    "success": {
+      "save": "ડેટા સફળતાપૂર્વક સાચવવામાં આવ્યો!"
+    },
+    "groups": "જૂથો",
+    "details": "વિગતો",
+    "selectPeopleGroups": "લોકો જૂથો પસંદ કરો",
+    "address": "સરનામું",
+    "progress": "પ્રગતિ",
+    "commentsActivity": "ટિપ્પણીઓ અને પ્રવૃત્તિ",
+    "writeYourCommentNoteHere": "તમારી ટિપ્પણી અથવા નોંધ અહીં લખો",
+    "requiredField": "આવશ્યક ક્ષેત્ર",
+    "edit": "સંપાદિત કરો",
+    "cancel": "રદ કરો",
+    "save": "સાચવો",
+    "online": "ઓનલાઇન",
+    "offline": "offlineફલાઇન",
+    "language": "ભાષા",
+    "search": "શોધો",
+    "membersActivity": "સભ્યો",
+    "moreFields": "વધુ ક્ષેત્રો",
+    "nameRequired": "નામ આવશ્યક છે",
+    "close": "બંધ",
+    "editComment": "સંપાદિત કરો",
+    "deleteComment": "કા .ી નાખો",
+    "delete": "કા .ી નાખો",
+    "sortBy": "સ sortર્ટબાય દ્વારા",
+    "reset": "ફરીથી સેટ કરો",
+    "apply": "લાગુ કરો",
+    "showing": "દર્શાવે",
+    "comments": "ટિપ્પણીઓ",
+    "activity": "પ્રવૃત્તિ",
+    "submit": "સબમિટ",
+    "share": "શેર કરો",
+    "viewOnMobileWeb": "મોબાઇલ વેબ પર જુઓ",
+    "shareSettings": "શેરસેટિંગ્સ",
+    "searchUsers": "શોધકર્તાઓ",
+    "noFilters": "noFilters",
+    "searchContacts": "સર્ચકોન્ટેકટ્સ",
+    "selectLocations": "પસંદ કરો સ્થાનો",
+    "other": "અન્ય",
+    "chooseOption": "ઓપ્શન",
+    "confirm": "ખાતરી કરો",
+    "selectDate": "તારીખ પસંદ કરો"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "દા.ત. myteam.mydomain.com",
+      "error": "ડોમેન આવશ્યક છે",
+      "errorForgotPass": "કૃપા કરીને તમારો પાસવર્ડ પુન toપ્રાપ્ત કરવા માટે URL દાખલ કરો"
+    },
+    "username": {
+      "label": "વપરાશકર્તા નામ",
+      "error": "વપરાશકર્તા નામ આવશ્યક છે"
+    },
+    "password": {
+      "label": "પાસવર્ડ",
+      "error": "પાસવર્ડ અનિવાર્ય છે"
+    },
+    "logIn": "પ્રવેશ કરો",
+    "forgotPassword": "તમારો પાસવર્ડ ખોવાયો?",
+    "errors": {
+      "invalidUsername": "અજ્ Unknownાત વપરાશકર્તા નામ ફરીથી તપાસો અથવા તમારું ઇમેઇલ સરનામું અજમાવો.",
+      "incorrectPassword": "તમે વપરાશકર્તા નામ માટે દાખલ કરેલ પાસવર્ડ ખોટો છે",
+      "configurationNeededOn": "રૂપરેખાંકનનિડ",
+      "mobileAppPluginRequiredOne": "મોબાઇલ એપ્લિકેશનપ્લગઇનની જરૂર છે",
+      "mobileAppPluginRequiredTwo": "મોબાઇલ એપ્લિકેશનપ્લગઇનરિવર્તિત બે"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "સંપર્કો",
+    "noContactPlacheHolder": "હાલમાં કોઈ સંપર્કો ઉપલબ્ધ નથી.",
+    "noContactPlacheHolder1": "તમારી સાઇટ પરથી તેમને મેળવવામાં સમસ્યા આવી શકે છે. તાજું કરવાનો પ્રયાસ કરવા નીચે ખેંચો અને ફરીથી પ્રયાસ કરો.",
+    "noContactPlacheHolderOffline": "તમે હાલમાં offlineફલાઇન છો. તમારા સંપર્કોને તાજું કરવા અને મેળવવા માટે તમે વાઇફાઇ અથવા મોબાઇલ ડેટાથી કનેક્ટ છો તેની ખાતરી કરો."
+  },
+  "settingsScreen": {
+    "settings": "સેટિંગ્સ",
+    "networkUnavailable": "નેટવર્ક અનુપલબ્ધ. હવે Fફલાઇન મોડમાં",
+    "networkAvailable": "નેટવર્ક મળ્યું. LINEનલાઇન મોડ પર પાછા ફરો",
+    "storybook": "સ્ટોરીબુક",
+    "logout": "સાઇન આઉટ",
+    "helpSupport": "સહાય / સપોર્ટ",
+    "rememberPassword": "પાસવર્ડ યાદ",
+    "rememberPasswordActive": "સક્ષમ કરેલ લ loggedગ ઇન રાખો",
+    "rememberPasswordInactive": "લ loggedગ ઇન કરો અક્ષમ રાખો",
+    "remove": "દૂર કરો",
+    "set": "સેટ કરો",
+    "pinCode": "પીન કોડ",
+    "enterPin": "પિન દાખલ કરો",
+    "setPin": "નવો પિન સેટ કરો",
+    "incorrectPin": "ખોટો પિન",
+    "savedPinCode": "પિન કોડ સફળતાપૂર્વક સાચવ્યો",
+    "removedPinCode": "પિન કોડ સફળતાપૂર્વક દૂર થયો",
+    "close": "બંધ",
+    "confirmPin": "પુષ્ટિ"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "નવો સંપર્ક ઉમેરો",
+    "subAssignThisContact": "આ સંપર્કને સબમ assignન કરો",
+    "mobile": "મોબાઇલ",
+    "selectLocations": "સ્થાનો પસંદ કરો",
+    "selectSources": "સ્ત્રોતો પસંદ કરો",
+    "connections": "જોડાણો",
+    "addGroup": "જૂથ ઉમેરો",
+    "addConnection": "જોડાણ ઉમેરો",
+    "addBaptizedBy": "દ્વારા બાપ્તિસ્મા ઉમેરો",
+    "addBaptized": "બાપ્તિસ્મા ઉમેરો",
+    "addCoachedBy": "દ્વારા કોચ ઉમેરો",
+    "addCoaching": "કોચિંગ ઉમેરો",
+    "phoneNumber": "ફોન નંબર",
+    "initialComment": "પ્રારંભિક ટિપ્પણી",
+    "socialMedia": "સામાજિક મીડિયા",
+    "noContactCommentPlacheHolder": "હાલમાં કોઈ સંપર્કની ટિપ્પણી ઉપલબ્ધ નથી.",
+    "fullName": {
+      "label": "પૂરું નામ",
+      "error": "નામ આવશ્યક છે"
+    },
+    "noContactCommentPlacheHolder1": "તમારી સાઇટ પરથી તેમને મેળવવામાં સમસ્યા આવી શકે છે. તાજું કરવાનો પ્રયાસ કરવા નીચે ખેંચો અને ફરીથી પ્રયાસ કરો.",
+    "noContactCommentPlacheHolderOffline": "તમે હાલમાં offlineફલાઇન છો. તમારી સંપર્ક ટિપ્પણી તાજું કરવા અને મેળવવા માટે તમે વાઇફાઇ અથવા મોબાઇલ ડેટાથી કનેક્ટ છો તેની ખાતરી કરો.",
+    "importContact": "ફોન સંપર્ક આયાત કરો",
+    "contactSharedWith": "સંપર્ક શેર કરો",
+    "ageNotSet": "વયનોટસેટ",
+    "contactType": "સંપર્ક પ્રકાર"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "નવું જૂથ ઉમેરો",
+    "selectCoaches": "ગ્રુપ કોચ પસંદ કરો",
+    "searchGroups": "જૂથો શોધો",
+    "searchPeerGroups": "પીઅર જૂથો શોધો",
+    "childGroup": "બાળ જૂથ",
+    "searchChildGroups": "બાળ જૂથો શોધો",
+    "addMember": "સભ્ય ઉમેરો",
+    "noGroupCommentPlacheHolder": "હાલમાં કોઈ જૂથ ટિપ્પણીઓ ઉપલબ્ધ નથી.",
+    "noGroupCommentPlacheHolder1": "તમારી સાઇટ પરથી તેમને મેળવવામાં સમસ્યા આવી શકે છે. તાજું કરવાનો પ્રયાસ કરવા નીચે ખેંચો અને ફરીથી પ્રયાસ કરો.",
+    "noGroupCommentPlacheHolderOffline": "તમે હાલમાં offlineફલાઇન છો. તમારી જૂથની ટિપ્પણી તાજું કરવા અને મેળવવા માટે તમે વાઇફાઇ અથવા મોબાઇલ ડેટાથી કનેક્ટ છો તેની ખાતરી કરો.",
+    "selectLocations": "સ્થાનો પસંદ કરો",
+    "noMembersMessage": "કોઈ સભ્યો નથી",
+    "groupName": {
+      "label": "જૂથનું નામ",
+      "error": "નામ આવશ્યક છે"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "બેઠક અનુસૂચિત",
+      "quick_button_meeting_postponed": "બેઠક મુલતવી રાખી",
+      "quick_button_meeting_complete": "બેઠક પૂર્ણ"
+    },
+    "memberCount": "સભ્યકાઉન્ટ",
+    "memberList": "સભ્યલિસ્ટ",
+    "attendance": {
+      "header": "હેડર",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "જૂથકોમમેન્ટલેબલ",
+      "groupComment": "ગ્રુપ કmentમેન્ટ"
+    },
+    "groupSharedWith": "જૂથશેરડેડ"
+  },
+  "notificationsScreen": {
+    "notifications": "સૂચનાઓ",
+    "loadMore": "વધુ બતાવો",
+    "new": "નવું",
+    "unRead": "અપરિચિત",
+    "all": "બધા",
+    "markAll": "બધાને ચિહ્નિત કરો",
+    "dontHaveNotificationsUnread": "કોઈ સૂચનાઓ વાંચ્યા વગરની",
+    "dontHaveNotifications": "કોઈ સૂચનાઓ નથી"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "હાલમાં કોઈ જૂથો ઉપલબ્ધ નથી.",
+    "noGroupPlacheHolder1": "તમારી સાઇટ પરથી તેમને મેળવવામાં સમસ્યા આવી શકે છે. તાજું કરવાનો પ્રયાસ કરવા નીચે ખેંચો અને ફરીથી પ્રયાસ કરો.",
+    "noGroupPlacheHolderOffline": "તમે હાલમાં offlineફલાઇન છો. તમારા જૂથોને તાજું કરવા અને મેળવવા માટે ખાતરી કરો કે તમે વાઇફાઇ અથવા મોબાઇલ ડેટાથી કનેક્ટ છો."
+  },
+  "appRestart": {
+    "message": "નીચેની ગોઠવણી લાગુ કરવા માટે એપ્લિકેશન ફરીથી પ્રારંભ કરવામાં આવશે:",
+    "button": "બરાબર",
+    "textDirection": "ટેક્સ્ટ દિશા",
+    "selectedLanguage": "પસંદ કરેલી ભાષા"
+  },
+  "endonym": "ગુજરાતી"
+}

@@ -22,7 +22,7 @@ const initialState = {
   hasPIN: null,
   cnoncePIN: null,
   cnonceLogin: null,
-  isSignout: null
+  isSignout: null,
 };
 
 export default function userReducer(state = initialState, action) {
@@ -32,7 +32,7 @@ export default function userReducer(state = initialState, action) {
   };
   switch (action.type) {
     case REHYDRATE:
-      console.log("*** REHYDRATE! ***");
+      console.log('*** REHYDRATE! ***');
       return {
         ...newState,
         loading: false,
@@ -47,6 +47,11 @@ export default function userReducer(state = initialState, action) {
         ...newState,
         hasPIN: false,
       };
+    case actions.SET_CNONCE_LOGIN:
+      return {
+        ...newState,
+        cnonceLogin: action.cnonceLogin,
+      };
     case actions.GENERATE_PIN_CNONCE_SUCCESS:
       return {
         ...newState,
@@ -56,12 +61,12 @@ export default function userReducer(state = initialState, action) {
       return {
         ...newState,
         cnoncePIN: null,
-        error: action.error
+        error: action.error,
       };
     case actions.USER_LOGIN_START:
       return {
         ...newState,
-        loading: true
+        loading: true,
       };
     case actions.USER_LOGIN_SUCCESS:
       return {
@@ -73,16 +78,16 @@ export default function userReducer(state = initialState, action) {
           locale: action.user.locale,
           id: null,
         },
-        cnonceLogin: action.cnonceLogin
+        cnonceLogin: action.cnonceLogin,
       };
     case actions.USER_LOGIN_FAILURE:
-      console.log("*** USER_LOGIN_FAILURE ***");
+      console.log('*** USER_LOGIN_FAILURE ***');
       console.log(JSON.stringify(action));
       return {
         ...newState,
         error: action.error,
         loading: false,
-        cnonceLogin: null 
+        cnonceLogin: null,
       };
     case actions.GET_MY_USER_INFO_SUCCESS:
       return {
@@ -112,8 +117,8 @@ export default function userReducer(state = initialState, action) {
       return {
         ...initialState,
         hasPIN: state.hasPIN, // TODO: explain
-        isSignout: action.isSignout
-      }
+        isSignout: action.isSignout,
+      };
     case actions.TOGGLE_AUTO_LOGIN:
       return {
         ...newState,
@@ -131,10 +136,10 @@ export default function userReducer(state = initialState, action) {
     case actions.TOGGLE_REMEMBER_LOGIN_DETAILS_FAILURE:
       return {
         ...newState,
-        error: action.error
+        error: action.error,
       };
     case actions.UPDATE_USER_INFO_SUCCESS:
-      console.log("**** UPDATE_USER_INFO_SUCCESS REDUCER ****");
+      console.log('**** UPDATE_USER_INFO_SUCCESS REDUCER ****');
       console.log(JSON.stringify(action));
       return {
         ...newState,

@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "Nambari: ",
+      "message": "Ujumbe: ",
+      "text": "maandishi",
+      "noRecords": "hakuna Rekodi"
+    },
+    "success": {
+      "save": "Takwimu zimehifadhiwa vizuri!"
+    },
+    "groups": "Vikundi",
+    "details": "Maelezo",
+    "selectPeopleGroups": "Chagua Vikundi vya Watu",
+    "address": "Anwani",
+    "progress": "Maendeleo",
+    "commentsActivity": "Maoni na Shughuli",
+    "writeYourCommentNoteHere": "Andika maoni yako au daftari hapa",
+    "requiredField": "Sehemu inayohitajika",
+    "edit": "Hariri",
+    "cancel": "Ghairi",
+    "save": "Okoa",
+    "online": "Mtandaoni",
+    "offline": "nje ya mkondo",
+    "language": "Lugha",
+    "search": "Tafuta",
+    "membersActivity": "Wajumbe",
+    "moreFields": "Mashamba Zaidi",
+    "nameRequired": "Jina linalohitajika",
+    "close": "Karibu",
+    "editComment": "Hariri",
+    "deleteComment": "Futa",
+    "delete": "futa",
+    "sortBy": "panga kwa",
+    "reset": "weka upya",
+    "apply": "tumia",
+    "showing": "kuonesha",
+    "comments": "maoni",
+    "activity": "shughuli",
+    "submit": "wasilisha",
+    "share": "shiriki",
+    "viewOnMobileWeb": "Angalia kwenye wavuti ya rununu",
+    "shareSettings": "kushirikiMipangilio",
+    "searchUsers": "watumiaji wa utafutaji",
+    "noFilters": "hakunaFilters",
+    "searchContacts": "tafutaMawasiliana",
+    "selectLocations": "chagua Mahali",
+    "other": "nyingine",
+    "chooseOption": "chagua Chaguo",
+    "confirm": "thibitisha",
+    "selectDate": "Chagua Tarehe"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "Kwa mfano myteam.mydomain.com",
+      "error": "Kikoa inahitajika",
+      "errorForgotPass": "Tafadhali ingiza URL kuanza kupata nenosiri lako"
+    },
+    "username": {
+      "label": "Jina la mtumiaji",
+      "error": "Jina la mtumiaji inahitajika"
+    },
+    "password": {
+      "label": "Nywila",
+      "error": "Nywila inahitajika"
+    },
+    "logIn": "Ingia",
+    "forgotPassword": "Umepoteza nenosiri lako?",
+    "errors": {
+      "invalidUsername": "Jina la mtumiaji lisilojulikana. Angalia tena au jaribu anwani yako ya barua pepe.",
+      "incorrectPassword": "Nenosiri uliloliingiza jina la mtumiaji sio sahihi",
+      "configurationNeededOn": "usanidiUnahitajikaOn",
+      "mobileAppPluginRequiredOne": "rununuAppPluginInahitajikaOne",
+      "mobileAppPluginRequiredTwo": "rununuAppPluginInahitajikaTwo"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "Anwani",
+    "noContactPlacheHolder": "Hakuna anwani zozote zinazopatikana kwa sasa.",
+    "noContactPlacheHolder1": "Kunaweza kuwa na shida kuzipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
+    "noContactPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate anwani zako."
+  },
+  "settingsScreen": {
+    "settings": "Mipangilio",
+    "networkUnavailable": "Mtandao haupatikani. Sasa katika hali ya Offline",
+    "networkAvailable": "Mtandao umegunduliwa. Rudi kwenye Modi ya ONLINE",
+    "storybook": "Kitabu cha hadithi",
+    "logout": "Toka",
+    "helpSupport": "Msaada / Msaada",
+    "rememberPassword": "Kumbuka Nenosiri",
+    "rememberPasswordActive": "Endelea kuwezeshwa",
+    "rememberPasswordInactive": "Endelea kuwa umelemazwa",
+    "remove": "Ondoa",
+    "set": "Weka",
+    "pinCode": "Nambari ya siri",
+    "enterPin": "Ingiza PIN",
+    "setPin": "Weka PIN mpya",
+    "incorrectPin": "PIN isiyo sahihi",
+    "savedPinCode": "Nambari ya siri imehifadhiwa kwa mafanikio",
+    "removedPinCode": "Nambari ya siri imeondolewa kwa mafanikio",
+    "close": "Funga",
+    "confirmPin": "thibitishaPini"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Ongeza Mawasiliano Mpya",
+    "subAssignThisContact": "Pana anwani hii",
+    "mobile": "Rununu",
+    "selectLocations": "Chagua Maeneo",
+    "selectSources": "Chagua vyanzo",
+    "connections": "Viunganisho",
+    "addGroup": "Ongeza Kikundi",
+    "addConnection": "Ongeza Uunganisho",
+    "addBaptizedBy": "Ongeza kubatizwa na",
+    "addBaptized": "Ongeza kubatizwa",
+    "addCoachedBy": "Ongeza kilichofunzwa na",
+    "addCoaching": "Ongeza kufundisha",
+    "phoneNumber": "Nambari ya simu",
+    "initialComment": "Maoni ya awali",
+    "socialMedia": "Mtandao wa kijamii",
+    "noContactCommentPlacheHolder": "Hakuna maoni yoyote ya mawasiliano yanayopatikana kwa sasa.",
+    "fullName": {
+      "label": "Jina kamili",
+      "error": "Jina inahitajika"
+    },
+    "noContactCommentPlacheHolder1": "Kunaweza kuwa na shida kuipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
+    "noContactCommentPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate maoni yako ya mawasiliano.",
+    "importContact": "Ingiza anwani ya simu",
+    "contactSharedWith": "wasilianaSharedWith",
+    "ageNotSet": "umriNotSet",
+    "contactType": "Aina ya Mawasiliano"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Ongeza Kundi Mpya",
+    "selectCoaches": "Chagua Kocha wa Kikundi",
+    "searchGroups": "Vikundi vya utaftaji",
+    "searchPeerGroups": "Tafuta vikundi vya rika",
+    "childGroup": "Kundi la watoto",
+    "searchChildGroups": "Tafuta vikundi vya watoto",
+    "addMember": "Ongeza Mwanachama",
+    "noGroupCommentPlacheHolder": "Hakuna maoni yoyote ya kikundi yanayopatikana kwa sasa.",
+    "noGroupCommentPlacheHolder1": "Kunaweza kuwa na shida kuzipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
+    "noGroupCommentPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate maoni ya kikundi chako.",
+    "selectLocations": "Chagua Maeneo",
+    "noMembersMessage": "Hakuna Wajumbe",
+    "groupName": {
+      "label": "Jina la Kikundi",
+      "error": "Jina inahitajika"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "Mkutano Umepangwa",
+      "quick_button_meeting_postponed": "Mkutano Ulihairishwa",
+      "quick_button_meeting_complete": "Mkutano Umekamilika"
+    },
+    "memberCount": "mwanachamaHesabu",
+    "memberList": "Orodha ya mwanachama",
+    "attendance": {
+      "header": "kichwa",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "kikundiCommentLabel",
+      "groupComment": "kikundiMaoni"
+    },
+    "groupSharedWith": "kikundiSharedWith"
+  },
+  "notificationsScreen": {
+    "notifications": "Arifa",
+    "loadMore": "Mzigo Zaidi",
+    "new": "Mpya",
+    "unRead": "Haijasomwa",
+    "all": "Wote",
+    "markAll": "Weka alama zote",
+    "dontHaveNotificationsUnread": "Hakuna arifa ambazo hazijasomwa",
+    "dontHaveNotifications": "Hakuna arifu"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "Hakuna vikundi yoyote vinavyopatikana kwa sasa.",
+    "noGroupPlacheHolder1": "Kunaweza kuwa na shida kuzipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
+    "noGroupPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate vikundi vyako."
+  },
+  "appRestart": {
+    "message": "Programu itaanza tena kutumia usanidi ufuatao:",
+    "button": "Sawa",
+    "textDirection": "Mwelekeo wa maandishi",
+    "selectedLanguage": "Lugha iliyochaguliwa"
+  },
+  "endonym": "Kiswahili"
+}

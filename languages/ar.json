@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "الكود: ",
+      "message": "الرسالة: ",
+      "text": "نص",
+      "noRecords": "لا تسجيلات"
+    },
+    "success": {
+      "save": "!تم حفظ البيانات بنجاح"
+    },
+    "groups": "الفرق",
+    "details": "التفاصيل",
+    "selectPeopleGroups": "اختر اشخاص المجموعة",
+    "address": "العنوان",
+    "progress": "التقدٌّم",
+    "commentsActivity": "التعليقات والنشاط",
+    "writeYourCommentNoteHere": "اكتب تعليقك أو ملاحظتك هنا",
+    "requiredField": "حقل مطلوب",
+    "edit": "تغيير",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "online": "متصل بالأنترنت",
+    "offline": "غير متصل على الانترنت",
+    "language": "لغة",
+    "search": "بحث",
+    "membersActivity": "أفراد",
+    "moreFields": "المزيد من الحقول",
+    "nameRequired": "الاسم مطلوب",
+    "close": "قريب",
+    "editComment": "تعديل",
+    "deleteComment": "حذف",
+    "delete": "حذف",
+    "sortBy": "ترتيب حسب",
+    "reset": "إعادة تعيين",
+    "apply": "تطبيق",
+    "showing": "عرض",
+    "comments": "تعليقات",
+    "activity": "نشاط",
+    "submit": "إرسال",
+    "share": "شارك",
+    "viewOnMobileWeb": "عرض على Mobile Web",
+    "shareSettings": "إعدادات المشاركة",
+    "searchUsers": "البحث عن المستخدمين",
+    "noFilters": "لا المرشحات",
+    "searchContacts": "اتصالات بحث",
+    "selectLocations": "تحديد المواقع",
+    "other": "آخر",
+    "chooseOption": "إختر خيارا",
+    "confirm": "تؤكد",
+    "selectDate": "حدد تاريخ"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "اسم نطاق أدوات التلمذة",
+      "placeholder": "مثلاً: myteam.mydomain.com",
+      "error": "اسم النطاق مطلوب",
+      "errorForgotPass": "الرجاء إدخال عنوان URL للبدء في استعادة كلمة المرور الخاصة بك"
+    },
+    "username": {
+      "label": "اسم المستخدم",
+      "error": "اسم الامستخدم مطلوب"
+    },
+    "password": {
+      "label": "كلمة المرور",
+      "error": "كلمة المرور مطلوبة"
+    },
+    "logIn": "تسجيل الدخول",
+    "forgotPassword": "فقدت كلمة المرور الخاصة بك؟",
+    "errors": {
+      "invalidUsername": "اسم مستخدم غير معروف. تحقق مرة أخرى أو حاول عنوان بريدك الإلكتروني.",
+      "incorrectPassword": "كلمة المرور التي أدخلتها لاسم المستخدم غير صحيحة",
+      "configurationNeededOn": "التكوين المطلوب على",
+      "mobileAppPluginRequiredOne": "mobileAppPluginRequiredOne",
+      "mobileAppPluginRequiredTwo": "mobileAppPluginRequiredTwo"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "المتواصلون",
+    "noContactPlacheHolder": "لا توجد أي جهات اتصال متاحة حاليًا.",
+    "noContactPlacheHolder1": "ربما كانت هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث والمحاولة مرة أخرى.",
+    "noContactPlacheHolderOffline": "أنت غير متصل حاليًا. تأكد من اتصالك بشبكة wifi أو بيانات الجوال من أجل التحديث والحصول على جهات الاتصال الخاصة بك."
+  },
+  "settingsScreen": {
+    "settings": "الإعدادات",
+    "networkUnavailable": "الشبكة غير متاحة الآن في وضع عدم الاتصال بالانترنت",
+    "networkAvailable": "تم العثور علي شبكة. العودة لوضع الاتصال بالانترنت",
+    "storybook": "قصة",
+    "logout": "تسجيل الخروج",
+    "helpSupport": "ساعد لدعم",
+    "rememberPassword": "تذكر كلمة المرور",
+    "rememberPasswordActive": "تمكين تسجيل الدخول باستمرار",
+    "rememberPasswordInactive": "حافظ على تسجيل الدخول معطلة",
+    "remove": "إزالة",
+    "set": "جلس",
+    "pinCode": "كود PIN",
+    "enterPin": "أدخل رقم التعريف الشخصي",
+    "setPin": "قم بتعيين رقم تعريف شخصي جديد",
+    "incorrectPin": "رقم التعريف الشخصي غير صحيح",
+    "savedPinCode": "تم حفظ رمز PIN بنجاح",
+    "removedPinCode": "تمت إزالة رمز PIN بنجاح",
+    "close": "قريب",
+    "confirmPin": "تأكيد PIN"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "إضافة جهة اتصال جديدة",
+    "subAssignThisContact": "تعيين جهة الاتصال",
+    "mobile": "الهاتف",
+    "selectLocations": "تحديد المواقع",
+    "selectSources": "اختر المصادر",
+    "connections": "الروابط",
+    "addGroup": "إضافة مجموعة",
+    "addConnection": "إضافة رابط",
+    "addBaptizedBy": "أضف عمد بواسطة",
+    "addBaptized": "إضافة مُعمّد",
+    "addCoachedBy": "إضافة المدربين من قبل",
+    "addCoaching": "إضافة التدريب",
+    "phoneNumber": "رقم الهاتف",
+    "initialComment": "تعليق أولي",
+    "socialMedia": "وسائل التواصل الاجتماعي",
+    "noContactCommentPlacheHolder": "لا توجد أي تعليقات اتصال متاحة حاليا.",
+    "fullName": {
+      "label": "الاسم الكامل",
+      "error": "مطلوب اسم"
+    },
+    "noContactCommentPlacheHolder1": "قد تكون هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث وحاول مرة أخرى.",
+    "noContactCommentPlacheHolderOffline": "أنت الآن في وضع عدم الاتصال. تأكد من أنك متصل بشبكة wifi أو بيانات الجوال لتحديث والحصول على تعليق الاتصال الخاص بك.",
+    "importContact": "استيراد جهة اتصال عبر الهاتف",
+    "contactSharedWith": "جهة الاتصال",
+    "ageNotSet": "ageNotSet",
+    "contactType": "نوع الاتصال"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "إضافة مجموعة جديدة",
+    "selectCoaches": "اختر المدربين",
+    "searchGroups": "بحث المجموعات",
+    "searchPeerGroups": "بحث مجموعات الأقران",
+    "childGroup": "ربط المجموعة الإبن",
+    "searchChildGroups": "بحث المجموعة الإبن",
+    "addMember": "إضافة عضو",
+    "noGroupCommentPlacheHolder": "لا توجد أي تعليقات جماعية متاحة حاليًا.",
+    "noGroupCommentPlacheHolder1": "ربما كانت هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث والمحاولة مرة أخرى.",
+    "noGroupCommentPlacheHolderOffline": "أنت غير متصل حاليًا. تأكد من اتصالك بشبكة wifi أو بيانات الجوال من أجل التحديث والحصول على تعليق مجموعتك.",
+    "selectLocations": "اختر المواقع",
+    "noMembersMessage": "لا يوجد أعضاء. انقر هنا أو على \"تعديل\" لإضافة بعض الأعضاء إلى هذه المجموعة.",
+    "groupName": {
+      "label": "أسم المجموعة",
+      "error": "مطلوب اسم"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "جدول الاجتماع",
+      "quick_button_meeting_postponed": "تم تأجيل الاجتماع",
+      "quick_button_meeting_complete": "اكتمل الاجتماع"
+    },
+    "memberCount": "عدد الأعضاء",
+    "memberList": "قائمة الأعضاء",
+    "attendance": {
+      "header": "رأس",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "لم يحضر التعليق",
+      "groupCommentLabel": "groupCommentLabel",
+      "groupComment": "groupComment"
+    },
+    "groupSharedWith": "groupSharedWith"
+  },
+  "notificationsScreen": {
+    "notifications": "إخطارات",
+    "loadMore": "تحميل المزيد",
+    "new": "الجديد",
+    "unRead": "غير مقروء",
+    "all": "الكل",
+    "markAll": "حدد الكل",
+    "dontHaveNotificationsUnread": "لا إخطارات غير مقروءة",
+    "dontHaveNotifications": "لا إشعارات"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "لا توجد أي مجموعات متاحة حاليًا.",
+    "noGroupPlacheHolder1": "ربما كانت هناك مشكلة في الحصول عليها من موقعك. اسحب لأسفل لمحاولة التحديث والمحاولة مرة أخرى.",
+    "noGroupPlacheHolderOffline": "أنت غير متصل حاليًا. تأكد من اتصالك بشبكة wifi أو بيانات الجوال من أجل التحديث والحصول على مجموعاتك."
+  },
+  "appRestart": {
+    "message": "سيتم إعادة تشغيل التطبيق لتطبيق التكوين التالي:",
+    "button": "حسنا",
+    "textDirection": "اتجاه النص",
+    "selectedLanguage": "اللغة المختارة"
+  },
+  "endonym": "اَلْعَرَبِيَّةُ‎"
+}

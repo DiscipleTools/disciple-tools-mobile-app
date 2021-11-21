@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "ኮድ ፦ ",
+      "message": "መልዕክት ፦ ",
+      "text": "ስህተት ፦ ",
+      "noRecords": "በአካባቢያዊ የመሣሪያ ማከማቻ ውስጥ መዝገብዎን ማግኘት አልተቻለም። ወይም 1) አዲስ መዝገብ ይፍጠሩ እና አንዴ በመስመር ላይ ይዋሃዱ ፣ ወይም 2) በመስመር ላይ ያግኙ እና ፍለጋዎን እንደገና ይሞክሩ።"
+    },
+    "success": {
+      "save": "ውሂብ በተሳካ ሁኔታ ተቀምጧል!"
+    },
+    "groups": "ቡድኖች",
+    "details": "ዝርዝሮች",
+    "selectPeopleGroups": "የሰዎች ቡድኖችን ይምረጡ",
+    "address": "አድራሻ",
+    "progress": "እድገት",
+    "commentsActivity": "አስተያየቶች እና እንቅስቃሴ",
+    "writeYourCommentNoteHere": "አስተያየትዎን ወይም ማስታወሻዎን እዚህ ይፃፉ",
+    "requiredField": "መሞላት ያለበት",
+    "edit": "አርትዕ",
+    "cancel": "ሰርዝ",
+    "save": "አስቀምጥ",
+    "online": "በመስመር ላይ",
+    "offline": "ከመስመር ውጭ",
+    "language": "ቋንቋ",
+    "search": "ይፈልጉ",
+    "membersActivity": "አባላት",
+    "moreFields": "ተጨማሪ መስኮች",
+    "nameRequired": "ስም ያስፈልጋል",
+    "close": "ገጠመ",
+    "editComment": "አርትዕ",
+    "deleteComment": "ሰርዝ",
+    "delete": "ሰርዝ",
+    "sortBy": "በ መደርደር",
+    "reset": "ዳግም አስጀምር",
+    "apply": "ተግብር",
+    "showing": "በማሳየት ላይ",
+    "comments": "አስተያየቶች",
+    "activity": "እንቅስቃሴ",
+    "submit": "አስረክብ",
+    "share": "አጋራ",
+    "viewOnMobileWeb": "በሞባይል ድር ላይ ይመልከቱ",
+    "shareSettings": "ቅንብሮችን ያጋሩ",
+    "searchUsers": "የፍለጋ ተጠቃሚዎች",
+    "noFilters": "ማጣሪያዎች የሉም",
+    "searchContacts": "እውቂያዎችን ይፈልጉ",
+    "selectLocations": "ቦታዎችን ይምረጡ",
+    "other": "ሌላ",
+    "chooseOption": "አማራጭ ይምረጡ",
+    "confirm": "ያረጋግጡ",
+    "selectDate": "ቀን ይምረጡ"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "ዩአርኤል",
+      "placeholder": "ለምሳሌ myteam.mydomain.com",
+      "error": "ጎራ ያስፈልጋል",
+      "errorForgotPass": "የይለፍ ቃልዎን ለማምጣት ለመጀመር እባክዎ ዩአርኤል ያስገቡ"
+    },
+    "username": {
+      "label": "የተጠቃሚ ስም",
+      "error": "የተጠቃሚ ስም ያስፈልጋል"
+    },
+    "password": {
+      "label": "ፕስወርድ",
+      "error": "የይለፍ ቃል ያስፈልጋል"
+    },
+    "logIn": "ግባ",
+    "forgotPassword": "የይለፍ ቃልህ ጠፋ?",
+    "errors": {
+      "invalidUsername": "ያልታወቀ የተጠቃሚ ስም። እንደገና ይፈትሹ ወይም የኢሜል አድራሻዎን ይሞክሩ።",
+      "incorrectPassword": "ለተጠቃሚ ስም ያስገቡት የይለፍ ቃል ትክክል አይደለም",
+      "configurationNeededOn": "ማዋቀር በርቷል",
+      "mobileAppPluginRequiredOne": "የተንቀሳቃሽ ስልክ መተግበሪያ ተሰኪው ያስፈልጋል እና በደቀመዝሙርዎ ላይ ገቢር አይመስልም።",
+      "mobileAppPluginRequiredTwo": "ለተጨማሪ መረጃ እዚህ መታ ያድርጉ።"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "እውቂያዎች",
+    "noContactPlacheHolder": "በአሁኑ ጊዜ ምንም እውቂያዎች የሉም።",
+    "noContactPlacheHolder1": "እነሱን ከጣቢያዎ የማግኘት ችግር ሊኖር ይችላል። ለማደስ ለመሞከር ወደ ታች ይጎትቱ እና እንደገና ይሞክሩ።",
+    "noContactPlacheHolderOffline": "በአሁኑ ጊዜ ከመስመር ውጭ ነዎት። እውቂያዎችዎን ለማደስ እና ለማግኘት ከ wifi ወይም ከተንቀሳቃሽ ስልክ ውሂብ ጋር መገናኘታቸውን ያረጋግጡ።"
+  },
+  "settingsScreen": {
+    "settings": "ቅንብሮች",
+    "networkUnavailable": "አውታረ መረብ አይገኝም። አሁን ከመስመር ውጭ ሁኔታ",
+    "networkAvailable": "አውታረ መረብ ተገኝቷል። ወደ የመስመር ላይ ሁነታ ተመለስ",
+    "storybook": "የታሪክ መጽሐፍ",
+    "logout": "ዛግተ ውጣ",
+    "helpSupport": "እገዛ / ድጋፍ",
+    "rememberPassword": "የይለፍ ቃል አስታውስ",
+    "rememberPasswordActive": "በመለያ መግባቱን ይቀጥሉ",
+    "rememberPasswordInactive": "በመለያ መግባቱን ቀጥል ተሰናክሏል",
+    "remove": "አስወግድ",
+    "set": "አዘጋጅ",
+    "pinCode": "የፒን ኮድ",
+    "enterPin": "ፒን ያስገቡ",
+    "setPin": "አዲስ ፒን ያዘጋጁ",
+    "incorrectPin": "ትክክል ያልሆነ ፒን",
+    "savedPinCode": "የፒን ኮድ በተሳካ ሁኔታ ተቀምጧል!.",
+    "removedPinCode": "የፒን ኮድ በተሳካ ሁኔታ ተወግዷል!.",
+    "close": "ገጠመ",
+    "confirmPin": "አዲሱን ፒን ያረጋግጡ"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "አዲስ እውቂያ ያክሉ",
+    "subAssignThisContact": "ይህንን ዕውቂያ ንዑስ ይመድቡ",
+    "mobile": "ስልክ",
+    "selectLocations": "ቦታዎችን ይምረጡ",
+    "selectSources": "ምንጮችን ይምረጡ",
+    "connections": "ግንኙነቶች",
+    "addGroup": "ቡድን አክል",
+    "addConnection": "ግንኙነት አክል",
+    "addBaptizedBy": "ተጠመቁ በ",
+    "addBaptized": "ተጠመቁ ያክሉ",
+    "addCoachedBy": "በሠለጠነ አክል",
+    "addCoaching": "ስልጠናን ያክሉ",
+    "phoneNumber": "ስልክ ቁጥር",
+    "initialComment": "የመጀመሪያ አስተያየት",
+    "socialMedia": "ማህበራዊ ሚዲያ",
+    "noContactCommentPlacheHolder": "በአሁኑ ጊዜ ምንም የእውቂያ አስተያየቶች የሉም።",
+    "fullName": {
+      "label": "ሙሉ ስም",
+      "error": "ስም ያስፈልጋል"
+    },
+    "noContactCommentPlacheHolder1": "እነሱን ከጣቢያዎ የማግኘት ችግር ሊኖር ይችላል። ለማደስ ለመሞከር ወደ ታች ይጎትቱ እና እንደገና ይሞክሩ።",
+    "noContactCommentPlacheHolderOffline": "በአሁኑ ጊዜ ከመስመር ውጭ ነዎት። የእውቂያ አስተያየትዎን ለማደስ እና ለማግኘት ከ wifi ወይም ከተንቀሳቃሽ ስልክ ውሂብ ጋር መገናኘታቸውን ያረጋግጡ።",
+    "importContact": "የስልክ እውቂያ ያስመጡ",
+    "contactSharedWith": "ይህ እውቂያ ተጋርቷል",
+    "ageNotSet": "የዕድሜ ስብስብ የለም",
+    "contactType": "የእውቂያ ዓይነት"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "አዲስ ቡድን ያክሉ",
+    "selectCoaches": "የቡድን አሰልጣኝ ይምረጡ",
+    "searchGroups": "የፍለጋ ቡድኖች",
+    "searchPeerGroups": "የአቻ ቡድኖችን ይፈልጉ",
+    "childGroup": "የሕፃናት ቡድን",
+    "searchChildGroups": "የልጆች ቡድኖችን ይፈልጉ",
+    "addMember": "አባል አክል",
+    "noGroupCommentPlacheHolder": "በአሁኑ ጊዜ ምንም የቡድን አስተያየቶች የሉም።",
+    "noGroupCommentPlacheHolder1": "እነሱን ከጣቢያዎ የማግኘት ችግር ሊኖር ይችላል። ለማደስ ለመሞከር ወደ ታች ይጎትቱ እና እንደገና ይሞክሩ።",
+    "noGroupCommentPlacheHolderOffline": "በአሁኑ ጊዜ ከመስመር ውጭ ነዎት። የቡድን አስተያየትዎን ለማደስ እና ለማግኘት ከ wifi ወይም ከተንቀሳቃሽ ስልክ ውሂብ ጋር መገናኘታቸውን ያረጋግጡ።",
+    "selectLocations": "ቦታዎችን ይምረጡ",
+    "noMembersMessage": "አባላት የሉም። አንዳንድ አባላትን ወደዚህ ቡድን ለማከል እዚህ ወይም አርትዕ ላይ መታ ያድርጉ።",
+    "groupName": {
+      "label": "የቡድን ስም",
+      "error": "ስም ያስፈልጋል"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "ስብሰባ ተይ .ል",
+      "quick_button_meeting_postponed": "ስብሰባ ለሌላ ጊዜ ተላልonedል",
+      "quick_button_meeting_complete": "ስብሰባ ተጠናቀቀ"
+    },
+    "memberCount": "የአባል ብዛት",
+    "memberList": "የአባል ዝርዝር",
+    "attendance": {
+      "header": "የስብሰባ መገኘት",
+      "didAttendComment": "በቡድን ተገኝተዋል",
+      "didNotAttendComment": "በቡድን አልተገኘም",
+      "groupCommentLabel": "የስብሰባ አስተያየት",
+      "groupComment": "ስብሰባ ተጠናቀቀ"
+    },
+    "groupSharedWith": "ይህ ቡድን ተጋርቷል"
+  },
+  "notificationsScreen": {
+    "notifications": "ማሳወቂያዎች",
+    "loadMore": "ተጨማሪ ይጫኑ",
+    "new": "አዲስ",
+    "unRead": "ያልተነበበ",
+    "all": "ሁሉም",
+    "markAll": "ሁሉንም ምልክት ያድርጉ",
+    "dontHaveNotificationsUnread": "ምንም ያልተነበቡ ማሳወቂያዎች የሉም",
+    "dontHaveNotifications": "ማሳወቂያዎች የሉም"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "በአሁኑ ጊዜ ምንም ቡድኖች የሉም።",
+    "noGroupPlacheHolder1": "እነሱን ከጣቢያዎ የማግኘት ችግር ሊኖር ይችላል። ለማደስ ለመሞከር ወደ ታች ይጎትቱ እና እንደገና ይሞክሩ።",
+    "noGroupPlacheHolderOffline": "በአሁኑ ጊዜ ከመስመር ውጭ ነዎት። ቡድኖችዎን ለማደስ እና ለማግኘት ከ wifi ወይም ከተንቀሳቃሽ ስልክ ውሂብ ጋር መገናኘታቸውን ያረጋግጡ።"
+  },
+  "appRestart": {
+    "message": "የሚከተለውን ውቅር ለመተግበር ማመልከቻው እንደገና ይጀምራል።",
+    "button": "እሺ",
+    "textDirection": "የጽሑፍ አቅጣጫ",
+    "selectedLanguage": "የተመረጠ ቋንቋ"
+  },
+  "endonym": "አማርኛ"
+}

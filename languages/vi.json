@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "Mã số: ",
+      "message": "Thông điệp: ",
+      "text": "bản văn",
+      "noRecords": "noRecords"
+    },
+    "success": {
+      "save": "Đã lưu dữ liệu thành công!"
+    },
+    "groups": "Các nhóm",
+    "details": "Chi tiết",
+    "selectPeopleGroups": "Chọn nhóm người",
+    "address": "Địa chỉ",
+    "progress": "Phát triển",
+    "commentsActivity": "Nhận xét và hoạt động",
+    "writeYourCommentNoteHere": "Viết bình luận hoặc ghi chú của bạn ở đây",
+    "requiredField": "phần bắt buộc",
+    "edit": "Biên tập",
+    "cancel": "Hủy bỏ",
+    "save": "Tiết kiệm",
+    "online": "Trực tuyến",
+    "offline": "ngoại tuyến",
+    "language": "Ngôn ngữ",
+    "search": "Tìm kiếm",
+    "membersActivity": "Các thành viên",
+    "moreFields": "Thêm lĩnh vực",
+    "nameRequired": "Tên yêu cầu",
+    "close": "Đóng",
+    "editComment": "Biên tập",
+    "deleteComment": "Xóa bỏ",
+    "delete": "xóa bỏ",
+    "sortBy": "sắp xếp",
+    "reset": "cài lại",
+    "apply": "ứng dụng",
+    "showing": "trưng bày",
+    "comments": "bình luận",
+    "activity": "Hoạt động",
+    "submit": "Gửi đi",
+    "share": "chia sẻ",
+    "viewOnMobileWeb": "Xem trên web di động",
+    "shareSettings": "chia sẻ cài đặt",
+    "searchUsers": "searchUsers",
+    "noFilters": "không có bộ lọc",
+    "searchContacts": "tìm liên lạc",
+    "selectLocations": "selectLocations",
+    "other": "khác",
+    "chooseOption": "selectOption",
+    "confirm": "xác nhận",
+    "selectDate": "Chọn ngày"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "Ví dụ. myteam.mydomain.com",
+      "error": "Tên miền là bắt buộc",
+      "errorForgotPass": "Vui lòng nhập URL để bắt đầu lấy lại mật khẩu của bạn"
+    },
+    "username": {
+      "label": "tên tài khoản",
+      "error": "tên người dùng là bắt buộc"
+    },
+    "password": {
+      "label": "Mật khẩu",
+      "error": "Mật khẩu là bắt buộc"
+    },
+    "logIn": "Đăng nhập",
+    "forgotPassword": "Quên mật khẩu?",
+    "errors": {
+      "invalidUsername": "Tên người dùng chưa biết. Kiểm tra lại hoặc thử địa chỉ email của bạn.",
+      "incorrectPassword": "Mật khẩu bạn đã nhập cho tên người dùng không chính xác",
+      "configurationNeededOn": "configNeededOn",
+      "mobileAppPluginRequiredOne": "mobileAppPluginRequiredOne",
+      "mobileAppPluginRequiredTwo": "mobileAppPluginRequiredTwo"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "Liên lạc",
+    "noContactPlacheHolder": "Hiện tại không có bất kỳ liên hệ có sẵn.",
+    "noContactPlacheHolder1": "Có thể đã có một vấn đề nhận được chúng từ trang web của bạn. Kéo xuống để thử làm mới và thử lại.",
+    "noContactPlacheHolderOffline": "Bạn hiện đang ngoại tuyến. Đảm bảo bạn được kết nối với wifi hoặc dữ liệu di động để làm mới và nhận danh bạ của bạn."
+  },
+  "settingsScreen": {
+    "settings": "Cài đặt",
+    "networkUnavailable": "Không có mạng. Bây giờ ở chế độ OFFLINE",
+    "networkAvailable": "Mạng được phát hiện. Quay lại chế độ TRỰC TUYẾN",
+    "storybook": "Quyển truyện",
+    "logout": "Đăng xuất",
+    "helpSupport": "Trợ giúp / Hỗ trợ",
+    "rememberPassword": "Nhớ mật khẩu",
+    "rememberPasswordActive": "Tiếp tục đăng nhập",
+    "rememberPasswordInactive": "Tiếp tục đăng nhập bị vô hiệu hóa",
+    "remove": "Tẩy",
+    "set": "Bộ",
+    "pinCode": "Mã PIN",
+    "enterPin": "Nhập PIN",
+    "setPin": "Đặt mã PIN mới",
+    "incorrectPin": "Mã PIN không chính xác",
+    "savedPinCode": "Mã PIN đã được lưu thành công",
+    "removedPinCode": "Đã xóa mã PIN thành công",
+    "close": "Đóng",
+    "confirmPin": "Xác nhận mã PIN"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Thêm liên hệ mới",
+    "subAssignThisContact": "Chỉ định phụ liên hệ này",
+    "mobile": "Di động",
+    "selectLocations": "Chọn địa điểm",
+    "selectSources": "Chọn nguồn",
+    "connections": "Kết nối",
+    "addGroup": "Thêm nhóm",
+    "addConnection": "Thêm kết nối",
+    "addBaptizedBy": "Thêm báp têm bằng",
+    "addBaptized": "Thêm báp têm",
+    "addCoachedBy": "Thêm huấn luyện bởi",
+    "addCoaching": "Thêm huấn luyện",
+    "phoneNumber": "Số điện thoại",
+    "initialComment": "Nhận xét ban đầu",
+    "socialMedia": "Truyền thông xã hội",
+    "noContactCommentPlacheHolder": "Hiện tại không có bất kỳ ý kiến liên hệ có sẵn.",
+    "fullName": {
+      "label": "Họ và tên",
+      "error": "Tên là bắt buộc"
+    },
+    "noContactCommentPlacheHolder1": "Có thể đã có một vấn đề nhận được chúng từ trang web của bạn. Kéo xuống để thử làm mới và thử lại.",
+    "noContactCommentPlacheHolderOffline": "Bạn hiện đang ngoại tuyến. Đảm bảo bạn được kết nối với wifi hoặc dữ liệu di động để làm mới và nhận được liên hệ nhận xét của bạn.",
+    "importContact": "Nhập một liên hệ điện thoại",
+    "contactSharedWith": "contactSharedWith",
+    "ageNotSet": "ageNotSet",
+    "contactType": "Loại liên hệ"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Thêm nhóm mới",
+    "selectCoaches": "Chọn huấn luyện viên nhóm",
+    "searchGroups": "Nhóm tìm kiếm",
+    "searchPeerGroups": "Tìm kiếm các nhóm ngang hàng",
+    "childGroup": "Nhóm trẻ em",
+    "searchChildGroups": "Tìm kiếm nhóm trẻ",
+    "addMember": "Thêm thành viên",
+    "noGroupCommentPlacheHolder": "Hiện tại không có bất kỳ ý kiến nhóm nào có sẵn.",
+    "noGroupCommentPlacheHolder1": "Có thể đã có một vấn đề nhận được chúng từ trang web của bạn. Kéo xuống để thử làm mới và thử lại.",
+    "noGroupCommentPlacheHolderOffline": "Bạn hiện đang ngoại tuyến. Đảm bảo bạn được kết nối với wifi hoặc dữ liệu di động để làm mới và nhận xét nhóm của bạn.",
+    "selectLocations": "Chọn địa điểm",
+    "noMembersMessage": "Không có thành viên",
+    "groupName": {
+      "label": "Tên nhóm",
+      "error": "Tên là bắt buộc"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "Cuộc họp đã lên lịch",
+      "quick_button_meeting_postponed": "Cuộc họp bị hoãn lại",
+      "quick_button_meeting_complete": "Cuộc họp hoàn thành"
+    },
+    "memberCount": "Số lượng thành viên",
+    "memberList": "danh sách thành viên",
+    "attendance": {
+      "header": "tiêu đề",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "groupCommentLabel",
+      "groupComment": "groupComment"
+    },
+    "groupSharedWith": "groupSharedWith"
+  },
+  "notificationsScreen": {
+    "notifications": "Thông báo",
+    "loadMore": "Tải thêm",
+    "new": "Mới",
+    "unRead": "Chưa đọc",
+    "all": "Tất cả",
+    "markAll": "Đánh dấu tất cả",
+    "dontHaveNotificationsUnread": "Không có thông báo chưa đọc",
+    "dontHaveNotifications": "Không có thông báo"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "Hiện tại không có bất kỳ nhóm nào có sẵn.",
+    "noGroupPlacheHolder1": "Có thể đã có một vấn đề nhận được chúng từ trang web của bạn. Kéo xuống để thử làm mới và thử lại.",
+    "noGroupPlacheHolderOffline": "Bạn hiện đang ngoại tuyến. Đảm bảo bạn được kết nối với wifi hoặc dữ liệu di động để làm mới và nhận các nhóm của bạn."
+  },
+  "appRestart": {
+    "message": "Ứng dụng sẽ được khởi động lại để áp dụng cấu hình sau:",
+    "button": "Đồng ý",
+    "textDirection": "Văn bản chỉ đạo",
+    "selectedLanguage": "Ngôn ngữ đã chọn"
+  },
+  "endonym": "tiếng Việt"
+}

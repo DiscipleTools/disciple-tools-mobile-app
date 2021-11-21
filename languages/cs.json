@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "Kód: ",
+      "message": "Zpráva: ",
+      "text": "Chyba: ",
+      "noRecords": "Nelze najít váš záznam v místním úložišti zařízení. Buď: 1) Vytvořte nový záznam a sloučte se jednou online, nebo 2) Připojte se online a zkuste hledat znovu."
+    },
+    "success": {
+      "save": "Data byla úspěšně uložena!"
+    },
+    "groups": "Skupiny",
+    "details": "Podrobnosti",
+    "selectPeopleGroups": "Vyberte Skupiny lidí",
+    "address": "Adresa",
+    "progress": "Pokrok",
+    "commentsActivity": "Komentáře a aktivita",
+    "writeYourCommentNoteHere": "Sem napište svůj komentář nebo poznámku",
+    "requiredField": "Povinné pole",
+    "edit": "Upravit",
+    "cancel": "zrušení",
+    "save": "Uložit",
+    "online": "Online",
+    "offline": "Offline",
+    "language": "Jazyk",
+    "search": "Vyhledávání",
+    "membersActivity": "Členové",
+    "moreFields": "Více polí",
+    "nameRequired": "Jméno (vyžadováno",
+    "close": "Zavřít",
+    "editComment": "Upravit",
+    "deleteComment": "Vymazat",
+    "delete": "Vymazat",
+    "sortBy": "Řazení podle",
+    "reset": "Resetovat",
+    "apply": "Aplikovat",
+    "showing": "Zobrazeno",
+    "comments": "Komentáře",
+    "activity": "Aktivita",
+    "submit": "Předložit",
+    "share": "Podíl",
+    "viewOnMobileWeb": "Zobrazit na mobilním webu",
+    "shareSettings": "Nastavení sdílení",
+    "searchUsers": "Hledat uživatele",
+    "noFilters": "Žádné filtry",
+    "searchContacts": "Hledat kontakty",
+    "selectLocations": "Vyberte Umístění",
+    "other": "jiný",
+    "chooseOption": "Zvolte možnost",
+    "confirm": "Potvrdit",
+    "selectDate": "Vyberte Datum"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "Např. myteam.mydomain.com",
+      "error": "Je vyžadována doména",
+      "errorForgotPass": "Chcete -li začít získávat heslo, zadejte adresu URL"
+    },
+    "username": {
+      "label": "Uživatelské jméno",
+      "error": "Uživatelské jméno je povinné"
+    },
+    "password": {
+      "label": "Heslo",
+      "error": "Je vyžadováno heslo"
+    },
+    "logIn": "Přihlásit se",
+    "forgotPassword": "Zapomněli jste heslo?",
+    "errors": {
+      "invalidUsername": "Neznámé uživatelské jméno. Zkontrolujte to znovu nebo zkuste svou e -mailovou adresu.",
+      "incorrectPassword": "Heslo, které jste zadali pro uživatelské jméno, je nesprávné",
+      "configurationNeededOn": "Konfigurace nutná na",
+      "mobileAppPluginRequiredOne": "Plugin pro mobilní aplikace je vyžadován a nezdá se, že by byl aktivován ve vašem Disciple.Tools.",
+      "mobileAppPluginRequiredTwo": "Klepnutím sem zobrazíte další informace."
+    }
+  },
+  "contactsScreen": {
+    "contacts": "Kontakty",
+    "noContactPlacheHolder": "V současné době nejsou k dispozici žádné kontakty.",
+    "noContactPlacheHolder1": "Při jejich získávání z vašeho webu mohl být problém. Tažením dolů se pokuste obnovit a zkuste to znovu.",
+    "noContactPlacheHolderOffline": "Aktuálně jste offline. Chcete -li obnovit a získat kontakty, ujistěte se, že jste připojeni k Wi -Fi nebo mobilním datům."
+  },
+  "settingsScreen": {
+    "settings": "Nastavení",
+    "networkUnavailable": "Síť není k dispozici. Nyní v režimu OFFLINE",
+    "networkAvailable": "Zjištěna síť. Zpět do režimu ONLINE",
+    "storybook": "Pohádková kniha",
+    "logout": "Odhlásit se",
+    "helpSupport": "Nápověda / podpora",
+    "rememberPassword": "Pamatuj si heslo",
+    "rememberPasswordActive": "Ponechat přihlášené povolené",
+    "rememberPasswordInactive": "Ponechat přihlášené deaktivované",
+    "remove": "Odstranit",
+    "set": "Soubor",
+    "pinCode": "PIN kód",
+    "enterPin": "Zadejte PIN",
+    "setPin": "Nastavit nový PIN",
+    "incorrectPin": "Nesprávný PIN",
+    "savedPinCode": "PIN kód byl úspěšně uložen !.",
+    "removedPinCode": "PIN kód byl úspěšně odstraněn!",
+    "close": "Zavřít",
+    "confirmPin": "Potvrďte nový PIN"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Přidat nový kontakt",
+    "subAssignThisContact": "Sub-assign this contact",
+    "mobile": "Telefon",
+    "selectLocations": "Vyberte umístění",
+    "selectSources": "Vyberte zdroje",
+    "connections": "Připojení",
+    "addGroup": "Přidat skupinu",
+    "addConnection": "Přidat připojení",
+    "addBaptizedBy": "Přidat pokřtěno",
+    "addBaptized": "Přidejte pokřtěného",
+    "addCoachedBy": "Přidat trenér",
+    "addCoaching": "Přidejte koučování",
+    "phoneNumber": "Telefonní číslo",
+    "initialComment": "Počáteční komentář",
+    "socialMedia": "Sociální média",
+    "noContactCommentPlacheHolder": "V současné době nejsou k dispozici žádné kontaktní komentáře.",
+    "fullName": {
+      "label": "Celé jméno",
+      "error": "Jméno je povinné"
+    },
+    "noContactCommentPlacheHolder1": "Při jejich získávání z vašeho webu mohl být problém. Tažením dolů se pokuste obnovit a zkuste to znovu.",
+    "noContactCommentPlacheHolderOffline": "Aktuálně jste offline. Chcete -li obnovit a získat svůj kontaktní komentář, ujistěte se, že jste připojeni k Wi -Fi nebo mobilním datům.",
+    "importContact": "Importovat telefonní kontakt",
+    "contactSharedWith": "Tento kontakt je sdílen s",
+    "ageNotSet": "Není stanoven žádný věk",
+    "contactType": "Typ kontaktu"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Přidat novou skupinu",
+    "selectCoaches": "Vyberte skupinový trenér",
+    "searchGroups": "Hledat skupiny",
+    "searchPeerGroups": "Hledat skupiny vrstevníků",
+    "childGroup": "Podřízená skupina",
+    "searchChildGroups": "Hledat podřízené skupiny",
+    "addMember": "Přidat člena",
+    "noGroupCommentPlacheHolder": "V současné době nejsou k dispozici žádné skupinové komentáře.",
+    "noGroupCommentPlacheHolder1": "Při jejich získávání z vašeho webu mohl být problém. Tažením dolů se pokuste obnovit a zkuste to znovu.",
+    "noGroupCommentPlacheHolderOffline": "Aktuálně jste offline. Chcete -li obnovit a získat komentář skupiny, ujistěte se, že jste připojeni k Wi -Fi nebo mobilním datům.",
+    "selectLocations": "Vyberte umístění",
+    "noMembersMessage": "Žádní členové. Klepnutím sem nebo na Upravit přidáte do této skupiny některé členy.",
+    "groupName": {
+      "label": "Skupinové jméno",
+      "error": "Jméno je povinné"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "Plánovaná schůzka",
+      "quick_button_meeting_postponed": "Schůzka odložena",
+      "quick_button_meeting_complete": "Setkání dokončeno"
+    },
+    "memberCount": "Počet členů",
+    "memberList": "Seznam členů",
+    "attendance": {
+      "header": "Účast na schůzkách",
+      "didAttendComment": "Navštěvoval skupinu",
+      "didNotAttendComment": "Nezúčastnil se skupiny",
+      "groupCommentLabel": "Komentář ze schůzky",
+      "groupComment": "Setkání dokončeno"
+    },
+    "groupSharedWith": "Tato skupina je sdílena s"
+  },
+  "notificationsScreen": {
+    "notifications": "Oznámení",
+    "loadMore": "Načíst další",
+    "new": "Nový",
+    "unRead": "Nepřečtený",
+    "all": "Všechno",
+    "markAll": "Označit vše",
+    "dontHaveNotificationsUnread": "Žádná nepřečtená oznámení",
+    "dontHaveNotifications": "Žádná oznámení"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "V současné době nejsou k dispozici žádné skupiny.",
+    "noGroupPlacheHolder1": "Při jejich získávání z vašeho webu mohl být problém. Tažením dolů se pokuste obnovit a zkuste to znovu.",
+    "noGroupPlacheHolderOffline": "Aktuálně jste offline. Chcete -li obnovit a získat své skupiny, zajistěte připojení k Wi -Fi nebo mobilním datům."
+  },
+  "appRestart": {
+    "message": "Aplikace bude restartována, aby použila následující konfiguraci:",
+    "button": "OK",
+    "textDirection": "Směr textu",
+    "selectedLanguage": "Vybraný jazyk"
+  },
+  "endonym": "čeština"
+}

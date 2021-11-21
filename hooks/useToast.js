@@ -1,15 +1,20 @@
-import { Toast } from "native-base";
+import { Toast } from 'native-base';
+
+import useI18N from 'hooks/useI18N';
 
 const useToast = () => {
+  const { i18n } = useI18N();
+
   // NOTE: wait half second to allow for collapse of virtual keyboard before showing Toast
   const DEFAULT_WAIT = 500;
-  const showToast = (message, error = false) => {
+  const toast = (message, error = false) => {
     if (error) {
+      const text = `${i18n.t('global.error.text')} ${message}`;
       setTimeout(() => {
         Toast.show({
-          text: message,
+          text,
           duration: 5000,
-          type: "danger",
+          type: 'danger',
         });
       }, DEFAULT_WAIT);
     } else {
@@ -21,8 +26,7 @@ const useToast = () => {
       }, DEFAULT_WAIT);
     }
   };
-  return {
-    showToast,
-  };
+  // TODO: fns for: toastSuccess, toastError, toastErrorGeneric ??
+  return toast;
 };
 export default useToast;

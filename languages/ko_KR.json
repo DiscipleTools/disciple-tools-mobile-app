@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "암호: ",
+      "message": "메세지: ",
+      "text": "오류: ",
+      "noRecords": "로컬 장치 저장소에서 레코드를 찾을 수 없습니다. 1) 새 레코드를 만들고 온라인에 한 번 병합하거나 2) 온라인에 연결하여 검색을 다시 시도합니다."
+    },
+    "success": {
+      "save": "데이터가 성공적으로 저장되었습니다!"
+    },
+    "groups": "여러 떼",
+    "details": "세부",
+    "selectPeopleGroups": "사람 그룹 선택",
+    "address": "주소",
+    "progress": "진전",
+    "commentsActivity": "댓글 및 활동",
+    "writeYourCommentNoteHere": "여기에 의견이나 메모를 작성하세요.",
+    "requiredField": "필수 필드",
+    "edit": "편집하다",
+    "cancel": "취소",
+    "save": "구하다",
+    "online": "온라인",
+    "offline": "오프라인",
+    "language": "언어",
+    "search": "찾다",
+    "membersActivity": "회원",
+    "moreFields": "더 많은 필드",
+    "nameRequired": "이름 (필수",
+    "close": "닫다",
+    "editComment": "편집하다",
+    "deleteComment": "삭제",
+    "delete": "삭제",
+    "sortBy": "정렬 기준",
+    "reset": "초기화",
+    "apply": "적용하다",
+    "showing": "전시",
+    "comments": "코멘트",
+    "activity": "활동",
+    "submit": "제출하다",
+    "share": "공유하다",
+    "viewOnMobileWeb": "모바일 웹에서 보기",
+    "shareSettings": "공유 설정",
+    "searchUsers": "사용자 검색",
+    "noFilters": "필터 없음",
+    "searchContacts": "연락처 검색",
+    "selectLocations": "위치 선택",
+    "other": "다른",
+    "chooseOption": "옵션을 선택하세요",
+    "confirm": "확인하다",
+    "selectDate": "날짜 선택"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "예를 들어 myteam.mydomain.com",
+      "error": "도메인은 필수 항목입니다.",
+      "errorForgotPass": "비밀번호 검색을 시작하려면 URL을 입력하세요."
+    },
+    "username": {
+      "label": "사용자 이름",
+      "error": "사용자 이름은 필수 항목입니다."
+    },
+    "password": {
+      "label": "비밀번호",
+      "error": "비밀번호가 필요합니다"
+    },
+    "logIn": "로그인",
+    "forgotPassword": "비밀번호를 잊어 버렸습니까?",
+    "errors": {
+      "invalidUsername": "알 수 없는 사용자 이름입니다. 다시 확인하거나 이메일 주소를 시도하십시오.",
+      "incorrectPassword": "사용자 이름에 입력한 비밀번호가 올바르지 않습니다.",
+      "configurationNeededOn": "에 필요한 구성",
+      "mobileAppPluginRequiredOne": "모바일 앱 플러그인이 필요하며 Disciple.Tools에서 활성화되지 않은 것 같습니다.",
+      "mobileAppPluginRequiredTwo": "자세한 내용을 보려면 여기를 누르십시오."
+    }
+  },
+  "contactsScreen": {
+    "contacts": "콘택트 렌즈",
+    "noContactPlacheHolder": "현재 사용 가능한 연락처가 없습니다.",
+    "noContactPlacheHolder1": "사이트에서 가져오는 데 문제가 있을 수 있습니다. 새로고침하고 다시 시도하려면 아래로 드래그하세요.",
+    "noContactPlacheHolderOffline": "현재 오프라인 상태입니다. 새로고침하고 연락처를 가져오려면 Wi-Fi 또는 모바일 데이터에 연결되어 있는지 확인하세요."
+  },
+  "settingsScreen": {
+    "settings": "설정",
+    "networkUnavailable": "네트워크를 사용할 수 없습니다. 이제 오프라인 모드에서",
+    "networkAvailable": "네트워크가 감지되었습니다. 온라인 모드로 돌아가기",
+    "storybook": "동화책",
+    "logout": "로그아웃",
+    "helpSupport": "도움말 / 지원",
+    "rememberPassword": "비밀번호 기억",
+    "rememberPasswordActive": "로그인 유지 활성화",
+    "rememberPasswordInactive": "로그인 유지 비활성화",
+    "remove": "제거하다",
+    "set": "세트",
+    "pinCode": "핀 코드",
+    "enterPin": "PIN 입력",
+    "setPin": "새 PIN 설정",
+    "incorrectPin": "잘못된 PIN",
+    "savedPinCode": "PIN 코드가 성공적으로 저장되었습니다!.",
+    "removedPinCode": "PIN 코드가 성공적으로 제거되었습니다!.",
+    "close": "닫다",
+    "confirmPin": "새 PIN 확인"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "새 연락처 추가",
+    "subAssignThisContact": "이 연락처를 하위 할당",
+    "mobile": "핸드폰",
+    "selectLocations": "위치 선택",
+    "selectSources": "소스 선택",
+    "connections": "사이",
+    "addGroup": "그룹 추가",
+    "addConnection": "연결 추가",
+    "addBaptizedBy": "세례 받은 사람 추가",
+    "addBaptized": "세례 받은 사람 추가",
+    "addCoachedBy": "코치 추가",
+    "addCoaching": "코칭 추가",
+    "phoneNumber": "전화 번호",
+    "initialComment": "초기 코멘트",
+    "socialMedia": "소셜 미디어",
+    "noContactCommentPlacheHolder": "현재 사용 가능한 연락처 댓글이 없습니다.",
+    "fullName": {
+      "label": "성명",
+      "error": "이름은 필수 항목입니다."
+    },
+    "noContactCommentPlacheHolder1": "사이트에서 가져오는 데 문제가 있을 수 있습니다. 새로고침하고 다시 시도하려면 아래로 드래그하세요.",
+    "noContactCommentPlacheHolderOffline": "현재 오프라인 상태입니다. 새로고침하고 연락처 댓글을 받으려면 Wi-Fi 또는 모바일 데이터에 연결되어 있는지 확인하세요.",
+    "importContact": "전화 연락처 가져오기",
+    "contactSharedWith": "이 연락처는 다음과 공유됩니다.",
+    "ageNotSet": "연령 설정 없음",
+    "contactType": "접점 유형"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "새 그룹 추가",
+    "selectCoaches": "그룹 코치 선택",
+    "searchGroups": "그룹 검색",
+    "searchPeerGroups": "피어 그룹 검색",
+    "childGroup": "하위 그룹",
+    "searchChildGroups": "하위 그룹 검색",
+    "addMember": "회원 추가",
+    "noGroupCommentPlacheHolder": "현재 사용할 수 있는 그룹 댓글이 없습니다.",
+    "noGroupCommentPlacheHolder1": "사이트에서 가져오는 데 문제가 있을 수 있습니다. 새로고침하고 다시 시도하려면 아래로 드래그하세요.",
+    "noGroupCommentPlacheHolderOffline": "현재 오프라인 상태입니다. 새로고침하고 그룹 댓글을 받으려면 Wi-Fi 또는 모바일 데이터에 연결되어 있는지 확인하세요.",
+    "selectLocations": "위치 선택",
+    "noMembersMessage": "회원이 없습니다. 이 그룹에 일부 회원을 추가하려면 여기 또는 편집을 탭하세요.",
+    "groupName": {
+      "label": "그룹 이름",
+      "error": "이름은 필수 항목입니다."
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "회의 예정",
+      "quick_button_meeting_postponed": "회의 연기",
+      "quick_button_meeting_complete": "회의 완료"
+    },
+    "memberCount": "회원 수",
+    "memberList": "회원 목록",
+    "attendance": {
+      "header": "회의 참석",
+      "didAttendComment": "참석 그룹",
+      "didNotAttendComment": "그룹에 참석하지 않음",
+      "groupCommentLabel": "회의 코멘트",
+      "groupComment": "회의 완료"
+    },
+    "groupSharedWith": "이 그룹은 다음과 공유됩니다."
+  },
+  "notificationsScreen": {
+    "notifications": "알림",
+    "loadMore": "더 찾아보기",
+    "new": "새로운",
+    "unRead": "읽히지 않는",
+    "all": "모두",
+    "markAll": "모두 표시",
+    "dontHaveNotificationsUnread": "읽지 않은 알림 없음",
+    "dontHaveNotifications": "알림 없음"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "현재 사용 가능한 그룹이 없습니다.",
+    "noGroupPlacheHolder1": "사이트에서 가져오는 데 문제가 있을 수 있습니다. 새로고침을 시도하고 다시 시도하려면 아래로 드래그하세요.",
+    "noGroupPlacheHolderOffline": "현재 오프라인 상태입니다. 새로고침하고 그룹을 가져오려면 Wi-Fi 또는 모바일 데이터에 연결되어 있는지 확인하세요."
+  },
+  "appRestart": {
+    "message": "다음 구성을 적용하기 위해 애플리케이션이 다시 시작됩니다.",
+    "button": "확인",
+    "textDirection": "텍스트 방향",
+    "selectedLanguage": "선택한 언어"
+  },
+  "endonym": "한국어"
+}

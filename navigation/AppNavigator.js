@@ -265,10 +265,12 @@ const AppNavigator = () => {
     );
   };
 
+        //<RenderStack />
+        //<LoginStack />
   return (
     <SafeAreaProvider>
       <NavigationContainer onReady={onReady}>
-        <RenderStack />
+        <MainTabNavigator/>
       </NavigationContainer>
     </SafeAreaProvider>
   );
