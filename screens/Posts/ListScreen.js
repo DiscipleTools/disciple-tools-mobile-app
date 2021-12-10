@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 // Custom Hooks
 import useNetworkStatus from 'hooks/useNetworkStatus';
 import useI18N from 'hooks/useI18N';
-import usePostType from 'hooks/usePostType.js';
-import useList from 'hooks/useList.js';
+import usePostType from 'hooks/usePostType';
+import useList from 'hooks/useList';
 import useTheme from 'hooks/useTheme';
 import useToast from 'hooks/useToast';
 
@@ -77,7 +77,7 @@ const ListScreen = ({ navigation, route }) => {
 
   // get posts
   const { posts, error: listError, isLoading, isValidating, mutate } = useList(filter);
-  if (listError) toast(listError.message, true);
+  //if (listError) toast(listError.message, true);
   /*
   return(
     <Text style={{ fontWeight: 'bold', color: 'blue' }}>{ JSON.stringify(posts) }</Text>

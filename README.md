@@ -39,7 +39,7 @@ UI/Framework-specific:
 
 - Functional Components vs. Class
 - Modular component design to mirror D.T Post Types and Fields, and dynamically respond to API changes, and support plugins
-- Custom Hooks - map well to a 'useResource' REST pattern
+- Custom Hooks - map well to REST endpoints 
 - SWR (stale-while-revalidate), also meets requirement for background fetching, onFocus fetching (prevent stale data on refocus of app)
 - Redux vs. Context - Redux enables Persistence (plus Flux pattern is nice)
 - Skeletons vs. Spinners

@@ -1,49 +1,38 @@
 import React, { useState, useRef } from "react";
 import { Image, Text, View } from "react-native";
-//import { useDispatch } from 'react-redux';
 import { useNavigation, useRoute } from "@react-navigation/native";
-import * as SecureStore from "expo-secure-store";
+
 import { MaterialIcons } from "@expo/vector-icons";
-//import i18n from 'languages';
-import useToast from "hooks/useToast";
 
 import SmoothPinCodeInput from "react-native-smooth-pincode-input";
 
+import useI18N from "hooks/useI18N";
+import usePIN from "hooks/usePIN";
+import useToast from "hooks/useToast";
+
 import { styles } from "./PINScreen.styles";
 
-/*
-import {
-  setPIN,
-  deletePIN,
-  generatePINCNonce,
-} from 'store/actions/user.actions';
-*/
-
-const PINScreen = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
-  //const dispatch = useDispatch();
-  const { showToast } = useToast();
+const PINScreen = ({ navigation, route }) => {
 
   const [state, setState] = useState({
     code: "",
     tmpCode: null,
   });
 
-  /*
-  const type = route.params.type ? route.params.type : null; 
-  const isValidate = type === "validate" ? true : false;
-  const isDelete = type === "delete" ? true : false;
-  const isSet = type === "set" ? true : false;
-  */
+  const { i18n } = useI18N();
+
+  const { PINConstants } = usePIN();
+
+  const toast = useToast();
+
+  console.log(`route: ${ JSON.stringify(route) }`)
+  //const type = route?.params?.type ? route.params.type : null; 
+  const type = "DELETE";
+  const isValidate = type === PINConstants.VALIDATE ? true : false;
+  const isDelete = type === PINConstants.DELETE ? true : false;
+  const isSet = type === PINConstants.SET ? true : false;
 
   const pinInput = useRef();
-
-  const getPIN = async () => {
-    // TODO: Constants for value
-    //return await SecureStore.getItemAsync("pinCode");
-    return "111111";
-  };
 
   const isRepeating = (code) => {
     return [
@@ -75,51 +64,31 @@ const PINScreen = () => {
     ].includes(code);
   };
 
+  // TODO: add support for "distress"
   const handleFulfill = async (code) => {
     console.log(`code: ${code}`);
-    const isCompliant = !isRepeating(code) && !isSequential(code);
-    if (!isCompliant) {
-      await pinInput.current.shake();
-      // TODO: translate
-      showToast(
-        "Error: Repeating (i.e., 444444) or Sequential (i.e., 234567) values are not permitted",
-        true
-      );
-      setState({
-        ...state,
-        code: "",
-      });
-    }
-    /*
-    if (isValidate) {
-      // TODO: Support for DISTRESS PIN (also solves for when "pinCode" is unavailable)
-      getPIN().then((secretCode) => {
-        if (secretCode === null) {
-          showToast("Error: Unable to retrieve existing PIN. Please contact your Disciple Tools Administrator for assistance", true);
-          pinInput.current.shake().then(() => setState({ ...state, code: '' }));
-        } else if (code === secretCode) {
-          dispatch(generatePINCNonce());
+    if (isValidate || isDelete) {
+      const secretCode = await getPIN();
+      if (secretCode === null) {
+        toast("Error: Unable to retrieve existing PIN. Please contact your Disciple Tools Administrator for assistance", true);
+        pinInput.current.shake().then(() => setState({ ...state, code: '' }));
+      } else if (code === secretCode) {
+        if (isValidate) {
+          //dispatch(generatePINCNonce());
+          console.log("*** GENERATE CNONCE ***")
+          // TODO: remove?
           setState({ ...state, code: '' });
-        } else {
-          pinInput.current.shake().then(() => setState({ ...state, code: '' }));
-        }
-      });
-    } else if (isDelete) {
-      console.log("*** GET PIN ***");
-      getPIN().then((secretCode) => {
-        console.log("*** GOT PIN ***");
-        if (code === secretCode) {
-          dispatch(deletePIN());
-          setState({ ...state, code: '' });
+        } else if (isDelete) {
+          //dispatch(deletePIN());
+          //setState({ ...state, code: '' });
           navigation.goBack();
-          showToast(i18n.t('settingsScreen.removedPinCode'));
+          toast(i18n.t('settingsScreen.removedPinCode'));
         } else {
-          pinInput.current.shake().then(() => setState({
-            ...state,
-            code: ''
-          }));
+          console.warn(`Unknown PINScreen type: ${type}`);
         }
-      });
+      } else {
+        pinInput.current.shake().then(() => setState({ ...state, code: '' }));
+      }
     } else if (isSet && state.tmpCode === null) {
       const isRepeating = _isRepeating(code);
       const isSequential = _isSequential(code);
@@ -136,7 +105,7 @@ const PINScreen = () => {
           code: ''
         }));
         // TODO: translate
-        showToast("Error: Repeating (i.e., 444444) or Sequential (i.e., 234567) values are not permitted", true);
+        toast("Error: Repeating (i.e., 444444) or Sequential (i.e., 234567) values are not permitted", true);
       } else {
         // unknown issue: retry 
         pinInput.current.shake().then(() => setState({
@@ -149,7 +118,7 @@ const PINScreen = () => {
         dispatch(setPIN(code));
         navigation.goBack();
         setState({ code: '', tmpCode: null });
-        showToast(i18n.t('settingsScreen.savedPinCode'));
+        toast(i18n.t('settingsScreen.savedPinCode'));
       } else {
         pinInput.current.shake().then(() => setState({
           ...state,
@@ -160,29 +129,29 @@ const PINScreen = () => {
       console.warn(`Unknown PINScreen type: ${type}`);
       navigation.goBack();
     }
-    */
   };
 
-  const getDisplayText = () => {
-    return "D.T";
-    /*
-    if (isValidate || isDelete || (isSet && state.tmpCode !== null)) {
-      return i18n.t('settingsScreen.confirmPin');
-    } else if (isSet) {
-      return i18n.t('settingsScreen.enterPin');
-    } else {
-      return '';
-    }
-    */
+  const DisplayText = () => {
+    const getDisplayText = () => {
+      if (isValidate || isDelete || (isSet && state.tmpCode !== null)) {
+        return i18n.t('settingsScreen.confirmPin');
+      } else if (isSet) {
+        return i18n.t('settingsScreen.enterPin');
+      } else {
+        return '';
+      }
+    };
+    return(
+      <Text style={styles.text}>
+        { getDisplayText() }
+      </Text>
+    );
   };
 
-  const displayText = getDisplayText();
-  //<ImageBackground source={require('assets/splash.png')} style={{width: '100%', height: '100%'}}>
-  // TODO: better way to import images than 'require'?
   return (
     <View style={styles.container}>
       <Image source={require("assets/dt-icon.png")} style={styles.logo} />
-      <Text style={styles.text}>{displayText}</Text>
+      <DisplayText />
       <MaterialIcons name="lock-outline" style={styles.icon} />
       <SmoothPinCodeInput
         ref={pinInput}

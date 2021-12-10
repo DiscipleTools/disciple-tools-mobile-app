@@ -1,11 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Text } from 'react-native';
-import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-// TODO: move to useNetworkStatus
-import { toggleNetworkConnectivity } from 'store/actions/networkConnectivity.actions';
 
-// Component Library (Native Base)
 import {
   Body,
   Button as NbButton,
@@ -18,67 +14,40 @@ import {
   Thumbnail,
 } from 'native-base';
 
-// Expo
+// TODO: hide Expo APIs in Hooks like Redux
 import Constants from 'expo-constants';
 import * as MailComposer from 'expo-mail-composer';
 
-// Custom Hooks
 import useNetworkStatus from 'hooks/useNetworkStatus';
 import useI18N from 'hooks/useI18N';
-import useAuth from 'hooks/useAuth';
+import usePIN from 'hooks/usePIN';
+import { useAuth } from 'hooks/useAuth';
 //import useMyUser from 'hooks/useMyUser';
 import useToast from 'hooks/useToast';
 
-// Custom Components
 import OfflineBar from 'components/OfflineBar';
 import LanguagePicker from 'components/LanguagePicker';
 
-// Styles, Constants, Icons, Assets, etc...
 import { styles } from './SettingsScreen.styles';
 import gravatar from 'assets/gravatar-default.png';
 
 const SettingsScreen = ({ navigation }) => {
-  const dispatch = useDispatch();
 
-  const isConnected = useNetworkStatus();
+  const { isConnected, toggleNetwork } = useNetworkStatus();
   const { i18n, isRTL } = useI18N();
-  const { hasPIN, isAutoLogin, rememberLoginDetails, toggleAutoLogin, toggleRememberLoginDetails } = useAuth();
-
+  const { PINConstants, hasPIN } = usePIN();
+  const { isAutoLogin, rememberLoginDetails, toggleAutoLogin, toggleRememberLoginDetails, signOut } = useAuth();
   const toast = useToast();
 
-  /* TODO: fix
-  const { userData, error: userError, logout } = useMyUser();
-  if (!userData) return null;
-  */
- const userData = null;
-
-  const [state, setState] = useState({
-    hasPIN: false
-  });
-
-  // update local state any time 'hasPIN' changes globally
-  useEffect(() => {
-    setState({
-      ...state,
-      hasPIN,
-    });
-  }, [hasPIN]);
-
-  /*
-  // display error toast on global 'userReducerError'
-  useEffect(() => {
-    if (userReducerError !== null && userReducerError.length() > 0) {
-      toast(userReducerError, true);
-    }
-  }, [userReducerError]);
-
-  if (!userData) return null;
-  */
+  // TODO:
+  //const { userData, error: userError } = useMyUser();
+  //if (!userData) return null;
+  const userData = null;
 
   const Header = () => {
-    const username = userData?.display_name ?? null;
-    // TODO: get from Redux
-    const domain = userData?.domain ?? null;
+    const username = userData?.display_name ?? '';
+    // TODO: pull from useAuth() ?
+    const domain = userData?.domain ?? '';
     return (
       <ListItem itemHeader first avatar style={styles.header}>
         <Left>
@@ -110,156 +79,87 @@ const SettingsScreen = ({ navigation }) => {
     );
   };
 
+  const SettingsOption = ({ onPress, iconType, iconName, label, component }) => (
+    <ListItem icon onPress={onPress ?? null}>
+      <Left>
+        <NbButton style={styles.button} onPress={onPress ?? null}>
+          <Icon type={iconType} name={iconName} />
+        </NbButton>
+      </Left>
+      <Body style={styles.body}>
+        <Text
+          style={{
+            writingDirection: isRTL ? 'rtl' : 'ltr',
+            textAlign: isRTL ? 'right' : 'left',
+          }}>
+            {label}
+        </Text>
+      </Body>
+      <Right>
+        {component}
+      </Right>
+    </ListItem>
+  );
+
   /*
-  const StorybookButton = () => {
-    return (
-      <ListItem icon onPress={() => navigation.navigate('Storybook')}>
-        <Left>
-          <NbButton style={styles.button}>
-            <Icon active name="flask" />
-          </NbButton>
-        </Left>
-        <Body style={styles.body}>
-          <Text
-            style={{
-              writingDirection: isRTL ? 'rtl' : 'ltr',
-              textAlign: isRTL ? 'right' : 'left',
-            }}>
-            {i18n.t('settingsScreen.storybook')}
-          </Text>
-        </Body>
-        <Right>
-          <Icon active name={isRTL ? 'arrow-back' : 'arrow-forward'} />
-        </Right>
-      </ListItem>
-    );
-  };
+  const StorybookButton = () => (
+    <SettingsOption
+      onPress={() => navigation.navigate('Storybook')}
+      iconName="flask"
+      label={i18n.t('settingsScreen.storybook')}
+    />
+  );
   */
 
-  const OnlineToggle = () => {
-    const toggleOnline = () => {
-      const toastMsg = isConnected
-        ? i18n.t('settingsScreen.networkUnavailable')
-        : i18n.t('settingsScreen.networkAvailable');
-      toast(toastMsg, isConnected);
-      // TODO: move to useNetworkStatus hook
-      dispatch(toggleNetworkConnectivity());
-    };
-    return (
-      <ListItem icon>
-        <Left>
-          <NbButton style={styles.button}>
-            <Icon name="ios-flash" />
-          </NbButton>
-        </Left>
-        <Body style={styles.body}>
-          <Text
-            style={{
-              writingDirection: isRTL ? 'rtl' : 'ltr',
-              textAlign: isRTL ? 'right' : 'left',
-            }}>
-            {i18n.t('global.online')}
-          </Text>
-        </Body>
-        <Right>
-          <Switch value={isConnected} onChange={toggleOnline} disabled={false} />
-        </Right>
-      </ListItem>
-    );
-  };
+  const OnlineToggle = () => (
+    <SettingsOption
+      iconName="ios-flash"
+      label={i18n.t('global.online')}
+      component={
+        <Switch value={isConnected} onChange={toggleNetwork} disabled={false} />
+      }
+    />
+  );
 
-  const AutoLoginToggle = () => {
-    return (
-      <ListItem icon>
-        <Left>
-          <NbButton style={styles.button}>
-            <Icon active type="MaterialCommunityIcons" name="login-variant" />
-          </NbButton>
-        </Left>
-        <Body style={styles.body}>
-          <Text
-            style={{
-              writingDirection: isRTL ? 'rtl' : 'ltr',
-              textAlign: isRTL ? 'right' : 'left',
-            }}>
-            {i18n.t('settingsScreen.autoLogin')}
-          </Text>
-        </Body>
-        <Right>
-          <Switch
-            value={isAutoLogin}
-            onChange={() => {
-              toggleAuthLogin();
-            }}
-          />
-        </Right>
-      </ListItem>
-    );
-  };
+  const AutoLoginToggle = () => (
+    <SettingsOption
+      iconType="MaterialCommunityIcons"
+      iconName="login-variant"
+      label={i18n.t('settingsScreen.autoLogin')}
+      component={
+        <Switch value={isAutoLogin} onChange={toggleAutoLogin} />
+      }
+    />
+  );
 
-  // TODO: add translations for 'rememberLoginDetails'
-  const RememberLoginDetailsToggle = () => {
-    return (
-      <ListItem icon>
-        <Left>
-          <NbButton style={styles.button}>
-            <Icon active type="MaterialCommunityIcons" name="onepassword" />
-          </NbButton>
-        </Left>
-        <Body style={styles.body}>
-          <Text
-            style={{
-              writingDirection: isRTL ? 'rtl' : 'ltr',
-              textAlign: isRTL ? 'right' : 'left',
-            }}>
-            {i18n.t('settingsScreen.rememberLoginDetails')}
-          </Text>
-        </Body>
-        <Right>
-          <Switch
-            value={rememberLoginDetails}
-            onChange={() => {
-              toggleRememberLoginDetails();
-            }}
-          />
-        </Right>
-      </ListItem>
-    );
-  };
+  const RememberLoginDetailsToggle = () => (
+    <SettingsOption
+      iconType="MaterialCommunityIcons"
+      iconName="onepassword"
+      label={i18n.t('settingsScreen.rememberLoginDetails')}
+      component={
+        <Switch value={rememberLoginDetails} onChange={toggleRememberLoginDetails} />
+      }
+    />
+  );
 
   const PINCodeToggle = () => {
     const togglePIN = () => {
-      const type = hasPIN ? 'delete' : 'set';
-      navigation.navigate('PIN', {
-        screen: 'PIN',
-        params: { type, code: null },
+      const type = hasPIN ? PINConstants.DELETE : PINConstants.SET;
+      navigation.navigate(PINConstants.SCREEN, {
+        type,
+        code: null
       });
     };
-    return (
-      <ListItem icon>
-        <Left>
-          <NbButton style={styles.button}>
-            <Icon active type="MaterialCommunityIcons" name="security" />
-          </NbButton>
-        </Left>
-        <Body style={styles.body}>
-          <Text
-            style={{
-              writingDirection: isRTL ? 'rtl' : 'ltr',
-              textAlign: isRTL ? 'right' : 'left',
-            }}>
-            {i18n.t('settingsScreen.pinCode')}
-          </Text>
-        </Body>
-        <Right>
-          <Switch
-            value={hasPIN}
-            onChange={() => {
-              togglePIN();
-            }}
-          />
-        </Right>
-      </ListItem>
+    return(
+      <SettingsOption
+        iconType="MaterialCommunityIcons"
+        iconName="security"
+        label={i18n.t('settingsScreen.pinCode')}
+        component={
+          <Switch value={hasPIN} onChange={togglePIN} />
+        }
+      />
     );
   };
 
@@ -269,62 +169,32 @@ const SettingsScreen = ({ navigation }) => {
         recipients: ['appsupport@disciple.tools'],
         subject: `DT App Support: v${Constants.manifest.version}`,
         body: '',
-      }).catch((onrejected) => {
-        const message = onrejected.toString();
-        toast(message, true);
+      }).catch((error) => {
+        toast(error.toString(), true);
       });
     };
     return (
-      <ListItem icon onPress={draftNewSupportEmail}>
-        <Left>
-          <NbButton style={styles.button}>
-            <Icon active name="help-circle" />
-          </NbButton>
-        </Left>
-        <Body style={styles.body}>
-          <Text
-            style={{
-              writingDirection: isRTL ? 'rtl' : 'ltr',
-              textAlign: isRTL ? 'right' : 'left',
-            }}>
-            {i18n.t('settingsScreen.helpSupport')}
-          </Text>
-        </Body>
-      </ListItem>
+      <SettingsOption
+        onPress={draftNewSupportEmail}
+        iconType="MaterialCommunityIcons"
+        iconName="help-circle"
+        label={i18n.t('settingsScreen.helpSupport')}
+      />
     );
   };
 
-  const AppVersionText = () => {
-    return <Text style={styles.versionText}>{Constants.manifest.version}</Text>;
-  };
+  const LogoutButton = () => (
+    <SettingsOption
+      onPress={signOut}
+      iconName="log-out"
+      label={i18n.t('settingsScreen.logout')}
+      component={
+        <Icon active name={isRTL ? 'arrow-back' : 'arrow-forward'} />
+      }
+    />
+  );
 
-  const LogoutButton = () => {
-    return (
-      <ListItem
-        icon
-        onPress={() => {
-          logout();
-        }}>
-        <Left>
-          <NbButton style={styles.button}>
-            <Icon active name="log-out" />
-          </NbButton>
-        </Left>
-        <Body style={styles.body}>
-          <Text
-            style={{
-              writingDirection: isRTL ? 'rtl' : 'ltr',
-              textAlign: isRTL ? 'right' : 'left',
-            }}>
-            {i18n.t('settingsScreen.logout')}
-          </Text>
-        </Body>
-        <Right>
-          <Icon active name={isRTL ? 'arrow-back' : 'arrow-forward'} />
-        </Right>
-      </ListItem>
-    );
-  };
+  const AppVersionText = () => <Text style={styles.versionText}>{Constants.manifest.version}</Text>;
 
   return (
     <Container style={styles.container}>
@@ -332,12 +202,12 @@ const SettingsScreen = ({ navigation }) => {
       <Header />
       {/*__DEV__ && <StorybookButton />*/}
       <OnlineToggle />
+      <LanguagePicker dropdown={true} />
       <AutoLoginToggle />
       <RememberLoginDetailsToggle />
       <PINCodeToggle />
       <HelpSupportButton />
       <LogoutButton />
-      <LanguagePicker />
       <AppVersionText />
     </Container>
   );

@@ -21,7 +21,7 @@ import Colors from 'constants/Colors';
 
 // custom hooks
 import useI18N from 'hooks/useI18N';
-import useMyUser from 'hooks/useMyUser';
+import { useAuth } from 'hooks/useAuth';
 import useToast from 'hooks/useToast';
 
 // custom components
@@ -35,14 +35,17 @@ import { styles } from './LoginScreen.styles';
 
 const LoginScreen = ({ navigation, route }) => {
   const { i18n, isRTL, locale, setLocale } = useI18N();
-  const { login } = useMyUser();
+  const { signIn } = useAuth();
   const toast = useToast();
 
   const [state, setState] = useState({
     loading: false,
-    domain: userData?.domain || '',
-    username: userData?.username || '',
-    password: '',
+    //domain: userData?.domain || '',
+    //username: userData?.username || '',
+    //password: '',
+    domain: "dtappdemo.wpengine.com",
+    username: "zdmc23",
+    password: "zVuZ7vW%iaFCIJ8&",
     hidePassword: true,
     domainValidation: null,
     userValidation: null,
@@ -65,7 +68,7 @@ const LoginScreen = ({ navigation, route }) => {
     Keyboard.dismiss();
     if (state.domain && state.username && state.password) {
       const cleanedDomain = cleanDomain(state.domain);
-      login(cleanedDomain, state.username, state.password);
+      signIn(cleanedDomain, state.username, state.password);
     } else {
       // if any of the required fields are not set, then update state to show error
       setState({

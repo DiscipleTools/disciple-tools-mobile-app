@@ -146,6 +146,7 @@ const useSettings = () => {
     };
   };
 
+  // TODO
   const url = `/dt-posts/v2/${postType}/settings`;
   const { data: settings, error, isLoading, isValidating } = useRequest(url);
   return {

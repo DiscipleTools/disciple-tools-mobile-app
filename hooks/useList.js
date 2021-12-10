@@ -1,5 +1,5 @@
 import usePostType from 'hooks/usePostType.js';
-import useResource from 'hooks/useResource';
+import useRequest from 'hooks/useRequest';
 
 const useList = (filter, type) => {
   const { isContact, isGroup, postType, mapContacts, mapGroups } = usePostType(type);
@@ -37,14 +37,15 @@ const useList = (filter, type) => {
   };
 
   // TODO: useMyUser() hook
-  const userData = { displayName: 'zzadmin' };
+  //const userData = { displayName: 'zzadmin' };
+  const userData = { displayName: 'zdmc23' };
   let url = `/dt-posts/v2/${postType}`;
   if (filter) url += mapFilterOnQueryParams(filter, userData);
 
   // TODO: useSelector for initialData if OFFLINE
   //const initialData = null;
 
-  let { data, error, isLoading, isValidating, mutate } = useResource(url);
+  let { data, error, isLoading, isValidating, mutate } = useRequest(url);
 
   return {
     posts: data?.posts ? mapPosts(data.posts) : null,

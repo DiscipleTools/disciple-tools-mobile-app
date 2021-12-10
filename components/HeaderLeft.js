@@ -11,7 +11,7 @@ import Colors from 'constants/Colors';
 
 const HeaderLeft = ({ label, editing, onPress }) => {
   const route = useRoute();
-  const { i18n, locale, isRTL, moment } = useI18N();
+  const { i18n, locale, isRTL } = useI18N();
   if (editing) {
     return (
       <Row onPress={onPress}>

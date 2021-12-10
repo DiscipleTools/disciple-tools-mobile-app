@@ -1,43 +1,57 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import * as SecureStore from 'expo-secure-store';
+import { useDispatch, useSelector } from 'react-redux';
 import * as Random from 'expo-random';
+import useSecureStore from 'hooks/useSecureStore';
 
-import { setHasPIN, setCNoncePIN } from 'store/actions/auth.actions';
+import { setHasPIN } from 'store/actions/auth.actions';
 
 const usePIN = () => {
   const dispatch = useDispatch();
+  const hasPIN = useSelector(state => state?.authReducer?.hasPIN);
+
+  const { Constants: SecureStore, getItem, setItem, deleteItem } = useSecureStore();
 
   const getPIN = async () => {
-    // TODO: use Constant
-    return SecureStore.getItemAsync('pinCode');
+    return getItem(SecureStore.PIN_CODE);
   };
 
   const setPIN = async (code) => {
-    // TODO: use Constant
-    await SecureStore.setItemAsync('pinCode', code);
-    // TODO: check SecureStore to determine
-    dispatch(setHasPIN(true));
+    await setItem(SecureStore.PIN_CODE, code);
+    await setCNoncePIN();
   };
 
   const deletePIN = async () => {
-    // TODO: use Constant
-    await SecureStore.deleteItemAsync('pinCode');
+    // TODO: PINConstants.CODE
+    await deleteItem(SecureStore.PIN_CODE);
     dispatch(setHasPIN(false));
   };
 
-  const setCNonce = async () => {
+  const setCNoncePIN = async () => {
     const cnonce = Random.getRandomBytes(256).toString();
+    // TODO: set in a Context
+    dispatch(setHasPIN(true));
+    /*
     await SecureStore.setItemAsync('cnoncePINDT', new Date().toString());
     await SecureStore.setItemAsync('cnoncePIN', cnonce);
     dispatch(setCNoncePIN(cnonce));
+    */
   };
 
+  const PINConstants = {
+    SCREEN: "PIN",
+    VALIDATE: "VALIDATE",
+    SET: "SET",
+    DELETE: "DELETE"
+  };
+
+  const cnoncePIN = null;
+
   return {
+    PINConstants,
+    hasPIN,
     getPIN,
     setPIN,
     deletePIN,
-    setCNonce,
+    cnoncePIN,
   };
 };
 export default usePIN;

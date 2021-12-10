@@ -1,5 +1,17 @@
-/*
- * Action Types
- */
 export const REQUEST = 'REQUEST';
-export const RESPONSE = 'RESPONSE';
+export const REQUEST_ENQUEUE = 'REQUEST_ENQUEUE';
+export const RESPONSE_DEQUEUE = 'REQUEST_DEQUEUE';
+
+export const enqueueRequest = (request) => {
+  return {
+    type: REQUEST_ENQUEUE,
+    request
+  }
+};
+
+export const dequeueRequest = (request) => {
+  return {
+    type: REQUEST_DEQUEUE,
+    request
+  }
+};

@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 //import HomeScreen from 'screens/HomeScreen';
 import PINScreen from 'screens/PINScreen';
 import ListScreen from 'screens/Posts/ListScreen';
-//import DetailsScreen from 'screens/Posts/DetailsScreen';
+import DetailsScreen from 'screens/Posts/DetailsScreen';
 //import AttendanceScreen from 'screens/AttendanceScreen';
 //import QuestionnaireScreen from 'screens/Posts/QuestionnaireScreen';
 import NotificationsScreen from 'screens/NotificationsScreen';
@@ -60,7 +60,6 @@ const MainTabNavigator = () => {
             type: 'contacts',
           }}
         />
-        {/*
         <Stack.Screen
           name="Details"
           component={DetailsScreen}
@@ -68,7 +67,6 @@ const MainTabNavigator = () => {
             title: '',
           }}
         />
-        */}
       </Stack.Navigator>
     );
   };
@@ -86,7 +84,6 @@ const MainTabNavigator = () => {
             type: 'groups', // TODO: Constants
           }}
         />
-        {/*
         <Stack.Screen
           name="Details"
           component={DetailsScreen}
@@ -94,7 +91,6 @@ const MainTabNavigator = () => {
           //  title: route.params.groupName
           //})}
         />
-        */}
       </Stack.Navigator>
     );
   };

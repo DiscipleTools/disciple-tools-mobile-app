@@ -6,12 +6,10 @@ import { Row } from 'react-native-easy-grid';
 
 import useI18N from 'hooks/useI18N';
 
-import utils from 'utils';
-
 import { styles } from './DateField.styles';
 
 const DateField = ({ value, editing, onChange }) => {
-  const { i18n, locale, isRTL, moment } = useI18N();
+  const { i18n, locale, isRTL } = useI18N();
 
   // if value is null, then set a default to ensure field displays
   if (value === null) value = '';
@@ -62,13 +60,17 @@ const DateField = ({ value, editing, onChange }) => {
   const DateFieldView = () => {
     const formatDateView = (date) => {
       if (date === null || date === '') return '';
-      return moment(new Date(date * 1000))
-        .utc()
-        .format('LL');
+      // TODO
+      //return moment(new Date(date * 1000))
+      return new Date(date * 1000)
+        //.utc()
+        //.format('LL');
     };
     //const dateValue = value === null ? '' : String(
+    //formatDateView(utils.isNumeric(value) ? parseInt(value) * 1000 : value),
+    // TODO
     const dateValue = String(
-      formatDateView(utils.isNumeric(value) ? parseInt(value) * 1000 : value),
+      formatDateView(parseInt(value) * 1000),
     );
     return <Text>{dateValue}</Text>;
   };

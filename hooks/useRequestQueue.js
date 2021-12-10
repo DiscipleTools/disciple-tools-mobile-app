@@ -1,17 +1,39 @@
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 //import { queueRequest as _queueRequest } from 'store/actions/requests.actions';
 
-const useRequestQueue = () => {
-  const pendingRequests = useSelector((state) => state.appReducer.pendingRequests);
+import axios from 'services/axios';
 
-  const queueRequest = (request, type) => {
-    console.log('*** QUEUE REQUEST ***');
-    //dispatch(_queueRequest(request, type));
+import useNetworkStatus from 'hooks/useNetworkStatus';
+
+const REQUEST_QUEUE_INTERVAL_SECS = 5;
+
+const useRequestQueue = () => {
+
+  const dispatch = useDispatch();
+  const isConnected = useNetworkStatus();
+  const pendingRequests = useSelector((state) => state.requestReducer.pendingRequests);
+
+  //const queueRequest = (request) => dispatch(queueRequest([...pendingRequests, request]));
+
+  const processRequests = async() => {
+    if (!isConnected) return;
+    //pendingRequests.forEach(request => {
+    for (const request of pendingRequests) {
+      try {
+        const res = await axios(request);
+        // TODO: Toast
+        //dispatch(dequeueRequest(request));
+      } catch (err) {
+        console.error(err);
+      }
+    };
   };
 
   return {
-    pendingRequests: pendingRequests ? pendingRequests : [],
-    queueRequest,
+    hasPendingRequests: pendingRequests?.length > 0,
+    queueRequest: () => console.log("*** QUEUE REQUEST ***"),
+    processRequests
   };
 };
 export default useRequestQueue;

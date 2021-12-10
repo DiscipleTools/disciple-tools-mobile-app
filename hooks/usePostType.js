@@ -7,7 +7,7 @@ const usePostType = (postType) => {
   if (!postType) postType = route?.params?.type;
 
   const mapContacts = (contacts, entities) => {
-    if (!entities) entities = new Html5Entities();
+    //if (!entities) entities = new Html5Entities();
     return contacts.map((contact) => {
       const mappedContact = {};
       Object.keys(contact).forEach((key) => {
@@ -32,14 +32,18 @@ const usePostType = (postType) => {
               mappedContact[key] = parseInt(value, 10);
             } else if (key === 'post_title') {
               // Decode HTML strings
-              mappedContact.title = entities.decode(value);
+              //TODO
+              //mappedContact.title = entities.decode(value);
+              mappedContact.title = value;
             } else if (dateRegex.test(value)) {
               // Date (post_date)
               var match = value.match(/^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/);
               var date = new Date(match[1], match[2] - 1, match[3], match[4], match[5], match[6]);
               mappedContact[key] = (date.getTime() / 1000).toString();
             } else {
-              mappedContact[key] = entities.decode(value);
+              //TODO
+              //mappedContact[key] = entities.decode(value);
+              mappedContact[key] = value;
             }
             return;
           }
@@ -71,7 +75,8 @@ const usePostType = (postType) => {
                     // connection
                     return {
                       value: valueTwo.ID.toString(),
-                      name: entities.decode(valueTwo.post_title),
+                      //name: entities.decode(valueTwo.post_title),
+                      name: valueTwo.post_title,
                     };
                   }
                   if (
@@ -124,7 +129,7 @@ const usePostType = (postType) => {
   };
 
   const mapGroups = (groups, entities) => {
-    if (!entities) entities = new Html5Entities();
+    //if (!entities) entities = new Html5Entities();
     return groups.map((group) => {
       const mappedGroup = {};
       Object.keys(group).forEach((key) => {
@@ -149,14 +154,18 @@ const usePostType = (postType) => {
               mappedGroup[key] = parseInt(value, 10);
             } else if (key === 'post_title') {
               // Decode HTML strings
-              mappedGroup.title = entities.decode(value);
+              // TODO
+              //mappedGroup.title = entities.decode(value);
+              mappedGroup.title = value;
             } else if (dateRegex.test(value)) {
               // Date (post_date)
               var match = value.match(/^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/);
               var date = new Date(match[1], match[2] - 1, match[3], match[4], match[5], match[6]);
               mappedGroup[key] = (date.getTime() / 1000).toString();
             } else {
-              mappedGroup[key] = entities.decode(value);
+              // TODO
+              //mappedGroup[key] = entities.decode(value);
+              mappedGroup[key] = value;
             }
             return;
           }
@@ -188,7 +197,8 @@ const usePostType = (postType) => {
                     // connection
                     let object = {
                       value: valueTwo.ID.toString(),
-                      name: entities.decode(valueTwo.post_title),
+                      //name: entities.decode(valueTwo.post_title),
+                      name: valueTwo.post_title,
                     };
                     // groups
                     if (Object.prototype.hasOwnProperty.call(valueTwo, 'baptized_member_count')) {

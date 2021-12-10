@@ -1,6 +1,6 @@
 import useId from 'hooks/useId';
 import usePostType from 'hooks/usePostType';
-import useResource from 'hooks/useResource';
+import useRequest from 'hooks/useRequest';
 import useToast from 'hooks/useToast';
 
 const useDetails = () => {
@@ -24,7 +24,7 @@ const useDetails = () => {
   const url = `${baseUrl}/${id}`;
   // TODO: useSelect for initialData?
   //const initialData = null;
-  const { data, error, isLoading, isValidating, mutate, write } = useResource(url);
+  const { data, error, isLoading, isValidating, mutate, write } = useRequest(url);
 
   const save = async (field, value) => {
     console.log(`*** SAVE!  id: ${id},  field: ${JSON.stringify({ field, value })} ***`);

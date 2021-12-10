@@ -26,6 +26,12 @@ export default function requestReducer(state = initialState, action) {
   let queue = [...newState.queue]; // clone array before modifying it
   const actionToModify = action.payload;
   switch (action.type) {
+    /*
+    case actions.REQUEST_ENQUEUE:
+      return;
+    case actions.REQUEST_DEQUEUE:
+      return;
+    */
     case actions.REQUEST: {
       // Queue all requests
       if (actionToModify.data.method === 'POST' && actionToModify.action.includes('SAVE')) {

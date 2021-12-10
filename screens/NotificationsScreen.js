@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -6,16 +6,16 @@ import PropTypes from 'prop-types';
 import { Container } from 'native-base';
 
 // 3rd-Party Components
-import { Html5Entities } from 'html-entities';
+//import { Html5Entities } from 'html-entities';
 
 // Custom Components
-//import FilterList from 'components/FilterList';
+import FilterList from 'components/FilterList';
 import OfflineBar from 'components/OfflineBar';
 
 // Custom Hooks
 import useNetworkStatus from 'hooks/useNetworkStatus';
 import useI18N from 'hooks/useI18N';
-//import useNotifications from 'hooks/useNotifications.js';
+import useNotifications from 'hooks/useNotifications.js';
 //import useMyUser from 'hooks/useMyUser.js';
 
 // Styles, Constants, Icons, Assets, etc...
@@ -28,22 +28,23 @@ const NotificationsScreen = ({ navigation }) => {
 
   const isConnected = useNetworkStatus();
   const { i18n, isRTL } = useI18N();
-  return null;
-  /*
   const {
     notifications,
     error: notificationsError,
     isLoading,
     isValidating,
     mutate,
+    markViewed,
+    markUnread
   } = useNotifications();
   //const { userData, error: userError } = useMyUser();
-  */
+  /*
   const notifications = [];
   const notificationsError = null;
   const isLoading = false;
   const isValidating = false;
   const mutate = () => {};
+  */
 
   const userData = null;
 
@@ -59,15 +60,6 @@ const NotificationsScreen = ({ navigation }) => {
   const onRefresh = useCallback(() => {
     mutate();
   });
-
-  /*
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      // something onFocus
-    });
-    return unsubscribe;
-  }, [navigation]);
-  */
 
   const renderRow = (notification) => {
     //console.log('*** RENDER ROW ***');
@@ -85,7 +77,8 @@ const NotificationsScreen = ({ navigation }) => {
     );
     let entityId = entityLink.split('/')[4];
     let entityName = entityLink.split('/')[3];
-    const entities = new Html5Entities();
+    // TODO
+    //const entities = new Html5Entities();
     const isNew = notification.is_new === '1' ? true : false;
     return (
       <View
@@ -97,11 +90,13 @@ const NotificationsScreen = ({ navigation }) => {
         <View style={[styles.notificationContainer, { flex: 1, flexDirection: 'row' }]}>
           <View style={{ flex: 1 }}>
             <Text style={[isRTL ? { textAlign: 'left' } : {}]}>
-              <Text>{entities.decode(newNotificationNoteA)}</Text>
+              {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
+              <Text>{newNotificationNoteA}</Text>
               <Text
                 style={{ color: Colors.primary }}
                 onPress={() => redirectToDetailView(entityName, entityId, newNotificationNoteC)}>
-                {entities.decode(newNotificationNoteC)}
+                {newNotificationNoteC}
+                {/*entities.decode(newNotificationNoteC)*/}
               </Text>
             </Text>
             <Text style={[styles.prettyTime, isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
@@ -112,7 +107,7 @@ const NotificationsScreen = ({ navigation }) => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              markAsReadUnread(notification, isNew);
+              toggleReadUnread(notification, isNew);
             }}>
             <View style={styles.buttonContainer}>
               <View
@@ -125,13 +120,7 @@ const NotificationsScreen = ({ navigation }) => {
     );
   };
 
-  const markAsReadUnread = (notification, isNew) => {
-    if (isNew) {
-      //dispatch(markViewed(notification.id));
-    } else {
-      //dispatch(markUnread(notification.id));
-    }
-  };
+  const toggleReadUnread = async(notification, isNew) => isNew ? await markViewed(notification.id) : await markUnread(notification.id);
 
   const redirectToDetailView = (viewName, entityId, entityTitle) => {
     let view, prop;
@@ -171,7 +160,7 @@ const NotificationsScreen = ({ navigation }) => {
     return (
       <ScrollView
         contentContainerStyle={styles.dontHaveNotificationsText}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} />}>
+        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}>
         {isAll && (
           <Text style={styles.dontHaveNotificationsText}>
             {i18n.t('notificationsScreen.dontHaveNotifications')}
@@ -196,7 +185,7 @@ const NotificationsScreen = ({ navigation }) => {
   return (
     <Container style={styles.container}>
       {!isConnected && <OfflineBar />}
-      {/*notifications.length > 0 ? (
+      {notifications.length > 0 ? (
         <FilterList
           posts={notifications}
           loading={isLoading || isValidating}
@@ -206,8 +195,7 @@ const NotificationsScreen = ({ navigation }) => {
         />
       ) : (
         <NotificationsPlaceholder />
-      )*/}
-        <NotificationsPlaceholder />
+      )}
     </Container>
   );
 };

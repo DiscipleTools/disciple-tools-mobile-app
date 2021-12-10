@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 
 const useTheme = () => {
-  //const theme = useSelector(state => state.appReducer.theme);
+  //const theme = useSelector(state => state.themeReducer);
   const theme = null;
 
   const getSelectorColor = (status) => {

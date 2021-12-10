@@ -1,20 +1,17 @@
 import { combineReducers } from 'redux';
 
-// themeReducer
-import networkConnectivityReducer from './reducers/networkConnectivity.reducer';
-import i18nReducer from './reducers/i18n.reducer';
-import appReducer from './reducers/app.reducer';
 import authReducer from './reducers/auth.reducer';
-// TODO: remove?
-import userReducer from './reducers/user.reducer';
+import i18nReducer from './reducers/i18n.reducer';
+import networkReducer from './reducers/network.reducer';
 import requestReducer from './reducers/request.reducer';
+//import themeReducer from './reducers/theme.reducer';
+import userReducer from './reducers/user.reducer';
 
 const rootReducer = combineReducers({
-  networkConnectivityReducer,
-  i18nReducer,
-  appReducer,
   authReducer,
-  userReducer, // TODO: merge with appReducer
+  i18nReducer,
+  networkReducer,
   requestReducer,
+  userReducer
 });
 export default rootReducer;

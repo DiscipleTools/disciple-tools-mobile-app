@@ -1,16 +1,15 @@
-import useSWR, { cache } from 'swr';
-
+import useSWR from 'swr';
 import axios from 'services/axios';
 
 import useNetworkStatus from 'hooks/useNetworkStatus';
+import useRequestQueue from 'hooks/useRequestQueue';
 
-// NOTE: useRequest is read-only (only useResource performs writes: create, update)
 const useRequest = (request, { initialData, ...config } = {}) => {
-  const isConnected = useNetworkStatus();
 
-  // TODO: is the [request, id] correct?
-  //console.log(`*** REQ: ${JSON.stringify(request)} ***`);
+  const { isConnected } = useNetworkStatus();
+  const { hasPendingRequests, queueRequest, processRequests } = useRequestQueue();
 
+  // if offline, then do not make the request (by passing null arg)
   let { data, error, isLoading, isValidating, mutate } = useSWR(
     isConnected ? request && JSON.stringify(request) : null,
     () => axios(request || {}).then((response) => response.data),
@@ -25,17 +24,23 @@ const useRequest = (request, { initialData, ...config } = {}) => {
     },
   );
 
-  if (!isConnected) {
-    // TODO: useSelector
-    /*
-    if (cache.has(JSON.stringify(request))) {
-      console.log("**** USING CACHED DATA ****");
-      data = cache.get(JSON.stringify(request));
-      error = null;
+  // this method serves for any non-read request (create, update, delete)
+  //
+  // if offline, then queue the request
+  // if online, first check if there are any pending requests
+  // else make the request
+  const fetch = async (request) => {
+    //console.log(`====> FETCH! ${ JSON.stringify(request) }`);
+    if (!isConnected) {
+      queueRequest(request);
+      return null;
     }
-    */
-  }
+    if (hasPendingRequests) await processRequests();
+    return axios(request);
+  };
+
   return {
+    fetch,
     data,
     error,
     isLoading,

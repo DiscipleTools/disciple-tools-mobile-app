@@ -1,19 +1,20 @@
-import * as actions from 'store/actions/networkConnectivity.actions';
+import * as actions from 'store/actions/network.actions';
 
 const initialState = {
   isConnected: null,
   networkStatus: null,
 };
 
-export default function networkConnectivityReducer(state = initialState, action) {
+const networkReducer = (state = initialState, action) => {
   switch (action.type) {
     case actions.NETWORK_SET_CONNECTIVITY:
-      return { ...state, isConnected: action.isConnected };
+      return { ...state, isConnected: action?.isConnected };
     case actions.NETWORK_SET_STATUS:
-      return { ...state, networkStatus: action.networkStatus };
+      return { ...state, networkStatus: action?.networkStatus };
     case actions.NETWORK_TOGGLE:
       return { ...state, isConnected: !state.isConnected };
     default:
       return state;
   }
-}
+};
+export default networkReducer;

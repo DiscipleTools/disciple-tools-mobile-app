@@ -1,6 +1,3 @@
-/*
- * Action Types
- */
 export const USER_LOGIN = 'USER_LOGIN';
 export const USER_LOGIN_START = 'USER_LOGIN_START';
 export const USER_LOGIN_SUCCESS = 'USER_LOGIN_SUCCESS';
@@ -49,9 +46,6 @@ export const UPDATE_USER_INFO_RESPONSE = 'UPDATE_USER_INFO_RESPONSE';
 export const UPDATE_USER_INFO_SUCCESS = 'UPDATE_USER_INFO_SUCCESS';
 export const UPDATE_USER_INFO_FAILURE = 'UPDATE_USER_INFO_FAILURE';
 
-/*
- * Action Creators
- */
 export function login(domain, username, password) {
   return {
     type: USER_LOGIN,

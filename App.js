@@ -4,39 +4,48 @@ import React, { useEffect, useRef, useState } from "react";
 //import { enableScreens } from 'react-native-screens';
 //enableScreens();
 
-import { LogBox, Platform, StatusBar } from "react-native";
-import { SWRConfig } from "swr";
+import { LogBox } from "react-native";
 
-// React Native Community
+import { Root } from 'native-base';
+
 import NetInfo from "@react-native-community/netinfo";
 
-// Expo
 import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
 
-// Component Library
-import { Root } from "native-base";
+// TODO: should this be a hook?
+import useConfig from "hooks/useConfig";
+//import useInterval from "hooks/useInterval";
+import { AuthProvider } from "hooks/useAuth";
+import { NonceProvider } from "hooks/useNonce";
 
-// Helpers
 import AppNavigator from "navigation/AppNavigator";
 import { store, persistor } from "store/store";
-import axios from "services/axios";
+//import axios from "services/axios";
 
-// Third-party components
 //import PropTypes from 'prop-types';
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 
+import { SWRConfig } from "swr";
+
 import {
   setNetworkStatus,
   setNetworkConnectivity,
-} from "store/actions/networkConnectivity.actions";
+} from "store/actions/network.actions";
 
 const App = () => {
+  const { timeout, refreshInterval } = useConfig();
   const [notifications, setNotification] = useState(false);
   console.log(notifications);
   const notificationListener = useRef();
   const responseListener = useRef();
+
+  /*
+  useInterval(() => {
+    console.log("^^^^^ useInterval");
+  }, 10000);
+  */
 
   // Push Notification Listeners
   useEffect(() => {
@@ -112,24 +121,29 @@ const App = () => {
     init();
   }, []);
 
+  // NOTE: Native Base <Root> required for components like <Toast>
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <SWRConfig
           value={{
-            focusThrottleInterval: 5000,
+            revalidateOnFocus: true,
             refreshInterval: 0,
+            shouldRetryOnError: false,
             dedupingInterval: 2000,
-            loadingTimeout: 15000,
-            fetcher: async (...args) => axios(...args).then((res) => res.data),
+            focusThrottleInterval: 5000,
+            loadingTimeout: 10000,
+            //errorRetryCount: 2,
+            //fetcher: async (...args) => axios(...args).then((res) => res.data),
           }}
         >
-          <Root>
-            <>
-              {Platform.OS === "ios" && <StatusBar barStyle="default" />}
-              <AppNavigator />
-            </>
-          </Root>
+          <AuthProvider>
+            <NonceProvider>
+              <Root>
+                <AppNavigator />
+              </Root>
+            </NonceProvider>
+          </AuthProvider>
         </SWRConfig>
       </PersistGate>
     </Provider>

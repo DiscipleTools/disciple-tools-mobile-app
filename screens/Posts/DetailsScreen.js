@@ -47,6 +47,8 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 // (native base does not have a Skeleton component)
 import ContentLoader, { Rect, Circle } from 'react-content-loader/native';
 
+import utils from 'utils';
+
 // Custom Hooks
 import useNetworkStatus from 'hooks/useNetworkStatus';
 import useI18N from 'hooks/useI18N';
@@ -249,6 +251,8 @@ const DetailsScreen = ({ navigation, route }) => {
   }, [navigation]);
   */
 
+  const kebabMenuItems = [];
+  /* TODO
   const kebabMenuItems = [
     {
       label: i18n.t('global.share'),
@@ -267,6 +271,7 @@ const DetailsScreen = ({ navigation, route }) => {
       },
     },
   ];
+  /*
 
   useLayoutEffect(() => {
     // TODO: helper to get either Group or Contact Name

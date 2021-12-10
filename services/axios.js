@@ -1,6 +1,7 @@
 import axios from "axios";
 
 // 15 sec default timeout for all requests
+// TODO: import from config
 const timeout = 15000;
 const protocol = "https";
 
@@ -16,5 +17,5 @@ const instance = axios.create({
   },
   timeout,
 });
-// TODO: intercept timeout error and provide better message (useResource/useRequest)
+// TODO: intercept timeout error and provide better message (useRequest)
 export default instance;
