@@ -1,34 +1,38 @@
-import React from 'react';
+import React from "react";
 //import { Text, View } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator, HeaderBackButton } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  createStackNavigator,
+  HeaderBackButton,
+} from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
 
 //import HomeScreen from 'screens/HomeScreen';
-import PINScreen from 'screens/PINScreen';
-import ListScreen from 'screens/Posts/ListScreen';
-import DetailsScreen from 'screens/Posts/DetailsScreen';
+import PINScreen from "screens/PINScreen";
+import ListScreen from "screens/Posts/ListScreen";
+import DetailsScreen from "screens/Posts/DetailsScreen";
 //import AttendanceScreen from 'screens/AttendanceScreen';
 //import QuestionnaireScreen from 'screens/Posts/QuestionnaireScreen';
-import NotificationsScreen from 'screens/NotificationsScreen';
-import SettingsScreen from 'screens/SettingsScreen';
+import NotificationsScreen from "screens/NotificationsScreen";
+import SettingsScreen from "screens/SettingsScreen";
 
-import TabBarIcon from 'components/TabBarIcon';
-import Colors from 'constants/Colors';
+import TabBarIcon from "components/TabBarIcon";
+import Colors from "constants/Colors";
 
-import useI18N from 'hooks/useI18N.js';
+import useI18N from "hooks/useI18N.js";
 //import useNotifications from 'hooks/useNotifications.js';
+import usePIN from "hooks/usePIN.js";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const MainTabNavigator = () => {
-
-  console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
-  console.log('$$$$$          MAIN TAB NAVIGATOR             $$$$$');
-  console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+  console.log("$$$$$          MAIN TAB NAVIGATOR             $$$$$");
+  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
   const { i18n } = useI18N();
+  const { PINConstants } = usePIN();
   /*
   const { notifications } = useNotifications();
   if (!notifications) return null;
@@ -54,17 +58,17 @@ const MainTabNavigator = () => {
           name="Contacts"
           component={ListScreen}
           options={{
-            title: i18n.t('contactsScreen.contacts'),
+            title: i18n.t("contactsScreen.contacts"),
           }}
           initialParams={{
-            type: 'contacts',
+            type: "contacts",
           }}
         />
         <Stack.Screen
           name="Details"
           component={DetailsScreen}
           options={{
-            title: '',
+            title: "",
           }}
         />
       </Stack.Navigator>
@@ -78,10 +82,10 @@ const MainTabNavigator = () => {
           name="Groups"
           component={ListScreen}
           options={{
-            title: i18n.t('global.groups'),
+            title: i18n.t("global.groups"),
           }}
           initialParams={{
-            type: 'groups', // TODO: Constants
+            type: "groups", // TODO: Constants
           }}
         />
         <Stack.Screen
@@ -135,7 +139,7 @@ const MainTabNavigator = () => {
           name="Notifications"
           component={NotificationsScreen}
           options={{
-            title: i18n.t('notificationsScreen.notifications'),
+            title: i18n.t("notificationsScreen.notifications"),
           }}
         />
       </Stack.Navigator>
@@ -143,15 +147,34 @@ const MainTabNavigator = () => {
   };
 
   const SettingsStack = () => {
+    const navigation = useNavigation();
+    const overrideScreenOptionStyle = { ...screenOptionStyle };
+    overrideScreenOptionStyle["headerBackTitle"] = i18n.t(
+      "settingsScreen.settings"
+    );
+    overrideScreenOptionStyle["title"] = "";
+    overrideScreenOptionStyle["headerStyle"] = {
+      ...screenOptionStyle.headerStyle,
+      shadowColor: "transparent",
+    };
     return (
       <Stack.Navigator screenOptions={screenOptionStyle}>
         <Stack.Screen
           name="Settings"
           component={SettingsScreen}
           options={{
-            title: i18n.t('settingsScreen.settings'),
+            title: i18n.t("settingsScreen.settings"),
           }}
         />
+        <Stack.Screen
+          name={PINConstants.SCREEN}
+          options={{
+            title: null,
+            headerBackTitle: i18n.t("settingsScreen.settings"),
+          }}
+        >
+          {(props) => <PINScreen {...props} />}
+        </Stack.Screen>
       </Stack.Navigator>
     );
   };
@@ -159,11 +182,13 @@ const MainTabNavigator = () => {
   const PINStack = () => {
     const navigation = useNavigation();
     const overrideScreenOptionStyle = { ...screenOptionStyle };
-    overrideScreenOptionStyle['headerBackTitle'] = i18n.t('settingsScreen.settings');
-    overrideScreenOptionStyle['title'] = '';
-    overrideScreenOptionStyle['headerStyle'] = {
+    overrideScreenOptionStyle["headerBackTitle"] = i18n.t(
+      "settingsScreen.settings"
+    );
+    overrideScreenOptionStyle["title"] = "";
+    overrideScreenOptionStyle["headerStyle"] = {
       ...screenOptionStyle.headerStyle,
-      shadowColor: 'transparent',
+      shadowColor: "transparent",
     };
     return (
       <Stack.Navigator screenOptions={overrideScreenOptionStyle}>
@@ -174,11 +199,12 @@ const MainTabNavigator = () => {
               <HeaderBackButton
                 {...props}
                 onPress={() => {
-                  navigation.navigate('Settings');
+                  navigation.navigate("Settings");
                 }}
               />
             ),
-          }}>
+          }}
+        >
           {(props) => <PINScreen {...props} />}
         </Stack.Screen>
       </Stack.Navigator>
@@ -187,24 +213,25 @@ const MainTabNavigator = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName={'Contacts'}
-      //initialRouteName={'Settings'}
+      //initialRouteName={"Contacts"}
+      initialRouteName={'Settings'}
       screenOptions={({ route }) => ({
         headerShown: false,
         //tabBarButton: ['Notifications', 'Settings', 'PIN', 'Storybook'].includes(route.name)
         tabBarActiveTintColor: "#365D86",
         tabBarStyle: [
           {
-            "display": "flex"
+            display: "flex",
           },
-          null
+          null,
         ],
-        tabBarButton: ['PIN'].includes(route.name)
+        tabBarButton: ["PIN"].includes(route.name)
           ? () => {
               return null;
             }
           : undefined,
-      })}>
+      })}
+    >
       {/*
       <Tab.Screen
         name="Home"
@@ -233,7 +260,7 @@ const MainTabNavigator = () => {
         name="Contacts"
         component={ContactsStack}
         options={{
-          tabBarLabel: i18n.t('contactsScreen.contacts'),
+          tabBarLabel: i18n.t("contactsScreen.contacts"),
           tabBarIcon: ({ focused }) => (
             <TabBarIcon type="FontAwesome" name="user" focused={focused} />
           ),
@@ -243,7 +270,7 @@ const MainTabNavigator = () => {
         name="Groups"
         component={GroupsStack}
         options={{
-          tabBarLabel: i18n.t('global.groups'),
+          tabBarLabel: i18n.t("global.groups"),
           tabBarIcon: ({ focused }) => (
             <TabBarIcon type="FontAwesome" name="users" focused={focused} />
           ),
@@ -253,7 +280,7 @@ const MainTabNavigator = () => {
         name="Notifications"
         component={NotificationsStack}
         options={{
-          tabBarLabel: i18n.t('notificationsScreen.notifications'),
+          tabBarLabel: i18n.t("notificationsScreen.notifications"),
           tabBarIcon: ({ focused, color, size }) => (
             <TabBarIcon type="FontAwesome" name="bell" focused={focused} />
           ),
@@ -264,7 +291,7 @@ const MainTabNavigator = () => {
         name="Settings"
         component={SettingsStack}
         options={{
-          tabBarLabel: i18n.t('settingsScreen.settings'),
+          tabBarLabel: i18n.t("settingsScreen.settings"),
           //tabBarLabel: ({ focused, color, size }) => (
           //  <Text style={{ color, fontSize: size }}>{i18n.t('settingsScreen.settings')}</Text>
           //),

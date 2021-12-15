@@ -13,21 +13,16 @@ import useToast from "hooks/useToast";
 import { styles } from "./PINScreen.styles";
 
 const PINScreen = ({ navigation, route }) => {
-
   const [state, setState] = useState({
     code: "",
     tmpCode: null,
   });
 
   const { i18n } = useI18N();
-
-  const { PINConstants } = usePIN();
-
+  const { PINConstants, getPIN, setPIN, deletePIN, setCNoncePIN } = usePIN();
   const toast = useToast();
 
-  console.log(`route: ${ JSON.stringify(route) }`)
-  //const type = route?.params?.type ? route.params.type : null; 
-  const type = "DELETE";
+  const type = route?.params?.type ? route.params.type : null;
   const isValidate = type === PINConstants.VALIDATE ? true : false;
   const isDelete = type === PINConstants.DELETE ? true : false;
   const isSet = type === PINConstants.SET ? true : false;
@@ -68,62 +63,68 @@ const PINScreen = ({ navigation, route }) => {
   const handleFulfill = async (code) => {
     console.log(`code: ${code}`);
     if (isValidate || isDelete) {
+      console.log("*** VALIDATE OR DELETE ***");
       const secretCode = await getPIN();
       if (secretCode === null) {
-        toast("Error: Unable to retrieve existing PIN. Please contact your Disciple Tools Administrator for assistance", true);
-        pinInput.current.shake().then(() => setState({ ...state, code: '' }));
+        toast(
+          "Error: Unable to retrieve existing PIN. Please contact your Disciple Tools Administrator for assistance",
+          true
+        );
+        pinInput.current.shake().then(() => setState({ ...state, code: "" }));
       } else if (code === secretCode) {
         if (isValidate) {
-          //dispatch(generatePINCNonce());
-          console.log("*** GENERATE CNONCE ***")
-          // TODO: remove?
-          setState({ ...state, code: '' });
+          setCNoncePIN();
         } else if (isDelete) {
-          //dispatch(deletePIN());
-          //setState({ ...state, code: '' });
-          navigation.goBack();
-          toast(i18n.t('settingsScreen.removedPinCode'));
+          deletePIN();
+          toast(i18n.t("settingsScreen.removedPinCode"));
         } else {
           console.warn(`Unknown PINScreen type: ${type}`);
         }
       } else {
-        pinInput.current.shake().then(() => setState({ ...state, code: '' }));
+        pinInput.current.shake().then(() => setState({ ...state, code: "" }));
       }
     } else if (isSet && state.tmpCode === null) {
-      const isRepeating = _isRepeating(code);
-      const isSequential = _isSequential(code);
-      const isCompliant = (!isRepeating && !isSequential);
+      console.log("*** SET ***");
+      const isCompliant = !isRepeating(code) && !isSequential(code);
       if (isCompliant) {
         setState({
           ...state,
-          code: '',
-          tmpCode: code
+          code: "",
+          tmpCode: code,
         });
       } else if (isRepeating || isSequential) {
-        pinInput.current.shake().then(() => setState({
-          ...state,
-          code: ''
-        }));
+        pinInput.current.shake().then(() =>
+          setState({
+            ...state,
+            code: "",
+          })
+        );
         // TODO: translate
-        toast("Error: Repeating (i.e., 444444) or Sequential (i.e., 234567) values are not permitted", true);
+        toast(
+          "Error: Repeating (i.e., 444444) or Sequential (i.e., 234567) values are not permitted",
+          true
+        );
       } else {
-        // unknown issue: retry 
-        pinInput.current.shake().then(() => setState({
-          ...state,
-          code: ''
-        }));
+        // unknown issue: retry
+        pinInput.current.shake().then(() =>
+          setState({
+            ...state,
+            code: "",
+          })
+        );
       }
     } else if (isSet && state.tmpCode !== null) {
       if (code === state.tmpCode) {
-        dispatch(setPIN(code));
-        navigation.goBack();
-        setState({ code: '', tmpCode: null });
-        toast(i18n.t('settingsScreen.savedPinCode'));
+        setPIN(code);
+        setState({ code: "", tmpCode: null });
+        toast(i18n.t("settingsScreen.savedPinCode"));
       } else {
-        pinInput.current.shake().then(() => setState({
-          ...state,
-          code: ''
-        }));
+        pinInput.current.shake().then(() =>
+          setState({
+            ...state,
+            code: "",
+          })
+        );
       }
     } else {
       console.warn(`Unknown PINScreen type: ${type}`);
@@ -134,18 +135,14 @@ const PINScreen = ({ navigation, route }) => {
   const DisplayText = () => {
     const getDisplayText = () => {
       if (isValidate || isDelete || (isSet && state.tmpCode !== null)) {
-        return i18n.t('settingsScreen.confirmPin');
+        return i18n.t("settingsScreen.confirmPin");
       } else if (isSet) {
-        return i18n.t('settingsScreen.enterPin');
+        return i18n.t("settingsScreen.enterPin");
       } else {
-        return '';
+        return "";
       }
     };
-    return(
-      <Text style={styles.text}>
-        { getDisplayText() }
-      </Text>
-    );
+    return <Text style={styles.text}>{getDisplayText()}</Text>;
   };
 
   return (

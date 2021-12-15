@@ -1,6 +1,6 @@
-import React from 'react';
-import { Text } from 'react-native';
-import PropTypes from 'prop-types';
+import React from "react";
+import { Text } from "react-native";
+import PropTypes from "prop-types";
 
 import {
   Body,
@@ -12,42 +12,42 @@ import {
   Right,
   Switch,
   Thumbnail,
-} from 'native-base';
+} from "native-base";
 
 // TODO: hide Expo APIs in Hooks like Redux
-import Constants from 'expo-constants';
-import * as MailComposer from 'expo-mail-composer';
+import Constants from "expo-constants";
+import * as MailComposer from "expo-mail-composer";
 
-import useNetworkStatus from 'hooks/useNetworkStatus';
-import useI18N from 'hooks/useI18N';
-import usePIN from 'hooks/usePIN';
-import { useAuth } from 'hooks/useAuth';
-//import useMyUser from 'hooks/useMyUser';
-import useToast from 'hooks/useToast';
+import { useAuth } from "hooks/useAuth";
+import useNetworkStatus from "hooks/useNetworkStatus";
+import useI18N from "hooks/useI18N";
+import usePIN from "hooks/usePIN";
+import useToast from "hooks/useToast";
 
-import OfflineBar from 'components/OfflineBar';
-import LanguagePicker from 'components/LanguagePicker';
+import OfflineBar from "components/OfflineBar";
+import LanguagePicker from "components/LanguagePicker";
 
-import { styles } from './SettingsScreen.styles';
-import gravatar from 'assets/gravatar-default.png';
+import { styles } from "./SettingsScreen.styles";
+import gravatar from "assets/gravatar-default.png";
 
 const SettingsScreen = ({ navigation }) => {
-
   const { isConnected, toggleNetwork } = useNetworkStatus();
   const { i18n, isRTL } = useI18N();
   const { PINConstants, hasPIN } = usePIN();
-  const { isAutoLogin, rememberLoginDetails, toggleAutoLogin, toggleRememberLoginDetails, signOut } = useAuth();
+  const {
+    user,
+    isAutoLogin,
+    rememberLoginDetails,
+    toggleAutoLogin,
+    toggleRememberLoginDetails,
+    signOut,
+  } = useAuth();
   const toast = useToast();
 
-  // TODO:
-  //const { userData, error: userError } = useMyUser();
-  //if (!userData) return null;
-  const userData = null;
 
   const Header = () => {
-    const username = userData?.display_name ?? '';
-    // TODO: pull from useAuth() ?
-    const domain = userData?.domain ?? '';
+    const username = user?.username ?? "";
+    const domain = user?.domain ?? "";
     return (
       <ListItem itemHeader first avatar style={styles.header}>
         <Left>
@@ -57,21 +57,23 @@ const SettingsScreen = ({ navigation }) => {
           <Text
             style={[
               {
-                writingDirection: isRTL ? 'rtl' : 'ltr',
-                textAlign: isRTL ? 'right' : 'left',
+                writingDirection: isRTL ? "rtl" : "ltr",
+                textAlign: isRTL ? "right" : "left",
               },
               styles.username,
-            ]}>
+            ]}
+          >
             {username}
           </Text>
           <Text
             style={[
               {
-                writingDirection: isRTL ? 'rtl' : 'ltr',
-                textAlign: isRTL ? 'right' : 'left',
+                writingDirection: isRTL ? "rtl" : "ltr",
+                textAlign: isRTL ? "right" : "left",
               },
               styles.domain,
-            ]}>
+            ]}
+          >
             {domain}
           </Text>
         </Body>
@@ -79,7 +81,13 @@ const SettingsScreen = ({ navigation }) => {
     );
   };
 
-  const SettingsOption = ({ onPress, iconType, iconName, label, component }) => (
+  const SettingsOption = ({
+    onPress,
+    iconType,
+    iconName,
+    label,
+    component,
+  }) => (
     <ListItem icon onPress={onPress ?? null}>
       <Left>
         <NbButton style={styles.button} onPress={onPress ?? null}>
@@ -89,15 +97,14 @@ const SettingsScreen = ({ navigation }) => {
       <Body style={styles.body}>
         <Text
           style={{
-            writingDirection: isRTL ? 'rtl' : 'ltr',
-            textAlign: isRTL ? 'right' : 'left',
-          }}>
-            {label}
+            writingDirection: isRTL ? "rtl" : "ltr",
+            textAlign: isRTL ? "right" : "left",
+          }}
+        >
+          {label}
         </Text>
       </Body>
-      <Right>
-        {component}
-      </Right>
+      <Right>{component}</Right>
     </ListItem>
   );
 
@@ -114,7 +121,7 @@ const SettingsScreen = ({ navigation }) => {
   const OnlineToggle = () => (
     <SettingsOption
       iconName="ios-flash"
-      label={i18n.t('global.online')}
+      label={i18n.t("global.online")}
       component={
         <Switch value={isConnected} onChange={toggleNetwork} disabled={false} />
       }
@@ -125,10 +132,8 @@ const SettingsScreen = ({ navigation }) => {
     <SettingsOption
       iconType="MaterialCommunityIcons"
       iconName="login-variant"
-      label={i18n.t('settingsScreen.autoLogin')}
-      component={
-        <Switch value={isAutoLogin} onChange={toggleAutoLogin} />
-      }
+      label={i18n.t("settingsScreen.autoLogin")}
+      component={<Switch value={isAutoLogin} onChange={toggleAutoLogin} />}
     />
   );
 
@@ -136,9 +141,12 @@ const SettingsScreen = ({ navigation }) => {
     <SettingsOption
       iconType="MaterialCommunityIcons"
       iconName="onepassword"
-      label={i18n.t('settingsScreen.rememberLoginDetails')}
+      label={i18n.t("settingsScreen.rememberLoginDetails")}
       component={
-        <Switch value={rememberLoginDetails} onChange={toggleRememberLoginDetails} />
+        <Switch
+          value={rememberLoginDetails}
+          onChange={toggleRememberLoginDetails}
+        />
       }
     />
   );
@@ -148,17 +156,16 @@ const SettingsScreen = ({ navigation }) => {
       const type = hasPIN ? PINConstants.DELETE : PINConstants.SET;
       navigation.navigate(PINConstants.SCREEN, {
         type,
-        code: null
+        code: null,
       });
     };
-    return(
+    console.log("~~~~~~~~~ hasPIN", hasPIN);
+    return (
       <SettingsOption
         iconType="MaterialCommunityIcons"
         iconName="security"
-        label={i18n.t('settingsScreen.pinCode')}
-        component={
-          <Switch value={hasPIN} onChange={togglePIN} />
-        }
+        label={i18n.t("settingsScreen.pinCode")}
+        component={<Switch value={hasPIN} onChange={togglePIN} />}
       />
     );
   };
@@ -166,9 +173,9 @@ const SettingsScreen = ({ navigation }) => {
   const HelpSupportButton = () => {
     const draftNewSupportEmail = () => {
       MailComposer.composeAsync({
-        recipients: ['appsupport@disciple.tools'],
+        recipients: ["appsupport@disciple.tools"],
         subject: `DT App Support: v${Constants.manifest.version}`,
-        body: '',
+        body: "",
       }).catch((error) => {
         toast(error.toString(), true);
       });
@@ -178,7 +185,7 @@ const SettingsScreen = ({ navigation }) => {
         onPress={draftNewSupportEmail}
         iconType="MaterialCommunityIcons"
         iconName="help-circle"
-        label={i18n.t('settingsScreen.helpSupport')}
+        label={i18n.t("settingsScreen.helpSupport")}
       />
     );
   };
@@ -187,14 +194,14 @@ const SettingsScreen = ({ navigation }) => {
     <SettingsOption
       onPress={signOut}
       iconName="log-out"
-      label={i18n.t('settingsScreen.logout')}
-      component={
-        <Icon active name={isRTL ? 'arrow-back' : 'arrow-forward'} />
-      }
+      label={i18n.t("settingsScreen.logout")}
+      component={<Icon active name={isRTL ? "arrow-back" : "arrow-forward"} />}
     />
   );
 
-  const AppVersionText = () => <Text style={styles.versionText}>{Constants.manifest.version}</Text>;
+  const AppVersionText = () => (
+    <Text style={styles.versionText}>{Constants.manifest.version}</Text>
+  );
 
   return (
     <Container style={styles.container}>
