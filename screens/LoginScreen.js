@@ -20,8 +20,9 @@ import Constants from "expo-constants";
 import Colors from "constants/Colors";
 
 // custom hooks
-import useI18N from "hooks/useI18N";
 import { useAuth } from "hooks/useAuth";
+import useI18N from "hooks/useI18N";
+import usePlugins from "hooks/usePlugins";
 import useToast from "hooks/useToast";
 
 // custom components
@@ -38,93 +39,66 @@ const LoginScreen = ({ navigation, route }) => {
   console.log("$$$$$          LOGIN SCREEN                   $$$$$");
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
-  const { i18n, isRTL, locale, setLocale } = useI18N();
   const { user, rememberLoginDetails, signIn } = useAuth();
+  const { i18n, isRTL, locale, setLocale } = useI18N();
+  const { mobileAppPluginEnabled, mobileAppPluginLink } = usePlugins();
   const toast = useToast();
 
   const [state, setState] = useState({
-    loading: false,
-    domain: rememberLoginDetails ? user?.domain : '',
-    username: rememberLoginDetails ? user?.username : '',
-    password: '',
-    hidePassword: true,
     domainValidation: null,
     userValidation: null,
     passwordValidation: null,
   });
 
-  const setPasswordVisibility = () => {
-    setState({
-      ...state,
-      hidePassword: !state.hidePassword,
-    });
-  };
+  const [loading, setLoading] = useState(false);
+  const [domain, setDomain] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (rememberLoginDetails) {
+      // TODO: batch update?
+      if (user?.domain) setDomain(user.domain);
+      if (user?.username) setUsername(user.username);
+    };
+    setDomain('dtappdemo.wpengine.com');
+    setUsername('zdmc23');
+    setPassword('fmZ%yM9sn8qv!A$9');
+  }, [])
 
   const cleanDomain = (domain) => {
     // trim leading/trailing whitespace and remove protocol
     return domain.trim().replace("http://", "").replace("https://", "");
   };
 
+  // TODO: add legit validation
   const onLoginPress = () => {
     Keyboard.dismiss();
-    if (state.domain && state.username && state.password) {
-      const cleanedDomain = cleanDomain(state.domain);
-      signIn(cleanedDomain, state.username, state.password);
-      setState({
-        ...state,
-        loading: true,
-      });
+    if (domain && username && password) {
+      const cleanedDomain = cleanDomain(domain);
+      signIn(cleanedDomain, username, password);
+      setLoading(true);
     } else {
       // if any of the required fields are not set, then update state to show error
       setState({
         ...state,
-        domainValidation: !state.domain,
-        userValidation: !state.username,
-        passwordValidation: !state.password,
+        domainValidation: !domain,
+        userValidation: !username,
+        passwordValidation: !password,
       });
     }
   };
 
-  const openDocsLink = () => {
-    Linking.openURL("https://disciple-tools.readthedocs.io/en/latest/app");
-  };
-
   const goToForgotPassword = () => {
-    if (state.domain !== "") {
+    if (domain !== "") {
       Linking.openURL(
-        `https://${state.domain}/wp-login.php?action=lostpassword`
+        `https://${domain}/wp-login.php?action=lostpassword`
       );
     } else {
       toast(i18n.t("loginScreen.domain.errorForgotPass", { locale }), true);
     }
   };
-
-  // TODO: simplify? put into a method?
-  const { domainValidation, userValidation, passwordValidation } = state;
-  const domainStyle = state.domainValidation
-    ? [styles.textField, styles.validationErrorInput]
-    : styles.textField;
-  const userStyle = state.userValidation
-    ? [styles.textField, styles.validationErrorInput]
-    : styles.textField;
-  const passwordStyle = state.passwordValidation
-    ? [styles.textField, styles.validationErrorInput]
-    : styles.textField;
-  const domainErrorMessage = state.domainValidation ? (
-    <Text style={styles.validationErrorMessage}>
-      {i18n.t("loginScreen.domain.error", { locale })}
-    </Text>
-  ) : null;
-  const userErrorMessage = state.userValidation ? (
-    <Text style={styles.validationErrorMessage}>
-      {i18n.t("loginScreen.username.error", { locale })}
-    </Text>
-  ) : null;
-  const passwordErrorMessage = state.passwordValidation ? (
-    <Text style={styles.validationErrorMessage}>
-      {i18n.t("loginScreen.password.error", { locale })}
-    </Text>
-  ) : null;
 
   const Header = () => {
     return (
@@ -139,7 +113,7 @@ const LoginScreen = ({ navigation, route }) => {
 
   const MobileAppPluginRequired = () => {
     return (
-      <TouchableOpacity activeOpacity={0.8} style={{}} onPress={openDocsLink}>
+      <TouchableOpacity activeOpacity={0.8} style={{}} onPress={mobileAppPluginLink}>
         <View
           style={{
             borderColor: "#c2e0ff",
@@ -164,31 +138,131 @@ const LoginScreen = ({ navigation, route }) => {
     );
   };
 
-  const LoginButton = () => {
-    return (
+  const DomainField = () => {
+    const domainErrorMessage = state.domainValidation ? (
+      <Text style={styles.validationErrorMessage}>
+        {i18n.t("loginScreen.domain.error", { locale })}
+      </Text>
+    ) : null;
+    return(
       <View>
-        <Button
-          accessibilityLabel={i18n.t("loginScreen.logIn", { locale })}
-          style={styles.signInButton}
-          onPress={onLoginPress}
-          block
-        >
-          <Text style={styles.signInButtonText}>
-            {i18n.t("loginScreen.logIn", { locale })}
-          </Text>
-        </Button>
-        <TouchableOpacity
-          style={styles.forgotButton}
-          onPress={goToForgotPassword}
-          disabled={state.loading}
-        >
-          <Text style={styles.forgotButtonText}>
-            {i18n.t("loginScreen.forgotPassword", { locale })}
-          </Text>
-        </TouchableOpacity>
+        <LabeledTextInput
+          editing
+          accessibilityLabel={i18n.t("loginScreen.domain.label", { locale })}
+          label={i18n.t("loginScreen.domain.label", { locale })}
+          containerStyle={[styles.textField, state.domainValidation && styles.validationErrorInput]}
+          iconName="ios-globe"
+          onChangeText={setDomain}
+          textAlign={isRTL ? "right" : "left"}
+          autoCapitalize="none"
+          autoCorrect={false}
+          value={domain}
+          returnKeyType="next"
+          textContentType="URL"
+          keyboardType="url"
+          disabled={loading}
+          placeholder={i18n.t("loginScreen.domain.placeholder", { locale })}
+        />
+        {domainErrorMessage}
       </View>
     );
   };
+
+  const UsernameField = () => {
+    const userErrorMessage = state.userValidation ? (
+      <Text style={styles.validationErrorMessage}>
+        {i18n.t("loginScreen.username.error", { locale })}
+      </Text>
+    ) : null;
+    return(      
+      <View>
+        <LabeledTextInput
+          editing
+          accessibilityLabel={i18n.t("loginScreen.username.label", {
+            locale,
+          })}
+          label={i18n.t("loginScreen.username.label", { locale })}
+          containerStyle={[styles.textField, state.usernameValidation && styles.validationErrorInput]}
+          iconName={Platform.OS === "ios" ? "ios-person" : "md-person"}
+          value={username}
+          onChangeText={setUsername}
+          textAlign={isRTL ? "right" : "left"}
+          autoCapitalize="none"
+          autoCorrect={false}
+          returnKeyType="next"
+          textContentType="emailAddress"
+          keyboardType="email-address"
+          disabled={loading}
+        />
+        {userErrorMessage}
+      </View>
+    );
+  };
+
+  const PasswordField = () => {
+    const passwordErrorMessage = state.passwordValidation ? (
+      <Text style={styles.validationErrorMessage}>
+        {i18n.t("loginScreen.password.error", { locale })}
+      </Text>
+    ) : null;
+    return(
+      <View>
+        <LabeledTextInput
+          editing
+          accessibilityLabel={i18n.t("loginScreen.password.label", {
+            locale,
+          })}
+          label={i18n.t("loginScreen.password.label", { locale })}
+          containerStyle={[styles.textField, state.passwordValidation && styles.validationErrorInput]}
+          iconName={Platform.OS === "ios" ? "ios-key" : "md-key"}
+          value={password}
+          onChangeText={setPassword}
+          underlineColorAndroid="transparent"
+          secureTextEntry={showPassword}
+          textAlign={isRTL ? "right" : "left"}
+        />
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.touchableButton}
+          onPress={()=>setShowPassword(!showPassword)}
+        >
+          <Icon
+            type="FontAwesome"
+            name="eye"
+            style={[
+              { marginBottom: "auto", marginTop: "auto", fontSize: 24 },
+              showPassword ?  { opacity: 0.3 } : { opacity: null },
+            ]}
+          />
+        </TouchableOpacity>
+        {passwordErrorMessage}
+      </View>
+    );
+  };
+
+  const LoginButton = () => (
+    <View>
+      <Button
+        accessibilityLabel={i18n.t("loginScreen.logIn", { locale })}
+        style={styles.signInButton}
+        onPress={onLoginPress}
+        block
+      >
+        <Text style={styles.signInButtonText}>
+          {i18n.t("loginScreen.logIn", { locale })}
+        </Text>
+      </Button>
+      <TouchableOpacity
+        style={styles.forgotButton}
+        onPress={goToForgotPassword}
+        disabled={loading}
+      >
+        <Text style={styles.forgotButtonText}>
+          {i18n.t("loginScreen.forgotPassword", { locale })}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   const LoadingSpinner = () => {
     return (
@@ -204,7 +278,7 @@ const LoginScreen = ({ navigation, route }) => {
     return <Text style={styles.versionText}>{Constants.manifest.version}</Text>;
   };
 
-  // NOTE: if we try to componentize <DomainField/>, <UsernameField/>, etc... the 'KeyboardAwareScrollView' breaks (and does not yet support UseRef). (A similar issue occurs with the React Native core 'KeyboardAvoidingView' component).
+  // TODO: is KeyboardAwareScrollView necessary?
   return (
     <KeyboardAwareScrollView
       enableAutomaticScroll
@@ -213,123 +287,18 @@ const LoginScreen = ({ navigation, route }) => {
       extraScrollHeight={0}
       keyboardShouldPersistTaps={"always"}
     >
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps={"always"}
-      >
+      <View style={styles.container}>
         <Header />
         <View style={styles.formContainer}>
-          {state.mobileAppRequired && <MobileAppPluginRequired />}
-          <LabeledTextInput
-            accessibilityLabel={i18n.t("loginScreen.domain.label", { locale })}
-            label={i18n.t("loginScreen.domain.label", { locale })}
-            containerStyle={domainStyle}
-            iconName="ios-globe"
-            onChangeText={(text) => {
-              setState({
-                ...state,
-                domain: text,
-              });
-            }}
-            textAlign={isRTL ? "right" : "left"}
-            autoCapitalize="none"
-            autoCorrect={false}
-            value={state.domain}
-            returnKeyType="next"
-            textContentType="URL"
-            keyboardType="url"
-            disabled={state.loading}
-            placeholder={i18n.t("loginScreen.domain.placeholder", { locale })}
-          />
-          {domainErrorMessage}
-          <LabeledTextInput
-            accessibilityLabel={i18n.t("loginScreen.username.label", {
-              locale,
-            })}
-            label={i18n.t("loginScreen.username.label", { locale })}
-            containerStyle={userStyle}
-            iconName={Platform.OS === "ios" ? "ios-person" : "md-person"}
-            onChangeText={(text) => {
-              setState({
-                ...state,
-                username: text,
-              });
-            }}
-            textAlign={isRTL ? "right" : "left"}
-            autoCapitalize="none"
-            autoCorrect={false}
-            value={state.username}
-            returnKeyType="next"
-            textContentType="emailAddress"
-            keyboardType="email-address"
-            disabled={state.loading}
-          />
-          {userErrorMessage}
-          <View style={passwordStyle}>
-            <View style={{ margin: 10 }}>
-              <Text style={{ textAlign: "left", color: "#555555" }}>
-                {i18n.t("loginScreen.password.label", { locale })}
-              </Text>
-              <View style={{ flexDirection: "row" }}>
-                <Icon
-                  type="Ionicons"
-                  name="md-key"
-                  style={{ marginBottom: "auto", marginTop: "auto" }}
-                />
-                <LabeledTextInput
-                  value={state.password} // TODO: remove
-                  accessibilityLabel={i18n.t("loginScreen.password.label", {
-                    locale,
-                  })}
-                  underlineColorAndroid="transparent"
-                  secureTextEntry={state.hidePassword}
-                  style={styles.textBox}
-                  onChangeText={(text) => {
-                    setState({
-                      ...state,
-                      password: text,
-                    });
-                  }}
-                  textAlign={isRTL ? "right" : "left"}
-                />
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  style={styles.touachableButton}
-                  onPress={setPasswordVisibility}
-                >
-                  {state.hidePassword ? (
-                    <Icon
-                      type="FontAwesome"
-                      name="eye"
-                      style={{
-                        marginBottom: "auto",
-                        marginTop: "auto",
-                        opacity: 0.3,
-                        fontSize: 22,
-                      }}
-                    />
-                  ) : (
-                    <Icon
-                      type="FontAwesome"
-                      name="eye"
-                      style={{
-                        marginBottom: "auto",
-                        marginTop: "auto",
-                        fontSize: 22,
-                      }}
-                    />
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-          {passwordErrorMessage}
-          {state.loading ? <LoadingSpinner /> : <LoginButton />}
+          { mobileAppPluginEnabled && <MobileAppPluginRequired /> }
+          <DomainField />
+          <UsernameField />
+          <PasswordField />
+          { loading ? <LoadingSpinner /> : <LoginButton /> }
           <AppVersion />
         </View>
         <LanguagePicker />
-      </ScrollView>
-      {/*<Locale state={state} setState={setState} />*/}
+      </View>
     </KeyboardAwareScrollView>
   );
 };
