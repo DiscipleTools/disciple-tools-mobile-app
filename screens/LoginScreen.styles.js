@@ -1,27 +1,27 @@
-import { Dimensions, StyleSheet } from 'react-native';
-import Colors from 'constants/Colors';
+import { Dimensions, StyleSheet } from "react-native";
+import Colors from "constants/Colors";
 
 export const styles = StyleSheet.create({
   container: {
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     backgroundColor: Colors.canvas,
-    minHeight: Dimensions.get('window').height,
+    minHeight: Dimensions.get("window").height,
   },
   inputContainer: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     marginVertical: 10,
     padding: 5,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   inputLabel: {
     margin: 5,
   },
   inputLabelText: {
-    color: '#555555',
+    color: "#555555",
   },
   inputRow: {
-    alignSelf: 'stretch',
-    flexDirection: 'row',
+    alignSelf: "stretch",
+    flexDirection: "row",
   },
   inputRowIcon: {
     fontSize: 25,
@@ -33,19 +33,19 @@ export const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: Colors.tintColor,
-    width: '100%',
+    width: "100%",
     padding: 35,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    alignItems: "center",
+    justifyContent: "flex-end",
   },
   welcomeImage: {
     height: 60,
     width: 250,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     padding: 20,
   },
   formContainer: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     flexGrow: 1,
     padding: 20,
   },
@@ -55,11 +55,11 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
   },
   signInButtonText: {
-    color: 'white',
+    color: "white",
   },
   forgotButton: {
-    alignSelf: 'stretch',
-    alignItems: 'center',
+    alignSelf: "stretch",
+    alignItems: "center",
     padding: 12,
     marginLeft: 20,
     marginRight: 20,
@@ -68,21 +68,21 @@ export const styles = StyleSheet.create({
     color: Colors.tintColor,
   },
   loading: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   textField: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: "#fff",
   },
   validationErrorInput: {
-    backgroundColor: '#FFE6E6',
+    backgroundColor: "#FFE6E6",
     borderWidth: 2,
     borderColor: Colors.errorBackground,
   },
@@ -91,15 +91,15 @@ export const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 25,
-    textAlign: 'center',
+    textAlign: "center",
     margin: 10,
-    color: 'black',
-    fontWeight: 'bold',
+    color: "black",
+    fontWeight: "bold",
   },
   textBoxContainer: {
-    position: 'relative',
-    alignSelf: 'stretch',
-    justifyContent: 'center',
+    position: "relative",
+    alignSelf: "stretch",
+    justifyContent: "center",
   },
   textBox: {
     fontSize: 16,
@@ -108,16 +108,22 @@ export const styles = StyleSheet.create({
     paddingVertical: 0,
     flex: 1,
   },
-  touachableButton: {
-    position: 'absolute',
-    right: 3,
-    height: 40,
-    width: 35,
+  touchableButton: {
+    position: "absolute",
+    right: 10,
+    height: 75,
     padding: 2,
   },
   buttonImage: {
-    resizeMode: 'contain',
-    height: '100%',
-    width: '100%',
+    resizeMode: "contain",
+    height: "100%",
+    width: "100%",
+  },
+  versionText: {
+    color: Colors.grayDark,
+    fontSize: 12,
+    position: 'absolute',
+    bottom: 15,
+    right: 15,
   },
 });
