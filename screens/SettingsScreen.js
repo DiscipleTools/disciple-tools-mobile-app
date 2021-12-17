@@ -14,7 +14,7 @@ import {
   Thumbnail,
 } from "native-base";
 
-// TODO: hide Expo APIs in Hooks like Redux
+// TODO: hide expo imports in hooks
 import Constants from "expo-constants";
 import * as MailComposer from "expo-mail-composer";
 
@@ -43,7 +43,6 @@ const SettingsScreen = ({ navigation }) => {
     signOut,
   } = useAuth();
   const toast = useToast();
-
 
   const Header = () => {
     const username = user?.username ?? "";
@@ -159,7 +158,6 @@ const SettingsScreen = ({ navigation }) => {
         code: null,
       });
     };
-    console.log("~~~~~~~~~ hasPIN", hasPIN);
     return (
       <SettingsOption
         iconType="MaterialCommunityIcons"
