@@ -1,12 +1,8 @@
 import axios from "axios";
-
-// 15 sec default timeout for all requests
-// TODO: import from config
-const timeout = 15000;
-const protocol = "https";
+import { AppConstants } from "constants";
 
 export const getBaseUrl = (domain) => {
-  return `${protocol}://${domain}/wp-json/`;
+  return `${AppConstants.PROTOCOL}://${domain}/wp-json/`;
 };
 
 // NOTE: the baseURL and Authorization Header will be set upon successful login,
@@ -15,7 +11,7 @@ const instance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout,
+  timeout: AppConstants.TIMEOUT,
 });
 // TODO: intercept timeout error and provide better message (useRequest)
 export default instance;
