@@ -1,13 +1,13 @@
-import React, { useRef } from 'react';
-import { Linking, Pressable, Text, TextInput } from 'react-native';
-import { Icon } from 'native-base';
-import { Col, Row } from 'react-native-easy-grid';
+import React, { useRef } from "react";
+import { Linking, Pressable, Text, TextInput } from "react-native";
+import { Icon } from "native-base";
+import { Col, Row } from "react-native-easy-grid";
 //import PropTypes from 'prop-types';
 
-import useI18N from 'hooks/useI18N';
+import useI18N from "hooks/useI18N";
 
 // TODO: refactor unused styles
-import { styles } from './CommunicationChannelField.styles';
+import { styles } from "./CommunicationChannelField.styles";
 
 const CommunicationChannelField = ({ field, value, editing, onChange }) => {
   const { i18n, isRTL } = useI18N();
@@ -17,7 +17,7 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
   const timerRef = useRef(null);
 
   // if value is null, then set a default to ensure field displays
-  if (value === null) value = [{ value: ''}];
+  if (value === null) value = [{ value: "" }];
 
   const changeDelay = () => {
     if (timerRef.current !== null) {
@@ -36,7 +36,7 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
     onChange([
       ...value,
       {
-        value: '',
+        value: "",
       },
     ]);
   };
@@ -63,9 +63,9 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
   };
 
   const getKeyboardType = () => {
-    if (field?.name?.includes('phone')) return 'phone-pad';
-    if (field?.name?.includes('email')) return 'email-address';
-    return 'default';
+    if (field?.name?.includes("phone")) return "phone-pad";
+    if (field?.name?.includes("email")) return "email-address";
+    return "default";
   };
 
   const CommunicationChannelFieldEdit = () => {
@@ -91,7 +91,11 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
                 defaultValue={communicationChannel.value}
                 onChangeText={(newValue) => {
                   changeDelay();
-                  onCommunicationFieldChange(newValue, idx, communicationChannel?.key);
+                  onCommunicationFieldChange(
+                    newValue,
+                    idx,
+                    communicationChannel?.key
+                  );
                 }}
                 //onBlur={onEndEditing}
                 onEndEditing={onEndEditing}
@@ -103,8 +107,14 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
               <Icon
                 android="md-remove"
                 ios="ios-remove"
-                style={[styles.formIcon, styles.addRemoveIcons, styles.removeIcons]}
-                onPress={() => onRemoveCommunicationField(idx, communicationChannel?.key)}
+                style={[
+                  styles.formIcon,
+                  styles.addRemoveIcons,
+                  styles.removeIcons,
+                ]}
+                onPress={() =>
+                  onRemoveCommunicationField(idx, communicationChannel?.key)
+                }
               />
             </Col>
           </Row>
@@ -118,41 +128,45 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
       <Text
         style={[
           styles.linkingText,
-          { marginTop: 'auto', marginBottom: 'auto' },
-          isRTL ? { textAlign: 'left', flex: 1 } : {},
-        ]}>
+          { marginTop: "auto", marginBottom: "auto" },
+          isRTL ? { textAlign: "left", flex: 1 } : {},
+        ]}
+      >
         {value}
       </Text>
     </Pressable>
   );
 
   const isValidHttp = (communicationChannelValue) => {
-    return communicationChannelValue?.toLowerCase()?.includes('http');
+    return communicationChannelValue?.toLowerCase()?.includes("http");
   };
 
   const isValidTLD = (communicationChannelValue) => {
     const lowercaseValue = communicationChannelValue?.toLowerCase();
     return (
-      lowercaseValue.includes('.com') ||
-      lowercaseValue.includes('.net') ||
-      lowercaseValue.includes('.org') ||
-      lowercaseValue.includes('.me')
+      lowercaseValue.includes(".com") ||
+      lowercaseValue.includes(".net") ||
+      lowercaseValue.includes(".org") ||
+      lowercaseValue.includes(".me")
     );
   };
 
   const isValidPhone = (communicationChannelValue) => {
     // TODO: phone regex
-    return field?.name?.includes('phone');
+    return field?.name?.includes("phone");
   };
 
   const isValidEmail = (communicationChannelValue) => {
     // TODO: email regex
-    return field?.name?.includes('email');
+    return field?.name?.includes("email");
   };
 
   const isValidURL = (communicationChannelValue) => {
     // TODO: URL regex
-    return isValidHttp(communicationChannelValue) || isValidTLD(communicationChannelValue);
+    return (
+      isValidHttp(communicationChannelValue) ||
+      isValidTLD(communicationChannelValue)
+    );
   };
 
   const CommunicationChannelFieldView = () => {
@@ -162,7 +176,7 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
         return (
           <CommunicationLink
             key={communicationChannel.key}
-            url={'tel:' + communicationChannelValue}
+            url={"tel:" + communicationChannelValue}
             value={communicationChannelValue}
           />
         );
@@ -170,7 +184,7 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
         return (
           <CommunicationLink
             key={communicationChannel.key}
-            url={'mailto:' + communicationChannelValue}
+            url={"mailto:" + communicationChannelValue}
             value={communicationChannelValue}
           />
         );
@@ -189,9 +203,10 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
         return (
           <Text
             style={[
-              { marginTop: 'auto', marginBottom: 'auto' },
-              isRTL ? { textAlign: 'left', flex: 1 } : {},
-            ]}>
+              { marginTop: "auto", marginBottom: "auto" },
+              isRTL ? { textAlign: "left", flex: 1 } : {},
+            ]}
+          >
             {communicationChannelValue}
           </Text>
         );
@@ -199,6 +214,14 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
     });
   };
 
-  return <>{editing ? <CommunicationChannelFieldEdit /> : <CommunicationChannelFieldView />}</>;
+  return (
+    <>
+      {editing ? (
+        <CommunicationChannelFieldEdit />
+      ) : (
+        <CommunicationChannelFieldView />
+      )}
+    </>
+  );
 };
 export default CommunicationChannelField;

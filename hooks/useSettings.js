@@ -1,8 +1,8 @@
-import usePostType from 'hooks/usePostType';
-import useRequest from 'hooks/useRequest';
+import useType from "hooks/useType";
+import useRequest from "hooks/useRequest";
 
 const useSettings = () => {
-  const { postType } = usePostType();
+  const { isPost, postType } = useType();
 
   const mapSettings = (settings) => {
     let fieldList = {};
@@ -11,16 +11,20 @@ const useSettings = () => {
       const fieldData = settings.fields[fieldName];
       // omit fields with { "hidden": true }
       if (
-        !Object.prototype.hasOwnProperty.call(fieldData, 'hidden') ||
-        (Object.prototype.hasOwnProperty.call(fieldData, 'hidden') && fieldData.hidden === false)
+        !Object.prototype.hasOwnProperty.call(fieldData, "hidden") ||
+        (Object.prototype.hasOwnProperty.call(fieldData, "hidden") &&
+          fieldData.hidden === false)
       ) {
-        if (fieldData.type === 'key_select' || fieldData.type === 'multi_select') {
+        if (
+          fieldData.type === "key_select" ||
+          fieldData.type === "multi_select"
+        ) {
           let newFieldData = {
             name: fieldData.name,
             description: fieldData.name,
             values: fieldData.default,
           };
-          if (Object.prototype.hasOwnProperty.call(fieldData, 'description')) {
+          if (Object.prototype.hasOwnProperty.call(fieldData, "description")) {
             newFieldData = {
               ...newFieldData,
               description: fieldData.description,
@@ -54,19 +58,19 @@ const useSettings = () => {
     });
 
     let tileList = [];
-    if (Object.prototype.hasOwnProperty.call(settings, 'tiles')) {
+    if (Object.prototype.hasOwnProperty.call(settings, "tiles")) {
       Object.keys(settings.tiles).forEach((tileName) => {
         let tileFields = [];
         Object.keys(settings.fields).forEach((fieldName) => {
           let fieldValue = settings.fields[fieldName];
           if (
-            Object.prototype.hasOwnProperty.call(fieldValue, 'tile') &&
+            Object.prototype.hasOwnProperty.call(fieldValue, "tile") &&
             fieldValue.tile === tileName
           ) {
             // Get only fields with hidden: false
             if (
-              !Object.prototype.hasOwnProperty.call(fieldValue, 'hidden') ||
-              (Object.prototype.hasOwnProperty.call(fieldValue, 'hidden') &&
+              !Object.prototype.hasOwnProperty.call(fieldValue, "hidden") ||
+              (Object.prototype.hasOwnProperty.call(fieldValue, "hidden") &&
                 fieldValue.hidden === false)
             ) {
               let newField = {
@@ -74,25 +78,34 @@ const useSettings = () => {
                 label: fieldValue.name,
                 type: fieldValue.type,
               };
-              if (Object.prototype.hasOwnProperty.call(fieldValue, 'post_type')) {
+              if (
+                Object.prototype.hasOwnProperty.call(fieldValue, "post_type")
+              ) {
                 newField = {
                   ...newField,
                   post_type: fieldValue.post_type,
                 };
               }
-              if (Object.prototype.hasOwnProperty.call(fieldValue, 'default')) {
+              if (Object.prototype.hasOwnProperty.call(fieldValue, "default")) {
                 newField = {
                   ...newField,
                   default: fieldValue.default,
                 };
               }
-              if (Object.prototype.hasOwnProperty.call(fieldValue, 'in_create_form')) {
+              if (
+                Object.prototype.hasOwnProperty.call(
+                  fieldValue,
+                  "in_create_form"
+                )
+              ) {
                 newField = {
                   ...newField,
                   in_create_form: fieldValue.in_create_form,
                 };
               }
-              if (Object.prototype.hasOwnProperty.call(fieldValue, 'required')) {
+              if (
+                Object.prototype.hasOwnProperty.call(fieldValue, "required")
+              ) {
                 newField = {
                   ...newField,
                   required: fieldValue.required,
@@ -109,7 +122,7 @@ const useSettings = () => {
           }
         });
         let tileFieldsOrdered = [];
-        if (settings.tiles[tileName].hasOwnProperty('order')) {
+        if (settings.tiles[tileName].hasOwnProperty("order")) {
           const orderList = settings.tiles[tileName].order;
           let existingFields = [...orderList];
           let missingFields = [];
@@ -126,7 +139,9 @@ const useSettings = () => {
           tileFieldsOrdered = [...tileFields];
         }
         // TODO: investigate why "location_grid_meta" was being added as string type
-        tileFieldsOrdered = tileFieldsOrdered.filter((item) => typeof item === 'object');
+        tileFieldsOrdered = tileFieldsOrdered.filter(
+          (item) => typeof item === "object"
+        );
         if (!settings.tiles[tileName].hidden) {
           tileList.push({
             name: tileName,
@@ -146,8 +161,7 @@ const useSettings = () => {
     };
   };
 
-  // TODO
-  const url = `/dt-posts/v2/${postType}/settings`;
+  const url = isPost ? `/dt-posts/v2/${postType}/settings` : null;
   const { data: settings, error, isLoading, isValidating } = useRequest(url);
   return {
     settings: settings?.fields ? mapSettings(settings) : null,

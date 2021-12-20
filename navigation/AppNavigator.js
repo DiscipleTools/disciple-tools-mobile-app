@@ -20,8 +20,15 @@ const AppNavigator = () => {
   console.log("$$$$$          APP NAVIGATOR                  $$$$$");
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
-  const { PINConstants, hasPIN, validCNoncePIN } = usePIN();
+  const { PINConstants, hasPIN, cnoncePIN, validateCNoncePIN } = usePIN();
   const { authenticated, isAutoLogin } = useAuth();
+
+  const [isValidCNoncePIN, setIsValidCNoncePIN] = useState(false);
+
+  useEffect(async() => {
+    const isValidCNoncePIN = await validateCNoncePIN();
+    setIsValidCNoncePIN(isValidCNoncePIN);
+  }, [cnoncePIN]);
 
   const onReady = useCallback(async () => {
     await SplashScreen.hideAsync();
@@ -70,13 +77,13 @@ const AppNavigator = () => {
     console.log("authenticated?", authenticated);
     console.log("isAutoLogin?", isAutoLogin);
     console.log("hasPIN?", hasPIN);
-    console.log("validCNoncePIN?", validCNoncePIN);
+    console.log("isValidCNoncePIN?", isValidCNoncePIN);
 
     // Auth Flow 4. Most Secure, Least Convenient
     // PIN->Login->Main
     if (hasPIN && !isAutoLogin) {
       console.log("*** AUTH 4 - PIN->Login->Main ***");
-      if (validCNoncePIN) return <RenderLogin />;
+      if (isValidCNoncePIN) return <RenderLogin />;
       return <PINStack />;
     }
     // Auth Flow 3. More Secure, Less Convenient
@@ -89,7 +96,7 @@ const AppNavigator = () => {
     // PIN->Main
     if (hasPIN && isAutoLogin) {
       console.log("*** AUTH 2 - PIN->Main ***");
-      if (validCNoncePIN) return <RenderLogin />;
+      if (isValidCNoncePIN) return <RenderLogin />;
       return <PINStack />;
     }
     // Auth Flow 1. Least Secure, Most Convenient

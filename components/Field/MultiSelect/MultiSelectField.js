@@ -1,26 +1,26 @@
-import React from 'react';
-import { Text } from 'react-native';
+import React from "react";
+import { Text } from "react-native";
 //import PropTypes from 'prop-types';
 
-import useI18N from 'hooks/useI18N';
+import useI18N from "hooks/useI18N";
 
-import MultiSelect from 'components/MultiSelect';
-import Milestones from 'components/Milestones';
+import MultiSelect from "components/MultiSelect";
+import Milestones from "components/Milestones";
 
-import { styles } from './MultiSelectField.styles';
+import { styles } from "./MultiSelectField.styles";
 
 const MultiSelectField = ({ field, value, editing, onChange }) => {
   const { i18n, isRTL } = useI18N();
 
   // if value is null, then set a default to ensure field displays
-  if (value === null) value = { values: [{ value: ''}] };
+  if (value === null) value = { values: [{ value: "" }] };
 
   const options = field?.default;
   const items = Object.keys(options).map((key) => {
-    if (options[key].hasOwnProperty('key')) return options[key];
+    if (options[key].hasOwnProperty("key")) return options[key];
     // 'milestones' do not have a 'key' property, so we set one for consistency sake
     let option = options[key];
-    option['key'] = key;
+    option["key"] = key;
     return option;
   });
 
@@ -34,15 +34,14 @@ const MultiSelectField = ({ field, value, editing, onChange }) => {
   });
 
   const isMilestones = () => {
-    return (
-      field?.name === 'milestones' ||
-      field?.name === 'health_metrics'
-    );
+    return field?.name === "milestones" || field?.name === "health_metrics";
   };
 
   const MultiSelectFieldEdit = () => {
     const addSelection = (newValue) => {
-      const exists = selectedItems.find((selectedItem) => selectedItem?.key === newValue?.key);
+      const exists = selectedItems.find(
+        (selectedItem) => selectedItem?.key === newValue?.key
+      );
       if (!exists) {
         const apiValue = [...selectedItems, newValue].map((newValue) => {
           return { value: newValue?.key };
@@ -53,7 +52,9 @@ const MultiSelectField = ({ field, value, editing, onChange }) => {
       }
     };
     const removeSelection = (deletedValue) => {
-      const idx = selectedItems.findIndex((value) => value?.key === deletedValue?.key);
+      const idx = selectedItems.findIndex(
+        (value) => value?.key === deletedValue?.key
+      );
       if (idx > -1) {
         const newValue = [...selectedItems];
         const removed = newValue.splice(idx, 1);
@@ -75,7 +76,7 @@ const MultiSelectField = ({ field, value, editing, onChange }) => {
           customAdd={addSelection}
           customRemove={removeSelection}
           // TODO
-          postType={'contacts'}
+          postType={"contacts"}
           editing
         />
       );
@@ -98,14 +99,16 @@ const MultiSelectField = ({ field, value, editing, onChange }) => {
           items={items}
           selectedItems={selectedItems}
           // TODO
-          postType={'contacts'}
+          postType={"contacts"}
         />
       );
     }
     return (
       <>
         {selectedItems.map((selectedItem) => (
-          <Text style={isRTL ? { textAlign: 'left', flex: 1 } : {}}>{selectedItem?.label}</Text>
+          <Text style={isRTL ? { textAlign: "left", flex: 1 } : {}}>
+            {selectedItem?.label}
+          </Text>
         ))}
       </>
     );

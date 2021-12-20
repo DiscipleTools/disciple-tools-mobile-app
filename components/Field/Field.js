@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import { Pressable, View } from 'react-native';
-import { Icon, Label } from 'native-base';
-import { Grid, Row, Col } from 'react-native-easy-grid';
+import React, { useState } from "react";
+import { Pressable, View } from "react-native";
+import { Icon, Label } from "native-base";
+import { Grid, Row, Col } from "react-native-easy-grid";
 
-import FieldIcon from 'components/Field/FieldIcon';
-import BooleanField from 'components/Field/Boolean/BooleanField';
-import CommunicationChannelField from 'components/Field/CommunicationChannel/CommunicationChannelField';
-import ConnectionField from 'components/Field/Connection/ConnectionField';
-import DateField from 'components/Field/Date/DateField';
-import KeySelectField from 'components/Field/KeySelect/KeySelectField';
-import LocationField from 'components/Field/Location/LocationField';
-import MultiSelectField from 'components/Field/MultiSelect/MultiSelectField';
-import NumberField from 'components/Field/Number/NumberField';
-import TagsField from 'components/Field/Tags/TagsField';
-import TextField from 'components/Field/Text/TextField';
-import UserSelectField from 'components/Field/UserSelect/UserSelectField';
+import FieldIcon from "components/Field/FieldIcon";
+import BooleanField from "components/Field/Boolean/BooleanField";
+import CommunicationChannelField from "components/Field/CommunicationChannel/CommunicationChannelField";
+import ConnectionField from "components/Field/Connection/ConnectionField";
+import DateField from "components/Field/Date/DateField";
+import KeySelectField from "components/Field/KeySelect/KeySelectField";
+import LocationField from "components/Field/Location/LocationField";
+import MultiSelectField from "components/Field/MultiSelect/MultiSelectField";
+import NumberField from "components/Field/Number/NumberField";
+import TagsField from "components/Field/Tags/TagsField";
+import TextField from "components/Field/Text/TextField";
+import UserSelectField from "components/Field/UserSelect/UserSelectField";
 
-import MemberList from 'components/MemberList';
+import MemberList from "components/MemberList";
 
-import { styles } from './Field.styles';
+import { styles } from "./Field.styles";
 
 const Field = ({ post, field, save }) => {
   console.log(`FIELD: ${JSON.stringify(field)}`);
@@ -71,14 +71,18 @@ const Field = ({ post, field, save }) => {
 
   const isRequiredField = (field) => {
     const name = field.name;
-    if (name === 'name') return true;
+    if (name === "name") return true;
     return false;
   };
 
   const isUndecoratedField = () => {
     const name = field?.name;
     //const type = field?.type;
-    return name === 'parent_groups' || name === 'peer_groups' || name === 'child_groups';
+    return (
+      name === "parent_groups" ||
+      name === "peer_groups" ||
+      name === "child_groups"
+    );
   };
 
   const onSave = () => {
@@ -107,7 +111,7 @@ const Field = ({ post, field, save }) => {
   };
 
   const onChange = (newValue, apiValue = null) => {
-    console.log('$$$$$$ ON CHANGE $$$$$$');
+    console.log("$$$$$$ ON CHANGE $$$$$$");
     console.log(`newValue: ${JSON.stringify(newValue)}`);
     console.log(`apiValue: ${JSON.stringify(apiValue)}`);
     console.log(`existingValue: ${JSON.stringify(value)}`);
@@ -125,8 +129,13 @@ const Field = ({ post, field, save }) => {
           ...state,
           editing: true,
         });
-      }}>
-      <Icon type={'MaterialIcons'} name={'edit'} style={styles.fieldActionIcon} />
+      }}
+    >
+      <Icon
+        type={"MaterialIcons"}
+        name={"edit"}
+        style={styles.fieldActionIcon}
+      />
     </Pressable>
   );
 
@@ -135,8 +144,8 @@ const Field = ({ post, field, save }) => {
       <Row>
         <Pressable onPress={() => onCancel()}>
           <Icon
-            type={'MaterialIcons'}
-            name={'close'}
+            type={"MaterialIcons"}
+            name={"close"}
             style={[styles.fieldActionIcon, { borderWidth: 0 }]}
           />
         </Pressable>
@@ -145,9 +154,12 @@ const Field = ({ post, field, save }) => {
         <Row>
           <Pressable onPress={() => onSave()}>
             <Icon
-              type={'MaterialIcons'}
-              name={'save'}
-              style={[styles.fieldActionIcon, { fontSize: 32, marginTop: 'auto' }]}
+              type={"MaterialIcons"}
+              name={"save"}
+              style={[
+                styles.fieldActionIcon,
+                { fontSize: 32, marginTop: "auto" },
+              ]}
             />
           </Pressable>
         </Row>
@@ -157,9 +169,15 @@ const Field = ({ post, field, save }) => {
 
   const FieldComponent = () => {
     switch (field?.type) {
-      case 'boolean':
-        return <BooleanField value={state.value} editing={state.editing} onChange={onChange} />;
-      case 'communication_channel':
+      case "boolean":
+        return (
+        <BooleanField
+          value={state.value}
+          editing={state.editing}
+          onChange={onChange}
+        />
+      );
+      case "communication_channel":
         // TODO: better implementation (timer not intuitive)
         // TODO: RTL, styles
         return (
@@ -170,7 +188,7 @@ const Field = ({ post, field, save }) => {
             onChange={onChange}
           />
         );
-      case 'connection':
+      case "connection":
         // TODO: RTL, style, (*)lists, (*)milestones
         return (
           <ConnectionField
@@ -180,10 +198,16 @@ const Field = ({ post, field, save }) => {
             onChange={onChange}
           />
         );
-      case 'date':
+      case "date":
         // TODO: RTL, style, better component?
-        return <DateField value={state.value} editing={state.editing} onChange={onChange} />;
-      case 'key_select':
+        return (
+        <DateField
+          value={state.value}
+          editing={state.editing}
+          onChange={onChange}
+        />
+      );
+      case "key_select":
         // TODO: RTL, style
         return (
           <KeySelectField
@@ -194,10 +218,16 @@ const Field = ({ post, field, save }) => {
           />
         );
       //case 'location_grid':
-      case 'location':
+      case "location":
         // TODO: RTL, style
-        return <LocationField value={state.value} editing={state.editing} onChange={onChange} />;
-      case 'multi_select':
+        return (
+        <LocationField
+          value={state.value}
+          editing={state.editing}
+          onChange={onChange}
+        />
+      );
+      case "multi_select":
         // TODO: RTL, style
         return (
           <MultiSelectField
@@ -207,21 +237,31 @@ const Field = ({ post, field, save }) => {
             onChange={onChange}
           />
         );
-      case 'number':
+      case "number":
         // TODO: RTL, style
         if (field?.name === "member_count") {
-          return(
+          return (
             <>
-              <NumberField value={state.value} editing={state.editing} onChange={onChange} />
+              <NumberField
+              value={state.value}
+              editing={state.editing}
+              onChange={onChange}
+            />
               <MemberList members={post?.members?.values} />
             </>
           );
         }
-        return <NumberField value={state.value} editing={state.editing} onChange={onChange} />;
-      case 'post_user_meta':
+        return (
+        <NumberField
+          value={state.value}
+          editing={state.editing}
+          onChange={onChange}
+        />
+      );
+      case "post_user_meta":
         return null;
       //return <PostUserMetaField value={state.value} editing={state.editing} onChange={onChange} />;
-      case 'tags':
+      case "tags":
         // TODO: RTL, style
         return (
           <TagsField
@@ -231,12 +271,24 @@ const Field = ({ post, field, save }) => {
             onChange={onChange}
           />
         );
-      case 'user_select':
+      case "user_select":
         // TODO: RTL, style
-        return <UserSelectField value={state.value} editing={state.editing} onChange={onChange} />;
+        return (
+        <UserSelectField
+          value={state.value}
+          editing={state.editing}
+          onChange={onChange}
+        />
+      );
       default:
         // TODO: RTL, style
-        return <TextField value={state.value} editing={state.editing} onChange={onChange} />;
+        return (
+        <TextField
+          value={state.value}
+          editing={state.editing}
+          onChange={onChange}
+        />
+      );
     }
   };
 
@@ -258,8 +310,14 @@ const Field = ({ post, field, save }) => {
     );
   return (
     <Grid>
-      <Row style={[state.editing ? styles.raisedBox : null, styles.formRow, styles.formDivider]}>
-        <Col size={1} style={[{ marginBottom: 'auto' }, styles.formIconLabel]}>
+      <Row
+        style={[
+          state.editing ? styles.raisedBox : null,
+          styles.formRow,
+          styles.formDivider,
+        ]}
+      >
+        <Col size={1} style={[{ marginBottom: "auto" }, styles.formIconLabel]}>
           <FieldIcon field={field} />
         </Col>
         <Col size={2} style={styles.formParentLabel}>

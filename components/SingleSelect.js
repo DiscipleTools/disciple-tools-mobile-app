@@ -1,10 +1,10 @@
-import React from 'react';
-import { Picker } from '@react-native-picker/picker';
-import { Icon } from 'native-base';
+import React from "react";
+import { Picker } from "@react-native-picker/picker";
+import { Icon } from "native-base";
 
-import useI18N from 'hooks/useI18N';
+import useI18N from "hooks/useI18N";
 
-import { styles } from 'components/Field/Field.styles';
+import { styles } from "components/Field/Field.styles";
 
 const SingleSelect = ({ items, selectedItem, onChange }) => {
   const { i18n, isRTL } = useI18N();
@@ -14,11 +14,13 @@ const SingleSelect = ({ items, selectedItem, onChange }) => {
     if (newValue === -1) {
       onChange({
         key: -1,
-        label: '',
+        label: "",
       });
       return;
     }
-    const newItem = items.find((existingItems) => existingItems.ID === newValue);
+    const newItem = items.find(
+      (existingItems) => existingItems.ID === newValue
+    );
     if (newItem)
       onChange({
         key: newItem?.ID ?? null,
@@ -34,13 +36,14 @@ const SingleSelect = ({ items, selectedItem, onChange }) => {
         onValueChange={handleChange}
         // TODO: confirm this on Android
         iosIcon={<Icon name="caret-down" size={10} style={styles.pickerIcon} />}
-        textStyle={{ fontSize: 14 }}>
-        <Picker.Item key={-1} label={''} value={-1} />
+        textStyle={{ fontSize: 14 }}
+      >
+        <Picker.Item key={-1} label={""} value={-1} />
         {items.map((item) => {
           return (
             <Picker.Item
               key={item?.ID}
-              label={item?.name + ' (#' + item?.ID + ')'}
+              label={item?.name + " (#" + item?.ID + ")"}
               value={item?.ID}
             />
           );

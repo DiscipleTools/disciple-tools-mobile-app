@@ -34,15 +34,26 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 // styles/assets
 import { styles } from "./LoginScreen.styles";
 
+import { useDispatch } from "react-redux";
+
 const LoginScreen = ({ navigation, route }) => {
+
+  // TODO: remove after testing
+  const dispatch = useDispatch();
+
+  /*
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
   console.log("$$$$$          LOGIN SCREEN                   $$$$$");
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+  */
 
   const { user, rememberLoginDetails, signIn } = useAuth();
-  const { i18n, isRTL, locale, setLocale } = useI18N();
+  const { i18n, isRTL, locale } = useI18N();
   const { mobileAppPluginEnabled, mobileAppPluginLink } = usePlugins();
   const toast = useToast();
+
+  console.log("__________________________")
+  console.log(`isRTL: ${ isRTL }`);
 
   const [state, setState] = useState({
     domainValidation: null,
@@ -62,9 +73,6 @@ const LoginScreen = ({ navigation, route }) => {
       if (user?.domain) setDomain(user.domain);
       if (user?.username) setUsername(user.username);
     };
-    setDomain('dtappdemo.wpengine.com');
-    setUsername('zdmc23');
-    setPassword('fmZ%yM9sn8qv!A$9');
   }, [])
 
   const cleanDomain = (domain) => {
@@ -91,6 +99,9 @@ const LoginScreen = ({ navigation, route }) => {
   };
 
   const goToForgotPassword = () => {
+    // TODO: revert this
+    dispatch({ type: "CLEAR_REDUX_DATA" });
+    /*
     if (domain !== "") {
       Linking.openURL(
         `https://${domain}/wp-login.php?action=lostpassword`
@@ -98,6 +109,7 @@ const LoginScreen = ({ navigation, route }) => {
     } else {
       toast(i18n.t("loginScreen.domain.errorForgotPass", { locale }), true);
     }
+    */
   };
 
   const Header = () => {

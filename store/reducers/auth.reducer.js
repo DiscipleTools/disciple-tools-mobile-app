@@ -1,5 +1,6 @@
 import * as actions from "store/actions/auth.actions";
 import { REHYDRATE } from "redux-persist/lib/constants";
+import { CLEAR_REDUX_DATA } from "store/rootActions";
 
 const initialState = {
   rehydrate: false,
@@ -11,6 +12,8 @@ const initialState = {
 
 export default function authReducer(state = initialState, action) {
   switch (action.type) {
+    case CLEAR_REDUX_DATA:
+      return initialState;
     case REHYDRATE:
       return {
         ...state,

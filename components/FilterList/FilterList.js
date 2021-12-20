@@ -1,34 +1,34 @@
-import React, { useState, useCallback } from 'react';
-import { RefreshControl, Text, View, useWindowDimensions } from 'react-native';
-import PropTypes from 'prop-types';
+import React, { useState, useCallback } from "react";
+import { RefreshControl, Text, View, useWindowDimensions } from "react-native";
+import PropTypes from "prop-types";
 
 // Component Library (Native Base)
 // (recommended by native base (https://docs.nativebase.io/Components.html#swipeable-multi-def-headref))
-import { SwipeListView } from 'react-native-swipe-list-view';
+import { SwipeListView } from "react-native-swipe-list-view";
 
 // Expo
 
 // Custom Hooks
-import useI18N from 'hooks/useI18N';
-import usePostType from 'hooks/usePostType.js';
-import useSettings from 'hooks/useSettings.js';
+import useI18N from "hooks/useI18N";
+import useType from "hooks/useType.js";
 
 // Custom Components
-import SearchBar from 'components/SearchBar';
+import SearchBar from "./SearchBar";
 
 // Third-party Components
 // (native base does not have a Skeleton component)
-import ContentLoader, { Rect, Circle, Path } from 'react-content-loader/native';
+import ContentLoader, { Rect, Circle, Path } from "react-content-loader/native";
 
 // Assets
 // Styles
-import { styles } from './FilterList.styles';
+import { styles } from "./FilterList.styles";
 
 const FilterList = ({
+  posts,
+  settings,
   filter,
   setFilter,
   resetFilter,
-  posts,
   renderRow,
   loading,
   onRefresh,
@@ -47,8 +47,7 @@ const FilterList = ({
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const { isContact, isGroup, postType } = usePostType();
-  const { settings } = useSettings();
+  const { isContact, isGroup, postType } = useType();
 
   const setSearchFilter = (searchString) => {
     setFilter({
@@ -75,7 +74,7 @@ const FilterList = ({
   });
 
   const skeletons = Array(10)
-    .fill('')
+    .fill("")
     .map((_, i) => ({ key: `${i}`, text: `item #${i}` }));
 
   const renderDefaultSkeletonRow = (item) => {
@@ -85,9 +84,10 @@ const FilterList = ({
         speed={3}
         width={windowWidth}
         height={77}
-        viewBox={'0 ' + '0 ' + windowWidth + ' 80'}
+        viewBox={"0 " + "0 " + windowWidth + " 80"}
         backgroundColor="#e7e7e7"
-        foregroundColor="#b7b7b7">
+        foregroundColor="#b7b7b7"
+      >
         <Circle cx="385" cy="25" r="8" />
         <Rect x="10" y="20" rx="2" ry="2" width="150" height="8" />
         <Rect x="10" y="45" rx="2" ry="2" width="100" height="5" />
@@ -100,15 +100,25 @@ const FilterList = ({
 
   const listItemSeparator = () => <View style={styles.listItemSeparator} />;
 
-  let placeholder = i18n.t('global.placeholder');
-  if (isContact) placeholder = i18n.t('contactsScreen.noContactPlaceHolder');
-  if (isGroup) placeholder = i18n.t('groupsScreen.noGroupPlaceHolder');
+  let placeholder = i18n.t("global.placeholder");
+  if (isContact) placeholder = i18n.t("contactsScreen.noContactPlacheHolder");
+  if (isGroup) placeholder = i18n.t("groupsScreen.noGroupPlacheHolder");
 
+  /*
+  return (
+    <Text>
+      { JSON.stringify(posts) }
+    </Text>
+  );
+  */
   // TODO: make the placeholder prettier (reuse from comments?)
   return (
     <>
       {showSearchBar && (
-        <SearchBar setFilter={setSearchFilter} setOptionsFilter={setOptionsFilter} />
+        <SearchBar
+          setFilter={setSearchFilter}
+          setOptionsFilter={setOptionsFilter}
+        />
       )}
       {posts?.length < 1 ? (
         <View style={styles.background}>
@@ -118,18 +128,21 @@ const FilterList = ({
         <SwipeListView
           data={posts ?? skeletons}
           renderItem={(item) => {
-            const isSkeletons = item?.item?.text?.includes('item #');
+            const isSkeletons = item?.item?.text?.includes("item #");
             // render normal
-            if (!loading && !isSkeletons && renderRow) return renderRow(item.item);
+            if (!loading && !isSkeletons && renderRow)
+              return renderRow(item.item);
             // render component provided skeletons
             if (item && renderSkeletonRow) return renderSkeletonRow(item.item);
             // render default skeletons
             return renderDefaultSkeletonRow(item.item);
           }}
           renderHiddenItem={(item, rowMap) => {
-            const isSkeletons = item?.item?.text?.includes('item #');
+            const isSkeletons = item?.item?.text?.includes("item #");
             // confirm is not skeletons and render fn exists, else return null
-            return !isSkeletons && renderHiddenRow ? renderHiddenRow(item, rowMap) : null;
+            return !isSkeletons && renderHiddenRow
+              ? renderHiddenRow(item, rowMap)
+              : null;
           }}
           leftOpenValue={leftOpenValue}
           rightOpenValue={leftOpenValue}
@@ -143,7 +156,9 @@ const FilterList = ({
           keyExtractor={(item) => item?.ID?.toString()}
           extraData={settings}
           ListFooterComponent={footer}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={_onRefresh} />}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={_onRefresh} />
+          }
           style={styles.background}
         />
       )}

@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Icon } from 'native-base';
+import React from "react";
+import PropTypes from "prop-types";
+import { Icon } from "native-base";
 
-import Colors from '../constants/Colors';
+import Colors from "../constants/Colors";
 
 function TabBarIcon({ type, name, focused }) {
   return (

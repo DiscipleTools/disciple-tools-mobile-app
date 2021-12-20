@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
-import Colors from 'constants/Colors';
+import { StyleSheet } from "react-native";
+import Colors from "constants/Colors";
 
 export const styles = StyleSheet.create({
   searchBarContainer: {
@@ -16,24 +16,24 @@ export const styles = StyleSheet.create({
     minHeight: 60,
   },
   searchBarItem: {
-    borderColor: '#DDDDDD',
+    borderColor: "#DDDDDD",
     borderRadius: 3,
     borderWidth: 10,
   },
   searchBarIcons: {
     fontSize: 20,
-    color: 'gray',
+    color: "gray",
     padding: 10,
   },
   searchBarInput: {
-    color: 'gray',
+    color: "gray",
     height: 41,
     fontSize: 18,
   },
   chip: {
-    borderColor: '#c2e0ff',
+    borderColor: "#c2e0ff",
     borderWidth: 1,
-    backgroundColor: '#ecf5fc',
+    backgroundColor: "#ecf5fc",
     borderRadius: 2,
     padding: 4,
     marginRight: 4,

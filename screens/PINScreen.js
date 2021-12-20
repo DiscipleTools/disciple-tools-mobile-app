@@ -65,20 +65,23 @@ const PINScreen = ({ navigation, route }) => {
     if (isValidate || isDelete) {
       console.log("*** VALIDATE OR DELETE ***");
       const secretCode = await getPIN();
+      // TODO: translate
       if (secretCode === null) {
         toast(
-          "Error: Unable to retrieve existing PIN. Please contact your Disciple Tools Administrator for assistance",
+          "Error: Unable to retrieve existing PIN. Please reinstall app, and if the problem persists then please contact your Disciple Tools Administrator for assistance",
           true
         );
         pinInput.current.shake().then(() => setState({ ...state, code: "" }));
       } else if (code === secretCode) {
         if (isValidate) {
-          setCNoncePIN();
+          await setCNoncePIN();
         } else if (isDelete) {
           deletePIN();
+          navigation.goBack();
           toast(i18n.t("settingsScreen.removedPinCode"));
         } else {
           console.warn(`Unknown PINScreen type: ${type}`);
+          navigation.goBack();
         }
       } else {
         pinInput.current.shake().then(() => setState({ ...state, code: "" }));
@@ -117,6 +120,7 @@ const PINScreen = ({ navigation, route }) => {
       if (code === state.tmpCode) {
         setPIN(code);
         setState({ code: "", tmpCode: null });
+        navigation.goBack();
         toast(i18n.t("settingsScreen.savedPinCode"));
       } else {
         pinInput.current.shake().then(() =>

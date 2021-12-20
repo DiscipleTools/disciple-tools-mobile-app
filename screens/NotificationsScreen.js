@@ -1,26 +1,32 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
-import PropTypes from 'prop-types';
+import React, { useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  RefreshControl,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import PropTypes from "prop-types";
 
 // Component Library (Native Base)
-import { Container } from 'native-base';
+import { Container } from "native-base";
 
 // 3rd-Party Components
 //import { Html5Entities } from 'html-entities';
 
 // Custom Components
-import FilterList from 'components/FilterList';
-import OfflineBar from 'components/OfflineBar';
+import FilterList from "components/FilterList";
+import OfflineBar from "components/OfflineBar";
 
 // Custom Hooks
-import useNetworkStatus from 'hooks/useNetworkStatus';
-import useI18N from 'hooks/useI18N';
-import useNotifications from 'hooks/useNotifications.js';
+import useNetworkStatus from "hooks/useNetworkStatus";
+import useI18N from "hooks/useI18N";
+import useNotifications from "hooks/useNotifications.js";
 //import useMyUser from 'hooks/useMyUser.js';
 
 // Styles, Constants, Icons, Assets, etc...
-import { styles } from './NotificationsScreen.styles';
-import Colors from 'constants/Colors';
+import { styles } from "./NotificationsScreen.styles";
+import Colors from "constants/Colors";
 
 // TODO: resolve screen flickering
 const NotificationsScreen = ({ navigation }) => {
@@ -35,7 +41,7 @@ const NotificationsScreen = ({ navigation }) => {
     isValidating,
     mutate,
     markViewed,
-    markUnread
+    markUnread,
   } = useNotifications();
   //const { userData, error: userError } = useMyUser();
   /*
@@ -49,7 +55,7 @@ const NotificationsScreen = ({ navigation }) => {
   const userData = null;
 
   const unreadNotifications = notifications?.filter((notification) => {
-    if (notification.is_new === '1') return notification;
+    if (notification.is_new === "1") return notification;
   });
 
   const [isAll, setIsAll] = useState(true);
@@ -64,42 +70,63 @@ const NotificationsScreen = ({ navigation }) => {
   const renderRow = (notification) => {
     //console.log('*** RENDER ROW ***');
     //console.log(JSON.stringify(notification));
-    const str1 = notification.notification_note.search('<');
-    const str2 = notification.notification_note.search('>');
+    const str1 = notification.notification_note.search("<");
+    const str2 = notification.notification_note.search(">");
     const str3 = notification.notification_note.length - 4;
     const newNotificationNoteA = notification.notification_note.substr(0, str1);
-    const newNotificationNoteB = notification.notification_note.substr(str2, str3);
-    const str4 = newNotificationNoteB.search('<') - 1;
+    const newNotificationNoteB = notification.notification_note.substr(
+      str2,
+      str3
+    );
+    const str4 = newNotificationNoteB.search("<") - 1;
     const newNotificationNoteC = newNotificationNoteB.substr(1, str4);
     let entityLink = notification.notification_note.substring(
       notification.notification_note.lastIndexOf('href="') + 6,
-      notification.notification_note.lastIndexOf('">'),
+      notification.notification_note.lastIndexOf('">')
     );
-    let entityId = entityLink.split('/')[4];
-    let entityName = entityLink.split('/')[3];
+    let entityId = entityLink.split("/")[4];
+    let entityName = entityLink.split("/")[3];
     // TODO
     //const entities = new Html5Entities();
-    const isNew = notification.is_new === '1' ? true : false;
+    const isNew = notification.is_new === "1" ? true : false;
     return (
       <View
         style={
           isNew
-            ? { backgroundColor: 'rgba(63, 114, 155, 0.19)' }
+            ? { backgroundColor: "rgba(63, 114, 155, 0.19)" }
             : { backgroundColor: Colors.mainBackgroundColor }
-        }>
-        <View style={[styles.notificationContainer, { flex: 1, flexDirection: 'row' }]}>
+        }
+      >
+        <View
+          style={[
+            styles.notificationContainer,
+            { flex: 1, flexDirection: "row" },
+          ]}
+        >
           <View style={{ flex: 1 }}>
-            <Text style={[isRTL ? { textAlign: 'left' } : {}]}>
+            <Text style={isRTL ? { textAlign: "left" } : {}}>
               {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
               <Text>{newNotificationNoteA}</Text>
               <Text
                 style={{ color: Colors.primary }}
-                onPress={() => redirectToDetailView(entityName, entityId, newNotificationNoteC)}>
+                onPress={() =>
+                  redirectToDetailView(
+                    entityName,
+                    entityId,
+                    newNotificationNoteC
+                  )
+                }
+              >
                 {newNotificationNoteC}
                 {/*entities.decode(newNotificationNoteC)*/}
               </Text>
             </Text>
-            <Text style={[styles.prettyTime, isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+            <Text
+              style={[
+                styles.prettyTime,
+                isRTL ? { textAlign: "left", flex: 1 } : {},
+              ]}
+            >
               {/*TODOmoment(notification.date_notified).fromNow() +
                 ' ~ ' +
               moment(notification.date_notified).format('L')*/}
@@ -108,10 +135,15 @@ const NotificationsScreen = ({ navigation }) => {
           <TouchableOpacity
             onPress={() => {
               toggleReadUnread(notification, isNew);
-            }}>
+            }}
+          >
             <View style={styles.buttonContainer}>
               <View
-                style={isNew ? styles.notificationUnreadButton : styles.notificationReadButton}
+                style={
+                  isNew
+                    ? styles.notificationUnreadButton
+                    : styles.notificationReadButton
+                }
               />
             </View>
           </TouchableOpacity>
@@ -120,18 +152,21 @@ const NotificationsScreen = ({ navigation }) => {
     );
   };
 
-  const toggleReadUnread = async(notification, isNew) => isNew ? await markViewed(notification.id) : await markUnread(notification.id);
+  const toggleReadUnread = async (notification, isNew) =>
+    isNew
+      ? await markViewed(notification.id)
+      : await markUnread(notification.id);
 
   const redirectToDetailView = (viewName, entityId, entityTitle) => {
     let view, prop;
     switch (viewName) {
-      case 'contacts':
-        view = 'ContactDetail';
-        prop = 'contact';
+      case "contacts":
+        view = "ContactDetail";
+        prop = "contact";
         break;
-      case 'groups':
-        view = 'GroupDetail';
-        prop = 'group';
+      case "groups":
+        view = "GroupDetail";
+        prop = "group";
         break;
       default:
     }
@@ -149,8 +184,11 @@ const NotificationsScreen = ({ navigation }) => {
         <TouchableOpacity
           onPress={() => {
             onRefresh(true);
-          }}>
-          <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
+          }}
+        >
+          <Text style={styles.loadMoreFooterText}>
+            {i18n.t("notificationsScreen.loadMore")}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -160,15 +198,18 @@ const NotificationsScreen = ({ navigation }) => {
     return (
       <ScrollView
         contentContainerStyle={styles.dontHaveNotificationsText}
-        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}>
+        refreshControl={
+          <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+        }
+      >
         {isAll && (
           <Text style={styles.dontHaveNotificationsText}>
-            {i18n.t('notificationsScreen.dontHaveNotifications')}
+            {i18n.t("notificationsScreen.dontHaveNotifications")}
           </Text>
         )}
         {!isAll && (
           <Text style={styles.dontHaveNotificationsText}>
-            {i18n.t('notificationsScreen.dontHaveNotificationsUnread')}
+            {i18n.t("notificationsScreen.dontHaveNotificationsUnread")}
           </Text>
         )}
       </ScrollView>
@@ -185,17 +226,14 @@ const NotificationsScreen = ({ navigation }) => {
   return (
     <Container style={styles.container}>
       {!isConnected && <OfflineBar />}
-      {notifications.length > 0 ? (
-        <FilterList
-          posts={notifications}
-          loading={isLoading || isValidating}
-          renderRow={renderRow}
-          //footer={list.length >= DEFAULT_LIMIT ? renderFooter : null}
-          //style={{ backgroundColor: Colors.mainBackgroundColor }}
-        />
-      ) : (
-        <NotificationsPlaceholder />
-      )}
+      <FilterList
+        posts={notifications}
+        loading={isLoading || isValidating}
+        renderRow={renderRow}
+        //footer={list.length >= DEFAULT_LIMIT ? renderFooter : null}
+        //style={{ backgroundColor: Colors.mainBackgroundColor }}
+        //placeholder={}
+      />
     </Container>
   );
 };

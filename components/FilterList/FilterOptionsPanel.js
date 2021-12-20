@@ -1,39 +1,41 @@
-import React, { useState } from 'react';
-import { Platform, Pressable, Text, useWindowDimensions, View } from 'react-native';
-import PropTypes from 'prop-types';
+import React, { useState } from "react";
+import {
+  Platform,
+  Pressable,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import PropTypes from "prop-types";
 
 // component library (native base)
-import { Accordion, Icon, Input, Item } from 'native-base';
+import { Accordion, Icon, Input, Item } from "native-base";
 
 // TODO: migrate to StyleSheet
-import Colors from 'constants/Colors';
+import Colors from "constants/Colors";
 
 // custom components
-import useI18N from 'hooks/useI18N';
-import useNetworkStatus from 'hooks/useNetworkStatus';
-import useMyUser from 'hooks/useMyUser';
+import useI18N from "hooks/useI18N";
+import useNetworkStatus from "hooks/useNetworkStatus";
+import useMyUser from "hooks/useMyUser";
 //import useSettings from 'hooks/useSettings';
-import useFilters from 'hooks/useFilters';
-import useToast from 'hooks/useToast';
+import useFilters from "hooks/useFilters";
+import useToast from "hooks/useToast";
 
 // third-party components
 // NOTE: this is used to pass a custom component/icon as checkbox to preserve a standard look-and-feel across platform (which is not currently supported by native base)
 // TODO: replace with existing depenedency
-import { CheckBox } from 'react-native-elements';
+import { CheckBox } from "react-native-elements";
 
 // styles/assets
-import { styles } from './FilterOptionsPanel.styles';
-import { MaterialIcons } from '@expo/vector-icons';
+import { styles } from "./FilterOptionsPanel.styles";
+import { MaterialIcons } from "@expo/vector-icons";
 
-const FilterOptionsPanel = ({ setFilter }) => {
+const FilterOptionsPanel = () => {
   const isConnected = useNetworkStatus();
   const { i18n, isRTL } = useI18N();
 
-  const { userData } = useMyUser();
-
-  //const { settings, error: settingsError } = useSettings();
-  const { customFilters, error: customFiltersError } = useFilters();
-  //if (customFiltersError) toast(customFiltersError.message, true);
+  //const { userData } = useMyUser();
 
   const initialState = {
     filter: {
@@ -43,6 +45,14 @@ const FilterOptionsPanel = ({ setFilter }) => {
     },
   };
   const [state, setState] = useState(initialState);
+
+  //const { settings, error: settingsError } = useSettings();
+  const { data: customFilters, error } = useFilters();
+  //console.log("*** CUSTOM FILTERS 1 ***");
+  //console.log(JSON.stringify(customFilters));
+  if (!customFilters) return null;
+  console.log("*** CUSTOM FILTERS 2 ***");
+  //if (customFiltersError) toast(customFiltersError.message, true);
 
   /*
   // TODO: ?? 
@@ -65,123 +75,137 @@ const FilterOptionsPanel = ({ setFilter }) => {
   const renderHeader = (item, expanded) => {
     return (
       <View
-        style={[
-          {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: 10,
-            backgroundColor: expanded ? Colors.primary : '#FFFFFF',
-            height: 50,
-            paddingLeft: 15,
-            paddingRight: 15,
-            borderTopWidth: 1,
-            borderBottomWidth: 1,
-            borderColor: Colors.grayLight,
-            width: '100%',
-          },
-        ]}>
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: 10,
+          backgroundColor: expanded ? Colors.primary : "#FFFFFF",
+          height: 50,
+          paddingLeft: 15,
+          paddingRight: 15,
+          borderTopWidth: 1,
+          borderBottomWidth: 1,
+          borderColor: Colors.grayLight,
+          width: "100%",
+        }}
+      >
         <Text
           style={{
-            color: expanded ? '#FFFFFF' : Colors.primary,
-            marginTop: 'auto',
-            marginBottom: 'auto',
-            fontWeight: 'bold',
-          }}>
-          {item.title}
+            color: expanded ? "#FFFFFF" : Colors.primary,
+            marginTop: "auto",
+            marginBottom: "auto",
+            fontWeight: "bold",
+          }}
+        >
+          {item?.title}
         </Text>
         <Text
           style={{
-            color: expanded ? '#FFFFFF' : Colors.primary,
-            marginTop: 'auto',
-            marginBottom: 'auto',
-            marginRight: 'auto',
-          }}>
-          {item.count ? (
+            color: expanded ? "#FFFFFF" : Colors.primary,
+            marginTop: "auto",
+            marginBottom: "auto",
+            marginRight: "auto",
+          }}
+        >
+          {item?.count ? (
             <Text
               style={{
-                color: expanded ? '#FFFFFF' : Colors.primary,
-                marginTop: 'auto',
-                marginBottom: 'auto',
-              }}>
+                color: expanded ? "#FFFFFF" : Colors.primary,
+                marginTop: "auto",
+                marginBottom: "auto",
+              }}
+            >
               {` (${item.count})`}
             </Text>
           ) : null}
         </Text>
         <Text
           style={{
-            color: expanded ? '#FFFFFF' : Colors.primary,
-            marginTop: 'auto',
-            marginBottom: 'auto',
-            marginLeft: 'auto',
-          }}>
-          {expanded ? '-' : '+'}
+            color: expanded ? "#FFFFFF" : Colors.primary,
+            marginTop: "auto",
+            marginBottom: "auto",
+            marginLeft: "auto",
+          }}
+        >
+          {expanded ? "-" : "+"}
         </Text>
       </View>
     );
   };
 
   const renderContent = (item, expanded) => {
-    const content = item.content;
+    //console.log("*** RENDER CONTENT ***");
+    const content = item?.content;
+    //console.log(content);
     return (
       <View
-        key={item}
+        key={0}
         style={{
           //borderWidth: 1,
           //borderColor: Colors.grayLight,
           paddingTop: 10,
           paddingBottom: 10,
           paddingRight: 10,
-        }}>
+        }}
+      >
         {content.length > 0 ? (
           content.map((filter) => {
             const subfilter = filter?.subfilter ?? 0;
             let indent = 0;
-            if (typeof subfilter !== 'boolean') {
+            if (typeof subfilter !== "boolean") {
               indent = 20 * subfilter; // 1, 2, ...
             }
             return (
               <Pressable
-                key={filter.ID}
-                onPress={() => filterByOption(filter.ID, filter.name, filter.query)}>
+                key={filter?.ID}
+                onPress={() =>
+                  filterByOption(filter?.ID, filter?.name, filter?.query)
+                }
+              >
                 <View
                   style={{
-                    flexDirection: 'row',
+                    flexDirection: "row",
                     height: 50,
                     paddingLeft: indent,
-                  }}>
+                  }}
+                >
                   <CheckBox
-                    checked={filter.ID === state.filter.ID}
+                    checked={filter?.ID === state?.filter?.ID}
                     checkedIcon="dot-circle-o"
                     uncheckedIcon="circle-o"
-                    onPress={() => filterByOption(filter.ID, filter.name, filter.query)}
+                    onPress={() =>
+                      filterByOption(filter?.ID, filter?.name, filter?.query)
+                    }
                     containerStyle={{ padding: 0, margin: 0 }}
                   />
                   <Text
                     style={{
-                      paddingTop: Platform.OS === 'ios' ? 4 : 0,
-                    }}>
-                    {filter.name}
+                      paddingTop: Platform.OS === "ios" ? 4 : 0,
+                    }}
+                  >
+                    {filter?.name}
                   </Text>
                   <Text
                     style={{
-                      marginLeft: 'auto',
-                      paddingTop: Platform.OS === 'ios' ? 4 : 0,
-                    }}>
-                    {filter.count}
+                      marginLeft: "auto",
+                      paddingTop: Platform.OS === "ios" ? 4 : 0,
+                    }}
+                  >
+                    {filter?.count}
                   </Text>
                 </View>
               </Pressable>
             );
           })
         ) : (
-          <Text>{i18n.t('global.noFilters')}</Text>
+          <Text>{i18n.t("global.noFilters")}</Text>
         )}
       </View>
     );
   };
 
-  if (!customFilters) return null;
+  //console.log(customFilters);
   return (
     <View>
       <Item regular>
@@ -228,6 +252,6 @@ const FilterOptionsPanel = ({ setFilter }) => {
   }
   */
 FilterOptionsPanel.propTypes = {
-  setFilter: PropTypes.func.isRequired,
+  //setFilter: PropTypes.func.isRequired,
 };
 export default FilterOptionsPanel;

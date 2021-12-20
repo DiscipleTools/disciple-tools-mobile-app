@@ -11,13 +11,13 @@ This helper script interfaces with POEditor API in the following ways:
 NOTE: Locale codes are mapped per the D.T definitions in order to match (ie., 'fa' -> 'fa_IR')
 */
 
-const https = require('https');
-const fs = require('fs');
+const https = require("https");
+const fs = require("fs");
 
 // constants
 const TRANSLATION_THRESHOLD = 80.0;
-const POEDITOR_THEME_ID = '251019';
-const POEDITOR_MOBILE_ID = '303023';
+const POEDITOR_THEME_ID = "251019";
+const POEDITOR_MOBILE_ID = "303023";
 
 if (!process.env.POEDITOR_API_KEY) {
   console.log("Missing required 'POEDITOR_API_KEY'");
@@ -27,63 +27,63 @@ if (!process.env.POEDITOR_API_KEY) {
 // required params
 const api_token = process.env.POEDITOR_API_KEY;
 const options = {
-  hostname: 'api.poeditor.com',
+  hostname: "api.poeditor.com",
   port: 443,
-  method: 'POST',
+  method: "POST",
   headers: {
-    'Content-Type': 'application/x-www-form-urlencoded',
+    "Content-Type": "application/x-www-form-urlencoded",
   },
 };
 
 // ref: https://github.com/DiscipleTools/disciple-tools-theme/blob/master/dt-assets/translation/download-poeditor-updates.php
 const mapCode = (code) => {
-  if (code === 'am') return 'am_ET';
-  if (code === 'ar-ma') return 'ar_MA';
-  if (code === 'bg') return 'bg_BG';
-  if (code === 'bn') return 'bn_BD';
-  if (code === 'bs') return 'bs_BA';
-  if (code === 'es') return 'es_ES';
-  if (code === 'es-419') return 'es_419';
-  if (code === 'es-ar') return 'es_AR';
-  if (code === 'es-co') return 'es_CO';
-  if (code === 'es-mx') return 'es_MX';
-  if (code === 'fa') return 'fa_IR';
-  if (code === 'fr') return 'fr_FR';
-  if (code === 'hi') return 'hi_IN';
-  if (code === 'mk') return 'mk_MK';
-  if (code === 'my') return 'my_MM';
-  if (code === 'ne') return 'ne_NP';
-  if (code === 'zh-Hans') return 'zh_CN';
-  if (code === 'zh-Hant') return 'zh_TW';
-  if (code === 'nl') return 'nl_NL';
-  if (code === 'en') return 'en_US';
-  if (code === 'de') return 'de_DE';
-  if (code === 'id') return 'id_ID';
-  if (code === 'ko') return 'ko_KR';
-  if (code === 'pt-br') return 'pt_BR';
-  if (code === 'ru') return 'ru_RU';
-  if (code === 'sr') return 'sr_BA';
-  if (code === 'sl') return 'sl_SI';
-  if (code === 'tr') return 'tr_TR';
-  if (code === 'ro') return 'ro_RO';
-  if (code === 'pa') return 'pa_IN';
-  if (code === 'it') return 'it_IT';
+  if (code === "am") return "am_ET";
+  if (code === "ar-ma") return "ar_MA";
+  if (code === "bg") return "bg_BG";
+  if (code === "bn") return "bn_BD";
+  if (code === "bs") return "bs_BA";
+  if (code === "es") return "es_ES";
+  if (code === "es-419") return "es_419";
+  if (code === "es-ar") return "es_AR";
+  if (code === "es-co") return "es_CO";
+  if (code === "es-mx") return "es_MX";
+  if (code === "fa") return "fa_IR";
+  if (code === "fr") return "fr_FR";
+  if (code === "hi") return "hi_IN";
+  if (code === "mk") return "mk_MK";
+  if (code === "my") return "my_MM";
+  if (code === "ne") return "ne_NP";
+  if (code === "zh-Hans") return "zh_CN";
+  if (code === "zh-Hant") return "zh_TW";
+  if (code === "nl") return "nl_NL";
+  if (code === "en") return "en_US";
+  if (code === "de") return "de_DE";
+  if (code === "id") return "id_ID";
+  if (code === "ko") return "ko_KR";
+  if (code === "pt-br") return "pt_BR";
+  if (code === "ru") return "ru_RU";
+  if (code === "sr") return "sr_BA";
+  if (code === "sl") return "sl_SI";
+  if (code === "tr") return "tr_TR";
+  if (code === "ro") return "ro_RO";
+  if (code === "pa") return "pa_IN";
+  if (code === "it") return "it_IT";
   return code;
 };
 
 const listLanguages = async (id) => {
   return new Promise((resolve, reject) => {
     const data = `api_token=${api_token}&id=${id}`;
-    options['path'] = '/v2/languages/list';
-    options['headers']['Content-Length'] = Buffer.byteLength(data);
-    let response = '';
+    options["path"] = "/v2/languages/list";
+    options["headers"]["Content-Length"] = Buffer.byteLength(data);
+    let response = "";
     const req = https.request(options, (res) => {
-      res.on('data', (chunk) => {
+      res.on("data", (chunk) => {
         response += chunk;
         resolve(response);
       });
     });
-    req.on('error', (error) => {
+    req.on("error", (error) => {
       reject(error);
     });
     req.write(data);
@@ -93,18 +93,18 @@ const listLanguages = async (id) => {
 
 const getExportLink = async (lang, id) => {
   return new Promise((resolve, reject) => {
-    const type = 'key_value_json';
+    const type = "key_value_json";
     const data = `api_token=${api_token}&id=${id}&language=${lang}&type=${type}`;
-    options['path'] = '/v2/projects/export';
-    options['headers']['Content-Length'] = Buffer.byteLength(data);
-    let response = '';
+    options["path"] = "/v2/projects/export";
+    options["headers"]["Content-Length"] = Buffer.byteLength(data);
+    let response = "";
     const req = https.request(options, (res) => {
-      res.on('data', (chunk) => {
+      res.on("data", (chunk) => {
         response += chunk;
         resolve(response);
       });
     });
-    req.on('error', (error) => {
+    req.on("error", (error) => {
       reject(error);
     });
     req.write(data);
@@ -118,7 +118,7 @@ const downloadExport = async (code, url) => {
     const path = `${__dirname}/${mappedCode}.json`;
     const filePath = fs.createWriteStream(path);
     res.pipe(filePath);
-    filePath.on('finish', () => {
+    filePath.on("finish", () => {
       filePath.close();
       const desc = code !== mappedCode ? `${code} (${mappedCode})` : code;
       console.log(`download complete for "${desc}"`);
@@ -148,7 +148,7 @@ const runner = async () => {
       .filter((x) => !!x);
     console.log(`supportedCodes: ${JSON.stringify(supportedCodes)}`);
     const exportVar = {};
-    var stream = fs.createWriteStream(__dirname + '/index.js', { flags: 'w' });
+    var stream = fs.createWriteStream(__dirname + "/index.js", { flags: "w" });
     //supportedCodes.forEach(code => {
     for (let ii = 0; ii < supportedCodes.length; ii++) {
       const code = supportedCodes[ii];
@@ -162,12 +162,12 @@ const runner = async () => {
       const url = JSON.parse(res).result.url;
       await downloadExport(code, url);
     }
-    stream.write('module.exports = {\n');
+    stream.write("module.exports = {\n");
     supportedCodes.forEach((code) => {
       const mappedCode = mapCode(code);
       stream.write(`\t"${mappedCode}": ${mappedCode},\n`);
     });
-    stream.write('};\n');
+    stream.write("};\n");
     stream.end();
   } catch (err) {
     console.error(err);

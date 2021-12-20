@@ -1,18 +1,18 @@
-import { StyleSheet } from 'react-native';
-import Colors from 'constants/Colors';
+import { StyleSheet } from "react-native";
+import Colors from "constants/Colors";
 
 export const styles = StyleSheet.create({
   body: {
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   button: {
     backgroundColor: Colors.tintColor,
   },
   languagePickerContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: Colors.gray,
     padding: 5,
-    alignItems: 'center',
+    alignItems: "center",
   },
   languagePicker: {
     flex: 1,

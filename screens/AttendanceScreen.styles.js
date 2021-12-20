@@ -1,18 +1,18 @@
-import { StyleSheet } from 'react-native';
-import Colors from 'constants/Colors';
+import { StyleSheet } from "react-native";
+import Colors from "constants/Colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     paddingTop: 10,
   },
   subHeader: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 20,
     marginTop: 20,
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   scrollView: {
     borderTopColor: Colors.gray,
@@ -23,12 +23,12 @@ export const styles = StyleSheet.create({
   },
   listItem: {
     flex: 1,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
+    flexDirection: "column",
+    alignItems: "flex-start",
   },
   listItemView: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
     margin: 10,
   },
   groupTextField: {
@@ -52,12 +52,12 @@ export const styles = StyleSheet.create({
     marginBottom: 50,
   },
   nextButton: {
-    alignSelf: 'center',
+    alignSelf: "center",
     width: 100,
     backgroundColor: Colors.tintColor,
     borderRadius: 2,
   },
   nextButtonText: {
-    color: 'white',
+    color: "white",
   },
 });

@@ -1,11 +1,18 @@
-import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import React from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
-import { Chip, Selectize } from 'react-native-material-selectize';
+import { Chip, Selectize } from "react-native-material-selectize";
 
-import { styles } from './MultiSelect.styles';
+import { styles } from "./MultiSelect.styles";
 
-const MultiSelect = ({ items, selectedItems, onChange, placeholder, customAdd, customRemove }) => {
+const MultiSelect = ({
+  items,
+  selectedItems,
+  onChange,
+  placeholder,
+  customAdd,
+  customRemove,
+}) => {
   /*
   Selectize component requires a consistent identifier,
   so we map any input to 'id' property
@@ -14,9 +21,9 @@ const MultiSelect = ({ items, selectedItems, onChange, placeholder, customAdd, c
     if (!itemsToMap || itemsToMap.length < 1) return itemsToMap;
     return itemsToMap.map((itemToMap) => {
       const mappedItem = { ...itemToMap };
-      if (itemToMap?.value) mappedItem['id'] = itemToMap.value;
-      if (itemToMap?.key) mappedItem['id'] = itemToMap.key;
-      if (itemToMap?.ID) mappedItem['id'] = itemToMap.ID;
+      if (itemToMap?.value) mappedItem["id"] = itemToMap.value;
+      if (itemToMap?.key) mappedItem["id"] = itemToMap.key;
+      if (itemToMap?.ID) mappedItem["id"] = itemToMap.ID;
       return mappedItem;
     });
   };
@@ -27,12 +34,14 @@ const MultiSelect = ({ items, selectedItems, onChange, placeholder, customAdd, c
   const add = (newValue) => {
     console.log(`+++ addSelection: ${JSON.stringify(newValue)}`);
     // no longer need the 'id' (return original format)
-    delete newValue['id'];
+    delete newValue["id"];
     if (customAdd) {
       customAdd(newValue);
       return;
     }
-    const exists = selectedItems.find((value) => value?.value === newValue?.value);
+    const exists = selectedItems.find(
+      (value) => value?.value === newValue?.value
+    );
     if (!exists)
       onChange({
         values: [...selectedItems, newValue],
@@ -45,7 +54,9 @@ const MultiSelect = ({ items, selectedItems, onChange, placeholder, customAdd, c
       customRemove(deletedValue);
       return;
     }
-    const idx = selectedItems.findIndex((value) => value?.value === deletedValue?.value);
+    const idx = selectedItems.findIndex(
+      (value) => value?.value === deletedValue?.value
+    );
     if (idx > -1) {
       const newValues = [...selectedItems];
       const removed = newValues.splice(idx, 1);
@@ -58,7 +69,7 @@ const MultiSelect = ({ items, selectedItems, onChange, placeholder, customAdd, c
 
   return (
     <Selectize
-      itemId={'id'}
+      itemId={"id"}
       items={mappedItems}
       selectedItems={mappedSelectedItems}
       textInputProps={{
@@ -73,28 +84,34 @@ const MultiSelect = ({ items, selectedItems, onChange, placeholder, customAdd, c
           style={{
             paddingVertical: 8,
             paddingHorizontal: 10,
-          }}>
+          }}
+        >
           <View
             style={{
-              flexDirection: 'row',
-              width: '100%',
-            }}>
-            {item?.avatar && <Image style={styles.avatar} source={{ uri: item?.avatar }} />}
+              flexDirection: "row",
+              width: "100%",
+            }}
+          >
+            {item?.avatar && (
+              <Image style={styles.avatar} source={{ uri: item?.avatar }} />
+            )}
             <Text
               style={{
-                color: 'rgba(0, 0, 0, 0.87)',
+                color: "rgba(0, 0, 0, 0.87)",
                 fontSize: 14,
                 lineHeight: 21,
-              }}>
+              }}
+            >
               {item?.label || item?.name || item?.value}
             </Text>
             <Text
               style={{
-                color: 'rgba(0, 0, 0, 0.54)',
+                color: "rgba(0, 0, 0, 0.54)",
                 fontSize: 14,
                 lineHeight: 21,
-              }}>
-              {' '}
+              }}
+            >
+              {" "}
               (#
               {id})
             </Text>

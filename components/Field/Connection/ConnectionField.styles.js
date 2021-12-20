@@ -1,16 +1,16 @@
-import { Dimensions, StyleSheet } from 'react-native';
-import Colors from 'constants/Colors';
+import { Dimensions, StyleSheet } from "react-native";
+import Colors from "constants/Colors";
 
 const containerPadding = 20;
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 const circleSideSize = windowWidth / 3 + 20;
 
 export const styles = StyleSheet.create({
   linkingText: {
     paddingTop: 4,
     paddingBottom: 8,
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
   formContainer: {
     paddingTop: 10,
@@ -21,9 +21,9 @@ export const styles = StyleSheet.create({
   formRow: {
     paddingTop: 15,
     paddingBottom: 15,
-    width: '100%',
+    width: "100%",
   },
-  formIconLabel: { marginLeft: 10, width: 'auto' },
+  formIconLabel: { marginLeft: 10, width: "auto" },
   formIconLabelMarginLeft: {
     marginLeft: containerPadding + 10,
   },
@@ -35,21 +35,21 @@ export const styles = StyleSheet.create({
   formIcon: {
     color: Colors.tintColor,
     fontSize: 25,
-    marginTop: 'auto',
-    marginBottom: 'auto',
+    marginTop: "auto",
+    marginBottom: "auto",
   },
   formParentLabel: {
-    width: 'auto',
+    width: "auto",
     maxWidth: 75,
   },
   formLabel: {
     color: Colors.tintColor,
     fontSize: 12,
-    marginTop: 'auto',
-    marginBottom: 'auto',
+    marginTop: "auto",
+    marginBottom: "auto",
   },
   formDivider: {
-    borderBottomColor: '#CCCCCC',
+    borderBottomColor: "#CCCCCC",
     borderBottomWidth: 1,
   },
   formDivider2: {
@@ -67,7 +67,7 @@ export const styles = StyleSheet.create({
     marginRight: 10,
   },
   formIconLabelView: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   formFieldPadding: {
     paddingTop: 30,
@@ -81,41 +81,41 @@ export const styles = StyleSheet.create({
     height: circleSideSize,
   },
   groupCircleContainer: {
-    height: '100%',
+    height: "100%",
     width: circleSideSize,
   },
   groupCircle: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    position: 'absolute',
-    height: '85%',
-    width: '85%',
-    marginTop: '7.5%',
-    marginRight: '7.5%',
-    marginBottom: '7.5%',
-    marginLeft: '7.5%',
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    position: "absolute",
+    height: "85%",
+    width: "85%",
+    marginTop: "7.5%",
+    marginRight: "7.5%",
+    marginBottom: "7.5%",
+    marginLeft: "7.5%",
   },
   groupCenterIcon: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    position: 'absolute',
-    height: '40%',
-    width: '40%',
-    marginTop: '25%',
-    resizeMode: 'contain',
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    position: "absolute",
+    height: "40%",
+    width: "40%",
+    marginTop: "25%",
+    resizeMode: "contain",
   },
   groupCircleName: {
-    justifyContent: 'center',
-    marginTop: '20%',
-    marginLeft: '20%',
-    marginRight: '20%',
+    justifyContent: "center",
+    marginTop: "20%",
+    marginLeft: "20%",
+    marginRight: "20%",
   },
-  groupCircleNameText: { fontSize: 11, textAlign: 'center' },
+  groupCircleNameText: { fontSize: 11, textAlign: "center" },
   groupCircleCounter: {
-    justifyContent: 'center',
-    marginTop: '-5%',
+    justifyContent: "center",
+    marginTop: "-5%",
   },
   groupIcons: {
     height: 30,
@@ -123,8 +123,8 @@ export const styles = StyleSheet.create({
   },
   progressIconText: {
     fontSize: 9,
-    textAlign: 'center',
-    width: '100%',
+    textAlign: "center",
+    width: "100%",
   },
   membersIconActive: {
     opacity: 1,
@@ -140,7 +140,7 @@ export const styles = StyleSheet.create({
   membersCloseIcon: {
     color: Colors.grayDark,
     fontSize: 25,
-    marginTop: 'auto',
-    marginBottom: 'auto',
+    marginTop: "auto",
+    marginBottom: "auto",
   },
 });

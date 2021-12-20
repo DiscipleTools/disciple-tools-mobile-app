@@ -28,7 +28,7 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: "module",
   },
-  plugins: ["react", "react-native", "jsx-a11y", "prettier", "jest"],
+  plugins: ["react", "react-native", "react-hooks", "jsx-a11y", "prettier", "jest"],
   rules: {
     indent: ["error", 2],
     "linebreak-style": ["error", "unix"],
@@ -40,6 +40,8 @@ module.exports = {
     //"react-native/no-color-literals": 2,
     "react-native/no-raw-text": 2,
     "react-native/no-single-element-style-arrays": 2,
+    "react-hooks/rules-of-hooks": 'error',
+    "react-hooks/exhaustive-deps": 'warn',
     "prettier/prettier": "warn",
     "jest/no-disabled-tests": "warn",
     "jest/no-focused-tests": "error",

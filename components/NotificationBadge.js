@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text } from 'native-base';
-import { connect } from 'react-redux';
+import React from "react";
+import { View, Text } from "native-base";
+import { connect } from "react-redux";
 
 class NotificationBadge extends React.Component {
   render() {
@@ -8,24 +8,26 @@ class NotificationBadge extends React.Component {
       return (
         <View
           style={{
-            position: 'absolute',
+            position: "absolute",
             zIndex: 1,
             right: -10,
             bottom: 0,
             height: 16,
             width: 16,
             borderRadius: 16 / 2,
-            backgroundColor: '#d9534f',
-          }}>
+            backgroundColor: "#d9534f",
+          }}
+        >
           <Text
             style={{
               fontSize: 8,
-              color: '#ffffff',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: 'auto',
-              marginBottom: 'auto',
-            }}>
+              color: "#ffffff",
+              marginLeft: "auto",
+              marginRight: "auto",
+              marginTop: "auto",
+              marginBottom: "auto",
+            }}
+          >
             {this.props.notificationsCount}
           </Text>
         </View>

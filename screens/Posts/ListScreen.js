@@ -1,28 +1,29 @@
-import React, { useState } from 'react';
-import { View, Pressable, Text } from 'react-native';
-import { Container, Icon } from 'native-base';
-import PropTypes from 'prop-types';
+import React, { useState } from "react";
+import { View, Pressable, Text } from "react-native";
+import { Container, Icon } from "native-base";
+import PropTypes from "prop-types";
 
 // Custom Hooks
-import useNetworkStatus from 'hooks/useNetworkStatus';
-import useI18N from 'hooks/useI18N';
-import usePostType from 'hooks/usePostType';
-import useList from 'hooks/useList';
-import useTheme from 'hooks/useTheme';
-import useToast from 'hooks/useToast';
+import useNetworkStatus from "hooks/useNetworkStatus";
+import useI18N from "hooks/useI18N";
+import useList from "hooks/useList";
+import useType from "hooks/useType";
+import useSettings from "hooks/useSettings";
+import useTheme from "hooks/useTheme";
+import useToast from "hooks/useToast";
 
 // Custom Components
-import FAB from 'components/FAB';
-import FilterList from 'components/FilterList';
-import ActionModal from 'components/ActionModal';
-import OfflineBar from 'components/OfflineBar';
-import Subtitles from 'components/Subtitles';
+import FAB from "components/FAB";
+import FilterList from "components/FilterList";
+import ActionModal from "components/ActionModal";
+import OfflineBar from "components/OfflineBar";
+import Subtitles from "components/Subtitles";
 
-import { styles } from './ListScreen.styles';
+import { styles } from "./ListScreen.styles";
 
-import Constants from 'constants';
+import Constants from "constants";
 // TODO: move to StyleSheet
-import Colors from 'constants/Colors';
+import Colors from "constants/Colors";
 
 const ListScreen = ({ navigation, route }) => {
   // TODO: move to Constants?
@@ -31,13 +32,14 @@ const ListScreen = ({ navigation, route }) => {
 
   const isConnected = useNetworkStatus();
   const { i18n, isRTL } = useI18N();
-  const { isContact, isGroup, postType } = usePostType();
+  const { isContact, isGroup, postType } = useType();
   const { getSelectorColor } = useTheme();
+  const { settings } = useSettings();
   const toast = useToast();
 
   const defaultFilter = {
-    text: '',
-    sort: '-last_modified',
+    text: "",
+    sort: "-last_modified",
   };
   const [filter, setFilter] = useState(defaultFilter);
   /*
@@ -54,7 +56,7 @@ const ListScreen = ({ navigation, route }) => {
   const [state, setState] = useState({
     offset: 0,
     limit: PAGINATION_LIMIT,
-    sort: '-last_modified',
+    sort: "-last_modified",
     filtered: false,
     filterOption: null,
     filterText: null,
@@ -76,7 +78,13 @@ const ListScreen = ({ navigation, route }) => {
 */
 
   // get posts
-  const { posts, error: listError, isLoading, isValidating, mutate } = useList(filter);
+  const {
+    posts,
+    error: listError,
+    isLoading,
+    isValidating,
+    mutate,
+  } = useList(filter);
   //if (listError) toast(listError.message, true);
   /*
   return(
@@ -91,8 +99,11 @@ const ListScreen = ({ navigation, route }) => {
           <Pressable
             onPress={() => {
               onRefresh(true);
-            }}>
-            <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
+            }}
+          >
+            <Text style={styles.loadMoreFooterText}>
+              {i18n.t("notificationsScreen.loadMore")}
+            </Text>
           </Pressable>
         )}
       </View>
@@ -102,7 +113,7 @@ const ListScreen = ({ navigation, route }) => {
   const truncateRowChars = (displayValue) => {
     const threshold = 40;
     if (displayValue.length > threshold) {
-      return displayValue.substring(0, threshold) + '...';
+      return displayValue.substring(0, threshold) + "...";
     }
     return displayValue;
   };
@@ -110,18 +121,20 @@ const ListScreen = ({ navigation, route }) => {
   const renderImportContactsRow = (contact) => {
     // TODO: FINISH - conditional icons
     let contactExists = contact.exists ? true : false;
-    let contactPhoneDisplay = '';
+    let contactPhoneDisplay = "";
     if (contact.contact_phone) {
       contactPhoneDisplay = contact.contact_phone[0].value;
       if (contact.contact_phone.length > 1) {
-        contactPhoneDisplay = contactPhoneDisplay + ', ' + contact.contact_phone[1].value;
+        contactPhoneDisplay =
+          contactPhoneDisplay + ", " + contact.contact_phone[1].value;
       }
     }
-    let contactEmailDisplay = '';
+    let contactEmailDisplay = "";
     if (contact.contact_email) {
       contactEmailDisplay = contact.contact_email[0].value;
       if (contact.contact_email.length > 1) {
-        contactEmailDisplay = contactEmailDisplay + ', ' + contact.contact_email[1].value;
+        contactEmailDisplay =
+          contactEmailDisplay + ", " + contact.contact_email[1].value;
       }
     }
     return (
@@ -129,8 +142,8 @@ const ListScreen = ({ navigation, route }) => {
         onPress={() => {
           if (contactExists) {
             // DISPLAY MODAL TO CONFIRM NAVIGATE TO CONTACT DETAILS
-            console.log('*************');
-            console.log('ASK THE USER!!');
+            console.log("*************");
+            console.log("ASK THE USER!!");
             //goToDetailsScreen(contact);
           } else {
             setState({ importContactsModalVisible: false });
@@ -138,38 +151,48 @@ const ListScreen = ({ navigation, route }) => {
           }
         }}
         style={styles.rowFront}
-        key={contact.idx}>
-        <View style={{ flexDirection: 'row', height: '100%' }}>
-          <View style={{ flexDirection: 'column', flexGrow: 1 }}>
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={{ textAlign: 'left', flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }}>
-                {Object.prototype.hasOwnProperty.call(contact, 'name')
+        key={contact.idx}
+      >
+        <View style={{ flexDirection: "row", height: "100%" }}>
+          <View style={{ flexDirection: "column", flexGrow: 1 }}>
+            <View style={{ flexDirection: "row" }}>
+              <Text
+                style={{
+                  textAlign: "left",
+                  flex: 1,
+                  flexWrap: "wrap",
+                  fontWeight: "bold",
+                }}
+              >
+                {Object.prototype.hasOwnProperty.call(contact, "name")
                   ? contact.name
                   : contact.title}
               </Text>
             </View>
             {contactPhoneDisplay.length > 0 && (
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{ flexDirection: "row" }}>
                 <Text
                   style={[
                     styles.contactSubtitle,
                     {
-                      textAlign: 'left',
+                      textAlign: "left",
                     },
-                  ]}>
+                  ]}
+                >
                   {truncateRowChars(contactPhoneDisplay)}
                 </Text>
               </View>
             )}
             {contactEmailDisplay.length > 0 && (
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{ flexDirection: "row" }}>
                 <Text
                   style={[
                     styles.contactSubtitle,
                     {
-                      textAlign: 'left',
+                      textAlign: "left",
                     },
-                  ]}>
+                  ]}
+                >
                   {truncateRowChars(contactEmailDisplay)}
                 </Text>
               </View>
@@ -178,18 +201,19 @@ const ListScreen = ({ navigation, route }) => {
           <View
             style={[
               {
-                flexDirection: 'column',
+                flexDirection: "column",
                 width: 35,
                 paddingTop: 0,
-                marginTop: 'auto',
-                marginBottom: 'auto',
+                marginTop: "auto",
+                marginBottom: "auto",
               },
               isRTL ? { marginRight: 5 } : { marginLeft: 5 },
-            ]}>
+            ]}
+          >
             <Icon
               style={{ color: contactExists ? Colors.gray : Colors.tintColor }}
               type="MaterialIcons"
-              name={contactExists ? 'playlist-add-check' : 'person-add'}
+              name={contactExists ? "playlist-add-check" : "person-add"}
             />
           </View>
         </View>
@@ -206,36 +230,48 @@ const ListScreen = ({ navigation, route }) => {
           goToDetailsScreen(record);
         }}
         style={styles.rowFront}
-        key={record.ID}>
-        <View style={{ flexDirection: 'row', height: '100%' }}>
-          <View style={{ flexDirection: 'column', flexGrow: 1 }}>
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={[{ textAlign: 'left', flex: 1, flexWrap: 'wrap', fontWeight: 'bold' }]}>
-                {Object.prototype.hasOwnProperty.call(record, 'name') ? record.name : record.title}
+        key={record.ID}
+      >
+        <View style={{ flexDirection: "row", height: "100%" }}>
+          <View style={{ flexDirection: "column", flexGrow: 1 }}>
+            <View style={{ flexDirection: "row" }}>
+              <Text
+                style={{
+                  textAlign: "left",
+                  flex: 1,
+                  flexWrap: "wrap",
+                  fontWeight: "bold",
+                }}
+              >
+                {Object.prototype.hasOwnProperty.call(record, "name")
+                  ? record.name
+                  : record.title}
               </Text>
             </View>
-            <Subtitles record={record} />
+            <Subtitles record={record} settings={settings} />
           </View>
           <View
             style={[
               {
-                flexDirection: 'column',
+                flexDirection: "column",
                 width: Constants.STATUS_CIRCLE_SIZE,
                 paddingTop: 0,
-                marginTop: 'auto',
-                marginBottom: 'auto',
+                marginTop: "auto",
+                marginBottom: "auto",
               },
               isRTL ? { marginRight: 5 } : { marginLeft: 5 },
-            ]}>
+            ]}
+          >
             <View
               style={{
                 width: Constants.STATUS_CIRCLE_SIZE,
                 height: Constants.STATUS_CIRCLE_SIZE,
                 borderRadius: Constants.STATUS_CIRCLE_SIZE / 2,
                 backgroundColor: getSelectorColor(statusValue),
-                marginTop: 'auto',
-                marginBottom: 'auto',
-              }}></View>
+                marginTop: "auto",
+                marginBottom: "auto",
+              }}
+            ></View>
           </View>
         </View>
       </Pressable>
@@ -243,37 +279,80 @@ const ListScreen = ({ navigation, route }) => {
   };
 
   const renderHiddenRow = (data, rowMap) => {
-    const btn1Style = isRTL ? { left: Constants.SWIPE_BTN_WIDTH * 2 } : { left: 0 };
+    const btn1Style = isRTL
+      ? { left: Constants.SWIPE_BTN_WIDTH * 2 }
+      : { left: 0 };
     const btn2Style = isRTL
       ? { left: Constants.SWIPE_BTN_WIDTH }
+      //: { left: Constants.SWIPE_BTN_WIDTH };
+      : { left: 0 };
+    const btn3Style = isRTL
+      ? { left: 0 }
+      //: { left: Constants.SWIPE_BTN_WIDTH * 2 };
       : { left: Constants.SWIPE_BTN_WIDTH };
-    const btn3Style = isRTL ? { left: 0 } : { left: Constants.SWIPE_BTN_WIDTH * 2 };
     //const btn3Style = isRTL ? { right: 0 } : { right: Constants.SWIPE_BTN_WIDTH };
     //const btn4Style = isRTL ? { right: Constants.SWIPE_BTN_WIDTH } : { right: 0 };
     return (
       <View style={styles.rowBack}>
+        {/*
         <Pressable
-          style={[styles.backBtn, styles.backBtn1, btn1Style, { width: Constants.SWIPE_BTN_WIDTH }]}
-          onPress={() => console.log('*** BUTTON 1 CLICKED ***')}>
-          <Icon type="MaterialCommunityIcons" name="check" style={styles.backBtnIcon} />
+          style={[
+            styles.backBtn,
+            styles.backBtn1,
+            btn1Style,
+            { width: Constants.SWIPE_BTN_WIDTH },
+          ]}
+          onPress={() => console.log("*** BUTTON 1 CLICKED ***")}
+        >
+          <Icon
+            type="MaterialCommunityIcons"
+            name="check"
+            style={styles.backBtnIcon}
+          />
           <Text style={styles.backBtnText}>Update Status</Text>
         </Pressable>
+        */}
         <Pressable
-          style={[styles.backBtn, styles.backBtn2, btn2Style, { width: Constants.SWIPE_BTN_WIDTH }]}
+          style={[
+            styles.backBtn,
+            styles.backBtn2,
+            btn2Style,
+            { width: Constants.SWIPE_BTN_WIDTH },
+          ]}
           onPress={() => {
-            console.log('*** BUTTON 2 CLICKED ***');
+            console.log("*** BUTTON 2 CLICKED ***");
             //console.log(JSON.stringify(questionnaires));
-          }}>
-          <Icon type="MaterialCommunityIcons" name="calendar-check" style={styles.backBtnIcon} />
+          }}
+        >
+          <Icon
+            type="MaterialCommunityIcons"
+            name="calendar-check"
+            style={styles.backBtnIcon}
+          />
           <Text style={styles.backBtnText}>Meeting Complete</Text>
         </Pressable>
         <Pressable
-          style={[styles.backBtn, styles.backBtn3, btn3Style, { width: Constants.SWIPE_BTN_WIDTH }]}
+          style={[
+            styles.backBtn,
+            styles.backBtn3,
+            btn3Style,
+            { width: Constants.SWIPE_BTN_WIDTH },
+          ]}
           onPress={() => {
-            console.log('*** BUTTON 3 CLICKED ***');
-            //setState({ ...state, commentsModalVisible: true });
-          }}>
-          <Icon type="MaterialCommunityIcons" name="pencil" style={styles.backBtnIcon} />
+            //console.log("*** BUTTON 3 CLICKED ***");
+            console.log(`data: ${JSON.stringify(data)}`);
+            // TODO: constants
+            navigation.navigate('CommentsActivity', {
+              id: data?.item?.ID,
+              type: postType
+            });
+          }}
+        >
+          <Icon
+            type="MaterialCommunityIcons"
+            name="pencil"
+            style={styles.backBtnIcon}
+          />
           <Text style={styles.backBtnText}>Comment</Text>
         </Pressable>
         {/*
@@ -297,13 +376,13 @@ const ListScreen = ({ navigation, route }) => {
 
   const goToDetailsScreen = (postData = null, isPhoneImport = false) => {
     if (postData && isPhoneImport) {
-      navigation.navigate('Details', {
+      navigation.navigate("Details", {
         importContact: contactData,
         type: postType,
       });
     } else if (postData) {
       // Detail
-      navigation.navigate('Details', {
+      navigation.navigate("Details", {
         id: postData.ID,
         name: postData.title,
         type: postType,
@@ -311,7 +390,7 @@ const ListScreen = ({ navigation, route }) => {
       });
     } else {
       // Create
-      navigation.navigate('Details', {
+      navigation.navigate("Details", {
         create: true,
         type: postType,
       });
@@ -328,7 +407,7 @@ const ListScreen = ({ navigation, route }) => {
       },
       () => {
         onRefresh(false);
-      },
+      }
     );
   };
 
@@ -336,7 +415,9 @@ const ListScreen = ({ navigation, route }) => {
     // NOTE: Contacts are already indexed by most recently modified, so we only need to reverse the array. If ever changes, then just sort by idx (id)
     const importContactsList = state.importContactsList.reverse();
     const existingContactsList =
-      state.dataSourceContact && state.dataSourceContact.length > 0 ? state.dataSourceContact : [];
+      state.dataSourceContact && state.dataSourceContact.length > 0
+        ? state.dataSourceContact
+        : [];
     const contactsInBothLists = [];
     existingContactsList.map((existingContact) => {
       importContactsList.map((importContact) => {
@@ -354,7 +435,7 @@ const ListScreen = ({ navigation, route }) => {
             importContact.title &&
             existingContact.name === importContact.title)
         ) {
-          importContact['exists'] = true;
+          importContact["exists"] = true;
           contactsInBothLists.push(importContact);
         }
       });
@@ -363,53 +444,53 @@ const ListScreen = ({ navigation, route }) => {
     const importContactsFilters = {
       tabs: [
         {
-          key: 'default',
-          label: 'Default Filters',
+          key: "default",
+          label: "Default Filters",
           order: 1,
         },
       ],
       filters: [
         {
-          ID: 'all_my_contacts',
+          ID: "all_my_contacts",
           labels: [
             {
-              id: 'all',
-              name: 'All Contacts',
+              id: "all",
+              name: "All Contacts",
             },
           ],
-          name: 'All Contacts',
+          name: "All Contacts",
           query: {
-            sort: '-last_modified',
+            sort: "-last_modified",
           },
-          tab: 'default',
+          tab: "default",
         },
         {
-          ID: 'not_yet_imported',
+          ID: "not_yet_imported",
           labels: [
             {
-              id: 'notyet',
-              name: 'Not Yet Imported',
+              id: "notyet",
+              name: "Not Yet Imported",
             },
           ],
-          name: 'Not Yet Imported',
+          name: "Not Yet Imported",
           query: {
-            sort: '-last_modified',
+            sort: "-last_modified",
           },
-          tab: 'default',
+          tab: "default",
         },
         {
-          ID: 'already_imported',
+          ID: "already_imported",
           labels: [
             {
-              id: 'already',
-              name: 'Already Imported',
+              id: "already",
+              name: "Already Imported",
             },
           ],
-          name: 'Already Imported',
+          name: "Already Imported",
           query: {
-            sort: '-last_modified',
+            sort: "-last_modified",
           },
-          tab: 'default',
+          tab: "default",
         },
       ],
     };
@@ -435,11 +516,14 @@ const ListScreen = ({ navigation, route }) => {
         {!isConnected && <OfflineBar />}
         {state.commentsModalVisible && (
           <ActionModal
-            height={'40%'}
+            height={"40%"}
             modalVisible={state.commentsModalVisible}
-            setModalVisible={(modalVisible) => setState({ commentsModalVisible: modalVisible })}
+            setModalVisible={(modalVisible) =>
+              setState({ commentsModalVisible: modalVisible })
+            }
             // TODO: translate
-            title={'Comments'}>
+            title={"Comments"}
+          >
             {commentsRender()}
           </ActionModal>
         )}
@@ -450,7 +534,8 @@ const ListScreen = ({ navigation, route }) => {
             setModalVisible={(modalVisible) =>
               setState({ importContactsModalVisible: modalVisible })
             }
-            title={i18n.t('contactsScreen.importContact')}>
+            title={i18n.t("contactsScreen.importContact")}
+          >
             {importContactsRender()}
           </ActionModal>
         )}
@@ -462,10 +547,10 @@ const ListScreen = ({ navigation, route }) => {
           renderRow={renderRow}
           loading={isLoading}
           onRefresh={onRefresh}
-          renderHiddenRow={isContact ? renderHiddenRow : null}
-          leftOpenValue={isContact ? Constants.SWIPE_BTN_WIDTH * 3 : null}
+          renderHiddenRow={renderHiddenRow}
+          leftOpenValue={Constants.SWIPE_BTN_WIDTH * 2}
         />
-        <FAB />
+        <FAB settings={settings} />
       </View>
     </Container>
   );

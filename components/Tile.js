@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
-import { KeyboardAvoidingView, ScrollView, View, RefreshControl } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import React, { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  ScrollView,
+  View,
+  RefreshControl,
+} from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 // Custom Components
-import Field from 'components/Field/Field';
+import Field from "components/Field/Field";
 
 const Tile = ({ post, fields, save, mutate }) => {
   const [refreshing, setRefreshing] = useState(false);
@@ -46,13 +51,16 @@ const Tile = ({ post, fields, save, mutate }) => {
   */
   return (
     <KeyboardAwareScrollView
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
       extraScrollHeight={75}
-      keyboardShouldPersistTaps="handled">
+      keyboardShouldPersistTaps="handled"
+    >
       {fields
         .filter((field) => currentlyUnsupportedFieldFilter(field))
-        .map((field) => (
-          <Field post={post} field={field} save={save} />
+        .map((field, idx) => (
+          <Field key={ field?.name ?? idx } post={post} field={field} save={save} />
         ))}
     </KeyboardAwareScrollView>
   );

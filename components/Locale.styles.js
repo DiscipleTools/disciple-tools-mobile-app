@@ -1,16 +1,16 @@
-import { StyleSheet } from 'react-native';
-import Colors from 'constants/Colors';
+import { StyleSheet } from "react-native";
+import Colors from "constants/Colors";
 
 export const styles = StyleSheet.create({
   dialogBackground: {
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
     top: 0,
     left: 0,
   },
   dialogBox: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     padding: 20,
     marginLeft: 10,
     marginRight: 10,
@@ -19,9 +19,9 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.tintColor,
     borderRadius: 5,
     //width: 150,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1,
@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
   },
   dialogContent: {
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: "center",
     color: Colors.grayDark,
     marginBottom: 5,
   },

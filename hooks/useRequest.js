@@ -1,13 +1,20 @@
-import useSWR from 'swr';
-import axios from 'services/axios';
+import { useEffect } from "react";
+import useSWR from "swr";
+import axios from "services/axios";
 
-import useNetworkStatus from 'hooks/useNetworkStatus';
-import useRequestQueue from 'hooks/useRequestQueue';
+import useNetworkStatus from "hooks/useNetworkStatus";
+import useRequestQueue from "hooks/useRequestQueue";
 
 const useRequest = (request, { initialData, ...config } = {}) => {
-
   const { isConnected } = useNetworkStatus();
-  const { hasPendingRequests, queueRequest, processRequests } = useRequestQueue();
+  const { hasPendingRequests, queueRequest, processRequests } =
+    useRequestQueue();
+
+  /*
+  console.log("======== USE REQUEST");
+  console.log(`baseURL: ${ axios.defaults.baseURL }`);
+  console.log(`request: ${ JSON.stringify(request) }`);
+  */
 
   // if offline, then do not make the request (by passing null arg)
   let { data, error, isLoading, isValidating, mutate } = useSWR(
@@ -17,11 +24,11 @@ const useRequest = (request, { initialData, ...config } = {}) => {
       ...config,
       initialData: initialData && {
         status: 200,
-        statusText: 'InitialData',
+        statusText: "InitialData",
         headers: {},
         data: initialData,
       },
-    },
+    }
   );
 
   // this method serves for any non-read request (create, update, delete)

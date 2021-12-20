@@ -1,7 +1,7 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 // TODO: cannot use hook without functional component
 //import useTheme from 'hooks/useTheme';
-import Colors from 'constants/Colors';
+import Colors from "constants/Colors";
 
 const listItemHeight = 80;
 const swipeBtnWidth = 80;
@@ -19,14 +19,14 @@ export const styles = StyleSheet.create({
   },
   rowBack: {
     backgroundColor: Colors.grayLight,
-    flexDirection: 'row',
+    flexDirection: "row",
     height: listItemHeight,
   },
   backBtn: {
     backgroundColor: Colors.grayLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
     top: 0,
     bottom: 0,
     height: listItemHeight,
@@ -34,17 +34,17 @@ export const styles = StyleSheet.create({
     borderColor: Colors.gray,
   },
   backBtnIcon: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 22,
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowColor: "rgba(0, 0, 0, 0.75)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 1,
   },
   backBtnText: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 12,
-    fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    fontWeight: "bold",
+    textShadowColor: "rgba(0, 0, 0, 0.75)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 1,
   },
@@ -62,50 +62,50 @@ export const styles = StyleSheet.create({
   },
   contactSubtitle: {
     flex: 1,
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
     paddingTop: 6,
-    fontWeight: '200',
-    color: 'rgba(0,0,0,0.6)',
+    fontWeight: "200",
+    color: "rgba(0,0,0,0.6)",
   },
   errorText: {
-    textAlign: 'center',
+    textAlign: "center",
     height: 100,
     padding: 20,
-    color: 'rgba(0,0,0,0.4)',
+    color: "rgba(0,0,0,0.4)",
   },
   contactFABIcon: {
-    color: 'white',
+    color: "white",
     fontSize: 20,
   },
   offlineBar: {
     height: 20,
-    backgroundColor: '#FCAB10',
+    backgroundColor: "#FCAB10",
   },
   offlineBarText: {
     fontSize: 14,
-    color: 'white',
-    textAlignVertical: 'center',
-    textAlign: 'center',
+    color: "white",
+    textAlignVertical: "center",
+    textAlign: "center",
   },
   loadMoreFooterText: {
     padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#3f729b',
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#3f729b",
   },
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 22,
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -113,16 +113,16 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    height: '95%',
-    width: '95%',
+    height: "95%",
+    width: "95%",
   },
   textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

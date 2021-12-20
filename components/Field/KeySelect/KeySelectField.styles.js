@@ -1,5 +1,5 @@
-import { Platform, StyleSheet } from 'react-native';
-import Colors from 'constants/Colors';
+import { Platform, StyleSheet } from "react-native";
+import Colors from "constants/Colors";
 
 export const styles = StyleSheet.create({
   fieldsIcons: {
@@ -9,12 +9,12 @@ export const styles = StyleSheet.create({
   formRow: {
     paddingTop: 15,
     paddingBottom: 15,
-    width: '100%',
+    width: "100%",
   },
   formIconLabel: {
     marginLeft: 10,
-    width: 'auto',
-    marginBottom: 'auto',
+    width: "auto",
+    marginBottom: "auto",
   },
   statusFieldContainer: Platform.select({
     default: {
@@ -28,6 +28,6 @@ export const styles = StyleSheet.create({
     fontSize: 22,
     right: 18,
     top: 10,
-    position: 'absolute',
+    position: "absolute",
   },
 });

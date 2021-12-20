@@ -1,11 +1,11 @@
-import React from 'react';
-import { Text } from 'react-native';
+import React from "react";
+import { Text } from "react-native";
 
 const MemberList = ({ members }) => {
-  return(
+  return (
     <>
-      { members.map(member => (
-        <Text>{ member?.name }</Text>
+      {members.map((member) => (
+        <Text>{member?.name}</Text>
       ))}
     </>
   );

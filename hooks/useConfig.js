@@ -3,7 +3,7 @@ const useConfig = () => {
   const refreshInterval = 0; //3000;
   return {
     timeout,
-    refreshInterval
+    refreshInterval,
   };
 };
 export default useConfig;

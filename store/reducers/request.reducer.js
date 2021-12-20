@@ -1,7 +1,7 @@
-import * as actions from '../actions/request.actions';
-import * as userActions from '../actions/user.actions';
+import * as actions from "../actions/request.actions";
+import * as userActions from "../actions/user.actions";
 
-import _ from 'lodash';
+import _ from "lodash";
 
 const initialState = {
   queue: [],
@@ -9,7 +9,7 @@ const initialState = {
 };
 
 export function generateLocalID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
     /* eslint-disable */
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r && 0x3) | 0x8;
@@ -34,10 +34,15 @@ export default function requestReducer(state = initialState, action) {
     */
     case actions.REQUEST: {
       // Queue all requests
-      if (actionToModify.data.method === 'POST' && actionToModify.action.includes('SAVE')) {
+      if (
+      actionToModify.data.method === "POST" &&
+        actionToModify.action.includes("SAVE")
+    ) {
         // Map only POST requests
         let jsonBody = JSON.parse(actionToModify.data.body);
-        if (Object.prototype.hasOwnProperty.call(action.payload, 'isConnected')) {
+        if (
+        Object.prototype.hasOwnProperty.call(action.payload, "isConnected")
+      ) {
           const jsonBodyId = jsonBody.ID,
             { isConnected } = actionToModify;
           delete actionToModify.isConnected;
@@ -48,23 +53,30 @@ export default function requestReducer(state = initialState, action) {
               const value = jsonBody[key];
               const valueType = Object.prototype.toString.call(value);
               if (
-                valueType === '[object Array]' ||
-                Object.prototype.hasOwnProperty.call(value, 'values')
+                valueType === "[object Array]" ||
+                Object.prototype.hasOwnProperty.call(value, "values")
               ) {
                 let collectionHasValues, mappedValue;
                 // "contact_" like field
-                if (valueType === '[object Array]') {
+                if (valueType === "[object Array]") {
                   collectionHasValues =
                     value.length > 0 &&
-                    Object.prototype.toString.call(value[0]) === '[object Object]' &&
-                    Object.prototype.hasOwnProperty.call(value[0], 'value');
+                    Object.prototype.toString.call(value[0]) ===
+                      "[object Object]" &&
+                    Object.prototype.hasOwnProperty.call(value[0], "value");
                   mappedValue = value;
-                } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                } else if (
+                Object.prototype.hasOwnProperty.call(value, "values")
+              ) {
                   // { value: '' } array field
                   collectionHasValues =
                     value.values.length > 0 &&
-                    Object.prototype.toString.call(value.values[0]) === '[object Object]' &&
-                    Object.prototype.hasOwnProperty.call(value.values[0], 'value');
+                    Object.prototype.toString.call(value.values[0]) ===
+                      "[object Object]" &&
+                    Object.prototype.hasOwnProperty.call(
+                      value.values[0],
+                      "value"
+                    );
                   mappedValue = value.values;
                 }
                 if (collectionHasValues) {
@@ -74,19 +86,21 @@ export default function requestReducer(state = initialState, action) {
                     if (
                       copyObject.key &&
                       /^([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})$/.test(
-                        copyObject.key,
+                        copyObject.key
                       )
                     ) {
                       delete copyObject.key;
                     }
                     return copyObject;
                   });
-                  if (valueType === '[object Array]') {
+                  if (valueType === "[object Array]") {
                     jsonBody = {
                       ...jsonBody,
                       [key]: mappedValue,
                     };
-                  } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                  } else if (
+                  Object.prototype.hasOwnProperty.call(value, "values")
+                ) {
                     jsonBody = {
                       ...jsonBody,
                       [key]: {
@@ -110,24 +124,31 @@ export default function requestReducer(state = initialState, action) {
               const value = jsonBody[key];
               const valueType = Object.prototype.toString.call(value);
               if (
-                valueType === '[object Array]' ||
-                Object.prototype.hasOwnProperty.call(value, 'values')
+                valueType === "[object Array]" ||
+                Object.prototype.hasOwnProperty.call(value, "values")
               ) {
                 let collectionHasValues;
                 let mappedValue;
                 // "contact_" like field
-                if (valueType === '[object Array]') {
+                if (valueType === "[object Array]") {
                   collectionHasValues =
                     value.length > 0 &&
-                    Object.prototype.toString.call(value[0]) === '[object Object]' &&
-                    Object.prototype.hasOwnProperty.call(value[0], 'value');
+                    Object.prototype.toString.call(value[0]) ===
+                      "[object Object]" &&
+                    Object.prototype.hasOwnProperty.call(value[0], "value");
                   mappedValue = value;
-                } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                } else if (
+                Object.prototype.hasOwnProperty.call(value, "values")
+              ) {
                   // { key: '', value: '' } array field
                   collectionHasValues =
                     value.values.length > 0 &&
-                    Object.prototype.toString.call(value.values[0]) === '[object Object]' &&
-                    Object.prototype.hasOwnProperty.call(value.values[0], 'value');
+                    Object.prototype.toString.call(value.values[0]) ===
+                      "[object Object]" &&
+                    Object.prototype.hasOwnProperty.call(
+                      value.values[0],
+                      "value"
+                    );
                   mappedValue = value.values;
                 }
                 if (collectionHasValues) {
@@ -155,12 +176,14 @@ export default function requestReducer(state = initialState, action) {
                     }
                     return object;
                   });
-                  if (valueType === '[object Array]') {
+                  if (valueType === "[object Array]") {
                     jsonBody = {
                       ...jsonBody,
                       [key]: mappedValue,
                     };
-                  } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                  } else if (
+                  Object.prototype.hasOwnProperty.call(value, "values")
+                ) {
                     jsonBody = {
                       ...jsonBody,
                       [key]: {
@@ -200,25 +223,33 @@ export default function requestReducer(state = initialState, action) {
                 const value = jsonBody[key];
                 const valueType = Object.prototype.toString.call(value);
                 if (
-                  valueType === '[object Array]' ||
-                  Object.prototype.hasOwnProperty.call(value, 'values')
+                  valueType === "[object Array]" ||
+                  Object.prototype.hasOwnProperty.call(value, "values")
                 ) {
                   let collection, oldCollection;
-                  if (valueType === '[object Array]') {
+                  if (valueType === "[object Array]") {
                     collection = value;
-                    oldCollection = oldRequestBody[key] ? [...oldRequestBody[key]] : [];
-                  } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                    oldCollection = oldRequestBody[key]
+                    ? [...oldRequestBody[key]]
+                    : [];
+                  } else if (
+                  Object.prototype.hasOwnProperty.call(value, "values")
+                ) {
                     collection = value.values;
-                    oldCollection = oldRequestBody[key] ? [...oldRequestBody[key].values] : [];
+                    oldCollection = oldRequestBody[key]
+                    ? [...oldRequestBody[key].values]
+                    : [];
                   }
                   // compare newCollection with oldCollection and merge differences.
                   collection.forEach((object) => {
                     // search object in oldRequestBody
                     let findObjectInOldRequestIndex = oldCollection.findIndex(
-                      (oldObject) => object.key === oldObject.key,
+                      (oldObject) => object.key === oldObject.key
                     );
                     if (findObjectInOldRequestIndex > -1) {
-                      if (Object.prototype.hasOwnProperty.call(object, 'delete')) {
+                      if (
+                      Object.prototype.hasOwnProperty.call(object, "delete")
+                    ) {
                         // remove object
                         oldCollection.splice(findObjectInOldRequestIndex, 1);
                       } else {
@@ -234,12 +265,14 @@ export default function requestReducer(state = initialState, action) {
                       });
                     }
                   });
-                  if (valueType === '[object Array]') {
+                  if (valueType === "[object Array]") {
                     newRequestBody = {
                       ...newRequestBody,
                       [key]: oldCollection,
                     };
-                  } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                  } else if (
+                  Object.prototype.hasOwnProperty.call(value, "values")
+                ) {
                     newRequestBody = {
                       ...newRequestBody,
                       [key]: {
@@ -306,24 +339,31 @@ export default function requestReducer(state = initialState, action) {
               const value = jsonBody[key];
               const valueType = Object.prototype.toString.call(value);
               if (
-                valueType === '[object Array]' ||
-                Object.prototype.hasOwnProperty.call(value, 'values')
+                valueType === "[object Array]" ||
+                Object.prototype.hasOwnProperty.call(value, "values")
               ) {
                 let collectionHasValues;
                 let mappedValue;
                 // "contact_" like field
-                if (valueType === '[object Array]') {
+                if (valueType === "[object Array]") {
                   collectionHasValues =
                     value.length > 0 &&
-                    Object.prototype.toString.call(value[0]) === '[object Object]' &&
-                    Object.prototype.hasOwnProperty.call(value[0], 'value');
+                    Object.prototype.toString.call(value[0]) ===
+                      "[object Object]" &&
+                    Object.prototype.hasOwnProperty.call(value[0], "value");
                   mappedValue = value;
-                } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                } else if (
+                Object.prototype.hasOwnProperty.call(value, "values")
+              ) {
                   // { key: '', value: '' } array field
                   collectionHasValues =
                     value.values.length > 0 &&
-                    Object.prototype.toString.call(value.values[0]) === '[object Object]' &&
-                    Object.prototype.hasOwnProperty.call(value.values[0], 'value');
+                    Object.prototype.toString.call(value.values[0]) ===
+                      "[object Object]" &&
+                    Object.prototype.hasOwnProperty.call(
+                      value.values[0],
+                      "value"
+                    );
                   mappedValue = value.values;
                 }
                 if (collectionHasValues) {
@@ -350,12 +390,14 @@ export default function requestReducer(state = initialState, action) {
                     }
                     return object;
                   });
-                  if (valueType === '[object Array]') {
+                  if (valueType === "[object Array]") {
                     jsonBody = {
                       ...jsonBody,
                       [key]: mappedValue,
                     };
-                  } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+                  } else if (
+                  Object.prototype.hasOwnProperty.call(value, "values")
+                ) {
                     jsonBody = {
                       ...jsonBody,
                       [key]: {
@@ -374,23 +416,24 @@ export default function requestReducer(state = initialState, action) {
           }
         }
         actionToModify.data.body = JSON.stringify(jsonBody);
-      } else if (actionToModify.data.method === 'GET') {
+      } else if (actionToModify.data.method === "GET") {
         // filter out redundant GET requests (omit request with same URL and METHOD)
         queue = _.reject(queue, function (request) {
           return (
-            request.url === actionToModify.url && request.data.method === actionToModify.data.method
+            request.url === actionToModify.url &&
+            request.data.method === actionToModify.data.method
           );
         });
-      } else if (actionToModify.data.method === 'DELETE') {
-        let urlSplit = actionToModify.url.split('/');
+      } else if (actionToModify.data.method === "DELETE") {
+        let urlSplit = actionToModify.url.split("/");
         // OFFLINE DELETE (comments)
         if (
-          urlSplit[urlSplit.length - 2] === 'comments' &&
-          Object.prototype.hasOwnProperty.call(actionToModify, 'isConnected') &&
+          urlSplit[urlSplit.length - 2] === "comments" &&
+          Object.prototype.hasOwnProperty.call(actionToModify, "isConnected") &&
           !actionToModify.isConnected
         ) {
           let id = urlSplit[urlSplit.length - 1];
-          let urlWithoutId = actionToModify.url.replace(id, '');
+          let urlWithoutId = actionToModify.url.replace(id, "");
           // Delete previous CREATE/EDIT request to the comment
           queue = queue.filter((existing) => existing.url !== urlWithoutId);
 
@@ -416,24 +459,25 @@ export default function requestReducer(state = initialState, action) {
     }
     case actions.RESPONSE: {
       // loop through every item in local storage and filter out the successful request
-      /* eslint-disable */
+    /* eslint-disable */
       let newQueue;
       /* eslint-enable */
-      if (action.payload.data.method === 'POST') {
+      if (action.payload.data.method === "POST") {
         newQueue = queue.filter(
           (request) =>
             request.action !== action.payload.action &&
             request.url !== action.payload.url &&
             request.data.method !== action.payload.data.method &&
             request.data.body &&
-            JSON.parse(request.data.body).ID !== JSON.parse(action.payload.data.body).ID,
+            JSON.parse(request.data.body).ID !==
+              JSON.parse(action.payload.data.body).ID
         );
       } else {
         newQueue = queue.filter(
           (request) =>
             request.action !== action.payload.action &&
             request.url !== action.payload.url &&
-            request.data.method !== action.payload.data.method,
+            request.data.method !== action.payload.data.method
         );
       }
       newState = {

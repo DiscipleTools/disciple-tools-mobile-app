@@ -4,10 +4,7 @@ import * as Notifications from "expo-notifications";
 
 const usePushNotifications = () => {
 
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~ usePushNotifications");
-
   const [notifications, setNotification] = useState(false);
-  console.log(notifications);
   const notificationListener = useRef();
   const responseListener = useRef();
 
@@ -37,11 +34,5 @@ const usePushNotifications = () => {
       Notifications.removeNotificationSubscription(responseListener);
     };
   }, []);
-
-  /*
-  return {
-    deviceIdentifier: "123xyz",
-  }
-  */
 };
 export default usePushNotifications;

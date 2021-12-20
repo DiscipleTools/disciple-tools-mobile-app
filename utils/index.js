@@ -1,8 +1,8 @@
-import _ from 'lodash';
+import _ from "lodash";
 
 const diff = (obj1, obj2) => {
   // Make sure an object to compare is provided
-  if (!obj2 || Object.prototype.toString.call(obj2) !== '[object Object]') {
+  if (!obj2 || Object.prototype.toString.call(obj2) !== "[object Object]") {
     return obj1;
   }
 
@@ -31,11 +31,13 @@ const diff = (obj1, obj2) => {
     if (type !== Object.prototype.toString.call(other)) return false;
 
     // If items are not an object or array, return false
-    if (['[object Array]', '[object Object]'].indexOf(type) < 0) return false;
+    if (["[object Array]", "[object Object]"].indexOf(type) < 0) return false;
 
     // Compare the length of the length of the two items
-    const valueLen = type === '[object Array]' ? value.length : Object.keys(value).length;
-    const otherLen = type === '[object Array]' ? other.length : Object.keys(other).length;
+    const valueLen =
+      type === "[object Array]" ? value.length : Object.keys(value).length;
+    const otherLen =
+      type === "[object Array]" ? other.length : Object.keys(other).length;
     if (valueLen !== otherLen) return false;
 
     // Compare two items
@@ -44,7 +46,7 @@ const diff = (obj1, obj2) => {
       const itemType = Object.prototype.toString.call(item1);
 
       // If an object or array, compare recursively
-      if (['[object Array]', '[object Object]'].indexOf(itemType) >= 0) {
+      if (["[object Array]", "[object Object]"].indexOf(itemType) >= 0) {
         if (!arraysMatch(item1, item2)) return false;
       } else {
         // Otherwise, do a simple comparison
@@ -53,7 +55,7 @@ const diff = (obj1, obj2) => {
 
         // Else if it's a function, convert to a string and compare
         // Otherwise, just compare
-        if (itemType === '[object Function]') {
+        if (itemType === "[object Function]") {
           if (item1.toString() !== item2.toString()) return false;
         } else if (item1 !== item2) return false;
       }
@@ -61,7 +63,7 @@ const diff = (obj1, obj2) => {
     };
 
     // Compare properties
-    if (type === '[object Array]') {
+    if (type === "[object Array]") {
       for (let i = 0; i < valueLen; i++) {
         if (compare(value[i], other[i]) === false) return false;
       }
@@ -89,7 +91,7 @@ const diff = (obj1, obj2) => {
     const type2 = Object.prototype.toString.call(item2);
 
     // If type2 is undefined it has been removed
-    if (type2 === '[object Undefined]') {
+    if (type2 === "[object Undefined]") {
       diffs[key] = null;
       return;
     }
@@ -101,7 +103,7 @@ const diff = (obj1, obj2) => {
     }
 
     // If an object, compare recursively
-    if (type1 === '[object Object]') {
+    if (type1 === "[object Object]") {
       const objDiff = diff(item1, item2);
       if (Object.keys(objDiff).length > 0) {
         diffs[key] = objDiff;
@@ -110,7 +112,7 @@ const diff = (obj1, obj2) => {
     }
 
     // If an array, compare
-    if (type1 === '[object Array]') {
+    if (type1 === "[object Array]") {
       if (!arraysMatch(item1, item2)) {
         diffs[key] = item2;
       }
@@ -119,7 +121,7 @@ const diff = (obj1, obj2) => {
 
     // Else if it's a function, convert to a string and compare
     // Otherwise, just compare
-    if (type1 === '[object Function]') {
+    if (type1 === "[object Function]") {
       if (item1.toString() !== item2.toString()) {
         diffs[key] = item2;
       }
@@ -153,7 +155,7 @@ const diff = (obj1, obj2) => {
 };
 
 const isNumeric = (string) => {
-  if (typeof string != 'string') return false; // we only process strings!
+  if (typeof string != "string") return false; // we only process strings!
   return (
     !isNaN(string) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
     !isNaN(parseFloat(string))
@@ -187,8 +189,8 @@ let handle,
 const mentionPattern = /@\[.+?\]\((.*)\)/g;
 const renderMention = (matchingString, matches) => {
   let mentionText = matchingString.substring(
-    matchingString.lastIndexOf('[') + 1,
-    matchingString.lastIndexOf(']'),
+    matchingString.lastIndexOf("[") + 1,
+    matchingString.lastIndexOf("]")
   );
   return `@${mentionText}`;
 };
@@ -196,22 +198,28 @@ const renderMention = (matchingString, matches) => {
 // Sort Comments and Acitivities by date, and group it by type (comment, activity) and user
 const groupCommentsActivities = (list) => {
   // Sort list by: new to old
-  list = _.orderBy(list, 'date', 'desc');
+  list = _.orderBy(list, "date", "desc");
   let groupedList = [];
   list.forEach((item, index, array) => {
     if (index > 0) {
       let previousCommentActivity = { ...array[index - 1] };
       let previousGroupedCommentActivity = groupedList[groupedList.length - 1];
       let lastGroupedCommentActivity =
-        previousGroupedCommentActivity.data[previousGroupedCommentActivity.data.length - 1];
-      let differenceBetweenDates = new Date(lastGroupedCommentActivity.date) - new Date(item.date),
+        previousGroupedCommentActivity.data[
+          previousGroupedCommentActivity.data.length - 1
+        ];
+      let differenceBetweenDates =
+          new Date(lastGroupedCommentActivity.date) - new Date(item.date),
         hourOnMilliseconds = 3600000;
       let authorName = item.author ? item.author : item.name,
         previousAuthorName = previousCommentActivity.author
           ? previousCommentActivity.author
           : previousCommentActivity.name;
       // current comment/activity same previous comment/activity, same type and current comment/activity date less than 1 day of difference
-      if (previousAuthorName === authorName && differenceBetweenDates < hourOnMilliseconds) {
+      if (
+        previousAuthorName === authorName &&
+        differenceBetweenDates < hourOnMilliseconds
+      ) {
         groupedList[groupedList.length - 1] = {
           ...previousGroupedCommentActivity,
           data: [...previousGroupedCommentActivity.data, { ...item }],
@@ -241,23 +249,23 @@ const groupCommentsActivities = (list) => {
 const filterExistInEntity = (filterValueType, filterValue, value) => {
   let result = false;
   switch (filterValueType) {
-    case '[object Boolean]': {
+    case "[object Boolean]": {
       if (filterValue === value) {
         result = true;
       }
       break;
     }
-    case '[object Number]': {
+    case "[object Number]": {
       if (filterValue === value) {
         result = true;
       }
       break;
     }
-    case '[object String]': {
+    case "[object String]": {
       // is date filter
       if (
-        Object.prototype.hasOwnProperty.call(filterValue, 'start') &&
-        Object.prototype.hasOwnProperty.call(filterValue, 'end')
+        Object.prototype.hasOwnProperty.call(filterValue, "start") &&
+        Object.prototype.hasOwnProperty.call(filterValue, "end")
       ) {
         let startDate = new Date(filterValue.start).getTime(),
           endDate = new Date(filterValue.end).getTime(),
@@ -265,10 +273,10 @@ const filterExistInEntity = (filterValueType, filterValue, value) => {
         if (valueDate >= startDate && valueDate <= endDate) {
           result = true;
         }
-      } else if (Object.prototype.hasOwnProperty.call(value, 'values')) {
+      } else if (Object.prototype.hasOwnProperty.call(value, "values")) {
         // locations - milestones
-        value['values'].forEach((object) => {
-          if (filterValue === object['value']) {
+        value["values"].forEach((object) => {
+          if (filterValue === object["value"]) {
             result = true;
           }
         });
@@ -277,21 +285,21 @@ const filterExistInEntity = (filterValueType, filterValue, value) => {
       }
       break;
     }
-    case '[object Object]': {
-      if (Object.prototype.hasOwnProperty.call(value, 'values')) {
-        value['values'].forEach((object) => {
-          if (filterValue === object['name']) {
+    case "[object Object]": {
+      if (Object.prototype.hasOwnProperty.call(value, "values")) {
+        value["values"].forEach((object) => {
+          if (filterValue === object["name"]) {
             result = true;
             //Detect custom values (tags)
-          } else if (filterValue === object['value']) {
+          } else if (filterValue === object["value"]) {
             result = true;
           }
         });
       } else if (
-        Object.prototype.hasOwnProperty.call(value, 'key') &&
-        Object.prototype.hasOwnProperty.call(value, 'label')
+        Object.prototype.hasOwnProperty.call(value, "key") &&
+        Object.prototype.hasOwnProperty.call(value, "label")
       ) {
-        if (filterValue === value['label']) {
+        if (filterValue === value["label"]) {
           result = true;
         }
       }
@@ -305,11 +313,11 @@ const filterExistInEntity = (filterValueType, filterValue, value) => {
 const contactsByFilter = (contactsList, query) => {
   // Temporal fix => set 'created_on' prop to 'post_date'
   Object.keys(query).map(function (key) {
-    if (key == 'created_on') {
-      query['post_date'] = query[key];
+    if (key == "created_on") {
+      query["post_date"] = query[key];
       delete query[key];
     }
-    if (key == 'combine' || key == 'sort' || key == 'type') {
+    if (key == "combine" || key == "sort" || key == "type") {
       delete query[key];
     }
   });
@@ -323,47 +331,52 @@ const contactsByFilter = (contactsList, query) => {
           let value = contact[key];
           let filterValues = query[key];
           let filterValuesType = Object.prototype.toString.call(filterValues);
-          if (filterValuesType == '[object Array]') {
+          if (filterValuesType == "[object Array]") {
             // Use filter with multiple props
             for (let index = 0; index <= filterValues.length - 1; index++) {
               let filterValue = filterValues[index];
               // Boolean props (requires_update)
-              if (filterValue === '0') {
+              if (filterValue === "0") {
                 filterValue = false;
-              } else if (filterValue === '1') {
+              } else if (filterValue === "1") {
                 filterValue = true;
               }
               let filterValueType = Object.prototype.toString.call(filterValue);
               result = filterExistInEntity(filterValueType, filterValue, value);
               // Return contacts with status different of '-closed'
-              if (filterValue.toString().startsWith('-')) {
-                if (value !== filterValue.replace('-', '')) {
+              if (filterValue.toString().startsWith("-")) {
+                if (value !== filterValue.replace("-", "")) {
                   result = true;
                 }
                 // Detect 'assigned_to' or 'subassigned' value
-              } else if (key == 'assigned_to') {
+              } else if (key == "assigned_to") {
                 // Search in 'assigned_to'
                 filterValues.forEach((assignedContact) => {
-                  if (assignedContact === value.label || parseInt(assignedContact) === value.key) {
+                  if (
+                    assignedContact === value.label ||
+                    parseInt(assignedContact) === value.key
+                  ) {
                     result = true;
                   }
                 });
                 // If record does not match 'assigned_to' value, search by 'subassigned'
                 if (
                   !result &&
-                  Object.prototype.hasOwnProperty.call(query, 'subassigned') &&
-                  Object.prototype.hasOwnProperty.call(contact, 'subassigned')
+                  Object.prototype.hasOwnProperty.call(query, "subassigned") &&
+                  Object.prototype.hasOwnProperty.call(contact, "subassigned")
                 ) {
                   // Search in 'subassigned'
-                  query['subassigned'].forEach((filterValue) => {
-                    contact['subassigned'].values.forEach((subassignedContact) => {
-                      if (filterValue === subassignedContact.value) {
-                        result = true;
+                  query["subassigned"].forEach((filterValue) => {
+                    contact["subassigned"].values.forEach(
+                      (subassignedContact) => {
+                        if (filterValue === subassignedContact.value) {
+                          result = true;
+                        }
                       }
-                    });
+                    );
                   });
                 }
-              } else if (key == 'subassigned') {
+              } else if (key == "subassigned") {
                 // Search in 'subassigned'
                 filterValues.forEach((filterValue) => {
                   value.values.forEach((subassignedContact) => {
@@ -375,14 +388,14 @@ const contactsByFilter = (contactsList, query) => {
                 // If record does not match 'subassigned' value, search by 'assigned_to'
                 if (
                   !result &&
-                  Object.prototype.hasOwnProperty.call(query, 'assigned_to') &&
-                  Object.prototype.hasOwnProperty.call(contact, 'assigned_to')
+                  Object.prototype.hasOwnProperty.call(query, "assigned_to") &&
+                  Object.prototype.hasOwnProperty.call(contact, "assigned_to")
                 ) {
                   // Search in 'assigned_to'
-                  query['assigned_to'].forEach((assignedContact) => {
+                  query["assigned_to"].forEach((assignedContact) => {
                     if (
-                      assignedContact === contact['assigned_to'].label ||
-                      parseInt(assignedContact) === contact['assigned_to'].key
+                      assignedContact === contact["assigned_to"].label ||
+                      parseInt(assignedContact) === contact["assigned_to"].key
                     ) {
                       result = true;
                     }
@@ -394,11 +407,11 @@ const contactsByFilter = (contactsList, query) => {
                 break;
               }
             }
-          } else if (filterValuesType == '[object Object]') {
+          } else if (filterValuesType == "[object Object]") {
             // Date range filter
             if (
-              Object.prototype.hasOwnProperty.call(filterValues, 'start') &&
-              Object.prototype.hasOwnProperty.call(filterValues, 'end')
+              Object.prototype.hasOwnProperty.call(filterValues, "start") &&
+              Object.prototype.hasOwnProperty.call(filterValues, "end")
             ) {
               let startDate = new Date(filterValues.start).getTime(),
                 endDate = new Date(filterValues.end).getTime(),
@@ -415,18 +428,21 @@ const contactsByFilter = (contactsList, query) => {
     })
     .sort((a, b) => {
       // Sort contacts 'desc'
-      return new Date(parseInt(a.last_modified)) < new Date(parseInt(b.last_modified));
+      return (
+        new Date(parseInt(a.last_modified)) <
+        new Date(parseInt(b.last_modified))
+      );
     });
 };
 
 const groupsByFilter = (groupsList, query) => {
   // Temporal fix => set 'created_on' prop to 'post_date'
   Object.keys(query).map(function (key) {
-    if (key == 'created_on') {
-      query['post_date'] = query[key];
+    if (key == "created_on") {
+      query["post_date"] = query[key];
       delete query[key];
     }
-    if (key == 'sort') {
+    if (key == "sort") {
       delete query[key];
     }
   });
@@ -439,27 +455,30 @@ const groupsByFilter = (groupsList, query) => {
         const value = group[key];
         const filterValues = query[key];
         const filterValuesType = Object.prototype.toString.call(filterValues);
-        if (filterValuesType == '[object Array]') {
+        if (filterValuesType == "[object Array]") {
           for (let index = 0; index <= filterValues.length - 1; index++) {
             let filterValue = filterValues[index];
             // Boolean props (requires_update)
-            if (filterValue === '0') {
+            if (filterValue === "0") {
               filterValue = false;
-            } else if (filterValue === '1') {
+            } else if (filterValue === "1") {
               filterValue = true;
             }
             let filterValueType = Object.prototype.toString.call(filterValue);
             result = filterExistInEntity(filterValueType, filterValue, value);
             // Return groups with status different of '-closed'
-            if (filterValue.toString().startsWith('-')) {
-              if (value !== filterValue.replace('-', '')) {
+            if (filterValue.toString().startsWith("-")) {
+              if (value !== filterValue.replace("-", "")) {
                 result = true;
               }
               // Detect 'assigned_to' or 'subassigned' value
-            } else if (key == 'assigned_to') {
+            } else if (key == "assigned_to") {
               // Search in 'assigned_to'
               filterValues.forEach((assignedContact) => {
-                if (assignedContact === value.label || parseInt(assignedContact) === value.key) {
+                if (
+                  assignedContact === value.label ||
+                  parseInt(assignedContact) === value.key
+                ) {
                   result = true;
                 }
               });
@@ -469,11 +488,11 @@ const groupsByFilter = (groupsList, query) => {
               break;
             }
           }
-        } else if (filterValuesType == '[object Object]') {
+        } else if (filterValuesType == "[object Object]") {
           // Date range filter
           if (
-            Object.prototype.hasOwnProperty.call(filterValues, 'start') &&
-            Object.prototype.hasOwnProperty.call(filterValues, 'end')
+            Object.prototype.hasOwnProperty.call(filterValues, "start") &&
+            Object.prototype.hasOwnProperty.call(filterValues, "end")
           ) {
             let startDate = new Date(filterValues.start).getTime(),
               endDate = new Date(filterValues.end).getTime(),
@@ -500,7 +519,9 @@ const getSelectizeValuesToSave = (dbData, selectedValues) => {
   });
   // Remove of D.B items that were removed of the field
   dbItems.forEach((dbItem) => {
-    const foundDatabaseInLocal = localItems.find((localItem) => dbItem.value === localItem.value);
+    const foundDatabaseInLocal = localItems.find(
+      (localItem) => dbItem.value === localItem.value
+    );
     if (!foundDatabaseInLocal) {
       localItems.push({
         ...dbItem,
@@ -515,14 +536,15 @@ const mergeContactList = (mappedContacts, persistedContacts) => {
   // Detect if any mappedContacts exist in persistedContacts list
   let updatedContacts = mappedContacts.filter((mappedContact) => {
     return (
-      persistedContacts.findIndex((persistedContact) => persistedContact.ID === mappedContact.ID) >
-      -1
+      persistedContacts.findIndex(
+        (persistedContact) => persistedContact.ID === mappedContact.ID
+      ) > -1
     );
   });
   // If exist => update persistedContact with mappedContact changes
   updatedContacts.forEach((updatedContact) => {
     let index = persistedContacts.findIndex(
-      (persistedContact) => persistedContact.ID === updatedContact.ID,
+      (persistedContact) => persistedContact.ID === updatedContact.ID
     );
     persistedContacts[index] = { ...updatedContact };
   });
@@ -530,7 +552,7 @@ const mergeContactList = (mappedContacts, persistedContacts) => {
   let newContacts = mappedContacts.filter((mappedContact) => {
     return (
       persistedContacts.findIndex(
-        (persistedContact) => persistedContact.ID === mappedContact.ID,
+        (persistedContact) => persistedContact.ID === mappedContact.ID
       ) === -1
     );
   });
@@ -543,19 +565,25 @@ const mergeContactList = (mappedContacts, persistedContacts) => {
 const mergeGroupList = (mappedGroups, persistedGroups) => {
   // Detect if any mappedGroups exist in persistedGroups list
   let updatedGroups = mappedGroups.filter((mappedGroup) => {
-    return persistedGroups.findIndex((persistedGroup) => persistedGroup.ID === mappedGroup.ID) > -1;
+    return (
+      persistedGroups.findIndex(
+        (persistedGroup) => persistedGroup.ID === mappedGroup.ID
+      ) > -1
+    );
   });
   // If exist => update persistedGroup with mappedGroup changes
   updatedGroups.forEach((updatedGroup) => {
     let index = persistedGroups.findIndex(
-      (persistedGroup) => persistedGroup.ID === updatedGroup.ID,
+      (persistedGroup) => persistedGroup.ID === updatedGroup.ID
     );
     persistedGroups[index] = { ...updatedGroup };
   });
   // Only get newGroups of DataBase. This way we avoid repeated groups records caused by pagination
   let newGroups = mappedGroups.filter((mappedGroup) => {
     return (
-      persistedGroups.findIndex((persistedGroup) => persistedGroup.ID === mappedGroup.ID) === -1
+      persistedGroups.findIndex(
+        (persistedGroup) => persistedGroup.ID === mappedGroup.ID
+      ) === -1
     );
   });
   return {
@@ -568,6 +596,7 @@ export default {
   diff,
   debounce,
   onlyExecuteLastCall,
+  mentionPattern,
   renderMention,
   groupCommentsActivities,
   filterExistInEntity,

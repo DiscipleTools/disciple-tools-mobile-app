@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   BackHandler,
   RefreshControl,
@@ -9,9 +9,9 @@ import {
   TouchableOpacity,
   View,
   TextInput,
-} from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import Swiper from 'react-native-swiper';
+} from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import Swiper from "react-native-swiper";
 import {
   Body,
   Button,
@@ -24,13 +24,13 @@ import {
   Icon,
   Radio,
   Right,
-} from 'native-base';
-import { Col, Row, Grid } from 'react-native-easy-grid';
-import PropTypes from 'prop-types';
+} from "native-base";
+import { Col, Row, Grid } from "react-native-easy-grid";
+import PropTypes from "prop-types";
 // TODO: move to StyleSheet
-import Colors from 'constants/Colors';
+import Colors from "constants/Colors";
 
-import useI18N from '../hooks/useI18N';
+import useI18N from "../hooks/useI18N";
 
 //import { saveComment as saveGroupComment } from 'store/actions/groups.actions';
 //import { saveComment as saveContactComment } from 'store/actions/contacts.actions';
@@ -41,7 +41,7 @@ const propTypes = {
   }).isRequired,
 };
 
-import { styles } from './AttendanceScreen.styles';
+import { styles } from "./AttendanceScreen.styles";
 
 const Attendance = () => {
   const navigation = useNavigation();
@@ -58,32 +58,38 @@ const Attendance = () => {
   const group_id = groupData?.ID ?? null;
   const group_name = groupData?.title ?? null;
 
-  const [groupComment, setGroupComment] = useState('');
+  const [groupComment, setGroupComment] = useState("");
   const [attendees, setAttendees] = useState(
     groupData.members.values.map((member, idx) => {
       return {
         id: member.value,
         name: member.name,
-        comment: '',
+        comment: "",
         checked: true,
         displayComment: false,
       };
-    }),
+    })
   );
   attendees.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-  const attendeesCount = attendees.filter((attendee) => attendee.checked).length;
+  const attendeesCount = attendees.filter(
+    (attendee) => attendee.checked
+  ).length;
   const membersCount = groupData.members.values.length;
 
   const NextButton = ({ hasQuestionnaire, onSubmit }) => {
     return (
       <View>
         {hasQuestionnaire ? (
-          <Button style={styles.nextButton} onPress={goToQuestionnaireScreen} block>
+          <Button
+            style={styles.nextButton}
+            onPress={goToQuestionnaireScreen}
+            block
+          >
             <Text style={styles.nextButtonText}>Next</Text>
           </Button>
         ) : (
           <Button style={styles.nextButton} onPress={onSubmit} block>
-            <Text style={styles.nextButtonText}>{i18n.t('global.submit')}</Text>
+            <Text style={styles.nextButtonText}>{i18n.t("global.submit")}</Text>
           </Button>
         )}
       </View>
@@ -96,15 +102,18 @@ const Attendance = () => {
     attendees.map((attendee) => {
       const id = attendee.id;
       const name = attendee.name;
-      var comment = '';
+      var comment = "";
       const attended = attendee.checked;
       if (attended) {
         comment =
-          i18n.t('groupDetailScreen.attendance.didAttendComment') + ':\n"' + group_name + '"\n\n';
+          i18n.t("groupDetailScreen.attendance.didAttendComment") +
+          ':\n"' +
+          group_name +
+          '"\n\n';
         attendedList.push(`@[${name}](${id})`);
       } else {
         comment =
-          i18n.t('groupDetailScreen.attendance.didNotAttendComment') +
+          i18n.t("groupDetailScreen.attendance.didNotAttendComment") +
           ':\n"' +
           group_name +
           '"\n\n';
@@ -115,16 +124,16 @@ const Attendance = () => {
       //dispatch(saveContactComment(domain, token, id, { comment }));
     });
     var comment =
-      i18n.t('groupDetailScreen.attendance.groupComment') +
-      '\n\n' +
-      i18n.t('groupDetailScreen.attendance.header') +
-      ' (' +
+      i18n.t("groupDetailScreen.attendance.groupComment") +
+      "\n\n" +
+      i18n.t("groupDetailScreen.attendance.header") +
+      " (" +
       attendeesCount +
-      '/' +
+      "/" +
       membersCount +
-      '):\n' +
-      attendedList.join('\n') +
-      '\n\n' +
+      "):\n" +
+      attendedList.join("\n") +
+      "\n\n" +
       groupComment;
     //dispatch(saveGroupComment(domain, token, group_id, { comment }));
     goToGroupDetailScreen(navigation);
@@ -165,7 +174,8 @@ const Attendance = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.subHeader}>
-        {i18n.t('groupDetailScreen.attendance.header')} ({attendeesCount}/{membersCount})
+        {i18n.t("groupDetailScreen.attendance.header")} ({attendeesCount}/
+        {membersCount})
       </Text>
       <KeyboardAwareScrollView
         enableAutomaticScroll
@@ -173,14 +183,16 @@ const Attendance = () => {
         keyboardOpeningTime={0}
         extraScrollHeight={150}
         keyboardShouldPersistTaps="handled"
-        style={styles.scrollView}>
+        style={styles.scrollView}
+      >
         {attendees.map((member) => (
           <ListItem
             key={member.id}
             style={styles.listItem}
             onPress={() => {
               setChecked(member, !member.checked);
-            }}>
+            }}
+          >
             <View style={styles.listItemView}>
               <CheckBox
                 onPress={() => {
@@ -193,8 +205,13 @@ const Attendance = () => {
                 <TouchableOpacity
                   onPress={() => {
                     setChecked(member, !member.checked);
-                  }}>
-                  {<Text style={[isRTL ? { textAlign: 'left', flex: 1 } : {}]}>{member.name}</Text>}
+                  }}
+                >
+                  {
+                    <Text style={isRTL ? { textAlign: "left", flex: 1 } : {}}>
+                      {member.name}
+                    </Text>
+                  }
                 </TouchableOpacity>
               </Body>
               <Icon
@@ -222,8 +239,13 @@ const Attendance = () => {
           </ListItem>
         ))}
         <View style={styles.meetingCommentsView}>
-          <Text style={[{ fontWeight: 'bold' }, isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
-            {i18n.t('groupDetailScreen.attendance.groupCommentLabel')}
+          <Text
+            style={[
+              { fontWeight: "bold" },
+              isRTL ? { textAlign: "left", flex: 1 } : {},
+            ]}
+          >
+            {i18n.t("groupDetailScreen.attendance.groupCommentLabel")}
           </Text>
           <Input
             multiline
@@ -245,22 +267,22 @@ const Attendance = () => {
 const goToQuestionnaireScreen = (navigation) => {
   this.props.navigation.navigate(
     NavigationActions.navigate({
-      routeName: 'Questionnaire',
+      routeName: "Questionnaire",
       action: NavigationActions.navigate({
-        routeName: 'Question',
+        routeName: "Question",
         params: {
           userData: this.props.userData,
           group: this.state.group,
           q_id,
         },
       }),
-    }),
+    })
   );
 };
 
 const goToGroupDetailScreen = (navigation) => {
-  const groupData = navigation.getParam('group');
-  navigation.navigate('GroupDetail', {
+  const groupData = navigation.getParam("group");
+  navigation.navigate("GroupDetail", {
     groupId: groupData.ID,
     onlyView: true,
     contactName: groupData.title,
@@ -277,18 +299,18 @@ Attendance.navigationOptions = ({ navigation }) => {
       onPress={() => {
         goToGroupDetailScreen(navigation);
       }}
-      style={{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }}
+      style={{ paddingLeft: 16, color: "#FFFFFF", paddingRight: 16 }}
     />
   );
   return {
-    title: navigation.getParam('group').title,
+    title: navigation.getParam("group").title,
     headerLeft,
     headerStyle: {
       backgroundColor: Colors.tintColor,
     },
-    headerTintColor: '#FFFFFF',
+    headerTintColor: "#FFFFFF",
     headerTitleStyle: {
-      fontWeight: 'bold',
+      fontWeight: "bold",
     },
   };
 };

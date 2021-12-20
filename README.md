@@ -57,7 +57,10 @@ npm install
 npm start
 ```
 
-Currently pure React Native, can be 'ejected' to integrate native code when the need arises.
+NOTES:
+- Requires `native-base@2.13.12`
+- Node v16.10
+- Expo v5.01
 
 ## Installation (Demo)
 
@@ -89,8 +92,8 @@ npx jest TextField
 npx jest components/*
 ```
 
-[appstore-image]: https://github.com/DiscipleTools/disciple-tools-mobile-app/blob/development/badges/appstore.png
-[playstore-image]: https://github.com/DiscipleTools/disciple-tools-mobile-app/blob/development/badges/playstore.png
+[appstore-image]: https://github.com/DiscipleTools/disciple-tools-mobile-app/blob/development/assets/badges/appstore.png
+[playstore-image]: https://github.com/DiscipleTools/disciple-tools-mobile-app/blob/development/assets/badges/playstore.png
 [appstore-url]: https://apps.apple.com/us/app/d-t/id1483836867
 [playstore-url]: https://play.google.com/store/apps/details?id=tools.disciple.app
 

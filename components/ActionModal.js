@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Modal,
@@ -7,16 +7,24 @@ import {
   Text,
   View,
   useWindowDimensions,
-} from 'react-native';
-import { Icon } from 'native-base';
+} from "react-native";
+import { Icon } from "native-base";
 
-import { styles } from './ActionModal.styles';
+import { styles } from "./ActionModal.styles";
 
-const ActionModal = ({ visible, onClose, title, fullScreen, width, height, children }) => {
-  const isIOS = Platform.OS === 'ios';
+const ActionModal = ({
+  visible,
+  onClose,
+  title,
+  fullScreen,
+  width,
+  height,
+  children,
+}) => {
+  const isIOS = Platform.OS === "ios";
   const windowHeight = useWindowDimensions().height;
 
-  const fullSize = '95%';
+  const fullSize = "95%";
   const modalWidth = fullScreen ? fullSize : width; // ? width : fullSize;
   const modalHeight = fullScreen ? fullSize : height; // ? height : fullSize;
   const dynamicSizeStyle = {
@@ -24,7 +32,7 @@ const ActionModal = ({ visible, onClose, title, fullScreen, width, height, child
     height: modalHeight,
   };
   return (
-    <KeyboardAvoidingView behavior={isIOS ? 'padding' : 'height'}>
+    <KeyboardAvoidingView behavior={isIOS ? "padding" : "height"}>
       <Modal
         animationType="none"
         transparent={true}
@@ -32,10 +40,11 @@ const ActionModal = ({ visible, onClose, title, fullScreen, width, height, child
         onRequestClose={() => {
           onClose(!visible);
         }}
-        statusBarTranslucent={true}>
+        statusBarTranslucent={true}
+      >
         <View style={styles.centeredView}>
           <View style={[styles.modalView, dynamicSizeStyle]}>
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: "row" }}>
               {/* TODO: use Grid */}
               <View style={{ flex: 2 }}>
                 <Text style={styles.textHeader}>{title}</Text>
@@ -45,7 +54,8 @@ const ActionModal = ({ visible, onClose, title, fullScreen, width, height, child
                   style={styles.buttonClose}
                   onPress={() => {
                     onClose(!visible);
-                  }}>
+                  }}
+                >
                   <Icon type="MaterialIcons" name="close" />
                 </Pressable>
               </View>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import {
   BackHandler,
   RefreshControl,
@@ -8,8 +8,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import Swiper from 'react-native-swiper';
+} from "react-native";
+import Swiper from "react-native-swiper";
 import {
   Body,
   Button,
@@ -21,12 +21,12 @@ import {
   Icon,
   Radio,
   Right,
-} from 'native-base';
-import { Col, Row, Grid } from 'react-native-easy-grid';
-import PropTypes from 'prop-types';
-import Colors from 'constants/Colors';
+} from "native-base";
+import { Col, Row, Grid } from "react-native-easy-grid";
+import PropTypes from "prop-types";
+import Colors from "constants/Colors";
 
-import useI18N from '../../hooks/useI18N';
+import useI18N from "../../hooks/useI18N";
 
 /*
 import {
@@ -43,16 +43,16 @@ const propTypes = {
   }).isRequired,
 };
 
-import { styles } from './QuestionnaireScreen.styles';
+import { styles } from "./QuestionnaireScreen.styles";
 
 const Questionnaire = ({ navigation }) => {
   const { i18n } = useI18N();
-  const q_id = navigation.getParam('q_id');
-  const userData = navigation.getParam('userData');
+  const q_id = navigation.getParam("q_id");
+  const userData = navigation.getParam("userData");
   const domain = userData.domain;
   const token = userData.token;
   const user_id = userData.id;
-  const contact_id = navigation.getParam('contact').ID;
+  const contact_id = navigation.getParam("contact").ID;
 
   // TODO: useDetails(id, "questionnaire"/postType);
   const questionnaireState = useSelector((state) => state.questionnaireReducer);
@@ -61,7 +61,8 @@ const Questionnaire = ({ navigation }) => {
   const error = questionnaireState.error;
   if (questionnaire != null) {
     questionnaire.forms.sort(
-      (a, b) => parseInt(a.seq.replace('.', '')) - parseInt(b.seq.replace('.', '')),
+      (a, b) =>
+        parseInt(a.seq.replace(".", "")) - parseInt(b.seq.replace(".", ""))
     );
   }
 
@@ -74,13 +75,15 @@ const Questionnaire = ({ navigation }) => {
     if (save != null) {
       toastSaveRef.current.show(
         <View>
-          <Text style={{ color: Colors.sucessText }}>{i18n.t('global.success.save')}</Text>
+          <Text style={{ color: Colors.sucessText }}>
+            {i18n.t("global.success.save")}
+          </Text>
         </View>,
         1000,
         () => {
           //dispatch(resetState());
           goToContactDetailScreen(navigation);
-        },
+        }
       );
     }
   }, [save]);
@@ -89,19 +92,19 @@ const Questionnaire = ({ navigation }) => {
     if (error != null) {
       toastErrorRef.current.show(
         <View>
-          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-            {i18n.t('global.error.code')}
+          <Text style={{ fontWeight: "bold", color: Colors.errorText }}>
+            {i18n.t("global.error.code")}
           </Text>
           <Text style={{ color: Colors.errorText }}>{error.code}</Text>
-          <Text style={{ fontWeight: 'bold', color: Colors.errorText }}>
-            {i18n.t('global.error.message')}
+          <Text style={{ fontWeight: "bold", color: Colors.errorText }}>
+            {i18n.t("global.error.message")}
           </Text>
           <Text style={{ color: Colors.errorText }}>{error.message}</Text>
         </View>,
         3000,
         () => {
           //dispatch(resetState());
-        },
+        }
       );
     }
   }, [error]);
@@ -133,12 +136,16 @@ const Questionnaire = ({ navigation }) => {
   const QuestionHeader = ({ question }) => {
     return (
       <Text>
-        <Text style={{ fontWeight: 'bold' }}>{question.title + ' '}</Text>
+        <Text style={{ fontWeight: "bold" }}>{question.title + " "}</Text>
         {question.required && question.required == true ? (
-          <Text style={{ marginLeft: 10, color: Colors.grayDark }}>(required)</Text>
+          <Text style={{ marginLeft: 10, color: Colors.grayDark }}>
+            (required)
+          </Text>
         ) : (
           <Text style={{ color: Colors.grayDark }}>
-            {question.type && question.type == 'radio' ? '(optional)' : '(optional, 0 or more)'}
+            {question.type && question.type == "radio"
+              ? "(optional)"
+              : "(optional, 0 or more)"}
           </Text>
         )}
       </Text>
@@ -148,7 +155,8 @@ const Questionnaire = ({ navigation }) => {
   const Question = ({ question }) => {
     //const dispatch = useDispatch();
     const options = question.options;
-    const isMutuallyExclusive = question && question.type == 'radio' ? true : false;
+    const isMutuallyExclusive =
+      question && question.type == "radio" ? true : false;
     const handleOptionSelect = (option) => {
       const options_p = options.map((existing_option) => {
         if (existing_option === option) {
@@ -178,7 +186,7 @@ const Questionnaire = ({ navigation }) => {
     return (
       <React.Fragment>
         <QuestionHeader question={question} />
-        {question.type && question.type == 'input' ? (
+        {question.type && question.type == "input" ? (
           <Input
             value={question.value}
             onChangeText={(value) => {
@@ -200,7 +208,8 @@ const Questionnaire = ({ navigation }) => {
               <ListItem
                 onPress={() => {
                   handleOptionSelect(option);
-                }}>
+                }}
+              >
                 <Checkbox
                   option={option}
                   handleOptionSelect={handleOptionSelect}
@@ -210,7 +219,10 @@ const Questionnaire = ({ navigation }) => {
               {option.questions &&
                 option.selected &&
                 option.questions.map((subquestion, subidx) => (
-                  <View key={subidx} style={{ marginTop: 20, marginBottom: 20, marginLeft: 40 }}>
+                  <View
+                    key={subidx}
+                    style={{ marginTop: 20, marginBottom: 20, marginLeft: 40 }}
+                  >
                     <Question question={subquestion} />
                   </View>
                 ))}
@@ -251,7 +263,9 @@ const Questionnaire = ({ navigation }) => {
       <View style={styles.bottomView}>
         {currIdx == lastIdx ? (
           <Button style={styles.nextButton} onPress={onSubmit} block>
-            <Text style={styles.nextButtonText}>Submit {/*i18n.t('loginScreen.logIn')*/}</Text>
+            <Text style={styles.nextButtonText}>
+              Submit {/*i18n.t('loginScreen.logIn')*/}
+            </Text>
           </Button>
         ) : (
           <Button style={styles.nextButton} onPress={swipeRight} block>
@@ -312,12 +326,20 @@ const Questionnaire = ({ navigation }) => {
         />
       }
       paginationStyle={{ bottom: 30 }}
-      loop={false}>
+      loop={false}
+    >
       {questionnaire != null && questionnaire.forms ? (
         questionnaire.forms.map((form, idx) => (
           <View key={idx} style={styles.formContainer}>
-            <Text style={{ fontWeight: 'bold', fontSize: 20, marginTop: 30, marginBottom: 30 }}>
-              {idx + 1 + '. ' + form.title}
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 20,
+                marginTop: 30,
+                marginBottom: 30,
+              }}
+            >
+              {idx + 1 + ". " + form.title}
             </Text>
             <ScrollView style={{ marginBottom: 150 }}>
               {form.questions ? (
@@ -362,8 +384,8 @@ const Questionnaire = ({ navigation }) => {
 };
 
 const goToContactDetailScreen = (navigation) => {
-  const contactData = navigation.getParam('contact');
-  navigation.navigate('ContactDetail', {
+  const contactData = navigation.getParam("contact");
+  navigation.navigate("ContactDetail", {
     contactId: contactData.ID,
     onlyView: true,
     contactName: contactData.title,
@@ -380,18 +402,18 @@ Questionnaire.navigationOptions = ({ navigation }) => {
       onPress={() => {
         goToContactDetailScreen(navigation);
       }}
-      style={{ paddingLeft: 16, color: '#FFFFFF', paddingRight: 16 }}
+      style={{ paddingLeft: 16, color: "#FFFFFF", paddingRight: 16 }}
     />
   );
   return {
-    title: navigation.getParam('contact').title,
+    title: navigation.getParam("contact").title,
     headerLeft,
     headerStyle: {
       backgroundColor: Colors.tintColor,
     },
-    headerTintColor: '#FFFFFF',
+    headerTintColor: "#FFFFFF",
     headerTitleStyle: {
-      fontWeight: 'bold',
+      fontWeight: "bold",
     },
   };
 };

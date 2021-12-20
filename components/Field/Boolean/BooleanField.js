@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import useI18N from 'hooks/useI18N';
+import useI18N from "hooks/useI18N";
 
 const BooleanField = ({ value, editing, onChange }) => {
   const { isRTL } = useI18N();

@@ -1,12 +1,11 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 // TODO: rename
-import { toggleNetworkConnectivity as _toggleNetwork } from 'store/actions/network.actions';
+import { toggleNetworkConnectivity as _toggleNetwork } from "store/actions/network.actions";
 
-import useI18N from 'hooks/useI18N';
-import useToast from 'hooks/useToast';
+import useI18N from "hooks/useI18N";
+import useToast from "hooks/useToast";
 
 const useNetworkStatus = () => {
-
   const dispatch = useDispatch();
 
   const { i18n } = useI18N();
@@ -17,20 +16,24 @@ const useNetworkStatus = () => {
   //const isConnected = netInfo.isConnected.toString() === 'true';
   const isConnected = true;
   // user specified offline in settings
-  const isConnectedUser = useSelector((state) => state.networkReducer.isConnected);
+  const isConnectedUser = useSelector(
+    (state) => state.networkReducer.isConnected
+  );
 
   const toggleNetwork = () => {
     dispatch(_toggleNetwork());
-    toast(isConnected
-      ? i18n.t('settingsScreen.networkUnavailable')
-      : i18n.t('settingsScreen.networkAvailable'),
-      isConnected);
+    toast(
+      isConnected
+        ? i18n.t("settingsScreen.networkUnavailable")
+        : i18n.t("settingsScreen.networkAvailable"),
+      isConnected
+    );
   };
 
   // TODO: return 'online' and 'offline' for better readability
   return {
     isConnected: isConnected && isConnectedUser,
-    toggleNetwork
+    toggleNetwork,
   };
 };
 export default useNetworkStatus;

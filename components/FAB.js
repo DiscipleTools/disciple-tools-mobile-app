@@ -1,30 +1,26 @@
-import React from 'react';
-import { Icon } from 'native-base';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import React from "react";
+import { Icon } from "native-base";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 // 3rd-party Components
-import ActionButton from 'react-native-action-button';
+import ActionButton from "react-native-action-button";
 
-// Helpers
-import i18n from 'languages';
-
-// Custom Hooks
-import useNetworkStatus from 'hooks/useNetworkStatus.js';
-import usePostType from 'hooks/usePostType.js';
-import useSettings from 'hooks/useSettings.js';
+import useI18N from "hooks/useI18N";
+import useNetworkStatus from "hooks/useNetworkStatus.js";
+import useType from "hooks/useType.js";
 
 // Styles, Constants, Icons, Assets, etc...
-import Colors from 'constants/Colors';
-import { styles } from './FAB.styles';
+import Colors from "constants/Colors";
+import { styles } from "./FAB.styles";
 
-const FAB = ({ post }) => {
+const FAB = ({ post, settings }) => {
   const navigation = useNavigation();
 
+  const { i18n, isRTL, locale } = useI18N();
   const isConnected = useNetworkStatus();
 
-  const { isContact, isGroup } = usePostType();
+  const { isContact, isGroup } = useType();
 
-  const { settings } = useSettings();
   if (!settings) return null;
 
   const onSaveQuickAction = (quickActionPropertyName) => {
@@ -40,26 +36,29 @@ const FAB = ({ post }) => {
     } else {
       // Update Seeker Path in OFFLINE mode
       let seekerPathValue = null;
-      let quickActionName = quickActionPropertyName.replace('quick_button_', '');
+      let quickActionName = quickActionPropertyName.replace(
+        "quick_button_",
+        ""
+      );
       switch (quickActionName) {
-        case 'no_answer': {
-          seekerPathValue = 'attempted';
+        case "no_answer": {
+          seekerPathValue = "attempted";
           break;
         }
-        case 'contact_established': {
-          seekerPathValue = 'established';
+        case "contact_established": {
+          seekerPathValue = "established";
           break;
         }
-        case 'meeting_scheduled': {
-          seekerPathValue = 'scheduled';
+        case "meeting_scheduled": {
+          seekerPathValue = "scheduled";
           break;
         }
-        case 'meeting_complete': {
-          seekerPathValue = 'met';
+        case "meeting_complete": {
+          seekerPathValue = "met";
           break;
         }
       }
-      if (seekerPathValue && post.seeker_path != 'met') {
+      if (seekerPathValue && post.seeker_path != "met") {
         setState(
           (prevState) => ({
             ...state,
@@ -74,7 +73,7 @@ const FAB = ({ post }) => {
               [quickActionPropertyName]: newActionValue,
             });
             */
-          },
+          }
         );
       } else {
         /*TODO
@@ -88,14 +87,14 @@ const FAB = ({ post }) => {
 
   // TODO: merge with onSaveQuickAction
   const onMeetingComplete = () => {
-    onSaveQuickAction('quick_button_meeting_complete');
+    onSaveQuickAction("quick_button_meeting_complete");
     var isQuestionnaireEnabled = false;
     var q_id = null;
     // loop thru all (active) questionnaires, and check whether 'contact'->'meeting_complete' is enabled
     questionnaires.map((questionnaire) => {
       if (
-        questionnaire.trigger_type == 'contact' &&
-        questionnaire.trigger_value == 'meeting_complete'
+        questionnaire.trigger_type == "contact" &&
+        questionnaire.trigger_value == "meeting_complete"
       ) {
         isQuestionnaireEnabled = true;
         q_id = questionnaire.id;
@@ -125,7 +124,7 @@ const FAB = ({ post }) => {
     const quickButtonFields = [];
     if (post) {
       Object.keys(settings.fields).forEach((field) => {
-        if (field.startsWith('quick_button')) {
+        if (field.startsWith("quick_button")) {
           //console.log(`field: ${ field }`);
           quickButtonFields.push(field);
         }
@@ -133,7 +132,7 @@ const FAB = ({ post }) => {
       return quickButtonFields;
     }
     if (isContact) {
-      return ['quick_button_new', 'quick_button_import_contacts'];
+      return ["quick_button_new", "quick_button_import_contacts"];
     }
     return [];
   };
@@ -143,115 +142,83 @@ const FAB = ({ post }) => {
 
   const mapIcon = (field) => {
     const defaultIconConfig = {
-      title: settings.fields[field]?.name ?? '',
+      title: settings.fields[field]?.name ?? "",
       count: (post && post[field]) ?? 0,
-      type: 'Feather',
-      name: 'check',
+      type: "Feather",
+      name: "check",
       bgColor: Colors.primary,
       fgColor: Colors.buttonText,
       callback: () => onSaveQuickAction(field),
     };
-    if (field === 'quick_button_no_answer')
+    if (field === "quick_button_no_answer")
       return {
         ...defaultIconConfig,
-        name: 'phone-off',
+        name: "phone-off",
         bgColor: Colors.colorNo,
       };
-    if (field === 'quick_button_contact_established')
+    if (field === "quick_button_contact_established")
       return {
         ...defaultIconConfig,
-        type: 'MaterialCommunityIcons',
-        name: 'phone-in-talk',
+        type: "MaterialCommunityIcons",
+        name: "phone-in-talk",
       };
-    if (field === 'quick_button_meeting_scheduled')
+    if (field === "quick_button_meeting_scheduled")
       return {
         ...defaultIconConfig,
-        type: 'MaterialCommunityIcons',
-        name: 'calendar-plus',
+        type: "MaterialCommunityIcons",
+        name: "calendar-plus",
       };
-    if (field === 'quick_button_meeting_complete')
+    if (field === "quick_button_meeting_complete")
       return {
         ...defaultIconConfig,
-        type: 'MaterialCommunityIcons',
-        name: 'calendar-check',
+        type: "MaterialCommunityIcons",
+        name: "calendar-check",
       };
-    if (field === 'quick_button_meeting_postponed')
+    if (field === "quick_button_meeting_postponed")
       return {
         ...defaultIconConfig,
-        type: 'MaterialCommunityIcons',
-        name: 'calendar-minus',
+        type: "MaterialCommunityIcons",
+        name: "calendar-minus",
       };
-    if (field === 'quick_button_no_show')
+    if (field === "quick_button_no_show")
       return {
         ...defaultIconConfig,
-        type: 'MaterialCommunityIcons',
-        name: 'calendar-remove',
+        type: "MaterialCommunityIcons",
+        name: "calendar-remove",
       };
-    if (field === 'quick_button_new')
+    if (field === "quick_button_new")
       return {
         ...defaultIconConfig,
-        title: i18n.t('contactsScreen.addNewContact'), // TODO: group translate
+        title: i18n.t("contactDetailScreen.addNewContact", { locale }), // TODO: group translate
         count: null,
-        name: 'plus',
+        name: "plus",
         callback: () => {
-          navigation.navigate('Details', { create: true });
+          // TODO: constants
+          navigation.navigate('CreateContact', {
+            type: 'import'
+          });
         },
       };
-    if (field === 'quick_button_import_contacts')
+    if (field === "quick_button_import_contacts")
       return {
         ...defaultIconConfig,
-        title: i18n.t('contactsScreen.importContact'),
+        title: i18n.t("contactDetailScreen.importContact", { locale }),
         count: null,
-        type: 'MaterialIcons',
+        type: "MaterialIcons",
         //name: "user-check",
-        name: 'contact-phone',
+        name: "contact-phone",
         bgColor: Colors.colorYes,
         callback: () => {
-          // TODO:
-          console.log('*** IMPORT CONTACT ***');
-          //navigation.navigate('Details', { import: true });
+          // TODO: constants
+          navigation.navigate('ImportContacts', {
+            type: 'import'
+          });
         },
       };
     return null;
   };
   /*
             (async () => {
-              const { status } = await Contacts.requestPermissionsAsync();
-              if (status === 'granted') {
-                const importContactsList = [];
-                const { data } = await Contacts.getContactsAsync({});
-                data.map((contact) => {
-                  const contactData = {};
-                  if (contact.contactType === 'person') {
-                    contactData['idx'] = contact.id;
-                    contactData['title'] = contact.name;
-                    contactData['name'] = contact.name;
-                    if (contact.hasOwnProperty('emails') && contact.emails.length > 0) {
-                      contactData['contact_email'] = [];
-                      contact.emails.map((email, idx) => {
-                        contactData['contact_email'].push({
-                          key: `contact_email_${idx}`,
-                          value: email.email,
-                        });
-                      });
-                    }
-                    if (contact.hasOwnProperty('phoneNumbers') && contact.phoneNumbers.length > 0) {
-                      contactData['contact_phone'] = [];
-                      contact.phoneNumbers.map((phoneNumber, idx) => {
-                        contactData['contact_phone'].push({
-                          key: `contact_phone_${idx}`,
-                          value: phoneNumber.number,
-                        });
-                      });
-                    }
-                    importContactsList.push(contactData);
-                  }
-                });
-                setState({
-                  importContactsModalVisible: true,
-                  importContactsList,
-                });
-              }
             })();
 */
 
@@ -262,27 +229,35 @@ const FAB = ({ post }) => {
           buttonColor={Colors.primary}
           onPress={() => {
             // TODO: add new
-            console.log('*** ADD NEW ***');
+            console.log("*** ADD NEW ***");
           }}
           renderIcon={() => (
-            <Icon type={'Feather'} name={'plus'} style={[styles.FABIcon, { fontSize: 30 }]} />
+            <Icon
+              type={"Feather"}
+              name={"plus"}
+              style={[styles.FABIcon, { fontSize: 30 }]}
+            />
           )}
         />
       ) : (
         <ActionButton
           style={{
-            position: 'absolute',
+            position: "absolute",
             bottom: 10,
             right: 10,
           }}
           buttonColor={Colors.primary}
           renderIcon={(active) =>
             active ? (
-              <Icon type={'Feather'} name={'x'} style={[styles.FABIcon, { fontSize: 25 }]} />
+              <Icon
+                type={"Feather"}
+                name={"x"}
+                style={[styles.FABIcon, { fontSize: 25 }]}
+              />
             ) : (
               <Icon
-                type={post ? 'MaterialCommunityIcons' : 'Feather'}
-                name={post ? 'comment-plus' : 'plus'}
+                type={post ? "MaterialCommunityIcons" : "Feather"}
+                name={post ? "comment-plus" : "plus"}
                 style={[styles.FABIcon, { fontSize: 30 }]}
               />
             )
@@ -290,11 +265,14 @@ const FAB = ({ post }) => {
           degrees={0}
           activeOpacity={0}
           bgColor="rgba(0,0,0,0.5)"
-          nativeFeedbackRippleColor="rgba(0,0,0,0)">
+          nativeFeedbackRippleColor="rgba(0,0,0,0)"
+        >
           {quickButtonFields.map((field) => {
-            const { title, count, type, name, bgColor, fgColor, callback } = mapIcon(field);
+            const { title, count, type, name, bgColor, fgColor, callback } =
+              mapIcon(field);
             return (
               <ActionButton.Item
+                key={count}
                 title={count !== null ? `${title} (${count})` : title}
                 onPress={() => {
                   callback();
@@ -303,8 +281,13 @@ const FAB = ({ post }) => {
                 buttonColor={bgColor}
                 nativeFeedbackRippleColor="rgba(0,0,0,0)"
                 textStyle={{ color: Colors.primary, fontSize: 15 }}
-                textContainerStyle={{ height: 'auto' }}>
-                <Icon type={type} name={name} style={[styles.FABIcon, { color: fgColor }]} />
+                textContainerStyle={{ height: "auto" }}
+              >
+                <Icon
+                  type={type}
+                  name={name}
+                  style={[styles.FABIcon, { color: fgColor }]}
+                />
               </ActionButton.Item>
             );
           })}

@@ -1,7 +1,7 @@
-import * as actions from '../actions/user.actions';
-import { REHYDRATE } from 'redux-persist/lib/constants';
+import * as actions from "../actions/user.actions";
+import { REHYDRATE } from "redux-persist/lib/constants";
 
-import * as Random from 'expo-random';
+import * as Random from "expo-random";
 
 const userDataInitialState = {
   username: null,
@@ -32,7 +32,7 @@ export default function userReducer(state = initialState, action) {
   };
   switch (action.type) {
     case REHYDRATE:
-      console.log('*** REHYDRATE! ***');
+      console.log("*** REHYDRATE! ***");
       return {
         ...newState,
         loading: false,
@@ -81,7 +81,7 @@ export default function userReducer(state = initialState, action) {
         cnonceLogin: action.cnonceLogin,
       };
     case actions.USER_LOGIN_FAILURE:
-      console.log('*** USER_LOGIN_FAILURE ***');
+      console.log("*** USER_LOGIN_FAILURE ***");
       console.log(JSON.stringify(action));
       return {
         ...newState,
@@ -139,7 +139,7 @@ export default function userReducer(state = initialState, action) {
         error: action.error,
       };
     case actions.UPDATE_USER_INFO_SUCCESS:
-      console.log('**** UPDATE_USER_INFO_SUCCESS REDUCER ****');
+      console.log("**** UPDATE_USER_INFO_SUCCESS REDUCER ****");
       console.log(JSON.stringify(action));
       return {
         ...newState,

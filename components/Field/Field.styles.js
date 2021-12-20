@@ -1,13 +1,13 @@
-import { Dimensions, Platform, StyleSheet } from 'react-native';
-import Colors from 'constants/Colors';
+import { Dimensions, Platform, StyleSheet } from "react-native";
+import Colors from "constants/Colors";
 
 const containerPadding = 20;
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 export const styles = StyleSheet.create({
   raisedBox: {
-    backgroundColor: '#fff',
-    shadowColor: '#000',
+    backgroundColor: "#fff",
+    shadowColor: "#000",
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,
     shadowRadius: 2,
@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
   tabBarUnderlineStyle: {
     backgroundColor: Colors.tintColor,
   },
-  tabStyle: { backgroundColor: '#FFFFFF' },
+  tabStyle: { backgroundColor: "#FFFFFF" },
   fieldsIcons: {
     height: 22,
     width: 22,
@@ -38,8 +38,8 @@ export const styles = StyleSheet.create({
     marginRight: 0,
     color: Colors.addRemoveIcons,
   },
-  addIcons: { color: 'green' },
-  removeIcons: { color: 'red' },
+  addIcons: { color: "green" },
+  removeIcons: { color: "red" },
   // Form
   formContainer: {
     paddingTop: 10,
@@ -50,36 +50,36 @@ export const styles = StyleSheet.create({
   formRow: {
     paddingTop: 15,
     paddingBottom: 15,
-    width: '100%',
+    width: "100%",
   },
   formDivider: {
-    borderBottomColor: '#ddd',
+    borderBottomColor: "#ddd",
     borderBottomWidth: 1,
   },
   formIconLabel: {
     marginLeft: 10,
-    width: 'auto',
+    width: "auto",
     //marginBottom: 'auto',
   },
   formIcon: {
     color: Colors.tintColor,
     fontSize: 22,
-    marginTop: 'auto',
-    marginBottom: 'auto',
+    marginTop: "auto",
+    marginBottom: "auto",
     width: 25,
   },
   formParentLabel: {
-    width: 'auto',
+    width: "auto",
     maxWidth: 100,
-    marginBottom: 'auto',
+    marginBottom: "auto",
   },
   formLabel: {
     color: Colors.tintColor,
     fontSize: 12,
     //fontWeight: 'bold',
     //textAlignVertical: 'top',
-    marginTop: 'auto',
-    marginBottom: 'auto',
+    marginTop: "auto",
+    marginBottom: "auto",
   },
   formComponent: {
     marginRight: 10,
@@ -91,8 +91,8 @@ export const styles = StyleSheet.create({
     width: 35,
   },
   formIconLabelView: {
-    alignItems: 'center',
-    marginTop: 'auto',
+    alignItems: "center",
+    marginTop: "auto",
     //marginBottom: 'auto',
   },
   formFieldMargin: {
@@ -100,7 +100,7 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   // Progress Section
-  progressIcon: { height: '100%', width: '100%' },
+  progressIcon: { height: "100%", width: "100%" },
   progressIconActive: {
     opacity: 1,
   },
@@ -109,16 +109,16 @@ export const styles = StyleSheet.create({
   },
   progressIconText: {
     fontSize: 9,
-    textAlign: 'center',
-    width: '100%',
+    textAlign: "center",
+    width: "100%",
   },
   // Comments Section
   container: {
     paddingLeft: 19,
     paddingRight: 16,
     paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     backgroundColor: Colors.mainBackgroundColor,
   },
   avatar: {
@@ -139,36 +139,36 @@ export const styles = StyleSheet.create({
     padding: 10,
   },
   contentHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 6,
   },
   name: {
     color: Colors.tintColor,
     fontSize: 13,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   time: {
     color: Colors.tintColor,
     fontSize: 10,
   },
   contactFABIcon: {
-    color: 'white',
+    color: "white",
     fontSize: 20,
   },
   offlineBar: {
     height: 20,
-    backgroundColor: '#FCAB10',
+    backgroundColor: "#FCAB10",
   },
   offlineBarText: {
     fontSize: 14,
-    color: 'white',
-    textAlignVertical: 'center',
-    textAlign: 'center',
+    color: "white",
+    textAlignVertical: "center",
+    textAlign: "center",
   },
   noCommentsContainer: {
     padding: 20,
-    height: '90%',
+    height: "90%",
     transform: [{ scaleY: -1 }],
   },
   noCommentsImage: {
@@ -178,32 +178,32 @@ export const styles = StyleSheet.create({
     padding: 10,
   },
   noCommentsText: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: '#A8A8A8',
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "#A8A8A8",
     marginTop: 10,
   },
   contactTextField: {
     borderBottomWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#B4B4B4',
+    borderStyle: "solid",
+    borderColor: "#B4B4B4",
     height: 50,
     fontSize: 15,
   },
   contactTextRoundField: {
     borderWidth: 1,
     borderRadius: 5,
-    borderStyle: 'solid',
-    borderColor: '#B4B4B4',
+    borderStyle: "solid",
+    borderColor: "#B4B4B4",
     height: 50,
     fontSize: 15,
   },
   selectizeField: {
     borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#B4B4B4',
+    borderStyle: "solid",
+    borderColor: "#B4B4B4",
     borderBottomWidth: 1.5,
-    borderBottomColor: '#B4B4B4',
+    borderBottomColor: "#B4B4B4",
     borderRadius: 5,
     minHeight: 50,
     marginTop: -15,
@@ -212,11 +212,11 @@ export const styles = StyleSheet.create({
   linkingText: {
     paddingTop: 4,
     paddingBottom: 8,
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
   statusFieldContainer: Platform.select({
     default: {
-      borderStyle: 'solid',
+      borderStyle: "solid",
       borderWidth: 2,
       borderRadius: 3,
     },
@@ -226,45 +226,45 @@ export const styles = StyleSheet.create({
     color: Colors.errorBackground,
   },
   suggestionsRowContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   userIconBox: {
     height: 45,
     width: 45,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: Colors.tintColor,
   },
   usernameInitials: {
-    color: '#fff',
-    fontWeight: '800',
+    color: "#fff",
+    fontWeight: "800",
     fontSize: 14,
   },
   userDetailsBox: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingLeft: 10,
     paddingRight: 15,
   },
   displayNameText: {
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   usernameText: {
     fontSize: 12,
-    color: 'rgba(0,0,0,0.6)',
+    color: "rgba(0,0,0,0.6)",
   },
   // Edit/Delete comment dialog
   dialogBackground: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
   },
   dialogBox: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     padding: 20,
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    marginLeft: "auto",
+    marginRight: "auto",
     height: windowHeight - windowHeight * 0.55,
     width: windowWidth - windowWidth * 0.1,
     marginTop: windowHeight * 0.1,
@@ -274,14 +274,14 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     width: 100,
     marginTop: 20,
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    marginLeft: "auto",
+    marginRight: "auto",
   },
   dialogContent: {
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%",
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: "center",
     color: Colors.grayDark,
     marginBottom: 5,
   },
@@ -290,7 +290,7 @@ export const styles = StyleSheet.create({
     height: 40,
     width: 40,
     marginBottom: 10,
-    position: 'absolute',
+    position: "absolute",
     right: 0,
     bottom: 0,
   },
@@ -299,6 +299,6 @@ export const styles = StyleSheet.create({
     fontSize: 22,
     right: 18,
     top: 10,
-    position: 'absolute',
+    position: "absolute",
   },
 });

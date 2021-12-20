@@ -1,12 +1,14 @@
-import React from 'react';
-import { View, Text, TextInput, ViewPropTypes } from 'react-native';
-import { Icon } from 'native-base';
+import React from "react";
+import { View, Text, TextInput, ViewPropTypes } from "react-native";
+import { Icon } from "native-base";
 //import PropTypes from 'prop-types';
 //import * as Icon from '@expo/vector-icons';
 
-import useI18N from 'hooks/useI18N';
+import TextField from "components/Field/Text/TextField";
 
-import { styles } from './LabeledTextInput.styles';
+import useI18N from "hooks/useI18N";
+
+import { styles } from "./LabeledTextInput.styles";
 
 const LabeledTextInput = (props) => {
   const {
@@ -21,7 +23,7 @@ const LabeledTextInput = (props) => {
     editing,
   } = props;
 
-  const { i18n, isRTL } = useI18N();
+  const { isRTL } = useI18N();
 
   /*
   const inputRef = useRef(null);
@@ -51,12 +53,12 @@ const LabeledTextInput = (props) => {
 
   const icon = iconName ? (
     <Icon
-      type={'Ionicons'}
+      type={"Ionicons"}
       name={iconName}
       style={[
         styles.inputRowIcon,
         iconStyle,
-        i18n.isRTL ? { textAlign: 'right' } : { textAlign: 'left' },
+        !isRTL ? { textAlign: "right" } : { textAlign: "left" },
       ]}
     />
   ) : null;
@@ -68,7 +70,10 @@ const LabeledTextInput = (props) => {
       </View>
       <View style={styles.inputRow}>
         {icon}
-        <TextInput style={[styles.inputRowTextInput, textInputStyle]} {...props} />
+        <TextField
+          style={[styles.inputRowTextInput, textInputStyle]}
+          {...props}
+        />
       </View>
     </View>
   );

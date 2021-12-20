@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
-import Colors from 'constants/Colors';
+import { StyleSheet } from "react-native";
+import Colors from "constants/Colors";
 
 export const styles = StyleSheet.create({
   addRemoveIcons: {
@@ -7,12 +7,12 @@ export const styles = StyleSheet.create({
     marginRight: 0,
     color: Colors.addRemoveIcons,
   },
-  removeIcons: { color: 'red' },
+  removeIcons: { color: "red" },
   formIcon: {
     color: Colors.tintColor,
     fontSize: 22,
-    marginTop: 'auto',
-    marginBottom: 'auto',
+    marginTop: "auto",
+    marginBottom: "auto",
     width: 25,
   },
 });

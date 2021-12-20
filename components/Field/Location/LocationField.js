@@ -1,19 +1,19 @@
-import React from 'react';
-import { Linking, Pressable, Text, View } from 'react-native';
+import React from "react";
+import { Linking, Pressable, Text, View } from "react-native";
 //import PropTypes from 'prop-types';
 
-import useI18N from 'hooks/useI18N';
-import useLocations from 'hooks/useLocations';
+import useI18N from "hooks/useI18N";
+import useLocations from "hooks/useLocations";
 
-import MultiSelect from 'components/MultiSelect';
+import MultiSelect from "components/MultiSelect";
 
-import { styles } from './LocationField.styles';
+import { styles } from "./LocationField.styles";
 
 const LocationField = ({ value, editing, onChange }) => {
   const { i18n, isRTL } = useI18N();
 
   // if value is null, then set a default to ensure field displays
-  if (value === null) value = { values: [{ value: ''}]};
+  if (value === null) value = { values: [{ value: "" }] };
 
   // All available Locations in D.T instance
   const items = useLocations();
@@ -32,7 +32,7 @@ const LocationField = ({ value, editing, onChange }) => {
       items={items}
       selectedItems={selectedItems}
       onChange={onChange}
-      placeholder={i18n.t('global.selectLocations')}
+      placeholder={i18n.t("global.selectLocations")}
     />
   );
 
@@ -50,7 +50,12 @@ const LocationField = ({ value, editing, onChange }) => {
       }
       return (
         <Pressable onPress={() => Linking.openURL(mapURL)}>
-          <Text style={[styles.linkingText, isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
+          <Text
+            style={[
+              styles.linkingText,
+              isRTL ? { textAlign: "left", flex: 1 } : {},
+            ]}
+          >
             {location.name}
           </Text>
         </Pressable>

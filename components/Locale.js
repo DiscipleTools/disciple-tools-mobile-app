@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { Text, View } from 'react-native';
-import { useDispatch } from 'react-redux';
-import { Button } from 'native-base';
-import { Row } from 'react-native-easy-grid';
+import React, { useState } from "react";
+import { Text, View } from "react-native";
+import { useDispatch } from "react-redux";
+import { Button } from "native-base";
+import { Row } from "react-native-easy-grid";
 
-import useI18N from 'hooks/useI18N';
-import ActionModal from 'components/ActionModal';
+import useI18N from "hooks/useI18N";
+import ActionModal from "components/ActionModal";
 
 // TODO: move to StyleSheet
-import Colors from 'constants/Colors';
+import Colors from "constants/Colors";
 
-import { styles } from './Locale.styles';
+import { styles } from "./Locale.styles";
 
 const Locale = ({ state, setState }) => {
   const dispatch = useDispatch();
@@ -21,7 +21,9 @@ const Locale = ({ state, setState }) => {
   const isRTLNew = localeObjNew.rtl;
 
   const isRestartRequired =
-    isRTLNew === isRTLPrev || isRTLNew === null || isRTLPrev === null ? false : true;
+    isRTLNew === isRTLPrev || isRTLNew === null || isRTLPrev === null
+      ? false
+      : true;
 
   const onCancel = () => {
     setState({
@@ -37,12 +39,18 @@ const Locale = ({ state, setState }) => {
 
   const renderAppRestartModal = (
     <View style={styles.dialogBox}>
-      <Text style={styles.dialogContent}>{i18n.t('appRestart.message', { localePrev })}</Text>
       <Text style={styles.dialogContent}>
-        {i18n.t('appRestart.selectedLanguage', { localePrev }) + ': ' + localeObjNew.name}
+        {i18n.t("appRestart.message", { localePrev })}
       </Text>
       <Text style={styles.dialogContent}>
-        {i18n.t('appRestart.textDirection', { localePrev }) + ': ' + (isRTLNew ? 'RTL' : 'LTR')}
+        {i18n.t("appRestart.selectedLanguage", { localePrev }) +
+          ": " +
+          localeObjNew.name}
+      </Text>
+      <Text style={styles.dialogContent}>
+        {i18n.t("appRestart.textDirection", { localePrev }) +
+          ": " +
+          (isRTLNew ? "RTL" : "LTR")}
       </Text>
       <Row style={{ height: 50 }}>
         <Button
@@ -50,24 +58,33 @@ const Locale = ({ state, setState }) => {
           style={[
             styles.dialogButton,
             {
-              backgroundColor: '#ffffff',
+              backgroundColor: "#ffffff",
               width: 120,
-              marginLeft: 'auto',
-              marginRight: 'auto',
+              marginLeft: "auto",
+              marginRight: "auto",
             },
           ]}
           onPress={() => {
             onCancel();
-          }}>
-          <Text style={{ color: Colors.tintColor }}>{i18n.t('global.cancel', { localePrev })}</Text>
+          }}
+        >
+          <Text style={{ color: Colors.tintColor }}>
+            {i18n.t("global.cancel", { localePrev })}
+          </Text>
         </Button>
         <Button
           block
-          style={[styles.dialogButton, { width: 120, marginLeft: 'auto', marginRight: 'auto' }]}
+          style={[
+            styles.dialogButton,
+            { width: 120, marginLeft: "auto", marginRight: "auto" },
+          ]}
           onPress={() => {
             onConfirm();
-          }}>
-          <Text style={{ color: '#FFFFFF' }}>{i18n.t('appRestart.button', { localePrev })}</Text>
+          }}
+        >
+          <Text style={{ color: "#FFFFFF" }}>
+            {i18n.t("appRestart.button", { localePrev })}
+          </Text>
         </Button>
       </Row>
     </View>
@@ -84,7 +101,8 @@ const Locale = ({ state, setState }) => {
       onClose={(visible) => {
         onCancel();
       }}
-      title={i18n.t('appRestart.modalTitle', { localePrev })}>
+      title={i18n.t("appRestart.modalTitle", { localePrev })}
+    >
       {renderAppRestartModal}
     </ActionModal>
   );

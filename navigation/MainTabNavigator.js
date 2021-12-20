@@ -9,8 +9,11 @@ import { useNavigation } from "@react-navigation/native";
 
 //import HomeScreen from 'screens/HomeScreen';
 import PINScreen from "screens/PINScreen";
+import ImportContactsScreen from "screens/ImportContactsScreen";
+import CreateScreen from "screens/Posts/CreateScreen";
 import ListScreen from "screens/Posts/ListScreen";
 import DetailsScreen from "screens/Posts/DetailsScreen";
+import CommentsActivityScreen from "screens/Posts/CommentsActivityScreen";
 //import AttendanceScreen from 'screens/AttendanceScreen';
 //import QuestionnaireScreen from 'screens/Posts/QuestionnaireScreen';
 import NotificationsScreen from "screens/NotificationsScreen";
@@ -31,7 +34,7 @@ const MainTabNavigator = () => {
   console.log("$$$$$          MAIN TAB NAVIGATOR             $$$$$");
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
-  const { i18n } = useI18N();
+  const { i18n, locale } = useI18N();
   const { PINConstants } = usePIN();
   /*
   const { notifications } = useNotifications();
@@ -58,7 +61,7 @@ const MainTabNavigator = () => {
           name="Contacts"
           component={ListScreen}
           options={{
-            title: i18n.t("contactsScreen.contacts"),
+            title: i18n.t("contactsScreen.contacts", { locale }),
           }}
           initialParams={{
             type: "contacts",
@@ -69,6 +72,41 @@ const MainTabNavigator = () => {
           component={DetailsScreen}
           options={{
             title: "",
+          }}
+          initialParams={{
+            type: "contacts",
+          }}
+        />
+        <Stack.Screen
+          name="CommentsActivity"
+          component={CommentsActivityScreen}
+          options={{
+            title: i18n.t("global.commentsActivity", { locale }),
+          }}
+          initialParams={{
+            type: "contacts",
+          }}
+        />
+        <Stack.Screen
+          name="CreateContact"
+          component={CreateScreen}
+          options={{
+            // TODO:better title term
+            title: i18n.t("contactDetailScreen.addNewContact", { locale }),
+          }}
+          initialParams={{
+            type: "createContact",
+          }}
+        />
+        <Stack.Screen
+          name="ImportContacts"
+          component={ImportContactsScreen}
+          options={{
+            // TODO:better title term
+            title: i18n.t("contactDetailScreen.importContact", { locale }),
+          }}
+          initialParams={{
+            type: "import",
           }}
         />
       </Stack.Navigator>
@@ -82,10 +120,20 @@ const MainTabNavigator = () => {
           name="Groups"
           component={ListScreen}
           options={{
-            title: i18n.t("global.groups"),
+            title: i18n.t("global.groups", { locale }),
           }}
           initialParams={{
             type: "groups", // TODO: Constants
+          }}
+        />
+        <Stack.Screen
+          name="CommentsActivity"
+          component={CommentsActivityScreen}
+          options={{
+            title: i18n.t("global.commentsActivity", { locale }),
+          }}
+          initialParams={{
+            type: "groups",
           }}
         />
         <Stack.Screen
@@ -139,7 +187,10 @@ const MainTabNavigator = () => {
           name="Notifications"
           component={NotificationsScreen}
           options={{
-            title: i18n.t("notificationsScreen.notifications"),
+            title: i18n.t("notificationsScreen.notifications", { locale }),
+          }}
+          initialParams={{
+            type: "notifications",
           }}
         />
       </Stack.Navigator>
@@ -149,9 +200,7 @@ const MainTabNavigator = () => {
   const SettingsStack = () => {
     const navigation = useNavigation();
     const overrideScreenOptionStyle = { ...screenOptionStyle };
-    overrideScreenOptionStyle["headerBackTitle"] = i18n.t(
-      "settingsScreen.settings"
-    );
+    overrideScreenOptionStyle["headerBackTitle"] = i18n.t("settingsScreen.settings", { locale });
     overrideScreenOptionStyle["title"] = "";
     overrideScreenOptionStyle["headerStyle"] = {
       ...screenOptionStyle.headerStyle,
@@ -163,14 +212,14 @@ const MainTabNavigator = () => {
           name="Settings"
           component={SettingsScreen}
           options={{
-            title: i18n.t("settingsScreen.settings"),
+            title: i18n.t("settingsScreen.settings", { locale }),
           }}
         />
         <Stack.Screen
           name={PINConstants.SCREEN}
           options={{
             title: null,
-            headerBackTitle: i18n.t("settingsScreen.settings"),
+            headerBackTitle: i18n.t("settingsScreen.settings", { locale }),
           }}
         >
           {(props) => <PINScreen {...props} />}
@@ -182,9 +231,7 @@ const MainTabNavigator = () => {
   const PINStack = () => {
     const navigation = useNavigation();
     const overrideScreenOptionStyle = { ...screenOptionStyle };
-    overrideScreenOptionStyle["headerBackTitle"] = i18n.t(
-      "settingsScreen.settings"
-    );
+    overrideScreenOptionStyle["headerBackTitle"] = i18n.t("settingsScreen.settings", { locale });
     overrideScreenOptionStyle["title"] = "";
     overrideScreenOptionStyle["headerStyle"] = {
       ...screenOptionStyle.headerStyle,
@@ -213,19 +260,16 @@ const MainTabNavigator = () => {
 
   return (
     <Tab.Navigator
-      //initialRouteName={"Contacts"}
-      initialRouteName={'Settings'}
+      initialRouteName={"Contacts"}
+      //initialRouteName={'Settings'}
       screenOptions={({ route }) => ({
         headerShown: false,
-        //tabBarButton: ['Notifications', 'Settings', 'PIN', 'Storybook'].includes(route.name)
         tabBarActiveTintColor: "#365D86",
+        // TODO:
         tabBarStyle: [
-          {
-            display: "flex",
-          },
-          null,
+          ["CommentsActivity","PIN"].includes(route?.name) ? { display: "none" } : { display: "flex" },
         ],
-        tabBarButton: ["PIN"].includes(route.name)
+        tabBarButton: ["PIN"].includes(route?.name)
           ? () => {
               return null;
             }
@@ -260,7 +304,7 @@ const MainTabNavigator = () => {
         name="Contacts"
         component={ContactsStack}
         options={{
-          tabBarLabel: i18n.t("contactsScreen.contacts"),
+          tabBarLabel: i18n.t("contactsScreen.contacts", { locale }),
           tabBarIcon: ({ focused }) => (
             <TabBarIcon type="FontAwesome" name="user" focused={focused} />
           ),
@@ -270,7 +314,7 @@ const MainTabNavigator = () => {
         name="Groups"
         component={GroupsStack}
         options={{
-          tabBarLabel: i18n.t("global.groups"),
+          tabBarLabel: i18n.t("global.groups", { locale }),
           tabBarIcon: ({ focused }) => (
             <TabBarIcon type="FontAwesome" name="users" focused={focused} />
           ),
@@ -280,7 +324,7 @@ const MainTabNavigator = () => {
         name="Notifications"
         component={NotificationsStack}
         options={{
-          tabBarLabel: i18n.t("notificationsScreen.notifications"),
+          tabBarLabel: i18n.t("notificationsScreen.notifications", { locale }),
           tabBarIcon: ({ focused, color, size }) => (
             <TabBarIcon type="FontAwesome" name="bell" focused={focused} />
           ),
@@ -291,9 +335,9 @@ const MainTabNavigator = () => {
         name="Settings"
         component={SettingsStack}
         options={{
-          tabBarLabel: i18n.t("settingsScreen.settings"),
+          tabBarLabel: i18n.t("settingsScreen.settings", { locale }),
           //tabBarLabel: ({ focused, color, size }) => (
-          //  <Text style={{ color, fontSize: size }}>{i18n.t('settingsScreen.settings')}</Text>
+          //  <Text style={{ color, fontSize: size }}>{i18n.t('settingsScreen.settings', { locale })}</Text>
           //),
           tabBarIcon: ({ focused, color, size }) => (
             <TabBarIcon type="FontAwesome" name="cog" focused={focused} />

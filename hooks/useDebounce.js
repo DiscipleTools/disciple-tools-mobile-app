@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 // ref: https://usehooks.com/useDebounce/
 const useDebounce = (value, delay) => {
@@ -19,7 +19,7 @@ const useDebounce = (value, delay) => {
         clearTimeout(handler);
       };
     },
-    [value, delay], // Only re-call effect if value or delay changes
+    [value, delay] // Only re-call effect if value or delay changes
   );
 
   return debouncedValue;

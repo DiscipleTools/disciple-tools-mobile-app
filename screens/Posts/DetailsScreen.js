@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useLayoutEffect, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+} from "react";
 import {
   ScrollView,
   Text,
@@ -13,9 +19,9 @@ import {
   BackHandler,
   ActivityIndicator,
   useWindowDimensions,
-} from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import PropTypes from 'prop-types';
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import PropTypes from "prop-types";
 
 // Component Library (Native Base)
 import {
@@ -27,53 +33,53 @@ import {
   Tabs,
   TabHeading,
   ScrollableTab,
-} from 'native-base';
-import { Col, Row, Grid } from 'react-native-easy-grid';
+} from "native-base";
+import { Col, Row, Grid } from "react-native-easy-grid";
 
 // Expo
-import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
+import ExpoFileSystemStorage from "redux-persist-expo-filesystem";
 
 // 3rd-party Components
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Chip, Selectize } from 'react-native-material-selectize';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Chip, Selectize } from "react-native-material-selectize";
 //import { TabView, TabBar } from 'react-native-tab-view';
-import MentionsTextInput from 'react-native-mentions';
-import ParsedText from 'react-native-parsed-text';
+import MentionsTextInput from "react-native-mentions";
+import ParsedText from "react-native-parsed-text";
 // TODO
 //import * as Sentry from 'sentry-expo';
-import { CheckBox } from 'react-native-elements';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { CheckBox } from "react-native-elements";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 // (native base does not have a Skeleton component)
-import ContentLoader, { Rect, Circle } from 'react-content-loader/native';
+import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 
-import utils from 'utils';
+import utils from "utils";
 
 // Custom Hooks
-import useNetworkStatus from 'hooks/useNetworkStatus';
-import useI18N from 'hooks/useI18N';
-import usePostType from 'hooks/usePostType';
-import useId from 'hooks/useId';
-import useDetails from 'hooks/useDetails';
-import useSettings from 'hooks/useSettings';
-import useMyUser from 'hooks/useMyUser';
-import useDevice from 'hooks/useDevice';
-import useToast from 'hooks/useToast';
+import useNetworkStatus from "hooks/useNetworkStatus";
+import useI18N from "hooks/useI18N";
+import useType from "hooks/useType";
+import useId from "hooks/useId";
+import useDetails from "hooks/useDetails";
+import useSettings from "hooks/useSettings";
+import useMyUser from "hooks/useMyUser";
+import useDevice from "hooks/useDevice";
+import useToast from "hooks/useToast";
 
 // Custom Components
-import FAB from 'components/FAB';
-import Tile from 'components/Tile';
-import ActionModal from 'components/ActionModal';
-import OfflineBar from 'components/OfflineBar';
-import HeaderLeft from 'components/HeaderLeft';
-import KebabMenu from 'components/KebabMenu';
-import FieldSkeleton from 'components/Field/FieldSkeleton';
+import FAB from "components/FAB";
+import Tile from "components/Tile";
+import ActionModal from "components/ActionModal";
+import OfflineBar from "components/OfflineBar";
+import HeaderLeft from "components/HeaderLeft";
+import KebabMenu from "components/KebabMenu";
+import FieldSkeleton from "components/Field/FieldSkeleton";
 
 // TODO: move to StyleSheet
-import Colors from 'constants/Colors';
-import { dtIcon } from 'constants/Icons';
+import Colors from "constants/Colors";
+import { dtIcon } from "constants/Icons";
 
-import { styles } from './DetailsScreen.styles';
+import { styles } from "./DetailsScreen.styles";
 
 const initialState = {
   record: {},
@@ -104,15 +110,15 @@ const initialState = {
   },
   loadActivities: false,
   loadingMoreActivities: false,
-  comment: '',
-  overallStatusBackgroundColor: '#ffffff',
+  comment: "",
+  overallStatusBackgroundColor: "#ffffff",
   loading: false,
   foundGeonames: [],
   footerLocation: 0,
   footerHeight: 0,
   nameRequired: false,
   executingBack: false,
-  keyword: '',
+  keyword: "",
   suggestedUsers: [],
   height: utils.commentFieldMinHeight,
   sources: [],
@@ -166,11 +172,20 @@ const DetailsScreen = ({ navigation, route }) => {
   const toast = useToast();
   const { isIOS } = useDevice();
 
-  const { isContact, isGroup, postType } = usePostType();
+  const { isContact, isGroup, postType } = useType();
 
   const id = useId();
-  const { post, error: postError, isLoading, isValidating, mutate, save } = useDetails(id);
-  const { settings, error: settingsError } = useSettings();
+  const {
+    post,
+    error: postError,
+    isLoading,
+    isValidating,
+    mutate,
+    save,
+  } = useDetails(id);
+
+  const { settings } = useSettings();
+
   const { userData, error: userError } = useMyUser();
 
   const mapTabRoutes = () => {
@@ -183,8 +198,8 @@ const DetailsScreen = ({ navigation, route }) => {
         };
       }),
       {
-        key: 'comments',
-        title: i18n.t('global.commentsActivity'),
+        key: "comments",
+        title: i18n.t("global.commentsActivity"),
       },
     ];
   };
@@ -231,7 +246,10 @@ const DetailsScreen = ({ navigation, route }) => {
   const savedShare = false;
   //const savedShare = useSelector((state) => state.contactsReducer.savedShare);
 
-  let keyboardDidShowListener, keyboardDidHideListener, focusListener, hardwareBackPressListener;
+  let keyboardDidShowListener,
+    keyboardDidHideListener,
+    focusListener,
+    hardwareBackPressListener;
 
   const [state, setState] = useState(initialState);
 
@@ -356,13 +374,17 @@ const DetailsScreen = ({ navigation, route }) => {
 
   // TODO: ?? delete or merge with Group
   const contactIsCreated = () => {
-    return Object.prototype.hasOwnProperty.call(navigation.state.params, 'contactId');
+    return Object.prototype.hasOwnProperty.call(
+      navigation.state.params,
+      "contactId"
+    );
   };
 
   // TODO: ?? delete or merge with Group
   const onLoad = () => {
     // TODO: id, name, route.params
-    const { onlyView, contactId, contactName, importContact } = navigation.state.params;
+    const { onlyView, contactId, contactName, importContact } =
+      navigation.state.params;
     let newState = {};
     if (importContact) {
       newState = {
@@ -371,11 +393,11 @@ const DetailsScreen = ({ navigation, route }) => {
           sources: {
             values: [
               {
-                value: 'personal',
+                value: "personal",
               },
             ],
           },
-          seeker_path: 'none',
+          seeker_path: "none",
           contact_phone: importContact.contact_phone,
           contact_email: importContact.contact_email,
         },
@@ -391,11 +413,11 @@ const DetailsScreen = ({ navigation, route }) => {
           sources: {
             values: [
               {
-                value: 'personal',
+                value: "personal",
               },
             ],
           },
-          seeker_path: 'none',
+          seeker_path: "none",
         },
       };
       navigation.setParams({
@@ -408,11 +430,11 @@ const DetailsScreen = ({ navigation, route }) => {
           sources: {
             values: [
               {
-                value: 'personal',
+                value: "personal",
               },
             ],
           },
-          seeker_path: 'none',
+          seeker_path: "none",
         },
       };
       navigation.setParams({
@@ -456,7 +478,7 @@ const DetailsScreen = ({ navigation, route }) => {
           navigation.setParams({
             hideTabBar: false,
           });
-        },
+        }
       );
     } else {
       //Fix to returning using Android back button! -> goBack(null)
@@ -482,13 +504,13 @@ const DetailsScreen = ({ navigation, route }) => {
           sources: {
             values: [
               {
-                value: 'personal',
+                value: "personal",
               },
             ],
           },
-          seeker_path: 'none',
+          seeker_path: "none",
         },
-        overallStatusBackgroundColor: '#ffffff',
+        overallStatusBackgroundColor: "#ffffff",
       });
       navigation.setParams({
         ...currentParams,
@@ -502,10 +524,10 @@ const DetailsScreen = ({ navigation, route }) => {
       });
       */
       //navigation.dispatch(resetAction);
-      navigation.navigate('NotificationList');
+      navigation.navigate("NotificationList");
     } else {
       // Prevent error when view loaded from GroupDetailScreen.js
-      if (typeof navigation.state.params.onGoBack === 'function') {
+      if (typeof navigation.state.params.onGoBack === "function") {
         navigation.state.params.onGoBack();
       }
     }
@@ -528,7 +550,7 @@ const DetailsScreen = ({ navigation, route }) => {
 
   const getLists = async () => {
     let newState = {};
-    const users = await ExpoFileSystemStorage.getItem('usersList');
+    const users = await ExpoFileSystemStorage.getItem("usersList");
     if (users !== null) {
       newState = {
         ...newState,
@@ -539,7 +561,7 @@ const DetailsScreen = ({ navigation, route }) => {
           };
           // Prevent 'null' values
           if (
-            Object.prototype.hasOwnProperty.call(user, 'contact_id') &&
+            Object.prototype.hasOwnProperty.call(user, "contact_id") &&
             utils.isNumeric(user.contact_id)
           ) {
             newUser = {
@@ -552,7 +574,9 @@ const DetailsScreen = ({ navigation, route }) => {
       };
     }
 
-    const peopleGroups = await ExpoFileSystemStorage.getItem('peopleGroupsList');
+    const peopleGroups = await ExpoFileSystemStorage.getItem(
+      "peopleGroupsList"
+    );
     if (peopleGroups !== null) {
       newState = {
         ...newState,
@@ -560,7 +584,7 @@ const DetailsScreen = ({ navigation, route }) => {
       };
     }
 
-    const geonames = await ExpoFileSystemStorage.getItem('locationsList');
+    const geonames = await ExpoFileSystemStorage.getItem("locationsList");
     if (geonames !== null) {
       newState = {
         ...newState,
@@ -568,10 +592,12 @@ const DetailsScreen = ({ navigation, route }) => {
       };
     }
 
-    let sourcesList = Object.keys(contactSettings.fields.sources.values).map((key) => ({
-      name: contactSettings.fields.sources.values[key].label,
-      value: key,
-    }));
+    let sourcesList = Object.keys(contactSettings.fields.sources.values).map(
+      (key) => ({
+        name: contactSettings.fields.sources.values[key].label,
+        value: key,
+      })
+    );
 
     const mappedContacts = contactsList.map((contact) => {
       return {
@@ -661,7 +687,7 @@ const DetailsScreen = ({ navigation, route }) => {
   const setContactStatus = (value) => {
     let contactHaveReason = Object.prototype.hasOwnProperty.call(
       contactSettings.fields,
-      `reason_${value}`,
+      `reason_${value}`
     );
     setState((prevState) => {
       let newState = {
@@ -676,7 +702,9 @@ const DetailsScreen = ({ navigation, route }) => {
 
       if (contactHaveReason) {
         // SET FIRST REASON STATUS AS DEFAULT SELECTED OPTION
-        let reasonValues = Object.keys(contactSettings.fields[`reason_${value}`].values);
+        let reasonValues = Object.keys(
+          contactSettings.fields[`reason_${value}`].values
+        );
         newState = {
           ...newState,
           selectedReasonStatus: {
@@ -705,11 +733,26 @@ const DetailsScreen = ({ navigation, route }) => {
             ...state.record,
           };
           if (
-            Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_no_answer') ||
-            Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_contact_established') ||
-            Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_scheduled') ||
-            Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_meeting_complete') ||
-            Object.prototype.hasOwnProperty.call(quickAction, 'quick_button_no_show')
+            Object.prototype.hasOwnProperty.call(
+              quickAction,
+              "quick_button_no_answer"
+            ) ||
+            Object.prototype.hasOwnProperty.call(
+              quickAction,
+              "quick_button_contact_established"
+            ) ||
+            Object.prototype.hasOwnProperty.call(
+              quickAction,
+              "quick_button_meeting_scheduled"
+            ) ||
+            Object.prototype.hasOwnProperty.call(
+              quickAction,
+              "quick_button_meeting_complete"
+            ) ||
+            Object.prototype.hasOwnProperty.call(
+              quickAction,
+              "quick_button_no_show"
+            )
           ) {
             contactToSave = {
               ...contactToSave,
@@ -724,16 +767,18 @@ const DetailsScreen = ({ navigation, route }) => {
           Object.keys(contactToSave)
             .filter(
               (key) =>
-                key.includes('contact_') &&
-                Object.prototype.toString.call(contactToSave[key]) === '[object Array]' &&
-                contactToSave[key].length > 0,
+                key.includes("contact_") &&
+                Object.prototype.toString.call(contactToSave[key]) ===
+                  "[object Array]" &&
+                contactToSave[key].length > 0
             )
             .forEach((key) => {
               contactToSave = {
                 ...contactToSave,
                 [key]: contactToSave[key].filter(
                   (socialMedia) =>
-                    socialMedia.delete || (!socialMedia.delete && socialMedia.value.length > 0),
+                    socialMedia.delete ||
+                    (!socialMedia.delete && socialMedia.value.length > 0)
                 ),
               };
             });
@@ -741,14 +786,14 @@ const DetailsScreen = ({ navigation, route }) => {
           Object.keys(contactToSave).forEach((key) => {
             const value = contactToSave[key];
             if (
-              Object.prototype.hasOwnProperty.call(value, 'values') &&
+              Object.prototype.hasOwnProperty.call(value, "values") &&
               value.values.length === 0
             ) {
               delete contactToSave[key];
             }
           });
           //After 'utils.diff()' method, ID is removed, then we add it again
-          if (Object.prototype.hasOwnProperty.call(state.record, 'ID')) {
+          if (Object.prototype.hasOwnProperty.call(state.record, "ID")) {
             contactToSave = {
               ...contactToSave,
               ID: state.record.ID,
@@ -758,7 +803,9 @@ const DetailsScreen = ({ navigation, route }) => {
             // TODO: is a (hopefully temprorary workaround)
             // ref: 'setContactCustomFieldValue' method AND "case 'user_select':" Ln#4273
             const assignedTo = contactToSave.assigned_to;
-            const assignedToID = assignedTo.hasOwnProperty('key') ? assignedTo.key : assignedTo;
+            const assignedToID = assignedTo.hasOwnProperty("key")
+              ? assignedTo.key
+              : assignedTo;
             contactToSave = {
               ...contactToSave,
               assigned_to: `user-${assignedToID}`,
@@ -772,7 +819,7 @@ const DetailsScreen = ({ navigation, route }) => {
             nameRequired: true,
           });
         }
-      },
+      }
     );
   };
 
@@ -781,7 +828,7 @@ const DetailsScreen = ({ navigation, route }) => {
     let baptismDateRegex = /\{(\d+)\}+/;
     if (baptismDateRegex.test(comment)) {
       comment = comment.replace(baptismDateRegex, (match, timestamp) =>
-        utils.formatDateToView(timestamp * 1000),
+        utils.formatDateToView(timestamp * 1000)
       );
     }
     return comment;
@@ -821,7 +868,9 @@ const DetailsScreen = ({ navigation, route }) => {
     const items = [];
     if (contactList) {
       contactList.values.forEach((listItem) => {
-        const foundItem = localList.find((localItem) => localItem.value === listItem.value);
+        const foundItem = localList.find(
+          (localItem) => localItem.value === listItem.value
+        );
         if (foundItem) {
           items.push({
             name: foundItem.name,
@@ -834,11 +883,11 @@ const DetailsScreen = ({ navigation, route }) => {
   };
 
   const linkingPhoneDialer = (phoneNumber) => {
-    let number = '';
+    let number = "";
     if (isIOS) {
-      number = 'telprompt:${' + phoneNumber + '}';
+      number = "telprompt:${" + phoneNumber + "}";
     } else {
-      number = 'tel:${' + phoneNumber + '}';
+      number = "tel:${" + phoneNumber + "}";
     }
     Linking.openURL(number);
   };
@@ -857,7 +906,7 @@ const DetailsScreen = ({ navigation, route }) => {
 
   // TODO: merge with Groups?
   const goToContactDetailScreen = (id, name) => {
-    navigation.push('ContactDetail', {
+    navigation.push("ContactDetail", {
       id,
       name,
       onlyView: true,
@@ -867,7 +916,7 @@ const DetailsScreen = ({ navigation, route }) => {
 
   // TODO: merge with Contacts?
   const goToGroupDetailScreen = (id, name) => {
-    navigation.navigate('GroupDetail', {
+    navigation.navigate("GroupDetail", {
       id,
       name,
       onlyView: true,
@@ -902,7 +951,7 @@ const DetailsScreen = ({ navigation, route }) => {
       },
       () => {
         toggleFilterView();
-      },
+      }
     );
   };
 
@@ -931,12 +980,12 @@ const DetailsScreen = ({ navigation, route }) => {
 
   // TODO: ??
   const filterUsers = (keyword) => {
-    let newKeyword = keyword.replace('@', '');
+    let newKeyword = keyword.replace("@", "");
     setState((state) => {
       return {
         ...state,
         suggestedUsers: state.users.filter((user) =>
-          user.label.toLowerCase().includes(newKeyword.toLowerCase()),
+          user.label.toLowerCase().includes(newKeyword.toLowerCase())
         ),
         keyword,
       };
@@ -966,33 +1015,37 @@ const DetailsScreen = ({ navigation, route }) => {
   const renderFilterCommentsView = () => (
     <View style={{ flex: 1 }}>
       <Text
-        style={[
-          {
-            color: Colors.tintColor,
-            fontSize: 18,
-            textAlign: 'left',
-            fontWeight: 'bold',
-            marginBottom: 20,
-            marginTop: 20,
-            marginLeft: 10,
-          },
-        ]}>
-        {i18n.t('global.showing')}:
+        style={{
+          color: Colors.tintColor,
+          fontSize: 18,
+          textAlign: "left",
+          fontWeight: "bold",
+          marginBottom: 20,
+          marginTop: 20,
+          marginLeft: 10,
+        }}
+      >
+        {i18n.t("global.showing")}:
       </Text>
       <TouchableOpacity
         activeOpacity={0.5}
-        onPress={() => toggleFilter(state.filtersSettings.showComments, 'showComments')}>
+        onPress={() =>
+          toggleFilter(state.filtersSettings.showComments, "showComments")
+        }
+      >
         <View
           style={{
-            flexDirection: 'row',
+            flexDirection: "row",
             height: 50,
-          }}>
+          }}
+        >
           <Text
             style={{
-              marginRight: 'auto',
+              marginRight: "auto",
               marginLeft: 10,
-            }}>
-            {i18n.t('global.comments')} ({state.comments.data.length})
+            }}
+          >
+            {i18n.t("global.comments")} ({state.comments.data.length})
           </Text>
           <CheckBox
             Component={TouchableWithoutFeedback}
@@ -1007,18 +1060,23 @@ const DetailsScreen = ({ navigation, route }) => {
       </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={0.5}
-        onPress={() => toggleFilter(state.filtersSettings.showActivities, 'showActivities')}>
+        onPress={() =>
+          toggleFilter(state.filtersSettings.showActivities, "showActivities")
+        }
+      >
         <View
           style={{
-            flexDirection: 'row',
+            flexDirection: "row",
             height: 50,
-          }}>
+          }}
+        >
           <Text
             style={{
-              marginRight: 'auto',
+              marginRight: "auto",
               marginLeft: 10,
-            }}>
-            {i18n.t('global.activity')} ({state.activities.data.length})
+            }}
+          >
+            {i18n.t("global.activity")} ({state.activities.data.length})
           </Text>
           <CheckBox
             Component={TouchableWithoutFeedback}
@@ -1031,23 +1089,25 @@ const DetailsScreen = ({ navigation, route }) => {
           />
         </View>
       </TouchableOpacity>
-      <View style={{ position: 'absolute', bottom: 0, flexDirection: 'row' }}>
+      <View style={{ position: "absolute", bottom: 0, flexDirection: "row" }}>
         <Button
           style={{
             height: 75,
             width: windowWidth / 2,
-            backgroundColor: '#FFFFFF',
+            backgroundColor: "#FFFFFF",
           }}
-          onPress={() => resetFilters()}>
+          onPress={() => resetFilters()}
+        >
           <Text
             style={{
               color: Colors.primary,
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-            }}>
-            {i18n.t('global.reset')}
+              fontWeight: "bold",
+              textTransform: "uppercase",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            {i18n.t("global.reset")}
           </Text>
         </Button>
         <Button
@@ -1056,16 +1116,18 @@ const DetailsScreen = ({ navigation, route }) => {
             width: windowWidth / 2,
             backgroundColor: Colors.primary,
           }}
-          onPress={() => toggleFilterView()}>
+          onPress={() => toggleFilterView()}
+        >
           <Text
             style={{
-              color: '#FFFFFF',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-            }}>
-            {i18n.t('global.apply')}
+              color: "#FFFFFF",
+              fontWeight: "bold",
+              textTransform: "uppercase",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            {i18n.t("global.apply")}
           </Text>
         </Button>
       </View>
@@ -1074,7 +1136,12 @@ const DetailsScreen = ({ navigation, route }) => {
 
   // TODO: comments
   const renderAllCommentsView = () => (
-    <View style={{ flex: 1, paddingBottom: state.footerHeight + state.footerLocation }}>
+    <View
+      style={{
+        flex: 1,
+        paddingBottom: state.footerHeight + state.footerLocation,
+      }}
+    >
       {state.comments.data.length == 0 &&
       state.activities.data.length == 0 &&
       !state.loadComments &&
@@ -1083,7 +1150,7 @@ const DetailsScreen = ({ navigation, route }) => {
       ) : (
         <FlatList
           style={{
-            backgroundColor: '#ffffff',
+            backgroundColor: "#ffffff",
           }}
           ref={(flatList) => {
             commentsFlatListRef = flatList;
@@ -1095,7 +1162,7 @@ const DetailsScreen = ({ navigation, route }) => {
             <View
               style={{
                 height: 1,
-                backgroundColor: '#CCCCCC',
+                backgroundColor: "#CCCCCC",
               }}
             />
           )}
@@ -1107,7 +1174,9 @@ const DetailsScreen = ({ navigation, route }) => {
           refreshControl={
             <RefreshControl
               refreshing={state.loadComments || state.loadActivities}
-              onRefresh={() => onRefreshCommentsActivities(state.record.ID, true)}
+              onRefresh={() =>
+                  onRefreshCommentsActivities(state.record.ID, true)
+                }
             />
           }
           onScroll={({ nativeEvent }) => {
@@ -1116,16 +1185,18 @@ const DetailsScreen = ({ navigation, route }) => {
               () => {
                 const flatList = nativeEvent;
                 const contentOffsetY = flatList.contentOffset.y;
-                const layoutMeasurementHeight = flatList.layoutMeasurement.height;
+                const layoutMeasurementHeight =
+                  flatList.layoutMeasurement.height;
                 const contentSizeHeight = flatList.contentSize.height;
-                const heightOffsetSum = layoutMeasurementHeight + contentOffsetY;
+                const heightOffsetSum =
+                  layoutMeasurementHeight + contentOffsetY;
                 const distanceToStart = contentSizeHeight - heightOffsetSum;
                 if (distanceToStart < 100) {
                   getContactComments(state.record.ID);
                   getContactActivities(state.record.ID);
                 }
               },
-              500,
+              500
             );
           }}
         />
@@ -1133,34 +1204,35 @@ const DetailsScreen = ({ navigation, route }) => {
       <View style={{ backgroundColor: Colors.mainBackgroundColor }}>
         <MentionsTextInput
           editable={!state.loadComments}
-          placeholder={i18n.t('global.writeYourCommentNoteHere')}
+          placeholder={i18n.t("global.writeYourCommentNoteHere")}
           value={state.comment}
           onChangeText={setComment}
-          style={isRTL ? { textAlign: 'right', flex: 1 } : {}}
+          style={isRTL ? { textAlign: "right", flex: 1 } : {}}
           textInputStyle={{
-            borderColor: '#B4B4B4',
+            borderColor: "#B4B4B4",
             borderRadius: 5,
             borderWidth: 1,
             padding: 5,
             margin: 10,
             width: windowWidth - 120,
-            backgroundColor: state.loadComments ? '#e6e6e6' : '#FFFFFF',
+            backgroundColor: state.loadComments ? "#e6e6e6" : "#FFFFFF",
           }}
           loadingComponent={() => (
             <View
               style={{
                 flex: 1,
                 width: windowWidth,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <ActivityIndicator />
             </View>
           )}
           textInputMinHeight={40}
           textInputMaxHeight={80}
-          trigger={'@'}
-          triggerLocation={'new-word-only'}
+          trigger={"@"}
+          triggerLocation={"new-word-only"}
           triggerCallback={filterUsers}
           renderSuggestionsRow={renderSuggestionsRow}
           suggestionsData={state.suggestedUsers}
@@ -1178,11 +1250,16 @@ const DetailsScreen = ({ navigation, route }) => {
               marginRight: 60,
             },
             state.loadComments
-              ? { backgroundColor: '#e6e6e6' }
+              ? { backgroundColor: "#e6e6e6" }
               : { backgroundColor: Colors.tintColor },
             isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
-          ]}>
-          <Icon android="md-send" ios="ios-send" style={[{ color: 'white', fontSize: 25 }]} />
+          ]}
+        >
+          <Icon
+            android="md-send"
+            ios="ios-send"
+            style={{ color: "white", fontSize: 25 }}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => toggleFilterView()}
@@ -1191,20 +1268,19 @@ const DetailsScreen = ({ navigation, route }) => {
             {
               marginRight: 10,
             },
-          ]}>
+          ]}
+        >
           <Icon
             type="FontAwesome"
             name="filter"
-            style={[
-              {
-                color: Colors.tintColor,
-                fontSize: 35,
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                marginTop: 'auto',
-                marginBottom: 'auto',
-              },
-            ]}
+            style={{
+              color: Colors.tintColor,
+              fontSize: 35,
+              marginLeft: "auto",
+              marginRight: "auto",
+              marginTop: "auto",
+              marginBottom: "auto",
+            }}
           />
         </TouchableOpacity>
       </View>
@@ -1220,26 +1296,31 @@ const DetailsScreen = ({ navigation, route }) => {
           refreshing={state.loadComments || state.loadActivities}
           onRefresh={() => onRefreshCommentsActivities(state.record.ID, true)}
         />
-      }>
+      }
+    >
       <Grid style={{ transform: [{ scaleY: -1 }] }}>
         <Col>
-          <Row style={{ justifyContent: 'center' }}>
+          <Row style={{ justifyContent: "center" }}>
             <Image style={styles.noCommentsImage} source={dtIcon} />
           </Row>
           <Row>
             <Text style={styles.noCommentsText}>
-              {i18n.t('contactDetailScreen.noContactCommentPlaceHolder')}
+              {i18n.t("contactDetailScreen.noContactCommentPlaceHolder")}
             </Text>
           </Row>
           <Row>
             <Text style={styles.noCommentsText}>
-              {i18n.t('contactDetailScreen.noContactCommentPlaceHolder1')}
+              {i18n.t("contactDetailScreen.noContactCommentPlaceHolder1")}
             </Text>
           </Row>
           {!isConnected && (
             <Row>
-              <Text style={[styles.noCommentsText, { backgroundColor: '#fff2ac' }]}>
-                {i18n.t('contactDetailScreen.noContactCommentPlaceHolderOffline')}
+              <Text
+                style={[styles.noCommentsText, { backgroundColor: "#fff2ac" }]}
+              >
+                {i18n.t(
+                  "contactDetailScreen.noContactCommentPlaceHolderOffline"
+                )}
               </Text>
             </Row>
           )}
@@ -1251,13 +1332,22 @@ const DetailsScreen = ({ navigation, route }) => {
   // TODO: comments
   //const renderCommentsView = () => {
   const commentsView = () => {
-    return <>{state.showFilterView ? { renderFilterCommentsView } : { renderAllCommentsView }}</>;
+    return (
+      <>
+        {state.showFilterView
+          ? { renderFilterCommentsView }
+          : { renderAllCommentsView }}
+      </>
+    );
   };
 
   // TODO: ??
   const renderActivityOrCommentRow = (commentOrActivity) => (
     <View style={styles.container}>
-      <Image style={styles.image} source={{ uri: commentOrActivity.data[0].gravatar }} />
+      <Image
+        style={styles.image}
+        source={{ uri: commentOrActivity.data[0].gravatar }}
+      />
       <View style={styles.content}>
         {
           // Comment
@@ -1275,8 +1365,15 @@ const DetailsScreen = ({ navigation, route }) => {
                         <Row>
                           <Col>
                             <Text
-                              style={[styles.name, isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
-                              {Object.prototype.hasOwnProperty.call(item, 'content')
+                              style={[
+                                styles.name,
+                                isRTL ? { textAlign: "left", flex: 1 } : {},
+                              ]}
+                            >
+                              {Object.prototype.hasOwnProperty.call(
+                                item,
+                                "content"
+                              )
                                 ? item.author
                                 : item.name}
                             </Text>
@@ -1285,8 +1382,11 @@ const DetailsScreen = ({ navigation, route }) => {
                             <Text
                               style={[
                                 styles.time,
-                                isRTL ? { textAlign: 'left', flex: 1 } : { textAlign: 'right' },
-                              ]}>
+                                isRTL
+                                  ? { textAlign: "left", flex: 1 }
+                                  : { textAlign: "right" },
+                              ]}
+                            >
                               {utils.formatDateToView(item.date)}
                             </Text>
                           </Col>
@@ -1301,10 +1401,10 @@ const DetailsScreen = ({ navigation, route }) => {
                         paddingLeft: 10,
                         paddingRight: 10,
                       },
-                      Object.prototype.hasOwnProperty.call(item, 'object_note')
-                        ? { color: '#B4B4B4', fontStyle: 'italic' }
+                      Object.prototype.hasOwnProperty.call(item, "object_note")
+                        ? { color: "#B4B4B4", fontStyle: "italic" }
                         : {},
-                      isRTL ? { textAlign: 'left', flex: 1 } : {},
+                      isRTL ? { textAlign: "left", flex: 1 } : {},
                       index > 0 ? { marginTop: 20 } : {},
                     ]}
                     parse={[
@@ -1313,25 +1413,30 @@ const DetailsScreen = ({ navigation, route }) => {
                         style: { color: Colors.primary },
                         renderText: utils.renderMention,
                       },
-                    ]}>
-                    {Object.prototype.hasOwnProperty.call(item, 'content')
+                    ]}
+                  >
+                    {Object.prototype.hasOwnProperty.call(item, "content")
                       ? item.content
                       : formatActivityDate(item.object_note)}
                   </ParsedText>
-                  {Object.prototype.hasOwnProperty.call(item, 'content') &&
-                    (item.author.toLowerCase() === userData.username.toLowerCase() ||
-                      item.author.toLowerCase() === userData.displayName.toLowerCase()) && (
+                  {Object.prototype.hasOwnProperty.call(item, "content") &&
+                    (item.author.toLowerCase() ===
+                      userData.username.toLowerCase() ||
+                      item.author.toLowerCase() ===
+                        userData.displayName.toLowerCase()) && (
                       <Grid style={{ marginTop: 20 }}>
                         <Row
                           style={{
-                            marginTop: 'auto',
-                            marginBottom: 'auto',
-                          }}>
+                            marginTop: "auto",
+                            marginBottom: "auto",
+                          }}
+                      >
                           <Row
-                            style={{ marginLeft: 0, marginRight: 'auto' }}
+                            style={{ marginLeft: 0, marginRight: "auto" }}
                             onPress={() => {
                               openCommentDialog(item, true);
-                            }}>
+                            }}
+                        >
                             <Icon
                               type="MaterialCommunityIcons"
                               name="delete"
@@ -1344,33 +1449,36 @@ const DetailsScreen = ({ navigation, route }) => {
                               style={{
                                 color: Colors.primary,
                                 fontSize: 14,
-                              }}>
-                              {i18n.t('global.delete')}
+                              }}
+                          >
+                              {i18n.t("global.delete")}
                             </Text>
                           </Row>
                           <Row
                             style={{
-                              marginLeft: 'auto',
+                              marginLeft: "auto",
                               marginRight: 0,
                             }}
                             onPress={() => {
                               openCommentDialog(item);
-                            }}>
+                            }}
+                        >
                             <Icon
                               type="MaterialCommunityIcons"
                               name="pencil"
                               style={{
                                 color: Colors.primary,
                                 fontSize: 20,
-                                marginLeft: 'auto',
+                                marginLeft: "auto",
                               }}
                             />
                             <Text
                               style={{
                                 color: Colors.primary,
                                 fontSize: 14,
-                              }}>
-                              {i18n.t('global.edit')}
+                              }}
+                          >
+                              {i18n.t("global.edit")}
                             </Text>
                           </Row>
                         </Row>
@@ -1396,7 +1504,8 @@ const DetailsScreen = ({ navigation, route }) => {
           ...newState,
           contact: {
             ...prevState.record,
-            [prevState.selectedReasonStatus.key]: prevState.selectedReasonStatus.value,
+            [prevState.selectedReasonStatus.key]:
+              prevState.selectedReasonStatus.value,
           },
         };
       } else {
@@ -1429,10 +1538,12 @@ const DetailsScreen = ({ navigation, route }) => {
         <Grid>
           <Row>
             <ScrollView keyboardShouldPersistTaps="handled">
-              <Text style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 10 }}>
-                {i18n.t('global.shareSettings')}
+              <Text
+                style={{ fontWeight: "bold", fontSize: 20, marginBottom: 10 }}
+              >
+                {i18n.t("global.shareSettings")}
               </Text>
-              <Text>{i18n.t('contactDetailScreen.contactSharedWith')}:</Text>
+              <Text>{i18n.t("contactDetailScreen.contactSharedWith")}:</Text>
               <Selectize
                 itemId="value"
                 items={state.users.map((user) => ({
@@ -1444,10 +1555,10 @@ const DetailsScreen = ({ navigation, route }) => {
                   state.users.map((user) => ({
                     name: user.label,
                     value: user.key,
-                  })),
+                  }))
                 )}
                 textInputProps={{
-                  placeholder: i18n.t('global.searchUsers'),
+                  placeholder: i18n.t("global.searchUsers"),
                 }}
                 renderChip={(id, onClose, item, style, iconStyle) => (
                   <Chip
@@ -1473,26 +1584,30 @@ const DetailsScreen = ({ navigation, route }) => {
                     style={{
                       paddingVertical: 8,
                       paddingHorizontal: 10,
-                    }}>
+                    }}
+                  >
                     <View
                       style={{
-                        flexDirection: 'row',
-                      }}>
+                        flexDirection: "row",
+                      }}
+                    >
                       <Text
                         style={{
-                          color: 'rgba(0, 0, 0, 0.87)',
+                          color: "rgba(0, 0, 0, 0.87)",
                           fontSize: 14,
                           lineHeight: 21,
-                        }}>
+                        }}
+                      >
                         {item.name}
                       </Text>
                       <Text
                         style={{
-                          color: 'rgba(0, 0, 0, 0.54)',
+                          color: "rgba(0, 0, 0, 0.54)",
                           fontSize: 14,
                           lineHeight: 21,
-                        }}>
-                        {' '}
+                        }}
+                      >
+                        {" "}
                         (#
                         {id})
                       </Text>
@@ -1505,9 +1620,13 @@ const DetailsScreen = ({ navigation, route }) => {
               />
             </ScrollView>
           </Row>
-          <Row style={{ height: 60, borderColor: '#B4B4B4', borderTopWidth: 1 }}>
+          <Row
+            style={{ height: 60, borderColor: "#B4B4B4", borderTopWidth: 1 }}
+          >
             <Button block style={styles.dialogButton} onPress={toggleShareView}>
-              <Text style={{ color: Colors.buttonText }}>{i18n.t('global.close')}</Text>
+              <Text style={{ color: Colors.buttonText }}>
+                {i18n.t("global.close")}
+              </Text>
             </Button>
           </Row>
         </Grid>
@@ -1518,17 +1637,34 @@ const DetailsScreen = ({ navigation, route }) => {
   // TODO: componentize (w/ Modal?)
   const renderShowReasonStatusView = () => {
     return (
-      <View style={[styles.dialogBox, { height: windowHeight - windowHeight * 0.4 }]}>
+      <View
+        style={[
+          styles.dialogBox,
+          { height: windowHeight - windowHeight * 0.4 },
+        ]}
+      >
         <Grid>
           <Row>
             <View>
-              <Text style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 20 }}>
-                {contactSettings.fields[`reason_${state.record.overall_status}`].name}
+              <Text
+                style={{ fontWeight: "bold", fontSize: 20, marginBottom: 20 }}
+              >
+                {
+                  contactSettings.fields[
+                    `reason_${state.record.overall_status}`
+                  ].name
+                }
               </Text>
               <Text style={{ marginBottom: 20 }}>
-                {contactSettings.fields[`reason_${state.record.overall_status}`].description}
+                {
+                  contactSettings.fields[
+                    `reason_${state.record.overall_status}`
+                  ].description
+                }
               </Text>
-              <Text style={{ marginBottom: 20 }}>{i18n.t('global.chooseOption')}:</Text>
+              <Text style={{ marginBottom: 20 }}>
+                {i18n.t("global.chooseOption")}:
+              </Text>
               <View style={styles.contactTextRoundField}>
                 <Picker
                   selectedValue={state.selectedReasonStatus.value}
@@ -1540,23 +1676,37 @@ const DetailsScreen = ({ navigation, route }) => {
                         value,
                       },
                     });
-                  }}>
+                  }}
+                >
                   {renderReasonStatusPickerItems(
-                    contactSettings.fields[`reason_${state.record.overall_status}`].values,
+                    contactSettings.fields[
+                      `reason_${state.record.overall_status}`
+                    ].values
                   )}
                 </Picker>
               </View>
             </View>
           </Row>
-          <Row style={{ height: 60, borderColor: '#B4B4B4', borderTopWidth: 1 }}>
+          <Row
+            style={{ height: 60, borderColor: "#B4B4B4", borderTopWidth: 1 }}
+          >
             <Button
               block
-              style={[styles.dialogButton, { backgroundColor: '#FFFFFF' }]}
-              onPress={() => toggleReasonStatusView()}>
-              <Text style={{ color: Colors.primary }}>{i18n.t('global.cancel')}</Text>
+              style={[styles.dialogButton, { backgroundColor: "#FFFFFF" }]}
+              onPress={() => toggleReasonStatusView()}
+            >
+              <Text style={{ color: Colors.primary }}>
+                {i18n.t("global.cancel")}
+              </Text>
             </Button>
-            <Button block style={styles.dialogButton} onPress={() => toggleReasonStatusView(true)}>
-              <Text style={{ color: Colors.buttonText }}>{i18n.t('global.confirm')}</Text>
+            <Button
+              block
+              style={styles.dialogButton}
+              onPress={() => toggleReasonStatusView(true)}
+            >
+              <Text style={{ color: Colors.buttonText }}>
+                {i18n.t("global.confirm")}
+              </Text>
             </Button>
           </Row>
         </Grid>
@@ -1597,11 +1747,13 @@ const DetailsScreen = ({ navigation, route }) => {
               <View style={styles.dialogContent}>
                 <Row style={{ height: 30 }}>
                   <Label style={[styles.name, { marginBottom: 5 }]}>
-                    {i18n.t('global.delete')}
+                    {i18n.t("global.delete")}
                   </Label>
                 </Row>
                 <Row>
-                  <Text style={{ fontSize: 15 }}>{state.commentDialog.data.content}</Text>
+                  <Text style={{ fontSize: 15 }}>
+                    {state.commentDialog.data.content}
+                  </Text>
                 </Row>
               </View>
             ) : (
@@ -1609,7 +1761,7 @@ const DetailsScreen = ({ navigation, route }) => {
                 <Grid>
                   <Row style={{ height: 30 }}>
                     <Label style={[styles.name, { marginBottom: 5 }]}>
-                      {i18n.t('global.edit')}
+                      {i18n.t("global.edit")}
                     </Label>
                   </Row>
                   <Row>
@@ -1628,7 +1780,10 @@ const DetailsScreen = ({ navigation, route }) => {
                           },
                         }));
                       }}
-                      style={[styles.contactTextField, { height: 'auto', minHeight: 50 }]}
+                      style={[
+                        styles.contactTextField,
+                        { height: "auto", minHeight: 50 },
+                      ]}
                     />
                   </Row>
                 </Grid>
@@ -1640,26 +1795,35 @@ const DetailsScreen = ({ navigation, route }) => {
               transparent
               style={{
                 marginTop: 20,
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                marginBottom: 'auto',
+                marginLeft: "auto",
+                marginRight: "auto",
+                marginBottom: "auto",
                 paddingLeft: 25,
                 paddingRight: 25,
               }}
               onPress={() => {
                 onCloseCommentDialog();
-              }}>
-              <Text style={{ color: Colors.primary }}>{i18n.t('global.close')}</Text>
+              }}
+            >
+              <Text style={{ color: Colors.primary }}>
+                {i18n.t("global.close")}
+              </Text>
             </Button>
             {state.commentDialog.delete ? (
               <Button
                 block
-                style={[styles.dialogButton, { backgroundColor: Colors.buttonDelete }]}
+                style={[
+                  styles.dialogButton,
+                  { backgroundColor: Colors.buttonDelete },
+                ]}
                 onPress={() => {
                   //dispatch(deleteComment(state.record.ID, state.commentDialog.data.ID));
                   onCloseCommentDialog();
-                }}>
-                <Text style={{ color: Colors.buttonText }}>{i18n.t('global.delete')}</Text>
+                }}
+              >
+                <Text style={{ color: Colors.buttonText }}>
+                  {i18n.t("global.delete")}
+                </Text>
               </Button>
             ) : (
               <Button
@@ -1668,8 +1832,11 @@ const DetailsScreen = ({ navigation, route }) => {
                 onPress={() => {
                   //dispatch(saveComment(state.record.ID, state.commentDialog.data));
                   onCloseCommentDialog();
-                }}>
-                <Text style={{ color: Colors.buttonText }}>{i18n.t('global.save')}</Text>
+                }}
+              >
+                <Text style={{ color: Colors.buttonText }}>
+                  {i18n.t("global.save")}
+                </Text>
               </Button>
             )}
           </Row>
@@ -1687,7 +1854,8 @@ const DetailsScreen = ({ navigation, route }) => {
           onClose={(visible) => {
             onCancel();
           }}
-          title={'?? INSERT TITLE HERE ??'}>
+          title={"?? INSERT TITLE HERE ??"}
+        >
           {renderCommentDialog}
         </ActionModal>
         {/* TODO: not working...*/}
@@ -1697,7 +1865,8 @@ const DetailsScreen = ({ navigation, route }) => {
           onClose={(visible) => {
             onCancel();
           }}
-          title={'?? INSERT TITLE HERE ??'}>
+          title={"?? INSERT TITLE HERE ??"}
+        >
           {renderShowShareView}
         </ActionModal>
         <ActionModal
@@ -1705,7 +1874,8 @@ const DetailsScreen = ({ navigation, route }) => {
           onClose={(visible) => {
             onCancel();
           }}
-          title={'?? INSERT TITLE HERE ??'}>
+          title={"?? INSERT TITLE HERE ??"}
+        >
           {renderShowReasonStatusView}
         </ActionModal>
       </>
@@ -1716,12 +1886,22 @@ const DetailsScreen = ({ navigation, route }) => {
     if (!settings?.tiles) return null;
     const fields = [];
     settings.tiles.forEach((tile) => {
-      let creationFieldsByTile = tile?.fields?.filter((field) => field?.in_create_form === true);
+      let creationFieldsByTile = tile?.fields?.filter(
+        (field) => field?.in_create_form === true
+      );
       if (creationFieldsByTile.length > 0) {
         fields.push(...creationFieldsByTile);
       }
     });
-    return <Tile post={post} fields={fields} save={save} mutate={mutate} refreshing={refreshing} />;
+    return (
+      <Tile
+        post={post}
+        fields={fields}
+        save={save}
+        mutate={mutate}
+        refreshing={refreshing}
+      />
+    );
   };
 
   const Post = () => (
@@ -1729,7 +1909,8 @@ const DetailsScreen = ({ navigation, route }) => {
       renderTabBar={() => <ScrollableTab />}
       tabBarUnderlineStyle={styles.tabBarUnderline}
       // TODO: remove
-      initialPage={1}>
+      initialPage={0}
+    >
       {settings.tiles.map((tile) => {
         return (
           <Tab
@@ -1738,8 +1919,14 @@ const DetailsScreen = ({ navigation, route }) => {
                 <Text style={styles.tabHeading}>{tile?.label}</Text>
               </TabHeading>
             }
-            style={styles.background}>
-            <Tile post={post} fields={tile.fields} save={save} mutate={mutate} />
+            style={styles.background}
+          >
+            <Tile
+              post={post}
+              fields={tile.fields}
+              save={save}
+              mutate={mutate}
+            />
           </Tab>
         );
       })}
@@ -1748,7 +1935,7 @@ const DetailsScreen = ({ navigation, route }) => {
 
   // TODO: refactor this a bit per reuse
   const Skeleton = () => {
-    const skeletons = Array(7).fill('');
+    const skeletons = Array(7).fill("");
     return (
       <>
         <ContentLoader
@@ -1756,9 +1943,10 @@ const DetailsScreen = ({ navigation, route }) => {
           speed={3}
           width={windowWidth}
           height={65}
-          viewBox={'0 ' + '0 ' + windowWidth + ' 80'}
+          viewBox={"0 " + "0 " + windowWidth + " 80"}
           backgroundColor="#e7e7e7"
-          foregroundColor="#b7b7b7">
+          foregroundColor="#b7b7b7"
+        >
           <Rect x="0" y="25" rx="2" ry="2" width="75" height="20" />
           <Rect x="0" y="50" rx="2" ry="2" width="100" height="8" />
           <Rect x="120" y="25" rx="2" ry="2" width="75" height="20" />
@@ -1774,9 +1962,10 @@ const DetailsScreen = ({ navigation, route }) => {
           speed={3}
           width={windowWidth}
           height={100}
-          viewBox={'0 ' + '0 ' + windowWidth + ' 80'}
+          viewBox={"0 " + "0 " + windowWidth + " 80"}
           backgroundColor="#e7e7e7"
-          foregroundColor="#b7b7b7">
+          foregroundColor="#b7b7b7"
+        >
           <Circle cx="350" cy="60" r="35" />
         </ContentLoader>
       </>
@@ -1798,8 +1987,11 @@ const DetailsScreen = ({ navigation, route }) => {
     </>
   );
 
-  if (postError || settingsError || userError || !id)
-    toast(postError?.message || settingsError?.message || userError?.message || 'ZZError', true);
+  if (postError || userError || !id)
+    toast(
+      postError?.message || userError?.message,
+      true
+    );
   //if (!post || !settings || !userData) return null;
 
   // TODO: why relying on position rather than name or type?
@@ -1810,7 +2002,7 @@ const DetailsScreen = ({ navigation, route }) => {
   return (
     <>
       <Details />
-      {!hideFAB() && <FAB post={post} />}
+      {!hideFAB() && <FAB post={post} settings={settings} />}
       {/* causes grey block above keyboard<Modals />*/}
     </>
   );

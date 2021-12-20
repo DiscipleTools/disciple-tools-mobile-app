@@ -1,34 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { Keyboard, View, TextInput } from 'react-native';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from "react";
+import { Keyboard, View, TextInput } from "react-native";
+import PropTypes from "prop-types";
 
 // Component Library (Native Base)
 // Expo
 // Redux
 
 // Helpers/Utils
-import i18n from 'languages';
+import i18n from "languages";
 
 // Custom Hooks
-import useDebounce from 'hooks/useDebounce.js';
-import useNetworkStatus from 'hooks/useNetworkStatus';
+import useDebounce from "hooks/useDebounce.js";
+import useNetworkStatus from "hooks/useNetworkStatus";
 
 // Custom Components
-import FilterOptionsPanel from 'components/FilterOptionsPanel';
+import FilterOptionsPanel from "./FilterOptionsPanel";
 
 // Third-party Components
 
 // Assets
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from "@expo/vector-icons";
 
 // Styles
-import { styles } from './SearchBar.styles';
+import { styles } from "./SearchBar.styles";
 
 const SearchBar = ({ setFilter, setOptionsFilter }) => {
   const isConnected = useNetworkStatus();
   const [showFilterOptionsPanel, setShowFilterOptionsPanel] = useState(false);
 
-  const [searchString, setSearchString] = useState('');
+  const [searchString, setSearchString] = useState("");
 
   const debouncedSearchString = useDebounce(searchString, 500);
 
@@ -40,8 +40,8 @@ const SearchBar = ({ setFilter, setOptionsFilter }) => {
 
   const filterByText = (searchString) => {
     if (searchString.length < 1) {
-      setSearchString('');
-      setFilter('');
+      setSearchString("");
+      setFilter("");
       Keyboard.dismiss();
     } else {
       setSearchString(searchString);
@@ -58,14 +58,18 @@ const SearchBar = ({ setFilter, setOptionsFilter }) => {
       <View style={styles.searchSection}>
         <MaterialIcons name="search" style={styles.searchIcon} />
         <TextInput
-          placeholder={i18n.t('global.search')}
+          placeholder={i18n.t("global.search")}
           value={searchString}
           onChangeText={(searchString) => filterByText(searchString)}
           autoCorrect={false}
           style={styles.input}
         />
         {searchString.length > 0 && (
-          <MaterialIcons name="clear" style={styles.searchIcon} onPress={() => filterByText('')} />
+          <MaterialIcons
+            name="clear"
+            style={styles.searchIcon}
+            onPress={() => filterByText("")}
+          />
         )}
         {isConnected && (
           <MaterialIcons
@@ -75,12 +79,14 @@ const SearchBar = ({ setFilter, setOptionsFilter }) => {
           />
         )}
       </View>
-      {showFilterOptionsPanel && setOptionsFilter && (
-        <FilterOptionsPanel setFilter={filterByOption} />
+      {showFilterOptionsPanel && (
+        <FilterOptionsPanel />
       )}
     </>
   );
 };
+      //{showFilterOptionsPanel && setOptionsFilter && (
+        //<FilterOptionsPanel setFilter={filterByOption} />
 SearchBar.propTypes = {
   setFilter: PropTypes.func.isRequired,
   setOptionsFilter: PropTypes.func,

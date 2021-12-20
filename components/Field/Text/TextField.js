@@ -1,30 +1,37 @@
-import React from 'react';
-import { Text, TextInput } from 'react-native';
+import React from "react";
+import { Text, TextInput } from "react-native";
 //import PropTypes from 'prop-types';
 
-import useI18N from 'hooks/useI18N';
+import useI18N from "hooks/useI18N";
 
-import { styles } from './TextField.styles';
+import { styles } from "./TextField.styles";
 
-const TextField = ({ value, editing, onChange }) => {
+//const TextField = ({ value, editing, onChange }) => {
+const TextField = (props) => {
+
   const { i18n, isRTL } = useI18N();
+
+  const { value, editing, onChange } = props;
 
   const handleChange = (newValue) => {
     if (newValue !== value) onChange(newValue);
   };
 
-  const TextFieldEdit = () => (
-    <TextInput
+  /*
       autoFocus={true}
       defaultValue={value}
       onChangeText={handleChange}
       // TODO: more consistent styling
-      style={[styles.textField, isRTL ? { textAlign: 'left', flex: 1 } : {}]}
+      style={[styles.textField, isRTL ? { textAlign: "left", flex: 1 } : {}]}
+  */
+  const TextFieldEdit = () => (
+    <TextInput
+      {...props}
     />
   );
 
   const TextFieldView = () => (
-    <Text style={isRTL ? { textAlign: 'left', flex: 1 } : {}}>{value}</Text>
+    <Text style={isRTL ? { textAlign: "left", flex: 1 } : {}}>{value}</Text>
   );
 
   return <>{editing ? <TextFieldEdit /> : <TextFieldView />}</>;

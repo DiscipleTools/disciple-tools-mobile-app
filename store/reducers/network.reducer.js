@@ -1,4 +1,4 @@
-import * as actions from 'store/actions/network.actions';
+import * as actions from "store/actions/network.actions";
 
 const initialState = {
   isConnected: null,

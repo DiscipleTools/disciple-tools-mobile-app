@@ -1,18 +1,18 @@
-import React from 'react';
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
-import { Label } from 'native-base';
-import { Col, Row, Grid } from 'react-native-easy-grid';
-import { useNavigation } from '@react-navigation/native';
+import React from "react";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Label } from "native-base";
+import { Col, Row, Grid } from "react-native-easy-grid";
+import { useNavigation } from "@react-navigation/native";
 
-import MultiSelect from 'components/MultiSelect';
-import PostLink from 'components/PostLink';
+import MultiSelect from "components/MultiSelect";
+import PostLink from "components/PostLink";
 
 // Custom Hooks
-import useI18N from 'hooks/useI18N';
-import usePostType from 'hooks/usePostType';
-import useUsersContacts from 'hooks/useUsersContacts';
-import useList from 'hooks/useList';
-import usePeopleGroups from 'hooks/usePeopleGroups';
+import useI18N from "hooks/useI18N";
+import useType from "hooks/useType";
+import useUsersContacts from "hooks/useUsersContacts";
+import useList from "hooks/useList";
+import usePeopleGroups from "hooks/usePeopleGroups";
 
 import {
   groupCircleIcon,
@@ -22,22 +22,23 @@ import {
   groupPeerIcon,
   groupTypeIcon,
   swimmingPoolIcon,
-} from 'constants/Icons';
-import { styles } from './ConnectionField.styles';
+} from "constants/Icons";
+import { styles } from "./ConnectionField.styles";
 
 const ConnectionField = ({ field, value, editing, onChange }) => {
   const { i18n, isRTL } = useI18N();
-  const { isContact, isGroup, postType } = usePostType();
+  const { isContact, isGroup, postType } = useType();
 
   // if value is null, then set a default to ensure field displays
-  if (value === null) value = { values: [{ value: '' }] };
+  if (value === null) value = { values: [{ value: "" }] };
 
   const selectedItems = value?.values;
 
   const addConnection = (newValue) => {
     const exists = selectedItems.find(
       (existingValue) =>
-        existingValue?.value === newValue?.ID || existingValue?.value === newValue?.contact_id,
+        existingValue?.value === newValue?.ID ||
+        existingValue?.value === newValue?.contact_id
     );
     if (!exists)
       onChange({
@@ -60,7 +61,7 @@ const ConnectionField = ({ field, value, editing, onChange }) => {
         selectedItems={selectedItems}
         onChange={onChange}
         customAdd={addConnection}
-        placeholder={''}
+        placeholder={""}
       />
     );
   };
@@ -68,7 +69,7 @@ const ConnectionField = ({ field, value, editing, onChange }) => {
   const GroupEdit = () => {
     const mergedUsersContacts = useUsersContacts();
     // TODO: filter should be 2nd param so we can default it to null
-    const { posts: groups } = useList(null, 'groups');
+    const { posts: groups } = useList(null, "groups");
     if (!groups || !mergedUsersContacts) return null;
     return (
       <MultiSelect
@@ -76,7 +77,7 @@ const ConnectionField = ({ field, value, editing, onChange }) => {
         selectedItems={selectedItems}
         onChange={onChange}
         customAdd={addConnection}
-        placeholder={''}
+        placeholder={""}
       />
     );
   };
@@ -90,7 +91,7 @@ const ConnectionField = ({ field, value, editing, onChange }) => {
         selectedItems={selectedItems}
         onChange={onChange}
         customAdd={addConnection}
-        placeholder={''}
+        placeholder={""}
       />
     );
   };
@@ -98,7 +99,11 @@ const ConnectionField = ({ field, value, editing, onChange }) => {
   const PeopleGroupView = () => (
     <>
       {selectedItems.map((connection) => (
-        <PostLink id={connection?.ID} title={connection?.name} type={'people_groups'} />
+        <PostLink
+          id={connection?.ID}
+          title={connection?.name}
+          type={"people_groups"}
+        />
       ))}
     </>
   );
@@ -109,8 +114,10 @@ const ConnectionField = ({ field, value, editing, onChange }) => {
     //const { posts: groups } = useList(null, 'groups');
     let iconSource = groupParentIcon;
     const groupFieldLabel = String(field.label);
-    if (groupFieldLabel.toLowerCase().includes('peer')) iconSource = groupPeerIcon;
-    if (groupFieldLabel.toLowerCase().includes('child')) iconSource = groupChildIcon;
+    if (groupFieldLabel.toLowerCase().includes("peer"))
+      iconSource = groupPeerIcon;
+    if (groupFieldLabel.toLowerCase().includes("child"))
+      iconSource = groupChildIcon;
     return (
       <Grid>
         <Row style={styles.formRow}>
@@ -124,38 +131,54 @@ const ConnectionField = ({ field, value, editing, onChange }) => {
           </Col>
           <Col />
         </Row>
-        <Row style={[styles.groupCircleParentContainer, { overflowX: 'auto', marginBottom: 10 }]}>
+        <Row
+          style={[
+            styles.groupCircleParentContainer,
+            { overflowX: "auto", marginBottom: 10 },
+          ]}
+        >
           <ScrollView horizontal>
             {selectedItems.map((group, index) => {
               const id = group?.value;
               const title = group?.name;
               // TODO: constant?
-              const type = 'groups';
+              const type = "groups";
               return (
                 <Col
                   key={index.toString()}
                   style={styles.groupCircleContainer}
                   onPress={() => {
-                    navigation.push('Details', {
+                    navigation.push("Details", {
                       id,
                       name: title,
                       type,
                       //onGoBack: () => onRefresh(),
                     });
-                  }}>
-                  {Object.prototype.hasOwnProperty.call(group, 'is_church') && group.is_church ? (
-                    <Image source={groupCircleIcon} style={styles.groupCircle} />
+                  }}
+                >
+                  {Object.prototype.hasOwnProperty.call(group, "is_church") &&
+                  group.is_church ? (
+                    <Image
+                      source={groupCircleIcon}
+                      style={styles.groupCircle}
+                    />
                   ) : (
-                    <Image source={groupDottedCircleIcon} style={styles.groupCircle} />
+                    <Image
+                      source={groupDottedCircleIcon}
+                      style={styles.groupCircle}
+                    />
                   )}
-                  <Image source={swimmingPoolIcon} style={styles.groupCenterIcon} />
+                  <Image
+                    source={swimmingPoolIcon}
+                    style={styles.groupCenterIcon}
+                  />
                   <Row style={styles.groupCircleName}>
                     <Text style={styles.groupCircleNameText}>{group.name}</Text>
                   </Row>
                   <Row style={styles.groupCircleCounter}>
                     <Text>{group.baptized_member_count}</Text>
                   </Row>
-                  <Row style={[styles.groupCircleCounter, { marginTop: '5%' }]}>
+                  <Row style={[styles.groupCircleCounter, { marginTop: "5%" }]}>
                     <Text>{group.member_count}</Text>
                   </Row>
                 </Col>
@@ -171,19 +194,23 @@ const ConnectionField = ({ field, value, editing, onChange }) => {
   const ContactView = () => (
     <>
       {selectedItems.map((connection) => (
-        <PostLink id={connection?.value} title={connection?.name} type={'contacts'} />
+        <PostLink
+          id={connection?.value}
+          title={connection?.name}
+          type={"contacts"}
+        />
       ))}
     </>
   );
 
   const ConnectionFieldEdit = () => {
-    if (field?.name === 'people_groups') return <PeopleGroupEdit />;
+    if (field?.name === "people_groups") return <PeopleGroupEdit />;
     if (isGroup) return <GroupEdit />;
     return <ContactEdit />;
   };
 
   const ConnectionFieldView = () => {
-    if (field?.name === 'people_groups') return <PeopleGroupView />;
+    if (field?.name === "people_groups") return <PeopleGroupView />;
     if (isGroup) return <GroupView />;
     return <ContactView />;
   };

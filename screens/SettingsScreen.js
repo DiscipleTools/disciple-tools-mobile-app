@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text } from "react-native";
 import PropTypes from "prop-types";
 
@@ -32,7 +32,7 @@ import gravatar from "assets/gravatar-default.png";
 
 const SettingsScreen = ({ navigation }) => {
   const { isConnected, toggleNetwork } = useNetworkStatus();
-  const { i18n, isRTL } = useI18N();
+  const { i18n, isRTL, locale } = useI18N();
   const { PINConstants, hasPIN } = usePIN();
   const {
     user,
@@ -112,7 +112,7 @@ const SettingsScreen = ({ navigation }) => {
     <SettingsOption
       onPress={() => navigation.navigate('Storybook')}
       iconName="flask"
-      label={i18n.t('settingsScreen.storybook')}
+      label={i18n.t('settingsScreen.storybook', { locale })}
     />
   );
   */
@@ -120,7 +120,7 @@ const SettingsScreen = ({ navigation }) => {
   const OnlineToggle = () => (
     <SettingsOption
       iconName="ios-flash"
-      label={i18n.t("global.online")}
+      label={i18n.t("global.online", { locale })}
       component={
         <Switch value={isConnected} onChange={toggleNetwork} disabled={false} />
       }
@@ -131,7 +131,7 @@ const SettingsScreen = ({ navigation }) => {
     <SettingsOption
       iconType="MaterialCommunityIcons"
       iconName="login-variant"
-      label={i18n.t("settingsScreen.autoLogin")}
+      label={i18n.t("settingsScreen.autoLogin", { locale })}
       component={<Switch value={isAutoLogin} onChange={toggleAutoLogin} />}
     />
   );
@@ -140,7 +140,7 @@ const SettingsScreen = ({ navigation }) => {
     <SettingsOption
       iconType="MaterialCommunityIcons"
       iconName="onepassword"
-      label={i18n.t("settingsScreen.rememberLoginDetails")}
+      label={i18n.t("settingsScreen.rememberLoginDetails", { locale })}
       component={
         <Switch
           value={rememberLoginDetails}
@@ -162,7 +162,7 @@ const SettingsScreen = ({ navigation }) => {
       <SettingsOption
         iconType="MaterialCommunityIcons"
         iconName="security"
-        label={i18n.t("settingsScreen.pinCode")}
+        label={i18n.t("settingsScreen.pinCode", { locale })}
         component={<Switch value={hasPIN} onChange={togglePIN} />}
       />
     );
@@ -183,7 +183,7 @@ const SettingsScreen = ({ navigation }) => {
         onPress={draftNewSupportEmail}
         iconType="MaterialCommunityIcons"
         iconName="help-circle"
-        label={i18n.t("settingsScreen.helpSupport")}
+        label={i18n.t("settingsScreen.helpSupport", { locale })}
       />
     );
   };
@@ -192,7 +192,7 @@ const SettingsScreen = ({ navigation }) => {
     <SettingsOption
       onPress={signOut}
       iconName="log-out"
-      label={i18n.t("settingsScreen.logout")}
+      label={i18n.t("settingsScreen.logout", { locale })}
       component={<Icon active name={isRTL ? "arrow-back" : "arrow-forward"} />}
     />
   );
