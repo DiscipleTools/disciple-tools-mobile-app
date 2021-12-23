@@ -1,11 +1,10 @@
 import React from "react";
-//import { Text, View } from 'react-native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   createStackNavigator,
   HeaderBackButton,
 } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
+import { getFocusedRouteNameFromRoute, useNavigation } from "@react-navigation/native";
 
 //import HomeScreen from 'screens/HomeScreen';
 import PINScreen from "screens/PINScreen";
@@ -265,10 +264,12 @@ const MainTabNavigator = () => {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: "#365D86",
-        // TODO:
-        tabBarStyle: [
-          ["CommentsActivity","PIN"].includes(route?.name) ? { display: "none" } : { display: "flex" },
-        ],
+        tabBarStyle: {
+          display:
+            ["CommentsActivity","PIN"].includes(getFocusedRouteNameFromRoute(route))
+              ? "none"
+              : "flex",
+        },
         tabBarButton: ["PIN"].includes(route?.name)
           ? () => {
               return null;
