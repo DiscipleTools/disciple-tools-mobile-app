@@ -1,3 +1,4 @@
+import './wdyr';
 import React, { useEffect } from "react";
 import { LogBox } from "react-native";
 import AppNavigator from "navigation/AppNavigator";
