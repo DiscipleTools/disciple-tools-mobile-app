@@ -50,7 +50,7 @@ const MainTabNavigator = () => {
       backgroundColor: Colors.tintColor,
     },
     headerTintColor: Colors.headerTintColor,
-    //headerBackTitle: ""
+    headerBackTitleVisible: false
   };
 
   const ContactsStack = () => {
