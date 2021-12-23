@@ -33,4 +33,13 @@ export const styles = StyleSheet.create({
     color: Colors.tintColor,
     fontSize: 10,
   },
+  commentInput: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 35,
+    backgroundColor: Colors.contentBackgroundColor,
+    minHeight: 75,
+  },
 });

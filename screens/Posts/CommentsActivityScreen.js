@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+/*
 import {
-  Text,
-  View,
+  Keyboard,
+  KeyboardAvoidingView,
   Image,
+  Text,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
+*/
+import { Image, View, Keyboard, KeyboardAvoidingView, TextInput, Text, Platform, TouchableWithoutFeedback, Button, StatusBar } from 'react-native';
+import { useHeaderHeight } from '@react-navigation/elements';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Container, Icon } from "native-base";
 import { Col, Row, Grid } from "react-native-easy-grid";
@@ -17,6 +26,7 @@ import PostItemSkeleton from "components/PostItem/PostItemSkeleton";
 
 import useNetworkStatus from "hooks/useNetworkStatus";
 import useI18N from "hooks/useI18N";
+import useDetails from "hooks/useDetails";
 import useComments from "hooks/useComments";
 import useActivity from "hooks/useActivity";
 import useMyUser from "hooks/useMyUser";
@@ -33,8 +43,22 @@ const CommentsActivityScreen = ({ navigation, route }) => {
   const { i18n, isRTL } = useI18N();
   const { userData } = useMyUser();
 
+  const { save } = useDetails();
+
   const [excludeComments, setExcludeComments] = useState(false);
   const [excludeActivity, setExcludeActivity] = useState(false);
+
+  const [expandedTextInput, toggleExpandedTextInput] = useState(false);
+
+  /*
+  useEffect(() => {
+    if (expandedTextInput) navigation.navigate("FullScreenModal", {
+      title: "...",
+      renderView: () => null
+    };
+    return;
+  }, [expandedTextInput])
+  */
 
   const items = [];
   const { data: comments, error, isLoading, isValidating, mutate } = useComments({ exclude: excludeComments });
@@ -137,53 +161,158 @@ const CommentsActivityScreen = ({ navigation, route }) => {
                     type="MaterialCommunityIcons"
                     name="delete"
                     style={{
-                      color: Colors.iconDelete,
-                      fontSize: 20,
-                    }}
-                  />
-                  <Text
-                    style={{
-                      color: Colors.primary,
-                      fontSize: 14,
-                    }}
-                >
-                    {i18n.t("global.delete")}
-                  </Text>
-                </Row>
-                <Row
-                  style={{
-                    marginLeft: "auto",
-                    marginRight: 0,
+                    color: Colors.iconDelete,
+                    fontSize: 20,
                   }}
-                  onPress={() => {
-                    //openCommentDialog(item);
+                />
+                <Text
+                  style={{
+                    color: Colors.primary,
+                    fontSize: 14,
                   }}
               >
-                  <Icon
-                    type="MaterialCommunityIcons"
-                    name="pencil"
-                    style={{
-                      color: Colors.primary,
-                      fontSize: 20,
-                      marginLeft: "auto",
-                    }}
-                  />
-                  <Text
-                    style={{
-                      color: Colors.primary,
-                      fontSize: 14,
-                    }}
-                >
-                    {i18n.t("global.edit")}
-                  </Text>
-                </Row>
+                  {i18n.t("global.delete")}
+                </Text>
               </Row>
-            </Grid>
-          )}
-        </View>
+              <Row
+                style={{
+                  marginLeft: "auto",
+                  marginRight: 0,
+                }}
+                onPress={() => {
+                  //openCommentDialog(item);
+                }}
+            >
+                <Icon
+                  type="MaterialCommunityIcons"
+                  name="pencil"
+                  style={{
+                    color: Colors.primary,
+                    fontSize: 20,
+                    marginLeft: "auto",
+                  }}
+                />
+                <Text
+                  style={{
+                    color: Colors.primary,
+                    fontSize: 14,
+                  }}
+              >
+                  {i18n.t("global.edit")}
+                </Text>
+              </Row>
+            </Row>
+          </Grid>
+        )}
       </View>
+    </View>
+  );
+};
+
+const CustomKeyboardAvoidingView = ({ children, style }) => {
+  const headerHeight = useHeaderHeight();
+  console.log("headerHeight: " + headerHeight)
+  console.log("StatusBar.currentHeight: " + StatusBar.currentHeight)
+
+  const insets = useSafeAreaInsets();
+  const [bottomPadding, setBottomPadding] = useState(insets.bottom)
+  const [topPadding, setTopPadding] = useState(insets.top)
+
+  useEffect(() => {
+    // This useEffect is needed because insets are undefined at first for some reason
+    // https://github.com/th3rdwave/react-native-safe-area-context/issues/54
+    setBottomPadding(insets.bottom)
+    setTopPadding(insets.top)
+
+    console.log("topPadding: " + topPadding)
+    console.log("bottomPadding: " + bottomPadding)
+  }, [insets.bottom, insets.top])
+
+  return (
+    <KeyboardAvoidingView
+      style={style}
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={headerHeight + topPadding + StatusBar.currentHeight}
+    >
+      {children}
+    </KeyboardAvoidingView>
+  );
+};
+
+const CommentInput = () => {
+  const [comment, setComment] = useState("");
+  return(
+    <>
+      { comment?.length > 0 && (
+        <View style={{ flexGrow: 1, marginLeft: "auto", paddingTop: 5, paddingBottom: 15 }}>
+          <Icon
+            type="MaterialCommunityIcons"
+            name="arrow-expand"
+            style={{ fontSize: 24, color: Colors.gray }}
+            onPress={() => toggleExpandedTextInput(false)}
+          />
+        </View>
+      )}
+      <View style={styles.commentInput}>
+        <TextInput
+          multiline={true}
+          value={comment}
+          onChangeText={(text) => setComment(text)}
+          // TODO: translate
+          placeholder={"Comment"}
+          //autoFocus={true}
+          style={{ flex: 1, fontSize: 16 }}
+        />
+        <Icon
+          type="MaterialCommunityIcons"
+          name="send-circle"
+          style={{ fontSize: 42, color: Colors.primary }}
+          onPress={() => save(comment)}
+        />
+      </View>
+    </>
+  );
+};
+
+// TODO: RTL support
+const ExpandableTextInput = () => {
+  const insets = useSafeAreaInsets();
+  return(
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <CustomKeyboardAvoidingView style={{ backgroundColor: "#fff", flexGrow: 1, flexDirection: "column", justifyContent: "space-between", borderTopWidth: 1, borderColor: "#ccc" }}>
+          <View style={{ height: 100, paddingLeft: 10, paddingRight: 10 }}>
+            <CommentInput />
+          </View>
+        </CustomKeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     );
   };
+
+
+  const ZZExpandableTextInput = () => (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{
+            padding: 24,
+            flex: 1,
+            justifyContent: "space-around"
+        }}>
+          <TextInput
+            multiline={true}
+            onChangeText={(text) => {
+              console.log(text);
+            }}
+            defaultValue={"ZZ"}
+            //autoFocus={true}
+            style={{ borderTopWidth: 1, borderColor: "#ccc", height: 200 }}
+          />
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
+  );
 
   const renderItem = ({ item }) => <CommentsActivityItem item={item} loading={isLoading||isValidating||isError} />;
 
@@ -197,6 +326,7 @@ const CommentsActivityScreen = ({ navigation, route }) => {
         // TODO: add term and translate
         placeholder={"COMMENTS ACTIVITY PLACEHOLDER TEXT"}
       />
+      <ExpandableTextInput />
     </Container>
   );
 };
