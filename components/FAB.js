@@ -8,12 +8,13 @@ import ActionButton from "react-native-action-button";
 import useI18N from "hooks/useI18N";
 import useNetworkStatus from "hooks/useNetworkStatus.js";
 import useType from "hooks/useType.js";
+import useSettings from "hooks/useSettings";
 
 // Styles, Constants, Icons, Assets, etc...
 import Colors from "constants/Colors";
 import { styles } from "./FAB.styles";
 
-const FAB = ({ post, settings }) => {
+const FAB = ({ post }) => {
   const navigation = useNavigation();
 
   const { i18n, isRTL, locale } = useI18N();
@@ -21,6 +22,7 @@ const FAB = ({ post, settings }) => {
 
   const { isContact, isGroup } = useType();
 
+  const { settings } = useSettings();
   if (!settings) return null;
 
   const onSaveQuickAction = (quickActionPropertyName) => {

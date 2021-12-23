@@ -1,18 +1,16 @@
+import useNetworkStatus from "hooks/useNetworkStatus";
 import useType from "hooks/useType";
 import useRequest from "hooks/useRequest";
 
-import { useRoute } from "@react-navigation/native";
-
 const useFilters = () => {
 
-  const route = useRoute();
+  const isConnected = useNetworkStatus();
+  const { isPost, isNotification, isCommentsActivity, postType } = useType();
 
-  const { isPost, isNotification, isCommentActivity, postType } = useType();
-
-  const url = isPost ? `/dt/v1/users/get_filters?post_type=${postType}&force_refresh=1` : null;
+  const url = (isPost && isConnected) ? `/dt/v1/users/get_filters?post_type=${postType}&force_refresh=1` : null;
   let { data, error, isLoading, isValidating } = useRequest(url);
 
-  if (isCommentActivity) data = [
+  if (isCommentsActivity) data = [
     {
       title: "Filter By Category",
       count: 1350,
@@ -140,10 +138,9 @@ const useFilters = () => {
     return mappedCustomFilters;
   };
 
-  //const customFilters = (isPost && data?.filters?.length > 0) ? mapCustomFilters(data) : data;
-  const customFilters = data?.filters?.length > 0 ? mapCustomFilters(data) : data;
+  const filters = data?.filters?.length > 0 ? mapCustomFilters(data) : data;
   return {
-    data: customFilters,
+    data: filters,
     error,
     isLoading,
     isValidating,

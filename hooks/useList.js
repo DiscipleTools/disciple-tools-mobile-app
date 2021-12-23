@@ -1,9 +1,10 @@
+import React from "react";
 import useType from "hooks/useType.js";
 import useRequest from "hooks/useRequest";
 import useMyUser from "hooks/useMyUser";
 import { Html5Entities } from "html-entities";
 
-const useList = (filter) => {
+const useList = ({ search, filter }) => {
 
   const { isContact, isGroup, postType } = useType();
   const { userData } = useMyUser();
@@ -321,26 +322,20 @@ const useList = (filter) => {
   };
 
   const mapFilterOnQueryParams = (filter, userData) => {
-    let queryParams = "?";
+    let queryParams = '';
     Object.keys(filter).forEach((key) => {
-      console.log(`key: ${ key }`)
       let filterValue = filter[key];
-      console.log(`value: ${ filterValue }`)
       let filterValueType = Object.prototype.toString.call(filterValue);
       if (filterValueType === "[object Array]") {
         filterValue.forEach((value) => {
-          queryParams = `${queryParams}${
-            queryParams === "?" ? "" : "&"
-          }${key}%5B%5D=${value === userData?.display_name ? "me" : value}`;
+          queryParams = `${queryParams}&${key}%5B%5D=${value === userData?.display_name ? "me" : value}`;
         });
       } else if (filterValueType === "[object Object]") {
         // TODO: implement?
         //mapFilterOnQueryParams(filterValue, null, userData);
       } else {
         if (filterValue?.length > 0) {
-          queryParams = `${queryParams}${
-            queryParams === "?" ? "" : "&"
-          }${key}=${filterValue === userData?.display_name ? "me" : filterValue}`;
+          queryParams = `${queryParams}&${key}=${filterValue === userData?.display_name ? "me" : filterValue}`;
         }
       }
     });
@@ -348,16 +343,18 @@ const useList = (filter) => {
   };
 
   let url = `/dt-posts/v2/${postType}`;
-  //if (filter) url += mapFilterOnQueryParams(filter, userData);
-  url += "?dt_recent=true";
+  if (search || filter) url += '?';
+  if (search) url += `text=${search}`;
+  if (filter && userData) url += mapFilterOnQueryParams(filter, userData);
+  if (!search && !filter) url += "?dt_recent=true";
 
+  // TODO: offline filtering
   // TODO: useSelector for initialData if OFFLINE
   //const initialData = null;
 
-  let { data, error, isLoading, isValidating, mutate } = useRequest(url);
-
+  const { data, error, isLoading, isValidating, mutate } = useRequest(url);
   return {
-    posts: data?.posts ? mapPosts(data.posts) : null,
+    data: data?.posts ? mapPosts(data.posts) : null,
     error,
     isLoading,
     isValidating,

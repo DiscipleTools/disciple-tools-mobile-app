@@ -8,41 +8,44 @@ import {
 } from "react-native";
 import PropTypes from "prop-types";
 
-// Component Library (Native Base)
 import { Container } from "native-base";
-
-// 3rd-Party Components
 //import { Html5Entities } from 'html-entities';
 
-// Custom Components
 import FilterList from "components/FilterList";
 import OfflineBar from "components/OfflineBar";
 
-// Custom Hooks
 import useNetworkStatus from "hooks/useNetworkStatus";
 import useI18N from "hooks/useI18N";
 import useNotifications from "hooks/useNotifications.js";
 //import useMyUser from 'hooks/useMyUser.js';
 
-// Styles, Constants, Icons, Assets, etc...
-import { styles } from "./NotificationsScreen.styles";
 import Colors from "constants/Colors";
 
-// TODO: resolve screen flickering
+import { styles } from "./NotificationsScreen.styles";
+
 const NotificationsScreen = ({ navigation }) => {
   const DEFAULT_LIMIT = 10;
 
   const isConnected = useNetworkStatus();
   const { i18n, isRTL } = useI18N();
   const {
-    notifications,
-    error: notificationsError,
+    data: notifications,
+    error,
     isLoading,
     isValidating,
     mutate,
     markViewed,
     markUnread,
   } = useNotifications();
+
+  let isError = false;
+  if (error) {
+    isError = true;
+    // TODO
+    //toast(error, true);
+    console.error(error);
+  };
+
   //const { userData, error: userError } = useMyUser();
   /*
   const notifications = [];
@@ -61,34 +64,28 @@ const NotificationsScreen = ({ navigation }) => {
   const [isAll, setIsAll] = useState(true);
   const [offset, setOffset] = useState(0);
   const [limit, setLimit] = useState(10); // fails: useState(DEFAULT_LIMIT);
-  const [refreshing, setRefreshing] = useState(false);
 
-  const onRefresh = useCallback(() => {
-    mutate();
-  });
-
-  const renderRow = (notification) => {
-    //console.log('*** RENDER ROW ***');
-    //console.log(JSON.stringify(notification));
-    const str1 = notification.notification_note.search("<");
-    const str2 = notification.notification_note.search(">");
-    const str3 = notification.notification_note.length - 4;
-    const newNotificationNoteA = notification.notification_note.substr(0, str1);
-    const newNotificationNoteB = notification.notification_note.substr(
+  const NotificationItem = ({ item, loading }) => {
+    //console.log(JSON.stringify(item));
+    const str1 = item?.notification_note?.search("<");
+    const str2 = item?.notification_note?.search(">");
+    const str3 = item?.notification_note?.length - 4;
+    const newNotificationNoteA = item?.notification_note?.substr(0, str1);
+    const newNotificationNoteB = item?.notification_note?.substr(
       str2,
       str3
     );
-    const str4 = newNotificationNoteB.search("<") - 1;
-    const newNotificationNoteC = newNotificationNoteB.substr(1, str4);
-    let entityLink = notification.notification_note.substring(
-      notification.notification_note.lastIndexOf('href="') + 6,
-      notification.notification_note.lastIndexOf('">')
+    const str4 = newNotificationNoteB?.search("<") - 1;
+    const newNotificationNoteC = newNotificationNoteB?.substr(1, str4);
+    let entityLink = item?.notification_note?.substring(
+      item?.notification_note?.lastIndexOf('href="') + 6,
+      item?.notification_note?.lastIndexOf('">')
     );
-    let entityId = entityLink.split("/")[4];
-    let entityName = entityLink.split("/")[3];
+    let entityId = entityLink?.split("/")[4];
+    let entityName = entityLink?.split("/")[3];
     // TODO
     //const entities = new Html5Entities();
-    const isNew = notification.is_new === "1" ? true : false;
+    const isNew = item?.is_new === "1" ? true : false;
     return (
       <View
         style={
@@ -134,7 +131,7 @@ const NotificationsScreen = ({ navigation }) => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              toggleReadUnread(notification, isNew);
+              toggleReadUnread(item, isNew);
             }}
           >
             <View style={styles.buttonContainer}>
@@ -154,8 +151,8 @@ const NotificationsScreen = ({ navigation }) => {
 
   const toggleReadUnread = async (notification, isNew) =>
     isNew
-      ? await markViewed(notification.id)
-      : await markUnread(notification.id);
+      ? await markViewed(notification?.id)
+      : await markUnread(notification?.id);
 
   const redirectToDetailView = (viewName, entityId, entityTitle) => {
     let view, prop;
@@ -178,67 +175,22 @@ const NotificationsScreen = ({ navigation }) => {
     });
   };
 
-  const renderFooter = () => {
-    return (
-      <View style={styles.loadMoreFooterText}>
-        <TouchableOpacity
-          onPress={() => {
-            onRefresh(true);
-          }}
-        >
-          <Text style={styles.loadMoreFooterText}>
-            {i18n.t("notificationsScreen.loadMore")}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  const renderItem = ({ item }) => <NotificationItem item={item} loading={isLoading||isValidating||isError} />;
 
-  const NotificationsPlaceholder = () => {
-    return (
-      <ScrollView
-        contentContainerStyle={styles.dontHaveNotificationsText}
-        refreshControl={
-          <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
-        }
-      >
-        {isAll && (
-          <Text style={styles.dontHaveNotificationsText}>
-            {i18n.t("notificationsScreen.dontHaveNotifications")}
-          </Text>
-        )}
-        {!isAll && (
-          <Text style={styles.dontHaveNotificationsText}>
-            {i18n.t("notificationsScreen.dontHaveNotificationsUnread")}
-          </Text>
-        )}
-      </ScrollView>
-    );
-  };
-
-  if (!notifications) return null;
-  /*
-  return(
-    <Text>{ JSON.stringify(notifications) } </Text>
-  )
-  */
-  // TODO: Filter All or Unread :-)
   return (
     <Container style={styles.container}>
       {!isConnected && <OfflineBar />}
       <FilterList
-        posts={notifications}
-        loading={isLoading || isValidating}
-        renderRow={renderRow}
-        //footer={list.length >= DEFAULT_LIMIT ? renderFooter : null}
-        //style={{ backgroundColor: Colors.mainBackgroundColor }}
-        //placeholder={}
+        items={(notifications?.length > 0) ? notifications : []}
+        renderItem={renderItem}
+        onRefresh={mutate}
+        // TODO: add term and translate
+        placeholder={"NOTIFICATIONS PLACEHOLDER TEXT"}
       />
     </Container>
   );
 };
 NotificationsScreen.propTypes = {
   navigation: PropTypes.object.isRequired,
-  route: PropTypes.object.isRequired,
 };
 export default NotificationsScreen;

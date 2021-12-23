@@ -30,13 +30,4 @@ export const styles = StyleSheet.create({
     height: 41,
     fontSize: 18,
   },
-  chip: {
-    borderColor: "#c2e0ff",
-    borderWidth: 1,
-    backgroundColor: "#ecf5fc",
-    borderRadius: 2,
-    padding: 4,
-    marginRight: 4,
-    marginBottom: 4,
-  },
 });

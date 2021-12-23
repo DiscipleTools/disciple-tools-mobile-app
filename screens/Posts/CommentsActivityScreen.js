@@ -13,6 +13,7 @@ import MentionsTextInput from "react-native-mentions";
 
 import OfflineBar from "components/OfflineBar";
 import FilterList from "components/FilterList";
+import PostItemSkeleton from "components/PostItem/PostItemSkeleton";
 
 import useNetworkStatus from "hooks/useNetworkStatus";
 import useI18N from "hooks/useI18N";
@@ -36,20 +37,31 @@ const CommentsActivityScreen = ({ navigation, route }) => {
   const [excludeActivity, setExcludeActivity] = useState(false);
 
   const items = [];
-  const { data: comments, error, isLoading, isValidating } = useComments({ exclude: excludeComments });
+  const { data: comments, error, isLoading, isValidating, mutate } = useComments({ exclude: excludeComments });
   const { data: activity } = useActivity({ exclude: excludeActivity });
   if (!excludeComments && !comments) return null;
   if (!excludeActivity && !activity) return null;
   if (comments) items.push(...comments);
   if (activity) items.push(...activity);
 
+  let isError = false;
+  if (error) {
+    isError = true;
+    // TODO
+    //toast(error, true);
+    console.error(error);
+  };
+
   const username = userData?.display_name;
 
-  const renderRow = (item) => {
-    //console.log(JSON.stringify(item));
+  // TODO: implement this skeleton 
+  const CommentsActivityItemLoadingSkeleton = () => <PostItemSkeleton />;
+
+  const CommentsActivityItem = ({ item, loading }) => {
     const message = item?.comment_content || item?.object_note;
     const author = item?.comment_author || item?.name;
     const userIsAuthor = author?.toLowerCase() === username?.toLowerCase();
+    if (!item || loading) return <CommentsActivityItemLoadingSkeleton />;
     return(
       <View style={styles.container}>
         <Image
@@ -168,24 +180,20 @@ const CommentsActivityScreen = ({ navigation, route }) => {
               </Row>
             </Grid>
           )}
-          {/*
-          item?.content ? item.content : formatActivityDate(item?.object_note)
-          */}
         </View>
       </View>
     );
   };
 
+  const renderItem = ({ item }) => <CommentsActivityItem item={item} loading={isLoading||isValidating||isError} />;
+
   return (
     <Container>
       {!isConnected && <OfflineBar />}
       <FilterList
-        posts={(items?.length > 0) ? items : []}
-        //posts={comments.comments}
-        loading={isLoading}
-        renderRow={renderRow}
-        //footer={list.length >= DEFAULT_LIMIT ? renderFooter : null}
-        //style={{ backgroundColor: Colors.mainBackgroundColor }}
+        items={(items?.length > 0) ? items : []}
+        renderItem={renderItem}
+        onRefresh={mutate}
         // TODO: add term and translate
         placeholder={"COMMENTS ACTIVITY PLACEHOLDER TEXT"}
       />

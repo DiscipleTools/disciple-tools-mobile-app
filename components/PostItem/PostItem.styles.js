@@ -1,6 +1,4 @@
 import { StyleSheet } from "react-native";
-// TODO: cannot use hook without functional component
-//import useTheme from 'hooks/useTheme';
 import Colors from "constants/Colors";
 
 const listItemHeight = 80;

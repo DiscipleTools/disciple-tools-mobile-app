@@ -1,75 +1,40 @@
-import React, { useState } from "react";
-import {
-  Platform,
-  Pressable,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import React, { useState, useReducer } from "react";
+import { Platform, Pressable, Text, View, } from "react-native";
 import PropTypes from "prop-types";
 
-// component library (native base)
-import { Accordion, Icon, Input, Item } from "native-base";
-
-// TODO: migrate to StyleSheet
-import Colors from "constants/Colors";
-
-// custom components
-import useI18N from "hooks/useI18N";
-import useNetworkStatus from "hooks/useNetworkStatus";
-import useMyUser from "hooks/useMyUser";
-//import useSettings from 'hooks/useSettings';
-import useFilters from "hooks/useFilters";
-import useToast from "hooks/useToast";
-
-// third-party components
+import { Accordion, Item } from "native-base";
 // NOTE: this is used to pass a custom component/icon as checkbox to preserve a standard look-and-feel across platform (which is not currently supported by native base)
 // TODO: replace with existing depenedency
 import { CheckBox } from "react-native-elements";
 
-// styles/assets
+import useNetworkStatus from "hooks/useNetworkStatus";
+import useI18N from "hooks/useI18N";
+import useFilters from "hooks/useFilters";
+import useToast from "hooks/useToast";
+
+// TODO: migrate to StyleSheet
+import Colors from "constants/Colors";
+
 import { styles } from "./FilterOptionsPanel.styles";
-import { MaterialIcons } from "@expo/vector-icons";
 
-const FilterOptionsPanel = () => {
-  const isConnected = useNetworkStatus();
+const FilterOptionsPanel = ({ onFilter }) => {
+  //const isConnected = useNetworkStatus();
   const { i18n, isRTL } = useI18N();
+  //const toast = useToast();
 
-  //const { userData } = useMyUser();
+  const [selectedFilterID, setSelectedFilterID] = useState(null); 
 
-  const initialState = {
-    filter: {
-      ID: null,
-      name: null,
-      query: null,
-    },
-  };
-  const [state, setState] = useState(initialState);
+  const { data: filters, error } = useFilters();
+  if (!filters) return null;
 
-  //const { settings, error: settingsError } = useSettings();
-  const { data: customFilters, error } = useFilters();
-  //console.log("*** CUSTOM FILTERS 1 ***");
-  //console.log(JSON.stringify(customFilters));
-  if (!customFilters) return null;
-  console.log("*** CUSTOM FILTERS 2 ***");
-  //if (customFiltersError) toast(customFiltersError.message, true);
+  if (error) toast(error?.message, true);
 
-  /*
-  // TODO: ?? 
-  const reset = () => {
-    setState(initialState);
-  };
-  */
-
-  const filterByOption = (ID, name, query) => {
-    setState({
-      filter: {
-        ID,
-        name,
-        query,
-      },
-    });
-    setFilter(query);
+  const _onFilter = (filter) => {
+    // TODO
+    // showFilterOptionsPanel(false) ??
+    // active X (clear) on SearchBar (to clear filter) ??
+    setSelectedFilterID(filter?.ID);
+    onFilter(filter);
   };
 
   const renderHeader = (item, expanded) => {
@@ -135,9 +100,7 @@ const FilterOptionsPanel = () => {
   };
 
   const renderContent = (item, expanded) => {
-    //console.log("*** RENDER CONTENT ***");
     const content = item?.content;
-    //console.log(content);
     return (
       <View
         key={0}
@@ -160,7 +123,11 @@ const FilterOptionsPanel = () => {
               <Pressable
                 key={filter?.ID}
                 onPress={() =>
-                  filterByOption(filter?.ID, filter?.name, filter?.query)
+                  _onFilter({
+                    ID: filter?.ID,
+                    name: filter?.name,
+                    query: filter?.query
+                  })
                 }
               >
                 <View
@@ -171,11 +138,15 @@ const FilterOptionsPanel = () => {
                   }}
                 >
                   <CheckBox
-                    checked={filter?.ID === state?.filter?.ID}
+                    checked={filter?.ID === selectedFilterID}
                     checkedIcon="dot-circle-o"
                     uncheckedIcon="circle-o"
                     onPress={() =>
-                      filterByOption(filter?.ID, filter?.name, filter?.query)
+                      _onFilter({
+                        ID: filter?.ID,
+                        name: filter?.name,
+                        query: filter?.query
+                      })
                     }
                     containerStyle={{ padding: 0, margin: 0 }}
                   />
@@ -205,53 +176,20 @@ const FilterOptionsPanel = () => {
     );
   };
 
-  //console.log(customFilters);
   return (
-    <View>
-      <Item regular>
-        <Accordion
-          dataArray={customFilters}
-          animation={true}
-          expanded={true}
-          renderHeader={renderHeader}
-          renderContent={renderContent}
-          //activeSections={null}
-          //sections={null}
-        />
-        {/* TODO: state.filter &&
-          !state.filter.toggle &&
-          ((state.search && state.search.length > 0) || state.filter.name.length > 0) && (
-            <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
-              {state.search && state.search.length > 0 && (
-                <Text style={styles.chip}>{state.search}</Text>
-              )}
-              {state.filter.name.length > 0 && <Text style={styles.chip}>{state.filter.name}</Text>}
-              {fieldName && <Text style={styles.chip}>{fieldName}</Text>}
-            </View>
-          )*/}
-      </Item>
-    </View>
+    <Item>
+      <Accordion
+        dataArray={filters}
+        animation={true}
+        //expanded={true}
+        renderHeader={renderHeader}
+        renderContent={renderContent}
+        //activeSections={null}
+        //sections={null}
+      />
+    </Item>
   );
 };
-/*
-  let fieldName = null;
-  if (state.filter && state.filter.query && state.filter.query.sort) {
-    // TODO: something better than this call method?
-    if (
-      settings &&
-      Object.prototype.hasOwnProperty.call(
-        settings.fields,
-        state.filter.query.sort.replace('-', ''),
-      )
-    ) {
-      fieldName =
-        i18n.t('global.sortBy') +
-        ': ' +
-        settings.fields[state.filter.query.sort.replace('-', '')].name;
-    }
-  }
-  */
-FilterOptionsPanel.propTypes = {
-  //setFilter: PropTypes.func.isRequired,
-};
+FilterOptionsPanel.propTypes = {};
+//FilterOptionsPanel.whyDidYouRender = true;
 export default FilterOptionsPanel;

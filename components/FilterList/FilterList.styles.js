@@ -15,4 +15,21 @@ export const styles = StyleSheet.create({
     padding: 20,
     fontWeight: "bold",
   },
+  tags: {
+    flexGrow: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    borderColor: "#ccc",
+    borderTopWidth: 1
+  },
+  chip: {
+    borderColor: "#c2e0ff",
+    borderWidth: 1,
+    backgroundColor: "#ecf5fc",
+    borderRadius: 2,
+    padding: 7,
+    marginTop: 5,
+    marginLeft: 5,
+    marginBottom: 5,
+  },
 });

@@ -99,9 +99,7 @@ const LoginScreen = ({ navigation, route }) => {
   };
 
   const goToForgotPassword = () => {
-    // TODO: revert this
-    dispatch({ type: "CLEAR_REDUX_DATA" });
-    /*
+    //dispatch({ type: "CLEAR_REDUX_DATA" });
     if (domain !== "") {
       Linking.openURL(
         `https://${domain}/wp-login.php?action=lostpassword`
@@ -109,7 +107,6 @@ const LoginScreen = ({ navigation, route }) => {
     } else {
       toast(i18n.t("loginScreen.domain.errorForgotPass", { locale }), true);
     }
-    */
   };
 
   const Header = () => {

@@ -1,4 +1,5 @@
 import { useRoute } from "@react-navigation/native";
+import React, { useEffect, useState, useMemo } from "react";
 
 // TODO: use caps once updates are made to nav params in screens
 const TypeConstants = {
@@ -13,24 +14,25 @@ const TypeConstants = {
 };
 
 const useType = () => {
-  const route = useRoute();
-  const type = route?.params?.type;
 
-  console.log("*** useType ***");
-  console.log(`type: ${ type }`);
-  console.log(`route.name: ${ route?.name }`);
+  /*
+  const [count, setCount] = useState(1);
+  useEffect(() => {
+    setCount(count => count + 1);
+  }, []); 
+  console.log(`useType: render # ${count}`);
+  */
+
+  const route = useRoute();
+
+  const type = route?.params?.type;
+  const subtype = route?.params?.subtype;
 
   const isContact = type === TypeConstants.CONTACT;
   const isGroup = type === TypeConstants.GROUP;
   const isTraining = type === TypeConstants.TRAINING;
   const isQuestionnaire = type === TypeConstants.QUESTIONNAIRE;
   const isNotification = type === TypeConstants.NOTIFICATION;
-
-  // TODO
-  const isCommentsActivity = () => {
-    //if (isContact || isGroup) { ... }
-    return true;
-  };
 
   const postType = () => {
     if (isContact) return "contacts";
@@ -41,6 +43,7 @@ const useType = () => {
   };
 
   const isPost = (isContact || isGroup || isTraining || isQuestionnaire) ? true : false;
+  const isCommentsActivity = (isPost && subtype === "comments_activity") ? true : false;
 
   return {
     TypeConstants,
@@ -50,8 +53,21 @@ const useType = () => {
     isTraining,
     isQuestionnaire,
     isNotification,
-    isCommentsActivity: isCommentsActivity(),
+    isCommentsActivity,
     postType: postType(),
   };
+  /*
+  return {
+    TypeConstants: null,
+    isPost: null,
+    isContact: true,
+    isGroup: null,
+    isTraining: null,
+    isQuestionnaire: null,
+    isNotification: null,
+    isCommentsActivity: null,
+    postType: "contacts"//null,
+  };
+  */
 };
 export default useType;

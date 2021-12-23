@@ -201,8 +201,9 @@ const SettingsScreen = ({ navigation }) => {
     <Text style={styles.versionText}>{Constants.manifest.version}</Text>
   );
 
+  //<Container style={styles.container}>
   return (
-    <Container style={styles.container}>
+    <Container>
       {!isConnected && <OfflineBar />}
       <Header />
       {/*__DEV__ && <StorybookButton />*/}

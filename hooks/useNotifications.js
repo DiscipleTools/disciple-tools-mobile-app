@@ -38,7 +38,7 @@ const useNotifications = () => {
     mark(`dt/v1/notifications/mark_unread/${nid}`);
 
   return {
-    notifications: data,
+    data,
     error,
     isLoading,
     isValidating,

@@ -1,11 +1,14 @@
 import React from "react";
-import { View, Pressable, Text } from "react-native";
+import { Pressable, Text, View, useWindowDimensions } from "react-native";
+
+import { useNavigation } from "@react-navigation/native";
 
 import { Container } from "native-base";
 
 import FilterList from "components/FilterList";
 import OfflineBar from "components/OfflineBar";
 import Subtitles from "components/Subtitles";
+import PostItemSkeleton from "components/PostItem/PostItemSkeleton";
 
 import useNetworkStatus from "hooks/useNetworkStatus";
 import useI18N from "hooks/useI18N";
@@ -20,37 +23,29 @@ const ImportContactsScreen = ({ navigation }) => {
   const isConnected = useNetworkStatus();
   const { i18n, isRTL } = useI18N();
 
-  const { data: importContacts, error, isLoading } = useImportContacts();
+  const { data: items, error, isLoading } = useImportContacts();
 
-  const renderRow = (record) => {
-    return(
-      <Pressable
-        onPress={() => {
-          //goToDetailsScreen(record);
-          console.log("*** IMPORT CONTACT SCREEN ***");
-          // navigate to Add New Screen
-        }}
-        //style={styles.rowFront}
-        //key={record.ID}
-        key={record?.id}
-      >
-        <Text>
-          {record.title}
-        </Text>
-      </Pressable>
-    );
-    const statusValue = null;
+  let isError = false;
+  if (error) {
+    isError = true;
+    // TODO
+    //toast(error, true);
+    console.error(error);
+  };
+
+  const ImportContactItem = ({ item, loading }) => {
+    //if (!item || loading) return <PostItemSkeleton />;
+    if (true) return <PostItemSkeleton />;
     return (
       <Pressable
         onPress={() => {
-          //goToDetailsScreen(record);
+          //goToDetailsScreen(item);
           console.log("*** IMPORT CONTACT SCREEN ***");
         }}
         //style={styles.rowFront}
-        //key={record.ID}
-        key={record?.id}
+        key={item?.id}
       >
-        <View style={{ flexDirection: "row", height: "100%" }}>
+        <View style={{ flexDirection: "row", height: 75 }}>
           <View style={{ flexDirection: "column", flexGrow: 1 }}>
             <View style={{ flexDirection: "row" }}>
               <Text
@@ -61,12 +56,10 @@ const ImportContactsScreen = ({ navigation }) => {
                   fontWeight: "bold",
                 }}
               >
-                {Object.prototype.hasOwnProperty.call(record, "name")
-                  ? record.name
-                  : record.title}
+                { item?.name ? item.name : item?.title}
               </Text>
             </View>
-            <Subtitles record={record} settings={null} />
+            <Subtitles item={item} />
           </View>
           <View
             style={[
@@ -96,15 +89,14 @@ const ImportContactsScreen = ({ navigation }) => {
     );
   };
 
+  const renderItem = ({ item }) => <ImportContactItem item={item} loading={isLoading||isError} />;
+
   return (
-    <Container style={styles.container}>
+    <Container>
       {!isConnected && <OfflineBar />}
       <FilterList
-        posts={ (importContacts?.length > 0) ? importContacts : [] }
-        loading={isLoading}
-        renderRow={renderRow}
-        //footer={list.length >= DEFAULT_LIMIT ? renderFooter : null}
-        //style={{ backgroundColor: Colors.mainBackgroundColor }}
+        items={(items?.length > 0) ? items : []}
+        renderItem={renderItem}
         // TODO: add term and translate
         placeholder={"IMPORT CONTACT PLACEHOLDER TEXT"}
       />

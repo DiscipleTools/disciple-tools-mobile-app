@@ -6,7 +6,9 @@ const useToast = () => {
   const { i18n } = useI18N();
 
   const toast = (message, error = false) => {
-    const text = error && !message?.includes(i18n.t("global.error.text")) ? `${i18n.t("global.error.text")} ${message}` : message;
+    // TODO
+    //const text = error && !message?.includes(i18n.t("global.error.text")) ? `${i18n.t("global.error.text")} ${message}` : message;
+    const text = message;
     const duration = error ? 5000 : 3000;
     const type = error ? "danger" : null;
 
