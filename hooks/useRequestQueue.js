@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-//import { queueRequest as _queueRequest } from 'store/actions/requests.actions';
+import { enqueueRequest } from 'store/actions/request.actions';
 
 import axios from "services/axios";
 
@@ -13,28 +13,44 @@ const useRequestQueue = () => {
   const isConnected = useNetworkStatus();
   const pendingRequests = useSelector(
     (state) => state.requestReducer.pendingRequests
-  );
+  ) ?? [];
 
-  //const queueRequest = (request) => dispatch(queueRequest([...pendingRequests, request]));
+  // TODO: implement queue interval
 
-  const processRequests = async () => {
-    if (!isConnected) return;
-    //pendingRequests.forEach(request => {
-    for (const request of pendingRequests) {
-      try {
-        const res = await axios(request);
-        // TODO: Toast
-        //dispatch(dequeueRequest(request));
-      } catch (err) {
-        console.error(err);
-      }
+  useEffect(() => {
+    if (isConnected && pendingRequests?.length > 0) processRequests();
+  }, [isConnected, pendingRequests]);
+
+  /*
+  // TODO: just pass request, and handle request array in reducer
+  const queueRequest = (request) => dispatch(enqueueRequest([...pendingRequests, request]));
+  const dequeueRequest = (request) => dispatch(dequeueRequest(pendingRequests.filter((r) => r.id !== request.id)));
+  */
+
+  // TODO: use SWR to give immediate user feedback (eg, submit comment)
+  const _request = async(request) => {
+    if (isConnected) {
+      // NOTE: dequeue request regardless of outcome
+      // (we do not want to fall into an error loop)
+      // TODO: implement retry strategy
+      //dispatch(dequeueRequest(request));
+      return axios(request);
     }
+    toast("OFFLINE, request being queued...");
+    //dispatch(enqueueRequest(request));
+    return null;
+  };
+
+  const processRequests = async() => {
+    if (!isConnected) return;
+    for (const request of pendingRequests) await _request(request);
+    return;
   };
 
   return {
-    hasPendingRequests: pendingRequests?.length > 0,
-    queueRequest: () => console.log("*** QUEUE REQUEST ***"),
+    hasPendingRequests: (pendingRequests?.length > 0) ? true : false,
     processRequests,
+    request: _request,
   };
 };
 export default useRequestQueue;
