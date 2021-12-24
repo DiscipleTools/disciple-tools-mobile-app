@@ -1,8 +1,8 @@
 import { StyleSheet } from "react-native";
 import Colors from "constants/Colors";
 
+// TODO: constant
 const listItemHeight = 80;
-const swipeBtnWidth = 80;
 export const styles = StyleSheet.create({
   flatListItem: {
     height: 40,

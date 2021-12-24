@@ -50,7 +50,7 @@ const useImportContacts = () => {
   }, []);
 
   return {
-    data: importContacts.reverse(),
+    data: importContacts?.reverse(),
     error,
     isLoading: loading,
   }

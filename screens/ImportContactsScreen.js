@@ -17,6 +17,7 @@ import useImportContacts from 'hooks/useImportContacts';
 import { styles } from "./ImportContactsScreen.styles";
 
 import Constants from "constants";
+import Colors from "constants/Colors";
 
 const ImportContactsScreen = ({ navigation }) => {
 
@@ -34,15 +35,16 @@ const ImportContactsScreen = ({ navigation }) => {
   };
 
   const ImportContactItem = ({ item, loading }) => {
-    //if (!item || loading) return <PostItemSkeleton />;
-    if (true) return <PostItemSkeleton />;
+    if (!item || loading) return <PostItemSkeleton />;
+    // TODO: compare imported contacts with existing contacts (to determine if new)
     return (
       <Pressable
         onPress={() => {
           //goToDetailsScreen(item);
           console.log("*** IMPORT CONTACT SCREEN ***");
+          console.log(JSON.stringify(item));
         }}
-        //style={styles.rowFront}
+        style={styles.rowFront}
         key={item?.id}
       >
         <View style={{ flexDirection: "row", height: 75 }}>
@@ -78,7 +80,8 @@ const ImportContactsScreen = ({ navigation }) => {
                 width: Constants.STATUS_CIRCLE_SIZE,
                 height: Constants.STATUS_CIRCLE_SIZE,
                 borderRadius: Constants.STATUS_CIRCLE_SIZE / 2,
-                backgroundColor: 'green', //getSelectorColor(statusValue),
+                //backgroundColor: getSelectorColor(item?.),
+                backgroundColor: Colors.gray,
                 marginTop: "auto",
                 marginBottom: "auto",
               }}

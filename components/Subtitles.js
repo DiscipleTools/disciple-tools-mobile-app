@@ -10,6 +10,7 @@ const Subtitles = ({ item }) => {
   const { isContact, isGroup } = useType();
   const { settings } = useSettings();
   if (!settings) return null;
+  // TODO: add support for import contact subtitles
   return (
     <View style={{ flexDirection: "row" }}>
       <Text style={styles.subtitle}>

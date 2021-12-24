@@ -328,15 +328,12 @@ const useDetails = () => {
     }
   };
 
-  // getById
-  // saveComment
+  let url = `/dt-posts/v2/${postType}`;
+  if (id) url += `/${id}`;
 
-  const baseUrl = `/dt-posts/v2/${postType}`;
-  const url = `${baseUrl}/${id}`;
   // TODO: useSelect for initialData?
   //const initialData = null;
-  const { data, error, isLoading, isValidating, mutate, write } =
-    useRequest(url);
+  const { data, error, isLoading, isValidating, mutate } = useRequest(url);
 
   const save = async (field, value) => {
     console.log(
@@ -378,34 +375,6 @@ const useDetails = () => {
       // TODO: translation
       toast("GENERIC ERROR GOES HERE", true);
     }
-  };
-
-  // TODO: useComment()
-  const saveComment = (comment) => {
-    // TODO:
-    // update();
-  };
-
-  const getComments = (moduleType, pagination) => {
-    // TODO:
-    // read();
-    // useRequest()?;
-  };
-
-  const deleteComment = (commentId) => {
-    // TODO:
-    /*
-    url: `/dt-posts/v2/contacts/${contactId}/comments/${commentId}`,
-    data: {
-      method: 'DELETE',
-    */
-    //destroy();
-  };
-
-  // TODO: useComment()
-  const getActivitiesByContact = (pagination) => {
-    // TODO:
-    // read();
   };
 
   // TODO: useShare() ?
