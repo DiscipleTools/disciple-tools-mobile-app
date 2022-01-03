@@ -1,8 +1,7 @@
 import React from "react";
 import { Icon } from "native-base";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
-// 3rd-party Components
 import ActionButton from "react-native-action-button";
 
 import useI18N from "hooks/useI18N";
@@ -218,11 +217,6 @@ const FAB = ({ post }) => {
 
   return (
     <ActionButton
-      style={{
-        position: "absolute",
-        bottom: 10,
-        right: 10,
-      }}
       buttonColor={Colors.primary}
       renderIcon={(active) =>
         active ? (

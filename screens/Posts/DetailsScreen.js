@@ -102,208 +102,6 @@ const DetailsScreen = ({ navigation, route }) => {
     });
   }, [navigation]);
 
-  /*
-  useEffect(() => {
-    //onLoad();
-    // Add afterBack param to execute 'parents' functions (ContactsView, NotificationsView)
-    //if (!navigation.state.params.afterBack) {
-    //  params = {
-    //    ...params,
-    //    afterBack: afterBack.bind(this),
-    //  };
-    //}
-    //navigation.setParams(params);
-    Keyboard.addListener('keyboardDidShow', keyboardDidShow);
-    Keyboard.addListener('keyboardDidHide', keyboardDidHide);
-    navigation.addListener('didFocus', () => {
-      //Focus on 'detail mode' (going back or open detail view)
-      console.log('*** DID FOCUS ***');
-      //if (contactIsCreated()) {
-      //  dispatch(loadingFalse());
-      //  onRefresh(navigation.state.params.contactId, true);
-      //}
-    });
-    // Android hardware back press listener
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      console.log('*** ANDROID HARDWARE BACK PRESS ***');
-      // TODO
-      //navigation.state.params.backButtonTap();
-      //return true;
-    });
-    // cleanup function
-    return () => {
-      Keyboard.removeListener('keyboardDidShow', keyboardDidShow);
-      Keyboard.removeListener('keyboardDidHide', keyboardDidHide);
-      navigation.removeListener('didFocus');
-      backHandler.remove();
-    };
-  }, []);
-
-  const keyboardDidShow = (event) => {
-    setState({
-      ...state,
-      footerLocation: isIOS ? event.endCoordinates.height : 0,
-    });
-  };
-
-  const keyboardDidHide = (event) => {
-    setState({
-      ...state,
-      footerLocation: 0,
-    });
-  };
-
-  const backButtonTap = () => {
-    let { params } = navigation.state;
-    if (params.hideTabBar) {
-      setState(
-        {
-          ...state,
-          executingBack: true,
-        },
-        () => {
-          navigation.setParams({
-            hideTabBar: false,
-          });
-        }
-      );
-    } else {
-      //Fix to returning using Android back button! -> goBack(null)
-      navigation.goBack(null);
-      navigation.state.params.afterBack();
-    }
-  };
-
-  const afterBack = () => {
-    let newPreviousContacts = [...previousContacts];
-    newPreviousContacts.pop();
-    //dispatch(updatePrevious(newPreviousContacts));
-    if (newPreviousContacts.length > 0) {
-      //dispatch(loadingFalse());
-      let currentParams = {
-        ...newPreviousContacts[newPreviousContacts.length - 1],
-      };
-      setState({
-        ...state,
-        contact: {
-          ID: currentParams.contactId,
-          name: currentParams.contactName,
-          sources: {
-            values: [
-              {
-                value: "personal",
-              },
-            ],
-          },
-          seeker_path: "none",
-        },
-        overallStatusBackgroundColor: "#ffffff",
-      });
-      navigation.setParams({
-        ...currentParams,
-      });
-      onRefresh(currentParams.contactId, true);
-    } else if (navigation.state.params.fromNotificationView) {
-      //const resetAction = StackActions.reset({
-      //  index: 0,
-      //  actions: [NavigationActions.navigate({ routeName: 'ContactList' })],
-      //});
-      //navigation.dispatch(resetAction);
-      navigation.navigate("NotificationList");
-    } else {
-      // Prevent error when view loaded from GroupDetailScreen.js
-      if (typeof navigation.state.params.onGoBack === "function") {
-        navigation.state.params.onGoBack();
-      }
-    }
-  };
-
-  const getLists = async () => {
-    let newState = {};
-    const users = await ExpoFileSystemStorage.getItem("usersList");
-    if (users !== null) {
-      newState = {
-        ...newState,
-        users: JSON.parse(users).map((user) => {
-          let newUser = {
-            key: user.ID,
-            label: user.name,
-          };
-          // Prevent 'null' values
-          if (
-            Object.prototype.hasOwnProperty.call(user, "contact_id") &&
-            utils.isNumeric(user.contact_id)
-          ) {
-            newUser = {
-              ...newUser,
-              contactID: parseInt(user.contact_id),
-            };
-          }
-          return newUser;
-        }),
-      };
-    }
-
-    const peopleGroups = await ExpoFileSystemStorage.getItem(
-      "peopleGroupsList"
-    );
-    if (peopleGroups !== null) {
-      newState = {
-        ...newState,
-        peopleGroups: JSON.parse(peopleGroups),
-      };
-    }
-
-    const geonames = await ExpoFileSystemStorage.getItem("locationsList");
-    if (geonames !== null) {
-      newState = {
-        ...newState,
-        geonames: JSON.parse(geonames),
-      };
-    }
-
-    let sourcesList = Object.keys(contactSettings.fields.sources.values).map(
-      (key) => ({
-        name: contactSettings.fields.sources.values[key].label,
-        value: key,
-      })
-    );
-
-    const mappedContacts = contactsList.map((contact) => {
-      return {
-        name: contact.title,
-        value: contact.ID,
-        avatarUri: null,
-      };
-    });
-    const mappedUsers = JSON.parse(users).map((user) => {
-      return {
-        name: user.name,
-        value: String(user.contact_id),
-        avatarUri: user.avatar,
-      };
-    });
-    newState = {
-      ...newState,
-      usersContacts: [...mappedContacts, ...mappedUsers],
-      groups: groupsList.map((group) => ({
-        name: group.title,
-        value: group.ID,
-      })),
-      loadedLocal: true,
-      sources: [...sourcesList],
-      unmodifiedSources: [...sourcesList],
-    };
-
-    setState(newState, () => {
-      // Only execute in detail mode
-      if (contactIsCreated()) {
-        onRefresh(state.record.ID);
-      }
-    });
-  };
-  */
-
   const Post = () => (
     <Tabs
       renderTabBar={() => <ScrollableTab />}
@@ -403,7 +201,6 @@ const DetailsScreen = ({ navigation, route }) => {
     );
   };
 
-  //<KeyboardAvoidingView behavior="position" style={{ flexGrow: 1 }}></KeyboardAvoidingView>
   const Details = () => (
     <>
       {isLoading || isValidating ? (
@@ -412,7 +209,7 @@ const DetailsScreen = ({ navigation, route }) => {
         <>
           {!isConnected && <OfflineBar />}
           <TitleBar />
-          {isCreate ? <CreatePost /> : <Post />}
+          <Post />
         </>
       )}
     </>
@@ -424,8 +221,6 @@ const DetailsScreen = ({ navigation, route }) => {
       true
     );
 
-  const isCreate = route?.params?.create;
-  //const isCreate = true;
   return (
     <>
       <Details />
@@ -435,10 +230,7 @@ const DetailsScreen = ({ navigation, route }) => {
 };
 /*
 DetailsScreen.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-    push: PropTypes.func.isRequired,
-  }).isRequired,
+  navigation: PropTypes.object.isRequired,
   route: PropTypes.object.isRequired,
 };
 */
