@@ -1,6 +1,5 @@
 import React from "react";
 import { Text } from "react-native";
-import { useRoute } from "@react-navigation/native";
 import { Icon } from "native-base";
 import { Row } from "react-native-easy-grid";
 
@@ -10,8 +9,7 @@ import useI18N from "hooks/useI18N";
 import Colors from "constants/Colors";
 
 const HeaderLeft = ({ label, editing, onPress }) => {
-  const route = useRoute();
-  const { i18n, locale, isRTL } = useI18N();
+  const { i18n, isRTL } = useI18N();
   if (editing) {
     return (
       <Row onPress={onPress}>

@@ -13,12 +13,16 @@ import {
 
 import useDevice from "hooks/useDevice";
 import useI18N from "hooks/useI18N";
+import useAPI from "hooks/useAPI";
+import useToast from "hooks/useToast";
 
 import { styles } from "./LanguagePicker.styles";
 
 const LanguagePicker = ({ dropdown }) => {
   const { isIOS } = useDevice();
   const { i18n, isRTL, locale, setLocale } = useI18N();
+  const toast = useToast();
+  const { updateUser } = useAPI();
   return (
     <>
       {dropdown ? (
@@ -41,7 +45,15 @@ const LanguagePicker = ({ dropdown }) => {
           <Right>
             <NBPicker
               selectedValue={locale}
-              onValueChange={(locale) => setLocale(locale)}
+              onValueChange={async(locale) => {
+                try {
+                  await updateUser(locale);
+                } catch (error) {
+                  // TODO: generic error
+                  toast(error.message, true);
+                };
+                setLocale(locale);
+              }}
               iosIcon={<Icon style={styles.pickerIosIcon} name="caret-down" />}
               style={isIOS ? { width: 150 } : null}
             >

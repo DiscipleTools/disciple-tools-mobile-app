@@ -28,6 +28,20 @@ export const AppConstants = Object.freeze({
   REFRESH_INTERVAL: 0,    // 0 secs
 });
 
+export const HTTP = Object.freeze({
+  METHODS: {
+    GET: "GET",
+    POST: "POST",
+    PUT: "PUT",
+    DELETE: "DELETE"
+  },
+  HEADERS: {
+    DEFAULT: {
+      "Content-Type": "application/json",
+    }
+  }
+});
+
 export default {
   STATUS_CIRCLE_SIZE: 15,
   SWIPE_BTN_WIDTH: 80,

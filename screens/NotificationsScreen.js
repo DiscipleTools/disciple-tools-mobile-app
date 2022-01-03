@@ -2,8 +2,6 @@ import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
-  RefreshControl,
-  ScrollView,
   TouchableOpacity,
 } from "react-native";
 import PropTypes from "prop-types";
@@ -34,8 +32,6 @@ const NotificationsScreen = ({ navigation }) => {
     isLoading,
     isValidating,
     mutate,
-    markViewed,
-    markUnread,
   } = useNotifications();
 
   let isError = false;

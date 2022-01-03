@@ -8,7 +8,7 @@ const useFilters = () => {
   const { isPost, isNotification, isCommentsActivity, postType } = useType();
 
   const url = (isPost && isConnected) ? `/dt/v1/users/get_filters?post_type=${postType}&force_refresh=1` : null;
-  let { data, error, isLoading, isValidating } = useRequest(url);
+  let { data, error, isLoading, isValidating } = useRequest({ url });
 
   if (isCommentsActivity) data = [
     {

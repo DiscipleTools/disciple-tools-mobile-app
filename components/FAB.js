@@ -10,7 +10,6 @@ import useNetworkStatus from "hooks/useNetworkStatus.js";
 import useType from "hooks/useType.js";
 import useSettings from "hooks/useSettings";
 
-// Styles, Constants, Icons, Assets, etc...
 import Colors from "constants/Colors";
 import { styles } from "./FAB.styles";
 
@@ -20,7 +19,7 @@ const FAB = ({ post }) => {
   const { i18n, isRTL, locale } = useI18N();
   const isConnected = useNetworkStatus();
 
-  const { isContact, isGroup } = useType();
+  const { TypeConstants, isContact, isGroup } = useType();
 
   const { settings } = useSettings();
   if (!settings) return null;
@@ -140,7 +139,6 @@ const FAB = ({ post }) => {
   };
 
   const quickButtonFields = filterQuickButtonFields();
-  //console.log(quickButtonFields);
 
   const mapIcon = (field) => {
     const defaultIconConfig = {
@@ -195,9 +193,8 @@ const FAB = ({ post }) => {
         count: null,
         name: "plus",
         callback: () => {
-          // TODO: constants
           navigation.navigate('CreateContact', {
-            type: 'import'
+            type: TypeConstants.CONTACT_CREATE, 
           });
         },
       };
@@ -211,91 +208,67 @@ const FAB = ({ post }) => {
         name: "contact-phone",
         bgColor: Colors.colorYes,
         callback: () => {
-          // TODO: constants
           navigation.navigate('ImportContacts', {
-            type: 'import'
+            type: TypeConstants.CONTACT_IMPORT, 
           });
         },
       };
     return null;
   };
-  /*
-            (async () => {
-            })();
-*/
 
   return (
-    <>
-      {quickButtonFields.length < 1 ? (
-        <ActionButton
-          buttonColor={Colors.primary}
-          onPress={() => {
-            // TODO: add new
-            console.log("*** ADD NEW ***");
-          }}
-          renderIcon={() => (
+    <ActionButton
+      style={{
+        position: "absolute",
+        bottom: 10,
+        right: 10,
+      }}
+      buttonColor={Colors.primary}
+      renderIcon={(active) =>
+        active ? (
+          <Icon
+            type={"Feather"}
+            name={"x"}
+            style={[styles.FABIcon, { fontSize: 25 }]}
+          />
+        ) : (
+          <Icon
+            type={post ? "MaterialCommunityIcons" : "Feather"}
+            name={post ? "comment-plus" : "plus"}
+            style={[styles.FABIcon, { fontSize: 30 }]}
+          />
+        )
+      }
+      degrees={0}
+      activeOpacity={0}
+      bgColor="rgba(0,0,0,0.5)"
+      nativeFeedbackRippleColor="rgba(0,0,0,0)"
+    >
+      {quickButtonFields.map((field) => {
+        const { title, count, type, name, bgColor, fgColor, callback } =
+          mapIcon(field);
+        return (
+          <ActionButton.Item
+            key={count}
+            title={count !== null ? `${title} (${count})` : title}
+            onPress={() => {
+              callback();
+            }}
+            size={40}
+            buttonColor={bgColor}
+            nativeFeedbackRippleColor="rgba(0,0,0,0)"
+            textStyle={{ color: Colors.primary, fontSize: 15 }}
+            textContainerStyle={{ height: "auto" }}
+          >
             <Icon
-              type={"Feather"}
-              name={"plus"}
-              style={[styles.FABIcon, { fontSize: 30 }]}
+              type={type}
+              name={name}
+              style={[styles.FABIcon, { color: fgColor }]}
             />
-          )}
-        />
-      ) : (
-        <ActionButton
-          style={{
-            position: "absolute",
-            bottom: 10,
-            right: 10,
-          }}
-          buttonColor={Colors.primary}
-          renderIcon={(active) =>
-            active ? (
-              <Icon
-                type={"Feather"}
-                name={"x"}
-                style={[styles.FABIcon, { fontSize: 25 }]}
-              />
-            ) : (
-              <Icon
-                type={post ? "MaterialCommunityIcons" : "Feather"}
-                name={post ? "comment-plus" : "plus"}
-                style={[styles.FABIcon, { fontSize: 30 }]}
-              />
-            )
-          }
-          degrees={0}
-          activeOpacity={0}
-          bgColor="rgba(0,0,0,0.5)"
-          nativeFeedbackRippleColor="rgba(0,0,0,0)"
-        >
-          {quickButtonFields.map((field) => {
-            const { title, count, type, name, bgColor, fgColor, callback } =
-              mapIcon(field);
-            return (
-              <ActionButton.Item
-                key={count}
-                title={count !== null ? `${title} (${count})` : title}
-                onPress={() => {
-                  callback();
-                }}
-                size={40}
-                buttonColor={bgColor}
-                nativeFeedbackRippleColor="rgba(0,0,0,0)"
-                textStyle={{ color: Colors.primary, fontSize: 15 }}
-                textContainerStyle={{ height: "auto" }}
-              >
-                <Icon
-                  type={type}
-                  name={name}
-                  style={[styles.FABIcon, { color: fgColor }]}
-                />
-              </ActionButton.Item>
-            );
-          })}
-        </ActionButton>
-      )}
-    </>
+          </ActionButton.Item>
+        );
+      })}
+    </ActionButton>
   );
 };
 export default FAB;

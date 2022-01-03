@@ -48,6 +48,7 @@ const MainTabNavigator = () => {
   const screenOptionStyle = {
     headerStyle: {
       backgroundColor: Colors.tintColor,
+      shadowColor: 'transparent',
     },
     headerTintColor: Colors.headerTintColor,
     headerBackTitleVisible: false

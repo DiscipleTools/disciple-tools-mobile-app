@@ -5,6 +5,18 @@ const containerPadding = 20;
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 export const styles = StyleSheet.create({
+  titleBar: {
+    backgroundColor: Colors.primary,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 10,
+    alignItems: "center",
+  },
+  title: {
+    color: Colors.headerTintColor,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   tabBarUnderline: {
     backgroundColor: Colors.tintColor,
   },

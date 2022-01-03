@@ -1,51 +1,46 @@
 import { useAuth } from "hooks/useAuth";
+import useAPI from "hooks/useAPI";
 import useRequest from "hooks/useRequest";
 import useToast from "hooks/useToast";
 
 const useNotifications = () => {
-  const { uid } = useAuth();
+  //const { uid } = useAuth();
   const toast = useToast();
 
-  // TODO: D.T API throwing 500 error
+  /*
+  const {
+    markAllNotificationsViewed,
+    markNotificationUnread,
+    markNotificationViewed
+  } = useAPI();
+  */
+
   const url = "dt/v1/notifications/get_notifications";
-  // TODO: useSWRInfinity: https://swr.vercel.app/examples/infinite-loading
   const request = {
     url,
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     data: {
       all: true,
-      limit: 20,
       page: 0,
-      mentions: true, //false,
+      limit: 10,
+      mentions: true,
     },
   };
-  const { fetch, data, error, isLoading, isValidating, mutate } =
-    useRequest(request);
-  console.log(error);
-
-  const mark = async (url) => {
-    try {
-      await fetch({ url });
-    } catch (error) {
-      toast(error, true);
-    }
-  };
-
-  //const markAllViewed = async() => mark(`dt/v1/notifications/mark_all_viewed/${uid}`);
-  const markViewed = async (nid) =>
-    mark(`dt/v1/notifications/mark_viewed/${nid}`);
-  const markUnread = async (nid) =>
-    mark(`dt/v1/notifications/mark_unread/${nid}`);
-
+  const { data, error, isLoading, isValidating, mutate } = useRequest(request);
+  console.log("*** NOTIFICATIONS ***");
+  console.log(JSON.stringify(data));
   return {
     data,
     error,
     isLoading,
     isValidating,
     mutate,
-    //markAllViewed,
-    markViewed,
-    markUnread,
+    //markAllNotificationsViewed,
+    //markNotificationUnread,
+    //markNotificationViewed,
   };
 };
 export default useNotifications;

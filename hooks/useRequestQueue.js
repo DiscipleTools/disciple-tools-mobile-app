@@ -1,56 +1,79 @@
-import { useEffect } from "react";
+//import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { enqueueRequest } from 'store/actions/request.actions';
+import { enqueueRequest, dequeueRequest } from 'store/actions/request.actions';
+import { useSWRConfig } from 'swr'
 
 import axios from "services/axios";
 
 import useNetworkStatus from "hooks/useNetworkStatus";
 
-const REQUEST_QUEUE_INTERVAL_SECS = 5;
+//const REQUEST_QUEUE_INTERVAL_SECS = 5;
 
 const useRequestQueue = () => {
-  const dispatch = useDispatch();
+
+  const { cache, mutate } = useSWRConfig();
   const isConnected = useNetworkStatus();
-  const pendingRequests = useSelector(
-    (state) => state.requestReducer.pendingRequests
-  ) ?? [];
+  const dispatch = useDispatch();
+  const pendingRequests = useSelector(state => state.requestReducer.pendingRequests);
 
-  // TODO: implement queue interval
+  const hasPendingRequests = () => pendingRequests?.length > 0;
 
-  useEffect(() => {
-    if (isConnected && pendingRequests?.length > 0) processRequests();
-  }, [isConnected, pendingRequests]);
 
   /*
-  // TODO: just pass request, and handle request array in reducer
-  const queueRequest = (request) => dispatch(enqueueRequest([...pendingRequests, request]));
-  const dequeueRequest = (request) => dispatch(dequeueRequest(pendingRequests.filter((r) => r.id !== request.id)));
+  // TODO: implement queue interval
+  useEffect(() => {
+    if (isConnected && hasPendingRequests) processRequests();
+  }, [isConnected, pendingRequests]);
   */
 
-  // TODO: use SWR to give immediate user feedback (eg, submit comment)
-  const _request = async(request) => {
-    if (isConnected) {
-      // NOTE: dequeue request regardless of outcome
-      // (we do not want to fall into an error loop)
-      // TODO: implement retry strategy
-      //dispatch(dequeueRequest(request));
-      return axios(request);
-    }
-    toast("OFFLINE, request being queued...");
-    //dispatch(enqueueRequest(request));
-    return null;
+  const _mutate = async(request) => {
+    const key = request?.url;
+    if (!key) return null;
+    return mutate(request?.url, axios(request)); //, false);
   };
 
-  const processRequests = async() => {
-    if (!isConnected) return;
-    for (const request of pendingRequests) await _request(request);
-    return;
+  /*
+   * NOTE:
+   * update the local data immediately and revalidate (refetch).
+   * we will assume that the server will handle the update and return the same data,
+   * otherwise the local data will be replaced with server state
+   * (this is so the user can see the new comment immediately)
+   */
+  const request = async(request) => {
+    if (!isConnected) {
+      dispatch(enqueueRequest(request));
+      // throw new Error?
+      toast("OFFLINE, request being queued...");
+      return null;
+    };
+    if (hasPendingRequests()) {
+      console.log("request queue: has pending requests");
+      for (const ii=0; ii < pendingRequests?.length; ii++) {
+        const pendingRequest = pendingRequests[ii];
+        console.log(`pending request: ${ JSON.stringify(pendingRequest) }`);
+        /*
+        await _mutate(pendingRequest);
+        dispatch(dequeueRequest(pendingRequest));
+        */
+      };
+    };
+    //const tmpUrl = "/dt-posts/v2/contacts/1681/comments";
+    //const cachedData = cache.get(tmpUrl);
+    //console.log("*** CACHED DATA ***");
+    //console.log(JSON.stringify(...cachedData.comments));
+    //const newComment = {"comment_ID":"9204","comment_author":"zdmc23","comment_author_email":"zdmc23@gmail.com","comment_date":"2020-09-15 03:02:03","comment_date_gmt":"2020-09-15 03:02:03","gravatar":"https://secure.gravatar.com/avatar/ccdaaa46cf24ecdfbece4680179a827e?s=16&d=mm&r=g","comment_content":"A TEMP TEST COMMENT","user_id":"13","comment_type":"comment","comment_post_ID":"1681","comment_reactions":[]};
+    //console.log(JSON.stringify(cachedData.comments.push(newComment)));
+    //mutate(tmpUrl, { comments: [ newComment, newComment ] }, false);
+    //mutate(tmpUrl, { comments: [ ...cachedData.comments, newComment ]}, false);
+    return _mutate(request);
+    //mutate(tmpUrl);
+    //return;
+    //return axios(request);
   };
 
   return {
-    hasPendingRequests: (pendingRequests?.length > 0) ? true : false,
-    processRequests,
-    request: _request,
+    hasPendingRequests,
+    request,
   };
 };
 export default useRequestQueue;

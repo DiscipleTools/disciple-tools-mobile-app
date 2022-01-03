@@ -352,7 +352,7 @@ const useList = ({ search, filter }) => {
   // TODO: useSelector for initialData if OFFLINE
   //const initialData = null;
 
-  const { data, error, isLoading, isValidating, mutate } = useRequest(url);
+  const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
   return {
     data: data?.posts ? mapPosts(data.posts) : null,
     error,

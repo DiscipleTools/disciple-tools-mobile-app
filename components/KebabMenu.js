@@ -6,6 +6,15 @@ import { styles } from "./KebabMenu.styles";
 
 const KebabMenu = ({ menuItems }) => {
   const menuRef = useRef();
+  return(
+    <Icon
+      type="Entypo"
+      name="dots-three-vertical"
+      //onPress={() => menuRef.current.show()}
+      style={styles.kebabMenu}
+    />
+  );
+  // TODO: debug error with this render
   return (
     <Menu
       ref={menuRef}
@@ -25,7 +34,7 @@ const KebabMenu = ({ menuItems }) => {
             menuRef.current.hide();
           }}
         >
-          {menuItem.label}
+          {menuItem?.label}
         </MenuItem>
       ))}
     </Menu>

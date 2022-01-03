@@ -21,8 +21,6 @@ import MemberList from "components/MemberList";
 import { styles } from "./Field.styles";
 
 const Field = ({ post, field, save }) => {
-  console.log(`FIELD: ${JSON.stringify(field)}`);
-
   //const ref = useRef(null);
 
   /*
@@ -94,11 +92,15 @@ const Field = ({ post, field, save }) => {
     if field requires a different API write format,
     then we'll use that (populated in 'onChange')
     */
+    const fields = {};
     if (state.apiValue !== null) {
-      save(field.name, state.apiValue);
+      fields[field.name] = state.apiValue;
+      save(fields);
       return;
     }
-    save(field.name, state.value);
+    fields[field.name] = state.value;
+    save(fields);
+    return;
   };
 
   const onCancel = () => {

@@ -1,13 +1,10 @@
 import useId from "hooks/useId";
 import useType from "hooks/useType";
 import useRequest from "hooks/useRequest";
-import useToast from "hooks/useToast";
 
 const useDetails = () => {
-  const id = useId();
+  const postId = useId();
   const { isContact, isGroup, postType } = useType();
-
-  const toast = useToast();
 
   // TODO: duplicated in useList
   const mapContacts = (contacts, entities) => {
@@ -329,81 +326,18 @@ const useDetails = () => {
   };
 
   let url = `/dt-posts/v2/${postType}`;
-  if (id) url += `/${id}`;
+  if (postId) url += `/${postId}`;
 
   // TODO: useSelect for initialData?
   //const initialData = null;
-  const { data, error, isLoading, isValidating, mutate } = useRequest(url);
-
-  const save = async (field, value) => {
-    console.log(
-      `*** SAVE!  id: ${id},  field: ${JSON.stringify({ field, value })} ***`
-    );
-    const data = {};
-    data[field] = value;
-    try {
-      let res = null;
-      if (!id) {
-        //res = await create({
-        res = await write({
-          url: baseUrl,
-          method: "POST",
-          data,
-        });
-      } else {
-        //res = await update({
-        res = await write({
-          url,
-          //method: "PUT",
-          method: "POST",
-          data,
-        });
-      }
-      mutate();
-      console.log(`res: ${JSON.stringify(res)}`);
-      if (res) {
-        if (res?.status === 200) {
-          // TODO: translation
-          toast("Saved successfully");
-        } else {
-          // TODO: translation
-          toast("Unable to save", true);
-        }
-      }
-    } catch (err) {
-      console.log(`err: ${JSON.stringify(err)}`);
-      // TODO: translation
-      toast("GENERIC ERROR GOES HERE", true);
-    }
-  };
-
-  // TODO: useShare() ?
-  const getShareSettings = () => {
-    // useSWR? useRequest?
-    // read();
-  };
-
-  const addUserToShare = (userId) => {
-    // TODO:
-    // update();
-  };
-
-  const removeSharedUser = (userId) => {
-    /*
-    url: `https://${domain}/wp-json/dt-posts/v2/contacts/${contactId}/shares`,
-      data: {
-      method: 'DELETE',
-    */
-    // destroy();
-  };
+  const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
 
   return {
     post: data ? mapPost(data) : null,
     error,
     isLoading,
     isValidating,
-    mutate,
-    save,
+    mutate
   };
 };
 export default useDetails;

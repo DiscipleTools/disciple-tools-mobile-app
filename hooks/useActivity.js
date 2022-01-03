@@ -7,7 +7,7 @@ const useActivity = ({ count, offset, exclude }) => {
   const id = useId();
 
   const url = (isPost && !exclude) ? `/dt-posts/v2/${postType}/${id}/activity` : null;
-  const { data, error, isLoading, isValidating, mutate } = useRequest(url);
+  const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
   return {
     data: data?.activity,
     error,

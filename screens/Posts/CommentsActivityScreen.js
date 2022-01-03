@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, View, Keyboard, KeyboardAvoidingView, TextInput, Text, Platform, TouchableWithoutFeedback, Button, StatusBar, Pressable } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,8 +20,8 @@ import useI18N from "hooks/useI18N";
 import useComments from "hooks/useComments";
 import useActivity from "hooks/useActivity";
 import useMyUser from "hooks/useMyUser";
-import useRequestQueue from "hooks/useRequestQueue";
 import useToast from "hooks/useToast";
+import useAPI from "hooks/useAPI";
 
 // TODO: refactor out
 import Colors from "constants/Colors";
@@ -36,7 +36,12 @@ const CommentsActivityScreen = ({ navigation, route }) => {
   const toast = useToast();
   const { userData } = useMyUser();
 
-  const { request } = useRequestQueue();
+  const [editComment, setEditComment] = useState({
+    id: null,
+    message: ''
+  });
+
+  const { createComment, updateComment, deleteComment } = useAPI();
 
   const [excludeComments, setExcludeComments] = useState(false);
   const [excludeActivity, setExcludeActivity] = useState(false);
@@ -78,7 +83,6 @@ const CommentsActivityScreen = ({ navigation, route }) => {
 
   const onClear = () => {
     //setComment('');
-    console.log("*** ON CLEAR ***");
     Keyboard.dismiss();
     mutate();
   };
@@ -92,23 +96,22 @@ const CommentsActivityScreen = ({ navigation, route }) => {
     const userIsAuthor = author?.toLowerCase() === username?.toLowerCase();
     if (!item || loading) return <CommentsActivityItemLoadingSkeleton />;
     const onCopy = () => Clipboard.setString(message);
-    // TODO: add support for Activity type
+    const onEdit = () => setEditComment({
+      id: item?.comment_ID,
+      message
+    });
     const onDelete = async() => {
-      const postType = route?.params?.type;
-      const postId = route?.params?.id;
+      // TODO: add support for Activity type
       const commentId = item?.comment_ID;
-      const url = `/dt-posts/v2/${postType}/${postId}/comments/${commentId}`;
       try {
-        await request({
-          url,
-          method: 'DELETE',
-        });
+        await deleteComment(commentId);
         mutate();
       } catch (error) {
         toast(error, true);
       };
     };
     const onLongPress = () => {
+      // TODO: use an expandable (to fullscreen) Action Sheet: https://github.com/gorhom/react-native-bottom-sheet
       // TODO: add term and translate "Copy"
       ActionSheet.show({
           options: userIsAuthor ? [
@@ -126,8 +129,8 @@ const CommentsActivityScreen = ({ navigation, route }) => {
         },
         buttonIndex => {
           if (buttonIndex === 0) onCopy();
-          if (userIsAuthor && buttonIndex === 2) onDelete(item);
-          //if (userIsAuthor && buttonIndex === 1) onEdit(item);
+          if (userIsAuthor && buttonIndex === 1) onEdit();
+          if (userIsAuthor && buttonIndex === 2) onDelete();
         }
       );
     };
@@ -136,7 +139,7 @@ const CommentsActivityScreen = ({ navigation, route }) => {
         <View style={styles.container}>
           <Image
             style={styles.image}
-            source={{ uri: item?.gravatar ?? "https://www.gravatar.com/avatar/?d=mp" }}
+            source={{ uri: (item?.gravatar && item?.gravator !== '') ? item?.gravatar : "https://www.gravatar.com/avatar/?d=mp" }}
           />
           <View style={styles.content}>
             <View style={styles.contentHeader}>
@@ -220,27 +223,31 @@ const CustomKeyboardAvoidingView = ({ children, style }) => {
 };
 
 const CommentInput = () => {
-  const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
+  const [comment, setComment] = useState('');
+
+  useEffect(() => {
+    setComment(editComment.message);
+  }, [editComment?.message]);
+
   const onSave = async(comment) => {
     setLoading(true);
     if (comment?.length > 0) {
-      // TODO: useURL() ?
-      const postType = route?.params?.type;
-      const postId = route?.params?.id;
-      const url = `/dt-posts/v2/${postType}/${postId}/comments`;
       try {
-        const res = await request({
-          url,
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          data: { comment }
-        });
-        toast("OK!");
-        setComment(''); 
-        mutate();
+        if (editComment?.id || editComment?.message?.length > 0) {
+          const res = await updateComment(editComment.id, comment);
+          if (res) {
+            setEditComment({
+              id: null,
+              message: ''
+            });
+            mutate();
+          };
+          return;
+        }
+        const res = await createComment(comment);
+        if (res) setComment('');
+        return;
       } catch (error) {
         toast(error, true);
       } finally {

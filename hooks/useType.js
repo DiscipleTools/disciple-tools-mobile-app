@@ -1,15 +1,15 @@
 import { useRoute } from "@react-navigation/native";
 import React, { useEffect, useState, useMemo } from "react";
 
-// TODO: use caps once updates are made to nav params in screens
+// TODO: clean up across screens
 const TypeConstants = {
-  //CONTACT: "CONTACT",
   CONTACT: "contacts",
-  //GROUP: "GROUP",
+  CONTACT_CREATE: "CONTACT_CREATE",
+  CONTACT_IMPORT: "CONTACT_IMPORT",
   GROUP: "groups",
+  GROUP_CREATE: "GROUP_CREATE",
   TRAINING: "TRAINING",
   QUESTIONNAIRE: "QUESTIONNAIRE",
-  //NOTIFICATION: "NOTIFICATION",
   NOTIFICATION: "notifications",
 };
 
@@ -28,7 +28,11 @@ const useType = () => {
   const type = route?.params?.type;
   const subtype = route?.params?.subtype;
 
-  const isContact = type === TypeConstants.CONTACT;
+  const isContact = (
+    type === TypeConstants.CONTACT ||
+    type === TypeConstants.CONTACT_CREATE ||
+    type === TypeConstants.CONTACT_IMPORT
+  );
   const isGroup = type === TypeConstants.GROUP;
   const isTraining = type === TypeConstants.TRAINING;
   const isQuestionnaire = type === TypeConstants.QUESTIONNAIRE;

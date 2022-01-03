@@ -1,6 +1,5 @@
-export const REQUEST = "REQUEST";
 export const REQUEST_ENQUEUE = "REQUEST_ENQUEUE";
-export const RESPONSE_DEQUEUE = "REQUEST_DEQUEUE";
+export const REQUEST_DEQUEUE = "REQUEST_DEQUEUE";
 
 export const enqueueRequest = (request) => {
   return {

@@ -10,7 +10,7 @@ import {
 import * as Localization from "expo-localization";
 import * as Updates from 'expo-updates';
 
-import axios from "services/axios";
+//import axios from "services/axios";
 
 //https://github.com/fnando/i18n-js
 import i18n from "i18n-js";
@@ -175,29 +175,7 @@ const useI18N = () => {
     return;
   }, [locale]);
 
-  const setLocale = (locale) => {
-    // TODO
-    /*
-    setRemoteLocale(locale)
-      .catch(error => {
-        console.error(error);
-      });
-    */
-    dispatch(_setLocale(locale));
-  };
-
-  const setRemoteLocale = async(locale) => {
-    const url = "/dt/v1/user/update";
-    return await axios(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      data: JSON.stringify({
-        locale
-      })
-    });
-  };
+  const setLocale = async(locale) => dispatch(_setLocale(locale));
 
   return {
     i18n,

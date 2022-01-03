@@ -110,6 +110,7 @@ const useCustomAuth = () => {
       axios.interceptors.request.use(
         config => {
           if (accessToken && accessToken !== config.headers?.Authorization) {
+            //console.log(`accessToken: ${ accessToken }`);
             config.headers["Authorization"] = `Bearer ${accessToken}`;
           } else {
             delete config.headers["Authorization"];

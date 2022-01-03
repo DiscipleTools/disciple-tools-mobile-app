@@ -7,7 +7,7 @@ const useComments = ({ count, offset, exclude }) => {
   const id = useId();
 
   const url = (isPost && !exclude) ? `/dt-posts/v2/${postType}/${id}/comments` : null;
-  const { data, error, isLoading, isValidating, mutate } = useRequest(url);
+  const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
   return {
     data: data?.comments,
     error,

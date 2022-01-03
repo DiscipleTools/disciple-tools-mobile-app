@@ -4,7 +4,7 @@ const usePeopleGroups = (searchString) => {
   let url = "dt/v1/people-groups/compact";
   if (searchString) url += `?s=${searchString}`;
 
-  const { data, error, isLoading, isValidating } = useRequest(url);
+  const { data, error, isLoading, isValidating } = useRequest({ url });
 
   return {
     peopleGroups: data?.posts ?? null,
