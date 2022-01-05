@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import * as Clipboard from 'expo-clipboard';
 
-import { ActionSheet, Container, Icon } from "native-base";
+import { ActionSheet, Icon } from "native-base";
 import { Col, Row, Grid } from "react-native-easy-grid";
 
 import ParsedText from "react-native-parsed-text";
@@ -13,9 +13,8 @@ import MentionsTextInput from "react-native-mentions";
 
 import OfflineBar from "components/OfflineBar";
 import FilterList from "components/FilterList";
-import PostItemSkeleton from "components/PostItem/PostItemSkeleton";
+import PostItemSkeleton from "components/Post/PostItem/PostItemSkeleton";
 
-import useNetworkStatus from "hooks/useNetworkStatus";
 import useI18N from "hooks/useI18N";
 import useComments from "hooks/useComments";
 import useActivity from "hooks/useActivity";
@@ -31,10 +30,9 @@ import { styles } from "./CommentsActivityScreen.styles";
 
 const CommentsActivityScreen = ({ navigation, route }) => {
 
-  const isConnected = useNetworkStatus();
   const { i18n, isRTL } = useI18N();
   const toast = useToast();
-  const { userData } = useMyUser();
+  const { data: userData } = useMyUser();
 
   const [editComment, setEditComment] = useState({
     id: null,
@@ -79,8 +77,6 @@ const CommentsActivityScreen = ({ navigation, route }) => {
     console.error(error);
   };
 
-  const username = userData?.display_name;
-
   const onClear = () => {
     //setComment('');
     Keyboard.dismiss();
@@ -93,7 +89,8 @@ const CommentsActivityScreen = ({ navigation, route }) => {
   const CommentsActivityItem = ({ item, loading }) => {
     const message = item?.comment_content || item?.object_note;
     const author = item?.comment_author || item?.name;
-    const userIsAuthor = author?.toLowerCase() === username?.toLowerCase();
+    const authorId = Number(item?.user_id);
+    const userIsAuthor = authorId === userData?.ID;
     if (!item || loading) return <CommentsActivityItemLoadingSkeleton />;
     const onCopy = () => Clipboard.setString(message);
     const onEdit = () => setEditComment({
@@ -311,8 +308,8 @@ const ExpandableTextInput = () => {
   const renderItem = ({ item }) => <CommentsActivityItem item={item} loading={isLoading||isValidating||isError} />;
 
   return (
-    <Container>
-      {!isConnected && <OfflineBar />}
+    <>
+      <OfflineBar />
       <FilterList
         items={(items?.length > 0) ? items : []}
         renderItem={renderItem}
@@ -325,7 +322,7 @@ const ExpandableTextInput = () => {
         placeholder={"COMMENTS ACTIVITY PLACEHOLDER TEXT"}
       />
       <ExpandableTextInput />
-    </Container>
+    </>
   );
 };
 export default CommentsActivityScreen;
