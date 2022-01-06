@@ -103,7 +103,7 @@ const LoginScreen = () => {
         domainRef.current = user.domain;
       };
     }, [])
-    const [domain, setDomain] = useState(null);
+    const [domain, setDomain] = useState(domainRef?.current);
     const domainErrorMessage = state.domainValidation ? (
       <Text style={styles.validationErrorMessage}>
         {i18n.t("loginScreen.domain.error", { locale })}
@@ -146,7 +146,7 @@ const LoginScreen = () => {
         usernameRef.current = user.username;
       };
     }, [])
-    const [username, setUsername] = useState(null);
+    const [username, setUsername] = useState(usernameRef?.current);
     const userErrorMessage = state.userValidation ? (
       <Text style={styles.validationErrorMessage}>
         {i18n.t("loginScreen.username.error", { locale })}
@@ -182,7 +182,7 @@ const LoginScreen = () => {
   };
 
   const PasswordField = () => {
-    const [password, setPassword] = useState(null);
+    const [password, setPassword] = useState(passwordRef?.current);
     const [showPassword, setShowPassword] = useState(false);
     const passwordErrorMessage = state.passwordValidation ? (
       <Text style={styles.validationErrorMessage}>
@@ -277,5 +277,4 @@ const LoginScreen = () => {
   );
 };
 //LoginScreen.propTypes = {};
-//LoginScreen.whyDidYouRender = true
 export default LoginScreen;
