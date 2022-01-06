@@ -1,59 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ActivityIndicator,
   Image,
   Keyboard,
   Linking,
-  Platform,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+//import PropTypes from "prop-types";
 
-import PropTypes from "prop-types";
-// component library (native base)
 import { Button, Icon } from "native-base";
-// expo
-import Constants from "expo-constants";
-// TODO: move to StyleSheet
-import Colors from "constants/Colors";
 
-// custom hooks
+import PluginRequired from "components/PluginRequired";
+import LabeledTextInput from "components/LabeledTextInput";
+import LanguagePicker from "components/LanguagePicker";
+import AppVersion from "components/AppVersion";
+
 import { useAuth } from "hooks/useAuth";
+import useDevice from "hooks/useDevice";
 import useI18N from "hooks/useI18N";
 import usePlugins from "hooks/usePlugins";
 import useToast from "hooks/useToast";
 
-// custom components
-//import Locale from 'components/Locale';
-import LabeledTextInput from "components/LabeledTextInput";
-import LanguagePicker from "components/LanguagePicker";
-// third-party components
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-// styles/assets
+import Colors from "constants/Colors";
 import { styles } from "./LoginScreen.styles";
 
-import { useDispatch } from "react-redux";
-
-const LoginScreen = ({ navigation, route }) => {
-
-  // TODO: remove after testing
-  const dispatch = useDispatch();
-
-  /*
-  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-  console.log("$$$$$          LOGIN SCREEN                   $$$$$");
-  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-  */
+const LoginScreen = () => {
 
   const { user, rememberLoginDetails, signIn } = useAuth();
+  const { isIOS } = useDevice();
   const { i18n, isRTL, locale } = useI18N();
-  const { mobileAppPluginEnabled, mobileAppPluginLink } = usePlugins();
+  const { mobileAppPlugin } = usePlugins();
   const toast = useToast();
-
-  console.log("__________________________")
-  console.log(`isRTL: ${ isRTL }`);
 
   const [state, setState] = useState({
     domainValidation: null,
@@ -62,27 +41,25 @@ const LoginScreen = ({ navigation, route }) => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [domain, setDomain] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-    if (rememberLoginDetails) {
-      // TODO: batch update?
-      if (user?.domain) setDomain(user.domain);
-      if (user?.username) setUsername(user.username);
-    };
-  }, [])
+  const domainRef = useRef(null);
+  const usernameRef = useRef(null);
+  const passwordRef = useRef(null);
+
+  const usernameFieldRef = useRef();
+  const passwordFieldRef = useRef();
 
   const cleanDomain = (domain) => {
     // trim leading/trailing whitespace and remove protocol
-    return domain.trim().replace("http://", "").replace("https://", "");
+    return domain?.trim()?.replace("http://", '')?.replace("https://", '');
   };
 
   // TODO: add legit validation
   const onLoginPress = () => {
     Keyboard.dismiss();
+    const domain = domainRef.current;
+    const username = usernameRef.current;
+    const password = passwordRef.current;
     if (domain && username && password) {
       const cleanedDomain = cleanDomain(domain);
       signIn(cleanedDomain, username, password);
@@ -99,7 +76,6 @@ const LoginScreen = ({ navigation, route }) => {
   };
 
   const goToForgotPassword = () => {
-    //dispatch({ type: "CLEAR_REDUX_DATA" });
     if (domain !== "") {
       Linking.openURL(
         `https://${domain}/wp-login.php?action=lostpassword`
@@ -120,95 +96,94 @@ const LoginScreen = ({ navigation, route }) => {
     );
   };
 
-  const MobileAppPluginRequired = () => {
-    return (
-      <TouchableOpacity activeOpacity={0.8} style={{}} onPress={mobileAppPluginLink}>
-        <View
-          style={{
-            borderColor: "#c2e0ff",
-            borderWidth: 1,
-            backgroundColor: "#ecf5fc",
-            borderRadius: 2,
-            padding: 10,
-          }}
-        >
-          <Text>
-            {i18n.t("loginScreen.errors.mobileAppPluginRequiredOne", {
-              locale,
-            })}
-          </Text>
-          <Text style={{ fontWeight: "bold" }}>
-            {i18n.t("loginScreen.errors.mobileAppPluginRequiredTwo", {
-              locale,
-            })}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   const DomainField = () => {
+    useEffect(() => {
+      if (rememberLoginDetails && user?.domain) {
+        setDomain(user.domain);
+        domainRef.current = user.domain;
+      };
+    }, [])
+    const [domain, setDomain] = useState(null);
     const domainErrorMessage = state.domainValidation ? (
       <Text style={styles.validationErrorMessage}>
         {i18n.t("loginScreen.domain.error", { locale })}
       </Text>
     ) : null;
     return(
-      <View>
+      <>
         <LabeledTextInput
           editing
+          onChangeText={text => {
+            setDomain(text);
+            domainRef.current = text;
+          }}
+          value={domain}
           accessibilityLabel={i18n.t("loginScreen.domain.label", { locale })}
           label={i18n.t("loginScreen.domain.label", { locale })}
-          containerStyle={[styles.textField, state.domainValidation && styles.validationErrorInput]}
-          iconName="ios-globe"
-          onChangeText={setDomain}
+          style={styles.inputRowTextInput}
+          containerStyle={[styles.textField, state.domainValidation && styles.domainErrorInput]}
+          // TODO: LabeledTextInput currently hardcoded to Ionicons
+          iconName={isIOS ? "ios-link" : "md-link"}
           textAlign={isRTL ? "right" : "left"}
           autoCapitalize="none"
           autoCorrect={false}
-          value={domain}
-          returnKeyType="next"
+          //returnKeyType="next"
+          //onSubmitEditing={() => usernameFieldRef.current.focus()}
+          //blurOnSubmit={false}
           textContentType="URL"
           keyboardType="url"
           disabled={loading}
-          placeholder={i18n.t("loginScreen.domain.placeholder", { locale })}
         />
         {domainErrorMessage}
-      </View>
+      </>
     );
   };
 
   const UsernameField = () => {
+    useEffect(() => {
+      if (rememberLoginDetails && user?.username) {
+        setUsername(user.username);
+        usernameRef.current = user.username;
+      };
+    }, [])
+    const [username, setUsername] = useState(null);
     const userErrorMessage = state.userValidation ? (
       <Text style={styles.validationErrorMessage}>
         {i18n.t("loginScreen.username.error", { locale })}
       </Text>
     ) : null;
     return(      
-      <View>
+      <>
         <LabeledTextInput
           editing
-          accessibilityLabel={i18n.t("loginScreen.username.label", {
-            locale,
-          })}
+          value={username}
+          onChangeText={text => {
+            setUsername(text);
+            usernameRef.current = text;
+          }}
+          accessibilityLabel={i18n.t("loginScreen.username.label", { locale })}
           label={i18n.t("loginScreen.username.label", { locale })}
           containerStyle={[styles.textField, state.usernameValidation && styles.validationErrorInput]}
-          iconName={Platform.OS === "ios" ? "ios-person" : "md-person"}
-          value={username}
-          onChangeText={setUsername}
+          iconName={isIOS ? "ios-person" : "md-person"}
           textAlign={isRTL ? "right" : "left"}
           autoCapitalize="none"
           autoCorrect={false}
-          returnKeyType="next"
+          //ref={usernameFieldRef}
+          //returnKeyType="next"
+          //onSubmitEditing={() => passwordFieldRef.current.focus()}
+          //blurOnSubmit={false}
           textContentType="emailAddress"
           keyboardType="email-address"
           disabled={loading}
         />
         {userErrorMessage}
-      </View>
+      </>
     );
   };
 
   const PasswordField = () => {
+    const [password, setPassword] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
     const passwordErrorMessage = state.passwordValidation ? (
       <Text style={styles.validationErrorMessage}>
         {i18n.t("loginScreen.password.error", { locale })}
@@ -218,16 +193,18 @@ const LoginScreen = ({ navigation, route }) => {
       <View>
         <LabeledTextInput
           editing
-          accessibilityLabel={i18n.t("loginScreen.password.label", {
-            locale,
-          })}
+          value={password}
+          onChangeText={text => {
+            setPassword(text);
+            passwordRef.current = text;
+          }}
+          ref={passwordFieldRef}
+          accessibilityLabel={i18n.t("loginScreen.password.label", { locale })}
           label={i18n.t("loginScreen.password.label", { locale })}
           containerStyle={[styles.textField, state.passwordValidation && styles.validationErrorInput]}
-          iconName={Platform.OS === "ios" ? "ios-key" : "md-key"}
-          value={password}
-          onChangeText={setPassword}
+          iconName={isIOS ? "ios-key" : "md-key"}
           underlineColorAndroid="transparent"
-          secureTextEntry={showPassword}
+          secureTextEntry={!showPassword}
           textAlign={isRTL ? "right" : "left"}
         />
         <TouchableOpacity
@@ -240,7 +217,7 @@ const LoginScreen = ({ navigation, route }) => {
             name="eye"
             style={[
               { marginBottom: "auto", marginTop: "auto", fontSize: 24 },
-              showPassword ?  { opacity: 0.3 } : { opacity: null },
+              !showPassword ?  { opacity: 0.3 } : { opacity: null },
             ]}
           />
         </TouchableOpacity>
@@ -249,6 +226,7 @@ const LoginScreen = ({ navigation, route }) => {
     );
   };
 
+  // TODO: implement timeout
   const LoginButton = () => (
     <View>
       <Button
@@ -283,36 +261,21 @@ const LoginScreen = ({ navigation, route }) => {
     );
   };
 
-  const AppVersion = () => {
-    return <Text style={styles.versionText}>{Constants.manifest.version}</Text>;
-  };
-
-  // TODO: is KeyboardAwareScrollView necessary?
   return (
-    <KeyboardAwareScrollView
-      enableAutomaticScroll
-      enableOnAndroid
-      keyboardOpeningTime={0}
-      extraScrollHeight={0}
-      keyboardShouldPersistTaps={"always"}
-    >
-      <View style={styles.container}>
-        <Header />
-        <View style={styles.formContainer}>
-          { mobileAppPluginEnabled && <MobileAppPluginRequired /> }
-          <DomainField />
-          <UsernameField />
-          <PasswordField />
-          { loading ? <LoadingSpinner /> : <LoginButton /> }
-          <AppVersion />
-        </View>
-        <LanguagePicker />
+    <View style={styles.container}>
+      <Header />
+      <View style={styles.formContainer}>
+        <PluginRequired {...mobileAppPlugin} /> 
+        <DomainField />
+        <UsernameField />
+        <PasswordField />
+        { loading ? <LoadingSpinner /> : <LoginButton /> }
+        <AppVersion />
       </View>
-    </KeyboardAwareScrollView>
+      <LanguagePicker />
+    </View>
   );
 };
-LoginScreen.propTypes = {
-  navigation: PropTypes.object.isRequired,
-  route: PropTypes.object.isRequired,
-};
+//LoginScreen.propTypes = {};
+//LoginScreen.whyDidYouRender = true
 export default LoginScreen;

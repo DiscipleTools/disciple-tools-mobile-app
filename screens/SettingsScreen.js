@@ -1,11 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Text } from "react-native";
 import PropTypes from "prop-types";
 
 import {
   Body,
   Button as NbButton,
-  Container,
   Icon,
   Left,
   ListItem,
@@ -15,7 +14,6 @@ import {
 } from "native-base";
 
 // TODO: hide expo imports in hooks
-import Constants from "expo-constants";
 import * as MailComposer from "expo-mail-composer";
 
 import { useAuth } from "hooks/useAuth";
@@ -26,6 +24,7 @@ import useToast from "hooks/useToast";
 
 import OfflineBar from "components/OfflineBar";
 import LanguagePicker from "components/LanguagePicker";
+import AppVersion from "components/AppVersion";
 
 import { styles } from "./SettingsScreen.styles";
 import gravatar from "assets/gravatar-default.png";
@@ -197,14 +196,9 @@ const SettingsScreen = ({ navigation }) => {
     />
   );
 
-  const AppVersionText = () => (
-    <Text style={styles.versionText}>{Constants.manifest.version}</Text>
-  );
-
-  //<Container style={styles.container}>
   return (
-    <Container>
-      {!isConnected && <OfflineBar />}
+    <>
+      <OfflineBar />
       <Header />
       {/*__DEV__ && <StorybookButton />*/}
       <OnlineToggle />
@@ -214,8 +208,8 @@ const SettingsScreen = ({ navigation }) => {
       <PINCodeToggle />
       <HelpSupportButton />
       <LogoutButton />
-      <AppVersionText />
-    </Container>
+      <AppVersion />
+    </>
   );
 };
 SettingsScreen.propTypes = {

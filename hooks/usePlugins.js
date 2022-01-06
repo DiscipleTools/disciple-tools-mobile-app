@@ -1,17 +1,16 @@
-import { Linking } from "react-native";
-
 const usePlugins = () => {
 
   // Mobile App Plugin
-  // TODO:
-  const mobileAppPluginEnabled = false; //true;
-  const mobileAppPluginLink = () => Linking.openURL("https://disciple.tools/plugins/mobile-app/");
+  const mobileAppPlugin = {
+    enabled: true, // TODO
+    label: "Mobile App", // TODO: i18n
+    link: "https://disciple.tools/plugins/mobile-app/",
+  };
 
   // TODO: 2FA Plugin
 
   return {
-    mobileAppPluginEnabled,
-    mobileAppPluginLink,
+    mobileAppPlugin
   };
 };
 export default usePlugins;
