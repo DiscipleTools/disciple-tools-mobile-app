@@ -4,6 +4,14 @@ import Colors from "constants/Colors";
 // TODO: constant
 const listItemHeight = 80;
 export const styles = StyleSheet.create({
+  favoriteStarView: {
+    flexDirection: "column",
+    marginTop: "auto",
+    marginBottom: "auto",
+  },
+  favoriteStarIcon: {
+    fontSize: 22
+  },
   flatListItem: {
     height: 40,
     margin: 20,

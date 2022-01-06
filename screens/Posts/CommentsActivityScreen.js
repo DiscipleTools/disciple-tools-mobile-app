@@ -87,7 +87,9 @@ const CommentsActivityScreen = ({ navigation, route }) => {
   const CommentsActivityItemLoadingSkeleton = () => <PostItemSkeleton />;
 
   const CommentsActivityItem = ({ item, loading }) => {
+    //console.log(`item: ${JSON.stringify(item)}`);
     const message = item?.comment_content || item?.object_note;
+    const datetime = item?.comment_date || new Date(Number('1611715906')*1000).toString();
     const author = item?.comment_author || item?.name;
     const authorId = Number(item?.user_id);
     const userIsAuthor = authorId === userData?.ID;
@@ -161,8 +163,7 @@ const CommentsActivityScreen = ({ navigation, route }) => {
                           : { textAlign: "right" },
                       ]}
                     >
-                      {/*utils.formatDateToView(item.date)*/}
-                      {item?.date}
+                      {datetime}
                     </Text>
                   </Col>
                 </Row>

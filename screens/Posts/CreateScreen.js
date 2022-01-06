@@ -1,25 +1,23 @@
 import React from "react";
 
 import OfflineBar from "components/OfflineBar";
-import Tile from "components/Tile";
+import Tile from "components/Post/Tile";
 
-import useNetworkStatus from "hooks/useNetworkStatus";
 import useI18N from "hooks/useI18N";
+import useType from "hooks/useType";
 import useSettings from "hooks/useSettings";
 import useAPI from "hooks/useAPI";
 
-import { styles } from "./CreateScreen.styles";
-
 const CreateScreen = ({ navigation }) => {
 
-  const isConnected = useNetworkStatus();
   const { i18n, isRTL } = useI18N();
+  const { isContact } = useType();
   const { settings } = useSettings();
   const { createPost } = useAPI();
 
   const CreatePost = () => {
     if (!settings?.tiles) return null;
-    const fields = [];
+    let fields = [];
     settings.tiles.forEach((tile) => {
       let creationFieldsByTile = tile?.fields?.filter(
         (field) => field?.in_create_form === true
@@ -28,10 +26,27 @@ const CreateScreen = ({ navigation }) => {
         fields.push(...creationFieldsByTile);
       }
     });
-    return null;
+    // TODO: translate
+    if (isContact) {
+      fields = [{
+        label: "Contact Type",
+        name: "contact_type",
+        type: "key_select",
+        default: {
+          personal: {
+            label: "Personal",
+          },
+          access: {
+            label: "Access",
+          },
+        }
+      }, ...fields];
+    };
     return (
       <Tile
-        //post={post}
+        editOnly
+        grouped
+        //post={null}
         fields={fields}
         save={createPost}
         //mutate={mutate}
@@ -41,7 +56,7 @@ const CreateScreen = ({ navigation }) => {
 
   return (
     <>
-      {!isConnected && <OfflineBar />}
+      <OfflineBar />
       <CreatePost />
     </>
   );

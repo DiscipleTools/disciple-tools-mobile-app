@@ -1,27 +1,19 @@
 import React from "react";
-import { Pressable, Text, View, useWindowDimensions } from "react-native";
-
-import { useNavigation } from "@react-navigation/native";
-
-import { Container } from "native-base";
+import { Pressable, Text, View } from "react-native";
 
 import FilterList from "components/FilterList";
 import OfflineBar from "components/OfflineBar";
 import Subtitles from "components/Subtitles";
-import PostItemSkeleton from "components/PostItem/PostItemSkeleton";
+import PostItemSkeleton from "components/Post/PostItem/PostItemSkeleton";
 
-import useNetworkStatus from "hooks/useNetworkStatus";
 import useI18N from "hooks/useI18N";
 import useImportContacts from 'hooks/useImportContacts';
-
-import { styles } from "./ImportContactsScreen.styles";
 
 import Constants from "constants";
 import Colors from "constants/Colors";
 
 const ImportContactsScreen = ({ navigation }) => {
 
-  const isConnected = useNetworkStatus();
   const { i18n, isRTL } = useI18N();
 
   const { data: items, error, isLoading } = useImportContacts();
@@ -37,6 +29,8 @@ const ImportContactsScreen = ({ navigation }) => {
   const ImportContactItem = ({ item, loading }) => {
     if (!item || loading) return <PostItemSkeleton />;
     // TODO: compare imported contacts with existing contacts (to determine if new)
+    // TODO: constant
+    const listItemHeight = 80;
     return (
       <Pressable
         onPress={() => {
@@ -44,7 +38,11 @@ const ImportContactsScreen = ({ navigation }) => {
           console.log("*** IMPORT CONTACT SCREEN ***");
           console.log(JSON.stringify(item));
         }}
-        style={styles.rowFront}
+        style={{
+          padding: 15,
+          backgroundColor: Colors.grayLight,
+          height: listItemHeight,
+        }}
         key={item?.id}
       >
         <View style={{ flexDirection: "row", height: 75 }}>
@@ -95,15 +93,15 @@ const ImportContactsScreen = ({ navigation }) => {
   const renderItem = ({ item }) => <ImportContactItem item={item} loading={isLoading||isError} />;
 
   return (
-    <Container>
-      {!isConnected && <OfflineBar />}
+    <>
+      <OfflineBar />
       <FilterList
         items={(items?.length > 0) ? items : []}
         renderItem={renderItem}
         // TODO: add term and translate
         placeholder={"IMPORT CONTACT PLACEHOLDER TEXT"}
       />
-    </Container>
+    </>
   );
 };
 export default ImportContactsScreen;

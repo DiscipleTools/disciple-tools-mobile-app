@@ -4,13 +4,11 @@ import { Container } from "native-base";
 import OfflineBar from "components/OfflineBar";
 import FilterList from "components/FilterList";
 import FAB from "components/FAB";
-import { PostItem, PostItemHidden } from "components/PostItem";
+import { PostItem, PostItemHidden } from "components/Post/PostItem/index";
 
-//import useFilters from "hooks/useFilters";
 import useList from "hooks/useList";
 import useI18N from "hooks/useI18N";
-import useNetworkStatus from "hooks/useNetworkStatus";
-import useToast  from "hooks/useToast";
+//import useToast  from "hooks/useToast";
 import useType from "hooks/useType";
 
 import Constants from "constants";
@@ -18,8 +16,7 @@ import Constants from "constants";
 const ListScreen = () => {
 
   const { i18n } = useI18N();
-  const isConnected = useNetworkStatus();
-  const toast = useToast();
+  //const toast = useToast();
   const { postType } = useType();
 
   const [search, setSearch] = useState(null);
@@ -52,22 +49,21 @@ const ListScreen = () => {
     console.error(error);
   };
 
-  const renderItem = ({ item }) => <PostItem item={item} loading={isLoading||isValidating||isError} />;
+  const renderItem = ({ item }) => <PostItem item={item} loading={isLoading||isValidating||isError} mutate={mutate} />;
   const renderHiddenItem = ({ item }) => <PostItemHidden item={item} loading={isLoading||isValidating||isError} />;
 
   const NUM_SWIPE_BUTTONS_LEFT = 2;
   const NUM_SWIPE_BUTTONS_RIGHT = 0;
 
   return (
-    <Container>
-      {!isConnected && <OfflineBar />}
+    <>
+      <OfflineBar />
       <FilterList
         items={items}
         renderItem={renderItem}
-        renderHiddenItem={renderHiddenItem}
+        //renderHiddenItem={renderHiddenItem}
         onRefresh={mutate}
         placeholder={i18n.t("listScreen.placeholder", { postType })}
-        //placeholder={i18n.t("global.placeholder")}
         leftOpenValue={Constants.SWIPE_BTN_WIDTH * NUM_SWIPE_BUTTONS_LEFT}
         rightOpenValue={Constants.SWIPE_BTN_WIDTH * NUM_SWIPE_BUTTONS_RIGHT}
         search={search}
@@ -76,7 +72,7 @@ const ListScreen = () => {
         onFilter={onFilter}
       />
       <FAB />
-    </Container>
+    </>
   );
 };
 export default ListScreen;
