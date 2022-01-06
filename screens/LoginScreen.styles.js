@@ -119,11 +119,4 @@ export const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
   },
-  versionText: {
-    color: Colors.grayDark,
-    fontSize: 12,
-    position: 'absolute',
-    bottom: 15,
-    right: 15,
-  },
 });

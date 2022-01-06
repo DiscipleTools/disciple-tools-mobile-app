@@ -21,6 +21,10 @@ import { SWRConfig } from "swr";
 
 const App = () => {
 
+  useEffect(() => {
+    LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
+  }, [])
+
   // Ignore YellowBox warnings in DEV 
   LogBox.ignoreAllLogs();
 
