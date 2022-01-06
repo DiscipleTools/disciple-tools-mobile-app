@@ -12,7 +12,6 @@ import { Container } from "native-base";
 import FilterList from "components/FilterList";
 import OfflineBar from "components/OfflineBar";
 
-import useNetworkStatus from "hooks/useNetworkStatus";
 import useI18N from "hooks/useI18N";
 import useNotifications from "hooks/useNotifications.js";
 //import useMyUser from 'hooks/useMyUser.js';
@@ -24,7 +23,6 @@ import { styles } from "./NotificationsScreen.styles";
 const NotificationsScreen = ({ navigation }) => {
   const DEFAULT_LIMIT = 10;
 
-  const isConnected = useNetworkStatus();
   const { i18n, isRTL } = useI18N();
   const {
     data: notifications,
@@ -175,7 +173,7 @@ const NotificationsScreen = ({ navigation }) => {
 
   return (
     <Container style={styles.container}>
-      {!isConnected && <OfflineBar />}
+      <OfflineBar />
       <FilterList
         items={(notifications?.length > 0) ? notifications : []}
         renderItem={renderItem}

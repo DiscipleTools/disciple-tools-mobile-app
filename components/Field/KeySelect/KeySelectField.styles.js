@@ -17,6 +17,7 @@ export const styles = StyleSheet.create({
     marginBottom: "auto",
   },
   statusFieldContainer: Platform.select({
+    width: 50,
     default: {
       borderRadius: 3,
     },

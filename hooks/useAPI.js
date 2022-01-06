@@ -1,6 +1,8 @@
 import useId from "hooks/useId";
 import useType from "hooks/useType";
 import useRequestQueue from "hooks/useRequestQueue";
+import useI18N from "hooks/useI18N";
+import useToast from "hooks/useToast";
 
 import { HTTP } from "constants";
 
@@ -8,6 +10,8 @@ const useAPI = () => {
   const { request } = useRequestQueue();
   const { postType } = useType();
   const postId = useId();
+  const { i18n } = useI18N();
+  const toast = useToast();
 
   // USER
   // https://developers.disciple.tools/theme-core/api-other/users
@@ -38,15 +42,24 @@ const useAPI = () => {
 
 
   // https://developers.disciple.tools/theme-core/api-posts/update-post
-  const updatePost = async(fields, silent=false) => {
-    let url = postType && postId ? `/dt-posts/v2/${postType}/${postId}` : null;
+  const updatePost = async(fields, id=false, type=false, mutate=null, silent=false) => {
+    if (!id) id = postId;
+    if (!type) type = postType;
+    let url = type && id ? `/dt-posts/v2/${type}/${id}` : null;
     if (silent) url += "?silent=true";
-    return request({
-      url,
-      method: HTTP.METHODS.POST,
-      headers: HTTP.HEADERS.DEFAULT,
-      data: { ...fields }
-    });
+    try {
+      const res = await request({
+        url,
+        method: HTTP.METHODS.POST,
+        headers: HTTP.HEADERS.DEFAULT,
+        data: { ...fields }
+      });
+      toast(i18n.t('global.success.save'));
+      if (mutate) mutate();
+    } catch (error) {
+      // TODO
+      console.error(error);
+    };
   };
 
   /* NOTE: DELETE Post is not supported by the API

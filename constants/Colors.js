@@ -46,4 +46,5 @@ export default {
   dialogButton: "#FFFFFF",
   buttonDelete: "#d9534f",
   iconDelete: "#d9534f",
+  offlineBar: "#FCAB10",
 };

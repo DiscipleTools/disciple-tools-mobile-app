@@ -74,7 +74,6 @@ const useCustomAuth = () => {
 
   // rehydrate state from secure storage (depends on Redux to notify via "rehydrate" change)
   useEffect(async() => {
-    console.log("*** REHYDRATE AUTH ***");
     /*
     if auto-login, but accessToken is missing or invalid, 
     then attempt to rehydrate accessToken from secure storage
@@ -83,17 +82,17 @@ const useCustomAuth = () => {
     if (isAutoLogin && (!accessToken || (accessToken && !validateToken(accessToken)))) {
       // rehydrate access token
       const rehydratedAccessToken = await getSecureItem(AuthConstants.ACCESS_TOKEN);
-      console.log(`~~~~~~~~~~ rehydratedAccessToken: ${rehydratedAccessToken}`);
+      //console.log(`~~~~~~~~~~ rehydratedAccessToken: ${rehydratedAccessToken}`);
       if (validateToken(rehydratedAccessToken)) setAccessToken(rehydratedAccessToken);
     };
     // rehydrate baseUrl
     const rehydratedBaseUrl = baseUrl ?? (await getSecureItem(AuthConstants.BASE_URL));
-    console.log(`~~~~~~~~~~ rehydratedBaseUrl: ${rehydratedBaseUrl}`);
+    //console.log(`~~~~~~~~~~ rehydratedBaseUrl: ${rehydratedBaseUrl}`);
     setBaseUrl(rehydratedBaseUrl);
     // rehydrate user
     try {
       const rehydratedUser = user ?? JSON.parse((await getSecureItem(AuthConstants.USER)));
-      console.log(`~~~~~~~~~~ rehydratedUser: ${JSON.stringify(rehydratedUser)}`);
+      //console.log(`~~~~~~~~~~ rehydratedUser: ${JSON.stringify(rehydratedUser)}`);
       // TODO: if user unable to be rehydrated AND have valid accessToken and baseUrl, then request user info
       setUser(rehydratedUser);
     } catch (error) {
@@ -110,7 +109,6 @@ const useCustomAuth = () => {
       axios.interceptors.request.use(
         config => {
           if (accessToken && accessToken !== config.headers?.Authorization) {
-            //console.log(`accessToken: ${ accessToken }`);
             config.headers["Authorization"] = `Bearer ${accessToken}`;
           } else {
             delete config.headers["Authorization"];
@@ -153,9 +151,11 @@ const useCustomAuth = () => {
   // set persisted secure storage values (if applicable per user options)
   const setPersistedAuth = async (accessToken, baseUrl, user) => {
     try {
-      if (isAutoLogin) await setSecureItem(AuthConstants.ACCESS_TOKEN, accessToken);
+      //if (isAutoLogin) await setSecureItem(AuthConstants.ACCESS_TOKEN, accessToken);
+      await setSecureItem(AuthConstants.ACCESS_TOKEN, accessToken);
       await setSecureItem(AuthConstants.BASE_URL, baseUrl);
-      if (rememberLoginDetails) await setSecureItem(AuthConstants.USER, JSON.stringify(user));
+      //if (rememberLoginDetails) await setSecureItem(AuthConstants.USER, JSON.stringify(user));
+      await setSecureItem(AuthConstants.USER, JSON.stringify(user));
     } catch (error) {
       // TODO:
       console.error(error);

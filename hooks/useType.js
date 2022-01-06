@@ -49,8 +49,11 @@ const useType = () => {
   const isPost = (isContact || isGroup || isTraining || isQuestionnaire) ? true : false;
   const isCommentsActivity = (isPost && subtype === "comments_activity") ? true : false;
 
+  const isList = isPost && !route?.params?.id && !route?.params?.name;
+
   return {
     TypeConstants,
+    isList,
     isPost,
     isContact,
     isGroup,

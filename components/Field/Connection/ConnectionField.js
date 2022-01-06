@@ -5,7 +5,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import { useNavigation } from "@react-navigation/native";
 
 import MultiSelect from "components/MultiSelect";
-import PostLink from "components/PostLink";
+import PostLink from "components/Post/PostLink";
 
 // Custom Hooks
 import useI18N from "hooks/useI18N";
@@ -57,7 +57,7 @@ const ConnectionField = ({ field, value, editing, onChange }) => {
     if (!peopleGroups) return null;
     return (
       <MultiSelect
-        items={peopleGroups}
+        items={peopleGroups ?? []}
         selectedItems={selectedItems}
         onChange={onChange}
         customAdd={addConnection}
@@ -98,8 +98,9 @@ const ConnectionField = ({ field, value, editing, onChange }) => {
 
   const PeopleGroupView = () => (
     <>
-      {selectedItems.map((connection) => (
+      {selectedItems.map((connection, idx) => (
         <PostLink
+          key={connection?.ID ?? idx}
           id={connection?.ID}
           title={connection?.name}
           type={"people_groups"}
@@ -193,8 +194,9 @@ const ConnectionField = ({ field, value, editing, onChange }) => {
 
   const ContactView = () => (
     <>
-      {selectedItems.map((connection) => (
+      {selectedItems.map((connection, idx) => (
         <PostLink
+          key={connection?.name ?? idx}
           id={connection?.value}
           title={connection?.name}
           type={"contacts"}

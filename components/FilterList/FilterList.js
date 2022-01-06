@@ -39,12 +39,6 @@ const FilterList = ({
     }, 1000);
   });
 
-  /*
-  const skeletons = Array(10)
-    .fill("")
-    .map((_, i) => ({ key: `${i}`, text: `item #${i}` }));
-  */
-
   const listItemSeparator = () => <View style={styles.listItemSeparator} />;
 
   const Tags = () => (

@@ -8,7 +8,7 @@ import { getFocusedRouteNameFromRoute, useNavigation } from "@react-navigation/n
 
 //import HomeScreen from 'screens/HomeScreen';
 import PINScreen from "screens/PINScreen";
-import ImportContactsScreen from "screens/ImportContactsScreen";
+import ImportContactsScreen from "screens/Posts/ImportContactsScreen";
 import CreateScreen from "screens/Posts/CreateScreen";
 import ListScreen from "screens/Posts/ListScreen";
 import DetailsScreen from "screens/Posts/DetailsScreen";

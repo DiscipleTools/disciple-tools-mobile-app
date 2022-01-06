@@ -333,11 +333,13 @@ const useDetails = () => {
   const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
 
   return {
-    post: data ? mapPost(data) : null,
+    data: data ? mapPost(data) : null,
     error,
     isLoading,
     isValidating,
-    mutate
+    mutate,
+    postId,
+    postType
   };
 };
 export default useDetails;

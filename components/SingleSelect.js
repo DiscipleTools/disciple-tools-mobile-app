@@ -1,12 +1,14 @@
 import React from "react";
-import { Picker } from "@react-native-picker/picker";
-import { Icon } from "native-base";
+import {
+  Icon,
+  Picker as NBPicker
+} from "native-base";
 
 import useI18N from "hooks/useI18N";
 
 import { styles } from "components/Field/Field.styles";
 
-const SingleSelect = ({ items, selectedItem, onChange }) => {
+const SingleSelect = ({ editing, items, selectedItem, onChange }) => {
   const { i18n, isRTL } = useI18N();
 
   const handleChange = (newValue) => {
@@ -30,26 +32,29 @@ const SingleSelect = ({ items, selectedItem, onChange }) => {
 
   return (
     <>
-      <Picker
+      <NBPicker
         mode="dropdown"
+        enabled={editing}
         selectedValue={selectedItem?.key}
         onValueChange={handleChange}
-        // TODO: confirm this on Android
-        iosIcon={<Icon name="caret-down" size={10} style={styles.pickerIcon} />}
         textStyle={{ fontSize: 14 }}
+        //textStyle={isStatusField() ? { color: "#FFF" } : null}
+        placeholder=""
       >
-        <Picker.Item key={-1} label={""} value={-1} />
-        {items.map((item) => {
+        <NBPicker.Item key={-1} label={""} value={-1} />
+        {items.map((item, idx) => {
           return (
-            <Picker.Item
-              key={item?.ID}
+            <NBPicker.Item
+              key={item?.ID ?? idx}
               label={item?.name + " (#" + item?.ID + ")"}
               value={item?.ID}
             />
           );
         })}
-      </Picker>
-      {/*<Icon name="caret-down" size={10} style={styles.pickerIcon} />*/}
+      </NBPicker>
+      {editing ? (
+        <Icon name="caret-down" size={10} style={styles.pickerIcon} />
+      ) : null}
     </>
   );
 };

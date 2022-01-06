@@ -105,8 +105,11 @@ const MultiSelectField = ({ field, value, editing, onChange }) => {
     }
     return (
       <>
-        {selectedItems.map((selectedItem) => (
-          <Text style={isRTL ? { textAlign: "left", flex: 1 } : {}}>
+        {selectedItems.map((selectedItem, idx) => (
+          <Text
+            key={selectedItem?.label ?? idx}
+            style={isRTL ? { textAlign: "left", flex: 1 } : {}}
+          >
             {selectedItem?.label}
           </Text>
         ))}

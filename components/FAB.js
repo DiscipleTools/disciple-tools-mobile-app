@@ -7,18 +7,29 @@ import ActionButton from "react-native-action-button";
 import useI18N from "hooks/useI18N";
 import useNetworkStatus from "hooks/useNetworkStatus.js";
 import useType from "hooks/useType.js";
+import useDetails from "hooks/useDetails";
 import useSettings from "hooks/useSettings";
 
 import Colors from "constants/Colors";
 import { styles } from "./FAB.styles";
 
-const FAB = ({ post }) => {
+const FAB = () => {
   const navigation = useNavigation();
 
   const { i18n, isRTL, locale } = useI18N();
   const isConnected = useNetworkStatus();
 
-  const { TypeConstants, isContact, isGroup } = useType();
+  const { TypeConstants, isList, isPost, isContact, isGroup } = useType();
+
+  const {
+    data: post,
+    error: postError,
+    isLoading,
+    isValidating,
+    mutate,
+    postId,
+    postType
+  } = useDetails();
 
   const { settings } = useSettings();
   if (!settings) return null;
@@ -122,17 +133,15 @@ const FAB = ({ post }) => {
   // TODO: explanation
   const filterQuickButtonFields = () => {
     const quickButtonFields = [];
-    if (post) {
+    if (isList && isContact) return ["quick_button_new", "quick_button_import_contacts"];
+    if (isList && isGroup) return [];
+    if (isPost) {
       Object.keys(settings.fields).forEach((field) => {
         if (field.startsWith("quick_button")) {
-          //console.log(`field: ${ field }`);
           quickButtonFields.push(field);
-        }
+        };
       });
       return quickButtonFields;
-    }
-    if (isContact) {
-      return ["quick_button_new", "quick_button_import_contacts"];
     }
     return [];
   };
@@ -227,8 +236,8 @@ const FAB = ({ post }) => {
           />
         ) : (
           <Icon
-            type={post ? "MaterialCommunityIcons" : "Feather"}
-            name={post ? "comment-plus" : "plus"}
+            type={isList ? "Feather" : "MaterialCommunityIcons"}
+            name={isList ? "plus" : "comment-plus"}
             style={[styles.FABIcon, { fontSize: 30 }]}
           />
         )

@@ -64,7 +64,7 @@ const Milestones = ({
   };
   return (
     <>
-      {items.map((item) => {
+      {items.map((item, idx) => {
         const selected = selectedItems.find(
           (selectedItem) => selectedItem.label === item.label
         )
@@ -72,6 +72,7 @@ const Milestones = ({
           : false;
         return (
           <Button
+            key={item?.label ?? idx}
             disabled={!editing}
             bordered={!selected}
             onPress={() => handleChange(item, selected)}
