@@ -7,7 +7,7 @@ import { Html5Entities } from "html-entities";
 const useList = ({ search, filter }) => {
 
   const { isContact, isGroup, postType } = useType();
-  const { userData } = useMyUser();
+  const { data: userData } = useMyUser();
 
   // TODO: duplicated in useDetails
   const mapContacts = (contacts, entities) => {

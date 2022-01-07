@@ -24,6 +24,7 @@ const ListScreen = () => {
   const filterReducer = (state, action) => {
     switch (action.type) {
       case "SET_FILTER":
+        console.log(`filter: SET_FILTER: ${JSON.stringify(action?.filter)}`);
         return action?.filter;
       default:
         return state;
@@ -38,6 +39,8 @@ const ListScreen = () => {
 
   const onSearch = (search) => setSearch(search);
   const onFilter = (filter) => dispatchFilter({ type: "SET_FILTER", filter });
+
+  console.log(`filter.query: ${JSON.stringify(filter?.query)}`);
 
   const { data: items, error, isLoading, isValidating, mutate } = useList({ search, filter: filter?.query });
 

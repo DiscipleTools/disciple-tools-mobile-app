@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Keyboard, View, TextInput } from "react-native";
-import PropTypes from "prop-types";
+//import PropTypes from "prop-types";
 
 import { Icon } from "native-base";
 
 import useDebounce from "hooks/useDebounce.js";
 import useNetworkStatus from "hooks/useNetworkStatus";
 import useI18N from "hooks/useI18N";
+import useToast from "hooks/useToast";
 
 import FilterOptionsPanel from "./FilterOptionsPanel";
 
 import { styles } from "./SearchBar.styles";
+import Colors from "constants/Colors";
 
 const SearchBar = ({ onSearch, filter, onFilter }) => {
 
-  const isConnected = useNetworkStatus();
+  const { isConnected } = useNetworkStatus();
   const { i18n } = useI18N();
+  const toast = useToast();
 
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 500);
@@ -40,9 +43,15 @@ const SearchBar = ({ onSearch, filter, onFilter }) => {
     return;
   };
 
-  const onClear = () => {
+  const _onClear = () => {
     _onSearch('');
+    setShowFilterOptionsPanel(false);
     onFilter(null);
+  };
+
+  const _onFilter = (filter) => {
+    setShowFilterOptionsPanel(false);
+    onFilter(filter);
   };
 
   return (
@@ -60,23 +69,27 @@ const SearchBar = ({ onSearch, filter, onFilter }) => {
           autoCorrect={false}
           style={styles.input}
         />
-        { (search?.length > 0 || filter) && (
+        { (search?.length > 0 || filter?.ID) && (
           <Icon
             type="MaterialIcons"
             name="clear"
             style={styles.searchIcon}
-            onPress={() => onClear()}
+            onPress={() => _onClear()}
           />
         )}
         <Icon
           type="MaterialIcons"
           name="filter-list"
-          style={styles.searchIcon}
-          onPress={() => setShowFilterOptionsPanel(!showFilterOptionsPanel)}
+          style={[styles.searchIcon, !isConnected ? { color: Colors.gray } : {}]}
+          onPress={() => {
+            if (!isConnected) return null;
+            setShowFilterOptionsPanel(!showFilterOptionsPanel);
+            return;
+          }}
         />
       </View>
       {showFilterOptionsPanel && (
-        <FilterOptionsPanel onFilter={onFilter} />
+        <FilterOptionsPanel onFilter={_onFilter} />
       )}
     </>
   );

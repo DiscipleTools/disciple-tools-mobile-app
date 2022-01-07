@@ -2,6 +2,11 @@ import { StyleSheet } from "react-native";
 import Colors from "constants/Colors";
 
 export const styles = StyleSheet.create({
+  accordionHeader: {
+    borderBottomWidth: 1,
+    borderColor: Colors.gray,
+    backgroundColor: Colors.grayLight,
+  },
   searchBarContainer: {
     //borderBottomWidth: 1,
     backgroundColor: Colors.tabBar,
