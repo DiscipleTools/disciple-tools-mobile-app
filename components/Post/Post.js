@@ -199,7 +199,7 @@ const Post = ({ editOnly=false }) => {
             <Tab
               key={tile?.name ?? idx}
               heading={
-                <TabHeading>
+                <TabHeading style={styles.tabHeadingStyle}>
                   <Text style={styles.tabHeading}>{tile?.label}</Text>
                 </TabHeading>
               }
@@ -217,11 +217,10 @@ const Post = ({ editOnly=false }) => {
         })}
         <Tab
           heading={
-            <TabHeading>
+            <TabHeading style={styles.tabHeadingStyle}>
               <Text style={styles.tabHeading}>{i18n.t('global.commentsActivity')}</Text>
             </TabHeading>
           }
-          style={styles.tabStyle}
         />
       </Tabs>
     </>

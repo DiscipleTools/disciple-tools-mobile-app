@@ -58,7 +58,7 @@ const PostItem = ({ item, loading, mutate }) => {
   const onLongPress = () => {
     ActionSheet.show({
         options: [
-          "Copy",
+          i18n.t('global.commentsActivity'),
           i18n.t("global.cancel"),
         ],
         cancelButtonIndex: 1,
@@ -66,7 +66,16 @@ const PostItem = ({ item, loading, mutate }) => {
         title: null 
       },
       buttonIndex => {
-        //if (buttonIndex === 0) onCopy();
+        if (buttonIndex === 0) {
+          const postId = Number(item?.ID);
+          const postType = item?.post_type;
+          // TODO: constant
+          navigation.navigate('CommentsActivity', {
+            id: postId,
+            type: postType,
+            subtype: "comments_activity"
+          });
+        };
         //if (userIsAuthor && buttonIndex === 1) onEdit();
         //if (userIsAuthor && buttonIndex === 2) onDelete();
       }

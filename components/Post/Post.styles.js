@@ -2,12 +2,11 @@ import { StyleSheet } from "react-native";
 import Colors from "constants/Colors";
 
 export const styles = StyleSheet.create({
-  tabStyle: {
-    backgroundColor: "#FFFFFF",
-  },
   tabHeading: {
-    //color: Colors.tintColor,
     color: "#000",
+  },
+  tabHeadingStyle: {
+    backgroundColor: Colors.mainBackgroundColor,
   },
   tabBarUnderline: {
     backgroundColor: Colors.tintColor,
