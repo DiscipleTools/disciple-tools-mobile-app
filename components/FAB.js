@@ -5,10 +5,10 @@ import { useNavigation } from "@react-navigation/native";
 import ActionButton from "react-native-action-button";
 
 import useI18N from "hooks/useI18N";
-import useNetworkStatus from "hooks/useNetworkStatus.js";
 import useType from "hooks/useType.js";
 import useDetails from "hooks/useDetails";
 import useSettings from "hooks/useSettings";
+import useAPI from "hooks/useAPI";
 
 import Colors from "constants/Colors";
 import { styles } from "./FAB.styles";
@@ -17,7 +17,6 @@ const FAB = () => {
   const navigation = useNavigation();
 
   const { i18n, isRTL, locale } = useI18N();
-  const isConnected = useNetworkStatus();
 
   const { TypeConstants, isList, isPost, isContact, isGroup } = useType();
 
@@ -31,69 +30,14 @@ const FAB = () => {
     postType
   } = useDetails();
 
+  const { updatePost } = useAPI();
+
   const { settings } = useSettings();
   if (!settings) return null;
 
   const onSaveQuickAction = (quickActionPropertyName) => {
-    let newActionValue = post[quickActionPropertyName]
-      ? parseInt(post[quickActionPropertyName], 10) + 1
-      : 1;
-    if (isConnected) {
-      /* TODO
-      onSaveContact({
-        [quickActionPropertyName]: newActionValue,
-      });
-      */
-    } else {
-      // Update Seeker Path in OFFLINE mode
-      let seekerPathValue = null;
-      let quickActionName = quickActionPropertyName.replace(
-        "quick_button_",
-        ""
-      );
-      switch (quickActionName) {
-        case "no_answer": {
-          seekerPathValue = "attempted";
-          break;
-        }
-        case "contact_established": {
-          seekerPathValue = "established";
-          break;
-        }
-        case "meeting_scheduled": {
-          seekerPathValue = "scheduled";
-          break;
-        }
-        case "meeting_complete": {
-          seekerPathValue = "met";
-          break;
-        }
-      }
-      if (seekerPathValue && post.seeker_path != "met") {
-        setState(
-          (prevState) => ({
-            ...state,
-            contact: {
-              ...prevpost,
-              seeker_path: seekerPathValue,
-            },
-          }),
-          () => {
-            /*TODO
-            onSaveContact({
-              [quickActionPropertyName]: newActionValue,
-            });
-            */
-          }
-        );
-      } else {
-        /*TODO
-        onSaveContact({
-          [quickActionPropertyName]: newActionValue,
-        });
-        */
-      }
-    }
+    const newActionValue = post[quickActionPropertyName] ? Number(post[quickActionPropertyName])+1 : 1;
+    updatePost({ [quickActionPropertyName]: newActionValue });
   };
 
   // TODO: merge with onSaveQuickAction
@@ -130,19 +74,16 @@ const FAB = () => {
     */
   };
 
-  // TODO: explanation
   const filterQuickButtonFields = () => {
-    const quickButtonFields = [];
     if (isList && isContact) return ["quick_button_new", "quick_button_import_contacts"];
-    if (isList && isGroup) return [];
-    if (isPost) {
+    if (isPost && settings?.fields) {
+      const quickButtonFields = [];
       Object.keys(settings.fields).forEach((field) => {
-        if (field.startsWith("quick_button")) {
-          quickButtonFields.push(field);
-        };
+        if (field.startsWith("quick_button")) quickButtonFields.push(field);
       });
+      //if (quickButtonFields.length === 0 && isGroup) return ["quick_button_contact_established"];
       return quickButtonFields;
-    }
+    };
     return [];
   };
 
@@ -224,7 +165,7 @@ const FAB = () => {
     return null;
   };
 
-  return (
+  if (isList || isPost) return (
     <ActionButton
       buttonColor={Colors.primary}
       renderIcon={(active) =>
@@ -246,8 +187,11 @@ const FAB = () => {
       activeOpacity={0}
       bgColor="rgba(0,0,0,0.5)"
       nativeFeedbackRippleColor="rgba(0,0,0,0)"
+      onPress={() => {
+        if (isList && isGroup) console.log("*** CREATE GROUP ***"); //navigation.navigate('CreatePost', {});
+      }}
     >
-      {quickButtonFields.map((field) => {
+      {quickButtonFields?.length > 0 && quickButtonFields.map((field) => {
         const { title, count, type, name, bgColor, fgColor, callback } =
           mapIcon(field);
         return (
@@ -273,5 +217,6 @@ const FAB = () => {
       })}
     </ActionButton>
   );
+  return null;
 };
 export default FAB;
