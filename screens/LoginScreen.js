@@ -54,16 +54,22 @@ const LoginScreen = () => {
     return domain?.trim()?.replace("http://", '')?.replace("https://", '');
   };
 
-  // TODO: add legit validation
-  const onLoginPress = () => {
+  // TODO: add validation
+  const onLoginPress = async() => {
     Keyboard.dismiss();
+    setLoading(true);
     const domain = domainRef.current;
     const username = usernameRef.current;
     const password = passwordRef.current;
     if (domain && username && password) {
       const cleanedDomain = cleanDomain(domain);
-      signIn(cleanedDomain, username, password);
-      setLoading(true);
+      try {
+        await signIn(cleanedDomain, username, password);
+      } catch (error) {
+        toast(error.message, true);
+      } finally {
+        setLoading(false);
+      };
     } else {
       // if any of the required fields are not set, then update state to show error
       setState({
@@ -226,7 +232,6 @@ const LoginScreen = () => {
     );
   };
 
-  // TODO: implement timeout
   const LoginButton = () => (
     <View>
       <Button

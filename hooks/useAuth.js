@@ -162,6 +162,7 @@ const useCustomAuth = () => {
     };
   };
 
+  // TODO: implement timeout
   const signIn = async (domain, username, password) => {
     // TODO: handle offline
     try {
@@ -195,9 +196,10 @@ const useCustomAuth = () => {
         setAccessToken(accessToken);
         setBaseUrl(baseUrl);
         setUser(user);
+        return;
       }
     } catch (error) {
-      console.error(error);
+      throw new Error(error);
     };
   };
 
