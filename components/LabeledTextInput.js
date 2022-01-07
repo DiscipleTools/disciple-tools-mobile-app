@@ -1,8 +1,7 @@
 import React from "react";
-import { View, Text, TextInput, ViewPropTypes } from "react-native";
+import { View, Text, TextInput } from "react-native";
 import { Icon } from "native-base";
 //import PropTypes from 'prop-types';
-//import * as Icon from '@expo/vector-icons';
 
 import TextField from "components/Field/Text/TextField";
 
@@ -25,32 +24,6 @@ const LabeledTextInput = (props) => {
 
   const { isRTL } = useI18N();
 
-  /*
-  const inputRef = useRef(null);
-
-  const handleChange = (newValue) => {
-    inputRef.current.value = newValue;
-  };
-
-  const handleEditingEnd = () => {
-    const newValue = inputRef.current.value;
-    if (newValue !== value) onChange(newValue);
-  }
-
-  const TextFieldEdit = () => {
-    return(
-      <TextInput
-        ref={inputRef}
-        //style={styles.input}
-        onChangeText={handleChange}
-        onEndEditing={handleEditingEnd}
-        //defaultValue={value}
-        value={value}
-      />
-    )
-  };
-  */
-
   const icon = iconName ? (
     <Icon
       type={"Ionicons"}
@@ -63,10 +36,13 @@ const LabeledTextInput = (props) => {
     />
   ) : null;
 
-  const TextFieldEdit = () => (
+  //const TextFieldEdit = () => (
+  const renderTextFieldEdit = () => (
     <View style={[styles.inputContainer, containerStyle]}>
       <View style={[styles.inputLabel, labelStyle]}>
-        <Text style={[styles.inputLabelText, labelTextStyle]}>{label}</Text>
+        <Text style={[styles.inputLabelText, labelTextStyle]}>
+          {label}
+        </Text>
       </View>
       <View style={styles.inputRow}>
         {icon}
@@ -78,40 +54,32 @@ const LabeledTextInput = (props) => {
     </View>
   );
 
-  const TextFieldView = () => (
+  //const TextFieldView = () => (
+  const renderTextFieldView = () => (
     <View style={[styles.inputContainer, containerStyle]}>
       <View style={[styles.inputLabel, labelStyle]}>
-        <Text style={[styles.inputLabelText, labelTextStyle]}>{label}</Text>
+        <Text style={[styles.inputLabelText, labelTextStyle]}>
+          {label}
+        </Text>
       </View>
       <View style={styles.inputRow}>
         {icon}
-        <Text style={[styles.inputRowTextInput, textInputStyle]}>{value}</Text>
+        <Text style={[
+          styles.inputRowTextInput,
+          textInputStyle,
+          isRTL ? { textAlign: "left", flex: 1 } : {}
+        ]}>
+          {value}
+        </Text>
       </View>
     </View>
   );
 
-  return <>{editing ? <TextFieldEdit /> : <TextFieldView />}</>;
+  /*
+   * NOTE: returning a component  will cause loss of focus and Keyboard dismissal
+   * (instead 'trick' React by invoking lowercase render method)
+   */
+  //return <>{editing ? <TextFieldEdit /> : <TextFieldView />}</>;
+  return <>{editing ? renderTextFieldEdit() : renderTextFieldView() }</>;
 };
-
-/*
-TextField.propTypes = {
-  // Styles
-  containerStyle: ViewPropTypes.style,
-  labelStyle: ViewPropTypes.style,
-  labelTextStyle: Text.propTypes.style,
-  iconStyle: Text.propTypes.style,
-  textInputStyle: Text.propTypes.style,
-  // Config
-  iconName: PropTypes.string,
-  label: PropTypes.string.isRequired,
-};
-TextField.defaultProps = {
-  containerStyle: null,
-  labelStyle: null,
-  labelTextStyle: null,
-  iconStyle: null,
-  textInputStyle: null,
-  iconName: null,
-};
-*/
 export default LabeledTextInput;

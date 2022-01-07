@@ -2,38 +2,27 @@ import React from "react";
 import { Text, TextInput } from "react-native";
 //import PropTypes from 'prop-types';
 
-import useI18N from "hooks/useI18N";
-
-import { styles } from "./TextField.styles";
-
-//const TextField = ({ value, editing, onChange }) => {
 const TextField = (props) => {
 
-  const { i18n, isRTL } = useI18N();
+  const { value, editing } = props;
 
-  const { value, editing, onChange } = props;
-
-  const handleChange = (newValue) => {
-    if (newValue !== value) onChange(newValue);
-  };
-
-  /*
-      autoFocus={true}
-      defaultValue={value}
-      onChangeText={handleChange}
-      // TODO: more consistent styling
-      style={[styles.textField, isRTL ? { textAlign: "left", flex: 1 } : {}]}
-  */
-  const TextFieldEdit = () => (
+  //const TextFieldEdit = () => (
+  const renderTextFieldEdit = () => (
     <TextInput
       {...props}
     />
   );
 
-  const TextFieldView = () => (
-    <Text style={isRTL ? { textAlign: "left", flex: 1 } : {}}>{value}</Text>
+  //const TextFieldView = () => (
+  const renderTextFieldView = () => (
+    <Text>{value}</Text>
   );
 
-  return <>{editing ? <TextFieldEdit /> : <TextFieldView />}</>;
+  /*
+   * NOTE: returning a component  will cause loss of focus and Keyboard dismissal
+   * (instead 'trick' React by invoking lowercase render method)
+   */
+  //return <>{editing ? <TextFieldEdit /> : <TextFieldView />}</>;
+  return <>{editing ? renderTextFieldEdit() : renderTextFieldView() }</>;
 };
 export default TextField;

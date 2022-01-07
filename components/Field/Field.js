@@ -20,15 +20,13 @@ import MemberList from "components/MemberList";
 
 import { styles } from "./Field.styles";
 
-const Field = ({ post, field, save }) => {
+const Field = ({ grouped=false, editing=false, post, field, save }) => {
   //const ref = useRef(null);
 
-  /*
-  NOTE: uncomment line below to enforce post must have data values for a field
-  (ie, uncomment to hide empty fields) 
-  */
+  // uncomment line below to enforce post must have data values for a field (ie, uncomment to hide empty fields) 
   //if (!post.hasOwnProperty(field?.name)) return null;
-  const value = post[field?.name] ?? null;
+
+  const value = post && field?.name && post[field.name] ? post[field.name] : null;
 
   /*
   NOTE: the difference between value and apiValue:
@@ -47,8 +45,9 @@ const Field = ({ post, field, save }) => {
   'user_select' write:
   { "assigned_to": 2 }
   */
+ // TODO: useReducer to manage state?
   const [state, setState] = useState({
-    editing: null,
+    editing,
     value,
     apiValue: null,
   });
@@ -88,10 +87,7 @@ const Field = ({ post, field, save }) => {
       ...state,
       editing: false,
     });
-    /*
-    if field requires a different API write format,
-    then we'll use that (populated in 'onChange')
-    */
+    // NOTE: if field requires a different API write format, then we'll use that (populated in 'onChange')
     const fields = {};
     if (state.apiValue !== null) {
       fields[field.name] = state.apiValue;
@@ -117,6 +113,8 @@ const Field = ({ post, field, save }) => {
     console.log(`newValue: ${JSON.stringify(newValue)}`);
     console.log(`apiValue: ${JSON.stringify(apiValue)}`);
     console.log(`existingValue: ${JSON.stringify(value)}`);
+    // TODO
+    //if (grouped) onSave();
     setState({
       ...state,
       value: newValue,
@@ -125,49 +123,62 @@ const Field = ({ post, field, save }) => {
   };
 
   const DefaultControls = () => (
-    <Pressable
-      onPress={() => {
-        setState({
-          ...state,
-          editing: true,
-        });
-      }}
-    >
-      <Icon
-        type={"MaterialIcons"}
-        name={"edit"}
-        style={styles.fieldActionIcon}
-      />
-    </Pressable>
+    <Col size={1} style={styles.formControls}>
+      { !grouped && (
+        <Pressable
+          onPress={() => {
+            setState({
+              ...state,
+              editing: true,
+            });
+          }}
+        >
+          <Icon
+            type={"MaterialIcons"}
+            name={"edit"}
+            style={styles.fieldActionIcon}
+          />
+        </Pressable>
+      )}
+    </Col>
   );
 
   const EditControls = () => (
     <Col style={{ marginRight: 15 }}>
-      <Row>
-        <Pressable onPress={() => onCancel()}>
-          <Icon
-            type={"MaterialIcons"}
-            name={"close"}
-            style={[styles.fieldActionIcon, { borderWidth: 0 }]}
-          />
-        </Pressable>
-      </Row>
-      {JSON.stringify(state.value) !== JSON.stringify(value) && (
-        <Row>
-          <Pressable onPress={() => onSave()}>
-            <Icon
-              type={"MaterialIcons"}
-              name={"save"}
-              style={[
-                styles.fieldActionIcon,
-                { fontSize: 32, marginTop: "auto" },
-              ]}
-            />
-          </Pressable>
-        </Row>
+      { !grouped && (
+        <>
+          <Row>
+            <Pressable onPress={() => onCancel()}>
+              <Icon
+                type={"MaterialIcons"}
+                name={"close"}
+                style={[styles.fieldActionIcon, { borderWidth: 0 }]}
+              />
+            </Pressable>
+          </Row>
+          {JSON.stringify(state.value) !== JSON.stringify(value) && (
+            <Row>
+              <Pressable onPress={() => onSave()}>
+                <Icon
+                  type={"MaterialIcons"}
+                  name={"save"}
+                  style={[
+                    styles.fieldActionIcon,
+                    { fontSize: 32, marginTop: "auto" },
+                  ]}
+                />
+              </Pressable>
+            </Row>
+          )}
+        </>
       )}
     </Col>
   );
+
+  const Controls = () => {
+    if (state.editing) return <EditControls />;
+    return <DefaultControls />;
+  };
 
   const FieldComponent = () => {
     switch (field?.type) {
@@ -190,6 +201,7 @@ const Field = ({ post, field, save }) => {
             onChange={onChange}
           />
         );
+      /*
       case "connection":
         // TODO: RTL, style, (*)lists, (*)milestones
         return (
@@ -200,6 +212,7 @@ const Field = ({ post, field, save }) => {
             onChange={onChange}
           />
         );
+      */
       case "date":
         // TODO: RTL, style, better component?
         return (
@@ -241,25 +254,18 @@ const Field = ({ post, field, save }) => {
         );
       case "number":
         // TODO: RTL, style
-        if (field?.name === "member_count") {
-          return (
-            <>
-              <NumberField
+        return (
+          <>
+            <NumberField
               value={state.value}
               editing={state.editing}
               onChange={onChange}
             />
+            { field?.name === "member_count" && (
               <MemberList members={post?.members?.values} />
-            </>
-          );
-        }
-        return (
-        <NumberField
-          value={state.value}
-          editing={state.editing}
-          onChange={onChange}
-        />
-      );
+            )}
+          </>
+        );
       case "post_user_meta":
         return null;
       //return <PostUserMetaField value={state.value} editing={state.editing} onChange={onChange} />;
@@ -273,24 +279,26 @@ const Field = ({ post, field, save }) => {
             onChange={onChange}
           />
         );
+      case "text":
+        // TODO: RTL, style
+        return (
+          <TextField
+            value={state.value}
+            editing={state.editing}
+            onChange={onChange}
+          />
+        );
       case "user_select":
         // TODO: RTL, style
         return (
-        <UserSelectField
-          value={state.value}
-          editing={state.editing}
-          onChange={onChange}
-        />
-      );
+          <UserSelectField
+            value={state.value}
+            editing={state.editing}
+            onChange={onChange}
+          />
+        );
       default:
-        // TODO: RTL, style
-        return (
-        <TextField
-          value={state.value}
-          editing={state.editing}
-          onChange={onChange}
-        />
-      );
+        return null;
     }
   };
 
@@ -301,12 +309,7 @@ const Field = ({ post, field, save }) => {
           <Col size={11}>
             <FieldComponent />
           </Col>
-          {!state.editing && (
-            <Col size={1} style={styles.formControls}>
-              <DefaultControls />
-            </Col>
-          )}
-          {state.editing && <EditControls />}
+          <Controls />
         </Row>
       </Grid>
     );
@@ -330,12 +333,7 @@ const Field = ({ post, field, save }) => {
             <FieldComponent />
           </View>
         </Col>
-        {!state.editing && (
-          <Col size={1} style={styles.formControls}>
-            <DefaultControls />
-          </Col>
-        )}
-        {state.editing && <EditControls />}
+        <Controls />
       </Row>
     </Grid>
   );

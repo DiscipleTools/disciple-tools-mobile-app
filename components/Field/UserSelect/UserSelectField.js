@@ -6,7 +6,7 @@ import useI18N from "hooks/useI18N";
 import useUsers from "hooks/useUsers";
 
 import SingleSelect from "components/SingleSelect";
-import PostLink from "components/PostLink";
+import PostLink from "components/Post/PostLink";
 
 import { styles } from "components/Field/Field.styles";
 
@@ -30,7 +30,7 @@ const UserSelectField = ({ value, editing, onChange }) => {
   };
 
   const UserSelectFieldEdit = () => (
-    <SingleSelect items={users} selectedItem={value} onChange={handleChange} />
+    <SingleSelect editing items={users} selectedItem={value} onChange={handleChange} />
   );
 
   const UserSelectFieldView = () => {

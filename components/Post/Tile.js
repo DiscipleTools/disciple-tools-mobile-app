@@ -29,8 +29,8 @@ const Tile = ({ grouped=false, editing=false, post, fields, save, mutate }) => {
       .filter((field) => currentlyUnsupportedFieldFilter(field))
       .map((field, idx) => (
         <Field
-          grouped
-          editing
+          //grouped
+          //editing
           key={field?.name ?? idx}
           post={post}
           field={field}
