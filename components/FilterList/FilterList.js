@@ -65,7 +65,7 @@ const FilterList = ({
     <>
       <SearchBar onSearch={onSearch} filter={filter} onFilter={onFilter} />
       <Tags />
-      {(items && items?.length === 0) ? (
+      {items?.length === 0 ? (
         <Placeholder />
       ) : (
         <SwipeListView
