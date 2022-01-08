@@ -1,33 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import {
   Icon,
   Picker as NBPicker
 } from "native-base";
 
-import useI18N from "hooks/useI18N";
+//import useI18N from "hooks/useI18N";
+import useAPI from "hooks/useAPI";
 
 // TODO: reuse SingleSelect component
 import SingleSelect from "components/SingleSelect";
 
 import { styles } from "./KeySelectField.styles";
 
-const KeySelectField = ({ field, value, editing, onChange }) => {
-  const { i18n, isRTL } = useI18N();
+const KeySelectField = ({ field, defaultValue, editing, onChange }) => {
 
-  // if value is null, then set a default to ensure field displays
-  if (value === null) value = "";
+  // TODO
+  //const { i18n, isRTL } = useI18N();
+
+  const { updatePost } = useAPI();
+
+  // if defaulValue is null/undefined, then set as empty string to ensure field displays
+  const [value, setValue] = useState(defaultValue ?? '');
 
   const handleChange = (newValue) => {
-    if (newValue !== value) onChange(newValue);
+    if (newValue !== value) {
+      const data = { [field?.name]: newValue }; 
+      if (onChange) onChange(data);
+      updatePost(data);
+    };
+    setValue(newValue);
   };
 
+  // TODO: constants
   const isStatusField = () => {
     if (field?.name === "overall_status" || field?.name === "group_status")
       return true;
     return false;
   };
 
+  // TODO: fix colors
   const backgroundColor = field?.default[value]?.color ?? null;
   return (
     <View
@@ -67,4 +79,5 @@ const KeySelectField = ({ field, value, editing, onChange }) => {
     </View>
   );
 };
+//KeySelectField.whyDidYouRender = true;
 export default KeySelectField;

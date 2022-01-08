@@ -1,15 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import { Text, TextInput } from "react-native";
 //import PropTypes from 'prop-types';
 
+import useAPI from "hooks/useAPI";
+
 const TextField = (props) => {
 
-  const { value, editing } = props;
+  const { defaultValue, editing, field, onChange } = props;
+
+  const { updatePost } = useAPI();
+
+  const [value, setValue] = useState(defaultValue ?? "");
+
+  const handleChange = () => {
+    if (field?.name) {
+      const data = { [field?.name]: value }; 
+      if (onChange) onChange(data);
+      updatePost(data);
+    };
+  };
 
   //const TextFieldEdit = () => (
   const renderTextFieldEdit = () => (
     <TextInput
       {...props}
+      value={value}
+      onChangeText={setValue}
+      onBlur={() => handleChange()}
     />
   );
 
