@@ -1,41 +1,36 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import { Icon } from "native-base";
-import Menu, { MenuItem } from "react-native-material-menu";
+import { Menu, MenuItem, MenuDivider } from "react-native-material-menu";
 
 import { styles } from "./KebabMenu.styles";
 
 const KebabMenu = ({ menuItems }) => {
-  const menuRef = useRef();
-  return(
-    <Icon
-      type="Entypo"
-      name="dots-three-vertical"
-      //onPress={() => menuRef.current.show()}
-      style={styles.kebabMenu}
-    />
-  );
-  // TODO: debug error with this render
+  const [visible, setVisible] = useState(false);
   return (
     <Menu
-      ref={menuRef}
-      button={
+      visible={visible}
+      anchor={
         <Icon
           type="Entypo"
           name="dots-three-vertical"
-          onPress={() => menuRef.current.show()}
+          onPress={() => setVisible(true)}
           style={styles.kebabMenu}
         />
       }
+      onRequestClose={() => setVisible(false)}
     >
       {menuItems?.map((menuItem) => (
-        <MenuItem
-          onPress={() => {
-            menuItem.callback();
-            menuRef.current.hide();
-          }}
-        >
-          {menuItem?.label}
-        </MenuItem>
+        <>
+          <MenuItem
+            onPress={() => {
+              menuItem.callback();
+              setVisible(false);
+            }}
+          >
+            {menuItem?.label}
+          </MenuItem>
+          <MenuDivider />
+        </>
       ))}
     </Menu>
   );

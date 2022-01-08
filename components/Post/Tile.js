@@ -6,7 +6,7 @@ import Field from "components/Field/Field";
 
 //import { styles } from "./Tile.styles";
 
-const Tile = ({ grouped=false, editing=false, post, fields, save, mutate }) => {
+const Tile = ({ post, fields, save, mutate }) => {
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -29,12 +29,10 @@ const Tile = ({ grouped=false, editing=false, post, fields, save, mutate }) => {
       .filter((field) => currentlyUnsupportedFieldFilter(field))
       .map((field, idx) => (
         <Field
-          //grouped
-          //editing
+          editing
           key={field?.name ?? idx}
           post={post}
           field={field}
-          //save={grouped ? tileSave : save}
           save={save}
         />
       ));
