@@ -8,45 +8,23 @@ import { Tab, Tabs, TabHeading, ScrollableTab } from "native-base";
 
 import OfflineBar from "components/OfflineBar";
 import Tile from "./Tile";
-import TitleBar from "./TitleBar";
 import PostSkeleton from "./PostSkeleton";
 import KebabMenu from "components/KebabMenu";
 
 import useI18N from "hooks/useI18N";
 import useDetails from "hooks/useDetails";
 import useSettings from "hooks/useSettings";
+import useToast from "hooks/useToast";
 import useAPI from "hooks/useAPI";
 
+import axios from "services/axios";
+
 import { styles } from "./Post.styles";
-
-/*
-const initialState = {};
-
-const actions = {
-  UPDATE: 'UDPATE',
-  CANCEL: 'CANCEL',
-};
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case actions.UPDATE:
-      console.log("*** UPDATE ***");
-      console.log(JSON.stringify(action.fields));
-      return { ...state, ...action.fields };
-    case actions.CANCEL:
-      return initialState;
-    default:
-      return state;
-  };
-};
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const tileSave = (fields) => dispatch({ type: actions.UPDATE, fields });
-*/
 
 const Post = ({ editOnly=false }) => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { i18n } = useI18N();
+  const { i18n, isRTL } = useI18N();
   const {
     data: post,
     error: postError,
@@ -57,22 +35,11 @@ const Post = ({ editOnly=false }) => {
     postType
   } = useDetails();
   const { settings } = useSettings();
+  const toast = useToast();
   const { updatePost } = useAPI();
-  //const [index, setIndex] = useState(0);
-
-  const [editing, setEditing] = useState(editOnly ? true : false);
 
   const renderHeaderLeft = (props) => {
-    const onBack = () => {
-      // TODO: test this
-      //dispatch({ type: actions.CANCEL });
-      //setEditing(false);
-      navigation.goBack();
-    };
-    const onCancel = () => {
-      //setEditing(false);
-      dispatch({ type: actions.CANCEL });
-    };
+    const onBack = () => navigation.goBack();
     return(
       <Row
         style={[
@@ -80,51 +47,36 @@ const Post = ({ editOnly=false }) => {
           isRTL ? { direction: "rtl" } : { direction: "ltr" },
         ]}
       >
-        { editing && !editOnly ? (
-          <Icon
-            type="AntDesign"
-            name={"close"}
-            onPress={onCancel}
-            style={styles.headerIcon}
-          />
-        ) : (
-          <Icon
-            type="Feather"
-            name={ isRTL ? "arrow-right" : "arrow-left" }
-            onPress={onBack}
-            style={styles.headerIcon}
-          />
-        )}
+        <Icon
+          type="Feather"
+          name={ isRTL ? "arrow-right" : "arrow-left" }
+          onPress={onBack}
+          style={styles.headerIcon}
+        />
       </Row>
     );
   };
 
-  /*
-  const kebabMenuItems = [
-    {
-      label: i18n.t('global.share'),
-      callback: () => setShowShare(!showShare),
-    },
-    {
-      label: i18n.t('global.viewOnMobileWeb'),
-      callback: () => {
-        const domain = userData?.domain;
-        if (domain && postId) {
-          Linking.openURL(`https://${domain}/${postType}/${postId}/`);
-        } else {
-          toast(i18n.t('global.error.recordData'), true);
-        }
-      },
-    },
-  ];
-  */
-
   const renderHeaderRight = (props) => {
-    const onEdit = () => null; //setEditing(true);
-    const onSave = () => {
-      console.log("*** ON SAVE ***");
-      console.log(JSON.stringify(state));
-    };
+    const kebabMenuItems = [
+      /*
+      {
+        label: i18n.t('global.share'),
+        callback: () => null
+      },
+      */
+      {
+        label: i18n.t('global.viewOnMobileWeb'),
+        callback: () => {
+          const url = axios.defaults.baseURL?.split("/wp-json")[0];
+          if (url && postId) {
+            Linking.openURL(`${url}/${postType}/${postId}/`);
+          } else {
+            toast(i18n.t('global.error.noRecords'), true);
+          }
+        },
+      },
+    ];
     return(
       <Row
         style={[
@@ -132,34 +84,17 @@ const Post = ({ editOnly=false }) => {
           isRTL ? { direction: "rtl" } : { direction: "ltr" },
         ]}
       >
-        { editing || editOnly ? (
-          <Icon
-            type="AntDesign"
-            name="save"
-            onPress={onSave}
-            style={styles.headerIcon}
-          />
-        ) : (
-          <>
-            <Icon
-              type="AntDesign"
-              name="edit"
-              onPress={onEdit}
-              style={styles.headerIcon}
-            />
-            <KebabMenu menuItems={null} />
-          </>
-        )}
+        <KebabMenu menuItems={kebabMenuItems} />
       </Row>
     );
   };
 
   useLayoutEffect(() => {
-    const title = route.params?.name ? '' : i18n.t('contactDetailScreen.addNewContact');
+    const title = route?.params?.name ?? i18n.t('contactDetailScreen.addNewContact');
     navigation.setOptions({
       title,
-      //headerLeft: (props) => isRTL ? renderHeaderRight(props) : renderHeaderLeft(props),
-      //headerRight: (props) => isRTL ? renderHeaderLeft(props) : renderHeaderRight(props),
+      headerLeft: (props) => isRTL ? renderHeaderRight(props) : renderHeaderLeft(props),
+      headerRight: (props) => isRTL ? renderHeaderLeft(props) : renderHeaderRight(props),
       headerStyle: styles.headerStyle, 
       headerTintColor: styles.headerTintColor,
       headerTitleStyle: {
@@ -168,19 +103,18 @@ const Post = ({ editOnly=false }) => {
           android: 180,
           ios: 140,
         }),
-        //marginLeft: editing ? null : 25,
       },
     });
-  }, [navigation, editing]);
+  }, [navigation, route?.params?.name]);
 
-  if (isLoading || isValidating) return <PostSkeleton />;
+  if (isLoading) return <PostSkeleton />;
   return(
     <>
-      <TitleBar />
       <OfflineBar />
       <Tabs
         renderTabBar={() => <ScrollableTab />}
         tabBarUnderlineStyle={styles.tabBarUnderline}
+        // TODO:
         //initialPage={index}
         onChangeTab={(evt) => {
           if (evt?.i === settings?.tiles?.length) {
@@ -206,7 +140,6 @@ const Post = ({ editOnly=false }) => {
               style={styles.tabStyle}
             >
               <Tile
-                //editing
                 post={post}
                 fields={tile.fields}
                 save={updatePost}
