@@ -20,7 +20,7 @@ import MemberList from "components/MemberList";
 
 import { styles } from "./Field.styles";
 
-const Field = ({ grouped=false, editing=false, post, field, save }) => {
+const Field = ({ editing=true, post, field }) => {
   //const ref = useRef(null);
 
   // uncomment line below to enforce post must have data values for a field (ie, uncomment to hide empty fields) 
@@ -82,39 +82,7 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
     );
   };
 
-  const onSave = () => {
-    setState({
-      ...state,
-      editing: false,
-    });
-    // NOTE: if field requires a different API write format, then we'll use that (populated in 'onChange')
-    const fields = {};
-    if (state.apiValue !== null) {
-      fields[field.name] = state.apiValue;
-      save(fields);
-      return;
-    }
-    fields[field.name] = state.value;
-    save(fields);
-    return;
-  };
-
-  const onCancel = () => {
-    setState({
-      ...state,
-      editing: false,
-      value, // initialValue
-      apiValue: null,
-    });
-  };
-
-  const onChange = (newValue, apiValue = null) => {
-    console.log("$$$$$$ ON CHANGE $$$$$$");
-    console.log(`newValue: ${JSON.stringify(newValue)}`);
-    console.log(`apiValue: ${JSON.stringify(apiValue)}`);
-    console.log(`existingValue: ${JSON.stringify(value)}`);
-    // TODO
-    //if (grouped) onSave();
+  const _onChange = (newValue, apiValue = null) => {
     setState({
       ...state,
       value: newValue,
@@ -122,73 +90,16 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
     });
   };
 
-  const DefaultControls = () => (
-    <Col size={1} style={styles.formControls}>
-      { !grouped && (
-        <Pressable
-          onPress={() => {
-            setState({
-              ...state,
-              editing: true,
-            });
-          }}
-        >
-          <Icon
-            type={"MaterialIcons"}
-            name={"edit"}
-            style={styles.fieldActionIcon}
-          />
-        </Pressable>
-      )}
-    </Col>
-  );
-
-  const EditControls = () => (
-    <Col style={{ marginRight: 15 }}>
-      { !grouped && (
-        <>
-          <Row>
-            <Pressable onPress={() => onCancel()}>
-              <Icon
-                type={"MaterialIcons"}
-                name={"close"}
-                style={[styles.fieldActionIcon, { borderWidth: 0 }]}
-              />
-            </Pressable>
-          </Row>
-          {JSON.stringify(state.value) !== JSON.stringify(value) && (
-            <Row>
-              <Pressable onPress={() => onSave()}>
-                <Icon
-                  type={"MaterialIcons"}
-                  name={"save"}
-                  style={[
-                    styles.fieldActionIcon,
-                    { fontSize: 32, marginTop: "auto" },
-                  ]}
-                />
-              </Pressable>
-            </Row>
-          )}
-        </>
-      )}
-    </Col>
-  );
-
-  const Controls = () => {
-    if (state.editing) return <EditControls />;
-    return <DefaultControls />;
-  };
-
+  // TODO: use constants for switch
   const FieldComponent = () => {
     switch (field?.type) {
       case "boolean":
         return (
-        <BooleanField
-          value={state.value}
-          editing={state.editing}
-          onChange={onChange}
-        />
+          <BooleanField
+            editing={state.editing}
+            value={state.value}
+            onChange={_onChange}
+          />
       );
       case "communication_channel":
         // TODO: better implementation (timer not intuitive)
@@ -198,7 +109,7 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
             field={field}
             value={value}
             editing={state.editing}
-            onChange={onChange}
+            onChange={_onChange}
           />
         );
       /*
@@ -209,7 +120,7 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
             field={field}
             value={state.value}
             editing={state.editing}
-            onChange={onChange}
+            onChange={_onChange}
           />
         );
       */
@@ -219,17 +130,17 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
         <DateField
           value={state.value}
           editing={state.editing}
-          onChange={onChange}
+          onChange={_onChange}
         />
       );
       case "key_select":
-        // TODO: RTL, style
+        // TODO: RTL, style - ok
         return (
           <KeySelectField
-            field={field}
-            value={state.value}
+            defaultValue={state.value}
             editing={state.editing}
-            onChange={onChange}
+            field={field}
+            //onChange={_onChange}
           />
         );
       //case 'location_grid':
@@ -239,7 +150,7 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
         <LocationField
           value={state.value}
           editing={state.editing}
-          onChange={onChange}
+          onChange={_onChange}
         />
       );
       case "multi_select":
@@ -249,7 +160,7 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
             field={field}
             value={state.value}
             editing={state.editing}
-            onChange={onChange}
+            onChange={_onChange}
           />
         );
       case "number":
@@ -259,7 +170,7 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
             <NumberField
               value={state.value}
               editing={state.editing}
-              onChange={onChange}
+              onChange={_onChange}
             />
             { field?.name === "member_count" && (
               <MemberList members={post?.members?.values} />
@@ -268,7 +179,7 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
         );
       case "post_user_meta":
         return null;
-      //return <PostUserMetaField value={state.value} editing={state.editing} onChange={onChange} />;
+      //return <PostUserMetaField value={state.value} editing={state.editing} onChange={_onChange} />;
       case "tags":
         // TODO: RTL, style
         return (
@@ -276,16 +187,16 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
             value={state.value}
             options={post?.tags?.values}
             editing={state.editing}
-            onChange={onChange}
+            onChange={_onChange}
           />
         );
       case "text":
-        // TODO: RTL, style
+        // TODO: RTL, style - ok
         return (
           <TextField
-            value={state.value}
+            defaultValue={state.value}
             editing={state.editing}
-            onChange={onChange}
+            field={field}
           />
         );
       case "user_select":
@@ -294,7 +205,7 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
           <UserSelectField
             value={state.value}
             editing={state.editing}
-            onChange={onChange}
+            onChange={_onChange}
           />
         );
       default:
@@ -305,11 +216,10 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
   if (isUndecoratedField() && !state.editing)
     return (
       <Grid>
-        <Row style={[state.editing ? styles.raisedBox : null, styles.formRow]}>
+        <Row style={styles.formRow}>
           <Col size={11}>
             <FieldComponent />
           </Col>
-          <Controls />
         </Row>
       </Grid>
     );
@@ -317,7 +227,6 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
     <Grid>
       <Row
         style={[
-          state.editing ? styles.raisedBox : null,
           styles.formRow,
           styles.formDivider,
         ]}
@@ -333,7 +242,6 @@ const Field = ({ grouped=false, editing=false, post, field, save }) => {
             <FieldComponent />
           </View>
         </Col>
-        <Controls />
       </Row>
     </Grid>
   );
