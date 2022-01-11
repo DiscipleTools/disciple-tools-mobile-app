@@ -14,39 +14,36 @@ import FilterOptionsPanel from "./FilterOptionsPanel";
 import { styles } from "./SearchBar.styles";
 import Colors from "constants/Colors";
 
-const SearchBar = ({ onSearch, filter, onFilter }) => {
+const SearchBar = ({ search, onSearch, filter, onFilter }) => {
 
   const { isConnected } = useNetworkStatus();
   const { i18n } = useI18N();
   const toast = useToast();
 
-  const [search, setSearch] = useState('');
-  const debouncedSearch = useDebounce(search, 500);
+  const [_search, _setSearch] = useState(search);
+  const debouncedSearch = useDebounce(_search, 1000);
 
   const [showFilterOptionsPanel, setShowFilterOptionsPanel] = useState(false);
 
   useEffect(() => {
-    //if (debouncedSearch) onSearch(debouncedSearch);
-    console.log(debouncedSearch);
+    if (debouncedSearch) _onSearch(debouncedSearch);
     return;
   }, [debouncedSearch]);
 
   const _onSearch = (search) => {
     if (search?.length < 1) {
       onSearch(null);
-      setSearch("");
+      _setSearch("");
       Keyboard.dismiss();
       return;
     };
     onSearch(search);
-    setSearch(search);
     return;
   };
 
   const _onClear = () => {
     _onSearch('');
     setShowFilterOptionsPanel(false);
-    onFilter(null);
   };
 
   const _onFilter = (filter) => {
@@ -64,12 +61,12 @@ const SearchBar = ({ onSearch, filter, onFilter }) => {
         />
         <TextInput
           placeholder={i18n.t("global.search")}
-          value={search}
-          onChangeText={(search) => _onSearch(search)}
+          value={_search}
+          onChangeText={_setSearch}
           autoCorrect={false}
           style={styles.input}
         />
-        { (search?.length > 0 || filter?.ID) && (
+        { (_search?.length > 0) && (
           <Icon
             type="MaterialIcons"
             name="clear"
@@ -89,7 +86,7 @@ const SearchBar = ({ onSearch, filter, onFilter }) => {
         />
       </View>
       {showFilterOptionsPanel && (
-        <FilterOptionsPanel onFilter={_onFilter} />
+        <FilterOptionsPanel filter={filter} onFilter={_onFilter} />
       )}
     </>
   );

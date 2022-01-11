@@ -41,16 +41,21 @@ const FilterList = ({
 
   const listItemSeparator = () => <View style={styles.listItemSeparator} />;
 
-  const Tags = () => (
-    <View style={styles.tags}>
-      { search && (
-        <Text style={styles.chip}>{search}</Text>
-      )}
-      { filter?.name && (
-        <Text style={styles.chip}>{filter?.name}</Text>
-      )}
-    </View>
-  );
+  const Tags = () => {
+    return(
+      <View style={styles.tags}>
+        <Text style={[styles.chip, styles.countChip ]}>
+          ({items?.length})
+        </Text>
+        { search && (
+          <Text style={styles.chip}>{search}</Text>
+        )}
+        { filter?.name && (
+          <Text style={styles.chip}>{ filter?.name }</Text>
+        )}
+      </View>
+    );
+  };
 
   const Placeholder = () => {
     const defaultPlaceholder = i18n.t("global.placeholder");
@@ -63,7 +68,7 @@ const FilterList = ({
 
   return (
     <>
-      <SearchBar onSearch={onSearch} filter={filter} onFilter={onFilter} />
+      <SearchBar search={search} onSearch={onSearch} filter={filter} onFilter={onFilter} />
       <Tags />
       {items?.length === 0 ? (
         <Placeholder />

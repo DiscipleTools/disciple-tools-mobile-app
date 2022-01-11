@@ -14,11 +14,11 @@ import Colors from "constants/Colors";
 
 import { styles } from "./FilterOptionsPanel.styles";
 
-const FilterOptionsPanel = ({ onFilter }) => {
+const FilterOptionsPanel = ({ filter, onFilter }) => {
   const { i18n, isRTL } = useI18N();
   //const toast = useToast();
 
-  const [selectedFilterID, setSelectedFilterID] = useState(null); 
+  const [_filter, _setFilter] = useState(filter); 
 
   const { data: filters, error } = useFilters();
   if (!filters) return null;
@@ -26,7 +26,7 @@ const FilterOptionsPanel = ({ onFilter }) => {
   //if (error) toast(error?.message, true);
 
   const _onFilter = (filter) => {
-    setSelectedFilterID(filter?.ID);
+    _setFilter(filter);
     onFilter(filter);
   };
 
@@ -67,7 +67,7 @@ const FilterOptionsPanel = ({ onFilter }) => {
                   }}
                 >
                   <CheckBox
-                    checked={filter?.ID === selectedFilterID}
+                    checked={filter?.ID === _filter?.ID}
                     checkedIcon="dot-circle-o"
                     uncheckedIcon="circle-o"
                     onPress={() =>

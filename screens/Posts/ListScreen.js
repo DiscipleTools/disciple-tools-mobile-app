@@ -74,6 +74,7 @@ const ListScreen = () => {
   // TODO: mock search bar, FAB, etc..
   const ListSkeleton = () => Array(10).fill(null).map((_, ii) => <PostItemSkeleton key={ii} />);
 
+  const placeholder = isContact ? i18n.t("contactsScreen.noContactPlacheHolder") : i18n.t("groupsScreen.noGroupPlacheHolder");
   return (
     <>
       <OfflineBar />
@@ -86,7 +87,7 @@ const ListScreen = () => {
             renderItem={renderItem}
             //renderHiddenItem={renderHiddenItem}
             onRefresh={mutate}
-            placeholder={i18n.t("listScreen.placeholder", { postType })}
+            placeholder={placeholder}
             //leftOpenValue={Constants.SWIPE_BTN_WIDTH * NUM_SWIPE_BUTTONS_LEFT}
             //rightOpenValue={Constants.SWIPE_BTN_WIDTH * NUM_SWIPE_BUTTONS_RIGHT}
             search={search}

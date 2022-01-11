@@ -32,4 +32,9 @@ export const styles = StyleSheet.create({
     marginLeft: 5,
     marginBottom: 5,
   },
+  countChip: {
+    borderColor: Colors.mainBackgroundColor,
+    backgroundColor: Colors.mainBackgroundColor,
+    fontWeight: "bold",
+  }
 });
