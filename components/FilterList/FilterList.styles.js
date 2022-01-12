@@ -5,10 +5,12 @@ export const styles = StyleSheet.create({
   listItemSeparator: {
     height: 1,
     width: "100%",
-    backgroundColor: "#dddddd",
+    backgroundColor: Colors.grayLight,
   },
   background: {
     backgroundColor: Colors.mainBackgroundColor,
+    borderTopColor: Colors.grayLight,
+    borderTopWidth: 1,
     height: "100%",
   },
   placeholder: {
@@ -18,9 +20,8 @@ export const styles = StyleSheet.create({
   tags: {
     flexGrow: 1,
     flexDirection: "row",
-    flexWrap: "wrap",
-    borderColor: "#ccc",
-    borderTopWidth: 1
+    backgroundColor: Colors.mainBackgroundColor,
+    width: "100%",
   },
   chip: {
     borderColor: "#c2e0ff",

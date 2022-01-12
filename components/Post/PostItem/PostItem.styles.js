@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
   },
   rowFront: {
     padding: 15,
-    backgroundColor: Colors.grayLight,
+    backgroundColor: Colors.mainBackground,
     height: listItemHeight,
   },
   rowBack: {

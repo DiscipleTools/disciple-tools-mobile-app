@@ -8,6 +8,8 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
+    borderBottomColor: Colors.gray,
+    borderBottomWidth: 1,
     minHeight: 60,
   },
   searchIcon: {

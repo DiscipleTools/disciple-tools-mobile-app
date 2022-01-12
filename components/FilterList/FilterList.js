@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from "react";
-import { RefreshControl, Text, View } from "react-native";
-import PropTypes from "prop-types";
-
+import { RefreshControl, ScrollView, Text, View } from "react-native";
+import { Icon } from "native-base";
 // (recommended by native base (https://docs.nativebase.io/Components.html#swipeable-multi-def-headref))
 import { SwipeListView } from "react-native-swipe-list-view";
 
@@ -10,6 +9,8 @@ import SearchBar from "./SearchBar";
 import useI18N from "hooks/useI18N";
 
 import { styles } from "./FilterList.styles";
+
+import PropTypes from "prop-types";
 
 const FilterList = ({
   items,
@@ -41,21 +42,29 @@ const FilterList = ({
 
   const listItemSeparator = () => <View style={styles.listItemSeparator} />;
 
-  const Tags = () => {
-    return(
-      <View style={styles.tags}>
-        <Text style={[styles.chip, styles.countChip ]}>
-          ({items?.length})
-        </Text>
-        { search && (
-          <Text style={styles.chip}>{search}</Text>
-        )}
-        { filter?.name && (
-          <Text style={styles.chip}>{ filter?.name }</Text>
-        )}
-      </View>
-    );
-  };
+  const Tags = () => (
+    <ScrollView
+      horizontal
+      style={{ minHeight: 50 }}
+      contentContainerStyle={styles.tags}
+    >
+      <Text style={[styles.chip, styles.countChip ]}>({items?.length})</Text>
+      { filter?.ID !== -1 && (
+        <View style={[styles.countChip, { flexDirection: "row", alignItems: "center" }]}>
+          <Icon
+            type="MaterialCommunityIcons"
+            name="filter-variant-remove"
+            onPress={() => onFilter(null)}
+          />
+        </View>
+      )}
+      { filter?.name && (
+        <View style={[styles.chip, { flexDirection: "row", alignItems: "center" }]}>
+          <Text>{ filter?.name }</Text>
+        </View>
+      )}
+    </ScrollView>
+  );
 
   const Placeholder = () => {
     const defaultPlaceholder = i18n.t("global.placeholder");
