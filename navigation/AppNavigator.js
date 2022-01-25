@@ -2,9 +2,10 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import * as SplashScreen from "expo-splash-screen";
 
-import { NavigationContainer } from "@react-navigation/native";
+import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { PortalProvider } from '@gorhom/portal';
 
 import PINScreen from "screens/PINScreen";
 import LoginScreen from "screens/LoginScreen";
@@ -112,9 +113,14 @@ const AppNavigator = () => {
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer onReady={onReady}>
-        <RenderStack />
-      </NavigationContainer>
+      <PortalProvider>
+        <NavigationContainer
+          onReady={onReady}
+          //theme={DarkTheme}
+        >
+          <RenderStack />
+        </NavigationContainer>
+      </PortalProvider>
     </SafeAreaProvider>
   );
 };
