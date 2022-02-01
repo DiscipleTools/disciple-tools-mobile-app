@@ -1,144 +1,157 @@
-import React from "react";
-import { Text } from "react-native";
-//import PropTypes from 'prop-types';
+import React, { useCallback, useMemo } from "react";
+import { Pressable, Text, View } from "react-native";
 
-import useI18N from "hooks/useI18N";
-
-import MultiSelect from "components/MultiSelect";
+import { CaretIcon } from "components/Icon";
 import Milestones from "components/Milestones";
+import SelectSheet from "components/Sheets/SelectSheet";
+import SheetHeader from "components/Sheets/SheetHeader";
 
-import { styles } from "./MultiSelectField.styles";
+import useBottomSheet from "hooks/useBottomSheet";
+import useStyles from "hooks/useStyles";
+import useType from "hooks/useType";
 
-const MultiSelectField = ({ field, value, editing, onChange }) => {
-  const { i18n, isRTL } = useI18N();
+const MultiSelectField = ({ editing, field, value, onChange }) => {
 
-  // if value is null, then set a default to ensure field displays
-  if (value === null) value = { values: [{ value: "" }] };
+  const { globalStyles } = useStyles();
+  const { expand, snapPoints } = useBottomSheet();
+  const { postType } = useType();
+
+  // VALUES
+  const values = value?.values || [];
+
+  // ITEMS
 
   const options = field?.default;
-  const items = Object.keys(options).map((key) => {
-    if (options[key].hasOwnProperty("key")) return options[key];
-    // 'milestones' do not have a 'key' property, so we set one for consistency sake
-    let option = options[key];
-    option["key"] = key;
-    return option;
-  });
 
-  const selectedItems = [];
-  value?.values.forEach((selectedItem) => {
-    items.find((option) => {
-      if (option?.key === selectedItem?.value) {
-        selectedItems.push(option);
-      }
+  const getItems = useCallback(() => {
+    return Object.keys(options).map((key) => {
+      if (options[key].hasOwnProperty("key")) return options[key];
+      // 'milestones' do not have a 'key' property, so we set one for consistency sake
+      let option = options[key];
+      option["key"] = key;
+      return option;
     });
-  });
+  }, [options]);
 
-  const isMilestones = () => {
-    return field?.name === "milestones" || field?.name === "health_metrics";
-  };
+  const items = getItems();
+
+  const getSelectedItems = useCallback(() => {
+    const selectedItems = [];
+    values.forEach((selectedItem) => {
+      items.find((option) => {
+        if (option?.key === selectedItem?.value) {
+          selectedItems.push(option);
+        }
+      });
+    });
+    return selectedItems;
+  }, [items, values]);
+
+  const selectedItems = getSelectedItems();
+
+  const isMilestones = (field?.name === "milestones" || field?.name === "health_metrics");
 
   const MultiSelectFieldEdit = () => {
-    const addSelection = (newValue) => {
-      const exists = selectedItems.find(
-        (selectedItem) => selectedItem?.key === newValue?.key
-      );
-      if (!exists) {
-        const apiValue = [...selectedItems, newValue].map((newValue) => {
-          return { value: newValue?.key };
+
+    // MAP TO API
+    const mapToAPI = (sections) => {
+      const values = [];
+      sections.forEach((section) => {
+        section?.data?.forEach(item => {
+          if (item?.selected) {
+            values.push({
+              value: item?.key,
+            });
+          };
         });
-        onChange({
-          values: apiValue,
-        });
-      }
+      });
+      return values;
     };
-    const removeSelection = (deletedValue) => {
-      const idx = selectedItems.findIndex(
-        (value) => value?.key === deletedValue?.key
-      );
-      if (idx > -1) {
-        const newValue = [...selectedItems];
-        const removed = newValue.splice(idx, 1);
-        const apiValue = newValue.map((newValue) => {
-          return { value: newValue?.key };
-        });
-        onChange({
-          values: apiValue,
+
+    // MAP FROM API
+    const mapFromAPI = (items) => {
+      return items?.map(item => {
+        return {
+          key: item?.key,
+          label: item?.label,
+          selected: selectedItems?.some(selectedItem => selectedItem?.key === item?.key),
+        };
+      });
+    };
+
+    /*
+     * NOTE: Since this is a multi-select, this method gets called when
+     * the user clicks the "Done" button, and all 'sections' are passed
+     * back (along with 'selected' property values).
+     */
+    const _onChange = async(newSections) => {
+      const mappedValues = mapToAPI(newSections);
+      if (JSON.stringify(mappedValues) !== JSON.stringify(values)) {
+        const apiValues = {
+          values: mappedValues,
           force_values: true,
+        };
+        onChange(apiValues, {
+          autosave: true
         });
-      }
+      };
     };
-    if (isMilestones()) {
-      return (
-        <Milestones
-          items={items}
-          selectedItems={selectedItems}
-          onChange={onChange}
-          customAdd={addSelection}
-          customRemove={removeSelection}
-          // TODO
-          postType={"contacts"}
-          editing
+
+    // SELECT OPTIONS
+    const sections = useMemo(() => [{ data: mapFromAPI(items) }], [items, selectedItems]);
+    const title = field?.label || '';
+
+    const sheetContent = useMemo(() => (
+      <>
+        <SheetHeader
+          expandable
+          dismissable
+          title={title}
         />
-      );
-    }
-    return (
-      <MultiSelect
-        items={items}
-        selectedItems={selectedItems}
-        onChange={onChange}
-        customAdd={addSelection}
-        customRemove={removeSelection}
-      />
+        <SelectSheet
+          multiple
+          sections={sections}
+          onChange={_onChange}
+        />
+      </>
+    ), [title, sections]);
+
+    const showSheet = () => expand({
+      index: snapPoints.length-1,
+      snapPoints,
+      renderContent: () => sheetContent,
+    });
+
+    return(
+      <Pressable onPress={() => showSheet()}>
+        <View style={globalStyles.postDetailsContainer}>
+          {!isMilestones &&(
+            <MultiSelectFieldView />
+          )}
+          <CaretIcon />
+        </View>
+      </Pressable>
     );
   };
 
   const MultiSelectFieldView = () => {
-    if (isMilestones()) {
-      return (
-        <Milestones
-          items={items}
-          selectedItems={selectedItems}
-          // TODO
-          postType={"contacts"}
-        />
-      );
-    }
+    /*
+    if (isMilestones) return (
+      <Milestones
+        items={items}
+        selectedItems={selectedItems}
+        postType={postType}
+      />
+    );
+    */
     return (
-      <>
-        {selectedItems.map((selectedItem, idx) => (
-          <Text
-            key={selectedItem?.label ?? idx}
-            style={isRTL ? { textAlign: "left", flex: 1 } : {}}
-          >
-            {selectedItem?.label}
-          </Text>
-        ))}
-      </>
+      <Text>
+        { selectedItems.map((selectedItem) => selectedItem?.label).join(", ") }
+      </Text>
     );
   };
 
-  return <>{editing ? <MultiSelectFieldEdit /> : <MultiSelectFieldView />}</>;
+  if (editing) return <MultiSelectFieldEdit />;
+  return <MultiSelectFieldView />;
 };
-/*
-MultiSelect.propTypes = {
-  items: PropTypes.arrayOf(
-    PropTypes.shape({
-      label: PropTypes.string,
-      value: PropTypes.string,
-    }),
-  ),
-  selectedItems: PropTypes.arrayOf(
-    PropTypes.shape({
-      label: PropTypes.string,
-      value: PropTypes.string,
-    }),
-  ),
-  placeholder: PropTypes.string,
-};
-MultiSelect.defaultProps = {
-  items: [],
-  selectedItems: [],
-  placeholder: null,
-};
-*/
 export default MultiSelectField;

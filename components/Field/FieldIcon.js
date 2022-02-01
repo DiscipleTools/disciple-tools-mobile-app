@@ -1,19 +1,23 @@
 import React from "react";
 import { Icon } from "native-base";
-import Colors from "constants/Colors";
+
+import useStyles from "hooks/useStyles";
+
+import { FieldConstants, FieldTypes, FieldNames } from "constants";
 
 const FieldIcon = ({ field, hide }) => {
+  const { globalStyles } = useStyles();
   const type = field.type;
   const name = field.name;
   let iconType = "";
   let iconName = "";
+  // TODO: use constants for case stmts
   switch (type) {
-    case "location": {
+    case FieldTypes.LOCATION_META:
       iconType = "FontAwesome";
       iconName = "map-marker";
       break;
-    }
-    case "date": {
+    case FieldTypes.DATE:
       if (name.includes("church_start_date")) {
         iconType = "FontAwesome";
         iconName = "calendar-check-o";
@@ -31,8 +35,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "calendar";
       }
       break;
-    }
-    case "connection": {
+    case FieldTypes.CONNECTION:
       if (name.includes("subassigned")) {
         iconType = "MaterialCommunityIcons";
         iconName = "briefcase-account-outline";
@@ -65,8 +68,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "group-work";
       }
       break;
-    }
-    case "multi_select": {
+    case FieldTypes.MULTI_SELECT:
       if (name.includes("email")) {
         iconType = "FontAwesome";
         iconName = "envelope";
@@ -81,8 +83,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "list-circle";
       }
       break;
-    }
-    case "communication_channel": {
+    case FieldTypes.COMMUNICATION_CHANNEL:
       if (name.includes("phone")) {
         iconType = "FontAwesome";
         iconName = "phone";
@@ -109,8 +110,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "hash";
       }
       break;
-    }
-    case "key_select": {
+    case FieldTypes.KEY_SELECT:
       if (name.includes("faith_status")) {
         iconType = "FontAwesome5";
         iconName = "cross";
@@ -137,8 +137,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "list-circle";
       }
       break;
-    }
-    case "user_select": {
+    case FieldTypes.USER_SELECT:
       if (name.includes("assigned_to")) {
         iconType = "MaterialCommunityIcons";
         iconName = "briefcase-account";
@@ -147,13 +146,11 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "user";
       }
       break;
-    }
-    case "tags": {
+    case FieldTypes.TAGS:
       iconType = "AntDesign";
       iconName = "tags";
       break;
-    }
-    case "text": {
+    case FieldTypes.TEXT:
       if (name.includes("nickname")) {
         iconType = "FontAwesome5";
         iconName = "user-tag";
@@ -168,8 +165,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "text";
       }
       break;
-    }
-    case "number": {
+    case FieldTypes.NUMBER:
       if (name.includes("leader")) {
         iconType = "FontAwesome5";
         iconName = "hashtag";
@@ -178,27 +174,16 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "hash";
       }
       break;
-    }
-    default: {
+    default:
       iconType = "MaterialCommunityIcons";
       iconName = "square-small";
       break;
-    }
-  }
+  };
   return (
     <Icon
       type={iconType}
       name={iconName}
-      style={[
-        {
-          color: Colors.tintColor,
-          fontSize: 22,
-          marginTop: "auto",
-          marginBottom: "auto",
-          width: 25,
-        },
-        hide ? { opacity: 0 } : {},
-      ]}
+      style={globalStyles.icon}
     />
   );
 };

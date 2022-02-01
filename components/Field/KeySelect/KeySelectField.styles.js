@@ -1,34 +1,10 @@
-import { Platform, StyleSheet } from "react-native";
-import Colors from "constants/Colors";
-
-export const styles = StyleSheet.create({
-  fieldsIcons: {
-    height: 22,
-    width: 22,
-  },
-  formRow: {
-    paddingTop: 15,
-    paddingBottom: 15,
-    width: "100%",
-  },
-  formIconLabel: {
-    marginLeft: 10,
-    width: "auto",
-    marginBottom: "auto",
-  },
-  statusFieldContainer: Platform.select({
-    width: 50,
-    default: {
-      borderRadius: 3,
-    },
-    //ios: {},
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
+  container: (isStatusField, backgroundColor) => ({
+    alignItems: 'center',
+    paddingStart: 15,
+    backgroundColor: isStatusField ? backgroundColor : null,
+    borderWidth: 0,
+    borderRadius: 5,
+    height: "100%",
   }),
-  // Edit/Delete comment dialog
-  pickerIcon: {
-    color: Colors.gray,
-    fontSize: 22,
-    right: 18,
-    top: 10,
-    position: "absolute",
-  },
 });

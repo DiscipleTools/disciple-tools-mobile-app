@@ -1,82 +1,122 @@
-import React from "react";
-import { Text } from "react-native";
-import { Icon, DatePicker } from "native-base";
-import { Row } from "react-native-easy-grid";
+import React, { useMemo, useState }  from "react";
+import { Text, View } from "react-native";
+import { Icon } from "native-base";
 //import PropTypes from 'prop-types';
 
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 import useI18N from "hooks/useI18N";
+import useStyles from "hooks/useStyles";
 
-import { styles } from "./DateField.styles";
+import { FieldNames } from "constants";
 
-const DateField = ({ value, editing, onChange }) => {
-  const { i18n, locale, isRTL } = useI18N();
+import { localStyles } from "./DateField.styles"
 
-  // if value is null, then set a default to ensure field displays
-  if (value === null) value = "";
+/*
+ * https://developers.disciple.tools/theme-core/api-posts/post-types-fields-format#date
+ */
+const DateField = ({ editing, field, value, onChange }) => {
 
-  const handleChange = (newValue) => {
-    let parsedValue = null;
-    if (newValue) parsedValue = Date.parse(newValue) / 1000;
-    if (parsedValue !== null && parsedValue !== value) onChange(parsedValue);
-  };
+  const { locale } = useI18N();
+  const { styles, globalStyles } = useStyles(localStyles);
+
+  const [_editing, _setEditing] = useState(editing);
+
+  // TODO: shared?
+  const adjustForTimezone = (date) => {
+    const timeOffsetInMS = date.getTimezoneOffset() * 60000;
+    date.setTime(date.getTime() + timeOffsetInMS);
+    return date;
+  }
+
+  /*
+   * NOTE: API sends us a UTC in Number format as seconds from epoch
+   * (ie, 1643760000 vs. 1643760000000 (ms since epoch))
+   */
+  // MAP VALUE FROM API
+  const mapFromAPI = (value) => adjustForTimezone(new Date(parseInt(value)*1000));
+  const mappedValue = useMemo(() => mapFromAPI(value), [value]);
+
+  // MAP VALUE TO API
+  const mapToAPI = (value) => Math.floor(value.valueOf()/1000); 
+  // see: _onChange
 
   const DateFieldEdit = () => {
-    const formatDateEdit = (timestamp = null) => {
-      if (!timestamp) return null;
-      let date = timestamp ? new Date(timestamp) : new Date();
-      // Keep date value to current timezone
-      date = new Date(
-        date.getTime() +
-          date.getTimezoneOffset() *
-            60 *
-            1000 *
-            Math.sign(date.getTimezoneOffset())
-      );
-      return date;
+
+    // ON CHANGE
+    const _onChange = (event, newValue) => {
+      if (newValue !== mappedValue) {
+        const apiValue = mapToAPI(newValue);
+        onChange(apiValue, {
+          autosave: true,
+        });
+      };
     };
-    const defaultDate = formatDateEdit(value * 1000);
+
+    const getMaxDate = () => {
+      const fieldName = field?.name;
+      if (fieldName === FieldNames.BAPTISM_DATE) return new Date();
+      return null;
+    };
+
+    const maximumDate = getMaxDate();
+
     return (
-      <Row>
-        <DatePicker
-          modalTransparent={false}
-          //androidMode={"default"}
-          maximumDate={new Date()}
-          locale={locale}
-          //timeZoneOffsetInMinutes={undefined}
-          onDateChange={handleChange}
-          defaultDate={defaultDate}
-        />
+      <View style={globalStyles.rowContainer}>
+      <DateTimePicker
+        value={mappedValue}
+        mode={"date"}
+        maximumDate={maximumDate}
+        display="default"
+        locale={locale?.replace("_", "-")}
+        onChange={_onChange}
+        style={styles.picker}
+      />
+      { _editing && (
         <Icon
-          type="AntDesign"
-          name="close"
+          type="MaterialIcons"
+          name="clear"
           style={[
-            styles.formIcon,
-            styles.addRemoveIcons,
-            styles.removeIcons,
-            //{ marginLeft: 'auto' },
+            globalStyles.icon,
+            styles.icon
           ]}
-          onPress={() => handleChange(null)}
+          onPress={() => _setEditing(false)}
         />
-      </Row>
+      )}
+      </View>
     );
   };
 
   const DateFieldView = () => {
     const formatDateView = (date) => {
-      if (date === null || date === "") return "";
-      // TODO
-      //return moment(new Date(date * 1000))
-      return new Date(date * 1000);
-      //.utc()
-      //.format('LL');
+      const options = {
+        year: 'numeric',
+        month: 'long',
+        day: '2-digit',
+      };
+      const locale_p = locale?.replace('_','-');
+      return new Intl.DateTimeFormat(locale_p, options).format(date);
     };
-    //const dateValue = value === null ? '' : String(
-    //formatDateView(utils.isNumeric(value) ? parseInt(value) * 1000 : value),
-    // TODO
-    const dateValue = String(formatDateView(parseInt(value) * 1000));
-    return <Text>{dateValue}</Text>;
+    const dateValue = formatDateView(mappedValue);
+    return (
+      <View style={globalStyles.postDetailsContainer}>
+        <Text>{dateValue}</Text>
+        { !_editing && (
+          <Icon
+            type="MaterialIcons"
+            name="edit"
+            style={[
+              globalStyles.icon,
+              styles.icon
+            ]}
+            onPress={() => _setEditing(true)}
+          />
+        )}
+      </View>
+    );
   };
 
-  return <>{editing ? <DateFieldEdit /> : <DateFieldView />}</>;
+  if (_editing) return <DateFieldEdit />;
+  return <DateFieldView />;
 };
 export default DateField;

@@ -1,0 +1,112 @@
+import { StyleSheet } from "react-native";
+
+import useDevice from "hooks/useDevice";
+import useI18N from "hooks/useI18N";
+import useTheme from "hooks/useTheme";
+
+const globalStyles = ({ theme, isRTL, isIOS }) => ({
+  // Palette
+  primary: {
+    color: theme.primary,
+  },
+  secondary: {
+    color: theme.secondary,
+  },
+  // Layout
+  background: {
+    backgroundColor: theme.background.primary,
+  },
+  surface: {
+    backgroundColor: theme.surface.primary,
+  },
+  header: {
+    backgroundColor: theme.background.primary,
+    color: theme.text.primary,
+  },
+  // Typography
+  text: {
+    color: theme.text.primary,
+    fontFamily: "System",
+    /* 
+      * Android
+      * https://material.io/design/typography/the-type-system.html 
+      * ref: Body 1 or Body 2
+      * 
+      * IOS
+      * https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/typography/
+      * ref: Small, Body
+      */
+    fontSize: 15,
+  },
+  link: {
+    color: theme.text.link,
+    textDecorationLine: "underline",
+  },
+  title: {
+    color: theme.text.primary,
+    fontSize: 20,
+    fontWeight: "bold",
+    marginEnd: "auto",
+  },
+  subtitle: {
+    color: theme.text.primary,
+    fontSize: 15,
+    fontWeight: "500",
+    marginEnd: "auto",
+  },
+  caption: {
+    color: theme.text.secondary,
+    fontSize: 12,
+    fontStyle: "italic",
+  },
+  icon: {
+    color: theme.text.primary,
+    fontSize: 24,
+    paddingHorizontal: 3
+  },
+  rowIcon: {
+    color: theme.text.primary,
+    fontSize: 24,
+    marginStart: isRTL ? 15 : 0,
+    marginEnd: isRTL ? 0 : 15,
+  },
+  // Components 
+  rowContainer: {
+    flexDirection: isRTL ? "row-reverse" : "row",
+  },
+  columnContainer: {
+    flexDirection: "column",
+  },
+  postDetailsContainer: {
+    flexDirection: isRTL ? "row-reverse" : "row",
+    marginHorizontal: 7,
+  },
+  body: {
+    //alignItems: isRTL ? "flex-end" : "flex-start",
+    paddingHorizontal: 10,
+    marginEnd: "auto",
+  },
+  placeholder: {
+    color: theme.placeholder,
+  },
+  divider: {
+    backgroundColor: theme.divider,
+  },
+  caret: {
+    marginStart: "auto",
+  }
+});
+
+const useStyles = (localStyles) => {
+  const { theme } = useTheme();
+  const { isRTL } = useI18N();
+  const { isIOS } = useDevice();
+  let localStylesSheet = null;
+  if (localStyles) localStylesSheet = StyleSheet.create(localStyles({ theme, globalStyles, isRTL, isIOS }));
+  const globalStylesSheet = StyleSheet.create(globalStyles({ theme, isRTL, isIOS }));
+  return {
+    styles: localStylesSheet,
+    globalStyles: globalStylesSheet,
+  };
+};
+export default useStyles;

@@ -1,18 +1,10 @@
-import { StyleSheet } from "react-native";
-import Colors from "constants/Colors";
-
-export const styles = StyleSheet.create({
-  addRemoveIcons: {
-    fontSize: 30,
-    marginRight: 0,
-    color: Colors.addRemoveIcons,
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
+  picker: {
+    width: "50%",
   },
-  removeIcons: { color: "red" },
-  formIcon: {
-    color: Colors.tintColor,
-    fontSize: 22,
+  icon: {
+    marginStart: "auto",
     marginTop: "auto",
-    marginBottom: "auto",
-    width: 25,
-  },
+    marginBottom: "auto"
+  }
 });

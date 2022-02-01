@@ -1,83 +1,123 @@
-import React, { useState } from "react";
-import { View } from "react-native";
-import {
-  Icon,
-  Picker as NBPicker
-} from "native-base";
+import React from "react";
+import { Pressable, Text, View } from "react-native";
 
-//import useI18N from "hooks/useI18N";
-import useAPI from "hooks/useAPI";
+import { CaretIcon } from "components/Icon";
+import SelectSheet from "components/Sheets/SelectSheet";
+import SheetHeader from "components/Sheets/SheetHeader";
 
-// TODO: reuse SingleSelect component
-import SingleSelect from "components/SingleSelect";
+import useBottomSheet from "hooks/useBottomSheet";
+import useStyles from "hooks/useStyles";
 
-import { styles } from "./KeySelectField.styles";
+import { FieldNames } from "constants";
 
-const KeySelectField = ({ field, defaultValue, editing, onChange }) => {
+import { localStyles } from "./KeySelectField.styles";
 
-  // TODO
-  //const { i18n, isRTL } = useI18N();
+const KeySelectField = ({ editing, field, value, onChange }) => {
 
-  const { updatePost } = useAPI();
+  const { styles, globalStyles } = useStyles(localStyles);
+  const { expand, snapPoints } = useBottomSheet();
 
-  // if defaulValue is null/undefined, then set as empty string to ensure field displays
-  const [value, setValue] = useState(defaultValue ?? '');
+  // ITEMS
+  const items = field?.default;
 
-  const handleChange = (newValue) => {
-    if (newValue !== value) {
-      const data = { [field?.name]: newValue }; 
-      if (onChange) onChange(data);
-      updatePost(data);
+  // SELECTED 
+  const selectedLabel = items[value]?.label ?? ''; 
+
+  // EDIT MODE
+  const KeySelectFieldEdit = () => {
+
+    // MAP TO API
+    const mapToAPI = (item) => {
+      return item?.key;
     };
-    setValue(newValue);
+
+    // ON CHANGE
+    const _onChange = (newValue) => {
+      const mappedValue = mapToAPI(newValue);
+      if (mappedValue !== value) {
+        onChange(mappedValue, {
+          autosave: true,
+          automutate: true
+        });
+      };
+    };
+
+    const isStatusField = () => {
+      if (
+        field?.name === FieldNames.OVERALL_STATUS ||
+        field?.name === FieldNames.GROUP_STATUS
+      ) return true;
+      return false;
+    };
+
+    const mapIcon = (key) => {
+      const style = items[key]?.color ? { color: items[key].color } : null;
+      if (isStatusField()) return {
+        type: 'MaterialCommunityIcons',
+        name: 'square',
+        style,
+      };
+      return null;
+    };
+
+    // MAP ITEMS
+    const mapItems = (items) => {
+      const keys = Object.keys(items);
+      return keys.map(key => {
+        return {
+          key,
+          label: items[key]?.label,
+          icon: mapIcon(key),
+          selected: value === key, 
+        };
+      });
+    };
+
+    // SECTIONS 
+    const sections = [{ data: mapItems(items) }];
+
+    const title = field?.label;
+
+    const keySelectContent = () => (
+      <>
+        <SheetHeader
+          expandable
+          dismissable
+          title={title}
+        />
+        <SelectSheet
+          required
+          sections={sections}
+          onChange={_onChange}
+        />
+      </>
+    );
+
+    const showSheet = () => expand({
+      index: 0,
+      snapPoints,
+      renderContent: () => keySelectContent,
+    });
+
+    const backgroundColor = items[value]?.color ?? globalStyles.surface?.backgroundColor;
+    // TODO: items[value]?.description (for when "Not Ready")
+    return(
+      <Pressable onPress={() => showSheet()}>
+        <View style={[
+          globalStyles.rowContainer,
+          styles.container(isStatusField(), backgroundColor),
+        ]}>
+          <Text>{selectedLabel}</Text>
+          <CaretIcon />
+        </View>
+      </Pressable>
+    );
   };
 
-  // TODO: constants
-  const isStatusField = () => {
-    if (field?.name === "overall_status" || field?.name === "group_status")
-      return true;
-    return false;
-  };
+  // VIEW MODE
+  const KeySelectFieldView = () => <Text>{selectedLabel}</Text>;
 
-  // TODO: fix colors
-  const backgroundColor = field?.default[value]?.color ?? null;
-  return (
-    <View
-      style={[
-        styles.statusFieldContainer,
-        isStatusField(field?.name) ? { backgroundColor } : null,
-        //Platform.select({
-        //android: {
-        //transparent?: state.overallStatusBackgroundColor,
-        //},
-        //ios: {
-        //backgroundColor: state.groupStatusBackgroundColor,
-        //},
-        //}),
-      ]}
-    >
-      <NBPicker
-        mode="dropdown"
-        enabled={editing}
-        selectedValue={value}
-        onValueChange={handleChange}
-        textStyle={isStatusField() ? { color: "#FFF" } : null}
-        placeholder=""
-      >
-        {Object.keys(field?.default).map((key) => {
-          const optionData = field.default[key];
-          if (optionData)
-            return (
-              <NBPicker.Item key={key} label={optionData?.label} value={key} />
-            );
-          return null;
-        })}
-      </NBPicker>
-      {editing ? (
-        <Icon name="caret-down" size={10} style={styles.pickerIcon} />
-      ) : null}
-    </View>
-  );
+  if (editing) return <KeySelectFieldEdit />;
+  return <KeySelectFieldView />;
 };
-//KeySelectField.whyDidYouRender = true;
 export default KeySelectField;

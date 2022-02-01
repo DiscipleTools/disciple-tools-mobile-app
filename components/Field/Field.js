@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Pressable, View } from "react-native";
-import { Icon, Label } from "native-base";
-import { Grid, Row, Col } from "react-native-easy-grid";
+import { Pressable, Text, View } from "react-native";
+import { Icon } from "native-base";
+import { Row, Col } from "react-native-easy-grid";
 
 import FieldIcon from "components/Field/FieldIcon";
 import BooleanField from "components/Field/Boolean/BooleanField";
@@ -18,41 +18,31 @@ import UserSelectField from "components/Field/UserSelect/UserSelectField";
 
 import MemberList from "components/MemberList";
 
-import { styles } from "./Field.styles";
+import useAPI from "hooks/useAPI";
+import useStyles from "hooks/useStyles";
 
-const Field = ({ editing=true, post, field }) => {
-  //const ref = useRef(null);
+import { FieldConstants, FieldTypes, FieldNames } from "constants";
+
+import { localStyles } from "./Field.styles";
+
+const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) => {
+
+  const { styles, globalStyles } = useStyles(localStyles);
+  const { updatePost } = useAPI();
 
   // uncomment line below to enforce post must have data values for a field (ie, uncomment to hide empty fields) 
   //if (!post.hasOwnProperty(field?.name)) return null;
 
-  const value = post && field?.name && post[field.name] ? post[field.name] : null;
+  let value = null;
+  try { value = post[field?.name]; } catch (error) {};
+  //console.log(`...FIELD value: ${JSON.stringify(value)}`);
+  //console.log(`...post: ${JSON.stringify(post)}`);
+
+  const [_editing, _setEditing] = useState(editing);
+  const [_value, _setValue] = useState(value);
 
   /*
-  NOTE: the difference between value and apiValue:
-
-  'value': the value returned from the API that we use to control components,
-  and so we need to keep this consistent for handling 'onChange' events and
-  future API reads
-
-  'apiValue': this is used only when format to update the API differs from the
-  format that the API returns upon reads (eg, 'user_select' fields)
-  https://developers.disciple.tools/theme-core/api-posts/post-types-fields-format#user_select
-
-  'user_select' read: 
- {"assigned_to":{"key":2,"label":"Jane Doe (multiplier)"}} 
-
-  'user_select' write:
-  { "assigned_to": 2 }
-  */
- // TODO: useReducer to manage state?
-  const [state, setState] = useState({
-    editing,
-    value,
-    apiValue: null,
-  });
-
-  /*
+  //const ref = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
       if (ref.current && !ref.current.contains(event.target)) {
@@ -67,144 +57,228 @@ const Field = ({ editing=true, post, field }) => {
   */
 
   const isRequiredField = (field) => {
-    const name = field.name;
-    if (name === "name") return true;
+    const name = field?.name;
+    if (name === FieldNames.NAME) return true;
     return false;
   };
 
   const isUndecoratedField = () => {
     const name = field?.name;
-    //const type = field?.type;
     return (
-      name === "parent_groups" ||
-      name === "peer_groups" ||
-      name === "child_groups"
+      name === FieldNames.PARENT_GROUPS ||
+      name === FieldNames.PEER_GROUPS ||
+      name === FieldNames.CHILD_GROUPS
     );
   };
 
-  const _onChange = (newValue, apiValue = null) => {
-    setState({
-      ...state,
-      value: newValue,
-      apiValue,
-    });
+  const isUncontrolledField = () => {
+    const fieldType = field?.type;
+    if (
+      fieldType === FieldTypes.COMMUNICATION_CHANNEL
+    ) return false;
+    return true;
+    return(
+      fieldType === FieldTypes.KEY_SELECT ||
+      fieldType === FieldTypes.USER_SELECT
+    );
   };
 
-  // TODO: use constants for switch
+  const _onSave = async(newValue) => {
+    console.log(`..._onSave: ${JSON.stringify(newValue)}`);
+    const fieldType = field?.type;
+    let data = { [field?.name]: newValue };
+    if (fieldType === FieldTypes.COMMUNICATION_CHANNEL) {
+      // NOTE: see CommunicationChannelField.js '_onAdd' 
+      const filteredNewValue = newValue.map(value => value?.key?.startsWith(FieldConstants.TMP_KEY_PREFIX) ? { value: value?.value } : value);
+      data = { [field?.name]: filteredNewValue };
+    };
+    console.log(`data: ${JSON.stringify(data)}`);
+    await updatePost(data);
+    mutate();
+  };
+
+  const _onCancel = () => {
+    _setEditing(false);
+    _setValue(value);
+  };
+
+  /*
+   * NOTE:
+   * - if grouped, then lift state up to Tile
+   * - if auto-save (instead of manual save via icon), update API directly
+   * - else, set local state (and await manual save via icon)
+   */
+  const _onChange = (newValue, { autosave } = {}) => {
+    console.log(`newValue: ${JSON.stringify(newValue)}`);
+    if (grouped) {
+      console.log("*** ON CHANGE 1 ***")
+      onChange(newValue);
+      return;
+    };
+    if (autosave) {
+      console.log("*** ON CHANGE 2 ***")
+      _onSave(newValue);
+    };
+    console.log("*** ON CHANGE N ***")
+    _setValue(newValue);
+    return;
+  };
+
+  const DefaultControls = () => (
+    <Col size={1} style={styles.formControls}>
+      { !grouped && (
+        <Pressable onPress={_setEditing}>
+          <Icon
+            type={"MaterialIcons"}
+            name={"edit"}
+            style={globalStyles.icon}
+          />
+        </Pressable>
+      )}
+    </Col>
+  );
+
+  const EditControls = () => {
+    console.log("**** EDIT CONTROLS ****");
+    const hasChanged = _value !== value; // && !(value === null && (_value === null || _value === ''));
+    console.log(`hasChanged: ${hasChanged}`);
+    return(
+      <Col size={1} style={styles.formControls}>
+        { !grouped && (
+          <Row>
+            { _editing && hasChanged && (
+              <Pressable onPress={() => _onSave(_value)}>
+                <Icon
+                  type={"MaterialIcons"}
+                  name={"save"}
+                  style={globalStyles.icon}
+                />
+              </Pressable>
+            )}
+            { _editing && !hasChanged && (
+              <Pressable onPress={_onCancel}>
+                <Icon
+                  type={"MaterialIcons"}
+                  name={"clear"}
+                  style={globalStyles.icon}
+                />
+              </Pressable>
+            )}
+          </Row>
+        )}
+      </Col>
+    );
+  };
+
+  const Controls = () => {
+    if (isUncontrolledField()) return null;
+    // preserve control spacing for uncontrolled fields
+    //if (isUncontrolledField()) return <Col size={1} style={styles.formControls} />;
+    if (_editing) return <EditControls />;
+    return <DefaultControls />;
+  };
+
   const FieldComponent = () => {
+    //console.log("***************************");
+    //console.log(`name: ${JSON.stringify(field?.name)}`);
+    //console.log(`type: ${JSON.stringify(field?.type)}`);
     switch (field?.type) {
-      case "boolean":
+      case FieldTypes.BOOLEAN:
         return (
           <BooleanField
-            editing={state.editing}
-            value={state.value}
+            editing={_editing}
+            value={_value}
             onChange={_onChange}
           />
-      );
-      case "communication_channel":
-        // TODO: better implementation (timer not intuitive)
-        // TODO: RTL, styles
+        );
+      case FieldTypes.COMMUNICATION_CHANNEL:
         return (
           <CommunicationChannelField
+            editing={_editing}
             field={field}
-            value={value}
-            editing={state.editing}
+            values={_value}
             onChange={_onChange}
           />
         );
-      /*
-      case "connection":
-        // TODO: RTL, style, (*)lists, (*)milestones
+      case FieldTypes.CONNECTION:
         return (
           <ConnectionField
+            //editing={_editing}
+            editing
             field={field}
-            value={state.value}
-            editing={state.editing}
+            value={_value}
             onChange={_onChange}
           />
         );
-      */
-      case "date":
-        // TODO: RTL, style, better component?
+      case FieldTypes.DATE:
         return (
-        <DateField
-          value={state.value}
-          editing={state.editing}
-          onChange={_onChange}
-        />
-      );
-      case "key_select":
-        // TODO: RTL, style - ok
+          <DateField
+            editing={_editing}
+            field={field}
+            value={_value}
+            onChange={_onChange}
+          />
+        );
+      case FieldTypes.KEY_SELECT:
         return (
           <KeySelectField
-            defaultValue={state.value}
-            editing={state.editing}
+            editing
             field={field}
-            //onChange={_onChange}
+            value={_value}
+            onChange={_onChange}
           />
         );
-      //case 'location_grid':
-      case "location":
-        // TODO: RTL, style
+      case FieldTypes.LOCATION_META:
         return (
-        <LocationField
-          value={state.value}
-          editing={state.editing}
-          onChange={_onChange}
-        />
-      );
-      case "multi_select":
-        // TODO: RTL, style
+          <LocationField
+            editing={_editing}
+            value={_value}
+            onChange={_onChange}
+          />
+        );
+      case FieldTypes.MULTI_SELECT:
+        //return null;
         return (
           <MultiSelectField
+            //editing={_editing}
+            editing
             field={field}
-            value={state.value}
-            editing={state.editing}
+            value={_value}
             onChange={_onChange}
           />
         );
-      case "number":
-        // TODO: RTL, style
+      case FieldTypes.NUMBER:
         return (
-          <>
-            <NumberField
-              value={state.value}
-              editing={state.editing}
-              onChange={_onChange}
-            />
-            { field?.name === "member_count" && (
-              <MemberList members={post?.members?.values} />
-            )}
-          </>
+          <NumberField
+            editing
+            value={_value}
+            onChange={_onChange}
+          />
         );
-      case "post_user_meta":
-        return null;
-      //return <PostUserMetaField value={state.value} editing={state.editing} onChange={_onChange} />;
-      case "tags":
-        // TODO: RTL, style
+      case FieldTypes.TAGS:
         return (
           <TagsField
-            value={state.value}
-            options={post?.tags?.values}
-            editing={state.editing}
+            //editing={_editing}
+            //editing
+            field={field}
+            value={_value}
             onChange={_onChange}
           />
         );
-      case "text":
-        // TODO: RTL, style - ok
+      case FieldTypes.TEXT:
         return (
           <TextField
-            defaultValue={state.value}
-            editing={state.editing}
-            field={field}
+            editing
+            value={_value}
+            onChange={_onChange}
           />
         );
-      case "user_select":
-        // TODO: RTL, style
+      case FieldTypes.USER_SELECT:
         return (
           <UserSelectField
-            value={state.value}
-            editing={state.editing}
+            editing
+            field={field}
+            value={_value}
             onChange={_onChange}
           />
         );
@@ -213,37 +287,50 @@ const Field = ({ editing=true, post, field }) => {
     }
   };
 
-  if (isUndecoratedField() && !state.editing)
+  if (isUndecoratedField()) {
     return (
-      <Grid>
-        <Row style={styles.formRow}>
-          <Col size={11}>
-            <FieldComponent />
-          </Col>
-        </Row>
-      </Grid>
+      <View style={globalStyles.postDetailsContainer}>
+        <View style={{ marginEnd: "auto" }}>
+          <FieldComponent />
+        </View>
+        <Controls />
+      </View>
     );
+  };
   return (
-    <Grid>
-      <Row
-        style={[
-          styles.formRow,
-          styles.formDivider,
-        ]}
-      >
-        <Col size={1} style={[{ marginBottom: "auto" }, styles.formIconLabel]}>
+    <>
+      <Row style={[styles.formRow, styles.formDivider]}>
+        <Col size={1} style={styles.formIconLabel}>
           <FieldIcon field={field} />
         </Col>
         <Col size={2} style={styles.formParentLabel}>
-          <Label style={styles.formLabel}>{field.label}</Label>
+          <Text style={styles.formLabel}>{field.label}</Text>
         </Col>
         <Col size={8}>
-          <View style={styles.formComponent}>
+          <View style={[
+            styles.formComponent,
+            field?.type === FieldTypes.COMMUNICATION_CHANNEL && _editing ? null : styles.field,
+            isUncontrolledField() ? null : { paddingLeft: 10, paddingRight: 10 }
+          ]}>
             <FieldComponent />
           </View>
         </Col>
+        <Controls />
       </Row>
-    </Grid>
+      { field?.name === FieldNames.MEMBER_COUNT && (
+        <Row style={[ styles.formRow, styles.formDivider ]}>
+          <Col size={1} style={[{ marginBottom: "auto" }, styles.formIconLabel]}>
+            <FieldIcon field={field} />
+          </Col>
+          <Col size={2} style={styles.formParentLabel}>
+            <Text style={styles.formLabel}>{field.label}</Text>
+          </Col>
+          <Col size={8}>
+            <MemberList members={post?.members?.values} />
+          </Col>
+        </Row>
+      )}
+    </>
   );
 };
 export default Field;
