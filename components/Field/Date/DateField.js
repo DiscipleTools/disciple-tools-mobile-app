@@ -34,7 +34,10 @@ const DateField = ({ editing, field, value, onChange }) => {
    * (ie, 1643760000 vs. 1643760000000 (ms since epoch))
    */
   // MAP VALUE FROM API
-  const mapFromAPI = (value) => adjustForTimezone(new Date(parseInt(value)*1000));
+  const mapFromAPI = (value) => {
+    if (!value) return null;
+    return adjustForTimezone(new Date(parseInt(value)*1000));
+  };
   const mappedValue = useMemo(() => mapFromAPI(value), [value]);
 
   // MAP VALUE TO API
@@ -64,7 +67,7 @@ const DateField = ({ editing, field, value, onChange }) => {
     return (
       <View style={globalStyles.rowContainer}>
       <DateTimePicker
-        value={mappedValue}
+        value={mappedValue ?? new Date()}
         mode={"date"}
         maximumDate={maximumDate}
         display="default"
@@ -89,7 +92,7 @@ const DateField = ({ editing, field, value, onChange }) => {
       const locale_p = locale?.replace('_','-');
       return new Intl.DateTimeFormat(locale_p, options).format(date);
     };
-    const dateValue = formatDateView(mappedValue);
+    const dateValue = mappedValue ? formatDateView(mappedValue) : '';
     return (
       <View style={globalStyles.postDetailsContainer}>
         <Text>{dateValue}</Text>
