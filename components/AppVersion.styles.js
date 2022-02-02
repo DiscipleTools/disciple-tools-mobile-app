@@ -1,9 +1,6 @@
-import { StyleSheet } from "react-native";
-import Colors from "constants/Colors";
-
-export const styles = StyleSheet.create({
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
   versionText: {
-    color: Colors.grayDark,
+    color: theme.text.secondary,
     fontSize: 12,
     position: 'absolute',
     bottom: 15,

@@ -1,9 +1,9 @@
 import React, { useMemo, useState }  from "react";
 import { Text, View } from "react-native";
-import { Icon } from "native-base";
-//import PropTypes from 'prop-types';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
+
+import { ClearIcon, EditIcon } from "components/Icon";
 
 import useI18N from "hooks/useI18N";
 import useStyles from "hooks/useStyles";
@@ -73,15 +73,7 @@ const DateField = ({ editing, field, value, onChange }) => {
         style={styles.picker}
       />
       { _editing && (
-        <Icon
-          type="MaterialIcons"
-          name="clear"
-          style={[
-            globalStyles.icon,
-            styles.icon
-          ]}
-          onPress={() => _setEditing(false)}
-        />
+        <ClearIcon onPress={() => _setEditing(false)} />
       )}
       </View>
     );
@@ -102,15 +94,7 @@ const DateField = ({ editing, field, value, onChange }) => {
       <View style={globalStyles.postDetailsContainer}>
         <Text>{dateValue}</Text>
         { !_editing && (
-          <Icon
-            type="MaterialIcons"
-            name="edit"
-            style={[
-              globalStyles.icon,
-              styles.icon
-            ]}
-            onPress={() => _setEditing(true)}
-          />
+          <EditIcon onPress={() => _setEditing(true)} />
         )}
       </View>
     );

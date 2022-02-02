@@ -73,13 +73,8 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
 
   const isUncontrolledField = () => {
     const fieldType = field?.type;
-    if (
-      fieldType === FieldTypes.COMMUNICATION_CHANNEL
-    ) return false;
-    return true;
     return(
-      fieldType === FieldTypes.KEY_SELECT ||
-      fieldType === FieldTypes.USER_SELECT
+      fieldType !== FieldTypes.COMMUNICATION_CHANNEL
     );
   };
 
@@ -237,10 +232,8 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
           />
         );
       case FieldTypes.MULTI_SELECT:
-        //return null;
         return (
           <MultiSelectField
-            //editing={_editing}
             editing
             field={field}
             value={_value}

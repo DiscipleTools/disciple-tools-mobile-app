@@ -1,75 +1,92 @@
-import React, { useRef } from "react";
-import { Linking, Pressable, Text, TextInput } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Linking, Pressable, Text, TextInput, View } from "react-native";
+// TODO: remove
 import { Icon } from "native-base";
 import { Col, Row } from "react-native-easy-grid";
-//import PropTypes from 'prop-types';
 
-import useI18N from "hooks/useI18N";
+import { EditIcon } from "components/Icon";
 
-// TODO: refactor unused styles
-import { styles } from "./CommunicationChannelField.styles";
+import useDebounce from "hooks/useDebounce";
+import useStyles from "hooks/useStyles";
 
-const CommunicationChannelField = ({ field, value, editing, onChange }) => {
-  const { i18n, isRTL } = useI18N();
+import { FieldConstants } from "constants";
 
-  const valueRef = useRef(value);
+import { localStyles } from "./CommunicationChannelField.styles";
 
-  const timerRef = useRef(null);
+const CommunicationChannelField = ({ editing, field, values, onChange }) => {
 
-  // if value is null, then set a default to ensure field displays
-  if (value === null) value = [{ value: "" }];
+  const { styles, globalStyles } = useStyles(localStyles);
 
-  const changeDelay = () => {
-    if (timerRef.current !== null) {
-      const timer = timerRef.current;
-      clearTimeout(timer);
-      timerRef.current = null;
-    }
-    timerRef.current = setTimeout(() => {
-      onChange(valueRef.current);
-    }, 2000);
-  };
+  const [_editing, _setEditing] = useState(editing);
 
-  const onEndEditing = () => onChange(valueRef.current);
+  if (!values) values = [];
 
-  const onAddCommunicationField = () => {
+  const _onAdd = () => {
+    /*
+     * NOTE: This key prefix is necessary or React to distinguish between multiple new TextInputs.
+     * This key is removed (in Field.js '_onSave') before API request is made (in order to create new)
+     */
     onChange([
-      ...value,
       {
-        value: "",
+        key: `${ FieldConstants.TMP_KEY_PREFIX }_${ values.length + 1 }`,
+        value: ''
       },
+      ...values,
     ]);
   };
 
-  const onCommunicationFieldChange = (newValue, idx, key) => {
-    if (newValue !== value[idx]) {
-      const updatedValue = [...value];
-      if (key) {
-        updatedValue[idx] = { key, value: newValue };
-      } else {
-        updatedValue[idx] = { value: newValue };
-      }
-      valueRef.current = updatedValue;
-    }
-  };
-
-  const onRemoveCommunicationField = (idx, key) => {
-    const newValue = [...value];
-    // splice occurs in-place, returns removed (unhandled)
-    newValue.splice(idx, 1);
+  const _onRemove = (key) => {
     // ref: https://developers.disciple.tools/theme-core/api-posts/post-types-fields-format#communication_channel
-    const apiValue = [{ key, delete: true }];
-    onChange(newValue, apiValue);
+    const newValues = values?.map(prevValue =>
+      prevValue?.key === key ? { key, delete: true } : prevValue
+    );
+    onChange(newValues);
   };
 
-  const getKeyboardType = () => {
-    if (field?.name?.includes("phone")) return "phone-pad";
-    if (field?.name?.includes("email")) return "email-address";
-    return "default";
+  const _onChange = (newValue) => {
+    const newValues = values?.map(prevValue =>
+      prevValue?.key === newValue?.key ?  (newValue?.key !== '' ? newValue : { value: newValue?.value }) : prevValue
+    );
+    if (JSON.stringify(newValues) !== JSON.stringify(values)) {
+      onChange(newValues);
+    };
+  };
+
+  // TODO: validate input per field type (eg, email, phone, etc)?
+  const renderTextInput = (value, idx) => {
+
+    const [_text, _setText] = useState(value?.value);
+    const debouncedText = useDebounce(_text, 1000);
+
+    useEffect(() => {
+      if (debouncedText !== value?.value) {
+        _onChange({
+          key: value?.key,
+          value: debouncedText
+        });
+      };
+      return;
+    }, [debouncedText]);
+
+    const getKeyboardType = () => {
+      if (field?.name?.includes("phone")) return "phone-pad";
+      if (field?.name?.includes("email")) return "email-address";
+      return "default";
+    };
+    const keyboardType = getKeyboardType();
+
+    return(
+      <TextInput
+        key={idx}
+        value={_text}
+        onChangeText={_setText}
+        style={styles.field}
+        keyboardType={keyboardType}
+      />
+    );
   };
 
   const CommunicationChannelFieldEdit = () => {
-    const keyboardType = getKeyboardType();
     return (
       <Col>
         <Row style={styles.formFieldMargin}>
@@ -78,47 +95,36 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
               android="md-add"
               ios="ios-add"
               style={[styles.addRemoveIcons, styles.addIcons]}
-              onPress={() => {
-                onAddCommunicationField();
-              }}
+              onPress={() => _onAdd()}
             />
           </Col>
         </Row>
-        {value.map((communicationChannel, idx) => (
-          <Row style={{ marginBottom: 10 }}>
-            <Col>
-              <TextInput
-                defaultValue={communicationChannel.value}
-                onChangeText={(newValue) => {
-                  changeDelay();
-                  onCommunicationFieldChange(
-                    newValue,
-                    idx,
-                    communicationChannel?.key
-                  );
-                }}
-                //onBlur={onEndEditing}
-                onEndEditing={onEndEditing}
-                style={styles.contactTextField}
-                keyboardType={keyboardType}
-              />
-            </Col>
-            <Col style={styles.formIconLabel}>
-              <Icon
-                android="md-remove"
-                ios="ios-remove"
-                style={[
-                  styles.formIcon,
-                  styles.addRemoveIcons,
-                  styles.removeIcons,
-                ]}
-                onPress={() =>
-                  onRemoveCommunicationField(idx, communicationChannel?.key)
-                }
-              />
-            </Col>
-          </Row>
-        ))}
+        {values?.map((value, idx) => {
+          if (value?.delete === true) return null;
+          return(
+            <Row
+              key={value?.key ?? idx}
+              style={{ marginBottom: 10 }}
+            >
+              <Col>
+                {renderTextInput(value)}
+              </Col>
+              <Col style={styles.formIconLabel}>
+                <Icon
+                  android="md-remove"
+                  ios="ios-remove"
+                  style={[
+                    styles.formIcon,
+                    styles.addRemoveIcons,
+                    styles.removeIcons,
+                  ]}
+                  onPress={() => _onRemove(value?.key)
+                  }
+                />
+              </Col>
+            </Row>
+          )}
+        )}
       </Col>
     );
   };
@@ -127,9 +133,9 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
     <Pressable key={key} onPress={() => Linking.openURL(url)}>
       <Text
         style={[
+          globalStyles.rowContainer,
           styles.linkingText,
           { marginTop: "auto", marginBottom: "auto" },
-          isRTL ? { textAlign: "left", flex: 1 } : {},
         ]}
       >
         {value}
@@ -144,10 +150,10 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
   const isValidTLD = (communicationChannelValue) => {
     const lowercaseValue = communicationChannelValue?.toLowerCase();
     return (
-      lowercaseValue.includes(".com") ||
-      lowercaseValue.includes(".net") ||
-      lowercaseValue.includes(".org") ||
-      lowercaseValue.includes(".me")
+      lowercaseValue?.includes(".com") ||
+      lowercaseValue?.includes(".net") ||
+      lowercaseValue?.includes(".org") ||
+      lowercaseValue?.includes(".me")
     );
   };
 
@@ -170,12 +176,13 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
   };
 
   const CommunicationChannelFieldView = () => {
-    return value.map((communicationChannel) => {
-      const communicationChannelValue = communicationChannel.value;
+    return values?.map((communicationChannel, idx) => {
+      const communicationChannelValue = communicationChannel?.value;
+      // TODO: perform validation INSIDE CommunicationLink component
       if (isValidPhone(communicationChannelValue)) {
         return (
           <CommunicationLink
-            key={communicationChannel.key}
+            key={communicationChannel?.key ?? idx}
             url={"tel:" + communicationChannelValue}
             value={communicationChannelValue}
           />
@@ -183,7 +190,7 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
       } else if (isValidEmail(communicationChannelValue)) {
         return (
           <CommunicationLink
-            key={communicationChannel.key}
+            key={communicationChannel?.key ?? idx}
             url={"mailto:" + communicationChannelValue}
             value={communicationChannelValue}
           />
@@ -194,34 +201,24 @@ const CommunicationChannelField = ({ field, value, editing, onChange }) => {
           : `https://${communicationChannelValue}`;
         return (
           <CommunicationLink
-            key={communicationChannel.key}
+            key={communicationChannel?.key ?? idx}
             url={url}
             value={communicationChannelValue}
           />
         );
       } else {
         return (
-          <Text
-            style={[
-              { marginTop: "auto", marginBottom: "auto" },
-              isRTL ? { textAlign: "left", flex: 1 } : {},
-            ]}
-          >
-            {communicationChannelValue}
-          </Text>
+          <View style={globalStyles.postDetailsContainer}>
+            <Text>
+              {JSON.stringify(communicationChannelValue)}
+            </Text>
+          </View>
         );
       }
     });
   };
 
-  return (
-    <>
-      {editing ? (
-        <CommunicationChannelFieldEdit />
-      ) : (
-        <CommunicationChannelFieldView />
-      )}
-    </>
-  );
+  if (_editing) return <CommunicationChannelFieldEdit />;
+  return <CommunicationChannelFieldView />;
 };
 export default CommunicationChannelField;

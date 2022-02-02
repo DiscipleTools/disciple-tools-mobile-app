@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import { Label } from "native-base";
+// TODO: remove
 import { Col, Row, Grid } from "react-native-easy-grid";
 import { useNavigation } from "@react-navigation/native";
 
-import MultiSelect from "components/MultiSelect";
+import { CaretIcon } from "components/Icon";
+import SelectSheet from "components/Sheets/SelectSheet";
+import SheetHeader from "components/Sheets/SheetHeader";
 import PostLink from "components/Post/PostLink";
 
-// Custom Hooks
-import useI18N from "hooks/useI18N";
+import useBottomSheet from "hooks/useBottomSheet";
+import useStyles from "hooks/useStyles";
 import useType from "hooks/useType";
 import useUsersContacts from "hooks/useUsersContacts";
 import useList from "hooks/useList";
@@ -23,93 +25,149 @@ import {
   groupTypeIcon,
   swimmingPoolIcon,
 } from "constants/Icons";
-import { styles } from "./ConnectionField.styles";
 
-const ConnectionField = ({ field, value, editing, onChange }) => {
-  const { i18n, isRTL } = useI18N();
-  const { isContact, isGroup, postType } = useType();
+import { FieldNames } from "constants";
 
-  // if value is null, then set a default to ensure field displays
-  if (value === null) value = { values: [{ value: "" }] };
+import { localStyles } from "./ConnectionField.styles";
 
-  const selectedItems = value?.values;
+const ConnectionField = ({ editing, field, value, onChange }) => {
 
-  const addConnection = (newValue) => {
-    const exists = selectedItems.find(
-      (existingValue) =>
-        existingValue?.value === newValue?.ID ||
-        existingValue?.value === newValue?.contact_id
-    );
-    if (!exists)
-      onChange({
-        values: [
-          ...selectedItems,
-          {
-            value: newValue?.contact_id || newValue.ID,
-            name: newValue.name,
-          },
-        ],
-      });
-  };
+  const { styles, globalStyles } = useStyles(localStyles);
+  const { expand, snapPoints } = useBottomSheet();
+  const { isPost, isContact, isGroup, postType } = useType();
+
+  // VALUES
+  const values = value?.values || [];
 
   const PeopleGroupEdit = () => {
+    return null;
+    // TODO: 
     const { peopleGroups } = usePeopleGroups();
     if (!peopleGroups) return null;
     return (
-      <MultiSelect
+      <Select
+        multiple
         items={peopleGroups ?? []}
         selectedItems={selectedItems}
-        onChange={onChange}
-        customAdd={addConnection}
+        onChange={() => onChange}
+        customAdd={() => addConnection}
         placeholder={""}
       />
     );
   };
 
-  const GroupEdit = () => {
-    const mergedUsersContacts = useUsersContacts();
-    // TODO: filter should be 2nd param so we can default it to null
-    const { posts: groups } = useList(null, "groups");
-    if (!groups || !mergedUsersContacts) return null;
-    return (
-      <MultiSelect
-        items={groups}
-        selectedItems={selectedItems}
-        onChange={onChange}
-        customAdd={addConnection}
-        placeholder={""}
-      />
+  const PostEdit = () => {
+
+    // TODO: implement support
+    const [search, setSearch] = useState(null);
+
+    // ITEMS
+    const items = useUsersContacts({ search });
+    if (!items) return null;
+
+    // MAP TO API
+    const mapToAPI = (sections) => {
+      const values = [];
+      sections.forEach((section) => {
+        section?.data?.forEach(item => {
+          if (item?.selected) {
+            values.push({
+              value: item?.contactId //item?.key,
+            });
+          };
+        });
+      });
+      return values;
+    };
+
+    // MAP FROM API
+    const mapFromAPI = (items) => {
+      return items?.map(item => {
+        //const key = item?.contact_id || item?.ID || item?.value;
+        return {
+          key: item?.ID,
+          label: item?.name,
+          avatar: item?.avatar,
+          contactId: item?.contact_id ? new String(item?.contact_id) : null,
+          selected: values?.some(selectedItem => Number(selectedItem?.value) === item?.contact_id),
+        };
+      });
+    };
+
+    /*
+     * NOTE: Since this is a multi-select, this method gets called when
+     * the user clicks the "Done" button, and all 'sections' are passed
+     * back (along with 'selected' property values).
+     */
+    const _onChange = async(newSections) => {
+      const mappedValues = mapToAPI(newSections);
+      if (JSON.stringify(mappedValues) !== JSON.stringify(values)) {
+        const apiValue = {
+          values: mappedValues,
+          force_values: true,
+        };
+        onChange(apiValue, {
+          autosave: true,
+        });
+      };
+    };
+
+    // SELECT OPTIONS
+    const sections = useMemo(() => [{ data: mapFromAPI(items) }], [items, values]);
+    const title = field?.label || '';
+
+    const connectionContent = useMemo(() => (
+      <>
+        <SheetHeader
+          expandable
+          dismissable
+          title={title}
+        />
+        <SelectSheet
+          multiple
+          sections={sections}
+          onChange={_onChange}
+        />
+      </>
+    ), [title, sections]);
+
+    const showSheet = () => expand({
+      index: snapPoints.length-1,
+      snapPoints,
+      renderContent: () => connectionContent,
+    });
+
+    return(
+      <Pressable onPress={() => showSheet()}>
+        <View style={globalStyles.rowContainer}>
+          <View style={styles.container}>
+            {values?.map(value => (
+              <PostLink id={value?.value} title={value?.name} type={postType} />
+            ))}
+          </View>
+          <CaretIcon />
+        </View>
+      </Pressable>
     );
   };
 
-  const ContactEdit = () => {
-    const mergedUsersContacts = useUsersContacts();
-    if (!mergedUsersContacts) return null;
-    return (
-      <MultiSelect
-        items={mergedUsersContacts}
-        selectedItems={selectedItems}
-        onChange={onChange}
-        customAdd={addConnection}
-        placeholder={""}
-      />
-    );
-  };
-
-  const PeopleGroupView = () => (
-    <>
-      {selectedItems.map((connection, idx) => (
+  const PeopleGroupView = () => {
+    return null;
+    // TODO
+    return selectedItems.map((connection, idx) => (
         <PostLink
           key={connection?.ID ?? idx}
           id={connection?.ID}
           title={connection?.name}
-          type={"people_groups"}
+          // TODO: useType inside of PostLink
+          //type={"people_groups"}
         />
-      ))}
-    </>
-  );
+    ));
+  };
 
   const GroupView = () => {
+    return null;
+    // TODO
     const navigation = useNavigation();
     //const { posts: contacts } = useList(null, 'contacts');
     //const { posts: groups } = useList(null, 'groups');
@@ -128,7 +186,7 @@ const ConnectionField = ({ field, value, editing, onChange }) => {
             </View>
           </Col>
           <Col style={styles.formIconLabel}>
-            <Label style={styles.formLabel}>{field.label}</Label>
+            <Text style={styles.formLabel}>{field.label}</Text>
           </Col>
           <Col />
         </Row>
@@ -192,31 +250,31 @@ const ConnectionField = ({ field, value, editing, onChange }) => {
     );
   };
 
-  const ContactView = () => (
-    <>
-      {selectedItems.map((connection, idx) => (
-        <PostLink
-          key={connection?.name ?? idx}
-          id={connection?.value}
-          title={connection?.name}
-          type={"contacts"}
-        />
-      ))}
-    </>
-  );
+  const PostView = () => {
+    return value?.values?.map((connection, idx) => (
+      <PostLink
+        key={connection?.name ?? idx}
+        id={connection?.value}
+        title={connection?.name}
+        type={"contacts"}
+      />
+    ))
+  };
 
   const ConnectionFieldEdit = () => {
-    if (field?.name === "people_groups") return <PeopleGroupEdit />;
-    if (isGroup) return <GroupEdit />;
-    return <ContactEdit />;
+    if (field?.name === FieldNames.PEOPLE_GROUPS) return <PeopleGroupEdit />;
+    if (isPost) return <PostEdit />;
+    return null; 
   };
 
   const ConnectionFieldView = () => {
-    if (field?.name === "people_groups") return <PeopleGroupView />;
+    if (field?.name === FieldNames.PEOPLE_GROUPS) return <PeopleGroupView />;
     if (isGroup) return <GroupView />;
-    return <ContactView />;
+    if (isPost) return <PostView />;
+    return null; 
   };
 
-  return <>{editing ? <ConnectionFieldEdit /> : <ConnectionFieldView />}</>;
+  if (editing) return <ConnectionFieldEdit />;
+  return <ConnectionFieldView />;
 };
 export default ConnectionField;

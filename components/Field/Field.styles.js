@@ -17,7 +17,6 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   formLabel: {
     color: theme.text.primary,
     fontSize: 12,
-    marginTop: "auto",
     marginBottom: "auto",
   },
   formComponent: {

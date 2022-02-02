@@ -1,12 +1,13 @@
-import { Dimensions, StyleSheet } from "react-native";
-import Colors from "constants/Colors";
+import { Dimensions } from "react-native";
 
 const containerPadding = 20;
 const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
 const circleSideSize = windowWidth / 3 + 20;
 
-export const styles = StyleSheet.create({
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
+  container: {
+    flexWrap: "wrap",
+  },
   linkingText: {
     paddingTop: 4,
     paddingBottom: 8,
@@ -33,7 +34,7 @@ export const styles = StyleSheet.create({
     marginBottom: 15,
   },
   formIcon: {
-    color: Colors.tintColor,
+    color: theme.brand.primary,
     fontSize: 25,
     marginTop: "auto",
     marginBottom: "auto",
@@ -43,7 +44,7 @@ export const styles = StyleSheet.create({
     maxWidth: 75,
   },
   formLabel: {
-    color: Colors.tintColor,
+    color: theme.brand.primary,
     fontSize: 12,
     marginTop: "auto",
     marginBottom: "auto",
@@ -138,7 +139,7 @@ export const styles = StyleSheet.create({
     marginLeft: 0,
   },
   membersCloseIcon: {
-    color: Colors.grayDark,
+    color: theme.text.primary,
     fontSize: 25,
     marginTop: "auto",
     marginBottom: "auto",

@@ -125,9 +125,7 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
     return(
       <Pressable onPress={() => showSheet()}>
         <View style={globalStyles.postDetailsContainer}>
-          {!isMilestones &&(
-            <MultiSelectFieldView />
-          )}
+          <MultiSelectFieldView />
           <CaretIcon />
         </View>
       </Pressable>
@@ -135,6 +133,7 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
   };
 
   const MultiSelectFieldView = () => {
+    // TODO: fix formatting
     /*
     if (isMilestones) return (
       <Milestones

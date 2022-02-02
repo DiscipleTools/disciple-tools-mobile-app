@@ -1,47 +1,44 @@
 import React from "react";
-import { Pressable } from "react-native";
+import { Pressable, View } from "react-native";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import useStyles from "hooks/useStyles";
 
-const Icon = ({ icon, onPress }) => {
-  if (onPress) return(
-    <Pressable onPress={onPress}>
-      {icon}
-    </Pressable>
+const Icon = ({ icon, onPress }) => (
+  <Pressable
+    disabled={!onPress}
+    onPress={onPress}
+    style={{ marginStart: "auto" }}
+  >
+    {icon}
+  </Pressable>
+);
+
+const MaterialIcon = ({ name, onPress }) => {
+  const { globalStyles } = useStyles();
+  const icon = (
+    <MaterialIcons
+      name={name}
+      style={globalStyles.icon}
+    />
   );
-  return icon;
+  return <Icon icon={icon} onPress={onPress} />;
 };
 
-export const CaretIcon = () => {
+const MaterialCommunityIcon = ({ name, onPress }) => {
   const { globalStyles } = useStyles();
-  return(
+  const icon = (
     <MaterialCommunityIcons
-      name="chevron-down"
-      style={[globalStyles.icon, globalStyles.caret]}
-    />
-  );
-};
-
-export const ClearIcon = ({ onPress }) => {
-  const { globalStyles } = useStyles();
-  const icon = (
-    <MaterialIcons
-      name="clear"
-      style={[globalStyles.icon]}
+      name={name}
+      style={globalStyles.icon}
     />
   );
   return <Icon icon={icon} onPress={onPress} />;
 };
 
-export const SaveIcon = ({ onPress }) => {
-  const { globalStyles } = useStyles();
-  const icon = (
-    <MaterialIcons
-      name="save"
-      style={[globalStyles.icon]}
-    />
-  );
-  return <Icon icon={icon} onPress={onPress} />;
-};
+export const CaretIcon = () => <MaterialCommunityIcon name="chevron-down" />;
+
+export const ClearIcon = ({ onPress }) => <MaterialIcon name="clear" onPress={onPress} />;
+export const EditIcon = ({ onPress }) => <MaterialIcon name="edit" onPress={onPress} />;
+export const SaveIcon = ({ onPress }) => <MaterialIcons name="save" onPress={onPress} />;
