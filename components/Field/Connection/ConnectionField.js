@@ -34,7 +34,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { expand, snapPoints } = useBottomSheet();
-  const { isPost, isContact, isGroup, postType } = useType();
+  const { isPost, isContact, isGroup, getPostTypeByFieldName } = useType();
 
   // VALUES
   const values = value?.values || [];
@@ -142,7 +142,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
         <View style={globalStyles.rowContainer}>
           <View style={styles.container}>
             {values?.map(value => (
-              <PostLink id={value?.value} title={value?.name} type={postType} />
+              <PostLink id={value?.value} title={value?.name} type={getPostTypeByFieldName(field?.name)} />
             ))}
           </View>
           <CaretIcon />
