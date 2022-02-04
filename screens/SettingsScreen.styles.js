@@ -1,79 +1,36 @@
-import { StyleSheet } from "react-native";
-import Colors from "constants/Colors";
+import { ThemeConstants } from "constants";
+const avatarSize = 60;
 
-export const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.canvas,
-    height: 100,
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
+  avatar: {
+    width: avatarSize,
+    height: avatarSize,
+    borderRadius: avatarSize/2
   },
-  header: {
-    borderBottomWidth: 1,
-    backgroundColor: Colors.tabBar,
-    paddingBottom: 10,
-    marginBottom: 10,
-
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5,
+  headerContainer: {
+    backgroundColor: theme.surface.secondary,
+    //backgroundColor: theme.background.primary,
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingHorizontal: 10,
+    //borderTopWidth: 1,
+    //borderTopColor: theme.highlight,
+    //borderBottomWidth: 1,
+    //borderBottomColor: theme.highlight,
   },
-  headerBody: {
-    borderBottomWidth: 0,
-    alignItems: "flex-start",
-  },
-  username: {
-    fontSize: 24,
-    fontWeight: "500",
-  },
-  domain: {
+  headerDomain: {
+    color: theme.placeholder,
     fontStyle: "italic",
-    color: "#888",
   },
-  body: {
-    alignItems: "flex-start",
+  switch: {
+    color: theme.mode === ThemeConstants.DARK ? theme.highlight : theme.brand.primary,
   },
-  button: {
-    backgroundColor: Colors.tintColor,
-  },
-  versionText: {
-    color: Colors.grayDark,
-    fontSize: 12,
-    position: "absolute",
-    bottom: 15,
-    right: 15,
-  },
-  dialogBackground: {
-    position: "absolute",
-    justifyContent: "center",
+  optionContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: theme.background.primary,
+    marginHorizontal: 5,
+    paddingHorizontal: 5,
     alignItems: "center",
-    top: 0,
-    left: 0,
-  },
-  dialogBox: {
-    backgroundColor: "#FFFFFF",
-    padding: 20,
-    marginLeft: 10,
-    marginRight: 10,
-  },
-  dialogButton: {
-    backgroundColor: Colors.tintColor,
-    borderRadius: 5,
-    width: 150,
-    alignSelf: "center",
-    marginTop: 20,
-  },
-  dialogContent: {
-    fontSize: 20,
-    textAlign: "center",
-    color: Colors.grayDark,
-    marginBottom: 5,
-  },
-  pickerIosIcon: {
-    color: Colors.grayDark,
+    height: 50,
   },
 });

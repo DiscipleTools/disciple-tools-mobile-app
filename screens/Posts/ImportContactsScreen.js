@@ -3,18 +3,11 @@ import { Pressable, Text, View } from "react-native";
 
 import FilterList from "components/FilterList";
 import OfflineBar from "components/OfflineBar";
-import Subtitles from "components/Subtitles";
-import PostItemSkeleton from "components/Post/PostItem/PostItemSkeleton";
+import { PostItem, PostItemSkeleton, PostItemHidden } from "components/Post/PostItem/index";
 
-import useI18N from "hooks/useI18N";
 import useImportContacts from 'hooks/useImportContacts';
 
-import Constants from "constants";
-import Colors from "constants/Colors";
-
 const ImportContactsScreen = ({ navigation }) => {
-
-  const { i18n, isRTL } = useI18N();
 
   const { data: items, error, isLoading } = useImportContacts();
 
@@ -26,6 +19,7 @@ const ImportContactsScreen = ({ navigation }) => {
     console.error(error);
   };
 
+  /*
   const ImportContactItem = ({ item, loading }) => {
     if (!item || loading) return <PostItemSkeleton />;
     // TODO: compare imported contacts with existing contacts (to determine if new)
@@ -59,7 +53,6 @@ const ImportContactsScreen = ({ navigation }) => {
                 { item?.name ? item.name : item?.title}
               </Text>
             </View>
-            <Subtitles item={item} />
           </View>
           <View
             style={[
@@ -89,8 +82,9 @@ const ImportContactsScreen = ({ navigation }) => {
       </Pressable>
     );
   };
+  */
 
-  const renderItem = ({ item }) => <ImportContactItem item={item} loading={isLoading||isError} />;
+  const renderItem = ({ item }) => <PostItem item={item} loading={isLoading} />;
 
   return (
     <>

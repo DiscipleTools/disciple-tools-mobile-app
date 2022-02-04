@@ -8,9 +8,10 @@ import SmoothPinCodeInput from "react-native-smooth-pincode-input";
 
 import useI18N from "hooks/useI18N";
 import usePIN from "hooks/usePIN";
+import useStyles from "hooks/useStyles";
 import useToast from "hooks/useToast";
 
-import { styles } from "./PINScreen.styles";
+import { localStyles } from "./PINScreen.styles";
 
 const PINScreen = ({ navigation, route }) => {
   const [state, setState] = useState({
@@ -18,6 +19,7 @@ const PINScreen = ({ navigation, route }) => {
     tmpCode: null,
   });
 
+  const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
   const { PINConstants, getPIN, setPIN, deletePIN, setCNoncePIN } = usePIN();
   const toast = useToast();

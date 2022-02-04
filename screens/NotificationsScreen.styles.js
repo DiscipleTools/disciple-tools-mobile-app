@@ -1,93 +1,20 @@
-import { StyleSheet } from "react-native";
+import Constants from "constants";
 
-export const styles = StyleSheet.create({
-  notificationContainer: {
-    padding: 20,
-  },
-  prettyTime: {
-    color: "#8A8A8A",
-    fontSize: 10,
-  },
-  loadMoreFooterText: {
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
+  container: {
+    backgroundColor: theme.surface.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.background.primary,
+    flexDirection: isRTL ? "row-reverse" : "row",
+    height: Constants.LIST_ITEM_HEIGHT,
     padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#3f729b",
   },
-  buttonContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: 35,
-    padding: 5,
+  notificationDetails: {
+    flexWrap: "wrap",
+    marginEnd: "auto",
   },
-  notificationUnreadButton: {
-    borderRadius: 100,
-    width: 25,
-    height: 25,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#3f729b",
-  },
-  notificationReadButton: {
-    borderRadius: 100,
-    width: 25,
-    height: 25,
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "#3f729b",
-  },
-  newHeader: {
-    fontWeight: "bold",
-    marginBottom: "auto",
-    fontSize: 12,
-  },
-  newHeaderNumber: {
-    marginRight: 5,
-    fontSize: 12,
-    padding: 2,
-    backgroundColor: "red",
-    borderRadius: 100,
-    color: "white",
-    marginBottom: "auto",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  markAllHeader: {
-    color: "#3f729b",
-    fontSize: 12,
-    marginLeft: "auto",
-    marginBottom: "auto",
-  },
-  marketButton: {
-    borderRadius: 5,
-    padding: 10,
-    margin: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    color: "white",
-    backgroundColor: "#3f729b",
-  },
-  marketButtonText: {
-    alignItems: "center",
-    justifyContent: "center",
-    color: "white",
-    fontSize: 14,
-  },
-  unmarketButton: {
-    borderRadius: 5,
-    padding: 10,
-    margin: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "#3f729b",
-  },
-  unmarketButtonText: {
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#3f729b",
-    fontSize: 14,
+  link: {
+    color: theme.text.link
   },
   dontHaveNotificationsText: {
     fontSize: 14,

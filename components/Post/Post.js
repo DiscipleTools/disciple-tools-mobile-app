@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useReducer, useState } from "react";
-import { Linking, Platform, Text } from "react-native";
+import { Linking, Platform, Text, View } from "react-native";
 import { Icon } from "native-base";
 import { Row } from "react-native-easy-grid";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -14,16 +14,18 @@ import KebabMenu from "components/KebabMenu";
 import useI18N from "hooks/useI18N";
 import useDetails from "hooks/useDetails";
 import useSettings from "hooks/useSettings";
+import useStyles from "hooks/useStyles";
 import useToast from "hooks/useToast";
 import useAPI from "hooks/useAPI";
 
 import axios from "services/axios";
 
-import { styles } from "./Post.styles";
+import { localStyles } from "./Post.styles";
 
 const Post = ({ editOnly=false }) => {
   const navigation = useNavigation();
   const route = useRoute();
+  const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, isRTL } = useI18N();
   const {
     data: post,
@@ -41,19 +43,14 @@ const Post = ({ editOnly=false }) => {
   const renderHeaderLeft = (props) => {
     const onBack = () => navigation.goBack();
     return(
-      <Row
-        style={[
-          styles.headerRow,
-          isRTL ? { direction: "rtl" } : { direction: "ltr" },
-        ]}
-      >
+      <View style={globalStyles.rowContainer}>
         <Icon
           type="Feather"
           name={ isRTL ? "arrow-right" : "arrow-left" }
           onPress={onBack}
-          style={styles.headerIcon}
+          style={globalStyles.icon}
         />
-      </Row>
+      </View>
     );
   };
 
@@ -78,14 +75,9 @@ const Post = ({ editOnly=false }) => {
       },
     ];
     return(
-      <Row
-        style={[
-          styles.headerRow,
-          isRTL ? { direction: "rtl" } : { direction: "ltr" },
-        ]}
-      >
+      <View style={styles.rowContainer}>
         <KebabMenu menuItems={kebabMenuItems} />
-      </Row>
+      </View>
     );
   };
 
@@ -95,15 +87,9 @@ const Post = ({ editOnly=false }) => {
       title,
       headerLeft: (props) => isRTL ? renderHeaderRight(props) : renderHeaderLeft(props),
       headerRight: (props) => isRTL ? renderHeaderLeft(props) : renderHeaderRight(props),
-      headerStyle: styles.headerStyle, 
-      headerTintColor: styles.headerTintColor,
-      headerTitleStyle: {
-        fontWeight: 'bold',
-        width: Platform.select({
-          android: 180,
-          ios: 140,
-        }),
-      },
+      //headerStyle: globalStyles.header, 
+      headerTintColor: globalStyles.text.primary,
+      headerTitleStyle: styles.headerTitle
     });
   }, [navigation, route?.params?.name]);
 

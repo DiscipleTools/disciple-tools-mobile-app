@@ -1,34 +1,18 @@
-import { StyleSheet } from "react-native";
-import Colors from "constants/Colors";
+import { ThemeConstants } from "constants"; 
 
-export const styles = StyleSheet.create({
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
   tabHeading: {
-    color: "#000",
+    color: theme.text.primary,
   },
   tabHeadingStyle: {
-    backgroundColor: Colors.mainBackgroundColor,
+    backgroundColor: theme.mode === ThemeConstants.DARK ? theme.surface.primary : theme.surface.input,
   },
   tabBarUnderline: {
-    backgroundColor: Colors.tintColor,
+    backgroundColor: theme.mode === ThemeConstants.DARK ? theme.highlight : theme.brand.primary,
   },
-  headerIcon: {
-    color: Colors.headerTintColor,
-    paddingLeft: 10,
-    paddingRight: 10 
+  headerTitle: {
+    color: theme.text.primary,
+    fontWeight: 'bold',
+    width: isIOS ? 140 : 180,
   },
-  headerRow: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "row",
-    paddingTop: 5,
-    paddingLeft: 5,
-    paddingRight: 5,
-  },
-  headerStyle: {
-    backgroundColor: Colors.tintColor,
-    shadowColor: 'transparent',
-  },
-  headerTintColor: {
-    color: Colors.headerTintColor,
-  }
 });

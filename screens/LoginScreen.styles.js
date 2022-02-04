@@ -1,71 +1,44 @@
-import { Dimensions, StyleSheet } from "react-native";
-import Colors from "constants/Colors";
-
-export const styles = StyleSheet.create({
-  container: {
-    justifyContent: "flex-end",
-    backgroundColor: Colors.canvas,
-    minHeight: Dimensions.get("window").height,
-  },
-  inputContainer: {
-    alignSelf: "stretch",
-    marginVertical: 10,
-    padding: 5,
-    alignItems: "flex-start",
-  },
-  inputLabel: {
-    margin: 5,
-  },
-  inputLabelText: {
-    color: "#555555",
-  },
-  inputRow: {
-    alignSelf: "stretch",
-    flexDirection: "row",
-  },
-  inputRowIcon: {
-    fontSize: 25,
-    marginHorizontal: 5,
-  },
-  inputRowTextInput: {
-    padding: 5,
-    flexGrow: 1,
-  },
-  header: {
-    backgroundColor: Colors.tintColor,
-    width: "100%",
-    padding: 35,
-    alignItems: "center",
-    justifyContent: "flex-end",
-  },
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
   welcomeImage: {
+    marginStart: "auto",
+    marginEnd: "auto",
+    marginTop: 60,
     height: 60,
-    width: 250,
     resizeMode: "contain",
-    padding: 20,
   },
   formContainer: {
-    alignSelf: "stretch",
     flexGrow: 1,
     padding: 20,
   },
+  textField: {
+    backgroundColor: theme.text.inverse,
+    borderWidth: 1,
+    borderColor: theme.divider,
+    borderRadius: 5,
+  },
+  inputText: {
+    color: theme.text.primary,
+    padding: 5,
+    width: "100%",
+  },
   signInButton: {
-    marginTop: 10,
-    backgroundColor: Colors.tintColor,
+    backgroundColor: theme.brand.primary,
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: theme.highlight,
+    marginTop: 10,
+    height: 50,
   },
   signInButtonText: {
-    color: "white",
+    color: theme.offLight,
+    fontSize: 16,
   },
   forgotButton: {
     alignSelf: "stretch",
     alignItems: "center",
-    padding: 12,
-    marginLeft: 20,
-    marginRight: 20,
-  },
-  forgotButtonText: {
-    color: Colors.tintColor,
+    marginTop: 15,
   },
   loading: {
     position: "absolute",
@@ -76,47 +49,27 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  textField: {
-    backgroundColor: "#ffffff",
-    borderWidth: 2,
-    borderColor: "#fff",
-  },
   validationErrorInput: {
     backgroundColor: "#FFE6E6",
     borderWidth: 2,
-    borderColor: Colors.errorBackground,
+    borderColor: theme.error,
   },
   validationErrorMessage: {
-    color: Colors.errorBackground,
+    color: theme.error,
   },
-  headerText: {
-    fontSize: 25,
-    textAlign: "center",
-    margin: 10,
-    color: "black",
-    fontWeight: "bold",
-  },
-  textBoxContainer: {
-    position: "relative",
-    alignSelf: "stretch",
-    justifyContent: "center",
-  },
-  textBox: {
-    fontSize: 16,
-    paddingRight: 30,
-    paddingLeft: 8,
-    paddingVertical: 0,
-    flex: 1,
-  },
-  touchableButton: {
+  showPasswordView: {
     position: "absolute",
     right: 10,
     height: 75,
     padding: 2,
   },
-  buttonImage: {
-    resizeMode: "contain",
-    height: "100%",
-    width: "100%",
-  },
+  showPasswordIcon: (showPassword) => ({
+    marginBottom: "auto",
+    marginTop: "auto",
+    fontSize: 24,
+    opacity: showPassword ? null : 0.3,
+  }),
+  spinner: {
+    margin: 20,
+  }
 });

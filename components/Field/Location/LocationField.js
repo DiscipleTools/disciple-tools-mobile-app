@@ -6,7 +6,7 @@ import useDevice from "hooks/useDevice";
 import useI18N from "hooks/useI18N";
 import useLocations from "hooks/useLocations";
 
-import MultiSelect from "components/MultiSelect";
+//import MultiSelect from "components/MultiSelect";
 
 import { styles } from "./LocationField.styles";
 
@@ -25,6 +25,8 @@ const LocationField = ({ editing, value, onChange }) => {
   // TODO: enable search
   //const searchLocationsDelayed = utils.debounce((queryText) => {...}, 750);
 
+  const LocationFieldEdit = () => null;
+  /*
   const LocationFieldEdit = () => (
     <MultiSelect
       items={items}
@@ -34,6 +36,7 @@ const LocationField = ({ editing, value, onChange }) => {
       //placeholder={i18n.t("global.selectLocations")}
     />
   );
+  */
 
   const LocationFieldView = () => {
     return value?.values?.map((location) => {

@@ -6,10 +6,9 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import { SvgUri } from "react-native-svg";
 
 import useI18N from "hooks/useI18N";
+import useStyles from "hooks/useStyles";
 
-import { styles } from "./Milestones.styles";
-// TODO: move to StyleSheet
-import Colors from "constants/Colors";
+import { localStyles } from "./Milestones.styles";
 
 const Milestones = ({
   items,
@@ -20,6 +19,8 @@ const Milestones = ({
   postType,
   editing,
 }) => {
+
+  const { styles } = useStyles(localStyles);
   // TODO:
   const { i18n, isRTL } = useI18N();
   const add = (newValue) => {
@@ -78,7 +79,7 @@ const Milestones = ({
             onPress={() => handleChange(item, selected)}
             style={[
               styles.button,
-              selected ? { backgroundColor: Colors.tintColor } : null,
+              selected ? { backgroundColor: "#F0F" } : null,
             ]}
           >
             <Row>

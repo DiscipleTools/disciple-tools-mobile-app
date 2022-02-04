@@ -1,26 +1,15 @@
-import { StyleSheet } from "react-native";
-import Colors from "constants/Colors";
-
-export const styles = StyleSheet.create({
-  body: {
-    alignItems: "flex-start",
-  },
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
   button: {
-    backgroundColor: Colors.tintColor,
+    backgroundColor: theme.brand.primary,
   },
   languagePickerContainer: {
-    flexDirection: "row",
-    backgroundColor: Colors.gray,
+    flexDirection: isRTL ? "row-reverse" : "row",
+    backgroundColor: theme.surface.primary,
     padding: 5,
     alignItems: "center",
-  },
-  languagePicker: {
-    flex: 1,
-  },
-  languageIcon: {
-    marginHorizontal: 20,
+    marginHorizontal: 10,
   },
   pickerIosIcon: {
-    color: Colors.grayDark,
+    color: theme.text.secondary,
   },
 });

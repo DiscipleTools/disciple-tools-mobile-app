@@ -1,9 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {
-  createStackNavigator,
-  HeaderBackButton,
-} from "@react-navigation/stack";
+import { createStackNavigator, HeaderBackButton } from "@react-navigation/stack";
 import { getFocusedRouteNameFromRoute, useNavigation } from "@react-navigation/native";
 
 //import HomeScreen from 'screens/HomeScreen';
@@ -19,11 +16,13 @@ import NotificationsScreen from "screens/NotificationsScreen";
 import SettingsScreen from "screens/SettingsScreen";
 
 import TabBarIcon from "components/TabBarIcon";
-import Colors from "constants/Colors";
 
-import useI18N from "hooks/useI18N.js";
-//import useNotifications from 'hooks/useNotifications.js';
-import usePIN from "hooks/usePIN.js";
+import useI18N from "hooks/useI18N";
+//import useNotifications from 'hooks/useNotifications';
+import usePIN from "hooks/usePIN";
+import useTheme from "hooks/useTheme";
+
+import { BottomSheetConstants } from "constants";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -33,6 +32,7 @@ const MainTabNavigator = () => {
   console.log("$$$$$          MAIN TAB NAVIGATOR             $$$$$");
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
+  const { isDarkMode, theme } = useTheme();
   const { i18n, locale } = useI18N();
   const { PINConstants } = usePIN();
   /*
@@ -45,18 +45,21 @@ const MainTabNavigator = () => {
   */
   const notificationsCount = null;
 
-  const screenOptionStyle = {
+  const screenOptions = {
+    //safeAreaInsets: { top: 0 },
     headerStyle: {
-      backgroundColor: Colors.tintColor,
+      //backgroundColor: isDarkMode ? theme.background.primary : theme.brand.primary,
+      backgroundColor: theme.background.primary,
       shadowColor: 'transparent',
     },
-    headerTintColor: Colors.headerTintColor,
+    //headerTintColor: isDarkMode ? theme.text.primary : theme.offLight,
+    headerTintColor: theme.text.primary,
     headerBackTitleVisible: false
   };
 
   const ContactsStack = () => {
     return (
-      <Stack.Navigator screenOptions={screenOptionStyle}>
+      <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
           name="Contacts"
           component={ListScreen}
@@ -115,7 +118,7 @@ const MainTabNavigator = () => {
 
   const GroupsStack = () => {
     return (
-      <Stack.Navigator screenOptions={screenOptionStyle}>
+      <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
           name="Groups"
           component={ListScreen}
@@ -150,7 +153,7 @@ const MainTabNavigator = () => {
   /*
   const HomeStack = () => {
     return (
-      <Stack.Navigator screenOptions={screenOptionStyle}>
+      <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
           name="Home"
           component={HomeScreen}
@@ -167,7 +170,7 @@ const MainTabNavigator = () => {
   // For anything non-Contact/Group, pass in Route param to identify the POST_TYPE
   const MoreStack = () => {
     return (
-      <Stack.Navigator screenOptions={screenOptionStyle}>
+      <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
           name="More"
           component={DetailsScreen}
@@ -182,7 +185,7 @@ const MainTabNavigator = () => {
 
   const NotificationsStack = () => {
     return (
-      <Stack.Navigator screenOptions={screenOptionStyle}>
+      <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
           name="Notifications"
           component={NotificationsScreen}
@@ -199,15 +202,15 @@ const MainTabNavigator = () => {
 
   const SettingsStack = () => {
     const navigation = useNavigation();
-    const overrideScreenOptionStyle = { ...screenOptionStyle };
-    overrideScreenOptionStyle["headerBackTitle"] = i18n.t("settingsScreen.settings", { locale });
-    overrideScreenOptionStyle["title"] = "";
-    overrideScreenOptionStyle["headerStyle"] = {
-      ...screenOptionStyle.headerStyle,
+    const overrideScreenOptions = { ...screenOptions};
+    overrideScreenOptions["headerBackTitle"] = i18n.t("settingsScreen.settings", { locale });
+    overrideScreenOptions["title"] = "";
+    overrideScreenOptions["headerStyle"] = {
+      ...screenOptions.headerStyle,
       shadowColor: "transparent",
     };
     return (
-      <Stack.Navigator screenOptions={screenOptionStyle}>
+      <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
           name="Settings"
           component={SettingsScreen}
@@ -230,15 +233,15 @@ const MainTabNavigator = () => {
 
   const PINStack = () => {
     const navigation = useNavigation();
-    const overrideScreenOptionStyle = { ...screenOptionStyle };
-    overrideScreenOptionStyle["headerBackTitle"] = i18n.t("settingsScreen.settings", { locale });
-    overrideScreenOptionStyle["title"] = "";
-    overrideScreenOptionStyle["headerStyle"] = {
-      ...screenOptionStyle.headerStyle,
+    const overrideScreenOptions = { ...screenOptions};
+    overrideScreenOptions["headerBackTitle"] = i18n.t("settingsScreen.settings", { locale });
+    overrideScreenOptions["title"] = "";
+    overrideScreenOptions["headerStyle"] = {
+      ...screenOptions.headerStyle,
       shadowColor: "transparent",
     };
     return (
-      <Stack.Navigator screenOptions={overrideScreenOptionStyle}>
+      <Stack.Navigator screenOptions={overrideScreenOptions}>
         <Stack.Screen
           name="PIN"
           options={{
@@ -258,14 +261,16 @@ const MainTabNavigator = () => {
     );
   };
 
-  return (
+  const Navigator = () => (
     <Tab.Navigator
       initialRouteName={"Contacts"}
-      //initialRouteName={'Settings'}
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: "#365D86",
+        tabBarActiveTintColor: isDarkMode ? theme.highlight : theme.text.primary,
         tabBarStyle: {
+          //transform: isRTL ? [{scaleX: -1}] : null,
+          backgroundColor: theme.background.primary,
+          borderTopColor: theme.divider,
           display:
             ["CommentsActivity","PIN"].includes(getFocusedRouteNameFromRoute(route))
               ? "none"
@@ -346,6 +351,7 @@ const MainTabNavigator = () => {
           ),
         }}
       />
+      {/*
       <Tab.Screen
         name="PIN"
         component={PINStack}
@@ -353,7 +359,10 @@ const MainTabNavigator = () => {
           tabBarVisible: false,
         }}
       />
+      */}
     </Tab.Navigator>
   );
+
+  return <Navigator />;
 };
 export default MainTabNavigator;

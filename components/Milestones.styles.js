@@ -1,13 +1,10 @@
-import { StyleSheet } from "react-native";
-import Colors from "constants/Colors";
-
-export const styles = StyleSheet.create({
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
   button: {
-    borderColor: Colors.tintColor,
+    borderColor: theme.brand.primary,
     margin: 5,
     padding: 10,
   },
   buttonLabel: {
-    marginLeft: 10,
+    marginStart: 10,
   },
 });

@@ -29,10 +29,9 @@ The React Native code base for the Disciple Tools mobile app.
 
 General:
 
-- Offline-First via FIFO Request Queue for API writes
-- Aggressive data fetching for Posts (Contacts, Groups, etc... not Notifications or Comments/Activities where we implement Pagination/InfiniteScrolling), preferring GET ALL vs. Pagination (so that data is available offline)
-- Not quite complete feature-parity offline - eg, Search works offline, but Filtering/Grouping only works online (for now?)
-- CNonces: Login (10 sec) and PIN (30 sec)
+- Offline-First via persistent FIFO request queue for API writes
+- Aggressive data fetching, preferring to get all vs. pagination (so that data is available offline)
+- CNonce: PIN (10 sec)
 - (Coming soon) Accessibility (double as Test IDs?)
 
 UI/Framework-specific:
@@ -41,12 +40,13 @@ UI/Framework-specific:
 - Modular component design to mirror D.T Post Types and Fields, and dynamically respond to API changes, and support plugins
 - Custom Hooks - map well to REST endpoints 
 - SWR (stale-while-revalidate), also meets requirement for background fetching, onFocus fetching (prevent stale data on refocus of app)
-- Redux vs. Context - Redux enables Persistence (plus Flux pattern is nice)
-- Skeletons vs. Spinners
-- Minimize 3rd party dependencies where possible (even if a noticeable impact to UI/UX, so long as minor impact)
-- "Over-use" SecureStore - in addition to obvious values like PIN, password, we also store URL/domain, username (if user specifies to 'Remember Login Details', then we also keep URL/domain, username in Redux as before)
-- Component Library: Native Base (may switch to React Native Paper?)
-- (Coming soon) Themes with fallback to D.T logo(s) and color scheme
+- Redux AND Context - Redux handles any persisted state, and Context is in-memory, runtime app state
+- Prefer Skeletons to Spinners, except for Button Actions
+- Minimize 3rd party dependencies where possible (eg, implement own Login form validation vs. something like Formik). Purpose: long-term maintenance (since this is an OSS project with volunteers), fewer library preference debates, less app bloat
+- SecureStore - in addition to obvious values like PIN, password, we also store URL/domain, username (if user specifies to 'Remember Login Details', then we also keep URL/domain, username in Redux as before)
+- Component Library: Native Base (v2, but v3 upgrade planned for v1.10+ release)
+- Expo libraries should be imported via Hooks, not directly into components (or Screens)
+- Screens should not use styles (Screens should use components which use styles) ??
 
 ## Installation (Development)
 

@@ -8,14 +8,15 @@ import useI18N from "hooks/useI18N";
 import useType from "hooks/useType.js";
 import useDetails from "hooks/useDetails";
 import useSettings from "hooks/useSettings";
+import useStyles from "hooks/useStyles";
 import useAPI from "hooks/useAPI";
 
-import Colors from "constants/Colors";
-import { styles } from "./FAB.styles";
+import { localStyles } from "./FAB.styles";
 
 const FAB = () => {
   const navigation = useNavigation();
 
+  const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, isRTL, locale } = useI18N();
 
   const { TypeConstants, isList, isPost, isContact, isGroup } = useType();
@@ -95,15 +96,15 @@ const FAB = () => {
       count: (post && post[field]) ?? 0,
       type: "Feather",
       name: "check",
-      bgColor: Colors.primary,
-      fgColor: Colors.buttonText,
+      bgColor: styles.item.backgroundColor,
+      fgColor: styles.item.color,
       callback: () => onSaveQuickAction(field),
     };
     if (field === "quick_button_no_answer")
       return {
         ...defaultIconConfig,
         name: "phone-off",
-        bgColor: Colors.colorNo,
+        bgColor: "red" //Colors.colorNo,
       };
     if (field === "quick_button_contact_established")
       return {
@@ -153,9 +154,7 @@ const FAB = () => {
         title: i18n.t("contactDetailScreen.importContact", { locale }),
         count: null,
         type: "MaterialIcons",
-        //name: "user-check",
         name: "contact-phone",
-        bgColor: Colors.colorYes,
         callback: () => {
           navigation.navigate('ImportContacts', {
             type: TypeConstants.CONTACT_IMPORT, 
@@ -167,19 +166,21 @@ const FAB = () => {
 
   if (isList || isPost) return (
     <ActionButton
-      buttonColor={Colors.primary}
+      position={isRTL ? "left" : "right"}
+      buttonColor={globalStyles.buttonColor.backgroundColor}
+      shadowStyle={globalStyles.buttonShadow}
       renderIcon={(active) =>
         active ? (
           <Icon
             type={"Feather"}
             name={"x"}
-            style={[styles.FABIcon, { fontSize: 25 }]}
+            style={styles.icon}
           />
         ) : (
           <Icon
             type={isList ? "Feather" : "MaterialCommunityIcons"}
             name={isList ? "plus" : "comment-plus"}
-            style={[styles.FABIcon, { fontSize: 30 }]}
+            style={styles.icon}
           />
         )
       }
@@ -204,13 +205,13 @@ const FAB = () => {
             size={40}
             buttonColor={bgColor}
             nativeFeedbackRippleColor="rgba(0,0,0,0)"
-            textStyle={{ color: Colors.primary, fontSize: 15 }}
+            textStyle={styles.itemText}
             textContainerStyle={{ height: "auto" }}
           >
             <Icon
               type={type}
               name={name}
-              style={[styles.FABIcon, { color: fgColor }]}
+              style={styles.itemIcon}
             />
           </ActionButton.Item>
         );

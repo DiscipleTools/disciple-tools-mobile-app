@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text } from "native-base";
+import { View, Text } from "react-native";
 import { connect } from "react-redux";
 
 class NotificationBadge extends React.Component {

@@ -1,9 +1,6 @@
 import React from "react";
 import { View, Text, TextInput } from "react-native";
 import { Icon } from "native-base";
-//import PropTypes from 'prop-types';
-
-import TextField from "components/Field/Text/TextField";
 
 import useI18N from "hooks/useI18N";
 
@@ -20,6 +17,7 @@ const LabeledTextInput = (props) => {
     label,
     value,
     editing,
+    onChangeText,
   } = props;
 
   const { isRTL } = useI18N();
@@ -46,7 +44,7 @@ const LabeledTextInput = (props) => {
       </View>
       <View style={styles.inputRow}>
         {icon}
-        <TextField
+        <TextInput
           style={[styles.inputRowTextInput, textInputStyle]}
           {...props}
         />

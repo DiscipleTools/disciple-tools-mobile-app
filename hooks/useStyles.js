@@ -70,6 +70,11 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
     marginStart: isRTL ? 15 : 0,
     marginEnd: isRTL ? 0 : 15,
   },
+  selectedIcon: {
+    fontSize: 24,
+    //marginStart: "auto",
+    color: theme.text.link,
+  },
   // Components 
   rowContainer: {
     flexDirection: isRTL ? "row-reverse" : "row",
@@ -77,12 +82,24 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   columnContainer: {
     flexDirection: "column",
   },
+  screenContainer: {
+    backgroundColor: theme.surface.primary,
+    height: "100%",
+  },
+  // TODO: rename fieldContainer
   postDetailsContainer: {
     flexDirection: isRTL ? "row-reverse" : "row",
     marginHorizontal: 7,
   },
+  buttonColor: {
+    backgroundColor: theme.brand.primary,
+  },
+  buttonShadow: {
+    borderColor: theme.highlight,
+    borderWidth: 1,
+    borderRadius: 50
+  },
   body: {
-    //alignItems: isRTL ? "flex-end" : "flex-start",
     paddingHorizontal: 10,
     marginEnd: "auto",
   },
@@ -92,8 +109,11 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   divider: {
     backgroundColor: theme.divider,
   },
-  caret: {
-    marginStart: "auto",
+  activityIndicator: {
+    color: theme.text.primary,
+  },
+  refreshControl: {
+    color: theme.placeholder,
   }
 });
 

@@ -1,28 +1,30 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import {
+  Button,
   View,
   Text,
-  TouchableOpacity,
 } from "react-native";
-import PropTypes from "prop-types";
+import { Icon } from "native-base";
 
 import { Container } from "native-base";
 //import { Html5Entities } from 'html-entities';
 
 import FilterList from "components/FilterList";
 import OfflineBar from "components/OfflineBar";
+import SelectSheet from "components/Sheets/SelectSheet";
+import { HelpSheet } from "components/Sheets/ModalSheet";
 
 import useI18N from "hooks/useI18N";
 import useNotifications from "hooks/useNotifications.js";
 //import useMyUser from 'hooks/useMyUser.js';
+import useStyles from "hooks/useStyles";
 
-import Colors from "constants/Colors";
-
-import { styles } from "./NotificationsScreen.styles";
+import { localStyles } from "./NotificationsScreen.styles";
 
 const NotificationsScreen = ({ navigation }) => {
   const DEFAULT_LIMIT = 10;
 
+  const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, isRTL } = useI18N();
   const {
     data: notifications,
@@ -40,6 +42,13 @@ const NotificationsScreen = ({ navigation }) => {
     console.error(error);
   };
 
+  const [_notifications, _setNotifications] = useState(notifications ?? []);
+  const [search, setSearch] = useState(null);
+
+  useEffect(() => {
+    if (_notifications?.length !== notifications?.length) _setNotifications(notifications);
+  }, [notifications]);
+
   //const { userData, error: userError } = useMyUser();
   /*
   const notifications = [];
@@ -51,16 +60,11 @@ const NotificationsScreen = ({ navigation }) => {
 
   const userData = null;
 
-  const unreadNotifications = notifications?.filter((notification) => {
-    if (notification.is_new === "1") return notification;
-  });
-
   const [isAll, setIsAll] = useState(true);
   const [offset, setOffset] = useState(0);
   const [limit, setLimit] = useState(10); // fails: useState(DEFAULT_LIMIT);
 
   const NotificationItem = ({ item, loading }) => {
-    //console.log(JSON.stringify(item));
     const str1 = item?.notification_note?.search("<");
     const str2 = item?.notification_note?.search(">");
     const str3 = item?.notification_note?.length - 4;
@@ -80,65 +84,103 @@ const NotificationsScreen = ({ navigation }) => {
     // TODO
     //const entities = new Html5Entities();
     const isNew = item?.is_new === "1" ? true : false;
-    return (
-      <View
-        style={
-          isNew
-            ? { backgroundColor: "rgba(63, 114, 155, 0.19)" }
-            : { backgroundColor: Colors.mainBackgroundColor }
-        }
-      >
-        <View
-          style={[
-            styles.notificationContainer,
-            { flex: 1, flexDirection: "row" },
-          ]}
-        >
-          <View style={{ flex: 1 }}>
-            <Text style={isRTL ? { textAlign: "left" } : {}}>
-              {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
-              <Text>{newNotificationNoteA}</Text>
-              <Text
-                style={{ color: Colors.primary }}
-                onPress={() =>
-                  redirectToDetailView(
-                    entityName,
-                    entityId,
-                    newNotificationNoteC
-                  )
-                }
-              >
-                {newNotificationNoteC}
-                {/*entities.decode(newNotificationNoteC)*/}
-              </Text>
-            </Text>
-            <Text
+    const name = item?.notification_name;
+    const action = item?.notification_action;
+
+    const NotificationTypeIcon = () => {
+      const getIcon = () => {
+        if (isNew) return {
+          type: "Entypo",
+          name: "new"
+        };
+        if (name === "mention" || action === "mentioned") return {
+          type: "Octicons",
+          name: "mention"
+        };
+        return {
+          type: "MaterialIcons",
+          name: "notifications-none"
+        };
+      };
+      const { type: iconType, name: iconName }= getIcon();
+      return(
+        <View style={globalStyles.columnContainer}>
+          <View style={globalStyles.rowIcon}>
+            <Icon
+              type={iconType}
+              name={iconName}
               style={[
-                styles.prettyTime,
-                isRTL ? { textAlign: "left", flex: 1 } : {},
+                globalStyles.icon,
+                { fontSize: 18 }
               ]}
-            >
-              {/*TODOmoment(notification.date_notified).fromNow() +
-                ' ~ ' +
-              moment(notification.date_notified).format('L')*/}
+            />
+          </View>
+        </View>
+      );
+    };
+
+    const NotificationDetails = () => (
+      <View style={[
+        globalStyles.rowContainer,
+        styles.notificationDetails
+      ]}>
+        {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
+        <Text>{newNotificationNoteA}</Text>
+        <Text
+          style={styles.link}
+          onPress={() =>
+            redirectToDetailView(
+              entityName,
+              entityId,
+              newNotificationNoteC
+            )
+          }
+        >
+          {newNotificationNoteC}
+          {/*entities.decode(newNotificationNoteC)*/}
+        </Text>
+      </View>
+    );
+
+    const NotificationDate = () => {
+      const parseDate = (dateStr) => {
+        try {
+          const today = new Date();
+          //const parsedDateMS = Date.parse(dateStr?.trim());
+          const parsedDateMS = Date.parse(dateStr?.trim()?.split(' ')[0]);
+          const diffMS = today - parsedDateMS;
+          const aDay = 24*60*60*1000;
+          const isToday = diffMS < aDay;
+          const diffDays = Math.floor(diffMS/aDay);
+          if (isNaN(diffDays)) return null;
+          // TODO: translate
+          if (isToday) return "today";
+          return `${ diffDays }d`
+        } catch (error) {
+          return null;
+        };
+      };
+      if (!item?.date_notified) return null;
+      const parsedDate = parseDate(item.date_notified);
+      return(
+        <View style={globalStyles.columnContainer}>
+          <View style={globalStyles.rowIcon}>
+            <Text style={globalStyles.caption}>
+              {parsedDate}
             </Text>
           </View>
-          <TouchableOpacity
-            onPress={() => {
-              toggleReadUnread(item, isNew);
-            }}
-          >
-            <View style={styles.buttonContainer}>
-              <View
-                style={
-                  isNew
-                    ? styles.notificationUnreadButton
-                    : styles.notificationReadButton
-                }
-              />
-            </View>
-          </TouchableOpacity>
         </View>
+      );
+    };
+
+    return (
+      <View style={[
+        globalStyles.rowContainer,
+        styles.container
+      ]}>
+        <NotificationTypeIcon />
+        <NotificationDetails />
+        <NotificationDate />
       </View>
     );
   };
@@ -169,22 +211,146 @@ const NotificationsScreen = ({ navigation }) => {
     });
   };
 
-  const renderItem = ({ item }) => <NotificationItem item={item} loading={isLoading||isValidating||isError} />;
+  const renderItem = ({ item }) => <NotificationItem item={item} loading={isLoading||isValidating} />;
+
+  const filterGroup = [
+    {
+      //label: 'Unread',
+      label: 'Comments',
+      query: ''
+    },
+    {
+      label: 'All',
+      query: ''
+    },
+    {
+      //label: 'Read',
+      label: "Activities",
+      query: ''
+    },
+  ];
+
+  /*
+  const unreadNotifications = notifications?.filter((notification) => {
+    if (notification.is_new === "1") return notification;
+  });
+  */
+  const onSearch = (search) => {
+    if (search?.length < 1) {
+      _setNotifications(notifications);
+      return;
+    };
+    _setNotifications(
+      _notifications?.filter(notification => notification?.notification_note?.includes(search))
+    );
+    return;
+  };
+
+  const bottomSheetRefSort = useRef(null);
+  const bottomSheetRefFilter = useRef(null);
+  const showSort = () => bottomSheetRefSort.current.expand();
+  //const showFilter = () => bottomSheetRefFilter.current.snapToIndex(1);
+  const showFilter = () => bottomSheetRefFilter.current.snapToIndex(0);
+
+  const renderBackdrop = useCallback(
+    props => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+      />
+    ), []);
+
+  const SortSheet = () => {
+    const onClose = () => bottomSheetRefSort.current.close();
+    const onSnap = useCallback((index) => {
+      console.log('handleSheetChanges', index);
+    }, []);
+    const snapPoints = useMemo(() => ['33%'], []);
+    return(
+      <BottomSheet
+        ref={bottomSheetRefSort}
+        index={-1}
+        snapPoints={snapPoints}
+        onChange={onSnap}
+        enablePanDownToClose
+        backdropComponent={renderBackdrop}
+        //detached={true}
+        // add bottom inset to elevate the sheet
+        //bottomInset={50}
+      >
+        <View style={{
+          flex: 1,
+          alignItems: 'center',
+          paddingTop: 20,
+        }}>
+          <Text>Sort 🎉</Text>
+          <Button title="Dismiss" onPress={() => onClose()} />
+        </View>
+      </BottomSheet>
+    );
+  };
+
+  //const FilterSheet = () => <HelpSheet ref={bottomSheetRefFilter} />;
+
+  const FilterSheet = () => {
+    const onDismiss = () => bottomSheetRefFilter.current.close();
+    const onDone = () => {
+      console.log('onDone');
+    };
+    const onSnap = useCallback((index) => {
+      console.log('handleSheetChanges', index);
+    }, []);
+    const snapPoints = useMemo(() => ['25%', '50%', '95%'], []);
+    const items = useMemo(
+      () =>
+        Array(50)
+          .fill(0)
+          .map((_, index) => ({
+            key: index,
+            label: `index-${index}`,
+            selected: index % 2 === 0 ? true : false,
+          })),
+      []
+    );
+
+    const renderItem = useCallback(
+      (item) => (
+        <View key={item} style={styles.itemContainer}>
+          <Text>{item}</Text>
+        </View>
+      ),
+      []
+    );
+
+    return(
+      <SelectSheet
+        ref={bottomSheetRefFilter}
+        snapPoints={snapPoints}
+        onSnap={onSnap}
+        items={items}
+        renderItem={renderItem}
+        onDismiss={onDismiss}
+        onDone={onDone}
+      />
+    );
+  };
 
   return (
-    <Container style={styles.container}>
+    <View style={globalStyles.screenContainer}>
       <OfflineBar />
       <FilterList
-        items={(notifications?.length > 0) ? notifications : []}
+        items={_notifications}
         renderItem={renderItem}
         onRefresh={mutate}
         // TODO: add term and translate
         placeholder={"NOTIFICATIONS PLACEHOLDER TEXT"}
+        //search={search}
+        onSearch={onSearch}
+        filterGroup={filterGroup}
+        onSort={()=>showSort(true)}
+        onShowFilters={()=>showFilter(true)}
       />
-    </Container>
+    </View>
   );
-};
-NotificationsScreen.propTypes = {
-  navigation: PropTypes.object.isRequired,
 };
 export default NotificationsScreen;

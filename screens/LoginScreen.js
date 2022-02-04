@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, forwardRef } from "react";
 import {
   ActivityIndicator,
   Image,
   Keyboard,
   Linking,
+  Pressable,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-//import PropTypes from "prop-types";
 
-import { Button, Icon } from "native-base";
+import { Icon } from "native-base";
 
 import PluginRequired from "components/PluginRequired";
 import LabeledTextInput from "components/LabeledTextInput";
@@ -21,13 +21,14 @@ import { useAuth } from "hooks/useAuth";
 import useDevice from "hooks/useDevice";
 import useI18N from "hooks/useI18N";
 import usePlugins from "hooks/usePlugins";
+import useStyles from "hooks/useStyles";
 import useToast from "hooks/useToast";
 
-import Colors from "constants/Colors";
-import { styles } from "./LoginScreen.styles";
+import { localStyles } from "./LoginScreen.styles";
 
 const LoginScreen = () => {
 
+  const { styles, globalStyles } = useStyles(localStyles);
   const { user, rememberLoginDetails, signIn } = useAuth();
   const { isIOS } = useDevice();
   const { i18n, isRTL, locale } = useI18N();
@@ -46,8 +47,8 @@ const LoginScreen = () => {
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
 
-  const usernameFieldRef = useRef();
-  const passwordFieldRef = useRef();
+  //const usernameFieldRef = useRef();
+  //const passwordFieldRef = useRef();
 
   const cleanDomain = (domain) => {
     // trim leading/trailing whitespace and remove protocol
@@ -102,14 +103,14 @@ const LoginScreen = () => {
     );
   };
 
-  const DomainField = () => {
+  const DomainField = forwardRef((props, ref) => {
     useEffect(() => {
       if (rememberLoginDetails && user?.domain) {
+        ref.current = user.domain;
         setDomain(user.domain);
-        domainRef.current = user.domain;
       };
     }, [])
-    const [domain, setDomain] = useState(domainRef?.current);
+    const [domain, setDomain] = useState(ref?.current);
     const domainErrorMessage = state.domainValidation ? (
       <Text style={styles.validationErrorMessage}>
         {i18n.t("loginScreen.domain.error", { locale })}
@@ -119,14 +120,14 @@ const LoginScreen = () => {
       <>
         <LabeledTextInput
           editing
-          onChangeText={text => {
+          onChangeText={(text) => {
+            ref.current = text;
             setDomain(text);
-            domainRef.current = text;
           }}
           value={domain}
           accessibilityLabel={i18n.t("loginScreen.domain.label", { locale })}
           label={i18n.t("loginScreen.domain.label", { locale })}
-          style={styles.inputRowTextInput}
+          style={styles.inputText}
           containerStyle={[styles.textField, state.domainValidation && styles.domainErrorInput]}
           // TODO: LabeledTextInput currently hardcoded to Ionicons
           iconName={isIOS ? "ios-link" : "md-link"}
@@ -143,16 +144,16 @@ const LoginScreen = () => {
         {domainErrorMessage}
       </>
     );
-  };
+  });
 
-  const UsernameField = () => {
+  const UsernameField = forwardRef((props, ref) => {
     useEffect(() => {
       if (rememberLoginDetails && user?.username) {
+        ref.current = user.username;
         setUsername(user.username);
-        usernameRef.current = user.username;
       };
-    }, [])
-    const [username, setUsername] = useState(usernameRef?.current);
+    }, []);
+    const [username, setUsername] = useState(ref?.current);
     const userErrorMessage = state.userValidation ? (
       <Text style={styles.validationErrorMessage}>
         {i18n.t("loginScreen.username.error", { locale })}
@@ -165,10 +166,11 @@ const LoginScreen = () => {
           value={username}
           onChangeText={text => {
             setUsername(text);
-            usernameRef.current = text;
+            ref.current = text;
           }}
           accessibilityLabel={i18n.t("loginScreen.username.label", { locale })}
           label={i18n.t("loginScreen.username.label", { locale })}
+          style={styles.inputText}
           containerStyle={[styles.textField, state.usernameValidation && styles.validationErrorInput]}
           iconName={isIOS ? "ios-person" : "md-person"}
           textAlign={isRTL ? "right" : "left"}
@@ -185,10 +187,10 @@ const LoginScreen = () => {
         {userErrorMessage}
       </>
     );
-  };
+  });
 
-  const PasswordField = () => {
-    const [password, setPassword] = useState(passwordRef?.current);
+  const PasswordField = forwardRef((props, ref) => {
+    const [password, setPassword] = useState(ref?.current);
     const [showPassword, setShowPassword] = useState(false);
     const passwordErrorMessage = state.passwordValidation ? (
       <Text style={styles.validationErrorMessage}>
@@ -201,12 +203,13 @@ const LoginScreen = () => {
           editing
           value={password}
           onChangeText={text => {
+            ref.current = text;
             setPassword(text);
-            passwordRef.current = text;
           }}
-          ref={passwordFieldRef}
+          ref={ref}
           accessibilityLabel={i18n.t("loginScreen.password.label", { locale })}
           label={i18n.t("loginScreen.password.label", { locale })}
+          style={styles.inputText}
           containerStyle={[styles.textField, state.passwordValidation && styles.validationErrorInput]}
           iconName={isIOS ? "ios-key" : "md-key"}
           underlineColorAndroid="transparent"
@@ -215,65 +218,58 @@ const LoginScreen = () => {
         />
         <TouchableOpacity
           activeOpacity={0.8}
-          style={styles.touchableButton}
+          style={styles.showPasswordView}
           onPress={()=>setShowPassword(!showPassword)}
         >
           <Icon
             type="FontAwesome"
             name="eye"
-            style={[
-              { marginBottom: "auto", marginTop: "auto", fontSize: 24 },
-              !showPassword ?  { opacity: 0.3 } : { opacity: null },
-            ]}
+            style={styles.showPasswordIcon(showPassword)}
           />
         </TouchableOpacity>
         {passwordErrorMessage}
       </View>
     );
-  };
+  });
 
   const LoginButton = () => (
-    <View>
-      <Button
-        accessibilityLabel={i18n.t("loginScreen.logIn", { locale })}
-        style={styles.signInButton}
-        onPress={onLoginPress}
-        block
-      >
-        <Text style={styles.signInButtonText}>
-          {i18n.t("loginScreen.logIn", { locale })}
-        </Text>
-      </Button>
-      <TouchableOpacity
-        style={styles.forgotButton}
-        onPress={goToForgotPassword}
-        disabled={loading}
-      >
-        <Text style={styles.forgotButtonText}>
-          {i18n.t("loginScreen.forgotPassword", { locale })}
-        </Text>
-      </TouchableOpacity>
-    </View>
+    <>
+      <Pressable onPress={onLoginPress}>
+        <View style={styles.signInButton}>
+          <Text style={styles.signInButtonText}>
+            {i18n.t("loginScreen.logIn", { locale })}
+          </Text>
+        </View>
+      </Pressable>
+      <Pressable onPress={goToForgotPassword} disabled={loading}>
+        <View style={styles.forgotButton}>
+          <Text style={globalStyles.link}>
+            {i18n.t("loginScreen.forgotPassword", { locale })}
+          </Text>
+        </View>
+      </Pressable>
+    </>
   );
 
   const LoadingSpinner = () => {
     return (
       <ActivityIndicator
-        color={Colors.tintColor}
-        style={{ margin: 20 }}
-        size="small"
+        style={[
+          globalStyles.icon,
+          styles.spinner
+        ]}
       />
     );
   };
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyles.screenContainer}>
       <Header />
       <View style={styles.formContainer}>
         <PluginRequired {...mobileAppPlugin} /> 
-        <DomainField />
-        <UsernameField />
-        <PasswordField />
+        <DomainField ref={domainRef} />
+        <UsernameField ref={usernameRef} />
+        <PasswordField ref={passwordRef} />
         { loading ? <LoadingSpinner /> : <LoginButton /> }
         <AppVersion />
       </View>
@@ -281,5 +277,4 @@ const LoginScreen = () => {
     </View>
   );
 };
-//LoginScreen.propTypes = {};
 export default LoginScreen;

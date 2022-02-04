@@ -11,21 +11,15 @@ import {
   Right,
 } from "native-base";
 
+import useAPI from "hooks/useAPI";
 import useDevice from "hooks/useDevice";
 import useI18N from "hooks/useI18N";
-import useAPI from "hooks/useAPI";
+import useStyles from "hooks/useStyles";
 import useToast from "hooks/useToast";
 
-import { styles } from "./LanguagePicker.styles";
+import { localStyles } from "./LanguagePicker.styles";
 
-const LanguagePicker = ({ dropdown }) => {
-  const { isIOS } = useDevice();
-  const { i18n, isRTL, locale, setLocale } = useI18N();
-  const toast = useToast();
-  const { updateUser } = useAPI();
-  return (
-    <>
-      {dropdown ? (
+/*
         <ListItem icon>
           <Left>
             <Button style={styles.button}>
@@ -64,26 +58,31 @@ const LanguagePicker = ({ dropdown }) => {
             </NBPicker>
           </Right>
         </ListItem>
-      ) : (
-        <View style={styles.languagePickerContainer}>
-          <Icon
-            type="FontAwesome"
-            name="language"
-            style={styles.languageIcon}
-          />
-          <RNPicker
-            selectedValue={locale}
-            onValueChange={(locale) => setLocale(locale)}
-            style={styles.languagePicker}
-          >
-            {Object.keys(i18n?.translations).map((lang) => {
-              const endonym = i18n.translations[lang]?.endonym ?? null;
-              return <RNPicker.Item key={endonym} label={endonym} value={lang} />;
-            })}
-          </RNPicker>
-        </View>
-      )}
-    </>
+*/
+const LanguagePicker = ({ dropdown }) => {
+  const { styles, globalStyles } = useStyles(localStyles);
+  const { isIOS } = useDevice();
+  const { i18n, isRTL, locale, setLocale } = useI18N();
+  const toast = useToast();
+  //const { updateUser } = useAPI();
+  return (
+    <View style={styles.languagePickerContainer}>
+      <Icon
+        type="FontAwesome"
+        name="language"
+        style={styles.languageIcon}
+      />
+      <RNPicker
+        selectedValue={locale}
+        onValueChange={(locale) => setLocale(locale)}
+        style={styles.languagePicker}
+      >
+        {Object.keys(i18n?.translations).map((lang) => {
+          const endonym = i18n.translations[lang]?.endonym ?? null;
+          return <RNPicker.Item key={endonym} label={endonym} value={lang} />;
+        })}
+      </RNPicker>
+    </View>
   );
 };
 export default LanguagePicker;

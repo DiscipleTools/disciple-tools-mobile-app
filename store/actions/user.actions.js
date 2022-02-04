@@ -15,6 +15,8 @@ export const USER_ADD_PUSH_TOKEN_RESPONSE = "USER_ADD_PUSH_TOKEN_RESPONSE";
 export const USER_ADD_PUSH_TOKEN_SUCCESS = "USER_ADD_PUSH_TOKEN_SUCCESS";
 export const USER_ADD_PUSH_TOKEN_FAILURE = "USER_ADD_PUSH_TOKEN_FAILURE";
 
+export const SET_THEME = "SET_THEME";
+
 export const GET_MY_USER_INFO = "GET_MY_USER_INFO";
 export const GET_MY_USER_INFO_START = "GET_MY_USER_INFO_START";
 export const GET_MY_USER_INFO_RESPONSE = "GET_MY_USER_INFO_RESPONSE";
@@ -55,6 +57,10 @@ export function login(domain, username, password) {
     username,
     password,
   };
+}
+
+export function setTheme(theme) {
+  return { type: SET_THEME, theme };
 }
 
 export function getPushToken() {

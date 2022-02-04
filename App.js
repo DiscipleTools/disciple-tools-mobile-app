@@ -1,6 +1,6 @@
 import './wdyr';
 import React, { useEffect } from "react";
-import { LogBox } from "react-native";
+import { LogBox, Text } from "react-native";
 import AppNavigator from "navigation/AppNavigator";
 //import PropTypes from 'prop-types';
 
@@ -14,12 +14,14 @@ import { Root } from 'native-base';
 
 import { AuthProvider } from "hooks/useAuth";
 import usePushNotifications from "hooks/usePushNotifications";
+import useStyles from "hooks/useStyles";
 
 import { AppConstants } from "constants";
 
 import { SWRConfig } from "swr";
 
 const App = () => {
+
 
   useEffect(() => {
     LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
@@ -43,6 +45,15 @@ const App = () => {
     })();
   }, []);
 
+  // NOTE: Necessary bc our chain of hooks depends on Redux and we need to be inside the Redux Provider
+  const StyledApp = () => {
+    // set default text styles
+    const { globalStyles } = useStyles();
+    Text.defaultProps = Text.defaultProps || {};
+    Text.defaultProps.style = { ...globalStyles.text };
+    return <AppNavigator />;
+  };
+
   // NOTE: Native-Base <Root> required for some components
   return (
     <Provider store={store}>
@@ -59,7 +70,7 @@ const App = () => {
         >
           <AuthProvider>
             <Root>
-              <AppNavigator />
+              <StyledApp />
             </Root>
           </AuthProvider>
         </SWRConfig>

@@ -1,26 +1,19 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Icon } from "native-base";
 
-import Colors from "constants/Colors";
+import useStyles from "hooks/useStyles";
 
+import { localStyles } from "./TabBarIcon.styles";
+
+// TODO: replace with components/Icon
 function TabBarIcon({ type, name, focused }) {
+  const { styles } = useStyles(localStyles);
   return (
     <Icon
       type={type}
       name={name}
-      style={{
-        marginBottom: -3,
-        color: focused ? Colors.tabIconSelected : Colors.tabIconDefault,
-        fontSize: 26,
-      }}
+      style={styles.icon(focused)}
     />
   );
 }
-
-TabBarIcon.propTypes = {
-  type: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  focused: PropTypes.bool.isRequired,
-};
 export default TabBarIcon;

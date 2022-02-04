@@ -19,17 +19,18 @@ import useI18N from "hooks/useI18N";
 import useComments from "hooks/useComments";
 import useActivity from "hooks/useActivity";
 import useMyUser from "hooks/useMyUser";
+import useStyles from "hooks/useStyles";
 import useToast from "hooks/useToast";
 import useAPI from "hooks/useAPI";
 
 // TODO: refactor out
-import Colors from "constants/Colors";
 import utils from "utils";
 
-import { styles } from "./CommentsActivityScreen.styles";
+import { localStyles } from "./CommentsActivityScreen.styles";
 
 const CommentsActivityScreen = ({ navigation, route }) => {
 
+  const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, isRTL } = useI18N();
   const toast = useToast();
   const { data: userData } = useMyUser();
@@ -183,7 +184,7 @@ const CommentsActivityScreen = ({ navigation, route }) => {
               parse={[
                 {
                   pattern: utils.mentionPattern,
-                  style: { color: Colors.primary },
+                  style: { color: "#F0F" }, //Colors.primary },
                   renderText: utils.renderMention,
                 },
               ]}
@@ -255,18 +256,15 @@ const CommentInput = () => {
     return;
   };
   return(
-    <>
-      { comment?.length > 0 && (
-        <View style={{ flexGrow: 1, marginLeft: "auto", paddingTop: 5, paddingBottom: 15 }}>
-          <Icon
-            type="MaterialCommunityIcons"
-            name="arrow-expand"
-            style={{ fontSize: 24, color: Colors.gray }}
-            //onPress={() => toggleExpandedTextInput(false)}
-          />
-        </View>
-      )}
-      <View style={styles.commentInput}>
+    <View style={styles.commentInput}>
+      {/* comment?.length > 0 && (
+        <Icon
+          type="MaterialCommunityIcons"
+          name="arrow-expand"
+          style={styles.expandIcon}
+          //onPress={() => toggleExpandedTextInput(false)}
+        />
+      )*/}
         <TextInput
           editable={!loading}
           multiline={true}
@@ -274,21 +272,25 @@ const CommentInput = () => {
           onChangeText={(text) => setComment(text)}
           // TODO: translate
           placeholder={"Comment"}
+          placeholderTextColor={globalStyles.placeholder.color}
           //autoFocus={true}
-          style={{ flex: 1, fontSize: 16 }}
+          style={styles.commentText}
         />
         { !loading ? (
           <Icon
             type="MaterialCommunityIcons"
             name="send-circle"
-            style={{ fontSize: 42, color: Colors.primary }}
+            style={styles.sendIcon}
             onPress={() => onSave(comment)}
           />
         ) : (
-          <ActivityIndicator size="small" color={Colors.primary} />
+          <ActivityIndicator
+            size="small"
+            color={globalStyles.activityIndicator.color}
+            style={styles.activityIndicator}
+          />
         )}
       </View>
-    </>
   );
 };
 
@@ -297,10 +299,8 @@ const ExpandableTextInput = () => {
   const insets = useSafeAreaInsets();
   return(
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <CustomKeyboardAvoidingView style={{ backgroundColor: "#fff", flexGrow: 1, flexDirection: "column", justifyContent: "space-between", borderTopWidth: 1, borderColor: "#ccc" }}>
-          <View style={{ height: 100, paddingLeft: 10, paddingRight: 10 }}>
-            <CommentInput />
-          </View>
+        <CustomKeyboardAvoidingView style={styles.commentView}>
+          <CommentInput />
         </CustomKeyboardAvoidingView>
       </TouchableWithoutFeedback>
     );

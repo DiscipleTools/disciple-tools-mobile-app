@@ -1,7 +1,6 @@
-import * as actions from "../actions/user.actions";
+import * as actions from "store/actions/user.actions";
 import { REHYDRATE } from "redux-persist/lib/constants";
 
-import * as Random from "expo-random";
 
 const userDataInitialState = {
   username: null,
@@ -9,6 +8,7 @@ const userDataInitialState = {
   locale: null,
   id: null,
   expoPushToken: null,
+  theme: null,
 };
 const initialState = {
   error: null,
@@ -36,6 +36,14 @@ export default function userReducer(state = initialState, action) {
       return {
         ...newState,
         loading: false,
+      };
+    case actions.SET_THEME:
+      return {
+        ...newState,
+        userData: {
+          ...newState.userData,
+          theme: action.theme,
+        },
       };
     case actions.SET_PIN_SUCCESS:
       return {

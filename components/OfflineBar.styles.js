@@ -1,14 +1,11 @@
-import { StyleSheet } from "react-native";
-import Colors from 'constants/Colors';
-
-export const styles = StyleSheet.create({
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
   offlineBar: {
     height: 20,
-    backgroundColor: Colors.offlineBar,
+    backgroundColor: theme.warning,
   },
   offlineBarText: {
     fontSize: 14,
-    color: Colors.headerTintColor,
+    color: theme.text.primary,
     textAlignVertical: "center",
     textAlign: "center",
   },
