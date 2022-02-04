@@ -1,32 +1,14 @@
+import React from "react";
 import { useRoute } from "@react-navigation/native";
-import React, { useEffect, useState, useMemo } from "react";
 
-// TODO: clean up across screens
-const TypeConstants = {
-  CONTACT: "contacts",
-  CONTACT_CREATE: "CONTACT_CREATE",
-  CONTACT_IMPORT: "CONTACT_IMPORT",
-  GROUP: "groups",
-  GROUP_CREATE: "GROUP_CREATE",
-  TRAINING: "TRAINING",
-  QUESTIONNAIRE: "QUESTIONNAIRE",
-  NOTIFICATION: "notifications",
-};
+import { FieldNames, TypeConstants } from "constants";
 
-const useType = () => {
-
-  /*
-  const [count, setCount] = useState(1);
-  useEffect(() => {
-    setCount(count => count + 1);
-  }, []); 
-  console.log(`useType: render # ${count}`);
-  */
+const useType = ({ type, subtype } = {}) => {
 
   const route = useRoute();
 
-  const type = route?.params?.type;
-  const subtype = route?.params?.subtype;
+  if (!type) type = route?.params?.type;
+  if (!subtype && !type) subtype = route?.params?.subtype;
 
   const isContact = (
     type === TypeConstants.CONTACT ||
@@ -51,6 +33,11 @@ const useType = () => {
 
   const isList = isPost && !route?.params?.id && !route?.params?.name;
 
+  const getPostTypeByFieldName = (fieldName) => {
+    if (fieldName === FieldNames.GROUPS) return TypeConstants.GROUP;
+    return postType();
+  };
+
   return {
     TypeConstants,
     isList,
@@ -62,6 +49,7 @@ const useType = () => {
     isNotification,
     isCommentsActivity,
     postType: postType(),
+    getPostTypeByFieldName,
   };
   /*
   return {

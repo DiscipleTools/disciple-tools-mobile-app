@@ -38,17 +38,15 @@ const useFilterContext = () => {
 
   const onSearch = (search) => setSearch(search);
   const onFilter = (filter) => {
-    console.log(`ON FILTER RETURN -> ${ JSON.stringify(filter) }`);
     dispatch({ type: SET_FILTER, filter });
   };
 
   const items = () => cache.get(key);
 
   // TODO: implement
-  const setItems = (items) => {
-    console.log("*** SET ITEMS ***");
-    //if (!isOnline) mutate(key, items, false);
-  };
+  const setItems = (items) => null; //{
+  //  if (!isOnline) mutate(key, items, false);
+  //};
 
   return {
     key,

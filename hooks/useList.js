@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
+
+import { Html5Entities } from "html-entities";
+
+import useFilter from "hooks/useFilter";
 import useType from "hooks/useType.js";
 import useRequest from "hooks/useRequest";
 import useMyUser from "hooks/useMyUser";
-import { Html5Entities } from "html-entities";
 
-const useList = ({ search, filter }) => {
+// TODO: need search as param for useUsersContacts
+const useList = ({ type } = {}) => {
+//const useList = ({ setKey, search, filter, type } = {}) => {
 
-  const { isContact, isGroup, postType } = useType();
+  const { isContact, isGroup, postType } = useType({ type });
   const { data: userData } = useMyUser();
+  const { setKey, filter, search } = useFilter();
 
   // TODO: duplicated in useDetails
   const mapContacts = (contacts, entities) => {
@@ -321,6 +327,8 @@ const useList = ({ search, filter }) => {
     return null;
   };
 
+  // TODO: [object Object]
+  // /dt-posts/v2/contacts?&fields%5B%5D=[object Object]&sort=name&fields_to_return%5B%5D=name&fields_to_return%5B%5D=favorite&fields_to_return%5B%5D=overall_status&fields_to_return%5B%5D=seeker_path&fields_to_return%5B%5D=milestones&fields_to_return%5B%5D=assigned_to&fields_to_return%5B%5D=groups&fields_to_return%5B%5D=last_modified
   const mapFilterOnQueryParams = (filter, userData) => {
     let queryParams = '';
     Object.keys(filter).forEach((key) => {
@@ -343,10 +351,12 @@ const useList = ({ search, filter }) => {
   };
 
   let url = `/dt-posts/v2/${postType}`;
-  if (search || filter) url += '?';
+  if (search || filter?.query) url += '?';
   if (search) url += `text=${search}`;
-  if (filter && userData) url += mapFilterOnQueryParams(filter, userData);
-  if (!search && !filter) url += "?dt_recent=true";
+  if (filter?.query && userData) url += mapFilterOnQueryParams(filter?.query, userData);
+  if (!search && !filter?.query) url += "?dt_recent=true";
+
+  setKey(url);
 
   // TODO: offline filtering
   // TODO: useSelector for initialData if OFFLINE

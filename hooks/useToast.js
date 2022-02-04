@@ -1,9 +1,9 @@
 import { Toast } from "native-base";
 
-import useI18N from "hooks/useI18N";
+//import useI18N from "hooks/useI18N";
 
 const useToast = () => {
-  const { i18n } = useI18N();
+  //const { i18n } = useI18N();
 
   const toast = (message, error = false) => {
     // TODO

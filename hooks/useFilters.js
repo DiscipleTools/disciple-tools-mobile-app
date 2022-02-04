@@ -103,8 +103,6 @@ const useFilters = () => {
     const mappedCustomFilters = [];
     customFilters?.filters.forEach((filter) => {
       if (filter?.tab === tab) {
-        //console.log("*** FILTER ***");
-        //console.log(filter);
         const ID = filter?.ID ?? null;
         const name = filter?.name ?? "";
         const count = filter?.count ?? 0;
@@ -125,8 +123,6 @@ const useFilters = () => {
   const mapCustomFilters = (customFilters) => {
     const mappedCustomFilters = [];
     customFilters?.tabs.forEach((tab) => {
-      //console.log("*** TAB ***");
-      //console.log(tab);
       const key = tab?.key ?? null;
       const title = tab?.label ?? "";
       let content = [];

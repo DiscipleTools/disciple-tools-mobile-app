@@ -30,8 +30,6 @@ const useNotifications = () => {
     },
   };
   const { data, error, isLoading, isValidating, mutate } = useRequest(request);
-  console.log("*** NOTIFICATIONS ***");
-  console.log(JSON.stringify(data));
   return {
     data,
     error,

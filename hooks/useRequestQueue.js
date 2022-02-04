@@ -34,8 +34,9 @@ const useRequestQueue = () => {
     const key = request?.url;
     if (!key) return null;
     const localCachedData = cache.get(key);
+    //console.log(`localCachedData: ${JSON.stringify(localCachedData)}`);
     const newData = request?.data;
-    mutate(request?.url, { ...localCachedData, ...newData }, false);
+    mutate(key, { ...localCachedData, ...newData }, false);
     return axios(request);
   };
 
@@ -43,14 +44,15 @@ const useRequestQueue = () => {
     if (!isConnected) {
       dispatch(enqueueRequest(request));
       // throw new Error?
+      // TODO: translate
       toast("OFFLINE, request being queued...");
       return null;
     };
     if (hasPendingRequests()) {
-      console.log("request queue: has pending requests");
+      //console.log("request queue: has pending requests");
       for (const ii=0; ii < pendingRequests?.length; ii++) {
         const pendingRequest = pendingRequests[ii];
-        console.log(`pending request: ${ JSON.stringify(pendingRequest) }`);
+        //console.log(`pending request: ${ JSON.stringify(pendingRequest) }`);
         await _mutate(pendingRequest);
         dispatch(dequeueRequest(pendingRequest));
       };
