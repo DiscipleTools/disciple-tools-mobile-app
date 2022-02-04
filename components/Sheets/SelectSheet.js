@@ -1,49 +1,53 @@
-import React, { forwardRef, useCallback, useMemo, useRef, useState } from "react";
-import { Pressable, View, Text } from "react-native";
+import React, { useRef, useState } from "react";
+import { Image, Pressable, View, Text } from "react-native";
 import { Icon } from "native-base";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetFooter, BottomSheetScrollView, BottomSheetSectionList, useBottomSheet } from '@gorhom/bottom-sheet';
-
-//import SearchBar from "components/FilterList/SearchBar";
-import SheetHeader from "components/Sheets/SheetHeader";
+import { BottomSheetSectionList } from '@gorhom/bottom-sheet';
 import { SheetFooterCancel, SheetFooterDone } from "components/Sheets/SheetFooter";
 
+import useBottomSheet from "hooks/useBottomSheet";
 import useStyles from "hooks/useStyles";
 
 import { localStyles } from "./SelectSheet.styles";
 
-const SelectSheet = forwardRef((props, ref) => {
-
-  const { 
-    multiple,
+const SelectSheet = ({
     required,
-    snapPoints,
-    onSnap,
-    title,
-    items,
-    renderItem,
+    multiple,
     sections,
+    renderSectionHeader,
+    renderItem,
     onDismiss,
     onChange,
-    onDone,
-  } = props;
+}) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
-  const [snapIndex, setSnapIndex] = useState(-1);
+  const { collapse, delayedClose } = useBottomSheet();
 
   const [_sections, _setSections] = useState(sections);
+
+  // TODO: used for...
   const selectedCount = useRef(1);
 
-  const delayedClose = () => {
-    setTimeout(() => {
-      if (onDismiss) {
-        onDismiss();
-      } else {
-        ref.current.close();
-      };
-    }, 250);
+  const _onDismiss = () => {
+    if (onDismiss) {
+      onDismiss(_sections);
+      return;
+    };
+    collapse();
   };
 
-  const onPress = (key) => {
+  const _onDone = () => {
+    onChange(_sections);
+    delayedClose();
+  };
+
+  // TODO: prettier implementation
+  const _onChange = (selectedItem) => {
+    if (!multiple) {
+      onChange(selectedItem);
+      collapse();
+      return;
+    };
+    const key = selectedItem.key;
     const updatedSections = _sections.map(section => {
       return {
         title: section.title,
@@ -70,37 +74,24 @@ const SelectSheet = forwardRef((props, ref) => {
         })
       };
     });
-
-    const selectedKeys = [];
-    updatedSections.forEach(section => {
-      section.data.forEach(item => {
-        if (item.selected) selectedKeys.push(item.key);
-      })
-    });
     _setSections(updatedSections);
-    onChange(selectedKeys);
-    if (!multiple) delayedClose();
   };
 
-  const renderBackdrop = useCallback(
-    props => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-      />
-    ), []);
-
-  const _renderItem = (item) => {
-    const { key, label, icon, selected } = item?.item;
+  const _renderItem = ({ item }) => {
+    if (renderItem) return renderItem(item);
+    const { key, label, icon, avatar, selected } = item;
     return(
-      <Pressable onPress={() => onPress(key)}>
+      <Pressable onPress={() => _onChange(item)}>
         <View key={key} style={styles.itemContainer}>
+            {avatar && (
+              <Image style={styles.avatar} source={{ uri: avatar }} />
+            )}
             {icon && (
               <View style={globalStyles.rowIcon}>
                 <Icon
                   type={icon?.type}
                   name={icon?.name}
-                  style={globalStyles.icon}
+                  style={[globalStyles.icon, icon?.style ? icon?.style : {}]} 
                 />
               </View>
             )}
@@ -114,7 +105,7 @@ const SelectSheet = forwardRef((props, ref) => {
               <Icon
                 type="MaterialCommunityIcons"
                 name="check"
-                style={styles.selectedIcon}
+                style={globalStyles.selectedIcon}
               />
             </View>
           )}
@@ -123,66 +114,33 @@ const SelectSheet = forwardRef((props, ref) => {
     );
   };
 
-  //const _renderSectionHeader = useCallback(
-  //  ({ section }) => (
-    const _renderSectionHeader = ({ section }) => (
+  //const _renderSectionHeader = useCallback(({ section }) => (
+  const _renderSectionHeader = ({ section }) => {
+    if (renderSectionHeader) return renderSectionHeader({ section });
+    if (!section?.title) return null;
+    return(
       <View style={styles.sectionHeader}>
         <Text style={globalStyles.subtitle}>{section.title}</Text>
       </View>
     );
-  //  []
-  //);
+  };
 
   return(
-    <BottomSheet
-      ref={ref}
-      index={-1}
-      snapPoints={snapPoints}
-      onChange={setSnapIndex}
-      enablePanDownToClose
-      backdropComponent={renderBackdrop}
-      backgroundStyle={styles.container}
-    >
-      <SheetHeader
-        expandable
-        dismissable
-        snapPoints={snapPoints}
-        snapIndex={snapIndex}
-        title={title}
-        onDismiss={onDismiss}
-      />
-        <BottomSheetSectionList
-          sections={_sections}
-          keyExtractor={(i) => i}
-          renderSectionHeader={_renderSectionHeader}
-          renderItem={_renderItem}
-          contentContainerStyle={styles.contentContainer}
-        />
-      {/*
-      <BottomSheetScrollView
+    <>
+      <BottomSheetSectionList
+        sections={_sections}
+        // TODO
+        //keyExtractor={(key) => key}
+        renderSectionHeader={_renderSectionHeader}
+        renderItem={_renderItem}
         contentContainerStyle={styles.contentContainer}
-      >
-        {items?.map(item => 
-          _renderItem(item)
-        )}
-      </BottomSheetScrollView>
-        */}
+      />
       {multiple ? (
-        <SheetFooterDone onDone={onDone} />
+        <SheetFooterDone onDone={_onDone} />
       ) : (
-        <SheetFooterCancel onDismiss ={onDismiss} />
+        <SheetFooterCancel onDismiss={_onDismiss} />
       )}
-    </BottomSheet>
+    </>
   );
-});
-{/*
-<SelectSheetItem
-  key={item?.key}
-  item={item}
-  onPress={() => ref.current.close()}
-/>
-*/}
-
-export const SectionSelectSheet = forwardRef((props, ref) => <SelectSheet ref={ref} sections={props?.sections} />);
-
+};
 export default SelectSheet;

@@ -1,6 +1,7 @@
-import React, { forwardRef, useMemo } from "react";
+import React from "react";
 
 import SelectSheet from "components/Sheets/SelectSheet";
+import SheetHeader from "components/Sheets/SheetHeader";
 
 const SortConstants = {
   LAST_MOD_ASC: "sort_last_mod_asc",
@@ -9,33 +10,40 @@ const SortConstants = {
   CREATED_DESC: "sort_created_desc",
 };
 
-const SortSheet = forwardRef((props, ref) => {
+const ZZSortConstants = {
+  LAST_MOD_ASC: "-last_modified",
+  LAST_MOD_DESC: "last_modified",
+  CREATED_ASC: "-post_date",
+  CREATED_DESC: "post_date",
+};
 
-  const { items, setItems } = props;
+// NOTE: need to pass these props in vs. useFilter()
+const SortSheet = ({ items, setItems, filter, onFilter }) => {
 
+  const sortKey = filter?.query?.sort;
   const sections = [
     {
       title: "Last Modified Date",
       data: [
         {
-          key: SortConstants.LAST_MOD_ASC,
+          key: ZZSortConstants.LAST_MOD_ASC,
           // TODO: translate
           label: "Most Recent",
           icon: {
             type: 'MaterialCommunityIcons',
             name: 'sort-ascending',
           },
-          selected: true,
+          selected: ZZSortConstants.LAST_MOD_ASC === sortKey,
         },
         {
-          key: SortConstants.LAST_MOD_DESC,
+          key: ZZSortConstants.LAST_MOD_DESC,
           // TODO: translate
           label: "Least Recent",
           icon: {
             type: 'MaterialCommunityIcons',
             name: 'sort-descending',
           },
-          selected: false,
+          selected: ZZSortConstants.LAST_MOD_DESC === sortKey,
         },
       ]
     },
@@ -43,24 +51,24 @@ const SortSheet = forwardRef((props, ref) => {
       title: "Created Date",
       data: [
         {
-          key: SortConstants.CREATED_ASC,
+          key: ZZSortConstants.CREATED_ASC,
           // TODO: translate
           label: "Newest",
           icon: {
             type: 'MaterialCommunityIcons',
             name: 'sort-ascending',
           },
-          selected: false,
+          selected: ZZSortConstants.CREATED_ASC === sortKey,
         },
         {
-          key: SortConstants.CREATED_DESC,
+          key: ZZSortConstants.CREATED_DESC,
           // TODO: translate
           label: "Oldest",
           icon: {
             type: 'MaterialCommunityIcons',
             name: 'sort-descending',
           },
-          selected: false,
+          selected: ZZSortConstants.CREATED_DESC === sortKey,
         },
       ]
     }
@@ -88,29 +96,37 @@ const SortSheet = forwardRef((props, ref) => {
     setItems(sortedItems);
   };
 
-  const onChange = (selectedKeys) => {
+  const onChange = (sortValue) => { //selectedKeys) => {
+    /*
     // sort is mutually exclusive, so only select first
     let selectedKey = selectedKeys[0];
     // default to most recently modified, if none selected (should not happen)
     if (!selectedKey) selectedKey = SortConstants.LAST_MOD_ASC;
     sort(selectedKey);
+    */
+    if (filter?.query) {
+      filter.query["sort"] = sortValue[0];
+      onFilter(filter);
+    };
   };
-
-  const snapPoints = useMemo(() => ['50%', '95%'], []);
 
   // TODO: translate
   const title = "Sort by";
 
   return(
-    <SelectSheet
-      ref={ref}
-      //multiple={true}
-      //required={required}
-      snapPoints={snapPoints}
-      title={title}
-      sections={sections}
-      onChange={onChange}
-    />
+    <>
+      <SheetHeader
+        expandable
+        dismissable
+        title={title}
+      />
+      <SelectSheet
+        require
+        sections={sections}
+        onChange={onChange}
+      />
+    </>
   );
-});
+};
+//<SheetFooterDone onDone={onDone} />
 export default SortSheet;

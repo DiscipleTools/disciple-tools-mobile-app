@@ -5,7 +5,6 @@ import * as SplashScreen from "expo-splash-screen";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { PortalProvider } from '@gorhom/portal';
 
 import PINScreen from "screens/PINScreen";
 import LoginScreen from "screens/LoginScreen";
@@ -13,6 +12,8 @@ import MainTabNavigator from "./MainTabNavigator";
 
 import usePIN from "hooks/usePIN";
 import { useAuth } from "hooks/useAuth";
+import { BottomSheetProvider } from "hooks/useBottomSheet";
+import { FilterProvider } from "hooks/useFilter";
 
 const Stack = createNativeStackNavigator();
 
@@ -70,7 +71,11 @@ const AppNavigator = () => {
 
   const RenderLogin = () => {
     console.log(".......... RENDER LOGIN ....................");
-    if (authenticated) return <MainTabNavigator />;
+    if (authenticated) return(
+      <FilterProvider>
+        <MainTabNavigator />
+      </FilterProvider>
+    );
     return <LoginStack />;
   };
 
@@ -113,14 +118,14 @@ const AppNavigator = () => {
 
   return (
     <SafeAreaProvider>
-      <PortalProvider>
-        <NavigationContainer
-          onReady={onReady}
-          //theme={DarkTheme}
-        >
-          <RenderStack />
-        </NavigationContainer>
-      </PortalProvider>
+      <BottomSheetProvider>
+          <NavigationContainer
+            onReady={onReady}
+            //theme={DarkTheme}
+          >
+            <RenderStack />
+          </NavigationContainer>
+      </BottomSheetProvider>
     </SafeAreaProvider>
   );
 };

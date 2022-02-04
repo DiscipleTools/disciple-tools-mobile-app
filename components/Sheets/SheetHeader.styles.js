@@ -9,5 +9,9 @@ export const localStyles = ({ theme, isRTL }) => ({
     justifyContent: "flex-end",
     paddingBottom: 20,
     paddingHorizontal: 10,
+  },
+  closeIcon: {
+    color: theme.text.primary,
+    fontSize: 32,
   }
 });

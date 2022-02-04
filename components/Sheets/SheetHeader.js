@@ -1,22 +1,22 @@
 import React from "react";
 import { Pressable, View, Text } from "react-native";
 import { Icon } from "native-base";
-import { useBottomSheet } from '@gorhom/bottom-sheet';
 
+import useBottomSheet from 'hooks/useBottomSheet';
 import useStyles from "hooks/useStyles";
 
 import { localStyles } from "./SheetHeader.styles";
 
-const SheetHeader = ({ expandable, dismissable, title, snapPoints, snapIndex, onDismiss }) => {
+const SheetHeader = ({ expandable, dismissable, title, onDismiss }) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { snapToIndex, expand, close } = useBottomSheet();
+  const { expand, collapse, snapPoints, snapIndex, snapToIndex } = useBottomSheet();
   // TODO: lazy initialize
-  const lastIdx = snapPoints.length-1;
+  const lastIdx = snapPoints?.length-1;
   const isExpanded = snapIndex === lastIdx;
-  const onPressExpand = isExpanded ? () => snapToIndex(0) : () => expand();
+  const onPressExpand = isExpanded ? () => snapToIndex(0) : () => snapToIndex(lastIdx);
   const onPressDismiss = () => {
     if (onDismiss) onDismiss();
-    close();
+    collapse();
   };
   const truncatedTitle = title?.length > 35 ? `${title.substring(0, 35)}...` : title;
   return(
@@ -38,10 +38,7 @@ const SheetHeader = ({ expandable, dismissable, title, snapPoints, snapIndex, on
           <Icon
             type="MaterialIcons"
             name="clear"
-            style={[
-              globalStyles.icon,
-              { fontSize: 32 }
-            ]}
+            style={styles.closeIcon}
           />
         </Pressable>
       )}

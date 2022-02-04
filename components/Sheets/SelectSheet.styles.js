@@ -1,6 +1,6 @@
 export const localStyles = ({ theme, isRTL }) => ({
   container: {
-    backgroundColor: theme.background.primary,
+    backgroundColor: "#0FF", //theme.background.primary,
     // shadow
     shadowColor: theme.text.primary,
     shadowOffset: {
@@ -25,13 +25,13 @@ export const localStyles = ({ theme, isRTL }) => ({
   itemText: {
     fontSize: 32,
   },
-  selectedIcon: {
-    fontSize: 24,
-    //marginStart: "auto",
-    color: theme.text.link,
-  },
   sectionHeader: {
     backgroundColor: theme.background.primary,
     padding: 15,
-  }
+  },
+  avatar: {
+    height: 16,
+    width: 16,
+    marginRight: 5,
+  },
 });
