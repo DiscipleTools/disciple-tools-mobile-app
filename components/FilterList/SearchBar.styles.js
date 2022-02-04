@@ -1,65 +1,30 @@
-import { StyleSheet } from "react-native";
-import Colors from "constants/Colors";
-
-export const styles = StyleSheet.create({
-  searchSection: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderBottomColor: Colors.gray,
-    borderBottomWidth: 1,
-    minHeight: 60,
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
+  container: {
+    backgroundColor: theme.background.primary,
   },
-  searchIcon: {
-    padding: 10,
-    fontSize: 20,
+  inputContainer: {
+    //backgroundColor: theme.surface.primary,
+    backgroundColor: theme.surface.input,
+    borderWidth: 1,
+    borderColor: theme.divider,
+    borderRadius: 10,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    marginTop: 5,
+    marginHorizontal: 5,
+    minHeight: 50,
   },
   input: {
-    flex: 1,
+    color: theme.text.primary,
     paddingTop: 10,
-    paddingRight: 10,
     paddingBottom: 10,
-    paddingLeft: 0,
-    backgroundColor: "#fff",
-    color: "#424242",
+    marginEnd: "auto",
+    textAlign: isRTL ? "right" : "left",
+    width: "100%",
   },
-  searchBarContainer: {
-    borderBottomWidth: 1,
-    backgroundColor: Colors.tabBar,
-    borderBottomColor: "#FFF",
-    marginTop: 10,
-  },
-  searchBarScrollView: {
-    paddingBottom: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
-    paddingTop: 9,
-    minHeight: 60,
-  },
-  searchBarItem: {
-    borderColor: "#DDDDDD",
-    borderRadius: 3,
-    borderWidth: 10,
-  },
-  searchBarIcons: {
-    fontSize: 20,
-    color: "gray",
-    padding: 10,
-  },
-  searchBarInput: {
-    color: "gray",
-    height: 41,
-    fontSize: 18,
-  },
-  chip: {
-    borderColor: "#c2e0ff",
-    borderWidth: 1,
-    backgroundColor: "#ecf5fc",
-    borderRadius: 2,
-    padding: 4,
-    marginRight: 4,
-    marginBottom: 4,
+  icon: {
+    color: theme.text.primary,
+    fontSize: 24,
+    paddingHorizontal: 10,
   },
 });

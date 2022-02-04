@@ -1,66 +1,65 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Keyboard, View, TextInput } from "react-native";
 //import PropTypes from "prop-types";
-
 import { Icon } from "native-base";
 
+import SortSheet from "components/Sheets/SortSheet";
+
+import useBottomSheet from "hooks/useBottomSheet";
 import useDebounce from "hooks/useDebounce.js";
-import useNetworkStatus from "hooks/useNetworkStatus";
+import useFilter from "hooks/useFilter";
 import useI18N from "hooks/useI18N";
-import useToast from "hooks/useToast";
+import useStyles from "hooks/useStyles";
 
-import FilterOptionsPanel from "./FilterOptionsPanel";
+import { localStyles } from "./SearchBar.styles";
 
-import { styles } from "./SearchBar.styles";
-import Colors from "constants/Colors";
+const SearchBar = ({ sortable }) => {
 
-const SearchBar = ({ search, onSearch, filter, onFilter }) => {
-
-  const { isConnected } = useNetworkStatus();
+  const { styles, globalStyles } = useStyles(localStyles);
+  const { expand, collapse, snapPoints } = useBottomSheet();
+  const { items, setItems, search, onSearch, filter, onFilter } = useFilter();
   const { i18n } = useI18N();
-  const toast = useToast();
 
-  const [_search, _setSearch] = useState(search);
+  const [_search, _setSearch] = useState(search ?? '');
   const debouncedSearch = useDebounce(_search, 1000);
 
-  const [showFilterOptionsPanel, setShowFilterOptionsPanel] = useState(false);
-
   useEffect(() => {
-    if (debouncedSearch) _onSearch(debouncedSearch);
+    onSearch(debouncedSearch);
+    Keyboard.dismiss();
     return;
   }, [debouncedSearch]);
 
-  const _onSearch = (search) => {
-    if (search?.length < 1) {
-      onSearch(null);
-      _setSearch("");
-      Keyboard.dismiss();
-      return;
-    };
-    onSearch(search);
-    return;
+  const onClear = () => {
+    onSearch('');
+    _setSearch('');
   };
 
-  const _onClear = () => {
-    _onSearch('');
-    setShowFilterOptionsPanel(false);
-  };
+  const sortSheetContent = useMemo(() => (
+    <SortSheet
+      items={items}
+      setItems={setItems}
+      filter={filter}
+      onFilter={onFilter}
+    />
+  ), [items, filter]);
 
-  const _onFilter = (filter) => {
-    setShowFilterOptionsPanel(false);
-    onFilter(filter);
-  };
+  const showSort = (show) => show ? expand({
+    index: 1,
+    snapPoints,
+    renderContent: () => sortSheetContent
+  }) : collapse();
 
   return (
-    <>
-      <View style={styles.searchSection}>
+    <View style={styles.container}>
+      <View style={[globalStyles.rowContainer, styles.inputContainer]}>
         <Icon
           type="MaterialIcons"
           name="search"
-          style={styles.searchIcon}
+          style={styles.icon}
         />
         <TextInput
           placeholder={i18n.t("global.search")}
+          placeholderTextColor={globalStyles.placeholder.color}
           value={_search}
           onChangeText={_setSearch}
           autoCorrect={false}
@@ -70,31 +69,25 @@ const SearchBar = ({ search, onSearch, filter, onFilter }) => {
           <Icon
             type="MaterialIcons"
             name="clear"
-            style={styles.searchIcon}
-            onPress={() => _onClear()}
+            style={styles.icon}
+            onPress={() => onClear()}
           />
         )}
-        <Icon
-          type="MaterialIcons"
-          name="filter-list"
-          style={[styles.searchIcon, !isConnected ? { color: Colors.gray } : {}]}
-          onPress={() => {
-            if (!isConnected) return null;
-            setShowFilterOptionsPanel(!showFilterOptionsPanel);
-            return;
-          }}
-        />
+        { sortable && (
+          <Icon
+            type="MaterialCommunityIcons"
+            name="sort"
+            style={styles.icon}
+            onPress={() => showSort(true)}
+          />
+        )}
       </View>
-      {showFilterOptionsPanel && (
-        <FilterOptionsPanel filter={filter} onFilter={_onFilter} />
-      )}
-    </>
+    </View>
   );
 };
 /*
 SearchBar.propTypes = {
-  setFilter: PropTypes.func.isRequired,
-  setOptionsFilter: PropTypes.func,
+  onSearch: PropTypes.func.isRequired
 };
 */
 export default SearchBar;

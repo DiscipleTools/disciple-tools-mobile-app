@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState } from "react";
 import { Platform, Pressable, Text, View, } from "react-native";
 //import PropTypes from "prop-types";
 

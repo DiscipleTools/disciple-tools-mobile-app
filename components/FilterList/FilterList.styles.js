@@ -1,41 +1,34 @@
-import { StyleSheet } from "react-native";
-import Colors from "constants/Colors";
-
-export const styles = StyleSheet.create({
-  listItemSeparator: {
-    height: 1,
-    width: "100%",
-    backgroundColor: Colors.grayLight,
-  },
-  background: {
-    backgroundColor: Colors.mainBackgroundColor,
-    borderTopColor: Colors.grayLight,
-    borderTopWidth: 1,
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
+  container: {
+    backgroundColor: theme.surface.primary,
     height: "100%",
   },
-  placeholder: {
-    padding: 20,
-    fontWeight: "bold",
+  filtersScrollContainer: {
+    backgroundColor: theme.background.primary,
+    borderBottomColor: theme.divider,
+    borderBottomWidth: 1,
+    minHeight: 50,
   },
-  tags: {
+  filtersContentContainer: {
     flexGrow: 1,
-    flexDirection: "row",
-    backgroundColor: Colors.mainBackgroundColor,
+    flexDirection: isRTL ? "row-reverse" : "row",
+    backgroundColor: theme.background.primary,
+    height: "100%",
     width: "100%",
   },
-  chip: {
-    borderColor: "#c2e0ff",
-    borderWidth: 1,
-    backgroundColor: "#ecf5fc",
-    borderRadius: 2,
-    padding: 7,
-    marginTop: 5,
-    marginLeft: 5,
-    marginBottom: 5,
+  placeholderContainer: {
+    backgroundColor: theme.surface.primary,
+    height: "100%",
   },
-  countChip: {
-    borderColor: Colors.mainBackgroundColor,
-    backgroundColor: Colors.mainBackgroundColor,
+  placeholderText: {
+    color: theme.placeholder,
+    padding: 20,
+  },
+  count: {
+    fontSize: 16,
     fontWeight: "bold",
+    marginTop: "auto",
+    marginBottom: "auto",
+    marginLeft: 5,
   }
 });

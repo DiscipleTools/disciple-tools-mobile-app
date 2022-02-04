@@ -1,14 +1,15 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
-import { Icon } from "native-base";
 // (recommended by native base (https://docs.nativebase.io/Components.html#swipeable-multi-def-headref))
 import { SwipeListView } from "react-native-swipe-list-view";
 
 import SearchBar from "./SearchBar";
+import FilterOptions from "./FilterOptions";
 
 import useI18N from "hooks/useI18N";
+import useStyles from "hooks/useStyles";
 
-import { styles } from "./FilterList.styles";
+import { localStyles } from "./FilterList.styles";
 
 import PropTypes from "prop-types";
 
@@ -22,15 +23,18 @@ const FilterList = ({
   rightOpenValue,
   onRowDidOpen,
   onRowDidClose,
-  search,
-  onSearch,
-  filter,
-  onFilter
 }) => {
 
+  const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
 
   const [refreshing, setRefreshing] = useState(false);
+
+  const [_items, _setItems] = useState(null);
+
+  useEffect(() => {
+    _setItems(items);
+  }, [items]);
 
   const _onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -40,50 +44,45 @@ const FilterList = ({
     }, 1000);
   });
 
-  const listItemSeparator = () => <View style={styles.listItemSeparator} />;
-
-  const Tags = () => (
-    <ScrollView
-      horizontal
-      style={{ minHeight: 50 }}
-      contentContainerStyle={styles.tags}
-    >
-      <Text style={[styles.chip, styles.countChip ]}>({items?.length})</Text>
-      { filter?.ID !== -1 && (
-        <View style={[styles.countChip, { flexDirection: "row", alignItems: "center" }]}>
-          <Icon
-            type="MaterialCommunityIcons"
-            name="filter-variant-remove"
-            onPress={() => onFilter(null)}
-          />
-        </View>
-      )}
-      { filter?.name && (
-        <View style={[styles.chip, { flexDirection: "row", alignItems: "center" }]}>
-          <Text>{ filter?.name }</Text>
-        </View>
-      )}
-    </ScrollView>
+  const Count = () => (
+    <Text style={[globalStyles.text, styles.count]}>({items?.length})</Text>
   );
+
+  const Filters = () => {
+    return(
+      <ScrollView
+        horizontal
+        style={styles.filtersScrollContainer}
+        contentContainerStyle={styles.filtersContentContainer}
+      >
+        <Count />
+        <FilterOptions />
+      </ScrollView>
+    );
+  };
 
   const Placeholder = () => {
     const defaultPlaceholder = i18n.t("global.placeholder");
     return(
-      <View style={styles.background}>
-        <Text style={styles.placeholder}>{placeholder ?? defaultPlaceholder}</Text>
+      <View style={styles.placeholderContainer}>
+        <Text style={styles.placeholderText}>{placeholder ?? defaultPlaceholder}</Text>
       </View>
     );
   };
 
   return (
     <>
-      <SearchBar search={search} onSearch={onSearch} filter={filter} onFilter={onFilter} />
-      <Tags />
+      <SearchBar
+        sortable
+        items={_items}
+        setItems={_setItems}
+      />
+      <Filters />
       {items?.length === 0 ? (
         <Placeholder />
       ) : (
         <SwipeListView
-          data={items}
+          data={_items}
           renderItem={renderItem}
           renderHiddenItem={renderHiddenItem ?? null}
           leftOpenValue={leftOpenValue}
@@ -94,14 +93,16 @@ const FilterList = ({
           onRowDidClose={(item) => {
             onRowDidClose === undefined ? null : onRowDidClose(item);
           }}
-          ItemSeparatorComponent={listItemSeparator}
           keyExtractor={(item) => item?.ID?.toString()}
-          //extraData={}
-          //ListFooterComponent={}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={_onRefresh} />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={_onRefresh}
+              colors={globalStyles.refreshControl.color}
+              tintColor={globalStyles.refreshControl.color}
+            />
           }
-          style={styles.background}
+          style={styles.container}
         />
       )}
     </>

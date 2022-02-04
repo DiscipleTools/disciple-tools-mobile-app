@@ -1,13 +1,15 @@
+import React, { useCallback, useMemo, useReducer, useRef, useState } from "react";
+
 import useNetworkStatus from "hooks/useNetworkStatus";
 import useType from "hooks/useType";
 import useRequest from "hooks/useRequest";
 
 const useFilters = () => {
 
-  const isConnected = useNetworkStatus();
+  //const isConnected = useNetworkStatus();
   const { isPost, isNotification, isCommentsActivity, postType } = useType();
 
-  const url = (isPost && isConnected) ? `/dt/v1/users/get_filters?post_type=${postType}&force_refresh=1` : null;
+  const url = isPost ? `/dt/v1/users/get_filters?post_type=${postType}&force_refresh=1` : null;
   let { data, error, isLoading, isValidating } = useRequest({ url });
 
   if (isCommentsActivity) data = [
