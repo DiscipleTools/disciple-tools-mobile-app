@@ -24,7 +24,7 @@ import {
   groupPeerIcon,
   groupTypeIcon,
   swimmingPoolIcon,
-} from "constants/Icons";
+} from "constants/icons";
 
 import { FieldNames } from "constants";
 
@@ -251,14 +251,9 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
   };
 
   const PostView = () => {
-    return value?.values?.map((connection, idx) => (
-      <PostLink
-        key={connection?.name ?? idx}
-        id={connection?.value}
-        title={connection?.name}
-        type={"contacts"}
-      />
-    ))
+    return values?.map(value => (
+      <PostLink id={value?.value} title={value?.name} type={getPostTypeByFieldName(field?.name)} />
+    ));
   };
 
   const ConnectionFieldEdit = () => {

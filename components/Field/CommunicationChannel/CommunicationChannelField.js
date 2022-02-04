@@ -56,7 +56,8 @@ const CommunicationChannelField = ({ editing, field, values, onChange }) => {
   const renderTextInput = (value, idx) => {
 
     const [_text, _setText] = useState(value?.value);
-    const debouncedText = useDebounce(_text, 1000);
+    // TODO: 1000 too slow and user may click plus sign, but less is too fast for entries like email
+    const debouncedText = useDebounce(_text, 750);
 
     useEffect(() => {
       if (debouncedText !== value?.value) {

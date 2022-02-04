@@ -1,8 +1,11 @@
-import { StyleSheet } from "react-native";
-//import Colors from 'constants/Colors';
-
-export const styles = StyleSheet.create({
-  textField: {
-    fontSize: 12,
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
+  container: {
+    backgroundColor: theme.surface.primary,
+  },
+  input: {
+    color: theme.text.primary,
+    marginEnd: "auto",
+    paddingHorizontal: 10,
+    width: "100%",
   },
 });

@@ -1,23 +1,14 @@
 import React from "react";
+import { Switch, Text } from "react-native";
 
-import useI18N from "hooks/useI18N";
+const BooleanField = ({ editing, value, onChange }) => {
 
-const BooleanField = ({ value, editing, onChange }) => {
-  const { isRTL } = useI18N();
+  const BooleanFieldEdit = () => <Switch value={value} onValueChange={onChange} />;
+  const BooleanFieldView = () => <Text>{new String(value)}</Text>;
 
-  // if value is null, then set a default to ensure field displays
-  if (value === null) value = false;
-
-  // TODO: implement as Switch?
-
-  const BooleanFieldEdit = () => {
-    return null;
-  };
-
-  const BooleanFieldView = () => {
-    return null;
-  };
-
-  return <>{editing ? <BooleanFieldEdit /> : <BooleanFieldView />}</>;
+  // if value is null/undefined or not boolean, set false to ensure render
+  if (!value || typeof variable !== "boolean") value = false;
+  if (editing) return <BooleanFieldEdit />;
+  return <BooleanFieldView />;
 };
 export default BooleanField;

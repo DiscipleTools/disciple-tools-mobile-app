@@ -8,4 +8,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     paddingHorizontal: 10,
     width: "100%",
   },
+  controlIcons: {
+    justifyContent: "space-between"
+  }
 });

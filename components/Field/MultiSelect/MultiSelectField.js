@@ -10,9 +10,11 @@ import useBottomSheet from "hooks/useBottomSheet";
 import useStyles from "hooks/useStyles";
 import useType from "hooks/useType";
 
+import { localStyles } from "./MultiSelectField.styles";
+
 const MultiSelectField = ({ editing, field, value, onChange }) => {
 
-  const { globalStyles } = useStyles();
+  const { styles, globalStyles } = useStyles(localStyles);
   const { expand, snapPoints } = useBottomSheet();
   const { postType } = useType();
 
@@ -144,9 +146,13 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
     );
     */
     return (
-      <Text>
-        { selectedItems.map((selectedItem) => selectedItem?.label).join(", ") }
-      </Text>
+      <View style={styles.container}>
+        {selectedItems.map(selectedItem => (
+          <Text style={styles.item}>
+            {selectedItem?.label}
+          </Text>
+        ))}
+      </View>
     );
   };
 

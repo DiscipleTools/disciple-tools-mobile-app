@@ -46,10 +46,10 @@ const TextField = ({ editing, value, onChange }) => {
           style={styles.input}
         />
         { showSave && (
-          <>
+          <View style={[globalStyles.rowContainer, styles.controlIcons]}>
             <ClearIcon onPress={() => _onClear()} />
             <SaveIcon onPress={() => _onChange()} />
-          </>
+          </View>
         )}
       </View>
     </View>

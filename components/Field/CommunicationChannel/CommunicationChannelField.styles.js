@@ -42,6 +42,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   linkingText: {
     paddingTop: 4,
     paddingBottom: 8,
+    color: theme.text.link,
     textDecorationLine: "underline",
   },
   field: {

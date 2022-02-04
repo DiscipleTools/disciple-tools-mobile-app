@@ -35,8 +35,6 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
 
   let value = null;
   try { value = post[field?.name]; } catch (error) {};
-  //console.log(`...FIELD value: ${JSON.stringify(value)}`);
-  //console.log(`...post: ${JSON.stringify(post)}`);
 
   const [_editing, _setEditing] = useState(editing);
   const [_value, _setValue] = useState(value);
@@ -79,7 +77,6 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   };
 
   const _onSave = async(newValue) => {
-    console.log(`..._onSave: ${JSON.stringify(newValue)}`);
     const fieldType = field?.type;
     let data = { [field?.name]: newValue };
     if (fieldType === FieldTypes.COMMUNICATION_CHANNEL) {
@@ -87,7 +84,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
       const filteredNewValue = newValue.map(value => value?.key?.startsWith(FieldConstants.TMP_KEY_PREFIX) ? { value: value?.value } : value);
       data = { [field?.name]: filteredNewValue };
     };
-    console.log(`data: ${JSON.stringify(data)}`);
+    //console.log(`data: ${JSON.stringify(data)}`);
     await updatePost(data);
     mutate();
   };
@@ -104,17 +101,13 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
    * - else, set local state (and await manual save via icon)
    */
   const _onChange = (newValue, { autosave } = {}) => {
-    console.log(`newValue: ${JSON.stringify(newValue)}`);
     if (grouped) {
-      console.log("*** ON CHANGE 1 ***")
       onChange(newValue);
       return;
     };
     if (autosave) {
-      console.log("*** ON CHANGE 2 ***")
       _onSave(newValue);
     };
-    console.log("*** ON CHANGE N ***")
     _setValue(newValue);
     return;
   };
@@ -134,9 +127,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   );
 
   const EditControls = () => {
-    console.log("**** EDIT CONTROLS ****");
     const hasChanged = _value !== value; // && !(value === null && (_value === null || _value === ''));
-    console.log(`hasChanged: ${hasChanged}`);
     return(
       <Col size={1} style={styles.formControls}>
         { !grouped && (
@@ -174,9 +165,6 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   };
 
   const FieldComponent = () => {
-    //console.log("***************************");
-    //console.log(`name: ${JSON.stringify(field?.name)}`);
-    //console.log(`type: ${JSON.stringify(field?.type)}`);
     switch (field?.type) {
       case FieldTypes.BOOLEAN:
         return (

@@ -1,40 +1,70 @@
-import React from "react";
-import { Text, TextInput } from "react-native";
-//import PropTypes from 'prop-types';
+import React, { useEffect, useState } from "react";
+import { Text, TextInput, View } from "react-native";
 
-import useI18N from "hooks/useI18N";
+import { ClearIcon, SaveIcon } from "components/Icon";
 
-import { styles } from "./NumberField.styles";
+import useDebounce from "hooks/useDebounce";
+import useStyles from "hooks/useStyles";
 
-const NumberField = ({ value, editing, onChange }) => {
-  const { i18n, isRTL } = useI18N();
+import { localStyles } from "./NumberField.styles";
 
-  // if value is null, then set a default to ensure field displays
-  if (value === null) value = "";
+// TODO: refactor futher
+// most of this can be reused with TextField
+// only the TextInput prop 'keyboardType="numeric" is different
+const NumberField = ({ editing, value, onChange }) => {
 
-  const handleChange = (newValue) => {
-    if (newValue !== value) onChange(newValue);
+  const { styles, globalStyles } = useStyles(localStyles);
+
+  const [showSave, setShowSave] = useState(false);
+
+  const mappedValue = value ? new String(value) : '';
+  const [_value, _setValue] = useState(mappedValue);
+
+  const debouncedValue = useDebounce(_value, 1000);
+
+  useEffect(() => {
+    if (debouncedValue !== mappedValue) {
+      setShowSave(true);
+    };
+    return;
+  }, [debouncedValue]);
+
+  const _onClear = () => {
+    _setValue(mappedValue);
+    setShowSave(false);
   };
 
-  const NumberFieldEdit = () => (
-    <TextInput
-      autoFocus={true}
-      keyboardType="numeric"
-      defaultValue={value}
-      onChangeText={handleChange}
-      // TODO: more consistent styling
-      style={[styles.textField, isRTL ? { textAlign: "left", flex: 1 } : {}]}
-    />
+  const _onChange = () => {
+    if (_value !== mappedValue) {
+      onChange(_value, {
+        autosave: true,
+        automutate: true
+      });
+    };
+  };
+
+  const renderNumberFieldEdit = () => (
+    <View style={styles.container}>
+      <View style={globalStyles.rowContainer}>
+        <TextInput
+          keyboardType="numeric"
+          value={_value}
+          onChangeText={_setValue}
+          style={styles.input}
+        />
+        { showSave && (
+          <>
+            <ClearIcon onPress={() => _onClear()} />
+            <SaveIcon onPress={() => _onChange()} />
+          </>
+        )}
+      </View>
+    </View>
   );
 
-  const NumberFieldView = () => {
-    return (
-      <Text style={isRTL ? { textAlign: "left", flex: 1 } : {}}>
-        {value.toString()}
-      </Text>
-    );
-  };
+  const renderNumberFieldView = () => <Text>{_value}</Text>;
 
-  return <>{editing ? <NumberFieldEdit /> : <NumberFieldView />}</>;
+  if (editing) return renderNumberFieldEdit();
+  return renderNumberFieldView();
 };
 export default NumberField;
