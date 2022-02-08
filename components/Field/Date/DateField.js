@@ -90,7 +90,9 @@ const DateField = ({ editing, field, value, onChange }) => {
         day: '2-digit',
       };
       const locale_p = locale?.replace('_','-');
-      return new Intl.DateTimeFormat(locale_p, options).format(date);
+      // NOTE: Intl is not supported in Android
+      //return new Intl.DateTimeFormat(locale_p, options).format(date);
+      return date.toLocaleDateString(locale_p, options);
     };
     const dateValue = mappedValue ? formatDateView(mappedValue) : '';
     return (
