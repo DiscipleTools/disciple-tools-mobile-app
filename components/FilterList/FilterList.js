@@ -98,8 +98,8 @@ const FilterList = ({
             <RefreshControl
               refreshing={refreshing}
               onRefresh={_onRefresh}
-              colors={globalStyles.refreshControl.color}
-              tintColor={globalStyles.refreshControl.color}
+              //colors={globalStyles.refreshControl.color}
+              //tintColor={globalStyles.refreshControl.color}
             />
           }
           style={styles.container}
