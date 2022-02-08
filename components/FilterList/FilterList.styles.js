@@ -14,7 +14,8 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     flexDirection: isRTL ? "row-reverse" : "row",
     backgroundColor: theme.background.primary,
     height: "100%",
-    width: "100%",
+    // NOTE: width: "100%" prevents horizontal scroll on Android
+    //width: "100%",
   },
   placeholderContainer: {
     backgroundColor: theme.surface.primary,
