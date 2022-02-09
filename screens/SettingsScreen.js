@@ -118,7 +118,7 @@ const SettingsScreen = ({ navigation }) => {
       iconType="MaterialCommunityIcons"
       iconName="theme-light-dark"
       // TODO: translate
-      label={"Light/Dark Mode"}
+      label={"Dark Mode"}
       component={
         <Switch
           trackColor={{ true: styles.switch.color}}
@@ -236,7 +236,6 @@ const SettingsScreen = ({ navigation }) => {
     };
     return (
       <SettingsOption
-        pressable  
         onPress={draftNewSupportEmail}
         iconType="MaterialCommunityIcons"
         iconName="help-circle"
@@ -247,7 +246,6 @@ const SettingsScreen = ({ navigation }) => {
 
   const LogoutButton = () => (
     <SettingsOption
-      pressable  
       onPress={signOut}
       iconName="log-out"
       label={i18n.t("settingsScreen.logout", { locale })}
@@ -275,7 +273,6 @@ const SettingsScreen = ({ navigation }) => {
       console.log('handleSheetChanges', index);
     }, []);
     const snapPoints = useMemo(() => ['50%', '95%'], []);
-    const sections = useMemo(() => 
       [
         {
           title: "Endonym (Locale)",
