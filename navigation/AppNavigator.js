@@ -117,16 +117,16 @@ const AppNavigator = () => {
   };
 
   return (
-    <SafeAreaProvider>
-      <BottomSheetProvider>
-          <NavigationContainer
-            onReady={onReady}
-            //theme={DarkTheme}
-          >
-            <RenderStack />
-          </NavigationContainer>
-      </BottomSheetProvider>
-    </SafeAreaProvider>
+    <BottomSheetProvider>
+      <SafeAreaProvider>
+        <NavigationContainer
+          onReady={onReady}
+          //theme={DarkTheme}
+        >
+          <RenderStack />
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </BottomSheetProvider>
   );
 };
 export default AppNavigator;
