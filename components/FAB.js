@@ -28,7 +28,7 @@ const FAB = () => {
     isValidating,
     mutate,
     postId,
-    postType
+    postType,
   } = useDetails();
 
   const { updatePost } = useAPI();
@@ -37,7 +37,9 @@ const FAB = () => {
   if (!settings) return null;
 
   const onSaveQuickAction = (quickActionPropertyName) => {
-    const newActionValue = post[quickActionPropertyName] ? Number(post[quickActionPropertyName])+1 : 1;
+    const newActionValue = post[quickActionPropertyName]
+      ? Number(post[quickActionPropertyName]) + 1
+      : 1;
     updatePost({ [quickActionPropertyName]: newActionValue });
   };
 
@@ -76,7 +78,8 @@ const FAB = () => {
   };
 
   const filterQuickButtonFields = () => {
-    if (isList && isContact) return ["quick_button_new", "quick_button_import_contacts"];
+    if (isList && isContact)
+      return ["quick_button_new", "quick_button_import_contacts"];
     if (isPost && settings?.fields) {
       const quickButtonFields = [];
       Object.keys(settings.fields).forEach((field) => {
@@ -84,7 +87,7 @@ const FAB = () => {
       });
       //if (quickButtonFields.length === 0 && isGroup) return ["quick_button_contact_established"];
       return quickButtonFields;
-    };
+    }
     return [];
   };
 
@@ -104,37 +107,42 @@ const FAB = () => {
       return {
         ...defaultIconConfig,
         name: "phone-off",
-        bgColor: "red" //Colors.colorNo,
+        bgColor: "red", //Colors.colorNo,
       };
     if (field === "quick_button_contact_established")
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "phone-in-talk",
+        bgColor: "green", //TODO
       };
     if (field === "quick_button_meeting_scheduled")
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "calendar-plus",
+        bgColor: "orange", //TODO
       };
     if (field === "quick_button_meeting_complete")
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "calendar-check",
+        bgColor: "green", //TODO
       };
     if (field === "quick_button_meeting_postponed")
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "calendar-minus",
+        bgColor: "orange", //TODO
       };
     if (field === "quick_button_no_show")
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "calendar-remove",
+        bgColor: "red", //TODO
       };
     if (field === "quick_button_new")
       return {
@@ -143,8 +151,8 @@ const FAB = () => {
         count: null,
         name: "plus",
         callback: () => {
-          navigation.navigate('CreateContact', {
-            type: TypeConstants.CONTACT_CREATE, 
+          navigation.navigate("CreateContact", {
+            type: TypeConstants.CONTACT_CREATE,
           });
         },
       };
@@ -156,68 +164,62 @@ const FAB = () => {
         type: "MaterialIcons",
         name: "contact-phone",
         callback: () => {
-          navigation.navigate('ImportContacts', {
-            type: TypeConstants.CONTACT_IMPORT, 
+          navigation.navigate("ImportContacts", {
+            type: TypeConstants.CONTACT_IMPORT,
           });
         },
       };
     return null;
   };
 
-  if (isList || isPost) return (
-    <ActionButton
-      position={isRTL ? "left" : "right"}
-      buttonColor={globalStyles.buttonColor.backgroundColor}
-      shadowStyle={globalStyles.buttonShadow}
-      renderIcon={(active) =>
-        active ? (
-          <Icon
-            type={"Feather"}
-            name={"x"}
-            style={styles.icon}
-          />
-        ) : (
-          <Icon
-            type={isList ? "Feather" : "MaterialCommunityIcons"}
-            name={isList ? "plus" : "comment-plus"}
-            style={styles.icon}
-          />
-        )
-      }
-      degrees={0}
-      activeOpacity={0}
-      bgColor="rgba(0,0,0,0.5)"
-      nativeFeedbackRippleColor="rgba(0,0,0,0)"
-      onPress={() => {
-        if (isList && isGroup) console.log("*** CREATE GROUP ***"); //navigation.navigate('CreatePost', {});
-      }}
-    >
-      {quickButtonFields?.length > 0 && quickButtonFields.map((field) => {
-        const { title, count, type, name, bgColor, fgColor, callback } =
-          mapIcon(field);
-        return (
-          <ActionButton.Item
-            key={count}
-            title={count !== null ? `${title} (${count})` : title}
-            onPress={() => {
-              callback();
-            }}
-            size={40}
-            buttonColor={bgColor}
-            nativeFeedbackRippleColor="rgba(0,0,0,0)"
-            textStyle={styles.itemText}
-            textContainerStyle={{ height: "auto" }}
-          >
+  if (isList || isPost)
+    return (
+      <ActionButton
+        position={isRTL ? "left" : "right"}
+        buttonColor={globalStyles.buttonColor.backgroundColor}
+        shadowStyle={globalStyles.buttonShadow}
+        renderIcon={(active) =>
+          active ? (
+            <Icon type={"Feather"} name={"x"} style={styles.icon} />
+          ) : (
             <Icon
-              type={type}
-              name={name}
-              style={styles.itemIcon}
+              type={isList ? "Feather" : "MaterialCommunityIcons"}
+              name={isList ? "plus" : "comment-plus"}
+              style={styles.icon}
             />
-          </ActionButton.Item>
-        );
-      })}
-    </ActionButton>
-  );
+          )
+        }
+        degrees={0}
+        activeOpacity={0}
+        bgColor="rgba(0,0,0,0.5)"
+        nativeFeedbackRippleColor="rgba(0,0,0,0)"
+        onPress={() => {
+          if (isList && isGroup) console.log("*** CREATE GROUP ***"); //navigation.navigate('CreatePost', {});
+        }}
+      >
+        {quickButtonFields?.length > 0 &&
+          quickButtonFields.map((field) => {
+            const { title, count, type, name, bgColor, fgColor, callback } =
+              mapIcon(field);
+            return (
+              <ActionButton.Item
+                key={count}
+                title={count !== null ? `${title} (${count})` : title}
+                onPress={() => {
+                  callback();
+                }}
+                size={40}
+                buttonColor={bgColor}
+                nativeFeedbackRippleColor="rgba(0,0,0,0)"
+                textStyle={styles.itemText}
+                textContainerStyle={{ height: "auto" }}
+              >
+                <Icon type={type} name={name} style={styles.itemIcon} />
+              </ActionButton.Item>
+            );
+          })}
+      </ActionButton>
+    );
   return null;
 };
 export default FAB;
