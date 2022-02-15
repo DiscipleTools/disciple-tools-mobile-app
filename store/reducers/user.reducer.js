@@ -42,8 +42,8 @@ export default function userReducer(state = initialState, action) {
         ...newState,
         userData: {
           ...newState.userData,
-          theme: action.theme,
         },
+        theme: action.theme,
       };
     case actions.SET_PIN_SUCCESS:
       return {

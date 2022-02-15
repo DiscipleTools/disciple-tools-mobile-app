@@ -5,10 +5,12 @@ import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 import FieldSkeleton from "components/Field/FieldSkeleton";
 
 import useI18N from "hooks/useI18N";
+import useTheme from "hooks/useTheme";
 
 const PostSkeleton = () => {
   const layout = useWindowDimensions();
   const windowWidth = layout.width;
+  const { theme } = useTheme();
   const { isRTL } = useI18N();
   const skeletons = Array(7)
     .fill("")
@@ -21,8 +23,8 @@ const PostSkeleton = () => {
         width={windowWidth}
         height={80}
         viewBox={"0 " + "0 " + windowWidth + " 80"}
-        backgroundColor="#e7e7e7"
-        foregroundColor="#b7b7b7"
+        backgroundColor={theme.background.primary}
+        foregroundColor={theme.divider}
       >
         <Rect x="0" y="0" rx="0" ry="0" width={windowWidth} height="35" />
         <Rect x="0" y="40" rx="2" ry="2" width="85" height="20" />
@@ -45,8 +47,8 @@ const PostSkeleton = () => {
         width={windowWidth}
         height={100}
         viewBox={"0 " + "0 " + windowWidth + " 80"}
-        backgroundColor="#e7e7e7"
-        foregroundColor="#b7b7b7"
+        backgroundColor={theme.background.primary}
+        foregroundColor={theme.divider}
       >
         <Circle cx="350" cy="60" r="35" />
       </ContentLoader>

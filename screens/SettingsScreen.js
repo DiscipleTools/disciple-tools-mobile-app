@@ -17,6 +17,7 @@ import useNetworkStatus from "hooks/useNetworkStatus";
 import useI18N from "hooks/useI18N";
 import usePIN from "hooks/usePIN";
 import useStyles from "hooks/useStyles";
+import useTheme from "hooks/useTheme";
 import useToast from "hooks/useToast";
 
 import { localStyles } from "./SettingsScreen.styles";
@@ -35,6 +36,7 @@ const SettingsScreen = ({ navigation }) => {
     toggleRememberLoginDetails,
     signOut,
   } = useAuth();
+  const { isDarkMode, toggleMode } = useTheme();
   const toast = useToast();
 
   const Header = () => {
@@ -112,7 +114,6 @@ const SettingsScreen = ({ navigation }) => {
   );
   */
 
-  const [dmvalue, setDMValue] = useState(true);
   const DarkModeToggle = () => (
     <SettingsOption
       iconType="MaterialCommunityIcons"
@@ -124,8 +125,8 @@ const SettingsScreen = ({ navigation }) => {
         <Switch
           trackColor={{ true: styles.switch.color}}
           thumbColor={styles.switch}
-          value={dmvalue}
-          onChange={() => setDMValue(!dmvalue)}
+          value={isDarkMode}
+          onChange={() => toggleMode()}
         />
       }
     />

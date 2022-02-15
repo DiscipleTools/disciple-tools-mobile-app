@@ -5,8 +5,10 @@ import { useWindowDimensions } from "react-native";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 
 import useI18N from "hooks/useI18N";
+import useTheme from "hooks/useTheme";
 
 const PostItemSkeleton = () => {
+  const { theme } = useTheme();
   const { isRTL } = useI18N();
   const windowWidth = useWindowDimensions().width;
   return (
@@ -16,8 +18,8 @@ const PostItemSkeleton = () => {
       width={windowWidth}
       height={77}
       viewBox={"0 " + "0 " + windowWidth + " 80"}
-      backgroundColor="#e7e7e7"
-      foregroundColor="#b7b7b7"
+      backgroundColor={theme.background.primary}
+      foregroundColor={theme.divider}
     >
       <Circle cx="385" cy="25" r="8" />
       <Rect x="10" y="20" rx="2" ry="2" width="150" height="8" />

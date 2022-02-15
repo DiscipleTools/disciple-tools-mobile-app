@@ -14,13 +14,15 @@ const useTheme = () => {
 
   let mode = persistedTheme?.mode || colorScheme;
   if (!mode || (mode !== ThemeConstants.DARK && mode !== ThemeConstants.LIGHT)) mode = ThemeConstants.LIGHT; // by default 
-  // TODO: remove
-  mode = "light";
-  //mode = "dark";
 
-  const theme = persistedTheme || mode === ThemeConstants.LIGHT ? defaultThemeLight : defaultThemeDark;
+  //const theme = persistedTheme || mode === ThemeConstants.LIGHT ? defaultThemeLight : defaultThemeDark;
+  const theme = mode === ThemeConstants.LIGHT ? defaultThemeLight : defaultThemeDark;
+  
+  //if (persistedTheme?.mode !== theme?.mode) setTheme(theme);
+
+  // NOTE: listen for device changes 
   Appearance.addChangeListener(scheme => {
-    //console.log(`*** Appearance.addChangeListener: ${JSON.stringify(scheme)}`);
+    console.log(`*** Appearance.addChangeListener: ${JSON.stringify(scheme)}`);
     //if (scheme?.colorScheme !== mode) dispatch(_setTheme(scheme?.colorScheme));
   });
 
@@ -47,10 +49,13 @@ const useTheme = () => {
 
   const setTheme = (theme) => dispatch(_setTheme(theme));
 
+  const toggleMode = () => setTheme(isDarkMode ? defaultThemeLight : defaultThemeDark);
+
   const isDarkMode = mode === ThemeConstants.DARK;
 
   return {
     isDarkMode,
+    toggleMode,
     theme,
     setTheme,
     getSelectorColor,
