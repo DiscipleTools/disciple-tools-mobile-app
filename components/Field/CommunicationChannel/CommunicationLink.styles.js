@@ -1,6 +1,5 @@
 import Constants from 'constants';
 
-// TODO: refactor to use global styles
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: {
     minHeight: Constants.FIELD_HEIGHT,
@@ -17,15 +16,9 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     flex: 11,
     width: "100%",
   },
-  input: {
-    color: theme.text.primary,
+  linkingText: {
+    color: theme.text.link,
+    textDecorationLine: "underline",
     paddingHorizontal: 10,
-  },
-  controlIcons: {
-    justifyContent: "space-between"
-  },
-  removeIcon: {
-    flex: 1,
-    justifyContent: "center"
   },
 });

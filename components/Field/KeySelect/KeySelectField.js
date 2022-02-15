@@ -37,7 +37,6 @@ const KeySelectField = ({ editing, field, value, onChange }) => {
       if (mappedValue !== value) {
         onChange(mappedValue, {
           autosave: true,
-          automutate: true
         });
       };
     };

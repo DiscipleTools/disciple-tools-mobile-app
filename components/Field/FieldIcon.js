@@ -1,4 +1,5 @@
 import React from "react";
+// TODO: swap out for React Native Icon
 import { Icon } from "native-base";
 
 import useStyles from "hooks/useStyles";

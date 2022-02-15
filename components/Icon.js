@@ -51,8 +51,10 @@ const FontAwesomeIcon = ({ name, onPress }) => {
 
 export const CaretIcon = () => <MaterialCommunityIcon name="chevron-down" />;
 
+export const AddIcon = ({ onPress }) => <MaterialIcon name="add" onPress={onPress} />;
 export const ClearIcon = ({ onPress }) => <MaterialIcon name="clear" onPress={onPress} />;
 export const EditIcon = ({ onPress }) => <MaterialIcon name="edit" onPress={onPress} />;
+export const RemoveIcon = ({ onPress }) => <MaterialIcon name="remove" onPress={onPress} />;
 export const SaveIcon = ({ onPress }) => <MaterialIcon name="save" onPress={onPress} />;
 
 // TabBarIcons

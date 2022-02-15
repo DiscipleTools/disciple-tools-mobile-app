@@ -8,16 +8,22 @@ import useStyles from "hooks/useStyles";
 
 import { localStyles } from "./TextField.styles";
 
-const TextField = ({ editing, value, onChange }) => {
+const TextField = ({ grouped=false, editing, value, onChange }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
 
   const [showSave, setShowSave] = useState(false);
   const [_value, _setValue] = useState(value);
-  const debouncedValue = useDebounce(_value, 1000);
+  // TODO: use constant for debounce time
+  const debouncedValue = useDebounce(_value, 1500);
 
   useEffect(() => {
     if (debouncedValue !== value) {
+      // TODO: explain
+      if (grouped) {
+        onChange(debouncedValue);
+        return;
+      };
       setShowSave(true);
     };
     return;
@@ -55,7 +61,13 @@ const TextField = ({ editing, value, onChange }) => {
     </View>
   );
 
-  const renderTextFieldView = () => <Text>{_value}</Text>;
+  const renderTextFieldView = () => (
+    <View style={styles.container}>
+      <View style={globalStyles.rowContainer}>
+        <Text style={styles.input}>{_value}</Text>
+      </View>
+    </View>
+  );
 
   /*
    * NOTE: returning a component will cause loss of focus and Keyboard dismissal

@@ -98,7 +98,8 @@ const MainTabNavigator = () => {
             title: i18n.t("contactDetailScreen.addNewContact", { locale }),
           }}
           initialParams={{
-            type: "createContact",
+            // TODO: constant
+            type: "CONTACT_CREATE",
           }}
         />
         <Stack.Screen
@@ -145,6 +146,18 @@ const MainTabNavigator = () => {
           //options={({ route }) => ({
           //  title: route.params.groupName
           //})}
+        />
+        <Stack.Screen
+          name="CreateGroup"
+          component={CreateScreen}
+          options={{
+            // TODO:better title term
+            title: i18n.t("groupDetailScreen.addNewGroup", { locale }),
+          }}
+          initialParams={{
+            // TODO: constant
+            type: "GROUP_CREATE",
+          }}
         />
       </Stack.Navigator>
     );

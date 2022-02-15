@@ -29,15 +29,23 @@ const useAPI = () => {
   // POSTS
   // https://developers.disciple.tools/theme-core/api-posts/create-post
 
-  const createPost = async(fields, silent=false) => {
+  const createPost = async(fields, mutate=null, silent=false) => {
     let url = postType ? `/dt-posts/v2/${postType}` : null;
     if (silent) url += "?silent=true";
-    return request({
-      url,
-      method: HTTP.METHODS.POST,
-      headers: HTTP.HEADERS.DEFAULT,
-      data: { ...fields }
-    });
+    try {
+      const res = await request({
+        url,
+        method: HTTP.METHODS.POST,
+        headers: HTTP.HEADERS.DEFAULT,
+        data: { ...fields }
+      });
+      toast(i18n.t('global.success.save'));
+      if (mutate) mutate();
+    } catch (error) {
+      // TODO
+      console.error(error);
+    };
+    return;
   };
 
 
@@ -60,6 +68,7 @@ const useAPI = () => {
       // TODO
       console.error(error);
     };
+    return;
   };
 
   /* NOTE: DELETE Post is not supported by the API

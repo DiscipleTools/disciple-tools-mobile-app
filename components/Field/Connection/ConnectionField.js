@@ -72,6 +72,8 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
         section?.data?.forEach(item => {
           if (item?.selected) {
             values.push({
+              ID: item?.key,
+              name: item?.label,
               value: item?.contactId //item?.key,
             });
           };
@@ -102,13 +104,10 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
     const _onChange = async(newSections) => {
       const mappedValues = mapToAPI(newSections);
       if (JSON.stringify(mappedValues) !== JSON.stringify(values)) {
-        const apiValue = {
-          values: mappedValues,
-          force_values: true,
-        };
-        onChange(apiValue, {
-          autosave: true,
-        });
+        onChange(
+          { values: mappedValues },
+          { autosave: true }
+        );
       };
     };
 

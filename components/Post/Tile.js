@@ -1,78 +1,93 @@
 import React, { useState, useReducer, useEffect } from "react";
-import { RefreshControl } from "react-native";
+import { Button, RefreshControl, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useNavigation } from "@react-navigation/native";
 
 import Field from "components/Field/Field";
 
+import useI18N from "hooks/useI18N";
 import useStyles from "hooks/useStyles";
+import useType from "hooks/useType";
+
+import { localStyles } from "./Tile.styles";
 
 const Tile = ({ grouped=false, editing=false, fields, post, save, mutate }) => {
 
-  const { globalStyles } = useStyles();
+  const navigation = useNavigation();
+  const { styles, globalStyles } = useStyles(localStyles);
+  const { isContact, isGroup, postType } = useType();
+  const { i18n } = useI18N();
 
   const SET_STATE = "SET_STATE";
 
-  const initialState = {};
-  const reducer = (state = initialState, action) => {
+  //const initializer = initialState => initialState
+
+  // NOTE: in-memory post
+  const reducer = (state, action) => {
     switch (action.type) {
       case SET_STATE:
         return {
           ...state,
-          ...action.fields
+          ...action?.field
         };
       default:
         state;
     };
   };
 
-  const generatePostFromFields = (fields) => {
-    // TODO:
-    return {
-      name: '',
-    };
+  /*
+   * This is a mock Post object generated from the available Fields,
+   * and this is necessary when creating new Posts (ie, Add Contact/Group)
+   */
+  const generatedPost = () => {
+    const post = {};
+    fields?.forEach(field => {
+      let defaultValue = null;
+      if (field?.default) defaultValue = Object.keys(field.default)?.[0] || null;
+      /*
+      if (
+        //field?.type === FieldTypes.COMMUNICATION_CHANNEL ||
+        field?.type === FieldTypes.CONNECTION ||
+        field?.type === FieldTypes.LOCATION_META ||
+        field?.type === FieldTypes.MULTI_SELECT ||
+        field?.type === FieldTypes.TAGS
+      ) defaultValue = { values: [{ value: null}], force_values: true };
+      // connection_meta?
+      // post_user_meta
+      */
+      post[field?.name] = defaultValue;
+    });
+    return post;
   };
 
-  const [state, dispatch] = useReducer(reducer, post);
-
-  /*
-  useEffect(() => {
-    if (post) {
-      dispatch({ type: SET_STATE, fields: post });
-      return;
-    };
-    const generatedPost = generatePostFromFields(fields);
-    dispatch({ type: SET_STATE, fields: generatedPost });
-    return;
-  }, [post, fields])
-  */
-
-  //if (!post) return null;
-
-  const [_value, _setValue] = useState(post);
+  const initialPost = post || generatedPost();
+  const [_post, dispatch] = useReducer(reducer, initialPost); //, initializer);
 
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = () => {
-    if (mutate) {
-      setRefreshing(true);
-      mutate();
-      setTimeout(() => {
-        setRefreshing(false);
-      }, 1000);
-    };
+    setRefreshing(true);
+    if (mutate) mutate();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
     return;
   };
 
-  //const onSave = () => save(state);
-  const onSave = () => save(_value);
-  const onCancel = () => onRefresh();
-  //const onChange = (newValue) => dispatch({ type: SET_STATE, fields: newValue });
-  const onChange = (data) => {
-    _setValue({
-      ..._value,
-      ...data
-    });
+  // TODO: check required fields
+  // TODO: clean up any added then removed fields (currently works, but messy)
+  const onSave = async() => {
+    let filteredPost = Object.fromEntries(Object.entries(_post).filter(([_, v]) => v != null));
+    await save(filteredPost);
+    mutate();
+    // TODO: use postType, and constants
+    if (isGroup) navigation.push("Groups");
+    if (isContact) navigation.push("Contacts");
   };
+
+  const onChange = (field) => dispatch({ type: SET_STATE, field });
+
+  const onCancel = () => onRefresh();
 
   const Fields = () => {
     return fields.map((field, idx) => (
@@ -81,10 +96,9 @@ const Tile = ({ grouped=false, editing=false, fields, post, save, mutate }) => {
         grouped={grouped}
         editing={editing}
         field={field}
-        //post={state}
-        //post={_value}
-        post={post}
-        onChange={() => onChange}
+        //post={_post}
+        post={grouped ? _post : post}
+        onChange={onChange}
         mutate={mutate}
       />
     ));
@@ -106,6 +120,20 @@ const Tile = ({ grouped=false, editing=false, fields, post, save, mutate }) => {
       style={globalStyles.surface}
     >
       <Fields />
+      { grouped && (
+        <View style={[
+          globalStyles.buttonShadow,
+          globalStyles.buttonText,
+          styles.button,
+        ]}>
+          <Button
+            onPress={onSave}
+            title={i18n.t("global.save")}
+            color={globalStyles.buttonText.color}
+            accessibilityLabel="Save, and Continue Editing"
+          />
+        </View>
+      )}
     </KeyboardAwareScrollView>
   );
 };

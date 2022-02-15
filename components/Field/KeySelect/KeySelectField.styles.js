@@ -1,3 +1,5 @@
+import Constants from "constants";
+
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: (isStatusField, backgroundColor) => ({
     alignItems: 'center',
@@ -5,6 +7,6 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     backgroundColor: isStatusField ? backgroundColor : null,
     borderWidth: 0,
     borderRadius: 5,
-    height: "100%",
+    minHeight: Constants.FIELD_HEIGHT,
   }),
 });

@@ -1,4 +1,5 @@
 import React from "react";
+import { useSWRConfig } from 'swr'
 
 import OfflineBar from "components/OfflineBar";
 import Tile from "components/Post/Tile";
@@ -10,6 +11,7 @@ import useAPI from "hooks/useAPI";
 
 const CreateScreen = ({ navigation }) => {
 
+  const { mutate } = useSWRConfig();
   const { i18n, isRTL } = useI18N();
   const { isContact } = useType();
   const { settings } = useSettings();
@@ -30,26 +32,24 @@ const CreateScreen = ({ navigation }) => {
     if (isContact) {
       fields = [{
         label: "Contact Type",
-        name: "contact_type",
+        name: "type",
         type: "key_select",
         default: {
-          personal: {
-            label: "Personal",
-          },
           access: {
-            label: "Access",
+            label: "Standard",
+          },
+          personal: {
+            label: "Private",
           },
         }
       }, ...fields];
     };
     return (
       <Tile
-        editOnly
         grouped
-        //post={null}
         fields={fields}
         save={createPost}
-        //mutate={mutate}
+        mutate={mutate}
       />
     );
   };

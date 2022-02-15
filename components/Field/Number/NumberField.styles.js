@@ -1,11 +1,17 @@
+import Constants from 'constants';
+
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: {
-    backgroundColor: theme.surface.primary,
+    minHeight: Constants.FIELD_HEIGHT,
+    justifyContent: "center",
   },
   input: {
     color: theme.text.primary,
-    marginEnd: "auto",
     paddingHorizontal: 10,
+    marginEnd: "auto",
     width: "100%",
   },
+  controlIcons: {
+    justifyContent: "space-between"
+  }
 });

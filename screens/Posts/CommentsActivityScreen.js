@@ -88,7 +88,6 @@ const CommentsActivityScreen = ({ navigation, route }) => {
   const CommentsActivityItemLoadingSkeleton = () => <PostItemSkeleton />;
 
   const CommentsActivityItem = ({ item, loading }) => {
-    //console.log(`item: ${JSON.stringify(item)}`);
     const message = item?.comment_content || item?.object_note;
     const datetime = item?.comment_date || new Date(Number('1611715906')*1000).toString();
     const author = item?.comment_author || item?.name;
@@ -233,7 +232,7 @@ const CommentInput = () => {
     setLoading(true);
     if (comment?.length > 0) {
       try {
-        if (editComment?.id || editComment?.message?.length > 0) {
+        if (editComment?.id && editComment?.message?.length > 0) {
           const res = await updateComment(editComment.id, comment);
           if (res) {
             setEditComment({

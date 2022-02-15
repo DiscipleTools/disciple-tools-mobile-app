@@ -91,8 +91,12 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
     flexDirection: isRTL ? "row-reverse" : "row",
     marginHorizontal: 7,
   },
+  // TODO: move to standalone Button component
   buttonColor: {
     backgroundColor: theme.brand.primary,
+  },
+  buttonText: {
+    color: theme.offLight,
   },
   buttonShadow: {
     borderColor: theme.highlight,

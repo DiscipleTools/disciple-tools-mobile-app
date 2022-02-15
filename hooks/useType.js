@@ -15,7 +15,10 @@ const useType = ({ type, subtype } = {}) => {
     type === TypeConstants.CONTACT_CREATE ||
     type === TypeConstants.CONTACT_IMPORT
   );
-  const isGroup = type === TypeConstants.GROUP;
+  const isGroup = (
+    type === TypeConstants.GROUP ||
+    type === TypeConstants.GROUP_CREATE
+  );
   const isTraining = type === TypeConstants.TRAINING;
   const isQuestionnaire = type === TypeConstants.QUESTIONNAIRE;
   const isNotification = type === TypeConstants.NOTIFICATION;

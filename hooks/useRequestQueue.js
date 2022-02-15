@@ -34,7 +34,6 @@ const useRequestQueue = () => {
     const key = request?.url;
     if (!key) return null;
     const localCachedData = cache.get(key);
-    //console.log(`localCachedData: ${JSON.stringify(localCachedData)}`);
     const newData = request?.data;
     mutate(key, { ...localCachedData, ...newData }, false);
     return axios(request);

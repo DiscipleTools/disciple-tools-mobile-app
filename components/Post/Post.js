@@ -127,7 +127,7 @@ const Post = ({ editOnly=false }) => {
             >
               <Tile
                 post={post}
-                fields={tile.fields}
+                fields={tile?.fields}
                 save={updatePost}
                 mutate={mutate}
               />

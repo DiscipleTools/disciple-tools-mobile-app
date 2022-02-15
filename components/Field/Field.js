@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Pressable, Text, View } from "react-native";
-import { Icon } from "native-base";
-import { Row, Col } from "react-native-easy-grid";
-
+import { Text, View } from "react-native";
+import {
+  AddIcon,
+  ClearIcon,
+  EditIcon,
+  SaveIcon
+} from "components/Icon";
 import FieldIcon from "components/Field/FieldIcon";
 import BooleanField from "components/Field/Boolean/BooleanField";
 import CommunicationChannelField from "components/Field/CommunicationChannel/CommunicationChannelField";
@@ -39,21 +42,6 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   const [_editing, _setEditing] = useState(editing);
   const [_value, _setValue] = useState(value);
 
-  /*
-  //const ref = useRef(null);
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (ref.current && !ref.current.contains(event.target)) {
-        alert("You clicked outside of me!");
-      }
-    }
-    window.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      window.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [ref]);
-  */
-
   const isRequiredField = (field) => {
     const name = field?.name;
     if (name === FieldNames.NAME) return true;
@@ -72,20 +60,44 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   const isUncontrolledField = () => {
     const fieldType = field?.type;
     return(
-      fieldType !== FieldTypes.COMMUNICATION_CHANNEL
+      grouped || fieldType !== FieldTypes.COMMUNICATION_CHANNEL
     );
   };
 
-  const _onSave = async(newValue) => {
+  const isMultiInputTextField = () => {
     const fieldType = field?.type;
-    let data = { [field?.name]: newValue };
-    if (fieldType === FieldTypes.COMMUNICATION_CHANNEL) {
-      // NOTE: see CommunicationChannelField.js '_onAdd' 
-      const filteredNewValue = newValue.map(value => value?.key?.startsWith(FieldConstants.TMP_KEY_PREFIX) ? { value: value?.value } : value);
-      data = { [field?.name]: filteredNewValue };
+    return(
+      fieldType === FieldTypes.COMMUNICATION_CHANNEL ||
+      fieldType === FieldTypes.LOCATION_META
+    );
+  };
+
+  /*
+   * Map Field to API format
+   *
+   * This method differs from individual Field 'mapToAPI' methods because
+   * those implementations are mapping values, and this is mapping those
+   * mapped values to the corresponding Field Name
+   */
+  const mapToAPI = (newValue) => {
+    if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) {
+      newValue = newValue.map(value => {
+        if (!value?.key) {
+          const random3Chars = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0,3);
+          value["key"] = `${field?.name}_${random3Chars}`;
+        };
+        return value;
+      });
     };
-    //console.log(`data: ${JSON.stringify(data)}`);
-    await updatePost(data);
+    let data = { [field?.name]: newValue };
+    if (newValue?.values && field?.type !== FieldTypes.COMMUNICATION_CHANNEL) data[field?.name]["force_values"] = true;
+    return data;
+  };
+
+  const _onSave = async(newValue) => {
+    // TODO: handle this differently (we shouldn't need one-off for this field.type)
+    if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) newValue = mapToAPI(newValue);
+    await updatePost(newValue);
     mutate();
   };
 
@@ -96,70 +108,44 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
 
   /*
    * NOTE:
-   * - if grouped, then lift state up to Tile
-   * - if auto-save (instead of manual save via icon), update API directly
-   * - else, set local state (and await manual save via icon)
+   * - if grouped, lift state up to Tile
+   * - if autosave, update API directly and immediately (via useAPI hook)
+   * - else, await user interaction with manual save/clear icons
    */
   const _onChange = (newValue, { autosave } = {}) => {
+    const mappedField = mapToAPI(newValue);
     if (grouped) {
-      onChange(newValue);
+      onChange(mappedField);
       return;
     };
     if (autosave) {
-      _onSave(newValue);
+      onChange(mappedField);
+      _onSave(mappedField);
+      return;
     };
     _setValue(newValue);
     return;
   };
 
   const DefaultControls = () => (
-    <Col size={1} style={styles.formControls}>
-      { !grouped && (
-        <Pressable onPress={_setEditing}>
-          <Icon
-            type={"MaterialIcons"}
-            name={"edit"}
-            style={globalStyles.icon}
-          />
-        </Pressable>
-      )}
-    </Col>
+    <EditIcon onPress={_setEditing} />
   );
 
   const EditControls = () => {
+    // TODO: ignore empty communication channel fields
     const hasChanged = _value !== value; // && !(value === null && (_value === null || _value === ''));
     return(
-      <Col size={1} style={styles.formControls}>
-        { !grouped && (
-          <Row>
-            { _editing && hasChanged && (
-              <Pressable onPress={() => _onSave(_value)}>
-                <Icon
-                  type={"MaterialIcons"}
-                  name={"save"}
-                  style={globalStyles.icon}
-                />
-              </Pressable>
-            )}
-            { _editing && !hasChanged && (
-              <Pressable onPress={_onCancel}>
-                <Icon
-                  type={"MaterialIcons"}
-                  name={"clear"}
-                  style={globalStyles.icon}
-                />
-              </Pressable>
-            )}
-          </Row>
+      <View style={globalStyles.rowContainer}>
+        <ClearIcon onPress={_onCancel} />
+        { hasChanged && (
+          <SaveIcon onPress={() => _onSave(_value)} />
         )}
-      </Col>
+      </View>
     );
   };
 
   const Controls = () => {
     if (isUncontrolledField()) return null;
-    // preserve control spacing for uncontrolled fields
-    //if (isUncontrolledField()) return <Col size={1} style={styles.formControls} />;
     if (_editing) return <EditControls />;
     return <DefaultControls />;
   };
@@ -177,10 +163,12 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
       case FieldTypes.COMMUNICATION_CHANNEL:
         return (
           <CommunicationChannelField
-            editing={_editing}
+            grouped={grouped}
+            editing={grouped ? true : _editing}
             field={field}
             values={_value}
             onChange={_onChange}
+            onAdd={_onAdd}
           />
         );
       case FieldTypes.CONNECTION:
@@ -229,8 +217,12 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
           />
         );
       case FieldTypes.NUMBER:
+        // TODO:
+        //{ field?.name === FieldNames.MEMBER_COUNT
+        //<MemberList members={post?.members?.values} />
         return (
           <NumberField
+            grouped={grouped}
             editing
             value={_value}
             onChange={_onChange}
@@ -249,6 +241,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
       case FieldTypes.TEXT:
         return (
           <TextField
+            grouped={grouped}
             editing
             value={_value}
             onChange={_onChange}
@@ -278,40 +271,51 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
       </View>
     );
   };
-  return (
-    <>
-      <Row style={[styles.formRow, styles.formDivider]}>
-        <Col size={1} style={styles.formIconLabel}>
-          <FieldIcon field={field} />
-        </Col>
-        <Col size={2} style={styles.formParentLabel}>
-          <Text style={styles.formLabel}>{field.label}</Text>
-        </Col>
-        <Col size={8}>
-          <View style={[
-            styles.formComponent,
-            field?.type === FieldTypes.COMMUNICATION_CHANNEL && _editing ? null : styles.field,
-            isUncontrolledField() ? null : { paddingLeft: 10, paddingRight: 10 }
-          ]}>
-            <FieldComponent />
-          </View>
-        </Col>
-        <Controls />
-      </Row>
-      { field?.name === FieldNames.MEMBER_COUNT && (
-        <Row style={[ styles.formRow, styles.formDivider ]}>
-          <Col size={1} style={[{ marginBottom: "auto" }, styles.formIconLabel]}>
-            <FieldIcon field={field} />
-          </Col>
-          <Col size={2} style={styles.formParentLabel}>
-            <Text style={styles.formLabel}>{field.label}</Text>
-          </Col>
-          <Col size={8}>
-            <MemberList members={post?.members?.values} />
-          </Col>
-        </Row>
+
+  const _onAdd = () => {
+    const newValue = _value ? [..._value, { value: '' }] : [{ value: '' }];
+    const mappedValue = mapToAPI(newValue);
+    _onChange(newValue);
+    if (!grouped) _setEditing(true);
+  };
+
+  /*
+   * [ICON | LABEL              | CONTROL(S)]
+   */
+  const FieldLabelControls = ({ label }) => (
+    <View style={[globalStyles.rowContainer, styles.fieldLabelContainer]}>
+      <FieldIcon field={field} />
+      <View style={styles.fieldLabel}>
+        <Text style={styles.fieldLabelText}>
+          {label}
+        </Text>
+      </View>
+      { isMultiInputTextField() && (
+        <View>
+          <AddIcon onPress={() => _onAdd()} />
+        </View>
       )}
-    </>
+      <View style={styles.fieldControls}>
+        <Controls />
+      </View>
+    </View>
+  );
+
+  /*
+   * ____________________________________
+   * | FieldLabelControls.............. |
+   * | FieldComponent.................. |
+   * |__________________________________|
+   */
+  return (
+    <View style={styles.container}>
+      <FieldLabelControls label={ field?.label } />
+      <View style={
+        (isUndecoratedField() || isMultiInputTextField()) ? null : styles.component
+      }>
+        <FieldComponent />
+      </View>
+    </View>
   );
 };
 export default Field;

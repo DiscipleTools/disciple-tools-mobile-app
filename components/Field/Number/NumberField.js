@@ -8,34 +8,36 @@ import useStyles from "hooks/useStyles";
 
 import { localStyles } from "./NumberField.styles";
 
-// TODO: refactor futher
-// most of this can be reused with TextField
+// TODO: most of this can be reused with TextField
 // only the TextInput prop 'keyboardType="numeric" is different
-const NumberField = ({ editing, value, onChange }) => {
+const NumberField = ({ grouped=false, editing, value, onChange }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
 
   const [showSave, setShowSave] = useState(false);
+  const [_value, _setValue] = useState(value);
+  // TODO: use constant for debounce time
+  const debouncedValue = useDebounce(_value, 1500);
 
-  const mappedValue = value ? new String(value) : '';
-  const [_value, _setValue] = useState(mappedValue);
-
-  const debouncedValue = useDebounce(_value, 1000);
 
   useEffect(() => {
-    if (debouncedValue !== mappedValue) {
+    if (debouncedValue !== value) {
+      if (grouped) {
+        onChange(debouncedValue);
+        return;
+      };
       setShowSave(true);
     };
     return;
   }, [debouncedValue]);
 
   const _onClear = () => {
-    _setValue(mappedValue);
+    _setValue(value);
     setShowSave(false);
   };
 
   const _onChange = () => {
-    if (_value !== mappedValue) {
+    if (_value !== value) {
       onChange(_value, {
         autosave: true,
         automutate: true
@@ -48,21 +50,27 @@ const NumberField = ({ editing, value, onChange }) => {
       <View style={globalStyles.rowContainer}>
         <TextInput
           keyboardType="numeric"
-          value={_value}
+          value={_value ? String(_value) : ''}
           onChangeText={_setValue}
           style={styles.input}
         />
         { showSave && (
-          <>
+          <View style={[globalStyles.rowContainer, styles.controlIcons]}>
             <ClearIcon onPress={() => _onClear()} />
             <SaveIcon onPress={() => _onChange()} />
-          </>
+          </View>
         )}
       </View>
     </View>
   );
 
-  const renderNumberFieldView = () => <Text>{_value}</Text>;
+  const renderNumberFieldView = () => (
+    <View style={styles.container}>
+      <View style={globalStyles.rowContainer}>
+        <Text style={styles.input}>{_value}</Text>
+      </View>
+    </View>
+  );
 
   if (editing) return renderNumberFieldEdit();
   return renderNumberFieldView();

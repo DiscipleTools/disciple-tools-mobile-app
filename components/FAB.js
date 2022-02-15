@@ -194,7 +194,11 @@ const FAB = () => {
         bgColor="rgba(0,0,0,0.5)"
         nativeFeedbackRippleColor="rgba(0,0,0,0)"
         onPress={() => {
-          if (isList && isGroup) console.log("*** CREATE GROUP ***"); //navigation.navigate('CreatePost', {});
+          if (isList && isGroup) {
+            navigation.navigate("CreateGroup", {
+              type: TypeConstants.GROUP_CREATE,
+            });
+          }
         }}
       >
         {quickButtonFields?.length > 0 &&
