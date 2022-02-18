@@ -106,9 +106,16 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
       if (JSON.stringify(mappedValues) !== JSON.stringify(values)) {
         onChange(
           { values: mappedValues },
-          { autosave: true }
+          { autosave: true, force: true }
         );
       };
+    };
+
+    const _onRemove = (id) => {
+      onChange(
+        { values: [{ value: id, delete: true }]},
+        { autosave: true }
+      );
     };
 
     // SELECT OPTIONS
@@ -138,12 +145,31 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
 
     return(
       <Pressable onPress={() => showSheet()}>
-        <View style={globalStyles.rowContainer}>
-          <View style={styles.container}>
+        <View style={[
+          globalStyles.rowContainer,
+          styles.container
+        ]}>
+          <View style={[
+            globalStyles.rowContainer,
+            styles.optionContainer
+          ]}>
             {values?.map(value => (
-              <PostLink id={value?.value} title={value?.name} type={getPostTypeByFieldName(field?.name)} />
+              <PostLink id={value?.value} title={value?.name} type={getPostTypeByFieldName(field?.name)} onRemove={_onRemove} />
             ))}
           </View>
+          <CaretIcon />
+        </View>
+      </Pressable>
+    );
+    return(
+      <Pressable onPress={() => showSheet()}>
+        <View style={[
+          globalStyles.rowContainer,
+          styles.container
+        ]}>
+          {values?.map(value => (
+            <PostLink id={value?.value} title={value?.name} type={getPostTypeByFieldName(field?.name)} />
+          ))}
           <CaretIcon />
         </View>
       </Pressable>

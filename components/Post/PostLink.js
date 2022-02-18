@@ -1,19 +1,23 @@
 import React from "react";
-import { Pressable, Text } from "react-native";
+import { View} from "react-native";
 import { useNavigation } from "@react-navigation/native";
+
+import Chip from "components/Chip";
+import { ClearIcon } from "components/Icon";
 
 import useStyles from "hooks/useStyles";
 
 import { localStyles } from "./PostLink.styles";
 
-const PostLink = ({ id, title, type }) => {
+const PostLink = ({ id, title, type, onRemove }) => {
 
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
-
-  // TODO: move inline styles to PostLink.styles
-  return (
-    <Pressable
+  return(
+    <Chip
+      // TODO: handle this better
+      isLink
+      selected
       disabled={!id || type === "people_groups"}
       onPress={() => {
         // TODO: constant
@@ -25,7 +29,21 @@ const PostLink = ({ id, title, type }) => {
           //onGoBack: () => onRefresh(),
         });
       }}
-    >
+      label={title}
+      endIcon={
+        <View style={styles.clearIconContainer}>
+          <ClearIcon
+            onPress={() => onRemove(id)}
+            style={styles.clearIcon}
+          />
+        </View>
+      }
+      style={styles.container}
+    />
+  );
+  /*
+  return (
+    <Pressable>
       <Text
         style={[
           globalStyles.rowContainer,
@@ -37,5 +55,6 @@ const PostLink = ({ id, title, type }) => {
       </Text>
     </Pressable>
   );
+  */
 };
 export default PostLink;

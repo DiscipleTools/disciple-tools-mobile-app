@@ -1,9 +1,8 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
-// TODO: remove
-import { Icon } from "native-base";
 
-//import { CaretIcon } from "components/Icon";
+import { CaretIcon } from "components/Icon";
+import Chip from "components/Chip";
 import FilterSheet from "components/Sheets/FilterSheet";
 
 import useBottomSheet from "hooks/useBottomSheet";
@@ -44,15 +43,6 @@ const FilterOptions = () => {
   );
   */
 
-  const Caret = ({ selected }) => (
-    <Icon
-      type="MaterialCommunityIcons"
-      //name="filter-list"
-      name="chevron-down"
-      style={styles.optionCaret(selected)}
-    />
-  );
-
   const FilterOption = ({ title }) => {
     const selectedFilterID = filter?.ID;
     let filterTitle = null; //getFilterTitle();
@@ -65,6 +55,19 @@ const FilterOptions = () => {
       });
     });
     const selected = filterTitle === title;
+    return(
+      <Chip
+        onPress={() => showFilter(title)}
+        label={title}
+        selected={selected}
+        endIcon={
+          <CaretIcon
+            onPress={() => showFilter(title)}
+            style={styles.optionCaret(selected)}
+          />
+        }
+      />
+    )
     return(
       <Pressable onPress={() => showFilter(title)}>
         <View
@@ -85,9 +88,7 @@ const FilterOptions = () => {
   
   /* 
   const ClearFilters = ({ filtering }) => (
-    <Icon
-      type="MaterialCommunityIcons"
-      name="filter-variant-remove"
+    <ClearFiltersIcon
       //onPress={() => filtering ? onFilter(null) : null }
       style={styles.clearFiltersIcon(filtering)}
     />

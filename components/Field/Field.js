@@ -79,7 +79,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
    * those implementations are mapping values, and this is mapping those
    * mapped values to the corresponding Field Name
    */
-  const mapToAPI = (newValue) => {
+  const mapToAPI = (newValue, { force } = {}) => {
     if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) {
       newValue = newValue.map(value => {
         if (!value?.key) {
@@ -90,7 +90,8 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
       });
     };
     let data = { [field?.name]: newValue };
-    if (newValue?.values && field?.type !== FieldTypes.COMMUNICATION_CHANNEL) data[field?.name]["force_values"] = true;
+    if (force && newValue?.values && field?.type !== FieldTypes.COMMUNICATION_CHANNEL) data[field?.name]["force_values"] = true;
+    //if (newValue?.values && field?.type !== FieldTypes.COMMUNICATION_CHANNEL) data[field?.name]["force_values"] = force ?? false;
     return data;
   };
 
@@ -112,8 +113,8 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
    * - if autosave, update API directly and immediately (via useAPI hook)
    * - else, await user interaction with manual save/clear icons
    */
-  const _onChange = (newValue, { autosave } = {}) => {
-    const mappedField = mapToAPI(newValue);
+  const _onChange = (newValue, { autosave, force } = {}) => {
+    const mappedField = mapToAPI(newValue, { force });
     if (grouped) {
       onChange(mappedField);
       return;

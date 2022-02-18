@@ -6,7 +6,12 @@ const circleSideSize = windowWidth / 3 + 20;
 
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: {
+    alignItems: "center",
+    padding: 5,
+  },
+  optionContainer: {
     flexWrap: "wrap",
+    width: "95%",
   },
   linkingText: {
     paddingTop: 4,

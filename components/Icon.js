@@ -16,46 +16,45 @@ const Icon = ({ icon, onPress }) => (
   </Pressable>
 );
 
-const MaterialIcon = ({ name, onPress }) => {
+const MaterialIcon = ({ name, onPress, style }) => {
   const { globalStyles } = useStyles();
   const icon = (
     <MaterialIcons
       name={name}
-      style={globalStyles.icon}
+      style={[globalStyles.icon, style]}
     />
   );
   return <Icon icon={icon} onPress={onPress} />;
 };
 
-const MaterialCommunityIcon = ({ name, onPress }) => {
+const MaterialCommunityIcon = ({ name, onPress, style }) => {
   const { globalStyles } = useStyles();
   const icon = (
     <MaterialCommunityIcons
       name={name}
-      style={globalStyles.icon}
+      style={[globalStyles.icon, style]}
     />
   );
   return <Icon icon={icon} onPress={onPress} />;
 };
 
-const FontAwesomeIcon = ({ name, onPress }) => {
+const FontAwesomeIcon = ({ name, onPress, style }) => {
   const { globalStyles } = useStyles();
   const icon = (
     <FontAwesome
       name={name}
-      style={globalStyles.icon}
+      style={[globalStyles.icon, style]}
     />
   );
   return <Icon icon={icon} onPress={onPress} />;
 };
 
-export const CaretIcon = () => <MaterialCommunityIcon name="chevron-down" />;
-
-export const AddIcon = ({ onPress }) => <MaterialIcon name="add" onPress={onPress} />;
-export const ClearIcon = ({ onPress }) => <MaterialIcon name="clear" onPress={onPress} />;
-export const EditIcon = ({ onPress }) => <MaterialIcon name="edit" onPress={onPress} />;
-export const RemoveIcon = ({ onPress }) => <MaterialIcon name="remove" onPress={onPress} />;
-export const SaveIcon = ({ onPress }) => <MaterialIcon name="save" onPress={onPress} />;
+export const AddIcon = ({ onPress, style }) => <MaterialIcon name="add" onPress={onPress} style={style} />;
+export const CaretIcon = ({ onPress, style }) => <MaterialCommunityIcon name="chevron-down" onPress={onPress} style={style} />;
+export const ClearIcon = ({ onPress, style }) => <MaterialIcon name="clear" onPress={onPress} style={style} />;
+export const EditIcon = ({ onPress, style }) => <MaterialIcon name="edit" onPress={onPress} style={style} />;
+export const RemoveIcon = ({ onPress, style }) => <MaterialIcon name="remove" onPress={onPress} style={style} />;
+export const SaveIcon = ({ onPress, style }) => <MaterialIcon name="save" onPress={onPress} style={style} />;
 
 // TabBarIcons
-export const SettingsIcon = ({ onPress }) => <FontAwesomeIcon name="cog" onPress={onPress} />;
+export const SettingsIcon = ({ onPress, style }) => <FontAwesomeIcon name="cog" onPress={onPress} style={style} />;
