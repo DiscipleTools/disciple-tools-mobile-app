@@ -50,11 +50,14 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
 
   const isUndecoratedField = () => {
     const name = field?.name;
+    return false;
+    /*
     return (
       name === FieldNames.PARENT_GROUPS ||
       name === FieldNames.PEER_GROUPS ||
       name === FieldNames.CHILD_GROUPS
     );
+    */
   };
 
   const isUncontrolledField = () => {
