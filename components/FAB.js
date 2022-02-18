@@ -150,6 +150,7 @@ const FAB = () => {
         title: i18n.t("contactDetailScreen.addNewContact", { locale }), // TODO: group translate
         count: null,
         name: "plus",
+        bgColor: "green", //TODO
         callback: () => {
           navigation.navigate("CreateContact", {
             type: TypeConstants.CONTACT_CREATE,
@@ -163,6 +164,7 @@ const FAB = () => {
         count: null,
         type: "MaterialIcons",
         name: "contact-phone",
+        bgColor: "orange", //TODO
         callback: () => {
           navigation.navigate("ImportContacts", {
             type: TypeConstants.CONTACT_IMPORT,
