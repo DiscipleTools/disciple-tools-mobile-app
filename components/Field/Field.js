@@ -33,7 +33,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   const { styles, globalStyles } = useStyles(localStyles);
   const { updatePost } = useAPI();
 
-  // uncomment line below to enforce post must have data values for a field (ie, uncomment to hide empty fields) 
+  // uncomment line below to enforce post must have data values for a field (ie, uncomment to hide empty fields)
   //if (!post.hasOwnProperty(field?.name)) return null;
 
   let value = null;
@@ -296,7 +296,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
       </View>
       { isMultiInputTextField() && (
         <View>
-          <AddIcon onPress={() => _onAdd()} />
+          <AddIcon onPress={() => _onAdd()} style={{ color: "green" }} />
         </View>
       )}
       <View style={styles.fieldControls}>

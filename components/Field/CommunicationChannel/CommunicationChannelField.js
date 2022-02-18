@@ -77,7 +77,8 @@ const CommunicationChannelField = ({ grouped=false, editing, field, values, onCh
             />
         </View>
         <View style={styles.removeIcon}>
-          <RemoveIcon key={idx} onPress={() => _onRemove(idx)} />
+          <RemoveIcon key={idx} onPress={() => _onRemove(idx)}
+          style={{ color: "red" }} />
         </View>
       </View>
     );
