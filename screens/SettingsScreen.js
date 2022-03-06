@@ -13,7 +13,7 @@ import AppVersion from "components/AppVersion";
 
 import { useAuth } from "hooks/useAuth";
 import useApp from "hooks/useApp";
-import useNetworkStatus from "hooks/useNetworkStatus";
+import useNetwork from "hooks/use-network";
 import useI18N from "hooks/useI18N";
 import usePIN from "hooks/usePIN";
 import useStyles from "hooks/useStyles";
@@ -24,7 +24,7 @@ import { localStyles } from "./SettingsScreen.styles";
 import gravatar from "assets/gravatar-default.png";
 
 const SettingsScreen = ({ navigation }) => {
-  const { isConnected, toggleNetwork } = useNetworkStatus();
+  const { isConnected, toggleNetwork } = useNetwork();
   const { i18n, isRTL, locale } = useI18N();
   const { PINConstants, hasPIN } = usePIN();
   const { styles, globalStyles } = useStyles(localStyles);
