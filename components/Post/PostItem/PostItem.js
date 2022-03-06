@@ -97,10 +97,7 @@ const PostItem = ({ item, loading, mutate }) => {
     const { settings } = useSettings();
     if (!settings) return null;
     return (
-        <Text style={[
-          globalStyles.caption,
-          styles.subtitle
-        ]}>
+        <Text style={globalStyles.caption}>
           {isContact && (
             <>
               {settings.fields.overall_status?.values[item?.overall_status]

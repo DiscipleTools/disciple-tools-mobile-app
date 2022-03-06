@@ -204,6 +204,12 @@ export const defaultThemeDark = Object.freeze({
 
 //export const ScreenConstants = Object.freeze({});
 
+export const NotificationActionConstants = Object.freeze({
+  ALERT: "alert",
+  COMMENT: "comment",
+  MENTION: "mentioned",
+});
+
 export const BottomSheetConstants = Object.freeze({
   PORTAL_HOST_NAME: "bottomSheet",
 });

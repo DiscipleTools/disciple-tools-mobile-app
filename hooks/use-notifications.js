@@ -1,12 +1,11 @@
 import { useAuth } from "hooks/useAuth";
 import useAPI from "hooks/useAPI";
 import useRequest from "hooks/useRequest";
-import useToast from "hooks/useToast";
 
-const useNotifications = () => {
+import { searchObjList } from "utils";
+
+const useNotifications = ({ search, filter, exclude }) => {
   //const { uid } = useAuth();
-  const toast = useToast();
-
   /*
   const {
     markAllNotificationsViewed,
@@ -14,6 +13,8 @@ const useNotifications = () => {
     markNotificationViewed
   } = useAPI();
   */
+
+  const LIMIT = 1000;
 
   const url = "dt/v1/notifications/get_notifications";
   const request = {
@@ -25,13 +26,25 @@ const useNotifications = () => {
     data: {
       all: true,
       page: 0,
-      limit: 10,
-      mentions: true,
+      limit: LIMIT,
+      mentions: false,
     },
   };
-  const { data, error, isLoading, isValidating, mutate } = useRequest(request);
+  const { data: notifications, error, isLoading, isValidating, mutate } = useRequest(request);
+  if (error || isLoading || !notifications) return {
+    data: null,
+    error,
+    isLoading,
+    isValidating,
+    mutate
+  };
+  //console.log(`# of notifications: ${ notifications?.length }`);
+  let filtered = notifications.filter(item => !exclude?.includes(item?.id));
+  //if (filtered?.length > 0 && search && isConnected == false) filtered = searchObjList(filtered, search);
+  if (filtered?.length > 0 && search) filtered = searchObjList(filtered, search);
+  //console.log(`# of filtered: ${ filtered?.length }`);
   return {
-    data,
+    data: filtered,
     error,
     isLoading,
     isValidating,

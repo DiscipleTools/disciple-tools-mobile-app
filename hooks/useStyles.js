@@ -58,6 +58,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
     color: theme.text.secondary,
     fontSize: 12,
     fontStyle: "italic",
+    paddingTop: 5
   },
   icon: {
     color: theme.text.primary,
@@ -67,8 +68,8 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   rowIcon: {
     color: theme.text.primary,
     fontSize: 24,
-    marginStart: isRTL ? 15 : 0,
-    marginEnd: isRTL ? 0 : 15,
+    marginStart: isRTL ? 10 : 0,
+    marginEnd: isRTL ? 0 : 10,
   },
   selectedIcon: {
     fontSize: 24,

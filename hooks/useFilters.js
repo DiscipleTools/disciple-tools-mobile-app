@@ -4,6 +4,8 @@ import React, { useCallback, useMemo, useReducer, useRef, useState } from "react
 import useType from "hooks/useType";
 import useRequest from "hooks/useRequest";
 
+import { NotificationActionConstants } from "constants";
+
 const useFilters = () => {
 
   //const { isConnected } = useNetwork();
@@ -14,7 +16,7 @@ const useFilters = () => {
 
   if (isCommentsActivity) data = [
     {
-      title: "Filter By Category",
+      title: "Category",
       count: 1350,
       content: [
         {
@@ -51,26 +53,26 @@ const useFilters = () => {
 
   if (isNotification) data = [
     {
-      title: "Notifications by Status",
+      title: "Status",
       count: 99,
       content: [
         {
           ID: "notifications_status_all",
-          count: 99,
+          //count: 99,
           name: "All",
           query: null,
-          subfilter: true 
+          subfilter: false 
         },
         {
           ID: "notifications_status_unread",
-          count: 76,
+          //count: 76,
           name: "Unread only",
           query: null,
           subfilter: false
         },
         {
           ID: "notifications_status_read",
-          count: 23,
+          //count: 23,
           name: "Read only",
           query: null,
           subfilter: false
@@ -78,20 +80,27 @@ const useFilters = () => {
       ]
     },
     {
-      title: "Notifications by Mention",
+      title: "Type",
       count: 99,
       content: [
         {
-          ID: "notifications_mentions_all",
-          count: 99,
-          name: "All",
+          ID: NotificationActionConstants.MENTION,
+          //count: 99,
+          name: "Mention",
           query: null,
-          subfilter: true 
+          subfilter: false 
         },
         {
-          ID: "notifications_mentions_only",
-          count: 19,
-          name: "Mentions onlly",
+          ID: NotificationActionConstants.ALERT,
+          //count: 19,
+          name: "Alert",
+          query: null,
+          subfilter: false
+        },
+        {
+          ID: NotificationActionConstants.COMMENT,
+          //count: 19,
+          name: "Comment",
           query: null,
           subfilter: false
         }

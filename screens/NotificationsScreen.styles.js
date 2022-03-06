@@ -1,13 +1,20 @@
 import Constants from "constants";
 
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
-  container: {
-    backgroundColor: theme.surface.primary,
+  container: (isNew) => ({
+    backgroundColor: isNew ? theme.surface.secondary : theme.surface.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.background.primary,
-    flexDirection: isRTL ? "row-reverse" : "row",
+    paddingTop: 10,
+    paddingHorizontal: 5,
     height: Constants.LIST_ITEM_HEIGHT,
-    padding: 10,
+  }),
+  startIcon: {
+    // NOTE: this does not work, forces details to details to align start
+    //marginEnd: "auto",
+  },
+  endIcon: {
+    marginStart: "auto",
   },
   notificationDetails: {
     flexWrap: "wrap",

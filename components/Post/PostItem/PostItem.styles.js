@@ -5,7 +5,8 @@ export const localStyles = ({ theme, isRTL }) => ({
     backgroundColor: theme.surface.primary,
     borderBottomColor: theme.background.primary,
     borderBottomWidth: 1,
-    padding: 10,
+    paddingTop: 10,
+    paddingHorizontal: 5,
     height: Constants.LIST_ITEM_HEIGHT,
   },
   postDetails: {
@@ -14,9 +15,6 @@ export const localStyles = ({ theme, isRTL }) => ({
   },
   title: {
     fontWeight: "bold",
-  },
-  subtitle: {
-    paddingTop: 5,
   },
   statusDot: {
     borderRadius: Constants.STATUS_CIRCLE_SIZE / 2,

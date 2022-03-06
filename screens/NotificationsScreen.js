@@ -1,82 +1,65 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from "react";
-import {
-  Button,
-  View,
-  Text,
-} from "react-native";
-import { Icon } from "native-base";
+import { Button, Pressable, Text, View } from "react-native";
 
-import { Container } from "native-base";
 //import { Html5Entities } from 'html-entities';
 
+import {
+  CheckIcon,
+  CircleOutlineIcon,
+  CommentIcon,
+  CommentAlertIcon,
+  MentionIcon
+} from "components/Icon";
 import FilterList from "components/FilterList";
 import OfflineBar from "components/OfflineBar";
 import SelectSheet from "components/Sheet/SelectSheet";
-import { HelpSheet } from "components/Sheet/ModalSheet";
+//import { HelpSheet } from "components/Sheet/ModalSheet";
+import { PostItemSkeleton } from "components/Post/PostItem/index";
 
-import useI18N from "hooks/useI18N";
-import useNotifications from "hooks/useNotifications.js";
+import useFilter from "hooks/useFilter";
+//import useI18N from "hooks/useI18N";
+import useNotifications from "hooks/use-notifications";
 //import useMyUser from 'hooks/useMyUser.js';
 import useStyles from "hooks/useStyles";
+
+import { NotificationActionConstants } from "constants";
 
 import { localStyles } from "./NotificationsScreen.styles";
 
 const NotificationsScreen = ({ navigation }) => {
+
   const DEFAULT_LIMIT = 10;
 
   const { styles, globalStyles } = useStyles(localStyles);
-  const { i18n, isRTL } = useI18N();
-  const {
-    data: notifications,
-    error,
-    isLoading,
-    isValidating,
-    mutate,
-  } = useNotifications();
-
-  let isError = false;
-  if (error) {
-    isError = true;
-    // TODO
-    //toast(error, true);
-    console.error(error);
-  };
-
-  const [_notifications, _setNotifications] = useState(notifications ?? []);
-  const [search, setSearch] = useState(null);
-
+  //const { i18n, isRTL } = useI18N();
+  const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
+  const { data: items, error, isLoading, isValidating, mutate } = useNotifications({ search, filter });
+  /*
+  const [_notifications, _setNotifications] = useState(items ?? []);
   useEffect(() => {
     if (_notifications?.length !== notifications?.length) _setNotifications(notifications);
   }, [notifications]);
-
-  //const { userData, error: userError } = useMyUser();
-  /*
-  const notifications = [];
-  const notificationsError = null;
-  const isLoading = false;
-  const isValidating = false;
-  const mutate = () => {};
   */
-
+  //const { userData, error: userError } = useMyUser();
   const userData = null;
 
   const [isAll, setIsAll] = useState(true);
   const [offset, setOffset] = useState(0);
   const [limit, setLimit] = useState(10); // fails: useState(DEFAULT_LIMIT);
 
-  const NotificationItem = ({ item, loading }) => {
+  const NotificationItem = ({ item }) => {
     const str1 = item?.notification_note?.search("<");
     const str2 = item?.notification_note?.search(">");
-    const str3 = item?.notification_note?.length - 4;
+    const str3 = item?.notification_note?.length-4;
     const newNotificationNoteA = item?.notification_note?.substr(0, str1);
     const newNotificationNoteB = item?.notification_note?.substr(
       str2,
       str3
     );
-    const str4 = newNotificationNoteB?.search("<") - 1;
+    const str4 = newNotificationNoteB?.search("<")-1;
     const newNotificationNoteC = newNotificationNoteB?.substr(1, str4);
     let entityLink = item?.notification_note?.substring(
-      item?.notification_note?.lastIndexOf('href="') + 6,
+      item?.notification_note?.lastIndexOf('href="')+6,
       item?.notification_note?.lastIndexOf('">')
     );
     let entityId = entityLink?.split("/")[4];
@@ -87,100 +70,109 @@ const NotificationsScreen = ({ navigation }) => {
     const name = item?.notification_name;
     const action = item?.notification_action;
 
-    const NotificationTypeIcon = () => {
-      const getIcon = () => {
-        if (isNew) return {
-          type: "Entypo",
-          name: "new"
-        };
-        if (name === "mention" || action === "mentioned") return {
-          type: "Octicons",
-          name: "mention"
-        };
-        return {
-          type: "MaterialIcons",
-          name: "notifications-none"
-        };
+    const parseDate = (dateStr) => {
+      try {
+        const today = new Date();
+        //const parsedDateMS = Date.parse(dateStr?.trim());
+        const parsedDateMS = Date.parse(dateStr?.trim()?.split(' ')[0]);
+        const diffMS = today - parsedDateMS;
+        const aDay = 24*60*60*1000;
+        const isToday = diffMS < aDay;
+        const diffDays = Math.floor(diffMS/aDay);
+        if (isNaN(diffDays)) return null;
+        // TODO: translate
+        if (isToday) return "today";
+        return `${ diffDays }d`
+      } catch (error) {
+        return null;
       };
-      const { type: iconType, name: iconName }= getIcon();
+    };
+
+    const NotificationIcon = () => {
+      const renderIcon = () => {
+        if (item?.notification_action == NotificationActionConstants.COMMENT) return <CommentIcon />;
+        if (item?.notification_action == NotificationActionConstants.ALERT) return <CommentAlertIcon />;
+        if (item?.notification_action == NotificationActionConstants.MENTION) return <MentionIcon />;
+        return null;
+      };
       return(
-        <View style={globalStyles.columnContainer}>
-          <View style={globalStyles.rowIcon}>
-            <Icon
-              type={iconType}
-              name={iconName}
-              style={[
-                globalStyles.icon,
-                { fontSize: 18 }
-              ]}
-            />
-          </View>
+        <View style={[
+          globalStyles.rowIcon,
+          styles.startIcon
+        ]}>
+          { renderIcon() }
         </View>
       );
     };
 
     const NotificationDetails = () => (
-      <View style={[
-        globalStyles.rowContainer,
-        styles.notificationDetails
-      ]}>
-        {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
-        <Text>{newNotificationNoteA}</Text>
-        <Text
-          style={styles.link}
-          onPress={() =>
-            redirectToDetailView(
-              entityName,
-              entityId,
-              newNotificationNoteC
-            )
-          }
-        >
-          {newNotificationNoteC}
-          {/*entities.decode(newNotificationNoteC)*/}
-        </Text>
+      <View style={globalStyles.columnContainer}>
+          <View style={[
+            globalStyles.rowContainer,
+            styles.notificationDetails
+          ]}>
+            {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
+            <Text>{newNotificationNoteA}</Text>
+            <Text
+              style={styles.link}
+              onPress={() =>
+                redirectToDetailView(
+                  entityName,
+                  entityId,
+                  newNotificationNoteC
+                )
+              }
+            >
+              {newNotificationNoteC}
+              {/*entities.decode(newNotificationNoteC)*/}
+            </Text>
+          </View>
+        <View>
+          { item?.pretty_time?.[0] ? (
+            <Text style={globalStyles.caption}>
+              {item.pretty_time[0]}
+              {item.pretty_time?.[1] ? `, ${ item.pretty_time[1] }` : ""}
+            </Text>
+          ) : (
+            <Text style={globalStyles.caption}>
+              {parseDate(item?.date_notified)}
+            </Text>
+          )}
+        </View>
       </View>
     );
 
-    const NotificationDate = () => {
-      const parseDate = (dateStr) => {
-        try {
-          const today = new Date();
-          //const parsedDateMS = Date.parse(dateStr?.trim());
-          const parsedDateMS = Date.parse(dateStr?.trim()?.split(' ')[0]);
-          const diffMS = today - parsedDateMS;
-          const aDay = 24*60*60*1000;
-          const isToday = diffMS < aDay;
-          const diffDays = Math.floor(diffMS/aDay);
-          if (isNaN(diffDays)) return null;
-          // TODO: translate
-          if (isToday) return "today";
-          return `${ diffDays }d`
-        } catch (error) {
-          return null;
-        };
-      };
-      if (!item?.date_notified) return null;
-      const parsedDate = parseDate(item.date_notified);
-      return(
-        <View style={globalStyles.columnContainer}>
-          <View style={globalStyles.rowIcon}>
-            <Text style={globalStyles.caption}>
-              {parsedDate}
-            </Text>
-          </View>
-        </View>
-      );
-    };
+    const NotificationButton = () => (
+      <View style={[
+        globalStyles.rowIcon,
+        styles.endIcon
+      ]}>
+        <Pressable onPress={() => {
+          if (isNew) {
+            console.log("*** MARK AS READ ***");
+            console.log(`item: ${ JSON.stringify(item) }`);
+          } else {
+            console.log("*** MARK AS UNREAD ***");
+            console.log(`item: ${ JSON.stringify(item) }`);
+          }
+        }}>
+          { isNew ? (
+            <CircleOutlineIcon />
+          ) : (
+            <CheckIcon style={globalStyles.selectedIcon} />
+          )}
+        </Pressable>
+      </View>
+    );
 
     return (
       <View style={[
         globalStyles.rowContainer,
-        styles.container
+        styles.container(isNew),
       ]}>
-        <NotificationTypeIcon />
+        <NotificationIcon />
         <NotificationDetails />
-        <NotificationDate />
+        <NotificationButton />
       </View>
     );
   };
@@ -211,40 +203,22 @@ const NotificationsScreen = ({ navigation }) => {
     });
   };
 
-  const renderItem = ({ item }) => <NotificationItem item={item} loading={isLoading||isValidating} />;
-
-  const filterGroup = [
-    {
-      //label: 'Unread',
-      label: 'Comments',
-      query: ''
-    },
-    {
-      label: 'All',
-      query: ''
-    },
-    {
-      //label: 'Read',
-      label: "Activities",
-      query: ''
-    },
-  ];
+  const renderItem = ({ item }) => {
+    /*
+    console.log("**********************************");
+    console.log(`post_id: ${ item?.post_id}`)
+    console.log(`action: ${ item?.notification_action}`)
+    console.log(`field_key: ${ item?.field_key}`)
+    console.log(`is_new: ${ item?.is_new}`)
+    */
+    return <NotificationItem item={item} />;
+  };
 
   /*
   const unreadNotifications = notifications?.filter((notification) => {
     if (notification.is_new === "1") return notification;
   });
   */
-  const onSearch = (search) => {
-    if (search?.length < 1) {
-      _setNotifications(notifications);
-      return;
-    };
-    _setNotifications(
-      _notifications?.filter(notification => notification?.notification_note?.includes(search))
-    );
-    return;
-  };
 
   const bottomSheetRefSort = useRef(null);
   const bottomSheetRefFilter = useRef(null);
@@ -335,22 +309,53 @@ const NotificationsScreen = ({ navigation }) => {
     );
   };
 
+  const ListSkeleton = () => Array(10).fill(null).map((_, ii) => <PostItemSkeleton key={ii} />);
+
+  /*
+  {
+    "id":"963",
+    "user_id":"2237",
+    "source_user_id":"637",
+    "post_id":"119",
+    "secondary_item_id":"424",
+    "notification_name":"mention",
+    "notification_action":"mentioned",
+    "notification_note":"Mike Allbutt mentioned you on <a href=\"https://dtdemo.disciple.tools/contacts/119\">Mike Allbutt</a> saying: \r\n\r\n @Some1 hi3",
+    "date_notified":"2021-03-19 23:11:52",
+    "is_new":"0",
+    "channels":null,
+    "field_key":"comments",
+    "field_value":"",
+    "post_title":"Mike Allbutt",
+    "pretty_time":["11 months ago","03/19/2021"]
+  }
+  */
+  if (!items) return null;
   return (
-    <View style={globalStyles.screenContainer}>
+    <>
       <OfflineBar />
-      <FilterList
-        items={_notifications}
-        renderItem={renderItem}
-        onRefresh={mutate}
-        // TODO: add term and translate
-        placeholder={"NOTIFICATIONS PLACEHOLDER TEXT"}
-        //search={search}
-        onSearch={onSearch}
-        filterGroup={filterGroup}
-        onSort={()=>showSort(true)}
-        onShowFilters={()=>showFilter(true)}
-      />
-    </View>
+      {!items ? (
+        <ListSkeleton />
+      ) : (
+        <>
+          <FilterList
+            display
+            sortable
+            items={items}
+            renderItem={renderItem}
+            //renderHiddenItem={renderHiddenItem}
+            search={search}
+            onSearch={onSearch}
+            defaultFilter={defaultFilter}
+            filter={filter}
+            onFilter={onFilter}
+            onRefresh={mutate}
+            //leftOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_LEFT}
+            //rightOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_RIGHT}
+          />
+        </>
+      )}
+    </>
   );
 };
 export default NotificationsScreen;
