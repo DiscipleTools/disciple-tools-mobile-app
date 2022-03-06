@@ -2,24 +2,27 @@ import React from "react";
 import { View} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import Chip from "components/Chip";
 import { ClearIcon } from "components/Icon";
+import Chip from "components/Chip";
 
 import useStyles from "hooks/useStyles";
 
 import { localStyles } from "./PostLink.styles";
 
-const PostLink = ({ id, title, type, onRemove }) => {
+// TODO: rename to PostChip?
+const PostLink = ({ id, icon, title, type, onRemove }) => {
 
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
+  const selected = type ? true : null;
   return(
     <Chip
       // TODO: handle this better
-      isLink
-      selected
-      disabled={!id || type === "people_groups"}
+      isLink={type ? true : null}
+      selected={selected}
+      disabled={!id || !type}
       onPress={() => {
+        //if (!type) return;
         // TODO: constant
         navigation.push("Details", {
           id,
@@ -30,14 +33,15 @@ const PostLink = ({ id, title, type, onRemove }) => {
         });
       }}
       label={title}
-      endIcon={
-        <View style={styles.clearIconContainer}>
+      startIcon={icon ?? null}
+      endIcon={onRemove ? (
+        <View style={styles.clearIconContainer(selected)}>
           <ClearIcon
             onPress={() => onRemove(id)}
             style={styles.clearIcon}
           />
         </View>
-      }
+      ) : null }
       style={styles.container}
     />
   );

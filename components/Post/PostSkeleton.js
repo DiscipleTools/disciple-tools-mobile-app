@@ -23,7 +23,8 @@ const PostSkeleton = () => {
         width={windowWidth}
         height={80}
         viewBox={"0 " + "0 " + windowWidth + " 80"}
-        backgroundColor={theme.background.primary}
+        //backgroundColor={theme.background.primary}
+        backgroundColor="#0FF"
         foregroundColor={theme.divider}
       >
         <Rect x="0" y="0" rx="0" ry="0" width={windowWidth} height="35" />
@@ -48,7 +49,8 @@ const PostSkeleton = () => {
         height={100}
         viewBox={"0 " + "0 " + windowWidth + " 80"}
         backgroundColor={theme.background.primary}
-        foregroundColor={theme.divider}
+        //foregroundColor={theme.divider}
+        foregroundColor="#0FF"
       >
         <Circle cx="350" cy="60" r="35" />
       </ContentLoader>
