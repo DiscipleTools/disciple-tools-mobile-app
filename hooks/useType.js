@@ -1,14 +1,14 @@
 import React from "react";
-import { useRoute } from "@react-navigation/native";
+import { useNavigationState } from "@react-navigation/native";
 
 import { FieldNames, TypeConstants } from "constants";
 
 const useType = ({ type, subtype } = {}) => {
 
-  const route = useRoute();
-
-  if (!type) type = route?.params?.type;
-  if (!subtype && !type) subtype = route?.params?.subtype;
+  const navState = useNavigationState(state => state);
+  const route = navState?.routes[navState?.index];
+  if (!type && route) type = route?.params?.type;
+  if (!subtype && !type && route) subtype = route?.params?.subtype;
 
   const isContact = (
     type === TypeConstants.CONTACT ||
@@ -23,6 +23,7 @@ const useType = ({ type, subtype } = {}) => {
   const isQuestionnaire = type === TypeConstants.QUESTIONNAIRE;
   const isNotification = type === TypeConstants.NOTIFICATION;
 
+  // TODO: constants
   const postType = () => {
     if (isContact) return "contacts";
     if (isGroup) return "groups";
@@ -54,18 +55,5 @@ const useType = ({ type, subtype } = {}) => {
     postType: postType(),
     getPostTypeByFieldName,
   };
-  /*
-  return {
-    TypeConstants: null,
-    isPost: null,
-    isContact: true,
-    isGroup: null,
-    isTraining: null,
-    isQuestionnaire: null,
-    isNotification: null,
-    isCommentsActivity: null,
-    postType: "contacts"//null,
-  };
-  */
 };
 export default useType;
