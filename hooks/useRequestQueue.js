@@ -4,14 +4,14 @@ import { useSWRConfig } from 'swr'
 
 import axios from "services/axios";
 
-import useNetworkStatus from "hooks/useNetworkStatus";
+import useNetwork from "hooks/use-network";
 
 //const REQUEST_QUEUE_INTERVAL_SECS = 5;
 
 const useRequestQueue = () => {
 
   const { cache, mutate } = useSWRConfig();
-  const isConnected = useNetworkStatus();
+  const { isConnected } = useNetwork();
   const dispatch = useDispatch();
   const pendingRequests = useSelector(state => state.requestReducer.pendingRequests);
 

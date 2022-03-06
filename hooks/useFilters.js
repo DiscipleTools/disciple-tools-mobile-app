@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo, useReducer, useRef, useState } from "react";
 
-import useNetworkStatus from "hooks/useNetworkStatus";
+//import useNetwork from "hooks/use-network";
 import useType from "hooks/useType";
 import useRequest from "hooks/useRequest";
 
 const useFilters = () => {
 
-  //const isConnected = useNetworkStatus();
+  //const { isConnected } = useNetwork();
   const { isPost, isNotification, isCommentsActivity, postType } = useType();
 
   const url = isPost ? `/dt/v1/users/get_filters?post_type=${postType}&force_refresh=1` : null;

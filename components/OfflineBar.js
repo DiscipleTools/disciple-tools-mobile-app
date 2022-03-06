@@ -1,14 +1,14 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-import useNetworkStatus from "hooks/useNetworkStatus";
+import useNetwork from "hooks/use-network";
 import useI18N from "hooks/useI18N";
 import useStyles from "hooks/useStyles";
 
 import { localStyles } from "./OfflineBar.styles";
 
 const OfflineBar = () => {
-  const { isConnected } = useNetworkStatus();
+  const { isConnected } = useNetwork();
   const { styles } = useStyles(localStyles);
   const { i18n } = useI18N();
   if (isConnected) return null;

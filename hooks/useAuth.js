@@ -5,7 +5,7 @@ import {
   toggleRememberLoginDetails as _toggleRememberLoginDetails,
 } from "store/actions/auth.actions";
 
-//import useNetworkStatus from "hooks/useNetworkStatus";
+import useNetwork from "hooks/use-network";
 import useI18N from "hooks/useI18N";
 import useSecureStore from "hooks/useSecureStore";
 
@@ -69,7 +69,7 @@ const useCustomAuth = () => {
   const isAutoLogin = useSelector(state => state?.authReducer?.isAutoLogin);
   const rememberLoginDetails = useSelector(state => state?.authReducer?.rememberLoginDetails);
 
-  //const { isConnected } = useNetworkStatus();
+  const { isConnected } = useNetwork();
   const { getSecureItem, setSecureItem, deleteSecureItem } = useSecureStore();
 
   // rehydrate state from secure storage (depends on Redux to notify via "rehydrate" change)
