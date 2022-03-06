@@ -86,8 +86,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
     backgroundColor: theme.surface.primary,
     height: "100%",
   },
-  // TODO: rename fieldContainer
-  postDetailsContainer: {
+  fieldContainer: {
     flexDirection: isRTL ? "row-reverse" : "row",
     marginHorizontal: 7,
   },
