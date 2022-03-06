@@ -11,8 +11,8 @@ import { Container } from "native-base";
 
 import FilterList from "components/FilterList";
 import OfflineBar from "components/OfflineBar";
-import SelectSheet from "components/Sheets/SelectSheet";
-import { HelpSheet } from "components/Sheets/ModalSheet";
+import SelectSheet from "components/Sheet/SelectSheet";
+import { HelpSheet } from "components/Sheet/ModalSheet";
 
 import useI18N from "hooks/useI18N";
 import useNotifications from "hooks/useNotifications.js";
