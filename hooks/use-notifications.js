@@ -38,11 +38,10 @@ const useNotifications = ({ search, filter, exclude }) => {
     isValidating,
     mutate
   };
-  //console.log(`# of notifications: ${ notifications?.length }`);
   let filtered = notifications.filter(item => !exclude?.includes(item?.id));
-  //if (filtered?.length > 0 && search && isConnected == false) filtered = searchObjList(filtered, search);
-  if (filtered?.length > 0 && search) filtered = searchObjList(filtered, search);
-  //console.log(`# of filtered: ${ filtered?.length }`);
+  if (filter?.query?.key && filter?.query?.value) filtered = filtered.filter(item => item?.[filter.query.key] === filter.query.value);
+  //if (search && isConnected == false) filtered = searchObjList(filtered, search);
+  if (search) filtered = searchObjList(filtered, search);
   return {
     data: filtered,
     error,
