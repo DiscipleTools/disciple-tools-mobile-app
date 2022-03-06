@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
-// (recommended by native base (https://docs.nativebase.io/Components.html#swipeable-multi-def-headref))
 import { SwipeListView } from "react-native-swipe-list-view";
 
 import SearchBar from "./SearchBar";
@@ -8,15 +7,20 @@ import FilterOptions from "./FilterOptions";
 
 import useI18N from "hooks/useI18N";
 import useStyles from "hooks/useStyles";
+import useType from "hooks/useType";
 
 import { localStyles } from "./FilterList.styles";
 
-import PropTypes from "prop-types";
-
 const FilterList = ({
+  sortable,
   items,
   renderItem,
   renderHiddenItem,
+  search,
+  onSearch,
+  defaultFilter,
+  filter,
+  onFilter,
   onRefresh,
   placeholder,
   leftOpenValue,
@@ -45,24 +49,49 @@ const FilterList = ({
   });
 
   const Count = () => (
-    <Text style={[globalStyles.text, styles.count]}>({items?.length})</Text>
+    <Text style={[globalStyles.text, styles.count]}>
+      {items?.length}
+    </Text>
   );
 
-  const Filters = () => {
+  // TODO: component, translate, and styles
+  const FilterBar = () => {
     return(
-      <ScrollView
-        horizontal
+      <View
         style={styles.filtersScrollContainer}
-        contentContainerStyle={styles.filtersContentContainer}
       >
-        <Count />
-        <FilterOptions />
-      </ScrollView>
+        <ScrollView
+          horizontal
+          contentContainerStyle={styles.filtersContentContainer}
+        >
+          <FilterOptions
+            defaultFilter={defaultFilter}
+            filter={filter}
+            onFilter={onFilter}
+          />
+        </ScrollView>
+        <View style={[
+          globalStyles.rowContainer,
+          { paddingVertical: 5 }
+        ]}>
+          <Count />
+          <View>
+            <Text style={styles.filterSelections}>Filtering: My Recently Viewed</Text>
+            <Text style={styles.filterSelections}> Sorting: Last Modified Date - Most Recent</Text>
+          </View>
+        </View>
+      </View>
     );
   };
 
   const Placeholder = () => {
-    const defaultPlaceholder = i18n.t("global.placeholder");
+    const { isContact, isGroup } = useType();
+    const getDefaultPlaceholder = () => {
+      if (isContact) return i18n.t("contactsScreen.noContactPlacheHolder");
+      if (isGroup) return i18n.t("groupsScreen.noGroupPlacheHolder");
+      return i18n.t("global.placeholder");
+    };
+    const defaultPlaceholder = getDefaultPlaceholder();
     return(
       <View style={styles.placeholderContainer}>
         <Text style={styles.placeholderText}>{placeholder ?? defaultPlaceholder}</Text>
@@ -72,12 +101,16 @@ const FilterList = ({
 
   return (
     <>
-      <SearchBar
-        sortable
-        items={_items}
-        setItems={_setItems}
-      />
-      <Filters />
+      { onSearch && (
+        <SearchBar
+          sortable={sortable}
+          search={search}
+          onSearch={onSearch}
+        />
+      )}
+      { onFilter && (
+        <FilterBar />
+      )}
       {items?.length === 0 ? (
         <Placeholder />
       ) : (
@@ -107,9 +140,5 @@ const FilterList = ({
       )}
     </>
   );
-};
-FilterList.propTypes = {
-  //items: PropTypes.arrayOf(PropTypes.object).isRequired,
-  renderItem: PropTypes.func.isRequired,
 };
 export default FilterList;

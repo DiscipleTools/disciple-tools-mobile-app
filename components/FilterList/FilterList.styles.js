@@ -14,6 +14,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     flexDirection: isRTL ? "row-reverse" : "row",
     backgroundColor: theme.background.primary,
     height: "100%",
+    paddingTop: 5,
     // NOTE: width: "100%" prevents horizontal scroll on Android
     //width: "100%",
   },
@@ -26,10 +27,20 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     padding: 20,
   },
   count: {
-    fontSize: 16,
+    //borderColor: theme.text.primary,
+    //borderWidth: 2,
+    color: theme.text.primary,
+    // TODO: use Theme
+    fontSize: 24,
     fontWeight: "bold",
     marginTop: "auto",
     marginBottom: "auto",
-    marginLeft: 5,
+    marginHorizontal: 10,
+  },
+  filterSelections: {
+    color: theme.placeholder,
+    fontStyle: "italic",
+    // TODO: use Theme
+    fontSize: 12,
   }
 });

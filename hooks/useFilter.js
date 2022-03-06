@@ -1,22 +1,9 @@
-import React, { createContext, useContext, useMemo, useReducer, useState } from "react";
-import { useSWRConfig } from "swr";
+import React, { useReducer, useState } from "react";
 
-const FilterContext = createContext(null);
+import useType from "hooks/useType";
 
-export const FilterProvider = ({ children }) => {
-  const filterContext = useFilterContext();
-  return(
-    <FilterContext.Provider value={filterContext}>
-      {children}
-    </FilterContext.Provider>
-  );
-};
-
-const useFilter = () => useContext(FilterContext);
-
-const useFilterContext = () => {
-
-  const { cache } = useSWRConfig();
+const useFilter = () => {
+  const { isContact, isGroup } = useType();
 
   const SET_FILTER = "SET_FILTER";
 
@@ -29,10 +16,30 @@ const useFilterContext = () => {
     }
   };
 
-  const [filter, dispatch] = useReducer(filterReducer, null);
+  const getDefaultFilter = () => {
+    // {"ID":"recent","name":"My Recently Viewed","count":0,"subfilter":false,"query":{"dt_recent":true}}
+    // last_modified
+    /*
+    if (isContact) return {
+      ID: "recent",
+      // TODO: translate?
+      name: "My Recently Viewed",
+      query: { "sort": "-post_date" }
+    };
+    */
+    //if (isGroup) return {};
+    return {
+      ID: "recent",
+      // TODO: translate?
+      name: "My Recently Viewed",
+      //count: 0,
+      //subfilter: false,
+      query: { "dt_recent": "true" }
+    };
+  };
 
-  // NOTE: this is the SWR key for retrieving cached items to filter/sort
-  const [key, setKey] = useState(null);
+  const defaultFilter = getDefaultFilter();
+  const [filter, dispatch] = useReducer(filterReducer, defaultFilter);
 
   const [search, setSearch] = useState(null);
 
@@ -41,18 +48,8 @@ const useFilterContext = () => {
     dispatch({ type: SET_FILTER, filter });
   };
 
-  const items = () => cache.get(key);
-
-  // TODO: implement
-  const setItems = (items) => null; //{
-  //  if (!isOnline) mutate(key, items, false);
-  //};
-
   return {
-    key,
-    setKey,
-    items,
-    setItems,
+    defaultFilter,
     filter,
     onFilter,
     search,
