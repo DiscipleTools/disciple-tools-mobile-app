@@ -1,5 +1,62 @@
 import _ from "lodash";
 
+const complementListByObjProps = ({aList=[], aProp, aTransform, bList=[], bProp, bTransform } = {}) => {
+  if (!aProp || !bProp) return;
+  for (var ii=0; ii < aList.length; ii++) {
+    const aa = aList[ii];
+    let aVal = aa?.[aProp];
+    if (aTransform) aVal = aTransform(aVal);
+    for (var jj=0; jj < bList.length; jj++) {
+      const bb = bList[jj];
+      let bVal = bb?.[bProp];
+      if (bTransform) bVal = bTransform(bVal);
+      if (aVal === bVal) {
+        aList.splice(ii,1);
+        //bList.splice(jj,1);
+      };
+    };
+  };
+};
+
+const searchObj = (pobj = {}, searchStr, { ignoreList } = {}) => {
+  const result = [];
+  const recursiveSearch = (obj = {}) => {
+    if (!obj || typeof obj !== 'object') return;
+    Object.keys(obj).forEach(key => {
+      if (ignoreList?.length > 0) {
+        ignoreList.forEach(prop => {
+          // if key/prop *NOT* in ignore list, then check if includes value
+          if (key !== prop) {
+            if (String(obj[key])?.includes(searchStr)) {
+              result.push(pobj);
+            };
+            recursiveSearch(obj[key]);
+          }
+        });
+      } else {
+        if (String(obj[key])?.includes(searchStr)) {
+          result.push(pobj);
+        };
+        recursiveSearch(obj[key]);
+      };
+    });
+  };
+  recursiveSearch(pobj);
+  return result;
+};
+
+const dedupeObjList = (objList) => {
+  const set = new Set(objList.map(item => JSON.stringify(item)));
+  return [...set].map(item => JSON.parse(item));
+};
+
+const searchObjList = (objList, searchStr, options) => {
+  return objList.map(obj => {
+    const res = searchObj(obj, searchStr, options);
+    return dedupeObjList(res);
+  })?.flat();
+};
+
 const diff = (obj1, obj2) => {
   // Make sure an object to compare is provided
   if (!obj2 || Object.prototype.toString.call(obj2) !== "[object Object]") {
@@ -591,6 +648,13 @@ const mergeGroupList = (mappedGroups, persistedGroups) => {
     newGroups,
   };
 };
+
+export {
+  complementListByObjProps,
+  searchObj,
+  dedupeObjList,
+  searchObjList,
+}
 
 export default {
   diff,
