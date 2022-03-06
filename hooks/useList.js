@@ -1,19 +1,16 @@
-import React, { useEffect } from "react";
-
 import { Html5Entities } from "html-entities";
 
-import useFilter from "hooks/useFilter";
+import useNetwork from "./use-network";
 import useType from "hooks/useType.js";
 import useRequest from "hooks/useRequest";
 import useMyUser from "hooks/useMyUser";
 
-// TODO: need search as param for useUsersContacts
-const useList = ({ type } = {}) => {
-//const useList = ({ setKey, search, filter, type } = {}) => {
+import { searchObjList } from "utils";
 
-  const { isContact, isGroup, postType } = useType({ type });
+const useList = ({ search, filter, exclude, type, subtype } = {}) => {
+
+  const { isContact, isGroup, postType } = useType({ type, subtype });
   const { data: userData } = useMyUser();
-  const { setKey, filter, search } = useFilter();
 
   // TODO: duplicated in useDetails
   const mapContacts = (contacts, entities) => {
@@ -351,20 +348,30 @@ const useList = ({ type } = {}) => {
   };
 
   let url = `/dt-posts/v2/${postType}`;
-  if (search || filter?.query) url += '?';
-  if (search) url += `text=${search}`;
+  if (filter?.query) url += '?';
+  //if (search || filter?.query) url += '?';
+  //if (search) url += `text=${search}`;
+  // TODO
   if (filter?.query && userData) url += mapFilterOnQueryParams(filter?.query, userData);
   if (!search && !filter?.query) url += "?dt_recent=true";
 
-  setKey(url);
-
   // TODO: offline filtering
-  // TODO: useSelector for initialData if OFFLINE
   //const initialData = null;
 
   const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
+  if (error || isLoading || !data?.posts) return {
+    data: null,
+    error,
+    isLoading,
+    isValidating,
+    mutate
+  };
+  let filtered = data.posts.filter(item => !exclude?.includes(item?.ID));
+  //if (filtered?.length > 0 && search && isConnected == false) filtered = searchObjList(filtered, search);
+  if (filtered?.length > 0 && search) filtered = searchObjList(filtered, search);
+  const posts = filtered?.length > 0 ? mapPosts(filtered) : null;
   return {
-    data: data?.posts ? mapPosts(data.posts) : null,
+    data: posts,
     error,
     isLoading,
     isValidating,
