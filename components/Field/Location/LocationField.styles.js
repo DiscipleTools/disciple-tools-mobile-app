@@ -1,29 +1,18 @@
-import { StyleSheet } from "react-native";
-
-export const styles = StyleSheet.create({
-  linkingText: {
-    paddingTop: 4,
-    paddingBottom: 8,
-    textDecorationLine: "underline",
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
+  startIcon: {
+    color: theme.text.primary,
+    fontSize: 16,
   },
-  selectizeField: {
+  clearIconContainer: (selected) => ({
+    backgroundColor: theme.background.primary,
+    borderColor: selected ? theme.highlight : theme.disabled,
+    borderRadius: 10,
     borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: "#B4B4B4",
-    borderBottomWidth: 1.5,
-    borderBottomColor: "#B4B4B4",
-    borderRadius: 5,
-    minHeight: 50,
-    marginTop: -15,
-    padding: 10,
-  },
-  selectizeRow: {
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-  },
-  selectizeRowText: {
-    color: "rgba(0, 0, 0, 0.87)",
-    fontSize: 14,
-    lineHeight: 21,
+    marginStart: 5,
+  }),
+  clearIcon: {
+    color: theme.text.primary,
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

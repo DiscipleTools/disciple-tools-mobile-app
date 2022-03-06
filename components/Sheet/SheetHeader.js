@@ -1,6 +1,7 @@
 import React from "react";
 import { Pressable, View, Text } from "react-native";
-import { Icon } from "native-base";
+
+import { ClearIcon, ExpandIcon } from "components/Icon";
 
 import useBottomSheet from 'hooks/useBottomSheet';
 import useStyles from "hooks/useStyles";
@@ -21,27 +22,30 @@ const SheetHeader = ({ expandable, dismissable, title, onDismiss }) => {
   const truncatedTitle = title?.length > 35 ? `${title.substring(0, 35)}...` : title;
   return(
     <View style={styles.container}>
+      <View>
       { title?.length > 0 && (
         <Text style={globalStyles.title}>{truncatedTitle}</Text>
       )}
+      </View>
+      <View style={[
+        globalStyles.rowContainer,
+        styles.controls
+      ]}>
       {expandable && (
-        <Pressable onPress={() => onPressExpand()}>
-          <Icon
-            type="MaterialCommunityIcons"
-            name="arrow-expand"
-            style={globalStyles.icon}
-          />
-        </Pressable>
+        <ExpandIcon
+          onPress={() => onPressExpand()}
+          style={[
+            globalStyles.icon,
+          ]}
+        />
       )}
       {dismissable && (
-        <Pressable onPress={() => onPressDismiss()}>
-          <Icon
-            type="MaterialIcons"
-            name="clear"
-            style={styles.closeIcon}
-          />
-        </Pressable>
+        <ClearIcon
+          onPress={() => onPressDismiss()}
+          style={styles.closeIcon}
+        />
       )}
+      </View>
     </View>
   );
 };

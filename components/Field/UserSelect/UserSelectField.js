@@ -1,48 +1,43 @@
 import React from "react";
-import { Pressable, View } from "react-native";
 
-import { CaretIcon } from "components/Icon";
-import SelectSheet from "components/Sheets/SelectSheet";
-import SheetHeader from "components/Sheets/SheetHeader";
+import Select from "components/Select";
 import PostLink from "components/Post/PostLink";
+import UsersSheet from "./UsersSheet";
 
 import useBottomSheet from "hooks/useBottomSheet";
-import useStyles from "hooks/useStyles";
 import useType from "hooks/useType";
-import useUsers from "hooks/useUsers";
-
-import { localStyles } from "./UserSelectField.styles";
 
 const UserSelectField = ({ editing, field, value, onChange }) => {
 
-  const { styles, globalStyles } = useStyles(localStyles);
-  const { expand, snapPoints } = useBottomSheet();
-  const { postType } = useType();
-
-  // ITEMS
-  const { data: users } = useUsers();
-  if (!users) return null;
+  const { delayedClose, expand, snapPoints } = useBottomSheet();
+  const { getPostTypeByFieldName } = useType();
 
   // SELECTED 
   const selectedLabel = value?.label ?? ''; 
+
+  const onRemove = (id) => {
+    onChange(
+      { values: [{ value: id, delete: true }]},
+      { autosave: true }
+    );
+  };
+  const renderItemEdit = (item) => <PostLink id={item?.key} title={item?.label} type={getPostTypeByFieldName(field?.name)} onRemove={onRemove} />;
 
   // EDIT MODE
   const UserSelectFieldEdit = () => {
 
     // MAP TO API
-    const mapToAPI = (item) => {
-      return item?.key;
-    };
+    const mapToAPI = (newItem) => newItem?.key;
 
     // ON CHANGE
-    const _onChange = (newValue) => {
-      const mappedValue = mapToAPI(newValue);
-      if (mappedValue !== value) {
-        onChange(mappedValue, {
-          autosave: true,
-          automutate: true
-        });
+    const _onChange = (selectedItem) => {
+      const mappedValue = mapToAPI(selectedItem);
+      if (JSON.stringify(mappedValue) !== JSON.stringify(value?.key)) {
+        onChange(mappedValue,
+          { autosave: true }
+        );
       };
+      delayedClose();
     };
 
     // MAP ITEMS
@@ -57,52 +52,29 @@ const UserSelectField = ({ editing, field, value, onChange }) => {
       });
     };
 
-    // SECTIONS 
-    const sections = [{ data: mapItems(users) }];
-
-    const title = field?.label;
-
-    const userSelectContent = () => (
-      <>
-        <SheetHeader
-          expandable
-          dismissable
-          title={title}
-        />
-        <SelectSheet
-          required
-          sections={sections}
-          onChange={_onChange}
-        />
-      </>
-    );
-
-    const showSheet = () => expand({
-      index: snapPoints.length-1,
-      snapPoints,
-      renderContent: () => userSelectContent,
-    });
-
     return(
-      <Pressable onPress={() => showSheet()}>
-        <View style={[
-            globalStyles.rowContainer,
-            styles.container
-        ]}>
-          <PostLink id={value?.key ?? 0} title={selectedLabel} type={postType} />
-          <CaretIcon />
-        </View>
-      </Pressable>
+      <Select
+        onOpen={() => {
+          expand({
+            index: snapPoints.length-1,
+            renderContent: () => 
+              <UsersSheet
+                id={value?.key}
+                title={field?.label || ''}
+                values={[value]}
+                onChange={_onChange}
+              />
+          });
+        }}
+        items={[value]}
+        renderItem={renderItemEdit}
+      />
     );
   };
 
   // VIEW MODE
-  const UserSelectFieldView = () => {
-    const user = users?.find(existingUser => value?.key && (existingUser?.ID === value.key || existingUser?.contact_id === value.key));
-    const id = !user ? null : user?.contact_id ?? null;
-    const title = !user ? value.label : user?.name ?? null;
-    return <PostLink id={id} title={title} type={"contacts"} />;
-  };
+  // TODO
+  const UserSelectFieldView = () => null;
 
   if (editing) return <UserSelectFieldEdit />;
   return <UserSelectFieldView />;

@@ -1,7 +1,8 @@
 import React from "react";
 import { Pressable, View, Text } from "react-native";
-import { Icon } from "native-base";
 import { useBottomSheet } from '@gorhom/bottom-sheet';
+
+import { CheckIcon, ClearIcon } from "components/Icon";
 
 import useI18N from "hooks/useI18N";
 import useStyles from "hooks/useStyles";
@@ -13,7 +14,9 @@ const SheetFooter = ({ label, renderIcon, onPress }) => {
   return(
     <Pressable onPress={() => onPress()}>
       <View style={styles.container}>
-        { renderIcon }
+        <View>
+          { renderIcon }
+        </View>
         <Text>{label}</Text>
       </View>
     </Pressable>
@@ -32,14 +35,13 @@ export const SheetFooterCancel = ({ onDismiss }) => {
       close();
     };
   };
-  const renderIcon = (
-    <Icon
-      type="MaterialIcons"
-      name="clear"
-      style={globalStyles.icon}
+  return(
+    <SheetFooter
+      onPress={onPress}
+      label={label}
+      renderIcon={<ClearIcon style={globalStyles.icon} />}
     />
   );
-  return <SheetFooter label={label} renderIcon={renderIcon} onPress={onPress} />;
 };
 
 export const SheetFooterDone = ({ onDone }) => {
@@ -54,14 +56,13 @@ export const SheetFooterDone = ({ onDone }) => {
       close();
     };
   };
-  const renderIcon = (
-    <Icon
-      type="MaterialIcons"
-      name="check"
-      style={globalStyles.icon}
+  return(
+    <SheetFooter
+      onPress={onPress}
+      label={label}
+      renderIcon={<CheckIcon style={globalStyles.icon} />}
     />
   );
-  return <SheetFooter label={label} renderIcon={renderIcon} onPress={onPress} />;
 };
 
 export default SheetFooter;

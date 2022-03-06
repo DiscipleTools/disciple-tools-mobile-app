@@ -1,9 +1,9 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 
-import { CaretIcon } from "components/Icon";
-import SelectSheet from "components/Sheets/SelectSheet";
-import SheetHeader from "components/Sheets/SheetHeader";
+import Select from "components/Select";
+import SelectSheet from "components/Sheet/SelectSheet";
+import SheetHeader from "components/Sheet/SheetHeader";
 
 import useBottomSheet from "hooks/useBottomSheet";
 import useStyles from "hooks/useStyles";
@@ -15,7 +15,8 @@ import { localStyles } from "./KeySelectField.styles";
 const KeySelectField = ({ editing, field, value, onChange }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
-  const { expand, snapPoints } = useBottomSheet();
+  const { expand } = useBottomSheet();
+  const _snapPoints = ['33%','50%','66%','95%'];
 
   // ITEMS
   const items = field?.default;
@@ -77,7 +78,7 @@ const KeySelectField = ({ editing, field, value, onChange }) => {
 
     const title = field?.label;
 
-    const keySelectContent = () => (
+    const KeySelectSheet = () => (
       <>
         <SheetHeader
           expandable
@@ -92,24 +93,37 @@ const KeySelectField = ({ editing, field, value, onChange }) => {
       </>
     );
 
-    const showSheet = () => expand({
-      index: 0,
-      snapPoints,
-      renderContent: () => keySelectContent,
-    });
+    const getDefaultSheetSnapIndex = () => {
+      const optionsCount = sections?.[0]?.data?.length;
+      console.log(`optionsCount: ${optionsCount}`);
+      if (optionsCount <= 3) return 0;
+      if (optionsCount <= 5) return 1;
+      if (optionsCount <= 9) return 2;
+      if (optionsCount <= 11) return 3;
+      return _snapPoints.length-1; // 4 in this case
+    };
 
-    const backgroundColor = items[value]?.color ?? globalStyles.surface?.backgroundColor;
+    const getBackgroundColor = () => {
+      if (items[value]?.color) return items[value].color;
+      return globalStyles.background?.backgroundColor;
+     
+    };
+
+    const renderItem = (item) => <Text>{item}</Text>;
+
     // TODO: items[value]?.description (for when "Not Ready")
     return(
-      <Pressable onPress={() => showSheet()}>
-        <View style={[
-          globalStyles.rowContainer,
-          styles.container(isStatusField(), backgroundColor),
-        ]}>
-          <Text>{selectedLabel}</Text>
-          <CaretIcon />
-        </View>
-      </Pressable>
+      <Select
+        onOpen={() => {
+          expand({
+            defaultIndex: getDefaultSheetSnapIndex(),
+            renderContent: () => <KeySelectSheet />
+          });
+        }}
+        items={[selectedLabel]}
+        renderItem={renderItem}
+        style={{ backgroundColor: getBackgroundColor() }}
+      />
     );
   };
 

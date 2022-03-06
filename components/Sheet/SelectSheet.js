@@ -1,8 +1,11 @@
 import React, { useRef, useState } from "react";
 import { Image, Pressable, View, Text } from "react-native";
-import { Icon } from "native-base";
 import { BottomSheetSectionList } from '@gorhom/bottom-sheet';
-import { SheetFooterCancel, SheetFooterDone } from "components/Sheets/SheetFooter";
+
+// TODO: remove
+import { Icon } from "native-base";
+
+import { CheckIcon } from "components/Icon";
 
 import useBottomSheet from "hooks/useBottomSheet";
 import useStyles from "hooks/useStyles";
@@ -75,6 +78,7 @@ const SelectSheet = ({
       };
     });
     _setSections(updatedSections);
+    onChange(updatedSections);
   };
 
   const _renderItem = ({ item }) => {
@@ -102,11 +106,7 @@ const SelectSheet = ({
           </View>
           {selected && (
             <View style={globalStyles.rowIcon}>
-              <Icon
-                type="MaterialCommunityIcons"
-                name="check"
-                style={globalStyles.selectedIcon}
-              />
+              <CheckIcon style={globalStyles.selectedIcon} />
             </View>
           )}
         </View>
@@ -126,21 +126,14 @@ const SelectSheet = ({
   };
 
   return(
-    <>
-      <BottomSheetSectionList
-        sections={_sections}
-        // TODO
-        //keyExtractor={(key) => key}
-        renderSectionHeader={_renderSectionHeader}
-        renderItem={_renderItem}
-        contentContainerStyle={styles.contentContainer}
-      />
-      {multiple ? (
-        <SheetFooterDone onDone={_onDone} />
-      ) : (
-        <SheetFooterCancel onDismiss={_onDismiss} />
-      )}
-    </>
+    <BottomSheetSectionList
+      sections={_sections}
+      // TODO
+      //keyExtractor={(key) => key}
+      renderSectionHeader={_renderSectionHeader}
+      renderItem={_renderItem}
+      contentContainerStyle={styles.contentContainer}
+    />
   );
 };
 export default SelectSheet;

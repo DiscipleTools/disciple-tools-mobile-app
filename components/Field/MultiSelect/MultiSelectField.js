@@ -1,10 +1,11 @@
-import React, { useCallback, useMemo } from "react";
-import { Pressable, Text, View } from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import { Text, View } from "react-native";
 
-import { CaretIcon } from "components/Icon";
 import Milestones from "components/Milestones";
-import SelectSheet from "components/Sheets/SelectSheet";
-import SheetHeader from "components/Sheets/SheetHeader";
+import Select from "components/Select";
+import PostLink from "components/Post/PostLink";
+import SelectSheet from "components/Sheet/SelectSheet";
+import SheetHeader from "components/Sheet/SheetHeader";
 
 import useBottomSheet from "hooks/useBottomSheet";
 import useStyles from "hooks/useStyles";
@@ -15,7 +16,7 @@ import { localStyles } from "./MultiSelectField.styles";
 const MultiSelectField = ({ editing, field, value, onChange }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
-  const { expand, snapPoints } = useBottomSheet();
+  const { expand, snapPoints, setMultiSelectValues } = useBottomSheet();
   const { postType } = useType();
 
   // VALUES
@@ -89,14 +90,18 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
     const _onChange = async(newSections) => {
       const mappedValues = mapToAPI(newSections);
       if (JSON.stringify(mappedValues) !== JSON.stringify(values)) {
-        const apiValues = {
-          values: mappedValues,
-          force_values: true,
-        };
-        onChange(apiValues, {
-          autosave: true
-        });
+        console.log("*** CHANGE OCCURRED ***");
+        setMultiSelectValues({ values: mappedValues });
       };
+    };
+
+    const onDone = (selectedValues) => {
+      onChange(selectedValues,
+        {
+          autosave: true,
+          force: true
+        }
+      );
     };
 
     // SELECT OPTIONS
@@ -118,23 +123,27 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
       </>
     ), [title, sections]);
 
-    const showSheet = () => expand({
-      index: snapPoints.length-1,
-      snapPoints,
-      renderContent: () => sheetContent,
-    });
+    const renderItemLinkless = (item) => <PostLink id={item?.key} title={item?.label} />;
 
     return(
-      <Pressable onPress={() => showSheet()}>
-        <View style={globalStyles.postDetailsContainer}>
-          <MultiSelectFieldView />
-          <CaretIcon />
-        </View>
-      </Pressable>
+      <Select
+        onOpen={() => {
+          expand({
+            index: snapPoints.length-1,
+            snapPoints,
+            multiple: true,
+            onDone: (selectedValues) => onDone(selectedValues),
+            renderContent: () => sheetContent
+          });
+        }}
+        items={selectedItems}
+        renderItem={renderItemLinkless}
+      />
     );
   };
 
   const MultiSelectFieldView = () => {
+
     // TODO: fix formatting
     /*
     if (isMilestones) return (
@@ -145,6 +154,19 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
       />
     );
     */
+    return (
+      <Select
+        items={selectedItems}
+        renderItem={renderItemLinkless}
+      />
+    );
+    return (
+      <View style={styles.container}>
+        {selectedItems.map(selectedItem => (
+          <PostLink id={selectedItem?.key} title={selectedItem?.label} />
+        ))}
+      </View>
+    );
     return (
       <View style={styles.container}>
         {selectedItems.map(selectedItem => (

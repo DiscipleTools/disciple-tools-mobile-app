@@ -96,7 +96,7 @@ const DateField = ({ editing, field, value, onChange }) => {
     };
     const dateValue = mappedValue ? formatDateView(mappedValue) : '';
     return (
-      <View style={globalStyles.postDetailsContainer}>
+      <View style={globalStyles.fieldContainer}>
         <Text>{dateValue}</Text>
         { !_editing && (
           <EditIcon onPress={() => _setEditing(true)} />

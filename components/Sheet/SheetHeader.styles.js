@@ -5,10 +5,11 @@ export const localStyles = ({ theme, isRTL }) => ({
     //borderBottomColor: theme.divider,
     //borderBottomWidth: 1,
     flexDirection: isRTL ? "row-reverse" : "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
     paddingBottom: 20,
     paddingHorizontal: 10,
+  },
+  controls: {
+    marginStart: "auto"
   },
   closeIcon: {
     color: theme.text.primary,

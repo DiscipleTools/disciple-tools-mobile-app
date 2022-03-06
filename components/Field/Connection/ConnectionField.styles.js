@@ -5,14 +5,6 @@ const windowWidth = Dimensions.get("window").width;
 const circleSideSize = windowWidth / 3 + 20;
 
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
-  container: {
-    alignItems: "center",
-    padding: 5,
-  },
-  optionContainer: {
-    flexWrap: "wrap",
-    width: "95%",
-  },
   linkingText: {
     paddingTop: 4,
     paddingBottom: 8,
@@ -148,5 +140,21 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     fontSize: 25,
     marginTop: "auto",
     marginBottom: "auto",
+  },
+  itemContainer: {
+    flexDirection: isRTL ? "row-reverse" : "row",
+    borderTopColor: theme.background.primary,
+    borderTopWidth: 1,
+    alignItems: "center",
+    marginStart: 15,
+    minHeight: 50,
+  },
+  itemText: {
+    fontSize: 32,
+  },
+  avatar: {
+    height: 16,
+    width: 16,
+    marginRight: 5,
   },
 });

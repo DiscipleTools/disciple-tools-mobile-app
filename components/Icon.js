@@ -51,10 +51,16 @@ const FontAwesomeIcon = ({ name, onPress, style }) => {
 
 export const AddIcon = ({ onPress, style }) => <MaterialIcon name="add" onPress={onPress} style={style} />;
 export const CaretIcon = ({ onPress, style }) => <MaterialCommunityIcon name="chevron-down" onPress={onPress} style={style} />;
+export const CheckIcon = ({ onPress, style }) => <MaterialCommunityIcon name="check" onPress={onPress} style={style} />;
 export const ClearIcon = ({ onPress, style }) => <MaterialIcon name="clear" onPress={onPress} style={style} />;
+export const ClearFiltersIcon = ({ onPress, style }) => <MaterialCommunityIcon name="filter-variant-remove" onPress={onPress} style={style} />;
 export const EditIcon = ({ onPress, style }) => <MaterialIcon name="edit" onPress={onPress} style={style} />;
+export const ExpandIcon = ({ onPress, style }) => <MaterialCommunityIcon name="arrow-expand" onPress={onPress} style={style} />;
+export const MapIcon = ({ onPress, style }) => <MaterialCommunityIcon name="earth" onPress={onPress} style={style} />;
 export const RemoveIcon = ({ onPress, style }) => <MaterialIcon name="remove" onPress={onPress} style={style} />;
 export const SaveIcon = ({ onPress, style }) => <MaterialIcon name="save" onPress={onPress} style={style} />;
+export const SearchIcon = ({ onPress, style }) => <MaterialIcon name="search" onPress={onPress} style={style} />;
+export const SortIcon = ({ onPress, style }) => <MaterialCommunityIcon name="sort" onPress={onPress} style={style} />;
 
 // TabBarIcons
 export const SettingsIcon = ({ onPress, style }) => <FontAwesomeIcon name="cog" onPress={onPress} style={style} />;

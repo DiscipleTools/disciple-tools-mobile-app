@@ -1,21 +1,19 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
-import { Icon } from "native-base";
 
-import SelectSheet from "components/Sheets/SelectSheet";
-import SheetHeader from "components/Sheets/SheetHeader";
+import { CheckIcon } from "components/Icon";
+import SelectSheet from "./SelectSheet";
+import SheetHeader from "./SheetHeader";
 
 import useBottomSheet from "hooks/useBottomSheet";
 import useStyles from "hooks/useStyles";
 
 import { localStyles } from "./FilterSheet.styles";
 
-const FilterSheet = ({ filters, filter, onFilter }) => {
+const FilterSheet = ({ multiple, filters, filter, onFilter }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { delayedClose } = useBottomSheet();
-
-  const multiple = false;
 
   const onChange = (selectedFilter) => {
     if (onFilter) onFilter(selectedFilter);
@@ -30,18 +28,13 @@ const FilterSheet = ({ filters, filter, onFilter }) => {
       <Pressable onPress={() => onChange(item)}>
         <View key={ID} style={styles.itemContainer}>
           <View style={styles.itemSubFilterContainer(subfilter)}>
-            <Text style={{
-            }}>
+            <Text style={styles.itemText}>
               {name} {count > 0 ? `(${count})` : null}
             </Text>
           </View>
           {selected && (
             <View style={globalStyles.rowIcon}>
-              <Icon
-                type="MaterialCommunityIcons"
-                name="check"
-                style={globalStyles.selectedIcon}
-              />
+              <CheckIcon style={globalStyles.selectedIcon} />
             </View>
           )}
         </View>

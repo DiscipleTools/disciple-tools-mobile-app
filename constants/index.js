@@ -95,6 +95,7 @@ export const FieldNames = Object.freeze({
   NAME: "name",
   OVERALL_STATUS: "overall_status",
   GROUP_STATUS: "group_status",
+  COACHES: "coaches",
   PARENT_GROUPS: "parent_groups",
   PEER_GROUPS: "peer_groups",
   CHILD_GROUPS: "child_groups",
@@ -102,6 +103,9 @@ export const FieldNames = Object.freeze({
   BAPTISM_DATE: "baptism_date",
   MEMBER_COUNT: "member_count",
   GROUPS: "groups",
+  TRAININGS: "trainings",
+  LOCATION_GRID_META: "location_grid_meta",
+  LOCATION_GRID: "location_grid",
 });
 
 export const TypeConstants = Object.freeze({
@@ -154,7 +158,7 @@ export const defaultThemeLight = Object.freeze({
   },
   divider: systemGray4Light, //systemGray,
   disabled: systemGray4Light,
-  placeholder: systemGray4Light,
+  placeholder: systemGray,
   highlight
 });
 
@@ -203,6 +207,11 @@ export const defaultThemeDark = Object.freeze({
 export const BottomSheetConstants = Object.freeze({
   PORTAL_HOST_NAME: "bottomSheet",
 });
+
+export const NetworkConstants = Object.freeze({
+  NETWORK_TEST_URL: "https://8.8.8.8",
+});
+
 
 export default {
   STATUS_CIRCLE_SIZE: 15,

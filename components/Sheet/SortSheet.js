@@ -1,7 +1,7 @@
 import React from "react";
 
-import SelectSheet from "components/Sheets/SelectSheet";
-import SheetHeader from "components/Sheets/SheetHeader";
+import SelectSheet from "./SelectSheet";
+import SheetHeader from "./SheetHeader";
 
 const SortConstants = {
   LAST_MOD_ASC: "sort_last_mod_asc",

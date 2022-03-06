@@ -6,7 +6,8 @@ import {
   EditIcon,
   SaveIcon
 } from "components/Icon";
-import FieldIcon from "components/Field/FieldIcon";
+import FieldSkeleton from "./FieldSkeleton";
+import FieldIcon from "./FieldIcon";
 import BooleanField from "components/Field/Boolean/BooleanField";
 import CommunicationChannelField from "components/Field/CommunicationChannel/CommunicationChannelField";
 import ConnectionField from "components/Field/Connection/ConnectionField";
@@ -39,6 +40,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   let value = null;
   try { value = post[field?.name]; } catch (error) {};
 
+  const [_loading, _setLoading] = useState(false);
   const [_editing, _setEditing] = useState(editing);
   const [_value, _setValue] = useState(value);
 
@@ -70,8 +72,8 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   const isMultiInputTextField = () => {
     const fieldType = field?.type;
     return(
-      fieldType === FieldTypes.COMMUNICATION_CHANNEL ||
-      fieldType === FieldTypes.LOCATION_META
+      fieldType === FieldTypes.COMMUNICATION_CHANNEL// ||
+      //fieldType === FieldTypes.LOCATION_META
     );
   };
 
@@ -81,26 +83,29 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
    * This method differs from individual Field 'mapToAPI' methods because
    * those implementations are mapping values, and this is mapping those
    * mapped values to the corresponding Field Name
+   * e.g., { "location_grid": <'mapToAPI' values from custom fields> }
    */
-  const mapToAPI = (newValue, { force } = {}) => {
+  const mapField = (newValue, { force } = {}) => {
+    let fieldName = field?.name;
+    if (field?.name === FieldNames.LOCATION_GRID_META) fieldName = FieldNames.LOCATION_GRID;
     if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) {
       newValue = newValue.map(value => {
         if (!value?.key) {
           const random3Chars = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0,3);
-          value["key"] = `${field?.name}_${random3Chars}`;
+          value["key"] = `${fieldName}_${random3Chars}`;
         };
         return value;
       });
     };
-    let data = { [field?.name]: newValue };
-    if (force && newValue?.values && field?.type !== FieldTypes.COMMUNICATION_CHANNEL) data[field?.name]["force_values"] = true;
-    //if (newValue?.values && field?.type !== FieldTypes.COMMUNICATION_CHANNEL) data[field?.name]["force_values"] = force ?? false;
+    let data = { [fieldName]: newValue };
+    if (force && newValue?.values && field?.type !== FieldTypes.COMMUNICATION_CHANNEL) data[fieldName]["force_values"] = true;
+    //if (newValue?.values && field?.type !== FieldTypes.COMMUNICATION_CHANNEL) data[fieldName]["force_values"] = force ?? false;
     return data;
   };
 
   const _onSave = async(newValue) => {
     // TODO: handle this differently (we shouldn't need one-off for this field.type)
-    if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) newValue = mapToAPI(newValue);
+    if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) newValue = mapField(newValue);
     await updatePost(newValue);
     mutate();
   };
@@ -117,7 +122,8 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
    * - else, await user interaction with manual save/clear icons
    */
   const _onChange = (newValue, { autosave, force } = {}) => {
-    const mappedField = mapToAPI(newValue, { force });
+    _setLoading(true);
+    const mappedField = mapField(newValue, { force });
     if (grouped) {
       onChange(mappedField);
       return;
@@ -128,6 +134,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
       return;
     };
     _setValue(newValue);
+    _setLoading(false);
     return;
   };
 
@@ -206,7 +213,8 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
       case FieldTypes.LOCATION_META:
         return (
           <LocationField
-            editing={_editing}
+            editing
+            field={field}
             value={_value}
             onChange={_onChange}
           />
@@ -265,20 +273,9 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
     }
   };
 
-  if (isUndecoratedField()) {
-    return (
-      <View style={globalStyles.postDetailsContainer}>
-        <View style={{ marginEnd: "auto" }}>
-          <FieldComponent />
-        </View>
-        <Controls />
-      </View>
-    );
-  };
-
   const _onAdd = () => {
     const newValue = _value ? [..._value, { value: '' }] : [{ value: '' }];
-    const mappedValue = mapToAPI(newValue);
+    const mappedValue = mapField(newValue);
     _onChange(newValue);
     if (!grouped) _setEditing(true);
   };
@@ -286,24 +283,26 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   /*
    * [ICON | LABEL              | CONTROL(S)]
    */
-  const FieldLabelControls = ({ label }) => (
-    <View style={[globalStyles.rowContainer, styles.fieldLabelContainer]}>
-      <FieldIcon field={field} />
-      <View style={styles.fieldLabel}>
-        <Text style={styles.fieldLabelText}>
-          {label}
-        </Text>
-      </View>
-      { isMultiInputTextField() && (
-        <View>
-          <AddIcon onPress={() => _onAdd()} style={{ color: "green" }} />
+  const FieldLabelControls = ({ label }) => {
+    return(
+      <View style={[globalStyles.rowContainer, styles.fieldLabelContainer]}>
+        <FieldIcon field={field} />
+        <View style={styles.fieldLabel}>
+          <Text style={styles.fieldLabelText}>
+            {label}
+          </Text>
         </View>
-      )}
-      <View style={styles.fieldControls}>
-        <Controls />
+        { isMultiInputTextField() && (
+          <View>
+            <AddIcon onPress={() => _onAdd()} style={{ color: "green" }} />
+          </View>
+        )}
+        <View style={styles.fieldControls}>
+          <Controls />
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   /*
    * ____________________________________
@@ -317,7 +316,11 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
       <View style={
         (isUndecoratedField() || isMultiInputTextField()) ? null : styles.component
       }>
-        <FieldComponent />
+        {_loading ? (
+          <FieldSkeleton windowWidth={400} />
+        ) : (
+          <FieldComponent />
+        )}
       </View>
     </View>
   );

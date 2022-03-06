@@ -1,73 +1,82 @@
 import React from "react";
-import { Linking, Pressable, Text, View } from "react-native";
-//import PropTypes from 'prop-types';
+import { Linking, View } from "react-native";
 
+import { ClearIcon, MapIcon } from "components/Icon";
+import Chip from "components/Chip";
+import Select from "components/Select";
+import LocationsSheet from "./LocationsSheet";
+
+import useBottomSheet from "hooks/useBottomSheet";
 import useDevice from "hooks/useDevice";
-import useI18N from "hooks/useI18N";
-import useLocations from "hooks/useLocations";
+import useStyles from "hooks/useStyles";
 
-//import MultiSelect from "components/MultiSelect";
+import { localStyles } from "./LocationField.styles";
 
-import { styles } from "./LocationField.styles";
+const LocationField = ({ editing, field, value, onChange }) => {
 
-const LocationField = ({ editing, value, onChange }) => {
-
+  const { styles } = useStyles(localStyles);
+  const { expand, snapPoints } = useBottomSheet();
   const { isIOS } = useDevice();
-  const { i18n, isRTL } = useI18N();
 
-  // ITEMS
-  const items = useLocations();
-  if (!items) return null;
+  // SELECTED VALUES
+  const values = value?.values || [];
 
-  // Locations relevant to this particular Post
-  //const selectedItems = value?.values ?? null;
-
-  // TODO: enable search
-  //const searchLocationsDelayed = utils.debounce((queryText) => {...}, 750);
-
-  const LocationFieldEdit = () => null;
-  /*
-  const LocationFieldEdit = () => (
-    <MultiSelect
-      items={items}
-      selectedItems={value?.values} //selectedItems}
-      onChange={onChange}
-      // TODO
-      //placeholder={i18n.t("global.selectLocations")}
-    />
-  );
-  */
-
-  const LocationFieldView = () => {
-    return value?.values?.map((location) => {
-      const name = location?.name || location?.label;
-      let mapURL = isIOS
-        ? `http://maps.apple.com/?q=${name}`
-        : `https://www.google.com/maps/search/?api=1&query=${location?.name}`;
-      if (location?.lat && location?.lng) {
-        mapURL = isIOS
-          ? `http://maps.apple.com/?ll=${location?.lat},${location?.lng}`
-          : `https://www.google.com/maps/search/?api=1&query=${location?.lat},${location?.lng}`;
-      }
-      return (
-        <Pressable
-          onPress={() => Linking.openURL(mapURL)}
-        >
-          <Text
-            style={[
-              styles.linkingText,
-              isRTL ? { textAlign: "left", flex: 1 } : {},
-            ]}
-          >
-            {name}
-          </Text>
-        </Pressable>
-      );
-    });
+  const onRemove = (id) => {
+    onChange(
+      { values: [{ value: id, delete: true }]},
+      { autosave: true }
+    );
   };
 
-  return null;
-  if (!value) return null;
+  const renderItemMapLink = (item) => {
+    const name = item?.name || item?.label;
+    let mapURL = isIOS
+      ? `http://maps.apple.com/?q=${name}`
+      : `https://www.google.com/maps/search/?api=1&query=${item?.name}`;
+    if (item?.lat && item?.lng) {
+      mapURL = isIOS
+        ? `http://maps.apple.com/?ll=${item?.lat},${item?.lng}`
+        : `https://www.google.com/maps/search/?api=1&query=${item?.lat},${item?.lng}`;
+    };
+    return(
+      <Chip
+        label={name}
+        onPress={() => Linking.openURL(mapURL)}
+        //startIcon={<MapIcon style={styles.startIcon} />}
+        endIcon={onRemove ? (
+          <View style={styles.clearIconContainer(false)}>
+            <ClearIcon
+              onPress={() => onRemove(item?.grid_id)}
+              style={styles.clearIcon}
+            />
+          </View>
+        ) : null }
+        //style={styles?.container}
+      />
+    );
+  };
+
+  const LocationFieldEdit = () => (
+    <Select
+      onOpen={() => {
+        expand({
+          index: snapPoints.length-1,
+          renderContent: () => 
+            <LocationsSheet
+              id={value?.key}
+              title={field?.label || ''}
+              values={value}
+              onChange={onChange}
+            />
+        });
+      }}
+      items={values}
+      renderItem={renderItemMapLink}
+    />
+  );
+
+  const LocationFieldView = () => null;
+
   if (editing) return <LocationFieldEdit />;
   return <LocationFieldView />;
 };

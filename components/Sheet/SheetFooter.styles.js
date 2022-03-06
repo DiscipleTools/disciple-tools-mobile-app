@@ -6,8 +6,8 @@ export const localStyles = ({ theme, isRTL }) => ({
     //borderTopWidth: 1,
     flexDirection: isRTL ? "row-reverse" : "row",
     alignItems: "center",
-    paddingBottom: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     minHeight: 75,
+    width: "100%",
   }
 });

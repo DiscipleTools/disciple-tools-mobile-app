@@ -1,6 +1,6 @@
 export const localStyles = ({ theme, isRTL }) => ({
   container: {
-    backgroundColor: "#0FF", //theme.background.primary,
+    backgroundColor: theme.background.primary,
     // shadow
     shadowColor: theme.text.primary,
     shadowOffset: {
