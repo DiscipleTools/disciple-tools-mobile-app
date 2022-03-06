@@ -9,6 +9,8 @@
     "success": {
       "save": "Data saved successfully!"
     },
+    "filter": "Filter",
+    "sort": "Sort",
     "groups": "Groups",
     "details": "Details",
     "selectPeopleGroups": "Select People Groups",

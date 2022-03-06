@@ -29,6 +29,7 @@ const ListScreen = () => {
       ) : (
         <>
           <FilterList
+            display
             sortable
             items={items}
             renderItem={renderItem}

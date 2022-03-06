@@ -3,7 +3,7 @@ import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 
 import SearchBar from "./SearchBar";
-import FilterOptions from "./FilterOptions";
+import FilterBar from "./FilterBar";
 
 import useI18N from "hooks/useI18N";
 import useStyles from "hooks/useStyles";
@@ -12,6 +12,7 @@ import useType from "hooks/useType";
 import { localStyles } from "./FilterList.styles";
 
 const FilterList = ({
+  display,
   sortable,
   items,
   renderItem,
@@ -48,42 +49,6 @@ const FilterList = ({
     }, 1000);
   });
 
-  const Count = () => (
-    <Text style={[globalStyles.text, styles.count]}>
-      {items?.length}
-    </Text>
-  );
-
-  // TODO: component, translate, and styles
-  const FilterBar = () => {
-    return(
-      <View
-        style={styles.filtersScrollContainer}
-      >
-        <ScrollView
-          horizontal
-          contentContainerStyle={styles.filtersContentContainer}
-        >
-          <FilterOptions
-            defaultFilter={defaultFilter}
-            filter={filter}
-            onFilter={onFilter}
-          />
-        </ScrollView>
-        <View style={[
-          globalStyles.rowContainer,
-          { paddingVertical: 5 }
-        ]}>
-          <Count />
-          <View>
-            <Text style={styles.filterSelections}>Filtering: My Recently Viewed</Text>
-            <Text style={styles.filterSelections}> Sorting: Last Modified Date - Most Recent</Text>
-          </View>
-        </View>
-      </View>
-    );
-  };
-
   const Placeholder = () => {
     const { isContact, isGroup } = useType();
     const getDefaultPlaceholder = () => {
@@ -104,14 +69,21 @@ const FilterList = ({
       { onSearch && (
         <SearchBar
           sortable={sortable}
+          items={_items}
           search={search}
           onSearch={onSearch}
         />
       )}
       { onFilter && (
-        <FilterBar />
+        <FilterBar
+          display={display}
+          items={_items}
+          defaultFilter={defaultFilter}
+          filter={filter}
+          onFilter={onFilter}
+        />
       )}
-      {items?.length === 0 ? (
+      {_items?.length === 0 ? (
         <Placeholder />
       ) : (
         <SwipeListView
