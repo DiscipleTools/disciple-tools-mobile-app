@@ -13,7 +13,6 @@ import MainTabNavigator from "./MainTabNavigator";
 import usePIN from "hooks/usePIN";
 import { useAuth } from "hooks/useAuth";
 import { BottomSheetProvider } from "hooks/useBottomSheet";
-import { FilterProvider } from "hooks/useFilter";
 
 const Stack = createNativeStackNavigator();
 
@@ -72,9 +71,7 @@ const AppNavigator = () => {
   const RenderLogin = () => {
     console.log(".......... RENDER LOGIN ....................");
     if (authenticated) return(
-      <FilterProvider>
-        <MainTabNavigator />
-      </FilterProvider>
+      <MainTabNavigator />
     );
     return <LoginStack />;
   };
@@ -117,16 +114,16 @@ const AppNavigator = () => {
   };
 
   return (
-    <BottomSheetProvider>
-      <SafeAreaProvider>
-        <NavigationContainer
-          onReady={onReady}
-          //theme={DarkTheme}
-        >
+    <NavigationContainer
+      onReady={onReady}
+      //theme={DarkTheme}
+    >
+      <BottomSheetProvider>
+        <SafeAreaProvider>
           <RenderStack />
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </BottomSheetProvider>
+        </SafeAreaProvider>
+      </BottomSheetProvider>
+    </NavigationContainer>
   );
 };
 export default AppNavigator;
