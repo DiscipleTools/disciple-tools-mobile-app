@@ -19,6 +19,7 @@ const complementListByObjProps = ({aList=[], aProp, aTransform, bList=[], bProp,
 };
 
 const searchObj = (pobj = {}, searchStr, { ignoreList } = {}) => {
+  searchStr = searchStr?.toLowerCase();
   const result = [];
   const recursiveSearch = (obj = {}) => {
     if (!obj || typeof obj !== 'object') return;
@@ -27,14 +28,14 @@ const searchObj = (pobj = {}, searchStr, { ignoreList } = {}) => {
         ignoreList.forEach(prop => {
           // if key/prop *NOT* in ignore list, then check if includes value
           if (key !== prop) {
-            if (String(obj[key])?.includes(searchStr)) {
+            if (String(obj[key])?.toLowerCase()?.includes(searchStr)) {
               result.push(pobj);
             };
             recursiveSearch(obj[key]);
           }
         });
       } else {
-        if (String(obj[key])?.includes(searchStr)) {
+        if (String(obj[key])?.toLowerCase()?.includes(searchStr)) {
           result.push(pobj);
         };
         recursiveSearch(obj[key]);
