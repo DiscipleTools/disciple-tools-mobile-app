@@ -5,9 +5,9 @@ import { CaretIcon, ClearFiltersIcon } from "components/Icon";
 import Chip from "components/Chip";
 import FilterSheet from "components/Sheet/FilterSheet";
 
-import useBottomSheet from "hooks/useBottomSheet";
-import useFilters from "hooks/useFilters";
-import useStyle from "hooks/useStyles";
+import useBottomSheet from "hooks/use-bottom-sheet";
+import useFilters from "hooks/use-filters";
+import useStyle from "hooks/use-styles";
 
 import { localStyles } from "./FilterOptions.styles";
 

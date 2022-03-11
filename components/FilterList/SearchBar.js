@@ -4,13 +4,13 @@ import { Keyboard, View, TextInput } from "react-native";
 import { ClearIcon, SearchIcon } from "components/Icon";
 import Sort from "components/FilterList/Sort";
 
-import useDebounce from "hooks/useDebounce.js";
-import useI18N from "hooks/useI18N";
-import useStyles from "hooks/useStyles";
+import useDebounce from "hooks/use-debounce";
+import useI18N from "hooks/use-i18n";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./SearchBar.styles";
 
-const SearchBar = ({ sortable, search, onSearch }) => {
+const SearchBar = ({ sortable, items, setItems, search, onSearch, filter, onFilter }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
@@ -53,7 +53,12 @@ const SearchBar = ({ sortable, search, onSearch }) => {
         )}
         { sortable && (
           <View>
-            <Sort />
+            <Sort
+              items={items}
+              setItems={setItems}
+              filter={filter}
+              onFilter={onFilter}
+            />
           </View>
         )}
       </View>

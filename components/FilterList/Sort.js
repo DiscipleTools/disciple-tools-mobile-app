@@ -3,14 +3,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { SortIcon } from "components/Icon";
 import SortSheet from "components/Sheet/SortSheet";
 
-import useBottomSheet from "hooks/useBottomSheet";
-import useFilter from "hooks/useFilter";
-import useStyles from "hooks/useStyles";
+import useBottomSheet from "hooks/use-bottom-sheet";
+import useStyles from "hooks/use-styles";
 
-const Sort = () => {
+const Sort = ({ items, setItems, filter, onFilter }) => {
   const { globalStyles } = useStyles();
   const { expand, collapse, snapPoints } = useBottomSheet();
-  const { items, setItems, filter, onFilter } = useFilter();
 
   const sortSheetContent = useMemo(() => (
     <SortSheet
@@ -22,7 +20,7 @@ const Sort = () => {
   ), [items, filter]);
 
   const showSort = (show) => show ? expand({
-    index: 1,
+    index: 0,
     snapPoints,
     multi: false,
     renderContent: () => sortSheetContent

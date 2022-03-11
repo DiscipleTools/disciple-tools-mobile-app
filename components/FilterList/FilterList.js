@@ -5,9 +5,9 @@ import { SwipeListView } from "react-native-swipe-list-view";
 import SearchBar from "./SearchBar";
 import FilterBar from "./FilterBar";
 
-import useI18N from "hooks/useI18N";
-import useStyles from "hooks/useStyles";
-import useType from "hooks/useType";
+import useI18N from "hooks/use-i18n";
+import useStyles from "hooks/use-styles";
+import useType from "hooks/use-type";
 
 import { localStyles } from "./FilterList.styles";
 
@@ -70,8 +70,11 @@ const FilterList = ({
         <SearchBar
           sortable={sortable}
           items={_items}
+          setItems={_setItems}
           search={search}
           onSearch={onSearch}
+          filter={filter}
+          onFilter={onFilter}
         />
       )}
       { onFilter && (

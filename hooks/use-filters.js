@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useReducer, useRef, useState } from "react";
 
 //import useNetwork from "hooks/use-network";
-import useType from "hooks/useType";
-import useRequest from "hooks/useRequest";
+import useType from "hooks/use-type";
+import useRequest from "hooks/use-request";
 
 import { NotificationActionConstants } from "constants";
 
@@ -16,37 +16,43 @@ const useFilters = () => {
 
   if (isCommentsActivity) data = [
     {
-      title: "Category",
-      count: 1350,
+      title: "Type",
+      //count: 1350,
       content: [
         {
           ID: "comments_activity_type_all",
-          count: 1350,
+          //count: 1350,
           name: "All",
           query: null,
-          subfilter: true 
+          subfilter: false
         },
         {
           ID: "comments_activity_type_comments_only",
-          count: 450,
-          name: "Comments only",
-          query: null,
+          //count: 450,
+          name: "Comments",
+          query: {
+            key: "comment_ID",
+          },
           subfilter: false
         },
         {
           ID: "comments_activity_type_activity_only",
-          count: 850,
-          name: "Activity only",
-          query: null,
+          //count: 850,
+          name: "Activity",
+          query: {
+            key: "histid",
+          },
           subfilter: false
         },
+        /*
         {
           ID: "comments_activity_type_facebook_only",
-          count: 50,
-          name: "Facebook only",
+          //count: 50,
+          name: "Facebook",
           query: null,
           subfilter: false
         }
+        */
       ]
     }
   ];
@@ -67,14 +73,20 @@ const useFilters = () => {
           ID: "notifications_status_unread",
           //count: 76,
           name: "Unread only",
-          query: null,
+          query: {
+            key: "is_new",
+            value: "1"
+          },
           subfilter: false
         },
         {
           ID: "notifications_status_read",
           //count: 23,
           name: "Read only",
-          query: null,
+          query: {
+            key: "is_new",
+            value: "0"
+          },
           subfilter: false
         }
       ]
@@ -87,21 +99,30 @@ const useFilters = () => {
           ID: NotificationActionConstants.MENTION,
           //count: 99,
           name: "Mention",
-          query: null,
+          query: {
+            key: "notification_action",
+            value: NotificationActionConstants.MENTION
+          },
           subfilter: false 
         },
         {
           ID: NotificationActionConstants.ALERT,
           //count: 19,
           name: "Alert",
-          query: null,
+          query: {
+            key: "notification_action",
+            value: NotificationActionConstants.ALERT
+          },
           subfilter: false
         },
         {
           ID: NotificationActionConstants.COMMENT,
           //count: 19,
           name: "Comment",
-          query: null,
+          query: {
+            key: "notification_action",
+            value: NotificationActionConstants.COMMENT
+          },
           subfilter: false
         }
       ]
