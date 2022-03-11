@@ -5,14 +5,15 @@ import * as SplashScreen from "expo-splash-screen";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { navigationRef } from './RootNavigation';
 
 import PINScreen from "screens/PINScreen";
 import LoginScreen from "screens/LoginScreen";
 import MainTabNavigator from "./MainTabNavigator";
 
-import usePIN from "hooks/usePIN";
-import { useAuth } from "hooks/useAuth";
-import { BottomSheetProvider } from "hooks/useBottomSheet";
+import usePIN from "hooks/use-pin";
+import { useAuth } from "hooks/use-auth";
+import { BottomSheetProvider } from "hooks/use-bottom-sheet";
 
 const Stack = createNativeStackNavigator();
 
@@ -116,7 +117,9 @@ const AppNavigator = () => {
   return (
     <NavigationContainer
       onReady={onReady}
+      ref={navigationRef}
       //theme={DarkTheme}
+      //onStateChange={(state) => {}}
     >
       <BottomSheetProvider>
         <SafeAreaProvider>

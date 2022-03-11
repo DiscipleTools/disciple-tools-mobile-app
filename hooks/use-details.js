@@ -1,10 +1,11 @@
-import useId from "hooks/useId";
-import useType from "hooks/useType";
-import useRequest from "hooks/useRequest";
+import * as RootNavigation from "navigation/RootNavigation";
+
+import useType from "hooks/use-type";
+import useRequest from "hooks/use-request";
 
 const useDetails = () => {
-  const postId = useId();
   const { isContact, isGroup, postType } = useType();
+  const postId = RootNavigation.getId();
 
   // TODO: duplicated in useList
   const mapContacts = (contacts, entities) => {
