@@ -1,35 +1,44 @@
-import React, { useLayoutEffect, useReducer, useState } from "react";
-import { Linking, Platform, Text, View } from "react-native";
-import { Icon } from "native-base";
-import { Row } from "react-native-easy-grid";
+import React, { useEffect, useLayoutEffect, useReducer, useState } from "react";
+import { Linking, Text, View } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useHeaderHeight } from '@react-navigation/elements';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Tab, Tabs, TabHeading, ScrollableTab } from "native-base";
 
+import { ArrowLeftIcon, ArrowRightIcon, CommentEditIcon } from "components/Icon";
 import OfflineBar from "components/OfflineBar";
 import Tile from "./Tile";
+// TODO: complete implementation
 import PostSkeleton from "./PostSkeleton";
 import KebabMenu from "components/KebabMenu";
+import CommentsActivity from "components/CommentsActivity";
 
-import useI18N from "hooks/useI18N";
-import useDetails from "hooks/useDetails";
-import useSettings from "hooks/useSettings";
-import useStyles from "hooks/useStyles";
-import useToast from "hooks/useToast";
-import useAPI from "hooks/useAPI";
+import useBottomSheet from "hooks/use-bottom-sheet";
+import useI18N from "hooks/use-i18n";
+import useDetails from "hooks/use-details";
+import useSettings from "hooks/use-settings";
+import useStyles from "hooks/use-styles";
+import useToast from "hooks/use-toast";
+import useAPI from "hooks/use-api";
 
 import axios from "services/axios";
+
+import { SubTypeConstants } from "constants";
 
 import { localStyles } from "./Post.styles";
 
 const Post = ({ editOnly=false }) => {
+  const headerHeight = useHeaderHeight();
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const route = useRoute();
   const { styles, globalStyles } = useStyles(localStyles);
+  const { expand } = useBottomSheet();
   const { i18n, isRTL } = useI18N();
   const {
     data: post,
-    error: postError,
+    error,
     isLoading,
     isValidating,
     mutate,
@@ -40,16 +49,19 @@ const Post = ({ editOnly=false }) => {
   const toast = useToast();
   const { updatePost } = useAPI();
 
+  // NOTE: focus handler to enable auto-refresh onBack()
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      mutate();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   const renderHeaderLeft = (props) => {
-    const onBack = () => navigation.goBack();
+    const onBack = () => navigation.pop(); //ToTop(); //goBack();
     return(
       <View style={globalStyles.rowContainer}>
-        <Icon
-          type="Feather"
-          name={ isRTL ? "arrow-right" : "arrow-left" }
-          onPress={onBack}
-          style={globalStyles.icon}
-        />
+        {isRTL ? <ArrowRightIcon onPress={onBack} /> : <ArrowLeftIcon onPress={onBack} />}
       </View>
     );
   };
@@ -75,16 +87,16 @@ const Post = ({ editOnly=false }) => {
       },
     ];
     return(
-      <View style={styles.rowContainer}>
+      <View style={globalStyles.rowContainer}>
+        <CommentEditIcon onPress={showCommentsActivitySheet} />
         <KebabMenu menuItems={kebabMenuItems} />
       </View>
     );
   };
 
   useLayoutEffect(() => {
-    const title = route?.params?.name ?? i18n.t('contactDetailScreen.addNewContact');
     navigation.setOptions({
-      title,
+      title: '',
       headerLeft: (props) => isRTL ? renderHeaderRight(props) : renderHeaderLeft(props),
       headerRight: (props) => isRTL ? renderHeaderLeft(props) : renderHeaderRight(props),
       //headerStyle: globalStyles.header, 
@@ -93,26 +105,43 @@ const Post = ({ editOnly=false }) => {
     });
   }, [navigation, route?.params?.name]);
 
-  if (isLoading) return <PostSkeleton />;
+  const showCommentsActivitySheet = () => {
+    navigation.setParams({
+      subtype: SubTypeConstants.COMMENTS_ACTIVITY
+    });
+    expand({
+      hideFooter: true,
+      snapPoints: ['66%','95%'],
+      renderContent: () => (
+        <CommentsActivity
+          headerHeight={headerHeight}
+          insets={insets}
+        /> 
+      )
+    });
+  };
+
+  const TitleBar = () => {
+    const TITLE_THRESHOLD = 45;
+    return(
+      <View style={styles.titleBarContainer}>
+        <Text style={styles.titleBarText}>
+          {post?.title?.length > TITLE_THRESHOLD ? post.title.substring(0, TITLE_THRESHOLD) + "..." : post?.title}
+        </Text>
+      </View>
+    );
+  };
+
+  if (!post || !settings || isLoading) return <PostSkeleton />;
   return(
     <>
       <OfflineBar />
+      <TitleBar />
       <Tabs
         renderTabBar={() => <ScrollableTab />}
         tabBarUnderlineStyle={styles.tabBarUnderline}
-        // TODO:
         //initialPage={index}
-        onChangeTab={(evt) => {
-          if (evt?.i === settings?.tiles?.length) {
-            //setIndex(0);
-            // TODO: constant
-            navigation.navigate('CommentsActivity', {
-              id: postId,
-              type: postType,
-              subtype: "comments_activity"
-            });
-          };
-        }}
+        //onChangeTab={(evt) => {}}
       >
         {settings?.tiles?.map((tile, idx) => {
           return (
@@ -134,13 +163,6 @@ const Post = ({ editOnly=false }) => {
             </Tab>
           );
         })}
-        <Tab
-          heading={
-            <TabHeading style={styles.tabHeadingStyle}>
-              <Text style={styles.tabHeading}>{i18n.t('global.commentsActivity')}</Text>
-            </TabHeading>
-          }
-        />
       </Tabs>
     </>
   );

@@ -1,19 +1,30 @@
-import useType from "hooks/useType";
-import useId from "hooks/useId";
-import useRequest from "hooks/useRequest";
+import * as RootNavigation from "navigation/RootNavigation";
 
-const useComments = ({ count, offset, exclude }) => {
+import useType from "hooks/use-type";
+import useRequest from "hooks/use-request";
+
+import { searchObjList } from "utils";
+
+const useComments = ({ search, filter, exclude }) => {
   const { isPost, postType } = useType();
-  const id = useId();
-
-  const url = (isPost && !exclude) ? `/dt-posts/v2/${postType}/${id}/comments` : null;
+  const id = RootNavigation.getId();
+  const url = isPost ? `/dt-posts/v2/${postType}/${id}/comments` : null;
   const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
-  return {
-    data: data?.comments,
+  if (error || isLoading || !data?.comments) return {
+    data: [],
     error,
     isLoading,
     isValidating,
-    mutate,
+    mutate
+  };
+  let filtered = data.comments?.filter(item => !exclude?.includes(item?.ID));
+  if (search) filtered = searchObjList(filtered, search);
+  return {
+    data: filtered,
+    error: null,
+    isLoading: null,
+    isValidating: null,
+    mutate
   };
 };
 export default useComments;

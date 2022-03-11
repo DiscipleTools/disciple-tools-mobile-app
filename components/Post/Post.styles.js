@@ -1,6 +1,17 @@
 import { ThemeConstants } from "constants"; 
 
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
+  titleBarContainer: {
+    backgroundColor: theme.background.primary,
+    padding: 5,
+  },
+  titleBarText: {
+    color: theme.text.primary,
+    fontSize: 16,
+    fontWeight: "bold",
+    marginStart: "auto",
+    marginEnd: "auto"
+  },
   tabHeading: {
     color: theme.text.primary,
   },

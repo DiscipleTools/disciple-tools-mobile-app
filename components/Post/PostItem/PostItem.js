@@ -6,12 +6,14 @@ import { useNavigation } from "@react-navigation/native";
 
 import PostItemSkeleton from "./PostItemSkeleton";
 
-import useAPI from "hooks/useAPI";
-import useI18N from "hooks/useI18N";
-import useSettings from "hooks/useSettings";
-import useStyles from "hooks/useStyles";
-import useTheme from "hooks/useTheme";
-import useType from "hooks/useType";
+import useAPI from "hooks/use-api";
+import useI18N from "hooks/use-i18n";
+import useSettings from "hooks/use-settings";
+import useStyles from "hooks/use-styles";
+import useTheme from "hooks/use-theme";
+import useType from "hooks/use-type";
+
+import { ScreenConstants, SubTypeConstants } from "constants";
 
 import { localStyles } from "./PostItem.styles";
 
@@ -34,26 +36,31 @@ const PostItem = ({ item, loading, mutate }) => {
   */
 
   const goToDetailsScreen = (postData = null, isPhoneImport = false) => {
+    // IMPORT
     if (postData && isPhoneImport) {
-      navigation.navigate("Details", {
-        importContact: contactData,
+      navigation.navigate(ScreenConstants.DETAILS, {
         type: postType,
+        subtype: SubTypeConstants.IMPORT,
+        data: contactData
       });
-    } else if (postData) {
-      // Detail
-      navigation.navigate("Details", {
-        id: postData.ID,
-        name: postData.title,
+      return
+    };
+    // DETAILS
+    if (postData) {
+      // TODO:
+      // data: { ... }
+      navigation.navigate(ScreenConstants.DETAILS, {
         type: postType,
-        onGoBack: () => onRefresh(),
+        id: postData?.ID,
+        name: postData?.title,
+        //onGoBack: () => onRefresh(),
       });
-    } else {
-      // Create
-      navigation.navigate("Details", {
-        create: true,
-        type: postType,
-      });
-    }
+      return;
+    };
+    // default: CREATE
+    navigation.navigate(ScreenConstants.CREATE, {
+      type: postType,
+    });
   };
 
   const onLongPress = () => {
@@ -70,12 +77,14 @@ const PostItem = ({ item, loading, mutate }) => {
         if (buttonIndex === 0) {
           const postId = Number(item?.ID);
           const postType = item?.post_type;
-          // TODO: constant
-          navigation.navigate('CommentsActivity', {
+          // TODO: detect the subtype in <Post /> component and show Comments Sheet
+          /*
+          navigation.navigate(ScreenConstants.DETAILS, {
             id: postId,
             type: postType,
-            subtype: "comments_activity"
+            subtype: SubTypeConstants.COMMENTS_ACTIVITY,
           });
+          */
         };
         //if (userIsAuthor && buttonIndex === 1) onEdit();
         //if (userIsAuthor && buttonIndex === 2) onDelete();

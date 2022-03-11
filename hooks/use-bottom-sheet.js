@@ -4,13 +4,14 @@ import BottomSheet, { BottomSheetBackdrop, BottomSheetFooter } from '@gorhom/bot
 
 import { SheetFooterCancel, SheetFooterDone } from "components/Sheet/SheetFooter";
 
-import useStyles from "hooks/useStyles";
+import useStyles from "hooks/use-styles";
 
 const BottomSheetContext = createContext(null);
 
 const DEFAULT_OPTIONS = {
   snapPoints: ['33%','50%','65%','95%'],
   index: -1,
+  hideFooter: false,
   multiple: false,
   renderContent: () => null,
   onDone: () => null,
@@ -107,7 +108,7 @@ export const BottomSheetProvider = ({ children }) => {
         onChange={onChange}
         enablePanDownToClose
         backdropComponent={renderBackdrop}
-        footerComponent={renderFooter}
+        footerComponent={options?.hideFooter ? null : renderFooter}
         backgroundStyle={globalStyles.background}
       >
         { options?.renderContent() }

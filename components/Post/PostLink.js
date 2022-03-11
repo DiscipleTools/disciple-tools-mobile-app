@@ -5,7 +5,9 @@ import { useNavigation } from "@react-navigation/native";
 import { ClearIcon } from "components/Icon";
 import Chip from "components/Chip";
 
-import useStyles from "hooks/useStyles";
+import useStyles from "hooks/use-styles";
+
+import { ScreenConstants } from "constants";
 
 import { localStyles } from "./PostLink.styles";
 
@@ -23,12 +25,12 @@ const PostLink = ({ id, icon, title, type, onRemove }) => {
       disabled={!id || !type}
       onPress={() => {
         //if (!type) return;
-        // TODO: constant
-        navigation.push("Details", {
+        navigation.push(ScreenConstants.DETAILS, {
           id,
           // TODO: rename prop to 'title' for consistency sake?
           name: title,
           type,
+          // TODO: this callback is never triggered and the refresh is not taking place
           //onGoBack: () => onRefresh(),
         });
       }}
