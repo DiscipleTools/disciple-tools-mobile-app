@@ -2,13 +2,10 @@ import React, { useRef, useState } from "react";
 import { Image, Pressable, View, Text } from "react-native";
 import { BottomSheetSectionList } from '@gorhom/bottom-sheet';
 
-// TODO: remove
-import { Icon } from "native-base";
-
 import { CheckIcon } from "components/Icon";
 
-import useBottomSheet from "hooks/useBottomSheet";
-import useStyles from "hooks/useStyles";
+import useBottomSheet from "hooks/use-bottom-sheet";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./SelectSheet.styles";
 
@@ -92,11 +89,7 @@ const SelectSheet = ({
             )}
             {icon && (
               <View style={globalStyles.rowIcon}>
-                <Icon
-                  type={icon?.type}
-                  name={icon?.name}
-                  style={[globalStyles.icon, icon?.style ? icon?.style : {}]} 
-                />
+                {icon}
               </View>
             )}
           <View style={{

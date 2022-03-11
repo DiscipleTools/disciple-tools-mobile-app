@@ -4,7 +4,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import useStyles from "hooks/useStyles";
+import useStyles from "hooks/use-styles";
 
 const Icon = ({ icon, onPress }) => (
   <Pressable
@@ -50,6 +50,8 @@ const FontAwesomeIcon = ({ name, onPress, style }) => {
 };
 
 export const AddIcon = ({ onPress, style }) => <MaterialIcon name="add" onPress={onPress} style={style} />;
+export const ArrowLeftIcon = ({ onPress, style }) => <MaterialCommunityIcon name="arrow-left" onPress={onPress} style={style} />;
+export const ArrowRightIcon = ({ onPress, style }) => <MaterialCommunityIcon name="arrow-right" onPress={onPress} style={style} />;
 export const CaretIcon = ({ onPress, style }) => <MaterialCommunityIcon name="chevron-down" onPress={onPress} style={style} />;
 export const CheckIcon = ({ onPress, style }) => <MaterialCommunityIcon name="check" onPress={onPress} style={style} />;
 export const ClearIcon = ({ onPress, style }) => <MaterialIcon name="clear" onPress={onPress} style={style} />;
@@ -62,12 +64,19 @@ export const MapIcon = ({ onPress, style }) => <MaterialCommunityIcon name="eart
 export const RemoveIcon = ({ onPress, style }) => <MaterialIcon name="remove" onPress={onPress} style={style} />;
 export const SaveIcon = ({ onPress, style }) => <MaterialIcon name="save" onPress={onPress} style={style} />;
 export const SearchIcon = ({ onPress, style }) => <MaterialIcon name="search" onPress={onPress} style={style} />;
+export const SendIcon = ({ onPress, style }) => <MaterialCommunityIcon name="send-circle" onPress={onPress} style={style} />;
 export const SortIcon = ({ onPress, style }) => <MaterialCommunityIcon name="sort" onPress={onPress} style={style} />;
+export const SquareIcon = ({ onPress, style }) => <MaterialCommunityIcon name="square" onPress={onPress} style={style} />;
 
 // Notifications
 export const CommentIcon = ({ onPress, style }) => <MaterialCommunityIcon name="comment-outline" onPress={onPress} style={style} />;
 export const CommentAlertIcon = ({ onPress, style }) => <MaterialCommunityIcon name="comment-alert" onPress={onPress} style={style} />;
+export const CommentEditIcon = ({ onPress, style }) => <MaterialCommunityIcon name="comment-edit-outline" onPress={onPress} style={style} />;
 export const MentionIcon = ({ onPress, style }) => <MaterialCommunityIcon name="at" onPress={onPress} style={style} />;
+
+// Sort
+export const SortAscIcon = ({ onPress, style }) => <MaterialCommunityIcon name="sort-reverse-variant" onPress={onPress} style={style} />;
+export const SortDescIcon = ({ onPress, style }) => <MaterialCommunityIcon name="sort-variant" onPress={onPress} style={style} />;
 
 // Nav Tab Bar
 export const SettingsIcon = ({ onPress, style }) => <FontAwesomeIcon name="cog" onPress={onPress} style={style} />;
