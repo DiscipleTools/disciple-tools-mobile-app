@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import KeySelectField from "components/Field/KeySelect/KeySelectField";
 
-import useStyles from "hooks/useStyles";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./PostItemHidden.styles";
 

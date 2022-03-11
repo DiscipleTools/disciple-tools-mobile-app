@@ -6,9 +6,9 @@ import Chip from "components/Chip";
 import Select from "components/Select";
 import LocationsSheet from "./LocationsSheet";
 
-import useBottomSheet from "hooks/useBottomSheet";
-import useDevice from "hooks/useDevice";
-import useStyles from "hooks/useStyles";
+import useBottomSheet from "hooks/use-bottom-sheet";
+import useDevice from "hooks/use-device";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./LocationField.styles";
 

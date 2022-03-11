@@ -5,8 +5,8 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 
 import { SvgUri } from "react-native-svg";
 
-import useI18N from "hooks/useI18N";
-import useStyles from "hooks/useStyles";
+import useI18N from "hooks/use-i18n";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./Milestones.styles";
 

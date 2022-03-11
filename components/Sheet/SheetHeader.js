@@ -1,10 +1,10 @@
 import React from "react";
-import { Pressable, View, Text } from "react-native";
+import { View, Text } from "react-native";
 
 import { ClearIcon, ExpandIcon } from "components/Icon";
 
-import useBottomSheet from 'hooks/useBottomSheet';
-import useStyles from "hooks/useStyles";
+import useBottomSheet from 'hooks/use-bottom-sheet';
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./SheetHeader.styles";
 

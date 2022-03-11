@@ -7,9 +7,9 @@ import PostLink from "components/Post/PostLink";
 import SelectSheet from "components/Sheet/SelectSheet";
 import SheetHeader from "components/Sheet/SheetHeader";
 
-import useBottomSheet from "hooks/useBottomSheet";
-import useStyles from "hooks/useStyles";
-import useType from "hooks/useType";
+import useBottomSheet from "hooks/use-bottom-sheet";
+import useStyles from "hooks/use-styles";
+import useType from "hooks/use-type";
 
 import { localStyles } from "./MultiSelectField.styles";
 

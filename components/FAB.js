@@ -4,12 +4,12 @@ import { useNavigation } from "@react-navigation/native";
 
 import ActionButton from "react-native-action-button";
 
-import useI18N from "hooks/useI18N";
-import useType from "hooks/useType.js";
-import useDetails from "hooks/useDetails";
-import useSettings from "hooks/useSettings";
-import useStyles from "hooks/useStyles";
-import useAPI from "hooks/useAPI";
+import useI18N from "hooks/use-i18n";
+import useType from "hooks/use-type.js";
+import useDetails from "hooks/use-details";
+import useSettings from "hooks/use-settings";
+import useStyles from "hooks/use-styles";
+import useAPI from "hooks/use-api";
 
 import { localStyles } from "./FAB.styles";
 

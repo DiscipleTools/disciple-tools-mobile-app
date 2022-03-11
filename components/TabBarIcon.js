@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon } from "native-base";
 
-import useStyles from "hooks/useStyles";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./TabBarIcon.styles";
 

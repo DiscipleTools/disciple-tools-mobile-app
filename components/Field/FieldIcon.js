@@ -2,7 +2,7 @@ import React from "react";
 // TODO: swap out for React Native Icon
 import { Icon } from "native-base";
 
-import useStyles from "hooks/useStyles";
+import useStyles from "hooks/use-styles";
 
 import { FieldConstants, FieldTypes, FieldNames } from "constants";
 

@@ -22,8 +22,8 @@ import UserSelectField from "components/Field/UserSelect/UserSelectField";
 
 import MemberList from "components/MemberList";
 
-import useAPI from "hooks/useAPI";
-import useStyles from "hooks/useStyles";
+import useAPI from "hooks/use-api";
+import useStyles from "hooks/use-styles";
 
 import { FieldConstants, FieldTypes, FieldNames } from "constants";
 

@@ -1,5 +1,5 @@
-import useType from "hooks/useType";
-import useRequest from "hooks/useRequest";
+import useType from "hooks/use-type";
+import useRequest from "hooks/use-request";
 
 const useSettings = () => {
   const { isPost, isGroup, postType } = useType();

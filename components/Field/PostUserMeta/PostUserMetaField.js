@@ -1,6 +1,6 @@
 import React from "react";
 
-import useI18N from "hooks/useI18N";
+import useI18N from "hooks/use-i18n";
 
 // ref: https://developers.disciple.tools/theme-core/api-posts/post-types-fields-format#post_user_meta
 const PostUserMetaField = ({ value, editing, onChange }) => {

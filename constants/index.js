@@ -108,17 +108,6 @@ export const FieldNames = Object.freeze({
   LOCATION_GRID: "location_grid",
 });
 
-export const TypeConstants = Object.freeze({
-  CONTACT: "contacts",
-  CONTACT_CREATE: "CONTACT_CREATE",
-  CONTACT_IMPORT: "CONTACT_IMPORT",
-  GROUP: "groups",
-  GROUP_CREATE: "GROUP_CREATE",
-  TRAINING: "TRAINING",
-  QUESTIONNAIRE: "QUESTIONNAIRE",
-  NOTIFICATION: "notifications",
-});
-
 export const ThemeConstants = Object.freeze({
   LIGHT: "light",
   DARK: "dark",
@@ -202,7 +191,30 @@ export const defaultThemeDark = Object.freeze({
   highlight
 });
 
-//export const ScreenConstants = Object.freeze({});
+// NOTE: lowercase constants bc used in D.T API requests
+export const TypeConstants = Object.freeze({
+  CONTACT: "contacts",
+  GROUP: "groups",
+  TRAINING: "trainings",
+  QUESTIONNAIRE: "questionnaires",
+  NOTIFICATION: "notifications",
+});
+
+export const SubTypeConstants = Object.freeze({
+  CREATE: "CREATE",
+  IMPORT: "IMPORT",
+  COMMENTS_ACTIVITY: "COMMENTS_ACTIVITY",
+});
+
+export const ScreenConstants = Object.freeze({
+  HOME: "HOME",
+  LIST: "LIST",
+  DETAILS: "DETAILS",
+  CREATE: "CREATE",
+  NOTIFICATIONS: "NOTIFICATIONS",
+  SETTINGS: "SETTINGS",
+  PIN: "PIN",
+});
 
 export const NotificationActionConstants = Object.freeze({
   ALERT: "alert",
@@ -218,6 +230,12 @@ export const NetworkConstants = Object.freeze({
   NETWORK_TEST_URL: "https://8.8.8.8",
 });
 
+export const SortConstants = Object.freeze({
+  LAST_MOD_ASC: "-last_modified",
+  LAST_MOD_DESC: "last_modified",
+  CREATED_ASC: "-post_date",
+  CREATED_DESC: "post_date",
+});
 
 export default {
   STATUS_CIRCLE_SIZE: 15,

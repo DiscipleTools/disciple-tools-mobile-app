@@ -26,7 +26,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import PropTypes from "prop-types";
 import Colors from "constants/Colors";
 
-import useI18N from "../../hooks/useI18N";
+import useI18N from "hooks/use-i18n";
 
 /*
 import {

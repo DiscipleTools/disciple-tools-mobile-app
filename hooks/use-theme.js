@@ -2,6 +2,8 @@
 import { Appearance, useColorScheme } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
+//import useDevice from "hooks/use-device";
+
 import { setTheme as _setTheme } from "store/actions/user.actions";
 
 import { ThemeConstants, defaultThemeLight, defaultThemeDark } from "constants";

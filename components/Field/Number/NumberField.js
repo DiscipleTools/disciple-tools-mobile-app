@@ -3,8 +3,8 @@ import { Text, TextInput, View } from "react-native";
 
 import { ClearIcon, SaveIcon } from "components/Icon";
 
-import useDebounce from "hooks/useDebounce";
-import useStyles from "hooks/useStyles";
+import useDebounce from "hooks/use-debounce";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./NumberField.styles";
 

@@ -7,8 +7,8 @@ import { NetworkConstants } from "constants";
 
 import { setNetworkIsConnected } from "store/actions/network.actions";
 
-import useI18N from "hooks/useI18N";
-import useToast from "hooks/useToast";
+import useI18N from "hooks/use-i18n";
+import useToast from "hooks/use-toast";
 
 const useNetwork = () => {
 

@@ -1,9 +1,9 @@
 import { Html5Entities } from "html-entities";
 
 import useNetwork from "./use-network";
-import useType from "hooks/useType.js";
-import useRequest from "hooks/useRequest";
-import useMyUser from "hooks/useMyUser";
+import useType from "hooks/use-type.js";
+import useRequest from "hooks/use-request";
+import useMyUser from "hooks/use-my-user";
 
 import { searchObjList } from "utils";
 

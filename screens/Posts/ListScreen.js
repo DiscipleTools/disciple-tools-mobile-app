@@ -1,17 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import OfflineBar from "components/OfflineBar";
 import FilterList from "components/FilterList";
 import FAB from "components/FAB";
 import { PostItem, PostItemSkeleton, PostItemHidden } from "components/Post/PostItem/index";
 
-import useFilter from "hooks/useFilter";
-import useList from "hooks/useList";
+import useFilter from "hooks/use-filter";
+import useList from "hooks/use-list";
 
 const ListScreen = () => {
 
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
-
+  
   const { data: items, error, isLoading, isValidating, mutate } = useList({ search, filter });
   // TODO: handler error case
 

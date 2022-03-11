@@ -5,11 +5,9 @@ import { getFocusedRouteNameFromRoute, useNavigation } from "@react-navigation/n
 
 //import HomeScreen from 'screens/HomeScreen';
 import PINScreen from "screens/PINScreen";
-import ImportContactsScreen from "screens/Posts/ImportContactsScreen";
 import CreateScreen from "screens/Posts/CreateScreen";
 import ListScreen from "screens/Posts/ListScreen";
 import DetailsScreen from "screens/Posts/DetailsScreen";
-import CommentsActivityScreen from "screens/Posts/CommentsActivityScreen";
 //import AttendanceScreen from 'screens/AttendanceScreen';
 //import QuestionnaireScreen from 'screens/Posts/QuestionnaireScreen';
 import NotificationsScreen from "screens/NotificationsScreen";
@@ -17,12 +15,21 @@ import SettingsScreen from "screens/SettingsScreen";
 
 import TabBarIcon from "components/TabBarIcon";
 
-import useI18N from "hooks/useI18N";
-//import useNotifications from 'hooks/useNotifications';
-import usePIN from "hooks/usePIN";
-import useTheme from "hooks/useTheme";
+import useI18N from "hooks/use-i18n";
+//import useNotifications from 'hooks/use-notifications';
+import usePIN from "hooks/use-pin";
+import useTheme from "hooks/use-theme";
 
-import { BottomSheetConstants } from "constants";
+import { ScreenConstants, TypeConstants } from "constants";
+
+const TabScreenConstants = Object.freeze({
+  HOME: "HOME",
+  CONTACTS: "CONTACTS",
+  GROUPS: "GROUPS",
+  NOTIFICATIONS: "NOTIFICATIONS",
+  SETTINGS: "SETTINGS",
+  //MORE: "MORE",
+});
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -61,56 +68,34 @@ const MainTabNavigator = () => {
     return (
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
-          name="Contacts"
+          name={ScreenConstants.LIST}
           component={ListScreen}
           options={{
             title: i18n.t("contactsScreen.contacts", { locale }),
           }}
           initialParams={{
-            type: "contacts",
+            type: TypeConstants.CONTACT,
           }}
         />
         <Stack.Screen
-          name="Details"
+          name={ScreenConstants.DETAILS}
           component={DetailsScreen}
           options={{
             title: "",
           }}
           initialParams={{
-            type: "contacts",
+            type: TypeConstants.CONTACT,
           }}
         />
         <Stack.Screen
-          name="CommentsActivity"
-          component={CommentsActivityScreen}
-          options={{
-            title: i18n.t("global.commentsActivity", { locale }),
-          }}
-          initialParams={{
-            type: "contacts",
-          }}
-        />
-        <Stack.Screen
-          name="CreateContact"
+          name={ScreenConstants.CREATE}
           component={CreateScreen}
           options={{
             // TODO:better title term
             title: i18n.t("contactDetailScreen.addNewContact", { locale }),
           }}
           initialParams={{
-            // TODO: constant
-            type: "CONTACT_CREATE",
-          }}
-        />
-        <Stack.Screen
-          name="ImportContacts"
-          component={ImportContactsScreen}
-          options={{
-            // TODO:better title term
-            title: i18n.t("contactDetailScreen.importContact", { locale }),
-          }}
-          initialParams={{
-            type: "import",
+            type: TypeConstants.CONTACT,
           }}
         />
       </Stack.Navigator>
@@ -121,42 +106,28 @@ const MainTabNavigator = () => {
     return (
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
-          name="Groups"
+          name={ScreenConstants.LIST}
           component={ListScreen}
           options={{
             title: i18n.t("global.groups", { locale }),
           }}
           initialParams={{
-            type: "groups", // TODO: Constants
+            type: TypeConstants.GROUP,
           }}
         />
         <Stack.Screen
-          name="CommentsActivity"
-          component={CommentsActivityScreen}
-          options={{
-            title: i18n.t("global.commentsActivity", { locale }),
-          }}
-          initialParams={{
-            type: "groups",
-          }}
-        />
-        <Stack.Screen
-          name="Details"
+          name={ScreenConstants.DETAILS}
           component={DetailsScreen}
-          //options={({ route }) => ({
-          //  title: route.params.groupName
-          //})}
         />
         <Stack.Screen
-          name="CreateGroup"
+          name={ScreenConstants.CREATE}
           component={CreateScreen}
           options={{
             // TODO:better title term
             title: i18n.t("groupDetailScreen.addNewGroup", { locale }),
           }}
           initialParams={{
-            // TODO: constant
-            type: "GROUP_CREATE",
+            type: TypeConstants.GROUP,
           }}
         />
       </Stack.Navigator>
@@ -168,7 +139,7 @@ const MainTabNavigator = () => {
     return (
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
-          name="Home"
+          name={ScreenConstants.HOME}
           component={HomeScreen}
           options={{
             // TODO: translate
@@ -185,7 +156,7 @@ const MainTabNavigator = () => {
     return (
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
-          name="More"
+          name={ScreenConstants.DETAILS}
           component={DetailsScreen}
           options={{
             title: '',
@@ -200,13 +171,13 @@ const MainTabNavigator = () => {
     return (
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
-          name="Notifications"
+          name={ScreenConstants.NOTIFICATIONS}
           component={NotificationsScreen}
           options={{
             title: i18n.t("notificationsScreen.notifications", { locale }),
           }}
           initialParams={{
-            type: "notifications",
+            type: TypeConstants.NOTIFICATION,
           }}
         />
       </Stack.Navigator>
@@ -225,14 +196,14 @@ const MainTabNavigator = () => {
     return (
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
-          name="Settings"
+          name={ScreenConstants.SETTINGS}
           component={SettingsScreen}
           options={{
             title: i18n.t("settingsScreen.settings", { locale }),
           }}
         />
         <Stack.Screen
-          name={PINConstants.SCREEN}
+          name={ScreenConstants.PIN}
           options={{
             title: null,
             headerBackTitle: i18n.t("settingsScreen.settings", { locale }),
@@ -256,7 +227,7 @@ const MainTabNavigator = () => {
     return (
       <Stack.Navigator screenOptions={overrideScreenOptions}>
         <Stack.Screen
-          name="PIN"
+          name={ScreenConstants.PIN}
           options={{
             headerLeft: (props) => (
               <HeaderBackButton
@@ -276,7 +247,7 @@ const MainTabNavigator = () => {
 
   const Navigator = () => (
     <Tab.Navigator
-      initialRouteName={"Contacts"}
+      initialRouteName={TabScreenConstants.CONTACTS}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: isDarkMode ? theme.highlight : theme.text.primary,
@@ -285,11 +256,11 @@ const MainTabNavigator = () => {
           backgroundColor: theme.background.primary,
           borderTopColor: theme.divider,
           display:
-            ["CommentsActivity","PIN"].includes(getFocusedRouteNameFromRoute(route))
+            [ScreenConstants.PIN].includes(getFocusedRouteNameFromRoute(route))
               ? "none"
               : "flex",
         },
-        tabBarButton: ["PIN"].includes(route?.name)
+        tabBarButton: [ScreenConstants.PIN].includes(route?.name)
           ? () => {
               return null;
             }
@@ -298,7 +269,7 @@ const MainTabNavigator = () => {
     >
       {/*
       <Tab.Screen
-        name="Home"
+        name={ScreenConstants.HOME}
         component={HomeStack}
         options={{
           // TODO: translate
@@ -309,7 +280,7 @@ const MainTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="More"
+        name={ScreenConstants.MORE}
         component={MoreStack}
         options={{
           // TODO: translate
@@ -321,7 +292,7 @@ const MainTabNavigator = () => {
       />
       */}
       <Tab.Screen
-        name="Contacts"
+        name={TabScreenConstants.CONTACTS}
         component={ContactsStack}
         options={{
           tabBarLabel: i18n.t("contactsScreen.contacts", { locale }),
@@ -331,7 +302,7 @@ const MainTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Groups"
+        name={TabScreenConstants.GROUPS}
         component={GroupsStack}
         options={{
           tabBarLabel: i18n.t("global.groups", { locale }),
@@ -341,7 +312,7 @@ const MainTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Notifications"
+        name={TabScreenConstants.NOTIFICATIONS}
         component={NotificationsStack}
         options={{
           tabBarLabel: i18n.t("notificationsScreen.notifications", { locale }),
@@ -352,7 +323,7 @@ const MainTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Settings"
+        name={TabScreenConstants.SETTINGS}
         component={SettingsStack}
         options={{
           tabBarLabel: i18n.t("settingsScreen.settings", { locale }),
@@ -364,15 +335,6 @@ const MainTabNavigator = () => {
           ),
         }}
       />
-      {/*
-      <Tab.Screen
-        name="PIN"
-        component={PINStack}
-        options={{
-          tabBarVisible: false,
-        }}
-      />
-      */}
     </Tab.Navigator>
   );
 

@@ -6,8 +6,8 @@ import { CheckIcon } from "components/Icon";
 import FilterList from "components/FilterList";
 import SheetHeader from "components/Sheet/SheetHeader";
 
-import useFilter from "hooks/useFilter";
-import useStyles from "hooks/useStyles";
+import useFilter from "hooks/use-filter";
+import useStyles from "hooks/use-styles";
 import useUsers from "hooks/use-users";
 
 import { localStyles } from "components/Field/Connection/ConnectionField.styles";

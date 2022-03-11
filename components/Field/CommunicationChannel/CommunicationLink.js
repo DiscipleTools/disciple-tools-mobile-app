@@ -1,7 +1,7 @@
 import React from "react";
 import { Linking, Pressable, Text, View } from "react-native";
 
-import useStyles from "hooks/useStyles";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./CommunicationLink.styles";
 

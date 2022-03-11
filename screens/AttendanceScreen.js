@@ -30,7 +30,7 @@ import PropTypes from "prop-types";
 // TODO: move to StyleSheet
 import Colors from "constants/Colors";
 
-import useI18N from "../hooks/useI18N";
+import useI18N from "hooks/use-i18n";
 
 //import { saveComment as saveGroupComment } from 'store/actions/groups.actions';
 //import { saveComment as saveContactComment } from 'store/actions/contacts.actions';

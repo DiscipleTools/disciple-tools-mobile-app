@@ -5,9 +5,9 @@ import { useNavigation } from "@react-navigation/native";
 
 import Field from "components/Field/Field";
 
-import useI18N from "hooks/useI18N";
-import useStyles from "hooks/useStyles";
-import useType from "hooks/useType";
+import useI18N from "hooks/use-i18n";
+import useStyles from "hooks/use-styles";
+import useType from "hooks/use-type";
 
 import { localStyles } from "./Tile.styles";
 

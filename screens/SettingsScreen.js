@@ -11,14 +11,14 @@ import OfflineBar from "components/OfflineBar";
 import AppVersion from "components/AppVersion";
 //import SelectSheet from "components/Sheets/SelectSheet";
 
-import { useAuth } from "hooks/useAuth";
-import useApp from "hooks/useApp";
+import { useAuth } from "hooks/use-auth";
+import useApp from "hooks/use-app";
 import useNetwork from "hooks/use-network";
-import useI18N from "hooks/useI18N";
-import usePIN from "hooks/usePIN";
-import useStyles from "hooks/useStyles";
-import useTheme from "hooks/useTheme";
-import useToast from "hooks/useToast";
+import useI18N from "hooks/use-i18n";
+import usePIN from "hooks/use-pin";
+import useStyles from "hooks/use-styles";
+import useTheme from "hooks/use-theme";
+import useToast from "hooks/use-toast";
 
 import { localStyles } from "./SettingsScreen.styles";
 import gravatar from "assets/gravatar-default.png";

@@ -6,8 +6,8 @@ import {
 } from "store/actions/auth.actions";
 
 import useNetwork from "hooks/use-network";
-import useI18N from "hooks/useI18N";
-import useSecureStore from "hooks/useSecureStore";
+import useI18N from "hooks/use-i18n";
+import useSecureStore from "hooks/use-secure-store";
 
 import axios from "services/axios";
 

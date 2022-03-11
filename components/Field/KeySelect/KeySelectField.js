@@ -1,12 +1,13 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
+import { SquareIcon } from "components/Icon";
 import Select from "components/Select";
 import SelectSheet from "components/Sheet/SelectSheet";
 import SheetHeader from "components/Sheet/SheetHeader";
 
-import useBottomSheet from "hooks/useBottomSheet";
-import useStyles from "hooks/useStyles";
+import useBottomSheet from "hooks/use-bottom-sheet";
+import useStyles from "hooks/use-styles";
 
 import { FieldNames } from "constants";
 
@@ -52,11 +53,7 @@ const KeySelectField = ({ editing, field, value, onChange }) => {
 
     const mapIcon = (key) => {
       const style = items[key]?.color ? { color: items[key].color } : null;
-      if (isStatusField()) return {
-        type: 'MaterialCommunityIcons',
-        name: 'square',
-        style,
-      };
+      if (isStatusField()) return <SquareIcon style={style} />;
       return null;
     };
 

@@ -2,8 +2,8 @@ import React from "react";
 import { Text, View } from "react-native";
 
 import useNetwork from "hooks/use-network";
-import useI18N from "hooks/useI18N";
-import useStyles from "hooks/useStyles";
+import useI18N from "hooks/use-i18n";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./OfflineBar.styles";
 

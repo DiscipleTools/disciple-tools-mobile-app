@@ -1,4 +1,4 @@
-import useRequest from "hooks/useRequest";
+import useRequest from "hooks/use-request";
 
 // https://developers.disciple.tools/theme-core/api-other/users
 const useMyUser = () => {

@@ -5,8 +5,8 @@ import { useWindowDimensions } from "react-native";
 // (native base does not have a Skeleton component)
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 
-import useI18N from "hooks/useI18N";
-import useStyles from "hooks/useStyles";
+import useI18N from "hooks/use-i18n";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./PostItemSkeleton.styles";
 

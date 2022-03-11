@@ -2,8 +2,8 @@ import React from "react";
 
 import ConnectionSheet from "./ConnectionSheet";
 
-import useFilter from "hooks/useFilter";
-import useList from "hooks/useList";
+import useFilter from "hooks/use-filter";
+import useList from "hooks/use-list";
 
 import { TypeConstants } from "constants";
 

@@ -4,10 +4,10 @@ import { useSWRConfig } from 'swr'
 import OfflineBar from "components/OfflineBar";
 import Tile from "components/Post/Tile";
 
-import useI18N from "hooks/useI18N";
-import useType from "hooks/useType";
-import useSettings from "hooks/useSettings";
-import useAPI from "hooks/useAPI";
+import useI18N from "hooks/use-i18n";
+import useType from "hooks/use-type";
+import useSettings from "hooks/use-settings";
+import useAPI from "hooks/use-api";
 
 const CreateScreen = ({ navigation }) => {
 

@@ -6,10 +6,10 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import SmoothPinCodeInput from "react-native-smooth-pincode-input";
 
-import useI18N from "hooks/useI18N";
-import usePIN from "hooks/usePIN";
-import useStyles from "hooks/useStyles";
-import useToast from "hooks/useToast";
+import useI18N from "hooks/use-i18n";
+import usePIN from "hooks/use-pin";
+import useStyles from "hooks/use-styles";
+import useToast from "hooks/use-toast";
 
 import { localStyles } from "./PINScreen.styles";
 

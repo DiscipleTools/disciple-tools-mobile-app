@@ -12,9 +12,9 @@ import * as SplashScreen from "expo-splash-screen";
 
 import { Root } from 'native-base';
 
-import { AuthProvider } from "hooks/useAuth";
-import usePushNotifications from "hooks/usePushNotifications";
-import useStyles from "hooks/useStyles";
+import { AuthProvider } from "hooks/use-auth";
+import usePushNotifications from "hooks/use-push-notifications";
+import useStyles from "hooks/use-styles";
 
 import { AppConstants } from "constants";
 

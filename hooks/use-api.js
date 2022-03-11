@@ -1,15 +1,16 @@
-import useId from "hooks/useId";
-import useType from "hooks/useType";
-import useRequestQueue from "hooks/useRequestQueue";
-import useI18N from "hooks/useI18N";
-import useToast from "hooks/useToast";
+import * as RootNavigation from "navigation/RootNavigation";
+
+import useType from "hooks/use-type";
+import useRequestQueue from "hooks/use-request-queue";
+import useI18N from "hooks/use-i18n";
+import useToast from "hooks/use-toast";
 
 import { HTTP } from "constants";
 
 const useAPI = () => {
   const { request } = useRequestQueue();
+  const postId = RootNavigation.getId();
   const { postType } = useType();
-  const postId = useId();
   const { i18n } = useI18N();
   const toast = useToast();
 

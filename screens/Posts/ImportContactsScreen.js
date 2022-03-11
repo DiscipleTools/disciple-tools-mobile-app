@@ -1,11 +1,10 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
 
 import FilterList from "components/FilterList";
 import OfflineBar from "components/OfflineBar";
 import { PostItem, PostItemSkeleton, PostItemHidden } from "components/Post/PostItem/index";
 
-import useImportContacts from 'hooks/useImportContacts';
+import useImportContacts from 'hooks/use-import-contacts';
 
 const ImportContactsScreen = ({ navigation }) => {
 

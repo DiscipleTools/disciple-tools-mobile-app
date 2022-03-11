@@ -17,12 +17,12 @@ import LabeledTextInput from "components/LabeledTextInput";
 import LanguagePicker from "components/LanguagePicker";
 import AppVersion from "components/AppVersion";
 
-import { useAuth } from "hooks/useAuth";
-import useDevice from "hooks/useDevice";
-import useI18N from "hooks/useI18N";
-import usePlugins from "hooks/usePlugins";
-import useStyles from "hooks/useStyles";
-import useToast from "hooks/useToast";
+import { useAuth } from "hooks/use-auth";
+import useDevice from "hooks/use-device";
+import useI18N from "hooks/use-i18n";
+import usePlugins from "hooks/use-plugins";
+import useStyles from "hooks/use-styles";
+import useToast from "hooks/use-toast";
 
 import { localStyles } from "./LoginScreen.styles";
 

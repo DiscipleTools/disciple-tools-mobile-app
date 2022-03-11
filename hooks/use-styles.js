@@ -1,8 +1,8 @@
 import { StyleSheet } from "react-native";
 
-import useDevice from "hooks/useDevice";
-import useI18N from "hooks/useI18N";
-import useTheme from "hooks/useTheme";
+import useDevice from "hooks/use-device";
+import useI18N from "hooks/use-i18n";
+import useTheme from "hooks/use-theme";
 
 const globalStyles = ({ theme, isRTL, isIOS }) => ({
   // Palette

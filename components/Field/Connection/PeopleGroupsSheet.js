@@ -2,7 +2,7 @@ import React from "react";
 
 import ConnectionSheet from "./ConnectionSheet";
 
-import useFilter from "hooks/useFilter";
+import useFilter from "hooks/use-filter";
 import usePeopleGroups from "hooks/use-people-groups";
 
 const PeopleGroupsSheet = ({ title, values, onChange }) => {

@@ -5,8 +5,8 @@ import { CheckIcon } from "components/Icon";
 import SelectSheet from "./SelectSheet";
 import SheetHeader from "./SheetHeader";
 
-import useBottomSheet from "hooks/useBottomSheet";
-import useStyles from "hooks/useStyles";
+import useBottomSheet from "hooks/use-bottom-sheet";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./FilterSheet.styles";
 

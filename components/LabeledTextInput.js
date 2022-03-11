@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TextInput } from "react-native";
 import { Icon } from "native-base";
 
-import useI18N from "hooks/useI18N";
+import useI18N from "hooks/use-i18n";
 
 import { styles } from "./LabeledTextInput.styles";
 

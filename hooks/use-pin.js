@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Random from "expo-random";
-import useSecureStore from "hooks/useSecureStore";
+import useSecureStore from "hooks/use-secure-store";
 
 import {
   setHasPIN,

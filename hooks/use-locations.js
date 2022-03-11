@@ -1,7 +1,7 @@
 //import { useDispatch, useSelector } from "react-redux";
 
 //import useNetwork from "./use-network";
-import useRequest from "hooks/useRequest";
+import useRequest from "hooks/use-request";
 
 // TODO: replace with lodash?
 import { searchObjList } from "utils";

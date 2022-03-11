@@ -12,9 +12,9 @@ import GroupsSheet from "./GroupsSheet";
 import PeopleGroupsSheet from "./PeopleGroupsSheet";
 import TrainingsSheet from "./TrainingsSheet";
 
-import useBottomSheet from "hooks/useBottomSheet";
-//import useStyles from "hooks/useStyles";
-import useType from "hooks/useType";
+import useBottomSheet from "hooks/use-bottom-sheet";
+//import useStyles from "hooks/use-styles";
+import useType from "hooks/use-type";
 
 import {
   groupCircleIcon,
@@ -94,7 +94,6 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
   };
 
   const ContactEdit = () => {
-    console.log(`ContactEdit: ${field?.name}`);
     const route = useRoute();
     return(
       <Select

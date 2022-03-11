@@ -16,11 +16,11 @@ import SelectSheet from "components/Sheet/SelectSheet";
 //import { HelpSheet } from "components/Sheet/ModalSheet";
 import { PostItemSkeleton } from "components/Post/PostItem/index";
 
-import useFilter from "hooks/useFilter";
-//import useI18N from "hooks/useI18N";
+import useFilter from "hooks/use-filter";
+//import useI18N from "hooks/use-i18n";
 import useNotifications from "hooks/use-notifications";
-//import useMyUser from 'hooks/useMyUser.js';
-import useStyles from "hooks/useStyles";
+//import useMyUser from 'hooks/use-my-user.js';
+import useStyles from "hooks/use-styles";
 
 import { NotificationActionConstants } from "constants";
 

@@ -1,5 +1,5 @@
 import useNetwork from "./use-network";
-import useRequest from "hooks/useRequest";
+import useRequest from "hooks/use-request";
 
 import { searchObjList } from "utils";
 
@@ -16,7 +16,6 @@ const useUsers = ({ search, filter, exclude } = {}) => {
     mutate
   };
   let filtered = users.filter(item => !exclude?.includes(item?.ID));
-  console.log(`# of filtered: ${ filtered.length }`);
   //if (filtered?.length > 0 && search && isConnected == false) filtered = searchObjList(filtered, search);
   if (filtered?.length > 0 && search) filtered = searchObjList(filtered, search);
   return {

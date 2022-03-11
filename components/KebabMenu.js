@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Icon } from "native-base";
 import { Menu, MenuItem, MenuDivider } from "react-native-material-menu";
 
-import useStyles from "hooks/useStyles";
+import useStyles from "hooks/use-styles";
 
 const KebabMenu = ({ menuItems }) => {
   const { globalStyles } = useStyles();

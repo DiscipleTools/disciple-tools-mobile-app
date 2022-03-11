@@ -3,7 +3,7 @@ import { Pressable, View } from "react-native";
 
 import { CaretIcon } from "components/Icon";
 
-import useStyles from "hooks/useStyles";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./Select.styles";
 

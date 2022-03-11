@@ -1,8 +1,8 @@
 import React from "react";
 import { Text } from "react-native";
 
-import useApp from "hooks/useApp";
-import useStyles from "hooks/useStyles";
+import useApp from "hooks/use-app";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./AppVersion.styles";
 

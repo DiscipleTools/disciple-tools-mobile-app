@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 
-import useStyle from "hooks/useStyles";
+import useStyle from "hooks/use-styles";
 
 import { localStyles } from "./Chip.styles";
 

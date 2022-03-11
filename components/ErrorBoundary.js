@@ -1,6 +1,6 @@
 import React from "react";
 
-//import useToast from 'hooks/useToast';
+//import useToast from 'hooks/use-toast';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {

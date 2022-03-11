@@ -1,7 +1,7 @@
 import React from "react";
 import { Linking, Pressable, Text, View } from "react-native";
 
-import useI18N from "hooks/useI18N";
+import useI18N from "hooks/use-i18n";
 
 import { styles } from "./PluginRequired.styles";
 

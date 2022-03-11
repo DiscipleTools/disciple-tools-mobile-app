@@ -4,8 +4,9 @@ import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 
 import FieldSkeleton from "components/Field/FieldSkeleton";
 
-import useI18N from "hooks/useI18N";
-import useTheme from "hooks/useTheme";
+import useI18N from "hooks/use-i18n";
+// TODO: use local style
+import useTheme from "hooks/use-theme";
 
 const PostSkeleton = () => {
   const layout = useWindowDimensions();

@@ -11,11 +11,11 @@ import {
   Right,
 } from "native-base";
 
-import useAPI from "hooks/useAPI";
-import useDevice from "hooks/useDevice";
-import useI18N from "hooks/useI18N";
-import useStyles from "hooks/useStyles";
-import useToast from "hooks/useToast";
+import useAPI from "hooks/use-api";
+import useDevice from "hooks/use-device";
+import useI18N from "hooks/use-i18n";
+import useStyles from "hooks/use-styles";
+import useToast from "hooks/use-toast";
 
 import { localStyles } from "./LanguagePicker.styles";
 

@@ -4,8 +4,8 @@ import { RemoveIcon } from "components/Icon";
 
 import CommunicationLink from "./CommunicationLink";
 
-import useDebounce from "hooks/useDebounce";
-import useStyles from "hooks/useStyles";
+import useDebounce from "hooks/use-debounce";
+import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./CommunicationChannelField.styles";
 

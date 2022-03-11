@@ -4,8 +4,8 @@ import Select from "components/Select";
 import PostLink from "components/Post/PostLink";
 import UsersSheet from "./UsersSheet";
 
-import useBottomSheet from "hooks/useBottomSheet";
-import useType from "hooks/useType";
+import useBottomSheet from "hooks/use-bottom-sheet";
+import useType from "hooks/use-type";
 
 const UserSelectField = ({ editing, field, value, onChange }) => {
 
