@@ -140,6 +140,15 @@ const useI18N = () => {
 
   const isRTL = _isRTL();
 
+  const reloadApp = (isRTL) => {
+    I18nManager.allowRTL(isRTL);
+    I18nManager.forceRTL(isRTL);
+    setTimeout(() => {
+      Updates.reloadAsync();
+    }, 500);
+    return;
+  };
+
   // TODO: useI18N() is rendered too much, employ useCallback strategy
   useEffect(async() => {
     // if no 'locale' existing in-memory or storage, then use device locale
@@ -148,17 +157,20 @@ const useI18N = () => {
       return;
     };
     // this condition is used for when redux state is re-initialized
+    // TODO: use constant
     if (locale === "en_US" && prevLocale === null) {
       i18n.locale = locale;
       setLocale(locale);
       if (I18nManager.isRTL) {
-        I18nManager.allowRTL(false);
-        I18nManager.forceRTL(false);
-        setTimeout(() => {
-          Updates.reloadAsync();
-        }, 500);
+        reloadApp(false);
+        return;
       };
     }
+    // if I18nManager is out of sync, reload
+    if (_isRTL(locale) !== I18nManager.isRTL) {
+      reloadApp(isRTL);
+      return;
+    };
     // assume that we have already handled the locale change
     if (locale === prevLocale) return;
     // set new locale in memory and in storage, and restart if swtiching to RTL/LTR
@@ -166,22 +178,24 @@ const useI18N = () => {
     i18n.locale = locale;
     setLocale(locale);
     if ((_isRTL(locale) && !_isRTL(prevLocale)) || ((!_isRTL(locale) && (_isRTL(prevLocale))) && (_isRTL(prevLocale) && !prevLocale))) {
-      I18nManager.allowRTL(isRTL);
-      I18nManager.forceRTL(isRTL);
-      setTimeout(() => {
-        Updates.reloadAsync();
-      }, 500);
+      reloadApp(isRTL);
+      return;
     };
     return;
   }, [locale]);
 
-  const setLocale = async(locale) => dispatch(_setLocale(locale));
+  const setLocale = async(locale) => {
+    dispatch(_setLocale(locale));
+  };
+
+  const selectedEndonym = i18n?.translations[locale]?.endonym ?? ''; 
 
   return {
     i18n,
     isRTL,
     locale,
     setLocale,
+    selectedEndonym,
   };
 };
 export default useI18N;

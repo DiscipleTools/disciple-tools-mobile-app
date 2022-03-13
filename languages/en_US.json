@@ -52,7 +52,9 @@
     "other": "Other",
     "chooseOption": "Choose an option",
     "confirm": "Confirm",
-    "selectDate": "Select Date"
+    "selectDate": "Select Date",
+    "status": "Status",
+    "type": "Type"
   },
   "loginScreen": {
     "domain": {

@@ -9,18 +9,14 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   },
   headerContainer: {
     backgroundColor: theme.surface.secondary,
-    //backgroundColor: theme.background.primary,
     paddingTop: 15,
     paddingBottom: 15,
     paddingHorizontal: 10,
-    //borderTopWidth: 1,
-    //borderTopColor: theme.highlight,
-    //borderBottomWidth: 1,
-    //borderBottomColor: theme.highlight,
   },
-  headerDomain: {
+  headerText: {
     color: theme.placeholder,
     fontStyle: "italic",
+    marginHorizontal: 20
   },
   switch: {
     color: theme.mode === ThemeConstants.DARK ? theme.highlight : theme.brand.primary,
@@ -32,5 +28,9 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     paddingHorizontal: 5,
     alignItems: "center",
     height: 50,
+  },
+  formContainer: {
+    flexGrow: 1,
+    padding: 20,
   },
 });

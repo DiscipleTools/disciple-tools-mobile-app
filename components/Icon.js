@@ -59,6 +59,7 @@ export const SearchIcon = ({ onPress, style }) => <MaterialIcon name="search" on
 export const SendIcon = ({ onPress, style }) => <MaterialCommunityIcon name="send-circle" onPress={onPress} style={style} />;
 export const SortIcon = ({ onPress, style }) => <MaterialCommunityIcon name="sort" onPress={onPress} style={style} />;
 export const SquareIcon = ({ onPress, style }) => <MaterialCommunityIcon name="square" onPress={onPress} style={style} />;
+export const TranslateIcon = ({ onPress, style }) => <MaterialCommunityIcon name="translate" onPress={onPress} style={style} />;
 
 // Notifications
 export const CommentIcon = ({ onPress, style }) => <MaterialCommunityIcon name="comment-outline" onPress={onPress} style={style} />;

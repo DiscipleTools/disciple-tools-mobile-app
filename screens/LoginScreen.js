@@ -6,14 +6,17 @@ import {
   Linking,
   Pressable,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
-
-import { AccountIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
+import {
+  AccountIcon,
+  EyeIcon,
+  KeyIcon,
+  LinkIcon,
+} from "components/Icon";
 import PluginRequired from "components/PluginRequired";
 import LabeledTextInput from "components/LabeledTextInput";
-import LanguagePicker from "components/LanguagePicker";
+import LanguagePicker from "components/Picker/LanguagePicker";
 import AppVersion from "components/AppVersion";
 
 import { useAuth } from "hooks/use-auth";
@@ -265,9 +268,9 @@ const LoginScreen = () => {
         <UsernameField ref={usernameRef} />
         <PasswordField ref={passwordRef} />
         { loading ? <LoadingSpinner /> : <LoginButton /> }
+        <LanguagePicker />
         <AppVersion />
       </View>
-      <LanguagePicker />
     </View>
   );
 };

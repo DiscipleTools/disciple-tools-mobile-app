@@ -25,7 +25,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     backgroundColor: theme.brand.primary,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 10,
+    borderRadius: 5,
     borderWidth: 1,
     borderColor: theme.highlight,
     marginTop: 10,

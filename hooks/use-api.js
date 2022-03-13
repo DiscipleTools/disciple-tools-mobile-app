@@ -17,7 +17,8 @@ const useAPI = () => {
   // USER
   // https://developers.disciple.tools/theme-core/api-other/users
 
-  const updateUser = async(locale) => {
+  // TODO: enable addl fields
+  const updateUser = async({ locale }) => {
     const url = "/dt/v1/user/update";
     return request({
       url,

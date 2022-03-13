@@ -9,9 +9,8 @@ import { Icon } from "native-base";
 import * as MailComposer from "expo-mail-composer";
 
 import OfflineBar from "components/OfflineBar";
-//import LanguagePicker from "components/LanguagePicker";
+import LanguagePicker from "components/Picker/LanguagePicker";
 import AppVersion from "components/AppVersion";
-//import SelectSheet from "components/Sheets/SelectSheet";
 
 import { useAuth } from "hooks/use-auth";
 import useApp from "hooks/use-app";
@@ -58,10 +57,13 @@ const SettingsScreen = ({ navigation }) => {
           style={styles.avatar}
         />
         <View style={globalStyles.columnContainer}>
-          <Text style={globalStyles.title}>
+          <Text style={[
+            styles.headerText,
+            globalStyles.title,
+          ]}>
             {username}
           </Text>
-          <Text style={styles.headerDomain}>
+          <Text style={styles.headerText}>
             {domain}
           </Text>
         </View>
@@ -154,26 +156,6 @@ const SettingsScreen = ({ navigation }) => {
     />
   );
 
-  const LanguagePicker = () => {
-    const endonym = i18n?.translations[locale]?.endonym;
-    return(
-      <SettingsOption
-        iconName="language"
-        label={i18n.t("global.language", { locale })}
-        component={
-          <Pressable onPress={() => showLangSheet(true)}>
-            <View>
-              <Text>{endonym}</Text>
-            </View>
-          </Pressable>
-        }
-        //component={
-        //  <Switch value={isConnected} onChange={toggleNetwork} disabled={false} />
-        //}
-      />
-    );
-  };
-
   const AutoLoginToggle = () => (
     <SettingsOption
       iconType="MaterialCommunityIcons"
@@ -263,72 +245,6 @@ const SettingsScreen = ({ navigation }) => {
     />
   );
 
-  const LanguageSheet = () => {
-
-    const SortConstants = {
-      LAST_MOD_ASC: "sort_last_mod_asc",
-      LAST_MOD_DESC: "sort_last_mod_desc",
-      CREATED_ASC: "sort_created_asc",
-      CREATED_DESC: "sort_created_desc",
-    };
-
-    // post_date
-    // last_modified
-    const onDismiss = () => langSheetRef.current.close();
-    const onDone = (item) => {
-      console.log('**** onDone');
-      console.log(`items: ${JSON.stringify(item)}`);
-    };
-    const onSnap = useCallback((index) => {
-      console.log('handleSheetChanges', index);
-    }, []);
-    const snapPoints = useMemo(() => ['50%', '95%'], []);
-    const sections = useMemo(() =>
-      [
-        {
-          title: "Endonym (Locale)",
-          data: [
-          {
-            key: SortConstants.LAST_MOD_ASC,
-            // TODO: translate
-            label: "English (en-US)",
-            locale: "en-US",
-            selected: true,
-          },
-          {
-            key: SortConstants.LAST_MOD_DESC,
-            // TODO: translate
-            label: "French (fr-FR)",
-            locale: "fr-FR",
-            selected: false,
-          },
-        ]
-      },
-    ]
-    , []);
-
-    return null;
-    /*
-    return(
-      <SelectSheet
-        ref={langSheetRef}
-        snapPoints={snapPoints}
-        onSnap={onSnap}
-        // TODO: translate
-        title={"Language"}
-        sections={sections}
-        //renderSection={renderSection}
-        //renderItem={renderItem}
-        onDismiss={onDismiss}
-        onDone={onDone}
-      />
-    );
-    */
-  };
-
-  const langSheetRef = useRef(null);
-  const showLangSheet = () => langSheetRef.current.expand();
-
   return (
     <View style={globalStyles.screenContainer}>
       <OfflineBar />
@@ -336,13 +252,15 @@ const SettingsScreen = ({ navigation }) => {
       {/*__DEV__ && <StorybookButton />*/}
       <OnlineToggle />
       <DarkModeToggle />
-      <LanguagePicker />
       <AutoLoginToggle />
       <RememberLoginDetailsToggle />
       <PINCodeToggle />
       <HelpSupportButton />
       <LogoutButton />
-      <AppVersion />
+      <View style={styles.formContainer}>
+        <LanguagePicker />
+        <AppVersion />
+      </View>
     </View>
   );
 };
