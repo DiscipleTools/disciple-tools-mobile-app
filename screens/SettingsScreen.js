@@ -1,5 +1,7 @@
 import React, { useCallback, useMemo, useReducer, useRef, useState } from "react";
 import { Image, Pressable, Switch, Text, View } from "react-native";
+import { useIsFocused } from '@react-navigation/native';
+
 // TODO: remove
 import { Icon } from "native-base";
 
@@ -24,6 +26,10 @@ import { localStyles } from "./SettingsScreen.styles";
 import gravatar from "assets/gravatar-default.png";
 
 const SettingsScreen = ({ navigation }) => {
+
+  // NOTE: invoking this hook causes the desired re-render onBack()
+  useIsFocused();
+
   const { isConnected, toggleNetwork } = useNetwork();
   const { i18n, isRTL, locale } = useI18N();
   const { PINConstants, hasPIN } = usePIN();

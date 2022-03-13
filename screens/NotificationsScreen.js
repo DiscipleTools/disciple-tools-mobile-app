@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { Button, Pressable, Text, View } from "react-native";
+import { useIsFocused } from '@react-navigation/native';
 
 //import { Html5Entities } from 'html-entities';
 
@@ -29,6 +30,9 @@ import { localStyles } from "./NotificationsScreen.styles";
 const NotificationsScreen = ({ navigation }) => {
 
   const DEFAULT_LIMIT = 10;
+
+  // NOTE: invoking this hook causes the desired re-render onBack()
+  useIsFocused();
 
   const { styles, globalStyles } = useStyles(localStyles);
   //const { i18n, isRTL } = useI18N();
