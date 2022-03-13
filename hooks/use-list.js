@@ -367,8 +367,10 @@ const useList = ({ search, filter, exclude, type, subtype } = {}) => {
     mutate
   };
   let filtered = data.posts.filter(item => !exclude?.includes(item?.ID));
-  //if (filtered?.length > 0 && search && isConnected == false) filtered = searchObjList(filtered, search);
-  if (filtered?.length > 0 && search) filtered = searchObjList(filtered, search);
+  // search by any property value, unless excluded
+  //if (filtered?.length > 0 && search) filtered = searchObjList(filtered, search);
+  // search only by title
+  if (filtered?.length > 0 && search) filtered = filtered.filter(item => item?.post_title?.toLowerCase()?.includes(search?.toLowerCase()));
   const posts = filtered?.length > 0 ? mapPosts(filtered) : null;
   return {
     data: posts,
