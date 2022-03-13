@@ -1,5 +1,5 @@
 import React from "react";
-import { Linking, View } from "react-native";
+import { Linking, Text, View } from "react-native";
 
 import { ClearIcon, MapIcon } from "components/Icon";
 import Chip from "components/Chip";
@@ -75,7 +75,11 @@ const LocationField = ({ editing, field, value, onChange }) => {
     />
   );
 
-  const LocationFieldView = () => null;
+  const LocationFieldView = () => (
+    <Text>
+      { values.map(tag => tag?.value).join(", ") }
+    </Text>
+  );
 
   if (editing) return <LocationFieldEdit />;
   return <LocationFieldView />;

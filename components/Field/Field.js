@@ -238,8 +238,8 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
       case FieldTypes.TAGS:
         return (
           <TagsField
-            //editing={_editing}
-            //editing
+            grouped={grouped}
+            editing
             field={field}
             value={_value}
             onChange={_onChange}
