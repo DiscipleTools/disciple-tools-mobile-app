@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useIsFocused } from '@react-navigation/native';
 
 import OfflineBar from "components/OfflineBar";
 import FilterList from "components/FilterList";
@@ -9,6 +10,9 @@ import useFilter from "hooks/use-filter";
 import useList from "hooks/use-list";
 
 const ListScreen = () => {
+
+  // NOTE: invoking this hook causes the desired re-render onBack()
+  useIsFocused();
 
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
   

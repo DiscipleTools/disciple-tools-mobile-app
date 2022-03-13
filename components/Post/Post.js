@@ -1,6 +1,6 @@
-import React, { useEffect, useLayoutEffect, useReducer, useState } from "react";
+import React, { useLayoutEffect } from "react";
 import { Linking, Text, View } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -29,6 +29,10 @@ import { SubTypeConstants } from "constants";
 import { localStyles } from "./Post.styles";
 
 const Post = ({ editOnly=false }) => {
+
+  // NOTE: invoking this hook causes the desired re-render onBack()
+  useIsFocused();
+
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
@@ -48,14 +52,6 @@ const Post = ({ editOnly=false }) => {
   const { settings } = useSettings();
   const toast = useToast();
   const { updatePost } = useAPI();
-
-  // NOTE: focus handler to enable auto-refresh onBack()
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      mutate();
-    });
-    return unsubscribe;
-  }, [navigation]);
 
   const renderHeaderLeft = (props) => {
     const onBack = () => navigation.pop(); //ToTop(); //goBack();
