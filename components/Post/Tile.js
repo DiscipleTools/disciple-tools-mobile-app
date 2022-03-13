@@ -4,10 +4,13 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { useNavigation } from "@react-navigation/native";
 
 import Field from "components/Field/Field";
+import MemberList from "components/MemberList";
 
 import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
 import useType from "hooks/use-type";
+
+import { FieldNames } from "constants";
 
 import { localStyles } from "./Tile.styles";
 
@@ -91,16 +94,24 @@ const Tile = ({ grouped=false, editing=false, fields, post, save, mutate }) => {
 
   const Fields = () => {
     return fields.map((field, idx) => (
-      <Field
-        key={field?.name ?? idx}
-        grouped={grouped}
-        editing={editing}
-        field={field}
-        //post={_post}
-        post={grouped ? _post : post}
-        onChange={onChange}
-        mutate={mutate}
-      />
+      <>
+        <Field
+          key={field?.name ?? idx}
+          grouped={grouped}
+          editing={editing}
+          field={field}
+          post={grouped ? _post : post}
+          onChange={onChange}
+          mutate={mutate}
+        />
+        { field?.name === FieldNames.MEMBER_COUNT && (
+          <MemberList
+            post={post}
+            onChange={onChange}
+            mutate={mutate}
+          />
+        )}
+      </>
     ));
   };
 

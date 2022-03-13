@@ -102,6 +102,7 @@ export const FieldNames = Object.freeze({
   PEOPLE_GROUPS: "people_groups",
   BAPTISM_DATE: "baptism_date",
   MEMBER_COUNT: "member_count",
+  MEMBERS: "members",
   GROUPS: "groups",
   TRAININGS: "trainings",
   LOCATION_GRID_META: "location_grid_meta",

@@ -20,8 +20,6 @@ import TagsField from "components/Field/Tags/TagsField";
 import TextField from "components/Field/Text/TextField";
 import UserSelectField from "components/Field/UserSelect/UserSelectField";
 
-import MemberList from "components/MemberList";
-
 import useAPI from "hooks/use-api";
 import useStyles from "hooks/use-styles";
 
@@ -229,9 +227,6 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
           />
         );
       case FieldTypes.NUMBER:
-        // TODO:
-        //{ field?.name === FieldNames.MEMBER_COUNT
-        //<MemberList members={post?.members?.values} />
         return (
           <NumberField
             grouped={grouped}

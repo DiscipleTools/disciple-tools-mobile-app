@@ -277,7 +277,8 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
   );
 
   const isContactField = () => (
-    field?.name === FieldNames.COACHES
+    field?.name === FieldNames.COACHES ||
+    field?.name === FieldNames.MEMBERS
   );
 
   const isTrainingField = () => (
