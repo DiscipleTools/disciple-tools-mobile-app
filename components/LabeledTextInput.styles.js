@@ -1,6 +1,4 @@
-import { StyleSheet } from "react-native";
-
-export const styles = StyleSheet.create({
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
   inputContainer: {
     alignSelf: "stretch",
     marginVertical: 5,
@@ -12,7 +10,7 @@ export const styles = StyleSheet.create({
     margin: 5,
   },
   inputLabelText: {
-    color: "#555555",
+    color: theme.text.primary,
   },
   inputRow: {
     alignSelf: "stretch",

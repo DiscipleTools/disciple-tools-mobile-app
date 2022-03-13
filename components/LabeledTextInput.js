@@ -1,38 +1,25 @@
 import React from "react";
 import { View, Text, TextInput } from "react-native";
-import { Icon } from "native-base";
 
-import useI18N from "hooks/use-i18n";
+import useStyles from "hooks/use-styles";
 
-import { styles } from "./LabeledTextInput.styles";
+import { localStyles } from "./LabeledTextInput.styles";
 
 const LabeledTextInput = (props) => {
   const {
     containerStyle,
     labelStyle,
     labelTextStyle,
-    iconStyle,
     textInputStyle,
-    iconName,
+    startIcon,
+    endIcon,
     label,
     value,
     editing,
     onChangeText,
   } = props;
 
-  const { isRTL } = useI18N();
-
-  const icon = iconName ? (
-    <Icon
-      type={"Ionicons"}
-      name={iconName}
-      style={[
-        styles.inputRowIcon,
-        iconStyle,
-        !isRTL ? { textAlign: "right" } : { textAlign: "left" },
-      ]}
-    />
-  ) : null;
+  const { styles, globalStyles } = useStyles(localStyles);
 
   //const TextFieldEdit = () => (
   const renderTextFieldEdit = () => (
@@ -42,12 +29,13 @@ const LabeledTextInput = (props) => {
           {label}
         </Text>
       </View>
-      <View style={styles.inputRow}>
-        {icon}
+      <View style={globalStyles.rowContainer}>
+        {startIcon}
         <TextInput
           style={[styles.inputRowTextInput, textInputStyle]}
           {...props}
         />
+        {endIcon}
       </View>
     </View>
   );

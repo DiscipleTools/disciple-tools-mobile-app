@@ -1,6 +1,5 @@
 import React from "react";
 import { Pressable } from "react-native";
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -38,17 +37,7 @@ const MaterialCommunityIcon = ({ name, onPress, style }) => {
   return <Icon icon={icon} onPress={onPress} />;
 };
 
-const FontAwesomeIcon = ({ name, onPress, style }) => {
-  const { globalStyles } = useStyles();
-  const icon = (
-    <FontAwesome
-      name={name}
-      style={[globalStyles.icon, style]}
-    />
-  );
-  return <Icon icon={icon} onPress={onPress} />;
-};
-
+export const AccountIcon = ({ onPress, style }) => <MaterialCommunityIcon name="account" onPress={onPress} style={style} />;
 export const AddIcon = ({ onPress, style }) => <MaterialIcon name="add" onPress={onPress} style={style} />;
 export const ArrowLeftIcon = ({ onPress, style }) => <MaterialCommunityIcon name="arrow-left" onPress={onPress} style={style} />;
 export const ArrowRightIcon = ({ onPress, style }) => <MaterialCommunityIcon name="arrow-right" onPress={onPress} style={style} />;
@@ -60,6 +49,9 @@ export const CircleIcon = ({ onPress, style }) => <MaterialCommunityIcon name="c
 export const CircleOutlineIcon = ({ onPress, style }) => <MaterialCommunityIcon name="circle-outline" onPress={onPress} style={style} />;
 export const EditIcon = ({ onPress, style }) => <MaterialIcon name="edit" onPress={onPress} style={style} />;
 export const ExpandIcon = ({ onPress, style }) => <MaterialCommunityIcon name="arrow-expand" onPress={onPress} style={style} />;
+export const EyeIcon = ({ onPress, style }) => <MaterialCommunityIcon name="eye" onPress={onPress} style={style} />;
+export const KeyIcon = ({ onPress, style }) => <MaterialCommunityIcon name="key-variant" onPress={onPress} style={style} />;
+export const LinkIcon = ({ onPress, style }) => <MaterialCommunityIcon name="link" onPress={onPress} style={style} />;
 export const MapIcon = ({ onPress, style }) => <MaterialCommunityIcon name="earth" onPress={onPress} style={style} />;
 export const RemoveIcon = ({ onPress, style }) => <MaterialIcon name="remove" onPress={onPress} style={style} />;
 export const SaveIcon = ({ onPress, style }) => <MaterialIcon name="save" onPress={onPress} style={style} />;
@@ -79,4 +71,4 @@ export const SortAscIcon = ({ onPress, style }) => <MaterialCommunityIcon name="
 export const SortDescIcon = ({ onPress, style }) => <MaterialCommunityIcon name="sort-variant" onPress={onPress} style={style} />;
 
 // Nav Tab Bar
-export const SettingsIcon = ({ onPress, style }) => <FontAwesomeIcon name="cog" onPress={onPress} style={style} />;
+export const SettingsIcon = ({ onPress, style }) => <MaterialIcon name="settings" onPress={onPress} style={style} />;

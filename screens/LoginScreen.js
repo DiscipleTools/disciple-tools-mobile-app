@@ -10,8 +10,7 @@ import {
   View,
 } from "react-native";
 
-import { Icon } from "native-base";
-
+import { AccountIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
 import PluginRequired from "components/PluginRequired";
 import LabeledTextInput from "components/LabeledTextInput";
 import LanguagePicker from "components/LanguagePicker";
@@ -127,10 +126,9 @@ const LoginScreen = () => {
           value={domain}
           accessibilityLabel={i18n.t("loginScreen.domain.label", { locale })}
           label={i18n.t("loginScreen.domain.label", { locale })}
-          style={styles.inputText}
           containerStyle={[styles.textField, state.domainValidation && styles.domainErrorInput]}
-          // TODO: LabeledTextInput currently hardcoded to Ionicons
-          iconName={isIOS ? "ios-link" : "md-link"}
+          startIcon={<LinkIcon />}
+          // TODO: is this necessary (using rowContainer in component?)
           textAlign={isRTL ? "right" : "left"}
           autoCapitalize="none"
           autoCorrect={false}
@@ -170,9 +168,9 @@ const LoginScreen = () => {
           }}
           accessibilityLabel={i18n.t("loginScreen.username.label", { locale })}
           label={i18n.t("loginScreen.username.label", { locale })}
-          style={styles.inputText}
           containerStyle={[styles.textField, state.usernameValidation && styles.validationErrorInput]}
-          iconName={isIOS ? "ios-person" : "md-person"}
+          //iconName={isIOS ? "ios-person" : "md-person"}
+          startIcon={<AccountIcon />}
           textAlign={isRTL ? "right" : "left"}
           autoCapitalize="none"
           autoCorrect={false}
@@ -209,24 +207,20 @@ const LoginScreen = () => {
           ref={ref}
           accessibilityLabel={i18n.t("loginScreen.password.label", { locale })}
           label={i18n.t("loginScreen.password.label", { locale })}
-          style={styles.inputText}
+          //style={styles.inputText}
           containerStyle={[styles.textField, state.passwordValidation && styles.validationErrorInput]}
-          iconName={isIOS ? "ios-key" : "md-key"}
+          //iconName={isIOS ? "ios-key" : "md-key"}
+          startIcon={<KeyIcon />}
+          endIcon={
+            <EyeIcon
+              onPress={()=>setShowPassword(!showPassword)}
+              style={styles.showPasswordIcon(showPassword)}
+            />
+          }
           underlineColorAndroid="transparent"
           secureTextEntry={!showPassword}
           textAlign={isRTL ? "right" : "left"}
         />
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={styles.showPasswordView}
-          onPress={()=>setShowPassword(!showPassword)}
-        >
-          <Icon
-            type="FontAwesome"
-            name="eye"
-            style={styles.showPasswordIcon(showPassword)}
-          />
-        </TouchableOpacity>
         {passwordErrorMessage}
       </View>
     );

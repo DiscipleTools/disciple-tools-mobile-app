@@ -57,16 +57,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   validationErrorMessage: {
     color: theme.error,
   },
-  showPasswordView: {
-    position: "absolute",
-    right: 10,
-    height: 75,
-    padding: 2,
-  },
   showPasswordIcon: (showPassword) => ({
-    marginBottom: "auto",
-    marginTop: "auto",
-    fontSize: 24,
     opacity: showPassword ? null : 0.3,
   }),
   spinner: {
