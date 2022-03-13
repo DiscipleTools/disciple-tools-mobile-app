@@ -371,7 +371,7 @@ const useList = ({ search, filter, exclude, type, subtype } = {}) => {
   //if (filtered?.length > 0 && search) filtered = searchObjList(filtered, search);
   // search only by title
   if (filtered?.length > 0 && search) filtered = filtered.filter(item => item?.post_title?.toLowerCase()?.includes(search?.toLowerCase()));
-  const posts = filtered?.length > 0 ? mapPosts(filtered) : null;
+  const posts = filtered?.length > 0 ? mapPosts(filtered) : [];
   return {
     data: posts,
     error,
