@@ -5,7 +5,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   },
   offlineBarText: {
     fontSize: 14,
-    color: theme.text.primary,
+    color: theme.offDark,
     textAlignVertical: "center",
     textAlign: "center",
   },

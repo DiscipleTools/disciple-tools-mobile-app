@@ -63,7 +63,7 @@ const useNetwork = () => {
   const toggleNetwork = () => handleConnectivityChange(!isConnected);
 
   return {
-    isConnected,
+    isConnected: isConnected !== false,
     toggleNetwork,
   };
 };
