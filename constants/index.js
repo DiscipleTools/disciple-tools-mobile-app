@@ -212,6 +212,7 @@ export const ScreenConstants = Object.freeze({
   LIST: "LIST",
   DETAILS: "DETAILS",
   CREATE: "CREATE",
+  IMPORT: "IMPORT",
   NOTIFICATIONS: "NOTIFICATIONS",
   SETTINGS: "SETTINGS",
   PIN: "PIN",

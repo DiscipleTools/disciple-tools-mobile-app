@@ -10,7 +10,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     fontSize: 20
   },
   itemText: {
-    color: theme.text.primary,
+    color: theme.offDark,
     fontSize: 15
   }
 });

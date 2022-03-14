@@ -6,6 +6,7 @@ import { getFocusedRouteNameFromRoute, useNavigation } from "@react-navigation/n
 //import HomeScreen from 'screens/HomeScreen';
 import PINScreen from "screens/PINScreen";
 import CreateScreen from "screens/Posts/CreateScreen";
+import ImportContactsScreen from "screens/Posts/ImportContactsScreen";
 import ListScreen from "screens/Posts/ListScreen";
 import DetailsScreen from "screens/Posts/DetailsScreen";
 //import AttendanceScreen from 'screens/AttendanceScreen';
@@ -93,6 +94,17 @@ const TabNavigator = () => {
           options={{
             // TODO:better title term
             title: i18n.t("contactDetailScreen.addNewContact", { locale }),
+          }}
+          initialParams={{
+            type: TypeConstants.CONTACT,
+          }}
+        />
+        <Stack.Screen
+          name={ScreenConstants.IMPORT}
+          component={ImportContactsScreen}
+          options={{
+            // TODO:better title term
+            title: i18n.t("contactDetailScreen.importContact", { locale }),
           }}
           initialParams={{
             type: TypeConstants.CONTACT,

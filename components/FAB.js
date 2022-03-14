@@ -11,6 +11,8 @@ import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
 import useAPI from "hooks/use-api";
 
+import { TypeConstants, ScreenConstants } from "constants";
+
 import { localStyles } from "./FAB.styles";
 
 const FAB = () => {
@@ -19,7 +21,7 @@ const FAB = () => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, isRTL, locale } = useI18N();
 
-  const { TypeConstants, isList, isPost, isContact, isGroup } = useType();
+  const { isList, isPost, isContact, isGroup } = useType();
 
   const {
     data: post,
@@ -152,8 +154,8 @@ const FAB = () => {
         name: "plus",
         bgColor: "green", //TODO
         callback: () => {
-          navigation.navigate("CreateContact", {
-            type: TypeConstants.CONTACT_CREATE,
+          navigation.navigate(ScreenConstants.CREATE, {
+            type: TypeConstants.CONTACT,
           });
         },
       };
@@ -166,14 +168,15 @@ const FAB = () => {
         name: "contact-phone",
         bgColor: "orange", //TODO
         callback: () => {
-          navigation.navigate("ImportContacts", {
-            type: TypeConstants.CONTACT_IMPORT,
+          navigation.navigate(ScreenConstants.IMPORT, {
+            type: TypeConstants.CONTACT,
           });
         },
       };
     return null;
   };
 
+  if (isList && !isContact) return null;
   if (isList || isPost)
     return (
       <ActionButton
