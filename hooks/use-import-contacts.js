@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import * as Contacts from 'expo-contacts';
 
-const useImportContacts = () => {
+import { searchObjList } from "utils";
+
+const useImportContacts = ({ search }) => {
 
   const [importContacts, setImportContacts] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // TODO: use-list Contacts and exclude by title
+  const exclude = [];
 
   useEffect(async() => {
     try {
@@ -18,9 +23,8 @@ const useImportContacts = () => {
         data.map((contact) => {
           const contactData = {};
           if (contact.contactType === 'person') {
-            contactData['id'] = contact.id;
+            contactData['ID'] = contact.id;
             contactData['title'] = contact.name;
-            contactData['name'] = contact.name;
             if (contact.hasOwnProperty('emails') && contact.emails.length > 0) {
               contactData['contact_email'] = [];
               contact.emails.map((email, idx) => {
@@ -49,10 +53,22 @@ const useImportContacts = () => {
     };
   }, []);
 
+  // filter any items marked to be excluded
+  let filtered = importContacts?.filter(item => !exclude?.includes(item?.title));
+  // search
+  if (search) {
+    const searchOptions = {
+      caseInsensitive: true,
+      include: ["title"]
+    };
+    filtered = searchObjList(filtered, search, searchOptions);
+  };
   return {
-    data: importContacts?.reverse(),
+    data: filtered, //importContacts?.reverse(),
     error,
     isLoading: loading,
+    isValidating: null,
+    mutate: () => null,
   }
 };
 export default useImportContacts;
