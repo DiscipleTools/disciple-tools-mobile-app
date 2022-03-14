@@ -2,7 +2,6 @@ import React from "react";
 import { View } from "react-native";
 import { useWindowDimensions } from "react-native";
 
-// (native base does not have a Skeleton component)
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 
 import useI18N from "hooks/use-i18n";

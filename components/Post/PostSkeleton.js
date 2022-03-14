@@ -1,32 +1,36 @@
 import React from "react";
+import { View } from "react-native";
 import { useWindowDimensions } from "react-native";
+
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 
 import FieldSkeleton from "components/Field/FieldSkeleton";
 
 import useI18N from "hooks/use-i18n";
-// TODO: use local style
-import useTheme from "hooks/use-theme";
+import useStyles from "hooks/use-styles";
+
+import { localStyles } from "./PostSkeleton.styles";
 
 const PostSkeleton = () => {
+  const { styles, globalStyles } = useStyles(localStyles);
   const layout = useWindowDimensions();
   const windowWidth = layout.width;
-  const { theme } = useTheme();
+  const windowHeight = layout.height;
   const { isRTL } = useI18N();
-  const skeletons = Array(7)
+  const skeletons = Array(5)
     .fill("")
     .map((_, i) => ({ key: `${i}`, text: `item #${i}` }));
   return (
-    <>
+    <View style={styles.container}>
+      <View style={styles.titleBarMock} />
       <ContentLoader
         rtl={isRTL}
-        speed={3}
+        speed={1}
         width={windowWidth}
         height={80}
         viewBox={"0 " + "0 " + windowWidth + " 80"}
-        //backgroundColor={theme.background.primary}
-        backgroundColor="#0FF"
-        foregroundColor={theme.divider}
+        backgroundColor={styles.skeletonBackground.backgroundColor}
+        foregroundColor={styles.skeletonForeground.backgroundColor}
       >
         <Rect x="0" y="0" rx="0" ry="0" width={windowWidth} height="35" />
         <Rect x="0" y="40" rx="2" ry="2" width="85" height="20" />
@@ -37,25 +41,28 @@ const PostSkeleton = () => {
         <Rect x="0" y="80" rx="2" ry="2" width={windowWidth} height="1" />
       </ContentLoader>
       {skeletons.map((fieldSkeleton, idx) => (
-        <FieldSkeleton
-          key={idx}
-          isRTL={isRTL}
-          windowWidth={windowWidth}
-        />
+        <View
+          style={{ marginVertical: 25, marginHorizontal: 5 }}
+        >
+          <FieldSkeleton
+            key={idx}
+            isRTL={isRTL}
+            windowWidth={windowWidth}
+          />
+        </View>
       ))}
       <ContentLoader
         rtl={isRTL}
-        speed={3}
+        speed={1}
         width={windowWidth}
-        height={100}
+        height={windowHeight/3}
         viewBox={"0 " + "0 " + windowWidth + " 80"}
-        backgroundColor={theme.background.primary}
-        //foregroundColor={theme.divider}
-        foregroundColor="#0FF"
+        backgroundColor={styles.skeletonBackground.backgroundColor}
+        foregroundColor={styles.skeletonForeground.backgroundColor}
       >
         <Circle cx="350" cy="60" r="35" />
       </ContentLoader>
-    </>
+    </View>
   );
 };
 export default PostSkeleton;
