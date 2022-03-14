@@ -6,6 +6,8 @@ import { ClearIcon, ExpandIcon } from "components/Icon";
 import useBottomSheet from 'hooks/use-bottom-sheet';
 import useStyles from "hooks/use-styles";
 
+import { truncate } from "utils";
+
 import { localStyles } from "./SheetHeader.styles";
 
 const SheetHeader = ({ expandable, dismissable, title, onDismiss }) => {
@@ -19,12 +21,11 @@ const SheetHeader = ({ expandable, dismissable, title, onDismiss }) => {
     if (onDismiss) onDismiss();
     collapse();
   };
-  const truncatedTitle = title?.length > 35 ? `${title.substring(0, 35)}...` : title;
   return(
     <View style={styles.container}>
       <View>
       { title?.length > 0 && (
-        <Text style={globalStyles.title}>{truncatedTitle}</Text>
+        <Text style={globalStyles.title}>{truncate(title, { maxLength: 35 })}</Text>
       )}
       </View>
       <View style={[

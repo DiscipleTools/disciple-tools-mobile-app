@@ -68,3 +68,10 @@ export const searchObjList = (objList, searchStr, options) => {
     return dedupeObjList(res);
   })?.flat();
 };
+
+export const truncate = (str, { maxLength } = {}) => {
+  if (maxLength && str?.length > maxLength) {
+    return str.substring(0, maxLength) + '...';
+  }
+  return str;
+};
