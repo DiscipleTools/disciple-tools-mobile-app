@@ -9,7 +9,8 @@ import { navigationRef } from './RootNavigation';
 
 import PINScreen from "screens/PINScreen";
 import LoginScreen from "screens/LoginScreen";
-import MainTabNavigator from "./MainTabNavigator";
+//import DrawerNavigator from "./DrawerNavigator";
+import TabNavigator from "./TabNavigator";
 
 import usePIN from "hooks/use-pin";
 import { useAuth } from "hooks/use-auth";
@@ -72,7 +73,7 @@ const AppNavigator = () => {
   const RenderLogin = () => {
     console.log(".......... RENDER LOGIN ....................");
     if (authenticated) return(
-      <MainTabNavigator />
+      <TabNavigator />
     );
     return <LoginStack />;
   };

@@ -4,7 +4,7 @@ import { Image, Platform, ScrollView, StyleSheet, Text, View } from 'react-nativ
 import PropTypes from 'prop-types';
 //import * as WebBrowser from 'expo-web-browser';
 
-import Colors from '../constants/Colors';
+import Colors from 'constants/Colors';
 
 const propTypes = {
   navigation: PropTypes.shape({

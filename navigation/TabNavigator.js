@@ -34,7 +34,7 @@ const TabScreenConstants = Object.freeze({
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const MainTabNavigator = () => {
+const TabNavigator = () => {
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
   console.log("$$$$$          MAIN TAB NAVIGATOR             $$$$$");
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
@@ -245,7 +245,7 @@ const MainTabNavigator = () => {
     );
   };
 
-  const Navigator = () => (
+  return(
     <Tab.Navigator
       initialRouteName={TabScreenConstants.CONTACTS}
       screenOptions={({ route }) => ({
@@ -337,7 +337,5 @@ const MainTabNavigator = () => {
       />
     </Tab.Navigator>
   );
-
-  return <Navigator />;
 };
-export default MainTabNavigator;
+export default TabNavigator;
