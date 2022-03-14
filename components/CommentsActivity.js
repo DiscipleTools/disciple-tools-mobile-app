@@ -24,10 +24,9 @@ import useStyles from "hooks/use-styles";
 import useToast from "hooks/use-toast";
 import useAPI from "hooks/use-api";
 
-// TODO: refactor out
-import utils from "utils";
-
 import { localStyles } from "./CommentsActivity.styles";
+
+const MENTION_PATTERN = /@\[.+?\]\((.*)\)/g;
 
 const CommentsActivity = ({ headerHeight, insets }) => {
 
@@ -118,6 +117,15 @@ const CommentsActivity = ({ headerHeight, insets }) => {
         }
       );
     };
+
+    const renderMention = (matchingString, matches) => {
+      let mentionText = matchingString.substring(
+        matchingString.lastIndexOf("[") + 1,
+        matchingString.lastIndexOf("]")
+      );
+      return `@${mentionText}`;
+    };
+
     return(
       <Pressable onLongPress={() => onLongPress()}>
         <View style={styles.container}>
@@ -159,9 +167,9 @@ const CommentsActivity = ({ headerHeight, insets }) => {
               style={styles.commentText(isActivity)}
               parse={[
                 {
-                  pattern: utils.mentionPattern,
+                  pattern: MENTION_PATTERN,
                   style: styles.parseText,
-                  renderText: utils.renderMention,
+                  renderText: renderMention,
                 },
               ]}
             >

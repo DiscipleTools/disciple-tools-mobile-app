@@ -348,15 +348,13 @@ const useList = ({ search, filter, exclude, type, subtype } = {}) => {
   };
 
   let url = `/dt-posts/v2/${postType}`;
-  if (filter?.query) url += '?';
   //if (search || filter?.query) url += '?';
-  //if (search) url += `text=${search}`;
-  // TODO
-  if (filter?.query && userData) url += mapFilterOnQueryParams(filter?.query, userData);
-  if (!search && !filter?.query) url += "?dt_recent=true";
 
-  // TODO: offline filtering
-  //const initialData = null;
+  // NOTE: currently only searching offline
+  //if (search) url += `?text=${search}`;
+
+  // map filters to url params
+  url += (filter?.query && userData) ? `?${ mapFilterOnQueryParams(filter?.query, userData) }`: "?dt_recent=true";
 
   const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
   if (error || isLoading || !data?.posts) return {
@@ -366,11 +364,16 @@ const useList = ({ search, filter, exclude, type, subtype } = {}) => {
     isValidating,
     mutate
   };
+  // filter any items marked to be excluded
   let filtered = data.posts.filter(item => !exclude?.includes(item?.ID));
-  // search by any property value, unless excluded
-  //if (filtered?.length > 0 && search) filtered = searchObjList(filtered, search);
-  // search only by title
-  if (filtered?.length > 0 && search) filtered = filtered.filter(item => item?.post_title?.toLowerCase()?.includes(search?.toLowerCase()));
+  // search
+  if (search) {
+    const searchOptions = {
+      caseInsensitive: true,
+      include: ["post_title"]
+    };
+    filtered = searchObjList(filtered, search, searchOptions);
+  };
   const posts = filtered?.length > 0 ? mapPosts(filtered) : [];
   return {
     data: posts,

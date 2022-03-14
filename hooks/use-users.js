@@ -3,6 +3,15 @@ import useRequest from "hooks/use-request";
 
 import { searchObjList } from "utils";
 
+/*
+see: https://developers.disciple.tools/theme-core/api-other/users#list-users
+[{
+  "name": String,
+  "ID": Number,
+  "avatar": String,
+  "contact_id": Number,
+},{..}]
+*/
 const useUsers = ({ search, filter, exclude } = {}) => {
   //const { isConnected } = useNetwork();
   let url = "dt/v1/users/get_users?get_all=1";
@@ -15,9 +24,16 @@ const useUsers = ({ search, filter, exclude } = {}) => {
     isValidating,
     mutate
   };
+  // filter any items marked to be excluded
   let filtered = users.filter(item => !exclude?.includes(item?.ID));
-  //if (filtered?.length > 0 && search && isConnected == false) filtered = searchObjList(filtered, search);
-  if (filtered?.length > 0 && search) filtered = searchObjList(filtered, search);
+  // search
+  if (search) {
+    const searchOptions = {
+      caseInsensitive: true,
+      include: ["name"]
+    };
+    filtered = searchObjList(filtered, search, searchOptions);
+  };
   return {
     data: filtered,
     error,
