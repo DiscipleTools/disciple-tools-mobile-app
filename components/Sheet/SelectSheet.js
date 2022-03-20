@@ -83,7 +83,10 @@ const SelectSheet = ({
     const { key, label, icon, avatar, selected } = item;
     return(
       <Pressable onPress={() => _onChange(item)}>
-        <View key={key} style={styles.itemContainer}>
+        <View key={key} style={[
+          globalStyles.rowContainer,
+          styles.itemContainer
+        ]}>
             {avatar && (
               <Image style={styles.avatar} source={{ uri: avatar }} />
             )}

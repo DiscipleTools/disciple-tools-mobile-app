@@ -15,7 +15,7 @@ export const localStyles = ({ theme, isRTL }) => ({
     backgroundColor: theme.surface.primary,
   },
   itemContainer: {
-    flexDirection: isRTL ? "row-reverse" : "row",
+    //flexDirection: isRTL ? "row-reverse" : "row",
     borderTopColor: theme.background.primary,
     borderTopWidth: 1,
     alignItems: "center",

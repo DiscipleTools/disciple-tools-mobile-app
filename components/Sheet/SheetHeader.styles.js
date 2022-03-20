@@ -4,7 +4,6 @@ export const localStyles = ({ theme, isRTL }) => ({
     color: theme.text.primary,
     //borderBottomColor: theme.divider,
     //borderBottomWidth: 1,
-    flexDirection: isRTL ? "row-reverse" : "row",
     paddingBottom: 20,
     paddingHorizontal: 10,
   },

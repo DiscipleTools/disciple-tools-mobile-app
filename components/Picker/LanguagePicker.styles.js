@@ -3,7 +3,6 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     backgroundColor: theme.brand.primary,
   },
   languagePickerContainer: {
-    flexDirection: isRTL ? "row-reverse" : "row",
     backgroundColor: theme.surface.primary,
     padding: 5,
     alignItems: "center",

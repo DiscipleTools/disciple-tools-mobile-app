@@ -10,10 +10,13 @@ import useStyles from "hooks/use-styles";
 import { localStyles } from "./SheetFooter.styles";
 
 const SheetFooter = ({ label, renderIcon, onPress }) => {
-  const { styles } = useStyles(localStyles);
+  const { styles, globalStyles } = useStyles(localStyles);
   return(
     <Pressable onPress={() => onPress()}>
-      <View style={styles.container}>
+      <View style={[
+        globalStyles.rowContainer,
+        styles.container
+      ]}>
         <View>
           { renderIcon }
         </View>

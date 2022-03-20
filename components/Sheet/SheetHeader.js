@@ -22,7 +22,10 @@ const SheetHeader = ({ expandable, dismissable, title, onDismiss }) => {
     collapse();
   };
   return(
-    <View style={styles.container}>
+    <View style={[
+      globalStyles.rowContainer,
+      styles.container
+    ]}>
       <View>
       { title?.length > 0 && (
         <Text style={globalStyles.title}>{truncate(title, { maxLength: 35 })}</Text>

@@ -77,19 +77,40 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
     color: theme.text.link,
   },
   // Components 
+  container: {
+    backgroundColor: theme.background.primary,
+  },
+  screenContainer: {
+    backgroundColor: theme.surface.primary,
+    // TODO: why 110%? 
+    height: "110%",
+  },
   rowContainer: {
-    flexDirection: isRTL ? "row-reverse" : "row",
+    // NOTE: now handled automatically by I18nManager.isRTL
+    //flexDirection: isRTL ? "row-reverse" : "row",
+    flexDirection: "row",
   },
   columnContainer: {
     flexDirection: "column",
   },
-  screenContainer: {
-    backgroundColor: theme.surface.primary,
-    height: "100%",
-  },
   fieldContainer: {
-    flexDirection: isRTL ? "row-reverse" : "row",
+    // NOTE: now handled automatically by I18nManager.isRTL
+    //flexDirection: isRTL ? "row-reverse" : "row",
+    flexDirection: "row",
     marginHorizontal: 7,
+  },
+  box: {
+    backgroundColor: theme.surface.primary,
+    minHeight: 50,
+    width: "auto",
+    shadowColor: theme.offDark,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    elevation: 2,
+    marginVertical: 5,
+    marginHorizontal: 10,
+    padding: 10
   },
   // TODO: move to standalone Button component
   buttonColor: {

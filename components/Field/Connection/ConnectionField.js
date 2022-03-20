@@ -1,5 +1,6 @@
 import React from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
+//import { ScrollView } from "react-native-gesture-handler";
 //import { Col, Row, Grid } from "react-native-easy-grid";
 //import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
