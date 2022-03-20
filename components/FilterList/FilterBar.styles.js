@@ -11,7 +11,6 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   },
   filtersContentContainer: {
     flexGrow: 1,
-    flexDirection: isRTL ? "row-reverse" : "row",
     backgroundColor: theme.background.primary,
     height: "100%",
     paddingTop: 5,

@@ -6,17 +6,16 @@ import Chip from "components/Chip";
 import FilterSheet from "components/Sheet/FilterSheet";
 
 import useBottomSheet from "hooks/use-bottom-sheet";
-import useFilters from "hooks/use-filters";
 import useStyle from "hooks/use-styles";
+
+import { findFilterOptionById } from "utils";
 
 import { localStyles } from "./FilterOptions.styles";
 
-const FilterOptions = ({ defaultFilter, filter, onFilter }) => {
+const FilterOptions = ({ defaultFilter, filter, filters, onFilter }) => {
 
   const { styles, globalStyles } = useStyle(localStyles);
   const { expand } = useBottomSheet();
-
-  const { data: filters } = useFilters();
 
   const filterContent = (title) => (
     <FilterSheet
@@ -42,17 +41,8 @@ const FilterOptions = ({ defaultFilter, filter, onFilter }) => {
   */
 
   const FilterOption = ({ title }) => {
-    const selectedFilterID = filter?.ID;
-    let filterTitle = null; //getFilterTitle();
-    // TODO: split into fn
-    filters?.forEach(filterOption => {
-      filterOption?.content?.forEach(content => {
-        if (selectedFilterID === content?.ID) {
-          filterTitle = filterOption?.title;
-        };
-      });
-    });
-    const selected = filterTitle === title;
+    const filterOption = findFilterOptionById(filter?.ID, filters);
+    const selected = filterOption?.title === title;
     return(
       <Chip
         onPress={() => showFilter(title)}
@@ -69,7 +59,7 @@ const FilterOptions = ({ defaultFilter, filter, onFilter }) => {
   };
   
   const ClearFilters = () => {
-    const isDefaultFilter = JSON.stringify(filter) === JSON.stringify(defaultFilter);
+    const isDefaultFilter = filter?.ID === defaultFilter?.ID;
     return(
       <ClearFiltersIcon
         onPress={() => isDefaultFilter ? null : onFilter(defaultFilter) }
@@ -87,7 +77,7 @@ const FilterOptions = ({ defaultFilter, filter, onFilter }) => {
       ]}
     >
       <ClearFilters />
-      { filters?.map((filter, idx) => (
+      { filters !== undefined && filters?.map((filter, idx) => (
           <FilterOption
             key={filter?.title ?? idx}
             title={filter?.title}

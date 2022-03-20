@@ -2,8 +2,8 @@ import { ThemeConstants } from "constants";
 
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: {
-    marginHorizontal: 5,
     alignItems: "center",
+    marginHorizontal: 5,
   },
   optionContainer: (selected) => ({
     backgroundColor: selected ? theme.brand.primary : theme.background.primary,

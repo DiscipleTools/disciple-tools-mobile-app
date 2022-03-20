@@ -1,11 +1,14 @@
-import React, { useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
+import * as RootNavigation from "navigation/RootNavigation";
 
-import useType from "hooks/use-type";
+//import useType from "hooks/use-type";
 
 import { SortConstants } from "constants";
 
 const useFilter = () => {
-  const { isContact, isGroup } = useType();
+
+  //const { isContact, isGroup } = useType();
+  const route = RootNavigation.getRoute();
 
   const SET_FILTER = "SET_FILTER";
 
@@ -19,30 +22,29 @@ const useFilter = () => {
   };
 
   const getDefaultFilter = () => {
-    // {"ID":"recent","name":"My Recently Viewed","count":0,"subfilter":false,"query":{"dt_recent":true}}
-    // last_modified
-    /*
-    if (isContact) return {
-      ID: "recent",
-      // TODO: translate?
-      name: "My Recently Viewed",
-      query: { "sort": "-post_date" }
-    };
-    */
-    //if (isGroup) return {};
     return {
       ID: "recent",
-      // TODO: translate?
+      /*
       name: "My Recently Viewed",
-      //count: 0,
-      //subfilter: false,
       query: {
         "dt_recent": "true",
         sort: SortConstants.LAST_MOD_DESC
       }
+      */
     };
   };
   const defaultFilter = getDefaultFilter();
+
+  useEffect(() => {
+    let filter = route?.params?.filter;
+    if (filter) {
+      dispatch({ type: SET_FILTER, filter });
+      return;
+    };
+    filter = getDefaultFilter();
+    dispatch({ type: SET_FILTER, filter });
+  }, [route]);
+
   const [filter, dispatch] = useReducer(filterReducer, defaultFilter);
   const [search, setSearch] = useState(null);
   const onSearch = (search) => setSearch(search);

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, View, Keyboard, KeyboardAvoidingView, TextInput, Text, Platform, TouchableWithoutFeedback, Button, StatusBar, Pressable } from 'react-native';
-import * as RootNavigation from "navigation/RootNavigation";
 
 import * as Clipboard from 'expo-clipboard';
 

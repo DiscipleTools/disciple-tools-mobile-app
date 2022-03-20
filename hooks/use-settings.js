@@ -1,8 +1,8 @@
 import useType from "hooks/use-type";
 import useRequest from "hooks/use-request";
 
-const useSettings = () => {
-  const { isPost, isGroup, postType } = useType();
+const useSettings = ({ type } = {}) => {
+  const { isPost, isGroup, postType } = useType({ type });
 
   const mapSettings = (settings) => {
     let fieldList = {};

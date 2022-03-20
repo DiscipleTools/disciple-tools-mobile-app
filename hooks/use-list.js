@@ -319,12 +319,15 @@ const useList = ({ search, filter, exclude, type, subtype } = {}) => {
   };
 
   const mapPosts = (posts) => {
+    if (posts?.length < 1) return [];
     if (isContact) return mapContacts(posts);
     if (isGroup) return mapGroups(posts);
-    return null;
+    if (postType === "trainings") return mapGroups(posts);
+    return [];
   };
 
-  // TODO: [object Object]
+  // TODO:
+  // support: filter?.query: {"fields":[{"overall_status":["from_facebook"]}],"sort":"name","fields_to_return":["name","favorite","overall_status","seeker_path","milestones","assigned_to","groups","last_modified"]}
   // /dt-posts/v2/contacts?&fields%5B%5D=[object Object]&sort=name&fields_to_return%5B%5D=name&fields_to_return%5B%5D=favorite&fields_to_return%5B%5D=overall_status&fields_to_return%5B%5D=seeker_path&fields_to_return%5B%5D=milestones&fields_to_return%5B%5D=assigned_to&fields_to_return%5B%5D=groups&fields_to_return%5B%5D=last_modified
   const mapFilterOnQueryParams = (filter, userData) => {
     let queryParams = '';
@@ -336,10 +339,9 @@ const useList = ({ search, filter, exclude, type, subtype } = {}) => {
           queryParams = `${queryParams}&${key}%5B%5D=${value === userData?.display_name ? "me" : value}`;
         });
       } else if (filterValueType === "[object Object]") {
-        // TODO: implement?
-        //mapFilterOnQueryParams(filterValue, null, userData);
+        queryParams = mapFilterOnQueryParams(filterValue, null, userData);
       } else {
-        if (filterValue?.length > 0) {
+        if (typeof filterValue === 'boolean' || filterValue?.length > 0) {
           queryParams = `${queryParams}&${key}=${filterValue === userData?.display_name ? "me" : filterValue}`;
         }
       }
@@ -358,7 +360,7 @@ const useList = ({ search, filter, exclude, type, subtype } = {}) => {
 
   const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
   if (error || isLoading || !data?.posts) return {
-    data: null,
+    data: [],
     error,
     isLoading,
     isValidating,
@@ -374,7 +376,7 @@ const useList = ({ search, filter, exclude, type, subtype } = {}) => {
     };
     filtered = searchObjList(filtered, search, searchOptions);
   };
-  const posts = filtered?.length > 0 ? mapPosts(filtered) : [];
+  const posts = mapPosts(filtered);
   return {
     data: posts,
     error,

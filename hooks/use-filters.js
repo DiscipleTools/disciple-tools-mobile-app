@@ -6,10 +6,10 @@ import useRequest from "hooks/use-request";
 
 import { NotificationActionConstants } from "constants";
 
-const useFilters = () => {
+const useFilters = ({ type } = {}) => {
 
   //const { isConnected } = useNetwork();
-  const { isPost, isNotification, isCommentsActivity, postType } = useType();
+  const { isPost, isNotification, isCommentsActivity, postType } = useType({ type });
 
   const url = isPost ? `/dt/v1/users/get_filters?post_type=${postType}&force_refresh=1` : null;
   let { data, error, isLoading, isValidating } = useRequest({ url });
@@ -60,7 +60,7 @@ const useFilters = () => {
   if (isNotification) data = [
     {
       title: "Status",
-      count: 99,
+      //count: 99,
       content: [
         {
           ID: "notifications_status_all",
@@ -93,7 +93,7 @@ const useFilters = () => {
     },
     {
       title: "Type",
-      count: 99,
+      //count: 99,
       content: [
         {
           ID: NotificationActionConstants.MENTION,
