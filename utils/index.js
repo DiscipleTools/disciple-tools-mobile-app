@@ -69,9 +69,43 @@ export const searchObjList = (objList, searchStr, options) => {
   })?.flat();
 };
 
+export const findFilterById = (id, filters) => {
+  for (let ii=0; ii < filters?.length; ii++) {
+    const option = filters[ii];
+    for (let jj=0; jj < option?.content?.length; jj++) {
+      const item = option?.content[jj];
+      if (item?.ID === id) return item;
+    };
+  };
+  return null;
+};
+
+/*
+  * NOTE: FilterOption = Filter Parent (eg, "Default Filters"
+  * is the Filter Option/Parent of "Favorite Contacts")
+  */
+export const findFilterOptionById = (id, filters) => {
+  for (let ii=0; ii < filters.length; ii++) {
+    const filterOption = filters[ii];
+    for (let jj=0; jj < filterOption?.content?.length; jj++) {
+      const content = filterOption?.content[jj];
+      if (content?.ID === id) return filterOption;
+    };
+  };
+  return null;
+};
+
 export const truncate = (str, { maxLength } = {}) => {
   if (maxLength && str?.length > maxLength) {
     return str.substring(0, maxLength) + '...';
   }
+  return str;
+};
+
+// capitalize first letter, lowercase remaining (eg, CONTACTS -> Contacts)
+export const labelize = (str) => {
+  if (str?.length > 0) {
+    return str[0]?.toUpperCase() + str.slice(1)?.toLowerCase();
+  };
   return str;
 };

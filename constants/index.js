@@ -207,8 +207,15 @@ export const SubTypeConstants = Object.freeze({
   COMMENTS_ACTIVITY: "COMMENTS_ACTIVITY",
 });
 
-export const ScreenConstants = Object.freeze({
+export const TabScreenConstants = Object.freeze({
   HOME: "HOME",
+  POST: "POST",
+  CONTACTS: "CONTACTS",
+  GROUPS: "GROUPS",
+  MORE: "MORE",
+});
+
+export const ScreenConstants = Object.freeze({
   LIST: "LIST",
   DETAILS: "DETAILS",
   CREATE: "CREATE",
