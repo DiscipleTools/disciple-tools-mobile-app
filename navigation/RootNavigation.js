@@ -16,3 +16,9 @@ export const getId = () => {
   const route = getRoute();
   return route?.params?.id;
 };
+
+export const resetFilter = () => {
+  const route = getRoute();
+  if (route?.params?.filter) route.params.filter = null;
+  return;
+};

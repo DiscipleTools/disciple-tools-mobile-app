@@ -9,7 +9,6 @@ import { navigationRef } from './RootNavigation';
 
 import PINScreen from "screens/PINScreen";
 import LoginScreen from "screens/LoginScreen";
-//import DrawerNavigator from "./DrawerNavigator";
 import TabNavigator from "./TabNavigator";
 
 import usePIN from "hooks/use-pin";
