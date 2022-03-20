@@ -1,13 +1,19 @@
-import React, { useCallback, useMemo, useReducer, useRef, useState } from "react";
-import { Image, Pressable, Switch, Text, View } from "react-native";
+import React, { useCallback } from "react";
+import { Image, Switch, Text, View } from "react-native";
 import { useIsFocused } from '@react-navigation/native';
 
-// TODO: remove
-import { Icon } from "native-base";
-
-// TODO: hide expo imports in hooks
-import * as MailComposer from "expo-mail-composer";
-
+import {
+  ChevronForwardIcon,
+  ChevronBackIcon,
+  DarkModeIcon,
+  FlashIcon,
+  HelpIcon,
+  LoginIcon,
+  LogoutIcon,
+  OnePasswordIcon,
+  SecurityIcon
+} from "components/Icon";
+import ListItem from "components/ListItem";
 import OfflineBar from "components/OfflineBar";
 import LanguagePicker from "components/Picker/LanguagePicker";
 import AppVersion from "components/AppVersion";
@@ -19,7 +25,6 @@ import useI18N from "hooks/use-i18n";
 import usePIN from "hooks/use-pin";
 import useStyles from "hooks/use-styles";
 import useTheme from "hooks/use-theme";
-import useToast from "hooks/use-toast";
 
 import { localStyles } from "./SettingsScreen.styles";
 import gravatar from "assets/gravatar-default.png";
@@ -29,10 +34,10 @@ const SettingsScreen = ({ navigation }) => {
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
+  const { styles, globalStyles } = useStyles(localStyles);
   const { isConnected, toggleNetwork } = useNetwork();
   const { i18n, isRTL, locale } = useI18N();
   const { PINConstants, hasPIN } = usePIN();
-  const { styles, globalStyles } = useStyles(localStyles);
   const {
     user,
     isAutoLogin,
@@ -42,7 +47,6 @@ const SettingsScreen = ({ navigation }) => {
     signOut,
   } = useAuth();
   const { isDarkMode, toggleMode } = useTheme();
-  const toast = useToast();
 
   const Header = () => {
     const username = user?.username ?? "";
@@ -71,80 +75,13 @@ const SettingsScreen = ({ navigation }) => {
     );
   };
 
-  const SettingsOption = ({
-    pressable,
-    onPress,
-    iconType,
-    iconName,
-    label,
-    component,
-  }) => (
-    <Pressable
-      disabled={!pressable}
-      onPress={onPress}
-    >
-      <View style={[
-        globalStyles.rowContainer,
-        styles.optionContainer,
-      ]}>
-        <View style={globalStyles.columnContainer}>
-          <Icon
-            type={iconType}
-            name={iconName}
-            style={[
-              globalStyles.icon,
-              iconName === "theme-light-dark" ? { transform: [{ scaleX: -1 }]} : null
-            ]}
-          />
-        </View>
-        <View style={[
-          globalStyles.columnContainer,
-          globalStyles.body,
-        ]}>
-          <Text>
-            {label}
-          </Text>
-        </View>
-        <View style={globalStyles.columnContainer}>
-          {component}
-        </View>
-      </View>
-    </Pressable>
-  );
-
-  /*
-  const StorybookButton = () => (
-    <SettingsOption
-      onPress={() => navigation.navigate('Storybook')}
-      iconName="flask"
-      label={i18n.t('settingsScreen.storybook', { locale })}
-    />
-  );
-  */
-
-  const DarkModeToggle = () => (
-    <SettingsOption
-      iconType="MaterialCommunityIcons"
-      iconName="theme-light-dark"
-      // TODO: translate
-      //label={"Dark Mode"}
-      label={i18n.t("global.darkMode", { locale })}
-      component={
-        <Switch
-          trackColor={{ true: styles.switch.color}}
-          thumbColor={styles.switch}
-          value={isDarkMode}
-          onChange={() => toggleMode()}
-        />
-      }
-    />
-  );
+  //const StorybookButton = () => null;
 
   const OnlineToggle = () => (
-    <SettingsOption
-      iconName="ios-flash"
+    <ListItem
+      startComponent={<FlashIcon />}
       label={i18n.t("global.online", { locale })}
-      component={
+      endComponent={
         <Switch
           trackColor={{ true: styles.switch.color}}
           thumbColor={styles.switch}
@@ -156,12 +93,26 @@ const SettingsScreen = ({ navigation }) => {
     />
   );
 
+  const DarkModeToggle = () => (
+    <ListItem
+      startComponent={<DarkModeIcon style={[globalStyles.icon, { transform: isRTL ? [] : [{ scaleX: -1 }]}]} />}
+      label={i18n.t("global.darkMode", { locale })}
+      endComponent={
+        <Switch
+          trackColor={{ true: styles.switch.color}}
+          thumbColor={styles.switch}
+          value={isDarkMode}
+          onChange={() => toggleMode()}
+        />
+      }
+    />
+  );
+
   const AutoLoginToggle = () => (
-    <SettingsOption
-      iconType="MaterialCommunityIcons"
-      iconName="login-variant"
+    <ListItem
+      startComponent={<LoginIcon />}
       label={i18n.t("settingsScreen.autoLogin", { locale })}
-      component={
+      endComponent={
         <Switch
           trackColor={{ true: styles.switch.color}}
           thumbColor={styles.switch}
@@ -173,11 +124,10 @@ const SettingsScreen = ({ navigation }) => {
   );
 
   const RememberLoginDetailsToggle = () => (
-    <SettingsOption
-      iconType="MaterialCommunityIcons"
-      iconName="onepassword"
+    <ListItem
+      startComponent={<OnePasswordIcon />}
       label={i18n.t("settingsScreen.rememberLoginDetails", { locale })}
-      component={
+      endComponent={
         <Switch
           trackColor={{ true: styles.switch.color}}
           thumbColor={styles.switch}
@@ -197,11 +147,10 @@ const SettingsScreen = ({ navigation }) => {
       });
     };
     return (
-      <SettingsOption
-        iconType="MaterialCommunityIcons"
-        iconName="security"
+      <ListItem
+        startComponent={<SecurityIcon />}
         label={i18n.t("settingsScreen.pinCode", { locale })}
-        component={
+        endComponent={
           <Switch
             trackColor={{ true: styles.switch.color}}
             thumbColor={styles.switch}
@@ -214,34 +163,24 @@ const SettingsScreen = ({ navigation }) => {
   };
 
   const HelpSupportButton = () => {
-    const { version } = useApp();
-    const draftNewSupportEmail = () => {
-      MailComposer.composeAsync({
-        recipients: ["appsupport@disciple.tools"],
-        subject: `DT App Support: v${version}`,
-        body: "",
-      }).catch((error) => {
-        toast(error.toString(), true);
-      });
-    };
+    const { draftNewSupportEmail } = useApp();
     return (
-      <SettingsOption
-        pressable
-        onPress={draftNewSupportEmail}
-        iconType="MaterialCommunityIcons"
-        iconName="help-circle"
+      <ListItem
+        startComponent={<HelpIcon />}
         label={i18n.t("settingsScreen.helpSupport", { locale })}
+        onPress={draftNewSupportEmail}
       />
     );
   };
 
   const LogoutButton = () => (
-    <SettingsOption
-      pressable
-      onPress={signOut}
-      iconName="log-out"
+    <ListItem
+      startComponent={<LogoutIcon />}
       label={i18n.t("settingsScreen.logout", { locale })}
-      component={<Icon name={isRTL ? "arrow-back" : "arrow-forward"} style={globalStyles.icon} />}
+      endComponent={
+        isRTL ? <ChevronBackIcon style={globalStyles.icon} /> : <ChevronForwardIcon style={globalStyles.icon} />
+      }
+      onPress={signOut}
     />
   );
 
