@@ -1,38 +1,51 @@
 import React, { useState } from "react";
-import { Icon } from "native-base";
+import { Linking } from "react-native";
+import { KebabIcon } from "components/Icon";
 import { Menu, MenuItem, MenuDivider } from "react-native-material-menu";
 
 import useStyles from "hooks/use-styles";
 
-const KebabMenu = ({ menuItems }) => {
+import axios from "services/axios";
+
+const KebabMenu = ({ items }) => {
   const { globalStyles } = useStyles();
   const [visible, setVisible] = useState(false);
   return (
     <Menu
       visible={visible}
       anchor={
-        <Icon
-          type="Entypo"
-          name="dots-three-vertical"
+        <KebabIcon
           onPress={() => setVisible(true)}
           style={globalStyles.icon}
         />
       }
       onRequestClose={() => setVisible(false)}
     >
-      {menuItems?.map((menuItem, idx) => (
-        <React.Fragment key={menuItem?.label ?? idx}>
-          <MenuItem
-            onPress={() => {
-              menuItem.callback();
-              setVisible(false);
-            }}
-          >
-            {menuItem?.label}
-          </MenuItem>
-          <MenuDivider />
-        </React.Fragment>
-      ))}
+      {items?.map((item, idx) => {
+        let url = null;
+        if (item?.url) url = item?.url;
+        if (item?.urlPath) {
+          const baseUrl = axios?.defaults?.baseURL?.split("/wp-json")?.[0];
+          if (baseUrl) url = `${baseUrl}/${item?.urlPath}`;
+        };
+        return(
+          <>
+            <MenuItem
+              onPress={() => {
+                if (item?.callback) {
+                  item.callback();
+                } else {
+                  if (url) Linking.openURL(url);
+                };
+                setVisible(false);
+              }}
+            >
+              {item?.label}
+            </MenuItem>
+            <MenuDivider />
+          </>
+        );
+      })}
     </Menu>
   );
 };

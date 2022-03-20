@@ -1,6 +1,11 @@
 import { ThemeConstants } from "constants"; 
 
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
+  screenContainer: {
+    backgroundColor: theme.background.primary,
+    // TODO: why 110%? 
+    height: "110%",
+  },
   titleBarContainer: {
     backgroundColor: theme.background.primary,
     padding: 5,

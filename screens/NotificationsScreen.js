@@ -1,24 +1,27 @@
-import React, { useState, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useState, useCallback, useLayoutEffect, useMemo, useRef } from "react";
 import { Button, Pressable, Text, View } from "react-native";
 import { useIsFocused } from '@react-navigation/native';
 
 //import { Html5Entities } from 'html-entities';
 
 import {
+  ChevronBackIcon,
+  ChevronForwardIcon,
   CheckIcon,
   CircleOutlineIcon,
   CommentIcon,
   CommentAlertIcon,
   MentionIcon
 } from "components/Icon";
-import FilterList from "components/FilterList";
+import KebabMenu from "components/KebabMenu";
 import OfflineBar from "components/OfflineBar";
+import FilterList from "components/FilterList";
 import SelectSheet from "components/Sheet/SelectSheet";
 //import { HelpSheet } from "components/Sheet/ModalSheet";
 import { PostItemSkeleton } from "components/Post/PostItem/index";
 
 import useFilter from "hooks/use-filter";
-//import useI18N from "hooks/use-i18n";
+import useI18N from "hooks/use-i18n";
 import useNotifications from "hooks/use-notifications";
 //import useMyUser from 'hooks/use-my-user.js';
 import useStyles from "hooks/use-styles";
@@ -35,7 +38,7 @@ const NotificationsScreen = ({ navigation }) => {
   useIsFocused();
 
   const { styles, globalStyles } = useStyles(localStyles);
-  //const { i18n, isRTL } = useI18N();
+  const { isRTL } = useI18N();
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
   const { data: items, error, isLoading, isValidating, mutate } = useNotifications({ search, filter });
   /*
@@ -50,6 +53,46 @@ const NotificationsScreen = ({ navigation }) => {
   const [isAll, setIsAll] = useState(true);
   const [offset, setOffset] = useState(0);
   const [limit, setLimit] = useState(10); // fails: useState(DEFAULT_LIMIT);
+
+  const renderHeaderLeft = (props) => {
+    const onBack = () => navigation.pop();
+    return(
+      <View style={globalStyles.rowContainer}>
+        {isRTL ? <ChevronForwardIcon onPress={onBack} style={globalStyles.navIcon} /> : <ChevronBackIcon onPress={onBack} style={globalStyles.navIcon} />}
+      </View>
+    );
+  };
+
+  const renderHeaderRight = (props) => {
+    const kebabItems = [
+      {
+        // TODO: translate
+        label: "View on Web",
+        urlPath: "/notifications/",
+      },
+      {
+        // TODO: translate
+        label: "Help Docs",
+        url: "https://disciple.tools/user-docs/getting-started-info/profile-settings/notifications/"
+      }
+    ];
+    return(
+      <View style={globalStyles.rowContainer}>
+        <View style={styles.headerIcon}>
+          <KebabMenu items={kebabItems} />
+        </View>
+      </View>
+    );
+  };
+
+  // TODO: custom useHeaderLayoutEffect hook for reuse
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      //title,
+      headerLeft: (props) => renderHeaderLeft(props),
+      headerRight: (props) => renderHeaderRight(props),
+    });
+  });
 
   const NotificationItem = ({ item }) => {
     const str1 = item?.notification_note?.search("<");

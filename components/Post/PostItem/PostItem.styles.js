@@ -1,7 +1,7 @@
 import Constants from "constants";
 
 export const localStyles = ({ theme, isRTL }) => ({
-  postItem: {
+  container: {
     backgroundColor: theme.surface.primary,
     borderBottomColor: theme.background.primary,
     borderBottomWidth: 1,
@@ -9,9 +9,11 @@ export const localStyles = ({ theme, isRTL }) => ({
     paddingHorizontal: 5,
     height: Constants.LIST_ITEM_HEIGHT,
   },
-  postDetails: {
-    alignItems: isRTL ? "flex-end" : "flex-start",
+  detailsContainer: {
+    //alignItems: isRTL ? "flex-end" : "flex-start",
+    alignItems: "flex-start",
     marginEnd: "auto",
+    flexWrap: "wrap",
   },
   title: {
     fontWeight: "bold",

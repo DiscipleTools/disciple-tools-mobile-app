@@ -15,6 +15,8 @@ import useType from "hooks/use-type";
 
 import { ScreenConstants, SubTypeConstants } from "constants";
 
+import { truncate } from "utils";
+
 import { localStyles } from "./PostItem.styles";
 
 const PostItem = ({ item, loading, mutate }) => {
@@ -92,14 +94,17 @@ const PostItem = ({ item, loading, mutate }) => {
     );
   };
 
-  const PostTitle = () => (
+  const PostTitle = () => {
+    const title = item?.name ? item.name : item?.title;
+    return(
       <Text style={[
         globalStyles.text,
         styles.title
       ]}>
-        { item?.name ? item.name : item?.title}
+        {truncate(title, { maxLength: 35 })}
       </Text>
-  );
+    );
+  };
 
   const PostSubtitle = () => {
     const { isContact, isGroup } = useType();
@@ -174,7 +179,7 @@ const PostItem = ({ item, loading, mutate }) => {
   const PostDetails = () => (
     <View style={[
       globalStyles.columnContainer,
-      styles.postDetails,
+      styles.detailsContainer,
     ]}>
       <PostTitle />
       <PostSubtitle />
@@ -191,7 +196,7 @@ const PostItem = ({ item, loading, mutate }) => {
     >
       <View style={[
         globalStyles.rowContainer,
-        styles.postItem
+        styles.container
       ]}>
         <FavoriteStar />
         <PostDetails />
