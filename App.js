@@ -1,8 +1,7 @@
-import './wdyr';
+//import './wdyr';
 import React, { useEffect } from "react";
 import { LogBox, Text } from "react-native";
 import AppNavigator from "navigation/AppNavigator";
-//import PropTypes from 'prop-types';
 
 import { store, persistor } from "store/store";
 import { Provider } from "react-redux";
@@ -10,7 +9,7 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import * as SplashScreen from "expo-splash-screen";
 
-import { Root } from 'native-base';
+import Toast from "react-native-toast-message";
 
 import { AuthProvider } from "hooks/use-auth";
 import usePushNotifications from "hooks/use-push-notifications";
@@ -54,28 +53,28 @@ const App = () => {
     return <AppNavigator />;
   };
 
-  // NOTE: Native-Base <Root> required for some components
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <SWRConfig
-          value={{
-            revalidateOnFocus: true,
-            refreshInterval: AppConstants.REFRESH_INTERVAL,
-            shouldRetryOnError: false,
-            dedupingInterval: 2000,
-            focusThrottleInterval: 5000,
-            loadingTimeout: 10000,
-          }}
-        >
-          <AuthProvider>
-            <Root>
+    <>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <SWRConfig
+            value={{
+              revalidateOnFocus: true,
+              refreshInterval: AppConstants.REFRESH_INTERVAL,
+              shouldRetryOnError: false,
+              dedupingInterval: 2000,
+              focusThrottleInterval: 5000,
+              loadingTimeout: 10000,
+            }}
+          >
+            <AuthProvider>
               <StyledApp />
-            </Root>
-          </AuthProvider>
-        </SWRConfig>
-      </PersistGate>
-    </Provider>
+            </AuthProvider>
+          </SWRConfig>
+        </PersistGate>
+      </Provider>
+      <Toast/>
+    </>
   );
 };
 export default App;

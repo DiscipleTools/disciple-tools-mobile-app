@@ -1,13 +1,11 @@
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   icon: {
     color: theme.offLight,
+    fontSize: 40,
+    marginEnd: 5,
   },
   item: {
     backgroundColor: theme.brand.primary,
-  },
-  itemIcon: {
-    color: theme.offLight,
-    fontSize: 20
   },
   itemText: {
     color: theme.offDark,

@@ -1,12 +1,14 @@
 import React from "react";
 import { Pressable } from "react-native";
+import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5Icons from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
 
-const Icon = ({ icon, onPress }) => (
+const BaseIcon = ({ icon, onPress }) => (
   <Pressable
     disabled={!onPress}
     onPress={onPress}
@@ -16,7 +18,53 @@ const Icon = ({ icon, onPress }) => (
   </Pressable>
 );
 
-const MaterialIcon = ({ name, onPress, style }) => {
+const mapIcon = ({ type, name, onPress, style }) => {
+  if (type === "FontAwesome") {
+    return <FontAwesomeIcon name={name} onPress={onPress} style={style} />;
+  };
+  if (type === "FontAwesome5") {
+    return <FontAwesome5Icon name={name} onPress={onPress} style={style} />;
+  };
+  if (type === "MaterialIcons") {
+    return <MaterialIcon name={name} onPress={onPress} style={style} />;
+  };
+  if (type === "MaterialCommunityIcons") {
+    return <MaterialCommunityIcon name={name} onPress={onPress} style={style} />;
+  };
+  return null;
+};
+
+export const Icon = ({ type, name, onPress, style }) => {
+  const { globalStyles } = useStyles();
+  if (!type || !name) return null;
+  const icon = mapIcon({ type, name, onPress, style });
+  if (!icon) return null;
+  return <BaseIcon icon={icon} onPress={onPress} />;
+};
+
+export const FontAwesomeIcon = ({ name, onPress, style }) => {
+  const { globalStyles } = useStyles();
+  const icon = (
+    <FontAwesomeIcons
+      name={name}
+      style={[globalStyles.icon, style]}
+    />
+  );
+  return <BaseIcon icon={icon} onPress={onPress} />;
+};
+
+export const FontAwesome5Icon = ({ name, onPress, style }) => {
+  const { globalStyles } = useStyles();
+  const icon = (
+    <FontAwesome5Icons
+      name={name}
+      style={[globalStyles.icon, style]}
+    />
+  );
+  return <BaseIcon icon={icon} onPress={onPress} />;
+};
+
+export const MaterialIcon = ({ name, onPress, style }) => {
   const { globalStyles } = useStyles();
   const icon = (
     <MaterialIcons
@@ -24,10 +72,10 @@ const MaterialIcon = ({ name, onPress, style }) => {
       style={[globalStyles.icon, style]}
     />
   );
-  return <Icon icon={icon} onPress={onPress} />;
+  return <BaseIcon icon={icon} onPress={onPress} />;
 };
 
-const MaterialCommunityIcon = ({ name, onPress, style }) => {
+export const MaterialCommunityIcon = ({ name, onPress, style }) => {
   const { globalStyles } = useStyles();
   const icon = (
     <MaterialCommunityIcons
@@ -35,7 +83,7 @@ const MaterialCommunityIcon = ({ name, onPress, style }) => {
       style={[globalStyles.icon, style]}
     />
   );
-  return <Icon icon={icon} onPress={onPress} />;
+  return <BaseIcon icon={icon} onPress={onPress} />;
 };
 
 // Dynamic Icons
@@ -61,6 +109,7 @@ export const ClearFiltersIcon = ({ onPress, style }) => <MaterialCommunityIcon n
 export const CircleIcon = ({ onPress, style }) => <MaterialCommunityIcon name="circle" onPress={onPress} style={style} />;
 export const CircleOutlineIcon = ({ onPress, style }) => <MaterialCommunityIcon name="circle-outline" onPress={onPress} style={style} />;
 export const CogIcon = ({ onPress, style }) => <MaterialCommunityIcon name="cog" onPress={onPress} style={style} />;
+export const CommentPlusIcon = ({ onPress, style }) => <MaterialCommunityIcon name="comment-plus" onPress={onPress} style={style} />;
 export const DarkModeIcon = ({ onPress, style }) => <MaterialCommunityIcon name="theme-light-dark" onPress={onPress} style={style} />;
 export const EditIcon = ({ onPress, style }) => <MaterialIcon name="edit" onPress={onPress} style={style} />;
 export const ExpandIcon = ({ onPress, style }) => <MaterialCommunityIcon name="arrow-expand" onPress={onPress} style={style} />;
@@ -83,7 +132,13 @@ export const SecurityIcon = ({ onPress, style }) => <MaterialCommunityIcon name=
 export const SendIcon = ({ onPress, style }) => <MaterialCommunityIcon name="send-circle" onPress={onPress} style={style} />;
 export const SortIcon = ({ onPress, style }) => <MaterialCommunityIcon name="sort" onPress={onPress} style={style} />;
 export const SquareIcon = ({ onPress, style }) => <MaterialCommunityIcon name="square" onPress={onPress} style={style} />;
+export const StarIcon = ({ onPress, style }) => <MaterialCommunityIcon name="star" onPress={onPress} style={style} />;
+export const StarOutlineIcon = ({ onPress, style }) => <MaterialCommunityIcon name="star-outline" onPress={onPress} style={style} />;
 export const TranslateIcon = ({ onPress, style }) => <MaterialCommunityIcon name="translate" onPress={onPress} style={style} />;
+
+// Various Calendars
+export const CalendarIcon = ({ onPress, style }) => <MaterialCommunityIcon name="calendar" onPress={onPress} style={style} />;
+
 
 // Notifications
 export const CommentIcon = ({ onPress, style }) => <MaterialCommunityIcon name="comment-outline" onPress={onPress} style={style} />;

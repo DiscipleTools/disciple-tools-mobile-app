@@ -3,10 +3,6 @@ import { ActivityIndicator, Image, View, Keyboard, KeyboardAvoidingView, TextInp
 
 import * as Clipboard from 'expo-clipboard';
 
-// TODO: remove
-import { ActionSheet, Icon } from "native-base";
-import { Col, Row, Grid } from "react-native-easy-grid";
-
 import ParsedText from "react-native-parsed-text";
 //import MentionsTextInput from "react-native-mentions";
 
@@ -95,6 +91,7 @@ const CommentsActivity = ({ headerHeight, insets }) => {
     const onLongPress = () => {
       // TODO: use an expandable (to fullscreen) Action Sheet: https://github.com/gorhom/react-native-bottom-sheet
       // TODO: add term and translate "Copy"
+      /*
       ActionSheet.show({
           options: userIsAuthor ? [
             "Copy",
@@ -115,6 +112,7 @@ const CommentsActivity = ({ headerHeight, insets }) => {
           if (userIsAuthor && buttonIndex === 2) onDelete();
         }
       );
+      */
     };
 
     const renderMention = (matchingString, matches) => {
@@ -134,32 +132,36 @@ const CommentsActivity = ({ headerHeight, insets }) => {
           />
           <View style={styles.content}>
             <View style={styles.contentHeader}>
-              <Grid>
-                <Row>
-                  <Col>
-                    <Text
-                      style={[
-                        styles.name,
-                        isRTL ? { textAlign: "left", flex: 1 } : {},
-                      ]}
-                    >
-                      { author }
-                    </Text>
-                  </Col>
-                  <Col style={{ width: 110 }}>
-                    <Text
-                      style={[
-                        styles.time,
-                        isRTL
-                          ? { textAlign: "left", flex: 1 }
-                          : { textAlign: "right" },
-                      ]}
-                    >
-                      {datetime}
-                    </Text>
-                  </Col>
-                </Row>
-              </Grid>
+              <View style={[
+                globalStyles.rowContainer,
+                { justifyContent: "space-between" }
+              ]}>
+                <View style={globalStyles.columnContainer}>
+                  <Text
+                    style={[
+                      styles.name,
+                      isRTL ? { textAlign: "left", flex: 1 } : {},
+                    ]}
+                  >
+                    { author }
+                  </Text>
+                </View>
+                <View style={[
+                  globalStyles.columnContainer,
+                  { width: 110 }
+                ]}>
+                  <Text
+                    style={[
+                      styles.time,
+                      isRTL
+                        ? { textAlign: "left", flex: 1 }
+                        : { textAlign: "right" },
+                    ]}
+                  >
+                    {datetime}
+                  </Text>
+                </View>
+              </View>
             </View>
             <ParsedText
               //selectable

@@ -54,7 +54,9 @@
     "confirm": "Confirm",
     "selectDate": "Select Date",
     "status": "Status",
-    "type": "Type"
+    "type": "Type",
+    "home": "Home",
+    "more": "More"
   },
   "loginScreen": {
     "domain": {

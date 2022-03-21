@@ -1,7 +1,12 @@
 import React from "react";
-import { Icon } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 
+import {
+  AddIcon,
+  CalendarIcon,
+  ClearIcon,
+  CommentPlusIcon
+} from "components/Icon";
 import ActionButton from "react-native-action-button";
 
 import useI18N from "hooks/use-i18n";
@@ -180,22 +185,17 @@ const FAB = () => {
   if (isList || isPost)
     return (
       <ActionButton
-        position={isRTL ? "left" : "right"}
+        //position={isRTL ? "left" : "right"}
         buttonColor={globalStyles.buttonColor.backgroundColor}
         shadowStyle={globalStyles.buttonShadow}
-        renderIcon={(active) =>
-          active ? (
-            <Icon type={"Feather"} name={"x"} style={styles.icon} />
-          ) : (
-            <Icon
-              type={isList ? "Feather" : "MaterialCommunityIcons"}
-              name={isList ? "plus" : "comment-plus"}
-              style={styles.icon}
-            />
-          )
-        }
+        renderIcon={(active) => {
+          if (active) return <ClearIcon style={styles.icon} />;
+          if (isList) return <AddIcon style={styles.icon} />;
+          return <CommentPlusIcon style={styles.icon} />;
+        }}
         degrees={0}
         activeOpacity={0}
+        // TODO: style
         bgColor="rgba(0,0,0,0.5)"
         nativeFeedbackRippleColor="rgba(0,0,0,0)"
         onPress={() => {
@@ -217,13 +217,13 @@ const FAB = () => {
                 onPress={() => {
                   callback();
                 }}
-                size={40}
+                size={35}
                 buttonColor={bgColor}
                 nativeFeedbackRippleColor="rgba(0,0,0,0)"
                 textStyle={styles.itemText}
                 textContainerStyle={{ height: "auto" }}
               >
-                <Icon type={type} name={name} style={styles.itemIcon} />
+                <CalendarIcon style={globalStyles.icon} />
               </ActionButton.Item>
             );
           })}

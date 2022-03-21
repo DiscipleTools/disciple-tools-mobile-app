@@ -71,8 +71,8 @@ const ActivityLogCard = () => {
   );
 
   // TODO: translate
-  //const title = "Activity Log";
-  const title = "جهات الاتصال المعلقة";
+  const title = "Activity Log";
+  //const title = "جهات الاتصال المعلقة";
   return (
     <ExpandableCard
       border

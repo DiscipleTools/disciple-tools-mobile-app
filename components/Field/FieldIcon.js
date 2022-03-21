@@ -1,10 +1,10 @@
 import React from "react";
-// TODO: swap out for React Native Icon
-import { Icon } from "native-base";
+
+import { Icon } from "components/Icon";
 
 import useStyles from "hooks/use-styles";
 
-import { FieldConstants, FieldTypes, FieldNames } from "constants";
+import { FieldTypes } from "constants";
 
 const FieldIcon = ({ field, hide }) => {
   const { globalStyles } = useStyles();
@@ -12,7 +12,6 @@ const FieldIcon = ({ field, hide }) => {
   const name = field.name;
   let iconType = "";
   let iconName = "";
-  // TODO: use constants for case stmts
   switch (type) {
     case FieldTypes.LOCATION_META:
       iconType = "FontAwesome";
@@ -80,8 +79,8 @@ const FieldIcon = ({ field, hide }) => {
         iconType = "FontAwesome5";
         iconName = "tachometer-alt";
       } else {
-        iconType = "Ionicons";
-        iconName = "list-circle";
+        iconType = "MaterialCommunityIcons";
+        iconName = "format-list-bulleted";
       }
       break;
     case FieldTypes.COMMUNICATION_CHANNEL:
@@ -107,8 +106,8 @@ const FieldIcon = ({ field, hide }) => {
         iconType = "FontAwesome5";
         iconName = "directions";
       } else {
-        iconType = "Feather";
-        iconName = "hash";
+        iconType = "FontAwesome5";
+        iconName = "hashtag";
       }
       break;
     case FieldTypes.KEY_SELECT:
@@ -128,14 +127,14 @@ const FieldIcon = ({ field, hide }) => {
         iconType = "FontAwesome5";
         iconName = "crosshairs";
       } else if (name.includes("group_type")) {
-        iconType = "Entypo";
-        iconName = "hair-cross";
+        iconType = "FontAwesome5";
+        iconName = "crosshairs";
       } else if (name.includes("group")) {
         iconType = "FontAwesome";
         iconName = "crosshairs";
       } else {
-        iconType = "Ionicons";
-        iconName = "list-circle";
+        iconType = "MaterialCommunityIcons";
+        iconName = "format-list-bulleted";
       }
       break;
     case FieldTypes.USER_SELECT:
@@ -148,7 +147,7 @@ const FieldIcon = ({ field, hide }) => {
       }
       break;
     case FieldTypes.TAGS:
-      iconType = "AntDesign";
+      iconType = "FontAwesome";
       iconName = "tags";
       break;
     case FieldTypes.TEXT:
@@ -162,17 +161,17 @@ const FieldIcon = ({ field, hide }) => {
         iconType = "FontAwesome5";
         iconName = "user-alt";
       } else {
-        iconType = "Entypo";
-        iconName = "text";
+        iconType = "MaterialCommunityIcons";
+        iconName = "text-long";
       }
       break;
     case FieldTypes.NUMBER:
       if (name.includes("leader")) {
-        iconType = "FontAwesome5";
+        iconType = "FontAwesome";
         iconName = "hashtag";
       } else {
-        iconType = "Feather";
-        iconName = "hash";
+        iconType = "FontAwesome5";
+        iconName = "hashtag";
       }
       break;
     default:

@@ -1,13 +1,14 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
-import { ActionSheet, Icon } from "native-base";
 
 import { useNavigation } from "@react-navigation/native";
 
+import { StarIcon, StarOutlineIcon } from "components/Icon";
 import PostItemSkeleton from "./PostItemSkeleton";
 
 import useAPI from "hooks/use-api";
-import useI18N from "hooks/use-i18n";
+import useBottomSheet from "hooks/use-bottom-sheet";
+//import useI18N from "hooks/use-i18n";
 import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
 import useTheme from "hooks/use-theme";
@@ -22,7 +23,8 @@ import { localStyles } from "./PostItem.styles";
 const PostItem = ({ item, loading, mutate }) => {
 
   const navigation = useNavigation();
-  const { i18n, isRTL } = useI18N();
+  const { expand } = useBottomSheet();
+  //const { i18n, isRTL } = useI18N();
   // TODO: move to useStyles?
   const { getSelectorColor } = useTheme();
   const { styles, globalStyles } = useStyles(localStyles);
@@ -66,6 +68,7 @@ const PostItem = ({ item, loading, mutate }) => {
   };
 
   const onLongPress = () => {
+    /*
     ActionSheet.show({
         options: [
           i18n.t('global.commentsActivity'),
@@ -80,18 +83,17 @@ const PostItem = ({ item, loading, mutate }) => {
           const postId = Number(item?.ID);
           const postType = item?.post_type;
           // TODO: detect the subtype in <Post /> component and show Comments Sheet
-          /*
-          navigation.navigate(ScreenConstants.DETAILS, {
-            id: postId,
-            type: postType,
-            subtype: SubTypeConstants.COMMENTS_ACTIVITY,
-          });
-          */
+          //navigation.navigate(ScreenConstants.DETAILS, {
+          //  id: postId,
+          //  type: postType,
+          //  subtype: SubTypeConstants.COMMENTS_ACTIVITY,
+          //});
         };
         //if (userIsAuthor && buttonIndex === 1) onEdit();
         //if (userIsAuthor && buttonIndex === 2) onDelete();
       }
     );
+    */
   };
 
   const PostTitle = () => {
@@ -166,11 +168,11 @@ const PostItem = ({ item, loading, mutate }) => {
     <View style={globalStyles.columnContainer}>
       <Pressable onPress={() => updatePost({ favorite: !item?.favorite }, Number(item?.ID), item?.post_type, mutate)}>
         <View style={globalStyles.rowIcon}>
-          <Icon
-            type="FontAwesome"
-            name={item?.favorite ? "star" : "star-o"}
-            style={globalStyles.icon}
-          />
+          { item?.favorite ? (
+            <StarIcon style={globalStyles.icon} />
+          ) : (
+            <StarOutlineIcon style={globalStyles.icon} />
+          )}
         </View>
       </Pressable>
     </View>

@@ -6,29 +6,16 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     // TODO: why 110%? 
     height: "110%",
   },
-  titleBarContainer: {
-    backgroundColor: theme.background.primary,
-    padding: 5,
-  },
-  titleBarText: {
-    color: theme.text.primary,
-    fontSize: 16,
-    fontWeight: "bold",
-    marginStart: "auto",
-    marginEnd: "auto"
-  },
-  tabHeading: {
-    color: theme.text.primary,
-  },
-  tabHeadingStyle: {
+  tabbar: {
     backgroundColor: theme.mode === ThemeConstants.DARK ? theme.surface.primary : theme.surface.input,
   },
-  tabBarUnderline: {
+  tab: {
+    width: "auto",
+  },
+  indicator: {
     backgroundColor: theme.mode === ThemeConstants.DARK ? theme.highlight : theme.brand.primary,
   },
-  headerTitle: {
-    color: theme.text.primary,
-    fontWeight: 'bold',
-    width: isIOS ? 140 : 180,
+  label: {
+    //fontWeight: '400',
   },
 });

@@ -17,7 +17,8 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   },
   fieldLabelContainer: {
     paddingVertical: 3,
-    alignItems: "center"
+    alignItems: "center",
+    marginEnd: "auto"
   },
   fieldLabelText: {
     color: theme.text.primary,

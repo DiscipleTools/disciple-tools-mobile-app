@@ -1,10 +1,10 @@
-import React, { useLayoutEffect } from "react";
-import { Linking, Text, View } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Tab, Tabs, TabHeading, ScrollableTab } from "native-base";
+import { TabView, TabBar } from 'react-native-tab-view';
 
 import { HeaderLeft, HeaderRight } from "components/Header/Header";
 import { CommentEditIcon } from "components/Icon";
@@ -47,6 +47,24 @@ const Post = () => {
   const { settings } = useSettings();
   const { updatePost } = useAPI();
 
+  const [state, setState] = useState({
+    index: 0,
+    routes: []
+  });
+
+  useEffect(() => {
+    if (settings?.tiles?.length > 0) {
+      setState({
+        ...state,
+        routes: settings?.tiles?.map((tile, idx) => ({
+          key: tile?.name ?? idx,
+          title: tile?.label
+        })) ?? []
+      });
+    };
+    return;
+  }, [settings?.tiles?.length]);
+
   useLayoutEffect(() => {
     const kebabItems = [
       {
@@ -74,9 +92,6 @@ const Post = () => {
           props
         />
       ),
-      //headerStyle: globalStyles.header, 
-      //headerTintColor: globalStyles.text.primary,
-      //headerTitleStyle: styles.headerTitle
     });
   //}, [navigation, route?.params?.name]);
   //}, []);
@@ -98,38 +113,43 @@ const Post = () => {
     });
   };
 
+  const handleIndexChange = (index) => setState({ ...state, index });
+
+  const renderTabBar = (props) => (
+    <TabBar
+      {...props}
+      scrollEnabled
+      indicatorStyle={styles.indicator}
+      style={styles.tabbar}
+      tabStyle={styles.tab}
+      labelStyle={styles.label}
+    />
+  );
+
+  const renderScene = ({ route }) => {
+    const tile = settings?.tiles?.find(tile => tile?.name === route?.key);
+    return(
+      <Tile
+        post={post}
+        fields={tile?.fields}
+        save={updatePost}
+        mutate={mutate}
+      />
+    );
+  };
+
   if (!post || !settings || isLoading) return <PostSkeleton />;
   return(
     <View style={styles.screenContainer}>
       <OfflineBar />
       <TitleBar center title={post?.title} />
-      <Tabs
-        renderTabBar={() => <ScrollableTab />}
-        tabBarUnderlineStyle={styles.tabBarUnderline}
-        //initialPage={index}
-        //onChangeTab={(evt) => {}}
-      >
-        {settings?.tiles?.map((tile, idx) => {
-          return (
-            <Tab
-              key={tile?.name ?? idx}
-              heading={
-                <TabHeading style={styles.tabHeadingStyle}>
-                  <Text style={styles.tabHeading}>{tile?.label}</Text>
-                </TabHeading>
-              }
-              style={styles.tabStyle}
-            >
-              <Tile
-                post={post}
-                fields={tile?.fields}
-                save={updatePost}
-                mutate={mutate}
-              />
-            </Tab>
-          );
-        })}
-      </Tabs>
+      <TabView
+        lazy
+        navigationState={state}
+        renderScene={renderScene}
+        renderTabBar={renderTabBar}
+        onIndexChange={handleIndexChange}
+      />
     </View>
   );
 };

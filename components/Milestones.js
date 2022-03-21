@@ -1,7 +1,5 @@
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
-import { Button } from "native-base";
-import { Col, Row, Grid } from "react-native-easy-grid";
 
 import { SvgUri } from "react-native-svg";
 
@@ -20,7 +18,7 @@ const Milestones = ({
   editing,
 }) => {
 
-  const { styles } = useStyles(localStyles);
+  const { styles, globalStyles } = useStyles(localStyles);
   // TODO:
   const { i18n, isRTL } = useI18N();
   const add = (newValue) => {
@@ -72,28 +70,29 @@ const Milestones = ({
           ? true
           : false;
         return (
-          <Button
-            key={item?.label ?? idx}
+          <Pressable
             disabled={!editing}
-            bordered={!selected}
             onPress={() => handleChange(item, selected)}
-            style={[
-              styles.button,
-              selected ? { backgroundColor: "#F0F" } : null,
-            ]}
           >
-            <Row>
-              <SvgUri width="25" height="25" uri={item?.icon} />
-              <Text
-                style={[
-                  styles.buttonLabel,
-                  selected ? { color: "#fff" } : null,
-                ]}
-              >
-                {item?.label}
-              </Text>
-            </Row>
-          </Button>
+            <View
+              style={[
+                styles.button,
+                selected ? { backgroundColor: "#F0F" } : null,
+              ]}
+            >
+              <View style={globalStyles.rowContainer}>
+                <SvgUri width="25" height="25" uri={item?.icon} />
+                <Text
+                  style={[
+                    styles.buttonLabel,
+                    selected ? { color: "#fff" } : null,
+                  ]}
+                >
+                  {item?.label}
+                </Text>
+              </View>
+            </View>
+          </Pressable>
         );
       })}
     </>
