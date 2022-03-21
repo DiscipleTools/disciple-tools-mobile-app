@@ -42,7 +42,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       - run: npm install
-      - run: npm test
+      #- run: npm test
       - name: Deploy Prod
         if: github.ref == 'refs/heads/main'
         run: expo publish --release-channel production && expo build:ios --release-channel production --non-interactive && expo build:android --type app-bundle --release-channel production --non-interactive
