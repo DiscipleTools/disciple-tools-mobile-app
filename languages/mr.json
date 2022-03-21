@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "कोड: ",
+      "message": "संदेशः ",
+      "text": "मजकूर",
+      "noRecords": "NoRecords"
+    },
+    "success": {
+      "save": "डेटा यशस्वीरित्या जतन केला!"
+    },
+    "groups": "गट",
+    "details": "तपशील",
+    "selectPeopleGroups": "लोक गट निवडा",
+    "address": "पत्ता",
+    "progress": "प्रगती",
+    "commentsActivity": "टिप्पण्या आणि क्रियाकलाप",
+    "writeYourCommentNoteHere": "आपली टिप्पणी किंवा टीप येथे लिहा",
+    "requiredField": "आवश्यक फील्ड",
+    "edit": "सुधारणे",
+    "cancel": "रद्द करा",
+    "save": "जतन करा",
+    "online": "ऑनलाईन",
+    "offline": "ऑफलाइन",
+    "language": "इंग्रजी",
+    "search": "शोधा",
+    "membersActivity": "सभासद",
+    "moreFields": "अधिक फील्ड",
+    "nameRequired": "नाव आवश्यक",
+    "close": "बंद",
+    "editComment": "सुधारणे",
+    "deleteComment": "हटवा",
+    "delete": "हटवा",
+    "sortBy": "सॉर्टबाय",
+    "reset": "रीसेट करा",
+    "apply": "अर्ज करा",
+    "showing": "दर्शवित आहे",
+    "comments": "टिप्पण्या",
+    "activity": "क्रियाकलाप",
+    "submit": "प्रस्तुत करणे",
+    "share": "सामायिक करा",
+    "viewOnMobileWeb": "मोबाइल वेबवर पहा",
+    "shareSettings": "सामायिक करा",
+    "searchUsers": "शोधकर्ते",
+    "noFilters": "NoFilters",
+    "searchContacts": "शोध संपर्क",
+    "selectLocations": "निवडा",
+    "other": "इतर",
+    "chooseOption": "निवडा पर्याय",
+    "confirm": "पुष्टी",
+    "selectDate": "तारीख निवडा"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "उदा. myteam.mydomain.com",
+      "error": "डोमेन आवश्यक आहे",
+      "errorForgotPass": "कृपया आपला संकेतशब्द पुनर्प्राप्त करण्यासाठी URL प्रविष्ट करा"
+    },
+    "username": {
+      "label": "वापरकर्तानाव",
+      "error": "वापरकर्तानाव आवश्यक आहे"
+    },
+    "password": {
+      "label": "संकेतशब्द",
+      "error": "संकेतशब्द आवश्यक आहे"
+    },
+    "logIn": "लॉग इन करा",
+    "forgotPassword": "आपला संकेतशब्द हरवला?",
+    "errors": {
+      "invalidUsername": "अज्ञात वापरकर्तानाव पुन्हा तपासा किंवा आपला ईमेल पत्ता वापरून पहा.",
+      "incorrectPassword": "आपण वापरकर्त्याच्या नावासाठी प्रविष्ट केलेला संकेतशब्द चुकीचा आहे",
+      "configurationNeededOn": "कॉन्फिगरेशननिडेडऑन",
+      "mobileAppPluginRequiredOne": "मोबाईलअप्प््लगिनची आवश्यकता",
+      "mobileAppPluginRequiredTwo": "मोबाईलअप्प््लगिनची आवश्यकता दोन"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "संपर्क",
+    "noContactPlacheHolder": "सध्या कोणतेही संपर्क उपलब्ध नाहीत.",
+    "noContactPlacheHolder1": "आपल्या साइटवरून त्यांना मिळविण्यात समस्या येत असेल. रीफ्रेश करण्याचा प्रयत्न करण्यासाठी खाली ड्रॅग करा आणि पुन्हा प्रयत्न करा.",
+    "noContactPlacheHolderOffline": "आपण सध्या ऑफलाइन आहात. आपले संपर्क रीफ्रेश करण्यासाठी आणि आपणास WiFi किंवा मोबाईल डेटाशी कनेक्ट केले असल्याचे सुनिश्चित करा."
+  },
+  "settingsScreen": {
+    "settings": "सेटिंग्ज",
+    "networkUnavailable": "नेटवर्क अनुपलब्ध. आता ऑफलाइन मोडमध्ये",
+    "networkAvailable": "नेटवर्क आढळले. ऑनलाईन मोडवर परत या",
+    "storybook": "स्टोरीबुक",
+    "logout": "साइन आउट",
+    "helpSupport": "मदत / समर्थन",
+    "rememberPassword": "पासवर्ड लक्षात ठेवा",
+    "rememberPasswordActive": "लॉग इन सक्षम ठेवा",
+    "rememberPasswordInactive": "लॉग इन केलेले अक्षम करा",
+    "remove": "काढा",
+    "set": "सेट",
+    "pinCode": "पिन कोड",
+    "enterPin": "पिन प्रविष्ट करा",
+    "setPin": "नवीन पिन सेट करा",
+    "incorrectPin": "चुकीचा पिन",
+    "savedPinCode": "पिन कोड यशस्वीरित्या जतन केला",
+    "removedPinCode": "पिन कोड यशस्वीरित्या काढला",
+    "close": "बंद",
+    "confirmPin": "कन्फर्मपिन"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "नवीन संपर्क जोडा",
+    "subAssignThisContact": "हा संपर्क उप-नियुक्त करा",
+    "mobile": "मोबाईल",
+    "selectLocations": "स्थाने निवडा",
+    "selectSources": "स्रोत निवडा",
+    "connections": "जोडणी",
+    "addGroup": "गट जोडा",
+    "addConnection": "कनेक्शन जोडा",
+    "addBaptizedBy": "द्वारे बाप्तिस्मा जोडा",
+    "addBaptized": "बाप्तिस्मा जोडा",
+    "addCoachedBy": "द्वारा प्रशिक्षित जोडा",
+    "addCoaching": "कोचिंग जोडा",
+    "phoneNumber": "फोन नंबर",
+    "initialComment": "प्रारंभिक टिप्पणी",
+    "socialMedia": "सामाजिक माध्यमे",
+    "noContactCommentPlacheHolder": "सध्या कोणत्याही संपर्क टिप्पण्या उपलब्ध नाहीत.",
+    "fullName": {
+      "label": "पूर्ण नाव",
+      "error": "नाव आवश्यक आहे"
+    },
+    "noContactCommentPlacheHolder1": "आपल्या साइटवरून त्यांना मिळविण्यात समस्या येत असेल. रीफ्रेश करण्याचा प्रयत्न करण्यासाठी खाली ड्रॅग करा आणि पुन्हा प्रयत्न करा.",
+    "noContactCommentPlacheHolderOffline": "आपण सध्या ऑफलाइन आहात. रीफ्रेश करण्यासाठी आणि आपली संपर्क टिप्पणी घेण्यासाठी आपण वायफाय किंवा मोबाइल डेटाशी कनेक्ट असल्याचे सुनिश्चित करा.",
+    "importContact": "फोन संपर्क आयात करा",
+    "contactSharedWith": "संपर्क सामायिक करा",
+    "ageNotSet": "ageNotSet",
+    "contactType": "संपर्क प्रकार"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "नवीन गट जोडा",
+    "selectCoaches": "गट कोच निवडा",
+    "searchGroups": "गट शोधा",
+    "searchPeerGroups": "सरदारांचे गट शोधा",
+    "childGroup": "बाल गट",
+    "searchChildGroups": "मुलाचे गट शोधा",
+    "addMember": "सभासद जोडा",
+    "noGroupCommentPlacheHolder": "सध्या कोणत्याही गट टिप्पण्या उपलब्ध नाहीत.",
+    "noGroupCommentPlacheHolder1": "आपल्या साइटवरून त्यांना मिळविण्यात समस्या येत असेल. रीफ्रेश करण्याचा प्रयत्न करण्यासाठी खाली ड्रॅग करा आणि पुन्हा प्रयत्न करा.",
+    "noGroupCommentPlacheHolderOffline": "आपण सध्या ऑफलाइन आहात. रीफ्रेश करण्यासाठी आणि आपली ग्रुप कमेंट मिळविण्यासाठी आपण वायफाय किंवा मोबाईल डेटाशी कनेक्ट असल्याचे सुनिश्चित करा.",
+    "selectLocations": "स्थाने निवडा",
+    "noMembersMessage": "कोणतेही सदस्य नाहीत",
+    "groupName": {
+      "label": "गटाचे नाव",
+      "error": "नाव आवश्यक आहे"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "बैठक नियोजित",
+      "quick_button_meeting_postponed": "सभा तहकूब केली",
+      "quick_button_meeting_complete": "मीटिंग पूर्ण"
+    },
+    "memberCount": "सभासद",
+    "memberList": "सदस्य यादी",
+    "attendance": {
+      "header": "शीर्षलेख",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "ग्रुप कॉमेंटमेंट लेबल",
+      "groupComment": "ग्रुप कॉमेंट"
+    },
+    "groupSharedWith": "गटशेअरडविथसह"
+  },
+  "notificationsScreen": {
+    "notifications": "अधिसूचना",
+    "loadMore": "लादणे",
+    "new": "नवीन",
+    "unRead": "न वाचलेले",
+    "all": "सर्व",
+    "markAll": "सर्व चिन्हांकित करा",
+    "dontHaveNotificationsUnread": "सूचना न वाचलेल्या",
+    "dontHaveNotifications": "सूचना नाहीत"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "सध्या कोणतेही गट उपलब्ध नाहीत.",
+    "noGroupPlacheHolder1": "आपल्या साइटवरून त्यांना मिळविण्यात समस्या येत असेल. रीफ्रेश करण्याचा प्रयत्न करण्यासाठी खाली ड्रॅग करा आणि पुन्हा प्रयत्न करा.",
+    "noGroupPlacheHolderOffline": "आपण सध्या ऑफलाइन आहात. रीफ्रेश करण्यासाठी आणि आपले गट मिळविण्यासाठी आपण वायफाय किंवा मोबाईल डेटाशी कनेक्ट असल्याचे सुनिश्चित करा."
+  },
+  "appRestart": {
+    "message": "पुढील कॉन्फिगरेशन लागू करण्यासाठी अनुप्रयोग पुन्हा सुरू केला जाईल:",
+    "button": "ठीक आहे",
+    "textDirection": "मजकूर दिशा",
+    "selectedLanguage": "निवडलेली भाषा"
+  },
+  "endonym": "मराठी"
+}

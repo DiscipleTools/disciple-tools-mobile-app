@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "ಕೋಡ್: ",
+      "message": "ಸಂದೇಶ: ",
+      "text": "ಪಠ್ಯ",
+      "noRecords": "noRecords"
+    },
+    "success": {
+      "save": "ಡೇಟಾವನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ!"
+    },
+    "groups": "ಗುಂಪುಗಳು",
+    "details": "ವಿವರಗಳು",
+    "selectPeopleGroups": "ಜನರ ಗುಂಪುಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    "address": "ವಿಳಾಸ",
+    "progress": "ಪ್ರಗತಿ",
+    "commentsActivity": "ಪ್ರತಿಕ್ರಿಯೆಗಳು ಮತ್ತು ಚಟುವಟಿಕೆ",
+    "writeYourCommentNoteHere": "ನಿಮ್ಮ ಕಾಮೆಂಟ್ ಅಥವಾ ಟಿಪ್ಪಣಿಯನ್ನು ಇಲ್ಲಿ ಬರೆಯಿರಿ",
+    "requiredField": "ಅಗತ್ಯವಿರುವ ಕ್ಷೇತ್ರ",
+    "edit": "ತಿದ್ದು",
+    "cancel": "ರದ್ದುಮಾಡಿ",
+    "save": "ಉಳಿಸಿ",
+    "online": "ಆನ್‌ಲೈನ್",
+    "offline": "ಆಫ್‌ಲೈನ್",
+    "language": "ಭಾಷೆ",
+    "search": "ಹುಡುಕಿ Kannada",
+    "membersActivity": "ಸದಸ್ಯರು",
+    "moreFields": "ಹೆಚ್ಚಿನ ಕ್ಷೇತ್ರಗಳು",
+    "nameRequired": "ಹೆಸರು ಅಗತ್ಯವಿದೆ",
+    "close": "ಮುಚ್ಚಿ",
+    "editComment": "ತಿದ್ದು",
+    "deleteComment": "ಅಳಿಸಿ",
+    "delete": "ಅಳಿಸಿ",
+    "sortBy": "ವಿಂಗಡಿಸು",
+    "reset": "ಮರುಹೊಂದಿಸಿ",
+    "apply": "ಅನ್ವಯಿಸು",
+    "showing": "ತೋರಿಸಲಾಗುತ್ತಿದೆ",
+    "comments": "ಕಾಮೆಂಟ್ಗಳು",
+    "activity": "ಚಟುವಟಿಕೆ",
+    "submit": "ಸಲ್ಲಿಸು",
+    "share": "ಪಾಲು",
+    "viewOnMobileWeb": "ಮೊಬೈಲ್ ವೆಬ್‌ನಲ್ಲಿ ವೀಕ್ಷಿಸಿ",
+    "shareSettings": "ಹಂಚಿಕೆ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+    "searchUsers": "ಹುಡುಕಾಟ ಬಳಕೆದಾರರು",
+    "noFilters": "noFilters",
+    "searchContacts": "ಹುಡುಕಾಟ ಸಂಪರ್ಕಗಳು",
+    "selectLocations": "ಆಯ್ಕೆ ಸ್ಥಳಗಳು",
+    "other": "ಇತರ",
+    "chooseOption": "ಆಯ್ಕೆ ಆಯ್ಕೆ",
+    "confirm": "ಖಚಿತಪಡಿಸಿ",
+    "selectDate": "ದಿನಾಂಕವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "ಉದಾ. myteam.mydomain.com",
+      "error": "ಡೊಮೇನ್ ಅಗತ್ಯವಿದೆ",
+      "errorForgotPass": "ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಹಿಂಪಡೆಯಲು ಪ್ರಾರಂಭಿಸಲು ದಯವಿಟ್ಟು URL ಅನ್ನು ನಮೂದಿಸಿ"
+    },
+    "username": {
+      "label": "ಬಳಕೆದಾರ ಹೆಸರು",
+      "error": "ಬಳಕೆದಾರಹೆಸರು ಅಗತ್ಯವಿದೆ"
+    },
+    "password": {
+      "label": "ಗುಪ್ತಪದ",
+      "error": "ಗುಪ್ತಪದದ ಅಗತ್ಯವಿದೆ"
+    },
+    "logIn": "ಲಾಗ್ ಇನ್ ಮಾಡಿ",
+    "forgotPassword": "ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಕಳೆದುಕೊಂಡಿದೆಯೇ?",
+    "errors": {
+      "invalidUsername": "ಅಜ್ಞಾತ ಬಳಕೆದಾರಹೆಸರು. ಮತ್ತೆ ಪರಿಶೀಲಿಸಿ ಅಥವಾ ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ಪ್ರಯತ್ನಿಸಿ.",
+      "incorrectPassword": "ಬಳಕೆದಾರಹೆಸರುಗಾಗಿ ನೀವು ನಮೂದಿಸಿದ ಪಾಸ್‌ವರ್ಡ್ ತಪ್ಪಾಗಿದೆ",
+      "configurationNeededOn": "ಸಂರಚನೆನೀಡ್ಆನ್",
+      "mobileAppPluginRequiredOne": "mobileAppPluginRequiredOne",
+      "mobileAppPluginRequiredTwo": "mobileAppPluginRequiredTwo"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "ಸಂಪರ್ಕಗಳು",
+    "noContactPlacheHolder": "ಪ್ರಸ್ತುತ ಯಾವುದೇ ಸಂಪರ್ಕಗಳು ಲಭ್ಯವಿಲ್ಲ.",
+    "noContactPlacheHolder1": "ನಿಮ್ಮ ಸೈಟ್‌ನಿಂದ ಅವುಗಳನ್ನು ಪಡೆಯುವಲ್ಲಿ ಸಮಸ್ಯೆ ಇದ್ದಿರಬಹುದು. ರಿಫ್ರೆಶ್ ಮಾಡಲು ಪ್ರಯತ್ನಿಸಲು ಕೆಳಗೆ ಎಳೆಯಿರಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "noContactPlacheHolderOffline": "ನೀವು ಪ್ರಸ್ತುತ ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿರುವಿರಿ. ನಿಮ್ಮ ಸಂಪರ್ಕಗಳನ್ನು ರಿಫ್ರೆಶ್ ಮಾಡಲು ಮತ್ತು ಪಡೆಯಲು ನೀವು ವೈಫೈ ಅಥವಾ ಮೊಬೈಲ್ ಡೇಟಾಗೆ ಸಂಪರ್ಕ ಹೊಂದಿದ್ದೀರಿ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ."
+  },
+  "settingsScreen": {
+    "settings": "ಸಂಯೋಜನೆಗಳು",
+    "networkUnavailable": "ನೆಟ್‌ವರ್ಕ್ ಲಭ್ಯವಿಲ್ಲ. ಈಗ ಆಫ್‌ಲೈನ್ ಮೋಡ್‌ನಲ್ಲಿದೆ",
+    "networkAvailable": "ನೆಟ್‌ವರ್ಕ್ ಪತ್ತೆಯಾಗಿದೆ. ಆನ್‌ಲೈನ್ ಮೋಡ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+    "storybook": "ಕಥೆಪುಸ್ತಕ",
+    "logout": "ಸೈನ್ .ಟ್ ಮಾಡಿ",
+    "helpSupport": "ಸಹಾಯ / ಬೆಂಬಲ",
+    "rememberPassword": "ಪಾಸ್ವರ್ಡ್ ನೆನಪಿಡಿ",
+    "rememberPasswordActive": "ಲಾಗಿನ್ ಆಗಿ ಸಕ್ರಿಯಗೊಳಿಸಿ",
+    "rememberPasswordInactive": "ಲಾಗಿನ್ ಆಗಿ ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ",
+    "remove": "ತೆಗೆದುಹಾಕಿ",
+    "set": "ಹೊಂದಿಸಿ",
+    "pinCode": "ಪಿನ್ ಕೋಡ್",
+    "enterPin": "ಪಿನ್ ನಮೂದಿಸಿ",
+    "setPin": "ಹೊಸ ಪಿನ್ ಹೊಂದಿಸಿ",
+    "incorrectPin": "ತಪ್ಪಾದ ಪಿನ್",
+    "savedPinCode": "ಪಿನ್ ಕೋಡ್ ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ",
+    "removedPinCode": "ಪಿನ್ ಕೋಡ್ ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ತೆಗೆದುಹಾಕಲಾಗಿದೆ",
+    "close": "ಮುಚ್ಚಿ",
+    "confirmPin": "ದೃ irm ೀಕರಿಸಿ"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "ಹೊಸ ಸಂಪರ್ಕವನ್ನು ಸೇರಿಸಿ",
+    "subAssignThisContact": "ಈ ಸಂಪರ್ಕವನ್ನು ಉಪ-ನಿಯೋಜಿಸಿ",
+    "mobile": "ಮೊಬೈಲ್",
+    "selectLocations": "ಸ್ಥಳಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    "selectSources": "ಮೂಲಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    "connections": "ಸಂಪರ್ಕಗಳು",
+    "addGroup": "ಗುಂಪು ಸೇರಿಸಿ",
+    "addConnection": "ಸಂಪರ್ಕವನ್ನು ಸೇರಿಸಿ",
+    "addBaptizedBy": "ಇವರಿಂದ ಬ್ಯಾಪ್ಟೈಜ್ ಮಾಡಿ",
+    "addBaptized": "ಬ್ಯಾಪ್ಟೈಜ್ ಸೇರಿಸಿ",
+    "addCoachedBy": "ತರಬೇತುದಾರರನ್ನು ಸೇರಿಸಿ",
+    "addCoaching": "ಕೋಚಿಂಗ್ ಸೇರಿಸಿ",
+    "phoneNumber": "ದೂರವಾಣಿ ಸಂಖ್ಯೆ",
+    "initialComment": "ಆರಂಭಿಕ ಕಾಮೆಂಟ್",
+    "socialMedia": "ಸಾಮಾಜಿಕ ಮಾಧ್ಯಮ",
+    "noContactCommentPlacheHolder": "ಪ್ರಸ್ತುತ ಯಾವುದೇ ಸಂಪರ್ಕ ಕಾಮೆಂಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.",
+    "fullName": {
+      "label": "ಪೂರ್ಣ ಹೆಸರು",
+      "error": "ಹೆಸರು ಅಗತ್ಯವಿದೆ"
+    },
+    "noContactCommentPlacheHolder1": "ನಿಮ್ಮ ಸೈಟ್‌ನಿಂದ ಅವುಗಳನ್ನು ಪಡೆಯುವಲ್ಲಿ ಸಮಸ್ಯೆ ಇದ್ದಿರಬಹುದು. ರಿಫ್ರೆಶ್ ಮಾಡಲು ಪ್ರಯತ್ನಿಸಲು ಕೆಳಗೆ ಎಳೆಯಿರಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "noContactCommentPlacheHolderOffline": "ನೀವು ಪ್ರಸ್ತುತ ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿರುವಿರಿ. ರಿಫ್ರೆಶ್ ಮಾಡಲು ಮತ್ತು ನಿಮ್ಮ ಸಂಪರ್ಕ ಕಾಮೆಂಟ್ ಪಡೆಯಲು ನೀವು ವೈಫೈ ಅಥವಾ ಮೊಬೈಲ್ ಡೇಟಾಗೆ ಸಂಪರ್ಕ ಹೊಂದಿದ್ದೀರಿ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.",
+    "importContact": "ಫೋನ್ ಸಂಪರ್ಕವನ್ನು ಆಮದು ಮಾಡಿ",
+    "contactSharedWith": "contactSharedWith",
+    "ageNotSet": "ageNotSet",
+    "contactType": "ಸಂಪರ್ಕ ಪ್ರಕಾರ"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "ಹೊಸ ಗುಂಪನ್ನು ಸೇರಿಸಿ",
+    "selectCoaches": "ಗುಂಪು ತರಬೇತುದಾರರನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    "searchGroups": "ಗುಂಪುಗಳನ್ನು ಹುಡುಕಿ",
+    "searchPeerGroups": "ಪೀರ್ ಗುಂಪುಗಳನ್ನು ಹುಡುಕಿ",
+    "childGroup": "ಮಕ್ಕಳ ಗುಂಪು",
+    "searchChildGroups": "ಮಕ್ಕಳ ಗುಂಪುಗಳನ್ನು ಹುಡುಕಿ",
+    "addMember": "ಸದಸ್ಯರನ್ನು ಸೇರಿಸಿ",
+    "noGroupCommentPlacheHolder": "ಪ್ರಸ್ತುತ ಯಾವುದೇ ಗುಂಪು ಕಾಮೆಂಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ.",
+    "noGroupCommentPlacheHolder1": "ನಿಮ್ಮ ಸೈಟ್‌ನಿಂದ ಅವುಗಳನ್ನು ಪಡೆಯುವಲ್ಲಿ ಸಮಸ್ಯೆ ಇದ್ದಿರಬಹುದು. ರಿಫ್ರೆಶ್ ಮಾಡಲು ಪ್ರಯತ್ನಿಸಲು ಕೆಳಗೆ ಎಳೆಯಿರಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "noGroupCommentPlacheHolderOffline": "ನೀವು ಪ್ರಸ್ತುತ ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿರುವಿರಿ. ನಿಮ್ಮ ಗುಂಪಿನ ಕಾಮೆಂಟ್ ಅನ್ನು ರಿಫ್ರೆಶ್ ಮಾಡಲು ಮತ್ತು ಪಡೆಯಲು ನೀವು ವೈಫೈ ಅಥವಾ ಮೊಬೈಲ್ ಡೇಟಾಗೆ ಸಂಪರ್ಕ ಹೊಂದಿದ್ದೀರಿ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.",
+    "selectLocations": "ಸ್ಥಳಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    "noMembersMessage": "ಸದಸ್ಯರು ಇಲ್ಲ",
+    "groupName": {
+      "label": "ತಂಡದ ಹೆಸರು",
+      "error": "ಹೆಸರು ಅಗತ್ಯವಿದೆ"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "ಸಭೆ ನಿಗದಿತ",
+      "quick_button_meeting_postponed": "ಸಭೆ ಮುಂದೂಡಲಾಗಿದೆ",
+      "quick_button_meeting_complete": "ಸಭೆ ಪೂರ್ಣಗೊಂಡಿದೆ"
+    },
+    "memberCount": "ಸದಸ್ಯರ ಸಂಖ್ಯೆ",
+    "memberList": "ಸದಸ್ಯರ ಪಟ್ಟಿ",
+    "attendance": {
+      "header": "ಹೆಡರ್",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "groupCommentLabel",
+      "groupComment": "ಗುಂಪು ಕಾಮೆಂಟ್"
+    },
+    "groupSharedWith": "ಗುಂಪು ಹಂಚಿಕೆಯೊಂದಿಗೆ"
+  },
+  "notificationsScreen": {
+    "notifications": "ಅಧಿಸೂಚನೆಗಳು",
+    "loadMore": "ಇನ್ನಷ್ಟು ಲೋಡ್ ಮಾಡಿ",
+    "new": "ಹೊಸದು",
+    "unRead": "ಓದಿಲ್ಲ",
+    "all": "ಎಲ್ಲಾ",
+    "markAll": "ಎಲ್ಲವನ್ನು ಗುರುತಿಸಿ",
+    "dontHaveNotificationsUnread": "ಯಾವುದೇ ಅಧಿಸೂಚನೆಗಳು ಓದಿಲ್ಲ",
+    "dontHaveNotifications": "ಅಧಿಸೂಚನೆಗಳಿಲ್ಲ"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "ಪ್ರಸ್ತುತ ಯಾವುದೇ ಗುಂಪುಗಳು ಲಭ್ಯವಿಲ್ಲ.",
+    "noGroupPlacheHolder1": "ನಿಮ್ಮ ಸೈಟ್‌ನಿಂದ ಅವುಗಳನ್ನು ಪಡೆಯುವಲ್ಲಿ ಸಮಸ್ಯೆ ಇದ್ದಿರಬಹುದು. ರಿಫ್ರೆಶ್ ಮಾಡಲು ಪ್ರಯತ್ನಿಸಲು ಕೆಳಗೆ ಎಳೆಯಿರಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "noGroupPlacheHolderOffline": "ನೀವು ಪ್ರಸ್ತುತ ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿರುವಿರಿ. ನಿಮ್ಮ ಗುಂಪುಗಳನ್ನು ರಿಫ್ರೆಶ್ ಮಾಡಲು ಮತ್ತು ಪಡೆಯಲು ನೀವು ವೈಫೈ ಅಥವಾ ಮೊಬೈಲ್ ಡೇಟಾಗೆ ಸಂಪರ್ಕ ಹೊಂದಿದ್ದೀರಿ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ."
+  },
+  "appRestart": {
+    "message": "ಕೆಳಗಿನ ಸಂರಚನೆಯನ್ನು ಅನ್ವಯಿಸಲು ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ಮರುಪ್ರಾರಂಭಿಸಲಾಗುತ್ತದೆ:",
+    "button": "ಸರಿ",
+    "textDirection": "ಪಠ್ಯ ನಿರ್ದೇಶನ",
+    "selectedLanguage": "ಆಯ್ದ ಭಾಷೆ"
+  },
+  "endonym": "ಕನ್ನಡ"
+}

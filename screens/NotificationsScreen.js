@@ -1,187 +1,248 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { View, Text, FlatList, RefreshControl, StyleSheet, TouchableOpacity } from 'react-native';
-import { Container } from 'native-base';
-import PropTypes from 'prop-types';
-import { Col, Row } from 'react-native-easy-grid';
-import moment from '../languages/moment';
-import { Html5Entities } from 'html-entities';
+import React, { useState, useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { Button, Pressable, Text, View } from "react-native";
+import { useIsFocused } from '@react-navigation/native';
+
+//import { Html5Entities } from 'html-entities';
 
 import {
-  getAll,
-  getNotificationsCount,
-  markViewed,
-  markUnread,
-  markAllAsRead,
-} from '../store/actions/notifications.actions';
-import Colors from '../constants/Colors';
-import i18n from '../languages';
+  ChevronBackIcon,
+  ChevronForwardIcon,
+  CheckIcon,
+  CircleOutlineIcon,
+  CommentIcon,
+  CommentAlertIcon,
+  MentionIcon
+} from "components/Icon";
+import KebabMenu from "components/KebabMenu";
+import OfflineBar from "components/OfflineBar";
+import FilterList from "components/FilterList";
+import SelectSheet from "components/Sheet/SelectSheet";
+//import { HelpSheet } from "components/Sheet/ModalSheet";
+import { PostItemSkeleton } from "components/Post/PostItem/index";
 
-const entities = new Html5Entities();
+import useFilter from "hooks/use-filter";
+import useI18N from "hooks/use-i18n";
+import useNotifications from "hooks/use-notifications";
+//import useMyUser from 'hooks/use-my-user.js';
+import useStyles from "hooks/use-styles";
 
-import { styles } from './NotificationsScreen.styles';
+import { NotificationActionConstants } from "constants";
 
-class NotificationsScreen extends React.Component {
-  state = {
-    notificationsSourceData: [],
-    isAll: false,
-    loading: false,
-    notificationsCount: 0,
-    limit: 20,
-    offset: 0,
-    haveNotifications: true,
+import { localStyles } from "./NotificationsScreen.styles";
+
+const NotificationsScreen = ({ navigation }) => {
+
+  const DEFAULT_LIMIT = 10;
+
+  // NOTE: invoking this hook causes the desired re-render onBack()
+  useIsFocused();
+
+  const { styles, globalStyles } = useStyles(localStyles);
+  const { isRTL } = useI18N();
+  const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
+  const { data: items, error, isLoading, isValidating, mutate } = useNotifications({ search, filter });
+  /*
+  const [_notifications, _setNotifications] = useState(items ?? []);
+  useEffect(() => {
+    if (_notifications?.length !== notifications?.length) _setNotifications(notifications);
+  }, [notifications]);
+  */
+  //const { userData, error: userError } = useMyUser();
+  const userData = null;
+
+  const [isAll, setIsAll] = useState(true);
+  const [offset, setOffset] = useState(0);
+  const [limit, setLimit] = useState(10); // fails: useState(DEFAULT_LIMIT);
+
+  const renderHeaderLeft = (props) => {
+    const onBack = () => navigation.pop();
+    return(
+      <View style={globalStyles.rowContainer}>
+        {isRTL ? <ChevronForwardIcon onPress={onBack} style={globalStyles.navIcon} /> : <ChevronBackIcon onPress={onBack} style={globalStyles.navIcon} />}
+      </View>
+    );
   };
 
-  componentDidMount() {
-    this.onRefresh();
-  }
+  const renderHeaderRight = (props) => {
+    const kebabItems = [
+      {
+        // TODO: translate
+        label: "View on Web",
+        urlPath: "/notifications/",
+      },
+      {
+        // TODO: translate
+        label: "Help Docs",
+        url: "https://disciple.tools/user-docs/getting-started-info/profile-settings/notifications/"
+      }
+    ];
+    return(
+      <View style={globalStyles.rowContainer}>
+        <View style={styles.headerIcon}>
+          <KebabMenu items={kebabItems} />
+        </View>
+      </View>
+    );
+  };
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { loading, notifications, notificationsCount } = nextProps;
-    let newState = {
-      ...prevState,
-      loading,
-      notificationsCount,
+  // TODO: custom useHeaderLayoutEffect hook for reuse
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      //title,
+      headerLeft: (props) => renderHeaderLeft(props),
+      headerRight: (props) => renderHeaderRight(props),
+    });
+  });
+
+  const NotificationItem = ({ item }) => {
+    const str1 = item?.notification_note?.search("<");
+    const str2 = item?.notification_note?.search(">");
+    const str3 = item?.notification_note?.length-4;
+    const newNotificationNoteA = item?.notification_note?.substr(0, str1);
+    const newNotificationNoteB = item?.notification_note?.substr(
+      str2,
+      str3
+    );
+    const str4 = newNotificationNoteB?.search("<")-1;
+    const newNotificationNoteC = newNotificationNoteB?.substr(1, str4);
+    let entityLink = item?.notification_note?.substring(
+      item?.notification_note?.lastIndexOf('href="')+6,
+      item?.notification_note?.lastIndexOf('">')
+    );
+    let entityId = entityLink?.split("/")[4];
+    let entityName = entityLink?.split("/")[3];
+    // TODO
+    //const entities = new Html5Entities();
+    const isNew = item?.is_new === "1" ? true : false;
+    const name = item?.notification_name;
+    const action = item?.notification_action;
+
+    const parseDate = (dateStr) => {
+      try {
+        const today = new Date();
+        //const parsedDateMS = Date.parse(dateStr?.trim());
+        const parsedDateMS = Date.parse(dateStr?.trim()?.split(' ')[0]);
+        const diffMS = today - parsedDateMS;
+        const aDay = 24*60*60*1000;
+        const isToday = diffMS < aDay;
+        const diffDays = Math.floor(diffMS/aDay);
+        if (isNaN(diffDays)) return null;
+        // TODO: translate
+        if (isToday) return "today";
+        return `${ diffDays }d`
+      } catch (error) {
+        return null;
+      };
     };
-    if (notifications) {
-      if (newState.offset > 0) {
-        newState = {
-          ...newState,
-          notificationsSourceData: prevState.notificationsSourceData.concat(notifications),
-        };
-      } else if (notifications.length > 0) {
-        newState = {
-          ...newState,
-          notificationsSourceData: notifications,
-          haveNotifications: true,
-        };
-      } else {
-        newState = {
-          ...newState,
-          notificationsSourceData: notifications,
-          haveNotifications: false,
-        };
-      }
-    }
-    return newState;
-  }
 
-  onRefresh = (pagination = false) => {
-    if (pagination) {
-      this.setState(
-        (prevState) => ({
-          offset: prevState.offset + prevState.limit,
-          haveNotifications: true,
-        }),
-        () => {
-          this.props.getAllNotifications(
-            this.props.userData.domain,
-            this.props.userData.token,
-            this.state.isAll,
-            this.state.offset,
-            this.state.limit,
-          );
-        },
+    const NotificationIcon = () => {
+      const renderIcon = () => {
+        if (item?.notification_action == NotificationActionConstants.COMMENT) return <CommentIcon />;
+        if (item?.notification_action == NotificationActionConstants.ALERT) return <CommentAlertIcon />;
+        if (item?.notification_action == NotificationActionConstants.MENTION) return <MentionIcon />;
+        return null;
+      };
+      return(
+        <View style={[
+          globalStyles.rowIcon,
+          styles.startIcon
+        ]}>
+          { renderIcon() }
+        </View>
       );
-    } else {
-      this.setState(
-        () => ({
-          offset: 0,
-          haveNotifications: true,
-        }),
-        () => {
-          this.props.getAllNotifications(
-            this.props.userData.domain,
-            this.props.userData.token,
-            this.state.isAll,
-            this.state.offset,
-            this.state.limit,
-          );
-        },
-      );
-    }
-    this.props.getNotificationsCount(this.props.userData.domain, this.props.userData.token);
-  };
+    };
 
-  getAll = () => {
-    this.setState(
-      {
-        isAll: true,
-      },
-      () => {
-        this.onRefresh();
-      },
+    const NotificationDetails = () => (
+      <View style={globalStyles.columnContainer}>
+          <View style={[
+            globalStyles.rowContainer,
+            styles.notificationDetails
+          ]}>
+            {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
+            <Text>{newNotificationNoteA}</Text>
+            <Text
+              style={styles.link}
+              onPress={() =>
+                redirectToDetailView(
+                  entityName,
+                  entityId,
+                  newNotificationNoteC
+                )
+              }
+            >
+              {newNotificationNoteC}
+              {/*entities.decode(newNotificationNoteC)*/}
+            </Text>
+          </View>
+        <View>
+          { item?.pretty_time?.[0] ? (
+            <Text style={globalStyles.caption}>
+              {item.pretty_time[0]}
+              {item.pretty_time?.[1] ? `, ${ item.pretty_time[1] }` : ""}
+            </Text>
+          ) : (
+            <Text style={globalStyles.caption}>
+              {parseDate(item?.date_notified)}
+            </Text>
+          )}
+        </View>
+      </View>
+    );
+
+    const NotificationButton = () => (
+      <View style={[
+        globalStyles.rowIcon,
+        styles.endIcon
+      ]}>
+        <Pressable onPress={() => {
+          if (isNew) {
+            console.log("*** MARK AS READ ***");
+            console.log(`item: ${ JSON.stringify(item) }`);
+          } else {
+            console.log("*** MARK AS UNREAD ***");
+            console.log(`item: ${ JSON.stringify(item) }`);
+          }
+        }}>
+          { isNew ? (
+            <CircleOutlineIcon />
+          ) : (
+            <CheckIcon style={globalStyles.selectedIcon} />
+          )}
+        </Pressable>
+      </View>
+    );
+
+    return (
+      <View style={[
+        globalStyles.rowContainer,
+        styles.container(isNew),
+      ]}>
+        <NotificationIcon />
+        <NotificationDetails />
+        <NotificationButton />
+      </View>
     );
   };
 
-  getUnread = () => {
-    this.setState(
-      {
-        isAll: false,
-      },
-      () => {
-        this.onRefresh();
-      },
-    );
-  };
+  const toggleReadUnread = async (notification, isNew) =>
+    isNew
+      ? await markViewed(notification?.id)
+      : await markUnread(notification?.id);
 
-  markAll = () => {
-    this.props.markAllAsRead(
-      this.props.userData.domain,
-      this.props.userData.token,
-      this.props.userData.id,
-    );
-    if (this.props.isConnected) {
-      this.onRefresh();
-    } else {
-      this.setState({
-        isAll: false,
-        notificationsCount: 0,
-        notificationsSourceData: [],
-        haveNotifications: false,
-      });
-    }
-  };
-
-  markAsRead = (notification) => {
-    const indexArray = this.state.notificationsSourceData.findIndex(
-      (notificationArray) => notificationArray.id === notification.id,
-    );
-    const saveMark = this.state.notificationsSourceData;
-    if (notification.is_new === '1') {
-      this.props.markViewed(this.props.userData.domain, this.props.userData.token, notification.id);
-      saveMark[indexArray].is_new = '0';
-      if (!this.state.isAll) {
-        saveMark.splice(indexArray, 1);
-      }
-      this.setState({
-        notificationsSourceData: saveMark,
-      });
-      this.props.getNotificationsCount(this.props.userData.domain, this.props.userData.token);
-    } else {
-      this.props.markUnread(this.props.userData.domain, this.props.userData.token, notification.id);
-      saveMark[indexArray].is_new = '1';
-      this.setState({
-        notificationsSourceData: saveMark,
-      });
-      this.props.getNotificationsCount(this.props.userData.domain, this.props.userData.token);
-    }
-  };
-
-  redirectToDetailView = (viewName, entityId, entityTitle) => {
+  const redirectToDetailView = (viewName, entityId, entityTitle) => {
     let view, prop;
     switch (viewName) {
-      case 'contacts':
-        view = 'ContactDetail';
-        prop = 'contact';
+      case "contacts":
+        view = "ContactDetail";
+        prop = "contact";
         break;
-      case 'groups':
-        view = 'GroupDetail';
-        prop = 'group';
+      case "groups":
+        view = "GroupDetail";
+        prop = "group";
         break;
       default:
     }
-    this.props.navigation.push(view, {
+    navigation.push(view, {
       [`${prop}Id`]: entityId,
       onlyView: true,
       [`${prop}Name`]: entityTitle,
@@ -189,255 +250,159 @@ class NotificationsScreen extends React.Component {
     });
   };
 
-  renderRow = (notification) => {
-    const str1 = notification.notification_note.search('<');
-    const str2 = notification.notification_note.search('>');
-    const str3 = notification.notification_note.length - 4;
-    const newNotificationNoteA = notification.notification_note.substr(0, str1);
-    const newNotificationNoteB = notification.notification_note.substr(str2, str3);
-    const str4 = newNotificationNoteB.search('<') - 1;
-    const newNotificationNoteC = newNotificationNoteB.substr(1, str4);
-    let entityLink = notification.notification_note.substring(
-      notification.notification_note.lastIndexOf('href="') + 6,
-      notification.notification_note.lastIndexOf('">'),
-    );
-    let entityId = entityLink.split('/')[4];
-    let entityName = entityLink.split('/')[3];
-    return (
-      <View
-        style={
-          notification.is_new === '1'
-            ? { backgroundColor: 'rgba(63, 114, 155, 0.19)' }
-            : { backgroundColor: Colors.mainBackgroundColor }
-        }>
-        <View style={[styles.notificationContainer, { flex: 1, flexDirection: 'row' }]}>
-          <View style={{ flex: 1 }}>
-            <Text style={[this.props.isRTL ? { textAlign: 'left' } : {}]}>
-              <Text>{entities.decode(newNotificationNoteA)}</Text>
-              <Text
-                style={{ color: Colors.primary }}
-                onPress={() =>
-                  this.redirectToDetailView(entityName, entityId, newNotificationNoteC)
-                }>
-                {entities.decode(newNotificationNoteC)}
-              </Text>
-            </Text>
-            <Text
-              style={[styles.prettyTime, this.props.isRTL ? { textAlign: 'left', flex: 1 } : {}]}>
-              {moment(notification.date_notified).fromNow() +
-                ' ~ ' +
-                moment(notification.date_notified).format('L')}
-            </Text>
-          </View>
-          <TouchableOpacity
-            onPress={() => {
-              this.markAsRead(notification);
-            }}>
-            <View style={styles.buttoContainer}>
-              <View
-                style={
-                  notification.is_new === '1'
-                    ? styles.notificationUnreadButton
-                    : styles.notificationReadButton
-                }
-              />
-            </View>
-          </TouchableOpacity>
+  const renderItem = ({ item }) => {
+    /*
+    console.log("**********************************");
+    console.log(`post_id: ${ item?.post_id}`)
+    console.log(`action: ${ item?.notification_action}`)
+    console.log(`field_key: ${ item?.field_key}`)
+    console.log(`is_new: ${ item?.is_new}`)
+    */
+    return <NotificationItem item={item} />;
+  };
+
+  /*
+  const unreadNotifications = notifications?.filter((notification) => {
+    if (notification.is_new === "1") return notification;
+  });
+  */
+
+  const bottomSheetRefSort = useRef(null);
+  const bottomSheetRefFilter = useRef(null);
+  const showSort = () => bottomSheetRefSort.current.expand();
+  //const showFilter = () => bottomSheetRefFilter.current.snapToIndex(1);
+  const showFilter = () => bottomSheetRefFilter.current.snapToIndex(0);
+
+  const renderBackdrop = useCallback(
+    props => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+      />
+    ), []);
+
+  const SortSheet = () => {
+    const onClose = () => bottomSheetRefSort.current.close();
+    const onSnap = useCallback((index) => {
+      console.log('handleSheetChanges', index);
+    }, []);
+    const snapPoints = useMemo(() => ['33%'], []);
+    return(
+      <BottomSheet
+        ref={bottomSheetRefSort}
+        index={-1}
+        snapPoints={snapPoints}
+        onChange={onSnap}
+        enablePanDownToClose
+        backdropComponent={renderBackdrop}
+        //detached={true}
+        // add bottom inset to elevate the sheet
+        //bottomInset={50}
+      >
+        <View style={{
+          flex: 1,
+          alignItems: 'center',
+          paddingTop: 20,
+        }}>
+          <Text>Sort 🎉</Text>
+          <Button title="Dismiss" onPress={() => onClose()} />
         </View>
-      </View>
+      </BottomSheet>
     );
   };
 
-  flatListItemSeparator = () => (
-    <View
-      style={{
-        height: 1,
-        width: '100%',
-        backgroundColor: '#dddddd',
-      }}
-    />
-  );
+  //const FilterSheet = () => <HelpSheet ref={bottomSheetRefFilter} />;
 
-  offlineBarRender = () => (
-    <View style={[styles.offlineBar]}>
-      <Text style={[styles.offlineBarText]}>{i18n.t('global.offline')}</Text>
-    </View>
-  );
-
-  dontHaveNotifications = () => (
-    <View style={[styles.dontHaveNotificationsText]}>
-      {this.state.isAll && (
-        <Text style={[styles.dontHaveNotificationsText]}>
-          {i18n.t('notificationsScreen.dontHaveNotifications')}
-        </Text>
-      )}
-      {!this.state.isAll && (
-        <Text style={[styles.dontHaveNotificationsText]}>
-          {i18n.t('notificationsScreen.dontHaveNotificationsUnread')}
-        </Text>
-      )}
-    </View>
-  );
-
-  renderFooter = () => {
-    // it will show indicator at the bottom of the list when data is loading otherwise it returns null
-    return (
-      <View style={styles.loadMoreFooterText}>
-        <TouchableOpacity
-          onPress={() => {
-            this.onRefresh(true);
-          }}>
-          <Text style={styles.loadMoreFooterText}>{i18n.t('notificationsScreen.loadMore')}</Text>
-        </TouchableOpacity>
-      </View>
+  const FilterSheet = () => {
+    const onDismiss = () => bottomSheetRefFilter.current.close();
+    const onDone = () => {
+      console.log('onDone');
+    };
+    const onSnap = useCallback((index) => {
+      console.log('handleSheetChanges', index);
+    }, []);
+    const snapPoints = useMemo(() => ['25%', '50%', '95%'], []);
+    const items = useMemo(
+      () =>
+        Array(50)
+          .fill(0)
+          .map((_, index) => ({
+            key: index,
+            label: `index-${index}`,
+            selected: index % 2 === 0 ? true : false,
+          })),
+      []
     );
-  };
 
-  static navigationOptions = {
-    title: i18n.t('notificationsScreen.notifications'),
-    headerStyle: {
-      backgroundColor: Colors.tintColor,
-    },
-    headerTintColor: '#FFFFFF',
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    },
-  };
-
-  render() {
-    return (
-      <Container>
-        <View style={{ flex: 1 }}>
-          {!this.props.isConnected && this.offlineBarRender()}
-          <Row style={{ height: 60, margin: 15 }}>
-            <Col size={2}>
-              <View style={{ flex: 1, flexDirection: 'row' }}>
-                {this.state.notificationsCount > 0 && (
-                  <Text style={styles.newHeaderNumber}> {this.state.notificationsCount} </Text>
-                )}
-                <Text style={styles.newHeader}>{i18n.t('notificationsScreen.new')}</Text>
-              </View>
-            </Col>
-            <Col size={3}>
-              <TouchableOpacity onPress={this.getAll}>
-                <View
-                  style={[
-                    this.state.isAll ? styles.marketButton : styles.unmarketButton,
-                    { marginRight: 1 },
-                  ]}>
-                  <Text
-                    style={this.state.isAll ? styles.marketButtonText : styles.unmarketButtonText}>
-                    {i18n.t('notificationsScreen.all')}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </Col>
-            <Col size={3}>
-              <TouchableOpacity onPress={this.getUnread}>
-                <View
-                  style={[
-                    this.state.isAll ? styles.unmarketButton : styles.marketButton,
-                    { marginLeft: 1 },
-                  ]}>
-                  <Text
-                    style={this.state.isAll ? styles.unmarketButtonText : styles.marketButtonText}>
-                    {i18n.t('notificationsScreen.unRead')}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </Col>
-            <Col size={2}>
-              <TouchableOpacity onPress={this.markAll}>
-                <View>
-                  <Text style={[styles.markAllHeader, { marginRight: 1 }]}>
-                    {i18n.t('notificationsScreen.markAll')}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </Col>
-          </Row>
-          {!this.state.haveNotifications && this.dontHaveNotifications()}
-          <FlatList
-            data={this.state.notificationsSourceData}
-            extraData={this.state.loading}
-            renderItem={(item) => this.renderRow(item.item)}
-            ItemSeparatorComponent={this.flatListItemSeparator}
-            refreshControl={
-              <RefreshControl refreshing={this.props.loading} onRefresh={this.onRefresh} />
-            }
-            ListFooterComponent={this.renderFooter}
-            style={{ backgroundColor: Colors.mainBackgroundColor }}
-          />
+    const renderItem = useCallback(
+      (item) => (
+        <View key={item} style={styles.itemContainer}>
+          <Text>{item}</Text>
         </View>
-      </Container>
+      ),
+      []
     );
+
+    return(
+      <SelectSheet
+        ref={bottomSheetRefFilter}
+        snapPoints={snapPoints}
+        onSnap={onSnap}
+        items={items}
+        renderItem={renderItem}
+        onDismiss={onDismiss}
+        onDone={onDone}
+      />
+    );
+  };
+
+  const ListSkeleton = () => Array(10).fill(null).map((_, ii) => <PostItemSkeleton key={ii} />);
+
+  /*
+  {
+    "id":"963",
+    "user_id":"2237",
+    "source_user_id":"637",
+    "post_id":"119",
+    "secondary_item_id":"424",
+    "notification_name":"mention",
+    "notification_action":"mentioned",
+    "notification_note":"Mike Allbutt mentioned you on <a href=\"https://dtdemo.disciple.tools/contacts/119\">Mike Allbutt</a> saying: \r\n\r\n @Some1 hi3",
+    "date_notified":"2021-03-19 23:11:52",
+    "is_new":"0",
+    "channels":null,
+    "field_key":"comments",
+    "field_value":"",
+    "post_title":"Mike Allbutt",
+    "pretty_time":["11 months ago","03/19/2021"]
   }
-}
-
-const mapStateToProps = (state) => ({
-  userData: state.userReducer.userData,
-  notifications: state.notificationsReducer.notifications,
-  loading: state.notificationsReducer.loading,
-  error: state.notificationsReducer.error,
-  contactSettings: state.contactsReducer.settings,
-  isConnected: state.networkConnectivityReducer.isConnected,
-  notificationsCount: state.notificationsReducer.notificationsCount,
-  isRTL: state.i18nReducer.isRTL,
-});
-const mapDispatchToProps = (dispatch) => ({
-  getAllNotifications: (domain, token, all, offset, limit) => {
-    dispatch(getAll(domain, token, all, offset, limit));
-  },
-  getNotificationsCount: (domain, token) => {
-    dispatch(getNotificationsCount(domain, token));
-  },
-  markViewed: (domain, token, notificaitonId) => {
-    dispatch(markViewed(domain, token, notificaitonId));
-  },
-  markUnread: (domain, token, notificaitonId) => {
-    dispatch(markUnread(domain, token, notificaitonId));
-  },
-  markAllAsRead: (domain, token, userId) => {
-    dispatch(markAllAsRead(domain, token, userId));
-  },
-});
-
-NotificationsScreen.propTypes = {
-  isConnected: PropTypes.bool,
-  getAllNotifications: PropTypes.func.isRequired,
-  getNotificationsCount: PropTypes.func.isRequired,
-  markViewed: PropTypes.func.isRequired,
-  markUnread: PropTypes.func.isRequired,
-  markAllAsRead: PropTypes.func.isRequired,
-  userData: PropTypes.shape({
-    domain: PropTypes.string,
-    token: PropTypes.string,
-    username: PropTypes.string,
-    id: PropTypes.number,
-  }).isRequired,
-  /* eslint-disable */
-  notifications: PropTypes.arrayOf(
-    PropTypes.shape({
-      key: PropTypes.id,
-    }),
-  ),
-  /* eslint-enable */
-  loading: PropTypes.bool,
-  error: PropTypes.shape({
-    code: PropTypes.any,
-    message: PropTypes.string,
-  }),
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-    push: PropTypes.func.isRequired,
-  }).isRequired,
+  */
+  if (!items) return null;
+  return (
+    <>
+      <OfflineBar />
+      {!items ? (
+        <ListSkeleton />
+      ) : (
+        <>
+          <FilterList
+            display
+            sortable
+            items={items}
+            renderItem={renderItem}
+            //renderHiddenItem={renderHiddenItem}
+            search={search}
+            onSearch={onSearch}
+            defaultFilter={defaultFilter}
+            filter={filter}
+            onFilter={onFilter}
+            onRefresh={mutate}
+            //leftOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_LEFT}
+            //rightOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_RIGHT}
+          />
+        </>
+      )}
+    </>
+  );
 };
-
-NotificationsScreen.defaultProps = {
-  error: null,
-  loading: false,
-  notifications: [],
-  isConnected: null,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(NotificationsScreen);
+export default NotificationsScreen;

@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "कोड: ",
+      "message": "सन्देश: ",
+      "text": "पाठ",
+      "noRecords": "NoRecords"
+    },
+    "success": {
+      "save": "डाटा सफलतापूर्वक बचत गरियो!"
+    },
+    "groups": "समूहहरू",
+    "details": "विवरण",
+    "selectPeopleGroups": "व्यक्ति समूह चयन गर्नुहोस्",
+    "address": "ठेगाना",
+    "progress": "प्रगति",
+    "commentsActivity": "टिप्पणीहरू र गतिविधि",
+    "writeYourCommentNoteHere": "तपाईंको टिप्पणी वा नोट यहाँ लेख्नुहोस्",
+    "requiredField": "आवश्यक क्षेत्र",
+    "edit": "सम्पादन गर्नुहोस्",
+    "cancel": "रद्द गर्नुहोस्",
+    "save": "बचत गर्नुहोस्",
+    "online": "अनलाइन",
+    "offline": "अफलाईन",
+    "language": "भाषा",
+    "search": "खोज्नुहोस्",
+    "membersActivity": "सदस्यहरू",
+    "moreFields": "थप क्षेत्रहरू",
+    "nameRequired": "नाम आवश्यक छ",
+    "close": "बन्द",
+    "editComment": "सम्पादन गर्नुहोस्",
+    "deleteComment": "मेटाउन",
+    "delete": "मेटाउन",
+    "sortBy": "SortBy",
+    "reset": "रिसेट",
+    "apply": "निवेदन गर्नु",
+    "showing": "देखाउँदै",
+    "comments": "टिप्पणीहरू",
+    "activity": "गतिविधि",
+    "submit": "बुझाउनुहोस्",
+    "share": "सेयर",
+    "viewOnMobileWeb": "मोबाइल वेब मा हेर्नुहोस्",
+    "shareSettings": "सेयर सेटिंग्स",
+    "searchUsers": "खोज प्रयोगकर्ताहरू",
+    "noFilters": "NoFilters",
+    "searchContacts": "खोज सम्पर्कहरू",
+    "selectLocations": "चयन गर्नुहोस्",
+    "other": "अन्य",
+    "chooseOption": "छनौट गर्नुहोस्",
+    "confirm": "निश्चित गर्नुहोस्",
+    "selectDate": "मिति चयन गर्नुहोस्"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "जस्तै myteam.mydomain.com",
+      "error": "डोमेन आवश्यक छ",
+      "errorForgotPass": "कृपया तपाईंको पासवर्ड पुन: प्राप्ति गर्न URL प्रविष्ट गर्नुहोस्"
+    },
+    "username": {
+      "label": "प्रयोगकर्ता नाम",
+      "error": "प्रयोगकर्तानाम आवश्यक छ"
+    },
+    "password": {
+      "label": "पासवर्ड",
+      "error": "पासवर्ड आवश्यक छ"
+    },
+    "logIn": "लग - इन",
+    "forgotPassword": "तपाईको पासवर्ड हराउनु भयो?",
+    "errors": {
+      "invalidUsername": "अज्ञात प्रयोगकर्ता नाम फेरि जाँच गर्नुहोस् वा तपाईंको ईमेल ठेगाना प्रयास गर्नुहोस्।",
+      "incorrectPassword": "तपाईंले प्रयोगकर्तानामको लागि प्रविष्ट गर्नुभएको पासवर्ड गलत छ",
+      "configurationNeededOn": "कन्फिगरेसनडिडेड अन",
+      "mobileAppPluginRequiredOne": "मोबाईल अनुप्रयोग प्लगइनअनुप्रयोगी",
+      "mobileAppPluginRequiredTwo": "मोबाईल अनुप्रयोग प्लगइनअनुप्रयोगित दो"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "सम्पर्कहरू",
+    "noContactPlacheHolder": "हाल कुनै पनि सम्पर्कहरू उपलब्ध छैनन्।",
+    "noContactPlacheHolder1": "तपाईंको साइटबाट तिनीहरूलाई प्राप्त गर्न समस्या भएको हुन सक्छ। ताजा गर्न को लागी तल ड्र्याग गर्नुहोस् र पुन: प्रयास गर्नुहोस्।",
+    "noContactPlacheHolderOffline": "तपाईं हाल अफलाईन हुनुहुन्छ। तपाईंको सम्पर्कहरू ताजा गर्न र प्राप्त गर्नका लागि तपाईं वाईफाई वा मोबाईल डाटामा जडित हुनुहुन्छ भनि निश्चित गर्नुहोस्।"
+  },
+  "settingsScreen": {
+    "settings": "सेटिंग्स",
+    "networkUnavailable": "नेटवर्क अनुपलब्ध। अब अफलाइन मोडमा",
+    "networkAvailable": "नेटवर्क पत्ता लाग्यो। अनलाइन मोडमा फर्कनुहोस्",
+    "storybook": "स्टोरीबुक",
+    "logout": "साइन आउट गर्नुहोस्",
+    "helpSupport": "मद्दत / समर्थन",
+    "rememberPassword": "पासवर्ड याद गर्नुहोस्",
+    "rememberPasswordActive": "सक्षम राखिएको लग ईन राख्नुहोस्",
+    "rememberPasswordInactive": "अक्षम राख्नु",
+    "remove": "हटाउनुहोस्",
+    "set": "सेट",
+    "pinCode": "पिन कोड",
+    "enterPin": "पिन प्रविष्ट गर्नुहोस्",
+    "setPin": "नयाँ पिन सेट गर्नुहोस्",
+    "incorrectPin": "गलत पिन",
+    "savedPinCode": "पिन कोड सफलतापूर्वक सुरक्षित गरियो",
+    "removedPinCode": "पिन कोड सफलतापूर्वक हटाइयो",
+    "close": "बन्द",
+    "confirmPin": "कन्फर्मपिन"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "नयाँ सम्पर्क थप्नुहोस्",
+    "subAssignThisContact": "यस सम्पर्कलाई उप-असाइन गर्नुहोस्",
+    "mobile": "फोन",
+    "selectLocations": "स्थानहरू चयन गर्नुहोस्",
+    "selectSources": "स्रोतहरू चयन गर्नुहोस्",
+    "connections": "जडानहरू",
+    "addGroup": "समूह थप्नुहोस्",
+    "addConnection": "जडान थप्नुहोस्",
+    "addBaptizedBy": "द्वारा बप्तिस्मा जोड्नुहोस्",
+    "addBaptized": "बप्‍तिस्मा जोड्नुहोस्",
+    "addCoachedBy": "द्वारा प्रशिक्षित जोड्नुहोस्",
+    "addCoaching": "कोचिंग थप्नुहोस्",
+    "phoneNumber": "फोन नम्बर",
+    "initialComment": "प्रारम्भिक टिप्पणी",
+    "socialMedia": "सामाजिक संजाल",
+    "noContactCommentPlacheHolder": "हाल कुनै सम्पर्क सम्पर्कहरू उपलब्ध छैनन्।",
+    "fullName": {
+      "label": "पुरा नाम",
+      "error": "नाम आवश्यक छ"
+    },
+    "noContactCommentPlacheHolder1": "तपाईंको साइटबाट तिनीहरूलाई प्राप्त गर्न समस्या भएको हुन सक्छ। ताजा गर्न को लागी तल ड्र्याग गर्नुहोस् र पुन: प्रयास गर्नुहोस्।",
+    "noContactCommentPlacheHolderOffline": "तपाईं हाल अफलाईन हुनुहुन्छ। रिफ्रेस गर्न र तपाईंको सम्पर्क टिप्पणी प्राप्त गर्न तपाई वाईफाई वा मोबाईल डाटामा जडित हुनुहुन्छ भनि निश्चित गर्नुहोस्।",
+    "importContact": "एक फोन सम्पर्क आयात गर्नुहोस्",
+    "contactSharedWith": "contactSharedWith",
+    "ageNotSet": "ageNotSet",
+    "contactType": "सम्पर्क प्रकार"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "नयाँ समूह थप्नुहोस्",
+    "selectCoaches": "समूह कोच चयन गर्नुहोस्",
+    "searchGroups": "समूहहरू खोज्नुहोस्",
+    "searchPeerGroups": "सहकर्मी समूहहरू खोज्नुहोस्",
+    "childGroup": "बाल समूह",
+    "searchChildGroups": "बच्चा समूहहरू खोज्नुहोस्",
+    "addMember": "सदस्य थप्नुहोस्",
+    "noGroupCommentPlacheHolder": "वर्तमानमा कुनै पनि समूह टिप्पणीहरू उपलब्ध छैनन्।",
+    "noGroupCommentPlacheHolder1": "तपाईंको साइटबाट तिनीहरूलाई प्राप्त गर्न समस्या भएको हुन सक्छ। ताजा गर्न को लागी तल ड्र्याग गर्नुहोस् र पुन: प्रयास गर्नुहोस्।",
+    "noGroupCommentPlacheHolderOffline": "तपाईं हाल अफलाईन हुनुहुन्छ। रिफ्रेस गर्न र तपाईंको समूह टिप्पणी प्राप्त गर्नका लागि तपाईं वाईफाई वा मोबाईल डाटामा जडित हुनुहुन्छ भनि निश्चित गर्नुहोस्।",
+    "selectLocations": "स्थानहरू चयन गर्नुहोस्",
+    "noMembersMessage": "कुनै सदस्य छैन। यहाँ वा सम्पादन गर्नुहोस् ट्याप गर्नुहोस् यस समूहमा केहि सदस्यहरू थप्नका लागि।",
+    "groupName": {
+      "label": "समूहको नाम",
+      "error": "नाम आवश्यक छ"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "बैठक अनुसूचित",
+      "quick_button_meeting_postponed": "बैठक स्थगित गरियो",
+      "quick_button_meeting_complete": "बैठक पूर्ण भयो"
+    },
+    "memberCount": "सदस्य गणना",
+    "memberList": "सदस्य सूची",
+    "attendance": {
+      "header": "हेडर",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "groupCommentLabel",
+      "groupComment": "समूह कममेन्ट"
+    },
+    "groupSharedWith": "समूहशेडविथ"
+  },
+  "notificationsScreen": {
+    "notifications": "सूचनाहरू",
+    "loadMore": "अधिक लोड गर्नुहोस्",
+    "new": "नयाँ",
+    "unRead": "अपठित",
+    "all": "सबै",
+    "markAll": "सबै मार्क गर्नुहोस्",
+    "dontHaveNotificationsUnread": "अपठित सूचनाहरू छैनन्",
+    "dontHaveNotifications": "कुनै सूचनाहरू छैनन्"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "वर्तमानमा कुनै समूहहरू उपलब्ध छैनन्।",
+    "noGroupPlacheHolder1": "तपाईंको साइटबाट तिनीहरूलाई प्राप्त गर्न समस्या भएको हुन सक्छ। ताजा गर्न को लागी तल ड्र्याग गर्नुहोस् र पुन: प्रयास गर्नुहोस्।",
+    "noGroupPlacheHolderOffline": "तपाईं हाल अफलाईन हुनुहुन्छ। रिफ्रेस गर्न र तपाईंको समूहहरू पाउनको लागि तपाईं वाईफाई वा मोबाइल डाटामा जडित हुनुहुन्छ भनि सुनिश्चित गर्नुहोस्।"
+  },
+  "appRestart": {
+    "message": "निम्न कन्फिगरेसन लागू गर्न अनुप्रयोग पुनः सुरु हुनेछ।",
+    "button": "ठिक छ",
+    "textDirection": "पाठ दिशा",
+    "selectedLanguage": "चयनित भाषा"
+  },
+  "endonym": "नेपाली"
+}

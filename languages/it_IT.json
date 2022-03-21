@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "Codice",
+      "message": "Messaggio",
+      "text": "testo",
+      "noRecords": "nessuna registrazione"
+    },
+    "success": {
+      "save": "Dati salvati con successo! "
+    },
+    "groups": "Gruppi",
+    "details": "Dettagli",
+    "selectPeopleGroups": "Selezioni gruppi di persone",
+    "address": "Indirizzo",
+    "progress": "Progresso",
+    "commentsActivity": "Commenti e attività",
+    "writeYourCommentNoteHere": "Scriva il suo commento o nota qui",
+    "requiredField": "Campo obbligato ",
+    "edit": "Editi",
+    "cancel": "Annullare",
+    "save": "Salvare",
+    "online": "In linea",
+    "offline": "Fuori linea",
+    "language": "Linguaggio",
+    "search": "Cercare",
+    "membersActivity": "Membri",
+    "moreFields": "Altri campi",
+    "nameRequired": "Nome (obbligatorio",
+    "close": "vicino",
+    "editComment": "Modificare",
+    "deleteComment": "Elimina",
+    "delete": "Elimina",
+    "sortBy": "ordina per",
+    "reset": "Ripristina",
+    "apply": "applicare",
+    "showing": "mostrando",
+    "comments": "Commenti",
+    "activity": "attività",
+    "submit": "Invia",
+    "share": "Condividere",
+    "viewOnMobileWeb": "Visualizza sul Web mobile",
+    "shareSettings": "Condividi le impostazioni",
+    "searchUsers": "Cerca utenti",
+    "noFilters": "Nessun filtro",
+    "searchContacts": "Cerca contatti",
+    "selectLocations": "Seleziona località",
+    "other": "altro",
+    "chooseOption": "Scegliere un'opzione",
+    "confirm": "Confermare",
+    "selectDate": "Seleziona data"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "segnaposto",
+      "error": "errore",
+      "errorForgotPass": "Inserisci l'URL per iniziare a recuperare la tua password"
+    },
+    "username": {
+      "label": "Nome utente",
+      "error": "è richiesto il nome utente"
+    },
+    "password": {
+      "label": "Parola d'ordine",
+      "error": "E 'richiesta la password"
+    },
+    "logIn": "Accedere",
+    "forgotPassword": "Ha dimenticato la password",
+    "errors": {
+      "invalidUsername": "nome utente non valido",
+      "incorrectPassword": "password errata",
+      "configurationNeededOn": "Configurazione necessaria su",
+      "mobileAppPluginRequiredOne": "Il plug-in dell'app mobile è necessario e non sembra essere attivato sul tuo Disciple.Tools.",
+      "mobileAppPluginRequiredTwo": "Tocca qui per ulteriori informazioni."
+    }
+  },
+  "contactsScreen": {
+    "contacts": "contatti",
+    "noContactPlacheHolder": "Non ci sono contatti attualmente disponibili.",
+    "noContactPlacheHolder1": "Potrebbe essersi verificato un problema nel recuperarli dal tuo sito. Trascina verso il basso per provare ad aggiornare e riprovare.",
+    "noContactPlacheHolderOffline": "Al momento sei offline. Assicurati di essere connesso al Wi-Fi o ai dati mobili per aggiornare e ottenere i tuoi contatti."
+  },
+  "settingsScreen": {
+    "settings": "impostazioni",
+    "networkUnavailable": "rete non disponibile",
+    "networkAvailable": "networkAvailable",
+    "storybook": "libro di storia",
+    "logout": "disconnettersi",
+    "helpSupport": "supporto",
+    "rememberPassword": "ricordare la password",
+    "rememberPasswordActive": "Mantieni l'accesso abilitato",
+    "rememberPasswordInactive": "Mantieni l'accesso disabilitato",
+    "remove": "rimuovere",
+    "set": "impostato",
+    "pinCode": "Codice PIN",
+    "enterPin": "Inserisci il PIN",
+    "setPin": "Imposta nuovo PIN",
+    "incorrectPin": "erratoPin",
+    "savedPinCode": "Codice PIN salvato con successo!.",
+    "removedPinCode": "Codice PIN rimosso con successo!.",
+    "close": "vicino",
+    "confirmPin": "Conferma il nuovo PIN"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Aggiungi nuovo contatto",
+    "subAssignThisContact": "subAssignThisContact",
+    "mobile": "mobile",
+    "selectLocations": "Seleziona località",
+    "selectSources": "selectSources",
+    "connections": "collegamenti",
+    "addGroup": "aggiungere gruppo",
+    "addConnection": "Aggiungi connessione",
+    "addBaptizedBy": "Aggiungi battezzato da",
+    "addBaptized": "Aggiungi battezzati",
+    "addCoachedBy": "Aggiungi allenato da",
+    "addCoaching": "Aggiungi coaching",
+    "phoneNumber": "numero di telefono",
+    "initialComment": "Commento iniziale",
+    "socialMedia": "Social media",
+    "noContactCommentPlacheHolder": "Non ci sono commenti di contatto attualmente disponibili.",
+    "fullName": {
+      "label": "etichetta",
+      "error": "errore"
+    },
+    "noContactCommentPlacheHolder1": "Potrebbe essersi verificato un problema nel recuperarli dal tuo sito. Trascina verso il basso per provare ad aggiornare e riprovare.",
+    "noContactCommentPlacheHolderOffline": "Al momento sei offline. Assicurati di essere connesso al Wi-Fi o ai dati mobili per aggiornare e ottenere il tuo commento di contatto.",
+    "importContact": "Importa un contatto telefonico",
+    "contactSharedWith": "Questo contatto è condiviso con",
+    "ageNotSet": "Nessuna età impostata",
+    "contactType": "Tipo di contatto"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Aggiungi nuovo gruppo",
+    "selectCoaches": "Seleziona Allenatore di gruppo",
+    "searchGroups": "Cerca gruppi",
+    "searchPeerGroups": "Cerca gruppi di pari",
+    "childGroup": "Gruppo di bambini",
+    "searchChildGroups": "Cerca gruppi di bambini",
+    "addMember": "Aggiungi membro",
+    "noGroupCommentPlacheHolder": "Non ci sono commenti di gruppo attualmente disponibili.",
+    "noGroupCommentPlacheHolder1": "Potrebbe essersi verificato un problema nel recuperarli dal tuo sito. Trascina verso il basso per provare ad aggiornare e riprovare.",
+    "noGroupCommentPlacheHolderOffline": "Sei attualmente offline. Assicurati di essere connesso al Wi-Fi o ai dati mobili per aggiornare e ottenere il commento del tuo gruppo.",
+    "selectLocations": "Seleziona località",
+    "noMembersMessage": "Nessun membro. Tocca qui o su Modifica per aggiungere alcuni membri a questo gruppo.",
+    "groupName": {
+      "label": "etichetta",
+      "error": "errore"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "Riunione programmata",
+      "quick_button_meeting_postponed": "Riunione rinviata",
+      "quick_button_meeting_complete": "Riunione completata"
+    },
+    "memberCount": "Conte membro",
+    "memberList": "lista dei membri",
+    "attendance": {
+      "header": "intestazione",
+      "didAttendComment": "Gruppo frequentato",
+      "didNotAttendComment": "Non ho partecipato al gruppo",
+      "groupCommentLabel": "Commento alla riunione",
+      "groupComment": "Riunione completata"
+    },
+    "groupSharedWith": "Questo gruppo è condiviso con"
+  },
+  "notificationsScreen": {
+    "notifications": "notifiche",
+    "loadMore": "Carica altro",
+    "new": "nuovo",
+    "unRead": "Non letto",
+    "all": "tutti",
+    "markAll": "Segna tutto",
+    "dontHaveNotificationsUnread": "Nessuna notifica non letta",
+    "dontHaveNotifications": "Nessuna notifica"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "Non ci sono gruppi attualmente disponibili.",
+    "noGroupPlacheHolder1": "Potrebbe essersi verificato un problema nel recuperarli dal tuo sito. Trascina verso il basso per provare ad aggiornare e riprovare.",
+    "noGroupPlacheHolderOffline": "Al momento sei offline. Assicurati di essere connesso al Wi-Fi o ai dati mobili per aggiornare e ottenere i tuoi gruppi."
+  },
+  "appRestart": {
+    "message": "Messaggio",
+    "button": "pulsante",
+    "textDirection": "Direzione del testo",
+    "selectedLanguage": "Lingua selezionata"
+  },
+  "endonym": "Italiano"
+}
