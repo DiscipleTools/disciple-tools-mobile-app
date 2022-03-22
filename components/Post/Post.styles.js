@@ -16,6 +16,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     backgroundColor: theme.mode === ThemeConstants.DARK ? theme.highlight : theme.brand.primary,
   },
   label: {
+    color: theme.text.primary,
     //fontWeight: '400',
   },
 });
