@@ -162,7 +162,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "user-alt";
       } else {
         iconType = "MaterialCommunityIcons";
-        iconName = "text-long";
+        iconName = "text";
       }
       break;
     case FieldTypes.NUMBER:
