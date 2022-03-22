@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "Lamba: ",
+      "message": "Sako: ",
+      "text": "rubutu",
+      "noRecords": "baRaura"
+    },
+    "success": {
+      "save": "An adana bayanan cikin nasara!"
+    },
+    "groups": "Kungiyoyi",
+    "details": "Bayanai",
+    "selectPeopleGroups": "Zaɓi Groungiyoyin Mutane",
+    "address": "Adireshin",
+    "progress": "Ci gaba",
+    "commentsActivity": "Bayani da Aiki",
+    "writeYourCommentNoteHere": "Rubuta bayaninka ko bayanin kula anan",
+    "requiredField": "Filin da ake buƙata",
+    "edit": "Shirya",
+    "cancel": "Soke",
+    "save": "Ajiye",
+    "online": "Yanar gizo",
+    "offline": "layi",
+    "language": "Harshe",
+    "search": "Bincika",
+    "membersActivity": "Wakilai",
+    "moreFields": "Eldsarin filaye",
+    "nameRequired": "Suna ake buƙata",
+    "close": "Rufe",
+    "editComment": "Shirya",
+    "deleteComment": "Share",
+    "delete": "goge",
+    "sortBy": "kasa",
+    "reset": "sake saitawa",
+    "apply": "nema",
+    "showing": "nuna",
+    "comments": "tsokaci",
+    "activity": "aiki",
+    "submit": "sallama",
+    "share": "raba",
+    "viewOnMobileWeb": "Duba akan gidan yanar sadarwar hannu",
+    "shareSettings": "Rabawa",
+    "searchUsers": "bincikaMai amfani",
+    "noFilters": "noFilters",
+    "searchContacts": "bincika lambobin sadarwa",
+    "selectLocations": "Zaɓi wurare",
+    "other": "wasu",
+    "chooseOption": "Zaɓi",
+    "confirm": "tabbatar",
+    "selectDate": "Zaɓi Kwanan wata"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "Misali. myteam.mydomain.com",
+      "error": "Ana buƙatar yanki",
+      "errorForgotPass": "Da fatan za a shigar da URL don fara dawo da kalmar sirri"
+    },
+    "username": {
+      "label": "Sunan mai amfani",
+      "error": "Ana buƙatar sunan mai amfani"
+    },
+    "password": {
+      "label": "Kalmar sirri",
+      "error": "Ana buƙatar kalmar wucewa"
+    },
+    "logIn": "Shiga",
+    "forgotPassword": "An rasa kalmar shiga?",
+    "errors": {
+      "invalidUsername": "Sunan mai amfani Duba kuma ko gwada adireshin imel ɗinku.",
+      "incorrectPassword": "Kalmar sirri da ka shigar don sunan mai amfani ba daidai ba ne",
+      "configurationNeededOn": "sanyiNeededOn",
+      "mobileAppPluginRequiredOne": "Wayar SalulaPPugugRequiredOne",
+      "mobileAppPluginRequiredTwo": "Wayar salulaPPuguginAn BuTata biyu"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "Adiresoshi",
+    "noContactPlacheHolder": "Babu wasu lambobin sadarwa a halin yanzu.",
+    "noContactPlacheHolder1": "Wataƙila akwai matsala samun su daga rukunin yanar gizon ku. Ja ƙasa don ƙoƙari don wartsakewa da sake gwadawa.",
+    "noContactPlacheHolderOffline": "A halin yanzu kana kan layi Tabbatar an haɗa ku zuwa wifi ko bayanan wayar hannu don shakatawa da samun lambobinku."
+  },
+  "settingsScreen": {
+    "settings": "Saiti",
+    "networkUnavailable": "Babu hanyar sadarwa. Yanzu a Yanayin KYAUTATA",
+    "networkAvailable": "An gano cibiyar sadarwa. Komawa yanayin KYAUTA",
+    "storybook": "Littafin Labari",
+    "logout": "Shiga ciki",
+    "helpSupport": "Taimako / Tallafi",
+    "rememberPassword": "Tuna Kalmar wucewa",
+    "rememberPasswordActive": "Cire shiga ciki",
+    "rememberPasswordInactive": "Cire shiga cikin aka kashe",
+    "remove": "Cire",
+    "set": "Saita",
+    "pinCode": "Lambar PIN",
+    "enterPin": "Shigar da PIN",
+    "setPin": "Saita sabon PIN",
+    "incorrectPin": "PIN mara daidai",
+    "savedPinCode": "An adana lambar PIN cikin nasara",
+    "removedPinCode": "An cire lambar PIN cikin nasara",
+    "close": "Kusa",
+    "confirmPin": "tabbatarPin"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Sanya Sabon Saduwa",
+    "subAssignThisContact": "Sub-sanya wannan lambar",
+    "mobile": "Waya",
+    "selectLocations": "Zaɓi Wurare",
+    "selectSources": "Zaɓi tushe",
+    "connections": "Haɗin kai",
+    "addGroup": "Groupara rukuni",
+    "addConnection": "San Haɗa",
+    "addBaptizedBy": "Baptizedara yi masa baftisma",
+    "addBaptized": "Baptizedara yi masa baftisma",
+    "addCoachedBy": "Sanya horar da",
+    "addCoaching": "Coara koyawa",
+    "phoneNumber": "Lambar tarho",
+    "initialComment": "Bayanin Tun farko",
+    "socialMedia": "Social Media",
+    "noContactCommentPlacheHolder": "Babu wasu bayanan tuntuba da ake da su a halin yanzu.",
+    "fullName": {
+      "label": "Cikakken suna",
+      "error": "Ana bukatar suna"
+    },
+    "noContactCommentPlacheHolder1": "Wataƙila akwai matsala samun su daga rukunin yanar gizon ku. Ja ƙasa don ƙoƙari don wartsakewa da sake gwadawa.",
+    "noContactCommentPlacheHolderOffline": "A halin yanzu kana kan layi Tabbatar an haɗa ku zuwa wifi ko bayanan wayar hannu don shakatawa da samun ra'ayi na tuntuɓarku.",
+    "importContact": "Shigo da lambar waya",
+    "contactSharedWith": "SaduwaSharedWith",
+    "ageNotSet": "shekaraNabaSet",
+    "contactType": "Nau'in Sadarwa"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Sanya Sabuwar Kungiyar",
+    "selectCoaches": "Zaɓi Kocin Kungiya",
+    "searchGroups": "Searchungiyoyin bincike",
+    "searchPeerGroups": "Binciken eran ƙungiyoyi",
+    "childGroup": "Ungiyar Yara",
+    "searchChildGroups": "Binciko kungiyoyin yara",
+    "addMember": "Memara Member",
+    "noGroupCommentPlacheHolder": "Babu wasu bayanan ra'ayoyi a halin yanzu.",
+    "noGroupCommentPlacheHolder1": "Wataƙila akwai matsala samun su daga rukunin yanar gizon ku. Ja ƙasa don ƙoƙari don wartsakewa da sake gwadawa.",
+    "noGroupCommentPlacheHolderOffline": "A halin yanzu kana kan layi Tabbatar an haɗa ku zuwa wifi ko bayanan wayar hannu don shakatawa da samun ra'ayoyin ku.",
+    "selectLocations": "Zaɓi Wurare",
+    "noMembersMessage": "Babu Membobi",
+    "groupName": {
+      "label": "Sunan Kungiya",
+      "error": "Ana bukatar suna"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "An tsara Taron",
+      "quick_button_meeting_postponed": "An fasa Taro",
+      "quick_button_meeting_complete": "An Kammala Taro"
+    },
+    "memberCount": "Lambar memba",
+    "memberList": "jerin mambobi",
+    "attendance": {
+      "header": "taken kai",
+      "didAttendComment": "yiAnFarfafawa",
+      "didNotAttendComment": "yiBataAnTattaunawa",
+      "groupCommentLabel": "rukuniCommentLabel",
+      "groupComment": "rukuniComment"
+    },
+    "groupSharedWith": "kungiyarSharedWith"
+  },
+  "notificationsScreen": {
+    "notifications": "Fadakarwa",
+    "loadMore": "Load Moreari",
+    "new": "Sabon",
+    "unRead": "Ba a Karanta ba",
+    "all": "Duk",
+    "markAll": "Alama Duk",
+    "dontHaveNotificationsUnread": "Ba a karanta sanarwar ba",
+    "dontHaveNotifications": "Babu sanarwar"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "Babu wasu kungiyoyi a halin yanzu.",
+    "noGroupPlacheHolder1": "Wataƙila akwai matsala samun su daga rukunin yanar gizon ku. Ja ƙasa don ƙoƙari don wartsakewa da sake gwadawa.",
+    "noGroupPlacheHolderOffline": "A halin yanzu kana kan layi Tabbatar an haɗa ku zuwa wifi ko bayanan wayar hannu don shakatawa da samun rukunin ku."
+  },
+  "appRestart": {
+    "message": "Za a sake aiwatar da aikace-aikacen don amfani da daidaitawar mai zuwa:",
+    "button": "Ko",
+    "textDirection": "Rubutun rubutu",
+    "selectedLanguage": "Yaren da aka zaba"
+  },
+  "endonym": "halshen Hausa"
+}

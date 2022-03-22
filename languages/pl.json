@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "Kod: ",
+      "message": "Wiadomość: ",
+      "text": "Błąd: ",
+      "noRecords": "Nie można znaleźć Twojego rekordu w lokalnej pamięci urządzenia. Albo: 1) Utwórz nowy rekord i połącz w trybie online, albo 2) Wejdź do trybu online i spróbuj ponownie wyszukać."
+    },
+    "success": {
+      "save": "Dane zostały pomyślnie zapisane!"
+    },
+    "groups": "Grupy",
+    "details": "Detale",
+    "selectPeopleGroups": "Wybierz grupy osób",
+    "address": "Adres",
+    "progress": "Postęp",
+    "commentsActivity": "Komentarze i aktywność",
+    "writeYourCommentNoteHere": "Napisz tutaj swój komentarz lub notatkę",
+    "requiredField": "Pole wymagane",
+    "edit": "Edytować",
+    "cancel": "Anulować",
+    "save": "Zapisać",
+    "online": "online",
+    "offline": "Offline",
+    "language": "Język",
+    "search": "Szukaj",
+    "membersActivity": "Członkowie",
+    "moreFields": "Więcej pól",
+    "nameRequired": "Imię (wymagane",
+    "close": "Blisko",
+    "editComment": "Edytować",
+    "deleteComment": "Kasować",
+    "delete": "Kasować",
+    "sortBy": "Sortowanie według",
+    "reset": "Resetowanie",
+    "apply": "Zastosować",
+    "showing": "Seans",
+    "comments": "Uwagi",
+    "activity": "Działalność",
+    "submit": "Składać",
+    "share": "Udział",
+    "viewOnMobileWeb": "Wyświetl w przeglądarce mobilnej",
+    "shareSettings": "Udostępnij ustawienia",
+    "searchUsers": "Szukaj użytkowników",
+    "noFilters": "Bez filtrów",
+    "searchContacts": "Szukać kontaktów",
+    "selectLocations": "Wybierz lokalizacje",
+    "other": "Inne",
+    "chooseOption": "Wybierz opcję",
+    "confirm": "Potwierdzać",
+    "selectDate": "Wybierz datę"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "Np. mójzespół.moja_domena.com",
+      "error": "Domena jest wymagana",
+      "errorForgotPass": "Wprowadź adres URL, aby rozpocząć odzyskiwanie hasła"
+    },
+    "username": {
+      "label": "Nazwa użytkownika",
+      "error": "Wymagana jest nazwa użytkownika"
+    },
+    "password": {
+      "label": "Hasło",
+      "error": "Wymagane jest hasło"
+    },
+    "logIn": "Zaloguj sie",
+    "forgotPassword": "Zgubiłeś swoje hasło?",
+    "errors": {
+      "invalidUsername": "Nieznana nazwa użytkownika. Sprawdź ponownie lub wypróbuj swój adres e-mail.",
+      "incorrectPassword": "Wprowadzone hasło dla nazwy użytkownika jest nieprawidłowe",
+      "configurationNeededOn": "Konieczna konfiguracja",
+      "mobileAppPluginRequiredOne": "Wtyczka aplikacji mobilnej jest wymagana i nie wydaje się być aktywowana w twoim Disciple.Tools.",
+      "mobileAppPluginRequiredTwo": "Kliknij tutaj, aby uzyskać więcej informacji."
+    }
+  },
+  "contactsScreen": {
+    "contacts": "Łączność",
+    "noContactPlacheHolder": "Obecnie nie ma żadnych dostępnych kontaktów.",
+    "noContactPlacheHolder1": "Mógł wystąpić problem z pobraniem ich z Twojej witryny. Przeciągnij w dół, aby spróbować odświeżyć, i spróbuj ponownie.",
+    "noContactPlacheHolderOffline": "Jesteś obecnie offline. Upewnij się, że masz połączenie z Wi-Fi lub komórkową transmisją danych, aby odświeżyć i uzyskać kontakty."
+  },
+  "settingsScreen": {
+    "settings": "Ustawienia",
+    "networkUnavailable": "Sieć niedostępna. Teraz w trybie OFFLINE",
+    "networkAvailable": "Wykryto sieć. Powrót do trybu ONLINE",
+    "storybook": "Książka z bajkami",
+    "logout": "Wyloguj się",
+    "helpSupport": "Pomoc wsparcie",
+    "rememberPassword": "Zapamiętaj hasło",
+    "rememberPasswordActive": "Pozostań zalogowany włączony",
+    "rememberPasswordInactive": "Pozostawaj zalogowany wyłączony",
+    "remove": "Usunąć",
+    "set": "Ustawić",
+    "pinCode": "Kod PIN",
+    "enterPin": "Wpisz PIN",
+    "setPin": "Ustaw nowy kod PIN",
+    "incorrectPin": "Nieprawidłowy PIN",
+    "savedPinCode": "Kod PIN został pomyślnie zapisany!.",
+    "removedPinCode": "Kod PIN został pomyślnie usunięty!.",
+    "close": "Blisko",
+    "confirmPin": "Potwierdź nowy kod PIN"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "Dodaj nowy kontakt",
+    "subAssignThisContact": "Podprzypisz ten kontakt",
+    "mobile": "Telefon",
+    "selectLocations": "Wybierz lokalizacje",
+    "selectSources": "Wybierz źródła",
+    "connections": "Znajomości",
+    "addGroup": "Dodaj grupę",
+    "addConnection": "Dodaj połączenie",
+    "addBaptizedBy": "Dodaj ochrzczony przez",
+    "addBaptized": "Dodaj ochrzczonych",
+    "addCoachedBy": "Dodaj trenera",
+    "addCoaching": "Dodaj coaching",
+    "phoneNumber": "Numer telefonu",
+    "initialComment": "Wstępny komentarz",
+    "socialMedia": "Media społecznościowe",
+    "noContactCommentPlacheHolder": "Obecnie nie ma dostępnych żadnych komentarzy kontaktowych.",
+    "fullName": {
+      "label": "Pełne imię i nazwisko",
+      "error": "imie jest wymagane"
+    },
+    "noContactCommentPlacheHolder1": "Mógł wystąpić problem z pobraniem ich z Twojej witryny. Przeciągnij w dół, aby spróbować odświeżyć, i spróbuj ponownie.",
+    "noContactCommentPlacheHolderOffline": "Jesteś obecnie offline. Upewnij się, że masz połączenie z Wi-Fi lub komórkową transmisją danych, aby odświeżyć i uzyskać komentarz do kontaktu.",
+    "importContact": "Importuj kontakt telefoniczny",
+    "contactSharedWith": "Ten kontakt jest udostępniany",
+    "ageNotSet": "Brak ustawionego wieku",
+    "contactType": "Typ kontaktu"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "Dodaj nową grupę",
+    "selectCoaches": "Wybierz trenera grupy",
+    "searchGroups": "Wyszukaj grupy",
+    "searchPeerGroups": "Wyszukaj grupy porównawcze",
+    "childGroup": "Grupa dzieci",
+    "searchChildGroups": "Wyszukaj grupy podrzędne",
+    "addMember": "Dodaj członka",
+    "noGroupCommentPlacheHolder": "Obecnie nie ma dostępnych żadnych komentarzy grupowych.",
+    "noGroupCommentPlacheHolder1": "Mógł wystąpić problem z pobraniem ich z Twojej witryny. Przeciągnij w dół, aby spróbować odświeżyć, i spróbuj ponownie.",
+    "noGroupCommentPlacheHolderOffline": "Jesteś obecnie offline. Upewnij się, że masz połączenie z siecią Wi-Fi lub komórkową transmisją danych, aby odświeżyć i uzyskać komentarz grupowy.",
+    "selectLocations": "Wybierz lokalizacje",
+    "noMembersMessage": "Brak członków. Dotknij tutaj lub Edytuj, aby dodać niektórych członków do tej grupy.",
+    "groupName": {
+      "label": "Nazwa grupy",
+      "error": "imie jest wymagane"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "Zaplanowane spotkanie",
+      "quick_button_meeting_postponed": "Spotkanie przełożone",
+      "quick_button_meeting_complete": "Spotkanie zakończone"
+    },
+    "memberCount": "Liczba członków",
+    "memberList": "Lista członków",
+    "attendance": {
+      "header": "Obecność na spotkaniu",
+      "didAttendComment": "Grupa uczęszczająca",
+      "didNotAttendComment": "Nie uczestniczyłem w grupie",
+      "groupCommentLabel": "Komentarz do spotkania",
+      "groupComment": "Spotkanie zakończone"
+    },
+    "groupSharedWith": "Ta grupa jest udostępniana"
+  },
+  "notificationsScreen": {
+    "notifications": "Powiadomienia",
+    "loadMore": "Załaduj więcej",
+    "new": "Nowy",
+    "unRead": "nieprzeczytane",
+    "all": "Wszystko",
+    "markAll": "Zaznacz wszystko",
+    "dontHaveNotificationsUnread": "Brak nieprzeczytanych powiadomień",
+    "dontHaveNotifications": "Brak powiadomień"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "Obecnie nie ma żadnych dostępnych grup.",
+    "noGroupPlacheHolder1": "Mógł wystąpić problem z pobraniem ich z Twojej witryny. Przeciągnij w dół, aby spróbować odświeżyć, i spróbuj ponownie.",
+    "noGroupPlacheHolderOffline": "Jesteś obecnie offline. Upewnij się, że masz połączenie z Wi-Fi lub komórkową transmisją danych, aby odświeżyć i pobrać swoje grupy."
+  },
+  "appRestart": {
+    "message": "Aplikacja zostanie ponownie uruchomiona, aby zastosować następującą konfigurację:",
+    "button": "Ok",
+    "textDirection": "Kierunek tekstu",
+    "selectedLanguage": "Wybrany język"
+  },
+  "endonym": "Polski"
+}

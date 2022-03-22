@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "ਕੋਡ: ",
+      "message": "ਸੁਨੇਹਾ: ",
+      "text": "ਟੈਕਸਟ",
+      "noRecords": "ਕੋਈ ਰਿਕਾਰਡ ਨਹੀਂ"
+    },
+    "success": {
+      "save": "ਡਾਟਾ ਸਫਲਤਾਪੂਰਵਕ ਸੁਰੱਖਿਅਤ ਕੀਤਾ ਗਿਆ!"
+    },
+    "groups": "ਸਮੂਹ",
+    "details": "ਵੇਰਵਾ",
+    "selectPeopleGroups": "ਲੋਕ ਸਮੂਹ ਚੁਣੋ",
+    "address": "ਪਤਾ",
+    "progress": "ਤਰੱਕੀ",
+    "commentsActivity": "ਟਿੱਪਣੀਆਂ ਅਤੇ ਗਤੀਵਿਧੀ",
+    "writeYourCommentNoteHere": "ਆਪਣੀ ਟਿੱਪਣੀ ਜਾਂ ਨੋਟ ਇੱਥੇ ਲਿਖੋ",
+    "requiredField": "ਲਾਜ਼ਮੀ ਖ਼ਾਨਾ",
+    "edit": "ਸੰਪਾਦਿਤ ਕਰੋ",
+    "cancel": "ਰੱਦ ਕਰੋ",
+    "save": "ਸੇਵ",
+    "online": "ਨਲਾਈਨ",
+    "offline": "offlineਫਲਾਈਨ",
+    "language": "ਭਾਸ਼ਾ",
+    "search": "ਖੋਜ",
+    "membersActivity": "ਸਦੱਸ",
+    "moreFields": "ਹੋਰ ਖੇਤਰ",
+    "nameRequired": "ਨਾਮ ਲੋੜੀਂਦਾ ਹੈ",
+    "close": "ਬੰਦ ਕਰੋ",
+    "editComment": "ਸੰਪਾਦਿਤ ਕਰੋ",
+    "deleteComment": "ਮਿਟਾਓ",
+    "delete": "ਮਿਟਾਓ",
+    "sortBy": "ਦੇ ਨਾਲ ਕ੍ਰਮਬੱਧ",
+    "reset": "ਰੀਸੈੱਟ",
+    "apply": "ਲਾਗੂ ਕਰੋ",
+    "showing": "ਦਿਖਾ ਰਿਹਾ ਹੈ",
+    "comments": "ਟਿੱਪਣੀਆਂ",
+    "activity": "ਸਰਗਰਮੀ",
+    "submit": "ਜਮ੍ਹਾਂ ਕਰੋ",
+    "share": "ਸ਼ੇਅਰ",
+    "viewOnMobileWeb": "ਮੋਬਾਈਲ ਵੈਬ ਤੇ ਵੇਖੋ",
+    "shareSettings": "ਸ਼ੇਅਰ ਸੈਟਿੰਗਜ਼",
+    "searchUsers": "ਸਰਚ",
+    "noFilters": "noFilters",
+    "searchContacts": "ਸਰਚ ਸੰਪਰਕ",
+    "selectLocations": "ਚੁਣੋ",
+    "other": "ਹੋਰ",
+    "chooseOption": "ਚੋਣ",
+    "confirm": "ਪੁਸ਼ਟੀ ਕਰੋ",
+    "selectDate": "ਮਿਤੀ ਚੁਣੋ"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "ਯੂਆਰਐਲ",
+      "placeholder": "ਜਿਵੇਂ ਕਿ myteam.mydomain.com",
+      "error": "ਡੋਮੇਨ ਲੋੜੀਂਦਾ ਹੈ",
+      "errorForgotPass": "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਪਾਸਵਰਡ ਦੀ ਮੁੜ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ URL ਦਾਖਲ ਕਰੋ"
+    },
+    "username": {
+      "label": "ਉਪਯੋਗਕਰਤਾ ਨਾਮ",
+      "error": "ਉਪਯੋਗਕਰਤਾ ਨਾਮ ਲਾਜ਼ਮੀ ਹੈ"
+    },
+    "password": {
+      "label": "ਪਾਸਵਰਡ",
+      "error": "ਪਾਸਵਰਡ ਲੋੜੀਂਦਾ ਹੈ"
+    },
+    "logIn": "ਲਾਗਿਨ",
+    "forgotPassword": "ਆਪਣਾ ਪਾਸਵਰਡ ਗੁਆ ਦਿੱਤਾ ਹੈ?",
+    "errors": {
+      "invalidUsername": "ਅਣਜਾਣ ਯੂਜ਼ਰ ਦੁਬਾਰਾ ਜਾਂਚ ਕਰੋ ਜਾਂ ਆਪਣੇ ਈਮੇਲ ਪਤੇ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ.",
+      "incorrectPassword": "ਪਾਸਵਰਡ ਜੋ ਤੁਸੀਂ ਉਪਭੋਗਤਾ ਨਾਮ ਲਈ ਦਿੱਤਾ ਹੈ ਗਲਤ ਹੈ",
+      "configurationNeededOn": "configurationNeededOn",
+      "mobileAppPluginRequiredOne": "ਮੋਬਾਈਲ ਐਪਪਲੱਗਇਨ ਦੀ ਲੋੜ",
+      "mobileAppPluginRequiredTwo": "ਮੋਬਾਈਲ ਐਪਪਲੱਗਇਨ ਦੀ ਲੋੜ"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "ਸੰਪਰਕ",
+    "noContactPlacheHolder": "ਇਸ ਸਮੇਂ ਕੋਈ ਵੀ ਸੰਪਰਕ ਉਪਲਬਧ ਨਹੀਂ ਹਨ.",
+    "noContactPlacheHolder1": "ਤੁਹਾਡੀ ਸਾਈਟ ਤੋਂ ਪ੍ਰਾਪਤ ਕਰਨ ਵਿੱਚ ਕੋਈ ਸਮੱਸਿਆ ਹੋ ਸਕਦੀ ਹੈ. ਤਾਜ਼ਾ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰਨ ਲਈ ਹੇਠਾਂ ਖਿੱਚੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ.",
+    "noContactPlacheHolderOffline": "ਤੁਸੀਂ ਇਸ ਸਮੇਂ offlineਫਲਾਈਨ ਹੋ. ਇਹ ਸੁਨਿਸ਼ਚਿਤ ਕਰੋ ਕਿ ਤੁਸੀਂ ਆਪਣੇ ਸੰਪਰਕਾਂ ਨੂੰ ਤਾਜ਼ਾ ਕਰਨ ਅਤੇ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਫਾਈ ਜਾਂ ਮੋਬਾਈਲ ਡਾਟਾ ਨਾਲ ਜੁੜੇ ਹੋ."
+  },
+  "settingsScreen": {
+    "settings": "ਸੈਟਿੰਗਜ਼",
+    "networkUnavailable": "ਨੈਟਵਰਕ ਉਪਲਬਧ ਨਹੀਂ ਹੈ. ਹੁਣ Fਫਲਾਈਨ ਮੋਡ ਵਿੱਚ",
+    "networkAvailable": "ਨੈਟਵਰਕ ਖੋਜਿਆ ਗਿਆ ਵਾਪਸ LINEਨਲਾਈਨ ਮੋਡ ਤੇ",
+    "storybook": "ਕਹਾਣੀ ਕਿਤਾਬ",
+    "logout": "ਸਾਇਨ ਆਉਟ",
+    "helpSupport": "ਸਹਾਇਤਾ / ਸਹਾਇਤਾ",
+    "rememberPassword": "ਯਾਦ ਰੱਖੋ ਪਾਸਵਰਡ",
+    "rememberPasswordActive": "ਸਮਰੱਥ ਲਾਗਇਨ ਰੱਖੋ",
+    "rememberPasswordInactive": "ਲਾਗਇਨ ਰੱਖੋ ਅਯੋਗ",
+    "remove": "ਹਟਾਓ",
+    "set": "ਸੈੱਟ ਕਰੋ",
+    "pinCode": "ਪਿੰਨ ਕੋਡ",
+    "enterPin": "ਪਿੰਨ ਦਰਜ ਕਰੋ",
+    "setPin": "ਨਵਾਂ ਪਿੰਨ ਸੈਟ ਕਰੋ",
+    "incorrectPin": "ਗ਼ਲਤ ਪਿੰਨ",
+    "savedPinCode": "ਪਿੰਨ ਕੋਡ ਸਫਲਤਾਪੂਰਵਕ ਸੁਰੱਖਿਅਤ ਕੀਤਾ ਗਿਆ",
+    "removedPinCode": "ਪਿੰਨ ਕੋਡ ਸਫਲਤਾਪੂਰਵਕ ਹਟਾਇਆ ਗਿਆ",
+    "close": "ਬੰਦ ਕਰੋ",
+    "confirmPin": "ਪੱਕਾ ਪਿੰਨ"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "ਨਵਾਂ ਸੰਪਰਕ ਸ਼ਾਮਲ ਕਰੋ",
+    "subAssignThisContact": "ਇਸ ਸੰਪਰਕ ਨੂੰ ਉਪ-ਨਿਰਧਾਰਤ ਕਰੋ",
+    "mobile": "ਮੋਬਾਈਲ",
+    "selectLocations": "ਸਥਾਨ ਚੁਣੋ",
+    "selectSources": "ਸਰੋਤ ਦੀ ਚੋਣ ਕਰੋ",
+    "connections": "ਕੁਨੈਕਸ਼ਨ",
+    "addGroup": "ਸਮੂਹ ਸ਼ਾਮਲ ਕਰੋ",
+    "addConnection": "ਕੁਨੈਕਸ਼ਨ ਸ਼ਾਮਲ ਕਰੋ",
+    "addBaptizedBy": "ਦੁਆਰਾ ਬਪਤਿਸਮਾ ਸ਼ਾਮਲ ਕਰੋ",
+    "addBaptized": "ਬਪਤਿਸਮਾ ਸ਼ਾਮਲ ਕਰੋ",
+    "addCoachedBy": "ਦੁਆਰਾ ਕੋਚ ਸ਼ਾਮਲ ਕਰੋ",
+    "addCoaching": "ਕੋਚਿੰਗ ਸ਼ਾਮਲ ਕਰੋ",
+    "phoneNumber": "ਫੋਨ ਨੰਬਰ",
+    "initialComment": "ਸ਼ੁਰੂਆਤੀ ਟਿੱਪਣੀ",
+    "socialMedia": "ਸੋਸ਼ਲ ਮੀਡੀਆ",
+    "noContactCommentPlacheHolder": "ਇਸ ਸਮੇਂ ਕੋਈ ਸੰਪਰਕ ਟਿੱਪਣੀਆਂ ਉਪਲਬਧ ਨਹੀਂ ਹਨ.",
+    "fullName": {
+      "label": "ਪੂਰਾ ਨਾਂਮ",
+      "error": "ਨਾਮ ਲੋੜੀਂਦਾ ਹੈ"
+    },
+    "noContactCommentPlacheHolder1": "ਤੁਹਾਡੀ ਸਾਈਟ ਤੋਂ ਪ੍ਰਾਪਤ ਕਰਨ ਵਿੱਚ ਕੋਈ ਸਮੱਸਿਆ ਹੋ ਸਕਦੀ ਹੈ. ਤਾਜ਼ਾ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰਨ ਲਈ ਹੇਠਾਂ ਖਿੱਚੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ.",
+    "noContactCommentPlacheHolderOffline": "ਤੁਸੀਂ ਇਸ ਸਮੇਂ offlineਫਲਾਈਨ ਹੋ. ਇਹ ਸੁਨਿਸ਼ਚਿਤ ਕਰੋ ਕਿ ਤੁਸੀਂ ਆਪਣੀ ਸੰਪਰਕ ਟਿੱਪਣੀ ਨੂੰ ਤਾਜ਼ਾ ਕਰਨ ਅਤੇ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਫਾਈ ਜਾਂ ਮੋਬਾਈਲ ਡਾਟਾ ਨਾਲ ਜੁੜੇ ਹੋ.",
+    "importContact": "ਇੱਕ ਫ਼ੋਨ ਸੰਪਰਕ ਆਯਾਤ ਕਰੋ",
+    "contactSharedWith": "ਸੰਪਰਕ",
+    "ageNotSet": "ਏਜਨੋਟਸੈੱਟ",
+    "contactType": "ਸੰਪਰਕ ਕਿਸਮ"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "ਨਵਾਂ ਸਮੂਹ ਸ਼ਾਮਲ ਕਰੋ",
+    "selectCoaches": "ਸਮੂਹ ਕੋਚ ਦੀ ਚੋਣ ਕਰੋ",
+    "searchGroups": "ਖੋਜ ਸਮੂਹ",
+    "searchPeerGroups": "ਪੀਅਰ ਸਮੂਹਾਂ ਦੀ ਖੋਜ ਕਰੋ",
+    "childGroup": "ਚਾਈਲਡ ਗਰੁੱਪ",
+    "searchChildGroups": "ਚਾਈਲਡ ਗਰੁੱਪ ਲੱਭੋ",
+    "addMember": "ਸਦੱਸ ਸ਼ਾਮਲ ਕਰੋ",
+    "noGroupCommentPlacheHolder": "ਇਸ ਵੇਲੇ ਕੋਈ ਸਮੂਹ ਟਿੱਪਣੀਆਂ ਉਪਲਬਧ ਨਹੀਂ ਹਨ.",
+    "noGroupCommentPlacheHolder1": "ਤੁਹਾਡੀ ਸਾਈਟ ਤੋਂ ਪ੍ਰਾਪਤ ਕਰਨ ਵਿੱਚ ਕੋਈ ਸਮੱਸਿਆ ਹੋ ਸਕਦੀ ਹੈ. ਤਾਜ਼ਾ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰਨ ਲਈ ਹੇਠਾਂ ਖਿੱਚੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ.",
+    "noGroupCommentPlacheHolderOffline": "ਤੁਸੀਂ ਇਸ ਸਮੇਂ offlineਫਲਾਈਨ ਹੋ. ਇਹ ਸੁਨਿਸ਼ਚਿਤ ਕਰੋ ਕਿ ਤੁਸੀਂ ਆਪਣੀ ਸਮੂਹ ਦੀ ਟਿੱਪਣੀ ਨੂੰ ਤਾਜ਼ਾ ਕਰਨ ਅਤੇ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਫਾਈ ਜਾਂ ਮੋਬਾਈਲ ਡਾਟਾ ਨਾਲ ਜੁੜੇ ਹੋ.",
+    "selectLocations": "ਸਥਾਨ ਚੁਣੋ",
+    "noMembersMessage": "ਕੋਈ ਮੈਂਬਰ ਨਹੀਂ",
+    "groupName": {
+      "label": "ਸਮੂਹ ਦਾ ਨਾਮ",
+      "error": "ਨਾਮ ਲੋੜੀਂਦਾ ਹੈ"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "ਬੈਠਕ ਤਹਿ",
+      "quick_button_meeting_postponed": "ਮੀਟਿੰਗ ਮੁਲਤਵੀ ਕੀਤੀ ਗਈ",
+      "quick_button_meeting_complete": "ਮੀਟਿੰਗ ਪੂਰੀ"
+    },
+    "memberCount": "ਸਦੱਸਤਾ",
+    "memberList": "ਸਦੱਸ ਸੂਚੀ",
+    "attendance": {
+      "header": "ਸਿਰਲੇਖ",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "ਗਰੁੱਪਕੁਮੈਂਟਲ ਲੇਬਲ",
+      "groupComment": "ਸਮੂਹ"
+    },
+    "groupSharedWith": "ਸਮੂਹ"
+  },
+  "notificationsScreen": {
+    "notifications": "ਨੋਟੀਫਿਕੇਸ਼ਨ",
+    "loadMore": "ਹੋਰ ਲੋਡ ਕਰ",
+    "new": "ਨਵਾਂ",
+    "unRead": "ਅਨਪੜ੍ਹ",
+    "all": "ਸਾਰੇ",
+    "markAll": "ਸਾਰੇ ਮਾਰਕ ਕਰੋ",
+    "dontHaveNotificationsUnread": "ਕੋਈ ਵੀ ਸੂਚਨਾ ਨਾ ਪੜ੍ਹੀ",
+    "dontHaveNotifications": "ਕੋਈ ਸੂਚਨਾਵਾਂ ਨਹੀਂ"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "ਇਸ ਸਮੇਂ ਇੱਥੇ ਕੋਈ ਸਮੂਹ ਉਪਲਬਧ ਨਹੀਂ ਹੈ.",
+    "noGroupPlacheHolder1": "ਤੁਹਾਡੀ ਸਾਈਟ ਤੋਂ ਉਨ੍ਹਾਂ ਨੂੰ ਪ੍ਰਾਪਤ ਕਰਨ ਵਿੱਚ ਕੋਈ ਸਮੱਸਿਆ ਹੋ ਸਕਦੀ ਹੈ. ਤਾਜ਼ਾ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰਨ ਲਈ ਹੇਠਾਂ ਖਿੱਚੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ.",
+    "noGroupPlacheHolderOffline": "ਤੁਸੀਂ ਇਸ ਸਮੇਂ offlineਫਲਾਈਨ ਹੋ. ਇਹ ਸੁਨਿਸ਼ਚਿਤ ਕਰੋ ਕਿ ਤੁਸੀਂ ਆਪਣੇ ਸਮੂਹਾਂ ਨੂੰ ਤਾਜ਼ਾ ਕਰਨ ਅਤੇ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਫਾਈ ਜਾਂ ਮੋਬਾਈਲ ਡਾਟਾ ਨਾਲ ਜੁੜੇ ਹੋ."
+  },
+  "appRestart": {
+    "message": "ਹੇਠ ਦਿੱਤੀ ਕੌਂਫਿਗਰੇਸ਼ਨ ਲਾਗੂ ਕਰਨ ਲਈ ਐਪਲੀਕੇਸ਼ਨ ਦੁਬਾਰਾ ਅਰੰਭ ਕੀਤੀ ਜਾਏਗੀ:",
+    "button": "ਠੀਕ ਹੈ",
+    "textDirection": "ਟੈਕਸਟ ਦਿਸ਼ਾ",
+    "selectedLanguage": "ਚੁਣੀ ਗਈ ਭਾਸ਼ਾ"
+  },
+  "endonym": "ਪੰਜਾਬੀ"
+}

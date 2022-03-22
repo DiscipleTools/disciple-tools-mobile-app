@@ -39,7 +39,7 @@
     "activity": "aktivnost",
     "submit": "podnijeti",
     "share": "udio",
-    "viewOnMobileWeb": "viewOnMobileWeb",
+    "viewOnMobileWeb": "Pogledajte na mobilnom webu",
     "shareSettings": "shareSettings",
     "searchUsers": "searchUsers",
     "noFilters": "noFilters",
@@ -47,7 +47,8 @@
     "selectLocations": "selectLocations",
     "other": "drugo",
     "chooseOption": "chooseOption",
-    "confirm": "potvrdi"
+    "confirm": "potvrdi",
+    "selectDate": "Odaberite Datum"
   },
   "loginScreen": {
     "domain": {
@@ -124,9 +125,10 @@
     },
     "noContactCommentPlacheHolder1": "Možda je došlo do problema pri preuzimanju s vaše web stranice. Povucite prema dolje kako biste osvježili podatke i pokušajte ponovo.",
     "noContactCommentPlacheHolderOffline": "Trenutno ste offline. Provjerite jeste li povezani na WiFi ili mobilne podatke kako biste osvježili podatke i došli do svog komentara kontakta.",
-    "importContact": "importContact",
+    "importContact": "Uvezite telefonski kontakt",
     "contactSharedWith": "contactSharedWith",
-    "ageNotSet": "ageNotSet"
+    "ageNotSet": "ageNotSet",
+    "contactType": "Vrsta kontakta"
   },
   "groupDetailScreen": {
     "addNewGroup": "Dodaj novu grupu",
@@ -181,5 +183,6 @@
     "button": "Ok",
     "textDirection": "Smjer teksta",
     "selectedLanguage": "Odabrani jezik"
-  }
+  },
+  "endonym": "Hrvatski"
 }

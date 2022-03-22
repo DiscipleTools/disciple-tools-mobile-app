@@ -1,10 +1,10 @@
 name: CI/CD
+
 on:
   push:
-    branches:
-      - main
-      - release
-      - development
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
 jobs:
   publish:
     name: CI/CD
@@ -42,7 +42,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       - run: npm install
-      - run: npm test
+      #- run: npm test
       - name: Deploy Prod
         if: github.ref == 'refs/heads/main'
         run: expo publish --release-channel production && expo build:ios --release-channel production --non-interactive && expo build:android --type app-bundle --release-channel production --non-interactive
@@ -52,3 +52,4 @@ jobs:
       - name: Deploy Test
         if: github.ref == 'refs/heads/development'
         run: expo publish
+

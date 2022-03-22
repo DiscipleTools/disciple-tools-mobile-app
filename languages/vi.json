@@ -39,7 +39,7 @@
     "activity": "Hoạt động",
     "submit": "Gửi đi",
     "share": "chia sẻ",
-    "viewOnMobileWeb": "viewOnMobileWeb",
+    "viewOnMobileWeb": "Xem trên web di động",
     "shareSettings": "chia sẻ cài đặt",
     "searchUsers": "searchUsers",
     "noFilters": "không có bộ lọc",
@@ -47,7 +47,8 @@
     "selectLocations": "selectLocations",
     "other": "khác",
     "chooseOption": "selectOption",
-    "confirm": "xác nhận"
+    "confirm": "xác nhận",
+    "selectDate": "Chọn ngày"
   },
   "loginScreen": {
     "domain": {
@@ -124,9 +125,10 @@
     },
     "noContactCommentPlacheHolder1": "Có thể đã có một vấn đề nhận được chúng từ trang web của bạn. Kéo xuống để thử làm mới và thử lại.",
     "noContactCommentPlacheHolderOffline": "Bạn hiện đang ngoại tuyến. Đảm bảo bạn được kết nối với wifi hoặc dữ liệu di động để làm mới và nhận được liên hệ nhận xét của bạn.",
-    "importContact": "importContact",
+    "importContact": "Nhập một liên hệ điện thoại",
     "contactSharedWith": "contactSharedWith",
-    "ageNotSet": "ageNotSet"
+    "ageNotSet": "ageNotSet",
+    "contactType": "Loại liên hệ"
   },
   "groupDetailScreen": {
     "addNewGroup": "Thêm nhóm mới",
@@ -181,5 +183,6 @@
     "button": "Đồng ý",
     "textDirection": "Văn bản chỉ đạo",
     "selectedLanguage": "Ngôn ngữ đã chọn"
-  }
+  },
+  "endonym": "tiếng Việt"
 }

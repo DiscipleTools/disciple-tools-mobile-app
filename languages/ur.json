@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "کوڈ: ",
+      "message": "پیغام: ",
+      "text": "متن",
+      "noRecords": "noRecords"
+    },
+    "success": {
+      "save": "ڈیٹا کامیابی کے ساتھ محفوظ ہوگیا!"
+    },
+    "groups": "گروہ",
+    "details": "تفصیلات",
+    "selectPeopleGroups": "لوگوں کے گروپ منتخب کریں",
+    "address": "پتہ",
+    "progress": "ترقی",
+    "commentsActivity": "تبصرے اور سرگرمی",
+    "writeYourCommentNoteHere": "اپنا تبصرہ یا نوٹ یہاں لکھیں",
+    "requiredField": "مطلوب خانہ",
+    "edit": "ترمیم",
+    "cancel": "منسوخ کریں",
+    "save": "محفوظ کریں",
+    "online": "آن لائن",
+    "offline": "آف لائن",
+    "language": "زبان",
+    "search": "تلاش کریں",
+    "membersActivity": "ممبران",
+    "moreFields": "مزید فیلڈز",
+    "nameRequired": "نام کی ضرورت ہے",
+    "close": "بند کریں",
+    "editComment": "ترمیم",
+    "deleteComment": "حذف کریں",
+    "delete": "حذف کریں",
+    "sortBy": "ترتیب دیں",
+    "reset": "دوبارہ ترتیب دیں",
+    "apply": "درخواست دیں",
+    "showing": "دکھا رہا ہے",
+    "comments": "تبصرے",
+    "activity": "سرگرمی",
+    "submit": "جمع کرائیں",
+    "share": "بانٹیں",
+    "viewOnMobileWeb": "موبائل ویب پر دیکھیں۔",
+    "shareSettings": "بانٹیں",
+    "searchUsers": "تلاش صارف",
+    "noFilters": "noFilters",
+    "searchContacts": "سرچ رابطے",
+    "selectLocations": "منتخب کریں",
+    "other": "دوسرے",
+    "chooseOption": "انتخاب کریں",
+    "confirm": "تصدیق کریں",
+    "selectDate": "تاریخ منتخب کریں۔"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "یو آر ایل",
+      "placeholder": "جیسے۔ myteam.mydomain.com",
+      "error": "ڈومین ضروری ہے",
+      "errorForgotPass": "براہ کرم اپنا پاس ورڈ بازیافت کرنے کے لئے URL درج کریں"
+    },
+    "username": {
+      "label": "صارف نام",
+      "error": "صارف نام ضروری ہے"
+    },
+    "password": {
+      "label": "پاس ورڈ",
+      "error": "پاس ورڈ کی ضرورت ہے"
+    },
+    "logIn": "میں لاگ ان کریں",
+    "forgotPassword": "اپنا پاس ورڈ کھو گئے؟",
+    "errors": {
+      "invalidUsername": "نامعلوم صارف نام دوبارہ چیک کریں یا اپنا ای میل پتہ آزمائیں۔",
+      "incorrectPassword": "صارف نام کے لئے آپ نے جو پاس ورڈ درج کیا ہے وہ غلط ہے",
+      "configurationNeededOn": "تشکیل نیڈڈ اون",
+      "mobileAppPluginRequiredOne": "موبائل ایپ پلگ ان کی ضرورت ہے",
+      "mobileAppPluginRequiredTwo": "موبائل ایپ پلگ ان کی ضرورت ہے"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "رابطے",
+    "noContactPlacheHolder": "فی الحال کوئی رابطہ دستیاب نہیں ہے۔",
+    "noContactPlacheHolder1": "آپ کی سائٹ سے ان کو حاصل کرنے میں کوئی دشواری ہوسکتی ہے۔ ریفریش کرنے کی کوشش کرنے کے لئے نیچے گھسیٹیں اور دوبارہ کوشش کریں۔",
+    "noContactPlacheHolderOffline": "آپ فی الحال آف لائن ہیں۔ اپنے رابطوں کو تازہ اور تازہ کرنے کے ل get یقینی بنائیں کہ آپ وائی فائی یا موبائل ڈیٹا سے جڑے ہوئے ہیں۔"
+  },
+  "settingsScreen": {
+    "settings": "ترتیبات",
+    "networkUnavailable": "نیٹ ورک غیر متوقع اب `آف لائن` وضع میں۔",
+    "networkAvailable": "نیٹ ورک دستیاب۔ اب `آن لائن` وضع میں۔",
+    "storybook": "اسٹوری بوک",
+    "logout": "باہر جائیں",
+    "helpSupport": "مدد / مدد",
+    "rememberPassword": "پاس ورڈ یاد رکھیں",
+    "rememberPasswordActive": "قابل لاگ ان رکھیں",
+    "rememberPasswordInactive": "غیر فعال لاگ ان رکھیں",
+    "remove": "دور",
+    "set": "سیٹ کریں",
+    "pinCode": "خفیہ نمبر",
+    "enterPin": "پن درج کریں",
+    "setPin": "نیا پن سیٹ کریں",
+    "incorrectPin": "غلط پن",
+    "savedPinCode": "پن کوڈ کامیابی کے ساتھ محفوظ ہوگیا",
+    "removedPinCode": "پن کوڈ کامیابی کے ساتھ ہٹا دیا گیا",
+    "close": "بند کریں",
+    "confirmPin": "تصدیق کریں"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "نیا رابطہ شامل کریں",
+    "subAssignThisContact": "اس رابطے کو ذیلی تفویض کریں",
+    "mobile": "موبائل",
+    "selectLocations": "مقامات منتخب کریں",
+    "selectSources": "ذرائع منتخب کریں",
+    "connections": "رابطے",
+    "addGroup": "گروپ شامل کریں",
+    "addConnection": "کنکشن شامل کریں",
+    "addBaptizedBy": "بپتسمہ دے کر شامل کریں",
+    "addBaptized": "بپتسمہ دیں شامل کریں",
+    "addCoachedBy": "کوچ کے ذریعے شامل کریں",
+    "addCoaching": "کوچنگ شامل کریں",
+    "phoneNumber": "فون نمبر",
+    "initialComment": "ابتدائی تبصرہ",
+    "socialMedia": "سوشل میڈیا",
+    "noContactCommentPlacheHolder": "فی الحال دستیاب کوئی رابطہ رائے نہیں ہے۔",
+    "fullName": {
+      "label": "پورا نام",
+      "error": "نام کی ضرورت ہے"
+    },
+    "noContactCommentPlacheHolder1": "آپ کی سائٹ سے ان کو حاصل کرنے میں کوئی دشواری ہوسکتی ہے۔ ریفریش کرنے کی کوشش کرنے کے لئے نیچے گھسیٹیں اور دوبارہ کوشش کریں۔",
+    "noContactCommentPlacheHolderOffline": "آپ فی الحال آف لائن ہیں۔ اس بات کو یقینی بنائیں کہ آپ ریفریش اور اپنے رابطے کا تبصرہ حاصل کرنے کے لئے وائی فائی یا موبائل ڈیٹا سے جڑے ہوئے ہیں۔",
+    "importContact": "ایک فون رابطہ درآمد کریں۔",
+    "contactSharedWith": "سے رابطہ کریں",
+    "ageNotSet": "ageNotSet",
+    "contactType": "رابطہ کی قسم۔"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "نیا گروپ شامل کریں",
+    "selectCoaches": "کوچ منتخب کریں",
+    "searchGroups": "گروپ تلاش کریں",
+    "searchPeerGroups": "ہم مرتبہ گروپوں کی تلاش کریں",
+    "childGroup": "چائلڈ گروپ",
+    "searchChildGroups": "بچوں کے گروپ تلاش کریں",
+    "addMember": "ممبر شامل کریں",
+    "noGroupCommentPlacheHolder": "فی الحال کوئی گروپی تبصرے دستیاب نہیں ہیں۔",
+    "noGroupCommentPlacheHolder1": "آپ کی سائٹ سے ان کو حاصل کرنے میں کوئی دشواری ہوسکتی ہے۔ ریفریش کرنے کی کوشش کرنے کے لئے نیچے گھسیٹیں اور دوبارہ کوشش کریں۔",
+    "noGroupCommentPlacheHolderOffline": "آپ فی الحال آف لائن ہیں۔ اس بات کو یقینی بنائیں کہ آپ ریفریش اور اپنے گروپ کے تبصرے حاصل کرنے کے لئے وائی فائی یا موبائل ڈیٹا سے جڑے ہوئے ہیں۔",
+    "selectLocations": "مقامات منتخب کریں",
+    "noMembersMessage": "#MeumberMessage",
+    "groupName": {
+      "label": "گروہ کا نام",
+      "error": "نام کی ضرورت ہے"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "میٹنگ طے شدہ",
+      "quick_button_meeting_postponed": "اجلاس ملتوی",
+      "quick_button_meeting_complete": "میٹنگ مکمل"
+    },
+    "memberCount": "ممبرکاونٹ",
+    "memberList": "ممبر فہرست",
+    "attendance": {
+      "header": "ہیڈر",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "گروپ کامنٹ لیبل",
+      "groupComment": "گروپ کامنٹ"
+    },
+    "groupSharedWith": "گروپ شیئرڈ کے ساتھ"
+  },
+  "notificationsScreen": {
+    "notifications": "اطلاعات",
+    "loadMore": "مزید لوڈ کریں",
+    "new": "نئی",
+    "unRead": "غیر پڑھے ہوئے",
+    "all": "سب",
+    "markAll": "سب کو نشان زد کریں",
+    "dontHaveNotificationsUnread": "کوئی اطلاع نہیں پڑھی ہوئی ہے",
+    "dontHaveNotifications": "کوئی اطلاع نہیں ہے"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "فی الحال کوئی گروپ دستیاب نہیں ہے۔",
+    "noGroupPlacheHolder1": "آپ کی سائٹ سے ان کو حاصل کرنے میں کوئی دشواری ہوسکتی ہے۔ ریفریش کرنے کی کوشش کرنے کے لئے نیچے گھسیٹیں اور دوبارہ کوشش کریں۔",
+    "noGroupPlacheHolderOffline": "آپ فی الحال آف لائن ہیں۔ اس بات کو یقینی بنائیں کہ آپ اپنے گروپس کو ریفریش کرنے کے ل w وائی فائی یا موبائل ڈیٹا سے جڑے ہوئے ہیں۔"
+  },
+  "appRestart": {
+    "message": "مندرجہ ذیل ترتیب کو لاگو کرنے کے لئے درخواست دوبارہ شروع کی جائے گی۔",
+    "button": "ٹھیک ہے",
+    "textDirection": "متن کی سمت",
+    "selectedLanguage": "منتخب زبان"
+  },
+  "endonym": "اُردُو"
+}

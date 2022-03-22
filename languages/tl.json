@@ -39,7 +39,7 @@
     "activity": "aktibidad",
     "submit": "ipasa",
     "share": "magbahagi",
-    "viewOnMobileWeb": "viewOnMobileWeb",
+    "viewOnMobileWeb": "Tingnan sa mobile web",
     "shareSettings": "magbahagi ng Mga Setting",
     "searchUsers": "mga gumagamit ng paghahanap",
     "noFilters": "noFilters",
@@ -47,7 +47,8 @@
     "selectLocations": "selectLocations",
     "other": "iba pa",
     "chooseOption": "pumili ng Opsyon",
-    "confirm": "kumpirmahin"
+    "confirm": "kumpirmahin",
+    "selectDate": "Piliin ang Petsa"
   },
   "loginScreen": {
     "domain": {
@@ -124,9 +125,10 @@
     },
     "noContactCommentPlacheHolder1": "Maaaring may problema sa pagkuha sa kanila mula sa iyong site. I-drag pababa upang subukang i-refresh at subukang muli.",
     "noContactCommentPlacheHolderOffline": "Kasalukuyan kang naka-offline. Tiyaking nakakonekta ka sa wifi o mobile data upang mai-refresh at makuha ang iyong komento sa pakikipag-ugnay.",
-    "importContact": "importContact",
+    "importContact": "Mag-import ng contact sa telepono",
     "contactSharedWith": "contactSharedWith",
-    "ageNotSet": "ageNotSet"
+    "ageNotSet": "ageNotSet",
+    "contactType": "Uri ng Pakikipag-ugnay"
   },
   "groupDetailScreen": {
     "addNewGroup": "Magdagdag ng Bagong Pangkat",
@@ -181,5 +183,6 @@
     "button": "Sige",
     "textDirection": "Direksyon ng teksto",
     "selectedLanguage": "Napiling wika"
-  }
+  },
+  "endonym": "Tagalog"
 }

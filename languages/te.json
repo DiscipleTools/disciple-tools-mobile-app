@@ -1,0 +1,188 @@
+{
+  "global": {
+    "error": {
+      "code": "కోడ్: ",
+      "message": "సందేశం: ",
+      "text": "టెక్స్ట్",
+      "noRecords": "noRecords"
+    },
+    "success": {
+      "save": "డేటా విజయవంతంగా సేవ్ చేయబడింది!"
+    },
+    "groups": "గుంపులు",
+    "details": "వివరాలు",
+    "selectPeopleGroups": "పీపుల్ గ్రూపులను ఎంచుకోండి",
+    "address": "చిరునామా",
+    "progress": "పురోగతి",
+    "commentsActivity": "వ్యాఖ్యలు మరియు కార్యాచరణ",
+    "writeYourCommentNoteHere": "మీ వ్యాఖ్య లేదా గమనికను ఇక్కడ వ్రాయండి",
+    "requiredField": "కావలసిన సమాచారం",
+    "edit": "మార్చు",
+    "cancel": "రద్దు చేయండి",
+    "save": "సేవ్",
+    "online": "ఆన్లైన్",
+    "offline": "ఆఫ్లైన్",
+    "language": "భాషా",
+    "search": "వెతకండి",
+    "membersActivity": "సభ్యులు",
+    "moreFields": "మరిన్ని ఫీల్డ్‌లు",
+    "nameRequired": "పేరు అవసరం",
+    "close": "దగ్గరగా",
+    "editComment": "సవరించండి",
+    "deleteComment": "తొలగించు",
+    "delete": "తొలగించండి",
+    "sortBy": "ఆమరిక",
+    "reset": "రీసెట్ చేయండి",
+    "apply": "వర్తించు",
+    "showing": "చూపుతోంది",
+    "comments": "వ్యాఖ్యలు",
+    "activity": "కార్యాచరణ",
+    "submit": "సమర్పించండి",
+    "share": "వాటా",
+    "viewOnMobileWeb": "మొబైల్ వెబ్‌లో చూడండి",
+    "shareSettings": "వాటా సెట్టింగ్‌లు",
+    "searchUsers": "శోధన వినియోగదారులు",
+    "noFilters": "noFilters",
+    "searchContacts": "శోధన కాంటాక్ట్స్",
+    "selectLocations": "ఎంపిక స్థానాలు",
+    "other": "ఇతర",
+    "chooseOption": "ఎంపిక ఎంపిక",
+    "confirm": "నిర్ధారించండి",
+    "selectDate": "తేదీని ఎంచుకోండి"
+  },
+  "loginScreen": {
+    "domain": {
+      "label": "URL",
+      "placeholder": "ఉదా myteam.mydomain.com",
+      "error": "డొమైన్ అవసరం",
+      "errorForgotPass": "మీ పాస్‌వర్డ్‌ను తిరిగి పొందడానికి దయచేసి URL ని నమోదు చేయండి"
+    },
+    "username": {
+      "label": "యూజర్ పేరు",
+      "error": "వినియోగదారు పేరు అవసరం"
+    },
+    "password": {
+      "label": "పాస్వర్డ్",
+      "error": "పాస్వర్డ్ అవసరం"
+    },
+    "logIn": "ప్రవేశించండి",
+    "forgotPassword": "మీ పాస్‌వర్డ్ పోయిందా?",
+    "errors": {
+      "invalidUsername": "తెలియని వినియోగదారు పేరు. మళ్ళీ తనిఖీ చేయండి లేదా మీ ఇమెయిల్ చిరునామాను ప్రయత్నించండి.",
+      "incorrectPassword": "వినియోగదారు పేరు కోసం మీరు నమోదు చేసిన పాస్‌వర్డ్ తప్పు",
+      "configurationNeededOn": "configNeededOn",
+      "mobileAppPluginRequiredOne": "mobileAppPluginRequiredOne",
+      "mobileAppPluginRequiredTwo": "mobileAppPluginRequiredTwo"
+    }
+  },
+  "contactsScreen": {
+    "contacts": "కాంటాక్ట్స్",
+    "noContactPlacheHolder": "ప్రస్తుతం పరిచయాలు ఏవీ అందుబాటులో లేవు.",
+    "noContactPlacheHolder1": "మీ సైట్ నుండి వాటిని పొందడంలో సమస్య ఉండవచ్చు. రిఫ్రెష్ చేయడానికి ప్రయత్నించడానికి క్రిందికి లాగండి మరియు మళ్లీ ప్రయత్నించండి.",
+    "noContactPlacheHolderOffline": "మీరు ప్రస్తుతం ఆఫ్‌లైన్‌లో ఉన్నారు. మీ పరిచయాలను రిఫ్రెష్ చేయడానికి మరియు పొందడానికి మీరు వైఫై లేదా మొబైల్ డేటాకు కనెక్ట్ అయ్యారని నిర్ధారించుకోండి."
+  },
+  "settingsScreen": {
+    "settings": "సెట్టింగులు",
+    "networkUnavailable": "నెట్‌వర్క్ అందుబాటులో లేదు. ఇప్పుడు ఆఫ్‌లైన్ మోడ్‌లో ఉంది",
+    "networkAvailable": "నెట్‌వర్క్ కనుగొనబడింది. ఆన్‌లైన్ మోడ్‌కు తిరిగి వెళ్ళు",
+    "storybook": "Storybook",
+    "logout": "సైన్ అవుట్ చేయండి",
+    "helpSupport": "సహాయం / మద్దతు",
+    "rememberPassword": "పాస్వర్డ్ గుర్తుంచుకో",
+    "rememberPasswordActive": "లాగిన్ అవ్వండి",
+    "rememberPasswordInactive": "లాగిన్ అవ్వండి",
+    "remove": "తొలగించండి",
+    "set": "సెట్",
+    "pinCode": "పిన్ కోడ్",
+    "enterPin": "పిన్ నమోదు చేయండి",
+    "setPin": "క్రొత్త పిన్ సెట్ చేయండి",
+    "incorrectPin": "తప్పు పిన్",
+    "savedPinCode": "పిన్ కోడ్ విజయవంతంగా సేవ్ చేయబడింది",
+    "removedPinCode": "పిన్ కోడ్ విజయవంతంగా తొలగించబడింది",
+    "close": "దగ్గరగా",
+    "confirmPin": "నిర్ధారించండి"
+  },
+  "contactDetailScreen": {
+    "addNewContact": "క్రొత్త పరిచయాన్ని జోడించండి",
+    "subAssignThisContact": "ఈ పరిచయాన్ని ఉప-కేటాయించండి",
+    "mobile": "మొబైల్",
+    "selectLocations": "స్థానాలను ఎంచుకోండి",
+    "selectSources": "మూలాలను ఎంచుకోండి",
+    "connections": "కనెక్షన్లు",
+    "addGroup": "సమూహాన్ని జోడించండి",
+    "addConnection": "కనెక్షన్‌ను జోడించండి",
+    "addBaptizedBy": "దీని ద్వారా బాప్తిస్మం తీసుకోండి",
+    "addBaptized": "బాప్టిజం జోడించండి",
+    "addCoachedBy": "ద్వారా కోచ్‌ను జోడించండి",
+    "addCoaching": "కోచింగ్ జోడించండి",
+    "phoneNumber": "ఫోను నంబరు",
+    "initialComment": "ప్రారంభ వ్యాఖ్య",
+    "socialMedia": "సాంఘిక ప్రసార మాధ్యమం",
+    "noContactCommentPlacheHolder": "ప్రస్తుతం సంప్రదింపు వ్యాఖ్యలు ఏవీ అందుబాటులో లేవు.",
+    "fullName": {
+      "label": "పూర్తి పేరు",
+      "error": "పేరు అవసరం"
+    },
+    "noContactCommentPlacheHolder1": "మీ సైట్ నుండి వాటిని పొందడంలో సమస్య ఉండవచ్చు. రిఫ్రెష్ చేయడానికి ప్రయత్నించడానికి క్రిందికి లాగండి మరియు మళ్లీ ప్రయత్నించండి.",
+    "noContactCommentPlacheHolderOffline": "మీరు ప్రస్తుతం ఆఫ్‌లైన్‌లో ఉన్నారు. రిఫ్రెష్ చేయడానికి మరియు మీ సంప్రదింపు వ్యాఖ్యను పొందడానికి మీరు వైఫై లేదా మొబైల్ డేటాకు కనెక్ట్ అయ్యారని నిర్ధారించుకోండి.",
+    "importContact": "ఫోన్ పరిచయాన్ని దిగుమతి చేయండి",
+    "contactSharedWith": "contactSharedWith",
+    "ageNotSet": "ageNotSet",
+    "contactType": "సంప్రదింపు రకం"
+  },
+  "groupDetailScreen": {
+    "addNewGroup": "క్రొత్త సమూహాన్ని జోడించండి",
+    "selectCoaches": "గ్రూప్ కోచ్ ఎంచుకోండి",
+    "searchGroups": "శోధన సమూహాలు",
+    "searchPeerGroups": "తోటి సమూహాలను శోధించండి",
+    "childGroup": "చైల్డ్ గ్రూప్",
+    "searchChildGroups": "పిల్లల సమూహాలను శోధించండి",
+    "addMember": "సభ్యుడిని జోడించండి",
+    "noGroupCommentPlacheHolder": "ప్రస్తుతం సమూహ వ్యాఖ్యలు ఏవీ అందుబాటులో లేవు.",
+    "noGroupCommentPlacheHolder1": "మీ సైట్ నుండి వాటిని పొందడంలో సమస్య ఉండవచ్చు. రిఫ్రెష్ చేయడానికి ప్రయత్నించడానికి క్రిందికి లాగండి మరియు మళ్లీ ప్రయత్నించండి.",
+    "noGroupCommentPlacheHolderOffline": "మీరు ప్రస్తుతం ఆఫ్‌లైన్‌లో ఉన్నారు. మీ సమూహ వ్యాఖ్యను రిఫ్రెష్ చేయడానికి మరియు పొందడానికి మీరు వైఫై లేదా మొబైల్ డేటాకు కనెక్ట్ అయ్యారని నిర్ధారించుకోండి.",
+    "selectLocations": "స్థానాలను ఎంచుకోండి",
+    "noMembersMessage": "సభ్యులు లేరు",
+    "groupName": {
+      "label": "కూటమి పేరు",
+      "error": "పేరు అవసరం"
+    },
+    "fab": {
+      "quick_button_meeting_scheduled": "సమావేశం షెడ్యూల్",
+      "quick_button_meeting_postponed": "సమావేశం వాయిదా పడింది",
+      "quick_button_meeting_complete": "సమావేశం పూర్తయింది"
+    },
+    "memberCount": "సభ్యుల సంఖ్య",
+    "memberList": "సభ్యుల జాబితా",
+    "attendance": {
+      "header": "శీర్షిక",
+      "didAttendComment": "didAttendComment",
+      "didNotAttendComment": "didNotAttendComment",
+      "groupCommentLabel": "groupCommentLabel",
+      "groupComment": "groupComment"
+    },
+    "groupSharedWith": "groupSharedWith"
+  },
+  "notificationsScreen": {
+    "notifications": "ప్రకటనలు",
+    "loadMore": "మరిన్ని లోడ్ చేయండి",
+    "new": "న్యూ",
+    "unRead": "చదవని",
+    "all": "అన్ని",
+    "markAll": "అన్నీ గుర్తించండి",
+    "dontHaveNotificationsUnread": "నోటిఫికేషన్‌లు చదవలేదు",
+    "dontHaveNotifications": "నోటిఫికేషన్‌లు లేవు"
+  },
+  "groupsScreen": {
+    "noGroupPlacheHolder": "ప్రస్తుతం ఏ సమూహాలు అందుబాటులో లేవు.",
+    "noGroupPlacheHolder1": "మీ సైట్ నుండి వాటిని పొందడంలో సమస్య ఉండవచ్చు. రిఫ్రెష్ చేయడానికి ప్రయత్నించడానికి క్రిందికి లాగండి మరియు మళ్లీ ప్రయత్నించండి.",
+    "noGroupPlacheHolderOffline": "మీరు ప్రస్తుతం ఆఫ్‌లైన్‌లో ఉన్నారు. మీ సమూహాలను రిఫ్రెష్ చేయడానికి మరియు పొందడానికి మీరు వైఫై లేదా మొబైల్ డేటాకు కనెక్ట్ అయ్యారని నిర్ధారించుకోండి."
+  },
+  "appRestart": {
+    "message": "కింది కాన్ఫిగరేషన్‌ను వర్తింపజేయడానికి అప్లికేషన్ పున ar ప్రారంభించబడుతుంది:",
+    "button": "అలాగే",
+    "textDirection": "వచన దిశ",
+    "selectedLanguage": "ఎంచుకున్న భాష"
+  },
+  "endonym": "తెలుగు"
+}

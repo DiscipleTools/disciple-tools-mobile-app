@@ -39,7 +39,7 @@
     "activity": "shughuli",
     "submit": "wasilisha",
     "share": "shiriki",
-    "viewOnMobileWeb": "maoniOnMobileWeb",
+    "viewOnMobileWeb": "Angalia kwenye wavuti ya rununu",
     "shareSettings": "kushirikiMipangilio",
     "searchUsers": "watumiaji wa utafutaji",
     "noFilters": "hakunaFilters",
@@ -47,7 +47,8 @@
     "selectLocations": "chagua Mahali",
     "other": "nyingine",
     "chooseOption": "chagua Chaguo",
-    "confirm": "thibitisha"
+    "confirm": "thibitisha",
+    "selectDate": "Chagua Tarehe"
   },
   "loginScreen": {
     "domain": {
@@ -124,9 +125,10 @@
     },
     "noContactCommentPlacheHolder1": "Kunaweza kuwa na shida kuipata kutoka kwa wavuti yako. Buruta chini kujaribu kujaribu kuburudisha na kujaribu tena.",
     "noContactCommentPlacheHolderOffline": "Hivi sasa uko nje ya mkondo. Hakikisha umeunganishwa na wifi au data ya rununu ili kuburudisha na upate maoni yako ya mawasiliano.",
-    "importContact": "kuagizaContact",
+    "importContact": "Ingiza anwani ya simu",
     "contactSharedWith": "wasilianaSharedWith",
-    "ageNotSet": "umriNotSet"
+    "ageNotSet": "umriNotSet",
+    "contactType": "Aina ya Mawasiliano"
   },
   "groupDetailScreen": {
     "addNewGroup": "Ongeza Kundi Mpya",
@@ -181,5 +183,6 @@
     "button": "Sawa",
     "textDirection": "Mwelekeo wa maandishi",
     "selectedLanguage": "Lugha iliyochaguliwa"
-  }
+  },
+  "endonym": "Kiswahili"
 }
