@@ -1,8 +1,7 @@
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: {
     flex: 1,
-    //backgroundColor: theme.background.primary 
-    backgroundColor: "#F0F"
+    backgroundColor: theme.background.primary 
   },
   // TODO: move to globalStyles?
   headerIcon: {
