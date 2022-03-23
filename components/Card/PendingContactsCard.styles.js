@@ -23,5 +23,14 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   },
   buttonText: {
     color: theme.text.primary
+  },
+  placeholderContainer: {
+    //justifyContent: "center"
+    alignItems: "center",
+    padding: 5
+  },
+  placeholderText: {
+    color: theme.text.primary,
+    fontStyle: "italic",
   }
 });

@@ -5,6 +5,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import Card from "components/Card/Card";
 import ExpandableCard from "components/Card/ExpandableCard";
 
+import useI18N from "hooks/use-i18n";
 import useList from "hooks/use-list";
 import useStyles from "hooks/use-styles";
 
@@ -12,8 +13,10 @@ import { TypeConstants } from "constants";
 
 import { localStyles } from './PendingContactsCard.styles';
 
-const PendingContactsCard = ({ refreshing }) => {
+const PendingContactsCard = ({ preview, refreshing }) => {
+
   const { styles, globalStyles } = useStyles(localStyles);
+  const { i18n } = useI18N();
 
   const filter = {
     ID: "contacts_pending",
@@ -76,7 +79,7 @@ const PendingContactsCard = ({ refreshing }) => {
   const renderPartialCard = () => (
     <>
       <View>
-        {contacts?.slice(0,1)?.map((contact, idx) => renderContactAccept(contact, idx))}
+        {contacts?.slice(0, preview ?? 1)?.map((contact, idx) => renderContactAccept(contact, idx))}
       </View>
       { contacts?.length > 1 && (
         <Text>...</Text>
@@ -103,7 +106,11 @@ const PendingContactsCard = ({ refreshing }) => {
           border
           center
           title={title}
-          body={<Text>All caught up!</Text>}
+          body={(
+            <View style={styles.placeholderContainer}>
+              <Text style={styles.placeholderText}>{i18n.t("global.placeholder")}</Text>
+            </View>
+          )}
         />
       )}
     </>

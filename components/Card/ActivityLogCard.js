@@ -14,7 +14,7 @@ import { ScreenConstants } from "constants";
 
 import { localStyles } from "./ActivityLogCard.styles";
 
-const ActivityLogCard = ({ refreshing }) => {
+const ActivityLogCard = ({ preview, refreshing }) => {
 
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
@@ -67,7 +67,7 @@ const ActivityLogCard = ({ refreshing }) => {
   const renderPartialCard = () => (
     <>
       <View>
-        {activityLog?.slice(0,3)?.map(renderActivityLog)}
+        {activityLog?.slice(0, preview ?? 3)?.map(renderActivityLog)}
       </View>
       { activityLog?.length > 1 && (
         <Text>...</Text>

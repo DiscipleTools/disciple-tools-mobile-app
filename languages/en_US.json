@@ -56,7 +56,8 @@
     "status": "Status",
     "type": "Type",
     "home": "Home",
-    "more": "More"
+    "more": "More",
+    "placeholder": "No posts available"
   },
   "loginScreen": {
     "domain": {

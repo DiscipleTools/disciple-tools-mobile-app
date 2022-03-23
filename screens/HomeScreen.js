@@ -201,7 +201,7 @@ const HomeScreen = ({ navigation, route }) => {
         <ActiveGroupsCard />
       </View>
       <PendingContactsCard refreshing={refreshing} />
-      <ActivityLogCard refreshing={refreshing} />
+      <ActivityLogCard preview={5} refreshing={refreshing} />
     </ScrollView>
   );
 };
