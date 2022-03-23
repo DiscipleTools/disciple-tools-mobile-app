@@ -1,6 +1,7 @@
 import {
   primaryBrand,
   secondaryBrand,
+  thirdBrand,
   offDark,
   offLight,
   highlight,
@@ -23,6 +24,8 @@ import {
   systemYellowDark,
   systemCyanDark,
   systemBlueDark,
+  facebook,
+  whatsapp,
 } from "constants/colors";
 // TODO: rename
 
@@ -52,8 +55,8 @@ export const defaultHealthMilestones = [
 
 export const AppConstants = Object.freeze({
   PROTOCOL: "https",
-  TIMEOUT: 15000,         // 15 secs
-  REFRESH_INTERVAL: 0,    // 0 secs
+  TIMEOUT: 15000, // 15 secs
+  REFRESH_INTERVAL: 0, // 0 secs
 });
 
 export const HTTP = Object.freeze({
@@ -61,13 +64,13 @@ export const HTTP = Object.freeze({
     GET: "GET",
     POST: "POST",
     PUT: "PUT",
-    DELETE: "DELETE"
+    DELETE: "DELETE",
   },
   HEADERS: {
     DEFAULT: {
       "Content-Type": "application/json",
-    }
-  }
+    },
+  },
 });
 
 export const FieldConstants = Object.freeze({
@@ -144,12 +147,14 @@ export const defaultThemeLight = Object.freeze({
   surface: {
     primary: systemGray5Light,
     secondary: systemGray4Light,
-    input: "#FFF" //systemGray5Light,
+    input: "#FFF", //systemGray5Light,
   },
   divider: systemGray4Light, //systemGray,
   disabled: systemGray4Light,
   placeholder: systemGray,
-  highlight
+  highlight,
+  facebook,
+  whatsapp,
 });
 
 export const defaultThemeDark = Object.freeze({
@@ -189,7 +194,9 @@ export const defaultThemeDark = Object.freeze({
   divider: systemGray,
   disabled: systemGray4Dark,
   placeholder: systemGray,
-  highlight
+  highlight,
+  facebook,
+  whatsapp,
 });
 
 // NOTE: lowercase constants bc used in D.T API requests
