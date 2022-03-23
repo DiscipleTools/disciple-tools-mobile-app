@@ -20,7 +20,7 @@ const TabScrollView = ({ initialIndex, scenes, renderTab, onIndexChange, style }
 
   const Tab = ({ idx, label, active }) => (
     <View style={styles.tabContainer(active)}>
-      <Text style={{ textTransform: "uppercase" }}>{label}</Text>
+      <Text style={styles.tabLabel}>{label}</Text>
     </View>
   );
 
