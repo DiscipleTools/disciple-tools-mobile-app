@@ -8,6 +8,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     borderTopWidth: 1,
   },
   scrollViewContainer: {
+    minHeight: 50,
     flexGrow: 0
   },
   scrollViewContent: {
@@ -17,9 +18,13 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     flexGrow: 1,
   },
   tabContainer: (active) => ({
-    height: 50,
+    //minHeight: 50,
     padding: 15,
     borderBottomWidth: active ? 3 : null,
     borderBottomColor: active ? (ThemeConstants.DARK === theme.mode ? theme.highlight : theme.brand.primary) : null,
   }),
+  tabLabel: {
+    color: theme.text.primary,
+    textTransform: "uppercase" //"sentenceCase",
+  }
 });
