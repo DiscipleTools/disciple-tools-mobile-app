@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo, useReducer, useRef, useState } from "react";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetFooter } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetFooter, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 //import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SheetFooterCancel, SheetFooterDone } from "components/Sheet/SheetFooter";
@@ -111,7 +111,9 @@ export const BottomSheetProvider = ({ children }) => {
         footerComponent={options?.hideFooter ? null : renderFooter}
         backgroundStyle={globalStyles.background}
       >
-        { options?.renderContent() }
+        <BottomSheetScrollView>
+          { options?.renderContent() }
+        </BottomSheetScrollView>
       </BottomSheet>
     </BottomSheetContext.Provider>
   );
