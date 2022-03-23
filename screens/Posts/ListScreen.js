@@ -16,6 +16,7 @@ import useList from "hooks/use-list";
 import useType from "hooks/use-type";
 import useStyles from "hooks/use-styles";
 
+// TODO: replace with style={{ textTransform: "sentenceCase" }} where used?
 import { labelize } from "utils";
 
 import { localStyles } from './ListScreen.styles';
