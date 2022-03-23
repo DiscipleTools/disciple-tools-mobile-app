@@ -1,6 +1,7 @@
-import React, { useLayoutEffect } from "react";
-import { Image, Text, View } from "react-native";
+import React, { useEffect, useLayoutEffect, useReducer, useState } from "react";
+import { Image, RefreshControl, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { useIsFocused } from '@react-navigation/native';
 
 import { BellIcon, CogIcon } from "components/Icon";
 import { HeaderRight } from "components/Header/Header";
@@ -20,12 +21,28 @@ import { localStyles } from './HomeScreen.styles';
 
 const HomeScreen = ({ navigation, route }) => {
 
+  const isFocused = useIsFocused();
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
-  const { data: contactFilters } = useFilters({ type: TypeConstants.CONTACT });
-  const { data: groupFilters } = useFilters({ type: TypeConstants.GROUP });
-  const { data: trainingFilters } = useFilters({ type: "trainings" });
-  console.log(`trainingFilters: ${JSON.stringify(trainingFilters)}`);
+  const { data: contactFilters, mutate: mutateContactFilters } = useFilters({ type: TypeConstants.CONTACT });
+  const { data: groupFilters, mutate: mutateGroupFilters } = useFilters({ type: TypeConstants.GROUP });
+  // TODO: constant
+  //const { data: trainingFilters, mutate: mutateTrainingFilters } = useFilters({ type: "trainings" });
+
+  //const [update, forceUpdate] = useReducer(x => x + 1, 0);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    //forceUpdate();
+    if (mutateContactFilters) mutateContactFilters();
+    if (mutateGroupFilters) mutateGroupFilters();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+    return;
+  };
 
   const renderHeaderLeft = (props) => (
     <View style={globalStyles.rowContainer}>
@@ -78,7 +95,11 @@ const HomeScreen = ({ navigation, route }) => {
         />
       )
     });
-  });
+  }, [navigation]);
+
+  useEffect(() => {
+    onRefresh();
+  }, [isFocused]);
 
   const FavoriteContactsCard = () => {
     const filter = findFilterById("favorite", contactFilters);
@@ -157,7 +178,14 @@ const HomeScreen = ({ navigation, route }) => {
     <ScrollView style={[
       globalStyles.screenContainer,
       styles.container
-    ]}>
+    ]}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />
+      }
+    >
       <View style={[
         globalStyles.rowContainer,
         styles.cardRowContainer
@@ -172,8 +200,8 @@ const HomeScreen = ({ navigation, route }) => {
         <ActiveContactsCard />
         <ActiveGroupsCard />
       </View>
-      <PendingContactsCard />
-      <ActivityLogCard />
+      <PendingContactsCard refreshing={refreshing} />
+      <ActivityLogCard refreshing={refreshing} />
     </ScrollView>
   );
 };

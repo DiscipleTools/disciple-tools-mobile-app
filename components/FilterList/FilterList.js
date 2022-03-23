@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { RefreshControl, Text, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { SwipeListView } from "react-native-swipe-list-view";
 
 import SearchBar from "./SearchBar";

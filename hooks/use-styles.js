@@ -4,6 +4,8 @@ import useDevice from "hooks/use-device";
 import useI18N from "hooks/use-i18n";
 import useTheme from "hooks/use-theme";
 
+import Constants from "constants";
+
 const globalStyles = ({ theme, isRTL, isIOS }) => ({
   // Palette
   primary: {
@@ -77,9 +79,10 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
     color: theme.text.link,
   },
   // Components 
-  container: {
+  container: (tabBarHeight) => ({
     backgroundColor: theme.background.primary,
-  },
+    marginBottom: tabBarHeight * 1.5, // ? tabBarHeight + Constants.LIST_ITEM_HEIGHT : null,
+  }),
   screenContainer: {
     backgroundColor: theme.surface.primary,
     // TODO: why 110%? 

@@ -355,8 +355,15 @@ const useList = ({ search, filter, exclude, type, subtype } = {}) => {
   // NOTE: currently only searching offline
   //if (search) url += `?text=${search}`;
 
-  // map filters to url params
+  // NOTE: map filters to url params
   url += (filter?.query && userData) ? `?${ mapFilterOnQueryParams(filter?.query, userData) }`: "?dt_recent=true";
+
+  /*
+  * NOTE: we set a silly upper limit in order to aggressively fetch ALL posts,
+  * so that we have them available in the cache for offline usage
+  */
+  const limit = 1000000;
+  if (!url.includes("limit")) url += `&limit=${limit}`;
 
   const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
   if (error || isLoading || !data?.posts) return {

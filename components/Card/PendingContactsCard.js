@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
+import Card from "components/Card/Card";
 import ExpandableCard from "components/Card/ExpandableCard";
 
 import useList from "hooks/use-list";
@@ -11,7 +12,7 @@ import { TypeConstants } from "constants";
 
 import { localStyles } from './PendingContactsCard.styles';
 
-const PendingContactsCard = () => {
+const PendingContactsCard = ({ refreshing }) => {
   const { styles, globalStyles } = useStyles(localStyles);
 
   const filter = {
@@ -20,14 +21,18 @@ const PendingContactsCard = () => {
     name: "Pending Contacts",
     query: {
       "assigned_to":["me"],
-      "subassigned":["me"],
-      "combine":["subassigned"],
       "overall_status":["assigned"],
       "type":["access"],
       //"sort":"seeker_path"
     }
   };
   const { data: contacts, error, isLoading, isValidating, mutate } = useList({ filter, type: TypeConstants.CONTACT });
+
+  // force data refresh on reload
+  useEffect(() => {
+    if (refreshing && mutate) mutate();
+  }, [refreshing]);
+
   const renderContactAccept = (contact, idx) => (
     <View style={[
       globalStyles.columnContainer,
@@ -83,14 +88,25 @@ const PendingContactsCard = () => {
   const title = "Pending Contacts";
   //const title = "جهات الاتصال المعلقة";
   return (
-    <ExpandableCard
-      border
-      center
-      title={title}
-      count={contacts?.length}
-      renderPartialCard={renderPartialCard}
-      renderExpandedCard={renderExpandedCard}
-    />
+    <>
+      { contacts?.length > 2 ? (
+        <ExpandableCard
+          border
+          center
+          title={title}
+          count={contacts?.length}
+          renderPartialCard={renderPartialCard}
+          renderExpandedCard={renderExpandedCard}
+        />
+      ) : (
+        <Card
+          border
+          center
+          title={title}
+          body={<Text>All caught up!</Text>}
+        />
+      )}
+    </>
   );
 };
 export default PendingContactsCard;

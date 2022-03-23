@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
@@ -14,7 +14,8 @@ import { ScreenConstants } from "constants";
 
 import { localStyles } from "./ActivityLogCard.styles";
 
-const ActivityLogCard = () => {
+const ActivityLogCard = ({ refreshing }) => {
+
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
   const { getTabScreenFromType } = useType();
@@ -49,7 +50,11 @@ const ActivityLogCard = () => {
   );
 
   const { data: activityLog, error, isLoading, isValidating, mutate } = useActivityLog();
-  if (!activityLog) return null;
+
+  // force data refresh on reload
+  useEffect(() => {
+    if (refreshing && mutate) mutate();
+  }, [refreshing]);
 
   const renderExpandedCard = () => (
     <ScrollView style={{
@@ -73,6 +78,7 @@ const ActivityLogCard = () => {
   // TODO: translate
   const title = "Activity Log";
   //const title = "جهات الاتصال المعلقة";
+  if (!activityLog) return null;
   return (
     <ExpandableCard
       border
