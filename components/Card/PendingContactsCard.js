@@ -5,31 +5,36 @@ import { ScrollView } from "react-native-gesture-handler";
 import Card from "components/Card/Card";
 import ExpandableCard from "components/Card/ExpandableCard";
 
-import useI18N from "hooks/use-i18n";
 import useList from "hooks/use-list";
 import useStyles from "hooks/use-styles";
 
 import { TypeConstants } from "constants";
 
-import { localStyles } from './PendingContactsCard.styles';
+import { localStyles } from "./PendingContactsCard.styles";
 
-const PendingContactsCard = ({ preview, refreshing }) => {
-
+const PendingContactsCard = ({ refreshing }) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { i18n } = useI18N();
 
   const filter = {
     ID: "contacts_pending",
     // TODO: translate
     name: "Pending Contacts",
     query: {
-      "assigned_to":["me"],
-      "overall_status":["assigned"],
-      "type":["access"],
-      //"sort":"seeker_path"
-    }
+      assigned_to: ["me"],
+      subassigned: ["me"], //TODO fix this since a subuser can't accept a contact
+      combine: ["subassigned"],
+      type: ["access"],
+      overall_status: ["assigned"],
+      sort: "seeker_path",
+    },
   };
-  const { data: contacts, error, isLoading, isValidating, mutate } = useList({ filter, type: TypeConstants.CONTACT });
+  const {
+    data: contacts,
+    error,
+    isLoading,
+    isValidating,
+    mutate,
+  } = useList({ filter, type: TypeConstants.CONTACT });
 
   // force data refresh on reload
   useEffect(() => {
@@ -37,32 +42,20 @@ const PendingContactsCard = ({ preview, refreshing }) => {
   }, [refreshing]);
 
   const renderContactAccept = (contact, idx) => (
-    <View style={[
-      globalStyles.columnContainer,
-      styles.container(idx)
-    ]}>
-      <Text style={styles.title}>
-        {contact?.title}
-      </Text>
-      <View style={[
-        globalStyles.rowContainer,
-        styles.buttonRowContainer
-      ]}>
+    <View style={[globalStyles.columnContainer, styles.container(idx)]}>
+      <Text style={styles.title}>{contact?.title}</Text>
+      <View style={[globalStyles.rowContainer, styles.buttonRowContainer]}>
         <Pressable
-          onPress={() => console.log(`*** ACCEPT: ${ JSON.stringify(contact)} `)}
-          style={[
-            styles.buttonContainer,
-            { backgroundColor: "green" }
-          ]}
+          onPress={() => console.log(`*** ACCEPT: ${JSON.stringify(contact)} `)}
+          style={[styles.buttonContainer, { backgroundColor: "green" }]}
         >
           <Text style={styles.buttonText}>Accept</Text>
         </Pressable>
         <Pressable
-          onPress={() => console.log(`*** DECLINE: ${ JSON.stringify(contact)} `)}
-          style={[
-            styles.buttonContainer,
-            { backgroundColor: "red" }
-          ]}
+          onPress={() =>
+            console.log(`*** DECLINE: ${JSON.stringify(contact)} `)
+          }
+          style={[styles.buttonContainer, { backgroundColor: "red" }]}
         >
           <Text style={styles.buttonText}>Decline</Text>
         </Pressable>
@@ -79,11 +72,11 @@ const PendingContactsCard = ({ preview, refreshing }) => {
   const renderPartialCard = () => (
     <>
       <View>
-        {contacts?.slice(0, preview ?? 1)?.map((contact, idx) => renderContactAccept(contact, idx))}
+        {contacts
+          ?.slice(0, 1)
+          ?.map((contact, idx) => renderContactAccept(contact, idx))}
       </View>
-      { contacts?.length > 1 && (
-        <Text>...</Text>
-      )}
+      {contacts?.length > 1 && <Text>...</Text>}
     </>
   );
 
@@ -92,7 +85,7 @@ const PendingContactsCard = ({ preview, refreshing }) => {
   //const title = "جهات الاتصال المعلقة";
   return (
     <>
-      { contacts?.length > 2 ? (
+      {contacts?.length > 2 ? (
         <ExpandableCard
           border
           center
@@ -102,16 +95,7 @@ const PendingContactsCard = ({ preview, refreshing }) => {
           renderExpandedCard={renderExpandedCard}
         />
       ) : (
-        <Card
-          border
-          center
-          title={title}
-          body={(
-            <View style={styles.placeholderContainer}>
-              <Text style={styles.placeholderText}>{i18n.t("global.placeholder")}</Text>
-            </View>
-          )}
-        />
+        <Card border center title={title} body={<Text>All caught up!</Text>} />
       )}
     </>
   );

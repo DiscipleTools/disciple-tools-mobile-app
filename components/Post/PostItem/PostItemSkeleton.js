@@ -24,7 +24,6 @@ const PostItemSkeleton = () => {
         backgroundColor={styles.skeletonBackground.backgroundColor}
         foregroundColor={styles.skeletonForeground.backgroundColor}
       >
-        <Circle cx="385" cy="25" r="8" />
         <Rect x="10" y="20" rx="2" ry="2" width="150" height="8" />
         <Rect x="10" y="45" rx="2" ry="2" width="100" height="5" />
         <Circle cx="120" cy="47" r="2" />

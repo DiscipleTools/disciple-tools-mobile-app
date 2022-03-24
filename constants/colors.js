@@ -1,12 +1,16 @@
 // BRAND
 export const primaryBrand = "#365D86";
 export const secondaryBrand = "#a0ce4e";
+export const tertiaryBrand = "#00897b";
 
 // COMMON
 export const offDark = "#121212";
 export const offLight = "#f3f3f3";
-export const highlight = "#0FF"; 
+export const highlight = "#0FF";
 export const systemGray = "rgb(142, 142, 147)";
+
+export const facebook = "#1778f2";
+export const whatsapp = "#075E54";
 
 // ref: https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/color/
 

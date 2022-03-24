@@ -5,7 +5,8 @@ import {
   AddIcon,
   CalendarIcon,
   ClearIcon,
-  CommentPlusIcon
+  CommentPlusIcon,
+  MaterialCommunityIcon,
 } from "components/Icon";
 import ActionButton from "react-native-action-button";
 
@@ -114,42 +115,42 @@ const FAB = () => {
       return {
         ...defaultIconConfig,
         name: "phone-off",
-        bgColor: "red", //Colors.colorNo,
+        //bgColor: "red", //Colors.colorNo,
       };
     if (field === "quick_button_contact_established")
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "phone-in-talk",
-        bgColor: "green", //TODO
+        //bgColor: "green", //TODO
       };
     if (field === "quick_button_meeting_scheduled")
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "calendar-plus",
-        bgColor: "orange", //TODO
+        //bgColor: "orange", //TODO
       };
     if (field === "quick_button_meeting_complete")
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "calendar-check",
-        bgColor: "green", //TODO
+        //bgColor: "green", //TODO
       };
     if (field === "quick_button_meeting_postponed")
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "calendar-minus",
-        bgColor: "orange", //TODO
+        //bgColor: "orange", //TODO
       };
     if (field === "quick_button_no_show")
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "calendar-remove",
-        bgColor: "red", //TODO
+        //bgColor: "red", //TODO
       };
     if (field === "quick_button_new")
       return {
@@ -157,7 +158,7 @@ const FAB = () => {
         title: i18n.t("contactDetailScreen.addNewContact", { locale }), // TODO: group translate
         count: null,
         name: "plus",
-        bgColor: "green", //TODO
+        //bgColor: "green", //TODO
         callback: () => {
           navigation.navigate(ScreenConstants.CREATE, {
             type: TypeConstants.CONTACT,
@@ -169,9 +170,9 @@ const FAB = () => {
         ...defaultIconConfig,
         title: i18n.t("contactDetailScreen.importContact", { locale }),
         count: null,
-        type: "MaterialIcons",
-        name: "contact-phone",
-        bgColor: "orange", //TODO
+        type: "MaterialCommunityIcon",
+        name: "card-account-phone",
+        //bgColor: "orange", //TODO
         callback: () => {
           navigation.navigate(ScreenConstants.IMPORT, {
             type: TypeConstants.CONTACT,
@@ -189,9 +190,9 @@ const FAB = () => {
         buttonColor={globalStyles.buttonColor.backgroundColor}
         shadowStyle={globalStyles.buttonShadow}
         renderIcon={(active) => {
-          if (active) return <ClearIcon style={styles.icon} />;
-          if (isList) return <AddIcon style={styles.icon} />;
-          return <CommentPlusIcon style={styles.icon} />;
+          if (active) return <ClearIcon style={styles.iconLg} />;
+          if (isList) return <AddIcon style={styles.iconLg} />;
+          return <CommentPlusIcon style={styles.iconLg} />;
         }}
         degrees={0}
         activeOpacity={0}
@@ -223,7 +224,10 @@ const FAB = () => {
                 textStyle={styles.itemText}
                 textContainerStyle={{ height: "auto" }}
               >
-                <CalendarIcon style={globalStyles.icon} />
+                <MaterialCommunityIcon
+                  name={name}
+                  style={[globalStyles.icon, styles.icon]}
+                />
               </ActionButton.Item>
             );
           })}

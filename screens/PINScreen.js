@@ -2,8 +2,7 @@ import React, { useState, useRef } from "react";
 import { Image, Text, View } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import { MaterialIcons } from "@expo/vector-icons";
-
+import { LockIcon } from "components/Icon";
 import SmoothPinCodeInput from "react-native-smooth-pincode-input";
 
 import useI18N from "hooks/use-i18n";
@@ -155,7 +154,7 @@ const PINScreen = ({ navigation, route }) => {
     <View style={styles.container}>
       <Image source={require("assets/dt-icon.png")} style={styles.logo} />
       <DisplayText />
-      <MaterialIcons name="lock-outline" style={styles.icon} />
+      <LockIcon style={styles.icon} />
       <SmoothPinCodeInput
         ref={pinInput}
         autoFocus
