@@ -77,6 +77,9 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("coached_by")) {
         iconType = "MaterialCommunityIcons";
         iconName = "teach";
+      } else if (name.includes("coaches")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "teach";
       } else if (name.includes("baptized_by")) {
         iconType = "MaterialCommunityIcons";
         iconName = "water";
