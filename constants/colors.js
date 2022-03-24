@@ -1,7 +1,7 @@
 // BRAND
 export const primaryBrand = "#365D86";
 export const secondaryBrand = "#a0ce4e";
-export const thirdBrand = "#00897b";
+export const tertiaryBrand = "#00897b";
 
 // COMMON
 export const offDark = "#121212";

@@ -29,15 +29,15 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   text: {
     color: theme.text.primary,
     fontFamily: "System",
-    /* 
-      * Android
-      * https://material.io/design/typography/the-type-system.html 
-      * ref: Body 1 or Body 2
-      * 
-      * IOS
-      * https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/typography/
-      * ref: Small, Body
-      */
+    /*
+     * Android
+     * https://material.io/design/typography/the-type-system.html
+     * ref: Body 1 or Body 2
+     *
+     * IOS
+     * https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/typography/
+     * ref: Small, Body
+     */
     fontSize: 15,
   },
   link: {
@@ -60,12 +60,12 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
     color: theme.text.secondary,
     fontSize: 12,
     fontStyle: "italic",
-    paddingTop: 5
+    paddingTop: 5,
   },
   icon: {
     color: theme.text.primary,
     fontSize: 24,
-    paddingHorizontal: 3
+    paddingHorizontal: 3,
   },
   rowIcon: {
     color: theme.text.primary,
@@ -78,14 +78,14 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
     //marginStart: "auto",
     color: theme.text.link,
   },
-  // Components 
+  // Components
   container: (tabBarHeight) => ({
     backgroundColor: theme.background.primary,
     marginBottom: isIOS ? tabBarHeight * 1.5 : tabBarHeight * 2.5, // ? tabBarHeight + Constants.LIST_ITEM_HEIGHT : null,
   }),
   screenContainer: {
     backgroundColor: theme.surface.primary,
-    // TODO: why 110%? 
+    // TODO: why 110%?
     height: "110%",
   },
   rowContainer: {
@@ -113,11 +113,11 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
     elevation: 2,
     marginVertical: 5,
     marginHorizontal: 10,
-    padding: 10
+    padding: 10,
   },
   // TODO: move to standalone Button component
   buttonColor: {
-    backgroundColor: theme.brand.primary,
+    backgroundColor: theme.brand.tertiary,
   },
   buttonText: {
     color: theme.offLight,
@@ -125,7 +125,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   buttonShadow: {
     borderColor: theme.highlight,
     borderWidth: 1,
-    borderRadius: 50
+    borderRadius: 50,
   },
   body: {
     paddingHorizontal: 10,
@@ -142,7 +142,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   },
   refreshControl: {
     color: theme.placeholder,
-  }
+  },
 });
 
 const useStyles = (localStyles) => {
@@ -150,8 +150,13 @@ const useStyles = (localStyles) => {
   const { isRTL } = useI18N();
   const { isIOS } = useDevice();
   let localStylesSheet = null;
-  if (localStyles) localStylesSheet = StyleSheet.create(localStyles({ theme, globalStyles, isRTL, isIOS }));
-  const globalStylesSheet = StyleSheet.create(globalStyles({ theme, isRTL, isIOS }));
+  if (localStyles)
+    localStylesSheet = StyleSheet.create(
+      localStyles({ theme, globalStyles, isRTL, isIOS })
+    );
+  const globalStylesSheet = StyleSheet.create(
+    globalStyles({ theme, isRTL, isIOS })
+  );
   return {
     styles: localStylesSheet,
     globalStyles: globalStylesSheet,

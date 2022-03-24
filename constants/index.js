@@ -1,7 +1,7 @@
 import {
   primaryBrand,
   secondaryBrand,
-  thirdBrand,
+  tertiaryBrand,
   offDark,
   offLight,
   highlight,
@@ -91,6 +91,7 @@ export const FieldTypes = Object.freeze({
   POST_USER_META: "post_user_meta",
   TAGS: "tags",
   TEXT: "text",
+  TEXTAREA: "textarea",
   USER_SELECT: "user_select",
 });
 
@@ -122,6 +123,7 @@ export const defaultThemeLight = Object.freeze({
   brand: {
     primary: primaryBrand,
     secondary: secondaryBrand,
+    tertiary: tertiaryBrand,
   },
   offLight,
   offDark,
@@ -162,6 +164,7 @@ export const defaultThemeDark = Object.freeze({
   brand: {
     primary: primaryBrand,
     secondary: secondaryBrand,
+    tertiary: tertiaryBrand,
   },
   primaryBrand,
   secondaryBrand,

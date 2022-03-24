@@ -12,26 +12,42 @@ const FieldIcon = ({ field, hide }) => {
   const name = field.name;
   let iconType = "";
   let iconName = "";
+  let iconStyle = {};
   switch (type) {
     case FieldTypes.LOCATION_META:
-      iconType = "FontAwesome";
+      iconType = "MaterialCommunityIcons";
       iconName = "map-marker";
       break;
-    case FieldTypes.DATE:
-      if (name.includes("church_start_date")) {
-        iconType = "FontAwesome";
-        iconName = "calendar-check-o";
-      } else if (name.includes("post_date")) {
-        iconType = "FontAwesome";
-        iconName = "calendar-o";
-      } else if (name.includes("start")) {
-        iconType = "FontAwesome";
-        iconName = "calendar-plus-o";
-      } else if (name.includes("end")) {
-        iconType = "FontAwesome";
-        iconName = "calendar-times-o";
+    case FieldTypes.TEXTAREA: //TODO: why does this not work?
+      if (name.includes("list")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "notification-clear-all";
       } else {
-        iconType = "FontAwesome";
+        iconType = "MaterialCommunityIcons";
+        iconName = "text-long";
+      }
+      break;
+    case FieldTypes.DATE:
+      if (name.includes("dob")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-account";
+      } else if (name.includes("church_start_date")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-check";
+      } else if (name.includes("post_date")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-clock";
+      } else if (name.includes("start")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-plus";
+      } else if (name.includes("end")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-remove";
+      } else if (name.includes("baptism_date")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-star";
+      } else {
+        iconType = "MaterialCommunityIcons";
         iconName = "calendar";
       }
       break;
@@ -39,45 +55,70 @@ const FieldIcon = ({ field, hide }) => {
       if (name.includes("subassigned")) {
         iconType = "MaterialCommunityIcons";
         iconName = "briefcase-account-outline";
+      } else if (name.includes("parent")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "drawing-box";
+      } else if (name.includes("peer")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "ray-start-end";
+      } else if (name.includes("child")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "sitemap";
       } else if (name.includes("relation")) {
-        iconType = "FontAwesome5";
-        iconName = "people-arrows";
+        iconType = "MaterialCommunityIcons";
+        iconName = "account-switch";
       } else if (name.includes("people_groups")) {
-        iconType = "FontAwesome";
-        iconName = "globe";
-      } else if (name.includes("coach")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "earth";
+      } else if (name.includes("coaching")) {
         iconType = "MaterialCommunityIcons";
         iconName = "teach";
-      } else if (name.includes("bapti")) {
-        iconType = "FontAwesome5";
+        iconStyle = { scaleX: -1 };
+      } else if (name.includes("coached_by")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "teach";
+      } else if (name.includes("baptized_by")) {
+        iconType = "MaterialCommunityIcons";
         iconName = "water";
+      } else if (name.includes("baptized")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "water-outline";
+      } else if (name.includes("group_leader")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "foot-print";
       } else if (name.includes("group")) {
-        iconType = "MaterialIcons";
-        iconName = "groups";
+        iconType = "MaterialCommunityIcons";
+        iconName = "account-group";
       } else if (name.includes("train")) {
-        iconType = "FontAwesome5";
+        iconType = "MaterialCommunityIcons";
         iconName = "chalkboard-teacher";
       } else if (name.includes("members")) {
-        iconType = "FontAwesome5";
-        iconName = "list-ol";
+        iconType = "MaterialCommunityIcons";
+        iconName = "format-list-bulleted";
       } else if (name.includes("leaders")) {
-        iconType = "FontAwesome";
-        iconName = "globe";
+        iconType = "MaterialCommunityIcons";
+        iconName = "shoe-print";
       } else {
-        iconType = "MaterialIcons";
-        iconName = "group-work";
+        iconType = "MaterialCommunityIcons";
+        iconName = "axis-arrow";
       }
       break;
     case FieldTypes.MULTI_SELECT:
       if (name.includes("email")) {
-        iconType = "FontAwesome";
-        iconName = "envelope";
+        iconType = "MaterialCommunityIcons";
+        iconName = "email";
       } else if (name.includes("sources")) {
-        iconType = "FontAwesome5";
-        iconName = "compress-arrows-alt";
+        iconType = "MaterialCommunityIcons";
+        iconName = "arrow-collapse-all";
+      } else if (name.includes("languages")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "translate";
       } else if (name.includes("health_metrics")) {
-        iconType = "FontAwesome5";
-        iconName = "tachometer-alt";
+        iconType = "MaterialCommunityIcons";
+        iconName = "gauge";
+      } else if (name.includes("milestones")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "routes";
       } else {
         iconType = "MaterialCommunityIcons";
         iconName = "format-list-bulleted";
@@ -85,11 +126,11 @@ const FieldIcon = ({ field, hide }) => {
       break;
     case FieldTypes.COMMUNICATION_CHANNEL:
       if (name.includes("phone")) {
-        iconType = "FontAwesome";
+        iconType = "MaterialCommunityIcons";
         iconName = "phone";
       } else if (name.includes("email")) {
-        iconType = "FontAwesome";
-        iconName = "envelope";
+        iconType = "MaterialCommunityIcons";
+        iconName = "email";
       } else if (name.includes("twitter")) {
         iconType = "MaterialCommunityIcons";
         iconName = "twitter";
@@ -103,38 +144,38 @@ const FieldIcon = ({ field, hide }) => {
         iconType = "MaterialCommunityIcons";
         iconName = "whatsapp";
       } else if (name.includes("address")) {
-        iconType = "FontAwesome5";
+        iconType = "MaterialCommunityIcons";
         iconName = "directions";
       } else {
-        iconType = "FontAwesome5";
-        iconName = "hashtag";
+        iconType = "MaterialCommunityIcons";
+        iconName = "pound";
       }
       break;
     case FieldTypes.KEY_SELECT:
       if (name.includes("faith_status")) {
-        iconType = "FontAwesome5";
-        iconName = "cross";
+        iconType = "MaterialCommunityIcons";
+        iconName = "celtic-cross";
       } else if (name.includes("seeker_path")) {
         iconType = "MaterialCommunityIcons";
         iconName = "map-marker-path";
       } else if (name.includes("gender")) {
-        iconType = "FontAwesome5";
-        iconName = "transgender";
+        iconType = "MaterialCommunityIcons";
+        iconName = "gender-male-female";
       } else if (name.includes("age")) {
-        iconType = "FontAwesome5";
-        iconName = "user-clock";
-      } else if (name.includes("group_status")) {
-        iconType = "FontAwesome5";
-        iconName = "crosshairs";
-      } else if (name.includes("group_type")) {
-        iconType = "FontAwesome5";
-        iconName = "crosshairs";
+        iconType = "MaterialCommunityIcons";
+        iconName = "account-clock";
+      } else if (name.includes("status")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "traffic-light";
+      } else if (name.includes("type")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "shape";
       } else if (name.includes("group")) {
-        iconType = "FontAwesome";
-        iconName = "crosshairs";
+        iconType = "MaterialCommunityIcons";
+        iconName = "group";
       } else {
         iconType = "MaterialCommunityIcons";
-        iconName = "format-list-bulleted";
+        iconName = "format-list-checks";
       }
       break;
     case FieldTypes.USER_SELECT:
@@ -142,48 +183,56 @@ const FieldIcon = ({ field, hide }) => {
         iconType = "MaterialCommunityIcons";
         iconName = "briefcase-account";
       } else {
-        iconType = "FontAwesome";
-        iconName = "user";
+        iconType = "MaterialCommunityIcons";
+        iconName = "briefcase-account-outline";
       }
       break;
     case FieldTypes.TAGS:
-      iconType = "FontAwesome";
-      iconName = "tags";
+      if (name.includes("campaigns")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "bullhorn";
+      } else {
+        iconType = "MaterialCommunityIcons";
+        iconName = "tag-multiple";
+      }
       break;
     case FieldTypes.TEXT:
       if (name.includes("nickname")) {
-        iconType = "FontAwesome5";
-        iconName = "user-tag";
-      } else if (name.includes("four_fields")) {
-        iconType = "FontAwesome5";
-        iconName = "dice-four";
+        iconType = "MaterialCommunityIcons";
+        iconName = "tag-faces";
       } else if (name.includes("name")) {
-        iconType = "FontAwesome5";
-        iconName = "user-alt";
+        iconType = "MaterialCommunityIcons";
+        iconName = "account";
+      } else if (name.includes("four_fields")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "dice-4";
       } else {
         iconType = "MaterialCommunityIcons";
         iconName = "text";
       }
       break;
     case FieldTypes.NUMBER:
-      if (name.includes("leader")) {
-        iconType = "FontAwesome";
-        iconName = "hashtag";
+      if (name.includes("leader_count")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "pound-box";
+      } else if (name.includes("member_count")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "pound-box-outline";
       } else {
-        iconType = "FontAwesome5";
-        iconName = "hashtag";
+        iconType = "MaterialCommunityIcons";
+        iconName = "pound";
       }
       break;
     default:
       iconType = "MaterialCommunityIcons";
       iconName = "square-small";
       break;
-  };
+  }
   return (
     <Icon
       type={iconType}
       name={iconName}
-      style={globalStyles.icon}
+      style={[globalStyles.icon, iconStyle]}
     />
   );
 };
