@@ -17,11 +17,12 @@ import DetailsScreen from "screens/Posts/DetailsScreen";
 import NotificationsScreen from "screens/NotificationsScreen";
 import SettingsScreen from "screens/SettingsScreen";
 
+import useDevice from "hooks/use-device";
 import useI18N from "hooks/use-i18n";
-//import useNotifications from 'hooks/use-notifications';
+import useNotifications from 'hooks/use-notifications';
 import useTheme from "hooks/use-theme";
 
-import { ScreenConstants, TabScreenConstants, TypeConstants } from "constants";
+import { AppConstants, ScreenConstants, TabScreenConstants, TypeConstants } from "constants";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -31,8 +32,10 @@ const TabNavigator = () => {
   console.log("$$$$$          MAIN TAB NAVIGATOR             $$$$$");
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
+  const { isIOS } = useDevice();
   const { isDarkMode, theme } = useTheme();
-  const { i18n } = useI18N();
+  const { i18n, isRTL } = useI18N();
+  const { hasNotifications } = useNotifications();
 
   const screenOptions = {
     headerStyle: {
@@ -98,8 +101,7 @@ const TabNavigator = () => {
           name={TabScreenConstants.HOME}
           component={HomeScreen}
           options={{
-            // TODO: translate
-            title: "D.T",
+            title: AppConstants.NAME,
           }}
         />
         <Stack.Screen
@@ -165,8 +167,7 @@ const TabNavigator = () => {
           name={TabScreenConstants.MORE}
           component={MoreScreen}
           options={{
-            // TODO: translate
-            title: "Custom Post Types",
+            title: i18n.t("more"),
           }}
         />
         <Stack.Screen
@@ -187,40 +188,6 @@ const TabNavigator = () => {
     );
   };
 
-  /*
-  const SettingsStack = () => {
-    const overrideScreenOptions = { ...screenOptions};
-    overrideScreenOptions["headerBackTitle"] = i18n.t("settingsScreen.settings");
-    overrideScreenOptions["title"] = "";
-    overrideScreenOptions["headerStyle"] = {
-      ...screenOptions.headerStyle,
-      shadowColor: "transparent",
-    };
-    return (
-      <Stack.Navigator screenOptions={{
-        headerShown: false,
-      }}>
-        <Stack.Screen
-          name={ScreenConstants.SETTINGS}
-          component={SettingsScreen}
-          //options={{
-          //  title: i18n.t("settingsScreen.settings"),
-          //}}
-        />
-        <Stack.Screen
-          name={ScreenConstants.PIN}
-          options={{
-            title: null,
-            headerBackTitle: i18n.t("settingsScreen.settings"),
-          }}
-        >
-          {(props) => <PINScreen {...props} />}
-        </Stack.Screen>
-      </Stack.Navigator>
-    );
-  };
-  */
-
   return(
     <Tab.Navigator
       initialRouteName={TabScreenConstants.HOME}
@@ -237,13 +204,11 @@ const TabNavigator = () => {
               ? "none"
               : "flex",
         },
-        /*
-        tabBarButton: [ScreenConstants.PIN, ScreenConstants.SETTINGS].includes(route?.name)
+        tabBarButton: [ScreenConstants.PIN].includes(route?.name)
           ? () => {
               return null;
             }
           : undefined,
-        */
       })}
     >
       <Tab.Screen
@@ -256,6 +221,14 @@ const TabNavigator = () => {
               <HomeIcon style={{ color }} />
             </View>
           ),
+          tabBarBadge: hasNotifications ? '' : null,
+          tabBarBadgeStyle: {
+            marginTop: isIOS ? 5 : 10,
+            marginStart: 7,
+            minWidth: 10,
+            maxHeight: 10,
+            borderRadius: 5,
+          },
         }}
       />
       <Tab.Screen
@@ -265,7 +238,7 @@ const TabNavigator = () => {
           type: TypeConstants.CONTACT,
         }}
         options={{
-          tabBarLabel: i18n.t("contactsScreen.contacts"),
+          tabBarLabel: i18n.t("types.contacts"),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <AccountIcon style={{ color }} />
@@ -295,7 +268,7 @@ const TabNavigator = () => {
           type: TypeConstants.GROUP,
         }}
         options={{
-          tabBarLabel: i18n.t("global.groups"),
+          tabBarLabel: i18n.t("types.groups"),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <AccountsIcon style={{ color }} />
@@ -307,22 +280,12 @@ const TabNavigator = () => {
         name={TabScreenConstants.MORE}
         component={MoreStack}
         options={{
-          tabBarLabel: i18n.t("global.more"),
+          tabBarLabel: i18n.t("more"),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <MoreIcon style={{ color }} />
             </View>
           )
-          /*
-          tabBarBadge: '',
-          tabBarBadgeStyle: {
-            marginTop: Platform.OS === "ios" ? 5 : 10,
-            marginStart: 10,
-            minWidth: 10,
-            maxHeight: 10,
-            borderRadius: 5,
-          },
-          */
         }}
       />
     </Tab.Navigator>
