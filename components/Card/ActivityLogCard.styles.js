@@ -6,6 +6,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     alignItems: "flex-start",
     paddingHorizontal: 10
   },
+  // TODO: move to use-styles?
   activityLink: {
     color: ThemeConstants.DARK === theme.mode ? theme.text.primary : theme.brand.primary,
     fontWeight: "bold",

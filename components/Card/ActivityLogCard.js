@@ -30,7 +30,6 @@ const ActivityLogCard = ({ preview, refreshing }) => {
       <Pressable onPress={() => {
         const type = log?.post_type;
         const tabScreen = getTabScreenFromType(type);
-        console.log(`tabScreen: ${tabScreen}`);
         navigation.jumpTo(tabScreen, {
           screen: ScreenConstants.DETAILS,
           id: log?.object_id,

@@ -148,12 +148,12 @@ const PostItem = ({ item, loading, mutate }) => {
       <View style={globalStyles.columnContainer}>
         <Pressable
           onPress={() =>
-            updatePost(
-              { favorite: !item?.favorite },
-              Number(item?.ID),
-              item?.post_type,
+            updatePost({
+              fields: { favorite: !item?.favorite },
+              id: Number(item?.ID),
+              type: item?.post_type,
               mutate
-            )
+            })
           }
         >
           <View style={globalStyles.rowIcon}>

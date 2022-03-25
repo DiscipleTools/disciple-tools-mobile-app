@@ -50,13 +50,15 @@ const useAPI = () => {
     return;
   };
 
-
   // https://developers.disciple.tools/theme-core/api-posts/update-post
-  const updatePost = async(fields, id=false, type=false, mutate=null, silent=false) => {
+  const updatePost = async({ urlPath, urlPathPostfix, fields, id, type, mutate, silent }) => {
     if (!id) id = postId;
     if (!type) type = postType;
     let url = type && id ? `/dt-posts/v2/${type}/${id}` : null;
-    if (silent) url += "?silent=true";
+    if (urlPathPostfix) url += urlPathPostfix;
+    if (urlPath) url = urlPath;
+    // TODO: check for exiting params to use '&' instead of '?'
+    //if (silent) url += "?silent=true";
     try {
       const res = await request({
         url,

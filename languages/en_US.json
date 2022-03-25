@@ -55,9 +55,16 @@
     "selectDate": "Select Date",
     "status": "Status",
     "type": "Type",
-    "home": "Home",
-    "more": "More",
-    "placeholder": "No posts available"
+    "home": "Home"
+  },
+  "accept": "Accept",
+  "decline": "Decline",
+  "items": "Items",
+  "more": "More",
+  "placeholder": "No %{items} currently available",
+  "types": {
+    "contacts": "Contacts",
+    "groups": "Groups"
   },
   "loginScreen": {
     "domain": {
@@ -83,12 +90,6 @@
       "mobileAppPluginRequiredOne": "The Mobile App Plugin is required and does not seem to be activated on your Disciple.Tools.",
       "mobileAppPluginRequiredTwo": "Tap here for more information."
     }
-  },
-  "contactsScreen": {
-    "contacts": "Contacts",
-    "noContactPlacheHolder": "There are not any contacts currently available.",
-    "noContactPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
-    "noContactPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your contacts."
   },
   "settingsScreen": {
     "settings": "Settings",
@@ -180,17 +181,6 @@
     "markAll": "Mark All",
     "dontHaveNotificationsUnread": "No unread notifications",
     "dontHaveNotifications": "No notifications"
-  },
-  "groupsScreen": {
-    "noGroupPlacheHolder": "There are not any groups currently available.",
-    "noGroupPlacheHolder1": "There may have been a problem getting them from your site. Drag down to try to refresh and try again.",
-    "noGroupPlacheHolderOffline": "You are currently offline. Ensure you are connected to wifi or mobile data in order to refresh and get your groups."
-  },
-  "appRestart": {
-    "message": "The application will be restarted to apply the following configuration:",
-    "button": "Ok",
-    "textDirection": "Text direction",
-    "selectedLanguage": "Selected language"
   },
   "endonym": "English"
 }

@@ -69,33 +69,28 @@ const ListScreen = ({ navigation, route }) => {
   // TODO: mock search bar, filter tags, FAB, etc..
   const ListSkeleton = () => Array(10).fill(null).map((_, ii) => <PostItemSkeleton key={ii} />);
 
+  if (!items) return <ListSkeleton />;
   return (
     <>
       <View style={[
         globalStyles.container(tabBarHeight),
       ]}>
         <OfflineBar />
-        {!items ? (
-          <ListSkeleton />
-        ) : (
-          <>
-            <FilterList
-              display
-              sortable
-              items={items}
-              renderItem={renderItem}
-              //renderHiddenItem={renderHiddenItem}
-              search={search}
-              onSearch={onSearch}
-              defaultFilter={defaultFilter}
-              filter={filter}
-              onFilter={onFilter}
-              onRefresh={mutate}
-              //leftOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_LEFT}
-              //rightOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_RIGHT}
-            />
-          </>
-        )}
+        <FilterList
+          display
+          sortable
+          items={items}
+          renderItem={renderItem}
+          //renderHiddenItem={renderHiddenItem}
+          search={search}
+          onSearch={onSearch}
+          defaultFilter={defaultFilter}
+          filter={filter}
+          onFilter={onFilter}
+          onRefresh={mutate}
+          //leftOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_LEFT}
+          //rightOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_RIGHT}
+        />
       </View>
       <FAB />
     </>

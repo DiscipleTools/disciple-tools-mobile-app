@@ -104,7 +104,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   const _onSave = async(newValue) => {
     // TODO: handle this differently (we shouldn't need one-off for this field.type)
     if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) newValue = mapField(newValue);
-    await updatePost(newValue);
+    await updatePost({ fields: newValue });
     mutate();
   };
 

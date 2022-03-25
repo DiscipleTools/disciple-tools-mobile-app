@@ -367,7 +367,7 @@ const useList = ({ search, filter, exclude, type, subtype } = {}) => {
 
   const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
   if (error || isLoading || !data?.posts) return {
-    data: [],
+    data: null,
     error,
     isLoading,
     isValidating,
