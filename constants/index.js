@@ -54,9 +54,10 @@ export const defaultHealthMilestones = [
 ];
 
 export const AppConstants = Object.freeze({
+  NAME: "D.T",
   PROTOCOL: "https",
   TIMEOUT: 15000, // 15 secs
-  REFRESH_INTERVAL: 0, // 0 secs
+  REFRESH_INTERVAL: 0, //10 secs
 });
 
 export const HTTP = Object.freeze({
