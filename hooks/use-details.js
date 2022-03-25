@@ -332,7 +332,6 @@ const useDetails = () => {
   // TODO: useSelect for initialData?
   //const initialData = null;
   const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
-
   return {
     data: data ? mapPost(data) : null,
     error,
