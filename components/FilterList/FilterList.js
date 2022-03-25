@@ -4,10 +4,9 @@ import { SwipeListView } from "react-native-swipe-list-view";
 
 import SearchBar from "./SearchBar";
 import FilterBar from "./FilterBar";
+import Placeholder from "components/Placeholder";
 
-import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
-import useType from "hooks/use-type";
 
 import { localStyles } from "./FilterList.styles";
 
@@ -31,7 +30,6 @@ const FilterList = ({
 }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
-  const { i18n } = useI18N();
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -48,21 +46,6 @@ const FilterList = ({
       setRefreshing(false);
     }, 1000);
   });
-
-  const Placeholder = () => {
-    const { isContact, isGroup } = useType();
-    const getDefaultPlaceholder = () => {
-      if (isContact) return i18n.t("contactsScreen.noContactPlacheHolder");
-      if (isGroup) return i18n.t("groupsScreen.noGroupPlacheHolder");
-      return i18n.t("global.placeholder");
-    };
-    const defaultPlaceholder = getDefaultPlaceholder();
-    return(
-      <View style={styles.placeholderContainer}>
-        <Text style={styles.placeholderText}>{placeholder ?? defaultPlaceholder}</Text>
-      </View>
-    );
-  };
 
   return (
     <>
@@ -86,8 +69,10 @@ const FilterList = ({
           onFilter={onFilter}
         />
       )}
-      {_items?.length === 0 ? (
-        <Placeholder />
+      {_items && _items?.length === 0 ? (
+        <View style={styles.container}>
+          <Placeholder placeholder={placeholder} />
+        </View>
       ) : (
         <SwipeListView
           data={_items}

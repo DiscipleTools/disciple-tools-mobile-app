@@ -11,6 +11,7 @@ import ActivityLogCard from "components/Card/ActivityLogCard";
 
 import useFilters from "hooks/use-filters";
 import useI18N from "hooks/use-i18n";
+import useNotifications from "hooks/use-notifications";
 import useStyles from "hooks/use-styles";
 
 import { ScreenConstants, TypeConstants } from "constants";
@@ -26,16 +27,14 @@ const HomeScreen = ({ navigation, route }) => {
   const { i18n } = useI18N();
   const { data: contactFilters, mutate: mutateContactFilters } = useFilters({ type: TypeConstants.CONTACT });
   const { data: groupFilters, mutate: mutateGroupFilters } = useFilters({ type: TypeConstants.GROUP });
-  // TODO: constant
-  //const { data: trainingFilters, mutate: mutateTrainingFilters } = useFilters({ type: "trainings" });
-
-  //const [update, forceUpdate] = useReducer(x => x + 1, 0);
+  const { hasNotifications } = useNotifications();
 
   const [refreshing, setRefreshing] = useState(false);
 
+  const hasAccountUpdates = false;
+
   const onRefresh = () => {
     setRefreshing(true);
-    //forceUpdate();
     if (mutateContactFilters) mutateContactFilters();
     if (mutateGroupFilters) mutateGroupFilters();
     setTimeout(() => {
@@ -64,9 +63,6 @@ const HomeScreen = ({ navigation, route }) => {
         url: "https://disciple.tools/user-docs/getting-started-info/admin/settings-dt/general-settings-dt/",
       }
     ];
-    // TODO
-    const hasNotifications = true;
-    //const hasNotifications = false;
     const renderStartIcons = () => (
       <>
         <View style={styles.headerIcon}>
@@ -81,6 +77,9 @@ const HomeScreen = ({ navigation, route }) => {
           <CogIcon
             onPress={() => navigation.push(ScreenConstants.SETTINGS)}
           />
+          { hasAccountUpdates && (
+            <View style={styles.notificationsDot(hasAccountUpdates)} />
+          )}
         </View>
       </>
     );
@@ -95,7 +94,7 @@ const HomeScreen = ({ navigation, route }) => {
         />
       )
     });
-  }, [navigation]);
+  }, [navigation, hasNotifications, hasAccountUpdates]);
 
   useEffect(() => {
     onRefresh();
@@ -200,7 +199,7 @@ const HomeScreen = ({ navigation, route }) => {
         <ActiveContactsCard />
         <ActiveGroupsCard />
       </View>
-      <PendingContactsCard refreshing={refreshing} />
+      <PendingContactsCard filters={contactFilters} refreshing={refreshing} onRefresh={onRefresh} />
       <ActivityLogCard preview={5} refreshing={refreshing} />
     </ScrollView>
   );

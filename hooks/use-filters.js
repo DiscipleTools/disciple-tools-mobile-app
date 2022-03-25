@@ -12,7 +12,7 @@ const useFilters = ({ type } = {}) => {
   const { isPost, isNotification, isCommentsActivity, postType } = useType({ type });
 
   const url = isPost ? `/dt/v1/users/get_filters?post_type=${postType}&force_refresh=1` : null;
-  let { data, error, isLoading, isValidating } = useRequest({ url });
+  let { data, error, isLoading, isValidating, mutate } = useRequest({ url });
 
   if (isCommentsActivity) data = [
     {
@@ -172,6 +172,7 @@ const useFilters = ({ type } = {}) => {
     error,
     isLoading,
     isValidating,
+    mutate
   };
 };
 export default useFilters;

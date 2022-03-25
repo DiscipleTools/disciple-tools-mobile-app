@@ -162,9 +162,10 @@ const useSettings = ({ type } = {}) => {
   };
 
   const url = isPost ? `/dt-posts/v2/${postType}/settings` : null;
-  const { data: settings, error, isLoading, isValidating } = useRequest({ url });
+  const { data, error, isLoading, isValidating } = useRequest({ url });
+  const settings = data?.fields ? mapSettings(data) : null;
   return {
-    settings: settings?.fields ? mapSettings(settings) : null,
+    settings,
     error,
     isLoading,
     isValidating,

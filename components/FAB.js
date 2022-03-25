@@ -48,7 +48,7 @@ const FAB = () => {
     const newActionValue = post[quickActionPropertyName]
       ? Number(post[quickActionPropertyName]) + 1
       : 1;
-    updatePost({ [quickActionPropertyName]: newActionValue });
+    updatePost({ fields: { [quickActionPropertyName]: newActionValue }});
   };
 
   // TODO: merge with onSaveQuickAction
