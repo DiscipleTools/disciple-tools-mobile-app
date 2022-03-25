@@ -1,35 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Pressable, Text, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import {
+  ScrollView,
+  FlingGestureHandler,
+  Directions,
+  State,
+} from 'react-native-gesture-handler';
 
 import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./TabScrollView.styles";
 
-const TabScrollView = ({ initialIndex, scenes, renderTab, onIndexChange, style }) => {
+const TabScrollView = ({ index, onIndexChange, renderTab, scenes, style }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
 
-  const [active, setActive] = useState(null);
+  if (!index) index = 0;
 
-  useEffect(() => {
-    if (!scenes) return;
-    if (!initialIndex) initialIndex = 0;
-    setActive(scenes[initialIndex]);
-  }, [initialIndex, scenes]);
-
-  const Tab = ({ idx, label, active }) => (
-    <View style={styles.tabContainer(active)}>
+  const Tab = ({ label, selected}) => (
+    <View style={styles.tabContainer(selected)}>
       <Text style={styles.tabLabel}>{label}</Text>
     </View>
   );
 
-  if (scenes?.length < 1) return null;
-  return (
-    <View style={[
-      styles.container,
-      style
-    ]}>
+  if (!scenes || scenes?.length < 1) return null;
+  return(
+    <View
+      style={[
+        styles.container,
+        style
+      ]}
+    >
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -39,25 +40,52 @@ const TabScrollView = ({ initialIndex, scenes, renderTab, onIndexChange, style }
         {scenes?.map((scene, idx) => (
           <Pressable
             key={idx}
-            onPress={() => {
-              setActive(scene);
-              if (onIndexChange) onIndexChange(idx);
-            }}
+            onPress={() => { onIndexChange ? onIndexChange(idx) : null }}
             style={{}}
           >
             { renderTab ? renderTab({ scene, idx }) : (
               <Tab
                 idx={idx}
                 label={scene?.label}
-                active={active === scene}
+                selected={scene?.label === scenes[index]?.label}
               />
             )}
           </Pressable>
         ))}
       </ScrollView>
-      <View style={styles.sceneContent}>
-        {active?.component}
-      </View>
+      <FlingGestureHandler
+        direction={Directions.LEFT}
+        onHandlerStateChange={({ nativeEvent }) => {
+          if (nativeEvent.state === State.ACTIVE) {
+            if (onIndexChange) {
+              if (index < scenes?.length-1) {
+                onIndexChange(index + 1);
+              } else {
+                onIndexChange(0);
+              };
+            };
+          };
+        }}
+      >
+        <FlingGestureHandler
+          direction={Directions.RIGHT}
+          onHandlerStateChange={({ nativeEvent }) => {
+            if (nativeEvent.state === State.ACTIVE) {
+              if (onIndexChange) {
+                if (index === 0) {
+                  onIndexChange(scenes?.length-1);
+                } else {
+                  onIndexChange(index-1);
+                };
+              };
+            };
+          }}
+        >
+          <View style={styles.sceneContent}>
+            {scenes[index]?.component}
+          </View>
+        </FlingGestureHandler>
+      </FlingGestureHandler>
     </View>
   );
 };
