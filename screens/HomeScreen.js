@@ -5,6 +5,8 @@ import { useIsFocused } from "@react-navigation/native";
 
 import { BellIcon, CogIcon } from "components/Icon";
 import { HeaderRight } from "components/Header/Header";
+import OfflineBar from "components/OfflineBar";
+
 import MetricCard from "components/Card/MetricCard";
 import PendingContactsCard from "components/Card/PendingContactsCard";
 import ActivityLogCard from "components/Card/ActivityLogCard";
@@ -165,27 +167,30 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   return (
-    <ScrollView
-      style={[globalStyles.screenContainer, styles.container]}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
-      <View style={[globalStyles.rowContainer, styles.cardRowContainer]}>
-        <FavoriteContactsCard />
-        <FavoriteGroupsCard />
-      </View>
-      <View style={[globalStyles.rowContainer, styles.cardRowContainer]}>
-        <ActiveContactsCard />
-        <ActiveGroupsCard />
-      </View>
-      <PendingContactsCard
-        filters={contactFilters}
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-      />
-      <ActivityLogCard preview={5} refreshing={refreshing} />
-    </ScrollView>
+    <>
+      <OfflineBar />
+      <ScrollView
+        style={[globalStyles.screenContainer, styles.container]}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View style={[globalStyles.rowContainer, styles.cardRowContainer]}>
+          <FavoriteContactsCard />
+          <FavoriteGroupsCard />
+        </View>
+        <View style={[globalStyles.rowContainer, styles.cardRowContainer]}>
+          <ActiveContactsCard />
+          <ActiveGroupsCard />
+        </View>
+        <PendingContactsCard
+          filters={contactFilters}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />
+        <ActivityLogCard preview={5} refreshing={refreshing} />
+      </ScrollView>
+    </>
   );
 };
 export default HomeScreen;
