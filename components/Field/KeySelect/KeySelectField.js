@@ -92,7 +92,6 @@ const KeySelectField = ({ editing, field, value, onChange }) => {
 
     const getDefaultSheetSnapIndex = () => {
       const optionsCount = sections?.[0]?.data?.length;
-      console.log(`optionsCount: ${optionsCount}`);
       if (optionsCount <= 3) return 0;
       if (optionsCount <= 5) return 1;
       if (optionsCount <= 9) return 2;
