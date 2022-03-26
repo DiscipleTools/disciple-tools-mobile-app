@@ -166,7 +166,11 @@ export const OnePasswordIcon = ({ onPress, style }) => (
 );
 //TODO more icon
 export const PostIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="post-outline" onPress={onPress} style={style} />
+  <MaterialCommunityIcon
+    name="format-list-bulleted-type"
+    onPress={onPress}
+    style={style}
+  />
 );
 export const RemoveIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="minus" onPress={onPress} style={style} />

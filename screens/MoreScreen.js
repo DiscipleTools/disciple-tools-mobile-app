@@ -1,11 +1,8 @@
-import React, { useCallback } from 'react';
-import { SafeAreaView } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
+import React, { useCallback } from "react";
+import { SafeAreaView } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 
-import {
-  ChevronIcon,
-  PostIcon,
-} from "components/Icon";
+import { ChevronIcon, PostIcon } from "components/Icon";
 import OfflineBar from "components/OfflineBar";
 //import TitleBar from "components/TitleBar";
 import ListItem from "components/ListItem";
@@ -15,10 +12,9 @@ import useStyles from "hooks/use-styles";
 
 import { ScreenConstants } from "constants";
 
-import { localStyles } from './MoreScreen.styles';
+import { localStyles } from "./MoreScreen.styles";
 
 const MoreScreen = ({ navigation, route }) => {
-
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
@@ -33,9 +29,9 @@ const MoreScreen = ({ navigation, route }) => {
       onPress={() => {
         navigation.push(ScreenConstants.LIST, {
           type,
-          filter: null 
-        })}
-      }
+          filter: null,
+        });
+      }}
     />
   );
 

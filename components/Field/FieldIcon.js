@@ -94,7 +94,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "account-group";
       } else if (name.includes("train")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "chalkboard-teacher";
+        iconName = "teach";
       } else if (name.includes("members")) {
         iconType = "MaterialCommunityIcons";
         iconName = "format-list-bulleted";
