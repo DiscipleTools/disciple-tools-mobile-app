@@ -43,8 +43,8 @@ const TabNavigator = () => {
     headerTintColor: theme.text.primary,
     headerBackTitleVisible: false,
     // use modals by default
-    gestureEnabled: true,
-    ...TransitionPresets.ModalTransition,
+    //gestureEnabled: true,
+    //...TransitionPresets.ModalTransition,
   };
 
   const PostStack = ({ route }) => {
@@ -236,6 +236,7 @@ const TabNavigator = () => {
           type: TypeConstants.CONTACT,
         }}
         options={{
+          //unmountOnBlur: true,
           tabBarLabel: i18n.t("types.contacts"),
           tabBarIcon: ({ focused, color }) => (
             <View>
@@ -243,21 +244,23 @@ const TabNavigator = () => {
             </View>
           ),
         }}
-        /*
-        listeners={({ navigation, route }) => ({
+        listeners={({ navigation }) => ({
           tabPress: (e) => {
-            // Prevent default action
-            //e.preventDefault();
-            //RootNavigation.resetFilter();
-            //navigation.setParams({
-            //  type: TypeConstants.CONTACT,
-            //});
-            //navigation.jumpTo(TabScreenConstants.CONTACTS, {
-            //  type: TypeConstants.CONTACT,
-            //}); 
+            e.preventDefault();
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: TabScreenConstants.CONTACTS,
+                  params: {
+                    screen: ScreenConstants.LIST,
+                    type: TypeConstants.CONTACT
+                  }
+                }
+              ]
+            });
           },
         })}
-        */
       />
       <Tab.Screen
         name={TabScreenConstants.GROUPS}
@@ -273,6 +276,23 @@ const TabNavigator = () => {
             </View>
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: TabScreenConstants.GROUPS,
+                  params: {
+                    screen: ScreenConstants.LIST,
+                    type: TypeConstants.GROUP
+                  }
+                }
+              ]
+            });
+          },
+        })}
       />
       <Tab.Screen
         name={TabScreenConstants.MORE}
@@ -285,6 +305,22 @@ const TabNavigator = () => {
             </View>
           )
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: TabScreenConstants.MORE,
+                  params: {
+                    screen: TabScreenConstants.MORE
+                  }
+                }
+              ]
+            });
+          },
+        })}
       />
     </Tab.Navigator>
   );

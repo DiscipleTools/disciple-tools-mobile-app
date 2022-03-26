@@ -47,10 +47,13 @@ export const ArrowIcon = ({ onPress, style }) => {
   return <ArrowForwardIcon onPress={onPress} style={style} />;
 };
 
-export const ChevronIcon = ({ onPress, style }) => {
+export const ChevronIcon = ({ header, onPress, style }) => {
   const { isRTL } = useI18N();
-  if (isRTL) return <ChevronBackIcon onPress={onPress} style={style} />;
+  if (isRTL && header) return <ChevronForwardIcon onPress={onPress} style={style} />;
+  if (header) return <ChevronBackIcon onPress={onPress} style={style} />;
+  if (isRTL)  return <ChevronBackIcon onPress={onPress} style={style} />;
   return <ChevronForwardIcon onPress={onPress} style={style} />;
+
 };
 
 // Static Icons
