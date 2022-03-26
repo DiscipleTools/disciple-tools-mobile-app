@@ -47,6 +47,7 @@ const DetailsScreen = ({ navigation }) => {
   const { settings } = useSettings();
   const { updatePost } = useAPI();
 
+  const [index, onIndexChange] = useState(0);
   const [scenes, setScenes] = useState(null);
 
   /*
@@ -126,7 +127,11 @@ const DetailsScreen = ({ navigation }) => {
       <View style={styles.screenContainer}>
         <OfflineBar />
         <TitleBar center title={post?.title} />
-        <TabScrollView scenes={scenes} />
+        <TabScrollView
+          index={index}
+          onIndexChange={onIndexChange}
+          scenes={scenes}
+        />
       </View>
       <FAB />
     </>

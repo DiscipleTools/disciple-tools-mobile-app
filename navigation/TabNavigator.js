@@ -17,7 +17,6 @@ import DetailsScreen from "screens/Posts/DetailsScreen";
 import NotificationsScreen from "screens/NotificationsScreen";
 import SettingsScreen from "screens/SettingsScreen";
 
-import useDevice from "hooks/use-device";
 import useI18N from "hooks/use-i18n";
 import useNotifications from 'hooks/use-notifications';
 import useTheme from "hooks/use-theme";
@@ -32,7 +31,6 @@ const TabNavigator = () => {
   console.log("$$$$$          MAIN TAB NAVIGATOR             $$$$$");
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
-  const { isIOS } = useDevice();
   const { isDarkMode, theme } = useTheme();
   const { i18n, isRTL } = useI18N();
   const { hasNotifications } = useNotifications();
@@ -223,7 +221,7 @@ const TabNavigator = () => {
           ),
           tabBarBadge: hasNotifications ? '' : null,
           tabBarBadgeStyle: {
-            marginTop: isIOS ? 5 : 10,
+            marginTop: 5,
             marginStart: 7,
             minWidth: 10,
             maxHeight: 10,
