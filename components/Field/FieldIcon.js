@@ -205,7 +205,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "tag-faces";
       } else if (name.includes("name")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "sign-text";
+        iconName = "account";
       } else if (name.includes("four_fields")) {
         iconType = "MaterialCommunityIcons";
         iconName = "dice-4";
