@@ -57,7 +57,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "briefcase-account-outline";
       } else if (name.includes("parent")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "drawing-box";
+        iconName = "triangle";
       } else if (name.includes("peer")) {
         iconType = "MaterialCommunityIcons";
         iconName = "ray-start-end";
@@ -199,13 +199,22 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "tag-multiple";
       }
       break;
+    case FieldTypes.TASK:
+      if (name.includes("task")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-clock";
+      } else {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-clock";
+      }
+      break;
     case FieldTypes.TEXT:
       if (name.includes("nickname")) {
         iconType = "MaterialCommunityIcons";
         iconName = "tag-faces";
       } else if (name.includes("name")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "account";
+        iconName = "sign-text";
       } else if (name.includes("four_fields")) {
         iconType = "MaterialCommunityIcons";
         iconName = "dice-4";

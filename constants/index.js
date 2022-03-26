@@ -91,6 +91,7 @@ export const FieldTypes = Object.freeze({
   NUMBER: "number",
   POST_USER_META: "post_user_meta",
   TAGS: "tags",
+  TASK: "task",
   TEXT: "text",
   TEXTAREA: "textarea",
   USER_SELECT: "user_select",
