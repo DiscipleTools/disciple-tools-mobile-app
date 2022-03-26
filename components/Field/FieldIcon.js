@@ -51,6 +51,15 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "calendar";
       }
       break;
+    case FieldTypes.DATETIME_SERIES:
+      if (name.includes("meeting")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-clock";
+      } else {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-clock";
+      }
+      break;
     case FieldTypes.CONNECTION:
       if (name.includes("subassigned")) {
         iconType = "MaterialCommunityIcons";

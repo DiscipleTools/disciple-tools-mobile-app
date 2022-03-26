@@ -83,6 +83,7 @@ export const FieldTypes = Object.freeze({
   COMMUNICATION_CHANNEL: "communication_channel",
   CONNECTION: "connection",
   DATE: "date",
+  DATETIME_SERIES: "datetime_series",
   KEY_SELECT: "key_select",
   LOCATION: "location",
   LOCATION_GRID: "location_grid",
