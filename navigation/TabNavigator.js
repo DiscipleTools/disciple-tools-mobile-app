@@ -1,12 +1,15 @@
 import React from "react";
 import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator, TransitionPresets } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  TransitionPresets,
+} from "@react-navigation/stack";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
 import { HomeIcon, AccountIcon, AccountsIcon, MoreIcon } from "components/Icon";
-import HomeScreen from 'screens/HomeScreen';
-import MoreScreen from 'screens/MoreScreen';
+import HomeScreen from "screens/HomeScreen";
+import MoreScreen from "screens/MoreScreen";
 import PINScreen from "screens/PINScreen";
 import CreateScreen from "screens/Posts/CreateScreen";
 import ImportContactsScreen from "screens/Posts/ImportContactsScreen";
@@ -18,10 +21,15 @@ import NotificationsScreen from "screens/NotificationsScreen";
 import SettingsScreen from "screens/SettingsScreen";
 
 import useI18N from "hooks/use-i18n";
-import useNotifications from 'hooks/use-notifications';
+import useNotifications from "hooks/use-notifications";
 import useTheme from "hooks/use-theme";
 
-import { AppConstants, ScreenConstants, TabScreenConstants, TypeConstants } from "constants";
+import {
+  AppConstants,
+  ScreenConstants,
+  TabScreenConstants,
+  TypeConstants,
+} from "constants";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -32,13 +40,13 @@ const TabNavigator = () => {
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
   const { isDarkMode, theme } = useTheme();
-  const { i18n, isRTL } = useI18N();
+  const { i18n, isRTL, locale } = useI18N();
   const { hasNotifications } = useNotifications();
 
   const screenOptions = {
     headerStyle: {
       backgroundColor: theme.background.primary,
-      shadowColor: 'transparent',
+      shadowColor: "transparent",
     },
     headerTintColor: theme.text.primary,
     headerBackTitleVisible: false,
@@ -54,35 +62,47 @@ const TabNavigator = () => {
           name={ScreenConstants.LIST}
           component={ListScreen}
           //options={{ headerShown: false }}
-          initialParams={route?.params ? {
-            ...route.params,
-          } : null}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
         />
         <Stack.Screen
           name={ScreenConstants.DETAILS}
           component={DetailsScreen}
           //options={{ presentation: 'card' }}
-          initialParams={route?.params ? {
-            ...route.params,
-          } : null}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
         />
         <Stack.Screen
           name={ScreenConstants.CREATE}
           component={CreateScreen}
           options={{
             // TODO:better title term
-            title: i18n.t("contactDetailScreen.addNewContact"),
+            title: i18n.t("global.addNewContact", { locale }),
           }}
-          initialParams={route?.params ? {
-            ...route.params,
-          } : null}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
         />
         <Stack.Screen
           name={ScreenConstants.IMPORT}
           component={ImportContactsScreen}
           options={{
             // TODO:better title term
-            title: i18n.t("contactDetailScreen.importContact"),
+            title: i18n.t("global.importContact", { locale }),
           }}
           initialParams={{
             type: TypeConstants.CONTACT,
@@ -121,7 +141,7 @@ const TabNavigator = () => {
           component={NotificationsScreen}
           //options={{ presentation: 'transparentModal' }}
           options={{
-            title: i18n.t("notificationsScreen.notifications"),
+            title: i18n.t("global.notifications", { locale }),
           }}
           initialParams={{
             type: TypeConstants.NOTIFICATION,
@@ -131,15 +151,15 @@ const TabNavigator = () => {
           name={ScreenConstants.SETTINGS}
           component={SettingsScreen}
           //options={{
-            //mode: "modal",
-            //headerMode: "none",
-            //cardStyle: {
-            //  backgroundColor:"transparent",
-            //  opacity: 0.99
-            //}
+          //mode: "modal",
+          //headerMode: "none",
+          //cardStyle: {
+          //  backgroundColor:"transparent",
+          //  opacity: 0.99
+          //}
           //}}
           options={{
-            title: i18n.t("settingsScreen.settings"),
+            title: i18n.t("global.settings", { locale }),
           }}
           initialParams={{
             type: TypeConstants.SETTINGS,
@@ -149,7 +169,7 @@ const TabNavigator = () => {
           name={ScreenConstants.PIN}
           options={{
             title: null,
-            headerBackTitle: i18n.t("settingsScreen.settings"),
+            headerBackTitle: i18n.t("global.settings", { locale }),
           }}
         >
           {(props) => <PINScreen {...props} />}
@@ -165,42 +185,55 @@ const TabNavigator = () => {
           name={TabScreenConstants.MORE}
           component={MoreScreen}
           options={{
-            title: i18n.t("more"),
+            title: i18n.t("global.more", { locale }),
           }}
         />
         <Stack.Screen
           name={ScreenConstants.LIST}
           component={ListScreen}
-          initialParams={route?.params ? {
-            ...route.params,
-          } : null}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
         />
         <Stack.Screen
           name={ScreenConstants.DETAILS}
           component={DetailsScreen}
-          initialParams={route?.params ? {
-            ...route.params,
-          } : null}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
         />
       </Stack.Navigator>
     );
   };
 
-  return(
+  return (
     <Tab.Navigator
       initialRouteName={TabScreenConstants.HOME}
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: isDarkMode ? theme.highlight : theme.brand.primary,
+        tabBarActiveTintColor: isDarkMode
+          ? theme.highlight
+          : theme.brand.primary,
         tabBarStyle: {
           // NOTE: no longer necessary bc handled automatically when 'I18nManager.isRTL' is set
           //transform: isRTL ? [{scaleX: -1}] : null,
           backgroundColor: theme.background.primary,
           borderTopColor: theme.divider,
-          display:
-            [ScreenConstants.PIN, ScreenConstants.SETTINGS, ScreenConstants.NOTIFICATIONS].includes(getFocusedRouteNameFromRoute(route))
-              ? "none"
-              : "flex",
+          display: [
+            ScreenConstants.PIN,
+            ScreenConstants.SETTINGS,
+            ScreenConstants.NOTIFICATIONS,
+          ].includes(getFocusedRouteNameFromRoute(route))
+            ? "none"
+            : "flex",
         },
         tabBarButton: [ScreenConstants.PIN].includes(route?.name)
           ? () => {
@@ -213,13 +246,13 @@ const TabNavigator = () => {
         name={TabScreenConstants.HOME}
         component={HomeStack}
         options={{
-          tabBarLabel: i18n.t("global.home"),
+          tabBarLabel: i18n.t("global.home", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <HomeIcon style={{ color }} />
             </View>
           ),
-          tabBarBadge: hasNotifications ? '' : null,
+          tabBarBadge: hasNotifications ? "" : null,
           tabBarBadgeStyle: {
             marginTop: 5,
             marginStart: 7,
@@ -237,7 +270,7 @@ const TabNavigator = () => {
         }}
         options={{
           //unmountOnBlur: true,
-          tabBarLabel: i18n.t("types.contacts"),
+          tabBarLabel: i18n.t("global.contacts", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <AccountIcon style={{ color }} />
@@ -254,10 +287,10 @@ const TabNavigator = () => {
                   name: TabScreenConstants.CONTACTS,
                   params: {
                     screen: ScreenConstants.LIST,
-                    type: TypeConstants.CONTACT
-                  }
-                }
-              ]
+                    type: TypeConstants.CONTACT,
+                  },
+                },
+              ],
             });
           },
         })}
@@ -269,7 +302,7 @@ const TabNavigator = () => {
           type: TypeConstants.GROUP,
         }}
         options={{
-          tabBarLabel: i18n.t("types.groups"),
+          tabBarLabel: i18n.t("global.groups", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <AccountsIcon style={{ color }} />
@@ -286,10 +319,10 @@ const TabNavigator = () => {
                   name: TabScreenConstants.GROUPS,
                   params: {
                     screen: ScreenConstants.LIST,
-                    type: TypeConstants.GROUP
-                  }
-                }
-              ]
+                    type: TypeConstants.GROUP,
+                  },
+                },
+              ],
             });
           },
         })}
@@ -298,12 +331,12 @@ const TabNavigator = () => {
         name={TabScreenConstants.MORE}
         component={MoreStack}
         options={{
-          tabBarLabel: i18n.t("more"),
+          tabBarLabel: i18n.t("global.more", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <MoreIcon style={{ color }} />
             </View>
-          )
+          ),
         }}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
@@ -314,10 +347,10 @@ const TabNavigator = () => {
                 {
                   name: TabScreenConstants.MORE,
                   params: {
-                    screen: TabScreenConstants.MORE
-                  }
-                }
-              ]
+                    screen: TabScreenConstants.MORE,
+                  },
+                },
+              ],
             });
           },
         })}

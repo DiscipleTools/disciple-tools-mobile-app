@@ -1,4 +1,4 @@
-import Toast from 'react-native-toast-message';
+import Toast from "react-native-toast-message";
 
 const useToast = () => {
   const toast = (message, error = false) => {

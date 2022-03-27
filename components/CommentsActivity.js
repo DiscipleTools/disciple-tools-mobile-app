@@ -1,7 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Image, View, Keyboard, KeyboardAvoidingView, TextInput, Text, Platform, TouchableWithoutFeedback, Button, StatusBar, Pressable } from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  View,
+  Keyboard,
+  KeyboardAvoidingView,
+  TextInput,
+  Text,
+  Platform,
+  TouchableWithoutFeedback,
+  Button,
+  StatusBar,
+  Pressable,
+} from "react-native";
 
-import * as Clipboard from 'expo-clipboard';
+import * as Clipboard from "expo-clipboard";
 
 import ParsedText from "react-native-parsed-text";
 //import MentionsTextInput from "react-native-mentions";
@@ -24,7 +37,6 @@ import { localStyles } from "./CommentsActivity.styles";
 const MENTION_PATTERN = /@\[.+?\]\((.*)\)/g;
 
 const CommentsActivity = ({ headerHeight, insets }) => {
-
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, isRTL } = useI18N();
   const toast = useToast();
@@ -32,7 +44,7 @@ const CommentsActivity = ({ headerHeight, insets }) => {
 
   const [editComment, setEditComment] = useState({
     id: null,
-    message: ''
+    message: "",
   });
 
   const { createComment, updateComment, deleteComment } = useAPI();
@@ -53,7 +65,13 @@ const CommentsActivity = ({ headerHeight, insets }) => {
 
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
 
-  const { data: items, error, isLoading, isValidating, mutate } = useCommentsActivities({ search, filter });
+  const {
+    data: items,
+    error,
+    isLoading,
+    isValidating,
+    mutate,
+  } = useCommentsActivities({ search, filter });
   if (!items) return null;
 
   const onClear = () => {
@@ -62,23 +80,25 @@ const CommentsActivity = ({ headerHeight, insets }) => {
     mutate();
   };
 
-  // TODO: implement this skeleton 
+  // TODO: implement this skeleton
   const CommentsActivityItemLoadingSkeleton = () => <PostItemSkeleton />;
 
   const CommentsActivityItem = ({ item, loading }) => {
     if (!item || loading) return <CommentsActivityItemLoadingSkeleton />;
     const message = item?.comment_content || item?.object_note;
-    const datetime = item?.comment_date || new Date(Number('1611715906')*1000).toString();
+    const datetime =
+      item?.comment_date || new Date(Number("1611715906") * 1000).toString();
     const author = item?.comment_author || item?.name;
     const authorId = Number(item?.user_id);
     const userIsAuthor = authorId === userData?.ID;
     const isActivity = item?.object_note?.length > 0;
     const onCopy = () => Clipboard.setString(message);
-    const onEdit = () => setEditComment({
-      id: item?.comment_ID,
-      message
-    });
-    const onDelete = async() => {
+    const onEdit = () =>
+      setEditComment({
+        id: item?.comment_ID,
+        message,
+      });
+    const onDelete = async () => {
       // TODO: add support for Activity type
       const commentId = item?.comment_ID;
       try {
@@ -86,7 +106,7 @@ const CommentsActivity = ({ headerHeight, insets }) => {
         mutate();
       } catch (error) {
         toast(error, true);
-      };
+      }
     };
     const onLongPress = () => {
       // TODO: use an expandable (to fullscreen) Action Sheet: https://github.com/gorhom/react-native-bottom-sheet
@@ -104,7 +124,7 @@ const CommentsActivity = ({ headerHeight, insets }) => {
           ],
           cancelButtonIndex: userIsAuthor ? 3 : 1,
           destructiveButtonIndex: userIsAuthor ? 2 : null,
-          title: null 
+          title: null
         },
         buttonIndex => {
           if (buttonIndex === 0) onCopy();
@@ -123,19 +143,26 @@ const CommentsActivity = ({ headerHeight, insets }) => {
       return `@${mentionText}`;
     };
 
-    return(
+    return (
       <Pressable onLongPress={() => onLongPress()}>
         <View style={styles.container}>
           <Image
             style={styles.image}
-            source={{ uri: (item?.gravatar && item?.gravator !== '') ? item?.gravatar : "https://www.gravatar.com/avatar/?d=mp" }}
+            source={{
+              uri:
+                item?.gravatar && item?.gravator !== ""
+                  ? item?.gravatar
+                  : "https://www.gravatar.com/avatar/?d=mp",
+            }}
           />
           <View style={styles.content}>
             <View style={styles.contentHeader}>
-              <View style={[
-                globalStyles.rowContainer,
-                { justifyContent: "space-between" }
-              ]}>
+              <View
+                style={[
+                  globalStyles.rowContainer,
+                  { justifyContent: "space-between" },
+                ]}
+              >
                 <View style={globalStyles.columnContainer}>
                   <Text
                     style={[
@@ -143,13 +170,10 @@ const CommentsActivity = ({ headerHeight, insets }) => {
                       isRTL ? { textAlign: "left", flex: 1 } : {},
                     ]}
                   >
-                    { author }
+                    {author}
                   </Text>
                 </View>
-                <View style={[
-                  globalStyles.columnContainer,
-                  { width: 110 }
-                ]}>
+                <View style={[globalStyles.columnContainer, { width: 110 }]}>
                   <Text
                     style={[
                       styles.time,
@@ -174,16 +198,16 @@ const CommentsActivity = ({ headerHeight, insets }) => {
                 },
               ]}
             >
-              { message }
+              {message}
             </ParsedText>
+          </View>
         </View>
-      </View>
-    </Pressable>
-  );
-};
+      </Pressable>
+    );
+  };
 
-const CustomKeyboardAvoidingView = ({ children, style }) => {
-  /*
+  const CustomKeyboardAvoidingView = ({ children, style }) => {
+    /*
   //const headerHeight = useHeaderHeight();
   const headerHeight = 0;
   //const insets = useSafeAreaInsets();
@@ -194,66 +218,68 @@ const CustomKeyboardAvoidingView = ({ children, style }) => {
     left: 0
   };
   */
-  const [bottomPadding, setBottomPadding] = useState(insets.bottom)
-  const [topPadding, setTopPadding] = useState(insets.top)
+    const [bottomPadding, setBottomPadding] = useState(insets.bottom);
+    const [topPadding, setTopPadding] = useState(insets.top);
 
-  useEffect(() => {
-    // This useEffect is needed because insets are undefined at first for some reason
-    // https://github.com/th3rdwave/react-native-safe-area-context/issues/54
-    setBottomPadding(insets.bottom)
-    setTopPadding(insets.top)
-  }, [insets.bottom, insets.top])
+    useEffect(() => {
+      // This useEffect is needed because insets are undefined at first for some reason
+      // https://github.com/th3rdwave/react-native-safe-area-context/issues/54
+      setBottomPadding(insets.bottom);
+      setTopPadding(insets.top);
+    }, [insets.bottom, insets.top]);
 
-  return (
-    <KeyboardAvoidingView
-      style={style}
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={headerHeight + topPadding + StatusBar.currentHeight}
-    >
-      {children}
-    </KeyboardAvoidingView>
-  );
-};
-
-const CommentInput = () => {
-  const [loading, setLoading] = useState(false);
-  const [comment, setComment] = useState('');
-
-  useEffect(() => {
-    setComment(editComment.message);
-  }, [editComment?.message]);
-
-  const onSave = async(comment) => {
-    setLoading(true);
-    if (comment?.length > 0) {
-      try {
-        if (editComment?.id && editComment?.message?.length > 0) {
-          const res = await updateComment(editComment.id, comment);
-          if (res) {
-            setEditComment({
-              id: null,
-              message: ''
-            });
-            mutate();
-          };
-          return;
+    return (
+      <KeyboardAvoidingView
+        style={style}
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={
+          headerHeight + topPadding + StatusBar.currentHeight
         }
-        const res = await createComment(comment);
-        if (res) setComment('');
-        return;
-      } catch (error) {
-        toast(error, true);
-      } finally {
-        // TODO: auto-refresh
-        //mutate();
-        setLoading(false);
-      };
-    };
-    return;
+      >
+        {children}
+      </KeyboardAvoidingView>
+    );
   };
-  return(
-    <View style={styles.commentInputView}>
-      {/*comment?.length > 0 && (
+
+  const CommentInput = () => {
+    const [loading, setLoading] = useState(false);
+    const [comment, setComment] = useState("");
+
+    useEffect(() => {
+      setComment(editComment.message);
+    }, [editComment?.message]);
+
+    const onSave = async (comment) => {
+      setLoading(true);
+      if (comment?.length > 0) {
+        try {
+          if (editComment?.id && editComment?.message?.length > 0) {
+            const res = await updateComment(editComment.id, comment);
+            if (res) {
+              setEditComment({
+                id: null,
+                message: "",
+              });
+              mutate();
+            }
+            return;
+          }
+          const res = await createComment(comment);
+          if (res) setComment("");
+          return;
+        } catch (error) {
+          toast(error, true);
+        } finally {
+          // TODO: auto-refresh
+          //mutate();
+          setLoading(false);
+        }
+      }
+      return;
+    };
+    return (
+      <View style={styles.commentInputView}>
+        {/*comment?.length > 0 && (
         <ExpandIcon onPress={() => toggleExpandedTextInput()} />
       )*/}
         <TextInput
@@ -261,17 +287,13 @@ const CommentInput = () => {
           multiline={true}
           value={comment}
           onChangeText={(text) => setComment(text)}
-          // TODO: translate
-          placeholder={"Comment"}
+          placeholder={i18n.t("global.comments")}
           placeholderTextColor={globalStyles.placeholder.color}
           //autoFocus={true}
           style={styles.commentInputText}
         />
-        { !loading ? (
-          <SendIcon
-            style={styles.sendIcon}
-            onPress={() => onSave(comment)}
-          />
+        {!loading ? (
+          <SendIcon style={styles.sendIcon} onPress={() => onSave(comment)} />
         ) : (
           <ActivityIndicator
             size="small"
@@ -280,29 +302,30 @@ const CommentInput = () => {
           />
         )}
       </View>
+    );
+  };
+
+  // TODO: RTL support
+  const ExpandableTextInput = () => (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <CustomKeyboardAvoidingView style={styles.commentView}>
+        <CommentInput />
+      </CustomKeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
-};
 
-// TODO: RTL support
-const ExpandableTextInput = () => (
-  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <CustomKeyboardAvoidingView style={styles.commentView}>
-      <CommentInput />
-    </CustomKeyboardAvoidingView>
-  </TouchableWithoutFeedback>
-);
-
-  const renderItem = ({ item }) => <CommentsActivityItem item={item} loading={isLoading||isValidating||error} />;
+  const renderItem = ({ item }) => (
+    <CommentsActivityItem
+      item={item}
+      loading={isLoading || isValidating || error}
+    />
+  );
 
   const title = i18n.t("global.commentsActivity");
 
   return (
     <>
-      <SheetHeader
-        expandable
-        dismissable
-        title={title}
-      />
+      <SheetHeader expandable dismissable title={title} />
       <FilterList
         //display
         //sortable

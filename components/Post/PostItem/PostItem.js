@@ -62,7 +62,7 @@ const PostItem = ({ item, loading, mutate }) => {
     /*
     ActionSheet.show({
         options: [
-          i18n.t('global.commentsActivity'),
+          i18n.t("global.commentsActivity"),
           i18n.t("global.cancel"),
         ],
         cancelButtonIndex: 1,
@@ -152,7 +152,7 @@ const PostItem = ({ item, loading, mutate }) => {
               fields: { favorite: !item?.favorite },
               id: Number(item?.ID),
               type: item?.post_type,
-              mutate
+              mutate,
             })
           }
         >

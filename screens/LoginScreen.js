@@ -235,14 +235,14 @@ const LoginScreen = () => {
       <Pressable onPress={onLoginPress}>
         <View style={styles.signInButton}>
           <Text style={styles.signInButtonText}>
-            {i18n.t("loginScreen.logIn", { locale })}
+            {i18n.t("global.logIn", { locale })}
           </Text>
         </View>
       </Pressable>
       <Pressable onPress={goToForgotPassword} disabled={loading}>
         <View style={styles.forgotButton}>
           <Text style={globalStyles.link}>
-            {i18n.t("loginScreen.forgotPassword", { locale })}
+            {i18n.t("global.forgotPassword", { locale })}
           </Text>
         </View>
       </Pressable>

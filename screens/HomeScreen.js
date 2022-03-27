@@ -58,11 +58,11 @@ const HomeScreen = ({ navigation, route }) => {
   useLayoutEffect(() => {
     const kebabItems = [
       {
-        label: i18n.t("global.viewOnMobileWeb"),
+        label: i18n.t("global.viewOnWeb"),
         urlPath: "/settings/",
       },
       {
-        label: i18n.t("settingsScreen.helpSupport"),
+        label: i18n.t("global.helpDocs"),
         url: "https://disciple.tools/user-docs/getting-started-info/admin/settings-dt/general-settings-dt/",
       },
     ];

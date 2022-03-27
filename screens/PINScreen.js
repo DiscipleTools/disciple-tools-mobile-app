@@ -68,10 +68,7 @@ const PINScreen = ({ navigation, route }) => {
       const secretCode = await getPIN();
       // TODO: translate
       if (secretCode === null) {
-        toast(
-          "Error: Unable to retrieve existing PIN. Please reinstall app, and if the problem persists then please contact your Disciple Tools Administrator for assistance",
-          true
-        );
+        toast("error.existingPIN", true);
         pinInput.current.shake().then(() => setState({ ...state, code: "" }));
       } else if (code === secretCode) {
         if (isValidate) {
@@ -103,11 +100,7 @@ const PINScreen = ({ navigation, route }) => {
             code: "",
           })
         );
-        // TODO: translate
-        toast(
-          "Error: Repeating (i.e., 444444) or Sequential (i.e., 234567) values are not permitted",
-          true
-        );
+        toast("error.repeating", true);
       } else {
         // unknown issue: retry
         pinInput.current.shake().then(() =>
