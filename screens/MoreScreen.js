@@ -16,7 +16,9 @@ import { ScreenConstants } from "constants";
 import { localStyles } from "./MoreScreen.styles";
 
 const MoreScreen = ({ navigation, route }) => {
+
   const { i18n } = useI18N();
+
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
