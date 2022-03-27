@@ -51,13 +51,22 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "calendar";
       }
       break;
+    case FieldTypes.DATETIME_SERIES:
+      if (name.includes("meeting")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-clock";
+      } else {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-clock";
+      }
+      break;
     case FieldTypes.CONNECTION:
       if (name.includes("subassigned")) {
         iconType = "MaterialCommunityIcons";
         iconName = "briefcase-account-outline";
       } else if (name.includes("parent")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "drawing-box";
+        iconName = "triangle";
       } else if (name.includes("peer")) {
         iconType = "MaterialCommunityIcons";
         iconName = "ray-start-end";
@@ -77,6 +86,9 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("coached_by")) {
         iconType = "MaterialCommunityIcons";
         iconName = "teach";
+      } else if (name.includes("coaches")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "teach";
       } else if (name.includes("baptized_by")) {
         iconType = "MaterialCommunityIcons";
         iconName = "water";
@@ -91,7 +103,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "account-group";
       } else if (name.includes("train")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "chalkboard-teacher";
+        iconName = "teach";
       } else if (name.includes("members")) {
         iconType = "MaterialCommunityIcons";
         iconName = "format-list-bulleted";
@@ -194,6 +206,15 @@ const FieldIcon = ({ field, hide }) => {
       } else {
         iconType = "MaterialCommunityIcons";
         iconName = "tag-multiple";
+      }
+      break;
+    case FieldTypes.TASK:
+      if (name.includes("task")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-clock";
+      } else {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-clock";
       }
       break;
     case FieldTypes.TEXT:

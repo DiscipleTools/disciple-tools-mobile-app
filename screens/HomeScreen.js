@@ -1,10 +1,12 @@
 import React, { useEffect, useLayoutEffect, useReducer, useState } from "react";
 import { Image, RefreshControl, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from "@react-navigation/native";
 
 import { BellIcon, CogIcon } from "components/Icon";
 import { HeaderRight } from "components/Header/Header";
+import OfflineBar from "components/OfflineBar";
+
 import MetricCard from "components/Card/MetricCard";
 import PendingContactsCard from "components/Card/PendingContactsCard";
 import ActivityLogCard from "components/Card/ActivityLogCard";
@@ -18,15 +20,18 @@ import { ScreenConstants, TypeConstants } from "constants";
 
 import { findFilterById, labelize } from "utils";
 
-import { localStyles } from './HomeScreen.styles';
+import { localStyles } from "./HomeScreen.styles";
 
 const HomeScreen = ({ navigation, route }) => {
-
   const isFocused = useIsFocused();
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
-  const { data: contactFilters, mutate: mutateContactFilters } = useFilters({ type: TypeConstants.CONTACT });
-  const { data: groupFilters, mutate: mutateGroupFilters } = useFilters({ type: TypeConstants.GROUP });
+  const { data: contactFilters, mutate: mutateContactFilters } = useFilters({
+    type: TypeConstants.CONTACT,
+  });
+  const { data: groupFilters, mutate: mutateGroupFilters } = useFilters({
+    type: TypeConstants.GROUP,
+  });
   const { hasNotifications } = useNotifications();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -46,22 +51,20 @@ const HomeScreen = ({ navigation, route }) => {
   const renderHeaderLeft = (props) => (
     <View style={globalStyles.rowContainer}>
       <Image source={require("assets/dt-icon.png")} style={styles.logo} />
-      <Text style={styles.brandText}>
-        D.T
-      </Text>
+      <Text style={styles.brandText}>D.T</Text>
     </View>
   );
 
   useLayoutEffect(() => {
     const kebabItems = [
       {
-        label: i18n.t('global.viewOnMobileWeb'),
+        label: i18n.t("global.viewOnMobileWeb"),
         urlPath: "/settings/",
       },
       {
-        label: i18n.t('settingsScreen.helpSupport'),
+        label: i18n.t("settingsScreen.helpSupport"),
         url: "https://disciple.tools/user-docs/getting-started-info/admin/settings-dt/general-settings-dt/",
-      }
+      },
     ];
     const renderStartIcons = () => (
       <>
@@ -69,22 +72,20 @@ const HomeScreen = ({ navigation, route }) => {
           <BellIcon
             onPress={() => navigation.push(ScreenConstants.NOTIFICATIONS)}
           />
-          { hasNotifications && (
+          {hasNotifications && (
             <View style={styles.notificationsDot(hasNotifications)} />
           )}
         </View>
         <View style={styles.headerIcon}>
-          <CogIcon
-            onPress={() => navigation.push(ScreenConstants.SETTINGS)}
-          />
-          { hasAccountUpdates && (
+          <CogIcon onPress={() => navigation.push(ScreenConstants.SETTINGS)} />
+          {hasAccountUpdates && (
             <View style={styles.notificationsDot(hasAccountUpdates)} />
           )}
         </View>
       </>
     );
     navigation.setOptions({
-      title: '',
+      title: "",
       headerLeft: (props) => renderHeaderLeft(props),
       headerRight: (props) => (
         <HeaderRight
@@ -92,7 +93,7 @@ const HomeScreen = ({ navigation, route }) => {
           renderStartIcons={renderStartIcons}
           props
         />
-      )
+      ),
     });
   }, [navigation, hasNotifications, hasAccountUpdates]);
 
@@ -102,7 +103,7 @@ const HomeScreen = ({ navigation, route }) => {
 
   const FavoriteContactsCard = () => {
     const filter = findFilterById("favorite", contactFilters);
-    return(
+    return (
       <MetricCard
         title={filter?.name}
         filter={filter}
@@ -113,7 +114,7 @@ const HomeScreen = ({ navigation, route }) => {
 
   const FavoriteGroupsCard = () => {
     const filter = findFilterById("favorite", groupFilters);
-    return(
+    return (
       <MetricCard
         title={filter?.name}
         filter={filter}
@@ -151,57 +152,45 @@ const HomeScreen = ({ navigation, route }) => {
 
   const ActiveContactsCard = () => {
     const filter = findFilterById("my_active", contactFilters);
-    const title = `${ filter?.name } ${ labelize (TypeConstants.CONTACT) }`;
-    return(
-      <MetricCard
-        title={title}
-        filter={filter}
-        type={TypeConstants.CONTACT}
-      />
+    const title = `${filter?.name} ${labelize(TypeConstants.CONTACT)}`;
+    return (
+      <MetricCard title={title} filter={filter} type={TypeConstants.CONTACT} />
     );
   };
 
   const ActiveGroupsCard = () => {
     const filter = findFilterById("my_active", groupFilters);
-    const title = `${ filter?.name } ${ labelize(TypeConstants.GROUP) }`;
-    return(
-      <MetricCard
-        title={title}
-        filter={filter}
-        type={TypeConstants.GROUP}
-      />
+    const title = `${filter?.name} ${labelize(TypeConstants.GROUP)}`;
+    return (
+      <MetricCard title={title} filter={filter} type={TypeConstants.GROUP} />
     );
   };
 
   return (
-    <ScrollView style={[
-      globalStyles.screenContainer,
-      styles.container
-    ]}
-      refreshControl={
-        <RefreshControl
+    <>
+      <OfflineBar />
+      <ScrollView
+        style={[globalStyles.screenContainer, styles.container]}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View style={[globalStyles.rowContainer, styles.cardRowContainer]}>
+          <FavoriteContactsCard />
+          <FavoriteGroupsCard />
+        </View>
+        <View style={[globalStyles.rowContainer, styles.cardRowContainer]}>
+          <ActiveContactsCard />
+          <ActiveGroupsCard />
+        </View>
+        <PendingContactsCard
+          filters={contactFilters}
           refreshing={refreshing}
           onRefresh={onRefresh}
         />
-      }
-    >
-      <View style={[
-        globalStyles.rowContainer,
-        styles.cardRowContainer
-      ]}>
-        <FavoriteContactsCard />
-        <FavoriteGroupsCard />
-      </View>
-      <View style={[
-        globalStyles.rowContainer,
-        styles.cardRowContainer
-      ]}>
-        <ActiveContactsCard />
-        <ActiveGroupsCard />
-      </View>
-      <PendingContactsCard filters={contactFilters} refreshing={refreshing} onRefresh={onRefresh} />
-      <ActivityLogCard preview={5} refreshing={refreshing} />
-    </ScrollView>
+        <ActivityLogCard preview={5} refreshing={refreshing} />
+      </ScrollView>
+    </>
   );
 };
 export default HomeScreen;

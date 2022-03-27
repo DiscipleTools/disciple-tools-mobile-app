@@ -49,11 +49,11 @@ export const ArrowIcon = ({ onPress, style }) => {
 
 export const ChevronIcon = ({ header, onPress, style }) => {
   const { isRTL } = useI18N();
-  if (isRTL && header) return <ChevronForwardIcon onPress={onPress} style={style} />;
+  if (isRTL && header)
+    return <ChevronForwardIcon onPress={onPress} style={style} />;
   if (header) return <ChevronBackIcon onPress={onPress} style={style} />;
-  if (isRTL)  return <ChevronBackIcon onPress={onPress} style={style} />;
+  if (isRTL) return <ChevronBackIcon onPress={onPress} style={style} />;
   return <ChevronForwardIcon onPress={onPress} style={style} />;
-
 };
 
 // Static Icons
@@ -164,9 +164,9 @@ export const MapIcon = ({ onPress, style }) => (
 export const OnePasswordIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="onepassword" onPress={onPress} style={style} />
 );
-//TODO more icon
+//TODO icon for more post Types
 export const PostIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="post-outline" onPress={onPress} style={style} />
+  <MaterialCommunityIcon name="teach" onPress={onPress} style={style} />
 );
 export const RemoveIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="minus" onPress={onPress} style={style} />
