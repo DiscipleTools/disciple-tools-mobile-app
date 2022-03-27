@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Image, Switch, Text, View } from "react-native";
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from "@react-navigation/native";
 
 import {
   ChevronForwardIcon,
@@ -11,7 +11,7 @@ import {
   LoginIcon,
   LogoutIcon,
   OnePasswordIcon,
-  SecurityIcon
+  SecurityIcon,
 } from "components/Icon";
 import ListItem from "components/ListItem";
 import OfflineBar from "components/OfflineBar";
@@ -30,7 +30,6 @@ import { localStyles } from "./SettingsScreen.styles";
 import gravatar from "assets/gravatar-default.png";
 
 const SettingsScreen = ({ navigation }) => {
-
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
@@ -52,24 +51,13 @@ const SettingsScreen = ({ navigation }) => {
     const username = user?.username ?? "";
     const domain = user?.domain ?? "";
     return (
-      <View style={[
-        globalStyles.rowContainer,
-        styles.headerContainer
-      ]}>
-        <Image
-          source={gravatar}
-          style={styles.avatar}
-        />
+      <View style={[globalStyles.rowContainer, styles.headerContainer]}>
+        <Image source={gravatar} style={styles.avatar} />
         <View style={globalStyles.columnContainer}>
-          <Text style={[
-            styles.headerText,
-            globalStyles.title,
-          ]}>
+          <Text style={[styles.headerText, globalStyles.title]}>
             {username}
           </Text>
-          <Text style={styles.headerText}>
-            {domain}
-          </Text>
+          <Text style={styles.headerText}>{domain}</Text>
         </View>
       </View>
     );
@@ -83,7 +71,7 @@ const SettingsScreen = ({ navigation }) => {
       label={i18n.t("global.online", { locale })}
       endComponent={
         <Switch
-          trackColor={{ true: styles.switch.color}}
+          trackColor={{ true: styles.switch.color }}
           thumbColor={styles.switch}
           value={isConnected}
           onChange={toggleNetwork}
@@ -95,11 +83,18 @@ const SettingsScreen = ({ navigation }) => {
 
   const DarkModeToggle = () => (
     <ListItem
-      startComponent={<DarkModeIcon style={[globalStyles.icon, { transform: isRTL ? [] : [{ scaleX: -1 }]}]} />}
+      startComponent={
+        <DarkModeIcon
+          style={[
+            globalStyles.icon,
+            { transform: isRTL ? [] : [{ scaleX: -1 }] },
+          ]}
+        />
+      }
       label={i18n.t("global.darkMode", { locale })}
       endComponent={
         <Switch
-          trackColor={{ true: styles.switch.color}}
+          trackColor={{ true: styles.switch.color }}
           thumbColor={styles.switch}
           value={isDarkMode}
           onChange={() => toggleMode()}
@@ -114,7 +109,7 @@ const SettingsScreen = ({ navigation }) => {
       label={i18n.t("settingsScreen.autoLogin", { locale })}
       endComponent={
         <Switch
-          trackColor={{ true: styles.switch.color}}
+          trackColor={{ true: styles.switch.color }}
           thumbColor={styles.switch}
           value={isAutoLogin}
           onChange={toggleAutoLogin}
@@ -129,7 +124,7 @@ const SettingsScreen = ({ navigation }) => {
       label={i18n.t("settingsScreen.rememberLoginDetails", { locale })}
       endComponent={
         <Switch
-          trackColor={{ true: styles.switch.color}}
+          trackColor={{ true: styles.switch.color }}
           thumbColor={styles.switch}
           value={rememberLoginDetails}
           onChange={toggleRememberLoginDetails}
@@ -152,7 +147,7 @@ const SettingsScreen = ({ navigation }) => {
         label={i18n.t("settingsScreen.pinCode", { locale })}
         endComponent={
           <Switch
-            trackColor={{ true: styles.switch.color}}
+            trackColor={{ true: styles.switch.color }}
             thumbColor={styles.switch}
             value={hasPIN}
             onChange={togglePIN}
@@ -167,7 +162,7 @@ const SettingsScreen = ({ navigation }) => {
     return (
       <ListItem
         startComponent={<HelpIcon />}
-        label={i18n.t("settingsScreen.helpSupport", { locale })}
+        label={i18n.t("global.helpSupport", { locale })}
         onPress={draftNewSupportEmail}
       />
     );
@@ -176,9 +171,13 @@ const SettingsScreen = ({ navigation }) => {
   const LogoutButton = () => (
     <ListItem
       startComponent={<LogoutIcon />}
-      label={i18n.t("settingsScreen.logout", { locale })}
+      label={i18n.t("global.logout", { locale })}
       endComponent={
-        isRTL ? <ChevronBackIcon style={globalStyles.icon} /> : <ChevronForwardIcon style={globalStyles.icon} />
+        isRTL ? (
+          <ChevronBackIcon style={globalStyles.icon} />
+        ) : (
+          <ChevronForwardIcon style={globalStyles.icon} />
+        )
       }
       onPress={signOut}
     />

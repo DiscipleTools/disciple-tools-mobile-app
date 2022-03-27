@@ -1,6 +1,12 @@
-import React, { useState, useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import React, {
+  useState,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { Button, Pressable, Text, View } from "react-native";
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from "@react-navigation/native";
 
 //import { Html5Entities } from 'html-entities';
 
@@ -11,7 +17,7 @@ import {
   CircleOutlineIcon,
   CommentIcon,
   CommentAlertIcon,
-  MentionIcon
+  MentionIcon,
 } from "components/Icon";
 import KebabMenu from "components/KebabMenu";
 import OfflineBar from "components/OfflineBar";
@@ -31,7 +37,7 @@ import { NotificationActionConstants } from "constants";
 import { localStyles } from "./NotificationsScreen.styles";
 
 const NotificationsScreen = ({ navigation }) => {
-
+  const { i18n } = useI18N();
   const DEFAULT_LIMIT = 10;
 
   // NOTE: invoking this hook causes the desired re-render onBack()
@@ -40,7 +46,13 @@ const NotificationsScreen = ({ navigation }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { isRTL } = useI18N();
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
-  const { data: items, error, isLoading, isValidating, mutate } = useNotifications({ search, filter });
+  const {
+    data: items,
+    error,
+    isLoading,
+    isValidating,
+    mutate,
+  } = useNotifications({ search, filter });
   /*
   const [_notifications, _setNotifications] = useState(items ?? []);
   useEffect(() => {
@@ -56,9 +68,13 @@ const NotificationsScreen = ({ navigation }) => {
 
   const renderHeaderLeft = (props) => {
     const onBack = () => navigation.pop();
-    return(
+    return (
       <View style={globalStyles.rowContainer}>
-        {isRTL ? <ChevronForwardIcon onPress={onBack} style={globalStyles.navIcon} /> : <ChevronBackIcon onPress={onBack} style={globalStyles.navIcon} />}
+        {isRTL ? (
+          <ChevronForwardIcon onPress={onBack} style={globalStyles.navIcon} />
+        ) : (
+          <ChevronBackIcon onPress={onBack} style={globalStyles.navIcon} />
+        )}
       </View>
     );
   };
@@ -66,17 +82,15 @@ const NotificationsScreen = ({ navigation }) => {
   const renderHeaderRight = (props) => {
     const kebabItems = [
       {
-        // TODO: translate
-        label: "View on Web",
+        label: i18n.t("global.viewOnWeb"),
         urlPath: "/notifications/",
       },
       {
-        // TODO: translate
-        label: "Help Docs",
-        url: "https://disciple.tools/user-docs/getting-started-info/profile-settings/notifications/"
-      }
+        label: i18n.t("global.helpDocs"),
+        url: "https://disciple.tools/user-docs/getting-started-info/profile-settings/notifications/",
+      },
     ];
-    return(
+    return (
       <View style={globalStyles.rowContainer}>
         <View style={styles.headerIcon}>
           <KebabMenu items={kebabItems} />
@@ -97,16 +111,13 @@ const NotificationsScreen = ({ navigation }) => {
   const NotificationItem = ({ item }) => {
     const str1 = item?.notification_note?.search("<");
     const str2 = item?.notification_note?.search(">");
-    const str3 = item?.notification_note?.length-4;
+    const str3 = item?.notification_note?.length - 4;
     const newNotificationNoteA = item?.notification_note?.substr(0, str1);
-    const newNotificationNoteB = item?.notification_note?.substr(
-      str2,
-      str3
-    );
-    const str4 = newNotificationNoteB?.search("<")-1;
+    const newNotificationNoteB = item?.notification_note?.substr(str2, str3);
+    const str4 = newNotificationNoteB?.search("<") - 1;
     const newNotificationNoteC = newNotificationNoteB?.substr(1, str4);
     let entityLink = item?.notification_note?.substring(
-      item?.notification_note?.lastIndexOf('href="')+6,
+      item?.notification_note?.lastIndexOf('href="') + 6,
       item?.notification_note?.lastIndexOf('">')
     );
     let entityId = entityLink?.split("/")[4];
@@ -121,64 +132,57 @@ const NotificationsScreen = ({ navigation }) => {
       try {
         const today = new Date();
         //const parsedDateMS = Date.parse(dateStr?.trim());
-        const parsedDateMS = Date.parse(dateStr?.trim()?.split(' ')[0]);
+        const parsedDateMS = Date.parse(dateStr?.trim()?.split(" ")[0]);
         const diffMS = today - parsedDateMS;
-        const aDay = 24*60*60*1000;
+        const aDay = 24 * 60 * 60 * 1000;
         const isToday = diffMS < aDay;
-        const diffDays = Math.floor(diffMS/aDay);
+        const diffDays = Math.floor(diffMS / aDay);
         if (isNaN(diffDays)) return null;
         // TODO: translate
         if (isToday) return "today";
-        return `${ diffDays }d`
+        return `${diffDays}d`;
       } catch (error) {
         return null;
-      };
+      }
     };
 
     const NotificationIcon = () => {
       const renderIcon = () => {
-        if (item?.notification_action == NotificationActionConstants.COMMENT) return <CommentIcon />;
-        if (item?.notification_action == NotificationActionConstants.ALERT) return <CommentAlertIcon />;
-        if (item?.notification_action == NotificationActionConstants.MENTION) return <MentionIcon />;
+        if (item?.notification_action == NotificationActionConstants.COMMENT)
+          return <CommentIcon />;
+        if (item?.notification_action == NotificationActionConstants.ALERT)
+          return <CommentAlertIcon />;
+        if (item?.notification_action == NotificationActionConstants.MENTION)
+          return <MentionIcon />;
         return null;
       };
-      return(
-        <View style={[
-          globalStyles.rowIcon,
-          styles.startIcon
-        ]}>
-          { renderIcon() }
+      return (
+        <View style={[globalStyles.rowIcon, styles.startIcon]}>
+          {renderIcon()}
         </View>
       );
     };
 
     const NotificationDetails = () => (
       <View style={globalStyles.columnContainer}>
-          <View style={[
-            globalStyles.rowContainer,
-            styles.notificationDetails
-          ]}>
-            {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
-            <Text>{newNotificationNoteA}</Text>
-            <Text
-              style={styles.link}
-              onPress={() =>
-                redirectToDetailView(
-                  entityName,
-                  entityId,
-                  newNotificationNoteC
-                )
-              }
-            >
-              {newNotificationNoteC}
-              {/*entities.decode(newNotificationNoteC)*/}
-            </Text>
-          </View>
+        <View style={[globalStyles.rowContainer, styles.notificationDetails]}>
+          {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
+          <Text>{newNotificationNoteA}</Text>
+          <Text
+            style={styles.link}
+            onPress={() =>
+              redirectToDetailView(entityName, entityId, newNotificationNoteC)
+            }
+          >
+            {newNotificationNoteC}
+            {/*entities.decode(newNotificationNoteC)*/}
+          </Text>
+        </View>
         <View>
-          { item?.pretty_time?.[0] ? (
+          {item?.pretty_time?.[0] ? (
             <Text style={globalStyles.caption}>
               {item.pretty_time[0]}
-              {item.pretty_time?.[1] ? `, ${ item.pretty_time[1] }` : ""}
+              {item.pretty_time?.[1] ? `, ${item.pretty_time[1]}` : ""}
             </Text>
           ) : (
             <Text style={globalStyles.caption}>
@@ -190,20 +194,19 @@ const NotificationsScreen = ({ navigation }) => {
     );
 
     const NotificationButton = () => (
-      <View style={[
-        globalStyles.rowIcon,
-        styles.endIcon
-      ]}>
-        <Pressable onPress={() => {
-          if (isNew) {
-            console.log("*** MARK AS READ ***");
-            console.log(`item: ${ JSON.stringify(item) }`);
-          } else {
-            console.log("*** MARK AS UNREAD ***");
-            console.log(`item: ${ JSON.stringify(item) }`);
-          }
-        }}>
-          { isNew ? (
+      <View style={[globalStyles.rowIcon, styles.endIcon]}>
+        <Pressable
+          onPress={() => {
+            if (isNew) {
+              console.log("*** MARK AS READ ***");
+              console.log(`item: ${JSON.stringify(item)}`);
+            } else {
+              console.log("*** MARK AS UNREAD ***");
+              console.log(`item: ${JSON.stringify(item)}`);
+            }
+          }}
+        >
+          {isNew ? (
             <CircleOutlineIcon />
           ) : (
             <CheckIcon style={globalStyles.selectedIcon} />
@@ -213,10 +216,7 @@ const NotificationsScreen = ({ navigation }) => {
     );
 
     return (
-      <View style={[
-        globalStyles.rowContainer,
-        styles.container(isNew),
-      ]}>
+      <View style={[globalStyles.rowContainer, styles.container(isNew)]}>
         <NotificationIcon />
         <NotificationDetails />
         <NotificationButton />
@@ -274,20 +274,17 @@ const NotificationsScreen = ({ navigation }) => {
   const showFilter = () => bottomSheetRefFilter.current.snapToIndex(0);
 
   const renderBackdrop = useCallback(
-    props => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-      />
-    ), []);
+    (props) => <BottomSheetBackdrop {...props} disappearsOnIndex={-1} />,
+    []
+  );
 
   const SortSheet = () => {
     const onClose = () => bottomSheetRefSort.current.close();
     const onSnap = useCallback((index) => {
-      console.log('handleSheetChanges', index);
+      console.log("handleSheetChanges", index);
     }, []);
-    const snapPoints = useMemo(() => ['33%'], []);
-    return(
+    const snapPoints = useMemo(() => ["33%"], []);
+    return (
       <BottomSheet
         ref={bottomSheetRefSort}
         index={-1}
@@ -299,11 +296,13 @@ const NotificationsScreen = ({ navigation }) => {
         // add bottom inset to elevate the sheet
         //bottomInset={50}
       >
-        <View style={{
-          flex: 1,
-          alignItems: 'center',
-          paddingTop: 20,
-        }}>
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+            paddingTop: 20,
+          }}
+        >
           <Text>Sort 🎉</Text>
           <Button title="Dismiss" onPress={() => onClose()} />
         </View>
@@ -316,12 +315,12 @@ const NotificationsScreen = ({ navigation }) => {
   const FilterSheet = () => {
     const onDismiss = () => bottomSheetRefFilter.current.close();
     const onDone = () => {
-      console.log('onDone');
+      console.log("onDone");
     };
     const onSnap = useCallback((index) => {
-      console.log('handleSheetChanges', index);
+      console.log("handleSheetChanges", index);
     }, []);
-    const snapPoints = useMemo(() => ['25%', '50%', '95%'], []);
+    const snapPoints = useMemo(() => ["25%", "50%", "95%"], []);
     const items = useMemo(
       () =>
         Array(50)
@@ -343,7 +342,7 @@ const NotificationsScreen = ({ navigation }) => {
       []
     );
 
-    return(
+    return (
       <SelectSheet
         ref={bottomSheetRefFilter}
         snapPoints={snapPoints}
@@ -356,7 +355,10 @@ const NotificationsScreen = ({ navigation }) => {
     );
   };
 
-  const ListSkeleton = () => Array(10).fill(null).map((_, ii) => <PostItemSkeleton key={ii} />);
+  const ListSkeleton = () =>
+    Array(10)
+      .fill(null)
+      .map((_, ii) => <PostItemSkeleton key={ii} />);
 
   /*
   {

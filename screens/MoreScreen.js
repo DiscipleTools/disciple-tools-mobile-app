@@ -9,12 +9,14 @@ import ListItem from "components/ListItem";
 
 //import useCustomPostTypes from "hooks/use-custom-post-types";
 import useStyles from "hooks/use-styles";
+import useI18N from "hooks/use-i18n";
 
 import { ScreenConstants } from "constants";
 
 import { localStyles } from "./MoreScreen.styles";
 
 const MoreScreen = ({ navigation, route }) => {
+  const { i18n } = useI18N();
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
@@ -35,10 +37,12 @@ const MoreScreen = ({ navigation, route }) => {
     />
   );
 
-  // TODO: translate
+  // TODO: translate HELP Please
   // TODO: detect Custom Post Types dynamically
-  const trainingsLabel = "Trainings";
-  const trainingsPostType = "trainings";
+  // const trainingsLabel = "Trainings";
+  // const trainingsPostType = "trainings";
+  const trainingsLabel = i18n.t("global.trainings");
+  const trainingsPostType = i18n.t("global.trainings");
   return (
     <SafeAreaView style={globalStyles.screenContainer}>
       <OfflineBar />

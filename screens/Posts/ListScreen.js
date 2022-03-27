@@ -1,14 +1,17 @@
 import React, { useLayoutEffect } from "react";
 import { SafeAreaView, View } from "react-native";
-import { useIsFocused } from '@react-navigation/native';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-
+import { useIsFocused } from "@react-navigation/native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import { HeaderRight } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
 import FilterList from "components/FilterList";
 import FAB from "components/FAB";
-import { PostItem, PostItemSkeleton, PostItemHidden } from "components/Post/PostItem/index";
+import {
+  PostItem,
+  PostItemSkeleton,
+  PostItemHidden,
+} from "components/Post/PostItem/index";
 
 import useFilter from "hooks/use-filter";
 import useI18N from "hooks/use-i18n";
@@ -19,10 +22,9 @@ import useStyles from "hooks/use-styles";
 // TODO: replace with style={{ textTransform: "sentenceCase" }} where used?
 import { labelize } from "utils";
 
-import { localStyles } from './ListScreen.styles';
+import { localStyles } from "./ListScreen.styles";
 
 const ListScreen = ({ navigation, route }) => {
-
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
@@ -31,50 +33,54 @@ const ListScreen = ({ navigation, route }) => {
   const { i18n } = useI18N();
   const { postType } = useType();
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
-  
-  const { data: items, error, isLoading, isValidating, mutate } = useList({ search, filter });
+
+  const {
+    data: items,
+    error,
+    isLoading,
+    isValidating,
+    mutate,
+  } = useList({ search, filter });
   // TODO: handler error case
 
   const getTitle = () => {
     if (postType) return labelize(postType);
-    return '';
+    return "";
   };
 
   useLayoutEffect(() => {
     const title = getTitle();
     const kebabItems = [
       {
-        label: i18n.t('global.viewOnMobileWeb'),
+        label: i18n.t("global.viewOnWeb"),
         urlPath: `/${postType}/`,
       },
       {
-        label: i18n.t('settingsScreen.helpSupport'),
-        url: `https://disciple.tools/user-docs/getting-started-info/${postType}/`
-      }
+        label: i18n.t("global.helpDocs"),
+        url: `https://disciple.tools/user-docs/getting-started-info/${postType}/`,
+      },
     ];
     navigation.setOptions({
       title,
-      headerRight: (props) => (
-        <HeaderRight
-          kebabItems={kebabItems}
-          props
-        />
-      )
+      headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />,
     });
   });
 
-  const renderItem = ({ item }) => <PostItem item={item} loading={isLoading||isValidating} mutate={mutate} />;
+  const renderItem = ({ item }) => (
+    <PostItem item={item} loading={isLoading || isValidating} mutate={mutate} />
+  );
   //const renderHiddenItem = ({ item }) => <PostItemHidden item={item} loading={isLoading||isValidating} />;
 
   // TODO: mock search bar, filter tags, FAB, etc..
-  const ListSkeleton = () => Array(10).fill(null).map((_, ii) => <PostItemSkeleton key={ii} />);
+  const ListSkeleton = () =>
+    Array(10)
+      .fill(null)
+      .map((_, ii) => <PostItemSkeleton key={ii} />);
 
   if (!items) return <ListSkeleton />;
   return (
     <>
-      <View style={[
-        globalStyles.container(tabBarHeight),
-      ]}>
+      <View style={[globalStyles.container(tabBarHeight)]}>
         <OfflineBar />
         <FilterList
           display
