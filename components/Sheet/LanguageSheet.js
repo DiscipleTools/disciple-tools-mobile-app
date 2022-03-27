@@ -8,7 +8,6 @@ import useI18N from "hooks/use-i18n";
 import useMyUser from "hooks/use-my-user";
 
 const LanguageSheet = () => {
-
   const { data: user } = useMyUser();
   const { updateUser } = useAPI();
 
@@ -26,28 +25,20 @@ const LanguageSheet = () => {
 
   // MAP ITEMS
   const mapItems = (items) => {
-    return Object.keys(items).map(key => ({
+    return Object.keys(items).map((key) => ({
       key,
       label: items[key]?.endonym,
-      selected: locale === key, 
+      selected: locale === key,
     }));
   };
 
   // SECTIONS
   const sections = [{ data: mapItems(items) }];
 
-  return(
+  return (
     <>
-      <SheetHeader
-        expandable
-        dismissable
-        title={i18n.t('global.language')}
-      />
-      <SelectSheet
-        required
-        sections={sections}
-        onChange={_onChange}
-      />
+      <SheetHeader expandable dismissable title={i18n.t("global.language")} />
+      <SelectSheet required sections={sections} onChange={_onChange} />
     </>
   );
 };

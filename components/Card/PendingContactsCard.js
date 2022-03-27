@@ -19,15 +19,14 @@ import { findFilterById } from "utils";
 import { localStyles } from "./PendingContactsCard.styles";
 
 const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
-
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
-  const { i18n } = useI18N();
+  const { i18n, locale } = useI18N();
 
   const { updatePost } = useAPI();
 
   const filter = findFilterById("my_assigned", filters);
-  const title = filter ? filter?.name : '';
+  const title = filter ? filter?.name : "";
   const {
     data: contacts,
     error,
@@ -69,10 +68,11 @@ const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
       <View style={[globalStyles.rowContainer, styles.buttonRowContainer]}>
         <Pressable
           onPress={() => handleAccept({ contact, accept: true })}
+          //TODO adjust color to be dynamic
           style={[styles.buttonContainer, { backgroundColor: "green" }]}
         >
           <Text style={styles.buttonText}>
-            {i18n.t("accept")}
+            {i18n.t("global.accept", { locale })}
           </Text>
         </Pressable>
         <Pressable
@@ -80,7 +80,7 @@ const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
           style={[styles.buttonContainer, { backgroundColor: "red" }]}
         >
           <Text style={styles.buttonText}>
-            {i18n.t("decline")}
+            {i18n.t("global.decline", { locale })}
           </Text>
         </Pressable>
       </View>
@@ -105,24 +105,21 @@ const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
   );
 
   if (!filter) return null;
-  if (contacts?.length > 1) return(
-    <ExpandableCard
-      border
-      center
-      title={title}
-      count={contacts?.length}
-      renderPartialCard={renderPartialCard}
-      renderExpandedCard={renderExpandedCard}
-    />
-  );
-  if (contacts?.length > 0) return(
-    <Card
-      border
-      center
-      title={title}
-      body={<>{renderPartialCard()}</>}
-    />
-  );
+  if (contacts?.length > 1)
+    return (
+      <ExpandableCard
+        border
+        center
+        title={title}
+        count={contacts?.length}
+        renderPartialCard={renderPartialCard}
+        renderExpandedCard={renderExpandedCard}
+      />
+    );
+  if (contacts?.length > 0)
+    return (
+      <Card border center title={title} body={<>{renderPartialCard()}</>} />
+    );
   return (
     <Card
       border
