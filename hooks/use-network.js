@@ -11,16 +11,18 @@ import useI18N from "hooks/use-i18n";
 import useToast from "hooks/use-toast";
 
 const useNetwork = () => {
-
   const dispatch = useDispatch();
-  const isConnectedUserSpecified = useSelector(state => state.networkReducer.isConnected);
+  const isConnectedUserSpecified = useSelector(
+    (state) => state.networkReducer.isConnected
+  );
   const netInfo = useNetInfo();
 
   /*
    * NOTE: consider device online IFF NetInfo 'isConnected',
    * AND the user has NOT manually specified as offline
    */
-  const isConnected = netInfo?.isConnected && isConnectedUserSpecified !== false; 
+  const isConnected =
+    netInfo?.isConnected && isConnectedUserSpecified !== false;
 
   const { i18n } = useI18N();
   const toast = useToast();
@@ -40,19 +42,19 @@ const useNetwork = () => {
    * Handle network connectivity changes, and fetch a common public URL
    * (eg, https://8.8.8.8) to double-check Internet connectivity
    */
-  const handleConnectivityChange = async(isConnected) => {
+  const handleConnectivityChange = async (isConnected) => {
     if (isConnected) {
       try {
-        toast(i18n.t("settingsScreen.networkAvailable"));
+        toast(i18n.t("networkAvailable"));
         await fetch(NetworkConstants.NETWORK_TEST_URL);
         dispatch(setNetworkIsConnected(true));
-      } catch(error) {
+      } catch (error) {
         //console.error(error);
-        toast(i18n.t("settingsScreen.networkUnavailable"), true);
+        toast(i18n.t("networkUnavailable"), true);
         dispatch(setNetworkIsConnected(false));
       }
     } else {
-      toast(i18n.t("settingsScreen.networkUnavailable"), true);
+      toast(i18n.t("networkUnavailable"), true);
       dispatch(setNetworkIsConnected(false));
     }
   };

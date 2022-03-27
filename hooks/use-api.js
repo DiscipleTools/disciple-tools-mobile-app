@@ -18,20 +18,20 @@ const useAPI = () => {
   // https://developers.disciple.tools/theme-core/api-other/users
 
   // TODO: enable addl fields
-  const updateUser = async({ locale }) => {
+  const updateUser = async ({ locale }) => {
     const url = "/dt/v1/user/update";
     return request({
       url,
       method: HTTP.METHODS.POST,
       headers: HTTP.HEADERS.DEFAULT,
-      data: { locale }
+      data: { locale },
     });
   };
 
   // POSTS
   // https://developers.disciple.tools/theme-core/api-posts/create-post
 
-  const createPost = async(fields, mutate=null, silent=false) => {
+  const createPost = async (fields, mutate = null, silent = false) => {
     let url = postType ? `/dt-posts/v2/${postType}` : null;
     if (silent) url += "?silent=true";
     try {
@@ -39,19 +39,27 @@ const useAPI = () => {
         url,
         method: HTTP.METHODS.POST,
         headers: HTTP.HEADERS.DEFAULT,
-        data: { ...fields }
+        data: { ...fields },
       });
-      toast(i18n.t('global.success.save'));
+      toast(i18n.t("global.success.save"));
       if (mutate) mutate();
     } catch (error) {
       // TODO
       console.error(error);
-    };
+    }
     return;
   };
 
   // https://developers.disciple.tools/theme-core/api-posts/update-post
-  const updatePost = async({ urlPath, urlPathPostfix, fields, id, type, mutate, silent }) => {
+  const updatePost = async ({
+    urlPath,
+    urlPathPostfix,
+    fields,
+    id,
+    type,
+    mutate,
+    silent,
+  }) => {
     if (!id) id = postId;
     if (!type) type = postType;
     let url = type && id ? `/dt-posts/v2/${type}/${id}` : null;
@@ -64,14 +72,14 @@ const useAPI = () => {
         url,
         method: HTTP.METHODS.POST,
         headers: HTTP.HEADERS.DEFAULT,
-        data: { ...fields }
+        data: { ...fields },
       });
-      toast(i18n.t('global.success.save'));
+      toast(i18n.t("global.success.save"));
       if (mutate) mutate();
     } catch (error) {
       // TODO
       console.error(error);
-    };
+    }
     return;
   };
 
@@ -82,36 +90,47 @@ const useAPI = () => {
   // COMMENTS
   // https://developers.disciple.tools/theme-core/api-posts/post-comments
 
-  const createComment = async(comment, date=null, commentType="comment") => {
-    const url = postType && postId ? `/dt-posts/v2/${postType}/${postId}/comments` : null;
+  const createComment = async (
+    comment,
+    date = null,
+    commentType = "comment"
+  ) => {
+    const url =
+      postType && postId ? `/dt-posts/v2/${postType}/${postId}/comments` : null;
     const data = {
       comment,
-      comment_type: commentType
+      comment_type: commentType,
     };
     if (date) data["date"] = date;
     return request({
       url,
       method: HTTP.METHODS.POST,
       headers: HTTP.HEADERS.DEFAULT,
-      data
+      data,
     });
   };
 
-  const updateComment = async(commentId, comment) => {
-    const url = postType && postId && commentId ? `/dt-posts/v2/${postType}/${postId}/comments/${commentId}` : null;
+  const updateComment = async (commentId, comment) => {
+    const url =
+      postType && postId && commentId
+        ? `/dt-posts/v2/${postType}/${postId}/comments/${commentId}`
+        : null;
     return request({
       url,
       method: HTTP.METHODS.POST,
       headers: HTTP.HEADERS.DEFAULT,
-      data: { comment }
+      data: { comment },
     });
   };
 
-  const deleteComment = async(commentId) => {
-    const url = postType && postId && commentId ? `/dt-posts/v2/${postType}/${postId}/comments/${commentId}` : null;
+  const deleteComment = async (commentId) => {
+    const url =
+      postType && postId && commentId
+        ? `/dt-posts/v2/${postType}/${postId}/comments/${commentId}`
+        : null;
     return request({
       url,
-      method: HTTP.METHODS.DELETE
+      method: HTTP.METHODS.DELETE,
     });
   };
 
@@ -124,21 +143,21 @@ const useAPI = () => {
 
   // NOTIFICATIONS
 
-  const markAllNotificationsViewed = async() => null;
+  const markAllNotificationsViewed = async () => null;
 
-  const markNotificationViewed = async(id) => {
+  const markNotificationViewed = async (id) => {
     const url = id ? `/dt/v1/notifications/mark_viewed/${id}` : null;
     return request({
       url,
-      method: HTTP.METHODS.POST
+      method: HTTP.METHODS.POST,
     });
   };
 
-  const markNotificationUnread = async(id) => {
+  const markNotificationUnread = async (id) => {
     const url = id ? `/dt/v1/notifications/mark_unread/${id}` : null;
     return request({
       url,
-      method: HTTP.METHODS.POST
+      method: HTTP.METHODS.POST,
     });
   };
 

@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
-import { enqueueRequest, dequeueRequest } from 'store/actions/request.actions';
-import { useSWRConfig } from 'swr'
+import { enqueueRequest, dequeueRequest } from "store/actions/request.actions";
+import { useSWRConfig } from "swr";
 
 import axios from "services/axios";
 
@@ -9,11 +9,12 @@ import useNetwork from "hooks/use-network";
 //const REQUEST_QUEUE_INTERVAL_SECS = 5;
 
 const useRequestQueue = () => {
-
   const { cache, mutate } = useSWRConfig();
   const { isConnected } = useNetwork();
   const dispatch = useDispatch();
-  const pendingRequests = useSelector(state => state.requestReducer.pendingRequests);
+  const pendingRequests = useSelector(
+    (state) => state.requestReducer.pendingRequests
+  );
 
   const hasPendingRequests = () => pendingRequests?.length > 0;
 
@@ -39,23 +40,24 @@ const useRequestQueue = () => {
     return axios(request);
   };
 
-  const request = async(request) => {
+  const request = async (request) => {
     if (!isConnected) {
       dispatch(enqueueRequest(request));
       // throw new Error?
       // TODO: translate
       toast("OFFLINE, request being queued...");
+      //toast(i18n.t("error.requestQueued"));
       return null;
-    };
+    }
     if (hasPendingRequests()) {
       //console.log("request queue: has pending requests");
-      for (const ii=0; ii < pendingRequests?.length; ii++) {
+      for (const ii = 0; ii < pendingRequests?.length; ii++) {
         const pendingRequest = pendingRequests[ii];
         //console.log(`pending request: ${ JSON.stringify(pendingRequest) }`);
         await _mutate(pendingRequest);
         dispatch(dequeueRequest(pendingRequest));
-      };
-    };
+      }
+    }
     return _mutate(request);
   };
 
