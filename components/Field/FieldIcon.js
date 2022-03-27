@@ -224,9 +224,24 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("name")) {
         iconType = "MaterialCommunityIcons";
         iconName = "sign-text";
+      } else if (name.includes("four_fields_unbelievers")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "crosshairs-off";
+      } else if (name.includes("four_fields_believers")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "crosshairs-gps";
+      } else if (name.includes("four_fields_accountable")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "crosshairs-question";
+      } else if (name.includes("four_fields_church_commitment")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "shield-cross";
+      } else if (name.includes("four_fields_multiplying")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "shield-cross-outline";
       } else if (name.includes("four_fields")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "dice-4";
+        iconName = "crosshairs";
       } else {
         iconType = "MaterialCommunityIcons";
         iconName = "text";
