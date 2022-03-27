@@ -8,12 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
-import {
-  AccountIcon,
-  EyeIcon,
-  KeyIcon,
-  LinkIcon,
-} from "components/Icon";
+import { AccountIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
 import PluginRequired from "components/PluginRequired";
 import LabeledTextInput from "components/LabeledTextInput";
 import LanguagePicker from "components/Picker/LanguagePicker";
@@ -29,7 +24,6 @@ import useToast from "hooks/use-toast";
 import { localStyles } from "./LoginScreen.styles";
 
 const LoginScreen = () => {
-
   const { styles, globalStyles } = useStyles(localStyles);
   const { user, rememberLoginDetails, signIn } = useAuth();
   const { isIOS } = useDevice();
@@ -54,11 +48,11 @@ const LoginScreen = () => {
 
   const cleanDomain = (domain) => {
     // trim leading/trailing whitespace and remove protocol
-    return domain?.trim()?.replace("http://", '')?.replace("https://", '');
+    return domain?.trim()?.replace("http://", "")?.replace("https://", "");
   };
 
   // TODO: add validation
-  const onLoginPress = async() => {
+  const onLoginPress = async () => {
     Keyboard.dismiss();
     setLoading(true);
     const domain = domainRef.current;
@@ -72,7 +66,7 @@ const LoginScreen = () => {
         toast(error.message, true);
       } finally {
         setLoading(false);
-      };
+      }
     } else {
       // if any of the required fields are not set, then update state to show error
       setState({
@@ -86,9 +80,7 @@ const LoginScreen = () => {
 
   const goToForgotPassword = () => {
     if (domain !== "") {
-      Linking.openURL(
-        `https://${domain}/wp-login.php?action=lostpassword`
-      );
+      Linking.openURL(`https://${domain}/wp-login.php?action=lostpassword`);
     } else {
       toast(i18n.t("loginScreen.domain.errorForgotPass", { locale }), true);
     }
@@ -110,15 +102,15 @@ const LoginScreen = () => {
       if (rememberLoginDetails && user?.domain) {
         ref.current = user.domain;
         setDomain(user.domain);
-      };
-    }, [])
+      }
+    }, []);
     const [domain, setDomain] = useState(ref?.current);
     const domainErrorMessage = state.domainValidation ? (
       <Text style={styles.validationErrorMessage}>
         {i18n.t("loginScreen.domain.error", { locale })}
       </Text>
     ) : null;
-    return(
+    return (
       <>
         <LabeledTextInput
           editing
@@ -129,7 +121,10 @@ const LoginScreen = () => {
           value={domain}
           accessibilityLabel={i18n.t("loginScreen.domain.label", { locale })}
           label={i18n.t("loginScreen.domain.label", { locale })}
-          containerStyle={[styles.textField, state.domainValidation && styles.domainErrorInput]}
+          containerStyle={[
+            styles.textField,
+            state.domainValidation && styles.domainErrorInput,
+          ]}
           startIcon={<LinkIcon />}
           // TODO: is this necessary (using rowContainer in component?)
           textAlign={isRTL ? "right" : "left"}
@@ -152,7 +147,7 @@ const LoginScreen = () => {
       if (rememberLoginDetails && user?.username) {
         ref.current = user.username;
         setUsername(user.username);
-      };
+      }
     }, []);
     const [username, setUsername] = useState(ref?.current);
     const userErrorMessage = state.userValidation ? (
@@ -160,18 +155,21 @@ const LoginScreen = () => {
         {i18n.t("loginScreen.username.error", { locale })}
       </Text>
     ) : null;
-    return(      
+    return (
       <>
         <LabeledTextInput
           editing
           value={username}
-          onChangeText={text => {
+          onChangeText={(text) => {
             setUsername(text);
             ref.current = text;
           }}
           accessibilityLabel={i18n.t("loginScreen.username.label", { locale })}
           label={i18n.t("loginScreen.username.label", { locale })}
-          containerStyle={[styles.textField, state.usernameValidation && styles.validationErrorInput]}
+          containerStyle={[
+            styles.textField,
+            state.usernameValidation && styles.validationErrorInput,
+          ]}
           //iconName={isIOS ? "ios-person" : "md-person"}
           startIcon={<AccountIcon />}
           textAlign={isRTL ? "right" : "left"}
@@ -198,12 +196,12 @@ const LoginScreen = () => {
         {i18n.t("loginScreen.password.error", { locale })}
       </Text>
     ) : null;
-    return(
+    return (
       <View>
         <LabeledTextInput
           editing
           value={password}
-          onChangeText={text => {
+          onChangeText={(text) => {
             ref.current = text;
             setPassword(text);
           }}
@@ -211,12 +209,15 @@ const LoginScreen = () => {
           accessibilityLabel={i18n.t("loginScreen.password.label", { locale })}
           label={i18n.t("loginScreen.password.label", { locale })}
           //style={styles.inputText}
-          containerStyle={[styles.textField, state.passwordValidation && styles.validationErrorInput]}
+          containerStyle={[
+            styles.textField,
+            state.passwordValidation && styles.validationErrorInput,
+          ]}
           //iconName={isIOS ? "ios-key" : "md-key"}
           startIcon={<KeyIcon />}
           endIcon={
             <EyeIcon
-              onPress={()=>setShowPassword(!showPassword)}
+              onPress={() => setShowPassword(!showPassword)}
               style={styles.showPasswordIcon(showPassword)}
             />
           }
@@ -234,14 +235,14 @@ const LoginScreen = () => {
       <Pressable onPress={onLoginPress}>
         <View style={styles.signInButton}>
           <Text style={styles.signInButtonText}>
-            {i18n.t("loginScreen.logIn", { locale })}
+            {i18n.t("global.logIn", { locale })}
           </Text>
         </View>
       </Pressable>
       <Pressable onPress={goToForgotPassword} disabled={loading}>
         <View style={styles.forgotButton}>
           <Text style={globalStyles.link}>
-            {i18n.t("loginScreen.forgotPassword", { locale })}
+            {i18n.t("global.forgotPassword", { locale })}
           </Text>
         </View>
       </Pressable>
@@ -249,25 +250,18 @@ const LoginScreen = () => {
   );
 
   const LoadingSpinner = () => {
-    return (
-      <ActivityIndicator
-        style={[
-          globalStyles.icon,
-          styles.spinner
-        ]}
-      />
-    );
+    return <ActivityIndicator style={[globalStyles.icon, styles.spinner]} />;
   };
 
   return (
     <View style={globalStyles.screenContainer}>
       <Header />
       <View style={styles.formContainer}>
-        <PluginRequired {...mobileAppPlugin} /> 
+        <PluginRequired {...mobileAppPlugin} />
         <DomainField ref={domainRef} />
         <UsernameField ref={usernameRef} />
         <PasswordField ref={passwordRef} />
-        { loading ? <LoadingSpinner /> : <LoginButton /> }
+        {loading ? <LoadingSpinner /> : <LoginButton />}
         <LanguagePicker />
         <AppVersion />
       </View>

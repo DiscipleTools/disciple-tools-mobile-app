@@ -4,7 +4,7 @@ import useRequest from "hooks/use-request";
 
 import { searchObjList } from "utils";
 
-const useNotifications = ({ search, filter, exclude }) => {
+const useNotifications = ({ search, filter, exclude } = {}) => {
   //const { uid } = useAuth();
   /*
   const {
@@ -43,12 +43,14 @@ const useNotifications = ({ search, filter, exclude }) => {
   if (filter?.query?.key && filter?.query?.value) filtered = filtered.filter(item => item?.[filter.query.key] === filter.query.value);
   //if (search && isConnected == false) filtered = searchObjList(filtered, search);
   if (search) filtered = searchObjList(filtered, search);
+  const filteredNew = filtered?.filter(item => item?.is_new==="1");
   return {
     data: filtered,
     error,
     isLoading,
     isValidating,
     mutate,
+    hasNotifications: filteredNew?.length > 0,
     //markAllNotificationsViewed,
     //markNotificationUnread,
     //markNotificationViewed,

@@ -1,56 +1,50 @@
-import React, { useCallback } from 'react';
-import { SafeAreaView } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
+import React, { useCallback } from "react";
+import { SafeAreaView } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 
-import {
-  ChevronForwardIcon,
-  ChevronBackIcon,
-  PostIcon,
-} from "components/Icon";
+import { ChevronIcon, PostIcon } from "components/Icon";
 import OfflineBar from "components/OfflineBar";
-import TitleBar from "components/TitleBar";
+//import TitleBar from "components/TitleBar";
 import ListItem from "components/ListItem";
 
-import useI18N from "hooks/use-i18n";
 //import useCustomPostTypes from "hooks/use-custom-post-types";
-import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
+import useI18N from "hooks/use-i18n";
 
 import { ScreenConstants } from "constants";
 
-import { localStyles } from './MoreScreen.styles';
+import { localStyles } from "./MoreScreen.styles";
 
 const MoreScreen = ({ navigation, route }) => {
+
+  const { i18n } = useI18N();
 
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
   //const { data, error, isLoading, isValidating, mutate } = useCustomPostTypes();
   const { styles, globalStyles } = useStyles(localStyles);
-  const { i18n, isRTL, locale } = useI18N();
-  const { settings } = useSettings();
-  if (!settings) console.log(`settings: ${ JSON.stringify(settings)}`);
 
   const PostButton = ({ label, type }) => (
     <ListItem
       startComponent={<PostIcon />}
       label={label}
-      endComponent={
-        isRTL ? <ChevronBackIcon style={globalStyles.icon} /> : <ChevronForwardIcon style={globalStyles.icon} />
-      }
+      endComponent={<ChevronIcon style={globalStyles.icon} />}
       onPress={() => {
         navigation.push(ScreenConstants.LIST, {
           type,
-          filter: null 
-        })}
-      }
+          filter: null,
+        });
+      }}
     />
   );
 
-  // TODO: translate
+  // TODO: translate HELP Please
   // TODO: detect Custom Post Types dynamically
-  const trainingsLabel = "Trainings";
-  const trainingsPostType = "trainings";
+  // const trainingsLabel = "Trainings";
+  // const trainingsPostType = "trainings";
+  const trainingsLabel = i18n.t("global.trainings");
+  const trainingsPostType = i18n.t("global.trainings");
   return (
     <SafeAreaView style={globalStyles.screenContainer}>
       <OfflineBar />

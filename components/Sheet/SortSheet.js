@@ -1,53 +1,50 @@
 import React from "react";
 
 import { SortAscIcon, SortDescIcon } from "components/Icon";
+import useI18N from "hooks/use-i18n";
 import SelectSheet from "./SelectSheet";
 import SheetHeader from "./SheetHeader";
 
 import { SortConstants } from "constants";
 
 const SortSheet = ({ items, setItems, filter, onFilter }) => {
-
+  const { i18n } = useI18N();
   const sortKey = filter?.query?.sort;
   const sections = [
     {
-      title: "Last Modified Date",
+      title: i18n.t("sorting.lastModifiedDate"),
       data: [
         {
           key: SortConstants.LAST_MOD_DESC,
-          // TODO: translate
-          label: "Most Recent",
+          label: i18n.t("sorting.mostRecent"),
           icon: <SortDescIcon />,
           selected: SortConstants.LAST_MOD_DESC === sortKey,
         },
         {
           key: SortConstants.LAST_MOD_ASC,
-          // TODO: translate
-          label: "Least Recent",
+          label: i18n.t("sorting.leastRecent"),
           icon: <SortAscIcon />,
           selected: SortConstants.LAST_MOD_ASC === sortKey,
         },
-      ]
+      ],
     },
     {
-      title: "Created Date",
+      title: i18n.t("sorting.createdDate"),
       data: [
         {
           key: SortConstants.CREATED_DESC,
-          // TODO: translate
-          label: "Newest",
+          label: i18n.t("sorting.newest"),
           icon: <SortDescIcon />,
           selected: SortConstants.CREATED_DESC === sortKey,
         },
         {
           key: SortConstants.CREATED_ASC,
-          // TODO: translate
-          label: "Oldest",
+          label: i18n.t("sorting.oldest"),
           icon: <SortAscIcon />,
           selected: SortConstants.CREATED_ASC === sortKey,
         },
-      ]
-    }
+      ],
+    },
   ];
 
   const getSortParams = (selectedKey) => {
@@ -62,12 +59,14 @@ const SortSheet = ({ items, setItems, filter, onFilter }) => {
         return { asc: false, sortKey: "post_date" };
       default:
         return "last_modified";
-    };
+    }
   };
- 
+
   const sort = (selectedKey) => {
     const { asc, sortKey } = getSortParams(selectedKey);
-    const sortedItems = [...items].sort((a,b) =>  asc ? a[sortKey]-b[sortKey] : b[sortKey]-a[sortKey]);
+    const sortedItems = [...items].sort((a, b) =>
+      asc ? a[sortKey] - b[sortKey] : b[sortKey] - a[sortKey]
+    );
     setItems(sortedItems);
   };
 
@@ -78,25 +77,16 @@ const SortSheet = ({ items, setItems, filter, onFilter }) => {
         const newFilter = filter;
         newFilter.query.sort = sortValue.key;
         onFilter(newFilter);
-      };
-    };
+      }
+    }
   };
 
-  // TODO: translate
-  const title = "Sort by";
+  const title = i18n.t("global.sortBy");
 
-  return(
+  return (
     <>
-      <SheetHeader
-        expandable
-        dismissable
-        title={title}
-      />
-      <SelectSheet
-        require
-        sections={sections}
-        onChange={onChange}
-      />
+      <SheetHeader expandable dismissable title={title} />
+      <SelectSheet require sections={sections} onChange={onChange} />
     </>
   );
 };

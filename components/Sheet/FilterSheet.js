@@ -7,11 +7,12 @@ import SheetHeader from "./SheetHeader";
 
 import useBottomSheet from "hooks/use-bottom-sheet";
 import useStyles from "hooks/use-styles";
+import useI18N from "hooks/use-i18n";
 
 import { localStyles } from "./FilterSheet.styles";
 
 const FilterSheet = ({ multiple, filters, filter, onFilter }) => {
-
+  const { i18n } = useI18N();
   const { styles, globalStyles } = useStyles(localStyles);
   const { delayedClose } = useBottomSheet();
 
@@ -24,7 +25,7 @@ const FilterSheet = ({ multiple, filters, filter, onFilter }) => {
     if (!item) return null;
     const { ID, name, count, subfilter, query } = item;
     const selected = ID === filter?.ID;
-    return(
+    return (
       <Pressable onPress={() => onChange(item)}>
         <View key={ID} style={styles.itemContainer}>
           <View style={styles.itemSubFilterContainer(subfilter)}>
@@ -53,16 +54,11 @@ const FilterSheet = ({ multiple, filters, filter, onFilter }) => {
 
   const sections = mapFilters(filters);
 
-  // TODO: translate
-  const title = "Filter by";
+  const title = i18n.t("global.filterBy");
 
-  return(
+  return (
     <>
-      <SheetHeader
-        expandable
-        dismissable
-        title={title}
-      />
+      <SheetHeader expandable dismissable title={title} />
       <SelectSheet
         required
         multiple={multiple}

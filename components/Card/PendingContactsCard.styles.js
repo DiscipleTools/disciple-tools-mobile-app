@@ -1,3 +1,5 @@
+import { ThemeConstants } from "constants";
+
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: (idx) => ({
     alignItems: "center",
@@ -5,10 +7,13 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     borderTopColor: idx !== 0 ? theme.surface.primary : null,
     paddingVertical: 10
   }),
+  // TODO: move to use-styles?
   title: {
-    color: theme.text.primary, 
+    color: ThemeConstants.DARK === theme.mode ? theme.text.primary : theme.brand.primary,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
     fontSize: 18,
-    fontStyle: "italic",
+    marginBottom: 15,
   },
   buttonRowContainer: {
     justifyContent: "center",
@@ -22,15 +27,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     margin: 5,
   },
   buttonText: {
-    color: theme.text.primary
+    color: theme.offLight,
+    fontWeight: "bold",
   },
-  placeholderContainer: {
-    //justifyContent: "center"
-    alignItems: "center",
-    padding: 5
-  },
-  placeholderText: {
-    color: theme.text.primary,
-    fontStyle: "italic",
-  }
 });

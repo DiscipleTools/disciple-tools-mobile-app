@@ -90,7 +90,6 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
     const _onChange = async(newSections) => {
       const mappedValues = mapToAPI(newSections);
       if (JSON.stringify(mappedValues) !== JSON.stringify(values)) {
-        console.log("*** CHANGE OCCURRED ***");
         setMultiSelectValues({ values: mappedValues });
       };
     };

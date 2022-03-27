@@ -54,9 +54,10 @@ export const defaultHealthMilestones = [
 ];
 
 export const AppConstants = Object.freeze({
+  NAME: "D.T",
   PROTOCOL: "https",
   TIMEOUT: 15000, // 15 secs
-  REFRESH_INTERVAL: 0, // 0 secs
+  REFRESH_INTERVAL: 0, //10 secs
 });
 
 export const HTTP = Object.freeze({
@@ -82,6 +83,7 @@ export const FieldTypes = Object.freeze({
   COMMUNICATION_CHANNEL: "communication_channel",
   CONNECTION: "connection",
   DATE: "date",
+  DATETIME_SERIES: "datetime_series",
   KEY_SELECT: "key_select",
   LOCATION: "location",
   LOCATION_GRID: "location_grid",
@@ -90,6 +92,7 @@ export const FieldTypes = Object.freeze({
   NUMBER: "number",
   POST_USER_META: "post_user_meta",
   TAGS: "tags",
+  TASK: "task",
   TEXT: "text",
   TEXTAREA: "textarea",
   USER_SELECT: "user_select",

@@ -1,5 +1,5 @@
 import React from "react";
-import { useSWRConfig } from 'swr'
+import { useSWRConfig } from "swr";
 
 import OfflineBar from "components/OfflineBar";
 import Tile from "components/Post/Tile";
@@ -10,7 +10,6 @@ import useSettings from "hooks/use-settings";
 import useAPI from "hooks/use-api";
 
 const CreateScreen = ({ navigation }) => {
-
   const { mutate } = useSWRConfig();
   const { i18n, isRTL } = useI18N();
   const { isContact } = useType();
@@ -28,30 +27,26 @@ const CreateScreen = ({ navigation }) => {
         fields.push(...creationFieldsByTile);
       }
     });
-    // TODO: translate
+    // TODO: translate via API?
     if (isContact) {
-      fields = [{
-        label: "Contact Type",
-        name: "type",
-        type: "key_select",
-        default: {
-          access: {
-            label: "Standard",
+      fields = [
+        {
+          label: "Contact Type",
+          name: "type",
+          type: "key_select",
+          default: {
+            access: {
+              label: "Standard",
+            },
+            personal: {
+              label: "Private",
+            },
           },
-          personal: {
-            label: "Private",
-          },
-        }
-      }, ...fields];
-    };
-    return (
-      <Tile
-        grouped
-        fields={fields}
-        save={createPost}
-        mutate={mutate}
-      />
-    );
+        },
+        ...fields,
+      ];
+    }
+    return <Tile grouped fields={fields} save={createPost} mutate={mutate} />;
   };
 
   return (

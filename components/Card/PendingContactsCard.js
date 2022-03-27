@@ -1,33 +1,32 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import { Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
 
 import Card from "components/Card/Card";
 import ExpandableCard from "components/Card/ExpandableCard";
+import Placeholder from "components/Placeholder";
 
+import useAPI from "hooks/use-api";
+import useI18N from "hooks/use-i18n";
 import useList from "hooks/use-list";
 import useStyles from "hooks/use-styles";
 
-import { TypeConstants } from "constants";
+import { TabScreenConstants, TypeConstants, ScreenConstants } from "constants";
+
+import { findFilterById } from "utils";
 
 import { localStyles } from "./PendingContactsCard.styles";
 
-const PendingContactsCard = ({ refreshing }) => {
+const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
+  const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
+  const { i18n, locale } = useI18N();
 
-  const filter = {
-    ID: "contacts_pending",
-    // TODO: translate
-    name: "Pending Contacts",
-    query: {
-      assigned_to: ["me"],
-      subassigned: ["me"], //TODO fix this since a subuser can't accept a contact
-      combine: ["subassigned"],
-      type: ["access"],
-      overall_status: ["assigned"],
-      sort: "seeker_path",
-    },
-  };
+  const { updatePost } = useAPI();
+
+  const filter = findFilterById("my_assigned", filters);
+  const title = filter ? filter?.name : "";
   const {
     data: contacts,
     error,
@@ -36,28 +35,53 @@ const PendingContactsCard = ({ refreshing }) => {
     mutate,
   } = useList({ filter, type: TypeConstants.CONTACT });
 
-  // force data refresh on reload
   useEffect(() => {
-    if (refreshing && mutate) mutate();
+    if (mutate) mutate();
   }, [refreshing]);
+
+  // https://dtdemo.disciple.tools/wp-json/dt-posts/v2/contacts/96/accept
+  // { "accept" true|false }
+  const handleAccept = ({ contact, accept }) => {
+    updatePost({
+      urlPathPostfix: "/accept",
+      fields: { accept },
+      id: contact?.ID,
+      type: contact?.post_type,
+      mutate: onRefresh,
+    });
+  };
 
   const renderContactAccept = (contact, idx) => (
     <View style={[globalStyles.columnContainer, styles.container(idx)]}>
-      <Text style={styles.title}>{contact?.title}</Text>
+      <Pressable
+        onPress={() => {
+          navigation.jumpTo(TabScreenConstants.CONTACTS, {
+            screen: ScreenConstants.DETAILS,
+            id: contact?.ID,
+            name: contact?.title,
+            type: TypeConstants.CONTACT,
+          });
+        }}
+      >
+        <Text style={styles.title}>{contact?.title}</Text>
+      </Pressable>
       <View style={[globalStyles.rowContainer, styles.buttonRowContainer]}>
         <Pressable
-          onPress={() => console.log(`*** ACCEPT: ${JSON.stringify(contact)} `)}
+          onPress={() => handleAccept({ contact, accept: true })}
+          //TODO adjust color to be dynamic
           style={[styles.buttonContainer, { backgroundColor: "green" }]}
         >
-          <Text style={styles.buttonText}>Accept</Text>
+          <Text style={styles.buttonText}>
+            {i18n.t("global.accept", { locale })}
+          </Text>
         </Pressable>
         <Pressable
-          onPress={() =>
-            console.log(`*** DECLINE: ${JSON.stringify(contact)} `)
-          }
+          onPress={() => handleAccept({ contact, accept: false })}
           style={[styles.buttonContainer, { backgroundColor: "red" }]}
         >
-          <Text style={styles.buttonText}>Decline</Text>
+          <Text style={styles.buttonText}>
+            {i18n.t("global.decline", { locale })}
+          </Text>
         </Pressable>
       </View>
     </View>
@@ -80,24 +104,29 @@ const PendingContactsCard = ({ refreshing }) => {
     </>
   );
 
-  // TODO: translate
-  const title = "Pending Contacts";
-  //const title = "جهات الاتصال المعلقة";
+  if (!filter) return null;
+  if (contacts?.length > 1)
+    return (
+      <ExpandableCard
+        border
+        center
+        title={title}
+        count={contacts?.length}
+        renderPartialCard={renderPartialCard}
+        renderExpandedCard={renderExpandedCard}
+      />
+    );
+  if (contacts?.length > 0)
+    return (
+      <Card border center title={title} body={<>{renderPartialCard()}</>} />
+    );
   return (
-    <>
-      {contacts?.length > 2 ? (
-        <ExpandableCard
-          border
-          center
-          title={title}
-          count={contacts?.length}
-          renderPartialCard={renderPartialCard}
-          renderExpandedCard={renderExpandedCard}
-        />
-      ) : (
-        <Card border center title={title} body={<Text>All caught up!</Text>} />
-      )}
-    </>
+    <Card
+      border
+      center
+      title={title}
+      body={<Placeholder type={TypeConstants.CONTACT} />}
+    />
   );
 };
 export default PendingContactsCard;

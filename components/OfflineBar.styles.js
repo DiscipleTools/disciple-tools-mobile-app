@@ -1,6 +1,6 @@
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   offlineBar: {
-    height: 20,
+    height: 24,
     backgroundColor: theme.warning,
   },
   offlineBarText: {

@@ -48,7 +48,7 @@ const FAB = () => {
     const newActionValue = post[quickActionPropertyName]
       ? Number(post[quickActionPropertyName]) + 1
       : 1;
-    updatePost({ [quickActionPropertyName]: newActionValue });
+    updatePost({ fields: { [quickActionPropertyName]: newActionValue } });
   };
 
   // TODO: merge with onSaveQuickAction
@@ -155,7 +155,7 @@ const FAB = () => {
     if (field === "quick_button_new")
       return {
         ...defaultIconConfig,
-        title: i18n.t("contactDetailScreen.addNewContact", { locale }), // TODO: group translate
+        title: i18n.t("global.addNewContact", { locale }), // TODO: group translate
         count: null,
         name: "plus",
         //bgColor: "green", //TODO
@@ -168,7 +168,7 @@ const FAB = () => {
     if (field === "quick_button_import_contacts")
       return {
         ...defaultIconConfig,
-        title: i18n.t("contactDetailScreen.importContact", { locale }),
+        title: i18n.t("global.importContact", { locale }),
         count: null,
         type: "MaterialCommunityIcon",
         name: "card-account-phone",
