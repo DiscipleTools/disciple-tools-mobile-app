@@ -3,13 +3,25 @@ import { Linking } from "react-native";
 import { KebabIcon } from "components/Icon";
 import { Menu, MenuItem, MenuDivider } from "react-native-material-menu";
 
+import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
 
 import axios from "services/axios";
 
 const KebabMenu = ({ items }) => {
   const { globalStyles } = useStyles();
+  const { i18n } = useI18N();
   const [visible, setVisible] = useState(false);
+  if (!items) items = [
+    {
+      label: i18n.t("global.viewOnWeb"),
+      urlPath: "/notifications/",
+    },
+    {
+      label: i18n.t("global.helpDocs"),
+      url: "https://disciple.tools/user-docs/getting-started-info/profile-settings/notifications/",
+    },
+  ];
   return (
     <Menu
       visible={visible}
