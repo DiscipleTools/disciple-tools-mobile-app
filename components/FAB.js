@@ -157,7 +157,7 @@ const FAB = () => {
         ...defaultIconConfig,
         title: i18n.t("global.addNewContact", { locale }), // TODO: group translate
         count: null,
-        name: "plus",
+        name: "account-plus",
         //bgColor: "green", //TODO
         callback: () => {
           navigation.navigate(ScreenConstants.CREATE, {
