@@ -1,13 +1,15 @@
 import React, { useEffect, useReducer, useState } from "react";
 import * as RootNavigation from "navigation/RootNavigation";
 
-//import useType from "hooks/use-type";
+import useI18N from "hooks/use-i18n";
+import useType from "hooks/use-type";
 
-import { SortConstants } from "constants";
+//import { SortConstants } from "constants";
 
 const useFilter = () => {
 
-  //const { isContact, isGroup } = useType();
+  const { i18n } = useI18N();
+  const { isNotification, isCommentsActivity } = useType();
   const route = RootNavigation.getRoute();
 
   const SET_FILTER = "SET_FILTER";
@@ -22,16 +24,13 @@ const useFilter = () => {
   };
 
   const getDefaultFilter = () => {
-    return {
-      ID: "recent",
-      /*
-      name: "My Recently Viewed",
-      query: {
-        "dt_recent": "true",
-        sort: SortConstants.LAST_MOD_DESC
-      }
-      */
+    if (isNotification || isCommentsActivity) return {
+      ID: "all",
+      name: i18n.t("global.all"),
+      query: null,
+      subfilter: false 
     };
+    return { ID: "recent" };
   };
   const defaultFilter = getDefaultFilter();
 
