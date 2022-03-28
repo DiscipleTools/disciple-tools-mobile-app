@@ -261,6 +261,19 @@ const TabNavigator = () => {
             borderRadius: 5,
           },
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: TabScreenConstants.HOME,
+                },
+              ],
+            });
+          },
+        })}
       />
       <Tab.Screen
         name={TabScreenConstants.CONTACTS}
@@ -346,9 +359,6 @@ const TabNavigator = () => {
               routes: [
                 {
                   name: TabScreenConstants.MORE,
-                  params: {
-                    screen: TabScreenConstants.MORE,
-                  },
                 },
               ],
             });
