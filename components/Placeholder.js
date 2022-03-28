@@ -14,7 +14,7 @@ const Placeholder = ({ placeholder, type }) => {
   const getDefaultPlaceholder = () => {
     if (type) return type;
     if (!type && postType) return postType;
-    return i18n.t("items");
+    return i18n.t("global.items");
   };
   const items = getDefaultPlaceholder();
   const defaultPlaceholder = i18n.t("placeholder", { items });
