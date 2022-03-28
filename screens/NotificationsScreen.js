@@ -1,18 +1,13 @@
 import React, {
   useState,
-  useCallback,
   useLayoutEffect,
-  useMemo,
-  useRef,
 } from "react";
-import { Button, Pressable, Text, View } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
+import { Pressable, Text, View } from "react-native";
+//import { useIsFocused } from "@react-navigation/native";
 
 //import { Html5Entities } from 'html-entities';
 
 import {
-  ChevronBackIcon,
-  ChevronForwardIcon,
   CheckIcon,
   CircleOutlineIcon,
   CommentIcon,
@@ -22,78 +17,49 @@ import {
 import KebabMenu from "components/KebabMenu";
 import OfflineBar from "components/OfflineBar";
 import FilterList from "components/FilterList";
-import SelectSheet from "components/Sheet/SelectSheet";
-//import { HelpSheet } from "components/Sheet/ModalSheet";
 import { PostItemSkeleton } from "components/Post/PostItem/index";
 
 import useFilter from "hooks/use-filter";
-import useI18N from "hooks/use-i18n";
 import useNotifications from "hooks/use-notifications";
 //import useMyUser from 'hooks/use-my-user.js';
 import useStyles from "hooks/use-styles";
+import useType from "hooks/use-type"; 
 
-import { NotificationActionConstants } from "constants";
+import { NotificationActionConstants, ScreenConstants } from "constants";
+
+import { truncate } from "utils";
 
 import { localStyles } from "./NotificationsScreen.styles";
 
 const NotificationsScreen = ({ navigation }) => {
-  const { i18n } = useI18N();
-  const DEFAULT_LIMIT = 10;
-
-  // NOTE: invoking this hook causes the desired re-render onBack()
-  useIsFocused();
+  // TODO: constant
+  const DEFAULT_LIMIT = 1000;
 
   const { styles, globalStyles } = useStyles(localStyles);
-  const { isRTL } = useI18N();
+  const { getTabScreenFromType } = useType();
+
+  const [offset, setOffset] = useState(0);
+  const [limit, setLimit] = useState(DEFAULT_LIMIT);
+
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
+
   const {
     data: items,
     error,
     isLoading,
     isValidating,
     mutate,
-  } = useNotifications({ search, filter });
-  /*
-  const [_notifications, _setNotifications] = useState(items ?? []);
-  useEffect(() => {
-    if (_notifications?.length !== notifications?.length) _setNotifications(notifications);
-  }, [notifications]);
-  */
+    markViewed,
+    markUnread,
+  } = useNotifications({ search, filter, offset, limit });
+
   //const { userData, error: userError } = useMyUser();
-  const userData = null;
-
-  const [isAll, setIsAll] = useState(true);
-  const [offset, setOffset] = useState(0);
-  const [limit, setLimit] = useState(10); // fails: useState(DEFAULT_LIMIT);
-
-  const renderHeaderLeft = (props) => {
-    const onBack = () => navigation.pop();
-    return (
-      <View style={globalStyles.rowContainer}>
-        {isRTL ? (
-          <ChevronForwardIcon onPress={onBack} style={globalStyles.navIcon} />
-        ) : (
-          <ChevronBackIcon onPress={onBack} style={globalStyles.navIcon} />
-        )}
-      </View>
-    );
-  };
 
   const renderHeaderRight = (props) => {
-    const kebabItems = [
-      {
-        label: i18n.t("global.viewOnWeb"),
-        urlPath: "/notifications/",
-      },
-      {
-        label: i18n.t("global.helpDocs"),
-        url: "https://disciple.tools/user-docs/getting-started-info/profile-settings/notifications/",
-      },
-    ];
     return (
       <View style={globalStyles.rowContainer}>
         <View style={styles.headerIcon}>
-          <KebabMenu items={kebabItems} />
+          <KebabMenu />
         </View>
       </View>
     );
@@ -102,13 +68,30 @@ const NotificationsScreen = ({ navigation }) => {
   // TODO: custom useHeaderLayoutEffect hook for reuse
   useLayoutEffect(() => {
     navigation.setOptions({
-      //title,
-      headerLeft: (props) => renderHeaderLeft(props),
       headerRight: (props) => renderHeaderRight(props),
     });
   });
 
   const NotificationItem = ({ item }) => {
+    /*
+    {
+      "id":"123",
+      "user_id":"4567",
+      "source_user_id":"555",
+      "post_id":"42",
+      "secondary_item_id":"124",
+      "notification_name":"mention",
+      "notification_action":"mentioned",
+      "notification_note":"Jane Doe mentioned you on <a href=\"https://example.com/contacts/42\">Jane Doe</a> saying: \r\n\r\n @jdoe hi3",
+      "date_notified":"2021-03-19 23:11:52",
+      "is_new":"1",
+      "channels":null,
+      "field_key":"comments",
+      "field_value":"",
+      "post_title":"Jane Doe",
+      "pretty_time":["11 months ago","03/19/2021"]
+    }
+    */
     const str1 = item?.notification_note?.search("<");
     const str2 = item?.notification_note?.search(">");
     const str3 = item?.notification_note?.length - 4;
@@ -120,8 +103,8 @@ const NotificationsScreen = ({ navigation }) => {
       item?.notification_note?.lastIndexOf('href="') + 6,
       item?.notification_note?.lastIndexOf('">')
     );
-    let entityId = entityLink?.split("/")[4];
-    let entityName = entityLink?.split("/")[3];
+    let id = entityLink?.split("/")[4];
+    let type = entityLink?.split("/")[3];
     // TODO
     //const entities = new Html5Entities();
     const isNew = item?.is_new === "1" ? true : false;
@@ -168,15 +151,24 @@ const NotificationsScreen = ({ navigation }) => {
         <View style={[globalStyles.rowContainer, styles.notificationDetails]}>
           {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
           <Text>{newNotificationNoteA}</Text>
-          <Text
-            style={styles.link}
-            onPress={() =>
-              redirectToDetailView(entityName, entityId, newNotificationNoteC)
-            }
+          <Pressable
+            onPress={() => {
+              const tabScreen = getTabScreenFromType(type);
+              navigation.jumpTo(tabScreen, {
+                screen: ScreenConstants.DETAILS,
+                id,
+                name: item?.post_title,
+                type,
+              });
+            }}
           >
-            {newNotificationNoteC}
-            {/*entities.decode(newNotificationNoteC)*/}
-          </Text>
+            <Text
+              style={globalStyles.link}
+            >
+              {truncate(newNotificationNoteC, { maxLength: 35 })}
+              {/*entities.decode(newNotificationNoteC)*/}
+            </Text>
+          </Pressable>
         </View>
         <View>
           {item?.pretty_time?.[0] ? (
@@ -194,16 +186,11 @@ const NotificationsScreen = ({ navigation }) => {
     );
 
     const NotificationButton = () => (
-      <View style={[globalStyles.rowIcon, styles.endIcon]}>
+      <View style={globalStyles.rowIcon}>
         <Pressable
           onPress={() => {
-            if (isNew) {
-              console.log("*** MARK AS READ ***");
-              console.log(`item: ${JSON.stringify(item)}`);
-            } else {
-              console.log("*** MARK AS UNREAD ***");
-              console.log(`item: ${JSON.stringify(item)}`);
-            }
+            const id = item?.id;
+            if (id) return isNew ? markViewed({ id }) : markUnread({ id });
           }}
         >
           {isNew ? (
@@ -217,194 +204,53 @@ const NotificationsScreen = ({ navigation }) => {
 
     return (
       <View style={[globalStyles.rowContainer, styles.container(isNew)]}>
-        <NotificationIcon />
-        <NotificationDetails />
-        <NotificationButton />
+        <View style={{
+          flex: 1,
+        }}>
+          <NotificationIcon />
+        </View>
+        <View style={{
+          flex: 6,
+        }}>
+          <NotificationDetails />
+        </View>
+        <View style={{
+          flex: 1,
+        }}>
+          <NotificationButton />
+        </View>
       </View>
     );
   };
 
-  const toggleReadUnread = async (notification, isNew) =>
-    isNew
-      ? await markViewed(notification?.id)
-      : await markUnread(notification?.id);
+  const renderItem = ({ item }) => <NotificationItem item={item} />;
 
-  const redirectToDetailView = (viewName, entityId, entityTitle) => {
-    let view, prop;
-    switch (viewName) {
-      case "contacts":
-        view = "ContactDetail";
-        prop = "contact";
-        break;
-      case "groups":
-        view = "GroupDetail";
-        prop = "group";
-        break;
-      default:
-    }
-    navigation.push(view, {
-      [`${prop}Id`]: entityId,
-      onlyView: true,
-      [`${prop}Name`]: entityTitle,
-      fromNotificationView: true,
-    });
-  };
-
-  const renderItem = ({ item }) => {
-    /*
-    console.log("**********************************");
-    console.log(`post_id: ${ item?.post_id}`)
-    console.log(`action: ${ item?.notification_action}`)
-    console.log(`field_key: ${ item?.field_key}`)
-    console.log(`is_new: ${ item?.is_new}`)
-    */
-    return <NotificationItem item={item} />;
-  };
-
-  /*
-  const unreadNotifications = notifications?.filter((notification) => {
-    if (notification.is_new === "1") return notification;
-  });
-  */
-
-  const bottomSheetRefSort = useRef(null);
-  const bottomSheetRefFilter = useRef(null);
-  const showSort = () => bottomSheetRefSort.current.expand();
-  //const showFilter = () => bottomSheetRefFilter.current.snapToIndex(1);
-  const showFilter = () => bottomSheetRefFilter.current.snapToIndex(0);
-
-  const renderBackdrop = useCallback(
-    (props) => <BottomSheetBackdrop {...props} disappearsOnIndex={-1} />,
-    []
-  );
-
-  const SortSheet = () => {
-    const onClose = () => bottomSheetRefSort.current.close();
-    const onSnap = useCallback((index) => {
-      console.log("handleSheetChanges", index);
-    }, []);
-    const snapPoints = useMemo(() => ["33%"], []);
-    return (
-      <BottomSheet
-        ref={bottomSheetRefSort}
-        index={-1}
-        snapPoints={snapPoints}
-        onChange={onSnap}
-        enablePanDownToClose
-        backdropComponent={renderBackdrop}
-        //detached={true}
-        // add bottom inset to elevate the sheet
-        //bottomInset={50}
-      >
-        <View
-          style={{
-            flex: 1,
-            alignItems: "center",
-            paddingTop: 20,
-          }}
-        >
-          <Text>Sort 🎉</Text>
-          <Button title="Dismiss" onPress={() => onClose()} />
-        </View>
-      </BottomSheet>
-    );
-  };
-
-  //const FilterSheet = () => <HelpSheet ref={bottomSheetRefFilter} />;
-
-  const FilterSheet = () => {
-    const onDismiss = () => bottomSheetRefFilter.current.close();
-    const onDone = () => {
-      console.log("onDone");
-    };
-    const onSnap = useCallback((index) => {
-      console.log("handleSheetChanges", index);
-    }, []);
-    const snapPoints = useMemo(() => ["25%", "50%", "95%"], []);
-    const items = useMemo(
-      () =>
-        Array(50)
-          .fill(0)
-          .map((_, index) => ({
-            key: index,
-            label: `index-${index}`,
-            selected: index % 2 === 0 ? true : false,
-          })),
-      []
-    );
-
-    const renderItem = useCallback(
-      (item) => (
-        <View key={item} style={styles.itemContainer}>
-          <Text>{item}</Text>
-        </View>
-      ),
-      []
-    );
-
-    return (
-      <SelectSheet
-        ref={bottomSheetRefFilter}
-        snapPoints={snapPoints}
-        onSnap={onSnap}
-        items={items}
-        renderItem={renderItem}
-        onDismiss={onDismiss}
-        onDone={onDone}
-      />
-    );
-  };
-
+  // TODO: reusable component
   const ListSkeleton = () =>
     Array(10)
       .fill(null)
       .map((_, ii) => <PostItemSkeleton key={ii} />);
 
-  /*
-  {
-    "id":"963",
-    "user_id":"2237",
-    "source_user_id":"637",
-    "post_id":"119",
-    "secondary_item_id":"424",
-    "notification_name":"mention",
-    "notification_action":"mentioned",
-    "notification_note":"Mike Allbutt mentioned you on <a href=\"https://dtdemo.disciple.tools/contacts/119\">Mike Allbutt</a> saying: \r\n\r\n @Some1 hi3",
-    "date_notified":"2021-03-19 23:11:52",
-    "is_new":"0",
-    "channels":null,
-    "field_key":"comments",
-    "field_value":"",
-    "post_title":"Mike Allbutt",
-    "pretty_time":["11 months ago","03/19/2021"]
-  }
-  */
-  if (!items) return null;
+  if (!items) return <ListSkeleton />;
   return (
-    <>
+    <View style={globalStyles.container}>
       <OfflineBar />
-      {!items ? (
-        <ListSkeleton />
-      ) : (
-        <>
-          <FilterList
-            display
-            sortable
-            items={items}
-            renderItem={renderItem}
-            //renderHiddenItem={renderHiddenItem}
-            search={search}
-            onSearch={onSearch}
-            defaultFilter={defaultFilter}
-            filter={filter}
-            onFilter={onFilter}
-            onRefresh={mutate}
-            //leftOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_LEFT}
-            //rightOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_RIGHT}
-          />
-        </>
-      )}
-    </>
+      <FilterList
+        display
+        //sortable
+        items={items}
+        renderItem={renderItem}
+        //renderHiddenItem={renderHiddenItem}
+        search={search}
+        onSearch={onSearch}
+        defaultFilter={defaultFilter}
+        filter={filter}
+        onFilter={onFilter}
+        onRefresh={mutate}
+        //leftOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_LEFT}
+        //rightOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_RIGHT}
+      />
+    </View>
   );
 };
 export default NotificationsScreen;
