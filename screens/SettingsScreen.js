@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { Image, Switch, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { useIsFocused } from "@react-navigation/native";
 
 import {
@@ -184,7 +185,7 @@ const SettingsScreen = ({ navigation }) => {
   );
 
   return (
-    <View style={globalStyles.screenContainer}>
+    <ScrollView style={globalStyles.screenContainer}>
       <OfflineBar />
       <Header />
       {/*__DEV__ && <StorybookButton />*/}
@@ -199,7 +200,7 @@ const SettingsScreen = ({ navigation }) => {
         <LanguagePicker />
         <AppVersion />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 export default SettingsScreen;

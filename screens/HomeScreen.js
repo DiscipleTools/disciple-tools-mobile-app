@@ -171,6 +171,7 @@ const HomeScreen = ({ navigation, route }) => {
       <OfflineBar />
       <ScrollView
         style={[globalStyles.screenContainer, styles.container]}
+        contentContainerStyle={globalStyles.screenGutter}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
