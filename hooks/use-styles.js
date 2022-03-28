@@ -42,6 +42,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   },
   link: {
     color: theme.text.link,
+    fontWeight: "bold",
     textDecorationLine: "underline",
   },
   title: {
@@ -85,8 +86,11 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   }),
   screenContainer: {
     backgroundColor: theme.surface.primary,
-    // TODO: why 110%?
-    height: "110%",
+    // NOTE: used by "More Screen"
+    height: "100%",
+  },
+  screenGutter: {
+    paddingBottom: 100
   },
   rowContainer: {
     // NOTE: now handled automatically by I18nManager.isRTL

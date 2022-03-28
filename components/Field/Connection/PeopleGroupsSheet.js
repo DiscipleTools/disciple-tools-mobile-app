@@ -5,7 +5,7 @@ import ConnectionSheet from "./ConnectionSheet";
 import useFilter from "hooks/use-filter";
 import usePeopleGroups from "hooks/use-people-groups";
 
-const PeopleGroupsSheet = ({ title, values, onChange }) => {
+const PeopleGroupsSheet = ({ values, onChange }) => {
 
   const { search, onSearch } = useFilter();
 
@@ -19,7 +19,6 @@ const PeopleGroupsSheet = ({ title, values, onChange }) => {
 
   return(
     <ConnectionSheet
-      title={title}
       items={items}
       //renderItem={renderItem}
       values={values}

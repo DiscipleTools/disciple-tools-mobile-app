@@ -140,7 +140,8 @@ export const defaultThemeLight = Object.freeze({
     secondary: "rgba(0, 0, 0, 0.6)",
     inverse: offLight,
     disabled: "rgba(0, 0, 0, 0.38)",
-    link: systemBlueLight,
+    //link: systemBlueLight,
+    link: primaryBrand,
   },
   buttons: {
     primaryBrand,

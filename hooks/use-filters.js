@@ -20,7 +20,7 @@ const useFilters = ({ type } = {}) => {
       //count: 1350,
       content: [
         {
-          ID: "comments_activity_type_all",
+          ID: "all",
           //count: 1350,
           name: "All",
           query: null,
@@ -63,7 +63,7 @@ const useFilters = ({ type } = {}) => {
       //count: 99,
       content: [
         {
-          ID: "notifications_status_all",
+          ID: "all",
           //count: 99,
           name: "All",
           query: null,

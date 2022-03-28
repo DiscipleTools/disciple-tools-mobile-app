@@ -5,6 +5,7 @@ import React, {
   useState,
 } from "react";
 import { View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { useIsFocused } from "@react-navigation/native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -127,15 +128,22 @@ const DetailsScreen = ({ navigation }) => {
   if (!post || !settings || isLoading) return <PostSkeleton />;
   return (
     <>
-      <View style={styles.screenContainer}>
+      <ScrollView
+        style={globalStyles.screenContainer}
+        contentContainerStyle={globalStyles.screenGutter}
+      >
         <OfflineBar />
-        <TitleBar center title={post?.title} />
+        <TitleBar
+          center
+          title={post?.title}
+          style={styles.titleBar}
+        />
         <TabScrollView
           index={index}
           onIndexChange={onIndexChange}
           scenes={scenes}
         />
-      </View>
+      </ScrollView>
       <FAB />
     </>
   );

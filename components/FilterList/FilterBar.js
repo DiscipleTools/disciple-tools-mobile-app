@@ -6,6 +6,7 @@ import FilterOptions from "./FilterOptions";
 
 import useFilters from "hooks/use-filters";
 import useI18N from "hooks/use-i18n";
+import useType from "hooks/use-type";
 import useStyles from "hooks/use-styles";
 
 import { findFilterById } from "utils";
@@ -15,6 +16,7 @@ import { localStyles } from "./FilterBar.styles";
 const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
+  const { isNotification, isCommentsActivity } = useType();
   const { data: filters } = useFilters();
 
   const Count = () => (
@@ -29,7 +31,13 @@ const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
    * This works for *any* Post Type bc D.T supports the 'recent' filter for any.
    */
   useEffect(() => {
-    if (!filter || filter?.query || defaultFilter?.query) return;
+    if (
+      !filter ||
+      filter?.query ||
+      defaultFilter?.query ||
+      isNotification ||
+      isCommentsActivity
+    ) return;
     if (filter?.ID || defaultFilter?.ID) {
       if (!filters) return;
       const foundFilter = findFilterById(

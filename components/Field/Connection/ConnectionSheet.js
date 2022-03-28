@@ -3,7 +3,6 @@ import { Image, Pressable, Text, View } from "react-native";
 
 import { CheckIcon } from "components/Icon";
 import FilterList from "components/FilterList";
-import SheetHeader from "components/Sheet/SheetHeader";
 
 import useBottomSheet from "hooks/use-bottom-sheet";
 import useStyles from "hooks/use-styles";
@@ -11,7 +10,7 @@ import useStyles from "hooks/use-styles";
 // TODO:
 import { localStyles } from "components/Field/Connection/ConnectionField.styles";
 
-const ConnectionSheet = ({ title, items, renderItem, values, onChange, search, onSearch }) => {
+const ConnectionSheet = ({ items, renderItem, values, onChange, search, onSearch }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { delayedClose } = useBottomSheet();
@@ -92,19 +91,12 @@ const ConnectionSheet = ({ title, items, renderItem, values, onChange, search, o
   const mappedItems = mapFromAPI(items);
 
   return(
-    <>
-      <SheetHeader
-        expandable
-        dismissable
-        title={title}
-      />
-      <FilterList
-        items={mappedItems}
-        renderItem={renderItem ?? _renderItem}
-        search={search}
-        onSearch={onSearch}
-      />
-    </>
+    <FilterList
+      items={mappedItems}
+      renderItem={renderItem ?? _renderItem}
+      search={search}
+      onSearch={onSearch}
+    />
   );
 };
 export default ConnectionSheet;

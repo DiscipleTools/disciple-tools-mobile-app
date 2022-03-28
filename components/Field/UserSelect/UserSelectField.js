@@ -2,6 +2,7 @@ import React from "react";
 
 import Select from "components/Select";
 import PostLink from "components/Post/PostLink";
+import SheetHeader from "components/Sheet/SheetHeader";
 import UsersSheet from "./UsersSheet";
 
 import useBottomSheet from "hooks/use-bottom-sheet";
@@ -56,11 +57,16 @@ const UserSelectField = ({ editing, field, value, onChange }) => {
       <Select
         onOpen={() => {
           expand({
-            index: snapPoints.length-1,
+            renderHeader: () => (
+              <SheetHeader
+                expandable
+                dismissable
+                title={field?.label || ''}
+              />
+            ),
             renderContent: () => 
               <UsersSheet
                 id={value?.key}
-                title={field?.label || ''}
                 values={[value]}
                 onChange={_onChange}
               />

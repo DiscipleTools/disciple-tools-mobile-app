@@ -76,20 +76,14 @@ const KeySelectField = ({ editing, field, value, onChange }) => {
     const title = field?.label;
 
     const KeySelectSheet = () => (
-      <>
-        <SheetHeader
-          expandable
-          dismissable
-          title={title}
-        />
-        <SelectSheet
-          required
-          sections={sections}
-          onChange={_onChange}
-        />
-      </>
+      <SelectSheet
+        required
+        sections={sections}
+        onChange={_onChange}
+      />
     );
 
+    // TODO: move to use-bottom-sheet hook
     const getDefaultSheetSnapIndex = () => {
       const optionsCount = sections?.[0]?.data?.length;
       if (optionsCount <= 3) return 0;
@@ -113,6 +107,13 @@ const KeySelectField = ({ editing, field, value, onChange }) => {
         onOpen={() => {
           expand({
             defaultIndex: getDefaultSheetSnapIndex(),
+            renderHeader: () => (
+              <SheetHeader
+                expandable
+                dismissable
+                title={title}
+              />
+            ),
             renderContent: () => <KeySelectSheet />
           });
         }}

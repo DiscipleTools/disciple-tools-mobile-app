@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { RefreshControl, Text, View } from "react-native";
+import { SafeAreaView, RefreshControl, Text, View } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 
 import SearchBar from "./SearchBar";
@@ -27,6 +27,7 @@ const FilterList = ({
   rightOpenValue,
   onRowDidOpen,
   onRowDidClose,
+  style
 }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
@@ -40,15 +41,20 @@ const FilterList = ({
   }, [items]);
 
   const _onRefresh = useCallback(() => {
-    setRefreshing(true);
     if (onRefresh) onRefresh();
+    /*
+    setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
+    */
   });
 
   return (
-    <>
+    <SafeAreaView style={[
+      styles.gutter,
+      style
+    ]}>
       { onSearch && (
         <SearchBar
           sortable={sortable}
@@ -96,9 +102,10 @@ const FilterList = ({
             />
           }
           style={styles.container}
+          contentContainerStyle={globalStyles.screenGutter}
         />
       )}
-    </>
+    </SafeAreaView>
   );
 };
 export default FilterList;

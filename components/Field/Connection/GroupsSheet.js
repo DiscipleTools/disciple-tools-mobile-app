@@ -7,7 +7,7 @@ import useList from "hooks/use-list";
 
 import { TypeConstants } from "constants";
 
-const GroupsSheet = ({ id, title, values, onChange }) => {
+const GroupsSheet = ({ id, values, onChange }) => {
 
   const { search, onSearch } = useFilter();
 

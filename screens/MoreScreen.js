@@ -39,12 +39,9 @@ const MoreScreen = ({ navigation, route }) => {
     />
   );
 
-  // TODO: translate HELP Please
   // TODO: detect Custom Post Types dynamically
-  // const trainingsLabel = "Trainings";
-  // const trainingsPostType = "trainings";
   const trainingsLabel = i18n.t("global.trainings");
-  const trainingsPostType = i18n.t("global.trainings");
+  const trainingsPostType = String(i18n.t("global.trainings"))?.toLowerCase();
   return (
     <SafeAreaView style={globalStyles.screenContainer}>
       <OfflineBar />

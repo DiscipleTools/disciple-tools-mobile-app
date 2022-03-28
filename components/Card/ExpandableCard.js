@@ -4,7 +4,6 @@ import Card from "components/Card/Card";
 import SheetHeader from "components/Sheet/SheetHeader";
 
 import useBottomSheet from "hooks/use-bottom-sheet";
-import useI18N from "hooks/use-i18n";
 
 const ExpandableCard = ({
   border,
@@ -15,19 +14,19 @@ const ExpandableCard = ({
   renderExpandedCard,
 }) => {
 
-  const { isRTL } = useI18N();
   const { expand } = useBottomSheet();
 
   const showSheet = () => {
     expand({
-      snapPoints: ['66%','95%'],
+      renderHeader: () => (
+        <SheetHeader
+          expandable
+          dismissable
+          title={title}
+        />
+      ),
       renderContent: () => (
         <>
-          <SheetHeader
-            expandable
-            dismissable
-            title={title}
-          />
           {renderExpandedCard()}
         </>
       )

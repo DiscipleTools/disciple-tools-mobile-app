@@ -9,13 +9,6 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     paddingHorizontal: 5,
     height: Constants.LIST_ITEM_HEIGHT,
   }),
-  startIcon: {
-    // NOTE: this does not work, forces details to details to align start
-    //marginEnd: "auto",
-  },
-  endIcon: {
-    marginStart: "auto",
-  },
   notificationDetails: {
     flexWrap: "wrap",
     marginEnd: "auto",

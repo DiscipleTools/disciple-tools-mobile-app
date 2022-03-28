@@ -6,6 +6,7 @@ import { useRoute } from "@react-navigation/native";
 
 import Select from "components/Select";
 import PostLink from "components/Post/PostLink";
+import SheetHeader from "components/Sheet/SheetHeader";
 import ConnectionSheet from "./ConnectionSheet";
 import UsersContactsSheet from "./UsersContactsSheet";
 import GroupsSheet from "./GroupsSheet";
@@ -54,13 +55,19 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
     <Select
       onOpen={() => {
         expand({
-          index: snapPoints.length-1,
-          renderContent: () => 
-            <PeopleGroupsSheet
+          renderHeader: () => (
+            <SheetHeader
+              expandable
+              dismissable
               title={field?.label || ''}
+            />
+          ),
+          renderContent: () => (
+            <PeopleGroupsSheet
               values={values}
               onChange={onChange}
             />
+          )
         });
       }}
       items={values}
@@ -74,12 +81,17 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
       <Select
         onOpen={() => {
           expand({
-            index: snapPoints.length-1,
+            renderHeader: () => (
+              <SheetHeader
+                expandable
+                dismissable
+                title={field?.label || ''}
+              />
+            ),
             renderContent: () => 
               <ConnectionSheet
                 id={route?.params?.id}
                 fieldName={field?.name}
-                title={field?.label || ''}
                 values={values}
                 onChange={onChange}
               />
@@ -99,11 +111,16 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
       <Select
         onOpen={() => {
           expand({
-            index: snapPoints.length-1,
+            renderHeader: () => (
+              <SheetHeader
+                expandable
+                dismissable
+                title={field?.label || ''}
+              />
+            ),
             renderContent: () => 
               <UsersContactsSheet
                 id={route?.params?.id}
-                title={field?.label || ''}
                 values={values}
                 onChange={onChange}
               />
@@ -123,11 +140,16 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
       <Select
         onOpen={() => {
           expand({
-            index: snapPoints.length-1,
+            renderHeader: () => (
+              <SheetHeader
+                expandable
+                dismissable
+                title={field?.label || ''}
+              />
+            ),
             renderContent: () => 
               <GroupsSheet
                 id={route?.params?.id}
-                title={field?.label || ''}
                 values={values}
                 onChange={onChange}
               />
@@ -147,11 +169,16 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
       <Select
         onOpen={() => {
           expand({
-            index: snapPoints.length-1,
+            renderHeader: () => (
+              <SheetHeader
+                expandable
+                dismissable
+                title={field?.label || ''}
+              />
+            ),
             renderContent: () => 
               <TrainingsSheet
                 id={route?.params?.id}
-                title={field?.label || ''}
                 values={values}
                 onChange={onChange}
               />

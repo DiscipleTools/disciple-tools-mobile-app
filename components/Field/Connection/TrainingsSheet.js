@@ -5,7 +5,7 @@ import ConnectionSheet from "./ConnectionSheet";
 import useFilter from "hooks/use-filter";
 //import useTrainings from "hooks/use-trainings";
 
-const GroupsSheet = ({ id, title, values, onChange }) => {
+const GroupsSheet = ({ id, values, onChange }) => {
 
   const { search, onSearch } = useFilter();
 

@@ -12,7 +12,7 @@ import useUsers from "hooks/use-users";
 
 import { localStyles } from "components/Field/Connection/ConnectionField.styles";
 
-const UsersSheet = ({ id, title, values, onChange }) => {
+const UsersSheet = ({ id, values, onChange }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { search, onSearch } = useFilter();
@@ -80,19 +80,12 @@ const UsersSheet = ({ id, title, values, onChange }) => {
   const mappedItems = mapFromAPI(items);
 
   return(
-    <>
-      <SheetHeader
-        expandable
-        dismissable
-        title={title}
-      />
-      <FilterList
-        items={mappedItems}
-        renderItem={_renderItem}
-        search={search}
-        onSearch={onSearch}
-      />
-    </>
+    <FilterList
+      items={mappedItems}
+      renderItem={_renderItem}
+      search={search}
+      onSearch={onSearch}
+    />
   );
 };
 export default UsersSheet;
