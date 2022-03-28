@@ -1,25 +1,25 @@
 import React, { createContext, useCallback, useContext, useMemo, useReducer, useRef, useState } from "react";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetFooter, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetFooter, BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 //import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SheetFooterCancel, SheetFooterDone } from "components/Sheet/SheetFooter";
 
+import useDevice from "hooks/use-device";
 import useStyles from "hooks/use-styles";
 
 const BottomSheetContext = createContext(null);
 
 const DEFAULT_OPTIONS = {
   snapPoints: ['33%','50%','65%','95%'],
-  index: -1,
-  hideFooter: false,
-  multiple: false,
+  defaultIndex: -1,
+  renderHeader: () => null,
   renderContent: () => null,
-  onDone: () => null,
   onDismiss: () => null,
 };
 
 export const BottomSheetProvider = ({ children }) => {
 
+  const { isAndroid } = useDevice();
   const { globalStyles } = useStyles();
   //const insets = useSafeAreaInsets();
 
@@ -80,18 +80,23 @@ export const BottomSheetProvider = ({ children }) => {
     []
   );
 
-  const renderFooter = useCallback(
-    props => (
+  const renderFooter = (props) => {
+    if (options?.renderFooter) return(
       <BottomSheetFooter {...props}>
-        {options?.multiple ? (
-          <SheetFooterDone onDone={() => options?.onDone(multiSelectValues)} />
-        ) : (
-          <SheetFooterCancel onDismiss={options?.onDismiss} />
-        )}
+        { options?.renderFooter(props) }
       </BottomSheetFooter>
-    ),
-    [options]
-  );
+    );
+    if (options?.onDone) return(
+      <BottomSheetFooter {...props}>
+        <SheetFooterDone onDone={() => options.onDone(multiSelectValues)} />
+      </BottomSheetFooter>
+    );
+    return(
+      <BottomSheetFooter {...props}>
+        <SheetFooterCancel onDismiss={options?.onDismiss} />
+      </BottomSheetFooter>
+    );
+  };
 
   const onChange = (idx) => {
     if (idx === -1) dispatch({ type: COLLAPSE });
@@ -111,13 +116,31 @@ export const BottomSheetProvider = ({ children }) => {
         footerComponent={options?.hideFooter ? null : renderFooter}
         backgroundStyle={globalStyles.background}
       >
-        <BottomSheetScrollView>
-          { options?.renderContent() }
-        </BottomSheetScrollView>
+        { options?.renderHeader() }
+        { isAndroid ? (
+          <BottomSheetScrollView>
+            { options?.renderContent() }
+          </BottomSheetScrollView>
+        ) : (
+          <>
+            { options?.renderContent() }
+          </>
+        )}
       </BottomSheet>
     </BottomSheetContext.Provider>
   );
 };
+/*
+        { options?.scrollable ? (
+          <BottomSheetScrollView>
+            { options?.renderContent() }
+          </BottomSheetScrollView>
+        ) : (
+          <BottomSheetView>
+            { options?.renderContent() }
+          </BottomSheetView>
+        )}
+*/
 
 const useBottomSheet = () => useContext(BottomSheetContext);
 

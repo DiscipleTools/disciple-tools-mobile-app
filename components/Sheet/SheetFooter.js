@@ -46,7 +46,7 @@ export const SheetFooterDone = ({ onDone }) => {
   const { close } = useBottomSheet();
   const { i18n } = useI18N();
   const { globalStyles } = useStyles();
-  const label = i18n.t("global.cancel");
+  const label = i18n.t("global.done");
   let onPress = () => close();
   if (onDone) {
     onPress = () => {

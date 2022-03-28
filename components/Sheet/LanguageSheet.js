@@ -1,6 +1,5 @@
 import React from "react";
 
-import SheetHeader from "./SheetHeader";
 import SelectSheet from "./SelectSheet";
 
 import useAPI from "hooks/use-api";
@@ -35,11 +34,6 @@ const LanguageSheet = () => {
   // SECTIONS
   const sections = [{ data: mapItems(items) }];
 
-  return (
-    <>
-      <SheetHeader expandable dismissable title={i18n.t("global.language")} />
-      <SelectSheet required sections={sections} onChange={_onChange} />
-    </>
-  );
+  return <SelectSheet required sections={sections} onChange={_onChange} />;
 };
 export default LanguageSheet;

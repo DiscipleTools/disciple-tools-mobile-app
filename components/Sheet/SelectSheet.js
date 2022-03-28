@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Image, Pressable, View, Text } from "react-native";
-import { BottomSheetSectionList } from '@gorhom/bottom-sheet';
+import { ScrollView } from "react-native-gesture-handler";
 
 import { CheckIcon } from "components/Icon";
 
@@ -27,6 +27,7 @@ const SelectSheet = ({
   // TODO: used for...
   const selectedCount = useRef(1);
 
+  /*
   const _onDismiss = () => {
     if (onDismiss) {
       onDismiss(_sections);
@@ -39,6 +40,7 @@ const SelectSheet = ({
     onChange(_sections);
     delayedClose();
   };
+  */
 
   // TODO: prettier implementation
   const _onChange = (selectedItem) => {
@@ -110,26 +112,27 @@ const SelectSheet = ({
     );
   };
 
-  //const _renderSectionHeader = useCallback(({ section }) => (
-  const _renderSectionHeader = ({ section }) => {
+  const _renderSection = ({ section }) => {
     if (renderSectionHeader) return renderSectionHeader({ section });
-    if (!section?.title) return null;
     return(
-      <View style={styles.sectionHeader}>
-        <Text style={globalStyles.subtitle}>{section.title}</Text>
-      </View>
+      <>
+        { section?.title && (
+          <View style={styles.sectionHeader}>
+            <Text style={globalStyles.subtitle}>{section.title}</Text>
+          </View>
+        )}
+        { section?.data?.map(item => _renderItem({ item })) }
+      </>
     );
   };
 
   return(
-    <BottomSheetSectionList
-      sections={_sections}
-      // TODO
-      //keyExtractor={(key) => key}
-      renderSectionHeader={_renderSectionHeader}
-      renderItem={_renderItem}
-      contentContainerStyle={styles.contentContainer}
-    />
+    <ScrollView
+      style={styles.contentContainer}
+      contentContainerStyle={globalStyles.screenGutter}
+    >
+      { _sections?.map(section => _renderSection({ section })) }
+    </ScrollView>
   );
 };
 export default SelectSheet;

@@ -12,7 +12,7 @@ import useUsersContacts from "hooks/use-users-contacts";
  * 
  * Also, IF we want a custom rendering of items, this abstraction enables it. 
  */
-const UsersContactsSheet = ({ id, title, values, onChange }) => {
+const UsersContactsSheet = ({ id, values, onChange }) => {
 
   const { search, onSearch } = useFilter();
 
@@ -26,7 +26,6 @@ const UsersContactsSheet = ({ id, title, values, onChange }) => {
 
   return(
     <ConnectionSheet
-      title={title}
       items={items}
       values={values}
       onChange={onChange}

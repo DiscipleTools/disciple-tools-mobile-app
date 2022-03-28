@@ -109,11 +109,6 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
 
     const sheetContent = useMemo(() => (
       <>
-        <SheetHeader
-          expandable
-          dismissable
-          title={title}
-        />
         <SelectSheet
           multiple
           sections={sections}
@@ -128,11 +123,15 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
       <Select
         onOpen={() => {
           expand({
-            index: snapPoints.length-1,
-            snapPoints,
-            multiple: true,
+            renderHeader: () => (
+              <SheetHeader
+                expandable
+                dismissable
+                title={title}
+              />
+            ),
+            renderContent: () => sheetContent,
             onDone: (selectedValues) => onDone(selectedValues),
-            renderContent: () => sheetContent
           });
         }}
         items={selectedItems}
