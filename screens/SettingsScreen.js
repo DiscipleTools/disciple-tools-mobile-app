@@ -9,6 +9,8 @@ import {
   DarkModeIcon,
   FlashIcon,
   HelpIcon,
+  HelpSupportIcon,
+  ExtLinkIcon,
   LoginIcon,
   LogoutIcon,
   OnePasswordIcon,
@@ -162,8 +164,9 @@ const SettingsScreen = ({ navigation }) => {
     const { draftNewSupportEmail } = useApp();
     return (
       <ListItem
-        startComponent={<HelpIcon />}
+        startComponent={<HelpSupportIcon />}
         label={i18n.t("global.helpSupport", { locale })}
+        //endComponent={<HelpSupportIcon style={globalStyles.icon} />}
         onPress={draftNewSupportEmail}
       />
     );

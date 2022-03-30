@@ -11,7 +11,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HeaderLeft, HeaderRight } from "components/Header/Header";
-import { CommentEditIcon } from "components/Icon";
+import { CommentEditIcon, HelpIcon, ExtLinkIcon } from "components/Icon";
 import OfflineBar from "components/OfflineBar";
 import TitleBar from "components/TitleBar";
 import TabScrollView from "components/TabScrollView";
@@ -89,7 +89,7 @@ const DetailsScreen = ({ navigation }) => {
         urlPath: `/${postType}/${postId}/`,
       },
       {
-        label: i18n.t("global.helpSupport"),
+        label: i18n.t("global.helpDocs"),
         url: `https://disciple.tools/user-docs/getting-started-info/${postType}/${postType}-record-page/`,
       },
     ];
@@ -133,11 +133,7 @@ const DetailsScreen = ({ navigation }) => {
         contentContainerStyle={globalStyles.screenGutter}
       >
         <OfflineBar />
-        <TitleBar
-          center
-          title={post?.title}
-          style={styles.titleBar}
-        />
+        <TitleBar center title={post?.title} style={styles.titleBar} />
         <TabScrollView
           index={index}
           onIndexChange={onIndexChange}

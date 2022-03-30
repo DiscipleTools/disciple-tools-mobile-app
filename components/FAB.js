@@ -114,14 +114,14 @@ const FAB = () => {
     if (field === "quick_button_no_answer")
       return {
         ...defaultIconConfig,
-        name: "phone-off",
-        //bgColor: "red", //Colors.colorNo,
+        name: "voice-off",
+        //bgColor: "red", //TODO Colors.colorNo,
       };
     if (field === "quick_button_contact_established")
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
-        name: "phone-in-talk",
+        name: "account-voice",
         //bgColor: "green", //TODO
       };
     if (field === "quick_button_meeting_scheduled")
