@@ -18,6 +18,10 @@ const FieldIcon = ({ field, hide }) => {
       iconType = "MaterialCommunityIcons";
       iconName = "map-marker";
       break;
+      case FieldTypes.LOCATION:
+        iconType = "MaterialCommunityIcons";
+        iconName = "map-marker";
+        break;
     case FieldTypes.TEXTAREA: //TODO: why does this not work?
       if (name.includes("list")) {
         iconType = "MaterialCommunityIcons";
