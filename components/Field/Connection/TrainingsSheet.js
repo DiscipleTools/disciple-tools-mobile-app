@@ -22,7 +22,6 @@ const GroupsSheet = ({ id, values, onChange }) => {
 
   return(
     <ConnectionSheet
-      title={title}
       items={items}
       //renderItem={renderItem}
       values={values}
