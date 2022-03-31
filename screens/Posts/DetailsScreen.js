@@ -95,6 +95,7 @@ const DetailsScreen = ({ navigation }) => {
               <CommentEditIcon
                 onPress={() => {
                   navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
+                    id: postId,
                     type: postType,
                     subtype: SubTypeConstants.COMMENTS_ACTIVITY
                   });
