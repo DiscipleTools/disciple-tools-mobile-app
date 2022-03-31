@@ -48,22 +48,21 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
     return false;
   };
 
-  const isUndecoratedField = () => {
-    const name = field?.name;
-    return false;
-    /*
-    return (
-      name === FieldNames.PARENT_GROUPS ||
-      name === FieldNames.PEER_GROUPS ||
-      name === FieldNames.CHILD_GROUPS
-    );
-    */
-  };
-
   const isUncontrolledField = () => {
+    const name = field?.name;
     const fieldType = field?.type;
+    if (
+      fieldType === FieldTypes.CONNECTION &&
+      (
+        name === FieldNames.GROUPS ||
+        name === FieldNames.PARENT_GROUPS ||
+        name === FieldNames.PEER_GROUPS ||
+        name === FieldNames.CHILD_GROUPS
+      )
+    ) return false;
     return(
-      grouped || fieldType !== FieldTypes.COMMUNICATION_CHANNEL
+      grouped ||
+      fieldType !== FieldTypes.COMMUNICATION_CHANNEL
     );
   };
 
@@ -159,6 +158,13 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
     return <DefaultControls />;
   };
 
+  const isGroupField = () => (
+    field?.name === FieldNames.GROUPS ||
+    field?.name === FieldNames.PARENT_GROUPS ||
+    field?.name === FieldNames.PEER_GROUPS ||
+    field?.name === FieldNames.CHILD_GROUPS
+  );
+
   const FieldComponent = () => {
     switch (field?.type) {
       case FieldTypes.BOOLEAN:
@@ -183,8 +189,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
       case FieldTypes.CONNECTION:
         return (
           <ConnectionField
-            //editing={_editing}
-            editing
+            editing={isGroupField() ? _editing : true}
             field={field}
             value={_value}
             onChange={_onChange}
@@ -281,8 +286,10 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   const FieldLabelControls = ({ label }) => {
     return(
       <View style={[globalStyles.rowContainer, styles.fieldLabelContainer]}>
-        <FieldIcon field={field} />
-        <View style={styles.fieldLabel}>
+        <View>
+          <FieldIcon field={field} />
+        </View>
+        <View>
           <Text style={styles.fieldLabelText}>
             {label}
           </Text>
@@ -299,6 +306,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
     );
   };
 
+  // TODO: calculate <FieldSkeleton windowWidth... value dynamically
   /*
    * ____________________________________
    * | FieldLabelControls.............. |
@@ -309,7 +317,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
     <View style={styles.container}>
       <FieldLabelControls label={ field?.label } />
       <View style={
-        (isUndecoratedField() || isMultiInputTextField()) ? null : styles.component
+        isMultiInputTextField() ? null : styles.component
       }>
         {_loading ? (
           <FieldSkeleton windowWidth={400} />

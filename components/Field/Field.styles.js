@@ -18,14 +18,13 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   fieldLabelContainer: {
     paddingVertical: 3,
     alignItems: "center",
-    marginEnd: "auto"
   },
   fieldLabelText: {
     color: theme.text.primary,
-    fontSize: 14,
+    fontSize: 15,
     paddingStart: 3,
   },
   fieldControls: {
-    marginStart: "auto"
+    marginStart: "auto",
   },
 });
