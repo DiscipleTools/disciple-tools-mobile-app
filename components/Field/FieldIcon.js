@@ -82,7 +82,7 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("coaching")) {
         iconType = "MaterialCommunityIcons";
         iconName = "teach";
-        iconStyle = { scaleX: -1 };
+        iconStyle = { transform: [{ scaleX: -1 }] }
       } else if (name.includes("coached_by")) {
         iconType = "MaterialCommunityIcons";
         iconName = "teach";
