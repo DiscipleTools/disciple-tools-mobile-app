@@ -204,10 +204,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
     const navigation = useNavigation();
     return (
       <View style={globalStyles.rowContainer}>
-        <ScrollView
-          horizontal
-          style={globalStyles.columnContainer}
-        >
+        <ScrollView horizontal>
           {values?.map((group, index) => {
             const id = group?.value;
             const title = group?.name;
