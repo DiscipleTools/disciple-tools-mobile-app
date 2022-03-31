@@ -13,6 +13,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   },
   scrollViewContent: {
     flexDirection: "row",
+
   },
   sceneContent: {
     flexGrow: 1,
