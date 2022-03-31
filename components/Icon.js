@@ -265,3 +265,10 @@ export const MoreIcon = ({ onPress, style }) => (
     style={style}
   />
 );
+export const UserIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon
+    name="account"
+    onPress={onPress}
+    style={style}
+  />
+);
