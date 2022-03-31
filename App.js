@@ -11,6 +11,7 @@ import * as SplashScreen from "expo-splash-screen";
 
 import Toast from "react-native-toast-message";
 
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { AuthProvider } from "hooks/use-auth";
 import usePushNotifications from "hooks/use-push-notifications";
 import useStyles from "hooks/use-styles";
@@ -67,9 +68,11 @@ const App = () => {
               loadingTimeout: 10000,
             }}
           >
-            <AuthProvider>
-              <StyledApp />
-            </AuthProvider>
+            <BottomSheetModalProvider>
+              <AuthProvider>
+                <StyledApp />
+              </AuthProvider>
+            </BottomSheetModalProvider>
           </SWRConfig>
         </PersistGate>
       </Provider>

@@ -1,14 +1,10 @@
 import React, {
-  useCallback,
   useEffect,
   useLayoutEffect,
   useState,
 } from "react";
 import { View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { useIsFocused } from "@react-navigation/native";
-import { useHeaderHeight } from "@react-navigation/elements";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HeaderLeft, HeaderRight } from "components/Header/Header";
 import { CommentEditIcon } from "components/Icon";
@@ -17,17 +13,15 @@ import TitleBar from "components/TitleBar";
 import TabScrollView from "components/TabScrollView";
 import Tile from "components/Post/Tile";
 import PostSkeleton from "components/Post/PostSkeleton";
-import CommentsActivity from "components/CommentsActivity";
 import FAB from "components/FAB";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
 import useI18N from "hooks/use-i18n";
 import useDetails from "hooks/use-details";
 import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
 import useAPI from "hooks/use-api";
 
-import { SubTypeConstants } from "constants";
+import { ScreenConstants, SubTypeConstants } from "constants";
 
 import { localStyles } from "./DetailsScreen.styles";
 
@@ -35,10 +29,7 @@ const DetailsScreen = ({ navigation }) => {
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
-  const headerHeight = useHeaderHeight();
-  const insets = useSafeAreaInsets();
   const { styles, globalStyles } = useStyles(localStyles);
-  const { expand } = useBottomSheet();
   const { i18n } = useI18N();
   const {
     data: post,
@@ -101,7 +92,14 @@ const DetailsScreen = ({ navigation }) => {
           kebabItems={kebabItems}
           renderStartIcons={() => (
             <View style={globalStyles.headerIcon}>
-              <CommentEditIcon onPress={showCommentsActivitySheet} />
+              <CommentEditIcon
+                onPress={() => {
+                  navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
+                    type: postType,
+                    subtype: SubTypeConstants.COMMENTS_ACTIVITY
+                  });
+                }}
+              />
             </View>
           )}
           props
@@ -112,38 +110,22 @@ const DetailsScreen = ({ navigation }) => {
     //}, []);
   });
 
-  const showCommentsActivitySheet = () => {
-    navigation.setParams({
-      subtype: SubTypeConstants.COMMENTS_ACTIVITY,
-    });
-    expand({
-      hideFooter: true,
-      snapPoints: ["66%", "95%"],
-      renderContent: () => (
-        <CommentsActivity headerHeight={headerHeight} insets={insets} />
-      ),
-    });
-  };
-
   if (!post || !settings || isLoading) return <PostSkeleton />;
   return (
     <>
-      <ScrollView
+      <OfflineBar />
+      <TitleBar
+        center
+        title={post?.title}
+        style={styles.titleBar}
+      />
+      <TabScrollView
+        index={index}
+        onIndexChange={onIndexChange}
+        scenes={scenes}
         style={globalStyles.screenContainer}
         contentContainerStyle={globalStyles.screenGutter}
-      >
-        <OfflineBar />
-        <TitleBar
-          center
-          title={post?.title}
-          style={styles.titleBar}
-        />
-        <TabScrollView
-          index={index}
-          onIndexChange={onIndexChange}
-          scenes={scenes}
-        />
-      </ScrollView>
+      />
       <FAB />
     </>
   );

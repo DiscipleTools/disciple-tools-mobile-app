@@ -31,31 +31,23 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     color: theme.text.secondary,
     fontSize: 10,
   },
-  commentView: {
-    backgroundColor: theme.background.primary,
-    borderColor: theme.divider,
-    borderTopWidth: 1,
-  },
   commentInputView: {
-    flexDirection: isRTL ? "row-reverse" : "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     paddingHorizontal: 15,
-    paddingBottom: 15,
-    minHeight: 100,
   },
   commentInputText: {
     color: theme.text.primary,
+    marginTop: 15
   },
   commentText: (isActivity) => ({
     flexDirection: isRTL ? "row-reverse" : "row",
     color: isActivity ? theme.text.secondary : theme.text.primary,
-    //color: theme.text.secondary,
     fontStyle: isActivity ? "italic" : null,
     padding: 5,
   }),
   parseText: {
     color: ThemeConstants.DARK === theme.mode ? theme.highlight : theme.brand.primary,
-    //textDecorationLine: "underline",   
+    textDecorationLine: "underline",   
   },
   expandIcon: {
     color: theme.text.primary,

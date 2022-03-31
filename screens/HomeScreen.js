@@ -97,7 +97,7 @@ const HomeScreen = ({ navigation, route }) => {
     });
   }, [navigation, hasNotifications, hasAccountUpdates]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     onRefresh();
   }, [isFocused]);
 

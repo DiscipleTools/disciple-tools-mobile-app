@@ -111,12 +111,18 @@ export const CogIcon = ({ onPress, style }) => (
 export const CommentPlusIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="comment-plus" onPress={onPress} style={style} />
 );
+export const CopyIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="content-copy" onPress={onPress} style={style} />
+);
 export const DarkModeIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon
     name="theme-light-dark"
     onPress={onPress}
     style={style}
   />
+);
+export const DeleteIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="delete" onPress={onPress} style={style} />
 );
 export const EditIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="pencil" onPress={onPress} style={style} />
@@ -254,7 +260,7 @@ export const AccountsIcon = ({ onPress, style }) => (
 );
 export const MoreIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon
-    name="dots-horizontal"
+    name="menu"
     onPress={onPress}
     style={style}
   />

@@ -10,6 +10,8 @@ import useStyles from "hooks/use-styles";
 const BottomSheetContext = createContext(null);
 
 const DEFAULT_OPTIONS = {
+  modal: true,
+  dismissable: true,
   snapPoints: ['33%','50%','65%','95%'],
   defaultIndex: -1,
   renderHeader: () => null,
@@ -111,10 +113,12 @@ export const BottomSheetProvider = ({ children }) => {
         index={-1}
         snapPoints={snapPoints}
         onChange={onChange}
-        enablePanDownToClose
-        backdropComponent={renderBackdrop}
-        footerComponent={options?.hideFooter ? null : renderFooter}
+        enablePanDownToClose={options?.dismissable === false ? false : true}
+        backdropComponent={options?.modal === false ? null : renderBackdrop}
+        footerComponent={renderFooter ?? null}
         backgroundStyle={globalStyles.background}
+        keyboardBehavior="extend"
+        keyboardBlurBehavior="restore"
       >
         { options?.renderHeader() }
         { isAndroid ? (

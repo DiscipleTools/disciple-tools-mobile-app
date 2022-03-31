@@ -17,6 +17,7 @@ import ListScreen from "screens/Posts/ListScreen";
 import DetailsScreen from "screens/Posts/DetailsScreen";
 //import AttendanceScreen from 'screens/AttendanceScreen';
 //import QuestionnaireScreen from 'screens/Posts/QuestionnaireScreen';
+import CommentsActivityScreen from "screens/CommentsActivityScreen";
 import NotificationsScreen from "screens/NotificationsScreen";
 import SettingsScreen from "screens/SettingsScreen";
 
@@ -108,6 +109,21 @@ const TabNavigator = () => {
             type: TypeConstants.CONTACT,
           }}
         />
+        <Stack.Screen
+          name={ScreenConstants.COMMENTS_ACTIVITY}
+          component={CommentsActivityScreen}
+          options={{
+            title: i18n.t("global.commentsActivity", { locale }),
+            ...TransitionPresets.ModalTransition,
+          }}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
+        />
       </Stack.Navigator>
     );
   };
@@ -118,9 +134,6 @@ const TabNavigator = () => {
         <Stack.Screen
           name={TabScreenConstants.HOME}
           component={HomeScreen}
-          options={{
-            title: AppConstants.NAME,
-          }}
         />
         <Stack.Screen
           name={TabScreenConstants.CONTACTS}
@@ -140,6 +153,7 @@ const TabNavigator = () => {
           name={ScreenConstants.NOTIFICATIONS}
           component={NotificationsScreen}
           //options={{ presentation: 'transparentModal' }}
+          // TODO: move to useLayoutEffect in Screen (and remove i18n dep)
           options={{
             title: i18n.t("global.notifications", { locale }),
           }}
@@ -231,6 +245,7 @@ const TabNavigator = () => {
             ScreenConstants.PIN,
             ScreenConstants.SETTINGS,
             ScreenConstants.NOTIFICATIONS,
+            ScreenConstants.COMMENTS_ACTIVITY,
           ].includes(getFocusedRouteNameFromRoute(route))
             ? "none"
             : "flex",
@@ -246,7 +261,8 @@ const TabNavigator = () => {
         name={TabScreenConstants.HOME}
         component={HomeStack}
         options={{
-          tabBarLabel: i18n.t("global.home", { locale }),
+          tabBarShowLabel: false,
+          //tabBarLabel: i18n.t("global.home", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <HomeIcon style={{ color }} />
@@ -283,7 +299,8 @@ const TabNavigator = () => {
         }}
         options={{
           //unmountOnBlur: true,
-          tabBarLabel: i18n.t("global.contacts", { locale }),
+          tabBarShowLabel: false,
+          //tabBarLabel: i18n.t("global.contacts", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <AccountIcon style={{ color }} />
@@ -315,7 +332,8 @@ const TabNavigator = () => {
           type: TypeConstants.GROUP,
         }}
         options={{
-          tabBarLabel: i18n.t("global.groups", { locale }),
+          tabBarShowLabel: false,
+          //tabBarLabel: i18n.t("global.groups", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <AccountsIcon style={{ color }} />
@@ -344,7 +362,8 @@ const TabNavigator = () => {
         name={TabScreenConstants.MORE}
         component={MoreStack}
         options={{
-          tabBarLabel: i18n.t("global.more", { locale }),
+          tabBarShowLabel: false,
+          //tabBarLabel: i18n.t("global.more", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <MoreIcon style={{ color }} />
