@@ -49,15 +49,21 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   };
 
   const isUncontrolledField = () => {
-    const name = field?.name;
+    const fieldName = field?.name;
     const fieldType = field?.type;
     if (
       fieldType === FieldTypes.CONNECTION &&
       (
-        name === FieldNames.GROUPS ||
-        name === FieldNames.PARENT_GROUPS ||
-        name === FieldNames.PEER_GROUPS ||
-        name === FieldNames.CHILD_GROUPS
+        fieldName === FieldNames.GROUPS ||
+        fieldName === FieldNames.PARENT_GROUPS ||
+        fieldName === FieldNames.PEER_GROUPS ||
+        fieldName === FieldNames.CHILD_GROUPS
+      )
+    ) return false;
+    if (
+      fieldType === FieldTypes.MULTI_SELECT &&
+      (
+        fieldName === FieldNames.CHURCH_HEALTH
       )
     ) return false;
     return(
@@ -225,7 +231,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
       case FieldTypes.MULTI_SELECT:
         return (
           <MultiSelectField
-            editing
+            editing={_editing}
             field={field}
             value={_value}
             onChange={_onChange}

@@ -127,7 +127,6 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
 
     const renderItemLinkless = (item) => <PostLink id={item?.key} title={item?.label} />;
 
-    if (isChurchHealth()) return <ChurchHealth items={items} selectedItems={selectedItems} />;
     return(
       <Select
         onOpen={() => {
@@ -150,39 +149,8 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
   };
 
   const MultiSelectFieldView = () => {
-
-    // TODO: fix formatting
-    /*
-    if (isMilestones) return (
-      <Milestones
-        items={items}
-        selectedItems={selectedItems}
-        postType={postType}
-      />
-    );
-    */
-    return (
-      <Select
-        items={selectedItems}
-        renderItem={renderItemLinkless}
-      />
-    );
-    return (
-      <View style={styles.container}>
-        {selectedItems.map(selectedItem => (
-          <PostLink id={selectedItem?.key} title={selectedItem?.label} />
-        ))}
-      </View>
-    );
-    return (
-      <View style={styles.container}>
-        {selectedItems.map(selectedItem => (
-          <Text style={styles.item}>
-            {selectedItem?.label}
-          </Text>
-        ))}
-      </View>
-    );
+    if (isChurchHealth()) return <ChurchHealth items={items} selectedItems={selectedItems} />;
+    return <MultiSelectFieldEdit />;
   };
 
   if (editing) return <MultiSelectFieldEdit />;
