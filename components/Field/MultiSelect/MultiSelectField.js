@@ -1,7 +1,9 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Text, View } from "react-native";
 
-import Milestones from "components/Milestones";
+import { FlashIcon } from "components/Icon";
+//import Milestones from "components/Milestones";
+import ChurchHealth from "components/ChurchHealth";
 import Select from "components/Select";
 import PostLink from "components/Post/PostLink";
 import SelectSheet from "components/Sheet/SelectSheet";
@@ -10,6 +12,8 @@ import SheetHeader from "components/Sheet/SheetHeader";
 import useBottomSheet from "hooks/use-bottom-sheet";
 import useStyles from "hooks/use-styles";
 import useType from "hooks/use-type";
+
+import { FieldNames } from "constants";
 
 import { localStyles } from "./MultiSelectField.styles";
 
@@ -52,7 +56,11 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
 
   const selectedItems = getSelectedItems();
 
-  const isMilestones = (field?.name === "milestones" || field?.name === "health_metrics");
+  const isFaithMilestones = () => (field?.name === FieldNames.FAITH_MILESTONES);
+
+  const isChurchHealth = () => (field?.name === FieldNames.CHURCH_HEALTH);
+
+  const isMilestones = (isFaithMilestones() || isChurchHealth());
 
   const MultiSelectFieldEdit = () => {
 
@@ -119,6 +127,7 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
 
     const renderItemLinkless = (item) => <PostLink id={item?.key} title={item?.label} />;
 
+    if (isChurchHealth()) return <ChurchHealth items={items} selectedItems={selectedItems} />;
     return(
       <Select
         onOpen={() => {

@@ -13,6 +13,7 @@ import {
   systemGray6Light,
   systemRedLight,
   systemYellowLight,
+  systemGreenLight,
   systemCyanLight,
   systemBlueLight,
   systemGray2Dark,
@@ -22,6 +23,7 @@ import {
   systemGray6Dark,
   systemRedDark,
   systemYellowDark,
+  systemGreenDark,
   systemCyanDark,
   systemBlueDark,
   facebook,
@@ -41,17 +43,18 @@ export const defaultFaithMilestones = [
   "milestone_planting",
 ];
 
-export const defaultHealthMilestones = [
-  "church_baptism",
-  "church_bible",
-  "church_communion",
-  "church_fellowship",
-  "church_giving",
-  "church_leaders",
-  "church_praise",
-  "church_prayer",
-  "church_sharing",
-];
+export const ChurchHealthConstants = Object.freeze({
+  BAPTISM: "church_baptism",
+  BIBLE: "church_bible",
+  COMMUNION: "church_communion",
+  FELLOWSHIP: "church_fellowship",
+  GIVING: "church_giving",
+  LEADERS: "church_leaders",
+  PRAISE: "church_praise",
+  PRAYER: "church_prayer",
+  SHARING: "church_sharing",
+  CHURCH_COMMITMENT: "church_commitment",
+});
 
 export const AppConstants = Object.freeze({
   NAME: "D.T",
@@ -114,6 +117,8 @@ export const FieldNames = Object.freeze({
   TRAININGS: "trainings",
   LOCATION_GRID_META: "location_grid_meta",
   LOCATION_GRID: "location_grid",
+  FAITH_MILESTONES: "milestones",
+  CHURCH_HEALTH: "health_metrics"
 });
 
 export const ThemeConstants = Object.freeze({
@@ -131,6 +136,7 @@ export const defaultThemeLight = Object.freeze({
   offLight,
   offDark,
   systemGray,
+  systemGreen: systemGreenLight,
   error: systemRedLight,
   warning: systemYellowLight,
   info: systemCyanLight,
@@ -175,6 +181,7 @@ export const defaultThemeDark = Object.freeze({
   offLight,
   offDark,
   systemGray,
+  systemGreen: systemGreenDark,
   error: systemRedDark,
   warning: systemYellowDark,
   info: systemCyanDark,
