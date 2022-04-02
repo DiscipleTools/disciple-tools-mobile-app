@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 //import useDevice from "hooks/use-device";
 
-import { setTheme as _setTheme } from "store/actions/user.actions";
+import { setTheme } from "store/actions/user.actions";
 
 import { ThemeConstants, defaultThemeLight, defaultThemeDark } from "constants";
 
@@ -20,15 +20,15 @@ const useTheme = () => {
   //const theme = persistedTheme || mode === ThemeConstants.LIGHT ? defaultThemeLight : defaultThemeDark;
   const theme = mode === ThemeConstants.LIGHT ? defaultThemeLight : defaultThemeDark;
   
-  //if (persistedTheme?.mode !== theme?.mode) setTheme(theme);
+  //if (persistedTheme?.mode !== theme?.mode) _setTheme(theme);
 
   // NOTE: listen for device changes 
   Appearance.addChangeListener(scheme => {
     console.log(`*** Appearance.addChangeListener: ${JSON.stringify(scheme)}`);
-    //if (scheme?.colorScheme !== mode) dispatch(_setTheme(scheme?.colorScheme));
+    //if (scheme?.colorScheme !== mode) dispatch(setTheme(scheme?.colorScheme));
   });
 
-  // TODO: name these colors in Colors.js
+  // TODO: pull from API
   const getSelectorColor = (status) => {
     let newColor;
     if (status === "new" || status === "unassigned" || status === "inactive") {
@@ -49,9 +49,9 @@ const useTheme = () => {
     return newColor;
   };
 
-  const setTheme = (theme) => dispatch(_setTheme(theme));
+  const _setTheme = (theme) => dispatch(setTheme(theme));
 
-  const toggleMode = () => setTheme(isDarkMode ? defaultThemeLight : defaultThemeDark);
+  const toggleMode = () => _setTheme(isDarkMode ? defaultThemeLight : defaultThemeDark);
 
   const isDarkMode = mode === ThemeConstants.DARK;
 
@@ -59,7 +59,7 @@ const useTheme = () => {
     isDarkMode,
     toggleMode,
     theme,
-    setTheme,
+    setTheme: _setTheme,
     getSelectorColor,
   };
 };
