@@ -1,15 +1,20 @@
 import React, { useEffect, useReducer, useState } from "react";
 import * as RootNavigation from "navigation/RootNavigation";
+import { useSelector, useDispatch } from "react-redux";
 
 import useI18N from "hooks/use-i18n";
 import useType from "hooks/use-type";
+
+import { setFilter } from "store/actions/user.actions";
 
 //import { SortConstants } from "constants";
 
 const useFilter = () => {
 
+  const dispatch = useDispatch();
+  const persistedFilters = useSelector(state => state.userReducer.filters);
   const { i18n } = useI18N();
-  const { isNotification, isCommentsActivity } = useType();
+  const { isContact, isNotification, isCommentsActivity, postType } = useType();
   const route = RootNavigation.getRoute();
 
   const SET_FILTER = "SET_FILTER";
@@ -24,30 +29,36 @@ const useFilter = () => {
   };
 
   const getDefaultFilter = () => {
-    if (isNotification || isCommentsActivity) return {
-      ID: "all",
-      name: i18n.t("global.all"),
-      query: null,
-      subfilter: false 
-    };
-    return { ID: "recent" };
+    if (isContact) return { ID: "all_my_contacts" };
+    return { ID: "all" };
+    //return { ID: "recent" };
   };
-  const defaultFilter = getDefaultFilter();
+
+  const getActiveFilter = () => {
+    if (persistedFilters && persistedFilters[postType]) return persistedFilters[postType];
+    return getDefaultFilter();
+  };
 
   useEffect(() => {
     let filter = route?.params?.filter;
     if (filter) {
-      dispatch({ type: SET_FILTER, filter });
+      _setFilter({ type: SET_FILTER, filter });
       return;
     };
-    filter = getDefaultFilter();
-    dispatch({ type: SET_FILTER, filter });
+    filter = getActiveFilter();
+    _setFilter({ type: SET_FILTER, filter });
   }, [route]);
 
-  const [filter, dispatch] = useReducer(filterReducer, defaultFilter);
+  const activeFilter = getActiveFilter();
+  const defaultFilter = getDefaultFilter();
+
+  const [filter, _setFilter] = useReducer(filterReducer, activeFilter);
   const [search, setSearch] = useState(null);
   const onSearch = (search) => setSearch(search);
-  const onFilter = (filter) => dispatch({ type: SET_FILTER, filter });
+  const onFilter = (filter) => {
+    dispatch(setFilter({ postType, filter }));
+    _setFilter({ type: SET_FILTER, filter });
+  };
 
   const filterByKey = (items, key) => {
     if (!key || !value) return items;
