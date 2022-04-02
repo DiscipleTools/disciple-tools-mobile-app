@@ -11,19 +11,21 @@ import { ThemeConstants, defaultThemeLight, defaultThemeDark } from "constants";
 const useTheme = () => {
   const colorScheme = useColorScheme();
   const dispatch = useDispatch();
-  const persistedTheme = useSelector(state => state.userReducer.theme);
+  const persistedTheme = useSelector((state) => state.userReducer.theme);
   //const { isIOS } = useDevice();
 
   let mode = persistedTheme?.mode || colorScheme;
-  if (!mode || (mode !== ThemeConstants.DARK && mode !== ThemeConstants.LIGHT)) mode = ThemeConstants.LIGHT; // by default 
+  if (!mode || (mode !== ThemeConstants.DARK && mode !== ThemeConstants.LIGHT))
+    mode = ThemeConstants.LIGHT; // by default
 
   //const theme = persistedTheme || mode === ThemeConstants.LIGHT ? defaultThemeLight : defaultThemeDark;
-  const theme = mode === ThemeConstants.LIGHT ? defaultThemeLight : defaultThemeDark;
-  
-  //if (persistedTheme?.mode !== theme?.mode) _setTheme(theme);
+  const theme =
+    mode === ThemeConstants.LIGHT ? defaultThemeLight : defaultThemeDark;
 
-  // NOTE: listen for device changes 
-  Appearance.addChangeListener(scheme => {
+  //if (persistedTheme?.mode !== theme?.mode) setTheme(theme);
+
+  // NOTE: listen for device changes
+  Appearance.addChangeListener((scheme) => {
     console.log(`*** Appearance.addChangeListener: ${JSON.stringify(scheme)}`);
     //if (scheme?.colorScheme !== mode) dispatch(setTheme(scheme?.colorScheme));
   });
@@ -31,27 +33,32 @@ const useTheme = () => {
   // TODO: pull from API
   const getSelectorColor = (status) => {
     let newColor;
-    if (status === "new" || status === "unassigned" || status === "inactive") {
-      newColor = "#d9534f";
+    if (status === "unassigned" || status === "scheduled") {
+      newColor = "#F43636";
+    } else if (status === "unassignable" || status === "assigned") {
+      newColor = "#FF9800";
     } else if (
-      status === "unassignable" ||
-      status === "assigned" ||
-      status === "paused"
+      status === "active" ||
+      status === "in_progress" ||
+      status === "complete"
     ) {
-      newColor = "#f0ad4e";
-    } else if (status === "active") {
-      newColor = "#5cb85c";
+      newColor = "#4CAF50";
+    } else if (status === "new" || status === "proposed") {
+      newColor = "#00afff";
+    } else if (status === "paused") {
+      newColor = "#ff44cc";
     } else if (status === "from_facebook") {
-      newColor = "#366184";
-    } else if (status === "closed") {
-      newColor = "#000";
+      newColor = "#1778F2";
+    } else if (status === "closed" || status === "inactive") {
+      newColor = "#808080";
     }
     return newColor;
   };
 
   const _setTheme = (theme) => dispatch(setTheme(theme));
 
-  const toggleMode = () => _setTheme(isDarkMode ? defaultThemeLight : defaultThemeDark);
+  const toggleMode = () =>
+    setTheme(isDarkMode ? defaultThemeLight : defaultThemeDark);
 
   const isDarkMode = mode === ThemeConstants.DARK;
 
