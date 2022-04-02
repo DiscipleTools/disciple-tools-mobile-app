@@ -21,33 +21,10 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     padding: 5,
     width: "100%",
   },
-  signInButton: {
-    backgroundColor: theme.brand.primary,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: theme.highlight,
-    marginTop: 10,
-    height: 50,
-  },
-  signInButtonText: {
-    color: theme.offLight,
-    fontSize: 16,
-  },
-  forgotButton: {
+  forgotPasswordLink: {
     alignSelf: "stretch",
     alignItems: "center",
     marginTop: 15,
-  },
-  loading: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: "center",
-    justifyContent: "center",
   },
   validationErrorInput: {
     backgroundColor: "#FFE6E6",
@@ -60,7 +37,4 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   showPasswordIcon: (showPassword) => ({
     opacity: showPassword ? null : 0.3,
   }),
-  spinner: {
-    margin: 20,
-  }
 });

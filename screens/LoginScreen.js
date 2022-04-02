@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef, forwardRef } from "react";
 import {
-  ActivityIndicator,
   Image,
   Keyboard,
   Linking,
-  Pressable,
   Text,
   View,
 } from "react-native";
 import { AccountIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
+import Button from "components/Button";
+import Link from "components/Link";
 import PluginRequired from "components/PluginRequired";
 import LabeledTextInput from "components/LabeledTextInput";
 import LanguagePicker from "components/Picker/LanguagePicker";
@@ -75,14 +75,6 @@ const LoginScreen = () => {
         userValidation: !username,
         passwordValidation: !password,
       });
-    }
-  };
-
-  const goToForgotPassword = () => {
-    if (domain !== "") {
-      Linking.openURL(`https://${domain}/wp-login.php?action=lostpassword`);
-    } else {
-      toast(i18n.t("loginScreen.domain.errorForgotPass", { locale }), true);
     }
   };
 
@@ -230,28 +222,29 @@ const LoginScreen = () => {
     );
   });
 
-  const LoginButton = () => (
-    <>
-      <Pressable onPress={onLoginPress}>
-        <View style={styles.signInButton}>
-          <Text style={styles.signInButtonText}>
-            {i18n.t("global.logIn", { locale })}
-          </Text>
-        </View>
-      </Pressable>
-      <Pressable onPress={goToForgotPassword} disabled={loading}>
-        <View style={styles.forgotButton}>
-          <Text style={globalStyles.link}>
-            {i18n.t("global.forgotPassword", { locale })}
-          </Text>
-        </View>
-      </Pressable>
-    </>
+  const ForgotPasswordLink = () => (
+    <Link
+      disabled={loading}
+      title={i18n.t("global.forgotPassword", { locale })}
+      onPress={() => {
+        const domain = domainRef?.current;
+        if (domain?.length > 0) {
+          Linking.openURL(`https://${domain}/wp-login.php?action=lostpassword`);
+        } else {
+          toast(i18n.t("loginScreen.domain.errorForgotPass", { locale }), true);
+        }
+      }}
+      containerStyle={styles.forgotPasswordLink}
+    />
   );
 
-  const LoadingSpinner = () => {
-    return <ActivityIndicator style={[globalStyles.icon, styles.spinner]} />;
-  };
+  const LoginButton = () => (
+    <Button
+      title={i18n.t("global.login", { locale })}
+      loading={loading}
+      onPress={onLoginPress}
+    />
+  );
 
   return (
     <View style={globalStyles.screenContainer}>
@@ -261,7 +254,8 @@ const LoginScreen = () => {
         <DomainField ref={domainRef} />
         <UsernameField ref={usernameRef} />
         <PasswordField ref={passwordRef} />
-        {loading ? <LoadingSpinner /> : <LoginButton />}
+        <LoginButton />
+        <ForgotPasswordLink />
         <LanguagePicker />
         <AppVersion />
       </View>
