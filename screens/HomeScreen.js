@@ -13,7 +13,6 @@ import ActivityLogCard from "components/Card/ActivityLogCard";
 
 import useFilters from "hooks/use-filters";
 import useI18N from "hooks/use-i18n";
-import useNotifications from "hooks/use-notifications";
 import useStyles from "hooks/use-styles";
 
 import { ScreenConstants, TypeConstants } from "constants";
@@ -32,7 +31,6 @@ const HomeScreen = ({ navigation, route }) => {
   const { data: groupFilters, mutate: mutateGroupFilters } = useFilters({
     type: TypeConstants.GROUP,
   });
-  const { hasNotifications } = useNotifications();
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -69,14 +67,6 @@ const HomeScreen = ({ navigation, route }) => {
     const renderStartIcons = () => (
       <>
         <View style={styles.headerIcon}>
-          <BellIcon
-            onPress={() => navigation.push(ScreenConstants.NOTIFICATIONS)}
-          />
-          {hasNotifications && (
-            <View style={styles.notificationsDot(hasNotifications)} />
-          )}
-        </View>
-        <View style={styles.headerIcon}>
           <CogIcon onPress={() => navigation.push(ScreenConstants.SETTINGS)} />
           {hasAccountUpdates && (
             <View style={styles.notificationsDot(hasAccountUpdates)} />
@@ -95,7 +85,7 @@ const HomeScreen = ({ navigation, route }) => {
         />
       ),
     });
-  }, [navigation, hasNotifications, hasAccountUpdates]);
+  }, [navigation, hasAccountUpdates]);
 
   useLayoutEffect(() => {
     onRefresh();

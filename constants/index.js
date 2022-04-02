@@ -230,9 +230,9 @@ export const SubTypeConstants = Object.freeze({
 
 export const TabScreenConstants = Object.freeze({
   HOME: "HOME",
-  POST: "POST",
   CONTACTS: "CONTACTS",
   GROUPS: "GROUPS",
+  NOTIFICATIONS: "NOTIFICATIONS",
   MORE: "MORE",
 });
 

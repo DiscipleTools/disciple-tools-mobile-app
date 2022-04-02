@@ -7,7 +7,13 @@ import {
 } from "@react-navigation/stack";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
-import { HomeIcon, AccountIcon, AccountsIcon, MoreIcon } from "components/Icon";
+import {
+  HomeIcon,
+  AccountIcon,
+  AccountsIcon,
+  BellIcon,
+  MoreIcon
+} from "components/Icon";
 import HomeScreen from "screens/HomeScreen";
 import MoreScreen from "screens/MoreScreen";
 import PINScreen from "screens/PINScreen";
@@ -153,7 +159,6 @@ const TabNavigator = () => {
           name={ScreenConstants.NOTIFICATIONS}
           component={NotificationsScreen}
           //options={{ presentation: 'transparentModal' }}
-          // TODO: move to useLayoutEffect in Screen (and remove i18n dep)
           options={{
             title: i18n.t("global.notifications", { locale }),
           }}
@@ -188,6 +193,23 @@ const TabNavigator = () => {
         >
           {(props) => <PINScreen {...props} />}
         </Stack.Screen>
+      </Stack.Navigator>
+    );
+  };
+
+  const NotificationsStack = ({ route }) => {
+    return (
+      <Stack.Navigator screenOptions={screenOptions}>
+        <Stack.Screen
+          name={TabScreenConstants.NOTIFICATIONS}
+          component={NotificationsScreen}
+          options={{
+            title: i18n.t("global.notifications", { locale }),
+          }}
+          initialParams={{
+            type: TypeConstants.NOTIFICATION,
+          }}
+        />
       </Stack.Navigator>
     );
   };
@@ -244,7 +266,6 @@ const TabNavigator = () => {
           display: [
             ScreenConstants.PIN,
             ScreenConstants.SETTINGS,
-            ScreenConstants.NOTIFICATIONS,
             ScreenConstants.COMMENTS_ACTIVITY,
           ].includes(getFocusedRouteNameFromRoute(route))
             ? "none"
@@ -268,14 +289,6 @@ const TabNavigator = () => {
               <HomeIcon style={{ color }} />
             </View>
           ),
-          tabBarBadge: hasNotifications ? "" : null,
-          tabBarBadgeStyle: {
-            marginTop: 5,
-            marginStart: 7,
-            minWidth: 10,
-            maxHeight: 10,
-            borderRadius: 5,
-          },
         }}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
@@ -352,6 +365,40 @@ const TabNavigator = () => {
                     screen: ScreenConstants.LIST,
                     type: TypeConstants.GROUP,
                   },
+                },
+              ],
+            });
+          },
+        })}
+      />
+      <Tab.Screen
+        name={TabScreenConstants.NOTIFICATIONS}
+        component={NotificationsStack}
+        options={{
+          tabBarShowLabel: false,
+          //tabBarLabel: i18n.t("global.notifications", { locale }),
+          tabBarIcon: ({ focused, color }) => (
+            <View>
+              <BellIcon style={{ color }} />
+            </View>
+          ),
+          tabBarBadge: hasNotifications ? "" : null,
+          tabBarBadgeStyle: {
+            marginTop: 5,
+            marginStart: 7,
+            minWidth: 10,
+            maxHeight: 10,
+            borderRadius: 5,
+          },
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: TabScreenConstants.NOTIFICATIONS,
                 },
               ],
             });
