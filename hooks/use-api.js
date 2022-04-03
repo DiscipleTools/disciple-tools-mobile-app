@@ -43,6 +43,7 @@ const useAPI = () => {
       });
       toast(i18n.t("global.success.save"));
       if (mutate) mutate();
+      return res;
     } catch (error) {
       // TODO
       console.error(error);

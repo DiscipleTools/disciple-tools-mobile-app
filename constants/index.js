@@ -253,6 +253,17 @@ export const NotificationActionConstants = Object.freeze({
   MENTION: "mentioned",
 });
 
+export const QuickActionButtonConstants = Object.freeze({
+  NO_ANSWER: "quick_button_no_answer",
+  CONTACT_ESTABLISHED: "quick_button_contact_established",
+  MEETING_SCHEDULED: "quick_button_meeting_scheduled",
+  MEETING_COMPLETE: "quick_button_meeting_complete",
+  MEETING_POSTPONED: "quick_button_meeting_postponed",
+  NO_SHOW: "quick_button_no_show",
+  NEW: "quick_button_new",
+  IMPORT: "quick_button_import_contacts",
+});
+
 export const BottomSheetConstants = Object.freeze({
   PORTAL_HOST_NAME: "bottomSheet",
 });
