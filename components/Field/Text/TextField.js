@@ -15,6 +15,7 @@ const TextField = ({ grouped=false, editing, value, onChange }) => {
   const [showSave, setShowSave] = useState(false);
   const [_value, _setValue] = useState(value);
   // TODO: use constant for debounce time
+  //const debouncedValue = useDebounce(_value, grouped ? 3000 : 1500);
   const debouncedValue = useDebounce(_value, 1500);
 
   useEffect(() => {

@@ -93,8 +93,7 @@ const TabNavigator = () => {
           name={ScreenConstants.CREATE}
           component={CreateScreen}
           options={{
-            // TODO:better title term
-            title: i18n.t("global.addNewContact", { locale }),
+            ...TransitionPresets.ModalTransition,
           }}
           initialParams={
             route?.params
@@ -238,6 +237,20 @@ const TabNavigator = () => {
         <Stack.Screen
           name={ScreenConstants.DETAILS}
           component={DetailsScreen}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
+        />
+        <Stack.Screen
+          name={ScreenConstants.CREATE}
+          component={CreateScreen}
+          options={{
+            ...TransitionPresets.ModalTransition,
+          }}
           initialParams={
             route?.params
               ? {
