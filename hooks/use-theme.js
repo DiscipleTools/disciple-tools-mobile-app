@@ -30,31 +30,6 @@ const useTheme = () => {
     //if (scheme?.colorScheme !== mode) dispatch(setTheme(scheme?.colorScheme));
   });
 
-  // TODO: pull from API
-  const getSelectorColor = (status) => {
-    let newColor;
-    if (status === "unassigned" || status === "scheduled") {
-      newColor = "#F43636";
-    } else if (status === "unassignable" || status === "assigned") {
-      newColor = "#FF9800";
-    } else if (
-      status === "active" ||
-      status === "in_progress" ||
-      status === "complete"
-    ) {
-      newColor = "#4CAF50";
-    } else if (status === "new" || status === "proposed") {
-      newColor = "#00afff";
-    } else if (status === "paused") {
-      newColor = "#ff44cc";
-    } else if (status === "from_facebook") {
-      newColor = "#1778F2";
-    } else if (status === "closed" || status === "inactive") {
-      newColor = "#808080";
-    }
-    return newColor;
-  };
-
   const _setTheme = (theme) => dispatch(setTheme(theme));
 
   const toggleMode = () =>
@@ -67,7 +42,6 @@ const useTheme = () => {
     toggleMode,
     theme,
     setTheme: _setTheme,
-    getSelectorColor,
   };
 };
 export default useTheme;
