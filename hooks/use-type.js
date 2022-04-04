@@ -1,6 +1,6 @@
 import * as RootNavigation from "navigation/RootNavigation";
 
-import useCustomPostTypes from "hooks/use-custom-post-types";
+import { getAvailablePostTypes } from "utils";
 
 import {
   FieldNames,
@@ -13,7 +13,7 @@ import {
 const useType = ({ type, subtype } = {}) => {
 
   const route = RootNavigation.getRoute();
-  const { activeCustomPostTypes } = useCustomPostTypes();
+  const availablePostTypes = getAvailablePostTypes();
   if (!type) type = route?.params?.type;
   if (!subtype) subtype = route?.params?.subtype;
 
@@ -21,15 +21,22 @@ const useType = ({ type, subtype } = {}) => {
 
   const isContact = type === TypeConstants.CONTACT;
   const isGroup = type === TypeConstants.GROUP;
-  const isCustomPostType = activeCustomPostTypes.includes(type);
+
+  const isNotification = type === TypeConstants.NOTIFICATION;
+  const isCommentsActivity = (isPost && subtype === SubTypeConstants.COMMENTS_ACTIVITY);
+
+  const isCustomPostType = !(
+    isContact ||
+    isGroup ||
+    isNotification ||
+    isCommentsActivity
+  );
+
   const isPost = (
     isContact ||
     isGroup ||
     isCustomPostType
   );
-
-  const isNotification = type === TypeConstants.NOTIFICATION;
-  const isCommentsActivity = (isPost && subtype === SubTypeConstants.COMMENTS_ACTIVITY);
 
   const postType = () => {
     if (isContact) return TypeConstants.CONTACT;

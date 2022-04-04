@@ -217,12 +217,12 @@ export const defaultThemeDark = Object.freeze({
 export const TypeConstants = Object.freeze({
   CONTACT: "contacts",
   GROUP: "groups",
-  TRAINING: "trainings",
-  QUESTIONNAIRE: "questionnaires",
   NOTIFICATION: "notifications",
-  STREAM: "streams",
+  TRAINING: "trainings",
   MEETING: "meetings",
-  CAMPAIGN: "campaigns"
+  CAMPAIGN: "campaigns",
+  STREAM: "streams",
+  QUESTIONNAIRE: "questionnaires",
 });
 
 export const SubTypeConstants = Object.freeze({

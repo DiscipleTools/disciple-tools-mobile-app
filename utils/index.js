@@ -1,3 +1,5 @@
+import { TypeConstants } from "constants";
+
 export const complementListByObjProps = ({aList=[], aProp, aTransform, bList=[], bProp, bTransform } = {}) => {
   if (!aProp || !bProp) return;
   for (var ii=0; ii < aList.length; ii++) {
@@ -108,4 +110,8 @@ export const labelize = (str) => {
     return str[0]?.toUpperCase() + str.slice(1)?.toLowerCase();
   };
   return str;
+};
+
+export const getAvailablePostTypes = () => {
+  return Object.values(TypeConstants);
 };

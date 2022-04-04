@@ -1,12 +1,14 @@
-import useRequest from "hooks/use-request";
+import useList from "hooks/use-list";
 
 import { TypeConstants } from "constants";
+
+import { getAvailablePostTypes } from "utils";
 
 const useCustomPostTypes = () => {
   //let url = "wp/v2/types";
   // https://developer.wordpress.org/rest-api/reference/post-types/
   //return useRequest({ url });
-  const availablePostTypes = Object.values(TypeConstants);
+  const availablePostTypes = getAvailablePostTypes();
   const activeCustomPostTypes = [];
   for (let ii=0; ii < availablePostTypes.length; ii++) {
     const type = availablePostTypes[ii];
@@ -15,10 +17,8 @@ const useCustomPostTypes = () => {
       type === TypeConstants.CONTACT ||
       type === TypeConstants.GROUP
     ) continue;
-    // NOTE: use-request vs. use-list bc use-type depends on this hook and it would be circular (bc use-list also depends on use-type)
-    let url = `/dt-posts/v2/${type}?limit=1`;
-    const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
-    if (data?.posts?.length > 0) activeCustomPostTypes.push(type);
+    const { data: posts } = useList({ limit: 1, type });
+    if (posts?.length > 0) activeCustomPostTypes.push(type);
   };
   return {
     activeCustomPostTypes
