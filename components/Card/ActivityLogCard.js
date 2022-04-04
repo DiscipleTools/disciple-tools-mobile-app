@@ -19,7 +19,7 @@ const ActivityLogCard = ({ preview, refreshing }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { getTabScreenFromType } = useType();
   const { collapse } = useBottomSheet();
-  const { i18n, isRTL } = useI18N();
+  const { i18n } = useI18N();
 
   // TODO: FilterList
   const renderActivityLog = (log) => (
@@ -69,7 +69,11 @@ const ActivityLogCard = ({ preview, refreshing }) => {
   const renderPartialCard = () => (
     <>
       <View>{activityLog?.slice(0, preview ?? 3)?.map(renderActivityLog)}</View>
-      {activityLog?.length > 1 && <Text>...</Text>}
+      {activityLog?.length > 1 && (
+        <View style={styles.etcetera}>
+          <Text>...</Text>
+        </View>
+      )}
     </>
   );
 
