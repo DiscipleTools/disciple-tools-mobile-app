@@ -167,6 +167,10 @@ const Tile = ({
       extraScrollHeight={75}
       keyboardShouldPersistTaps="handled"
       style={globalStyles.surface}
+      contentContainerStyle={[
+        globalStyles.surface,
+        globalStyles.screenGutter
+      ]}
     >
       <Fields />
       { isCreate && (
