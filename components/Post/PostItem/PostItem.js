@@ -11,7 +11,6 @@ import useBottomSheet from "hooks/use-bottom-sheet";
 //import useI18N from "hooks/use-i18n";
 import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
-import useTheme from "hooks/use-theme";
 import useType from "hooks/use-type";
 
 import { ScreenConstants, SubTypeConstants } from "constants";
@@ -24,11 +23,11 @@ const PostItem = ({ item, loading, mutate }) => {
   const navigation = useNavigation();
   const { expand } = useBottomSheet();
   //const { i18n, isRTL } = useI18N();
-  // TODO: move to useStyles?
-  const { getSelectorColor } = useTheme();
   const { styles, globalStyles } = useStyles(localStyles);
   const { isContact, isGroup, postType } = useType();
   const { updatePost } = useAPI();
+  const { settings } = useSettings();
+  if (!settings) return null;
 
   const goToDetailsScreen = (postData = null, isPhoneImport = false) => {
     // IMPORT
@@ -98,8 +97,6 @@ const PostItem = ({ item, loading, mutate }) => {
 
   const PostSubtitle = () => {
     const { isContact, isGroup } = useType();
-    const { settings } = useSettings();
-    if (!settings) return null;
     return (
       <Text style={globalStyles.caption}>
         {isContact && (
@@ -140,10 +137,15 @@ const PostItem = ({ item, loading, mutate }) => {
     );
   };
 
+  const getBackgroundColor = () => {
+    let backgroundColor = null;
+    if (item?.overall_status) return settings.fields.overall_status?.values?.[item?.overall_status]?.color;
+    if (item?.group_status) return backgroundColor = settings.fields.group_status?.values?.[item.group_status]?.color;
+    return settings?.fields?.status?.values?.[item?.status]?.color;
+  };
+
   const FavoriteStar = () => {
-    const backgroundColor = getSelectorColor(
-      isContact ? item?.overall_status : item?.group_status
-    );
+    const backgroundColor = getBackgroundColor();
     return (
       <View style={globalStyles.columnContainer}>
         <Pressable
