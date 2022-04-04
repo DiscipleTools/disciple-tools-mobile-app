@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 
-import { CheckIcon } from "components/Icon";
+import { MaterialCommunityIcon, CheckIcon } from "components/Icon";
 import FilterList from "components/FilterList";
 import SheetHeader from "components/Sheet/SheetHeader";
 
@@ -10,7 +10,7 @@ import useFilter from "hooks/use-filter";
 import useStyles from "hooks/use-styles";
 import useLocations from "hooks/use-locations";
 
-import { localStyles } from "components/Field/Connection/ConnectionField.styles";
+import { localStyles } from "./LocationsSheet.styles";
 
 const LocationsSheet = ({ id, title, values, onChange }) => {
 
@@ -61,8 +61,7 @@ const LocationsSheet = ({ id, title, values, onChange }) => {
         <View key={key} style={styles.itemContainer}>
             {icon && (
               <View style={globalStyles.rowIcon}>
-                <Icon
-                  type={icon?.type}
+                <MaterialCommunityIcon
                   name={icon?.name}
                   style={[globalStyles.icon, icon?.style ? icon?.style : {}]} 
                 />

@@ -1,8 +1,7 @@
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 
-//import ConnectionSheet from "components/Field/Connection/ConnectionSheet";
-import { CheckIcon } from "components/Icon";
+import { MaterialCommunityIcon, CheckIcon } from "components/Icon";
 import FilterList from "components/FilterList";
 import SheetHeader from "components/Sheet/SheetHeader";
 
@@ -10,7 +9,7 @@ import useFilter from "hooks/use-filter";
 import useStyles from "hooks/use-styles";
 import useUsers from "hooks/use-users";
 
-import { localStyles } from "components/Field/Connection/ConnectionField.styles";
+import { localStyles } from "./UsersSheet.styles";
 
 const UsersSheet = ({ id, values, onChange }) => {
 
@@ -53,8 +52,7 @@ const UsersSheet = ({ id, values, onChange }) => {
             )}
             {icon && (
               <View style={globalStyles.rowIcon}>
-                <Icon
-                  type={icon?.type}
+                <MaterialCommunityIcon
                   name={icon?.name}
                   style={[globalStyles.icon, icon?.style ? icon?.style : {}]} 
                 />
