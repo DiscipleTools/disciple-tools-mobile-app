@@ -263,6 +263,17 @@ const TabNavigator = () => {
     );
   };
 
+  const indicatorStyle = (focused) => {
+    if (focused) return {
+      top: -10,
+      height: 3,
+      backgroundColor: isDarkMode
+          ? theme.highlight
+          : theme.brand.primary,
+    };
+    return null;
+  }
+
   return (
     <Tab.Navigator
       initialRouteName={TabScreenConstants.HOME}
@@ -299,6 +310,7 @@ const TabNavigator = () => {
           //tabBarLabel: i18n.t("global.home", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
+              <View style={indicatorStyle(focused)} />
               <HomeIcon style={{ color }} />
             </View>
           ),
@@ -329,6 +341,7 @@ const TabNavigator = () => {
           //tabBarLabel: i18n.t("global.contacts", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
+              <View style={indicatorStyle(focused)} />
               <AccountIcon style={{ color }} />
             </View>
           ),
@@ -362,6 +375,7 @@ const TabNavigator = () => {
           //tabBarLabel: i18n.t("global.groups", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
+              <View style={indicatorStyle(focused)} />
               <AccountsIcon style={{ color }} />
             </View>
           ),
@@ -392,6 +406,7 @@ const TabNavigator = () => {
           //tabBarLabel: i18n.t("global.notifications", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
+              <View style={indicatorStyle(focused)} />
               <BellIcon style={{ color }} />
             </View>
           ),
@@ -426,6 +441,7 @@ const TabNavigator = () => {
           //tabBarLabel: i18n.t("global.more", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
+              <View style={indicatorStyle(focused)} />
               <MoreIcon style={{ color }} />
             </View>
           ),
