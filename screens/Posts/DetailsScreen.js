@@ -135,7 +135,7 @@ const DetailsScreen = ({ navigation }) => {
         style={styles.titleBar}
       />
       <TabView
-        lazy
+        //lazy
         renderLazyPlaceholder={() => <PostSkeleton />}
         navigationState={{ index, routes }}
         renderScene={renderScene}
