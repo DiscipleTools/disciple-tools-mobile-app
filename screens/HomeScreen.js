@@ -1,9 +1,9 @@
-import React, { useEffect, useLayoutEffect, useReducer, useState } from "react";
-import { Image, RefreshControl, Text, View } from "react-native";
+import React, { useLayoutEffect, useState } from "react";
+import { Image, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useIsFocused } from "@react-navigation/native";
 
-import { BellIcon, CogIcon } from "components/Icon";
+import { CogIcon } from "components/Icon";
 import { HeaderRight } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
 
@@ -162,17 +162,10 @@ const HomeScreen = ({ navigation, route }) => {
       <ScrollView
         style={[globalStyles.screenContainer, styles.container]}
         contentContainerStyle={globalStyles.screenGutter}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
       >
         <View style={[globalStyles.rowContainer, styles.cardRowContainer]}>
           <FavoriteContactsCard />
           <FavoriteGroupsCard />
-        </View>
-        <View style={[globalStyles.rowContainer, styles.cardRowContainer]}>
-          <ActiveContactsCard />
-          <ActiveGroupsCard />
         </View>
         <PendingContactsCard
           filters={contactFilters}
