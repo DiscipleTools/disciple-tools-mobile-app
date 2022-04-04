@@ -135,8 +135,9 @@ const DetailsScreen = ({ navigation }) => {
         style={styles.titleBar}
       />
       <TabView
-        //lazy
+        lazy
         renderLazyPlaceholder={() => <PostSkeleton />}
+        keyboardDismissMode="none"
         navigationState={{ index, routes }}
         renderScene={renderScene}
         onIndexChange={setIndex}
