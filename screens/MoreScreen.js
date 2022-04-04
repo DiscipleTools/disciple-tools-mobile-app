@@ -7,26 +7,26 @@ import OfflineBar from "components/OfflineBar";
 //import TitleBar from "components/TitleBar";
 import ListItem from "components/ListItem";
 
-//import useCustomPostTypes from "hooks/use-custom-post-types";
+import useCustomPostTypes from "hooks/use-custom-post-types";
 import useStyles from "hooks/use-styles";
-import useI18N from "hooks/use-i18n";
 
 import { ScreenConstants } from "constants";
+
+import { labelize } from "utils";
 
 import { localStyles } from "./MoreScreen.styles";
 
 const MoreScreen = ({ navigation, route }) => {
 
-  const { i18n } = useI18N();
-
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
-  //const { data, error, isLoading, isValidating, mutate } = useCustomPostTypes();
+  const { activeCustomPostTypes } = useCustomPostTypes();
   const { styles, globalStyles } = useStyles(localStyles);
 
-  const PostButton = ({ label, type }) => (
+  const PostButton = ({ key, label, type }) => (
     <ListItem
+      key={key}
       startComponent={<PostIcon />}
       label={label}
       endComponent={<ChevronIcon style={globalStyles.icon} />}
@@ -39,13 +39,12 @@ const MoreScreen = ({ navigation, route }) => {
     />
   );
 
-  // TODO: detect Custom Post Types dynamically
-  const trainingsLabel = i18n.t("global.trainings");
-  const trainingsPostType = String(i18n.t("global.trainings"))?.toLowerCase();
   return (
     <SafeAreaView style={globalStyles.screenContainer}>
       <OfflineBar />
-      <PostButton label={trainingsLabel} type={trainingsPostType} />
+      { activeCustomPostTypes.map(type => (
+        <PostButton key={type} label={labelize(type)} type={type} />
+      ))}
     </SafeAreaView>
   );
 };
