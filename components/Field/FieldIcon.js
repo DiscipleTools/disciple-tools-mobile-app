@@ -26,6 +26,9 @@ const FieldIcon = ({ field, hide }) => {
       if (name.includes("list")) {
         iconType = "MaterialCommunityIcons";
         iconName = "notification-clear-all";
+      } else if (name.includes("description")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "text";
       } else {
         iconType = "MaterialCommunityIcons";
         iconName = "text-long";
@@ -70,7 +73,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "briefcase-account-outline";
       } else if (name.includes("parent")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "triangle";
+        iconName = "gamepad-circle-up";
       } else if (name.includes("peer")) {
         iconType = "MaterialCommunityIcons";
         iconName = "ray-start-end";
@@ -80,9 +83,13 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("relation")) {
         iconType = "MaterialCommunityIcons";
         iconName = "account-switch";
-      } else if (name.includes("people_groups")) {
+      } else if ((name.includes("people_groups") || name.includes("peoplegroups")) ) {
         iconType = "MaterialCommunityIcons";
         iconName = "earth";
+      } else if (name.includes("reporter")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "teach";
+        iconStyle = { transform: [{ scaleX: -1 }] }
       } else if (name.includes("coaching")) {
         iconType = "MaterialCommunityIcons";
         iconName = "teach";
@@ -99,12 +106,15 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("baptized")) {
         iconType = "MaterialCommunityIcons";
         iconName = "water-outline";
+      } else if (name.includes("trainings")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "school";
       } else if (name.includes("group_leader")) {
         iconType = "MaterialCommunityIcons";
         iconName = "foot-print";
       } else if (name.includes("group")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "account-group";
+        iconName = "gamepad-circle";
       } else if (name.includes("train")) {
         iconType = "MaterialCommunityIcons";
         iconName = "teach";
@@ -113,10 +123,25 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "format-list-bulleted";
       } else if (name.includes("leaders")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "shoe-print";
-      } else {
+        iconName = "foot-print";
+      } else if (name.includes("contacts")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "human";
+      } else if (name.includes("disciples")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "foot-print";
+        iconStyle = { transform: [{ scaleX: -1 }] }
+      } else if (name.includes("meetings")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "calendar-text";
+        iconStyle = { transform: [{ scaleX: -1 }] }
+      } else if (name.includes("streams")) {
         iconType = "MaterialCommunityIcons";
         iconName = "axis-arrow";
+        iconStyle = { transform: [{ scaleX: -1 }] }
+      } else {
+        iconType = "MaterialCommunityIcons";
+        iconName = "axis";
       }
       break;
     case FieldTypes.MULTI_SELECT:
@@ -228,6 +253,9 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("name")) {
         iconType = "MaterialCommunityIcons";
         iconName = "sign-text";
+      } else if (name.includes("notes")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "note-text";
       } else if (name.includes("four_fields_unbelievers")) {
         iconType = "MaterialCommunityIcons";
         iconName = "crosshairs-off";
@@ -245,7 +273,10 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "shield-cross-outline";
       } else if (name.includes("four_fields")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "crosshairs";
+        iconName = "crosshairs";      
+      } else if (name.includes("video_link")) {
+          iconType = "MaterialCommunityIcons";
+          iconName = "satellite-uplink";
       } else {
         iconType = "MaterialCommunityIcons";
         iconName = "text";

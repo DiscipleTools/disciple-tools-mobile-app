@@ -35,14 +35,14 @@ const SheetHeader = ({ expandable, dismissable, title, onDismiss }) => {
         globalStyles.rowContainer,
         styles.controls
       ]}>
-      {expandable && (
+      {/* {expandable && (
         <ExpandIcon
           onPress={() => onPressExpand()}
           style={[
             globalStyles.icon,
           ]}
         />
-      )}
+      )} */}
       {dismissable && (
         <ClearIcon
           onPress={() => onPressDismiss()}
