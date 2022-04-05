@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Text, View } from "react-native";
 import {
   AddIcon,
-  ClearIcon,
+  CancelIcon,
   EditIcon,
   SaveIcon
 } from "components/Icon";
@@ -150,7 +150,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
     const hasChanged = _value !== value; // && !(value === null && (_value === null || _value === ''));
     return(
       <View style={globalStyles.rowContainer}>
-        <ClearIcon onPress={_onCancel} />
+        <CancelIcon onPress={_onCancel} />
         { hasChanged && (
           <SaveIcon onPress={() => _onSave(_value)} />
         )}

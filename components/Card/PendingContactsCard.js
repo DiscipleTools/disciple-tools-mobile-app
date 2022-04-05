@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import Card from "components/Card/Card";
 import ExpandableCard from "components/Card/ExpandableCard";
 import Placeholder from "components/Placeholder";
+import { DeclineIcon, AcceptIcon } from "components/Icon";
 
 import useAPI from "hooks/use-api";
 import useI18N from "hooks/use-i18n";
@@ -68,8 +69,7 @@ const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
       <View style={[globalStyles.rowContainer, styles.buttonRowContainer]}>
         <Pressable
           onPress={() => handleAccept({ contact, accept: true })}
-          //TODO adjust color to be dynamic
-          style={[styles.buttonContainer, { backgroundColor: "green" }]}
+          style={[styles.buttonContainer, styles.buttonAccept]}
         >
           <Text style={styles.buttonText}>
             {i18n.t("global.accept", { locale })}
@@ -77,7 +77,7 @@ const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
         </Pressable>
         <Pressable
           onPress={() => handleAccept({ contact, accept: false })}
-          style={[styles.buttonContainer, { backgroundColor: "red" }]}
+          style={[styles.buttonContainer, styles.buttonDecline]}
         >
           <Text style={styles.buttonText}>
             {i18n.t("global.decline", { locale })}
