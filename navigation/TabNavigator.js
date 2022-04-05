@@ -11,6 +11,7 @@ import {
   HomeIcon,
   AccountIcon,
   AccountsIcon,
+  UserIcon,
   BellIcon,
   MoreIcon
 } from "components/Icon";
@@ -155,6 +156,24 @@ const TabNavigator = () => {
           }}
         />
         <Stack.Screen
+          name={ScreenConstants.SETTINGS}
+          component={SettingsScreen}
+          //options={{
+          //mode: "modal",
+          //headerMode: "none",
+          //cardStyle: {
+          //  backgroundColor:"transparent",
+          //  opacity: 0.99
+          //}
+          //}}
+          options={{
+            title: i18n.t("global.user", { locale }),
+          }}
+          initialParams={{
+            type: TypeConstants.SETTINGS,
+          }}
+        />
+        <Stack.Screen
           name={ScreenConstants.NOTIFICATIONS}
           component={NotificationsScreen}
           //options={{ presentation: 'transparentModal' }}
@@ -195,7 +214,22 @@ const TabNavigator = () => {
       </Stack.Navigator>
     );
   };
-
+  const UserStack = ({ route }) => {
+    return (
+      <Stack.Navigator screenOptions={screenOptions}>
+        <Stack.Screen
+          name={TabScreenConstants.NOTIFICATIONS}
+          component={NotificationsScreen}
+          options={{
+            title: i18n.t("global.notifications", { locale }),
+          }}
+          initialParams={{
+            type: TypeConstants.NOTIFICATION,
+          }}
+        />
+      </Stack.Navigator>
+    );
+  };
   const NotificationsStack = ({ route }) => {
     return (
       <Stack.Navigator screenOptions={screenOptions}>
@@ -391,6 +425,40 @@ const TabNavigator = () => {
                   params: {
                     screen: ScreenConstants.LIST,
                     type: TypeConstants.GROUP,
+                  },
+                },
+              ],
+            });
+          },
+        })}
+      />
+      <Tab.Screen
+        name={TabScreenConstants.USER}
+        component={PostStack}
+        initialParams={{
+          type: TypeConstants.USER,
+        }}
+        options={{
+          tabBarShowLabel: false,
+          //tabBarLabel: i18n.t("global.groups", { locale }),
+          tabBarIcon: ({ focused, color }) => (
+            <View>
+              <View style={indicatorStyle(focused)} />
+              <UserIcon style={{ color }} />
+            </View>
+          ),
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: TabScreenConstants.USER,
+                  params: {
+                    screen: ScreenConstants.LIST,
+                    type: TypeConstants.USER,
                   },
                 },
               ],

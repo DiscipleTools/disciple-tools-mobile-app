@@ -266,6 +266,9 @@ export const AccountIcon = ({ onPress, style }) => (
 export const AccountsIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="account-group" onPress={onPress} style={style} />
 );
+export const UserIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="account-circle" onPress={onPress} style={style} />
+);
 export const MoreIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon
     name="menu"
@@ -290,7 +293,7 @@ export const StreamsIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="axis-arrow" onPress={onPress} style={style} />
 );
 // Login screen
-export const UserIcon = ({ onPress, style }) => (
+export const UsernameIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon
     name="account-key"
     onPress={onPress}

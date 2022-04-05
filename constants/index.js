@@ -248,6 +248,7 @@ export const TabScreenConstants = Object.freeze({
   HOME: "HOME",
   CONTACTS: "CONTACTS",
   GROUPS: "GROUPS",
+  USER: "USER",
   NOTIFICATIONS: "NOTIFICATIONS",
   MORE: "MORE",
 });
