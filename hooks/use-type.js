@@ -1,7 +1,5 @@
 import * as RootNavigation from "navigation/RootNavigation";
 
-import { getAvailablePostTypes } from "utils";
-
 import {
   FieldNames,
   TabScreenConstants,
@@ -13,7 +11,6 @@ import {
 const useType = ({ type, subtype } = {}) => {
 
   const route = RootNavigation.getRoute();
-  const availablePostTypes = getAvailablePostTypes();
   if (!type) type = route?.params?.type;
   if (!subtype) subtype = route?.params?.subtype;
 
@@ -25,7 +22,7 @@ const useType = ({ type, subtype } = {}) => {
   const isNotification = type === TypeConstants.NOTIFICATION;
   const isCommentsActivity = (isPost && subtype === SubTypeConstants.COMMENTS_ACTIVITY);
 
-  const isCustomPostType = !(
+  const isCustomPostType = (type || subtype) && !(
     isContact ||
     isGroup ||
     isNotification ||
