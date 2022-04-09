@@ -114,7 +114,6 @@ const FAB = () => {
       fgColor: styles.item.color,
       callback: () => onSaveQuickAction(field),
     };
-    // TODO: constants
     if (field === QuickActionButtonConstants.NO_ANSWER)
       return {
         ...defaultIconConfig,
@@ -159,7 +158,7 @@ const FAB = () => {
     if (field === QuickActionButtonConstants.NEW)
       return {
         ...defaultIconConfig,
-        title: i18n.t("global.addNew", { locale }), // TODO: group translate
+        title: i18n.t("global.addNew"),
         count: null,
         name: "account-plus",
         //bgColor: "green", //TODO
@@ -172,7 +171,7 @@ const FAB = () => {
     if (field === QuickActionButtonConstants.IMPORT)
       return {
         ...defaultIconConfig,
-        title: i18n.t("global.importContact", { locale }),
+        title: i18n.t("global.importContact"),
         count: null,
         type: "MaterialCommunityIcon",
         name: "card-account-phone",
