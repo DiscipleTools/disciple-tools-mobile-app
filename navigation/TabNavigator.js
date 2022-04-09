@@ -27,6 +27,7 @@ import DetailsScreen from "screens/Posts/DetailsScreen";
 import CommentsActivityScreen from "screens/CommentsActivityScreen";
 import NotificationsScreen from "screens/NotificationsScreen";
 import SettingsScreen from "screens/SettingsScreen";
+import UserScreen from "screens/UserScreen";
 
 import useI18N from "hooks/use-i18n";
 import useNotifications from "hooks/use-notifications";
@@ -155,22 +156,21 @@ const TabNavigator = () => {
             type: TypeConstants.GROUP,
           }}
         />
+        {/* <Stack.Screen
+          name={TabScreenConstants.USER}
+          component={PostStack}
+          initialParams={{
+            type: TypeConstants.USER,
+          }}
+        /> */}
         <Stack.Screen
-          name={ScreenConstants.SETTINGS}
-          component={SettingsScreen}
-          //options={{
-          //mode: "modal",
-          //headerMode: "none",
-          //cardStyle: {
-          //  backgroundColor:"transparent",
-          //  opacity: 0.99
-          //}
-          //}}
+          name={ScreenConstants.USER}
+          component={UserScreen}
           options={{
             title: i18n.t("global.user", { locale }),
           }}
           initialParams={{
-            type: TypeConstants.SETTINGS,
+            type: TypeConstants.USER,
           }}
         />
         <Stack.Screen

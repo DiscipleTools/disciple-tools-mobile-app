@@ -8,7 +8,6 @@ import {
   ChevronBackIcon,
   DarkModeIcon,
   FlashIcon,
-  HelpIcon,
   LoginIcon,
   LogoutIcon,
   OnePasswordIcon,
@@ -17,20 +16,18 @@ import {
 import ListItem from "components/ListItem";
 import OfflineBar from "components/OfflineBar";
 import LanguagePicker from "components/Picker/LanguagePicker";
-import AppVersion from "components/AppVersion";
 
 import { useAuth } from "hooks/use-auth";
-import useApp from "hooks/use-app";
 import useNetwork from "hooks/use-network";
 import useI18N from "hooks/use-i18n";
 import usePIN from "hooks/use-pin";
 import useStyles from "hooks/use-styles";
 import useTheme from "hooks/use-theme";
 
-import { localStyles } from "./SettingsScreen.styles";
+import { localStyles } from "./UserScreen.styles";
 import gravatar from "assets/gravatar-default.png";
 
-const SettingsScreen = ({ navigation }) => {
+const UserScreen = ({ navigation }) => {
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
@@ -64,9 +61,8 @@ const SettingsScreen = ({ navigation }) => {
     );
   };
 
-  //const StorybookButton = () => null;
 
-  const OnlineToggle = () => (
+   const OnlineToggle = () => (
     <ListItem
       startComponent={<FlashIcon />}
       label={i18n.t("global.online", { locale })}
@@ -158,16 +154,6 @@ const SettingsScreen = ({ navigation }) => {
     );
   };
 
-  const HelpSupportButton = () => {
-    const { draftNewSupportEmail } = useApp();
-    return (
-      <ListItem
-        startComponent={<HelpIcon />}
-        label={i18n.t("global.helpSupport", { locale })}
-        onPress={draftNewSupportEmail}
-      />
-    );
-  };
 
   const LogoutButton = () => (
     <ListItem
@@ -188,19 +174,16 @@ const SettingsScreen = ({ navigation }) => {
     <ScrollView style={globalStyles.screenContainer}>
       <OfflineBar />
       <Header />
-      {/*__DEV__ && <StorybookButton />*/}
       <OnlineToggle />
       <DarkModeToggle />
       <AutoLoginToggle />
       <RememberLoginDetailsToggle />
       <PINCodeToggle />
-      <HelpSupportButton />
       <LogoutButton />
       <View style={styles.formContainer}>
         <LanguagePicker />
-        <AppVersion />
       </View>
     </ScrollView>
   );
 };
-export default SettingsScreen;
+export default UserScreen;
