@@ -142,6 +142,9 @@ export const EditIcon = ({ onPress, style }) => (
 export const ExpandIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="arrow-expand" onPress={onPress} style={style} />
 );
+export const ExternalLinkIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="open-in-new" onPress={onPress} style={style} />
+);
 export const EyeIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="eye" onPress={onPress} style={style} />
 );
