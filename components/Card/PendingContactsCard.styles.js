@@ -30,4 +30,10 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     color: theme.offLight,
     fontWeight: "bold",
   },
+  buttonAccept: {
+    backgroundColor: theme.success,
+  },
+  buttonDecline: {
+    backgroundColor: theme.error,
+  }
 });

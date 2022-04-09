@@ -70,6 +70,9 @@ export const ArrowForwardIcon = ({ onPress, style }) => (
 export const BellIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="bell" onPress={onPress} style={style} />
 );
+export const CancelIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="close-thick" onPress={onPress} style={style} />
+);
 export const CaretIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="chevron-down" onPress={onPress} style={style} />
 );
@@ -94,6 +97,9 @@ export const ClearFiltersIcon = ({ onPress, style }) => (
     onPress={onPress}
     style={style}
   />
+);
+export const CloseIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="close-thick" onPress={onPress} style={style} />
 );
 export const CircleIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="circle" onPress={onPress} style={style} />
@@ -123,6 +129,12 @@ export const DarkModeIcon = ({ onPress, style }) => (
 );
 export const DeleteIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="delete" onPress={onPress} style={style} />
+);
+export const AcceptIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="check-circle" onPress={onPress} style={style} />
+);
+export const DeclineIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="close-circle" onPress={onPress} style={style} />
 );
 export const EditIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="pencil" onPress={onPress} style={style} />
@@ -169,10 +181,6 @@ export const MapIcon = ({ onPress, style }) => (
 );
 export const OnePasswordIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="onepassword" onPress={onPress} style={style} />
-);
-//TODO icon for more post Types
-export const PostIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="teach" onPress={onPress} style={style} />
 );
 export const RemoveIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="minus" onPress={onPress} style={style} />
@@ -265,9 +273,26 @@ export const MoreIcon = ({ onPress, style }) => (
     style={style}
   />
 );
+//TODO icon for more post Types
+export const PostIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="file-multiple" onPress={onPress} style={style} />
+);
+export const TrainingsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="teach" onPress={onPress} style={style} />
+);
+export const MeetingsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="calendar-multiselect" onPress={onPress} style={style} />
+);
+export const CampaignsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="bullhorn" onPress={onPress} style={style} />
+);
+export const StreamsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="axis-arrow" onPress={onPress} style={style} />
+);
+// Login screen
 export const UserIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon
-    name="account"
+    name="account-key"
     onPress={onPress}
     style={style}
   />

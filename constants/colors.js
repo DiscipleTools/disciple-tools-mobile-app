@@ -18,6 +18,18 @@ export const whatsapp = "#075E54";
 // DARK MODE
 ////////////////////////////
 
+// D.T Brand - Dark Mode
+export const primaryDark = "#365D86";
+export const secondaryDark = "#a0ce4e";
+export const tertiaryDark = "#00897b";
+export const backgroundDark = "#F3F3F3";
+export const errorDark = "#C70039";
+export const warningDark = "#FFC300";
+export const infoDark = "#29b6f6";
+export const successDark = "#66bb6a";
+export const cellDark = "#ecf5fc;";
+export const borderDark = "#c2e0ff";
+
 // System Grays - Dark Mode
 export const systemGray2Dark = "rgb(99, 99, 102)";
 export const systemGray3Dark = "rgb(72, 72, 74)";
@@ -46,12 +58,14 @@ export const systemBrownDark = "rgb(172, 142, 104)";
 // D.T Brand - Light Mode
 export const primaryLight = "#365D86";
 export const secondaryLight = "#a0ce4e";
+export const tertiaryLight = "#00897b";
 export const backgroundLight = "#F3F3F3";
 export const errorLight = "#C70039";
-//export const warningLight = "#FFC300";
-//export const infoLight = "#29b6f6";
-//export const successLight = "#66bb6a";
-export const successLight = "#000";
+export const warningLight = "#FFC300";
+export const infoLight = "#29b6f6";
+export const successLight = "#66bb6a";
+export const cellLight = "#ecf5fc;";
+export const borderLight = "#c2e0ff";
 
 // System Grays - Light Mode
 export const systemGray2Light = "rgb(174, 174, 178)";
