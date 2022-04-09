@@ -61,6 +61,9 @@ export const ChevronIcon = ({ header, onPress, style }) => {
 export const AddIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="plus" onPress={onPress} style={style} />
 );
+export const AlertIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="alert-circle-outline" onPress={onPress} style={style} />
+);
 export const ArrowBackIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="arrow-left" onPress={onPress} style={style} />
 );
