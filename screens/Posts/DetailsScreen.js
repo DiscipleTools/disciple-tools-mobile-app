@@ -90,11 +90,16 @@ const DetailsScreen = ({ navigation }) => {
     const kebabItems = [
       {
         label: i18n.t("global.viewOnWeb"),
-        urlPath: `/${postType}/${postId}/`,
+        urlPath: `${postType}/${postId}`,
       },
       {
-        label: i18n.t("global.helpSupport"),
-        url: `https://disciple.tools/user-docs/getting-started-info/${postType}/${postType}-record-page/`,
+        label: i18n.t("global.helpDocs"),
+       // url: `https://disciple.tools/user-docs/getting-started-info/${postType}/${postType}-record-page/`,
+       url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/${postType}-record-screen/`,
+      },
+      {
+        label: ("Email Support"),
+        //onPress: {draftNewSupportEmail},
       },
     ];
     navigation.setOptions({

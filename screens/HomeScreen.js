@@ -57,11 +57,21 @@ const HomeScreen = ({ navigation, route }) => {
     const kebabItems = [
       {
         label: i18n.t("global.viewOnWeb"),
-        urlPath: "/settings/",
+        urlPath: "home",
       },
       {
-        label: i18n.t("global.helpDocs"),
-        url: "https://disciple.tools/user-docs/getting-started-info/admin/settings-dt/general-settings-dt/",
+        label: ("Documentation"),
+        //label: i18n.t("global.helpDocs"),
+       // url: "https://disciple.tools/user-docs/getting-started-info/admin/settings-dt/general-settings-dt/",
+       url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/home-screen/`,
+      },
+      {
+        label: ("Support"),
+        //onPress: {draftNewSupportEmail},
+      },
+      {
+        label: ("Feedback"),
+        //onPress: {draftNewSupportEmail},
       },
     ];
     const renderStartIcons = () => (
