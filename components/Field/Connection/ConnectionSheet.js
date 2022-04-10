@@ -1,14 +1,13 @@
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 
-import { CheckIcon } from "components/Icon";
+import { CheckIcon, MaterialCommunityIcon } from "components/Icon";
 import FilterList from "components/FilterList";
 
 import useBottomSheet from "hooks/use-bottom-sheet";
 import useStyles from "hooks/use-styles";
 
-// TODO:
-import { localStyles } from "components/Field/Connection/ConnectionField.styles";
+import { localStyles } from "./ConnectionSheet.styles";
 
 const ConnectionSheet = ({ items, renderItem, values, onChange, search, onSearch }) => {
 
@@ -35,7 +34,7 @@ const ConnectionSheet = ({ items, renderItem, values, onChange, search, onSearch
       const key = item?.contact_id || item?.ID || item?.value;
       return {
         key,
-        label: item?.name,
+        label: item?.name || item?.title,
         avatar: item?.avatar,
         contactId: item?.contact_id ? String(item?.contact_id) : null,
         //selected: values?.some(selectedItem => Number(selectedItem?.value) === item?.contact_id),
@@ -58,13 +57,18 @@ const ConnectionSheet = ({ items, renderItem, values, onChange, search, onSearch
     const { key, label, icon, avatar, selected } = item;
     return(
       <Pressable onPress={() => _onChange(item)}>
-        <View key={key} style={styles.itemContainer}>
+        <View key={key}
+          style={[
+            globalStyles.rowContainer,
+            styles.itemContainer
+          ]}
+        >
             {avatar && (
               <Image style={styles.avatar} source={{ uri: avatar }} />
             )}
             {icon && (
               <View style={globalStyles.rowIcon}>
-                <Icon
+                <MaterialCommunityIcon
                   type={icon?.type}
                   name={icon?.name}
                   style={[globalStyles.icon, icon?.style ? icon?.style : {}]} 

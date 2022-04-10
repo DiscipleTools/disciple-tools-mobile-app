@@ -61,6 +61,9 @@ export const ChevronIcon = ({ header, onPress, style }) => {
 export const AddIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="plus" onPress={onPress} style={style} />
 );
+export const AlertIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="alert-circle-outline" onPress={onPress} style={style} />
+);
 export const ArrowBackIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="arrow-left" onPress={onPress} style={style} />
 );
@@ -69,6 +72,9 @@ export const ArrowForwardIcon = ({ onPress, style }) => (
 );
 export const BellIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="bell" onPress={onPress} style={style} />
+);
+export const CancelIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="cancel" onPress={onPress} style={style} />
 );
 export const CaretIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="chevron-down" onPress={onPress} style={style} />
@@ -88,12 +94,14 @@ export const ChevronForwardIcon = ({ onPress, style }) => (
 export const ClearIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="close" onPress={onPress} style={style} />
 );
+export const ClearAllIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="notification-clear-all" onPress={onPress} style={style} />
+);
 export const ClearFiltersIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon
-    name="filter-variant-remove"
-    onPress={onPress}
-    style={style}
-  />
+  <MaterialCommunityIcon name="filter-variant-remove" onPress={onPress} style={style} />
+);
+export const CloseIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="close" onPress={onPress} style={style} />
 );
 export const CircleIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="circle" onPress={onPress} style={style} />
@@ -111,6 +119,9 @@ export const CogIcon = ({ onPress, style }) => (
 export const CommentPlusIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="comment-plus" onPress={onPress} style={style} />
 );
+export const CopyIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="content-copy" onPress={onPress} style={style} />
+);
 export const DarkModeIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon
     name="theme-light-dark"
@@ -118,17 +129,35 @@ export const DarkModeIcon = ({ onPress, style }) => (
     style={style}
   />
 );
+export const DeleteIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="delete" onPress={onPress} style={style} />
+);
+export const DoneIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="check" onPress={onPress} style={style} />
+);
+export const AcceptIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="check-circle" onPress={onPress} style={style} />
+);
+export const DeclineIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="close-circle" onPress={onPress} style={style} />
+);
 export const EditIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="pencil" onPress={onPress} style={style} />
 );
 export const ExpandIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="arrow-expand" onPress={onPress} style={style} />
 );
+export const ExternalLinkIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="open-in-new" onPress={onPress} style={style} />
+);
 export const EyeIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="eye" onPress={onPress} style={style} />
 );
 export const FlashIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="flash" onPress={onPress} style={style} />
+);
+export const FeedbackIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="frequently-asked-questions" onPress={onPress} style={style} />
 );
 export const HamburgerIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon
@@ -169,10 +198,6 @@ export const MapIcon = ({ onPress, style }) => (
 );
 export const OnePasswordIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="onepassword" onPress={onPress} style={style} />
-);
-//TODO icon for more post Types
-export const PostIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="teach" onPress={onPress} style={style} />
 );
 export const RemoveIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="minus" onPress={onPress} style={style} />
@@ -260,15 +285,97 @@ export const AccountsIcon = ({ onPress, style }) => (
 );
 export const MoreIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon
-    name="dots-horizontal"
+    name="menu"
     onPress={onPress}
     style={style}
   />
 );
+export const PostIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="file-multiple" onPress={onPress} style={style} />
+);
+export const TrainingsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="teach" onPress={onPress} style={style} />
+);
+export const MeetingsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="calendar-multiselect" onPress={onPress} style={style} />
+);
+export const CampaignsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="bullhorn" onPress={onPress} style={style} />
+);
+export const StreamsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="axis-arrow" onPress={onPress} style={style} />
+);
+export const MetricsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="chart-bar" onPress={onPress} style={style} />
+);
+export const GenmapperIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="sitemap-outline" onPress={onPress} style={style} />
+);
+
+// Login screen
 export const UserIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon
-    name="account-cowboy-hat"
+    name="account-key"
     onPress={onPress}
     style={style}
   />
+);
+
+// Other icons
+export const CommentActivityIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="timeline-text-outline" onPress={onPress} style={style} />
+);
+export const ShareIcon = ({ onPress, style }) => (
+   <MaterialCommunityIcon name="share-variant" onPress={onPress} style={style} /> 
+);
+export const UpdateRequiredIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="progress-clock" onPress={onPress} style={style} /> 
+);
+export const TasksIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="clock-check-outline" onPress={onPress} style={style} /> 
+);
+export const FollowingIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="eye-outline" onPress={onPress} style={style} /> 
+);
+export const ShowIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="eye" onPress={onPress} style={style} /> 
+);
+export const HideIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="eye-off" onPress={onPress} style={style} /> 
+);
+export const PreferencesIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="cog-outline" onPress={onPress} style={style} />
+);
+export const InfoIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="information-outline" onPress={onPress} style={style} />
+);
+export const LogsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="chart-timeline" onPress={onPress} style={style} />
+);
+export const MapsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="map" onPress={onPress} style={style} />
+);
+export const TreesIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="file-tree" onPress={onPress} style={style} />
+);
+export const ChartsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="chart-pie" onPress={onPress} style={style} />
+);
+export const HighlightsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="white-balance-sunny" onPress={onPress} style={style} />
+);
+export const SettingsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="cog" onPress={onPress} style={style} />
+);
+export const PersonIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="child" onPress={onPress} style={style} />
+);
+export const MaleIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="human-male" onPress={onPress} style={style} />
+);
+export const FemaleIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="human-female" onPress={onPress} style={style} />
+);
+export const GroupsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="account-group-outline" onPress={onPress} style={style} />
 );

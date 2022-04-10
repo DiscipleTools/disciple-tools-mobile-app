@@ -13,6 +13,7 @@ import {
   systemGray6Light,
   systemRedLight,
   systemYellowLight,
+  systemGreenLight,
   systemCyanLight,
   systemBlueLight,
   systemGray2Dark,
@@ -22,12 +23,26 @@ import {
   systemGray6Dark,
   systemRedDark,
   systemYellowDark,
+  systemGreenDark,
   systemCyanDark,
   systemBlueDark,
   facebook,
   whatsapp,
+  primaryDark,
+  primaryLight, 
+  secondaryDark,
+  secondaryLight, 
+  tertiaryDark, 
+  tertiaryLight,
+  errorDark,
+  errorLight, 
+  warningDark, 
+  warningLight, 
+  infoDark, 
+  infoLight, 
+  successLight, 
+  successDark,
 } from "constants/colors";
-// TODO: rename
 
 export const defaultFaithMilestones = [
   "milestone_has_bible",
@@ -41,17 +56,18 @@ export const defaultFaithMilestones = [
   "milestone_planting",
 ];
 
-export const defaultHealthMilestones = [
-  "church_baptism",
-  "church_bible",
-  "church_communion",
-  "church_fellowship",
-  "church_giving",
-  "church_leaders",
-  "church_praise",
-  "church_prayer",
-  "church_sharing",
-];
+export const ChurchHealthConstants = Object.freeze({
+  BAPTISM: "church_baptism",
+  BIBLE: "church_bible",
+  COMMUNION: "church_communion",
+  FELLOWSHIP: "church_fellowship",
+  GIVING: "church_giving",
+  LEADERS: "church_leaders",
+  PRAISE: "church_praise",
+  PRAYER: "church_prayer",
+  SHARING: "church_sharing",
+  CHURCH_COMMITMENT: "church_commitment",
+});
 
 export const AppConstants = Object.freeze({
   NAME: "D.T",
@@ -114,6 +130,8 @@ export const FieldNames = Object.freeze({
   TRAININGS: "trainings",
   LOCATION_GRID_META: "location_grid_meta",
   LOCATION_GRID: "location_grid",
+  FAITH_MILESTONES: "milestones",
+  CHURCH_HEALTH: "health_metrics"
 });
 
 export const ThemeConstants = Object.freeze({
@@ -124,17 +142,18 @@ export const ThemeConstants = Object.freeze({
 export const defaultThemeLight = Object.freeze({
   mode: ThemeConstants.LIGHT,
   brand: {
-    primary: primaryBrand,
-    secondary: secondaryBrand,
-    tertiary: tertiaryBrand,
+    primary: primaryLight,
+    secondary: secondaryLight,
+    tertiary: tertiaryLight,
   },
   offLight,
   offDark,
   systemGray,
-  error: systemRedLight,
-  warning: systemYellowLight,
-  info: systemCyanLight,
-  success: systemGray6Dark,
+  systemGreen: systemGreenLight,
+  error: errorLight,
+  warning: warningLight,
+  info: infoLight,
+  success: successLight,
   text: {
     primary: offDark,
     secondary: "rgba(0, 0, 0, 0.6)",
@@ -166,19 +185,20 @@ export const defaultThemeLight = Object.freeze({
 export const defaultThemeDark = Object.freeze({
   mode: ThemeConstants.DARK,
   brand: {
-    primary: primaryBrand,
-    secondary: secondaryBrand,
-    tertiary: tertiaryBrand,
+    primary: primaryDark,
+    secondary: secondaryDark,
+    tertiary: tertiaryDark,
   },
   primaryBrand,
   secondaryBrand,
   offLight,
   offDark,
   systemGray,
-  error: systemRedDark,
-  warning: systemYellowDark,
-  info: systemCyanDark,
-  success: systemGray6Light,
+  systemGreen: systemGreenDark,
+  error: errorDark,
+  warning: warningDark,
+  info: infoDark,
+  success: successDark,
   text: {
     primary: offLight,
     secondary: "rgba(255, 255, 255, 0.7)",
@@ -210,9 +230,9 @@ export const defaultThemeDark = Object.freeze({
 export const TypeConstants = Object.freeze({
   CONTACT: "contacts",
   GROUP: "groups",
-  TRAINING: "trainings",
-  QUESTIONNAIRE: "questionnaires",
   NOTIFICATION: "notifications",
+  TRAINING: "trainings",
+  PEOPLEGROUPS: "peoplegroups",
 });
 
 export const SubTypeConstants = Object.freeze({
@@ -223,9 +243,9 @@ export const SubTypeConstants = Object.freeze({
 
 export const TabScreenConstants = Object.freeze({
   HOME: "HOME",
-  POST: "POST",
   CONTACTS: "CONTACTS",
   GROUPS: "GROUPS",
+  NOTIFICATIONS: "NOTIFICATIONS",
   MORE: "MORE",
 });
 
@@ -234,6 +254,7 @@ export const ScreenConstants = Object.freeze({
   DETAILS: "DETAILS",
   CREATE: "CREATE",
   IMPORT: "IMPORT",
+  COMMENTS_ACTIVITY: "COMMENTS_ACTIVITY",
   NOTIFICATIONS: "NOTIFICATIONS",
   SETTINGS: "SETTINGS",
   PIN: "PIN",
@@ -243,6 +264,17 @@ export const NotificationActionConstants = Object.freeze({
   ALERT: "alert",
   COMMENT: "comment",
   MENTION: "mentioned",
+});
+
+export const QuickActionButtonConstants = Object.freeze({
+  NO_ANSWER: "quick_button_no_answer",
+  CONTACT_ESTABLISHED: "quick_button_contact_established",
+  MEETING_SCHEDULED: "quick_button_meeting_scheduled",
+  MEETING_COMPLETE: "quick_button_meeting_complete",
+  MEETING_POSTPONED: "quick_button_meeting_postponed",
+  NO_SHOW: "quick_button_no_show",
+  NEW: "quick_button_new",
+  IMPORT: "quick_button_import_contacts",
 });
 
 export const BottomSheetConstants = Object.freeze({

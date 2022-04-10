@@ -5,13 +5,14 @@ import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./ListItem.styles";
 
-const ListItem = ({ label, startComponent, endComponent, onPress }) => {
+const ListItem = ({ label, startComponent, endComponent, onPress, style }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   return(
     <Pressable onPress={onPress ?? null}>
       <View style={[
         globalStyles.rowContainer,
-        styles.container
+        styles.container,
+        style
       ]}>
         <View style={styles.start}>
           {startComponent}

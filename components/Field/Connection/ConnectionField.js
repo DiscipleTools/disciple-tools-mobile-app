@@ -1,7 +1,7 @@
 import React from "react";
-import { Image, Text, View } from "react-native";
-//import { ScrollView } from "react-native-gesture-handler";
-//import { useNavigation } from "@react-navigation/native";
+import { Image, Pressable, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
 
 import Select from "components/Select";
@@ -14,7 +14,7 @@ import PeopleGroupsSheet from "./PeopleGroupsSheet";
 import TrainingsSheet from "./TrainingsSheet";
 
 import useBottomSheet from "hooks/use-bottom-sheet";
-//import useStyles from "hooks/use-styles";
+import useStyles from "hooks/use-styles";
 import useType from "hooks/use-type";
 
 import {
@@ -27,14 +27,14 @@ import {
   swimmingPoolIcon,
 } from "constants/icons";
 
-import { FieldNames, TypeConstants } from "constants";
+import { FieldNames, TabScreenConstants, ScreenConstants } from "constants";
 
-//import { localStyles } from "./ConnectionField.styles";
+import { localStyles } from "./ConnectionField.styles";
 
 const ConnectionField = ({ editing, field, value, onChange }) => {
 
-  //const { styles, globalStyles } = useStyles(localStyles);
-  const { expand, snapPoints } = useBottomSheet();
+  const { styles, globalStyles } = useStyles(localStyles);
+  const { expand } = useBottomSheet();
   const { isPost, isContact, isGroup, getPostTypeByFieldName } = useType();
 
   // VALUES
@@ -176,12 +176,13 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
                 title={field?.label || ''}
               />
             ),
-            renderContent: () => 
+            renderContent: () => (
               <TrainingsSheet
                 id={route?.params?.id}
                 values={values}
                 onChange={onChange}
               />
+            )
           });
         }}
         items={values}
@@ -200,92 +201,65 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
   );
 
   const GroupView = () => {
-    return(
-      <Select
-        items={values}
-        renderItem={renderItemView}
-      />
-    );
-    /*
     const navigation = useNavigation();
-    let iconSource = groupParentIcon;
-    const groupFieldLabel = String(field.label);
-    if (groupFieldLabel.toLowerCase().includes("peer"))
-      iconSource = groupPeerIcon;
-    if (groupFieldLabel.toLowerCase().includes("child"))
-      iconSource = groupChildIcon;
     return (
-      <Grid>
-        <Row style={styles.formRow}>
-          <Col style={styles.formIconLabel}>
-            <View style={styles.formIconLabelView}>
-              <Image source={iconSource} style={styles.groupIcons} />
-            </View>
-          </Col>
-          <Col style={styles.formIconLabel}>
-            <Text style={styles.formLabel}>{field.label}</Text>
-          </Col>
-          <Col />
-        </Row>
-        <Row
-          style={[
-            styles.groupCircleParentContainer,
-            { overflowX: "auto", marginBottom: 10 },
-          ]}
-        >
-          <ScrollView horizontal>
-            {selectedItems.map((group, index) => {
-              const id = group?.value;
-              const title = group?.name;
-              // TODO: constant?
-              const type = "groups";
-              return (
-                <Col
-                  key={index.toString()}
-                  style={styles.groupCircleContainer}
-                  onPress={() => {
-                    navigation.push("Details", {
-                      id,
-                      name: title,
-                      type,
-                      //onGoBack: () => onRefresh(),
-                    });
-                  }}
-                >
-                  {Object.prototype.hasOwnProperty.call(group, "is_church") &&
-                  group.is_church ? (
-                    <Image
-                      source={groupCircleIcon}
-                      style={styles.groupCircle}
-                    />
-                  ) : (
-                    <Image
-                      source={groupDottedCircleIcon}
-                      style={styles.groupCircle}
-                    />
-                  )}
+      <View style={globalStyles.rowContainer}>
+        <ScrollView horizontal>
+          {values?.map((group, index) => {
+            const id = group?.value;
+            const title = group?.name;
+            const isChurch = group?.is_church; 
+            const baptizedMemberCount = group?.baptized_member_count?.length > 0 ? group.baptized_member_count : '0';
+            const memberCount = group?.member_count?.length > 0 ? group.member_count : '0';
+            // TODO: constant?
+            const type = "groups";
+            return (
+              <Pressable
+                key={index.toString()}
+                style={[
+                  globalStyles.columnContainer,
+                  styles.groupCircleContainer
+                ]}
+                onPress={() => {
+                  navigation.jumpTo(TabScreenConstants.GROUPS, {
+                    screen: ScreenConstants.DETAILS,
+                    id,
+                    name: title,
+                    type,
+                    //onGoBack: () => onRefresh(),
+                  });
+                }}
+              >
+                { isChurch ? (
                   <Image
-                    source={swimmingPoolIcon}
-                    style={styles.groupCenterIcon}
+                    source={groupCircleIcon}
+                    style={styles.groupCircle}
                   />
-                  <Row style={styles.groupCircleName}>
-                    <Text style={styles.groupCircleNameText}>{group.name}</Text>
-                  </Row>
-                  <Row style={styles.groupCircleCounter}>
-                    <Text>{group.baptized_member_count}</Text>
-                  </Row>
-                  <Row style={[styles.groupCircleCounter, { marginTop: "5%" }]}>
-                    <Text>{group.member_count}</Text>
-                  </Row>
-                </Col>
-              );
-            })}
-          </ScrollView>
-        </Row>
-        <View style={styles.formDivider} />
-      </Grid>
+                ) : (
+                  <Image
+                    source={groupDottedCircleIcon}
+                    style={styles.groupCircle}
+                  />
+                )}
+                <Image
+                  source={swimmingPoolIcon}
+                  style={styles.groupCenterIcon}
+                />
+                <View style={[globalStyles.rowContainer, styles.groupCircleName]}>
+                  <Text style={styles.groupCircleNameText}>{group.name}</Text>
+                </View>
+                <View style={[globalStyles.rowContainer, styles.groupCircleCounter]}>
+                  <Text>{baptizedMemberCount}</Text>
+                </View>
+                <View style={[globalStyles.rowContainer, styles.groupCircleCounter]}>
+                  <Text>{memberCount}</Text>
+                </View>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+      </View>
     );
-    */
   };
 
   const PostView = () => (
@@ -300,7 +274,10 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
   );
 
   const isGroupField = () => (
-    field?.name === FieldNames.GROUPS
+    field?.name === FieldNames.GROUPS ||
+    field?.name === FieldNames.PARENT_GROUPS ||
+    field?.name === FieldNames.PEER_GROUPS ||
+    field?.name === FieldNames.CHILD_GROUPS
   );
 
   const isContactField = () => (
@@ -325,6 +302,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
 
   const ConnectionFieldView = () => {
     if (isPeopleGroupField()) return <PeopleGroupView />;
+    if (isGroupField()) return <GroupView />;
     if (isPost) return <PostView />;
     return null; 
   };

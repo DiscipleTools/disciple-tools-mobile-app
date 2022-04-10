@@ -7,7 +7,13 @@ import {
 } from "@react-navigation/stack";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
-import { HomeIcon, AccountIcon, AccountsIcon, MoreIcon } from "components/Icon";
+import {
+  HomeIcon,
+  AccountIcon,
+  AccountsIcon,
+  BellIcon,
+  MoreIcon
+} from "components/Icon";
 import HomeScreen from "screens/HomeScreen";
 import MoreScreen from "screens/MoreScreen";
 import PINScreen from "screens/PINScreen";
@@ -17,6 +23,7 @@ import ListScreen from "screens/Posts/ListScreen";
 import DetailsScreen from "screens/Posts/DetailsScreen";
 //import AttendanceScreen from 'screens/AttendanceScreen';
 //import QuestionnaireScreen from 'screens/Posts/QuestionnaireScreen';
+import CommentsActivityScreen from "screens/Posts/CommentsActivityScreen";
 import NotificationsScreen from "screens/NotificationsScreen";
 import SettingsScreen from "screens/SettingsScreen";
 
@@ -86,8 +93,7 @@ const TabNavigator = () => {
           name={ScreenConstants.CREATE}
           component={CreateScreen}
           options={{
-            // TODO:better title term
-            title: i18n.t("global.addNewContact", { locale }),
+            ...TransitionPresets.ModalTransition,
           }}
           initialParams={
             route?.params
@@ -108,6 +114,21 @@ const TabNavigator = () => {
             type: TypeConstants.CONTACT,
           }}
         />
+        <Stack.Screen
+          name={ScreenConstants.COMMENTS_ACTIVITY}
+          component={CommentsActivityScreen}
+          options={{
+            title: i18n.t("global.commentsActivity", { locale }),
+            ...TransitionPresets.ModalTransition,
+          }}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
+        />
       </Stack.Navigator>
     );
   };
@@ -118,9 +139,6 @@ const TabNavigator = () => {
         <Stack.Screen
           name={TabScreenConstants.HOME}
           component={HomeScreen}
-          options={{
-            title: AppConstants.NAME,
-          }}
         />
         <Stack.Screen
           name={TabScreenConstants.CONTACTS}
@@ -178,6 +196,23 @@ const TabNavigator = () => {
     );
   };
 
+  const NotificationsStack = ({ route }) => {
+    return (
+      <Stack.Navigator screenOptions={screenOptions}>
+        <Stack.Screen
+          name={TabScreenConstants.NOTIFICATIONS}
+          component={NotificationsScreen}
+          options={{
+            title: i18n.t("global.notifications", { locale }),
+          }}
+          initialParams={{
+            type: TypeConstants.NOTIFICATION,
+          }}
+        />
+      </Stack.Navigator>
+    );
+  };
+
   const MoreStack = ({ route }) => {
     return (
       <Stack.Navigator screenOptions={screenOptions}>
@@ -210,9 +245,34 @@ const TabNavigator = () => {
               : null
           }
         />
+        <Stack.Screen
+          name={ScreenConstants.CREATE}
+          component={CreateScreen}
+          options={{
+            ...TransitionPresets.ModalTransition,
+          }}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
+        />
       </Stack.Navigator>
     );
   };
+
+  const indicatorStyle = (focused) => {
+    if (focused) return {
+      top: -10,
+      height: 3,
+      backgroundColor: isDarkMode
+          ? theme.highlight
+          : theme.brand.primary,
+    };
+    return null;
+  }
 
   return (
     <Tab.Navigator
@@ -230,7 +290,7 @@ const TabNavigator = () => {
           display: [
             ScreenConstants.PIN,
             ScreenConstants.SETTINGS,
-            ScreenConstants.NOTIFICATIONS,
+            ScreenConstants.COMMENTS_ACTIVITY,
           ].includes(getFocusedRouteNameFromRoute(route))
             ? "none"
             : "flex",
@@ -246,20 +306,14 @@ const TabNavigator = () => {
         name={TabScreenConstants.HOME}
         component={HomeStack}
         options={{
-          tabBarLabel: i18n.t("global.home", { locale }),
+          tabBarShowLabel: false,
+          //tabBarLabel: i18n.t("global.home", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
+              <View style={indicatorStyle(focused)} />
               <HomeIcon style={{ color }} />
             </View>
           ),
-          tabBarBadge: hasNotifications ? "" : null,
-          tabBarBadgeStyle: {
-            marginTop: 5,
-            marginStart: 7,
-            minWidth: 10,
-            maxHeight: 10,
-            borderRadius: 5,
-          },
         }}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
@@ -283,9 +337,11 @@ const TabNavigator = () => {
         }}
         options={{
           //unmountOnBlur: true,
-          tabBarLabel: i18n.t("global.contacts", { locale }),
+          tabBarShowLabel: false,
+          //tabBarLabel: i18n.t("global.contacts", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
+              <View style={indicatorStyle(focused)} />
               <AccountIcon style={{ color }} />
             </View>
           ),
@@ -315,9 +371,11 @@ const TabNavigator = () => {
           type: TypeConstants.GROUP,
         }}
         options={{
-          tabBarLabel: i18n.t("global.groups", { locale }),
+          tabBarShowLabel: false,
+          //tabBarLabel: i18n.t("global.groups", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
+              <View style={indicatorStyle(focused)} />
               <AccountsIcon style={{ color }} />
             </View>
           ),
@@ -341,12 +399,49 @@ const TabNavigator = () => {
         })}
       />
       <Tab.Screen
+        name={TabScreenConstants.NOTIFICATIONS}
+        component={NotificationsStack}
+        options={{
+          tabBarShowLabel: false,
+          //tabBarLabel: i18n.t("global.notifications", { locale }),
+          tabBarIcon: ({ focused, color }) => (
+            <View>
+              <View style={indicatorStyle(focused)} />
+              <BellIcon style={{ color }} />
+            </View>
+          ),
+          tabBarBadge: hasNotifications ? "" : null,
+          tabBarBadgeStyle: {
+            marginTop: 5,
+            marginStart: 7,
+            minWidth: 10,
+            maxHeight: 10,
+            borderRadius: 5,
+          },
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: TabScreenConstants.NOTIFICATIONS,
+                },
+              ],
+            });
+          },
+        })}
+      />
+      <Tab.Screen
         name={TabScreenConstants.MORE}
         component={MoreStack}
         options={{
-          tabBarLabel: i18n.t("global.more", { locale }),
+          tabBarShowLabel: false,
+          //tabBarLabel: i18n.t("global.more", { locale }),
           tabBarIcon: ({ focused, color }) => (
             <View>
+              <View style={indicatorStyle(focused)} />
               <MoreIcon style={{ color }} />
             </View>
           ),

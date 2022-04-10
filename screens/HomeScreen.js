@@ -1,9 +1,9 @@
-import React, { useEffect, useLayoutEffect, useReducer, useState } from "react";
-import { Image, RefreshControl, Text, View } from "react-native";
+import React, { useLayoutEffect, useState } from "react";
+import { Image, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useIsFocused } from "@react-navigation/native";
 
-import { BellIcon, CogIcon } from "components/Icon";
+import { CogIcon } from "components/Icon";
 import { HeaderRight } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
 
@@ -13,7 +13,6 @@ import ActivityLogCard from "components/Card/ActivityLogCard";
 
 import useFilters from "hooks/use-filters";
 import useI18N from "hooks/use-i18n";
-import useNotifications from "hooks/use-notifications";
 import useStyles from "hooks/use-styles";
 
 import { ScreenConstants, TypeConstants } from "constants";
@@ -32,7 +31,6 @@ const HomeScreen = ({ navigation, route }) => {
   const { data: groupFilters, mutate: mutateGroupFilters } = useFilters({
     type: TypeConstants.GROUP,
   });
-  const { hasNotifications } = useNotifications();
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -69,14 +67,6 @@ const HomeScreen = ({ navigation, route }) => {
     const renderStartIcons = () => (
       <>
         <View style={styles.headerIcon}>
-          <BellIcon
-            onPress={() => navigation.push(ScreenConstants.NOTIFICATIONS)}
-          />
-          {hasNotifications && (
-            <View style={styles.notificationsDot(hasNotifications)} />
-          )}
-        </View>
-        <View style={styles.headerIcon}>
           <CogIcon onPress={() => navigation.push(ScreenConstants.SETTINGS)} />
           {hasAccountUpdates && (
             <View style={styles.notificationsDot(hasAccountUpdates)} />
@@ -95,9 +85,9 @@ const HomeScreen = ({ navigation, route }) => {
         />
       ),
     });
-  }, [navigation, hasNotifications, hasAccountUpdates]);
+  }, [navigation, hasAccountUpdates]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     onRefresh();
   }, [isFocused]);
 
@@ -172,17 +162,10 @@ const HomeScreen = ({ navigation, route }) => {
       <ScrollView
         style={[globalStyles.screenContainer, styles.container]}
         contentContainerStyle={globalStyles.screenGutter}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
       >
         <View style={[globalStyles.rowContainer, styles.cardRowContainer]}>
           <FavoriteContactsCard />
           <FavoriteGroupsCard />
-        </View>
-        <View style={[globalStyles.rowContainer, styles.cardRowContainer]}>
-          <ActiveContactsCard />
-          <ActiveGroupsCard />
         </View>
         <PendingContactsCard
           filters={contactFilters}

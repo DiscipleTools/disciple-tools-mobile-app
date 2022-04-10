@@ -1,67 +1,68 @@
-import React, { useEffect, useState } from "react";
+import React, { createRef, useEffect, useLayoutEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
   View,
-  Keyboard,
-  KeyboardAvoidingView,
-  TextInput,
   Text,
-  Platform,
-  TouchableWithoutFeedback,
-  Button,
-  StatusBar,
   Pressable,
 } from "react-native";
 
-import * as Clipboard from "expo-clipboard";
-
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import ParsedText from "react-native-parsed-text";
 //import MentionsTextInput from "react-native-mentions";
 
-import { ExpandIcon, SendIcon } from "components/Icon";
+import {
+  CopyIcon,
+  DeleteIcon,
+  EditIcon,
+  SendIcon
+} from "components/Icon";
+import CustomBottomSheet from "components/Sheet/CustomBottomSheet";
 import FilterList from "components/FilterList";
 import PostItemSkeleton from "components/Post/PostItem/PostItemSkeleton";
+import SelectSheet from "components/Sheet/SelectSheet";
 import SheetHeader from "components/Sheet/SheetHeader";
 
+import useApp from "hooks/use-app";
+import useAPI from "hooks/use-api";
+import useBottomSheet from "hooks/use-bottom-sheet";
+import useCommentsActivities from "hooks/use-comments-activity";
 import useFilter from "hooks/use-filter";
 import useI18N from "hooks/use-i18n";
-import useCommentsActivities from "hooks/use-comments-activity";
 import useMyUser from "hooks/use-my-user";
 import useStyles from "hooks/use-styles";
 import useToast from "hooks/use-toast";
-import useAPI from "hooks/use-api";
 
-import { localStyles } from "./CommentsActivity.styles";
+import { localStyles } from "./CommentsActivityScreen.styles";
 
 const MENTION_PATTERN = /@\[.+?\]\((.*)\)/g;
 
-const CommentsActivity = ({ headerHeight, insets }) => {
+const CommentsActivityConstants = Object.freeze({
+  COPY: "copy",
+  DELETE: "delete",
+  EDIT: "edit",
+});
+
+const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => {
+
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, isRTL } = useI18N();
+  const { setClipboard } = useApp();
   const toast = useToast();
+
+  const { expand } = useBottomSheet();
+  const sheetRef = createRef();
+  const inputRef = createRef();
+
   const { data: userData } = useMyUser();
 
   const [editComment, setEditComment] = useState({
     id: null,
     message: "",
   });
+  //const [expanded, setExpanded] = useState(false);
 
   const { createComment, updateComment, deleteComment } = useAPI();
-
-  const [excludeComments, setExcludeComments] = useState(false);
-  const [excludeActivity, setExcludeActivity] = useState(false);
-
-  /*
-  const [expandedTextInput, toggleExpandedTextInput] = useState(false);
-  useEffect(() => {
-    if (expandedTextInput) navigation.navigate("FullScreenModal", {
-      title: "...",
-      renderView: () => null
-    };
-    return;
-  }, [expandedTextInput])
-  */
 
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
 
@@ -74,11 +75,14 @@ const CommentsActivity = ({ headerHeight, insets }) => {
   } = useCommentsActivities({ search, filter });
   if (!items) return null;
 
-  const onClear = () => {
-    //setComment('');
-    Keyboard.dismiss();
-    mutate();
-  };
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: route?.params?.name,
+    });
+    return;
+  });
+
+  //const onClear = () => setComment('');
 
   // TODO: implement this skeleton
   const CommentsActivityItemLoadingSkeleton = () => <PostItemSkeleton />;
@@ -86,53 +90,85 @@ const CommentsActivity = ({ headerHeight, insets }) => {
   const CommentsActivityItem = ({ item, loading }) => {
     if (!item || loading) return <CommentsActivityItemLoadingSkeleton />;
     const message = item?.comment_content || item?.object_note;
-    const datetime =
-      item?.comment_date || new Date(Number("1611715906") * 1000).toString();
+    // TODO: try/catch handler
+    const datetime = item?.hist_time ? new Date(Number(item.hist_time)*1000).toString() : "";
     const author = item?.comment_author || item?.name;
     const authorId = Number(item?.user_id);
     const userIsAuthor = authorId === userData?.ID;
     const isActivity = item?.object_note?.length > 0;
-    const onCopy = () => Clipboard.setString(message);
-    const onEdit = () =>
-      setEditComment({
-        id: item?.comment_ID,
-        message,
-      });
+
+    const onCopy = () => setClipboard(message);
+
+    const onEdit = () => setEditComment({ id: item?.comment_ID, message });
+
     const onDelete = async () => {
-      // TODO: add support for Activity type
-      const commentId = item?.comment_ID;
-      try {
-        await deleteComment(commentId);
-        mutate();
-      } catch (error) {
-        toast(error, true);
-      }
-    };
-    const onLongPress = () => {
-      // TODO: use an expandable (to fullscreen) Action Sheet: https://github.com/gorhom/react-native-bottom-sheet
-      // TODO: add term and translate "Copy"
-      /*
-      ActionSheet.show({
-          options: userIsAuthor ? [
-            "Copy",
-            i18n.t("global.edit"),
-            i18n.t("global.delete"),
-            i18n.t("global.cancel"),
-          ] : [
-            "Copy",
-            i18n.t("global.cancel"),
-          ],
-          cancelButtonIndex: userIsAuthor ? 3 : 1,
-          destructiveButtonIndex: userIsAuthor ? 2 : null,
-          title: null
-        },
-        buttonIndex => {
-          if (buttonIndex === 0) onCopy();
-          if (userIsAuthor && buttonIndex === 1) onEdit();
-          if (userIsAuthor && buttonIndex === 2) onDelete();
+      // TODO: add support for Activity type?
+      if (item?.comment_ID) {
+        const commentId = item.comment_ID;
+        try {
+          await deleteComment(commentId);
+          mutate();
+        } catch (error) {
+          toast(error, true);
         }
-      );
-      */
+      };
+    };
+
+    const generateOptions = () => {
+      const sections = [
+        {
+          data: [
+            {
+              key: CommentsActivityConstants.COPY,
+              label: i18n.t("global.copy"),
+              icon: <CopyIcon />,
+            },
+          ],
+        },
+      ];
+      if (userIsAuthor) {
+        sections[0].data.push({
+          key: CommentsActivityConstants.EDIT,
+          label: i18n.t("global.edit"),
+          icon: <EditIcon />,
+        });
+        sections[0].data.push({
+          key: CommentsActivityConstants.DELETE,
+          label: i18n.t("global.delete"),
+          icon: <DeleteIcon />,
+        });
+      };
+      return sections;
+    };
+
+    const onChange = (value) => {
+      const key = value?.key;
+      if (key === CommentsActivityConstants.COPY) onCopy();
+      if (key === CommentsActivityConstants.EDIT) onEdit();
+      if (key === CommentsActivityConstants.DELETE) onDelete();
+    };
+
+    const onLongPress = () => {
+      const title = i18n.t("global.options");
+      const sections = generateOptions();
+      expand({
+        // TODO: constants?
+        snapPoints: userIsAuthor ? [325,"95%"] : [225,"95%"],
+        defaultIndex: 0,
+        renderHeader: () => (
+          <SheetHeader
+            expandable
+            dismissable
+            title={title}
+          />
+        ),
+        renderContent: () => (
+          <SelectSheet
+            sections={sections}
+            onChange={onChange}
+          />
+        )
+      });
     };
 
     const renderMention = (matchingString, matches) => {
@@ -206,41 +242,6 @@ const CommentsActivity = ({ headerHeight, insets }) => {
     );
   };
 
-  const CustomKeyboardAvoidingView = ({ children, style }) => {
-    /*
-  //const headerHeight = useHeaderHeight();
-  const headerHeight = 0;
-  //const insets = useSafeAreaInsets();
-  const insets = {
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0
-  };
-  */
-    const [bottomPadding, setBottomPadding] = useState(insets.bottom);
-    const [topPadding, setTopPadding] = useState(insets.top);
-
-    useEffect(() => {
-      // This useEffect is needed because insets are undefined at first for some reason
-      // https://github.com/th3rdwave/react-native-safe-area-context/issues/54
-      setBottomPadding(insets.bottom);
-      setTopPadding(insets.top);
-    }, [insets.bottom, insets.top]);
-
-    return (
-      <KeyboardAvoidingView
-        style={style}
-        behavior={Platform.OS == "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={
-          headerHeight + topPadding + StatusBar.currentHeight
-        }
-      >
-        {children}
-      </KeyboardAvoidingView>
-    );
-  };
-
   const CommentInput = () => {
     const [loading, setLoading] = useState(false);
     const [comment, setComment] = useState("");
@@ -250,7 +251,7 @@ const CommentsActivity = ({ headerHeight, insets }) => {
     }, [editComment?.message]);
 
     const onSave = async (comment) => {
-      setLoading(true);
+      if (sheetRef?.current) sheetRef.current.snapToIndex(0);
       if (comment?.length > 0) {
         try {
           if (editComment?.id && editComment?.message?.length > 0) {
@@ -265,54 +266,54 @@ const CommentsActivity = ({ headerHeight, insets }) => {
             return;
           }
           const res = await createComment(comment);
-          if (res) setComment("");
-          return;
+          if (res) {
+            setComment("");
+          };
         } catch (error) {
           toast(error, true);
         } finally {
-          // TODO: auto-refresh
-          //mutate();
+          mutate();
           setLoading(false);
         }
       }
       return;
     };
+
     return (
-      <View style={styles.commentInputView}>
-        {/*comment?.length > 0 && (
-        <ExpandIcon onPress={() => toggleExpandedTextInput()} />
-      )*/}
-        <TextInput
+      <>
+        <View style={{ marginStart: "auto" }}>
+          {!loading ? (
+            <SendIcon
+              onPress={() => {
+                setLoading(true);
+                setTimeout(() => onSave(comment), 1000);
+              }}
+              style={styles.sendIcon} 
+            />
+          ) : (
+            <ActivityIndicator
+              size="small"
+              color={globalStyles.activityIndicator.color}
+              style={[
+                styles.activityIndicator,
+              ]}
+            />
+          )}
+        </View>
+        <BottomSheetTextInput
+          autoFocus={editComment?.message?.length > 0 ? true : false}
+          ref={inputRef}
           editable={!loading}
           multiline={true}
           value={comment}
           onChangeText={(text) => setComment(text)}
           placeholder={i18n.t("global.comments")}
           placeholderTextColor={globalStyles.placeholder.color}
-          //autoFocus={true}
           style={styles.commentInputText}
         />
-        {!loading ? (
-          <SendIcon style={styles.sendIcon} onPress={() => onSave(comment)} />
-        ) : (
-          <ActivityIndicator
-            size="small"
-            color={globalStyles.activityIndicator.color}
-            style={styles.activityIndicator}
-          />
-        )}
-      </View>
+      </>
     );
   };
-
-  // TODO: RTL support
-  const ExpandableTextInput = () => (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <CustomKeyboardAvoidingView style={styles.commentView}>
-        <CommentInput />
-      </CustomKeyboardAvoidingView>
-    </TouchableWithoutFeedback>
-  );
 
   const renderItem = ({ item }) => (
     <CommentsActivityItem
@@ -321,25 +322,32 @@ const CommentsActivity = ({ headerHeight, insets }) => {
     />
   );
 
-  const title = i18n.t("global.commentsActivity");
 
-  return (
+  return(
     <>
-      <SheetHeader expandable dismissable title={title} />
       <FilterList
-        //display
+        display
         //sortable
         items={items}
         renderItem={renderItem}
         search={search}
         onSearch={onSearch}
-        //defaultFilter={defaultFilter}
-        //filter={filter}
-        //onFilter={onFilter}
+        defaultFilter={defaultFilter}
+        filter={filter}
+        onFilter={onFilter}
         onRefresh={mutate}
       />
-      <ExpandableTextInput />
+      <CustomBottomSheet
+        ref={sheetRef}
+        modal={false}
+        dismissable={false}
+        // TODO: dynamic based on Keyboard height?
+        snapPoints={[125,"100%"]}
+        defaultIndex={0}
+      >
+        <CommentInput />
+      </CustomBottomSheet>
     </>
   );
 };
-export default CommentsActivity;
+export default CommentsActivityScreen;

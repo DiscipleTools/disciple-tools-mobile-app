@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 
-import { ClearIcon, ExpandIcon } from "components/Icon";
+import { CloseIcon, ExpandIcon } from "components/Icon";
 
 import useBottomSheet from 'hooks/use-bottom-sheet';
 import useStyles from "hooks/use-styles";
@@ -35,16 +35,16 @@ const SheetHeader = ({ expandable, dismissable, title, onDismiss }) => {
         globalStyles.rowContainer,
         styles.controls
       ]}>
-      {expandable && (
+      {/* {expandable && (
         <ExpandIcon
           onPress={() => onPressExpand()}
           style={[
             globalStyles.icon,
           ]}
         />
-      )}
+      )} */}
       {dismissable && (
-        <ClearIcon
+        <CloseIcon
           onPress={() => onPressDismiss()}
           style={styles.closeIcon}
         />

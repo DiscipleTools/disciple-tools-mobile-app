@@ -11,7 +11,7 @@ import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./TabScrollView.styles";
 
-const TabScrollView = ({ index, onIndexChange, renderTab, scenes, style }) => {
+const TabScrollView = ({ index, onIndexChange, renderTab, scenes, style, contentContainerStyle }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
 
@@ -81,9 +81,14 @@ const TabScrollView = ({ index, onIndexChange, renderTab, scenes, style }) => {
             };
           }}
         >
-          <View style={styles.sceneContent}>
+          <ScrollView
+            style={styles.sceneContent}
+            contentContainerStyle={[
+              contentContainerStyle
+            ]}
+          >
             {scenes[index]?.component}
-          </View>
+          </ScrollView>
         </FlingGestureHandler>
       </FlingGestureHandler>
     </View>

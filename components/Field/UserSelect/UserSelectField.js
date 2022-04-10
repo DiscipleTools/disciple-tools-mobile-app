@@ -72,7 +72,7 @@ const UserSelectField = ({ editing, field, value, onChange }) => {
               />
           });
         }}
-        items={[value]}
+        items={value ? [value] : null}
         renderItem={renderItemEdit}
       />
     );

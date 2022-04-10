@@ -15,6 +15,8 @@ export const USER_ADD_PUSH_TOKEN_RESPONSE = "USER_ADD_PUSH_TOKEN_RESPONSE";
 export const USER_ADD_PUSH_TOKEN_SUCCESS = "USER_ADD_PUSH_TOKEN_SUCCESS";
 export const USER_ADD_PUSH_TOKEN_FAILURE = "USER_ADD_PUSH_TOKEN_FAILURE";
 
+export const SET_FILTER = "SET_FILTER";
+
 export const SET_THEME = "SET_THEME";
 
 export const GET_MY_USER_INFO = "GET_MY_USER_INFO";
@@ -57,6 +59,10 @@ export function login(domain, username, password) {
     username,
     password,
   };
+}
+
+export function setFilter({ key, filter }) {
+  return { type: SET_FILTER, key, filter };
 }
 
 export function setTheme(theme) {

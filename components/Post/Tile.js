@@ -1,25 +1,39 @@
-import React, { useState, useReducer, useEffect } from "react";
-import { Button, RefreshControl, View } from "react-native";
+import React, { useReducer, useState } from "react";
+import { RefreshControl, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
 
+import Alert from "components/Alert";
+import Button from "components/Button";
 import Field from "components/Field/Field";
 import MemberList from "components/MemberList";
 
 import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
+import useToast from 'hooks/use-toast';
 import useType from "hooks/use-type";
 
-import { FieldNames } from "constants";
+import { FieldNames, ScreenConstants } from "constants";
 
 import { localStyles } from "./Tile.styles";
 
-const Tile = ({ grouped=false, editing=false, fields, post, save, mutate }) => {
+const Tile = ({
+  isCreate,
+  grouped,
+  editing,
+  post,
+  fields,
+  save,
+  mutate
+}) => {
 
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
-  const { isContact, isGroup, postType } = useType();
   const { i18n } = useI18N();
+  const { postType } = useType();
+  const toast = useToast();
+
+  const [loading, setLoading] = useState(false);
 
   const SET_STATE = "SET_STATE";
 
@@ -77,24 +91,55 @@ const Tile = ({ grouped=false, editing=false, fields, post, save, mutate }) => {
     return;
   };
 
-  // TODO: check required fields
-  // TODO: clean up any added then removed fields (currently works, but messy)
-  const onSave = async() => {
-    let filteredPost = Object.fromEntries(Object.entries(_post).filter(([_, v]) => v != null));
-    await save(filteredPost);
-    mutate();
-    // TODO: use postType, and constants
-    if (isGroup) navigation.push("Groups");
-    if (isContact) navigation.push("Contacts");
-  };
-
   const onChange = (field) => dispatch({ type: SET_STATE, field });
 
-  const onCancel = () => onRefresh();
+  const onSave = async() => {
+    setLoading(true);
+    const requiredFields = fields?.filter(field => field?.required === true && field?.in_create_form === true); //?.map(field => field?.name);
+    const filteredPost = Object.fromEntries(Object.entries(_post).filter(([_, v]) => v != null && v?.length > 0));
+    for (let ii=0; ii<requiredFields?.length; ii++) {
+      const fieldName = requiredFields[ii]?.name;
+      const fieldLabel = requiredFields[ii]?.label;
+      if (fieldName && !filteredPost[fieldName]) {
+        setLoading(false);
+        toast(i18n.t("isRequiredError", { item: fieldLabel }), true);
+        return;
+      };
+    };
+    const res = await save(filteredPost);
+    if (isCreate) {
+      if (res?.data?.ID) {
+        navigation.navigate(ScreenConstants.DETAILS, {
+          id: res.data.ID,
+          type: postType,
+        });
+      } else {
+        navigation.navigate(ScreenConstants.LIST, {
+          type: postType,
+        });
+      };
+    };
+    setLoading(false);
+  };
+
+  const SaveButton = () => (
+    <Button
+      title={i18n.t("global.save")}
+      loading={loading}
+      onPress={onSave}
+    />
+  );
+
 
   const Fields = () => {
     return fields.map((field, idx) => (
       <>
+        { idx === 0 && post?.requires_update && (
+          <Alert
+            title={i18n.t("global.updateRequired")}
+            subtitle={i18n.t("global.updateRequiredText")}
+          />
+        )}
         <Field
           key={field?.name ?? idx}
           grouped={grouped}
@@ -129,20 +174,15 @@ const Tile = ({ grouped=false, editing=false, fields, post, save, mutate }) => {
       extraScrollHeight={75}
       keyboardShouldPersistTaps="handled"
       style={globalStyles.surface}
+      contentContainerStyle={[
+        globalStyles.surface,
+        globalStyles.screenGutter
+      ]}
     >
       <Fields />
-      { grouped && (
-        <View style={[
-          globalStyles.buttonShadow,
-          globalStyles.buttonText,
-          styles.button,
-        ]}>
-          <Button
-            onPress={onSave}
-            title={i18n.t("global.save")}
-            color={globalStyles.buttonText.color}
-            accessibilityLabel="Save, and Continue Editing"
-          />
+      { isCreate && (
+        <View style={styles.saveButton}>
+          <SaveButton />
         </View>
       )}
     </KeyboardAwareScrollView>

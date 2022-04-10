@@ -1,33 +1,28 @@
 import React, {
-  useCallback,
   useEffect,
   useLayoutEffect,
   useState,
 } from "react";
-import { View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { Pressable, View, useWindowDimensions } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
-import { useHeaderHeight } from "@react-navigation/elements";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 
 import { HeaderLeft, HeaderRight } from "components/Header/Header";
-import { CommentEditIcon, HelpIcon, ExtLinkIcon } from "components/Icon";
+import { CommentActivityIcon, StarIcon, StarOutlineIcon } from "components/Icon";
 import OfflineBar from "components/OfflineBar";
 import TitleBar from "components/TitleBar";
-import TabScrollView from "components/TabScrollView";
 import Tile from "components/Post/Tile";
 import PostSkeleton from "components/Post/PostSkeleton";
-import CommentsActivity from "components/CommentsActivity";
 import FAB from "components/FAB";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
 import useI18N from "hooks/use-i18n";
 import useDetails from "hooks/use-details";
 import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
 import useAPI from "hooks/use-api";
 
-import { SubTypeConstants } from "constants";
+import { ScreenConstants, SubTypeConstants } from "constants";
 
 import { localStyles } from "./DetailsScreen.styles";
 
@@ -35,10 +30,8 @@ const DetailsScreen = ({ navigation }) => {
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
-  const headerHeight = useHeaderHeight();
-  const insets = useSafeAreaInsets();
+  const layout = useWindowDimensions();
   const { styles, globalStyles } = useStyles(localStyles);
-  const { expand } = useBottomSheet();
   const { i18n } = useI18N();
   const {
     data: post,
@@ -52,8 +45,11 @@ const DetailsScreen = ({ navigation }) => {
   const { settings } = useSettings();
   const { updatePost } = useAPI();
 
-  const [index, onIndexChange] = useState(0);
+  const [index, setIndex] = useState(0);
   const [scenes, setScenes] = useState(null);
+  const [routes, setRoutes] = useState([]);
+
+  const renderScene = SceneMap(scenes);
 
   /*
    * NOTE: we need to stringify 'post' otherwise React will consider it
@@ -62,24 +58,32 @@ const DetailsScreen = ({ navigation }) => {
   useEffect(() => {
     if (!post || !settings) return;
     if (settings?.tiles?.length > 0) {
+      let _scenes = {};
+      let _routes = [];
+      // TODO: constant
       const sortKey = "tile_priority";
       const sortedTiles = [...settings.tiles].sort((a, b) =>
         true ? a[sortKey] - b[sortKey] : b[sortKey] - a[sortKey]
       );
-      setScenes(
-        sortedTiles.map((tile) => ({
-          label: tile?.label,
-          component: (
+      sortedTiles.forEach(tile => {
+        if (tile?.name && tile?.label) {
+          _scenes[tile.name] = () => (
             <Tile
               post={post}
               fields={tile?.fields}
               save={updatePost}
               mutate={mutate}
             />
-          ),
-        }))
-      );
-    }
+          );
+          _routes.push({
+            key: tile.name,
+            title: tile.label,
+          });
+        };
+      });
+      setScenes(_scenes);
+      setRoutes(_routes);
+    };
   }, [JSON.stringify(post), settings?.tiles?.length]);
 
   useLayoutEffect(() => {
@@ -100,9 +104,40 @@ const DetailsScreen = ({ navigation }) => {
         <HeaderRight
           kebabItems={kebabItems}
           renderStartIcons={() => (
+            <>
+            <Pressable
+              onPress={() =>
+                updatePost({
+                  fields: { favorite: !post?.favorite },
+                  id: Number(post?.ID),
+                  type: post?.post_type,
+                  mutate,
+                })
+              }
+              style={[
+                globalStyles.headerIcon,
+                styles.headerIcon
+              ]}
+            >
+              {post?.favorite ? (
+                <StarIcon style={globalStyles.icon} />
+              ) : (
+                <StarOutlineIcon style={globalStyles.icon} />
+              )}
+            </Pressable>
             <View style={globalStyles.headerIcon}>
-              <CommentEditIcon onPress={showCommentsActivitySheet} />
+              <CommentActivityIcon
+                onPress={() => {
+                  navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
+                    id: post?.ID,
+                    name: post?.name,
+                    type: post?.post_type,
+                    subtype: SubTypeConstants.COMMENTS_ACTIVITY
+                  });
+                }}
+              />
             </View>
+            </>
           )}
           props
         />
@@ -112,34 +147,60 @@ const DetailsScreen = ({ navigation }) => {
     //}, []);
   });
 
-  const showCommentsActivitySheet = () => {
-    navigation.setParams({
-      subtype: SubTypeConstants.COMMENTS_ACTIVITY,
-    });
-    expand({
-      hideFooter: true,
-      snapPoints: ["66%", "95%"],
-      renderContent: () => (
-        <CommentsActivity headerHeight={headerHeight} insets={insets} />
-      ),
-    });
-  };
 
-  if (!post || !settings || isLoading) return <PostSkeleton />;
+  if (!scenes || !post || !settings || isLoading) return <PostSkeleton />;
+  // TODO: switch to toggle Update Required
+  // updatePost({ fields: { "requires_update": true|false }});
+  return(
+    <>
+      <OfflineBar />
+      <TitleBar
+        center
+        title={post?.title}
+        style={styles.titleBar}
+      />
+      <TabView
+        lazy
+        renderLazyPlaceholder={() => <PostSkeleton />}
+        keyboardDismissMode="none"
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: layout.width }}
+        renderTabBar={(props) => (
+          <TabBar
+            {...props}
+            style={styles.tabBarContainer}
+            activeColor={styles.tabBarLabelActive.color}
+            inactiveColor={styles.tabBarLabelInactive.color}
+            scrollEnabled
+            tabStyle={styles.tabBarTab}
+            indicatorStyle={styles.tabBarIndicator}
+            //renderLabel={({ route, color }) => (
+            //  <Text style={styles.tabBarLabel}>{route.title}</Text>
+            //)}
+          />
+        )}
+        style={globalStyles.surface}
+      />
+      <FAB />
+    </>
+  );
   return (
     <>
-      <ScrollView
+      <OfflineBar />
+      <TitleBar
+        center
+        title={post?.title}
+        style={styles.titleBar}
+      />
+      <TabScrollView
+        index={index}
+        onIndexChange={onIndexChange}
+        scenes={scenes}
         style={globalStyles.screenContainer}
         contentContainerStyle={globalStyles.screenGutter}
-      >
-        <OfflineBar />
-        <TitleBar center title={post?.title} style={styles.titleBar} />
-        <TabScrollView
-          index={index}
-          onIndexChange={onIndexChange}
-          scenes={scenes}
-        />
-      </ScrollView>
+      />
       <FAB />
     </>
   );

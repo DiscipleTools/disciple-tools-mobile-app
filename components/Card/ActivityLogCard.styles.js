@@ -16,5 +16,8 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   activityText: {
     color: "grey",
     fontStyle: "italic",
+  },
+  etcetera: {
+    alignItems: "center",
   }
 });

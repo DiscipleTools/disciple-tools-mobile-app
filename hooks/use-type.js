@@ -1,4 +1,3 @@
-import React from "react";
 import * as RootNavigation from "navigation/RootNavigation";
 
 import {
@@ -19,18 +18,28 @@ const useType = ({ type, subtype } = {}) => {
 
   const isContact = type === TypeConstants.CONTACT;
   const isGroup = type === TypeConstants.GROUP;
-  const isTraining = type === TypeConstants.TRAINING;
-  const isQuestionnaire = type === TypeConstants.QUESTIONNAIRE;
+
   const isNotification = type === TypeConstants.NOTIFICATION;
 
-  const isPost = (isContact || isGroup || isTraining || isQuestionnaire);
+  const isCustomPostType = (type || subtype) && !(
+    isContact ||
+    isGroup ||
+    isNotification ||
+    isCommentsActivity
+  );
+
+  const isPost = (
+    isContact ||
+    isGroup ||
+    isCustomPostType
+  );
+
   const isCommentsActivity = (isPost && subtype === SubTypeConstants.COMMENTS_ACTIVITY);
 
   const postType = () => {
     if (isContact) return TypeConstants.CONTACT;
     if (isGroup) return TypeConstants.GROUP;
-    if (isTraining) return TypeConstants.TRAINING;
-    if (isQuestionnaire) return TypeConstants.QUESTIONNAIRE;
+    if (isCustomPostType) return type;
     return null;
   };
 
@@ -42,10 +51,8 @@ const useType = ({ type, subtype } = {}) => {
   const getTabScreenFromType = (type) => {
     if (type === TypeConstants.CONTACT) return TabScreenConstants.CONTACTS;
     if (type === TypeConstants.GROUP) return TabScreenConstants.GROUPS;
-    if (type === TypeConstants.TRAINING) return TabScreenConstants.MORE;
-    //if (type === TypeConstants.QUESTIONNAIRE) return TabScreenConstants.MORE;
-    return null;
-  }
+    return TabScreenConstants.MORE;
+  };
 
   return {
     TypeConstants,
@@ -53,8 +60,7 @@ const useType = ({ type, subtype } = {}) => {
     isPost,
     isContact,
     isGroup,
-    isTraining,
-    isQuestionnaire,
+    isCustomPostType,
     isNotification,
     isCommentsActivity,
     postType: postType(),

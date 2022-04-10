@@ -3,7 +3,6 @@ import { useNavigation } from "@react-navigation/native";
 
 import {
   AddIcon,
-  CalendarIcon,
   ClearIcon,
   CommentPlusIcon,
   MaterialCommunityIcon,
@@ -17,7 +16,11 @@ import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
 import useAPI from "hooks/use-api";
 
-import { TypeConstants, ScreenConstants } from "constants";
+import {
+  QuickActionButtonConstants,
+  TypeConstants,
+  ScreenConstants
+} from "constants";
 
 import { localStyles } from "./FAB.styles";
 
@@ -25,9 +28,9 @@ const FAB = () => {
   const navigation = useNavigation();
 
   const { styles, globalStyles } = useStyles(localStyles);
-  const { i18n, isRTL, locale } = useI18N();
+  const { i18n, locale } = useI18N();
 
-  const { isList, isPost, isContact, isGroup } = useType();
+  const { isList, isPost, isContact, getTabScreenFromType } = useType();
 
   const {
     data: post,
@@ -101,7 +104,7 @@ const FAB = () => {
 
   const quickButtonFields = filterQuickButtonFields();
 
-  const mapIcon = (field) => {
+  const mapItem = (field) => {
     const defaultIconConfig = {
       title: settings.fields[field]?.name ?? "",
       count: (post && post[field]) ?? 0,
@@ -111,51 +114,51 @@ const FAB = () => {
       fgColor: styles.item.color,
       callback: () => onSaveQuickAction(field),
     };
-    if (field === "quick_button_no_answer")
+    if (field === QuickActionButtonConstants.NO_ANSWER)
       return {
         ...defaultIconConfig,
         name: "voice-off",
         //bgColor: "red", //TODO Colors.colorNo,
       };
-    if (field === "quick_button_contact_established")
+    if (field === QuickActionButtonConstants.CONTACT_ESTABLISHED)
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "account-voice",
         //bgColor: "green", //TODO
       };
-    if (field === "quick_button_meeting_scheduled")
+    if (field === QuickActionButtonConstants.MEETING_SCHEDULED)
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "calendar-plus",
         //bgColor: "orange", //TODO
       };
-    if (field === "quick_button_meeting_complete")
+    if (field === QuickActionButtonConstants.MEETING_COMPLETE)
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "calendar-check",
         //bgColor: "green", //TODO
       };
-    if (field === "quick_button_meeting_postponed")
+    if (field === QuickActionButtonConstants.MEETING_POSTPONED)
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "calendar-minus",
         //bgColor: "orange", //TODO
       };
-    if (field === "quick_button_no_show")
+    if (field === QuickActionButtonConstants.NO_SHOW)
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
         name: "calendar-remove",
         //bgColor: "red", //TODO
       };
-    if (field === "quick_button_new")
+    if (field === QuickActionButtonConstants.NEW)
       return {
         ...defaultIconConfig,
-        title: i18n.t("global.addNewContact", { locale }), // TODO: group translate
+        title: i18n.t("global.addNew"),
         count: null,
         name: "account-plus",
         //bgColor: "green", //TODO
@@ -165,10 +168,10 @@ const FAB = () => {
           });
         },
       };
-    if (field === "quick_button_import_contacts")
+    if (field === QuickActionButtonConstants.IMPORT)
       return {
         ...defaultIconConfig,
-        title: i18n.t("global.importContact", { locale }),
+        title: i18n.t("global.importContact"),
         count: null,
         type: "MaterialCommunityIcon",
         name: "card-account-phone",
@@ -182,8 +185,7 @@ const FAB = () => {
     return null;
   };
 
-  if (isList && !isContact) return null;
-  if (isList || isPost)
+  if (isList || isPost) {
     return (
       <ActionButton
         //position={isRTL ? "left" : "right"}
@@ -200,24 +202,24 @@ const FAB = () => {
         bgColor="rgba(0,0,0,0.5)"
         nativeFeedbackRippleColor="rgba(0,0,0,0)"
         onPress={() => {
-          if (isList && isGroup) {
-            navigation.navigate("CreateGroup", {
-              type: TypeConstants.GROUP_CREATE,
+          if (!isContact) {
+            const tabScreen = getTabScreenFromType(postType);
+            navigation.jumpTo(tabScreen, {
+              screen: ScreenConstants.CREATE,
+              type: postType,
             });
-          }
+          };
         }}
       >
         {quickButtonFields?.length > 0 &&
           quickButtonFields.map((field) => {
             const { title, count, type, name, bgColor, fgColor, callback } =
-              mapIcon(field);
+              mapItem(field);
             return (
               <ActionButton.Item
                 key={count}
                 title={count !== null ? `${title} (${count})` : title}
-                onPress={() => {
-                  callback();
-                }}
+                onPress={() => callback()}
                 size={35}
                 buttonColor={bgColor}
                 nativeFeedbackRippleColor="rgba(0,0,0,0)"
@@ -233,6 +235,7 @@ const FAB = () => {
           })}
       </ActionButton>
     );
+  };
   return null;
 };
 export default FAB;
