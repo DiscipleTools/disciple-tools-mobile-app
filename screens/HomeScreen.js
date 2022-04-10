@@ -69,10 +69,6 @@ const HomeScreen = ({ navigation, route }) => {
         label: ("Support"),
         //onPress: {draftNewSupportEmail},
       },
-      {
-        label: ("Feedback"),
-        //onPress: {draftNewSupportEmail},
-      },
     ];
     const renderStartIcons = () => (
       <>
