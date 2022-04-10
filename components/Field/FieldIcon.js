@@ -20,7 +20,7 @@ const FieldIcon = ({ field, hide }) => {
       break;
       case FieldTypes.LOCATION:
         iconType = "MaterialCommunityIcons";
-        iconName = "map-marker";
+        iconName = "map-marker-outline";
         break;
     case FieldTypes.TEXTAREA: //TODO: why does this not work?
       if (name.includes("list")) {
@@ -31,7 +31,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "text";
       } else {
         iconType = "MaterialCommunityIcons";
-        iconName = "text-long";
+        iconName = "text-short";
       }
       break;
     case FieldTypes.DATE:
@@ -109,9 +109,13 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("trainings")) {
         iconType = "MaterialCommunityIcons";
         iconName = "school";
-      } else if (name.includes("group_leader")) {
+      } else if (name.includes("group_leader") || name.includes("leaders")) {
         iconType = "MaterialCommunityIcons";
         iconName = "foot-print";
+      } else if (name.includes("leader")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "shield-account";
+        iconStyle = { transform: [{ scaleX: -1 }] }
       } else if (name.includes("group")) {
         iconType = "MaterialCommunityIcons";
         iconName = "gamepad-circle";
@@ -121,15 +125,12 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("members")) {
         iconType = "MaterialCommunityIcons";
         iconName = "format-list-bulleted";
-      } else if (name.includes("leaders")) {
-        iconType = "MaterialCommunityIcons";
-        iconName = "foot-print";
       } else if (name.includes("contacts")) {
         iconType = "MaterialCommunityIcons";
         iconName = "human";
-      } else if (name.includes("disciples")) {
+      } else if (name.includes("disciple")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "foot-print";
+        iconName = "account-star-outline";
         iconStyle = { transform: [{ scaleX: -1 }] }
       } else if (name.includes("meetings")) {
         iconType = "MaterialCommunityIcons";
@@ -276,7 +277,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "crosshairs";      
       } else if (name.includes("video_link")) {
           iconType = "MaterialCommunityIcons";
-          iconName = "satellite-uplink";
+          iconName = "video-image";
       } else {
         iconType = "MaterialCommunityIcons";
         iconName = "text";
