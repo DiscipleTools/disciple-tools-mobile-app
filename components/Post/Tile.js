@@ -3,6 +3,7 @@ import { RefreshControl, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
 
+import Alert from "components/Alert";
 import Button from "components/Button";
 import Field from "components/Field/Field";
 import MemberList from "components/MemberList";
@@ -133,6 +134,12 @@ const Tile = ({
   const Fields = () => {
     return fields.map((field, idx) => (
       <>
+        { idx === 0 && post?.requires_update && (
+          <Alert
+            title={i18n.t("global.updateRequired")}
+            subtitle={i18n.t("global.updateRequiredText")}
+          />
+        )}
         <Field
           key={field?.name ?? idx}
           grouped={grouped}

@@ -31,16 +31,13 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     color: theme.text.secondary,
     fontSize: 10,
   },
-  commentInputView: {
-    alignItems: "flex-start",
-    paddingHorizontal: 15,
-  },
   commentInputText: {
     color: theme.text.primary,
-    marginTop: 15
+    padding: 10,
+    marginBottom: 10
   },
   commentText: (isActivity) => ({
-    flexDirection: isRTL ? "row-reverse" : "row",
+    flexDirection: "row",
     color: isActivity ? theme.text.secondary : theme.text.primary,
     fontStyle: isActivity ? "italic" : null,
     padding: 5,
@@ -58,7 +55,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     //borderWidth: 2,
     //borderColor: theme.highlight,
     //borderRadius: 25,
-    fontSize: 50,
+    fontSize: 42,
   },
   activityIndicator: {
     marginEnd: 15

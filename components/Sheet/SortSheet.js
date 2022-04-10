@@ -12,36 +12,36 @@ const SortSheet = ({ items, setItems, filter, onFilter }) => {
   const sortKey = filter?.query?.sort;
   const sections = [
     {
-      title: i18n.t("sorting.lastModifiedDate"),
+      title: i18n.t("global.lastModifiedDate"),
       data: [
         {
-          key: SortConstants.LAST_MOD_DESC,
-          label: i18n.t("sorting.mostRecent"),
-          icon: <SortDescIcon />,
-          selected: SortConstants.LAST_MOD_DESC === sortKey,
-        },
-        {
           key: SortConstants.LAST_MOD_ASC,
-          label: i18n.t("sorting.leastRecent"),
+          label: i18n.t("global.mostRecent"),
           icon: <SortAscIcon />,
           selected: SortConstants.LAST_MOD_ASC === sortKey,
+        },
+        {
+          key: SortConstants.LAST_MOD_DESC,
+          label: i18n.t("global.leastRecent"),
+          icon: <SortDescIcon />,
+          selected: SortConstants.LAST_MOD_DESC === sortKey,
         },
       ],
     },
     {
-      title: i18n.t("sorting.createdDate"),
+      title: i18n.t("global.createdDate"),
       data: [
         {
-          key: SortConstants.CREATED_DESC,
-          label: i18n.t("sorting.newest"),
-          icon: <SortDescIcon />,
-          selected: SortConstants.CREATED_DESC === sortKey,
-        },
-        {
           key: SortConstants.CREATED_ASC,
-          label: i18n.t("sorting.oldest"),
+          label: i18n.t("global.newest"),
           icon: <SortAscIcon />,
           selected: SortConstants.CREATED_ASC === sortKey,
+        },
+        {
+          key: SortConstants.CREATED_DESC,
+          label: i18n.t("global.oldest"),
+          icon: <SortDescIcon />,
+          selected: SortConstants.CREATED_DESC === sortKey,
         },
       ],
     },

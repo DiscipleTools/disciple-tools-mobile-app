@@ -1,27 +1,24 @@
-import useList from "hooks/use-list";
+import useSettings from "hooks/use-settings";
 
 import { TypeConstants } from "constants";
 
-import { getAvailablePostTypes } from "utils";
-
+// TODO: merge into use-types?
 const useCustomPostTypes = () => {
-  //let url = "wp/v2/types";
-  // https://developer.wordpress.org/rest-api/reference/post-types/
-  //return useRequest({ url });
-  const availablePostTypes = getAvailablePostTypes();
-  const activeCustomPostTypes = [];
-  for (let ii=0; ii < availablePostTypes.length; ii++) {
-    const type = availablePostTypes[ii];
-    if (
-      type === TypeConstants.NOTIFICATION ||
-      type === TypeConstants.CONTACT ||
-      type === TypeConstants.GROUP
-    ) continue;
-    const { data: posts } = useList({ limit: 1, type });
-    if (posts?.length > 0) activeCustomPostTypes.push(type);
-  };
+  const { settings } = useSettings();
+  if (!settings?.post_types) return null;
+  const ignorePostTypes = [
+    TypeConstants.PEOPLEGROUPS
+  ];
+  const corePostTypes = [
+    TypeConstants.CONTACT,
+    TypeConstants.GROUP,
+  ];
+  const filteredCustomPostTypes = settings?.post_types?.filter(postType => (
+    !corePostTypes.includes(postType) &&
+    !ignorePostTypes.includes(postType)
+  ));
   return {
-    activeCustomPostTypes
+    customPostTypes: filteredCustomPostTypes,
   };
 };
 export default useCustomPostTypes;

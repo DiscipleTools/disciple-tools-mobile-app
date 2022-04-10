@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { SafeAreaView } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -8,42 +8,45 @@ import OfflineBar from "components/OfflineBar";
 import ListItem from "components/ListItem";
 
 import useCustomPostTypes from "hooks/use-custom-post-types";
+import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
 
 import { ScreenConstants } from "constants";
 
-import { labelize } from "utils";
-
 import { localStyles } from "./MoreScreen.styles";
 
-const MoreScreen = ({ navigation, route }) => {
+const MoreScreen = ({ navigation }) => {
 
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
-  const { activeCustomPostTypes } = useCustomPostTypes();
+  const { customPostTypes } = useCustomPostTypes() || {};
   const { styles, globalStyles } = useStyles(localStyles);
 
-  const PostButton = ({ key, label, type }) => (
-    <ListItem
-      key={key}
-      startComponent={<PostIcon />}
-      label={label}
-      endComponent={<ChevronIcon style={globalStyles.icon} />}
-      onPress={() => {
-        navigation.push(ScreenConstants.LIST, {
-          type,
-          filter: null,
-        });
-      }}
-    />
-  );
+  const PostButton = ({ type }) => {
+    const { settings } = useSettings({ type });
+    if (!settings?.labelPlural) return null;
+    const label = settings.labelPlural;
+    return(
+      <ListItem
+        startComponent={<PostIcon />}
+        label={label}
+        endComponent={<ChevronIcon style={globalStyles.icon} />}
+        onPress={() => {
+          navigation.push(ScreenConstants.LIST, {
+            type,
+            filter: null,
+          });
+        }}
+      />
+    );
+  };
 
   return (
     <SafeAreaView style={globalStyles.screenContainer}>
       <OfflineBar />
-      { activeCustomPostTypes.map(type => (
-        <PostButton key={type} label={labelize(type)} type={type} />
+      { customPostTypes?.map(postType => (
+        <PostButton key={postType} type={postType} />
       ))}
     </SafeAreaView>
   );

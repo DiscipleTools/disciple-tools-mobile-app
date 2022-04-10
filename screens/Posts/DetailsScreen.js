@@ -3,13 +3,13 @@ import React, {
   useLayoutEffect,
   useState,
 } from "react";
-import { View, useWindowDimensions } from "react-native";
+import { Pressable, View, useWindowDimensions } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 
 import { HeaderLeft, HeaderRight } from "components/Header/Header";
-import { CommentEditIcon } from "components/Icon";
+import { CommentActivityIcon, StarIcon, StarOutlineIcon } from "components/Icon";
 import OfflineBar from "components/OfflineBar";
 import TitleBar from "components/TitleBar";
 import Tile from "components/Post/Tile";
@@ -109,17 +109,40 @@ const DetailsScreen = ({ navigation }) => {
         <HeaderRight
           kebabItems={kebabItems}
           renderStartIcons={() => (
+            <>
+            <Pressable
+              onPress={() =>
+                updatePost({
+                  fields: { favorite: !post?.favorite },
+                  id: Number(post?.ID),
+                  type: post?.post_type,
+                  mutate,
+                })
+              }
+              style={[
+                globalStyles.headerIcon,
+                styles.headerIcon
+              ]}
+            >
+              {post?.favorite ? (
+                <StarIcon style={globalStyles.icon} />
+              ) : (
+                <StarOutlineIcon style={globalStyles.icon} />
+              )}
+            </Pressable>
             <View style={globalStyles.headerIcon}>
-              <CommentEditIcon
+              <CommentActivityIcon
                 onPress={() => {
                   navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
-                    id: postId,
-                    type: postType,
+                    id: post?.ID,
+                    name: post?.name,
+                    type: post?.post_type,
                     subtype: SubTypeConstants.COMMENTS_ACTIVITY
                   });
                 }}
               />
             </View>
+            </>
           )}
           props
         />
@@ -131,6 +154,8 @@ const DetailsScreen = ({ navigation }) => {
 
 
   if (!scenes || !post || !settings || isLoading) return <PostSkeleton />;
+  // TODO: switch to toggle Update Required
+  // updatePost({ fields: { "requires_update": true|false }});
   return(
     <>
       <OfflineBar />
