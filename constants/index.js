@@ -262,6 +262,7 @@ export const ScreenConstants = Object.freeze({
   NOTIFICATIONS: "NOTIFICATIONS",
   SETTINGS: "SETTINGS",
   PIN: "PIN",
+  USER: "USER",
 });
 
 export const NotificationActionConstants = Object.freeze({
