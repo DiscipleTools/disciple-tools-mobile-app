@@ -12,6 +12,9 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
       marginVertical: 20,
       paddingVertical: 10,
   },
+  icon: {
+    color: theme.offLight
+  },
   title: {
     fontSize: 20,
     fontWeight: "bold",

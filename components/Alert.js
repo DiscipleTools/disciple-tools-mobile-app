@@ -12,7 +12,7 @@ const Alert = ({ title, subtitle }) => {
   return(
     <View style={styles.container}>
       <View style={globalStyles.rowContainer}>
-        <AlertIcon />
+        <AlertIcon style={styles.icon} />
         <Text style={styles.title}>
           {title}
         </Text>
