@@ -22,4 +22,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     backgroundColor: ThemeConstants.DARK === theme.mode ? theme.highlight : theme.brand.primary,
     height: 3
   },
+  headerIcon: {
+    marginHorizontal: 10
+  }
 });

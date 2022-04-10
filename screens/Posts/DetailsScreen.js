@@ -3,13 +3,13 @@ import React, {
   useLayoutEffect,
   useState,
 } from "react";
-import { View, useWindowDimensions } from "react-native";
+import { Pressable, View, useWindowDimensions } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 
 import { HeaderLeft, HeaderRight } from "components/Header/Header";
-import { CommentEditIcon } from "components/Icon";
+import { CommentEditIcon, StarIcon, StarOutlineIcon } from "components/Icon";
 import OfflineBar from "components/OfflineBar";
 import TitleBar from "components/TitleBar";
 import Tile from "components/Post/Tile";
@@ -104,6 +104,27 @@ const DetailsScreen = ({ navigation }) => {
         <HeaderRight
           kebabItems={kebabItems}
           renderStartIcons={() => (
+            <>
+            <Pressable
+              onPress={() =>
+                updatePost({
+                  fields: { favorite: !post?.favorite },
+                  id: Number(post?.ID),
+                  type: post?.post_type,
+                  mutate,
+                })
+              }
+              style={[
+                globalStyles.headerIcon,
+                styles.headerIcon
+              ]}
+            >
+              {post?.favorite ? (
+                <StarIcon style={globalStyles.icon} />
+              ) : (
+                <StarOutlineIcon style={globalStyles.icon} />
+              )}
+            </Pressable>
             <View style={globalStyles.headerIcon}>
               <CommentEditIcon
                 onPress={() => {
@@ -115,6 +136,7 @@ const DetailsScreen = ({ navigation }) => {
                 }}
               />
             </View>
+            </>
           )}
           props
         />
