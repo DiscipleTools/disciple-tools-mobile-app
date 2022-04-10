@@ -9,7 +9,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 
 import { HeaderLeft, HeaderRight } from "components/Header/Header";
-import { CommentEditIcon, StarIcon, StarOutlineIcon } from "components/Icon";
+import { CommentActivityIcon, StarIcon, StarOutlineIcon } from "components/Icon";
 import OfflineBar from "components/OfflineBar";
 import TitleBar from "components/TitleBar";
 import Tile from "components/Post/Tile";
@@ -126,7 +126,7 @@ const DetailsScreen = ({ navigation }) => {
               )}
             </Pressable>
             <View style={globalStyles.headerIcon}>
-              <CommentEditIcon
+              <CommentActivityIcon
                 onPress={() => {
                   navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
                     id: postId,
