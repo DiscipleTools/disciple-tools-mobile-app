@@ -19,7 +19,6 @@ const KebabMenu = ({ items }) => {
     },
     {
       label: i18n.t("global.helpDocs"),
-      //url: "https://disciple.tools/user-docs/getting-started-info/profile-settings/notifications/",
       url: "https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/notifications-screen/",
     },
   ];
