@@ -94,12 +94,7 @@ const DetailsScreen = ({ navigation }) => {
       },
       {
         label: i18n.t("global.helpDocs"),
-       // url: `https://disciple.tools/user-docs/getting-started-info/${postType}/${postType}-record-page/`,
        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/${postType}-record-screen/`,
-      },
-      {
-        label: ("Email Support"),
-        //onPress: {draftNewSupportEmail},
       },
     ];
     navigation.setOptions({
