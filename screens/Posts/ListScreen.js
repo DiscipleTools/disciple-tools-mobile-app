@@ -64,9 +64,6 @@ const ListScreen = ({ navigation, route }) => {
         label: ("Support Email"),
         //onPress: {draftNewSupportEmail},
       },
-      {
-        label: ("Feedback"),
-      },
     ];
     navigation.setOptions({
       title,
