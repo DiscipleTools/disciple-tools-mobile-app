@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useIsFocused } from '@react-navigation/native';
 
@@ -6,9 +6,12 @@ import OfflineBar from "components/OfflineBar";
 import FilterList from "components/FilterList";
 import { PostItem, PostItemSkeleton, PostItemHidden } from "components/Post/PostItem/index";
 
+import useI18N from "hooks/use-i18n";
 import useImportContacts from 'hooks/use-import-contacts';
 import useFilter from "hooks/use-filter";
 import useStyles from "hooks/use-styles";
+
+import { ScreenConstants, TypeConstants } from "constants";
 
 import { truncate } from "utils";
 
@@ -16,18 +19,26 @@ import { localStyles } from "./ImportContactsScreen.styles";
 
 const SUBTITLE_THRESHOLD = 60;
 
+// TODO: rename to ImportScreen
 const ImportContactsScreen = ({ navigation }) => {
 
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
   const { styles, globalStyles } = useStyles(localStyles);
+  const { i18n } = useI18N();
   const { search, onSearch } = useFilter();
   
   const { data: items, error, isLoading, isValidating, mutate } = useImportContacts({ search });
   // TODO: handler error case
 
+  useLayoutEffect(() => {
+    const title = i18n.t("global.importContact");
+    navigation.setOptions({ title });
+  });
+
   const renderItem = ({ item }) => {
+
     const PostTitle = () => (
         <Text style={[
           globalStyles.text,
@@ -36,6 +47,7 @@ const ImportContactsScreen = ({ navigation }) => {
           { item?.name ? item.name : item?.title}
         </Text>
     );
+
     const PostSubtitle = ({ values }) => {
       values = values?.map(value => value?.value);
       const joined = values?.join(" • ");
@@ -46,6 +58,15 @@ const ImportContactsScreen = ({ navigation }) => {
         </Text>
       );
     };
+
+    const mapItem = (item) => {
+      // TODO: constant?
+      item["type"] = "personal";
+      item["name"] = item?.title;
+      delete item["ID"];
+      return item;
+    };
+
     const PostDetails = () => (
       <View style={[
         globalStyles.columnContainer,
@@ -60,10 +81,16 @@ const ImportContactsScreen = ({ navigation }) => {
         )}
       </View>
     );
+
     return (
       <Pressable
         key={item?.ID}
-        onPress={() => console.log(JSON.stringify(item)) }
+        onPress={() => {
+          navigation.navigate(ScreenConstants.CREATE, {
+            type: TypeConstants.CONTACT,
+            post: mapItem(item),
+          });
+        }}
       >
         <View style={[
           globalStyles.rowContainer,

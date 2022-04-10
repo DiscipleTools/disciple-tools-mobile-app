@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-import { ClearIcon, EditIcon } from "components/Icon";
+import { CancelIcon, EditIcon } from "components/Icon";
 
 import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
@@ -76,7 +76,7 @@ const DateField = ({ editing, field, value, onChange }) => {
         style={styles.picker}
       />
       { _editing && (
-        <ClearIcon onPress={() => _setEditing(false)} />
+        <CancelIcon onPress={() => _setEditing(false)} />
       )}
       </View>
     );

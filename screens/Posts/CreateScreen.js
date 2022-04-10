@@ -9,15 +9,17 @@ import useI18N from "hooks/use-i18n";
 import useSettings from "hooks/use-settings";
 import useType from "hooks/use-type";
 
-const CreateScreen = ({ navigation }) => {
+import { labelize } from "utils";
+
+const CreateScreen = ({ navigation, route }) => {
   const { mutate } = useSWRConfig();
   const { i18n } = useI18N();
-  const { isContact } = useType();
+  const { isContact, postType } = useType();
   const { settings } = useSettings();
   const { createPost } = useAPI();
 
   useLayoutEffect(() => {
-    const title = i18n.t("global.addNew");
+    const title = `${ labelize(postType) } - ${ i18n.t("global.addNew") }`;
     navigation.setOptions({ title });
   });
 
@@ -56,6 +58,7 @@ const CreateScreen = ({ navigation }) => {
       <Tile
         isCreate
         grouped
+        post={route?.params?.post ?? null}
         fields={fields}
         save={createPost}
         mutate={mutate}

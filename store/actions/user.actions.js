@@ -61,8 +61,8 @@ export function login(domain, username, password) {
   };
 }
 
-export function setFilter({ postType, filter }) {
-  return { type: SET_FILTER, postType, filter };
+export function setFilter({ key, filter }) {
+  return { type: SET_FILTER, key, filter };
 }
 
 export function setTheme(theme) {
