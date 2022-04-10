@@ -129,8 +129,9 @@ const DetailsScreen = ({ navigation }) => {
               <CommentActivityIcon
                 onPress={() => {
                   navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
-                    id: postId,
-                    type: postType,
+                    id: post?.ID,
+                    name: post?.name,
+                    type: post?.post_type,
                     subtype: SubTypeConstants.COMMENTS_ACTIVITY
                   });
                 }}
@@ -148,6 +149,8 @@ const DetailsScreen = ({ navigation }) => {
 
 
   if (!scenes || !post || !settings || isLoading) return <PostSkeleton />;
+  // TODO: switch to toggle Update Required
+  // updatePost({ fields: { "requires_update": true|false }});
   return(
     <>
       <OfflineBar />

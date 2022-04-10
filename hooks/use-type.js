@@ -20,7 +20,6 @@ const useType = ({ type, subtype } = {}) => {
   const isGroup = type === TypeConstants.GROUP;
 
   const isNotification = type === TypeConstants.NOTIFICATION;
-  const isCommentsActivity = (isPost && subtype === SubTypeConstants.COMMENTS_ACTIVITY);
 
   const isCustomPostType = (type || subtype) && !(
     isContact ||
@@ -34,6 +33,8 @@ const useType = ({ type, subtype } = {}) => {
     isGroup ||
     isCustomPostType
   );
+
+  const isCommentsActivity = (isPost && subtype === SubTypeConstants.COMMENTS_ACTIVITY);
 
   const postType = () => {
     if (isContact) return TypeConstants.CONTACT;
