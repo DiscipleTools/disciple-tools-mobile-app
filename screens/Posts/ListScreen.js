@@ -57,12 +57,7 @@ const ListScreen = ({ navigation, route }) => {
       },
       {
         label: i18n.t("global.helpDocs"),
-        //url: `https://disciple.tools/user-docs/getting-started-info/${postType}/`,
         url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/${postType}-list-screen/`,
-      },
-      {
-        label: ("Support Email"),
-        //onPress: {draftNewSupportEmail},
       },
     ];
     navigation.setOptions({
