@@ -77,7 +77,7 @@ export const BellIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="bell" onPress={onPress} style={style} />
 );
 export const CancelIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="cancel" onPress={onPress} style={style} />
+  <MaterialCommunityIcon name="close" onPress={onPress} style={style} />
 );
 export const CaretIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="chevron-down" onPress={onPress} style={style} />
@@ -287,7 +287,7 @@ export const CommentActivityIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="timeline-text-outline" onPress={onPress} style={style} />
 );
 export const ShareIcon = ({ onPress, style }) => (
-   <MaterialCommunityIcon name="share-variant" onPress={onPress} style={style} /> 
+  <MaterialCommunityIcon name="share-variant" onPress={onPress} style={style} /> 
 );
 export const UpdateRequiredIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="progress-clock" onPress={onPress} style={style} /> 
