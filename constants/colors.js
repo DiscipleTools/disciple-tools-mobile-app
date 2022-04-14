@@ -27,7 +27,7 @@ export const errorDark = "#C70039";
 export const warningDark = "#FFC300";
 export const infoDark = "#29b6f6";
 export const successDark = "#66bb6a";
-export const cellDark = "#ecf5fc;";
+export const cellDark = "#ecf5fc";
 export const borderDark = "#c2e0ff";
 
 // System Grays - Dark Mode
@@ -64,7 +64,7 @@ export const errorLight = "#C70039";
 export const warningLight = "#FFC300";
 export const infoLight = "#29b6f6";
 export const successLight = "#66bb6a";
-export const cellLight = "#ecf5fc;";
+export const cellLight = "#ecf5fc";
 export const borderLight = "#c2e0ff";
 
 // System Grays - Light Mode
