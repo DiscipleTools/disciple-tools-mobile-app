@@ -33,7 +33,7 @@ const useTheme = () => {
   const _setTheme = (theme) => dispatch(setTheme(theme));
 
   const toggleMode = () =>
-    _setTheme(isDarkMode ? defaultThemeLight : defaultThemeDark);
+    setTheme(isDarkMode ? defaultThemeLight : defaultThemeDark);
 
   const isDarkMode = mode === ThemeConstants.DARK;
 

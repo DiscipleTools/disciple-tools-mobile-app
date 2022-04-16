@@ -3,13 +3,13 @@ import React, {
   useLayoutEffect,
   useState,
 } from "react";
-import { Pressable, View, useWindowDimensions } from "react-native";
+import { View, useWindowDimensions } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 
 import { HeaderLeft, HeaderRight } from "components/Header/Header";
-import { CommentActivityIcon, StarIcon, StarOutlineIcon } from "components/Icon";
+import { CommentEditIcon } from "components/Icon";
 import OfflineBar from "components/OfflineBar";
 import TitleBar from "components/TitleBar";
 import Tile from "components/Post/Tile";
@@ -90,11 +90,11 @@ const DetailsScreen = ({ navigation }) => {
     const kebabItems = [
       {
         label: i18n.t("global.viewOnWeb"),
-        urlPath: `${postType}/${postId}`,
+        urlPath: `/${postType}/${postId}/`,
       },
       {
-        label: i18n.t("global.helpDocs"),
-       url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/${postType}-record-screen/`,
+        label: i18n.t("global.helpSupport"),
+        url: `https://disciple.tools/user-docs/getting-started-info/${postType}/${postType}-record-page/`,
       },
     ];
     navigation.setOptions({
@@ -104,40 +104,17 @@ const DetailsScreen = ({ navigation }) => {
         <HeaderRight
           kebabItems={kebabItems}
           renderStartIcons={() => (
-            <>
-            <Pressable
-              onPress={() =>
-                updatePost({
-                  fields: { favorite: !post?.favorite },
-                  id: Number(post?.ID),
-                  type: post?.post_type,
-                  mutate,
-                })
-              }
-              style={[
-                globalStyles.headerIcon,
-                styles.headerIcon
-              ]}
-            >
-              {post?.favorite ? (
-                <StarIcon style={globalStyles.icon} />
-              ) : (
-                <StarOutlineIcon style={globalStyles.icon} />
-              )}
-            </Pressable>
             <View style={globalStyles.headerIcon}>
-              <CommentActivityIcon
+              <CommentEditIcon
                 onPress={() => {
                   navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
-                    id: post?.ID,
-                    name: post?.name,
-                    type: post?.post_type,
+                    id: postId,
+                    type: postType,
                     subtype: SubTypeConstants.COMMENTS_ACTIVITY
                   });
                 }}
               />
             </View>
-            </>
           )}
           props
         />
@@ -149,8 +126,6 @@ const DetailsScreen = ({ navigation }) => {
 
 
   if (!scenes || !post || !settings || isLoading) return <PostSkeleton />;
-  // TODO: switch to toggle Update Required
-  // updatePost({ fields: { "requires_update": true|false }});
   return(
     <>
       <OfflineBar />

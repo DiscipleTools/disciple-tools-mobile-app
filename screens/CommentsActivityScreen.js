@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useLayoutEffect, useState } from "react";
+import React, { createRef, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -15,6 +15,7 @@ import {
   CopyIcon,
   DeleteIcon,
   EditIcon,
+  ExpandIcon,
   SendIcon
 } from "components/Icon";
 import CustomBottomSheet from "components/Sheet/CustomBottomSheet";
@@ -43,7 +44,7 @@ const CommentsActivityConstants = Object.freeze({
   EDIT: "edit",
 });
 
-const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => {
+const CommentsActivityScreen = ({ navigation, headerHeight, insets }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, isRTL } = useI18N();
@@ -60,7 +61,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
     id: null,
     message: "",
   });
-  //const [expanded, setExpanded] = useState(false);
+  const [expanded, toggleExpanded] = useState(false);
 
   const { createComment, updateComment, deleteComment } = useAPI();
 
@@ -75,12 +76,15 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
   } = useCommentsActivities({ search, filter });
   if (!items) return null;
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: route?.params?.name,
-    });
-    return;
-  });
+  useEffect(() => {
+    if (sheetRef?.current) {
+      if (expanded) {
+        sheetRef.current?.snapToPosition("100%");
+      } else {
+        sheetRef.current?.snapToIndex(0);
+      };
+    };
+  }, [expanded]);
 
   //const onClear = () => setComment('');
 
@@ -99,7 +103,11 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
 
     const onCopy = () => setClipboard(message);
 
-    const onEdit = () => setEditComment({ id: item?.comment_ID, message });
+    const onEdit = () =>
+      setEditComment({
+        id: item?.comment_ID,
+        message,
+      });
 
     const onDelete = async () => {
       // TODO: add support for Activity type?
@@ -135,7 +143,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
         sections[0].data.push({
           key: CommentsActivityConstants.DELETE,
           label: i18n.t("global.delete"),
-          icon: <DeleteIcon />,
+          icon: <DeleteIcon style={{ color: "red" }} />,
         });
       };
       return sections;
@@ -246,12 +254,14 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
     const [loading, setLoading] = useState(false);
     const [comment, setComment] = useState("");
 
+    // TODO: preserve active comment on expand/collapse
+
     useEffect(() => {
       setComment(editComment.message);
     }, [editComment?.message]);
 
     const onSave = async (comment) => {
-      if (sheetRef?.current) sheetRef.current.snapToIndex(0);
+      setLoading(true);
       if (comment?.length > 0) {
         try {
           if (editComment?.id && editComment?.message?.length > 0) {
@@ -266,9 +276,8 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
             return;
           }
           const res = await createComment(comment);
-          if (res) {
-            setComment("");
-          };
+          if (res) setComment("");
+          return;
         } catch (error) {
           toast(error, true);
         } finally {
@@ -280,38 +289,47 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
     };
 
     return (
-      <>
-        <View style={{ marginStart: "auto" }}>
+      <View style={[
+        globalStyles.rowContainer,
+        styles.commentInputView
+      ]}>
+        <View style={{ flex: 4 }}>
+          <BottomSheetTextInput
+            autoFocus={editComment?.message?.length > 0 ? true : false}
+            ref={inputRef}
+            editable={!loading}
+            multiline={true}
+            value={comment}
+            onChangeText={(text) => setComment(text)}
+            placeholder={i18n.t("global.comments")}
+            placeholderTextColor={globalStyles.placeholder.color}
+            style={styles.commentInputText}
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <ExpandIcon
+            style={[
+              globalStyles.icon,
+              { marginTop: 15 }
+            ]}
+            onPress={() => toggleExpanded(!expanded)}
+          />
+        </View>
+        <View style={{ flex: 1 }}>
           {!loading ? (
-            <SendIcon
-              onPress={() => {
-                setLoading(true);
-                setTimeout(() => onSave(comment), 1000);
-              }}
-              style={styles.sendIcon} 
-            />
+            <SendIcon style={styles.sendIcon} onPress={() => onSave(comment)} />
           ) : (
             <ActivityIndicator
               size="small"
               color={globalStyles.activityIndicator.color}
               style={[
                 styles.activityIndicator,
+                { marginTop: 15 }
               ]}
             />
           )}
         </View>
-        <BottomSheetTextInput
-          autoFocus={editComment?.message?.length > 0 ? true : false}
-          ref={inputRef}
-          editable={!loading}
-          multiline={true}
-          value={comment}
-          onChangeText={(text) => setComment(text)}
-          placeholder={i18n.t("global.comments")}
-          placeholderTextColor={globalStyles.placeholder.color}
-          style={styles.commentInputText}
-        />
-      </>
+      </View>
     );
   };
 
@@ -321,7 +339,6 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
       loading={isLoading || isValidating || error}
     />
   );
-
 
   return(
     <>
@@ -342,7 +359,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
         modal={false}
         dismissable={false}
         // TODO: dynamic based on Keyboard height?
-        snapPoints={[125,"100%"]}
+        snapPoints={[expanded ? "100%" : 100]}
         defaultIndex={0}
       >
         <CommentInput />

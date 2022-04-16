@@ -2,16 +2,18 @@ import React, { useEffect, useReducer, useState } from "react";
 import * as RootNavigation from "navigation/RootNavigation";
 import { useSelector, useDispatch } from "react-redux";
 
+import useI18N from "hooks/use-i18n";
 import useType from "hooks/use-type";
 
 import { setFilter } from "store/actions/user.actions";
 
-import { TypeConstants, SubTypeConstants } from "constants";
+//import { SortConstants } from "constants";
 
 const useFilter = () => {
 
   const dispatch = useDispatch();
   const persistedFilters = useSelector(state => state.userReducer.filters);
+  const { i18n } = useI18N();
   const { isContact, isNotification, isCommentsActivity, postType } = useType();
   const route = RootNavigation.getRoute();
 
@@ -27,18 +29,13 @@ const useFilter = () => {
   };
 
   const getDefaultFilter = () => {
-    // TODO: constants
-    if (isCommentsActivity) return { ID: "all" };
     if (isContact) return { ID: "all_my_contacts" };
     return { ID: "all" };
     //return { ID: "recent" };
   };
 
   const getActiveFilter = () => {
-    let key = postType;
-    if (isNotification) key = TypeConstants.NOTIFICATION;
-    if (isCommentsActivity) key = SubTypeConstants.COMMENTS_ACTIVITY;
-    if (persistedFilters && persistedFilters[key]) return persistedFilters[key];
+    if (persistedFilters && persistedFilters[postType]) return persistedFilters[postType];
     return getDefaultFilter();
   };
 
@@ -59,10 +56,7 @@ const useFilter = () => {
   const [search, setSearch] = useState(null);
   const onSearch = (search) => setSearch(search);
   const onFilter = (filter) => {
-    let key = postType;
-    if (isNotification) key = TypeConstants.NOTIFICATION;
-    if (isCommentsActivity) key = SubTypeConstants.COMMENTS_ACTIVITY;
-    dispatch(setFilter({ key, filter }));
+    dispatch(setFilter({ postType, filter }));
     _setFilter({ type: SET_FILTER, filter });
   };
 

@@ -40,8 +40,7 @@ const FilterOptions = ({ defaultFilter, filter, filters, onFilter }) => {
   );
   */
 
-  const FilterOption = ({ title } = {}) => {
-    if (!title || !filter?.ID) return null;
+  const FilterOption = ({ title }) => {
     const filterOption = findFilterOptionById(filter?.ID, filters);
     const selected = filterOption?.title === title;
     return(
@@ -78,12 +77,13 @@ const FilterOptions = ({ defaultFilter, filter, filters, onFilter }) => {
       ]}
     >
       <ClearFilters />
-      { Array.isArray(filters) && filters?.map((filter, idx) => (
+      { filters !== undefined && filters?.map((filter, idx) => (
           <FilterOption
             key={filter?.title ?? idx}
             title={filter?.title}
           />
-      ))}
+        )
+      )}
     </View>
   );
 };

@@ -24,7 +24,7 @@ import ListScreen from "screens/Posts/ListScreen";
 import DetailsScreen from "screens/Posts/DetailsScreen";
 //import AttendanceScreen from 'screens/AttendanceScreen';
 //import QuestionnaireScreen from 'screens/Posts/QuestionnaireScreen';
-import CommentsActivityScreen from "screens/Posts/CommentsActivityScreen";
+import CommentsActivityScreen from "screens/CommentsActivityScreen";
 import NotificationsScreen from "screens/NotificationsScreen";
 import SettingsScreen from "screens/SettingsScreen";
 import UserScreen from "screens/UserScreen";

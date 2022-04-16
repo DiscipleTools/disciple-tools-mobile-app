@@ -232,7 +232,10 @@ export const TypeConstants = Object.freeze({
   GROUP: "groups",
   NOTIFICATION: "notifications",
   TRAINING: "trainings",
-  PEOPLEGROUPS: "peoplegroups",
+  MEETING: "meetings",
+  CAMPAIGN: "campaigns",
+  STREAM: "streams",
+  QUESTIONNAIRE: "questionnaires",
 });
 
 export const SubTypeConstants = Object.freeze({

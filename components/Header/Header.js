@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import { ArrowIcon } from "components/Icon";
+import { ChevronIcon } from "components/Icon";
 import KebabMenu from "components/KebabMenu";
 
 import useStyles from "hooks/use-styles";
@@ -22,7 +22,7 @@ export const HeaderLeft = ({ startIcons, endIcons, style, iconStyle }) => {
       style
     ]}>
       { startIcons?.map() }
-      <ArrowIcon
+      <ChevronIcon
         header  
         onPress={() => {
           navigation.navigate(ScreenConstants.LIST, {

@@ -2,7 +2,7 @@ import React from "react";
 import { Pressable, View, Text } from "react-native";
 import { useBottomSheet } from "@gorhom/bottom-sheet";
 
-import { DoneIcon, CancelIcon } from "components/Icon";
+import { AcceptIcon, DeclineIcon } from "components/Icon";
 
 import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
@@ -37,7 +37,7 @@ export const SheetFooterCancel = ({ onDismiss }) => {
     <SheetFooter
       onPress={onPress}
       label={label}
-      renderIcon={<CancelIcon style={globalStyles.icon} />}
+      renderIcon={<DeclineIcon style={globalStyles.icon} />}
     />
   );
 };
@@ -58,7 +58,7 @@ export const SheetFooterDone = ({ onDone }) => {
     <SheetFooter
       onPress={onPress}
       label={label}
-      renderIcon={<DoneIcon style={globalStyles.icon} />}
+      renderIcon={<AcceptIcon style={globalStyles.icon} />}
     />
   );
 };

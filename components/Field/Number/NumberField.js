@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Text, TextInput, View } from "react-native";
 
-import { CancelIcon, SaveIcon } from "components/Icon";
+import { ClearIcon, SaveIcon } from "components/Icon";
 
 import useDebounce from "hooks/use-debounce";
 import useStyles from "hooks/use-styles";
@@ -56,7 +56,7 @@ const NumberField = ({ grouped=false, editing, value, onChange }) => {
         />
         { showSave && (
           <View style={[globalStyles.rowContainer, styles.controlIcons]}>
-            <CancelIcon onPress={() => _onClear()} />
+            <ClearIcon onPress={() => _onClear()} />
             <SaveIcon onPress={() => _onChange()} />
           </View>
         )}

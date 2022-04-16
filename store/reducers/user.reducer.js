@@ -46,7 +46,7 @@ export default function userReducer(state = initialState, action) {
         },
         filters: {
           ...newState?.filters,
-          [action?.key]: action?.filter
+          [action?.postType]: action?.filter
         },
       };
     case actions.SET_THEME:
@@ -101,6 +101,8 @@ export default function userReducer(state = initialState, action) {
         cnonceLogin: action?.cnonceLogin,
       };
     case actions.USER_LOGIN_FAILURE:
+      console.log("*** USER_LOGIN_FAILURE ***");
+      console.log(JSON.stringify(action));
       return {
         ...newState,
         error: action?.error,
@@ -157,6 +159,8 @@ export default function userReducer(state = initialState, action) {
         error: action?.error,
       };
     case actions.UPDATE_USER_INFO_SUCCESS:
+      console.log("**** UPDATE_USER_INFO_SUCCESS REDUCER ****");
+      console.log(JSON.stringify(action));
       return {
         ...newState,
         userData: {
