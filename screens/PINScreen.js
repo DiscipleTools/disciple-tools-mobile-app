@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
 import { Image, Text, View } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { LockIcon } from "components/Icon";
 import SmoothPinCodeInput from "react-native-smooth-pincode-input";
@@ -62,11 +61,8 @@ const PINScreen = ({ navigation, route }) => {
 
   // TODO: add support for "distress"
   const handleFulfill = async (code) => {
-    console.log(`code: ${code}`);
     if (isValidate || isDelete) {
-      console.log("*** VALIDATE OR DELETE ***");
       const secretCode = await getPIN();
-      // TODO: translate
       if (secretCode === null) {
         toast("error.existingPIN", true);
         pinInput.current.shake().then(() => setState({ ...state, code: "" }));
@@ -76,7 +72,7 @@ const PINScreen = ({ navigation, route }) => {
         } else if (isDelete) {
           deletePIN();
           navigation.goBack();
-          toast(i18n.t("settingsScreen.removedPinCode"));
+          toast(i18n.t("global.pinCodeAction", { action: i18n.t("global.deleted") }), true);
         } else {
           console.warn(`Unknown PINScreen type: ${type}`);
           navigation.goBack();
@@ -85,7 +81,6 @@ const PINScreen = ({ navigation, route }) => {
         pinInput.current.shake().then(() => setState({ ...state, code: "" }));
       }
     } else if (isSet && state.tmpCode === null) {
-      console.log("*** SET ***");
       const isCompliant = !isRepeating(code) && !isSequential(code);
       if (isCompliant) {
         setState({
@@ -115,7 +110,7 @@ const PINScreen = ({ navigation, route }) => {
         setPIN(code);
         setState({ code: "", tmpCode: null });
         navigation.goBack();
-        toast(i18n.t("settingsScreen.savedPinCode"));
+        toast(i18n.t("global.pinCodeAction", { action: i18n.t("global.saved") }));
       } else {
         pinInput.current.shake().then(() =>
           setState({
@@ -133,9 +128,10 @@ const PINScreen = ({ navigation, route }) => {
   const DisplayText = () => {
     const getDisplayText = () => {
       if (isValidate || isDelete || (isSet && state.tmpCode !== null)) {
-        return i18n.t("settingsScreen.confirmPin");
+        // TODO: do not ask to confirm PIN when incorrect
+        return i18n.t("global.pinConfirm");
       } else if (isSet) {
-        return i18n.t("settingsScreen.enterPin");
+        return i18n.t("global.pinEnter");
       } else {
         return "";
       }
@@ -147,7 +143,9 @@ const PINScreen = ({ navigation, route }) => {
     <View style={styles.container}>
       <Image source={require("assets/dt-icon.png")} style={styles.logo} />
       <DisplayText />
-      <LockIcon style={styles.icon} />
+      <View style={styles.iconContainer}>
+        <LockIcon style={styles.icon} />
+      </View>
       <SmoothPinCodeInput
         ref={pinInput}
         autoFocus
