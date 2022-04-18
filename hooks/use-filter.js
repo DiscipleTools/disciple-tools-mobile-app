@@ -2,6 +2,7 @@ import React, { useEffect, useReducer, useState } from "react";
 import * as RootNavigation from "navigation/RootNavigation";
 import { useSelector, useDispatch } from "react-redux";
 
+import useI18N from "./use-i18n";
 import useType from "hooks/use-type";
 
 import { setFilter } from "store/actions/user.actions";
@@ -14,6 +15,8 @@ const useFilter = () => {
   const persistedFilters = useSelector(state => state.userReducer.filters);
   const { isContact, isNotification, isCommentsActivity, postType } = useType();
   const route = RootNavigation.getRoute();
+
+  const { locale } = useI18N();
 
   const SET_FILTER = "SET_FILTER";
 
@@ -34,8 +37,10 @@ const useFilter = () => {
     //return { ID: "recent" };
   };
 
+  // TODO: persist filter by ID rather than full JSON,
+  // (then we wouldn't need to also persist the locale)
   const getActiveFilter = () => {
-    let key = postType;
+    let key = locale + '_' + postType;
     if (isNotification) key = TypeConstants.NOTIFICATION;
     if (isCommentsActivity) key = SubTypeConstants.COMMENTS_ACTIVITY;
     if (persistedFilters && persistedFilters[key]) return persistedFilters[key];

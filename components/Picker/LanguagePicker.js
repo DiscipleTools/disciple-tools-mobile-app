@@ -11,7 +11,7 @@ import useI18N from "hooks/use-i18n";
 
 const LanguagePicker = () => {
   const { i18n, selectedEndonym } = useI18N();
-  const { expand, snapPoints } = useBottomSheet();
+  const { expand } = useBottomSheet();
   const showLanguageSheet = () => {
     expand({
       renderHeader: () => <SheetHeader expandable dismissable title={i18n.t("global.language")} />,

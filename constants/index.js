@@ -286,10 +286,10 @@ export const NetworkConstants = Object.freeze({
 });
 
 export const SortConstants = Object.freeze({
-  LAST_MOD_ASC: "-last_modified",
-  LAST_MOD_DESC: "last_modified",
-  CREATED_ASC: "-post_date",
-  CREATED_DESC: "post_date",
+  LAST_MOD_DESC: "-last_modified",
+  LAST_MOD_ASC: "last_modified",
+  CREATED_DESC: "-post_date",
+  CREATED_ASC: "post_date",
 });
 
 export default {

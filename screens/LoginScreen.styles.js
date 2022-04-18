@@ -27,7 +27,6 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     marginTop: 15,
   },
   validationErrorInput: {
-    backgroundColor: "#FFE6E6",
     borderWidth: 2,
     borderColor: theme.error,
   },

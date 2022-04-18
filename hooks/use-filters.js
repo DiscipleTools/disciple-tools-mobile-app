@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useReducer, useRef, useState } from "react";
 
 //import useNetwork from "hooks/use-network";
+import useI18n from "hooks/use-i18n";
 import useType from "hooks/use-type";
 import useRequest from "hooks/use-request";
 
@@ -10,26 +11,27 @@ const useFilters = ({ type } = {}) => {
 
   //const { isConnected } = useNetwork();
   const { isPost, isNotification, isCommentsActivity, postType } = useType({ type });
+  const { i18n }  = useI18n();
 
   const url = isPost ? `/dt/v1/users/get_filters?post_type=${postType}&force_refresh=1` : null;
   let { data, error, isLoading, isValidating, mutate } = useRequest({ url });
 
   if (isCommentsActivity) data = [
     {
-      title: "Type",
+      title: i18n.t("global.type"),
       //count: 1350,
       content: [
         {
           ID: "all",
           //count: 1350,
-          name: "All",
+          name: i18n.t("global.all"),
           query: null,
           subfilter: false
         },
         {
           ID: "comments_activity_type_comments_only",
           //count: 450,
-          name: "Comments",
+          name: i18n.t("global.comments"),
           query: {
             key: "comment_ID",
           },
@@ -38,7 +40,7 @@ const useFilters = ({ type } = {}) => {
         {
           ID: "comments_activity_type_activity_only",
           //count: 850,
-          name: "Activity",
+          name: i18n.t("global.activity"),
           query: {
             key: "histid",
           },
@@ -59,20 +61,20 @@ const useFilters = ({ type } = {}) => {
 
   if (isNotification) data = [
     {
-      title: "Status",
+      title: i18n.t("global.status"),
       //count: 99,
       content: [
         {
           ID: "all",
           //count: 99,
-          name: "All",
+          name: i18n.t("global.all"),
           query: null,
           subfilter: false 
         },
         {
           ID: "notifications_status_unread",
           //count: 76,
-          name: "Unread only",
+          name: i18n.t("global.unread"),
           query: {
             key: "is_new",
             value: "1"
@@ -82,7 +84,7 @@ const useFilters = ({ type } = {}) => {
         {
           ID: "notifications_status_read",
           //count: 23,
-          name: "Read only",
+          name: i18n.t("global.read"),
           query: {
             key: "is_new",
             value: "0"
@@ -92,13 +94,13 @@ const useFilters = ({ type } = {}) => {
       ]
     },
     {
-      title: "Type",
+      title: i18n.t("global.type"),
       //count: 99,
       content: [
         {
           ID: NotificationActionConstants.MENTION,
           //count: 99,
-          name: "Mention",
+          name: i18n.t("global.mention"),
           query: {
             key: "notification_action",
             value: NotificationActionConstants.MENTION
@@ -108,7 +110,7 @@ const useFilters = ({ type } = {}) => {
         {
           ID: NotificationActionConstants.ALERT,
           //count: 19,
-          name: "Alert",
+          name: i18n.t("global.alert"),
           query: {
             key: "notification_action",
             value: NotificationActionConstants.ALERT
@@ -118,7 +120,7 @@ const useFilters = ({ type } = {}) => {
         {
           ID: NotificationActionConstants.COMMENT,
           //count: 19,
-          name: "Comment",
+          name: i18n.t("global.comments"),
           query: {
             key: "notification_action",
             value: NotificationActionConstants.COMMENT

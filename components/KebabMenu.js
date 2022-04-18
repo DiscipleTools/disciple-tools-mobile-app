@@ -18,7 +18,7 @@ const KebabMenu = ({ items }) => {
       urlPath: "notifications",
     },
     {
-      label: i18n.t("global.helpDocs"),
+      label: i18n.t("global.documentation"),
       url: "https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/notifications-screen/",
     },
   ];

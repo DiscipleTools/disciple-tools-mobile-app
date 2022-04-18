@@ -12,7 +12,7 @@ const BottomSheetContext = createContext(null);
 const DEFAULT_OPTIONS = {
   modal: true,
   dismissable: true,
-  snapPoints: ['33%','50%','65%','95%'],
+  snapPoints: ['33%','50%','66%','95%'],
   defaultIndex: -1,
   renderHeader: () => null,
   renderContent: () => null,

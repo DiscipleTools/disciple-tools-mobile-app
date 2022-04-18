@@ -2,6 +2,7 @@ import React, { useEffect, useState, useReducer } from "react";
 import { Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 
 import Card from "components/Card/Card";
 import ExpandableCard from "components/Card/ExpandableCard";
@@ -20,9 +21,13 @@ import { findFilterById } from "utils";
 import { localStyles } from "./PendingContactsCard.styles";
 
 const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
+
+  // NOTE: invoking this hook causes the desired re-render onBack()
+  useIsFocused();
+
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
-  const { i18n, locale } = useI18N();
+  const { i18n } = useI18N();
 
   const { updatePost } = useAPI();
 
@@ -72,7 +77,7 @@ const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
           style={[styles.buttonContainer, styles.buttonAccept]}
         >
           <Text style={styles.buttonText}>
-            {i18n.t("global.accept", { locale })}
+            {i18n.t("global.accept")}
           </Text>
         </Pressable>
         <Pressable
@@ -80,7 +85,7 @@ const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
           style={[styles.buttonContainer, styles.buttonDecline]}
         >
           <Text style={styles.buttonText}>
-            {i18n.t("global.decline", { locale })}
+            {i18n.t("global.decline")}
           </Text>
         </Pressable>
       </View>

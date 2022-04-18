@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 
 import ExpandableCard from "components/Card/ExpandableCard";
 import useI18N from "hooks/use-i18n";
@@ -15,6 +16,10 @@ import { ScreenConstants } from "constants";
 import { localStyles } from "./ActivityLogCard.styles";
 
 const ActivityLogCard = ({ preview, refreshing }) => {
+
+  // NOTE: invoking this hook causes the desired re-render onBack()
+  useIsFocused();
+
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
   const { getTabScreenFromType } = useType();

@@ -7,7 +7,7 @@ import useI18N from "hooks/use-i18n";
 import useMyUser from "hooks/use-my-user";
 
 const LanguageSheet = () => {
-  const { data: user } = useMyUser();
+  const { data: userData } = useMyUser();
   const { updateUser } = useAPI();
 
   const { i18n, locale, setLocale } = useI18N();
@@ -18,8 +18,12 @@ const LanguageSheet = () => {
   // ON CHANGE
   const _onChange = (newValue) => {
     const newLocale = newValue?.key;
-    if (user) updateUser({ locale: newLocale });
-    if (newLocale) setLocale(newLocale);
+    if (newLocale) {
+      // set locale remotely
+      if (userData?.locale !== newLocale) updateUser({ locale: newLocale });
+      // set locale locally
+      setLocale(newLocale);
+    };
   };
 
   // MAP ITEMS

@@ -20,9 +20,7 @@ const Sort = ({ items, setItems, filter, onFilter }) => {
   ), [items, filter]);
 
   const showSort = (show) => show ? expand({
-    index: 0,
-    snapPoints,
-    multi: false,
+    defaultIndex: 1,
     renderContent: () => sortSheetContent
   }) : collapse();
 

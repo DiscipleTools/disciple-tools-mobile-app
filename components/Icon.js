@@ -181,6 +181,9 @@ export const LogoutIcon = ({ onPress, style }) => (
 export const MapIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="earth" onPress={onPress} style={style} />
 );
+export const MeatballIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="dots-horizontal" onPress={onPress} style={style} />
+);
 export const OnePasswordIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="onepassword" onPress={onPress} style={style} />
 );

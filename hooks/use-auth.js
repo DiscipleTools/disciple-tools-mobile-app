@@ -176,7 +176,6 @@ const useCustomAuth = () => {
           password,
         },
       });
-      console.log(res?.data);
       if (res?.status === 200 && res?.data?.token) {
         const accessToken = res.data.token;
         const id = decodeToken(accessToken)?.data?.user?.id;

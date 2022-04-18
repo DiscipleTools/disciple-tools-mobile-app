@@ -50,6 +50,7 @@ const FilterList = ({
     */
   });
 
+  if (!_items) return null;
   return (
     <SafeAreaView style={[
       styles.gutter,

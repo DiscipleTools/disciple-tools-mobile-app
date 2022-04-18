@@ -156,7 +156,7 @@ const useSettings = ({ type } = {}) => {
     return {
       fields: fieldList,
       channels,
-      labelPlural: settings.label_plural,
+      label: settings?.label_plural,
       tiles: tileList,
     };
   };

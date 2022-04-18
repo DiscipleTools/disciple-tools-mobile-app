@@ -27,7 +27,7 @@ const LoginScreen = () => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { user, rememberLoginDetails, signIn } = useAuth();
   const { isIOS } = useDevice();
-  const { i18n, isRTL, locale } = useI18N();
+  const { i18n, isRTL } = useI18N();
   const { mobileAppPlugin } = usePlugins();
   const toast = useToast();
 
@@ -63,7 +63,7 @@ const LoginScreen = () => {
       try {
         await signIn(cleanedDomain, username, password);
       } catch (error) {
-        toast(error.message, true);
+        toast(error?.message, true);
       } finally {
         setLoading(false);
       }
@@ -75,7 +75,8 @@ const LoginScreen = () => {
         userValidation: !username,
         passwordValidation: !password,
       });
-    }
+      setLoading(false);
+    };
   };
 
   const Header = () => {
@@ -99,9 +100,10 @@ const LoginScreen = () => {
     const [domain, setDomain] = useState(ref?.current);
     const domainErrorMessage = state.domainValidation ? (
       <Text style={styles.validationErrorMessage}>
-        {i18n.t("loginScreen.domain.error", { locale })}
+        {i18n.t("global.error.isRequired", { item: i18n.t("global.url") })}
       </Text>
     ) : null;
+    const label = i18n.t("global.url");
     return (
       <>
         <LabeledTextInput
@@ -111,8 +113,8 @@ const LoginScreen = () => {
             setDomain(text);
           }}
           value={domain}
-          accessibilityLabel={i18n.t("loginScreen.domain.label", { locale })}
-          label={i18n.t("loginScreen.domain.label", { locale })}
+          accessibilityLabel={label}
+          label={label}
           containerStyle={[
             styles.textField,
             state.domainValidation && styles.domainErrorInput,
@@ -144,9 +146,10 @@ const LoginScreen = () => {
     const [username, setUsername] = useState(ref?.current);
     const userErrorMessage = state.userValidation ? (
       <Text style={styles.validationErrorMessage}>
-        {i18n.t("loginScreen.username.error", { locale })}
+        {i18n.t("global.error.isRequired", { item: i18n.t("global.username") })}
       </Text>
     ) : null;
+    const label = i18n.t("global.username");
     return (
       <>
         <LabeledTextInput
@@ -156,8 +159,8 @@ const LoginScreen = () => {
             setUsername(text);
             ref.current = text;
           }}
-          accessibilityLabel={i18n.t("loginScreen.username.label", { locale })}
-          label={i18n.t("loginScreen.username.label", { locale })}
+          accessibilityLabel={label}
+          label={label}
           containerStyle={[
             styles.textField,
             state.usernameValidation && styles.validationErrorInput,
@@ -185,9 +188,10 @@ const LoginScreen = () => {
     const [showPassword, setShowPassword] = useState(false);
     const passwordErrorMessage = state.passwordValidation ? (
       <Text style={styles.validationErrorMessage}>
-        {i18n.t("loginScreen.password.error", { locale })}
+        {i18n.t("global.error.isRequired", { item: i18n.t("global.password") })}
       </Text>
     ) : null;
+    const label = i18n.t("global.password");
     return (
       <View>
         <LabeledTextInput
@@ -198,8 +202,8 @@ const LoginScreen = () => {
             setPassword(text);
           }}
           ref={ref}
-          accessibilityLabel={i18n.t("loginScreen.password.label", { locale })}
-          label={i18n.t("loginScreen.password.label", { locale })}
+          accessibilityLabel={label}
+          label={label}
           //style={styles.inputText}
           containerStyle={[
             styles.textField,
@@ -225,13 +229,13 @@ const LoginScreen = () => {
   const ForgotPasswordLink = () => (
     <Link
       disabled={loading}
-      title={i18n.t("global.forgotPassword", { locale })}
+      title={i18n.t("global.forgotPassword")}
       onPress={() => {
         const domain = domainRef?.current;
         if (domain?.length > 0) {
           Linking.openURL(`https://${domain}/wp-login.php?action=lostpassword`);
         } else {
-          toast(i18n.t("loginScreen.domain.errorForgotPass", { locale }), true);
+          toast(i18n.t("loginScreen.domain.errorForgotPass"), true);
         }
       }}
       containerStyle={styles.forgotPasswordLink}
@@ -240,7 +244,7 @@ const LoginScreen = () => {
 
   const LoginButton = () => (
     <Button
-      title={i18n.t("global.login", { locale })}
+      title={i18n.t("global.login")}
       loading={loading}
       onPress={onLoginPress}
     />

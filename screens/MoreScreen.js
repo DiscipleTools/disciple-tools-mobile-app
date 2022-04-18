@@ -1,10 +1,8 @@
 import React from "react";
 import { SafeAreaView } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
 
 import { ChevronIcon, PostIcon } from "components/Icon";
 import OfflineBar from "components/OfflineBar";
-//import TitleBar from "components/TitleBar";
 import ListItem from "components/ListItem";
 
 import useCustomPostTypes from "hooks/use-custom-post-types";
@@ -17,16 +15,13 @@ import { localStyles } from "./MoreScreen.styles";
 
 const MoreScreen = ({ navigation }) => {
 
-  // NOTE: invoking this hook causes the desired re-render onBack()
-  useIsFocused();
-
   const { customPostTypes } = useCustomPostTypes() || {};
   const { styles, globalStyles } = useStyles(localStyles);
 
   const PostButton = ({ type }) => {
     const { settings } = useSettings({ type });
-    if (!settings?.labelPlural) return null;
-    const label = settings.labelPlural;
+    if (!settings?.label) return null;
+    const label = settings.label;
     return(
       <ListItem
         startComponent={<PostIcon />}

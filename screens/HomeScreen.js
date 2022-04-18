@@ -1,7 +1,6 @@
 import React, { useLayoutEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { useIsFocused } from "@react-navigation/native";
 
 import { CogIcon } from "components/Icon";
 import { HeaderRight } from "components/Header/Header";
@@ -22,7 +21,7 @@ import { findFilterById, labelize } from "utils";
 import { localStyles } from "./HomeScreen.styles";
 
 const HomeScreen = ({ navigation, route }) => {
-  const isFocused = useIsFocused();
+
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
   const { data: contactFilters, mutate: mutateContactFilters } = useFilters({
@@ -60,7 +59,7 @@ const HomeScreen = ({ navigation, route }) => {
         urlPath: "dashboard",
       },
       {
-        label: i18n.t("global.helpDocs"),
+        label: i18n.t("global.documentation"),
        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/home-screen/`,
       },
     ];
@@ -85,11 +84,7 @@ const HomeScreen = ({ navigation, route }) => {
         />
       ),
     });
-  }, [navigation, hasAccountUpdates]);
-
-  useLayoutEffect(() => {
-    onRefresh();
-  }, [isFocused]);
+  }, [hasAccountUpdates]);
 
   const FavoriteContactsCard = () => {
     const filter = findFilterById("favorite", contactFilters);

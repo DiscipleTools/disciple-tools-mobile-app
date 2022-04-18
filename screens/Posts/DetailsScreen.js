@@ -4,7 +4,6 @@ import React, {
   useState,
 } from "react";
 import { Pressable, View, useWindowDimensions } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
 
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 
@@ -27,8 +26,6 @@ import { ScreenConstants, SubTypeConstants } from "constants";
 import { localStyles } from "./DetailsScreen.styles";
 
 const DetailsScreen = ({ navigation }) => {
-  // NOTE: invoking this hook causes the desired re-render onBack()
-  useIsFocused();
 
   const layout = useWindowDimensions();
   const { styles, globalStyles } = useStyles(localStyles);
@@ -93,8 +90,8 @@ const DetailsScreen = ({ navigation }) => {
         urlPath: `${postType}/${postId}`,
       },
       {
-        label: i18n.t("global.helpDocs"),
-       url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/${postType}-record-screen/`,
+        label: i18n.t("global.documentation"),
+        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/${postType}-record-screen/`,
       },
     ];
     navigation.setOptions({

@@ -1,48 +1,57 @@
 import React from "react";
 
 import { SortAscIcon, SortDescIcon } from "components/Icon";
-import useI18N from "hooks/use-i18n";
 import SelectSheet from "./SelectSheet";
 import SheetHeader from "./SheetHeader";
+
+import useI18N from "hooks/use-i18n";
+import useSettings from "hooks/use-settings";
 
 import { SortConstants } from "constants";
 
 const SortSheet = ({ items, setItems, filter, onFilter }) => {
   const { i18n } = useI18N();
+  const { settings } = useSettings();
+
+  // TODO: default to English in this way?
+  const lastModifiedDateLabel = settings?.fields?.last_modified?.name ?? "Last Modified Date";
+  const createdDateLabel = settings?.fields?.post_date?.name ?? "Created Date";
+
   const sortKey = filter?.query?.sort;
+
   const sections = [
     {
-      title: i18n.t("global.lastModifiedDate"),
+      title: lastModifiedDateLabel,
       data: [
         {
-          key: SortConstants.LAST_MOD_ASC,
-          label: i18n.t("global.mostRecent"),
-          icon: <SortAscIcon />,
-          selected: SortConstants.LAST_MOD_ASC === sortKey,
-        },
-        {
           key: SortConstants.LAST_MOD_DESC,
-          label: i18n.t("global.leastRecent"),
+          label: i18n.t("global.newest"),
           icon: <SortDescIcon />,
           selected: SortConstants.LAST_MOD_DESC === sortKey,
+        },
+        {
+          key: SortConstants.LAST_MOD_ASC,
+          label: i18n.t("global.oldest"),
+          icon: <SortAscIcon />,
+          selected: SortConstants.LAST_MOD_ASC === sortKey,
         },
       ],
     },
     {
-      title: i18n.t("global.createdDate"),
+      title: createdDateLabel,
       data: [
         {
-          key: SortConstants.CREATED_ASC,
-          label: i18n.t("global.newest"),
-          icon: <SortAscIcon />,
-          selected: SortConstants.CREATED_ASC === sortKey,
-        },
-        {
           key: SortConstants.CREATED_DESC,
-          label: i18n.t("global.oldest"),
+          label: i18n.t("global.newest"),
           icon: <SortDescIcon />,
           selected: SortConstants.CREATED_DESC === sortKey,
         },
+        {
+          key: SortConstants.CREATED_ASC,
+          label: i18n.t("global.oldest"),
+          icon: <SortAscIcon />,
+          selected: SortConstants.CREATED_ASC === sortKey,
+        }
       ],
     },
   ];

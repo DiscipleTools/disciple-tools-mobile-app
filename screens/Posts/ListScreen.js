@@ -1,6 +1,5 @@
 import React, { useLayoutEffect } from "react";
-import { SafeAreaView, View } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
+import { View } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import { HeaderRight } from "components/Header/Header";
@@ -17,21 +16,18 @@ import useFilter from "hooks/use-filter";
 import useI18N from "hooks/use-i18n";
 import useList from "hooks/use-list";
 import useType from "hooks/use-type";
+import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
-
-// TODO: replace with style={{ textTransform: "sentenceCase" }} where used?
-import { labelize } from "utils";
 
 import { localStyles } from "./ListScreen.styles";
 
 const ListScreen = ({ navigation, route }) => {
-  // NOTE: invoking this hook causes the desired re-render onBack()
-  useIsFocused();
 
   const tabBarHeight = useBottomTabBarHeight();
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
   const { postType } = useType();
+  const { settings } = useSettings({ type: postType });
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
 
   const {
@@ -43,20 +39,15 @@ const ListScreen = ({ navigation, route }) => {
   } = useList({ search, filter });
   // TODO: handler error case
 
-  const getTitle = () => {
-    if (postType) return labelize(postType);
-    return "";
-  };
-
   useLayoutEffect(() => {
-    const title = getTitle();
+    const title = settings?.label ? settings.label : '';
     const kebabItems = [
       {
         label: i18n.t("global.viewOnWeb"),
         urlPath: `/${postType}/`,
       },
       {
-        label: i18n.t("global.helpDocs"),
+        label: i18n.t("global.documentation"),
         url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/${postType}-list-screen/`,
       },
     ];

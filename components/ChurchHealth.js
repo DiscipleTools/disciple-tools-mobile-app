@@ -31,12 +31,12 @@ const ChurchHealth = ({ items, selectedItems }) => {
 
   const hasChurchCommitment = isSelected(ChurchHealthConstants.CHURCH_COMMITMENT);
 
+  /*
   const ChurchCommitment = ({ hasChurchCommitment }) => {
     //const toggleChurchCommitment = () => null;
     return(
       <ListItem
-        // TODO: translate
-        label={"Church Commitment"}
+        label={i18n.t("global.churchCommitment")}
         endComponent={
           <Switch
             trackColor={{ true: styles.switch.color }}
@@ -51,6 +51,7 @@ const ChurchHealth = ({ items, selectedItems }) => {
       />
     );
   };
+  */
 
   const GridItem = ({ top, left, icon, selected }) => (
     <View style={[
