@@ -1,116 +1,83 @@
 {
-  "isRequired": "is required",
-  "isRequiredError": "%{item} is required",
-  "by": "by",
-  "placeholder": "No %{items} currently available",
-
-  "networkUnavailable": "Network unavailable. Now in OFFLINE mode",
-  "networkAvailable": "Network detected. Back to ONLINE mode",
-
-  "error": {
-    "error": "Error",
-    "repeating": "%{error}: Repeating (i.e., 444444) or Sequential (i.e., 234567) values are not permitted",
-    "requestQueued": "OFFLINE, request being queued...",
-    "existingPIN": "Error: Unable to retrieve existing PIN. Please reinstall app, and if the problem persists then please contact your Disciple Tools Administrator for assistance"
-  },
-
+  "endonym": "English",
   "global": {
-    "addNew": "Add New",
-    "accept": "Accept",
+  	"accept": "Accept",
     "activity": "Activity",
     "activityLog": "Activity Log",
+    "addNew": "Add New",
+    "alert": "Alert",
     "all": "All",
+    "appRestart": "Restarting App",
+    "autoLogin": "Auto-Login",
     "cancel": "Cancel",
     "comments": "Comments",
     "commentsActivity": "Comments and Activity",
-    "contacts": "Contacts",
     "contactType": "Contact Type",
     "copy": "Copy",
     "darkMode": "Dark Mode",
-    "done": "Done",
+    "dataSaved": "Data saved successfully!",
     "decline": "Decline",
     "delete": "Delete",
+    "deleted": "deleted",
+    "documentation": "Documentation",
+    "done": "Done",
     "edit": "Edit",
-    "error": "Error",
+    "error": {
+      "forgotLogin": "Please enter URL to start to retrieve your login/password",
+      "isRequired": "%{item} is required",
+      "mobileAppPluginRequired": "The Mobile App Plugin is required and does not seem to be activated on your D.T",
+      "pinExisting": "Unable to retrieve existing PIN. Please reinstall app, and if the problem persists then please contact your D.T Administrator for assistance",
+      "pinRepeating": "Repeating (i.e., 444444) or Sequential (i.e., 234567) values are not permitted",
+      "requestQueued": "OFFLINE, request being queued...",
+      "text": "Error"
+    },
     "filter": "Filter",
     "filterBy": "Filter By",
     "forgotPassword": "Lost your password?",
-    "groups": "Groups",
-    "helpSupport": "Help / Support",
-    "helpDocs": "Help Documents",
+    "help": "Help",
     "home": "Home",
     "importContact": "Import a phone contact",
     "items": "Items",
     "language": "Language",
-    "locations": "Locations",
     "login": "Log In",
     "logout": "Sign Out",
     "members": "Members",
-    "message": "Message",
+    "mention": "Mention",
     "more": "More",
+    "networkAvailable": "Network detected. Back to ONLINE mode",
+    "networkUnavailable": "Network unavailable. Now in OFFLINE mode",
+    "newest": "Newest",
+    "notification": "Notification",
     "notifications": "Notifications",
     "offline": "Offline",
+    "oldest": "Oldest",
     "online": "Online",
     "options": "Options",
+    "password": "Password",
+    "pinCode": "PIN code",
+    "pinCodeAction": "PIN code %{action} successfully!",
+    "pinConfirm": "Confirm the new PIN",
+    "pinEnter": "Enter PIN",
+    "placeholder": "No %{items} currently available",
     "private": "Private",
+    "read": "Read only",
+    "rememberLoginDetails": "Remember Login Details",
     "save": "Save",
+    "saved": "saved",
     "search": "Search",
     "settings": "Settings",
     "share": "Share",
     "sort": "Sort",
     "sortBy": "Sort By",
     "standard": "Standard",
-    "trainings": "Trainings",
-    "viewOnWeb": "View on the Web",
-
-    "error": {
-      "code": "Code: ",
-      "message": "Message: ",
-      "text": "Error: "
-    },
-    "success": {
-      "save": "Data saved successfully!"
-    }
-  },
-
-  "sorting": {
-    "lastModifiedDate": "Last Modified Date",
-    "mostRecent": "Most Recent",
-    "leastRecent": "Least Recent",
-    "createdDate": "Created Date",
-    "newest": "Newest",
-    "oldest": "Oldest"
-  },
-  "loginScreen": {
-    "domain": {
-      "label": "URL",
-      "placeholder": "E.g. myteam.mydomain.com",
-      "error": "Domain is required",
-      "errorForgotPass": "Please enter URL to start to retrieve your password"
-    },
-    "username": {
-      "label": "Username",
-      "error": "Username is required"
-    },
-    "password": {
-      "label": "Password",
-      "error": "Password is required"
-    },
-    "errors": {
-      "mobileAppPluginRequiredOne": "The Mobile App Plugin is required and does not seem to be activated on your Disciple.Tools.",
-      "mobileAppPluginRequiredTwo": "Tap here for more information."
-    }
-  },
-  "settingsScreen": {
-    "autoLogin": "Auto-Login",
-    "rememberLoginDetails": "Remember Login Details",
-    "pinCode": "PIN code",
-    "enterPin": "Enter PIN",
-    "setPin": "Set new PIN",
-    "incorrectPin": "Incorrect PIN",
-    "savedPinCode": "PIN code saved successfully!",
-    "removedPinCode": "PIN code removed successfully!",
-    "confirmPin": "Confirm the new PIN"
-  },
-  "endonym": "English"
+    "status": "Status",
+    "support": "Support",
+    "type": "Type",
+    "unread": "Unread only",
+    "updateRequired": "Update Required",
+    "updateRequiredText": "Please provide an update by posting a comment",
+    "url": "URL",
+    "username": "Username",
+    "viewOnWeb": "View on the Web"
+  }
 }
