@@ -13,7 +13,6 @@ import Toast from "react-native-toast-message";
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { AuthProvider } from "hooks/use-auth";
-import usePushNotifications from "hooks/use-push-notifications";
 import useStyles from "hooks/use-styles";
 
 import { AppConstants } from "constants";
@@ -29,9 +28,6 @@ const App = () => {
 
   // Ignore YellowBox warnings in DEV 
   LogBox.ignoreAllLogs();
-
-  // Register Push Notification Listeners
-  usePushNotifications();
 
   // Keep the splash screen visible until we are ready to render the app
   // navigation/AppNavigator.js
