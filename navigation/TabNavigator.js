@@ -47,7 +47,7 @@ const TabNavigator = () => {
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
   const { isDarkMode, theme } = useTheme();
-  const { i18n, isRTL, locale } = useI18N();
+  const { i18n } = useI18N();
   const { hasNotifications } = useNotifications();
 
   const screenOptions = {
@@ -108,7 +108,7 @@ const TabNavigator = () => {
           component={ImportContactsScreen}
           options={{
             // TODO:better title term
-            title: i18n.t("global.importContact", { locale }),
+            title: i18n.t("global.importContact"),
           }}
           initialParams={{
             type: TypeConstants.CONTACT,
@@ -118,7 +118,7 @@ const TabNavigator = () => {
           name={ScreenConstants.COMMENTS_ACTIVITY}
           component={CommentsActivityScreen}
           options={{
-            title: i18n.t("global.commentsActivity", { locale }),
+            title: i18n.t("global.commentsActivity"),
             ...TransitionPresets.ModalTransition,
           }}
           initialParams={
@@ -159,7 +159,7 @@ const TabNavigator = () => {
           component={NotificationsScreen}
           //options={{ presentation: 'transparentModal' }}
           options={{
-            title: i18n.t("global.notifications", { locale }),
+            title: i18n.t("global.notifications"),
           }}
           initialParams={{
             type: TypeConstants.NOTIFICATION,
@@ -177,7 +177,7 @@ const TabNavigator = () => {
           //}
           //}}
           options={{
-            title: i18n.t("global.settings", { locale }),
+            title: i18n.t("global.settings"),
           }}
           initialParams={{
             type: TypeConstants.SETTINGS,
@@ -187,7 +187,7 @@ const TabNavigator = () => {
           name={ScreenConstants.PIN}
           options={{
             title: null,
-            headerBackTitle: i18n.t("global.settings", { locale }),
+            headerBackTitle: i18n.t("global.settings"),
           }}
         >
           {(props) => <PINScreen {...props} />}
@@ -203,7 +203,7 @@ const TabNavigator = () => {
           name={TabScreenConstants.NOTIFICATIONS}
           component={NotificationsScreen}
           options={{
-            title: i18n.t("global.notifications", { locale }),
+            title: i18n.t("global.notifications"),
           }}
           initialParams={{
             type: TypeConstants.NOTIFICATION,
@@ -220,7 +220,7 @@ const TabNavigator = () => {
           name={TabScreenConstants.MORE}
           component={MoreScreen}
           options={{
-            title: i18n.t("global.more", { locale }),
+            title: i18n.t("global.more"),
           }}
         />
         <Stack.Screen
@@ -307,7 +307,7 @@ const TabNavigator = () => {
         component={HomeStack}
         options={{
           tabBarShowLabel: false,
-          //tabBarLabel: i18n.t("global.home", { locale }),
+          //tabBarLabel: i18n.t("global.home"),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <View style={indicatorStyle(focused)} />
@@ -338,7 +338,7 @@ const TabNavigator = () => {
         options={{
           //unmountOnBlur: true,
           tabBarShowLabel: false,
-          //tabBarLabel: i18n.t("global.contacts", { locale }),
+          //tabBarLabel: i18n.t("global.contacts"),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <View style={indicatorStyle(focused)} />
@@ -372,7 +372,7 @@ const TabNavigator = () => {
         }}
         options={{
           tabBarShowLabel: false,
-          //tabBarLabel: i18n.t("global.groups", { locale }),
+          //tabBarLabel: i18n.t("global.groups"),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <View style={indicatorStyle(focused)} />
@@ -403,7 +403,7 @@ const TabNavigator = () => {
         component={NotificationsStack}
         options={{
           tabBarShowLabel: false,
-          //tabBarLabel: i18n.t("global.notifications", { locale }),
+          //tabBarLabel: i18n.t("global.notifications"),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <View style={indicatorStyle(focused)} />
@@ -438,7 +438,7 @@ const TabNavigator = () => {
         component={MoreStack}
         options={{
           tabBarShowLabel: false,
-          //tabBarLabel: i18n.t("global.more", { locale }),
+          //tabBarLabel: i18n.t("global.more"),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <View style={indicatorStyle(focused)} />
