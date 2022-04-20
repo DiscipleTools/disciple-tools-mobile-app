@@ -14,13 +14,16 @@ import TabNavigator from "./TabNavigator";
 import usePIN from "hooks/use-pin";
 import { useAuth } from "hooks/use-auth";
 import { BottomSheetProvider } from "hooks/use-bottom-sheet";
+import usePushNotifications from "hooks/use-push-notifications";
 
 const Stack = createNativeStackNavigator();
 
-const AppNavigator = () => {
+const AppNavigator = ({ navigation }) => {
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
   console.log("$$$$$          APP NAVIGATOR                  $$$$$");
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+
+  usePushNotifications({ navigation });
 
   const { PINConstants, hasPIN, cnoncePIN, validateCNoncePIN } = usePIN();
   const { authenticated, isAutoLogin } = useAuth();

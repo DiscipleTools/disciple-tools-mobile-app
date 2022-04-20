@@ -17,14 +17,19 @@ const useAPI = () => {
   // USER
   // https://developers.disciple.tools/theme-core/api-other/users
 
-  // TODO: enable addl fields
-  const updateUser = async ({ locale }) => {
+  const updateUser = async ({
+    add_push_token,
+    locale
+  }) => {
     const url = "/dt/v1/user/update";
+    let data = {};
+    if (add_push_token) data["add_push_token"] = add_push_token;
+    if (locale) data["locale"] = locale;
     return request({
       url,
       method: HTTP.METHODS.POST,
       headers: HTTP.HEADERS.DEFAULT,
-      data: { locale },
+      data,
     });
   };
 
@@ -41,7 +46,7 @@ const useAPI = () => {
         headers: HTTP.HEADERS.DEFAULT,
         data: { ...fields },
       });
-      toast(i18n.t("global.success.save"));
+      toast(i18n.t("global.dataSaved"));
       if (mutate) mutate();
       return res;
     } catch (error) {
@@ -75,7 +80,7 @@ const useAPI = () => {
         headers: HTTP.HEADERS.DEFAULT,
         data: { ...fields },
       });
-      toast(i18n.t("global.success.save"));
+      toast(i18n.t("global.dataSaved"));
       if (mutate) mutate();
     } catch (error) {
       // TODO
