@@ -16,8 +16,7 @@ import { localStyles } from "./KeySelectField.styles";
 const KeySelectField = ({ editing, field, value, onChange }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
-  const { expand } = useBottomSheet();
-  const _snapPoints = ['33%','50%','66%','95%'];
+  const { expand, getDefaultIndex } = useBottomSheet();
 
   // ITEMS
   const items = field?.default;
@@ -83,16 +82,6 @@ const KeySelectField = ({ editing, field, value, onChange }) => {
       />
     );
 
-    // TODO: move to use-bottom-sheet hook
-    const getDefaultSheetSnapIndex = () => {
-      const optionsCount = sections?.[0]?.data?.length;
-      if (optionsCount <= 3) return 0;
-      if (optionsCount <= 5) return 1;
-      if (optionsCount <= 9) return 2;
-      if (optionsCount <= 11) return 3;
-      return _snapPoints.length-1; // 4 in this case
-    };
-
     const getBackgroundColor = () => {
       if (items[value]?.color) return items[value].color;
       return globalStyles.background?.backgroundColor;
@@ -106,7 +95,7 @@ const KeySelectField = ({ editing, field, value, onChange }) => {
       <Select
         onOpen={() => {
           expand({
-            defaultIndex: getDefaultSheetSnapIndex(),
+            defaultIndex: getDefaultIndex({ items: sections?.[0]?.data }),
             renderHeader: () => (
               <SheetHeader
                 expandable

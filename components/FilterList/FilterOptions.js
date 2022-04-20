@@ -15,7 +15,7 @@ import { localStyles } from "./FilterOptions.styles";
 const FilterOptions = ({ defaultFilter, filter, filters, onFilter }) => {
 
   const { styles, globalStyles } = useStyle(localStyles);
-  const { expand } = useBottomSheet();
+  const { expand, getDefaultIndex } = useBottomSheet();
 
   const filterContent = (title) => (
     <FilterSheet
@@ -25,10 +25,13 @@ const FilterOptions = ({ defaultFilter, filter, filters, onFilter }) => {
     />
   );
 
-  const showFilter = (title) => expand({
-    index: 1,
-    renderContent: () => filterContent(title),
-  });
+  const showFilter = (title) => {
+    const filterOption = findFilterOptionById(filter?.ID, filters);
+    return expand({
+      defaultIndex: getDefaultIndex({ items: filterOption?.content }),
+      renderContent: () => filterContent(title),
+    });
+  };
 
   /*
   const Count = ({ count, selected }) => (

@@ -56,6 +56,15 @@ export const BottomSheetProvider = ({ children }) => {
     }, 100);
   };
 
+  const getDefaultIndex = ({ items, itemHeight } = {}) => {
+    const optionsCount = items?.length;
+    if (!optionsCount) return snapPoints.length-1;
+    if (optionsCount < 3) return 0;
+    if (optionsCount < 5) return 1;
+    if (optionsCount < 9) return 2;
+    return snapPoints.length-1;
+  };
+
   const bottomSheetContext = useMemo(
     () => ({
       expand: (opts) => {
@@ -63,6 +72,7 @@ export const BottomSheetProvider = ({ children }) => {
         dispatch({ type: EXPAND, ...opts });
       },
       collapse: collapseBottomSheet,
+      getDefaultIndex,
       snapPoints,
       snapIndex,
       snapToIndex: (index) => bottomSheetRef.current?.snapToIndex(index),
@@ -134,17 +144,6 @@ export const BottomSheetProvider = ({ children }) => {
     </BottomSheetContext.Provider>
   );
 };
-/*
-        { options?.scrollable ? (
-          <BottomSheetScrollView>
-            { options?.renderContent() }
-          </BottomSheetScrollView>
-        ) : (
-          <BottomSheetView>
-            { options?.renderContent() }
-          </BottomSheetView>
-        )}
-*/
 
 const useBottomSheet = () => useContext(BottomSheetContext);
 
