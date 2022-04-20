@@ -24,7 +24,7 @@ import {
 
 import { localStyles } from "./FAB.styles";
 
-const FAB = () => {
+const FAB = ({ offsetX, offsetY }) => {
   const navigation = useNavigation();
 
   const { styles, globalStyles } = useStyles(localStyles);
@@ -188,7 +188,8 @@ const FAB = () => {
   if (isList || isPost) {
     return (
       <ActionButton
-        //position={isRTL ? "left" : "right"}
+        offsetX={offsetX}
+        offsetY={offsetY}
         buttonColor={globalStyles.buttonColor.backgroundColor}
         shadowStyle={globalStyles.buttonShadow}
         renderIcon={(active) => {

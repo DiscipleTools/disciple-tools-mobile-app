@@ -22,6 +22,7 @@ import FilterList from "components/FilterList";
 import PostItemSkeleton from "components/Post/PostItem/PostItemSkeleton";
 import SelectSheet from "components/Sheet/SelectSheet";
 import SheetHeader from "components/Sheet/SheetHeader";
+import FAB from "components/FAB";
 
 import useApp from "hooks/use-app";
 import useAPI from "hooks/use-api";
@@ -37,6 +38,8 @@ import { localStyles } from "./CommentsActivityScreen.styles";
 
 const MENTION_PATTERN = /@\[.+?\]\((.*)\)/g;
 
+const OFFSET_Y = 125;
+
 const CommentsActivityConstants = Object.freeze({
   COPY: "copy",
   DELETE: "delete",
@@ -46,7 +49,7 @@ const CommentsActivityConstants = Object.freeze({
 const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
-  const { i18n, isRTL } = useI18N();
+  const { i18n, isRTL, moment } = useI18N();
   const { setClipboard } = useApp();
   const toast = useToast();
 
@@ -87,11 +90,26 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
   // TODO: implement this skeleton
   const CommentsActivityItemLoadingSkeleton = () => <PostItemSkeleton />;
 
+  const parseDateSafe = (dateStr) => {
+    try {
+      const parsedDate = moment(dateStr).format("LLL");
+      if (parsedDate === "Invalid date") return "";
+      return parsedDate;
+    } catch (ee) {
+      return '';
+    };
+  };
+
+  const parseDate = (item) => {
+    if (item?.comment_date) return parseDateSafe(item.comment_date);
+    if (item?.hist_time) return parseDateSafe(Number(item.hist_time)*1000);
+    return '';
+  };
+
   const CommentsActivityItem = ({ item, loading }) => {
     if (!item || loading) return <CommentsActivityItemLoadingSkeleton />;
     const message = item?.comment_content || item?.object_note;
-    // TODO: try/catch handler
-    const datetime = item?.hist_time ? new Date(Number(item.hist_time)*1000).toString() : "";
+    const datetime = parseDate(item);
     const author = item?.comment_author || item?.name;
     const authorId = Number(item?.user_id);
     const userIsAuthor = authorId === userData?.ID;
@@ -153,7 +171,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
       const sections = generateOptions();
       expand({
         // TODO: constants?
-        snapPoints: userIsAuthor ? [325,"95%"] : [225,"95%"],
+        snapPoints: userIsAuthor ? [OFFSET_Y+200,"95%"] : [OFFSET_Y+100,"95%"],
         defaultIndex: 0,
         renderHeader: () => (
           <SheetHeader
@@ -337,12 +355,13 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
         onFilter={onFilter}
         onRefresh={mutate}
       />
+      <FAB offsetY={OFFSET_Y + 25} />
       <CustomBottomSheet
         ref={sheetRef}
         modal={false}
         dismissable={false}
         // TODO: dynamic based on Keyboard height?
-        snapPoints={[125,"100%"]}
+        snapPoints={[OFFSET_Y,"100%"]}
         defaultIndex={0}
       >
         <CommentInput />

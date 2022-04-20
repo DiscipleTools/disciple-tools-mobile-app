@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Alert, I18nManager } from "react-native";
-
 import { useDispatch, useSelector } from "react-redux";
+import moment from 'moment/min/moment-with-locales';
 
 import useMyUser from "hooks/use-my-user";
 
@@ -152,11 +152,29 @@ const useI18N = () => {
 
   const isRTL = _isRTL();
 
+  const mapLocaleToMomentLocale = (locale) => {
+    const special = [
+      "pt_BR",
+    ];
+    if (special.includes(locale)) {
+      switch(locale) {
+        case "pt_BR":
+          return "pt-br";
+        default:
+          return "en";
+      };
+    };
+    return locale?.split("_")?.[0];
+  };
+
   useEffect(() => {
     // if no 'locale' existing in-memory or storage, then use device locale
     if (!locale) _setLocale(Localization?.locale ?? DEFAULT_LOCALE);
     // NOTE: not sure why this is necessary, but it is...
-    if (locale !== i18n?.locale) i18n.locale = locale;
+    if (locale !== i18n?.locale) {
+      i18n.locale = locale;
+      moment.locale(mapLocaleToMomentLocale(locale));
+    };
   }, [locale]);
 
   // NOTE: detect API language change and update app locale
@@ -173,6 +191,7 @@ const useI18N = () => {
   const _setLocale = (_locale) => {
     if (_locale !== locale) {
       i18n.locale = _locale;
+      moment.locale(mapLocaleToMomentLocale(_locale));
       const isRTL = _isRTL(_locale);
       dispatch(setLocale(_locale));
       if (isRTL !== I18nManager?.isRTL) {
@@ -200,6 +219,7 @@ const useI18N = () => {
     locale,
     setLocale: _setLocale,
     selectedEndonym,
+    moment
   };
 };
 export default useI18N;
