@@ -115,3 +115,25 @@ export const labelize = (str) => {
 export const getAvailablePostTypes = () => {
   return Object.values(TypeConstants);
 };
+
+export const parseDateShort = (dateValue) => {
+  try {
+    let parsedDateMS = null;
+    if (typeof dateValue === 'number') {
+      parsedDateMS = dateValue*1000;
+    } else if (typeof dateValue === 'string') {
+      parsedDateMS = Date.parse(dateValue?.trim()?.split(" ")[0]);
+      //const parsedDateMS = Date.parse(dateValue?.trim());
+    } else return null;
+    const today = new Date();
+    const diffMS = today - parsedDateMS;
+    const aDay = 24 * 60 * 60 * 1000;
+    const isToday = diffMS < aDay;
+    const diffDays = Math.floor(diffMS / aDay);
+    if (isNaN(diffDays)) return null;
+    //if (isToday) return i18n.t("global.today");
+    return `${diffDays}d`;
+  } catch (error) {
+    return null;
+  }
+};

@@ -20,14 +20,15 @@ import FilterList from "components/FilterList";
 import { PostItemSkeleton } from "components/Post/PostItem/index";
 
 import useFilter from "hooks/use-filter";
-import useNotifications from "hooks/use-notifications";
+import useHaptics from "hooks/use-haptics";
 //import useMyUser from 'hooks/use-my-user.js';
+import useNotifications from "hooks/use-notifications";
 import useStyles from "hooks/use-styles";
 import useType from "hooks/use-type"; 
 
 import { NotificationActionConstants, ScreenConstants } from "constants";
 
-import { truncate } from "utils";
+import { parseDateShort, truncate } from "utils";
 
 import { localStyles } from "./NotificationsScreen.styles";
 
@@ -35,6 +36,7 @@ const NotificationsScreen = ({ navigation }) => {
   // TODO: constant
   const DEFAULT_LIMIT = 1000;
 
+  const { vibrate } = useHaptics();
   const { styles, globalStyles } = useStyles(localStyles);
   const { getTabScreenFromType } = useType();
 
@@ -111,24 +113,6 @@ const NotificationsScreen = ({ navigation }) => {
     const name = item?.notification_name;
     const action = item?.notification_action;
 
-    const parseDate = (dateStr) => {
-      try {
-        const today = new Date();
-        //const parsedDateMS = Date.parse(dateStr?.trim());
-        const parsedDateMS = Date.parse(dateStr?.trim()?.split(" ")[0]);
-        const diffMS = today - parsedDateMS;
-        const aDay = 24 * 60 * 60 * 1000;
-        const isToday = diffMS < aDay;
-        const diffDays = Math.floor(diffMS / aDay);
-        if (isNaN(diffDays)) return null;
-        // TODO: translate
-        if (isToday) return "today";
-        return `${diffDays}d`;
-      } catch (error) {
-        return null;
-      }
-    };
-
     const NotificationIcon = () => {
       const renderIcon = () => {
         if (item?.notification_action == NotificationActionConstants.COMMENT)
@@ -178,7 +162,7 @@ const NotificationsScreen = ({ navigation }) => {
             </Text>
           ) : (
             <Text style={globalStyles.caption}>
-              {parseDate(item?.date_notified)}
+              {parseDateShort(item?.date_notified)}
             </Text>
           )}
         </View>
@@ -189,6 +173,7 @@ const NotificationsScreen = ({ navigation }) => {
       <View style={globalStyles.rowIcon}>
         <Pressable
           onPress={() => {
+            vibrate();
             const id = item?.id;
             if (id) return isNew ? markViewed({ id }) : markUnread({ id });
           }}

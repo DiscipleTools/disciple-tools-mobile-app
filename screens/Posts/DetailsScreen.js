@@ -15,11 +15,12 @@ import Tile from "components/Post/Tile";
 import PostSkeleton from "components/Post/PostSkeleton";
 import FAB from "components/FAB";
 
-import useI18N from "hooks/use-i18n";
+import useAPI from "hooks/use-api";
 import useDetails from "hooks/use-details";
+import useHaptics from "hooks/use-haptics";
+import useI18N from "hooks/use-i18n";
 import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
-import useAPI from "hooks/use-api";
 
 import { ScreenConstants, SubTypeConstants } from "constants";
 
@@ -30,6 +31,7 @@ const DetailsScreen = ({ navigation }) => {
   const layout = useWindowDimensions();
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
+  const { vibrate } = useHaptics();
   const {
     data: post,
     error,
@@ -103,14 +105,15 @@ const DetailsScreen = ({ navigation }) => {
           renderStartIcons={() => (
             <>
             <Pressable
-              onPress={() =>
+              onPress={() => {
+                vibrate();
                 updatePost({
                   fields: { favorite: !post?.favorite },
                   id: Number(post?.ID),
                   type: post?.post_type,
                   mutate,
-                })
-              }
+                });
+              }}
               style={[
                 globalStyles.headerIcon,
                 styles.headerIcon

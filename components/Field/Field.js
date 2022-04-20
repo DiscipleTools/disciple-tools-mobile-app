@@ -21,6 +21,7 @@ import TextField from "components/Field/Text/TextField";
 import UserSelectField from "components/Field/UserSelect/UserSelectField";
 
 import useAPI from "hooks/use-api";
+import useHaptics from "hooks/use-haptics";
 import useStyles from "hooks/use-styles";
 
 import { FieldConstants, FieldTypes, FieldNames } from "constants";
@@ -31,6 +32,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { updatePost } = useAPI();
+  const { vibrate } = useHaptics();
 
   // uncomment line below to enforce post must have data values for a field (ie, uncomment to hide empty fields)
   //if (!post.hasOwnProperty(field?.name)) return null;
@@ -109,6 +111,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   const _onSave = async(newValue) => {
     // TODO: handle this differently (we shouldn't need one-off for this field.type)
     if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) newValue = mapField(newValue);
+    vibrate();
     await updatePost({ fields: newValue });
     mutate();
   };
