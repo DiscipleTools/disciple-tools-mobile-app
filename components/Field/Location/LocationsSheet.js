@@ -27,9 +27,11 @@ const LocationsSheet = ({ id, title, values, onChange }) => {
   // MAP TO API
   const mapToAPI = (newItem) => {
     const mappedValues = values?.values?.map(value => ({ value: value?.grid_id }));
-    mappedValues.push({
-      value: newItem?.key,
-    });
+    if (newItem?.key) {
+      mappedValues.push({
+        value: newItem.key,
+      });
+    };
    return mappedValues;
   };
 

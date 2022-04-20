@@ -45,14 +45,20 @@ const UsersSheet = ({ id, values, onChange }) => {
   const _renderItem = ({ item }) => {
     const { key, label, icon, avatar, selected } = item;
     return(
-      <Pressable onPress={() => onChange(item)}>
-        <View key={key} style={styles.itemContainer}>
+      <Pressable onPress={() => _onChange(item)}>
+        <View key={key}
+          style={[
+            globalStyles.rowContainer,
+            styles.itemContainer
+          ]}
+        >
             {avatar && (
               <Image style={styles.avatar} source={{ uri: avatar }} />
             )}
             {icon && (
               <View style={globalStyles.rowIcon}>
                 <MaterialCommunityIcon
+                  type={icon?.type}
                   name={icon?.name}
                   style={[globalStyles.icon, icon?.style ? icon?.style : {}]} 
                 />
