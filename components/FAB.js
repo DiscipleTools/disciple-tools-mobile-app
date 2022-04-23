@@ -117,14 +117,15 @@ const FAB = ({ offsetX, offsetY }) => {
     if (field === QuickActionButtonConstants.NO_ANSWER)
       return {
         ...defaultIconConfig,
-        name: "phone-off",
+        type: "MaterialCommunityIcons",
+        name: "voice-off",
         //bgColor: "red", //Colors.colorNo,
       };
     if (field === QuickActionButtonConstants.CONTACT_ESTABLISHED)
       return {
         ...defaultIconConfig,
         type: "MaterialCommunityIcons",
-        name: "phone-in-talk",
+        name: "account-voice",
         //bgColor: "green", //TODO
       };
     if (field === QuickActionButtonConstants.MEETING_SCHEDULED)

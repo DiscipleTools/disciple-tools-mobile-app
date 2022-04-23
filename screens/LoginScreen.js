@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { UserIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
+import { UsernameIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
 import Button from "components/Button";
 import Link from "components/Link";
 import PluginRequired from "components/PluginRequired";
@@ -166,7 +166,7 @@ const LoginScreen = () => {
             state.usernameValidation && styles.validationErrorInput,
           ]}
           //iconName={isIOS ? "ios-person" : "md-person"}
-          startIcon={<UserIcon />}
+          startIcon={<UsernameIcon />}
           textAlign={isRTL ? "right" : "left"}
           autoCapitalize="none"
           autoCorrect={false}
