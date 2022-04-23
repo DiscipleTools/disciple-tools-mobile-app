@@ -25,11 +25,7 @@ const ExpandableCard = ({
           title={title}
         />
       ),
-      renderContent: () => (
-        <>
-          {renderExpandedCard()}
-        </>
-      )
+      renderContent: () => renderExpandedCard()
     });
   };
 

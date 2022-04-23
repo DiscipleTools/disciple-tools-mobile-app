@@ -21,24 +21,27 @@ const FilterSheet = ({ multiple, filters, filter, onFilter }) => {
     if (!multiple) delayedClose();
   };
 
-  const renderItem = (item) => {
+  const renderItem = (item, idx) => {
     if (!item) return null;
     const { ID, name, count, subfilter, query } = item;
     const selected = ID === filter?.ID;
+    const _key = `${ ID }_${ idx }`;
     return (
-      <Pressable onPress={() => onChange(item)}>
-        <View key={ID} style={styles.itemContainer}>
-          <View style={styles.itemSubFilterContainer(subfilter)}>
-            <Text style={styles.itemText}>
-              {name} {count > 0 ? `(${count})` : null}
-            </Text>
-          </View>
-          {selected && (
-            <View style={globalStyles.rowIcon}>
-              <CheckIcon style={globalStyles.selectedIcon} />
-            </View>
-          )}
+      <Pressable
+        key={_key}
+        onPress={() => onChange(item)}
+        style={styles.itemContainer}
+      >
+        <View style={styles.itemSubFilterContainer(subfilter)}>
+          <Text style={styles.itemText}>
+            {name} {count > 0 ? `(${count})` : null}
+          </Text>
         </View>
+        {selected && (
+          <View style={globalStyles.rowIcon}>
+            <CheckIcon style={globalStyles.selectedIcon} />
+          </View>
+        )}
       </Pressable>
     );
   };

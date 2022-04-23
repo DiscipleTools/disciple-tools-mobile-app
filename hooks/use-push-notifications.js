@@ -20,12 +20,10 @@ const usePushNotifications = ({ navigation }) => {
   const { deviceUID, isDevice, isAndroid, isIOS } = useDevice();
   const { getTabScreenFromType } = useType();
   const { updateUser } = useAPI();
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
 
-  async function registerForPushNotificationsAsync() {
+  const registerForPushNotificationsAsync = async() => {
     let token;
     if (isDevice) {
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -62,7 +60,10 @@ const usePushNotifications = ({ navigation }) => {
   }
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    const run = async() => {
+      registerForPushNotificationsAsync();
+    };
+    run();
 
     // This listener is fired whenever a notification is received while the app is foregrounded
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {

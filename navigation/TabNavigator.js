@@ -29,6 +29,7 @@ import SettingsScreen from "screens/SettingsScreen";
 
 import useI18N from "hooks/use-i18n";
 import useNotifications from "hooks/use-notifications";
+import usePushNotifications from "hooks/use-push-notifications";
 import useTheme from "hooks/use-theme";
 
 import {
@@ -41,14 +42,19 @@ import {
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const TabNavigator = () => {
+const TabNavigator = ({ navigation }) => {
+  /*
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
   console.log("$$$$$          MAIN TAB NAVIGATOR             $$$$$");
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+  */
+
+  usePushNotifications({ navigation });
 
   const { isDarkMode, theme } = useTheme();
   const { i18n } = useI18N();
   const { hasNotifications } = useNotifications();
+  //const hasNotifications = false;
 
   const screenOptions = {
     headerStyle: {

@@ -10,13 +10,13 @@ import useStyles from "hooks/use-styles";
 import { localStyles } from "./SelectSheet.styles";
 
 const SelectSheet = ({
-    required,
-    multiple,
-    sections,
-    renderSectionHeader,
-    renderItem,
-    onDismiss,
-    onChange,
+  required,
+  multiple,
+  sections,
+  renderSectionHeader,
+  renderItem,
+  onDismiss,
+  onChange,
 }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
@@ -80,49 +80,53 @@ const SelectSheet = ({
     onChange(updatedSections);
   };
 
-  const _renderItem = ({ item }) => {
+  const _renderItem = (item, idx) => {
     if (renderItem) return renderItem(item);
     const { key, label, icon, avatar, selected } = item;
+    const _key = `${ key }_${ idx }`;
     return(
-      <Pressable onPress={() => _onChange(item)}>
-        <View key={key} style={[
+      <Pressable
+        key={_key}
+        onPress={() => _onChange(item)}
+        style={[
           globalStyles.rowContainer,
           styles.itemContainer
-        ]}>
-            {avatar && (
-              <Image style={styles.avatar} source={{ uri: avatar }} />
-            )}
-            {icon && (
-              <View style={globalStyles.rowIcon}>
-                {icon}
-              </View>
-            )}
-          <View style={{
-            marginEnd: "auto",
-          }}>
-            <Text>{label}</Text>
+        ]}
+      >
+        {avatar && (
+          <Image style={styles.avatar} source={{ uri: avatar }} />
+        )}
+        {icon && (
+          <View style={globalStyles.rowIcon}>
+            {icon}
           </View>
-          {selected && (
-            <View style={globalStyles.rowIcon}>
-              <CheckIcon style={globalStyles.selectedIcon} />
-            </View>
-          )}
+        )}
+        <View style={{
+          marginEnd: "auto",
+        }}>
+          <Text>{label}</Text>
         </View>
+        {selected && (
+          <View style={globalStyles.rowIcon}>
+            <CheckIcon style={globalStyles.selectedIcon} />
+          </View>
+        )}
       </Pressable>
     );
   };
 
-  const _renderSection = ({ section }) => {
+  const _renderSection = (section, idx) => {
     if (renderSectionHeader) return renderSectionHeader({ section });
+    const _key = `${ section?.title }_${ idx }`;
     return(
-      <>
+      <View key={_key}>
         { section?.title && (
           <View style={styles.sectionHeader}>
             <Text style={globalStyles.subtitle}>{section.title}</Text>
           </View>
         )}
-        { section?.data?.map(item => _renderItem({ item })) }
-      </>
+        { section?.data?.map((item, idx) => _renderItem(item, idx)) }
+      </View>
     );
   };
 
@@ -131,7 +135,7 @@ const SelectSheet = ({
       style={styles.contentContainer}
       contentContainerStyle={globalStyles.screenGutter}
     >
-      { _sections?.map(section => _renderSection({ section })) }
+      { _sections?.map((section, idx) => _renderSection(section, idx)) }
     </ScrollView>
   );
 };

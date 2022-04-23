@@ -14,25 +14,27 @@ import TabNavigator from "./TabNavigator";
 import usePIN from "hooks/use-pin";
 import { useAuth } from "hooks/use-auth";
 import { BottomSheetProvider } from "hooks/use-bottom-sheet";
-import usePushNotifications from "hooks/use-push-notifications";
 
 const Stack = createNativeStackNavigator();
 
-const AppNavigator = ({ navigation }) => {
+const AppNavigator = () => {
+  /*
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
   console.log("$$$$$          APP NAVIGATOR                  $$$$$");
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-
-  usePushNotifications({ navigation });
+  */
 
   const { PINConstants, hasPIN, cnoncePIN, validateCNoncePIN } = usePIN();
   const { authenticated, isAutoLogin } = useAuth();
 
   const [isValidCNoncePIN, setIsValidCNoncePIN] = useState(false);
 
-  useEffect(async() => {
-    const isValidCNoncePIN = await validateCNoncePIN();
-    setIsValidCNoncePIN(isValidCNoncePIN);
+  useEffect(() => {
+    const run = async () => {
+      const isValidCNoncePIN = await validateCNoncePIN();
+      setIsValidCNoncePIN(isValidCNoncePIN);
+    };
+    run();
   }, [cnoncePIN]);
 
   const onReady = useCallback(async () => {
@@ -73,7 +75,7 @@ const AppNavigator = ({ navigation }) => {
   };
 
   const RenderLogin = () => {
-    console.log(".......... RENDER LOGIN ....................");
+    //console.log(".......... RENDER LOGIN ....................");
     if (authenticated) return(
       <TabNavigator />
     );
@@ -81,28 +83,30 @@ const AppNavigator = ({ navigation }) => {
   };
 
   const RenderStack = () => {
+    /*
     console.log("authenticated?", authenticated);
     console.log("isAutoLogin?", isAutoLogin);
     console.log("hasPIN?", hasPIN);
     console.log("isValidCNoncePIN?", isValidCNoncePIN);
+    */
 
     // Auth Flow 4. Most Secure, Least Convenient
     // PIN->Login->Main
     if (hasPIN && !isAutoLogin) {
-      console.log("*** AUTH 4 - PIN->Login->Main ***");
+      //console.log("*** AUTH 4 - PIN->Login->Main ***");
       if (isValidCNoncePIN) return <RenderLogin />;
       return <PINStack />;
     }
     // Auth Flow 3. More Secure, Less Convenient
     // Login->Main
     if (!hasPIN && !isAutoLogin) {
-      console.log("*** AUTH 3 - Login ***");
+      //console.log("*** AUTH 3 - Login ***");
       return <RenderLogin />;
     }
     // Auth Flow 2. Less Secure, More Convenient
     // PIN->Main
     if (hasPIN && isAutoLogin) {
-      console.log("*** AUTH 2 - PIN->Main ***");
+      //console.log("*** AUTH 2 - PIN->Main ***");
       if (isValidCNoncePIN) return <RenderLogin />;
       return <PINStack />;
     }
@@ -110,7 +114,7 @@ const AppNavigator = ({ navigation }) => {
     // Main
     // Login (following Logout, reinstall, delete cache/data)
     if (!hasPIN && isAutoLogin) {
-      console.log("*** AUTH 1 - Main ***");
+      //console.log("*** AUTH 1 - Main ***");
       return <RenderLogin />;
     }
     console.warn("Unknown Auth condition occurred!");

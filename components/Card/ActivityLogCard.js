@@ -27,26 +27,35 @@ const ActivityLogCard = ({ preview, refreshing }) => {
   const { i18n } = useI18N();
 
   // TODO: FilterList
-  const renderActivityLog = (log) => (
-    <View style={[globalStyles.columnContainer, styles.activityView]}>
-      <Pressable
-        onPress={() => {
-          const type = log?.post_type;
-          const tabScreen = getTabScreenFromType(type);
-          navigation.jumpTo(tabScreen, {
-            screen: ScreenConstants.DETAILS,
-            id: log?.object_id,
-            name: log?.object_name,
-            type,
-          });
-          collapse();
-        }}
+  const renderActivityLog = (log, idx) => {
+    const _key = `${ log.object_id }-${ idx }`;
+    return(
+      <View
+        key={_key}
+        style={[
+          globalStyles.columnContainer,
+          styles.activityView
+        ]}
       >
-        <Text style={styles.activityLink}>{log?.object_name}</Text>
-      </Pressable>
-      <Text style={styles.activityText}>{log?.object_note}</Text>
-    </View>
-  );
+        <Pressable
+          onPress={() => {
+            const type = log?.post_type;
+            const tabScreen = getTabScreenFromType(type);
+            navigation.jumpTo(tabScreen, {
+              screen: ScreenConstants.DETAILS,
+              id: log?.object_id,
+              name: log?.object_name,
+              type,
+            });
+            collapse();
+          }}
+        >
+          <Text style={styles.activityLink}>{log?.object_name}</Text>
+        </Pressable>
+        <Text style={styles.activityText}>{log?.object_note}</Text>
+      </View>
+    );
+  };
 
   const {
     data: activityLog,
@@ -67,7 +76,7 @@ const ActivityLogCard = ({ preview, refreshing }) => {
         padding: 10,
       }}
     >
-      {activityLog?.map(renderActivityLog)}
+      {activityLog?.map((log, idx) => renderActivityLog(log, idx))}
     </ScrollView>
   );
 

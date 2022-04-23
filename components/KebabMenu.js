@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Linking } from "react-native";
+import { Linking, View } from "react-native";
 import { KebabIcon } from "components/Icon";
 import { Menu, MenuItem, MenuDivider } from "react-native-material-menu";
 
@@ -40,8 +40,9 @@ const KebabMenu = ({ items }) => {
           const baseUrl = axios?.defaults?.baseURL?.split("/wp-json")?.[0];
           if (baseUrl) url = `${baseUrl}/${item?.urlPath}`;
         };
+        const _key = `${item?.url}-${idx}`;
         return(
-          <>
+          <View key={_key}>
             <MenuItem
               onPress={() => {
                 if (item?.callback) {
@@ -55,7 +56,7 @@ const KebabMenu = ({ items }) => {
               {item?.label}
             </MenuItem>
             <MenuDivider />
-          </>
+          </View>
         );
       })}
     </Menu>
