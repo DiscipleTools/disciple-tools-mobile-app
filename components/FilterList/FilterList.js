@@ -16,6 +16,7 @@ const FilterList = ({
   items,
   renderItem,
   renderHiddenItem,
+  keyExtractor,
   search,
   onSearch,
   defaultFilter,
@@ -38,7 +39,7 @@ const FilterList = ({
 
   useEffect(() => {
     _setItems(items);
-  }, [items]);
+  }, [JSON.stringify(items)]);
 
   const _onRefresh = useCallback(() => {
     if (onRefresh) onRefresh();
@@ -82,6 +83,7 @@ const FilterList = ({
         </View>
       ) : (
         <SwipeListView
+          initialNumToRender={8}
           data={_items}
           renderItem={renderItem}
           renderHiddenItem={renderHiddenItem ?? null}
@@ -93,7 +95,7 @@ const FilterList = ({
           onRowDidClose={(item) => {
             onRowDidClose === undefined ? null : onRowDidClose(item);
           }}
-          keyExtractor={(item) => item?.ID?.toString()}
+          keyExtractor={keyExtractor}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -102,6 +104,7 @@ const FilterList = ({
               //tintColor={globalStyles.refreshControl.color}
             />
           }
+          disableScrollViewPanResponder={true}
           style={styles.container}
           contentContainerStyle={globalStyles.screenGutter}
         />

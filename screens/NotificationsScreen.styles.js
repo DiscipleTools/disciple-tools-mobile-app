@@ -6,12 +6,15 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     borderBottomWidth: 1,
     borderBottomColor: theme.background.primary,
     paddingTop: 10,
-    paddingHorizontal: 5,
     height: Constants.LIST_ITEM_HEIGHT,
   }),
   notificationDetails: {
     flexWrap: "wrap",
     marginEnd: "auto",
+  },
+  markIcon: {
+    height: "100%",
+    justifyContent: "center",
   },
   link: {
     color: theme.text.link

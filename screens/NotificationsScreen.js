@@ -1,8 +1,10 @@
 import React, {
   useState,
   useLayoutEffect,
+  useEffect,
 } from "react";
 import { Pressable, Text, View } from "react-native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 //import { useIsFocused } from "@react-navigation/native";
 
 //import { Html5Entities } from 'html-entities';
@@ -17,7 +19,7 @@ import {
 import KebabMenu from "components/KebabMenu";
 import OfflineBar from "components/OfflineBar";
 import FilterList from "components/FilterList";
-import { PostItemSkeleton } from "components/Post/PostItem/index";
+import PostItemSkeleton from "components/Post/PostItem/PostItemSkeleton";
 
 import useFilter from "hooks/use-filter";
 import useHaptics from "hooks/use-haptics";
@@ -37,6 +39,7 @@ const NotificationsScreen = ({ navigation }) => {
   const DEFAULT_LIMIT = 1000;
 
   const { vibrate } = useHaptics();
+  const tabBarHeight = useBottomTabBarHeight();
   const { styles, globalStyles } = useStyles(localStyles);
   const { getTabScreenFromType } = useType();
 
@@ -74,26 +77,9 @@ const NotificationsScreen = ({ navigation }) => {
     });
   });
 
-  const NotificationItem = ({ item }) => {
-    /*
-    {
-      "id":"123",
-      "user_id":"4567",
-      "source_user_id":"555",
-      "post_id":"42",
-      "secondary_item_id":"124",
-      "notification_name":"mention",
-      "notification_action":"mentioned",
-      "notification_note":"Jane Doe mentioned you on <a href=\"https://example.com/contacts/42\">Jane Doe</a> saying: \r\n\r\n @jdoe hi3",
-      "date_notified":"2021-03-19 23:11:52",
-      "is_new":"1",
-      "channels":null,
-      "field_key":"comments",
-      "field_value":"",
-      "post_title":"Jane Doe",
-      "pretty_time":["11 months ago","03/19/2021"]
-    }
-    */
+  const NotificationItem = ({ item, loading, mutate }) => {
+    const [isNew, setIsNew] = useState(item?.is_new === "1" ? true : false);
+    if (!item || loading) return <PostItemSkeleton />;
     const str1 = item?.notification_note?.search("<");
     const str2 = item?.notification_note?.search(">");
     const str3 = item?.notification_note?.length - 4;
@@ -109,7 +95,6 @@ const NotificationsScreen = ({ navigation }) => {
     let type = entityLink?.split("/")[3];
     // TODO
     //const entities = new Html5Entities();
-    const isNew = item?.is_new === "1" ? true : false;
     const name = item?.notification_name;
     const action = item?.notification_action;
 
@@ -170,25 +155,41 @@ const NotificationsScreen = ({ navigation }) => {
     );
 
     const NotificationButton = () => (
-      <View style={globalStyles.rowIcon}>
-        <Pressable
-          onPress={() => {
-            vibrate();
-            const id = item?.id;
-            if (id) return isNew ? markViewed({ id }) : markUnread({ id });
-          }}
-        >
-          {isNew ? (
-            <CircleOutlineIcon />
-          ) : (
-            <CheckIcon style={globalStyles.selectedIcon} />
-          )}
-        </Pressable>
-      </View>
+      <Pressable
+        onPress={() => {
+          vibrate();
+          const id = item?.id;
+          if (id) {
+            if (isNew) {
+              markViewed({ id });
+              setIsNew(false);
+              return;
+            };
+            markUnread({ id });
+            setIsNew(true);
+            return;
+          }
+        }}
+        style={[
+          globalStyles.rowIcon,
+          styles.markIcon,
+        ]}
+      >
+        {isNew ? (
+          <CircleOutlineIcon />
+        ) : (
+          <CheckIcon style={globalStyles.selectedIcon} />
+        )}
+      </Pressable>
     );
 
     return (
-      <View style={[globalStyles.rowContainer, styles.container(isNew)]}>
+      <View
+        style={[
+          globalStyles.rowContainer,
+          styles.container(isNew)
+        ]}
+      >
         <View style={{
           flex: 1,
         }}>
@@ -208,7 +209,12 @@ const NotificationsScreen = ({ navigation }) => {
     );
   };
 
-  const renderItem = ({ item }) => <NotificationItem item={item} />;
+  // NOTE: wrap in empty view, otherwise `react-native-swipe-view` requires React.forwardRef
+  const renderItem = ({ item }) => (
+    <>
+      <NotificationItem item={item} loading={isLoading || isValidating} mutate={mutate} />
+    </>
+  );
 
   // TODO: reusable component
   const ListSkeleton = () =>
@@ -218,7 +224,7 @@ const NotificationsScreen = ({ navigation }) => {
 
   if (!items) return <ListSkeleton />;
   return (
-    <View style={globalStyles.container}>
+    <View style={[globalStyles.container(tabBarHeight)]}>
       <OfflineBar />
       <FilterList
         display
@@ -226,6 +232,7 @@ const NotificationsScreen = ({ navigation }) => {
         items={items}
         renderItem={renderItem}
         //renderHiddenItem={renderHiddenItem}
+        keyExtractor={(item) => item?.id?.toString()}
         search={search}
         onSearch={onSearch}
         defaultFilter={defaultFilter}

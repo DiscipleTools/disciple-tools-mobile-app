@@ -4,7 +4,6 @@ import { useSWRConfig } from "swr";
 
 import axios from "services/axios";
 
-import useI18N from "hooks/use-i18n";
 import useNetwork from "hooks/use-network";
 
 //const REQUEST_QUEUE_INTERVAL_SECS = 5;
@@ -12,7 +11,6 @@ import useNetwork from "hooks/use-network";
 const useRequestQueue = () => {
   const { cache, mutate } = useSWRConfig();
   const { isConnected } = useNetwork();
-  const { i18n } = useI18N();
   const dispatch = useDispatch();
   const pendingRequests = useSelector(
     (state) => state.requestReducer.pendingRequests
@@ -45,7 +43,6 @@ const useRequestQueue = () => {
   const request = async (request) => {
     if (!isConnected) {
       dispatch(enqueueRequest(request));
-      toast(i18n.t("error.requestQueued"));
       return null;
     }
     if (hasPendingRequests()) {

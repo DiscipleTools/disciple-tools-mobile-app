@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { useAuth } from "hooks/use-auth";
 import useAPI from "hooks/use-api";
 import useRequest from "hooks/use-request";
@@ -46,27 +48,38 @@ const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
 
   const markViewed = ({ id } = {}) => {
     // if !id, then mark all as viewed
+    // NOTE: *not* passing `mutate` bc we want responsive updates, but pull refresh will mutate
     if (!id && uid) {
       updatePost({
         urlPath: `/dt/v1/notifications/mark_all_viewed/${uid}`,
-        //mutate,
       });
       return;
     };
     if (id) updatePost({
       urlPath: `/dt/v1/notifications/mark_viewed/${id}`,
-      mutate,
     });
   };
 
   const markUnread = ({ id } = {}) => {
+    // NOTE: *not* passing `mutate` bc we want responsive updates, but pull refresh will mutate
     if (id) updatePost({
       urlPath: `/dt/v1/notifications/mark_unread/${id}`,
-      mutate,
     });
   };
 
+  const hasNotifications = filteredNew?.length > 0;
+
   return {
+    data: filtered,
+    error,
+    isLoading,
+    isValidating,
+    mutate,
+    hasNotifications,
+    markViewed,
+    markUnread,
+  };
+  return useMemo (() => ({
     data: filtered,
     error,
     isLoading,
@@ -75,6 +88,6 @@ const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
     hasNotifications: filteredNew?.length > 0,
     markViewed,
     markUnread,
-  };
+  }), [filtered?.length]);
 };
 export default useNotifications;
