@@ -33,8 +33,7 @@ export const localStyles = ({ theme, isRTL }) => ({
     fontStyle: "italic",
   },
   meatballIcon: {
-    flex: 1,
-    padding: 5,
-    height: "100%",
+    padding: 10,
+    justifyContent: "center",
   }
 });

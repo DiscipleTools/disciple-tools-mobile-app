@@ -79,6 +79,7 @@ const ListScreen = ({ navigation, route }) => {
           items={items}
           renderItem={renderItem}
           //renderHiddenItem={renderHiddenItem}
+          keyExtractor={(item) => item?.ID?.toString()}
           search={search}
           onSearch={onSearch}
           defaultFilter={defaultFilter}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Random from "expo-random";
 import useSecureStore from "hooks/use-secure-store";
@@ -74,7 +74,7 @@ at hooks/usePIN.js:48:12 in useEffect$argument_0
     dispatch(_setCNoncePIN(cnonce));
   };
 
-  return {
+  return useMemo (() => ({
     PINConstants,
     hasPIN,
     getPIN,
@@ -83,6 +83,6 @@ at hooks/usePIN.js:48:12 in useEffect$argument_0
     cnoncePIN,
     setCNoncePIN,
     validateCNoncePIN,
-  };
+  }), [hasPIN, cnoncePIN]);
 };
 export default usePIN;

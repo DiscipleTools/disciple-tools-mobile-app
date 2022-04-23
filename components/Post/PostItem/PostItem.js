@@ -184,11 +184,13 @@ const PostItem = ({ item, loading, mutate }) => {
     </View>
   );
 
+  /*
   const LastModifiedDate = () => (
     <Text style={styles.lastModifiedDateText}>
       { parseDateShort(item?.last_modified) }
     </Text>
   );
+  */
 
   const SheetOptions = () => (
     <Pressable
@@ -229,11 +231,16 @@ const PostItem = ({ item, loading, mutate }) => {
       ]}>
         <FavoriteStar />
         <PostDetails />
-        <LastModifiedDate />
+        {/*<LastModifiedDate />*/}
       </View>
     </Pressable>
     <SheetOptions />
     </View>
   );
 };
-export default PostItem;
+
+const arePropsEqual = (prevProps, nextProps) => {
+  return prevProps?.item?.ID === nextProps?.item?.ID;
+};
+
+export default React.memo(PostItem, arePropsEqual);

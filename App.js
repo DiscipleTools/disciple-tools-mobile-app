@@ -11,6 +11,8 @@ import * as SplashScreen from "expo-splash-screen";
 
 import Toast from "react-native-toast-message";
 
+import { enableScreens } from 'react-native-screens';
+
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { AuthProvider } from "hooks/use-auth";
 import useStyles from "hooks/use-styles";
@@ -18,6 +20,8 @@ import useStyles from "hooks/use-styles";
 import { AppConstants } from "constants";
 
 import { SWRConfig } from "swr";
+
+enableScreens();
 
 const App = () => {
 

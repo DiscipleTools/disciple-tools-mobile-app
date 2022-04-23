@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Alert, I18nManager } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import moment from 'moment/min/moment-with-locales';
@@ -213,13 +213,13 @@ const useI18N = () => {
 
   const selectedEndonym = i18n?.translations[locale]?.endonym ?? ''; 
 
-  return {
+  return useMemo(() => ({
     i18n,
     isRTL,
     locale,
     setLocale: _setLocale,
     selectedEndonym,
     moment
-  };
+  }), [isRTL, locale, selectedEndonym]);
 };
 export default useI18N;

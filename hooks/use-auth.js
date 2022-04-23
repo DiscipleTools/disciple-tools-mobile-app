@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   toggleAutoLogin as _toggleAutoLogin,
@@ -223,7 +223,7 @@ const useCustomAuth = () => {
     }
   };
 
-  return {
+  return useMemo (() => ({
     authenticated,
     user,
     isAutoLogin,
@@ -232,6 +232,6 @@ const useCustomAuth = () => {
     toggleRememberLoginDetails,
     signIn,
     signOut,
-  };
+  }), [authenticated, user, isAutoLogin, rememberLoginDetails, rememberLoginDetails]);
 };
 export { useAuth, AuthProvider };
