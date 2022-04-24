@@ -233,6 +233,7 @@ export const TypeConstants = Object.freeze({
   NOTIFICATION: "notifications",
   TRAINING: "trainings",
   PEOPLEGROUPS: "peoplegroups",
+  MY_USER: "contacts",
 });
 
 export const SubTypeConstants = Object.freeze({
@@ -247,6 +248,7 @@ export const TabScreenConstants = Object.freeze({
   GROUPS: "GROUPS",
   NOTIFICATIONS: "NOTIFICATIONS",
   MORE: "MORE",
+  MY_USER: "MY_USER",
 });
 
 export const ScreenConstants = Object.freeze({
@@ -255,8 +257,8 @@ export const ScreenConstants = Object.freeze({
   CREATE: "CREATE",
   IMPORT: "IMPORT",
   COMMENTS_ACTIVITY: "COMMENTS_ACTIVITY",
+  MY_USER: "MY_USER",
   NOTIFICATIONS: "NOTIFICATIONS",
-  SETTINGS: "SETTINGS",
   PIN: "PIN",
 });
 

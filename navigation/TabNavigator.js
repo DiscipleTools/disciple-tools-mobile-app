@@ -12,7 +12,8 @@ import {
   AccountIcon,
   AccountsIcon,
   BellIcon,
-  MoreIcon
+  MoreIcon,
+  UserIcon
 } from "components/Icon";
 import HomeScreen from "screens/HomeScreen";
 import MoreScreen from "screens/MoreScreen";
@@ -25,7 +26,7 @@ import DetailsScreen from "screens/Posts/DetailsScreen";
 //import QuestionnaireScreen from 'screens/Posts/QuestionnaireScreen';
 import CommentsActivityScreen from "screens/Posts/CommentsActivityScreen";
 import NotificationsScreen from "screens/NotificationsScreen";
-import SettingsScreen from "screens/SettingsScreen";
+import MyUserScreen from "screens/MyUserScreen";
 
 import useI18N from "hooks/use-i18n";
 import useNotifications from "hooks/use-notifications";
@@ -160,40 +161,62 @@ const TabNavigator = ({ navigation }) => {
             type: TypeConstants.GROUP,
           }}
         />
+      </Stack.Navigator>
+    );
+  };
+
+  const MyUserStack = ({ route }) => {
+    return (
+      <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
-          name={ScreenConstants.NOTIFICATIONS}
-          component={NotificationsScreen}
-          //options={{ presentation: 'transparentModal' }}
-          options={{
-            title: i18n.t("global.notifications"),
-          }}
-          initialParams={{
-            type: TypeConstants.NOTIFICATION,
-          }}
-        />
-        <Stack.Screen
-          name={ScreenConstants.SETTINGS}
-          component={SettingsScreen}
+          name={ScreenConstants.MY_USER}
+          component={MyUserScreen}
           //options={{
           //mode: "modal",
-          //headerMode: "none",
           //cardStyle: {
           //  backgroundColor:"transparent",
           //  opacity: 0.99
           //}
           //}}
           options={{
-            title: i18n.t("global.settings"),
+            title: '',
           }}
           initialParams={{
-            type: TypeConstants.SETTINGS,
+            type: TypeConstants.MY_USER,
           }}
+        />
+        <Stack.Screen
+          name={ScreenConstants.COMMENTS_ACTIVITY}
+          component={CommentsActivityScreen}
+          options={{
+            title: i18n.t("global.commentsActivity"),
+            ...TransitionPresets.ModalTransition,
+          }}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
+        />
+        <Stack.Screen
+          name={ScreenConstants.DETAILS}
+          component={DetailsScreen}
+          //options={{ presentation: 'card' }}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
         />
         <Stack.Screen
           name={ScreenConstants.PIN}
           options={{
             title: null,
-            headerBackTitle: i18n.t("global.settings"),
+            //headerBackTitle: i18n.t("global.settings"),
           }}
         >
           {(props) => <PINScreen {...props} />}
@@ -295,7 +318,7 @@ const TabNavigator = ({ navigation }) => {
           borderTopColor: theme.divider,
           display: [
             ScreenConstants.PIN,
-            ScreenConstants.SETTINGS,
+            //ScreenConstants.SETTINGS,
             ScreenConstants.COMMENTS_ACTIVITY,
           ].includes(getFocusedRouteNameFromRoute(route))
             ? "none"
@@ -397,6 +420,40 @@ const TabNavigator = ({ navigation }) => {
                   params: {
                     screen: ScreenConstants.LIST,
                     type: TypeConstants.GROUP,
+                  },
+                },
+              ],
+            });
+          },
+        })}
+      />
+      <Tab.Screen
+        name={TabScreenConstants.MY_USER}
+        component={MyUserStack}
+        initialParams={{
+          type: TypeConstants.MY_USER,
+        }}
+        options={{
+          //unmountOnBlur: true,
+          tabBarShowLabel: false,
+          tabBarIcon: ({ focused, color }) => (
+            <View>
+              <View style={indicatorStyle(focused)} />
+              <UserIcon style={{ color }} />
+            </View>
+          ),
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: TabScreenConstants.MY_USER,
+                  params: {
+                    screen: ScreenConstants.MY_USER,
+                    type: TypeConstants.MY_USER,
                   },
                 },
               ],

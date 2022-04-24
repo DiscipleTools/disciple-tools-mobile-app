@@ -14,9 +14,15 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     paddingHorizontal: 10,
   },
   headerText: {
-    color: theme.placeholder,
+    color: theme.text.primary,
     fontStyle: "italic",
-    marginHorizontal: 20
+    marginHorizontal: 20,
+    marginTop: 5,
+  },
+  commentActivityIcon: {
+    marginStart: "auto",
+    justifyContent: "center",
+    marginHorizontal: 10
   },
   switch: {
     color: theme.mode === ThemeConstants.DARK ? theme.highlight : theme.brand.primary,

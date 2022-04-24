@@ -1,11 +1,12 @@
-import React from "react";
-import { Image, Switch, Text, View } from "react-native";
+import React, { useLayoutEffect } from "react";
+import { Image, Pressable, Switch, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { useIsFocused } from "@react-navigation/native";
+//import { useIsFocused } from "@react-navigation/native";
 
 import {
   ChevronForwardIcon,
   ChevronBackIcon,
+  CommentActivityIcon,
   DarkModeIcon,
   FlashIcon,
   HelpIcon,
@@ -14,30 +15,36 @@ import {
   OnePasswordIcon,
   SecurityIcon,
 } from "components/Icon";
-import ListItem from "components/ListItem";
+import { HeaderRight } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
 import LanguagePicker from "components/Picker/LanguagePicker";
+import ListItem from "components/ListItem";
 import AppVersion from "components/AppVersion";
 
 import { useAuth } from "hooks/use-auth";
 import useApp from "hooks/use-app";
 import useNetwork from "hooks/use-network";
 import useI18N from "hooks/use-i18n";
+import useMyUser from "hooks/use-my-user";
 import usePIN from "hooks/use-pin";
+import useUsers from "hooks/use-users";
 import useStyles from "hooks/use-styles";
 import useTheme from "hooks/use-theme";
 
-import { localStyles } from "./SettingsScreen.styles";
 import gravatar from "assets/gravatar-default.png";
 
-const SettingsScreen = ({ navigation }) => {
+import { ScreenConstants, TypeConstants, SubTypeConstants } from "constants";
+
+import { localStyles } from "./MyUserScreen.styles";
+
+const MyUserScreen = ({ navigation }) => {
 
   // NOTE: invoking this hook causes the desired re-render onBack()
-  useIsFocused();
+  //useIsFocused();
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { isConnected, toggleNetwork } = useNetwork();
-  const { i18n, isRTL, locale } = useI18N();
+  const { i18n, isRTL } = useI18N();
   const { PINConstants, hasPIN } = usePIN();
   const {
     user,
@@ -49,18 +56,73 @@ const SettingsScreen = ({ navigation }) => {
   } = useAuth();
   const { isDarkMode, toggleMode } = useTheme();
 
+  useLayoutEffect(() => {
+    const kebabItems = [
+      {
+        label: i18n.t("global.viewOnWeb"),
+        urlPath: "settings",
+      },
+      {
+        label: i18n.t("global.documentation"),
+        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/settings-screen/`,
+      },
+    ];
+    navigation.setOptions({
+      title: "",
+      headerRight: (props) => (
+        <HeaderRight
+          kebabItems={kebabItems}
+          props
+        />
+      ),
+    });
+  }, []);
+
   const Header = () => {
-    const username = user?.username ?? "";
-    const domain = user?.domain ?? "";
+    const { data: userData } = useMyUser();
+    const { data: users } = useUsers();
+    const myUser = users?.find(user => user?.ID === userData?.ID);
+    const id = myUser?.contact_id;
+    const name = userData?.display_name ?? '';
+    const domain = user?.domain ?? '';
     return (
       <View style={[globalStyles.rowContainer, styles.headerContainer]}>
         <Image source={gravatar} style={styles.avatar} />
         <View style={globalStyles.columnContainer}>
-          <Text style={[styles.headerText, globalStyles.title]}>
-            {username}
-          </Text>
+          { id ? (
+            <Pressable
+              onPress={() => {
+                navigation.push(ScreenConstants.DETAILS, {
+                  id,
+                  name,
+                  type: TypeConstants.CONTACT,
+                });
+              }}
+            >
+              <Text style={[styles.headerText, globalStyles.title, globalStyles.link]}>
+                {name}
+              </Text>
+            </Pressable>
+          ) : (
+            <Text style={[styles.headerText, globalStyles.title]}>
+              {name}
+            </Text>
+          )}
           <Text style={styles.headerText}>{domain}</Text>
         </View>
+        <Pressable
+          onPress={() => {
+            navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
+              id,
+              name,
+              type: TypeConstants.CONTACT,
+              subtype: SubTypeConstants.COMMENTS_ACTIVITY
+            });
+          }}
+          style={styles.commentActivityIcon}
+        >
+          <CommentActivityIcon />
+        </Pressable>
       </View>
     );
   };
@@ -204,4 +266,4 @@ const SettingsScreen = ({ navigation }) => {
     </ScrollView>
   );
 };
-export default SettingsScreen;
+export default MyUserScreen;
