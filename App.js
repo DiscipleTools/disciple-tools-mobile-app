@@ -13,6 +13,7 @@ import Toast from "react-native-toast-message";
 
 import { enableScreens } from 'react-native-screens';
 
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { AuthProvider } from "hooks/use-auth";
 import useStyles from "hooks/use-styles";
@@ -68,11 +69,13 @@ const App = () => {
               loadingTimeout: 10000,
             }}
           >
-            <BottomSheetModalProvider>
-              <AuthProvider>
-                <StyledApp />
-              </AuthProvider>
-            </BottomSheetModalProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <BottomSheetModalProvider>
+                <AuthProvider>
+                  <StyledApp />
+                </AuthProvider>
+              </BottomSheetModalProvider>
+            </GestureHandlerRootView>
           </SWRConfig>
         </PersistGate>
       </Provider>

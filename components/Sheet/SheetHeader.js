@@ -6,7 +6,7 @@ import { CloseIcon, ExpandIcon } from "components/Icon";
 import useBottomSheet from 'hooks/use-bottom-sheet';
 import useStyles from "hooks/use-styles";
 
-import { truncate } from "utils";
+import { titleize } from "utils";
 
 import { localStyles } from "./SheetHeader.styles";
 
@@ -28,7 +28,7 @@ const SheetHeader = ({ expandable, dismissable, title, onDismiss }) => {
     ]}>
       <View>
       { title?.length > 0 && (
-        <Text style={globalStyles.title}>{truncate(title, { maxLength: 35 })}</Text>
+        <Text style={globalStyles.title}>{titleize(title)}</Text>
       )}
       </View>
       <View style={[

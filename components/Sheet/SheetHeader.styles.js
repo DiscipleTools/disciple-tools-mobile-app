@@ -4,7 +4,7 @@ export const localStyles = ({ theme, isRTL }) => ({
     color: theme.text.primary,
     //borderBottomColor: theme.divider,
     //borderBottomWidth: 1,
-    paddingBottom: 20,
+    paddingBottom: 10,
     paddingHorizontal: 10,
   },
   controls: {
@@ -12,6 +12,6 @@ export const localStyles = ({ theme, isRTL }) => ({
   },
   closeIcon: {
     color: theme.text.primary,
-    fontSize: 32,
+    fontSize: 28,
   }
 });

@@ -47,7 +47,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   },
   title: {
     color: theme.text.primary,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
     marginEnd: "auto",
   },

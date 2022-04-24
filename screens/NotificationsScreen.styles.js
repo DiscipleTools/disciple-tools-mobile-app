@@ -12,6 +12,10 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     flexWrap: "wrap",
     marginEnd: "auto",
   },
+  startIcon: {
+    //justifyContent: "center",
+    marginTop: 5,
+  },
   markIcon: {
     height: "100%",
     justifyContent: "center",

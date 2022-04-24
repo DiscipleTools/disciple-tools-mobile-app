@@ -119,7 +119,9 @@ const NotificationsScreen = ({ navigation }) => {
       <View style={globalStyles.columnContainer}>
         <View style={[globalStyles.rowContainer, styles.notificationDetails]}>
           {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
-          <Text>{newNotificationNoteA}</Text>
+          <Text>
+            {truncate(newNotificationNoteA, { maxLength: 35 })}
+          </Text>
           <Pressable
             onPress={() => {
               const tabScreen = getTabScreenFromType(type);
@@ -202,6 +204,7 @@ const NotificationsScreen = ({ navigation }) => {
         </View>
         <View style={{
           flex: 1,
+          paddingHorizontal: 20,
         }}>
           <NotificationButton />
         </View>
@@ -212,7 +215,7 @@ const NotificationsScreen = ({ navigation }) => {
   // NOTE: wrap in empty view, otherwise `react-native-swipe-view` requires React.forwardRef
   const renderItem = ({ item }) => (
     <>
-      <NotificationItem item={item} loading={isLoading || isValidating} mutate={mutate} />
+      <NotificationItem item={item} loading={isLoading} mutate={mutate} />
     </>
   );
 

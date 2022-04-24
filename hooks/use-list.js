@@ -526,7 +526,11 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
   //if (search) url += `?text=${search}`;
 
   // NOTE: map filters to url params
-  url += (filter?.query && userData) ? `?${ mapFilterOnQueryParams(filter?.query, userData) }`: "?dt_recent=true";
+  if (filter?.query && userData) {
+    url += `?${ mapFilterOnQueryParams(filter?.query, userData) }`;
+  } else if (!type) {
+    url += `?dt_recent=true`;
+  } else;
 
   /*
   * NOTE: we set a silly upper limit in order to aggressively fetch ALL posts,

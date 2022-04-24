@@ -112,6 +112,11 @@ export const labelize = (str) => {
   return str;
 };
 
+// TODO: constant for maxLength?
+export const titleize = (title) => {
+  return truncate(title, { maxLength: 35 });
+};
+
 export const getAvailablePostTypes = () => {
   return Object.values(TypeConstants);
 };

@@ -30,7 +30,7 @@ export const HeaderLeft = ({ startIcons, endIcons, style, iconStyle }) => {
           });
         }}
         style={[
-          styles.navIcon,
+          globalStyles.icon,
           iconStyle
         ]}
       />
