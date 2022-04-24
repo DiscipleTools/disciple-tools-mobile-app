@@ -8,6 +8,8 @@ import Placeholder from "components/Placeholder";
 
 import useStyles from "hooks/use-styles";
 
+import Constants from "constants";
+
 import { localStyles } from "./FilterList.styles";
 
 const FilterList = ({
@@ -39,19 +41,42 @@ const FilterList = ({
 
   useEffect(() => {
     _setItems(items);
-  }, [JSON.stringify(items)]);
+  }, [items?.length, JSON.stringify(items?.[0])]);
 
   const _onRefresh = useCallback(() => {
-    if (onRefresh) onRefresh();
-    /*
+    if (onRefresh) {
+      onRefresh();
+      return;
+    };
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
-    */
   });
 
-  if (!_items) return null;
+  const ScrollList = (props) => {
+    const LIMIT = 100;
+    const [offset, setOffset] = useState(LIMIT);
+    return(
+      <SwipeListView
+        //initialNumToRender={offset}
+        data={_items}
+        //data={_items.splice(0, offset)}
+        {...props}
+        /*
+        onEndReached={() => { 
+          console.log("*** ON END REACHED")
+          if (_items?.length > offset) {
+            setOffset(offset + LIMIT);
+          };
+        }}
+        onEndReachedThreshold={0.5}
+        */
+      />
+    );
+  };
+
+  if (!items) return null;
   return (
     <SafeAreaView style={[
       styles.gutter,
@@ -82,10 +107,12 @@ const FilterList = ({
           <Placeholder placeholder={placeholder} />
         </View>
       ) : (
-        <SwipeListView
-          initialNumToRender={8}
-          data={_items}
+        <ScrollList
           renderItem={renderItem}
+          getItemLayout={(data, index) => ({
+            length: Constants.LIST_ITEM_HEIGHT,
+            offset: Constants.LIST_ITEM_HEIGHT * index, index
+          })}
           renderHiddenItem={renderHiddenItem ?? null}
           leftOpenValue={leftOpenValue}
           rightOpenValue={leftOpenValue}

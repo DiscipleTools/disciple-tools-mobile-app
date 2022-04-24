@@ -2,7 +2,6 @@ import React, { useLayoutEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-import { CogIcon } from "components/Icon";
 import { HeaderRight } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
 
@@ -14,7 +13,7 @@ import useFilters from "hooks/use-filters";
 import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
 
-import { ScreenConstants, TypeConstants } from "constants";
+import { TypeConstants } from "constants";
 
 import { findFilterById, labelize } from "utils";
 
@@ -24,21 +23,15 @@ const HomeScreen = ({ navigation, route }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
-  const { data: contactFilters, mutate: mutateContactFilters } = useFilters({
-    type: TypeConstants.CONTACT,
-  });
-  const { data: groupFilters, mutate: mutateGroupFilters } = useFilters({
-    type: TypeConstants.GROUP,
-  });
-
+ 
   const [refreshing, setRefreshing] = useState(false);
 
   const hasAccountUpdates = false;
 
   const onRefresh = () => {
     setRefreshing(true);
-    if (mutateContactFilters) mutateContactFilters();
-    if (mutateGroupFilters) mutateGroupFilters();
+    ///if (mutateContactFilters) mutateContactFilters();
+    //if (mutateGroupFilters) mutateGroupFilters();
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
@@ -63,23 +56,12 @@ const HomeScreen = ({ navigation, route }) => {
        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/home-screen/`,
       },
     ];
-    const renderStartIcons = () => (
-      <>
-        <View style={styles.headerIcon}>
-          <CogIcon onPress={() => navigation.push(ScreenConstants.SETTINGS)} />
-          {hasAccountUpdates && (
-            <View style={styles.notificationsDot(hasAccountUpdates)} />
-          )}
-        </View>
-      </>
-    );
     navigation.setOptions({
       title: "",
       headerLeft: (props) => renderHeaderLeft(props),
       headerRight: (props) => (
         <HeaderRight
           kebabItems={kebabItems}
-          renderStartIcons={renderStartIcons}
           props
         />
       ),
@@ -87,6 +69,9 @@ const HomeScreen = ({ navigation, route }) => {
   }, [hasAccountUpdates]);
 
   const FavoriteContactsCard = () => {
+    const { data: contactFilters, mutate: mutateContactFilters } = useFilters({
+      type: TypeConstants.CONTACT,
+    });
     const filter = findFilterById("favorite", contactFilters);
     return (
       <MetricCard
@@ -98,6 +83,9 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   const FavoriteGroupsCard = () => {
+    const { data: groupFilters, mutate: mutateGroupFilters } = useFilters({
+      type: TypeConstants.GROUP,
+    });
     const filter = findFilterById("favorite", groupFilters);
     return (
       <MetricCard
@@ -135,6 +123,7 @@ const HomeScreen = ({ navigation, route }) => {
   };
   */
 
+  /*
   const ActiveContactsCard = () => {
     const filter = findFilterById("my_active", contactFilters);
     const title = `${filter?.name} ${labelize(TypeConstants.CONTACT)}`;
@@ -150,6 +139,7 @@ const HomeScreen = ({ navigation, route }) => {
       <MetricCard title={title} filter={filter} type={TypeConstants.GROUP} />
     );
   };
+  */
 
   return (
     <>
@@ -162,11 +152,13 @@ const HomeScreen = ({ navigation, route }) => {
           <FavoriteContactsCard />
           <FavoriteGroupsCard />
         </View>
+        {/*
         <PendingContactsCard
           filters={contactFilters}
           refreshing={refreshing}
           onRefresh={onRefresh}
         />
+        */}
         <ActivityLogCard preview={5} refreshing={refreshing} />
       </ScrollView>
     </>

@@ -46,7 +46,7 @@ export const BottomSheetProvider = ({ children }) => {
   const [multiSelectValues, setMultiSelectValues] = useState(null);
 
   const collapseBottomSheet = useCallback(() => {
-    bottomSheetRef.current?.close(); //collapse();
+    bottomSheetRef.current?.close();
     dispatch({ type: COLLAPSE });
   }, []);
 
@@ -92,26 +92,33 @@ export const BottomSheetProvider = ({ children }) => {
     []
   );
 
+  const FooterCancel = useCallback(props => (
+    <BottomSheetFooter {...props}>
+      <SheetFooterCancel onDismiss={options?.onDismiss} />
+    </BottomSheetFooter>
+  ), []);
+
+  const FooterDone = useCallback(props => (
+    <BottomSheetFooter {...props}>
+      <SheetFooterDone onDone={() => options.onDone(multiSelectValues)} />
+    </BottomSheetFooter>
+  ), []);
+
   const renderFooter = (props) => {
     if (options?.renderFooter) return(
       <BottomSheetFooter {...props}>
         { options?.renderFooter(props) }
       </BottomSheetFooter>
     );
-    if (options?.onDone) return(
-      <BottomSheetFooter {...props}>
-        <SheetFooterDone onDone={() => options.onDone(multiSelectValues)} />
-      </BottomSheetFooter>
-    );
-    return(
-      <BottomSheetFooter {...props}>
-        <SheetFooterCancel onDismiss={options?.onDismiss} />
-      </BottomSheetFooter>
-    );
+    if (options?.onDone) return <FooterDone {...props} />;
+    //return <FooterCancel {...props} />;
+    return null;
   };
 
   const onChange = (idx) => {
-    if (idx === -1) dispatch({ type: COLLAPSE });
+    if (idx === -1) {
+      dispatch({ type: COLLAPSE });
+    };
     setSnapIndex(idx);
   };
 
@@ -147,4 +154,4 @@ export const BottomSheetProvider = ({ children }) => {
 
 const useBottomSheet = () => useContext(BottomSheetContext);
 
-export default useBottomSheet
+export default useBottomSheet;

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { View } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
@@ -40,6 +40,7 @@ const ListScreen = ({ navigation, route }) => {
   // TODO: handler error case
 
   useLayoutEffect(() => {
+    if (!settings?.label) return;
     const title = settings?.label ? settings.label : '';
     const kebabItems = [
       {
@@ -55,10 +56,10 @@ const ListScreen = ({ navigation, route }) => {
       title,
       headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />,
     });
-  });
+  }, [settings?.label]);
 
   const renderItem = ({ item }) => (
-    <PostItem item={item} loading={isLoading || isValidating} mutate={mutate} />
+    <PostItem item={item} loading={isLoading} mutate={mutate} />
   );
   //const renderHiddenItem = ({ item }) => <PostItemHidden item={item} loading={isLoading||isValidating} />;
 

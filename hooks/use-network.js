@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -7,20 +7,27 @@ import { setNetworkIsConnected } from "store/actions/network.actions";
 
 const useNetwork = () => {
   const dispatch = useDispatch();
-  const _isConnected = useSelector(
-    (state) => state.networkReducer.isConnected
-  );
+  const isConnectedUserSetting = useSelector(state => state.networkReducer.isConnected);
   const netInfo = useNetInfo();
 
-  const toggleNetwork = () => dispatch(setNetworkIsConnected(!_isConnected));
+  const [isConnected, setIsConnected] = useState(true);
 
-  const isConnected = netInfo?.isInternetReachable && _isConnected !== false;
+  useEffect(() => {
+    const netInfoInitializing = (
+      netInfo?.details === null &&
+      netInfo?.isInternetReachable === null &&
+      netInfo?.isConnected === null &&
+      netInfo?.type === "unknown"
+    );
+    const _isConnected = netInfo?.isInternetReachable && isConnectedUserSetting !== false;
+    if (isConnected !== _isConnected && !netInfoInitializing) setIsConnected(_isConnected);
+  }, [netInfo?.isInternetReachable, isConnectedUserSetting]);
+
+  const toggleNetwork = () => dispatch(setNetworkIsConnected(!_isConnected));
 
   return useMemo (() => ({
     isConnected,
     toggleNetwork,
-  }), [netInfo?.isInternetReachable, _isConnected]);
-  return {
-  };
+  }), [isConnected]);
 };
 export default useNetwork;

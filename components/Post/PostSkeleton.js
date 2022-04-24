@@ -42,10 +42,10 @@ const PostSkeleton = () => {
       </ContentLoader>
       {skeletons.map((fieldSkeleton, idx) => (
         <View
+          key={idx}
           style={{ marginVertical: 25, marginHorizontal: 5 }}
         >
           <FieldSkeleton
-            key={idx}
             isRTL={isRTL}
             windowWidth={windowWidth}
           />

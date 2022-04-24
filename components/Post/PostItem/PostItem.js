@@ -64,7 +64,8 @@ const PostItem = ({ item, loading, mutate }) => {
     const title = item?.name;
     const sections = generateOptions();
     expand({
-      snapPoints: ["25%","95%"],
+      snapPoints: ["33%","95%"],
+      dismissable: true,
       defaultIndex: 0,
       renderHeader: () => (
         <SheetHeader
@@ -209,32 +210,31 @@ const PostItem = ({ item, loading, mutate }) => {
         styles.container
       ]}
     >
-    <Pressable
-      key={item?.ID}
-      onPress={() => {
-        navigation.push(ScreenConstants.DETAILS, {
-          id: item?.ID,
-          name: item?.title,
-          type: item?.post_type,
-        });
-      }}
-      //onLongPress={() => onLongPress()}
-      style={[
-        globalStyles.rowContainer,
-        styles.subcontainer
-      ]}
-    >
-      <StatusBorder />
-      <View style={[
-        globalStyles.rowContainer,
-        styles.subsubcontainer
-      ]}>
-        <FavoriteStar />
-        <PostDetails />
-        {/*<LastModifiedDate />*/}
-      </View>
-    </Pressable>
-    <SheetOptions />
+      <Pressable
+        key={item?.ID}
+        onPress={() => {
+          navigation.push(ScreenConstants.DETAILS, {
+            id: item?.ID,
+            name: item?.title,
+            type: item?.post_type,
+          });
+        }}
+        //onLongPress={() => onLongPress()}
+        style={[
+          globalStyles.rowContainer,
+          styles.subcontainer
+        ]}
+      >
+        <StatusBorder />
+        <View style={[
+          globalStyles.rowContainer,
+          styles.subsubcontainer
+        ]}>
+          <FavoriteStar />
+          <PostDetails />
+        </View>
+      </Pressable>
+      <SheetOptions />
     </View>
   );
 };
