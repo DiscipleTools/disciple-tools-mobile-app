@@ -4,6 +4,8 @@ import { Icon } from "components/Icon";
 import ParentIcon from "assets/icons/parent.svg";
 import PeerIcon from "assets/icons/peer.svg";
 import ChildIcon from "assets/icons/child.svg";
+import PeopleGroupsIcon from "assets/icons/people-groups.svg";
+import TypeIcon from "assets/icons/type.svg";
 
 import useStyles from "hooks/use-styles";
 
@@ -334,6 +336,28 @@ const FieldIcon = ({ field, hide }) => {
           style={styles.svgIcon}
           fill={globalStyles.text.color}
         />
+      );
+    };
+    if ((name.includes("people_groups") || name.includes("peoplegroups")) ) {
+      return (
+        <PeopleGroupsIcon
+          height={globalStyles.icon.fontSize}
+          width={globalStyles.icon.fontSize}
+          style={styles.svgIcon}
+          fill={globalStyles.text.color}
+        />
+      );
+    };
+  };
+  if (type === FieldTypes.KEY_SELECT) {
+    if (name.includes("type")) {
+      return (
+        <TypeIcon
+        height={globalStyles.icon.fontSize}
+        width={globalStyles.icon.fontSize}
+        style={styles.svgIcon}
+        fill={globalStyles.text.color}
+      />
       );
     };
   };
