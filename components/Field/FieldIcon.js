@@ -1,13 +1,16 @@
 import React from "react";
 
 import { Icon } from "components/Icon";
+import ParentIcon from "assets/icons/parent.svg";
 
 import useStyles from "hooks/use-styles";
 
 import { FieldTypes } from "constants";
 
+import { localStyles } from "./FieldIcon.styles";
+
 const FieldIcon = ({ field, hide }) => {
-  const { globalStyles } = useStyles();
+  const { styles, globalStyles } = useStyles(localStyles);
   const type = field.type;
   const name = field.name;
   let iconType = "";
@@ -300,6 +303,18 @@ const FieldIcon = ({ field, hide }) => {
       iconName = "square-small";
       break;
   }
+  if (type === FieldTypes.CONNECTION) {
+    if (name.includes("parent")) {
+      return (
+        <ParentIcon
+          height={globalStyles.icon.fontSize}
+          width={globalStyles.icon.fontSize}
+          style={styles.svgIcon}
+          fill={globalStyles.text.color}
+        />
+      );
+    };
+  };
   return (
     <Icon
       type={iconType}

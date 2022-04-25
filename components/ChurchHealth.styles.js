@@ -25,8 +25,9 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   iconImage: (selected) => ({
     //tintColor: selected ? null : "gray",
     opacity: selected ? null : 0.15,
-    borderBottomColor: theme.mode === ThemeConstants.DARK ? theme.highlight : theme.brand.primary,
-    borderBottomWidth: selected ? 2 : 0, 
+    // RN throws console error about Image having a border property
+    //borderBottomColor: theme.mode === ThemeConstants.DARK ? theme.highlight : theme.brand.primary,
+    //borderBottomWidth: selected ? 2 : 0,
   }),
   switch: {
     color: theme.mode === ThemeConstants.DARK ? theme.highlight : theme.brand.primary,
