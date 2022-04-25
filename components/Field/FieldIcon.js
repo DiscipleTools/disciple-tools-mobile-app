@@ -131,7 +131,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "teach";
       } else if (name.includes("members")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "format-list-bulleted";
+        iconName = "account-group-outline";
       } else if (name.includes("contacts")) {
         iconType = "MaterialCommunityIcons";
         iconName = "human";
