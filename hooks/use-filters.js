@@ -1,5 +1,15 @@
 import React, { useCallback, useMemo, useReducer, useRef, useState } from "react";
 
+import {
+  CheckIcon,
+  CircleOutlineIcon,
+  CommentIcon,
+  CommentActivityIcon,
+  CommentAlertIcon,
+  InfinityIcon,
+  MentionIcon
+} from "components/Icon";
+
 //import useNetwork from "hooks/use-network";
 import useI18n from "hooks/use-i18n";
 import useType from "hooks/use-type";
@@ -25,6 +35,7 @@ const useFilters = ({ type } = {}) => {
           ID: "all",
           //count: 1350,
           name: i18n.t("global.all"),
+          icon: <InfinityIcon />,
           query: null,
           subfilter: false
         },
@@ -32,6 +43,7 @@ const useFilters = ({ type } = {}) => {
           ID: "comments_activity_type_comments_only",
           //count: 450,
           name: i18n.t("global.comments"),
+          icon: <CommentIcon />,
           query: {
             key: "comment_ID",
           },
@@ -41,6 +53,7 @@ const useFilters = ({ type } = {}) => {
           ID: "comments_activity_type_activity_only",
           //count: 850,
           name: i18n.t("global.activity"),
+          icon: <CommentActivityIcon />,
           query: {
             key: "histid",
           },
@@ -68,6 +81,7 @@ const useFilters = ({ type } = {}) => {
           ID: "all",
           //count: 99,
           name: i18n.t("global.all"),
+          icon: <InfinityIcon />,
           query: null,
           subfilter: false 
         },
@@ -75,6 +89,7 @@ const useFilters = ({ type } = {}) => {
           ID: "notifications_status_unread",
           //count: 76,
           name: i18n.t("global.unread"),
+          icon: <CircleOutlineIcon />,
           query: {
             key: "is_new",
             value: "1"
@@ -85,6 +100,7 @@ const useFilters = ({ type } = {}) => {
           ID: "notifications_status_read",
           //count: 23,
           name: i18n.t("global.read"),
+          icon: <CheckIcon />,
           query: {
             key: "is_new",
             value: "0"
@@ -101,6 +117,7 @@ const useFilters = ({ type } = {}) => {
           ID: NotificationActionConstants.MENTION,
           //count: 99,
           name: i18n.t("global.mention"),
+          icon: <MentionIcon />,
           query: {
             key: "notification_action",
             value: NotificationActionConstants.MENTION
@@ -111,6 +128,7 @@ const useFilters = ({ type } = {}) => {
           ID: NotificationActionConstants.ALERT,
           //count: 19,
           name: i18n.t("global.alert"),
+          icon: <CommentAlertIcon />,
           query: {
             key: "notification_action",
             value: NotificationActionConstants.ALERT
@@ -121,6 +139,7 @@ const useFilters = ({ type } = {}) => {
           ID: NotificationActionConstants.COMMENT,
           //count: 19,
           name: i18n.t("global.comments"),
+          icon: <CommentIcon />,
           query: {
             key: "notification_action",
             value: NotificationActionConstants.COMMENT

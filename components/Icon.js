@@ -160,6 +160,9 @@ export const HamburgerIcon = ({ onPress, style }) => (
 export const HelpIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="help-circle" onPress={onPress} style={style} />
 );
+export const InfinityIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="infinity" onPress={onPress} style={style} />
+);
 export const KebabIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="dots-vertical" onPress={onPress} style={style} />
 );

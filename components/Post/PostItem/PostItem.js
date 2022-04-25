@@ -3,7 +3,12 @@ import { Pressable, Text, View } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
 
-import { CommentEditIcon, MeatballIcon, StarIcon, StarOutlineIcon } from "components/Icon";
+import {
+  CommentActivityIcon,
+  MeatballIcon,
+  StarIcon,
+  StarOutlineIcon
+} from "components/Icon";
 import PostItemSkeleton from "./PostItemSkeleton";
 import SelectSheet from "components/Sheet/SelectSheet";
 import SheetHeader from "components/Sheet/SheetHeader";
@@ -39,7 +44,7 @@ const PostItem = ({ item, loading, mutate }) => {
           {
             key: "commentsActivity",
             label: i18n.t("global.commentsActivity"),
-            icon: <CommentEditIcon />,
+            icon: <CommentActivityIcon />,
           },
         ],
       },
