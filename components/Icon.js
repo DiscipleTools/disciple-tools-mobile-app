@@ -326,7 +326,7 @@ export const MapsIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="map" onPress={onPress} style={style} />
 );
 export const TreesIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="file-tree" onPress={onPress} style={style} />
+  <MaterialCommunityIcon name="family-tree" onPress={onPress} style={style} />
 );
 export const ChartsIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="chart-pie" onPress={onPress} style={style} />
