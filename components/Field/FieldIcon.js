@@ -194,10 +194,13 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "whatsapp";
       } else if (name.includes("address")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "directions";
+        iconName = "map-marker-outline";
+      } else if (name.includes("other")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "link";
       } else {
         iconType = "MaterialCommunityIcons";
-        iconName = "pound";
+        iconName = "chat";
       }
       break;
     case FieldTypes.KEY_SELECT:
