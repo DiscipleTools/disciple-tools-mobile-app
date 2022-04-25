@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
@@ -10,6 +10,7 @@ import Placeholder from "components/Placeholder";
 import { DeclineIcon, AcceptIcon } from "components/Icon";
 
 import useAPI from "hooks/use-api";
+import useFilters from "hooks/use-filters";
 import useI18N from "hooks/use-i18n";
 import useList from "hooks/use-list";
 import useStyles from "hooks/use-styles";
@@ -20,7 +21,7 @@ import { findFilterById } from "utils";
 
 import { localStyles } from "./PendingContactsCard.styles";
 
-const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
+const PendingContactsCard = ({ refreshing, onRefresh }) => {
 
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
@@ -31,7 +32,10 @@ const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
 
   const { updatePost } = useAPI();
 
-  const filter = findFilterById("my_assigned", filters);
+  const { data: contactFilters, mutate: mutateContactFilters } = useFilters({
+    type: TypeConstants.CONTACT,
+  });
+  const filter = findFilterById("my_assigned", contactFilters);
   const title = filter ? filter?.name : "";
   const {
     data: contacts,
@@ -41,6 +45,8 @@ const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
     mutate,
   } = useList({ filter, type: TypeConstants.CONTACT });
 
+  const [_contacts, setContacts] = useState(contacts);
+
   useEffect(() => {
     if (mutate) mutate();
   }, [refreshing]);
@@ -48,6 +54,7 @@ const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
   // https://dtdemo.disciple.tools/wp-json/dt-posts/v2/contacts/96/accept
   // { "accept" true|false }
   const handleAccept = ({ contact, accept }) => {
+    setContacts(_contacts?.filter((_contact) => _contact.ID !== contact.ID));
     updatePost({
       urlPathPostfix: "/accept",
       fields: { accept },
@@ -94,34 +101,38 @@ const PendingContactsCard = ({ filters, refreshing, onRefresh }) => {
 
   const renderExpandedCard = () => (
     <ScrollView>
-      {contacts?.map((contact, idx) => renderContactAccept(contact, idx))}
+      {_contacts?.map((contact, idx) => renderContactAccept(contact, idx))}
     </ScrollView>
   );
 
   const renderPartialCard = () => (
     <>
       <View>
-        {contacts
+        {_contacts
           ?.slice(0, 1)
           ?.map((contact, idx) => renderContactAccept(contact, idx))}
       </View>
-      {contacts?.length > 1 && <Text>...</Text>}
+      {_contacts?.length > 1 && (
+        <View style={styles.etcetera}>
+          <Text>...</Text>
+        </View>
+      )}
     </>
   );
 
   if (!filter) return null;
-  if (contacts?.length > 1)
+  if (_contacts?.length > 1)
     return (
       <ExpandableCard
         border
         center
         title={title}
-        count={contacts?.length}
+        count={_contacts?.length}
         renderPartialCard={renderPartialCard}
         renderExpandedCard={renderExpandedCard}
       />
     );
-  if (contacts?.length > 0)
+  if (_contacts?.length > 0)
     return (
       <Card border center title={title} body={<>{renderPartialCard()}</>} />
     );

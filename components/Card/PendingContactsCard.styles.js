@@ -35,5 +35,8 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   },
   buttonDecline: {
     backgroundColor: theme.error,
+  },
+  etcetera: {
+    alignItems: "center",
   }
 });
