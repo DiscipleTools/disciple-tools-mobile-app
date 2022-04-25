@@ -111,8 +111,7 @@ export const BottomSheetProvider = ({ children }) => {
       </BottomSheetFooter>
     );
     if (options?.onDone) return <FooterDone {...props} />;
-    //return <FooterCancel {...props} />;
-    return null;
+    return <FooterCancel {...props} />;
   };
 
   const onChange = (idx) => {
