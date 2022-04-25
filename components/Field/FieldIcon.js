@@ -122,7 +122,6 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("leader")) {
         iconType = "MaterialCommunityIcons";
         iconName = "shield-account";
-        iconStyle = { transform: [{ scaleX: -1 }] }
       } else if (name.includes("group")) {
         iconType = "MaterialCommunityIcons";
         iconName = "gamepad-circle";
@@ -138,15 +137,12 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("disciple")) {
         iconType = "MaterialCommunityIcons";
         iconName = "account-star-outline";
-        iconStyle = { transform: [{ scaleX: -1 }] }
       } else if (name.includes("meetings")) {
         iconType = "MaterialCommunityIcons";
         iconName = "calendar-text";
-        iconStyle = { transform: [{ scaleX: -1 }] }
       } else if (name.includes("streams")) {
         iconType = "MaterialCommunityIcons";
         iconName = "axis-arrow";
-        iconStyle = { transform: [{ scaleX: -1 }] }
       } else {
         iconType = "MaterialCommunityIcons";
         iconName = "axis";
