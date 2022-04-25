@@ -26,12 +26,8 @@ const HomeScreen = ({ navigation, route }) => {
  
   const [refreshing, setRefreshing] = useState(false);
 
-  const hasAccountUpdates = false;
-
   const onRefresh = () => {
     setRefreshing(true);
-    ///if (mutateContactFilters) mutateContactFilters();
-    //if (mutateGroupFilters) mutateGroupFilters();
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
@@ -66,7 +62,7 @@ const HomeScreen = ({ navigation, route }) => {
         />
       ),
     });
-  }, [hasAccountUpdates]);
+  }, []);
 
   const FavoriteContactsCard = () => {
     const { data: contactFilters, mutate: mutateContactFilters } = useFilters({
@@ -152,13 +148,10 @@ const HomeScreen = ({ navigation, route }) => {
           <FavoriteContactsCard />
           <FavoriteGroupsCard />
         </View>
-        {/*
         <PendingContactsCard
-          filters={contactFilters}
           refreshing={refreshing}
           onRefresh={onRefresh}
         />
-        */}
         <ActivityLogCard preview={5} refreshing={refreshing} />
       </ScrollView>
     </>
