@@ -2,6 +2,8 @@ import React from "react";
 
 import { Icon } from "components/Icon";
 import ParentIcon from "assets/icons/parent.svg";
+import PeerIcon from "assets/icons/peer.svg";
+import ChildIcon from "assets/icons/child.svg";
 
 import useStyles from "hooks/use-styles";
 
@@ -307,6 +309,26 @@ const FieldIcon = ({ field, hide }) => {
     if (name.includes("parent")) {
       return (
         <ParentIcon
+          height={globalStyles.icon.fontSize}
+          width={globalStyles.icon.fontSize}
+          style={styles.svgIcon}
+          fill={globalStyles.text.color}
+        />
+      );
+    };
+    if (name.includes("peer")) {
+      return (
+        <PeerIcon
+          height={globalStyles.icon.fontSize}
+          width={globalStyles.icon.fontSize}
+          style={styles.svgIcon}
+          fill={globalStyles.text.color}
+        />
+      );
+    };
+    if (name.includes("child")) {
+      return (
+        <ChildIcon
           height={globalStyles.icon.fontSize}
           width={globalStyles.icon.fontSize}
           style={styles.svgIcon}
