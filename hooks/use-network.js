@@ -23,7 +23,7 @@ const useNetwork = () => {
     if (isConnected !== _isConnected && !netInfoInitializing) setIsConnected(_isConnected);
   }, [netInfo?.isInternetReachable, isConnectedUserSetting]);
 
-  const toggleNetwork = () => dispatch(setNetworkIsConnected(!_isConnected));
+  const toggleNetwork = () => dispatch(setNetworkIsConnected(!isConnected));
 
   return useMemo (() => ({
     isConnected,
