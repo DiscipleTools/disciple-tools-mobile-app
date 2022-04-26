@@ -20,10 +20,6 @@ import useType from "hooks/use-type";
 import {
   groupCircleIcon,
   groupDottedCircleIcon,
-  groupChildIcon,
-  groupParentIcon,
-  groupPeerIcon,
-  groupTypeIcon,
   swimmingPoolIcon,
 } from "constants/icons";
 

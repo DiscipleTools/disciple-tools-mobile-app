@@ -1,6 +1,5 @@
 export { default as dtIcon } from "assets/dt-icon.png";
 export { default as hasBibleIcon } from "assets/icons/book-bookmark.png";
-export { default as statusIcon } from "assets/icons/status.png";
 // Contact-specific
 export { default as readingBibleIcon } from "assets/icons/word.png";
 export { default as statesBeliefIcon } from "assets/icons/language.png";
@@ -24,8 +23,3 @@ export { default as dottedCircleIcon } from "assets/icons/dotted-circle.png";
 export { default as swimmingPoolIcon } from "assets/icons/swimming-pool.png";
 export { default as groupCircleIcon } from "assets/icons/group-circle.png";
 export { default as groupDottedCircleIcon } from "assets/icons/group-dotted-circle.png";
-export { default as groupChildIcon } from "assets/icons/group-child.png";
-export { default as groupParentIcon } from "assets/icons/group-parent.png";
-export { default as groupPeerIcon } from "assets/icons/group-peer.png";
-export { default as groupTypeIcon } from "assets/icons/group-type.png";
-export { default as footprint } from "assets/icons/footprint.png";
