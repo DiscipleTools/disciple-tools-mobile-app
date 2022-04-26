@@ -100,7 +100,7 @@ export const BottomSheetProvider = ({ children }) => {
 
   const FooterDone = useCallback(props => (
     <BottomSheetFooter {...props}>
-      <SheetFooterDone onDone={() => options.onDone(multiSelectValues)} />
+      <SheetFooterDone onDone={props?.onDone} />
     </BottomSheetFooter>
   ), []);
 
@@ -110,7 +110,7 @@ export const BottomSheetProvider = ({ children }) => {
         { options?.renderFooter(props) }
       </BottomSheetFooter>
     );
-    if (options?.onDone) return <FooterDone {...props} />;
+    if (options?.onDone) return <FooterDone onDone={options.onDone(multiSelectValues)} {...props} />;
     return <FooterCancel {...props} />;
   };
 
