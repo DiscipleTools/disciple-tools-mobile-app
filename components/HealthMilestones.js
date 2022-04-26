@@ -211,7 +211,7 @@ const renderHealthMilestones = () => {
                               activeOpacity={1}
                             >
                               <Image
-                                source={baptismIcon}
+                                source={baptismsIcon}
                                 style={
                                   onCheckExistingHealthMetric("church_baptism")
                                     ? styles.activeImage

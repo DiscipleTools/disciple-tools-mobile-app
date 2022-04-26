@@ -6,7 +6,7 @@ import ListItem from "components/ListItem";
 import useStyles from "hooks/use-styles";
 
 import {
-  baptismIcon,
+  baptismsIcon,
   bibleStudyIcon,
   communionIcon,
   fellowshipIcon,
@@ -102,7 +102,7 @@ const ChurchHealth = ({ items, selectedItems }) => {
         <GridItem top={120} left={120} />
         <GridItem top={120} left={180} />
         <GridItem top={120} left={240} />
-        <GridItem top={120+30} left={300-20} icon={baptismIcon} selected={isSelected(ChurchHealthConstants.BAPTISM)} />
+        <GridItem top={120+30} left={300-20} icon={baptismsIcon} selected={isSelected(ChurchHealthConstants.BAPTISM)} />
 
         <GridItem top={180} left={0+25} icon={givingIcon} selected={isSelected(ChurchHealthConstants.GIVING)} />
         <GridItem top={180} left={60} />

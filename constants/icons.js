@@ -20,6 +20,6 @@ export { default as sharingIcon } from "assets/icons/evangelism.png";
 export { default as leadersIcon } from "assets/icons/leadership.png";
 export { default as circleIcon } from "assets/icons/circle.png";
 export { default as dottedCircleIcon } from "assets/icons/dotted-circle.png";
-export { default as swimmingPoolIcon } from "assets/icons/swimming-pool.png";
+export { default as baptismsIcon } from "assets/icons/swimming-pool.png";
 export { default as groupCircleIcon } from "assets/icons/group-circle.png";
 export { default as groupDottedCircleIcon } from "assets/icons/group-dotted-circle.png";
