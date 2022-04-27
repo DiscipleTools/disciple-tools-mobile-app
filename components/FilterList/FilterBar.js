@@ -55,7 +55,7 @@ const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
       if (foundFilter) onFilter(foundFilter);
     }
     return;
-  }, [filter]);
+  }, [JSON.stringify(filter)]);
 
   const mapSortKey = (sortKey) => {
     if (SortConstants.LAST_MOD_DESC === sortKey) {

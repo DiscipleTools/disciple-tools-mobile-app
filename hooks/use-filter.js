@@ -1,7 +1,8 @@
-import React, { useEffect, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer, useState } from "react";
 import * as RootNavigation from "navigation/RootNavigation";
 import { useSelector, useDispatch } from "react-redux";
 
+import useFilters from "./use-filters";
 import useI18N from "./use-i18n";
 import useType from "hooks/use-type";
 
@@ -18,6 +19,8 @@ const useFilter = () => {
 
   const { locale } = useI18N();
 
+  const { data: filters } = useFilters({ type: postType });
+
   const SET_FILTER = "SET_FILTER";
 
   const filterReducer = (state, action) => {
@@ -30,11 +33,22 @@ const useFilter = () => {
   };
 
   const getDefaultFilter = () => {
-    // TODO: constants
-    if (isCommentsActivity) return { ID: "all" };
-    if (isContact) return { ID: "all_my_contacts" };
-    return { ID: "all" };
+    for (let ii=0; ii < filters?.length; ii++) {
+      const filterType = filters[ii];
+      for (let jj=0; jj < filterType?.content?.length; jj++) {
+        const filter = filterType.content[jj];
+        // TODO: constants?
+        if (
+          (isContact && filter?.ID === "all_my_contacts") ||
+          (filter?.ID === "all")
+        ) {
+          return filter;
+        };
+      };
+    };
+    //return null;
     //return { ID: "recent" };
+    return { ID: "all" };
   };
 
   // TODO: persist filter by ID rather than full JSON,
@@ -55,7 +69,7 @@ const useFilter = () => {
     };
     filter = getActiveFilter();
     _setFilter({ type: SET_FILTER, filter });
-  }, [route]);
+  }, [route?.params?.filter]);
 
   const activeFilter = getActiveFilter();
   const defaultFilter = getDefaultFilter();
@@ -85,7 +99,7 @@ const useFilter = () => {
     items.sort((a,b) =>  b[key]-a[key]);
   };
 
-  return {
+  return useMemo(() => ({
     defaultFilter,
     filter,
     onFilter,
@@ -94,6 +108,6 @@ const useFilter = () => {
     filterByKey,
     filterByKeyValue,
     sortByKey
-  };
+  }), [JSON.stringify(defaultFilter), JSON.stringify(filter), search]);
 };
 export default useFilter;

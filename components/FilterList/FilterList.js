@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { SafeAreaView, RefreshControl, Text, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { SafeAreaView, RefreshControl, View } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 
 import SearchBar from "./SearchBar";
@@ -37,7 +37,11 @@ const FilterList = ({
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const [_items, setItems] = useState(items);
+  const [_items, setItems] = useState(null);
+
+  useEffect(() => {
+    if (JSON.stringify(items) !== JSON.stringify(_items)) setItems(items);
+  }, [items?.length, JSON.stringify(items?.[0])]);
 
   const _onRefresh = useCallback(() => {
     if (onRefresh) {
@@ -55,9 +59,11 @@ const FilterList = ({
     offset: Constants.LIST_ITEM_HEIGHT * index, index
   }), []);
 
-  if (!_items) return null;
+  // TODO: actual skeleton component for post lists
+  if (!_items) return <SafeAreaView style={styles.container} />;
   return (
     <SafeAreaView style={[
+      styles.container,
       styles.gutter,
       style
     ]}>

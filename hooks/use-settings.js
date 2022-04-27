@@ -171,6 +171,6 @@ const useSettings = ({ type } = {}) => {
     error,
     isLoading,
     isValidating,
-  }), [JSON.stringify(settings?.fields)]);
+  }), [JSON.stringify(settings)]);
 };
 export default useSettings;
