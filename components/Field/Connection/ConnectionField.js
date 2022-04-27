@@ -20,7 +20,7 @@ import useType from "hooks/use-type";
 import {
   groupCircleIcon,
   groupDottedCircleIcon,
-  baptiseIcon,
+  baptizeIcon,
 } from "constants/icons";
 
 import { FieldNames, TabScreenConstants, ScreenConstants } from "constants";
@@ -238,7 +238,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
                   />
                 )}
                 <Image
-                  source={baptiseIcon}
+                  source={baptizeIcon}
                   style={styles.groupCenterIcon}
                 />
                 <View style={[globalStyles.rowContainer, styles.groupCircleName]}>

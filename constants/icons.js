@@ -22,4 +22,4 @@ export { default as circleIcon } from "assets/icons/circle.png";
 export { default as dottedCircleIcon } from "assets/icons/dotted-circle.png";
 export { default as groupCircleIcon } from "assets/icons/group-circle.png";
 export { default as groupDottedCircleIcon } from "assets/icons/group-dotted-circle.png";
-export { default as baptiseIcon } from "assets/icons/water.png";
+export { default as baptizeIcon } from "assets/icons/water.png";
