@@ -108,6 +108,6 @@ const useFilter = () => {
     filterByKey,
     filterByKeyValue,
     sortByKey
-  }), [JSON.stringify(defaultFilter), JSON.stringify(filter), search]);
+  }), [defaultFilter?.ID, filter?.ID, search, postType]);
 };
 export default useFilter;
