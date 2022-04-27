@@ -111,7 +111,6 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   const _onSave = async(newValue) => {
     // TODO: handle this differently (we shouldn't need one-off for this field.type)
     if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) newValue = mapField(newValue);
-    vibrate();
     await updatePost({ fields: newValue });
     mutate();
   };
@@ -155,7 +154,12 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
       <View style={globalStyles.rowContainer}>
         <CancelIcon onPress={_onCancel} />
         { hasChanged && (
-          <SaveIcon onPress={() => _onSave(_value)} />
+          <SaveIcon
+            onPress={() => {
+              vibrate();
+              _onSave(_value)
+            }}
+          />
         )}
       </View>
     );
