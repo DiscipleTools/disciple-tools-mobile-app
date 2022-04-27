@@ -234,7 +234,7 @@ export const CalendarIcon = ({ onPress, style }) => (
 
 // Notifications
 export const CommentIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="comment-outline" onPress={onPress} style={style} />
+  <MaterialCommunityIcon name="comment-text-outline" onPress={onPress} style={style} />
 );
 export const CommentAlertIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="comment-alert" onPress={onPress} style={style} />
@@ -298,6 +298,9 @@ export const UsernameIcon = ({ onPress, style }) => (
 );
 
 // Other icons
+export const ActivityIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="timeline-outline" onPress={onPress} style={style} />
+);
 export const CommentActivityIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="timeline-text-outline" onPress={onPress} style={style} />
 );

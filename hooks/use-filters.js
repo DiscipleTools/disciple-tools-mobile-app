@@ -4,7 +4,7 @@ import {
   ReadIcon,
   UnreadIcon,
   CommentIcon,
-  CommentActivityIcon,
+  ActivityIcon,
   CommentAlertIcon,
   InfinityIcon,
   MentionIcon
@@ -53,7 +53,7 @@ const useFilters = ({ type } = {}) => {
           ID: "comments_activity_type_activity_only",
           //count: 850,
           name: i18n.t("global.activity"),
-          icon: <CommentActivityIcon />,
+          icon: <ActivityIcon />,
           query: {
             key: "histid",
           },
