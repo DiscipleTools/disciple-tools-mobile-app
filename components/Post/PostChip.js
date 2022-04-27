@@ -9,10 +9,9 @@ import useStyles from "hooks/use-styles";
 
 import { ScreenConstants } from "constants";
 
-import { localStyles } from "./PostLink.styles";
+import { localStyles } from "./PostChip.styles";
 
-// TODO: rename to PostChip?
-const PostLink = ({ id, icon, title, type, onRemove }) => {
+const PostChip = ({ id, icon, title, type, onRemove, onGoBack }) => {
 
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
@@ -24,14 +23,11 @@ const PostLink = ({ id, icon, title, type, onRemove }) => {
       selected={selected}
       disabled={!id || !type}
       onPress={() => {
-        //if (!type) return;
         navigation.push(ScreenConstants.DETAILS, {
           id,
-          // TODO: rename prop to 'title' for consistency sake?
           name: title,
           type,
-          // TODO: this callback is never triggered and the refresh is not taking place
-          //onGoBack: () => onRefresh(),
+          onGoBack: () => navigation.goBack()
         });
       }}
       label={title}
@@ -47,20 +43,5 @@ const PostLink = ({ id, icon, title, type, onRemove }) => {
       style={styles.container}
     />
   );
-  /*
-  return (
-    <Pressable>
-      <Text
-        style={[
-          globalStyles.rowContainer,
-          globalStyles.link,
-          styles.link
-        ]}
-      >
-        {title}
-      </Text>
-    </Pressable>
-  );
-  */
 };
-export default PostLink;
+export default PostChip;

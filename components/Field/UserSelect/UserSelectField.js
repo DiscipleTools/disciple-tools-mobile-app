@@ -1,7 +1,7 @@
 import React from "react";
 
 import Select from "components/Select";
-import PostLink from "components/Post/PostLink";
+import PostChip from "components/Post/PostChip";
 import SheetHeader from "components/Sheet/SheetHeader";
 import UsersSheet from "./UsersSheet";
 
@@ -22,7 +22,7 @@ const UserSelectField = ({ editing, field, value, onChange }) => {
       { autosave: true }
     );
   };
-  const renderItemEdit = (item) => <PostLink id={item?.key} title={item?.label} type={getPostTypeByFieldName(field?.name)} onRemove={onRemove} />;
+  const renderItemEdit = (item) => <PostChip id={item?.key} title={item?.label} type={getPostTypeByFieldName(field?.name)} onRemove={onRemove} />;
 
   // EDIT MODE
   const UserSelectFieldEdit = () => {

@@ -5,7 +5,7 @@ import { FlashIcon } from "components/Icon";
 //import Milestones from "components/Milestones";
 import ChurchHealth from "components/ChurchHealth";
 import Select from "components/Select";
-import PostLink from "components/Post/PostLink";
+import PostChip from "components/Post/PostChip";
 import SelectSheet from "components/Sheet/SelectSheet";
 import SheetHeader from "components/Sheet/SheetHeader";
 
@@ -125,7 +125,7 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
       </>
     ), [title, sections]);
 
-    const renderItemLinkless = (item) => <PostLink id={item?.key} title={item?.label} />;
+    const renderItemLinkless = (item) => <PostChip id={item?.key} title={item?.label} />;
 
     return(
       <Select

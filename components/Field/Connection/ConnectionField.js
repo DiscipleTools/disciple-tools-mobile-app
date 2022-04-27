@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
 
 import Select from "components/Select";
-import PostLink from "components/Post/PostLink";
+import PostChip from "components/Post/PostChip";
 import SheetHeader from "components/Sheet/SheetHeader";
 import ConnectionSheet from "./ConnectionSheet";
 import UsersContactsSheet from "./UsersContactsSheet";
@@ -43,9 +43,9 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
     );
   };
 
-  const renderItemEdit = (item) => <PostLink id={item?.value} title={item?.name} type={getPostTypeByFieldName(field?.name)} onRemove={onRemove} />;
-  const renderItemView = (item) => <PostLink id={item?.value} title={item?.name} type={getPostTypeByFieldName(field?.name)} />;
-  const renderItemLinkless = (item) => <PostLink id={item?.value} title={item?.name} onRemove={onRemove} />;
+  const renderItemEdit = (item) => <PostChip id={item?.value} title={item?.name} type={getPostTypeByFieldName(field?.name)} onRemove={onRemove} />;
+  const renderItemView = (item) => <PostChip id={item?.value} title={item?.name} type={getPostTypeByFieldName(field?.name)} />;
+  const renderItemLinkless = (item) => <PostChip id={item?.value} title={item?.name} onRemove={onRemove} />;
 
   const PeopleGroupEdit = () => (
     <Select
@@ -107,6 +107,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
       <Select
         onOpen={() => {
           expand({
+            defaultIndex: 3,
             renderHeader: () => (
               <SheetHeader
                 expandable
