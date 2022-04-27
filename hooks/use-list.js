@@ -519,25 +519,36 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
     return queryParams;
   };
 
-  let url = `/dt-posts/v2/${postType}`;
-  //if (search || filter?.query) url += '?';
+  // TODO: handle query params better
+
+  if (!type) type = postType;
+  let url = `/dt-posts/v2/${type}/`;
+
+  let paramSeparator = '?';
+  if (url.includes('?')) paramSeparator = '&';
 
   // NOTE: currently only searching offline
-  //if (search) url += `?text=${search}`;
+  //if (search) url += `${paramSeparator}text=${search}`;
+
+  if (url.includes('?')) paramSeparator = '&';
 
   // NOTE: map filters to url params
   if (filter?.query && userData) {
-    url += `?${ mapFilterOnQueryParams(filter?.query, userData) }`;
+    url += `${paramSeparator}${ mapFilterOnQueryParams(filter?.query, userData) }`;
   } else if (!type) {
-    url += `?dt_recent=true`;
+    url += `${paramSeparator}dt_recent=true`;
   } else;
+
+  if (url.includes('?')) paramSeparator = '&';
 
   /*
   * NOTE: we set a silly upper limit in order to aggressively fetch ALL posts,
   * so that we have them available in the cache for offline usage
   */
   if (!limit) limit = 1000000;
-  if (!url.includes("limit")) url += `&limit=${limit}`;
+  if (!url.includes("limit")) url += `${paramSeparator}limit=${limit}`;
+
+  if (url.includes('?')) paramSeparator = '&';
 
   const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
   if (error || isLoading || !data?.posts) return {
