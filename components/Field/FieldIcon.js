@@ -59,7 +59,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "calendar-remove";
       } else if (name.includes("baptism_date")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "calendar-star";
+        iconName = "calendar-heart";
       } else {
         iconType = "MaterialCommunityIcons";
         iconName = "calendar";

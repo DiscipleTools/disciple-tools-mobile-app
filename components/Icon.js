@@ -298,6 +298,9 @@ export const UsernameIcon = ({ onPress, style }) => (
 );
 
 // Other icons
+export const ArchiveIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="archive" onPress={onPress} style={style} />
+);
 export const ActivityIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="timeline-outline" onPress={onPress} style={style} />
 );
