@@ -68,7 +68,7 @@ const MyUserScreen = ({ navigation }) => {
       },
     ];
     navigation.setOptions({
-      title: "",
+      title: i18n.t("global.user"),
       headerRight: (props) => (
         <HeaderRight
           kebabItems={kebabItems}
