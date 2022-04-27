@@ -84,11 +84,15 @@ const KeySelectField = ({ editing, field, value, onChange }) => {
 
     const getBackgroundColor = () => {
       if (items[value]?.color) return items[value].color;
-      return globalStyles.background?.backgroundColor;
-     
+      //return globalStyles.background?.backgroundColor;
+      return null;
     };
 
-    const renderItem = (item) => <Text>{item}</Text>;
+    const renderItem = (item) => (
+      <View style={styles.container}>
+        <Text>{item}</Text>
+      </View>
+    );
 
     // TODO: items[value]?.description (for when "Not Ready")
     return(
