@@ -1,9 +1,6 @@
-import { ThemeConstants } from "constants";
-
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: {
-    paddingStart: 5,
-    paddingEnd: 5,
+    paddingHorizontal: 5
   },
   clearIconContainer: (selected) => ({
     backgroundColor: theme.background.primary,
