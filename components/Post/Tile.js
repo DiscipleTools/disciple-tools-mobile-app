@@ -21,6 +21,7 @@ const Tile = ({
   isCreate,
   grouped,
   editing,
+  idx,
   post,
   fields,
   save,
@@ -132,9 +133,9 @@ const Tile = ({
 
 
   const Fields = () => {
-    return fields.map((field, idx) => (
+    return fields.map((field, _idx) => (
       <>
-        { idx === 0 && post?.requires_update && (
+        { idx === 0 && _idx === 0 && post?.requires_update && (
           <Alert
             title={i18n.t("global.updateRequired")}
             subtitle={i18n.t("global.updateRequiredText")}

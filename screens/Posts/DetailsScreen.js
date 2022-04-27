@@ -64,10 +64,11 @@ const DetailsScreen = ({ navigation }) => {
       const sortedTiles = [...settings.tiles].sort((a, b) =>
         true ? a[sortKey] - b[sortKey] : b[sortKey] - a[sortKey]
       );
-      sortedTiles.forEach(tile => {
+      sortedTiles.forEach((tile, idx) => {
         if (tile?.name && tile?.label) {
           _scenes[tile.name] = () => (
             <Tile
+              idx={idx}
               post={post}
               fields={tile?.fields}
               save={updatePost}
