@@ -10,8 +10,8 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 //import { Html5Entities } from 'html-entities';
 
 import {
-  CheckIcon,
-  CircleOutlineIcon,
+  ReadIcon,
+  UnreadIcon,
   CommentIcon,
   CommentAlertIcon,
   MentionIcon,
@@ -178,9 +178,9 @@ const NotificationsScreen = ({ navigation }) => {
         ]}
       >
         {isNew ? (
-          <CircleOutlineIcon />
+          <UnreadIcon />
         ) : (
-          <CheckIcon style={globalStyles.selectedIcon} />
+          <ReadIcon style={globalStyles.selectedIcon} />
         )}
       </Pressable>
     );

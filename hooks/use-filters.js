@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useReducer, useRef, useState } from "react";
 
 import {
-  CheckIcon,
-  CircleOutlineIcon,
+  ReadIcon,
+  UnreadIcon,
   CommentIcon,
   CommentActivityIcon,
   CommentAlertIcon,
@@ -89,7 +89,7 @@ const useFilters = ({ type } = {}) => {
           ID: "notifications_status_unread",
           //count: 76,
           name: i18n.t("global.unread"),
-          icon: <CircleOutlineIcon />,
+          icon: <UnreadIcon />,
           query: {
             key: "is_new",
             value: "1"
@@ -100,7 +100,7 @@ const useFilters = ({ type } = {}) => {
           ID: "notifications_status_read",
           //count: 23,
           name: i18n.t("global.read"),
-          icon: <CheckIcon />,
+          icon: <ReadIcon />,
           query: {
             key: "is_new",
             value: "0"

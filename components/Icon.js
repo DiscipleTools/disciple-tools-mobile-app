@@ -190,6 +190,12 @@ export const MeatballIcon = ({ onPress, style }) => (
 export const OnePasswordIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="onepassword" onPress={onPress} style={style} />
 );
+export const UnreadIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="checkbox-blank-circle" onPress={onPress} style={style} />
+);
+export const ReadIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="checkbox-marked-circle-outline" onPress={onPress} style={style} />
+);
 export const RemoveIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="minus" onPress={onPress} style={style} />
 );
