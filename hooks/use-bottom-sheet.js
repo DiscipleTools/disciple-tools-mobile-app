@@ -12,7 +12,7 @@ const BottomSheetContext = createContext(null);
 const DEFAULT_OPTIONS = {
   modal: true,
   dismissable: true,
-  snapPoints: ['33%','50%','66%','95%'],
+  snapPoints: ['33%','50%','66%','85%','95%'],
   defaultIndex: -1,
   renderHeader: () => null,
   renderContent: () => null,
@@ -68,7 +68,7 @@ export const BottomSheetProvider = ({ children }) => {
   const bottomSheetContext = useMemo(
     () => ({
       expand: (opts) => {
-        bottomSheetRef.current?.snapToIndex(opts?.defaultIndex ?? snapPoints?.length-1), //.expand();
+        bottomSheetRef.current?.snapToIndex(opts?.defaultIndex < snapPoints?.length ? opts?.defaultIndex : snapPoints?.length-1), //.expand();
         dispatch({ type: EXPAND, ...opts });
       },
       collapse: collapseBottomSheet,
