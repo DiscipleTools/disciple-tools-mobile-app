@@ -6,6 +6,7 @@ import { TypeConstants } from "constants";
 const useCustomPostTypes = () => {
   const { settings } = useSettings();
   if (!settings?.post_types) return null;
+  const availablePostTypes = Object.keys(settings?.post_types);
   const ignorePostTypes = [
     TypeConstants.PEOPLEGROUPS
   ];
@@ -13,7 +14,7 @@ const useCustomPostTypes = () => {
     TypeConstants.CONTACT,
     TypeConstants.GROUP,
   ];
-  const filteredCustomPostTypes = settings?.post_types?.filter(postType => (
+  const filteredCustomPostTypes = availablePostTypes?.filter(postType => (
     !corePostTypes.includes(postType) &&
     !ignorePostTypes.includes(postType)
   ));

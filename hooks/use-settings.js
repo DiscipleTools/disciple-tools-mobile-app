@@ -9,27 +9,27 @@ const useSettings = ({ type } = {}) => {
   const mapSettings = (settings) => {
     let fieldList = {};
     // Get fieldlist
-    Object.keys(settings.fields).forEach((fieldName) => {
-      const fieldData = settings.fields[fieldName];
+    Object.keys(settings?.fields).forEach((fieldName) => {
+      const fieldData = settings.fields?.[fieldName];
       // omit fields with { "hidden": true }
       if (
         !Object.prototype.hasOwnProperty.call(fieldData, "hidden") ||
         (Object.prototype.hasOwnProperty.call(fieldData, "hidden") &&
-          fieldData.hidden === false)
+          fieldData?.hidden === false)
       ) {
         if (
-          fieldData.type === "key_select" ||
-          fieldData.type === "multi_select"
+          fieldData?.type === "key_select" ||
+          fieldData?.type === "multi_select"
         ) {
           let newFieldData = {
-            name: fieldData.name,
-            description: fieldData.name,
-            values: fieldData.default,
+            name: fieldData?.name,
+            description: fieldData?.name,
+            values: fieldData?.default,
           };
           if (Object.prototype.hasOwnProperty.call(fieldData, "description")) {
             newFieldData = {
               ...newFieldData,
-              description: fieldData.description,
+              description: fieldData?.description,
             };
           }
           fieldList = {
@@ -40,7 +40,7 @@ const useSettings = ({ type } = {}) => {
           fieldList = {
             ...fieldList,
             [fieldName]: {
-              name: fieldData.name,
+              name: fieldData?.name,
             },
           };
         }
@@ -48,12 +48,12 @@ const useSettings = ({ type } = {}) => {
     });
     // Get channels
     let channels = {};
-    Object.keys(settings.channels).forEach((channelName) => {
-      const channelData = settings.channels[channelName];
+    Object.keys(settings?.channels).forEach((channelName) => {
+      const channelData = settings.channels?.[channelName];
       channels = {
         ...channels,
         [channelName]: {
-          label: channelData.label,
+          label: channelData?.label,
           value: channelName,
         },
       };
@@ -61,37 +61,37 @@ const useSettings = ({ type } = {}) => {
 
     let tileList = [];
     if (Object.prototype.hasOwnProperty.call(settings, "tiles")) {
-      Object.keys(settings.tiles).forEach((tileName) => {
+      Object.keys(settings?.tiles).forEach((tileName) => {
         let tileFields = [];
-        Object.keys(settings.fields).forEach((fieldName) => {
-          let fieldValue = settings.fields[fieldName];
+        Object.keys(settings?.fields).forEach((fieldName) => {
+          let fieldValue = settings.fields?.[fieldName];
           if (
             Object.prototype.hasOwnProperty.call(fieldValue, "tile") &&
-            fieldValue.tile === tileName
+            fieldValue?.tile === tileName
           ) {
             // Get only fields with hidden: false
             if (
               !Object.prototype.hasOwnProperty.call(fieldValue, "hidden") ||
               (Object.prototype.hasOwnProperty.call(fieldValue, "hidden") &&
-                fieldValue.hidden === false)
+                fieldValue?.hidden === false)
             ) {
               let newField = {
                 name: fieldName,
-                label: fieldValue.name,
-                type: fieldValue.type,
+                label: fieldValue?.name,
+                type: fieldValue?.type,
               };
               if (
                 Object.prototype.hasOwnProperty.call(fieldValue, "post_type")
               ) {
                 newField = {
                   ...newField,
-                  post_type: fieldValue.post_type,
+                  post_type: fieldValue?.post_type,
                 };
               }
               if (Object.prototype.hasOwnProperty.call(fieldValue, "default")) {
                 newField = {
                   ...newField,
-                  default: fieldValue.default,
+                  default: fieldValue?.default,
                 };
               }
               if (
@@ -102,7 +102,7 @@ const useSettings = ({ type } = {}) => {
               ) {
                 newField = {
                   ...newField,
-                  in_create_form: fieldValue.in_create_form,
+                  in_create_form: fieldValue?.in_create_form,
                 };
               }
               if (
@@ -110,13 +110,13 @@ const useSettings = ({ type } = {}) => {
               ) {
                 newField = {
                   ...newField,
-                  required: fieldValue.required,
+                  required: fieldValue?.required,
                 };
               }
               /*if (Object.prototype.hasOwnProperty.call(fieldValue, 'icon')) {
                 newField = {
                   ...newField,
-                  icon: fieldValue.icon,
+                  icon: fieldValue?.icon,
                 };
               }*/
               tileFields.push(newField);
@@ -124,12 +124,12 @@ const useSettings = ({ type } = {}) => {
           }
         });
         let tileFieldsOrdered = [];
-        if (settings.tiles[tileName].hasOwnProperty("order")) {
+        if (settings?.tiles?.[tileName]?.hasOwnProperty("order")) {
           const orderList = settings.tiles[tileName].order;
           let existingFields = [...orderList];
           let missingFields = [];
           tileFields.map((tileField, idx) => {
-            const orderIdx = orderList.indexOf(tileField.name);
+            const orderIdx = orderList?.indexOf(tileField.name);
             if (orderIdx !== -1) {
               existingFields[orderIdx] = tileField;
             } else {
@@ -141,14 +141,14 @@ const useSettings = ({ type } = {}) => {
           tileFieldsOrdered = [...tileFields];
         }
         // TODO: investigate why "location_grid_meta" was being added as string type
-        tileFieldsOrdered = tileFieldsOrdered.filter(
+        tileFieldsOrdered = tileFieldsOrdered?.filter(
           (item) => typeof item === "object"
         );
-        if (!settings.tiles[tileName].hidden) {
+        if (settings?.tiles?.[tileName] && !settings?.tiles?.[tileName]?.hidden) {
           tileList.push({
             name: tileName,
-            label: settings.tiles[tileName].label,
-            tile_priority: settings.tiles[tileName].tile_priority,
+            label: settings.tiles[tileName]?.label,
+            tile_priority: settings.tiles[tileName]?.tile_priority,
             fields: tileFieldsOrdered,
           });
         }
