@@ -76,6 +76,9 @@ const TabNavigator = ({ navigation }) => {
           name={ScreenConstants.LIST}
           component={ListScreen}
           //options={{ headerShown: false }}
+          options={{
+            title: '',
+          }}
           initialParams={
             route?.params
               ? {
@@ -255,6 +258,9 @@ const TabNavigator = ({ navigation }) => {
         <Stack.Screen
           name={ScreenConstants.LIST}
           component={ListScreen}
+          options={{
+            title: '',
+          }}
           initialParams={
             route?.params
               ? {

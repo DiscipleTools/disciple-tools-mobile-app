@@ -34,8 +34,6 @@ const PostItem = ({ item, loading, mutate }) => {
   const { vibrate } = useHaptics();
   const { styles, globalStyles } = useStyles(localStyles);
   const { updatePost } = useAPI();
-  const { settings } = useSettings();
-  if (!settings) return null;
 
   const generateOptions = () => {
     const sections = [
@@ -100,10 +98,12 @@ const PostItem = ({ item, loading, mutate }) => {
   };
 
   const PostSubtitle = () => {
-    const { isContact, isGroup } = useType();
+    const { isContact, isGroup, postType } = useType();
+    const { settings } = useSettings({ type: postType });
+    if (!settings) return null;
     return (
       <Text style={globalStyles.caption}>
-        {isContact && (
+        {isContact && settings?.fields && (
           <>
             {settings.fields.overall_status?.values[item?.overall_status]
               ? settings.fields.overall_status.values[item?.overall_status]
@@ -118,7 +118,7 @@ const PostItem = ({ item, loading, mutate }) => {
               : ""}
           </>
         )}
-        {isGroup && (
+        {isGroup && settings?.fields && (
           <>
             {settings.fields.group_status.values[item?.group_status]
               ? settings.fields.group_status.values[item?.group_status].label
@@ -141,14 +141,16 @@ const PostItem = ({ item, loading, mutate }) => {
     );
   };
 
-  const getStatusColor = () => {
+  const getStatusColor = (settings) => {
     if (item?.overall_status) return settings?.fields?.overall_status?.values?.[item.overall_status]?.color;
     if (item?.group_status) return settings?.fields?.group_status?.values?.[item.group_status]?.color;
     return settings?.fields?.status?.values?.[item?.status]?.color;
   };
 
   const StatusBorder = () => {
-    const backgroundColor = getStatusColor();
+    const { settings } = useSettings();
+    if (!settings) return null;
+    const backgroundColor = getStatusColor(settings);
     return(
       <View
         style={{
@@ -243,9 +245,8 @@ const PostItem = ({ item, loading, mutate }) => {
     </View>
   );
 };
-
-const arePropsEqual = (prevProps, nextProps) => {
-  return prevProps?.item?.ID === nextProps?.item?.ID;
-};
-
+/* NOTE: no performance improvements observed with this approach
+const arePropsEqual = (prevProps, nextProps) => prevProps?.item?.ID === nextProps?.item?.ID;
 export default React.memo(PostItem, arePropsEqual);
+*/
+export default PostItem;

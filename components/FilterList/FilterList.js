@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SafeAreaView, RefreshControl, Text, View } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 
@@ -37,11 +37,7 @@ const FilterList = ({
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const [_items, _setItems] = useState(null);
-
-  useEffect(() => {
-    _setItems(items);
-  }, [items?.length, JSON.stringify(items?.[0])]);
+  const [_items, setItems] = useState(items);
 
   const _onRefresh = useCallback(() => {
     if (onRefresh) {
@@ -54,29 +50,12 @@ const FilterList = ({
     }, 1000);
   });
 
-  const ScrollList = (props) => {
-    const LIMIT = 100;
-    const [offset, setOffset] = useState(LIMIT);
-    return(
-      <SwipeListView
-        //initialNumToRender={offset}
-        data={_items}
-        //data={_items.splice(0, offset)}
-        {...props}
-        /*
-        onEndReached={() => { 
-          console.log("*** ON END REACHED")
-          if (_items?.length > offset) {
-            setOffset(offset + LIMIT);
-          };
-        }}
-        onEndReachedThreshold={0.5}
-        */
-      />
-    );
-  };
+  const getItemLayout = useCallback((data, index) => ({
+    length: Constants.LIST_ITEM_HEIGHT,
+    offset: Constants.LIST_ITEM_HEIGHT * index, index
+  }), []);
 
-  if (!items) return null;
+  if (!_items) return null;
   return (
     <SafeAreaView style={[
       styles.gutter,
@@ -86,7 +65,7 @@ const FilterList = ({
         <SearchBar
           sortable={sortable}
           items={_items}
-          setItems={_setItems}
+          setItems={setItems}
           search={search}
           onSearch={onSearch}
           filter={filter}
@@ -102,17 +81,15 @@ const FilterList = ({
           onFilter={onFilter}
         />
       )}
-      {_items && _items?.length === 0 ? (
+      {items && items?.length === 0 ? (
         <View style={styles.container}>
           <Placeholder placeholder={placeholder} />
         </View>
       ) : (
-        <ScrollList
+        <SwipeListView
+          keyExtractor={keyExtractor}
+          data={_items}
           renderItem={renderItem}
-          getItemLayout={(data, index) => ({
-            length: Constants.LIST_ITEM_HEIGHT,
-            offset: Constants.LIST_ITEM_HEIGHT * index, index
-          })}
           renderHiddenItem={renderHiddenItem ?? null}
           leftOpenValue={leftOpenValue}
           rightOpenValue={leftOpenValue}
@@ -122,7 +99,6 @@ const FilterList = ({
           onRowDidClose={(item) => {
             onRowDidClose === undefined ? null : onRowDidClose(item);
           }}
-          keyExtractor={keyExtractor}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -134,6 +110,13 @@ const FilterList = ({
           disableScrollViewPanResponder={true}
           style={styles.container}
           contentContainerStyle={globalStyles.screenGutter}
+          // Performance settings
+          getItemLayout={getItemLayout}
+          //removeClippedSubviews={true} // Unmount components when outside of window
+          //maxToRenderPerBatch={10} // Reduce number in each render batch
+          //updateCellsBatchingPeriod={50} // Increase time between renders
+          //initialNumToRender={10} // Reduce initial render amount
+          windowSize={3} // Reduce the window size
         />
       )}
     </SafeAreaView>

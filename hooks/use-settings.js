@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import useType from "hooks/use-type";
 import useRequest from "hooks/use-request";
 
@@ -164,11 +166,11 @@ const useSettings = ({ type } = {}) => {
   const url = isPost ? `/dt-posts/v2/${postType}/settings` : "dt-core/v1/settings";
   const { data, error, isLoading, isValidating } = useRequest({ url });
   const settings = data?.fields ? mapSettings(data) : data;
-  return {
+  return useMemo (() => ({
     settings,
     error,
     isLoading,
     isValidating,
-  };
+  }), [JSON.stringify(settings?.fields)]);
 };
 export default useSettings;
