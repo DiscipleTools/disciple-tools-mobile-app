@@ -3,6 +3,7 @@ import { useSWRConfig } from "swr";
 
 import OfflineBar from "components/OfflineBar";
 import Tile from "components/Post/Tile";
+import { HeaderRight } from "components/Header/Header";
 
 import useAPI from "hooks/use-api";
 import useI18N from "hooks/use-i18n";
@@ -20,7 +21,20 @@ const CreateScreen = ({ navigation, route }) => {
 
   useLayoutEffect(() => {
     const title = `${ labelize(postType) } - ${ i18n.t("global.addNew") }`;
-    navigation.setOptions({ title });
+    const kebabItems = [
+      {
+        label: i18n.t("global.viewOnWeb"),
+        urlPath: `${postType}/new`,
+      },
+      {
+        label: i18n.t("global.documentation"),
+        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/${postType}-new-screen/`,
+      },
+    ];
+    navigation.setOptions({ 
+      title,
+      headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />,
+    });
   });
 
   let fields = [];

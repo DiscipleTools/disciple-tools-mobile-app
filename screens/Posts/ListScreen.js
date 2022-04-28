@@ -45,7 +45,7 @@ const ListScreen = ({ navigation, route }) => {
     const kebabItems = [
       {
         label: i18n.t("global.viewOnWeb"),
-        urlPath: `/${postType}/`,
+        urlPath: `${postType}`,
       },
       {
         label: i18n.t("global.documentation"),
