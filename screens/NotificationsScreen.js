@@ -16,13 +16,14 @@ import {
   CommentAlertIcon,
   MentionIcon,
 } from "components/Icon";
-import KebabMenu from "components/KebabMenu";
+import { HeaderRight } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
 import FilterList from "components/FilterList";
 import PostItemSkeleton from "components/Post/PostItem/PostItemSkeleton";
 
 import useFilter from "hooks/use-filter";
 import useHaptics from "hooks/use-haptics";
+import useI18N from "hooks/use-i18n";
 //import useMyUser from 'hooks/use-my-user.js';
 import useNotifications from "hooks/use-notifications";
 import useStyles from "hooks/use-styles";
@@ -39,6 +40,7 @@ const NotificationsScreen = ({ navigation }) => {
   const DEFAULT_LIMIT = 1000;
 
   const { vibrate } = useHaptics();
+  const { i18n } = useI18N();
   const tabBarHeight = useBottomTabBarHeight();
   const { styles, globalStyles } = useStyles(localStyles);
   const { getTabScreenFromType } = useType();
@@ -60,20 +62,21 @@ const NotificationsScreen = ({ navigation }) => {
 
   //const { userData, error: userError } = useMyUser();
 
-  const renderHeaderRight = (props) => {
-    return (
-      <View style={globalStyles.rowContainer}>
-        <View style={styles.headerIcon}>
-          <KebabMenu />
-        </View>
-      </View>
-    );
-  };
 
   // TODO: custom useHeaderLayoutEffect hook for reuse
   useLayoutEffect(() => {
+    const kebabItems = [
+      {
+        label: i18n.t("global.viewOnWeb"),
+        urlPath: "notifications",
+      },
+      {
+        label: i18n.t("global.documentation"),
+        url: "https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/notifications-screen/",
+      },
+    ];
     navigation.setOptions({
-      headerRight: (props) => renderHeaderRight(props),
+      headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />,
     });
   });
 
