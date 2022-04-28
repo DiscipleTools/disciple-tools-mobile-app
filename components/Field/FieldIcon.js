@@ -221,6 +221,24 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("group")) {
         iconType = "MaterialCommunityIcons";
         iconName = "group";
+
+        // Contact type icons
+      } else if (name.includes("user")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "account-box";
+      } else if (name.includes("personal")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "account-lock";
+      } else if (name.includes("placeholder")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "account-lock-outline";
+      } else if (name.includes("access")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "account-network";
+      } else if (name.includes("access_placeholder")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "account-network-outline";
+        
       } else {
         iconType = "MaterialCommunityIcons";
         iconName = "format-list-checks";
