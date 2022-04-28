@@ -5,6 +5,7 @@ import { useIsFocused } from '@react-navigation/native';
 import OfflineBar from "components/OfflineBar";
 import FilterList from "components/FilterList";
 import { PostItem, PostItemSkeleton, PostItemHidden } from "components/Post/PostItem/index";
+import { HeaderRight } from "components/Header/Header";
 
 import useI18N from "hooks/use-i18n";
 import useImportContacts from 'hooks/use-import-contacts';
@@ -34,7 +35,13 @@ const ImportContactsScreen = ({ navigation }) => {
 
   useLayoutEffect(() => {
     const title = i18n.t("global.importContact");
-    navigation.setOptions({ title });
+    const kebabItems = [
+      {
+        label: i18n.t("global.documentation"),
+        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/import-contact-screen/`,
+      },
+    ];
+    navigation.setOptions({ title ,headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />,});
   });
 
   const renderItem = ({ item }) => {

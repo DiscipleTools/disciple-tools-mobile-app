@@ -15,11 +15,11 @@ const KebabMenu = ({ items }) => {
   if (!items) items = [
     {
       label: i18n.t("global.viewOnWeb"),
-      urlPath: "notifications",
+      urlPath: `#`,
     },
     {
       label: i18n.t("global.documentation"),
-      url: "https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/notifications-screen/",
+      url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/`,
     },
   ];
   return (
