@@ -45,7 +45,7 @@ const HomeScreen = ({ navigation, route }) => {
     const kebabItems = [
       {
         label: i18n.t("global.viewOnWeb"),
-        urlPath: "dashboard",
+        urlPath: "#",
       },
       {
         label: i18n.t("global.documentation"),
