@@ -3,8 +3,8 @@ import { Image, Pressable, Text, View } from "react-native";
 
 import { MaterialCommunityIcon, CheckIcon } from "components/Icon";
 import FilterList from "components/FilterList";
-import SheetHeader from "components/Sheet/SheetHeader";
 
+import useBottomSheet from "hooks/use-bottom-sheet";
 import useFilter from "hooks/use-filter";
 import useStyles from "hooks/use-styles";
 import useUsers from "hooks/use-users";
@@ -14,6 +14,7 @@ import { localStyles } from "./UsersSheet.styles";
 const UsersSheet = ({ id, values, onChange }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
+  const { delayedClose } = useBottomSheet();
   const { search, onSearch } = useFilter();
 
   // exclude currently selected values from options list
@@ -24,9 +25,12 @@ const UsersSheet = ({ id, values, onChange }) => {
   if (!items) return null;
 
   // MAP TO API
+  const mapToAPI = (newItem) => newItem;
+  /*
   const mapToAPI = (newItem) => ({
     value: newItem?.key
   });
+  */
 
   // MAP FROM API
   const mapFromAPI = (items) => {
@@ -40,6 +44,16 @@ const UsersSheet = ({ id, values, onChange }) => {
         selected: values?.some(selectedItem => Number(selectedItem?.value) === item?.contact_id),
       };
     });
+  };
+
+  const _onChange = (selectedItem) => {
+    const mappedValue = mapToAPI(selectedItem);
+    // NOTE: no comparison req bc we already exclude prevoiusly selected value
+    onChange(mappedValue, {
+      autosave: true,
+      force: true
+    });
+    delayedClose();
   };
 
   const _renderItem = ({ item }) => {
