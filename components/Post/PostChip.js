@@ -10,6 +10,8 @@ import useStyles from "hooks/use-styles";
 
 import { ScreenConstants } from "constants";
 
+import { titleize } from "utils";
+
 import { localStyles } from "./PostChip.styles";
 
 const PostChip = ({ id, icon, title, type, onRemove, onGoBack }) => {
@@ -32,7 +34,7 @@ const PostChip = ({ id, icon, title, type, onRemove, onGoBack }) => {
           onGoBack: () => navigation.goBack()
         });
       }}
-      label={title}
+      label={titleize(title)}
       startIcon={icon ?? null}
       endIcon={onRemove ? (
         <View style={styles.clearIconContainer(selected)}>
