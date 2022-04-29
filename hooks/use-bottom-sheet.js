@@ -107,7 +107,7 @@ export const BottomSheetProvider = ({ children }) => {
     if (options?.onDone) {
       return(
         <BottomSheetFooter {...props}>
-          <SheetFooterDone onDone={props?.onDone} />
+          <SheetFooterDone onDone={() => options.onDone(multiSelectValues)} />
         </BottomSheetFooter>
       );
     };
