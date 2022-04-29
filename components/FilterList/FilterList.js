@@ -64,7 +64,6 @@ const FilterList = ({
   return (
     <SafeAreaView style={[
       styles.container,
-      styles.gutter,
       style
     ]}>
       { onSearch && (

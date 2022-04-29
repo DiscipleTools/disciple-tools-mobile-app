@@ -28,7 +28,7 @@ const PendingContactsCard = ({ refreshing, onRefresh }) => {
 
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
-  const { i18n } = useI18N();
+  const { i18n, numberFormat } = useI18N();
 
   const { updatePost } = useAPI();
 
@@ -127,7 +127,7 @@ const PendingContactsCard = ({ refreshing, onRefresh }) => {
         border
         center
         title={title}
-        count={_contacts?.length}
+        count={numberFormat(_contacts?.length)}
         renderPartialCard={renderPartialCard}
         renderExpandedCard={renderExpandedCard}
       />

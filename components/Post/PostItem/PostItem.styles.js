@@ -13,14 +13,14 @@ export const localStyles = ({ theme, isRTL }) => ({
   },
   subsubcontainer: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 5,
     alignItems: "flex-start",
     marginEnd: "auto",
     flexWrap: "wrap",
   },
   detailsContainer: {
     flex: 10.5,
-    flexWrap: "wrap",
+    //flexWrap: "wrap",
     alignItems: "flex-start",
     marginEnd: "auto",
   },

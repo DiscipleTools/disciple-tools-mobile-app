@@ -211,6 +211,14 @@ const useI18N = () => {
     };
   };
 
+  const numberFormat = (numberValue) => {
+    try {
+      return new Intl.NumberFormat(locale?.replace('_','-')).format(numberValue);
+    } catch (ee) {
+      return numberValue;
+    };
+  };
+
   const selectedEndonym = i18n?.translations[locale]?.endonym ?? ''; 
 
   return useMemo(() => ({
@@ -219,7 +227,8 @@ const useI18N = () => {
     locale,
     setLocale: _setLocale,
     selectedEndonym,
-    moment
+    moment,
+    numberFormat
   }), [isRTL, locale, selectedEndonym]);
 };
 export default useI18N;

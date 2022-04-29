@@ -15,13 +15,15 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     marginTop: 7, //'auto',
     //marginBottom: 'auto',
   },
-  content: {
+  content: (userIsAuthor) => ({
     backgroundColor: theme.surface.primary,
     borderRadius: 5,
     flex: 1,
     marginLeft: 16,
     padding: 10,
-  },
+    borderWidth: userIsAuthor ? 1 : null,
+    borderColor: userIsAuthor ? theme.divider : null,
+  }),
   name: {
     color: theme.text.primary,
     fontSize: 13,

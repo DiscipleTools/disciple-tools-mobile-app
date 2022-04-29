@@ -23,14 +23,14 @@ import useType from "hooks/use-type";
 
 import { ScreenConstants, SubTypeConstants } from "constants";
 
-import { parseDateShort, truncate } from "utils";
+import { parseDateSafe, titleize, truncate } from "utils";
 
 import { localStyles } from "./PostItem.styles";
 
 const PostItem = ({ item, loading, mutate }) => {
   const navigation = useNavigation();
   const { expand } = useBottomSheet();
-  const { i18n } = useI18N();
+  const { i18n, moment, numberFormat } = useI18N();
   const { vibrate } = useHaptics();
   const { styles, globalStyles } = useStyles(localStyles);
   const { updatePost } = useAPI();
@@ -92,51 +92,42 @@ const PostItem = ({ item, loading, mutate }) => {
     const title = item?.name ? item.name : item?.title;
     return (
       <Text style={[globalStyles.text, styles.title]}>
-        {truncate(title, { maxLength: 33 })}
+        {titleize(title)}
       </Text>
     );
   };
 
   const PostSubtitle = () => {
-    const { isContact, isGroup, postType } = useType();
+    const { isGroup, postType } = useType();
     const { settings } = useSettings({ type: postType });
     if (!settings) return null;
+    // TODO: constants?
+    let subtitle1Key = "overall_status";
+    if (isGroup) subtitle1Key = "group_status";
+    let subtitle2Key = "seeker_path";
+    if (isGroup) subtitle2Key = "group_type";
+    //
+    const subtitle1 = settings?.fields?.[subtitle1Key]?.values[item?.[subtitle1Key]]?.label;
+    const subtitle2 = settings?.fields?.[subtitle2Key]?.values[item?.[subtitle2Key]]?.label;
+    //
+    let subtitle = subtitle1;
+    if (subtitle2) subtitle += ` • ${ subtitle2 }`;
+    if (isGroup && item?.member_count) subtitle += ` • ${ numberFormat(item.member_count) }`;
     return (
       <Text style={globalStyles.caption}>
-        {isContact && settings?.fields && (
-          <>
-            {settings.fields.overall_status?.values[item?.overall_status]
-              ? settings.fields.overall_status.values[item?.overall_status]
-                  .label
-              : ""}
-            {settings.fields.overall_status?.values[item?.overall_status] &&
-            settings.fields.seeker_path.values[item?.seeker_path]
-              ? " • "
-              : ""}
-            {settings.fields.seeker_path?.values[item?.seeker_path]
-              ? settings.fields.seeker_path.values[item?.seeker_path].label
-              : ""}
-          </>
-        )}
-        {isGroup && settings?.fields && (
-          <>
-            {settings.fields.group_status.values[item?.group_status]
-              ? settings.fields.group_status.values[item?.group_status].label
-              : ""}
-            {settings.fields.group_status.values[item?.group_status] &&
-            settings.fields.group_type.values[item?.group_type]
-              ? " • "
-              : ""}
-            {settings.fields.group_type.values[item?.group_type]
-              ? settings.fields.group_type.values[item?.group_type].label
-              : ""}
-            {settings.fields.group_type.values[item?.group_type] &&
-            item?.member_count
-              ? " • "
-              : ""}
-            {item?.member_count ? item.member_count : ""}
-          </>
-        )}
+        { truncate(subtitle, { maxLength: 70 })}
+      </Text>
+    );
+  };
+
+  const DateSubtitle = () => {
+    const subtitle1 = moment(parseDateSafe(item?.post_date)).format('L');
+    const subtitle2 = moment(parseDateSafe(item?.last_modified)).format('L');
+    if (!subtitle1 && !subtitle2) return null;
+    const subtitle = `${ subtitle1 } • ${ subtitle2 }`;
+    return (
+      <Text style={globalStyles.caption}>
+        { subtitle }
       </Text>
     );
   };
@@ -189,6 +180,7 @@ const PostItem = ({ item, loading, mutate }) => {
     <View style={[globalStyles.columnContainer, styles.detailsContainer]}>
       <PostTitle />
       <PostSubtitle />
+      <DateSubtitle />
     </View>
   );
 

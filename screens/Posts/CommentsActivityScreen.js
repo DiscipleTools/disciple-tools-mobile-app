@@ -34,6 +34,8 @@ import useMyUser from "hooks/use-my-user";
 import useStyles from "hooks/use-styles";
 import useToast from "hooks/use-toast";
 
+import { parseDateSafe } from "utils";
+
 import { localStyles } from "./CommentsActivityScreen.styles";
 
 const MENTION_PATTERN = /@\[.+?\]\((.*)\)/g;
@@ -90,26 +92,16 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
   // TODO: implement this skeleton
   const CommentsActivityItemLoadingSkeleton = () => <PostItemSkeleton />;
 
-  const parseDateSafe = (dateStr) => {
-    try {
-      const parsedDate = moment(dateStr).format("LLL");
-      if (parsedDate === "Invalid date") return "";
-      return parsedDate;
-    } catch (ee) {
-      return '';
-    };
-  };
-
   const parseDate = (item) => {
     if (item?.comment_date) return parseDateSafe(item.comment_date);
-    if (item?.hist_time) return parseDateSafe(Number(item.hist_time)*1000);
+    if (item?.hist_time) return parseDateSafe(item.hist_time);
     return '';
   };
 
   const CommentsActivityItem = ({ item, loading }) => {
     if (!item || loading) return <CommentsActivityItemLoadingSkeleton />;
     const message = item?.comment_content || item?.object_note;
-    const datetime = parseDate(item);
+    const datetime = moment(parseDate(item)).format("LLLL");
     const author = item?.comment_author || item?.name;
     const authorId = Number(item?.user_id);
     const userIsAuthor = authorId === userData?.ID;
@@ -209,7 +201,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
                   : "https://www.gravatar.com/avatar/?d=mp",
             }}
           />
-          <View style={styles.content}>
+          <View style={styles.content(userIsAuthor)}>
             <View style={styles.contentHeader}>
               <View
                 style={[

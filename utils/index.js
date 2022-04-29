@@ -142,3 +142,17 @@ export const parseDateShort = (dateValue) => {
     return null;
   }
 };
+
+// TODO: handle more cases
+export const parseDateSafe = (dateValue) => {
+  try {
+    if (typeof dateValue !== "number" && typeof dateValue !== "string") return '';
+    if (typeof dateValue !== "string") dateValue = dateValue.toString();
+    if (dateValue?.includes(' ')) return new Date(dateValue.replace(' ', 'T'));
+    if (dateValue?.length === 13) return new Date(Number(dateValue));
+    if (dateValue?.length === 10) return new Date(Number(`${ dateValue }000`));
+    return '';
+  } catch (ee) {
+    return '';
+  };
+};

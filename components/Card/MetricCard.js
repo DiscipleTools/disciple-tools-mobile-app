@@ -5,6 +5,7 @@ import { TabActions, useNavigation } from '@react-navigation/native';
 import { ArrowIcon } from "components/Icon";
 import Card from "components/Card/Card";
 
+import useI18N from "hooks/use-i18n";
 import useMetric from "hooks/use-metric";
 import useStyles from "hooks/use-styles";
 import useType from "hooks/use-type";
@@ -16,6 +17,7 @@ import { localStyles } from './MetricCard.styles';
 const MetricCard = ({ title, filter, type }) => {
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
+  const { numberFormat } = useI18N();
   const { getTabScreenFromType } = useType();
   const metric = useMetric({ filter, type });
   const layout = useWindowDimensions();
@@ -38,7 +40,7 @@ const MetricCard = ({ title, filter, type }) => {
               globalStyles.buttonText,
               styles.buttonText
             ]}>
-              { metric ? metric : "-" }  
+              { metric ? numberFormat(metric) : "-" }
             </Text>
             { filter && (
               <ArrowIcon

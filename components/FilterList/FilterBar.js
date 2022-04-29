@@ -18,7 +18,7 @@ import { localStyles } from "./FilterBar.styles";
 
 const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { i18n } = useI18N();
+  const { i18n, numberFormat } = useI18N();
   const { isNotification, isCommentsActivity } = useType();
   const { data: filters } = useFilters();
   const { settings } = useSettings();
@@ -28,7 +28,7 @@ const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
   const createdDateLabel = settings?.fields?.post_date?.name ?? "Created Date";
 
   const Count = () => (
-    <Text style={[globalStyles.text, styles.count]}>{items?.length}</Text>
+    <Text style={[globalStyles.text, styles.count]}>{numberFormat(items?.length)}</Text>
   );
 
   /*

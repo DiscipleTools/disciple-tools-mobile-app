@@ -24,7 +24,7 @@ const ActivityLogCard = ({ preview, refreshing }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { getTabScreenFromType } = useType();
   const { collapse } = useBottomSheet();
-  const { i18n } = useI18N();
+  const { i18n, numberFormat } = useI18N();
 
   // TODO: FilterList
   const renderActivityLog = (log, idx) => {
@@ -97,7 +97,7 @@ const ActivityLogCard = ({ preview, refreshing }) => {
     <ExpandableCard
       border
       title={title}
-      count={activityLog?.length}
+      count={numberFormat(activityLog?.length)}
       renderPartialCard={renderPartialCard}
       renderExpandedCard={renderExpandedCard}
     />

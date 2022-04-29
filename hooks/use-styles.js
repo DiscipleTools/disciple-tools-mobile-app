@@ -59,7 +59,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   },
   caption: {
     color: theme.text.secondary,
-    fontSize: 12,
+    fontSize: 11,
     fontStyle: "italic",
     paddingTop: 5,
   },
