@@ -28,7 +28,7 @@ const CreateScreen = ({ navigation, route }) => {
       },
       {
         label: i18n.t("global.documentation"),
-        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/${postType}-new-screen/`,
+        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/add-new-screens/#${postType}-screen`,
       },
     ];
     navigation.setOptions({ 

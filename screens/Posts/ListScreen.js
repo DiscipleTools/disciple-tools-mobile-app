@@ -49,7 +49,7 @@ const ListScreen = ({ navigation, route }) => {
       },
       {
         label: i18n.t("global.documentation"),
-        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/${postType}-list-screen/`,
+        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/list-screens/#${postType}-screen`,
       },
     ];
     navigation.setOptions({

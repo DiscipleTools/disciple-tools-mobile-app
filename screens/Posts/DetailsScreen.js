@@ -94,7 +94,7 @@ const DetailsScreen = ({ navigation }) => {
       },
       {
         label: i18n.t("global.documentation"),
-        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/${postType}-record-screen/`,
+        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/record-screens/#${postType}-screen`,
       },
     ];
     navigation.setOptions({
