@@ -10,18 +10,14 @@ import useType from "hooks/use-type";
 
 const UserSelectField = ({ editing, field, value, onChange }) => {
 
-  const { delayedClose, expand, snapPoints } = useBottomSheet();
+  const { delayedClose, expand } = useBottomSheet();
   const { getPostTypeByFieldName } = useType();
 
   // SELECTED 
   const selectedLabel = value?.label ?? ''; 
 
-  const onRemove = (id) => {
-    onChange(
-      { values: [{ value: id, delete: true }]},
-      { autosave: true }
-    );
-  };
+  const onRemove = () => onChange(null, { autosave: true });
+
   const renderItemEdit = (item) => <PostChip id={item?.key} title={item?.label} type={getPostTypeByFieldName(field?.name)} onRemove={onRemove} />;
 
   // EDIT MODE

@@ -21,16 +21,11 @@ const UsersSheet = ({ id, values, onChange }) => {
   const exclude = [];
   if (id) exclude.push(id);
 
-  const { data: items, error, isLoading, isValidating, mutate } = useUsers({ search, exclude });
+  const { data: items } = useUsers({ search, exclude });
   if (!items) return null;
 
   // MAP TO API
   const mapToAPI = (newItem) => newItem;
-  /*
-  const mapToAPI = (newItem) => ({
-    value: newItem?.key
-  });
-  */
 
   // MAP FROM API
   const mapFromAPI = (items) => {
@@ -94,7 +89,6 @@ const UsersSheet = ({ id, values, onChange }) => {
   };
 
   // SELECT OPTIONS
-  //const sections = useMemo(() => [{ data: mapFromAPI(items) }], [items, values]);
   const mappedItems = mapFromAPI(items);
 
   return(
