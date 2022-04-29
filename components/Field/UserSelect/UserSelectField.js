@@ -57,6 +57,7 @@ const UserSelectField = ({ editing, field, value, onChange }) => {
       <Select
         onOpen={() => {
           expand({
+            defaultIndex: 3,
             renderHeader: () => (
               <SheetHeader
                 expandable

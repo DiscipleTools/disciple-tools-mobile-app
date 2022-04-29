@@ -60,7 +60,7 @@ const LocationField = ({ editing, field, value, onChange }) => {
     <Select
       onOpen={() => {
         expand({
-          index: snapPoints.length-1,
+          defaultIndex: 3,
           renderContent: () => 
             <LocationsSheet
               id={value?.key}

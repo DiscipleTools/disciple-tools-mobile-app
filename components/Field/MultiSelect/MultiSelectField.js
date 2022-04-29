@@ -20,7 +20,7 @@ import { localStyles } from "./MultiSelectField.styles";
 const MultiSelectField = ({ editing, field, value, onChange }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
-  const { expand, snapPoints, setMultiSelectValues } = useBottomSheet();
+  const { expand, setMultiSelectValues } = useBottomSheet();
   const { postType } = useType();
 
   // VALUES
@@ -131,6 +131,7 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
       <Select
         onOpen={() => {
           expand({
+            defaultIndex: 3,
             renderHeader: () => (
               <SheetHeader
                 expandable

@@ -51,6 +51,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
     <Select
       onOpen={() => {
         expand({
+          defaultIndex: 3,
           renderHeader: () => (
             <SheetHeader
               expandable
@@ -77,6 +78,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
       <Select
         onOpen={() => {
           expand({
+            defaultIndex: 3,
             renderHeader: () => (
               <SheetHeader
                 expandable
@@ -137,6 +139,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
       <Select
         onOpen={() => {
           expand({
+            defaultIndex: 3,
             renderHeader: () => (
               <SheetHeader
                 expandable
@@ -166,6 +169,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
       <Select
         onOpen={() => {
           expand({
+            defaultIndex: 3,
             renderHeader: () => (
               <SheetHeader
                 expandable
