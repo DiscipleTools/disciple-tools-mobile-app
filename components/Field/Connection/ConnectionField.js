@@ -8,10 +8,6 @@ import Select from "components/Select";
 import PostChip from "components/Post/PostChip";
 import SheetHeader from "components/Sheet/SheetHeader";
 import ConnectionSheet from "./ConnectionSheet";
-import UsersContactsSheet from "./UsersContactsSheet";
-import GroupsSheet from "./GroupsSheet";
-import PeopleGroupsSheet from "./PeopleGroupsSheet";
-import TrainingsSheet from "./TrainingsSheet";
 
 import useBottomSheet from "hooks/use-bottom-sheet";
 import useStyles from "hooks/use-styles";
@@ -23,7 +19,11 @@ import {
   baptizeIcon,
 } from "constants/icons";
 
-import { FieldNames, TabScreenConstants, ScreenConstants } from "constants";
+import {
+  ScreenConstants,
+  TabScreenConstants,
+  TypeConstants
+} from "constants";
 
 import { localStyles } from "./ConnectionField.styles";
 
@@ -31,7 +31,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { expand } = useBottomSheet();
-  const { isPost, isContact, isGroup, getPostTypeByFieldName } = useType();
+  const { isPost, getPostTypeByField } = useType();
 
   // VALUES
   const values = value?.values || [];
@@ -43,128 +43,13 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
     );
   };
 
-  const renderItemEdit = (item) => <PostChip id={item?.value} title={item?.name} type={getPostTypeByFieldName(field?.name)} onRemove={onRemove} />;
-  const renderItemView = (item) => <PostChip id={item?.value} title={item?.name} type={getPostTypeByFieldName(field?.name)} />;
+  const renderItemEdit = (item) => <PostChip id={item?.value} title={item?.name} type={getPostTypeByField(field)} onRemove={onRemove} />;
+  const renderItemView = (item) => <PostChip id={item?.value} title={item?.name} type={getPostTypeByField(field)} />;
   const renderItemLinkless = (item) => <PostChip id={item?.value} title={item?.name} onRemove={onRemove} />;
 
-  const PeopleGroupEdit = () => (
-    <Select
-      onOpen={() => {
-        expand({
-          defaultIndex: 3,
-          renderHeader: () => (
-            <SheetHeader
-              expandable
-              dismissable
-              title={field?.label || ''}
-            />
-          ),
-          renderContent: () => (
-            <PeopleGroupsSheet
-              values={values}
-              onChange={onChange}
-            />
-          )
-        });
-      }}
-      items={values}
-      renderItem={renderItemLinkless}
-    />
-  );
-
-  const PostEdit = () => {
+  const PostEdit = ({ linkless }) => {
     const route = useRoute();
-    return(
-      <Select
-        onOpen={() => {
-          expand({
-            defaultIndex: 3,
-            renderHeader: () => (
-              <SheetHeader
-                expandable
-                dismissable
-                title={field?.label || ''}
-              />
-            ),
-            renderContent: () => 
-              <ConnectionSheet
-                id={route?.params?.id}
-                fieldName={field?.name}
-                values={values}
-                onChange={onChange}
-              />
-          });
-        }}
-        items={values}
-        renderItem={renderItemEdit}
-        //style={style}
-        //optionStyle={optionStyle}
-      />
-    );
-  };
-
-  const ContactEdit = () => {
-    const route = useRoute();
-    return(
-      <Select
-        onOpen={() => {
-          expand({
-            defaultIndex: 3,
-            renderHeader: () => (
-              <SheetHeader
-                expandable
-                dismissable
-                title={field?.label || ''}
-              />
-            ),
-            renderContent: () => 
-              <UsersContactsSheet
-                id={route?.params?.id}
-                values={values}
-                onChange={onChange}
-              />
-          });
-        }}
-        items={values}
-        renderItem={renderItemEdit}
-        //style={style}
-        //optionStyle={optionStyle}
-      />
-    );
-  };
-
-  const GroupEdit = () => {
-    const route = useRoute();
-    return(
-      <Select
-        onOpen={() => {
-          expand({
-            defaultIndex: 3,
-            renderHeader: () => (
-              <SheetHeader
-                expandable
-                dismissable
-                title={field?.label || ''}
-              />
-            ),
-            renderContent: () => 
-              <GroupsSheet
-                id={route?.params?.id}
-                values={values}
-                onChange={onChange}
-              />
-          });
-        }}
-        items={values}
-        renderItem={renderItemEdit}
-        //style={style}
-        //optionStyle={optionStyle}
-      />
-    );
-  };
-
-  const TrainingEdit = () => {
-    const route = useRoute();
+    const type = getPostTypeByField(field);
     return(
       <Select
         onOpen={() => {
@@ -178,8 +63,9 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
               />
             ),
             renderContent: () => (
-              <TrainingsSheet
+              <ConnectionSheet
                 id={route?.params?.id}
+                type={type}
                 values={values}
                 onChange={onChange}
               />
@@ -187,19 +73,12 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
           });
         }}
         items={values}
-        renderItem={renderItemEdit}
+        renderItem={linkless ? renderItemLinkless : renderItemEdit}
         //style={style}
         //optionStyle={optionStyle}
       />
     );
   };
-
-  const PeopleGroupView = () => (
-    <Select
-      items={values}
-      renderItem={renderItemView}
-    />
-  );
 
   const GroupView = () => {
     const navigation = useNavigation();
@@ -270,40 +149,16 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
     />
   );
 
-  const isPeopleGroupField = () => (
-    field?.name === FieldNames.PEOPLE_GROUPS
-  );
-
-  const isGroupField = () => (
-    field?.name === FieldNames.GROUPS ||
-    field?.name === FieldNames.PARENT_GROUPS ||
-    field?.name === FieldNames.PEER_GROUPS ||
-    field?.name === FieldNames.CHILD_GROUPS
-  );
-
-  const isContactField = () => (
-    field?.name === FieldNames.COACHES ||
-    field?.name === FieldNames.MEMBERS
-  );
-
-  const isTrainingField = () => (
-    field?.name === FieldNames.TRAININGS
-  );
-
   const ConnectionFieldEdit = () => {
-    if (isContactField()) return <ContactEdit />;
-    if (isPeopleGroupField()) return <PeopleGroupEdit />;
-    if (isGroupField()) return <GroupEdit />;
-    if (isTrainingField()) return <TrainingEdit />;
-    if (isContact) return <ContactEdit />;
-    if (isGroup) return <GroupEdit />;
+    const postType = getPostTypeByField(field);
+    if (postType === TypeConstants.PEOPLE_GROUP) return <PostEdit linkless />;
     if (isPost) return <PostEdit />;
     return null;
   };
 
   const ConnectionFieldView = () => {
-    if (isPeopleGroupField()) return <PeopleGroupView />;
-    if (isGroupField()) return <GroupView />;
+    const postType = getPostTypeByField(field);
+    if (postType === TypeConstants.GROUP) return <GroupView />;
     if (isPost) return <PostView />;
     return null; 
   };

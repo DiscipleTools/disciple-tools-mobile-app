@@ -8,7 +8,7 @@ const useCustomPostTypes = () => {
   if (!settings?.post_types) return null;
   const availablePostTypes = Object.keys(settings?.post_types);
   const ignorePostTypes = [
-    TypeConstants.PEOPLEGROUPS
+    TypeConstants.PEOPLE_GROUP
   ];
   const corePostTypes = [
     TypeConstants.CONTACT,

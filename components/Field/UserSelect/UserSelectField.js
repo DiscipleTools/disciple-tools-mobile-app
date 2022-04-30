@@ -13,12 +13,11 @@ const UserSelectField = ({ editing, field, value, onChange }) => {
 
   const { delayedClose, expand } = useBottomSheet();
 
-  // SELECTED 
-  const selectedLabel = value?.label ?? ''; 
-
   const onRemove = () => onChange(null, { autosave: true });
 
-  const renderItemEdit = (item) => <PostChip id={item?.key} title={item?.label} type={TypeConstants.CONTACT} onRemove={onRemove} />;
+  //const renderItemEdit = (item) => <PostChip id={item?.key} title={item?.label} type={TypeConstants.CONTACT} onRemove={onRemove} />;
+  const renderItemEdit = (item) => <PostChip id={item?.key} title={item?.label} type={null} onRemove={onRemove} />;
+  const renderItemView = (item) => <PostChip id={item?.key} title={item?.label} />;
 
   // EDIT MODE
   const UserSelectFieldEdit = () => {
@@ -35,18 +34,6 @@ const UserSelectField = ({ editing, field, value, onChange }) => {
         );
       };
       delayedClose();
-    };
-
-    // MAP ITEMS
-    const mapItems = (users) => {
-      if (!users) return [];
-      return users.map(user => {
-        return {
-          key: user?.ID,
-          label: `${ user?.name } (#${ user?.ID })`,
-          selected: selectedLabel === user?.ID,
-        };
-      });
     };
 
     return(
@@ -76,8 +63,12 @@ const UserSelectField = ({ editing, field, value, onChange }) => {
   };
 
   // VIEW MODE
-  // TODO
-  const UserSelectFieldView = () => null;
+  const UserSelectFieldView = () => (
+    <Select
+      items={[value]}
+      renderItem={renderItemView}
+    />
+  );
 
   if (editing) return <UserSelectFieldEdit />;
   return <UserSelectFieldView />;

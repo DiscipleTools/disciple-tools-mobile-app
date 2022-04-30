@@ -124,6 +124,7 @@ export const FieldNames = Object.freeze({
   CHILD_GROUPS: "child_groups",
   PEOPLE_GROUPS: "people_groups",
   BAPTISM_DATE: "baptism_date",
+  LEADERS: "leaders",
   MEMBER_COUNT: "member_count",
   MEMBERS: "members",
   GROUPS: "groups",
@@ -232,7 +233,7 @@ export const TypeConstants = Object.freeze({
   GROUP: "groups",
   NOTIFICATION: "notifications",
   TRAINING: "trainings",
-  PEOPLEGROUPS: "peoplegroups",
+  PEOPLE_GROUP: "peoplegroups",
   MY_USER: "contacts",
 });
 

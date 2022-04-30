@@ -5,16 +5,26 @@ import { CheckIcon, MaterialCommunityIcon } from "components/Icon";
 import FilterList from "components/FilterList";
 
 import useBottomSheet from "hooks/use-bottom-sheet";
+import useFilter from "hooks/use-filter";
+import useList from "hooks/use-list";
 import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./ConnectionSheet.styles";
 
-const ConnectionSheet = ({ items, renderItem, values, onChange, search, onSearch }) => {
+const ConnectionSheet = ({ id, type, renderItem, values, onChange }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { delayedClose } = useBottomSheet();
 
-  if (!items) return null;
+  const { search, onSearch } = useFilter();
+
+  // exclude currently selected values from options list
+  const exclude = values?.map(item => item?.value);
+  // exclude the the current post (ie, contact or group)
+  if (id) exclude.push(id);
+
+  const { data: items } = useList({ search, exclude, type });
+  if (!items) return [];
 
   // MAP TO API
   const mapToAPI = (newItem) => {

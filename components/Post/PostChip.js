@@ -7,6 +7,7 @@ import Chip from "components/Chip";
 
 import useHaptics from "hooks/use-haptics";
 import useStyles from "hooks/use-styles";
+import useType from "hooks/use-type";
 
 import { ScreenConstants } from "constants";
 
@@ -19,6 +20,7 @@ const PostChip = ({ id, icon, title, type, onRemove, onGoBack }) => {
   const navigation = useNavigation();
   const { vibrate } = useHaptics();
   const { styles, globalStyles } = useStyles(localStyles);
+  const { postType, getTabScreenFromType } = useType();
   const selected = type ? true : null;
   return(
     <Chip
@@ -27,12 +29,23 @@ const PostChip = ({ id, icon, title, type, onRemove, onGoBack }) => {
       selected={selected}
       disabled={!id || !type}
       onPress={() => {
+        if (type !== postType) {
+          const tabScreen = getTabScreenFromType(type);
+          navigation.jumpTo(tabScreen, {
+            screen: ScreenConstants.DETAILS,
+            id,
+            name: title,
+            type,
+          });
+          return;
+        };
         navigation.push(ScreenConstants.DETAILS, {
           id,
           name: title,
           type,
           onGoBack: () => navigation.goBack()
         });
+        return;
       }}
       label={titleize(title)}
       startIcon={icon ?? null}
