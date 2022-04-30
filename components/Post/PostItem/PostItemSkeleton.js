@@ -1,6 +1,5 @@
 import React from "react";
-import { View } from "react-native";
-import { useWindowDimensions } from "react-native";
+import { View, useWindowDimensions } from "react-native";
 
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 
@@ -12,7 +11,8 @@ import { localStyles } from "./PostItemSkeleton.styles";
 const PostItemSkeleton = () => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { isRTL } = useI18N();
-  const windowWidth = useWindowDimensions().width;
+  // TODO: constant
+  const windowWidth = useWindowDimensions()?.width ?? 400;
   return (
     <View style={styles.container}>
       <ContentLoader
