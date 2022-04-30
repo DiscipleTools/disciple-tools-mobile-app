@@ -4,8 +4,9 @@ import { Pressable, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import {
-  AlertIcon,
+  AlertProgressIcon,
   CommentActivityIcon,
+  LeaderIcon,
   MeatballIcon,
   StarIcon,
   StarOutlineIcon
@@ -98,7 +99,7 @@ const PostItem = ({ item, loading, mutate }) => {
     );
   };
 
-  const PostSubtitle = () => {
+  const PostSubtitle1 = () => {
     const { isGroup, postType } = useType();
     const { settings } = useSettings({ type: postType });
     if (!settings) return null;
@@ -125,23 +126,26 @@ const PostItem = ({ item, loading, mutate }) => {
     );
   };
 
-  const DateSubtitle = () => {
+  const PostSubtitle2 = () => {
     const { postType } = useType();
     const { settings } = useSettings({ type: postType });
     if (!settings) return null;
-    const lastModDateLabel = settings?.fields?.last_modified?.name ?? '';
     const lastModDate = moment(parseDateSafe(item?.last_modified)).format('L');
     if (!lastModDate) return null;
-    const subtitle = `${ lastModDateLabel }: ${ lastModDate }`;
     return (
-      <Text
-        style={[
-          globalStyles.caption,
-          styles.caption
-        ]}
-      >
-        { subtitle }
-      </Text>
+      <View style={globalStyles.rowContainer}>
+        <View>
+          <Text
+            style={[
+              globalStyles.caption,
+              styles.caption
+            ]}
+          >
+            { lastModDate }
+          </Text>
+        </View>
+        <InfoIcons />
+      </View>
     );
   };
 
@@ -192,16 +196,26 @@ const PostItem = ({ item, loading, mutate }) => {
   const PostDetails = () => (
     <View style={[globalStyles.columnContainer, styles.detailsContainer]}>
       <PostTitle />
-      <PostSubtitle />
-      <DateSubtitle />
+      <PostSubtitle1 />
+      <PostSubtitle2 />
     </View>
   );
 
   const InfoIcons = () => (
     <>
       { item?.requires_update && (
-        <View style={styles.icon}>
-          <AlertIcon style={styles.alertIcon} />
+        <View style={styles.infoIconContainer}>
+          <AlertProgressIcon
+            style={[
+              styles.alertIcon,
+              styles.infoIcon,
+            ]}
+          />
+        </View>
+      )}
+      { item?.group_leader?.values?.length > 0 && (
+        <View style={styles.infoIconContainer}>
+          <LeaderIcon style={styles.infoIcon} />
         </View>
       )}
     </>
@@ -212,7 +226,7 @@ const PostItem = ({ item, loading, mutate }) => {
       onPress={() => showSheet(item)}
       style={[
         styles.icon,
-        styles.meatballIcon
+        styles.actionIcon
       ]}
     >
       <MeatballIcon />
@@ -251,7 +265,6 @@ const PostItem = ({ item, loading, mutate }) => {
           <PostDetails />
         </View>
       </Pressable>
-      <InfoIcons />
       <SheetOptions />
     </View>
   );

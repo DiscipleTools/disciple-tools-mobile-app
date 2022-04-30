@@ -67,6 +67,9 @@ export const AddIcon = ({ onPress, style }) => (
 export const AlertIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="alert-circle-outline" onPress={onPress} style={style} />
 );
+export const AlertProgressIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="clock-alert-outline" onPress={onPress} style={style} />
+);
 export const ArrowBackIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="arrow-left" onPress={onPress} style={style} />
 );
@@ -148,11 +151,11 @@ export const ExternalLinkIcon = ({ onPress, style }) => (
 export const EyeIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="eye" onPress={onPress} style={style} />
 );
-export const FlashIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="flash" onPress={onPress} style={style} />
-);
 export const FeedbackIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="frequently-asked-questions" onPress={onPress} style={style} />
+);
+export const FlashIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="flash" onPress={onPress} style={style} />
 );
 export const HamburgerIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="dots-horizontal" onPress={onPress} style={style} />
@@ -168,6 +171,9 @@ export const KebabIcon = ({ onPress, style }) => (
 );
 export const KeyIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="key-variant" onPress={onPress} style={style} />
+);
+export const LeaderIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="foot-print" onPress={onPress} style={style} />
 );
 export const LinkIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="link" onPress={onPress} style={style} />

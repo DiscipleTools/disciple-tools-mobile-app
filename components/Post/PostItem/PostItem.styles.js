@@ -42,10 +42,18 @@ export const localStyles = ({ theme, isRTL }) => ({
     marginStart: "auto",
     paddingEnd: 10,
   },
+  infoIconContainer: {
+    justifyContent: "center",
+    marginTop: 2
+  },
+  infoIcon: {
+    margin: "auto",
+    fontSize: 15
+  },
   alertIcon: {
     color: theme.error,
   },
-  meatballIcon: {
+  actionIcon: {
     paddingEnd: 20,
   }
 });
