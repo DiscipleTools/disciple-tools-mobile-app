@@ -180,7 +180,6 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   );
 
   const FieldComponent = () => {
-    console.log(`field.type: ${field?.type}`);
     switch (field?.type) {
       case FieldTypes.BOOLEAN:
         return (

@@ -6,19 +6,19 @@ import SheetHeader from "components/Sheet/SheetHeader";
 import UsersSheet from "./UsersSheet";
 
 import useBottomSheet from "hooks/use-bottom-sheet";
-import useType from "hooks/use-type";
+
+import { TypeConstants } from "constants";
 
 const UserSelectField = ({ editing, field, value, onChange }) => {
 
   const { delayedClose, expand } = useBottomSheet();
-  const { getPostTypeByFieldName } = useType();
 
   // SELECTED 
   const selectedLabel = value?.label ?? ''; 
 
   const onRemove = () => onChange(null, { autosave: true });
 
-  const renderItemEdit = (item) => <PostChip id={item?.key} title={item?.label} type={getPostTypeByFieldName(field?.name)} onRemove={onRemove} />;
+  const renderItemEdit = (item) => <PostChip id={item?.key} title={item?.label} type={TypeConstants.CONTACT} onRemove={onRemove} />;
 
   // EDIT MODE
   const UserSelectFieldEdit = () => {
