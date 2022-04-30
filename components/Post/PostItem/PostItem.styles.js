@@ -27,15 +27,25 @@ export const localStyles = ({ theme, isRTL }) => ({
   title: {
     fontWeight: "bold",
   },
+  caption: {
+    color: theme.placeholder,
+    fontSize: 11
+  },
   lastModifiedDateText: {
     flex: 1.5,
     color: theme.placeholder,
     fontStyle: "italic",
   },
-  meatballIcon: {
+  icon: {
     height: "100%",
     justifyContent: "center",
     marginStart: "auto",
-    paddingHorizontal: 20,
+    paddingEnd: 10,
+  },
+  alertIcon: {
+    color: theme.error,
+  },
+  meatballIcon: {
+    paddingEnd: 20,
   }
 });

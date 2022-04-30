@@ -4,6 +4,7 @@ import { Pressable, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import {
+  AlertIcon,
   CommentActivityIcon,
   MeatballIcon,
   StarIcon,
@@ -110,8 +111,12 @@ const PostItem = ({ item, loading, mutate }) => {
     const subtitle1 = settings?.fields?.[subtitle1Key]?.values[item?.[subtitle1Key]]?.label;
     const subtitle2 = settings?.fields?.[subtitle2Key]?.values[item?.[subtitle2Key]]?.label;
     //
-    let subtitle = subtitle1;
-    if (subtitle2) subtitle += ` • ${ subtitle2 }`;
+    let subtitle = '';
+    if (subtitle1) subtitle += subtitle1;
+    if (subtitle2) {
+      if (subtitle1) subtitle += ' • ';
+      subtitle += subtitle2;
+    };
     if (isGroup && item?.member_count) subtitle += ` • ${ numberFormat(item.member_count) }`;
     return (
       <Text style={globalStyles.caption}>
@@ -121,12 +126,20 @@ const PostItem = ({ item, loading, mutate }) => {
   };
 
   const DateSubtitle = () => {
-    const subtitle1 = moment(parseDateSafe(item?.post_date)).format('L');
-    const subtitle2 = moment(parseDateSafe(item?.last_modified)).format('L');
-    if (!subtitle1 && !subtitle2) return null;
-    const subtitle = `${ subtitle1 } • ${ subtitle2 }`;
+    const { postType } = useType();
+    const { settings } = useSettings({ type: postType });
+    if (!settings) return null;
+    const lastModDateLabel = settings?.fields?.last_modified?.name ?? '';
+    const lastModDate = moment(parseDateSafe(item?.last_modified)).format('L');
+    if (!lastModDate) return null;
+    const subtitle = `${ lastModDateLabel }: ${ lastModDate }`;
     return (
-      <Text style={globalStyles.caption}>
+      <Text
+        style={[
+          globalStyles.caption,
+          styles.caption
+        ]}
+      >
         { subtitle }
       </Text>
     );
@@ -184,18 +197,23 @@ const PostItem = ({ item, loading, mutate }) => {
     </View>
   );
 
-  /*
-  const LastModifiedDate = () => (
-    <Text style={styles.lastModifiedDateText}>
-      { parseDateShort(item?.last_modified) }
-    </Text>
+  const InfoIcons = () => (
+    <>
+      { item?.requires_update && (
+        <View style={styles.icon}>
+          <AlertIcon style={styles.alertIcon} />
+        </View>
+      )}
+    </>
   );
-  */
 
   const SheetOptions = () => (
     <Pressable
       onPress={() => showSheet(item)}
-      style={styles.meatballIcon}
+      style={[
+        styles.icon,
+        styles.meatballIcon
+      ]}
     >
       <MeatballIcon />
     </Pressable>
@@ -233,6 +251,7 @@ const PostItem = ({ item, loading, mutate }) => {
           <PostDetails />
         </View>
       </Pressable>
+      <InfoIcons />
       <SheetOptions />
     </View>
   );
