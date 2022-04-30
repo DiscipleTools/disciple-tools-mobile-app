@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View } from "react-native";
+import { Text, View, useWindowDimensions } from "react-native";
 import {
   AddIcon,
   CancelIcon,
@@ -30,6 +30,7 @@ import { localStyles } from "./Field.styles";
 
 const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) => {
 
+  const windowWidth = useWindowDimensions()?.width;
   const { styles, globalStyles } = useStyles(localStyles);
   const { updatePost } = useAPI();
   const { vibrate } = useHaptics();
@@ -179,6 +180,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   );
 
   const FieldComponent = () => {
+    console.log(`field.type: ${field?.type}`);
     switch (field?.type) {
       case FieldTypes.BOOLEAN:
         return (
@@ -319,7 +321,6 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
     );
   };
 
-  // TODO: calculate <FieldSkeleton windowWidth... value dynamically
   /*
    * ____________________________________
    * | FieldLabelControls.............. |
@@ -333,7 +334,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
         isMultiInputTextField() ? null : styles.component
       }>
         {_loading ? (
-          <FieldSkeleton windowWidth={400} />
+          <FieldSkeleton windowWidth={windowWidth-10 ?? 400} />
         ) : (
           <FieldComponent />
         )}
