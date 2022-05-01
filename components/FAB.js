@@ -186,6 +186,7 @@ const FAB = ({ offsetX, offsetY }) => {
     return null;
   };
 
+  if (!isContact && !isList) return null;
   if (isList || isPost) {
     return (
       <ActionButton
