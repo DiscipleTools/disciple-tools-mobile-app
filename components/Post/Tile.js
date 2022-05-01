@@ -103,7 +103,7 @@ const Tile = ({
       const fieldLabel = requiredFields[ii]?.label;
       if (fieldName && !filteredPost[fieldName]) {
         setLoading(false);
-        toast(i18n.t("isRequiredError", { item: fieldLabel }), true);
+        toast(i18n.t("global.error.isRequired", { item: fieldLabel }), true);
         return;
       };
     };
