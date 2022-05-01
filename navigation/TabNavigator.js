@@ -294,6 +294,21 @@ const TabNavigator = ({ navigation }) => {
               : null
           }
         />
+        <Stack.Screen
+          name={ScreenConstants.COMMENTS_ACTIVITY}
+          component={CommentsActivityScreen}
+          options={{
+            title: i18n.t("global.commentsActivity"),
+            ...TransitionPresets.ModalTransition,
+          }}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
+        />
       </Stack.Navigator>
     );
   };
