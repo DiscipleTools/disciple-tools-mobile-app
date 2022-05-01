@@ -89,11 +89,9 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
    * This method differs from individual Field 'mapToAPI' methods because
    * those implementations are mapping values, and this is mapping those
    * mapped values to the corresponding Field Name
-   * e.g., { "location_grid": <'mapToAPI' values from custom fields> }
    */
   const mapField = (newValue, { force } = {}) => {
     let fieldName = field?.name;
-    if (field?.name === FieldNames.LOCATION_GRID_META) fieldName = FieldNames.LOCATION_GRID;
     if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) {
       newValue = newValue.map(value => {
         if (!value?.key) {
@@ -105,7 +103,6 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
     };
     let data = { [fieldName]: newValue };
     if (force && newValue?.values && field?.type !== FieldTypes.COMMUNICATION_CHANNEL) data[fieldName]["force_values"] = true;
-    //if (newValue?.values && field?.type !== FieldTypes.COMMUNICATION_CHANNEL) data[fieldName]["force_values"] = force ?? false;
     return data;
   };
 

@@ -21,9 +21,17 @@ const LocationField = ({ editing, field, value, onChange }) => {
   // SELECTED VALUES
   const values = value?.values || [];
 
+  // TODO: enable remove
+  /*
+   * NOTE: currently we get Locations list from the D.T Mobile App plugin:
+   * wp-json/dt-mobile-app/v1/locations
+   * but this endpoint only provides 'grid_id' and not also 'grid_meta_id'
+   * and 'grid_meta_id' is required to remove a value from the field
+   * eg, { location_grid_meta: { "values": [ { "grid_meta_id": 98, "delete": true } ] } }
+   */
   const onRemove = (id) => {
     onChange(
-      { values: [{ value: id, delete: true }]},
+      { values: [{ grid_meta_id: Number(id), delete: true }]},
       { autosave: true }
     );
   };
@@ -42,7 +50,9 @@ const LocationField = ({ editing, field, value, onChange }) => {
       <Chip
         label={name}
         onPress={() => Linking.openURL(mapURL)}
-        //startIcon={<MapIcon style={styles.startIcon} />}
+        startIcon={<MapIcon style={styles.startIcon} />}
+        /*
+         * NOTE: see note from 'onRemove' above
         endIcon={onRemove ? (
           <View style={styles.clearIconContainer(false)}>
             <ClearIcon
@@ -51,6 +61,7 @@ const LocationField = ({ editing, field, value, onChange }) => {
             />
           </View>
         ) : null }
+        */
         //style={styles?.container}
       />
     );

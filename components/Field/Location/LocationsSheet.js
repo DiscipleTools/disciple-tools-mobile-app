@@ -21,15 +21,16 @@ const LocationsSheet = ({ id, title, values, onChange }) => {
   // exclude currently selected values from options list
   const exclude = values?.values?.map(item => item?.grid_id);
 
-  const { data: items, error, isLoading, isValidating, mutate } = useLocations({ search, exclude });
+  const { data: items } = useLocations({ search, exclude });
   if (!items) return [];
 
   // MAP TO API
   const mapToAPI = (newItem) => {
-    const mappedValues = values?.values?.map(value => ({ value: value?.grid_id }));
+    let mappedValues = [];
+    if (values?.values?.length > 0) mappedValues = values.values.map(value => ({ grid_id: value?.grid_id }));
     if (newItem?.key) {
       mappedValues.push({
-        value: newItem.key,
+        grid_id: newItem.key,
       });
     };
    return mappedValues;
@@ -47,7 +48,7 @@ const LocationsSheet = ({ id, title, values, onChange }) => {
 
   const _onChange = (selectedItem) => {
     const mappedValues = mapToAPI(selectedItem);
-    if (JSON.stringify(mappedValues) !== JSON.stringify(items)) {
+    if (JSON.stringify(mappedValues) !== JSON.stringify(values)) {
       onChange(
         { values: mappedValues },
         { autosave: true }
