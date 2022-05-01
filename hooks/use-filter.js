@@ -10,6 +10,8 @@ import { setFilter } from "store/actions/user.actions";
 
 import { TypeConstants, SubTypeConstants } from "constants";
 
+import { findFilterById } from "utils";
+
 const useFilter = () => {
 
   const dispatch = useDispatch();
@@ -51,23 +53,22 @@ const useFilter = () => {
     return { ID: "all" };
   };
 
-  // TODO: persist filter by ID rather than full JSON,
-  // (then we wouldn't need to also persist the locale)
   const getActiveFilter = () => {
-    let key = locale + '_' + postType;
+    let key = postType;
     if (isNotification) key = TypeConstants.NOTIFICATION;
     if (isCommentsActivity) key = SubTypeConstants.COMMENTS_ACTIVITY;
-    if (persistedFilters && persistedFilters[key]) return persistedFilters[key];
+    if (persistedFilters && persistedFilters[key]) {
+      const filterID = persistedFilters[key];
+      const _filter = findFilterById(filterID, filters);
+      if (_filter) return _filter;
+    };
+    const _filter = route?.params?.filter;
+    if (_filter) return _filter;
     return getDefaultFilter();
   };
 
   useEffect(() => {
-    let filter = route?.params?.filter;
-    if (filter) {
-      _setFilter({ type: SET_FILTER, filter });
-      return;
-    };
-    filter = getActiveFilter();
+    const filter = getActiveFilter();
     _setFilter({ type: SET_FILTER, filter });
   }, [route?.params?.filter]);
 
@@ -81,7 +82,7 @@ const useFilter = () => {
     let key = postType;
     if (isNotification) key = TypeConstants.NOTIFICATION;
     if (isCommentsActivity) key = SubTypeConstants.COMMENTS_ACTIVITY;
-    dispatch(setFilter({ key, filter }));
+    dispatch(setFilter({ key, filter: filter?.ID }));
     _setFilter({ type: SET_FILTER, filter });
   };
 
