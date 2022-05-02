@@ -71,7 +71,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "calendar-clock";
       } else {
         iconType = "MaterialCommunityIcons";
-        iconName = "calendar-clock";
+        iconName = "calendar-clock-outline";
       }
       break;
     case FieldTypes.CONNECTION:
@@ -116,7 +116,7 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("trainings")) {
         iconType = "MaterialCommunityIcons";
         iconName = "school";
-      } else if (name.includes("group_leader") || name.includes("leaders")) {
+      } else if (name === ("group_leader") || name.includes("leaders")) {
         iconType = "MaterialCommunityIcons";
         iconName = "foot-print";
       } else if (name.includes("leader")) {
@@ -133,13 +133,13 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "account-group-outline";
       } else if (name.includes("contacts")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "human";
+        iconName = "account";
       } else if (name.includes("disciple")) {
         iconType = "MaterialCommunityIcons";
         iconName = "account-star-outline";
       } else if (name.includes("meetings")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "calendar-text";
+        iconName = "calendar-multiselect";
       } else if (name.includes("streams")) {
         iconType = "MaterialCommunityIcons";
         iconName = "axis-arrow";
@@ -205,11 +205,11 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "celtic-cross";
       } else if (name.includes("seeker_path")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "map-marker-path";
+        iconName = "sign-direction";
       } else if (name.includes("gender")) {
         iconType = "MaterialCommunityIcons";
         iconName = "gender-male-female";
-      } else if (name.includes("age")) {
+      } else if (name === ("age")) {
         iconType = "MaterialCommunityIcons";
         iconName = "account-clock";
       } else if (name.includes("status")) {
@@ -239,6 +239,19 @@ const FieldIcon = ({ field, hide }) => {
         iconType = "MaterialCommunityIcons";
         iconName = "account-network-outline";
         
+        // Plugins
+      } else if (name.includes("timezone") || (name === ("campaign_timezone"))) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "map-clock";
+      } else if (name.includes("min_time_duration")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "timer-outline";
+      } else if (name.includes("duration_options")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "timer";
+      } else if (name === ("languages")) {
+        iconType = "MaterialCommunityIcons";
+        iconName = "translate";
       } else {
         iconType = "MaterialCommunityIcons";
         iconName = "format-list-checks";
@@ -265,10 +278,10 @@ const FieldIcon = ({ field, hide }) => {
     case FieldTypes.TASK:
       if (name.includes("task")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "calendar-clock";
+        iconName = "calendar-check";
       } else {
         iconType = "MaterialCommunityIcons";
-        iconName = "calendar-clock";
+        iconName = "calendar-check-outline";
       }
       break;
     case FieldTypes.TEXT:
@@ -281,25 +294,25 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("notes")) {
         iconType = "MaterialCommunityIcons";
         iconName = "note-text";
-      } else if (name.includes("four_fields_unbelievers")) {
+      } else if (name === ("four_fields_unbelievers")) {
         iconType = "MaterialCommunityIcons";
         iconName = "crosshairs-off";
-      } else if (name.includes("four_fields_believers")) {
+      } else if (name === ("four_fields_believers")) {
         iconType = "MaterialCommunityIcons";
         iconName = "crosshairs-gps";
-      } else if (name.includes("four_fields_accountable")) {
+      } else if (name === ("four_fields_accountable")) {
         iconType = "MaterialCommunityIcons";
         iconName = "crosshairs-question";
-      } else if (name.includes("four_fields_church_commitment")) {
+      } else if (name === ("four_fields_church_commitment")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "shield-cross";
-      } else if (name.includes("four_fields_multiplying")) {
+        iconName = "shield-check";
+      } else if (name === ("four_fields_multiplying")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "shield-cross-outline";
+        iconName = "shield-plus";
       } else if (name.includes("four_fields")) {
         iconType = "MaterialCommunityIcons";
         iconName = "crosshairs";      
-      } else if (name.includes("video_link")) {
+      } else if (name === ("video_link")) {
           iconType = "MaterialCommunityIcons";
           iconName = "video-image";
       } else {
@@ -319,6 +332,18 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "pound";
       }
       break;
+      case FieldTypes.BOOLEAN:
+        if (name.includes("favorite")) {
+          iconType = "MaterialCommunityIcons";
+          iconName = "star";
+        } else if (name === ("receive_prayer_time_notifications")) {
+          iconType = "MaterialCommunityIcons";
+          iconName = "bell-ring-outline";
+        } else {
+          iconType = "MaterialCommunityIcons";
+          iconName = "toggle-switch";
+        }
+        break;
     default:
       iconType = "MaterialCommunityIcons";
       iconName = "square-small";
@@ -376,18 +401,18 @@ const FieldIcon = ({ field, hide }) => {
       );
     };
   };
-  if (type === FieldTypes.KEY_SELECT) {
-    if (name.includes("type")) {
-      return (
-        <TypeIcon
-        height={globalStyles.icon.fontSize}
-        width={globalStyles.icon.fontSize}
-        style={styles.svgIcon}
-        fill={globalStyles.text.color}
-      />
-      );
-    };
-  };
+  // if (type === FieldTypes.KEY_SELECT) {
+  //   if (name === ("group_type")) {
+  //     return (
+  //       <TypeIcon
+  //       height={globalStyles.icon.fontSize}
+  //       width={globalStyles.icon.fontSize}
+  //       style={styles.svgIcon}
+  //       fill={globalStyles.text.color}
+  //     />
+  //     );
+  //   };
+  // };
   return (
     <Icon
       type={iconType}

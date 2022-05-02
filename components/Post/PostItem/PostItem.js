@@ -4,7 +4,7 @@ import { Pressable, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import {
-  AlertProgressIcon,
+  UpdateRequiredIcon,
   CommentActivityIcon,
   LeaderIcon,
   MeatballIcon,
@@ -205,7 +205,7 @@ const PostItem = ({ item, loading, mutate }) => {
     <>
       { item?.requires_update && (
         <View style={styles.infoIconContainer}>
-          <AlertProgressIcon
+          <UpdateRequiredIcon
             style={[
               styles.alertIcon,
               styles.infoIcon,

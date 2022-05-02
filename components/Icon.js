@@ -64,11 +64,11 @@ export const ChevronIcon = ({ header, onPress, style }) => {
 export const AddIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="plus" onPress={onPress} style={style} />
 );
+export const AddNewIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="plus-circle" onPress={onPress} style={style} />
+);
 export const AlertIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="alert-circle-outline" onPress={onPress} style={style} />
-);
-export const AlertProgressIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="clock-alert-outline" onPress={onPress} style={style} />
 );
 export const ArrowBackIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="arrow-left" onPress={onPress} style={style} />
@@ -317,7 +317,7 @@ export const ShareIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="share-variant" onPress={onPress} style={style} /> 
 );
 export const UpdateRequiredIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="progress-clock" onPress={onPress} style={style} /> 
+  <MaterialCommunityIcon name="progress-alert" onPress={onPress} style={style} /> 
 );
 export const TasksIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="clock-check-outline" onPress={onPress} style={style} /> 
