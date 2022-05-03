@@ -56,12 +56,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
     const fieldType = field?.type;
     if (
       fieldType === FieldTypes.CONNECTION &&
-      (
-        fieldName === FieldNames.GROUPS ||
-        fieldName === FieldNames.PARENT_GROUPS ||
-        fieldName === FieldNames.PEER_GROUPS ||
-        fieldName === FieldNames.CHILD_GROUPS
-      )
+      isGroupField()
     ) return false;
     if (
       fieldType === FieldTypes.MULTI_SELECT &&
@@ -174,7 +169,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
     field?.name === FieldNames.PARENT_GROUPS ||
     field?.name === FieldNames.PEER_GROUPS ||
     field?.name === FieldNames.CHILD_GROUPS
-  );
+  ) && value?.values?.length > 0;
 
   const FieldComponent = () => {
     switch (field?.type) {
