@@ -18,7 +18,7 @@ const useCommentsActivity = ({ search, filter, exclude }) => {
   if (comments) {
     comments.forEach(comment => {
       try {
-        comment[sortKey] = Date.parse(comments[0]?.comment_date_gmt.replace(' ','T'))/1000;
+        comment[sortKey] = Date.parse(comment?.comment_date_gmt.replace(' ','T'))/1000;
       } catch (error) {
         comment[sortKey] = -1;
       };
