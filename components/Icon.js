@@ -65,7 +65,7 @@ export const AddIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="plus" onPress={onPress} style={style} />
 );
 export const AddNewIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="plus-circle" onPress={onPress} style={style} />
+  <MaterialCommunityIcon name="plus-circle-outline" onPress={onPress} style={style} />
 );
 export const AlertIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="alert-circle-outline" onPress={onPress} style={style} />
@@ -338,7 +338,7 @@ export const InfoIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="information-outline" onPress={onPress} style={style} />
 );
 export const LogsIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="chart-timeline" onPress={onPress} style={style} />
+  <MaterialCommunityIcon name="timeline-clock-outline" onPress={onPress} style={style} />
 );
 export const MapsIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="map" onPress={onPress} style={style} />
