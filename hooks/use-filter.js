@@ -54,6 +54,7 @@ const useFilter = () => {
   };
 
   const getActiveFilter = () => {
+    if (route?.params?.filter) return route.params.filter;
     let key = postType;
     if (isNotification) key = TypeConstants.NOTIFICATION;
     if (isCommentsActivity) key = SubTypeConstants.COMMENTS_ACTIVITY;
@@ -62,8 +63,6 @@ const useFilter = () => {
       const _filter = findFilterById(filterID, filters);
       if (_filter) return _filter;
     };
-    const _filter = route?.params?.filter;
-    if (_filter) return _filter;
     return getDefaultFilter();
   };
 
