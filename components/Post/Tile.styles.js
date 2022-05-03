@@ -3,5 +3,8 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     backgroundColor: theme.surface.primary,
     padding: 10,
     paddingBottom: 100
-  }
+  },
+  icon: {
+    color: theme.offLight
+  },
 });

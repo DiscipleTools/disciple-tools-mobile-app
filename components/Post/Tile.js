@@ -3,6 +3,7 @@ import { RefreshControl, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
 
+import { UpdateRequiredIcon } from "components/Icon";
 import Alert from "components/Alert";
 import Button from "components/Button";
 import Field from "components/Field/Field";
@@ -139,6 +140,7 @@ const Tile = ({
           <Alert
             title={i18n.t("global.updateRequired")}
             subtitle={i18n.t("global.updateRequiredText")}
+            icon={<UpdateRequiredIcon style={styles.icon} />}
           />
         )}
         <Field
