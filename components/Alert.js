@@ -7,12 +7,18 @@ import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./Alert.styles";
 
-const Alert = ({ title, subtitle }) => {
+const Alert = ({ title, subtitle, icon }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   return(
     <View style={styles.container}>
       <View style={globalStyles.rowContainer}>
-        <AlertIcon style={styles.icon} />
+        { icon ? (
+          <>
+            { icon }
+          </>
+        ) : (
+          <AlertIcon style={styles.icon} />
+        )}
         <Text style={styles.title}>
           {title}
         </Text>
