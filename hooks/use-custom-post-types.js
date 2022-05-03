@@ -4,9 +4,17 @@ import { TypeConstants } from "constants";
 
 // TODO: merge into use-types?
 const useCustomPostTypes = () => {
+
   const { settings } = useSettings();
   if (!settings?.post_types) return null;
-  const availablePostTypes = Object.keys(settings?.post_types);
+
+  const mapPostTypes = (postTypes) => {
+    if (Array.isArray(postTypes)) return postTypes;
+    if (typeof postTypes === "object") return Object.keys(postTypes);
+    return [];
+  };
+
+  const availablePostTypes = mapPostTypes(settings.post_types);
   const ignorePostTypes = [
     TypeConstants.PEOPLE_GROUP
   ];
