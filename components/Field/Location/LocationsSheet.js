@@ -25,16 +25,11 @@ const LocationsSheet = ({ id, title, values, onChange }) => {
   if (!items) return [];
 
   // MAP TO API
-  const mapToAPI = (newItem) => {
-    let mappedValues = [];
-    if (values?.values?.length > 0) mappedValues = values.values.map(value => ({ grid_id: value?.grid_id }));
-    if (newItem?.key) {
-      mappedValues.push({
-        grid_id: newItem.key,
-      });
-    };
-   return mappedValues;
-  };
+  /*
+   * NOTE: if we append to existing values, then API will duplicate those values
+   * so we only send the new value to the API
+   */
+  const mapToAPI = (newItem) => [{ grid_id: newItem?.key }];
 
   // MAP FROM API
   const mapFromAPI = (items) => {
