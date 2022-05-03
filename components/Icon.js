@@ -280,7 +280,7 @@ export const PostIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="file-multiple" onPress={onPress} style={style} />
 );
 export const TrainingsIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="teach" onPress={onPress} style={style} />
+  <MaterialCommunityIcon name="school" onPress={onPress} style={style} />
 );
 export const MeetingsIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="calendar-multiselect" onPress={onPress} style={style} />
@@ -290,6 +290,9 @@ export const CampaignsIcon = ({ onPress, style }) => (
 );
 export const StreamsIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="axis-arrow" onPress={onPress} style={style} />
+);
+export const SubscriptionsIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="playlist-check" onPress={onPress} style={style} />
 );
 export const MetricsIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="chart-bar" onPress={onPress} style={style} />
