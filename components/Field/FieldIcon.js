@@ -6,6 +6,8 @@ import ParentIcon from "assets/icons/parent.svg";
 import PeerIcon from "assets/icons/peer.svg";
 import ChildIcon from "assets/icons/child.svg";
 import PeopleGroupsIcon from "assets/icons/people-groups.svg";
+import BaptizeIcon from "assets/icons/baptize.svg";
+import Baptize2Icon from "assets/icons/baptize2.svg";
 
 import useStyles from "hooks/use-styles";
 
@@ -107,12 +109,12 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("coaches")) {
         iconType = "MaterialCommunityIcons";
         iconName = "teach";
-      } else if (name.includes("baptized_by")) {
+      } else if (name.includes("baptizing")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "water";
-      } else if (name.includes("baptized")) {
+        iconName = "waves"; 
+      } else if (name.includes("bapti")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "water-outline";
+        iconName = "waves";
       } else if (name.includes("trainings")) {
         iconType = "MaterialCommunityIcons";
         iconName = "school";
@@ -349,7 +351,7 @@ const FieldIcon = ({ field, hide }) => {
       iconName = "square-small";
       break;
   }
-  if (type === FieldTypes.CONNECTION) {
+  if (type === FieldTypes.CONNECTION || type === FieldTypes.KEY_SELECT) {
     if (name.includes("parent")) {
       return (
         <ParentIcon
@@ -398,6 +400,26 @@ const FieldIcon = ({ field, hide }) => {
         style={styles.svgIcon}
         fill={globalStyles.text.color}
       />
+      );
+    };
+    if (name === ("baptized")) {
+      return (
+        <Baptize2Icon
+          height={globalStyles.icon.fontSize}
+          width={globalStyles.icon.fontSize}
+          style={styles.svgIcon}
+          fill={globalStyles.text.color}
+        />
+      );
+    };
+    if (name === ("baptized_by") || name.includes("bapti")) {
+      return (
+        <BaptizeIcon
+          height={globalStyles.icon.fontSize}
+          width={globalStyles.icon.fontSize}
+          style={styles.svgIcon}
+          fill={globalStyles.text.color}
+        />
       );
     };
   };
