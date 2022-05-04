@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   toggleAutoLogin as _toggleAutoLogin,
@@ -13,6 +19,17 @@ import axios from "services/axios";
 
 import jwt_decode from "jwt-decode";
 
+import * as WebBrowser from "expo-web-browser";
+import {
+  makeRedirectUri,
+  useAuthRequest,
+  useAutoDiscovery,
+  exchangeCodeAsync,
+} from "expo-auth-session";
+
+const TENANT_ID = "1917185a-187d-415b-87e6-295e95df8a01";
+const CLIENT_ID = "9a83c1ef-d132-47b2-bf77-d42c465c949a";
+
 const AuthConstants = {
   ACCESS_TOKEN: "ACCESS_TOKEN",
   BASE_URL: "BASE_URL",
@@ -26,17 +43,17 @@ const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
   const auth = useCustomAuth();
-  return (
-    <AuthContext.Provider value={auth}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 };
+
+WebBrowser.maybeCompleteAuthSession();
+
+let uri = makeRedirectUri();
+console.log("------ URI ------", uri);
 
 const useAuth = () => useContext(AuthContext);
 
 const useCustomAuth = () => {
-
   const { setLocale } = useI18N();
 
   // TODO: validate "iss" === domain
@@ -54,93 +71,104 @@ const useCustomAuth = () => {
       return jwt_decode(token);
     } catch (error) {
       return null;
-    };
+    }
   };
 
   const [accessToken, setAccessToken] = useState(null);
   const [baseUrl, setBaseUrl] = useState(null);
   const [user, setUser] = useState(null);
   const [authenticated, setAuthenticated] = useState(false);
+  const [o365domain, setO365domain] = useState(false);
 
   const dispatch = useDispatch();
 
   // NOTE: Redux already does a good job indicating whether to rehydrate state, so use that
-  const rehydrate = useSelector(state => state?.authReducer?.rehydrate);
-  const isAutoLogin = useSelector(state => state?.authReducer?.isAutoLogin);
-  const rememberLoginDetails = useSelector(state => state?.authReducer?.rememberLoginDetails);
+  const rehydrate = useSelector((state) => state?.authReducer?.rehydrate);
+  const isAutoLogin = useSelector((state) => state?.authReducer?.isAutoLogin);
+  const rememberLoginDetails = useSelector(
+    (state) => state?.authReducer?.rememberLoginDetails
+  );
 
   const { isConnected } = useNetwork();
   const { getSecureItem, setSecureItem, deleteSecureItem } = useSecureStore();
 
   // rehydrate state from secure storage (depends on Redux to notify via "rehydrate" change)
-  useEffect(async() => {
+  useEffect(async () => {
     /*
     if auto-login, but accessToken is missing or invalid, 
     then attempt to rehydrate accessToken from secure storage
     else do nothing bc user will be prompted to re-login
     */
-    if (isAutoLogin && (!accessToken || (accessToken && !validateToken(accessToken)))) {
+    if (
+      isAutoLogin &&
+      (!accessToken || (accessToken && !validateToken(accessToken)))
+    ) {
       // rehydrate access token
-      const rehydratedAccessToken = await getSecureItem(AuthConstants.ACCESS_TOKEN);
+      const rehydratedAccessToken = await getSecureItem(
+        AuthConstants.ACCESS_TOKEN
+      );
       //console.log(`~~~~~~~~~~ rehydratedAccessToken: ${rehydratedAccessToken}`);
-      if (validateToken(rehydratedAccessToken)) setAccessToken(rehydratedAccessToken);
-    };
+      if (validateToken(rehydratedAccessToken))
+        setAccessToken(rehydratedAccessToken);
+    }
     // rehydrate baseUrl
-    const rehydratedBaseUrl = baseUrl ?? (await getSecureItem(AuthConstants.BASE_URL));
+    const rehydratedBaseUrl =
+      baseUrl ?? (await getSecureItem(AuthConstants.BASE_URL));
     //console.log(`~~~~~~~~~~ rehydratedBaseUrl: ${rehydratedBaseUrl}`);
     setBaseUrl(rehydratedBaseUrl);
     // rehydrate user
     try {
-      const rehydratedUser = user ?? JSON.parse((await getSecureItem(AuthConstants.USER)));
+      const rehydratedUser =
+        user ?? JSON.parse(await getSecureItem(AuthConstants.USER));
       //console.log(`~~~~~~~~~~ rehydratedUser: ${JSON.stringify(rehydratedUser)}`);
       // TODO: if user unable to be rehydrated AND have valid accessToken and baseUrl, then request user info
       setUser(rehydratedUser);
     } catch (error) {
       setUser(null);
-    };
+    }
   }, [rehydrate]);
 
   // when "accessToken" changes, validate it:
   // if valid, configure axios interceptors and setAuthenticated(true)
   // else setAuthenticated(false)
-  useEffect(async() => {
+  useEffect(async () => {
     if (accessToken && validateToken(accessToken)) {
       // Add a request interceptor
       axios.interceptors.request.use(
-        config => {
+        (config) => {
           if (accessToken && accessToken !== config.headers?.Authorization) {
             config.headers["Authorization"] = `Bearer ${accessToken}`;
           } else {
             delete config.headers["Authorization"];
             setAuthenticated(false);
-          };
+          }
           return config;
         },
-        error => error
+        (error) => error
       );
       // Add a response interceptor
       axios.interceptors.response.use(
-        response => response,
-        async(error) => {
+        (response) => response,
+        async (error) => {
           if (error?.response?.status === 401) {
             setAuthenticated(false);
-          };
+          }
           return Promise.reject(error);
         }
       );
       setAuthenticated(true);
     } else {
       setAuthenticated(false);
-    };
+    }
   }, [accessToken]);
 
   // when baseUrl changes, set axios default baseURL (if applicable)
-  useEffect(async() => {
+  useEffect(async () => {
     if (baseUrl) {
       if (baseUrl !== axios.defaults.baseURL) axios.defaults.baseURL = baseUrl;
     } else {
       setAuthenticated(false);
-    };
+    }
     return;
   }, [baseUrl]);
 
@@ -159,7 +187,110 @@ const useCustomAuth = () => {
     } catch (error) {
       // TODO:
       console.error(error);
-    };
+    }
+  };
+
+  // FOR o365 LOG IN
+  const discovery = useAutoDiscovery(
+    `https://login.microsoftonline.com/${TENANT_ID}/v2.0`
+  );
+
+  // Request
+  const [request, response, promptAsync] = useAuthRequest(
+    {
+      clientId: CLIENT_ID,
+      scopes: ["openid", "profile", "email", "offline_access"],
+      redirectUri: uri,
+    },
+    discovery
+  );
+
+  // console.log("------ request ------", request);
+
+  useEffect(() => {
+    // console.log("----RESPONSE---- ", response);
+
+    if (response !== null && response.type === "success") {
+      // console.log("------exchangeCodeAsync------");
+      exchangeCodeAsync(
+        {
+          clientId: CLIENT_ID,
+          scopes: ["openid", "profile", "email", "offline_access"],
+          code: response.params.code,
+          redirectUri: uri,
+          extraParams: { code_verifier: request.codeVerifier },
+        },
+        discovery
+      )
+        .then((token) => {
+          // console.log("------TOKEN------", token);
+          let decodedToken = jwt_decode(token.idToken);
+          console.log("------DECODEDTOKEN------", decodedToken);
+
+          //VALIDATE THE ACCESS TOKEN AT THE BACKEND.
+          validateAccessToken(token);
+        })
+        .catch((exchangeError) => {
+          // console.log("------ERROR------", exchangeError);
+          throw new Error(exchangeError);
+        });
+    }
+  }, [response]);
+
+  const validateAccessToken = async (token) => {
+    try {
+      // const domain = "rubicodevclean.arrowappstage.wpengine.com";
+      const domain = o365domain;
+
+      const baseUrl = `${PROTOCOL}://${domain}/wp-json`;
+      const url = `${baseUrl}/jwt-auth/v1/token/o365validate`;
+      const res = await axios({
+        url,
+        method: "POST",
+        data: {
+          accessToken: token.accessToken,
+        },
+      });
+
+      // console.log("------ res.data ------", res?.data);
+
+      if (res?.status === 200 && res?.data?.token) {
+        const accessToken = res.data.token;
+        const id = decodeToken(accessToken)?.data?.user?.id;
+        const user = {
+          id,
+          username: res.data?.user_email,
+          domain,
+          display_name: res.data?.user_display_name,
+          email: res.data?.user_email,
+          nicename: res.data?.user_nicename,
+          o365Login: true,
+        };
+        // set persisted storage values
+        await setPersistedAuth(accessToken, baseUrl, user);
+        // sync local locale with server
+        if (res.data?.locale) setLocale(res.data.locale);
+        // set in-memory provider value
+        setAccessToken(accessToken);
+        setBaseUrl(baseUrl);
+        setUser(user);
+        return;
+      }
+    } catch (err) {
+      // console.log("------validateAccessToken ERROR------", err);
+      throw new Error(err);
+    }
+  };
+
+  const signInO365 = async (domain) => {
+    setO365domain(domain);
+    try {
+      // console.log("------ signInO365 ------");
+      await promptAsync();
+    } catch (error) {
+      // console.log("------ signInO365 ERROR------", error);
+      throw new Error(error);
+    }
   };
 
   // TODO: implement timeout
@@ -199,7 +330,80 @@ const useCustomAuth = () => {
       }
     } catch (error) {
       throw new Error(error);
+    }
+  };
+
+  const check2FaEnabled = async (domain, username, password) => {
+    try {
+      const baseUrl = `${PROTOCOL}://${domain}/wp-json`;
+      const url = `${baseUrl}/jwt-auth/v1/login/validate`;
+      const res = await axios({
+        url,
+        method: "POST",
+        data: {
+          username,
+          password,
+        },
+      });
+
+      // console.log("------ check2FaEnabled res.status------", res.status);
+
+      if (res?.status === 200 && res?.data) {
+        return { ...res.data, baseUrl };
+      } else {
+        throw new Error(res.data.status);
+      }
+    } catch (error) {
+      // console.log("------ ERROR check2FaEnabled ------", error.response.data);
+      throw new Error(error.response.data.message);
+    }
+  };
+
+  const validateOtp = async (domain, username, password, otp) => {
+    try {
+      const baseUrl = `${PROTOCOL}://${domain}/wp-json`;
+      const url = `${baseUrl}/jwt-auth/v1/login/validate-otp`;
+      const res = await axios({
+        url,
+        method: "POST",
+        data: {
+          username,
+          password,
+          authcode: otp,
+        },
+      });
+      // console.log("------ VALIDATEOTP res.data ------", res?.data);
+      if (res?.status === 200 && res?.data?.token) {
+        return { ...res.data, baseUrl };
+      } else {
+        throw new Error(res.data.status);
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
+
+  const persistUser = async (domain, username, data) => {
+    const accessToken = data.token;
+    const id = decodeToken(accessToken)?.data?.user?.id;
+    const user = {
+      id,
+      username,
+      domain,
+      display_name: data?.user_display_name,
+      email: data?.user_email,
+      nicename: data?.user_nicename,
+      o365Login: false,
     };
+    // set persisted storage values
+    await setPersistedAuth(accessToken, data.baseUrl, user);
+    // sync local locale with server
+    if (data?.locale) setLocale(data.locale);
+    // set in-memory provider value
+    setAccessToken(accessToken);
+    setBaseUrl(data.baseUrl);
+    setUser(user);
+    return;
   };
 
   const signOut = async () => {
@@ -216,6 +420,12 @@ const useCustomAuth = () => {
       // disable "auto login" and "remember login details" on signOut
       if (isAutoLogin) toggleAutoLogin();
       if (rememberLoginDetails) toggleRememberLoginDetails();
+      if (user.o365Login) {
+        await WebBrowser.openAuthSessionAsync(
+          `https://login.windows.net/${TENANT_ID}/oauth2/logout`,
+          uri
+        );
+      }
       // nullify in-memory auth provider values
       setAccessToken(null);
       setBaseUrl(null);
@@ -223,15 +433,29 @@ const useCustomAuth = () => {
     }
   };
 
-  return useMemo (() => ({
-    authenticated,
-    user,
-    isAutoLogin,
-    toggleAutoLogin,
-    rememberLoginDetails,
-    toggleRememberLoginDetails,
-    signIn,
-    signOut,
-  }), [authenticated, user, isAutoLogin, rememberLoginDetails, rememberLoginDetails]);
+  let memoizedValues = useMemo(
+    () => ({
+      authenticated,
+      user,
+      isAutoLogin,
+      toggleAutoLogin,
+      rememberLoginDetails,
+      toggleRememberLoginDetails,
+      signIn,
+      check2FaEnabled,
+      validateOtp,
+      persistUser,
+      signOut,
+    }),
+    [
+      authenticated,
+      user,
+      isAutoLogin,
+      rememberLoginDetails,
+      rememberLoginDetails,
+    ]
+  );
+
+  return { ...memoizedValues, signInO365 };
 };
 export { useAuth, AuthProvider };

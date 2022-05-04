@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef } from "react";
-import {
-  Image,
-  Keyboard,
-  Linking,
-  Text,
-  View,
-} from "react-native";
+import { Image, Keyboard, Linking, Text, View } from "react-native";
 import { UsernameIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
 import Button from "components/Button";
 import Link from "components/Link";
@@ -23,9 +17,15 @@ import useToast from "hooks/use-toast";
 
 import { localStyles } from "./LoginScreen.styles";
 
-const LoginScreen = () => {
+const LoginScreen = (props) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { user, rememberLoginDetails, signIn } = useAuth();
+  const {
+    user,
+    rememberLoginDetails,
+    signInO365,
+    check2FaEnabled,
+    persistUser,
+  } = useAuth();
   const { isIOS } = useDevice();
   const { i18n, isRTL } = useI18N();
   const { mobileAppPlugin } = usePlugins();
@@ -61,9 +61,26 @@ const LoginScreen = () => {
     if (domain && username && password) {
       const cleanedDomain = cleanDomain(domain);
       try {
-        await signIn(cleanedDomain, username, password);
+        // await signIn(cleanedDomain, username, password);
+        let response = await check2FaEnabled(cleanedDomain, username, password);
+        // console.log("------onLoginPress check2FaEnabled------", response);
+        // console.log("------TOKEN?------", response.token);
+        // console.log("------wp_2fa_totp_key?------", response.wp_2fa_totp_key);
+        if (response?.token) {
+          await persistUser(cleanedDomain, username, response);
+        } else if (response?.wp_2fa_totp_key) {
+          // NAVIGATE TO ValidateOtp SCREEN, PASS Params
+          props.navigation.navigate("ValidateOtp", {
+            paramsData: {
+              domain: cleanedDomain,
+              username,
+              password,
+              userData: response,
+            },
+          });
+        }
       } catch (error) {
-        toast(error?.message, true);
+        toast(error.message, true);
       } finally {
         setLoading(false);
       }
@@ -76,7 +93,31 @@ const LoginScreen = () => {
         passwordValidation: !password,
       });
       setLoading(false);
-    };
+    }
+  };
+
+  const onLoginPressO365 = async () => {
+    Keyboard.dismiss();
+    const domain = domainRef.current;
+    if (domain) {
+      const cleanedDomain = cleanDomain(domain);
+      setLoading(true);
+      try {
+        await signInO365(cleanedDomain);
+      } catch (error) {
+        toast(error.message, true);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // if any of the required fields are not set, then update state to show error
+      setState({
+        ...state,
+        domainValidation: !domain,
+        userValidation: null,
+        passwordValidation: null,
+      });
+    }
   };
 
   const Header = () => {
@@ -250,6 +291,14 @@ const LoginScreen = () => {
     />
   );
 
+  const O365LoginButton = () => (
+    <Button
+      title={i18n.t("global.login") + " O365"}
+      loading={loading}
+      onPress={onLoginPressO365}
+    />
+  );
+
   return (
     <View style={globalStyles.screenContainer}>
       <Header />
@@ -260,6 +309,7 @@ const LoginScreen = () => {
         <PasswordField ref={passwordRef} />
         <LoginButton />
         <ForgotPasswordLink />
+        <O365LoginButton />
         <LanguagePicker />
         <AppVersion />
       </View>

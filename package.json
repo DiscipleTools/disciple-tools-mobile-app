@@ -58,7 +58,9 @@
     "redux": "^4.1.2",
     "redux-persist": "^6.0.0",
     "redux-persist-expo-filesystem": "^2.0.0",
-    "swr": "^1.0.1"
+    "swr": "^1.0.1",
+    "expo-web-browser": "~10.1.0",
+    "expo-auth-session": "~3.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
