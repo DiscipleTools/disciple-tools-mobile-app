@@ -106,9 +106,8 @@ const FAB = ({ offsetX, offsetY }) => {
 
   const mapItem = (field) => {
     const defaultIconConfig = {
-      title: settings.fields[field]?.name ?? "",
-      count: (post && post[field]) ?? 0,
-      type: "Feather",
+      title: settings?.fields?.[field]?.name ?? "",
+      count: (post && post?.[field]) ?? 0,
       name: "check",
       bgColor: styles.item.backgroundColor,
       fgColor: styles.item.color,
@@ -117,42 +116,36 @@ const FAB = ({ offsetX, offsetY }) => {
     if (field === QuickActionButtonConstants.NO_ANSWER)
       return {
         ...defaultIconConfig,
-        type: "MaterialCommunityIcons",
         name: "voice-off",
         //bgColor: "red", //Colors.colorNo,
       };
     if (field === QuickActionButtonConstants.CONTACT_ESTABLISHED)
       return {
         ...defaultIconConfig,
-        type: "MaterialCommunityIcons",
         name: "account-voice",
         //bgColor: "green", //TODO
       };
     if (field === QuickActionButtonConstants.MEETING_SCHEDULED)
       return {
         ...defaultIconConfig,
-        type: "MaterialCommunityIcons",
         name: "calendar-plus",
         //bgColor: "orange", //TODO
       };
     if (field === QuickActionButtonConstants.MEETING_COMPLETE)
       return {
         ...defaultIconConfig,
-        type: "MaterialCommunityIcons",
         name: "calendar-check",
         //bgColor: "green", //TODO
       };
     if (field === QuickActionButtonConstants.MEETING_POSTPONED)
       return {
         ...defaultIconConfig,
-        type: "MaterialCommunityIcons",
         name: "calendar-minus",
         //bgColor: "orange", //TODO
       };
     if (field === QuickActionButtonConstants.NO_SHOW)
       return {
         ...defaultIconConfig,
-        type: "MaterialCommunityIcons",
         name: "calendar-remove",
         //bgColor: "red", //TODO
       };
@@ -174,7 +167,6 @@ const FAB = ({ offsetX, offsetY }) => {
         ...defaultIconConfig,
         title: i18n.t("global.importContact"),
         count: null,
-        type: "MaterialCommunityIcon",
         name: "card-account-phone",
         //bgColor: "orange", //TODO
         callback: () => {
@@ -183,7 +175,7 @@ const FAB = ({ offsetX, offsetY }) => {
           });
         },
       };
-    return null;
+    return defaultIconConfig;
   };
 
   if (!isContact && !isList) return null;
@@ -216,8 +208,7 @@ const FAB = ({ offsetX, offsetY }) => {
       >
         {quickButtonFields?.length > 0 &&
           quickButtonFields.map((field) => {
-            const { title, count, type, name, bgColor, fgColor, callback } =
-              mapItem(field);
+            const { title, count, name, bgColor, fgColor, callback } = mapItem(field);
             return (
               <ActionButton.Item
                 key={count}
