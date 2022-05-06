@@ -8,7 +8,19 @@ import { Pressable, View, useWindowDimensions } from "react-native";
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 
 import { HeaderLeft, HeaderRight } from "components/Header/Header";
-import { CommentActivityIcon, StarIcon, StarOutlineIcon } from "components/Icon";
+import { 
+  CommentActivityIcon, 
+  StarIcon, 
+  StarOutlineIcon, 
+  SearchIcon, 
+  AddNewIcon, 
+  UpdateRequiredIcon,
+  TasksIcon,
+  FollowingIcon,
+  ShareIcon,
+  ExternalLinkIcon,
+  HelpIcon,
+  } from "components/Icon";
 import OfflineBar from "components/OfflineBar";
 import TitleBar from "components/TitleBar";
 import Tile from "components/Post/Tile";

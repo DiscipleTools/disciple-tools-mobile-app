@@ -17,6 +17,7 @@ import {
   EditIcon,
   SendIcon
 } from "components/Icon";
+import { HeaderRight } from "components/Header/Header";
 import CustomBottomSheet from "components/Sheet/CustomBottomSheet";
 import FilterList from "components/FilterList";
 import PostItemSkeleton from "components/Post/PostItem/PostItemSkeleton";
@@ -81,8 +82,21 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
   if (!items) return null;
 
   useLayoutEffect(() => {
+    const postType = route?.params?.type;
+    const postId = route?.params?.id;
+    const kebabItems = [
+      {
+        label: i18n.t("global.viewOnWeb"),
+        urlPath: `${postType}/${postId}/#comment-activity-section`,
+      },
+      {
+        label: i18n.t("global.documentation"),
+        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/record-screens/#${postType}-screen`,
+      },
+    ];
     navigation.setOptions({
       title: route?.params?.name,
+      headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />
     });
     return;
   });

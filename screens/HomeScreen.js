@@ -9,6 +9,20 @@ import MetricCard from "components/Card/MetricCard";
 import PendingContactsCard from "components/Card/PendingContactsCard";
 import ActivityLogCard from "components/Card/ActivityLogCard";
 
+import { 
+  CommentActivityIcon, 
+  StarIcon, 
+  StarOutlineIcon, 
+  SearchIcon, 
+  AddNewIcon, 
+  UpdateRequiredIcon,
+  TasksIcon,
+  FollowingIcon,
+  ShareIcon,
+  ExternalLinkIcon,
+  HelpIcon,
+  } from "components/Icon";
+
 import useFilters from "hooks/use-filters";
 import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
@@ -58,6 +72,12 @@ const HomeScreen = ({ navigation, route }) => {
       headerRight: (props) => (
         <HeaderRight
           kebabItems={kebabItems}
+          renderStartIcons={() => (
+            <>
+            <SearchIcon style={globalStyles.placeholder} />
+            <AddNewIcon style={globalStyles.placeholder} />
+            </>
+          )}
           props
         />
       ),

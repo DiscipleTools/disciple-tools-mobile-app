@@ -19,6 +19,11 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     marginHorizontal: 20,
     marginTop: 5,
   },
+  headerText2: {
+    color: theme.text.secondary,
+    marginHorizontal: 20,
+    marginTop: 5,
+  },
   commentActivityIcon: {
     marginStart: "auto",
     justifyContent: "center",

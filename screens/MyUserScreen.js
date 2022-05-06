@@ -7,6 +7,8 @@ import {
   ChevronForwardIcon,
   ChevronBackIcon,
   CommentActivityIcon,
+  ActivityIcon,
+  LogsIcon,
   DarkModeIcon,
   FlashIcon,
   HelpIcon,
@@ -55,6 +57,13 @@ const MyUserScreen = ({ navigation }) => {
     signOut,
   } = useAuth();
   const { isDarkMode, toggleMode } = useTheme();
+  const { data: userData } = useMyUser();
+  const { data: users } = useUsers();
+  const myUser = users?.find(user => user?.ID === userData?.ID);
+  const id = myUser?.contact_id;
+  const name = userData?.display_name ?? '';
+  const role = userData?.ID ?? '';
+  const domain = user?.domain ?? '';
 
   useLayoutEffect(() => {
     const kebabItems = [
@@ -72,6 +81,23 @@ const MyUserScreen = ({ navigation }) => {
       headerRight: (props) => (
         <HeaderRight
           kebabItems={kebabItems}
+          renderStartIcons={() => (
+              <>
+                      <Pressable
+          onPress={() => {
+            navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
+              id,
+              name,
+              type: TypeConstants.CONTACT,
+              subtype: SubTypeConstants.COMMENTS_ACTIVITY
+            });
+          }}
+          style={styles.commentActivityIcon}
+        >
+          <CommentActivityIcon />
+        </Pressable>
+              </>         
+           )} 
           props
         />
       ),
@@ -79,16 +105,11 @@ const MyUserScreen = ({ navigation }) => {
   }, []);
 
   const Header = () => {
-    const { data: userData } = useMyUser();
-    const { data: users } = useUsers();
-    const myUser = users?.find(user => user?.ID === userData?.ID);
-    const id = myUser?.contact_id;
-    const name = userData?.display_name ?? '';
-    const domain = user?.domain ?? '';
+    // console.log("userData", userData);
     return (
       <View style={[globalStyles.rowContainer, styles.headerContainer]}>
         <Image source={gravatar} style={styles.avatar} />
-        <View style={globalStyles.columnContainer}>
+        <View style={[globalStyles.columnContainer]}>
           { id ? (
             <Pressable
               onPress={() => {
@@ -108,20 +129,16 @@ const MyUserScreen = ({ navigation }) => {
               {name}
             </Text>
           )}
+          {/*<Text style={styles.headerText2}>{role}</Text>*/}
           <Text style={styles.headerText}>{domain}</Text>
         </View>
         <Pressable
           onPress={() => {
-            navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
-              id,
-              name,
-              type: TypeConstants.CONTACT,
-              subtype: SubTypeConstants.COMMENTS_ACTIVITY
-            });
+            //todo: add logs screen
           }}
           style={styles.commentActivityIcon}
         >
-          <CommentActivityIcon />
+          <LogsIcon />
         </Pressable>
       </View>
     );
