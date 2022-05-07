@@ -15,13 +15,15 @@ export default function requestReducer(state = initialState, action) {
   switch (action.type) {
     case actions.REQUEST_ENQUEUE:
       if (!action?.request) return state;
+      // NOTE: filter out duplicates
+      const _state = state?.filter(request => !deepEqual(request, action.request));
       return [
-        ...state,
+        ..._state,
         action.request,
       ];
     case actions.REQUEST_DEQUEUE:
       if (!action?.request) return state;
-      return state.filter(request => !deepEqual(request, action.request));;
+      return state?.filter(request => !deepEqual(request, action.request)) ?? [];
     default:
       return state;
   }
