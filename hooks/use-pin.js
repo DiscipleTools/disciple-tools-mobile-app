@@ -41,17 +41,6 @@ const usePIN = () => {
     return false;
   };
 
-  /*
-  Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function.
-at hooks/usePIN.js:48:12 in useEffect$argument_0
-  useEffect(async() => {
-    const validCNoncePIN = await isValidCNoncePIN();
-    // TODO:
-    //setValidCNoncePIN(validCNoncePIN);
-    setValidCNoncePIN(true);
-  }, [])
-  */
-
   const getPIN = async () => {
     return getSecureItem(PINConstants.CODE);
   };

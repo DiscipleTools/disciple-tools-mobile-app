@@ -73,75 +73,81 @@ const useCustomAuth = () => {
   const { getSecureItem, setSecureItem, deleteSecureItem } = useSecureStore();
 
   // rehydrate state from secure storage (depends on Redux to notify via "rehydrate" change)
-  useEffect(async() => {
-    /*
-    if auto-login, but accessToken is missing or invalid, 
-    then attempt to rehydrate accessToken from secure storage
-    else do nothing bc user will be prompted to re-login
-    */
-    if (isAutoLogin && (!accessToken || (accessToken && !validateToken(accessToken)))) {
-      // rehydrate access token
-      const rehydratedAccessToken = await getSecureItem(AuthConstants.ACCESS_TOKEN);
-      //console.log(`~~~~~~~~~~ rehydratedAccessToken: ${rehydratedAccessToken}`);
-      if (validateToken(rehydratedAccessToken)) setAccessToken(rehydratedAccessToken);
-    };
-    // rehydrate baseUrl
-    const rehydratedBaseUrl = baseUrl ?? (await getSecureItem(AuthConstants.BASE_URL));
-    //console.log(`~~~~~~~~~~ rehydratedBaseUrl: ${rehydratedBaseUrl}`);
-    setBaseUrl(rehydratedBaseUrl);
-    // rehydrate user
-    try {
-      const rehydratedUser = user ?? JSON.parse((await getSecureItem(AuthConstants.USER)));
-      //console.log(`~~~~~~~~~~ rehydratedUser: ${JSON.stringify(rehydratedUser)}`);
-      // TODO: if user unable to be rehydrated AND have valid accessToken and baseUrl, then request user info
-      setUser(rehydratedUser);
-    } catch (error) {
-      setUser(null);
-    };
+  useEffect(() => {
+    (async () => {
+      /*
+      if auto-login, but accessToken is missing or invalid,
+      then attempt to rehydrate accessToken from secure storage
+      else do nothing bc user will be prompted to re-login
+      */
+      if (isAutoLogin && (!accessToken || (accessToken && !validateToken(accessToken)))) {
+        // rehydrate access token
+        const rehydratedAccessToken = await getSecureItem(AuthConstants.ACCESS_TOKEN);
+        //console.log(`~~~~~~~~~~ rehydratedAccessToken: ${rehydratedAccessToken}`);
+        if (validateToken(rehydratedAccessToken)) setAccessToken(rehydratedAccessToken);
+      };
+      // rehydrate baseUrl
+      const rehydratedBaseUrl = baseUrl ?? (await getSecureItem(AuthConstants.BASE_URL));
+      //console.log(`~~~~~~~~~~ rehydratedBaseUrl: ${rehydratedBaseUrl}`);
+      setBaseUrl(rehydratedBaseUrl);
+      // rehydrate user
+      try {
+        const rehydratedUser = user ?? JSON.parse((await getSecureItem(AuthConstants.USER)));
+        //console.log(`~~~~~~~~~~ rehydratedUser: ${JSON.stringify(rehydratedUser)}`);
+        // TODO: if user unable to be rehydrated AND have valid accessToken and baseUrl, then request user info
+        setUser(rehydratedUser);
+      } catch (error) {
+        setUser(null);
+      };
+    })();
   }, [rehydrate]);
 
   // when "accessToken" changes, validate it:
   // if valid, configure axios interceptors and setAuthenticated(true)
   // else setAuthenticated(false)
-  useEffect(async() => {
-    if (accessToken && validateToken(accessToken)) {
-      // Add a request interceptor
-      axios.interceptors.request.use(
-        config => {
-          if (accessToken && accessToken !== config.headers?.Authorization) {
-            config.headers["Authorization"] = `Bearer ${accessToken}`;
-          } else {
-            delete config.headers["Authorization"];
-            setAuthenticated(false);
-          };
-          return config;
-        },
-        error => error
-      );
-      // Add a response interceptor
-      axios.interceptors.response.use(
-        response => response,
-        async(error) => {
-          if (error?.response?.status === 401) {
-            setAuthenticated(false);
-          };
-          return Promise.reject(error);
-        }
-      );
-      setAuthenticated(true);
-    } else {
-      setAuthenticated(false);
-    };
+  useEffect(() => {
+    (async () => {
+      if (accessToken && validateToken(accessToken)) {
+        // Add a request interceptor
+        axios.interceptors.request.use(
+          config => {
+            if (accessToken && accessToken !== config.headers?.Authorization) {
+              config.headers["Authorization"] = `Bearer ${accessToken}`;
+            } else {
+              delete config.headers["Authorization"];
+              setAuthenticated(false);
+            };
+            return config;
+          },
+          error => error
+        );
+        // Add a response interceptor
+        axios.interceptors.response.use(
+          response => response,
+          async(error) => {
+            if (error?.response?.status === 401) {
+              setAuthenticated(false);
+            };
+            return Promise.reject(error);
+          }
+        );
+        setAuthenticated(true);
+      } else {
+        setAuthenticated(false);
+      };
+    })();
   }, [accessToken]);
 
   // when baseUrl changes, set axios default baseURL (if applicable)
-  useEffect(async() => {
-    if (baseUrl) {
-      if (baseUrl !== axios.defaults.baseURL) axios.defaults.baseURL = baseUrl;
-    } else {
-      setAuthenticated(false);
-    };
-    return;
+  useEffect(() => {
+    (async () => {
+      if (baseUrl) {
+        if (baseUrl !== axios.defaults.baseURL) axios.defaults.baseURL = baseUrl;
+      } else {
+        setAuthenticated(false);
+      };
+      return;
+    })();
   }, [baseUrl]);
 
   const toggleAutoLogin = () => dispatch(_toggleAutoLogin());

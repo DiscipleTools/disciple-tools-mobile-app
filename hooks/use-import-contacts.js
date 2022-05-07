@@ -12,45 +12,47 @@ const useImportContacts = ({ search }) => {
   // TODO: use-list Contacts and exclude by title
   const exclude = [];
 
-  useEffect(async() => {
-    try {
-      setLoading(true);
-      const { status } = await Contacts.requestPermissionsAsync();
-      setLoading(false);
-      if (status === 'granted') {
-        const importContactsList = [];
-        const { data } = await Contacts.getContactsAsync({});
-        data.map((contact) => {
-          const contactData = {};
-          if (contact.contactType === 'person') {
-            contactData['ID'] = contact.id;
-            contactData['title'] = contact.name;
-            if (contact.hasOwnProperty('emails') && contact.emails.length > 0) {
-              contactData['contact_email'] = [];
-              contact.emails.map((email, idx) => {
-                contactData['contact_email'].push({
-                  key: `contact_email_${idx}`,
-                  value: email.email,
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        const { status } = await Contacts.requestPermissionsAsync();
+        setLoading(false);
+        if (status === 'granted') {
+          const importContactsList = [];
+          const { data } = await Contacts.getContactsAsync({});
+          data.map((contact) => {
+            const contactData = {};
+            if (contact.contactType === 'person') {
+              contactData['ID'] = contact.id;
+              contactData['title'] = contact.name;
+              if (contact.hasOwnProperty('emails') && contact.emails.length > 0) {
+                contactData['contact_email'] = [];
+                contact.emails.map((email, idx) => {
+                  contactData['contact_email'].push({
+                    key: `contact_email_${idx}`,
+                    value: email.email,
+                  });
                 });
-              });
-            }
-            if (contact.hasOwnProperty('phoneNumbers') && contact.phoneNumbers.length > 0) {
-              contactData['contact_phone'] = [];
-              contact.phoneNumbers.map((phoneNumber, idx) => {
-                contactData['contact_phone'].push({
-                  key: `contact_phone_${idx}`,
-                  value: phoneNumber.number,
+              }
+              if (contact.hasOwnProperty('phoneNumbers') && contact.phoneNumbers.length > 0) {
+                contactData['contact_phone'] = [];
+                contact.phoneNumbers.map((phoneNumber, idx) => {
+                  contactData['contact_phone'].push({
+                    key: `contact_phone_${idx}`,
+                    value: phoneNumber.number,
+                  });
                 });
-              });
+              }
+              importContactsList.push(contactData);
             }
-            importContactsList.push(contactData);
-          }
-        });
-        setImportContacts(importContactsList);
+          });
+          setImportContacts(importContactsList);
+        };
+      } catch (error) {
+        setError(error);
       };
-    } catch (error) {
-      setError(error);
-    };
+      })();
   }, []);
 
   // filter any items marked to be excluded
