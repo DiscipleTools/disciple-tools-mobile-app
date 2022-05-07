@@ -1,6 +1,7 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
+    "build": "tsc",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -17,7 +18,7 @@
     "@react-navigation/native-stack": "^6.2.5",
     "@react-navigation/stack": "^6.0.11",
     "axios": "^0.24.0",
-    "expo": "^45.0.0",
+    "expo": "~45.0.0",
     "expo-clipboard": "~3.0.1",
     "expo-contacts": "~10.2.0",
     "expo-device": "~4.2.0",
@@ -37,10 +38,8 @@
     "moment": "^2.29.3",
     "react": "17.0.2",
     "react-content-loader": "^6.0.3",
-    "react-dom": "17.0.2",
     "react-native": "0.68.1",
     "react-native-action-button": "^2.8.5",
-    "react-native-elements": "^3.4.2",
     "react-native-gesture-handler": "~2.2.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-material-menu": "^2.0.0",
@@ -63,8 +62,8 @@
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@types/jest": "^27.5.0",
-    "@types/react": "^18.0.9",
-    "@types/react-native": "^0.67.6",
+    "@types/react": "~17.0.21",
+    "@types/react-native": "~0.67.6",
     "@types/react-test-renderer": "^18.0.0",
     "@welldone-software/why-did-you-render": "^6.2.3",
     "eslint": "^7.32.0",
@@ -79,7 +78,7 @@
     "jest": "^26.6.3",
     "prettier": "2.4.1",
     "react-native-svg-transformer": "^1.0.0",
-    "typescript": "^4.6.4"
+    "typescript": "~4.3.5"
   },
   "private": true
 }
