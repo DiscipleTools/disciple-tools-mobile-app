@@ -45,6 +45,11 @@ const LoginScreen = () => {
 
   //const usernameFieldRef = useRef();
   //const passwordFieldRef = useRef();
+  
+  useEffect(() => {
+    domainRef.current = "oikos.disciple.tools";
+    usernameRef.current = "mike"; // admin
+    passwordRef.current = "dt helps mike";
 
   const cleanDomain = (domain) => {
     // trim leading/trailing whitespace and remove protocol

@@ -34,13 +34,13 @@ const FieldIcon = ({ field, hide }) => {
     case FieldTypes.TEXTAREA: //TODO: why does this not work?
       if (name.includes("list")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "notification-clear-all";
+        iconName = "format-list-group";
       } else if (name.includes("description")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "text";
+        iconName = "text-long";
       } else {
         iconType = "MaterialCommunityIcons";
-        iconName = "text-short";
+        iconName = "text";
       }
       break;
     case FieldTypes.DATE:
@@ -97,18 +97,18 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "earth";
       } else if (name.includes("reporter")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "teach";
+        iconName = "human-male-board";
         iconStyle = { transform: [{ scaleX: -1 }] }
       } else if (name.includes("coaching")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "teach";
+        iconName = "human-male-board";
         iconStyle = { transform: [{ scaleX: -1 }] }
       } else if (name.includes("coached_by")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "teach";
+        iconName = "human-male-board";
       } else if (name.includes("coaches")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "teach";
+        iconName = "human-male-board";
       } else if (name.includes("baptizing")) {
         iconType = "MaterialCommunityIcons";
         iconName = "waves"; 
@@ -129,7 +129,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "gamepad-circle";
       } else if (name.includes("train")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "teach";
+        iconName = "school-outline";
       } else if (name.includes("members")) {
         iconType = "MaterialCommunityIcons";
         iconName = "account-group-outline";
@@ -204,7 +204,7 @@ const FieldIcon = ({ field, hide }) => {
     case FieldTypes.KEY_SELECT:
       if (name.includes("faith_status")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "celtic-cross";
+        iconName = "cross-celtic";
       } else if (name.includes("seeker_path")) {
         iconType = "MaterialCommunityIcons";
         iconName = "sign-direction";
@@ -293,7 +293,7 @@ const FieldIcon = ({ field, hide }) => {
       } else if (name.includes("name")) {
         iconType = "MaterialCommunityIcons";
         iconName = "sign-text";
-      } else if (name.includes("notes")) {
+      } else if (name.includes("note")) {
         iconType = "MaterialCommunityIcons";
         iconName = "note-text";
       } else if (name === ("four_fields_unbelievers")) {
@@ -301,7 +301,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "crosshairs-off";
       } else if (name === ("four_fields_believers")) {
         iconType = "MaterialCommunityIcons";
-        iconName = "crosshairs-gps";
+        iconName = "target-account";
       } else if (name === ("four_fields_accountable")) {
         iconType = "MaterialCommunityIcons";
         iconName = "crosshairs-question";
@@ -319,7 +319,7 @@ const FieldIcon = ({ field, hide }) => {
           iconName = "video-image";
       } else {
         iconType = "MaterialCommunityIcons";
-        iconName = "text";
+        iconName = "text-short";
       }
       break;
     case FieldTypes.NUMBER:
