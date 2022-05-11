@@ -5,10 +5,11 @@ import * as SplashScreen from "expo-splash-screen";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { navigationRef } from './RootNavigation';
+import { navigationRef } from "./RootNavigation";
 
 import PINScreen from "screens/PINScreen";
 import LoginScreen from "screens/LoginScreen";
+import ValidateOtpScreen from "screens/ValidateOtpScreen";
 import TabNavigator from "./TabNavigator";
 
 import usePIN from "hooks/use-pin";
@@ -70,15 +71,14 @@ const AppNavigator = () => {
           // when logging out, a pop animation feels intuitive
           //options={{ animationTypeForReplace: authenticated ? 'push' : 'pop' } }
         />
+        <Stack.Screen name="ValidateOtp" component={ValidateOtpScreen} />
       </Stack.Navigator>
     );
   };
 
   const RenderLogin = () => {
     //console.log(".......... RENDER LOGIN ....................");
-    if (authenticated) return(
-      <TabNavigator />
-    );
+    if (authenticated) return <TabNavigator />;
     return <LoginStack />;
   };
 
