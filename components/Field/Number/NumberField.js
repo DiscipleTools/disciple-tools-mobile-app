@@ -2,15 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Text, TextInput, View } from "react-native";
 
 import { CancelIcon, SaveIcon } from "components/Icon";
+import Slider from "components/Slider";
 
 import useDebounce from "hooks/use-debounce";
 import useStyles from "hooks/use-styles";
+
+import { FieldNames } from "constants";
 
 import { localStyles } from "./NumberField.styles";
 
 // TODO: most of this can be reused with TextField
 // only the TextInput prop 'keyboardType="numeric" is different
-const NumberField = ({ grouped=false, editing, value, onChange }) => {
+const NumberField = ({ grouped=false, editing, field, value, onChange }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
 
@@ -19,10 +22,11 @@ const NumberField = ({ grouped=false, editing, value, onChange }) => {
   // TODO: use constant for debounce time
   const debouncedValue = useDebounce(_value, 1500);
 
+  const isSliderField = field?.name === FieldNames.INFLUENCE;
 
   useEffect(() => {
     if (debouncedValue !== value) {
-      if (grouped) {
+      if (grouped || isSliderField) {
         onChange(debouncedValue);
         return;
       };
@@ -72,7 +76,17 @@ const NumberField = ({ grouped=false, editing, value, onChange }) => {
     </View>
   );
 
-  if (editing) return renderNumberFieldEdit();
+  if (editing) {
+    if (isSliderField) {
+      return(
+        <Slider
+          value={_value}
+          onValueChange={_setValue}
+        />
+      );
+    };
+    return renderNumberFieldEdit();
+  };
   return renderNumberFieldView();
 };
 export default NumberField;

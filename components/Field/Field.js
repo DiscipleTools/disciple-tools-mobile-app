@@ -242,6 +242,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
           <NumberField
             grouped={grouped}
             editing
+            field={field}
             value={_value}
             onChange={_onChange}
           />

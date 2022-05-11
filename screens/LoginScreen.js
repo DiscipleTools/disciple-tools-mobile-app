@@ -15,7 +15,6 @@ import LanguagePicker from "components/Picker/LanguagePicker";
 import AppVersion from "components/AppVersion";
 
 import { useAuth } from "hooks/use-auth";
-import useDevice from "hooks/use-device";
 import useI18N from "hooks/use-i18n";
 import usePlugins from "hooks/use-plugins";
 import useStyles from "hooks/use-styles";
@@ -26,7 +25,6 @@ import { localStyles } from "./LoginScreen.styles";
 const LoginScreen = () => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { user, rememberLoginDetails, signIn } = useAuth();
-  const { isIOS } = useDevice();
   const { i18n, isRTL } = useI18N();
   const { mobileAppPlugin } = usePlugins();
   const toast = useToast();
@@ -42,14 +40,6 @@ const LoginScreen = () => {
   const domainRef = useRef(null);
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
-
-  //const usernameFieldRef = useRef();
-  //const passwordFieldRef = useRef();
-  
-  useEffect(() => {
-    domainRef.current = "oikos.disciple.tools";
-    usernameRef.current = "mike"; // admin
-    passwordRef.current = "dt helps mike";
 
   const cleanDomain = (domain) => {
     // trim leading/trailing whitespace and remove protocol
@@ -170,7 +160,6 @@ const LoginScreen = () => {
             styles.textField,
             state.usernameValidation && styles.validationErrorInput,
           ]}
-          //iconName={isIOS ? "ios-person" : "md-person"}
           startIcon={<UsernameIcon />}
           textAlign={isRTL ? "right" : "left"}
           autoCapitalize="none"
@@ -214,7 +203,6 @@ const LoginScreen = () => {
             styles.textField,
             state.passwordValidation && styles.validationErrorInput,
           ]}
-          //iconName={isIOS ? "ios-key" : "md-key"}
           startIcon={<KeyIcon />}
           endIcon={
             <EyeIcon

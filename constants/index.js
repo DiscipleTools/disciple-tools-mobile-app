@@ -132,7 +132,8 @@ export const FieldNames = Object.freeze({
   LOCATION_GRID_META: "location_grid_meta",
   LOCATION_GRID: "location_grid",
   FAITH_MILESTONES: "milestones",
-  CHURCH_HEALTH: "health_metrics"
+  CHURCH_HEALTH: "health_metrics",
+  INFLUENCE: "influence",
 });
 
 export const ThemeConstants = Object.freeze({
@@ -294,6 +295,14 @@ export const SortConstants = Object.freeze({
   CREATED_DESC: "-post_date",
   CREATED_ASC: "post_date",
 });
+
+export const AppStateConstants = Object.freeze({
+  ACTIVE: "active",
+  BACKGROUND: "background",
+  INACTIVE: "inactive"
+});
+
+export const EMPTY_CACHE = new Map([]);
 
 export default {
   STATUS_CIRCLE_SIZE: 15,
