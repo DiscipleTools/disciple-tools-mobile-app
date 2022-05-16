@@ -1,10 +1,11 @@
-import React, { useLayoutEffect, useState } from "react";
-import { Image, Text, View } from "react-native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { Image, SafeAreaView, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { HeaderRight } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
 
+import PrefetchCacheRecord from "components/PrefetchCacheRecord";
 import MetricCard from "components/Card/MetricCard";
 import PendingContactsCard from "components/Card/PendingContactsCard";
 import ActivityLogCard from "components/Card/ActivityLogCard";
@@ -25,15 +26,17 @@ import {
 
 import useFilters from "hooks/use-filters";
 import useI18N from "hooks/use-i18n";
+import useList from "hooks/use-list";
 import useStyles from "hooks/use-styles";
+import useType from "hooks/use-type";
 
-import { TypeConstants } from "constants";
+import { ScreenConstants, TypeConstants } from "constants";
 
-import { findFilterById, labelize } from "utils";
+import { findFilterById } from "utils";
 
 import { localStyles } from "./HomeScreen.styles";
 
-const HomeScreen = ({ navigation, route }) => {
+const HomeScreen = ({ navigation }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
@@ -84,33 +87,40 @@ const HomeScreen = ({ navigation, route }) => {
     });
   }, []);
 
-  const FavoriteContactsCard = () => {
-    const { data: contactFilters, mutate: mutateContactFilters } = useFilters({
-      type: TypeConstants.CONTACT,
-    });
-    const filter = findFilterById("favorite", contactFilters);
+  const FavoriteCard = ({ type }) => {
+    const { getTabScreenFromType } = useType({ type });
+    const { data: filters } = useFilters({ type });
+    const filter = findFilterById("favorite", filters);
+    const { data: items } = useList({ filter, type });
+    const value = items?.length;
     return (
-      <MetricCard
-        title={filter?.name}
-        filter={filter}
-        type={TypeConstants.CONTACT}
-      />
+      <>
+        {
+        // Prefetch any favorite posts so that the records
+        // are available if the user goes OFFLINE.
+        }
+        { items?.map(item => {
+          if (!item?.ID || !item?.post_type) return null;
+          return <PrefetchCacheRecord key={item.ID} id={item.ID} type={item.post_type} />;
+        })}
+        <MetricCard
+          title={filter?.name}
+          value={value}
+          onPress={() => {
+            const tabScreen = getTabScreenFromType(type);
+            navigation.jumpTo(tabScreen, {
+              screen: ScreenConstants.LIST,
+              type,
+              filter: filter,
+            });
+          }}
+        />
+      </>
     );
   };
 
-  const FavoriteGroupsCard = () => {
-    const { data: groupFilters, mutate: mutateGroupFilters } = useFilters({
-      type: TypeConstants.GROUP,
-    });
-    const filter = findFilterById("favorite", groupFilters);
-    return (
-      <MetricCard
-        title={filter?.name}
-        filter={filter}
-        type={TypeConstants.GROUP}
-      />
-    );
-  };
+  const FavoriteContactsCard = () => <FavoriteCard type={TypeConstants.CONTACT} />;
+  const FavoriteGroupsCard = () => <FavoriteCard type={TypeConstants.GROUP} />;
 
   /*
   const CustomQueryCard = () => {
@@ -162,7 +172,7 @@ const HomeScreen = ({ navigation, route }) => {
       <OfflineBar />
       <ScrollView
         style={[globalStyles.screenContainer, styles.container]}
-        contentContainerStyle={globalStyles.screenGutter}
+        //contentContainerStyle={globalStyles.screenGutter}
       >
         <View style={[globalStyles.rowContainer, styles.cardRowContainer]}>
           <FavoriteContactsCard />

@@ -3,9 +3,9 @@ import * as RootNavigation from "navigation/RootNavigation";
 import useType from "hooks/use-type";
 import useRequest from "hooks/use-request";
 
-const useDetails = () => {
-  const { isContact, isGroup, postType } = useType();
-  const postId = RootNavigation.getId();
+const useDetails = ({ id, type } = {}) => {
+  const { isContact, isGroup, postType } = useType({ type });
+  const postId = id ?? RootNavigation.getId();
 
   // TODO: duplicated in useList
   const mapContacts = (contacts, entities) => {

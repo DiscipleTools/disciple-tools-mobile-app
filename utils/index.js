@@ -156,3 +156,19 @@ export const parseDateSafe = (dateValue) => {
     return '';
   };
 };
+
+const addLeadingZeros = (n) => {
+  if (n <= 9) {
+    return "0" + n;
+  };
+  return n
+};
+
+export const formatDateAPI = (date) => {
+  return date.getFullYear() + "-" +
+    addLeadingZeros(date.getMonth() + 1) + "-" +
+    addLeadingZeros(date.getDate()) + " " +
+    addLeadingZeros(date.getHours()) + ":" +
+    addLeadingZeros(date.getMinutes()) + ":" +
+    addLeadingZeros(date.getSeconds());
+};

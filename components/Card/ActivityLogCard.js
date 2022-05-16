@@ -5,6 +5,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useIsFocused } from "@react-navigation/native";
 
 import ExpandableCard from "components/Card/ExpandableCard";
+import PrefetchCacheRecord from "components/PrefetchCacheRecord";
+
 import useI18N from "hooks/use-i18n";
 import useActivityLog from "hooks/use-activity-log";
 import useBottomSheet from "hooks/use-bottom-sheet";
@@ -53,6 +55,13 @@ const ActivityLogCard = ({ preview, refreshing }) => {
           <Text style={styles.activityLink}>{log?.object_name}</Text>
         </Pressable>
         <Text style={styles.activityText}>{log?.object_note}</Text>
+        {
+        // Prefetch any posts in the ActivityLog so that the records
+        // are available if the user goes OFFLINE.
+        }
+        { log?.object_id && log?.post_type && (
+          <PrefetchCacheRecord id={log.object_id} type={log.post_type} />
+        )}
       </View>
     );
   };

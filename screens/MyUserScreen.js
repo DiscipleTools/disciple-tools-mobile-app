@@ -155,7 +155,7 @@ const MyUserScreen = ({ navigation }) => {
           trackColor={{ true: styles.switch.color }}
           thumbColor={styles.switch}
           value={isConnected}
-          onChange={toggleNetwork}
+          onChange={() => toggleNetwork(!isConnected)}
           disabled={false}
         />
       }

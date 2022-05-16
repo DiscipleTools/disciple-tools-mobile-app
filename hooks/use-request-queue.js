@@ -1,29 +1,23 @@
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { enqueueRequest, dequeueRequest } from "store/actions/request.actions";
-import { useSWRConfig } from "swr";
 
 import axios from "services/axios";
 
+import useCache from "hooks/use-cache";
 import useNetwork from "hooks/use-network";
 
-//const REQUEST_QUEUE_INTERVAL_SECS = 5;
-
 const useRequestQueue = () => {
-  const { cache, mutate } = useSWRConfig();
+  const { cache, mutate } = useCache();
   const { isConnected } = useNetwork();
   const dispatch = useDispatch();
-  const pendingRequests = useSelector(
-    (state) => state.requestReducer.pendingRequests
-  );
+  const pendingRequests = useSelector(state => state.requestReducer);
 
-  const hasPendingRequests = () => pendingRequests?.length > 0;
+  const processRequests = () => pendingRequests?.forEach(_request => request(_request, { reprocess: true }));
 
-  /*
-  // TODO: implement queue interval
   useEffect(() => {
-    if (isConnected && hasPendingRequests) processRequests();
-  }, [isConnected, pendingRequests]);
-  */
+    if (isConnected && pendingRequests?.length > 0) processRequests();
+  }, [isConnected, pendingRequests?.length]);
 
   /*
    * NOTE:
@@ -31,35 +25,35 @@ const useRequestQueue = () => {
    * assume that the server will handle the update and return the same data,
    * otherwise the local data will be replaced with server state
    */
-  const _mutate = async (request) => {
+  const request = async (request, { reprocess, localData }={}) => {
     const key = request?.url;
     if (!key) return null;
     const localCachedData = cache.get(key);
-    const newData = request?.data;
-    mutate(key, { ...localCachedData, ...newData }, false);
-    return axios(request);
+    const newData = localData ?? request?.data;
+    const optimisticData = newData ? { ...localCachedData, ...newData } : null;
+    const options = {
+      optimisticData,
+      revalidate: false,
+      populateCache: false,
+      rollbackOnError: true
+    };
+    // we do *not* return here, but rather continue to attempt the 'mutate'
+    // because we are performing an optimisticUI update when offline, and the
+    // conditional of whether to make an API request or not is part of that
+    // see `await mutate(key, isConnected ? ...)` below
+    if (!isConnected) dispatch(enqueueRequest(request));
+    try {
+      const res = await mutate(key, isConnected ? axios(request) : null, options);
+      // dequeue request, if conditions met
+      if (isConnected && reprocess && res?.data) dispatch(dequeueRequest(request));
+    } catch(error) {
+      // dequeue request, if error occurred (so as to not retry errors)
+      // TODO: is this appropriate?
+      if (isConnected && reprocess) dispatch(dequeueRequest(request));
+    } finally {
+      return;
+    };
   };
-
-  const request = async (request) => {
-    if (!isConnected) {
-      dispatch(enqueueRequest(request));
-      return null;
-    }
-    if (hasPendingRequests()) {
-      //console.log("request queue: has pending requests");
-      for (const ii = 0; ii < pendingRequests?.length; ii++) {
-        const pendingRequest = pendingRequests[ii];
-        //console.log(`pending request: ${ JSON.stringify(pendingRequest) }`);
-        await _mutate(pendingRequest);
-        dispatch(dequeueRequest(pendingRequest));
-      }
-    }
-    return _mutate(request);
-  };
-
-  return {
-    hasPendingRequests,
-    request,
-  };
+  return { request };
 };
 export default useRequestQueue;

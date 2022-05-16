@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
 
 import authReducer from "./reducers/auth.reducer";
+import cacheReducer from "./reducers/cache.reducer";
 import i18nReducer from "./reducers/i18n.reducer";
 import networkReducer from "./reducers/network.reducer";
 import requestReducer from "./reducers/request.reducer";
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   networkReducer,
   requestReducer,
   userReducer,
+  cacheReducer,
 });
 
 // Handling CLEAR_REDUX_DATA in each individual reducer reducer is better bc we can reset to initialState rather than completely undefined

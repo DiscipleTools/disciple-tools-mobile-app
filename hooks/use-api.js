@@ -1,12 +1,16 @@
 import * as RootNavigation from "navigation/RootNavigation";
 
-import useType from "hooks/use-type";
+import useCache from "hooks/use-cache";
 import useRequestQueue from "hooks/use-request-queue";
+import useType from "hooks/use-type";
 
 import { HTTP } from "constants";
 
+import { formatDateAPI } from "utils";
+
 const useAPI = () => {
   const postId = RootNavigation.getId();
+  const { cache, mutate } = useCache();
   const { request } = useRequestQueue();
   const { postType } = useType();
 
@@ -95,24 +99,32 @@ const useAPI = () => {
     date = null,
     commentType = "comment"
   ) => {
-    const url =
-      postType && postId ? `/dt-posts/v2/${postType}/${postId}/comments` : null;
+    const url = postType && postId ? `/dt-posts/v2/${postType}/${postId}/comments` : null;
     const data = {
       comment,
       comment_type: commentType,
     };
     if (date) data["date"] = date;
+    //
+    const localData = { comments: [{
+      "comment_ID": "-1",
+      "comment_content": comment,
+      "comment_date": formatDateAPI(new Date()),
+      "comment_type": "comment",
+    }]};
+    const key = url;
+    const localCachedData = cache.get(key);
+    if (localCachedData?.comments?.length > 0) localData.comments.push(...localCachedData.comments);
     return request({
       url,
       method: HTTP.METHODS.POST,
       headers: HTTP.HEADERS.DEFAULT,
-      data,
-    });
+      data
+    }, { localData });
   };
 
   const updateComment = async (commentId, comment) => {
-    const url =
-      postType && postId && commentId
+    const url = postType && postId && commentId
         ? `/dt-posts/v2/${postType}/${postId}/comments/${commentId}`
         : null;
     return request({
@@ -124,8 +136,7 @@ const useAPI = () => {
   };
 
   const deleteComment = async (commentId) => {
-    const url =
-      postType && postId && commentId
+    const url = postType && postId && commentId
         ? `/dt-posts/v2/${postType}/${postId}/comments/${commentId}`
         : null;
     return request({
