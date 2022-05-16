@@ -64,7 +64,7 @@ const PINScreen = ({ navigation, route }) => {
     if (isValidate || isDelete) {
       const secretCode = await getPIN();
       if (secretCode === null) {
-        toast("error.existingPIN", true);
+        toast(i18n.t("global.error.pinExisting"), true);
         pinInput.current.shake().then(() => setState({ ...state, code: "" }));
       } else if (code === secretCode) {
         if (isValidate) {
@@ -95,7 +95,7 @@ const PINScreen = ({ navigation, route }) => {
             code: "",
           })
         );
-        toast("error.repeating", true);
+        toast(i18n.t("global.error.pinRepeating"), true);
       } else {
         // unknown issue: retry
         pinInput.current.shake().then(() =>

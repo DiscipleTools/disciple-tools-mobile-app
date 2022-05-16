@@ -1,25 +1,17 @@
 import React from 'react';
 import { Text, View, useWindowDimensions } from "react-native";
-import { TabActions, useNavigation } from '@react-navigation/native';
 
 import { ArrowIcon } from "components/Icon";
 import Card from "components/Card/Card";
 
 import useI18N from "hooks/use-i18n";
-import useMetric from "hooks/use-metric";
 import useStyles from "hooks/use-styles";
-import useType from "hooks/use-type";
-
-import { ScreenConstants } from "constants";
 
 import { localStyles } from './MetricCard.styles';
 
-const MetricCard = ({ title, filter, type }) => {
-  const navigation = useNavigation();
+const MetricCard = ({ title, value, onPress }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { numberFormat } = useI18N();
-  const { getTabScreenFromType } = useType();
-  const metric = useMetric({ filter, type });
   const layout = useWindowDimensions();
   const windowWidth = layout.width;
   const offset = 40;
@@ -40,18 +32,11 @@ const MetricCard = ({ title, filter, type }) => {
               globalStyles.buttonText,
               styles.buttonText
             ]}>
-              { metric ? numberFormat(metric) : "-" }
+              { value ? numberFormat(value) : "-" }
             </Text>
-            { filter && (
+            { onPress && (
               <ArrowIcon
-                onPress={() => {
-                  const tabScreen = getTabScreenFromType(type);
-                  navigation.jumpTo(tabScreen, {
-                    screen: ScreenConstants.LIST,
-                    type,
-                    filter: filter,
-                  });
-                }}
+                onPress={onPress}
                 style={styles.buttonContainer}
               />
             )}

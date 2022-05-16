@@ -272,6 +272,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
 
     useEffect(() => {
       setComment(editComment.message);
+      return;
     }, [editComment?.message]);
 
     const onSave = async (comment) => {

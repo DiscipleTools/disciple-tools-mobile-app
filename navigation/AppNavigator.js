@@ -14,15 +14,14 @@ import TabNavigator from "./TabNavigator";
 import usePIN from "hooks/use-pin";
 import { useAuth } from "hooks/use-auth";
 import { BottomSheetProvider } from "hooks/use-bottom-sheet";
+import useCache from "hooks/use-cache";
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-  /*
-  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-  console.log("$$$$$          APP NAVIGATOR                  $$$$$");
-  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-  */
+
+  // subsribe to app state changes and sync SWR cache w/ persistent storage
+  useCache();
 
   const { PINConstants, hasPIN, cnoncePIN, validateCNoncePIN } = usePIN();
   const { authenticated, isAutoLogin } = useAuth();
@@ -75,21 +74,11 @@ const AppNavigator = () => {
   };
 
   const RenderLogin = () => {
-    //console.log(".......... RENDER LOGIN ....................");
-    if (authenticated) return(
-      <TabNavigator />
-    );
+    if (authenticated) return <TabNavigator />;
     return <LoginStack />;
   };
 
   const RenderStack = () => {
-    /*
-    console.log("authenticated?", authenticated);
-    console.log("isAutoLogin?", isAutoLogin);
-    console.log("hasPIN?", hasPIN);
-    console.log("isValidCNoncePIN?", isValidCNoncePIN);
-    */
-
     // Auth Flow 4. Most Secure, Least Convenient
     // PIN->Login->Main
     if (hasPIN && !isAutoLogin) {
