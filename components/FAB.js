@@ -116,7 +116,7 @@ const FAB = ({ offsetX, offsetY }) => {
     if (field === QuickActionButtonConstants.NO_ANSWER)
       return {
         ...defaultIconConfig,
-        name: "voice-off",
+        name: "account-voice-off",
         //bgColor: "red", //Colors.colorNo,
       };
     if (field === QuickActionButtonConstants.CONTACT_ESTABLISHED)
