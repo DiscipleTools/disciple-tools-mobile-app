@@ -16,7 +16,6 @@ import { ScreenConstants } from "constants";
 import { localStyles } from "./ActivityLogCard.styles";
 
 const ActivityLogCard = ({ preview, refreshing }) => {
-
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
@@ -28,19 +27,18 @@ const ActivityLogCard = ({ preview, refreshing }) => {
 
   // TODO: FilterList
   const renderActivityLog = (log, idx) => {
-    const _key = `${ log.object_id }-${ idx }`;
-    return(
+    const _key = `${log.object_id}-${idx}`;
+    return (
       <View
         key={_key}
-        style={[
-          globalStyles.columnContainer,
-          styles.activityView
-        ]}
+        style={[globalStyles.columnContainer, styles.activityView]}
       >
         <Pressable
           onPress={() => {
             const type = log?.post_type;
             const tabScreen = getTabScreenFromType(type);
+            // console.log("----- type -----", type);
+            // console.log("----- tabScreen -----", tabScreen);
             navigation.jumpTo(tabScreen, {
               screen: ScreenConstants.DETAILS,
               id: log?.object_id,
@@ -64,6 +62,8 @@ const ActivityLogCard = ({ preview, refreshing }) => {
     isValidating,
     mutate,
   } = useActivityLog();
+
+  // console.log("------ activityLog ------", activityLog);
 
   // force data refresh on reload
   useEffect(() => {

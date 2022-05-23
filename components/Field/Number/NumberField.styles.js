@@ -1,4 +1,4 @@
-import Constants from 'constants';
+import Constants from "constants";
 
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: {
@@ -12,6 +12,6 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     width: "100%",
   },
   controlIcons: {
-    justifyContent: "space-between"
-  }
+    justifyContent: "space-between",
+  },
 });

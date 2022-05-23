@@ -35,7 +35,7 @@ const AuthConstants = {
 };
 
 // TODO: load protocol from .env
-const PROTOCOL = "https";
+const PROTOCOL = "http";
 
 const AuthContext = createContext(null);
 

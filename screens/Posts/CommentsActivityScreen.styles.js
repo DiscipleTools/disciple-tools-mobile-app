@@ -36,7 +36,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   commentInputText: {
     color: theme.text.primary,
     padding: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   commentText: (isActivity) => ({
     flexDirection: "row",
@@ -45,21 +45,36 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     padding: 5,
   }),
   parseText: {
-    color: ThemeConstants.DARK === theme.mode ? theme.highlight : theme.brand.primary,
-    textDecorationLine: "underline",   
+    color:
+      ThemeConstants.DARK === theme.mode
+        ? theme.highlight
+        : theme.brand.primary,
+    textDecorationLine: "underline",
   },
   expandIcon: {
     color: theme.text.primary,
     fontSize: 25,
   },
   sendIcon: {
-    color: ThemeConstants.DARK === theme.mode ? theme.text.primary : theme.brand.primary,
+    color:
+      ThemeConstants.DARK === theme.mode
+        ? theme.text.primary
+        : theme.brand.primary,
     //borderWidth: 2,
     //borderColor: theme.highlight,
     //borderRadius: 25,
     fontSize: 42,
   },
   activityIndicator: {
-    marginEnd: 15
-  }
+    marginEnd: 15,
+  },
+  activityLink: {
+    color:
+      ThemeConstants.DARK === theme.mode
+        ? theme.text.primary
+        : theme.brand.primary,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+    marginVertical: 2,
+  },
 });

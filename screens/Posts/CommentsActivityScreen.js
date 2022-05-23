@@ -1,22 +1,11 @@
 import React, { createRef, useEffect, useLayoutEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  View,
-  Text,
-  Pressable,
-} from "react-native";
+import { ActivityIndicator, Image, View, Text, Pressable } from "react-native";
 
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import ParsedText from "react-native-parsed-text";
 //import MentionsTextInput from "react-native-mentions";
 
-import {
-  CopyIcon,
-  DeleteIcon,
-  EditIcon,
-  SendIcon
-} from "components/Icon";
+import { CopyIcon, DeleteIcon, EditIcon, SendIcon } from "components/Icon";
 import { HeaderRight } from "components/Header/Header";
 import CustomBottomSheet from "components/Sheet/CustomBottomSheet";
 import FilterList from "components/FilterList";
@@ -34,6 +23,9 @@ import useI18N from "hooks/use-i18n";
 import useMyUser from "hooks/use-my-user";
 import useStyles from "hooks/use-styles";
 import useToast from "hooks/use-toast";
+import useType from "hooks/use-type";
+
+import { ScreenConstants } from "constants";
 
 import { parseDateSafe } from "utils";
 
@@ -49,9 +41,14 @@ const CommentsActivityConstants = Object.freeze({
   EDIT: "edit",
 });
 
-const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => {
-
+const CommentsActivityScreen = ({
+  navigation,
+  route,
+  headerHeight,
+  insets,
+}) => {
   const { styles, globalStyles } = useStyles(localStyles);
+  const { getTabScreenFromType } = useType();
   const { i18n, isRTL, moment } = useI18N();
   const { setClipboard } = useApp();
   const toast = useToast();
@@ -81,8 +78,11 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
   } = useCommentsActivities({ search, filter });
   if (!items) return null;
 
+  // console.log("------ items ------", items);
+
   useLayoutEffect(() => {
     const postType = route?.params?.type;
+    // console.log("------ postType ------", postType);
     const postId = route?.params?.id;
     const kebabItems = [
       {
@@ -96,7 +96,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
     ];
     navigation.setOptions({
       title: route?.params?.name,
-      headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />
+      headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />,
     });
     return;
   });
@@ -109,7 +109,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
   const parseDate = (item) => {
     if (item?.comment_date) return parseDateSafe(item.comment_date);
     if (item?.hist_time) return parseDateSafe(item.hist_time);
-    return '';
+    return "";
   };
 
   const CommentsActivityItem = ({ item, loading }) => {
@@ -120,6 +120,32 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
     const authorId = Number(item?.user_id);
     const userIsAuthor = authorId === userData?.ID;
     const isActivity = item?.object_note?.length > 0;
+
+    // console.log("------ item ------", item);
+
+    let hasUrl =
+      message.match(/\bhttps?::\/\/\S+/gi) ||
+      message.match(/\bhttps?:\/\/\S+/gi);
+    let strArr;
+    let tempName;
+    let preMsg;
+    let postMsg;
+
+    if (hasUrl) {
+      strArr = hasUrl[0].split("/");
+
+      let nameStart = message.indexOf("[");
+      let nameEnd = message.indexOf("]", nameStart);
+
+      if (nameStart >= 0 && nameEnd >= 0) {
+        tempName = message.slice(nameStart + 1, nameEnd);
+        preMsg = message.slice(0, nameStart + 1);
+        postMsg = message.slice(nameEnd);
+        // console.log(message.slice(nameStart + 1, nameEnd));
+        // console.log(message.slice(0, nameStart + 1));
+        // console.log(message.slice(nameEnd));
+      }
+    }
 
     const onCopy = () => setClipboard(message);
 
@@ -135,7 +161,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
         } catch (error) {
           toast(error, true);
         }
-      };
+      }
     };
 
     const generateOptions = () => {
@@ -161,7 +187,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
           label: i18n.t("global.delete"),
           icon: <DeleteIcon />,
         });
-      };
+      }
       return sections;
     };
 
@@ -177,21 +203,16 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
       const sections = generateOptions();
       expand({
         // TODO: constants?
-        snapPoints: userIsAuthor ? [OFFSET_Y+200,"95%"] : [OFFSET_Y+100,"95%"],
+        snapPoints: userIsAuthor
+          ? [OFFSET_Y + 200, "95%"]
+          : [OFFSET_Y + 100, "95%"],
         defaultIndex: 0,
         renderHeader: () => (
-          <SheetHeader
-            expandable
-            dismissable
-            title={title}
-          />
+          <SheetHeader expandable dismissable title={title} />
         ),
         renderContent: () => (
-          <SelectSheet
-            sections={sections}
-            onChange={onChange}
-          />
-        )
+          <SelectSheet sections={sections} onChange={onChange} />
+        ),
       });
     };
 
@@ -247,19 +268,50 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
                 </View>
               </View>
             </View>
-            <ParsedText
-              //selectable
-              style={styles.commentText(isActivity)}
-              parse={[
-                {
-                  pattern: MENTION_PATTERN,
-                  style: styles.parseText,
-                  renderText: renderMention,
-                },
-              ]}
-            >
-              {message}
-            </ParsedText>
+            {hasUrl ? (
+              <ParsedText
+                //selectable
+                style={styles.commentText(isActivity)}
+                parse={[
+                  {
+                    pattern: MENTION_PATTERN,
+                    style: styles.parseText,
+                    renderText: renderMention,
+                  },
+                ]}
+              >
+                {preMsg}
+                <Text
+                  onPress={() => {
+                    const type = strArr[strArr.length - 3];
+                    const tabScreen = getTabScreenFromType(type);
+                    navigation.jumpTo(tabScreen, {
+                      screen: ScreenConstants.DETAILS,
+                      id: strArr[strArr.length - 2],
+                      name: tempName,
+                      type,
+                    });
+                  }}
+                  style={styles.activityLink}
+                >
+                  {tempName}
+                </Text>
+                {postMsg}
+              </ParsedText>
+            ) : (
+              <ParsedText
+                style={styles.commentText(isActivity)}
+                parse={[
+                  {
+                    pattern: MENTION_PATTERN,
+                    style: styles.parseText,
+                    renderText: renderMention,
+                  },
+                ]}
+              >
+                {message}
+              </ParsedText>
+            )}
           </View>
         </View>
       </Pressable>
@@ -292,7 +344,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
           const res = await createComment(comment);
           if (res) {
             setComment("");
-          };
+          }
         } catch (error) {
           toast(error, true);
         } finally {
@@ -312,15 +364,13 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
                 setLoading(true);
                 setTimeout(() => onSave(comment), 1000);
               }}
-              style={styles.sendIcon} 
+              style={styles.sendIcon}
             />
           ) : (
             <ActivityIndicator
               size="small"
               color={globalStyles.activityIndicator.color}
-              style={[
-                styles.activityIndicator,
-              ]}
+              style={[styles.activityIndicator]}
             />
           )}
         </View>
@@ -346,8 +396,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
     />
   );
 
-
-  return(
+  return (
     <>
       <FilterList
         display
@@ -367,7 +416,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
         modal={false}
         dismissable={false}
         // TODO: dynamic based on Keyboard height?
-        snapPoints={[OFFSET_Y,"100%"]}
+        snapPoints={[OFFSET_Y, "100%"]}
         defaultIndex={0}
       >
         <CommentInput />

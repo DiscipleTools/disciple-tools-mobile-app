@@ -29,18 +29,18 @@ import {
   facebook,
   whatsapp,
   primaryDark,
-  primaryLight, 
+  primaryLight,
   secondaryDark,
-  secondaryLight, 
-  tertiaryDark, 
+  secondaryLight,
+  tertiaryDark,
   tertiaryLight,
   errorDark,
-  errorLight, 
-  warningDark, 
-  warningLight, 
-  infoDark, 
-  infoLight, 
-  successLight, 
+  errorLight,
+  warningDark,
+  warningLight,
+  infoDark,
+  infoLight,
+  successLight,
   successDark,
 } from "constants/colors";
 
@@ -182,6 +182,7 @@ export const defaultThemeLight = Object.freeze({
   highlight,
   facebook,
   whatsapp,
+  sliderThumb: systemBlueDark,
 });
 
 export const defaultThemeDark = Object.freeze({
@@ -226,6 +227,7 @@ export const defaultThemeDark = Object.freeze({
   highlight,
   facebook,
   whatsapp,
+  sliderThumb: systemBlueDark,
 });
 
 // NOTE: lowercase constants bc used in D.T API requests
@@ -299,7 +301,7 @@ export const SortConstants = Object.freeze({
 export const AppStateConstants = Object.freeze({
   ACTIVE: "active",
   BACKGROUND: "background",
-  INACTIVE: "inactive"
+  INACTIVE: "inactive",
 });
 
 export const EMPTY_CACHE = new Map([]);
