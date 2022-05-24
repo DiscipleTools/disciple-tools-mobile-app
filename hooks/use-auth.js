@@ -35,7 +35,7 @@ const AuthConstants = {
 };
 
 // TODO: load protocol from .env
-const PROTOCOL = "http";
+const PROTOCOL = "https";
 
 const AuthContext = createContext(null);
 
@@ -47,7 +47,7 @@ const AuthProvider = ({ children }) => {
 WebBrowser.maybeCompleteAuthSession();
 
 let uri = makeRedirectUri();
-console.log("------ URI ------", uri);
+// console.log("------ URI ------", uri);
 
 const useAuth = () => useContext(AuthContext);
 
