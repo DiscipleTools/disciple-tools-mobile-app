@@ -11,7 +11,7 @@ import MemberList from "components/MemberList";
 
 import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
-import useToast from 'hooks/use-toast';
+import useToast from "hooks/use-toast";
 import useType from "hooks/use-type";
 
 import { FieldNames, ScreenConstants } from "constants";
@@ -26,9 +26,8 @@ const Tile = ({
   post,
   fields,
   save,
-  mutate
+  mutate,
 }) => {
-
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
@@ -47,11 +46,11 @@ const Tile = ({
       case SET_STATE:
         return {
           ...state,
-          ...action?.field
+          ...action?.field,
         };
       default:
         state;
-    };
+    }
   };
 
   /*
@@ -60,9 +59,10 @@ const Tile = ({
    */
   const generatedPost = () => {
     const post = {};
-    fields?.forEach(field => {
+    fields?.forEach((field) => {
       let defaultValue = null;
-      if (field?.default) defaultValue = Object.keys(field.default)?.[0] || null;
+      if (field?.default)
+        defaultValue = Object.keys(field.default)?.[0] || null;
       /*
       if (
         //field?.type === FieldTypes.COMMUNICATION_CHANNEL ||
@@ -95,19 +95,23 @@ const Tile = ({
 
   const onChange = (field) => dispatch({ type: SET_STATE, field });
 
-  const onSave = async() => {
+  const onSave = async () => {
     setLoading(true);
-    const requiredFields = fields?.filter(field => field?.required === true && field?.in_create_form === true); //?.map(field => field?.name);
-    const filteredPost = Object.fromEntries(Object.entries(_post).filter(([_, v]) => v != null && v?.length > 0));
-    for (let ii=0; ii<requiredFields?.length; ii++) {
+    const requiredFields = fields?.filter(
+      (field) => field?.required === true && field?.in_create_form === true
+    );
+    const filteredPost = Object.fromEntries(
+      Object.entries(_post).filter(([_, v]) => v != null && v?.length > 0)
+    );
+    for (let ii = 0; ii < requiredFields?.length; ii++) {
       const fieldName = requiredFields[ii]?.name;
       const fieldLabel = requiredFields[ii]?.label;
       if (fieldName && !filteredPost[fieldName]) {
         setLoading(false);
         toast(i18n.t("global.error.isRequired", { item: fieldLabel }), true);
         return;
-      };
-    };
+      }
+    }
     const res = await save(filteredPost);
     if (isCreate) {
       if (res?.data?.ID) {
@@ -119,24 +123,19 @@ const Tile = ({
         navigation.navigate(ScreenConstants.LIST, {
           type: postType,
         });
-      };
-    };
+      }
+    }
     setLoading(false);
   };
 
   const SaveButton = () => (
-    <Button
-      title={i18n.t("global.save")}
-      loading={loading}
-      onPress={onSave}
-    />
+    <Button title={i18n.t("global.save")} loading={loading} onPress={onSave} />
   );
-
 
   const Fields = () => {
     return fields.map((field, _idx) => (
       <>
-        { idx === 0 && _idx === 0 && post?.requires_update && (
+        {idx === 0 && _idx === 0 && post?.requires_update && (
           <Alert
             title={i18n.t("global.updateRequired")}
             subtitle={i18n.t("global.updateRequiredText")}
@@ -152,12 +151,8 @@ const Tile = ({
           onChange={onChange}
           mutate={mutate}
         />
-        { field?.name === FieldNames.MEMBER_COUNT && (
-          <MemberList
-            post={post}
-            onChange={onChange}
-            mutate={mutate}
-          />
+        {field?.name === FieldNames.MEMBER_COUNT && (
+          <MemberList post={post} onChange={onChange} mutate={mutate} />
         )}
       </>
     ));
@@ -177,13 +172,10 @@ const Tile = ({
       extraScrollHeight={75}
       keyboardShouldPersistTaps="handled"
       style={globalStyles.surface}
-      contentContainerStyle={[
-        globalStyles.surface,
-        globalStyles.screenGutter
-      ]}
+      contentContainerStyle={[globalStyles.surface, globalStyles.screenGutter]}
     >
       <Fields />
-      { isCreate && (
+      {isCreate && (
         <View style={styles.saveButton}>
           <SaveButton />
         </View>
