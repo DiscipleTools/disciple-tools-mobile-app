@@ -6,7 +6,7 @@ export const getBaseUrl = (domain) => {
 };
 
 // TODO: https://github.com/axios/axios#cancellation
-// AbortController 
+// AbortController
 
 // NOTE: the baseURL and Authorization Header will be set upon successful login,
 // for subsequent reuse with JWT, etc... (see: hooks/useMyUser::login(..))

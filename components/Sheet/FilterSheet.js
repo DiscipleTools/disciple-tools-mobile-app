@@ -25,18 +25,14 @@ const FilterSheet = ({ multiple, filters, filter, onFilter }) => {
     if (!item) return null;
     const { ID, name, icon, count, subfilter, query } = item;
     const selected = ID === filter?.ID;
-    const _key = `${ ID }_${ idx }`;
+    const _key = `${ID}_${idx}`;
     return (
       <Pressable
         key={_key}
         onPress={() => onChange(item)}
         style={styles.itemContainer}
       >
-        { icon && (
-          <View style={globalStyles.rowIcon}>
-            {icon}
-          </View>
-        )}
+        {icon && <View style={globalStyles.rowIcon}>{icon}</View>}
         <View style={styles.itemSubFilterContainer(subfilter)}>
           <Text style={styles.itemText}>
             {name} {count > 0 ? `(${count})` : null}

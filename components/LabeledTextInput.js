@@ -25,9 +25,7 @@ const LabeledTextInput = (props) => {
   const renderTextFieldEdit = () => (
     <View style={[styles.inputContainer, containerStyle]}>
       <View style={[styles.inputLabel, labelStyle]}>
-        <Text style={[styles.inputLabelText, labelTextStyle]}>
-          {label}
-        </Text>
+        <Text style={[styles.inputLabelText, labelTextStyle]}>{label}</Text>
       </View>
       <View style={globalStyles.rowContainer}>
         {startIcon}
@@ -44,17 +42,17 @@ const LabeledTextInput = (props) => {
   const renderTextFieldView = () => (
     <View style={[styles.inputContainer, containerStyle]}>
       <View style={[styles.inputLabel, labelStyle]}>
-        <Text style={[styles.inputLabelText, labelTextStyle]}>
-          {label}
-        </Text>
+        <Text style={[styles.inputLabelText, labelTextStyle]}>{label}</Text>
       </View>
       <View style={styles.inputRow}>
         {icon}
-        <Text style={[
-          styles.inputRowTextInput,
-          textInputStyle,
-          isRTL ? { textAlign: "left", flex: 1 } : {}
-        ]}>
+        <Text
+          style={[
+            styles.inputRowTextInput,
+            textInputStyle,
+            isRTL ? { textAlign: "left", flex: 1 } : {},
+          ]}
+        >
           {value}
         </Text>
       </View>
@@ -66,6 +64,6 @@ const LabeledTextInput = (props) => {
    * (instead 'trick' React by invoking lowercase render method)
    */
   //return <>{editing ? <TextFieldEdit /> : <TextFieldView />}</>;
-  return <>{editing ? renderTextFieldEdit() : renderTextFieldView() }</>;
+  return <>{editing ? renderTextFieldEdit() : renderTextFieldView()}</>;
 };
 export default LabeledTextInput;

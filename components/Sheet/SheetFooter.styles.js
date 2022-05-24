@@ -8,5 +8,5 @@ export const localStyles = ({ theme, isRTL }) => ({
     paddingHorizontal: 20,
     minHeight: 75,
     width: "100%",
-  }
+  },
 });

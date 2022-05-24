@@ -18,7 +18,7 @@ const Placeholder = ({ placeholder, type }) => {
   };
   const items = getDefaultPlaceholder();
   const defaultPlaceholder = i18n.t("global.placeholder", { items });
-  return(
+  return (
     <View style={styles.container}>
       <Text style={styles.text}>{placeholder ?? defaultPlaceholder}</Text>
     </View>

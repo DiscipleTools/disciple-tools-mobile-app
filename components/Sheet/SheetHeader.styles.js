@@ -8,10 +8,10 @@ export const localStyles = ({ theme, isRTL }) => ({
     paddingHorizontal: 10,
   },
   controls: {
-    marginStart: "auto"
+    marginStart: "auto",
   },
   closeIcon: {
     color: theme.text.primary,
     fontSize: 28,
-  }
+  },
 });

@@ -30,9 +30,8 @@ const FilterList = ({
   rightOpenValue,
   onRowDidOpen,
   onRowDidClose,
-  style
+  style,
 }) => {
-
   const { styles, globalStyles } = useStyles(localStyles);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -47,26 +46,27 @@ const FilterList = ({
     if (onRefresh) {
       onRefresh();
       return;
-    };
+    }
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
   });
 
-  const getItemLayout = useCallback((data, index) => ({
-    length: Constants.LIST_ITEM_HEIGHT,
-    offset: Constants.LIST_ITEM_HEIGHT * index, index
-  }), []);
+  const getItemLayout = useCallback(
+    (data, index) => ({
+      length: Constants.LIST_ITEM_HEIGHT,
+      offset: Constants.LIST_ITEM_HEIGHT * index,
+      index,
+    }),
+    []
+  );
 
   // TODO: actual skeleton component for post lists
   if (!_items) return <SafeAreaView style={styles.container} />;
   return (
-    <SafeAreaView style={[
-      styles.container,
-      style
-    ]}>
-      { onSearch && (
+    <SafeAreaView style={[styles.container, style]}>
+      {onSearch && (
         <SearchBar
           sortable={sortable}
           items={_items}
@@ -77,7 +77,7 @@ const FilterList = ({
           onFilter={onFilter}
         />
       )}
-      { onFilter && (
+      {onFilter && (
         <FilterBar
           display={display}
           items={_items}

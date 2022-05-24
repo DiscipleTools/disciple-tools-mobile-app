@@ -11,12 +11,11 @@ import { EMPTY_CACHE } from "constants";
 /**
  * A hook that abstracts the in-memory (SWR) and device storage (Redux) cache
  * implementations.
- * 
+ *
  * TODO: implement 'CacheProvider'
  * For use in App.js (rather than referencing 'SWRConfig' provider directly).
  */
 const useCache = () => {
-
   const { cache, mutate } = useSWRConfig();
   const dispatch = useDispatch();
 
@@ -30,17 +29,22 @@ const useCache = () => {
   };
 
   /**
-   * When user "foregrounds" the app, rehydrate the in-memory cache. 
+   * When user "foregrounds" the app, rehydrate the in-memory cache.
    */
   const onAppForegroundCallback = () => {
     // Use Redux 'store' object reference directly because 'useSelector'
     // does not have latest state available within 'AppState' event listener.
-    const persistentCacheMap = store?.getState()?.cacheReducer?.cache ?? EMPTY_CACHE; 
-    if (persistentCacheMap && (persistentCacheMap?.size > 0 || Object.keys(persistentCacheMap)?.length > 0)) {
+    const persistentCacheMap =
+      store?.getState()?.cacheReducer?.cache ?? EMPTY_CACHE;
+    if (
+      persistentCacheMap &&
+      (persistentCacheMap?.size > 0 ||
+        Object.keys(persistentCacheMap)?.length > 0)
+    ) {
       for (var [key, value] of persistentCacheMap.entries()) {
         cache.set(key, value);
-      };
-    };
+      }
+    }
   };
 
   //* Use the "useAppState" hook to listen for app state changes.
@@ -48,7 +52,7 @@ const useCache = () => {
 
   return {
     cache,
-    mutate
+    mutate,
   };
 };
 export default useCache;

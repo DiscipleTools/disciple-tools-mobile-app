@@ -3,10 +3,10 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     alignItems: "center",
     borderTopWidth: idx !== 0 ? 1 : null,
     borderTopColor: idx !== 0 ? theme.divider : null,
-    paddingVertical: 10
+    paddingVertical: 10,
   }),
   title: {
-    color: theme.text.primary, 
+    color: theme.text.primary,
     fontSize: 18,
     fontStyle: "italic",
   },
@@ -22,6 +22,6 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     margin: 5,
   },
   buttonText: {
-    color: theme.text.primary
-  }
+    color: theme.text.primary,
+  },
 });

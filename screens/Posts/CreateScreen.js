@@ -20,7 +20,7 @@ const CreateScreen = ({ navigation, route }) => {
   const { createPost } = useAPI();
 
   useLayoutEffect(() => {
-    const title = `${ labelize(postType) } - ${ i18n.t("global.addNew") }`;
+    const title = `${labelize(postType)} - ${i18n.t("global.addNew")}`;
     const kebabItems = [
       {
         label: i18n.t("global.viewOnWeb"),
@@ -31,7 +31,7 @@ const CreateScreen = ({ navigation, route }) => {
         url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/add-new-screens/#${postType}-screen`,
       },
     ];
-    navigation.setOptions({ 
+    navigation.setOptions({
       title,
       headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />,
     });
@@ -64,7 +64,7 @@ const CreateScreen = ({ navigation, route }) => {
       },
       ...fields,
     ];
-  };
+  }
 
   return (
     <>

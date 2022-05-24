@@ -3,7 +3,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     paddingVertical: 20,
   },
   cardRowContainer: {
-    justifyContent: "space-evenly"
+    justifyContent: "space-evenly",
   },
   logo: {
     height: 25,

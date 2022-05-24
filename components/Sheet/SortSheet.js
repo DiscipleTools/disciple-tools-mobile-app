@@ -14,7 +14,8 @@ const SortSheet = ({ items, setItems, filter, onFilter }) => {
   const { settings } = useSettings();
 
   // TODO: default to English in this way?
-  const lastModifiedDateLabel = settings?.fields?.last_modified?.name ?? "Last Modified Date";
+  const lastModifiedDateLabel =
+    settings?.fields?.last_modified?.name ?? "Last Modified Date";
   const createdDateLabel = settings?.fields?.post_date?.name ?? "Created Date";
 
   const sortKey = filter?.query?.sort;
@@ -51,7 +52,7 @@ const SortSheet = ({ items, setItems, filter, onFilter }) => {
           label: i18n.t("global.oldest"),
           icon: <SortAscIcon />,
           selected: SortConstants.CREATED_ASC === sortKey,
-        }
+        },
       ],
     },
   ];

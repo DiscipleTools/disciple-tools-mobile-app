@@ -5,32 +5,33 @@ import {
   FlingGestureHandler,
   Directions,
   State,
-} from 'react-native-gesture-handler';
+} from "react-native-gesture-handler";
 
 import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./TabScrollView.styles";
 
-const TabScrollView = ({ index, onIndexChange, renderTab, scenes, style, contentContainerStyle }) => {
-
+const TabScrollView = ({
+  index,
+  onIndexChange,
+  renderTab,
+  scenes,
+  style,
+  contentContainerStyle,
+}) => {
   const { styles, globalStyles } = useStyles(localStyles);
 
   if (!index) index = 0;
 
-  const Tab = ({ label, selected}) => (
+  const Tab = ({ label, selected }) => (
     <View style={styles.tabContainer(selected)}>
       <Text style={styles.tabLabel}>{label}</Text>
     </View>
   );
 
   if (!scenes || scenes?.length < 1) return null;
-  return(
-    <View
-      style={[
-        styles.container,
-        style
-      ]}
-    >
+  return (
+    <View style={[styles.container, style]}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -40,10 +41,14 @@ const TabScrollView = ({ index, onIndexChange, renderTab, scenes, style, content
         {scenes?.map((scene, idx) => (
           <Pressable
             key={idx}
-            onPress={() => { onIndexChange ? onIndexChange(idx) : null }}
+            onPress={() => {
+              onIndexChange ? onIndexChange(idx) : null;
+            }}
             style={{}}
           >
-            { renderTab ? renderTab({ scene, idx }) : (
+            {renderTab ? (
+              renderTab({ scene, idx })
+            ) : (
               <Tab
                 idx={idx}
                 label={scene?.label}
@@ -58,13 +63,13 @@ const TabScrollView = ({ index, onIndexChange, renderTab, scenes, style, content
         onHandlerStateChange={({ nativeEvent }) => {
           if (nativeEvent.state === State.ACTIVE) {
             if (onIndexChange) {
-              if (index < scenes?.length-1) {
+              if (index < scenes?.length - 1) {
                 onIndexChange(index + 1);
               } else {
                 onIndexChange(0);
-              };
-            };
-          };
+              }
+            }
+          }
         }}
       >
         <FlingGestureHandler
@@ -73,19 +78,17 @@ const TabScrollView = ({ index, onIndexChange, renderTab, scenes, style, content
             if (nativeEvent.state === State.ACTIVE) {
               if (onIndexChange) {
                 if (index === 0) {
-                  onIndexChange(scenes?.length-1);
+                  onIndexChange(scenes?.length - 1);
                 } else {
-                  onIndexChange(index-1);
-                };
-              };
-            };
+                  onIndexChange(index - 1);
+                }
+              }
+            }
           }}
         >
           <ScrollView
             style={styles.sceneContent}
-            contentContainerStyle={[
-              contentContainerStyle
-            ]}
+            contentContainerStyle={[contentContainerStyle]}
           >
             {scenes[index]?.component}
           </ScrollView>

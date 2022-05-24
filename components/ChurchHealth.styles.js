@@ -30,9 +30,12 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     //borderBottomWidth: selected ? 2 : 0,
   }),
   switch: {
-    color: theme.mode === ThemeConstants.DARK ? theme.highlight : theme.brand.primary,
+    color:
+      theme.mode === ThemeConstants.DARK
+        ? theme.highlight
+        : theme.brand.primary,
   },
   listItem: {
     backgroundColor: theme.background.primary,
-  }
+  },
 });

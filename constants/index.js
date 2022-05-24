@@ -29,18 +29,18 @@ import {
   facebook,
   whatsapp,
   primaryDark,
-  primaryLight, 
+  primaryLight,
   secondaryDark,
-  secondaryLight, 
-  tertiaryDark, 
+  secondaryLight,
+  tertiaryDark,
   tertiaryLight,
   errorDark,
-  errorLight, 
-  warningDark, 
-  warningLight, 
-  infoDark, 
-  infoLight, 
-  successLight, 
+  errorLight,
+  warningDark,
+  warningLight,
+  infoDark,
+  infoLight,
+  successLight,
   successDark,
 } from "constants/colors";
 
@@ -299,7 +299,7 @@ export const SortConstants = Object.freeze({
 export const AppStateConstants = Object.freeze({
   ACTIVE: "active",
   BACKGROUND: "background",
-  INACTIVE: "inactive"
+  INACTIVE: "inactive",
 });
 
 export const EMPTY_CACHE = new Map([]);

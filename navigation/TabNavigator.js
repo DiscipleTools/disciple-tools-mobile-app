@@ -13,7 +13,7 @@ import {
   AccountsIcon,
   BellIcon,
   MoreIcon,
-  UserIcon
+  UserIcon,
 } from "components/Icon";
 import HomeScreen from "screens/HomeScreen";
 import MoreScreen from "screens/MoreScreen";
@@ -77,7 +77,7 @@ const TabNavigator = ({ navigation }) => {
           component={ListScreen}
           //options={{ headerShown: false }}
           options={{
-            title: '',
+            title: "",
           }}
           initialParams={
             route?.params
@@ -146,10 +146,7 @@ const TabNavigator = ({ navigation }) => {
   const HomeStack = () => {
     return (
       <Stack.Navigator screenOptions={screenOptions}>
-        <Stack.Screen
-          name={TabScreenConstants.HOME}
-          component={HomeScreen}
-        />
+        <Stack.Screen name={TabScreenConstants.HOME} component={HomeScreen} />
         <Stack.Screen
           name={TabScreenConstants.CONTACTS}
           component={PostStack}
@@ -182,7 +179,7 @@ const TabNavigator = ({ navigation }) => {
           //}
           //}}
           options={{
-            title: '',
+            title: "",
           }}
           initialParams={{
             type: TypeConstants.MY_USER,
@@ -259,7 +256,7 @@ const TabNavigator = ({ navigation }) => {
           name={ScreenConstants.LIST}
           component={ListScreen}
           options={{
-            title: '',
+            title: "",
           }}
           initialParams={
             route?.params
@@ -314,15 +311,14 @@ const TabNavigator = ({ navigation }) => {
   };
 
   const indicatorStyle = (focused) => {
-    if (focused) return {
-      top: -10,
-      height: 3,
-      backgroundColor: isDarkMode
-          ? theme.highlight
-          : theme.brand.primary,
-    };
+    if (focused)
+      return {
+        top: -10,
+        height: 3,
+        backgroundColor: isDarkMode ? theme.highlight : theme.brand.primary,
+      };
     return null;
-  }
+  };
 
   return (
     <Tab.Navigator

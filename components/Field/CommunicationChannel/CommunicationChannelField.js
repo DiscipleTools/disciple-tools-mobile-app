@@ -9,8 +9,14 @@ import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./CommunicationChannelField.styles";
 
-const CommunicationChannelField = ({ grouped=false, editing, field, values, onChange, onAdd }) => {
-
+const CommunicationChannelField = ({
+  grouped = false,
+  editing,
+  field,
+  values,
+  onChange,
+  onAdd,
+}) => {
   const { styles, globalStyles } = useStyles(localStyles);
 
   const [_editing, _setEditing] = useState(editing);
@@ -26,7 +32,7 @@ const CommunicationChannelField = ({ grouped=false, editing, field, values, onCh
       _onChange(newValues);
       return;
     }
-    newValues.splice(idx,1);
+    newValues.splice(idx, 1);
     _onChange(newValues);
     return;
   };
@@ -34,12 +40,11 @@ const CommunicationChannelField = ({ grouped=false, editing, field, values, onCh
   const _onChange = (newValues) => {
     if (JSON.stringify(newValues) !== JSON.stringify(values)) {
       onChange(newValues);
-    };
+    }
   };
 
   // TODO: validate input per field type (eg, email, phone, etc)?
   const renderTextInput = (value, idx) => {
-
     const [_text, _setText] = useState(value?.value);
     // TODO: 1000 too slow and user may click plus sign, but less is too fast for entries like email
     const debouncedText = useDebounce(_text, 1500);
@@ -51,7 +56,7 @@ const CommunicationChannelField = ({ grouped=false, editing, field, values, onCh
         newValue["value"] = debouncedText;
         newValues[idx] = newValue;
         _onChange(newValues);
-      };
+      }
       return;
     }, [debouncedText]);
 
@@ -65,36 +70,40 @@ const CommunicationChannelField = ({ grouped=false, editing, field, values, onCh
     };
 
     const keyboardType = getKeyboardType();
-    return(
+    return (
       <View style={globalStyles.rowContainer}>
         <View style={styles.container}>
-            <TextInput
-              key={idx}
-              value={_text}
-              onChangeText={_setText}
-              style={styles.input}
-              keyboardType={keyboardType}
-            />
+          <TextInput
+            key={idx}
+            value={_text}
+            onChangeText={_setText}
+            style={styles.input}
+            keyboardType={keyboardType}
+          />
         </View>
         <View style={styles.removeIcon}>
-          <RemoveIcon key={idx} onPress={() => _onRemove(idx)}
-          style={{ color: "red" }} />
+          <RemoveIcon
+            key={idx}
+            onPress={() => _onRemove(idx)}
+            style={{ color: "red" }}
+          />
         </View>
       </View>
     );
   };
 
-  const allMarkedForDeletion = () => values?.filter(value => value?.delete)?.length === values?.length;
+  const allMarkedForDeletion = () =>
+    values?.filter((value) => value?.delete)?.length === values?.length;
 
   const CommunicationChannelFieldEdit = () => {
     // if empty (or all marked for deletion), then add to offer at least 1 input
     if (!values || values?.length === 0 || allMarkedForDeletion()) {
       onAdd();
       return null;
-    };
+    }
     return values?.map((value, idx) => {
       if (value?.delete === true) return null;
-      return renderTextInput(value, idx)
+      return renderTextInput(value, idx);
     });
   };
 

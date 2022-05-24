@@ -11,7 +11,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     height: 125,
     width: 125,
     marginHorizontal: 10,
-    marginTop: 5
+    marginTop: 5,
   },
   groupCenterIcon: {
     justifyContent: "center",

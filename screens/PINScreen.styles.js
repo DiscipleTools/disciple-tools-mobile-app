@@ -24,7 +24,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     marginBottom: 20,
   },
   iconContainer: {
-    alignSelf: "center"
+    alignSelf: "center",
   },
   cellStyle: {
     backgroundColor: "azure",

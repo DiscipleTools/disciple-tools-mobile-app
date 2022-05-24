@@ -18,7 +18,6 @@ import { ScreenConstants } from "constants";
 import { localStyles } from "./ActivityLogCard.styles";
 
 const ActivityLogCard = ({ preview, refreshing }) => {
-
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
@@ -30,14 +29,11 @@ const ActivityLogCard = ({ preview, refreshing }) => {
 
   // TODO: FilterList
   const renderActivityLog = (log, idx) => {
-    const _key = `${ log.object_id }-${ idx }`;
-    return(
+    const _key = `${log.object_id}-${idx}`;
+    return (
       <View
         key={_key}
-        style={[
-          globalStyles.columnContainer,
-          styles.activityView
-        ]}
+        style={[globalStyles.columnContainer, styles.activityView]}
       >
         <Pressable
           onPress={() => {
@@ -56,10 +52,10 @@ const ActivityLogCard = ({ preview, refreshing }) => {
         </Pressable>
         <Text style={styles.activityText}>{log?.object_note}</Text>
         {
-        // Prefetch any posts in the ActivityLog so that the records
-        // are available if the user goes OFFLINE.
+          // Prefetch any posts in the ActivityLog so that the records
+          // are available if the user goes OFFLINE.
         }
-        { log?.object_id && log?.post_type && (
+        {log?.object_id && log?.post_type && (
           <PrefetchCacheRecord id={log.object_id} type={log.post_type} />
         )}
       </View>

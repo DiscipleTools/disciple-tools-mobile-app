@@ -5,7 +5,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   avatar: {
     width: avatarSize,
     height: avatarSize,
-    borderRadius: avatarSize/2
+    borderRadius: avatarSize / 2,
   },
   headerContainer: {
     backgroundColor: theme.surface.secondary,
@@ -27,10 +27,13 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   commentActivityIcon: {
     marginStart: "auto",
     justifyContent: "center",
-    marginHorizontal: 10
+    marginHorizontal: 10,
   },
   switch: {
-    color: theme.mode === ThemeConstants.DARK ? theme.highlight : theme.brand.primary,
+    color:
+      theme.mode === ThemeConstants.DARK
+        ? theme.highlight
+        : theme.brand.primary,
   },
   optionContainer: {
     borderBottomWidth: 1,

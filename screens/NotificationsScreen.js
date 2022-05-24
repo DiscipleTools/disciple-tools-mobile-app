@@ -1,8 +1,4 @@
-import React, {
-  useState,
-  useLayoutEffect,
-  useEffect,
-} from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 //import { useIsFocused } from "@react-navigation/native";
@@ -27,7 +23,7 @@ import useI18N from "hooks/use-i18n";
 //import useMyUser from 'hooks/use-my-user.js';
 import useNotifications from "hooks/use-notifications";
 import useStyles from "hooks/use-styles";
-import useType from "hooks/use-type"; 
+import useType from "hooks/use-type";
 
 import { NotificationActionConstants, ScreenConstants } from "constants";
 
@@ -61,7 +57,6 @@ const NotificationsScreen = ({ navigation }) => {
   } = useNotifications({ search, filter, offset, limit });
 
   //const { userData, error: userError } = useMyUser();
-
 
   // TODO: custom useHeaderLayoutEffect hook for reuse
   useLayoutEffect(() => {
@@ -122,9 +117,7 @@ const NotificationsScreen = ({ navigation }) => {
       <View style={globalStyles.columnContainer}>
         <View style={[globalStyles.rowContainer, styles.notificationDetails]}>
           {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
-          <Text>
-            {truncate(newNotificationNoteA, { maxLength: 35 })}
-          </Text>
+          <Text>{truncate(newNotificationNoteA, { maxLength: 35 })}</Text>
           <Pressable
             onPress={() => {
               const tabScreen = getTabScreenFromType(type);
@@ -136,9 +129,7 @@ const NotificationsScreen = ({ navigation }) => {
               });
             }}
           >
-            <Text
-              style={globalStyles.link}
-            >
+            <Text style={globalStyles.link}>
               {truncate(newNotificationNoteC, { maxLength: 35 })}
               {/*entities.decode(newNotificationNoteC)*/}
             </Text>
@@ -169,16 +160,13 @@ const NotificationsScreen = ({ navigation }) => {
               markViewed({ id });
               setIsNew(false);
               return;
-            };
+            }
             markUnread({ id });
             setIsNew(true);
             return;
           }
         }}
-        style={[
-          globalStyles.rowIcon,
-          styles.markIcon,
-        ]}
+        style={[globalStyles.rowIcon, styles.markIcon]}
       >
         {isNew ? (
           <UnreadIcon />
@@ -189,26 +177,27 @@ const NotificationsScreen = ({ navigation }) => {
     );
 
     return (
-      <View
-        style={[
-          globalStyles.rowContainer,
-          styles.container(isNew)
-        ]}
-      >
-        <View style={{
-          flex: 1,
-        }}>
+      <View style={[globalStyles.rowContainer, styles.container(isNew)]}>
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
           <NotificationIcon />
         </View>
-        <View style={{
-          flex: 6,
-        }}>
+        <View
+          style={{
+            flex: 6,
+          }}
+        >
           <NotificationDetails />
         </View>
-        <View style={{
-          flex: 1,
-          paddingHorizontal: 20,
-        }}>
+        <View
+          style={{
+            flex: 1,
+            paddingHorizontal: 20,
+          }}
+        >
           <NotificationButton />
         </View>
       </View>

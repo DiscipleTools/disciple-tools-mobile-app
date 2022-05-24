@@ -15,5 +15,5 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   },
   spinner: {
     margin: 20,
-  }
+  },
 });

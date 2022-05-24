@@ -16,38 +16,38 @@ export const HeaderLeft = ({ startIcons, endIcons, style, iconStyle }) => {
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
   const { postType } = useType();
-  return(
-    <View style={[
-      globalStyles.rowContainer,
-      style
-    ]}>
-      { startIcons?.map() }
+  return (
+    <View style={[globalStyles.rowContainer, style]}>
+      {startIcons?.map()}
       <ArrowIcon
-        header  
+        header
         onPress={() => {
           navigation.navigate(ScreenConstants.LIST, {
             type: postType,
           });
         }}
-        style={[
-          globalStyles.icon,
-          iconStyle
-        ]}
+        style={[globalStyles.icon, iconStyle]}
       />
-      { endIcons?.map() }
+      {endIcons?.map()}
     </View>
   );
 };
 
-export const HeaderRight = ({ kebabItems, renderStartIcons, renderEndIcons, style, iconStyle }) => {
+export const HeaderRight = ({
+  kebabItems,
+  renderStartIcons,
+  renderEndIcons,
+  style,
+  iconStyle,
+}) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  return(
+  return (
     <View style={globalStyles.rowContainer}>
-      { renderStartIcons ? renderStartIcons() : null }
+      {renderStartIcons ? renderStartIcons() : null}
       <View style={styles.headerIcon}>
         <KebabMenu items={kebabItems} />
       </View>
-      { renderEndIcons ? renderEndIcons() : null }
+      {renderEndIcons ? renderEndIcons() : null}
     </View>
   );
 };

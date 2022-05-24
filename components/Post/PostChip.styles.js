@@ -1,6 +1,6 @@
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: {
-    paddingHorizontal: 5
+    paddingHorizontal: 5,
   },
   clearIconContainer: (selected) => ({
     backgroundColor: theme.background.primary,

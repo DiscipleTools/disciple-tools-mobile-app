@@ -8,7 +8,6 @@ import useMyUser from "hooks/use-my-user";
 import { searchObjList } from "utils";
 
 const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
-
   const { isContact, isGroup, postType } = useType({ type, subtype });
   const { data: userData } = useMyUser();
 
@@ -45,16 +44,16 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
             } else if (dateRegex.test(value)) {
               // Date (post_date)
               var match = value.match(
-              /^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/
-            );
+                /^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/
+              );
               var date = new Date(
-              match[1],
-              match[2] - 1,
-              match[3],
-              match[4],
-              match[5],
-              match[6]
-            );
+                match[1],
+                match[2] - 1,
+                match[3],
+                match[4],
+                match[5],
+                match[6]
+              );
               mappedContact[key] = (date.getTime() / 1000).toString();
             } else {
               //TODO
@@ -71,8 +70,8 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
               // key_select
               mappedContact[key] = value.key;
             } else if (
-            Object.prototype.hasOwnProperty.call(value, "timestamp")
-          ) {
+              Object.prototype.hasOwnProperty.call(value, "timestamp")
+            ) {
               // date
               mappedContact[key] = value.timestamp;
             } else if (key === "assigned_to") {
@@ -90,8 +89,8 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
               switch (valueTwoType) {
                 case "[object Object]": {
                   if (
-                Object.prototype.hasOwnProperty.call(valueTwo, "post_title")
-              ) {
+                    Object.prototype.hasOwnProperty.call(valueTwo, "post_title")
+                  ) {
                     // connection
                     return {
                       value: valueTwo.ID.toString(),
@@ -180,16 +179,16 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
             } else if (dateRegex.test(value)) {
               // Date (post_date)
               var match = value.match(
-              /^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/
-            );
+                /^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/
+              );
               var date = new Date(
-              match[1],
-              match[2] - 1,
-              match[3],
-              match[4],
-              match[5],
-              match[6]
-            );
+                match[1],
+                match[2] - 1,
+                match[3],
+                match[4],
+                match[5],
+                match[6]
+              );
               mappedGroup[key] = (date.getTime() / 1000).toString();
             } else {
               // TODO
@@ -206,8 +205,8 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
               // key_select
               mappedGroup[key] = value.key;
             } else if (
-            Object.prototype.hasOwnProperty.call(value, "timestamp")
-          ) {
+              Object.prototype.hasOwnProperty.call(value, "timestamp")
+            ) {
               // date
               mappedGroup[key] = value.timestamp;
             } else if (key === "assigned_to") {
@@ -225,8 +224,8 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
               switch (valueTwoType) {
                 case "[object Object]": {
                   if (
-                Object.prototype.hasOwnProperty.call(valueTwo, "post_title")
-              ) {
+                    Object.prototype.hasOwnProperty.call(valueTwo, "post_title")
+                  ) {
                     // connection
                     let object = {
                       value: valueTwo.ID.toString(),
@@ -235,33 +234,33 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
                     };
                     // groups
                     if (
-                  Object.prototype.hasOwnProperty.call(
-                    valueTwo,
-                    "baptized_member_count"
-                  )
-                ) {
+                      Object.prototype.hasOwnProperty.call(
+                        valueTwo,
+                        "baptized_member_count"
+                      )
+                    ) {
                       object = {
                         ...object,
                         baptized_member_count: valueTwo.baptized_member_count,
                       };
                     }
                     if (
-                  Object.prototype.hasOwnProperty.call(
-                    valueTwo,
-                    "member_count"
-                  )
-                ) {
+                      Object.prototype.hasOwnProperty.call(
+                        valueTwo,
+                        "member_count"
+                      )
+                    ) {
                       object = {
                         ...object,
                         member_count: valueTwo.member_count,
                       };
                     }
                     if (
-                  Object.prototype.hasOwnProperty.call(
-                    valueTwo,
-                    "is_church"
-                  )
-                ) {
+                      Object.prototype.hasOwnProperty.call(
+                        valueTwo,
+                        "is_church"
+                      )
+                    ) {
                       object = {
                         ...object,
                         is_church: valueTwo.is_church,
@@ -351,16 +350,16 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
             } else if (dateRegex.test(value)) {
               // Date (post_date)
               var match = value.match(
-              /^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/
-            );
+                /^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/
+              );
               var date = new Date(
-              match[1],
-              match[2] - 1,
-              match[3],
-              match[4],
-              match[5],
-              match[6]
-            );
+                match[1],
+                match[2] - 1,
+                match[3],
+                match[4],
+                match[5],
+                match[6]
+              );
               mappedCustomPostType[key] = (date.getTime() / 1000).toString();
             } else {
               // TODO
@@ -377,8 +376,8 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
               // key_select
               mappedCustomPostType[key] = value.key;
             } else if (
-            Object.prototype.hasOwnProperty.call(value, "timestamp")
-          ) {
+              Object.prototype.hasOwnProperty.call(value, "timestamp")
+            ) {
               // date
               mappedCustomPostType[key] = value.timestamp;
             } else if (key === "assigned_to") {
@@ -396,8 +395,8 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
               switch (valueTwoType) {
                 case "[object Object]": {
                   if (
-                Object.prototype.hasOwnProperty.call(valueTwo, "post_title")
-              ) {
+                    Object.prototype.hasOwnProperty.call(valueTwo, "post_title")
+                  ) {
                     // connection
                     let object = {
                       value: valueTwo.ID.toString(),
@@ -406,33 +405,33 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
                     };
                     // groups
                     if (
-                  Object.prototype.hasOwnProperty.call(
-                    valueTwo,
-                    "baptized_member_count"
-                  )
-                ) {
+                      Object.prototype.hasOwnProperty.call(
+                        valueTwo,
+                        "baptized_member_count"
+                      )
+                    ) {
                       object = {
                         ...object,
                         baptized_member_count: valueTwo.baptized_member_count,
                       };
                     }
                     if (
-                  Object.prototype.hasOwnProperty.call(
-                    valueTwo,
-                    "member_count"
-                  )
-                ) {
+                      Object.prototype.hasOwnProperty.call(
+                        valueTwo,
+                        "member_count"
+                      )
+                    ) {
                       object = {
                         ...object,
                         member_count: valueTwo.member_count,
                       };
                     }
                     if (
-                  Object.prototype.hasOwnProperty.call(
-                    valueTwo,
-                    "is_church"
-                  )
-                ) {
+                      Object.prototype.hasOwnProperty.call(
+                        valueTwo,
+                        "is_church"
+                      )
+                    ) {
                       object = {
                         ...object,
                         is_church: valueTwo.is_church,
@@ -500,19 +499,23 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
   // support: filter?.query: {"fields":[{"overall_status":["from_facebook"]}],"sort":"name","fields_to_return":["name","favorite","overall_status","seeker_path","milestones","assigned_to","groups","last_modified"]}
   // /dt-posts/v2/contacts?&fields%5B%5D=[object Object]&sort=name&fields_to_return%5B%5D=name&fields_to_return%5B%5D=favorite&fields_to_return%5B%5D=overall_status&fields_to_return%5B%5D=seeker_path&fields_to_return%5B%5D=milestones&fields_to_return%5B%5D=assigned_to&fields_to_return%5B%5D=groups&fields_to_return%5B%5D=last_modified
   const mapFilterOnQueryParams = (filter, userData) => {
-    let queryParams = '';
+    let queryParams = "";
     Object.keys(filter).forEach((key) => {
       let filterValue = filter[key];
       let filterValueType = Object.prototype.toString.call(filterValue);
       if (filterValueType === "[object Array]") {
         filterValue.forEach((value) => {
-          queryParams = `${queryParams}&${key}%5B%5D=${value === userData?.display_name ? "me" : value}`;
+          queryParams = `${queryParams}&${key}%5B%5D=${
+            value === userData?.display_name ? "me" : value
+          }`;
         });
       } else if (filterValueType === "[object Object]") {
         queryParams = mapFilterOnQueryParams(filterValue, null, userData);
       } else {
-        if (typeof filterValue === 'boolean' || filterValue?.length > 0) {
-          queryParams = `${queryParams}&${key}=${filterValue === userData?.display_name ? "me" : filterValue}`;
+        if (typeof filterValue === "boolean" || filterValue?.length > 0) {
+          queryParams = `${queryParams}&${key}=${
+            filterValue === userData?.display_name ? "me" : filterValue
+          }`;
         }
       }
     });
@@ -524,50 +527,54 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
   if (!type) type = postType;
   let url = `/dt-posts/v2/${type}/`;
 
-  let paramSeparator = '?';
-  if (url.includes('?')) paramSeparator = '&';
+  let paramSeparator = "?";
+  if (url.includes("?")) paramSeparator = "&";
 
   // NOTE: currently only searching offline
   //if (search) url += `${paramSeparator}text=${search}`;
 
-  if (url.includes('?')) paramSeparator = '&';
+  if (url.includes("?")) paramSeparator = "&";
 
   // NOTE: map filters to url params
   if (filter?.query && userData) {
-    url += `${paramSeparator}${ mapFilterOnQueryParams(filter?.query, userData) }`;
+    url += `${paramSeparator}${mapFilterOnQueryParams(
+      filter?.query,
+      userData
+    )}`;
   } else if (!type) {
     url += `${paramSeparator}dt_recent=true`;
   } else;
 
-  if (url.includes('?')) paramSeparator = '&';
+  if (url.includes("?")) paramSeparator = "&";
 
   /*
-  * NOTE: we set a silly upper limit in order to aggressively fetch ALL posts,
-  * so that we have them available in the cache for offline usage
-  */
+   * NOTE: we set a silly upper limit in order to aggressively fetch ALL posts,
+   * so that we have them available in the cache for offline usage
+   */
   if (!limit) limit = 1000000;
   if (!url.includes("limit")) url += `${paramSeparator}limit=${limit}`;
 
-  if (url.includes('?')) paramSeparator = '&';
+  if (url.includes("?")) paramSeparator = "&";
 
   const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
-  if (error || isLoading || !data?.posts) return {
-    data: null,
-    error,
-    isLoading,
-    isValidating,
-    mutate
-  };
+  if (error || isLoading || !data?.posts)
+    return {
+      data: null,
+      error,
+      isLoading,
+      isValidating,
+      mutate,
+    };
   // filter any items marked to be excluded
-  let filtered = data.posts.filter(item => !exclude?.includes(item?.ID));
+  let filtered = data.posts.filter((item) => !exclude?.includes(item?.ID));
   // search
   if (search) {
     const searchOptions = {
       caseInsensitive: true,
-      include: ["post_title"]
+      include: ["post_title"],
     };
     filtered = searchObjList(filtered, search, searchOptions);
-  };
+  }
   const posts = mapPosts(filtered);
   return {
     data: posts,

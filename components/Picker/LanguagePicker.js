@@ -14,11 +14,13 @@ const LanguagePicker = () => {
   const { expand } = useBottomSheet();
   const showLanguageSheet = () => {
     expand({
-      renderHeader: () => <SheetHeader expandable dismissable title={i18n.t("global.language")} />,
+      renderHeader: () => (
+        <SheetHeader expandable dismissable title={i18n.t("global.language")} />
+      ),
       renderContent: () => <LanguageSheet />,
     });
   };
-  return(
+  return (
     <Picker
       icon={<TranslateIcon />}
       label={selectedEndonym}

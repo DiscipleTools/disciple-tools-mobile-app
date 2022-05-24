@@ -1,5 +1,4 @@
 const usePlugins = () => {
-
   // Mobile App Plugin
   const mobileAppPlugin = {
     enabled: true, // TODO
@@ -10,7 +9,7 @@ const usePlugins = () => {
   // TODO: 2FA Plugin
 
   return {
-    mobileAppPlugin
+    mobileAppPlugin,
   };
 };
 export default usePlugins;

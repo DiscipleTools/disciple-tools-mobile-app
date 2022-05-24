@@ -13,13 +13,12 @@ import useLocations from "hooks/use-locations";
 import { localStyles } from "./LocationsSheet.styles";
 
 const LocationsSheet = ({ id, title, values, onChange }) => {
-
   const { styles, globalStyles } = useStyles(localStyles);
   const { delayedClose } = useBottomSheet();
   const { search, onSearch } = useFilter();
 
   // exclude currently selected values from options list
-  const exclude = values?.values?.map(item => item?.grid_id);
+  const exclude = values?.values?.map((item) => item?.grid_id);
 
   const { data: items } = useLocations({ search, exclude });
   if (!items) return [];
@@ -33,7 +32,7 @@ const LocationsSheet = ({ id, title, values, onChange }) => {
 
   // MAP FROM API
   const mapFromAPI = (items) => {
-    return items?.map(item => {
+    return items?.map((item) => {
       return {
         key: item?.ID,
         label: item?.name,
@@ -44,30 +43,29 @@ const LocationsSheet = ({ id, title, values, onChange }) => {
   const _onChange = (selectedItem) => {
     const mappedValues = mapToAPI(selectedItem);
     if (JSON.stringify(mappedValues) !== JSON.stringify(values)) {
-      onChange(
-        { values: mappedValues },
-        { autosave: true }
-      );
-    };
+      onChange({ values: mappedValues }, { autosave: true });
+    }
     delayedClose();
   };
 
   const _renderItem = ({ item }) => {
     const { key, label, icon, selected } = item;
-    return(
+    return (
       <Pressable onPress={() => _onChange(item)}>
         <View key={key} style={styles.itemContainer}>
-            {icon && (
-              <View style={globalStyles.rowIcon}>
-                <MaterialCommunityIcon
-                  name={icon?.name}
-                  style={[globalStyles.icon, icon?.style ? icon?.style : {}]} 
-                />
-              </View>
-            )}
-          <View style={{
-            marginEnd: "auto",
-          }}>
+          {icon && (
+            <View style={globalStyles.rowIcon}>
+              <MaterialCommunityIcon
+                name={icon?.name}
+                style={[globalStyles.icon, icon?.style ? icon?.style : {}]}
+              />
+            </View>
+          )}
+          <View
+            style={{
+              marginEnd: "auto",
+            }}
+          >
             <Text>{label}</Text>
           </View>
           {selected && (
@@ -84,13 +82,9 @@ const LocationsSheet = ({ id, title, values, onChange }) => {
   //const sections = useMemo(() => [{ data: mapFromAPI(items) }], [items, values]);
   const mappedItems = mapFromAPI(items);
 
-  return(
+  return (
     <>
-      <SheetHeader
-        expandable
-        dismissable
-        title={title}
-      />
+      <SheetHeader expandable dismissable title={title} />
       <FilterList
         items={mappedItems}
         renderItem={_renderItem}

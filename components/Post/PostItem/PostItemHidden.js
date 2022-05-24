@@ -6,7 +6,6 @@ import React from "react";
 //import { localStyles } from "./PostItemHidden.styles";
 
 const PostItemHidden = ({ item, loading }) => {
-
   //const navigation = useNavigation();
   //const { styles } = useStyles(localStyles);
 

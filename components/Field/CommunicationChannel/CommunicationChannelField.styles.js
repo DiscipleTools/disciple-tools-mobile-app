@@ -1,4 +1,4 @@
-import Constants from 'constants';
+import Constants from "constants";
 
 // TODO: refactor to use global styles
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
@@ -22,10 +22,10 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     paddingHorizontal: 10,
   },
   controlIcons: {
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   removeIcon: {
     flex: 1,
-    justifyContent: "center"
+    justifyContent: "center",
   },
 });

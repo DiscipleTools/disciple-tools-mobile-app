@@ -8,12 +8,10 @@ import { styles } from "./PluginRequired.styles";
 const PluginRequired = ({ enabled, label, link }) => {
   const { i18n } = useI18N();
   if (enabled) return null;
-  return(
+  return (
     <Pressable onPress={() => Linking.openURL(link)}>
       <View style={styles.pluginAlert}>
-        <Text>
-          {i18n.t("global.error.mobileAppPluginRequired")}
-        </Text>
+        <Text>{i18n.t("global.error.mobileAppPluginRequired")}</Text>
       </View>
     </Pressable>
   );

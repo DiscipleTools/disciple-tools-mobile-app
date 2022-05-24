@@ -1,22 +1,11 @@
 import React, { createRef, useEffect, useLayoutEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  View,
-  Text,
-  Pressable,
-} from "react-native";
+import { ActivityIndicator, Image, View, Text, Pressable } from "react-native";
 
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import ParsedText from "react-native-parsed-text";
 //import MentionsTextInput from "react-native-mentions";
 
-import {
-  CopyIcon,
-  DeleteIcon,
-  EditIcon,
-  SendIcon
-} from "components/Icon";
+import { CopyIcon, DeleteIcon, EditIcon, SendIcon } from "components/Icon";
 import { HeaderRight } from "components/Header/Header";
 import CustomBottomSheet from "components/Sheet/CustomBottomSheet";
 import FilterList from "components/FilterList";
@@ -49,8 +38,12 @@ const CommentsActivityConstants = Object.freeze({
   EDIT: "edit",
 });
 
-const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => {
-
+const CommentsActivityScreen = ({
+  navigation,
+  route,
+  headerHeight,
+  insets,
+}) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, isRTL, moment } = useI18N();
   const { setClipboard } = useApp();
@@ -96,7 +89,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
     ];
     navigation.setOptions({
       title: route?.params?.name,
-      headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />
+      headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />,
     });
     return;
   });
@@ -109,7 +102,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
   const parseDate = (item) => {
     if (item?.comment_date) return parseDateSafe(item.comment_date);
     if (item?.hist_time) return parseDateSafe(item.hist_time);
-    return '';
+    return "";
   };
 
   const CommentsActivityItem = ({ item, loading }) => {
@@ -135,7 +128,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
         } catch (error) {
           toast(error, true);
         }
-      };
+      }
     };
 
     const generateOptions = () => {
@@ -161,7 +154,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
           label: i18n.t("global.delete"),
           icon: <DeleteIcon />,
         });
-      };
+      }
       return sections;
     };
 
@@ -177,21 +170,16 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
       const sections = generateOptions();
       expand({
         // TODO: constants?
-        snapPoints: userIsAuthor ? [OFFSET_Y+200,"95%"] : [OFFSET_Y+100,"95%"],
+        snapPoints: userIsAuthor
+          ? [OFFSET_Y + 200, "95%"]
+          : [OFFSET_Y + 100, "95%"],
         defaultIndex: 0,
         renderHeader: () => (
-          <SheetHeader
-            expandable
-            dismissable
-            title={title}
-          />
+          <SheetHeader expandable dismissable title={title} />
         ),
         renderContent: () => (
-          <SelectSheet
-            sections={sections}
-            onChange={onChange}
-          />
-        )
+          <SelectSheet sections={sections} onChange={onChange} />
+        ),
       });
     };
 
@@ -293,7 +281,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
           const res = await createComment(comment);
           if (res) {
             setComment("");
-          };
+          }
         } catch (error) {
           toast(error, true);
         } finally {
@@ -313,15 +301,13 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
                 setLoading(true);
                 setTimeout(() => onSave(comment), 1000);
               }}
-              style={styles.sendIcon} 
+              style={styles.sendIcon}
             />
           ) : (
             <ActivityIndicator
               size="small"
               color={globalStyles.activityIndicator.color}
-              style={[
-                styles.activityIndicator,
-              ]}
+              style={[styles.activityIndicator]}
             />
           )}
         </View>
@@ -347,8 +333,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
     />
   );
 
-
-  return(
+  return (
     <>
       <FilterList
         display
@@ -368,7 +353,7 @@ const CommentsActivityScreen = ({ navigation, route, headerHeight, insets }) => 
         modal={false}
         dismissable={false}
         // TODO: dynamic based on Keyboard height?
-        snapPoints={[OFFSET_Y,"100%"]}
+        snapPoints={[OFFSET_Y, "100%"]}
         defaultIndex={0}
       >
         <CommentInput />

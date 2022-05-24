@@ -5,4 +5,4 @@ export function persistCache(cache) {
     type: PERSIST_CACHE,
     cache,
   };
-};
+}

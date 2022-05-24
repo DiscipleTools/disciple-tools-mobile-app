@@ -15,30 +15,37 @@ const useUsers = ({ search, filter, exclude } = {}) => {
   let url = "dt/v1/users/get_users?get_all=1";
   // NOTE: see local search implementation below
   //if (search) url += `&s=${search}`;
-  const { data: users, error, isLoading, isValidating, mutate } = useRequest({ url });
-  if (error || isLoading || !users) return {
-    data: null,
+  const {
+    data: users,
     error,
     isLoading,
     isValidating,
-    mutate
-  };
+    mutate,
+  } = useRequest({ url });
+  if (error || isLoading || !users)
+    return {
+      data: null,
+      error,
+      isLoading,
+      isValidating,
+      mutate,
+    };
   // filter any items marked to be excluded
-  let filtered = users.filter(item => !exclude?.includes(item?.ID));
+  let filtered = users.filter((item) => !exclude?.includes(item?.ID));
   // search
   if (search) {
     const searchOptions = {
       caseInsensitive: true,
-      include: ["name"]
+      include: ["name"],
     };
     filtered = searchObjList(filtered, search, searchOptions);
-  };
+  }
   return {
     data: filtered,
     error,
     isLoading,
     isValidating,
-    mutate
+    mutate,
   };
 };
 export default useUsers;

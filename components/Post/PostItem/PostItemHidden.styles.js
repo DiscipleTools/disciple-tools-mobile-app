@@ -57,5 +57,5 @@ export const localStyles = ({ theme, isRTL }) => ({
   },
   btn3: {
     start: isRTL ? 0 : Constants.SWIPE_BTN_WIDTH,
-  }
+  },
 });

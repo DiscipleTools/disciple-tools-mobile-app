@@ -10,21 +10,22 @@ const useComments = ({ search, filter, exclude }) => {
   const id = RootNavigation.getId();
   const url = isPost ? `/dt-posts/v2/${postType}/${id}/comments` : null;
   const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
-  if (error || isLoading || !data?.comments) return {
-    data: [],
-    error,
-    isLoading,
-    isValidating,
-    mutate
-  };
-  let filtered = data.comments?.filter(item => !exclude?.includes(item?.ID));
+  if (error || isLoading || !data?.comments)
+    return {
+      data: [],
+      error,
+      isLoading,
+      isValidating,
+      mutate,
+    };
+  let filtered = data.comments?.filter((item) => !exclude?.includes(item?.ID));
   if (search) filtered = searchObjList(filtered, search);
   return {
     data: filtered,
     error: null,
     isLoading: null,
     isValidating: null,
-    mutate
+    mutate,
   };
 };
 export default useComments;

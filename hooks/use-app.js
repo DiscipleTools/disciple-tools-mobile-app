@@ -8,10 +8,9 @@ import * as SplashScreen from "expo-splash-screen";
 import useToast from "hooks/use-toast";
 
 const useApp = () => {
-
   useEffect(() => {
-    LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
-  }, [])
+    LogBox.ignoreLogs(["Animated: `useNativeDriver`"]);
+  }, []);
   // Ignore YellowBox warnings in DEV
   LogBox.ignoreAllLogs();
 
@@ -41,7 +40,7 @@ const useApp = () => {
   return {
     version,
     draftNewSupportEmail,
-    setClipboard
+    setClipboard,
   };
 };
 export default useApp;

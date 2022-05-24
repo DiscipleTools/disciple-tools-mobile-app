@@ -19,16 +19,11 @@ import {
   baptizeIcon,
 } from "constants/icons";
 
-import {
-  ScreenConstants,
-  TabScreenConstants,
-  TypeConstants
-} from "constants";
+import { ScreenConstants, TabScreenConstants, TypeConstants } from "constants";
 
 import { localStyles } from "./ConnectionField.styles";
 
 const ConnectionField = ({ editing, field, value, onChange }) => {
-
   const { styles, globalStyles } = useStyles(localStyles);
   const { expand } = useBottomSheet();
   const { isPost, getPostTypeByField } = useType();
@@ -37,30 +32,38 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
   const values = value?.values || [];
 
   const onRemove = (id) => {
-    onChange(
-      { values: [{ value: id, delete: true }]},
-      { autosave: true }
-    );
+    onChange({ values: [{ value: id, delete: true }] }, { autosave: true });
   };
 
-  const renderItemEdit = (item) => <PostChip id={item?.value} title={item?.name} type={getPostTypeByField(field)} onRemove={onRemove} />;
-  const renderItemView = (item) => <PostChip id={item?.value} title={item?.name} type={getPostTypeByField(field)} />;
-  const renderItemLinkless = (item) => <PostChip id={item?.value} title={item?.name} onRemove={onRemove} />;
+  const renderItemEdit = (item) => (
+    <PostChip
+      id={item?.value}
+      title={item?.name}
+      type={getPostTypeByField(field)}
+      onRemove={onRemove}
+    />
+  );
+  const renderItemView = (item) => (
+    <PostChip
+      id={item?.value}
+      title={item?.name}
+      type={getPostTypeByField(field)}
+    />
+  );
+  const renderItemLinkless = (item) => (
+    <PostChip id={item?.value} title={item?.name} onRemove={onRemove} />
+  );
 
   const PostEdit = ({ linkless }) => {
     const route = useRoute();
     const type = getPostTypeByField(field);
-    return(
+    return (
       <Select
         onOpen={() => {
           expand({
             defaultIndex: 3,
             renderHeader: () => (
-              <SheetHeader
-                expandable
-                dismissable
-                title={field?.label || ''}
-              />
+              <SheetHeader expandable dismissable title={field?.label || ""} />
             ),
             renderContent: () => (
               <ConnectionSheet
@@ -69,7 +72,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
                 values={values}
                 onChange={onChange}
               />
-            )
+            ),
           });
         }}
         items={values}
@@ -88,9 +91,13 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
           {values?.map((group, index) => {
             const id = group?.value;
             const title = group?.name;
-            const isChurch = group?.is_church; 
-            const baptizedMemberCount = group?.baptized_member_count?.length > 0 ? group.baptized_member_count : '0';
-            const memberCount = group?.member_count?.length > 0 ? group.member_count : '0';
+            const isChurch = group?.is_church;
+            const baptizedMemberCount =
+              group?.baptized_member_count?.length > 0
+                ? group.baptized_member_count
+                : "0";
+            const memberCount =
+              group?.member_count?.length > 0 ? group.member_count : "0";
             // TODO: constant?
             const type = "groups";
             return (
@@ -98,7 +105,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
                 key={index.toString()}
                 style={[
                   globalStyles.columnContainer,
-                  styles.groupCircleContainer
+                  styles.groupCircleContainer,
                 ]}
                 onPress={() => {
                   navigation.jumpTo(TabScreenConstants.GROUPS, {
@@ -110,28 +117,28 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
                   });
                 }}
               >
-                { isChurch ? (
-                  <Image
-                    source={groupCircleIcon}
-                    style={styles.groupCircle}
-                  />
+                {isChurch ? (
+                  <Image source={groupCircleIcon} style={styles.groupCircle} />
                 ) : (
                   <Image
                     source={groupDottedCircleIcon}
                     style={styles.groupCircle}
                   />
                 )}
-                <Image
-                  source={baptizeIcon}
-                  style={styles.groupCenterIcon}
-                />
-                <View style={[globalStyles.rowContainer, styles.groupCircleName]}>
+                <Image source={baptizeIcon} style={styles.groupCenterIcon} />
+                <View
+                  style={[globalStyles.rowContainer, styles.groupCircleName]}
+                >
                   <Text style={styles.groupCircleNameText}>{group.name}</Text>
                 </View>
-                <View style={[globalStyles.rowContainer, styles.groupCircleCounter]}>
+                <View
+                  style={[globalStyles.rowContainer, styles.groupCircleCounter]}
+                >
                   <Text>{baptizedMemberCount}</Text>
                 </View>
-                <View style={[globalStyles.rowContainer, styles.groupCircleCounter]}>
+                <View
+                  style={[globalStyles.rowContainer, styles.groupCircleCounter]}
+                >
                   <Text>{memberCount}</Text>
                 </View>
               </Pressable>
@@ -142,12 +149,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
     );
   };
 
-  const PostView = () => (
-    <Select
-      items={values}
-      renderItem={renderItemView}
-    />
-  );
+  const PostView = () => <Select items={values} renderItem={renderItemView} />;
 
   const ConnectionFieldEdit = () => {
     const postType = getPostTypeByField(field);
@@ -160,7 +162,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
     const postType = getPostTypeByField(field);
     if (postType === TypeConstants.GROUP) return <GroupView />;
     if (isPost) return <PostView />;
-    return null; 
+    return null;
   };
 
   if (editing) return <ConnectionFieldEdit />;

@@ -40,16 +40,16 @@ const useDetails = ({ id, type } = {}) => {
             } else if (dateRegex.test(value)) {
               // Date (post_date)
               var match = value.match(
-              /^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/
-            );
+                /^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/
+              );
               var date = new Date(
-              match[1],
-              match[2] - 1,
-              match[3],
-              match[4],
-              match[5],
-              match[6]
-            );
+                match[1],
+                match[2] - 1,
+                match[3],
+                match[4],
+                match[5],
+                match[6]
+              );
               mappedContact[key] = (date.getTime() / 1000).toString();
             } else {
               //TODO
@@ -66,8 +66,8 @@ const useDetails = ({ id, type } = {}) => {
               // key_select
               mappedContact[key] = value.key;
             } else if (
-            Object.prototype.hasOwnProperty.call(value, "timestamp")
-          ) {
+              Object.prototype.hasOwnProperty.call(value, "timestamp")
+            ) {
               // date
               mappedContact[key] = value.timestamp;
             } else if (key === "assigned_to") {
@@ -85,8 +85,8 @@ const useDetails = ({ id, type } = {}) => {
               switch (valueTwoType) {
                 case "[object Object]": {
                   if (
-                Object.prototype.hasOwnProperty.call(valueTwo, "post_title")
-              ) {
+                    Object.prototype.hasOwnProperty.call(valueTwo, "post_title")
+                  ) {
                     // connection
                     return {
                       value: valueTwo.ID.toString(),
@@ -175,16 +175,16 @@ const useDetails = ({ id, type } = {}) => {
             } else if (dateRegex.test(value)) {
               // Date (post_date)
               var match = value.match(
-              /^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/
-            );
+                /^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/
+              );
               var date = new Date(
-              match[1],
-              match[2] - 1,
-              match[3],
-              match[4],
-              match[5],
-              match[6]
-            );
+                match[1],
+                match[2] - 1,
+                match[3],
+                match[4],
+                match[5],
+                match[6]
+              );
               mappedGroup[key] = (date.getTime() / 1000).toString();
             } else {
               // TODO
@@ -201,8 +201,8 @@ const useDetails = ({ id, type } = {}) => {
               // key_select
               mappedGroup[key] = value.key;
             } else if (
-            Object.prototype.hasOwnProperty.call(value, "timestamp")
-          ) {
+              Object.prototype.hasOwnProperty.call(value, "timestamp")
+            ) {
               // date
               mappedGroup[key] = value.timestamp;
             } else if (key === "assigned_to") {
@@ -220,8 +220,8 @@ const useDetails = ({ id, type } = {}) => {
               switch (valueTwoType) {
                 case "[object Object]": {
                   if (
-                Object.prototype.hasOwnProperty.call(valueTwo, "post_title")
-              ) {
+                    Object.prototype.hasOwnProperty.call(valueTwo, "post_title")
+                  ) {
                     // connection
                     let object = {
                       value: valueTwo.ID.toString(),
@@ -230,33 +230,33 @@ const useDetails = ({ id, type } = {}) => {
                     };
                     // groups
                     if (
-                  Object.prototype.hasOwnProperty.call(
-                    valueTwo,
-                    "baptized_member_count"
-                  )
-                ) {
+                      Object.prototype.hasOwnProperty.call(
+                        valueTwo,
+                        "baptized_member_count"
+                      )
+                    ) {
                       object = {
                         ...object,
                         baptized_member_count: valueTwo.baptized_member_count,
                       };
                     }
                     if (
-                  Object.prototype.hasOwnProperty.call(
-                    valueTwo,
-                    "member_count"
-                  )
-                ) {
+                      Object.prototype.hasOwnProperty.call(
+                        valueTwo,
+                        "member_count"
+                      )
+                    ) {
                       object = {
                         ...object,
                         member_count: valueTwo.member_count,
                       };
                     }
                     if (
-                  Object.prototype.hasOwnProperty.call(
-                    valueTwo,
-                    "is_church"
-                  )
-                ) {
+                      Object.prototype.hasOwnProperty.call(
+                        valueTwo,
+                        "is_church"
+                      )
+                    ) {
                       object = {
                         ...object,
                         is_church: valueTwo.is_church,
@@ -339,7 +339,7 @@ const useDetails = ({ id, type } = {}) => {
     isValidating,
     mutate,
     postId,
-    postType
+    postType,
   };
 };
 export default useDetails;

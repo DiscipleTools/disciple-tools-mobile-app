@@ -14,19 +14,17 @@ import { FieldNames } from "constants";
 import { localStyles } from "./KeySelectField.styles";
 
 const KeySelectField = ({ editing, field, value, onChange }) => {
-
   const { styles, globalStyles } = useStyles(localStyles);
   const { expand, getDefaultIndex } = useBottomSheet();
 
   // ITEMS
   const items = field?.default;
 
-  // SELECTED 
-  const selectedLabel = items[value]?.label ?? ''; 
+  // SELECTED
+  const selectedLabel = items[value]?.label ?? "";
 
   // EDIT MODE
   const KeySelectFieldEdit = () => {
-
     // MAP TO API
     const mapToAPI = (item) => {
       return item?.key;
@@ -39,14 +37,15 @@ const KeySelectField = ({ editing, field, value, onChange }) => {
         onChange(mappedValue, {
           autosave: true,
         });
-      };
+      }
     };
 
     const isStatusField = () => {
       if (
         field?.name === FieldNames.OVERALL_STATUS ||
         field?.name === FieldNames.GROUP_STATUS
-      ) return true;
+      )
+        return true;
       return false;
     };
 
@@ -59,27 +58,23 @@ const KeySelectField = ({ editing, field, value, onChange }) => {
     // MAP ITEMS
     const mapItems = (items) => {
       const keys = Object.keys(items);
-      return keys.map(key => {
+      return keys.map((key) => {
         return {
           key,
           label: items[key]?.label,
           icon: mapIcon(key),
-          selected: value === key, 
+          selected: value === key,
         };
       });
     };
 
-    // SECTIONS 
+    // SECTIONS
     const sections = [{ data: mapItems(items) }];
 
     const title = field?.label;
 
     const KeySelectSheet = () => (
-      <SelectSheet
-        required
-        sections={sections}
-        onChange={_onChange}
-      />
+      <SelectSheet required sections={sections} onChange={_onChange} />
     );
 
     const getBackgroundColor = () => {
@@ -95,19 +90,15 @@ const KeySelectField = ({ editing, field, value, onChange }) => {
     );
 
     // TODO: items[value]?.description (for when "Not Ready")
-    return(
+    return (
       <Select
         onOpen={() => {
           expand({
             defaultIndex: getDefaultIndex({ items: sections?.[0]?.data }),
             renderHeader: () => (
-              <SheetHeader
-                expandable
-                dismissable
-                title={title}
-              />
+              <SheetHeader expandable dismissable title={title} />
             ),
-            renderContent: () => <KeySelectSheet />
+            renderContent: () => <KeySelectSheet />,
           });
         }}
         items={[selectedLabel]}

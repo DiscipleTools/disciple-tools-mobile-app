@@ -1,14 +1,14 @@
 import { useEffect, useMemo } from "react";
 import { Alert, I18nManager } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import moment from 'moment/min/moment-with-locales';
+import moment from "moment/min/moment-with-locales";
 
 import useMyUser from "hooks/use-my-user";
 
 import { setLocale } from "store/actions/i18n.actions";
 
 import * as Localization from "expo-localization";
-import * as Updates from 'expo-updates';
+import * as Updates from "expo-updates";
 
 //import axios from "services/axios";
 
@@ -135,12 +135,11 @@ const RTL_LANGS = [
 const DEFAULT_LOCALE = "en_US";
 
 const useI18N = () => {
-
   const dispatch = useDispatch();
   const locale = useSelector((state) => state.i18nReducer?.locale);
   const { data: userData } = useMyUser();
 
-  const getCountryCode = (locale) => locale?.substring(0,2);
+  const getCountryCode = (locale) => locale?.substring(0, 2);
 
   const _isRTL = (_locale) => {
     // if param is undefined, then default to use existing/persisted locale
@@ -153,17 +152,15 @@ const useI18N = () => {
   const isRTL = _isRTL();
 
   const mapLocaleToMomentLocale = (locale) => {
-    const special = [
-      "pt_BR",
-    ];
+    const special = ["pt_BR"];
     if (special.includes(locale)) {
-      switch(locale) {
+      switch (locale) {
         case "pt_BR":
           return "pt-br";
         default:
           return "en";
-      };
-    };
+      }
+    }
     return locale?.split("_")?.[0];
   };
 
@@ -174,7 +171,7 @@ const useI18N = () => {
     if (locale !== i18n?.locale) {
       i18n.locale = locale;
       moment.locale(mapLocaleToMomentLocale(locale));
-    };
+    }
   }, [locale]);
 
   // NOTE: detect API language change and update app locale
@@ -197,38 +194,39 @@ const useI18N = () => {
       if (isRTL !== I18nManager?.isRTL) {
         I18nManager.allowRTL(isRTL);
         I18nManager.forceRTL(isRTL);
-        Alert.alert(
-          i18n.t("global.alert"),
-          i18n.t("global.appRestart"),
-          [
-            {
-              text: "OK",
-              onPress: () => reloadApp()
-            }
-          ]
-        );
-      };
-    };
+        Alert.alert(i18n.t("global.alert"), i18n.t("global.appRestart"), [
+          {
+            text: "OK",
+            onPress: () => reloadApp(),
+          },
+        ]);
+      }
+    }
   };
 
   const numberFormat = (numberValue) => {
     try {
-      return new Intl.NumberFormat(locale?.replace('_','-')).format(numberValue);
+      return new Intl.NumberFormat(locale?.replace("_", "-")).format(
+        numberValue
+      );
     } catch (ee) {
       return numberValue;
-    };
+    }
   };
 
-  const selectedEndonym = i18n?.translations[locale]?.endonym ?? ''; 
+  const selectedEndonym = i18n?.translations[locale]?.endonym ?? "";
 
-  return useMemo(() => ({
-    i18n,
-    isRTL,
-    locale,
-    setLocale: _setLocale,
-    selectedEndonym,
-    moment,
-    numberFormat
-  }), [isRTL, locale, selectedEndonym]);
+  return useMemo(
+    () => ({
+      i18n,
+      isRTL,
+      locale,
+      setLocale: _setLocale,
+      selectedEndonym,
+      moment,
+      numberFormat,
+    }),
+    [isRTL, locale, selectedEndonym]
+  );
 };
 export default useI18N;

@@ -10,25 +10,26 @@ const Sort = ({ items, setItems, filter, onFilter }) => {
   const { globalStyles } = useStyles();
   const { expand, collapse, snapPoints } = useBottomSheet();
 
-  const sortSheetContent = useMemo(() => (
-    <SortSheet
-      items={items}
-      setItems={setItems}
-      filter={filter}
-      onFilter={onFilter}
-    />
-  ), [items, filter]);
-
-  const showSort = (show) => show ? expand({
-    defaultIndex: 2,
-    renderContent: () => sortSheetContent
-  }) : collapse();
-
-  return(
-    <SortIcon
-      style={globalStyles.icon}
-      onPress={() => showSort(true)}
-    />
+  const sortSheetContent = useMemo(
+    () => (
+      <SortSheet
+        items={items}
+        setItems={setItems}
+        filter={filter}
+        onFilter={onFilter}
+      />
+    ),
+    [items, filter]
   );
+
+  const showSort = (show) =>
+    show
+      ? expand({
+          defaultIndex: 2,
+          renderContent: () => sortSheetContent,
+        })
+      : collapse();
+
+  return <SortIcon style={globalStyles.icon} onPress={() => showSort(true)} />;
 };
 export default Sort;

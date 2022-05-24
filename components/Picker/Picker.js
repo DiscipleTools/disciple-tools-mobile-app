@@ -9,22 +9,11 @@ import { localStyles } from "./Picker.styles";
 
 const Picker = ({ onOpen, icon, label, style, optionStyle }) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  return(
+  return (
     <Pressable onPress={onOpen}>
-      <View style={[
-        globalStyles.rowContainer,
-        styles.container,
-        style
-      ]}>
-        <View style={[
-          globalStyles.icon,
-          optionStyle
-        ]}>
-          {icon}
-        </View>
-        <View style={[
-          optionStyle
-        ]}>
+      <View style={[globalStyles.rowContainer, styles.container, style]}>
+        <View style={[globalStyles.icon, optionStyle]}>{icon}</View>
+        <View style={[optionStyle]}>
           <Text>{label}</Text>
         </View>
         <CaretIcon />

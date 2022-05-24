@@ -15,16 +15,24 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     marginEnd: 3,
     paddingStart: 5,
     paddingEnd: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   }),
   optionText: (selected) => ({
-    color: selected ? (ThemeConstants.DARK === theme.mode ? theme.text.primary : theme.text.inverse ) : theme.text.secondary,
+    color: selected
+      ? ThemeConstants.DARK === theme.mode
+        ? theme.text.primary
+        : theme.text.inverse
+      : theme.text.secondary,
     fontWeight: selected ? "bold" : null,
     paddingHorizontal: 2,
   }),
   optionCaret: (selected) => ({
-    color: selected ? (ThemeConstants.DARK === theme.mode ? theme.text.primary : theme.text.inverse ) : theme.text.secondary,
+    color: selected
+      ? ThemeConstants.DARK === theme.mode
+        ? theme.text.primary
+        : theme.text.inverse
+      : theme.text.secondary,
     fontSize: 20,
   }),
   optionCount: (selected) => ({
@@ -35,7 +43,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   }),
   optionCountText: (selected) => ({
     color: selected ? theme.primaryBrand : theme.text.primary,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     padding: 1,
   }),
   optionCountIcon: (selected) => ({

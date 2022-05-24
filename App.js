@@ -11,7 +11,7 @@ import { SWRConfig } from "swr";
 import Toast from "react-native-toast-message";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import { AuthProvider } from "hooks/use-auth";
 import useApp from "hooks/use-app";
@@ -19,11 +19,10 @@ import useStyles from "hooks/use-styles";
 
 import { AppConstants } from "constants";
 
-import { enableScreens } from 'react-native-screens';
+import { enableScreens } from "react-native-screens";
 enableScreens();
 
 const App = () => {
-
   // Initialize the app
   useApp();
 
@@ -60,7 +59,7 @@ const App = () => {
           </GestureHandlerRootView>
         </PersistGate>
       </Provider>
-      <Toast/>
+      <Toast />
     </>
   );
 };

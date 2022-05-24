@@ -17,10 +17,7 @@ const useAPI = () => {
   // USER
   // https://developers.disciple.tools/theme-core/api-other/users
 
-  const updateUser = async ({
-    add_push_token,
-    locale
-  }) => {
+  const updateUser = async ({ add_push_token, locale }) => {
     const url = "/dt/v1/user/update";
     let data = {};
     if (add_push_token) data["add_push_token"] = add_push_token;
@@ -99,32 +96,42 @@ const useAPI = () => {
     date = null,
     commentType = "comment"
   ) => {
-    const url = postType && postId ? `/dt-posts/v2/${postType}/${postId}/comments` : null;
+    const url =
+      postType && postId ? `/dt-posts/v2/${postType}/${postId}/comments` : null;
     const data = {
       comment,
       comment_type: commentType,
     };
     if (date) data["date"] = date;
     //
-    const localData = { comments: [{
-      "comment_ID": "-1",
-      "comment_content": comment,
-      "comment_date": formatDateAPI(new Date()),
-      "comment_type": "comment",
-    }]};
+    const localData = {
+      comments: [
+        {
+          comment_ID: "-1",
+          comment_content: comment,
+          comment_date: formatDateAPI(new Date()),
+          comment_type: "comment",
+        },
+      ],
+    };
     const key = url;
     const localCachedData = cache.get(key);
-    if (localCachedData?.comments?.length > 0) localData.comments.push(...localCachedData.comments);
-    return request({
-      url,
-      method: HTTP.METHODS.POST,
-      headers: HTTP.HEADERS.DEFAULT,
-      data
-    }, { localData });
+    if (localCachedData?.comments?.length > 0)
+      localData.comments.push(...localCachedData.comments);
+    return request(
+      {
+        url,
+        method: HTTP.METHODS.POST,
+        headers: HTTP.HEADERS.DEFAULT,
+        data,
+      },
+      { localData }
+    );
   };
 
   const updateComment = async (commentId, comment) => {
-    const url = postType && postId && commentId
+    const url =
+      postType && postId && commentId
         ? `/dt-posts/v2/${postType}/${postId}/comments/${commentId}`
         : null;
     return request({
@@ -136,7 +143,8 @@ const useAPI = () => {
   };
 
   const deleteComment = async (commentId) => {
-    const url = postType && postId && commentId
+    const url =
+      postType && postId && commentId
         ? `/dt-posts/v2/${postType}/${postId}/comments/${commentId}`
         : null;
     return request({

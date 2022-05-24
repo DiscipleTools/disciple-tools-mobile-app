@@ -90,7 +90,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
     height: "100%",
   },
   screenGutter: {
-    paddingBottom: 100
+    paddingBottom: 100,
   },
   rowContainer: {
     // NOTE: now handled automatically by I18nManager.isRTL

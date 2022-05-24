@@ -13,8 +13,7 @@ import { localStyles } from "./NumberField.styles";
 
 // TODO: most of this can be reused with TextField
 // only the TextInput prop 'keyboardType="numeric" is different
-const NumberField = ({ grouped=false, editing, field, value, onChange }) => {
-
+const NumberField = ({ grouped = false, editing, field, value, onChange }) => {
   const { styles, globalStyles } = useStyles(localStyles);
 
   const [showSave, setShowSave] = useState(false);
@@ -29,9 +28,9 @@ const NumberField = ({ grouped=false, editing, field, value, onChange }) => {
       if (grouped || isSliderField) {
         onChange(debouncedValue);
         return;
-      };
+      }
       setShowSave(true);
-    };
+    }
     return;
   }, [debouncedValue]);
 
@@ -44,9 +43,9 @@ const NumberField = ({ grouped=false, editing, field, value, onChange }) => {
     if (_value !== value) {
       onChange(_value, {
         autosave: true,
-        automutate: true
+        automutate: true,
       });
-    };
+    }
   };
 
   const renderNumberFieldEdit = () => (
@@ -54,11 +53,11 @@ const NumberField = ({ grouped=false, editing, field, value, onChange }) => {
       <View style={globalStyles.rowContainer}>
         <TextInput
           keyboardType="numeric"
-          value={_value ? String(_value) : ''}
+          value={_value ? String(_value) : ""}
           onChangeText={_setValue}
           style={styles.input}
         />
-        { showSave && (
+        {showSave && (
           <View style={[globalStyles.rowContainer, styles.controlIcons]}>
             <CancelIcon onPress={() => _onClear()} />
             <SaveIcon onPress={() => _onChange()} />
@@ -78,15 +77,10 @@ const NumberField = ({ grouped=false, editing, field, value, onChange }) => {
 
   if (editing) {
     if (isSliderField) {
-      return(
-        <Slider
-          value={_value}
-          onValueChange={_setValue}
-        />
-      );
-    };
+      return <Slider value={_value} onValueChange={_setValue} />;
+    }
     return renderNumberFieldEdit();
-  };
+  }
   return renderNumberFieldView();
 };
 export default NumberField;

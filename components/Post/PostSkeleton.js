@@ -41,21 +41,15 @@ const PostSkeleton = () => {
         <Rect x="0" y="80" rx="2" ry="2" width={windowWidth} height="1" />
       </ContentLoader>
       {skeletons.map((fieldSkeleton, idx) => (
-        <View
-          key={idx}
-          style={{ marginVertical: 25, marginHorizontal: 5 }}
-        >
-          <FieldSkeleton
-            isRTL={isRTL}
-            windowWidth={windowWidth}
-          />
+        <View key={idx} style={{ marginVertical: 25, marginHorizontal: 5 }}>
+          <FieldSkeleton isRTL={isRTL} windowWidth={windowWidth} />
         </View>
       ))}
       <ContentLoader
         rtl={isRTL}
         speed={1}
         width={windowWidth}
-        height={windowHeight/3}
+        height={windowHeight / 3}
         viewBox={"0 " + "0 " + windowWidth + " 80"}
         backgroundColor={styles.skeletonBackground.backgroundColor}
         foregroundColor={styles.skeletonForeground.backgroundColor}

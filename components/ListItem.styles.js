@@ -12,9 +12,9 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     color: theme.text.primary,
   },
   start: {
-    paddingEnd: 10
+    paddingEnd: 10,
   },
   end: {
-    marginStart: "auto"
-  }
+    marginStart: "auto",
+  },
 });

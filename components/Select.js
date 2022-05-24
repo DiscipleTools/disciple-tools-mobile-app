@@ -9,25 +9,17 @@ import { localStyles } from "./Select.styles";
 
 const Select = ({ onOpen, items, renderItem, style, optionStyle }) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  return(
+  return (
     <Pressable
       onPress={onOpen}
-      style={[
-        globalStyles.rowContainer,
-        styles.container,
-        style
-      ]}
+      style={[globalStyles.rowContainer, styles.container, style]}
     >
-      <View style={[
-        globalStyles.rowContainer,
-        styles.optionContainer,
-        optionStyle
-      ]}>
+      <View
+        style={[globalStyles.rowContainer, styles.optionContainer, optionStyle]}
+      >
         {items?.map(renderItem)}
       </View>
-      { onOpen && (
-        <CaretIcon />
-      )}
+      {onOpen && <CaretIcon />}
     </Pressable>
   );
 };

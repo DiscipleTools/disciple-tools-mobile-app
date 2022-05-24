@@ -1,7 +1,6 @@
 import * as actions from "store/actions/user.actions";
 import { REHYDRATE } from "redux-persist/lib/constants";
 
-
 const userDataInitialState = {
   username: null,
   displayName: null,
@@ -46,7 +45,7 @@ export default function userReducer(state = initialState, action) {
         },
         filters: {
           ...newState?.filters,
-          [action?.key]: action?.filter
+          [action?.key]: action?.filter,
         },
       };
     case actions.SET_THEME:

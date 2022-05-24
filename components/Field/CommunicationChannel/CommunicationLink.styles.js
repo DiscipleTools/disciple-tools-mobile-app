@@ -1,4 +1,4 @@
-import Constants from 'constants';
+import Constants from "constants";
 
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: {

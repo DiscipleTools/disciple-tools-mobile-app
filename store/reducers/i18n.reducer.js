@@ -8,9 +8,9 @@ const initialState = {
 export default function i18nReducer(state = initialState, action) {
   switch (action?.type) {
     case CLEAR_REDUX_DATA:
-      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
       console.log("*** CLEAR_REDUX_DATA ***");
       return initialState;
     case actions.I18N_SET_LOCALE:

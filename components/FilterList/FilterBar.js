@@ -24,11 +24,14 @@ const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
   const { settings } = useSettings();
 
   // TODO: default to English in this way?
-  const lastModifiedDateLabel = settings?.fields?.last_modified?.name ?? "Last Modified Date";
+  const lastModifiedDateLabel =
+    settings?.fields?.last_modified?.name ?? "Last Modified Date";
   const createdDateLabel = settings?.fields?.post_date?.name ?? "Created Date";
 
   const Count = () => (
-    <Text style={[globalStyles.text, styles.count]}>{numberFormat(items?.length)}</Text>
+    <Text style={[globalStyles.text, styles.count]}>
+      {numberFormat(items?.length)}
+    </Text>
   );
 
   /*
@@ -45,7 +48,8 @@ const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
       defaultFilter?.query ||
       isNotification ||
       isCommentsActivity
-    ) return;
+    )
+      return;
     if (filter?.ID || defaultFilter?.ID) {
       if (!filters) return;
       const foundFilter = findFilterById(
@@ -59,17 +63,17 @@ const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
 
   const mapSortKey = (sortKey) => {
     if (SortConstants.LAST_MOD_DESC === sortKey) {
-      return `${ lastModifiedDateLabel } (${ i18n.t("global.newest") })`;
-    };
+      return `${lastModifiedDateLabel} (${i18n.t("global.newest")})`;
+    }
     if (SortConstants.LAST_MOD_ASC === sortKey) {
-      return `${ lastModifiedDateLabel } (${ i18n.t("global.oldest") })`;
-    };
+      return `${lastModifiedDateLabel} (${i18n.t("global.oldest")})`;
+    }
     if (SortConstants.CREATED_DESC === sortKey) {
-      return `${ createdDateLabel } (${ i18n.t("global.newest") })`;
-    };
+      return `${createdDateLabel} (${i18n.t("global.newest")})`;
+    }
     if (SortConstants.CREATED_ASC === sortKey) {
-      return `${ createdDateLabel } (${ i18n.t("global.oldest") })`;
-    };
+      return `${createdDateLabel} (${i18n.t("global.oldest")})`;
+    }
     return sortKey;
   };
 

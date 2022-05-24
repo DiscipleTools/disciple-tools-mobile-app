@@ -17,26 +17,38 @@ const useLocations = ({ search, filter, exclude } = {}) => {
   //if (filter && isConnected) url += `&filter=${filter}`;
   //if (search && isConnected) url += `&s=${search}`;
   let url = "dt-mobile-app/v1/locations";
-  let { data: locations, error, isLoading, isValidating, mutate } = useRequest({ url });
-  if (error || isLoading || !locations) return {
-    data: null,
+  let {
+    data: locations,
     error,
     isLoading,
     isValidating,
-    mutate
-  };
+    mutate,
+  } = useRequest({ url });
+  if (error || isLoading || !locations)
+    return {
+      data: null,
+      error,
+      isLoading,
+      isValidating,
+      mutate,
+    };
   // NOTE: when using the dt-mobile-app plugin, we map to values to match the D.T theme endpoint
   const mappedLocations = {};
-  mappedLocations["location_grid"] = Object.entries(locations?.location_grid).map(([ID, name]) => ({ ID, name }));
-  let filtered = mappedLocations?.location_grid?.filter(item => !exclude?.includes(item?.ID));
+  mappedLocations["location_grid"] = Object.entries(
+    locations?.location_grid
+  ).map(([ID, name]) => ({ ID, name }));
+  let filtered = mappedLocations?.location_grid?.filter(
+    (item) => !exclude?.includes(item?.ID)
+  );
   //if (filtered?.length > 0 && search && isConnected == false) filtered = searchObjList(filtered, search);
-  if (filtered?.length > 0 && search) filtered = searchObjList(filtered, search);
+  if (filtered?.length > 0 && search)
+    filtered = searchObjList(filtered, search);
   return {
     data: filtered,
     error,
     isLoading,
     isValidating,
-    mutate
+    mutate,
   };
 };
 export default useLocations;

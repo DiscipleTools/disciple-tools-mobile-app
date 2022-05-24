@@ -14,9 +14,7 @@ const OfflineBar = () => {
   if (isInitializing || isConnected) return null;
   return (
     <View style={styles.offlineBar}>
-      <Text style={styles.offlineBarText}>
-        {i18n.t("global.offline")}
-      </Text>
+      <Text style={styles.offlineBarText}>{i18n.t("global.offline")}</Text>
     </View>
   );
 };

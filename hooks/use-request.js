@@ -5,11 +5,12 @@ import useCache from "hooks/use-cache";
 import useNetwork from "hooks/use-network";
 
 // 'useRequest' is an abstraction to enable swap SWR for another library
-const useRequest = (request, options={}) => {
+const useRequest = (request, options = {}) => {
   const { cache, mutate } = useCache();
   const { isConnected } = useNetwork();
-  const key = request && request?.url && JSON.stringify(request) ? request.url : null;
-  const fetcher = request => axios(request).then(res => res.data);
+  const key =
+    request && request?.url && JSON.stringify(request) ? request.url : null;
+  const fetcher = (request) => axios(request).then((res) => res.data);
   if (!isConnected) {
     const localCachedData = cache.get(key);
     /*
@@ -28,7 +29,7 @@ const useRequest = (request, options={}) => {
       isValidating: false,
       mutate,
     };
-  };
+  }
   // TODO: isLoading has been deprecated (remove elsewhere in code)
   return useSWR(key, () => fetcher(request), options);
 };

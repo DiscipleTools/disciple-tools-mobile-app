@@ -7,13 +7,17 @@ const useAppState = ({ onAppForegroundCallback, onAppBackgroundCallback }) => {
   const appState = useRef(AppState.currentState);
 
   useEffect(() => {
-    const subscription = AppState.addEventListener("change", nextAppState => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
       if (
-        appState.current.match(new RegExp(`${AppStateConstants.INACTIVE}|${AppStateConstants.BACKGROUND}`)) &&
+        appState.current.match(
+          new RegExp(
+            `${AppStateConstants.INACTIVE}|${AppStateConstants.BACKGROUND}`
+          )
+        ) &&
         nextAppState === AppStateConstants.ACTIVE
       ) {
         if (onAppForegroundCallback) onAppForegroundCallback();
-      };
+      }
       if (
         appState.current.match(new RegExp(AppStateConstants.ACTIVE)) &&
         nextAppState !== AppStateConstants.ACTIVE
@@ -28,7 +32,7 @@ const useAppState = ({ onAppForegroundCallback, onAppBackgroundCallback }) => {
   }, []);
 
   return {
-    appState: appState?.current
+    appState: appState?.current,
   };
 };
 export default useAppState;

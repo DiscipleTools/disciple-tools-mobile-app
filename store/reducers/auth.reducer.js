@@ -17,42 +17,42 @@ export default function authReducer(state = initialState, action) {
     case REHYDRATE:
       return {
         ...state,
-        rehydrate: true 
+        rehydrate: true,
       };
     case actions.AUTH_TOGGLE_AUTO_LOGIN:
       return {
         ...state,
         isAutoLogin: !state.isAutoLogin,
-        rehydrate: false 
+        rehydrate: false,
       };
     case actions.AUTH_TOGGLE_REMEMBER_LOGIN_DETAILS:
       return {
         ...state,
         rememberLoginDetails: !state.rememberLoginDetails,
-        rehydrate: false 
+        rehydrate: false,
       };
     case actions.AUTH_TOGGLE_HAS_PIN:
       return {
         ...state,
         hasPIN: !state.hasPIN,
-        rehydrate: false 
+        rehydrate: false,
       };
     case actions.AUTH_SET_HAS_PIN:
       return {
         ...state,
         hasPIN: action?.hasPIN,
-        rehydrate: false 
+        rehydrate: false,
       };
     case actions.AUTH_SET_CNONCE_PIN:
       return {
         ...state,
         cnoncePIN: action?.cnoncePIN,
-        rehydrate: false 
+        rehydrate: false,
       };
     default:
       return {
         ...state,
-        rehydrate: false 
+        rehydrate: false,
       };
   }
 }

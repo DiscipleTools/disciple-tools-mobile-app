@@ -7,10 +7,10 @@ import { localStyles } from "./Slider.styles";
 
 const Slider = ({ value, onValueChange }) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  return(
+  return (
     <View style={styles.container}>
       <Text>SLIDER</Text>
     </View>
-  )
+  );
 };
 export default Slider;

@@ -22,7 +22,6 @@ import useStyles from "hooks/use-styles";
 import { localStyles } from "./ListScreen.styles";
 
 const ListScreen = ({ navigation, route }) => {
-
   const tabBarHeight = useBottomTabBarHeight();
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
@@ -41,7 +40,7 @@ const ListScreen = ({ navigation, route }) => {
 
   useLayoutEffect(() => {
     if (!settings?.label) return;
-    const title = settings?.label ? settings.label : '';
+    const title = settings?.label ? settings.label : "";
     const kebabItems = [
       {
         label: i18n.t("global.viewOnWeb"),

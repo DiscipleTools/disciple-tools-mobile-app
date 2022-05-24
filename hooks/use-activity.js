@@ -10,21 +10,22 @@ const useActivity = ({ search, filter, exclude }) => {
   const id = RootNavigation.getId();
   const url = isPost ? `/dt-posts/v2/${postType}/${id}/activity` : null;
   const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
-  if (error || isLoading || !data?.activity) return {
-    data: [],
-    error,
-    isLoading,
-    isValidating,
-    mutate
-  };
-  let filtered = data.activity?.filter(item => !exclude?.includes(item?.ID));
+  if (error || isLoading || !data?.activity)
+    return {
+      data: [],
+      error,
+      isLoading,
+      isValidating,
+      mutate,
+    };
+  let filtered = data.activity?.filter((item) => !exclude?.includes(item?.ID));
   if (search) filtered = searchObjList(filtered, search);
   return {
     data: filtered,
     error: null,
     isLoading: null,
     isValidating: null,
-    mutate
+    mutate,
   };
 };
 export default useActivity;

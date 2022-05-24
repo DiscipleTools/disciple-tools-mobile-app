@@ -23,7 +23,7 @@ const LanguageSheet = () => {
       if (userData?.locale !== newLocale) updateUser({ locale: newLocale });
       // set locale locally
       setLocale(newLocale);
-    };
+    }
   };
 
   // MAP ITEMS

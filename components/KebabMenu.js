@@ -12,24 +12,22 @@ const KebabMenu = ({ items }) => {
   const { globalStyles } = useStyles();
   const { i18n } = useI18N();
   const [visible, setVisible] = useState(false);
-  if (!items) items = [
-    {
-      label: i18n.t("global.viewOnWeb"),
-      urlPath: `#`,
-    },
-    {
-      label: i18n.t("global.documentation"),
-      url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/`,
-    },
-  ];
+  if (!items)
+    items = [
+      {
+        label: i18n.t("global.viewOnWeb"),
+        urlPath: `#`,
+      },
+      {
+        label: i18n.t("global.documentation"),
+        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/`,
+      },
+    ];
   return (
     <Menu
       visible={visible}
       anchor={
-        <KebabIcon
-          onPress={() => setVisible(true)}
-          style={globalStyles.icon}
-        />
+        <KebabIcon onPress={() => setVisible(true)} style={globalStyles.icon} />
       }
       onRequestClose={() => setVisible(false)}
     >
@@ -39,9 +37,9 @@ const KebabMenu = ({ items }) => {
         if (item?.urlPath) {
           const baseUrl = axios?.defaults?.baseURL?.split("/wp-json")?.[0];
           if (baseUrl) url = `${baseUrl}/${item?.urlPath}`;
-        };
+        }
         const _key = `${item?.url}-${idx}`;
-        return(
+        return (
           <View key={_key}>
             <MenuItem
               onPress={() => {
@@ -49,7 +47,7 @@ const KebabMenu = ({ items }) => {
                   item.callback();
                 } else {
                   if (url) Linking.openURL(url);
-                };
+                }
                 setVisible(false);
               }}
             >

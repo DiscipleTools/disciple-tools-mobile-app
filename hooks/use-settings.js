@@ -144,7 +144,10 @@ const useSettings = ({ type } = {}) => {
         tileFieldsOrdered = tileFieldsOrdered?.filter(
           (item) => typeof item === "object"
         );
-        if (settings?.tiles?.[tileName] && !settings?.tiles?.[tileName]?.hidden) {
+        if (
+          settings?.tiles?.[tileName] &&
+          !settings?.tiles?.[tileName]?.hidden
+        ) {
           tileList.push({
             name: tileName,
             label: settings.tiles[tileName]?.label,
@@ -163,14 +166,19 @@ const useSettings = ({ type } = {}) => {
     };
   };
 
-  const url = isPost ? `/dt-posts/v2/${postType}/settings` : "dt-core/v1/settings";
+  const url = isPost
+    ? `/dt-posts/v2/${postType}/settings`
+    : "dt-core/v1/settings";
   const { data, error, isLoading, isValidating } = useRequest({ url });
   const settings = data?.fields ? mapSettings(data) : data;
-  return useMemo (() => ({
-    settings,
-    error,
-    isLoading,
-    isValidating,
-  }), [JSON.stringify(settings)]);
+  return useMemo(
+    () => ({
+      settings,
+      error,
+      isLoading,
+      isValidating,
+    }),
+    [JSON.stringify(settings)]
+  );
 };
 export default useSettings;

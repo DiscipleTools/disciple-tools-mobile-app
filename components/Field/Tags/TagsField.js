@@ -11,7 +11,6 @@ import useStyles from "hooks/use-styles";
 import { localStyles } from "./TagsField.styles";
 
 const TagsField = ({ editing, field, value, onChange }) => {
-
   const { styles } = useStyles(localStyles);
   //const { expand, snapPoints } = useBottomSheet();
 
@@ -19,23 +18,22 @@ const TagsField = ({ editing, field, value, onChange }) => {
   const values = value?.values || [];
 
   const onRemove = (value) => {
-    onChange(
-      { values: [{ value, delete: true }]},
-      { autosave: true }
-    );
+    onChange({ values: [{ value, delete: true }] }, { autosave: true });
   };
 
   const renderItem = (item) => (
     <Chip
       label={item?.value}
-      endIcon={onRemove ? (
-        <View style={styles.clearIconContainer(false)}>
-          <ClearIcon
-            onPress={() => onRemove(item?.value)}
-            style={styles.clearIcon}
-          />
-        </View>
-      ) : null }
+      endIcon={
+        onRemove ? (
+          <View style={styles.clearIconContainer(false)}>
+            <ClearIcon
+              onPress={() => onRemove(item?.value)}
+              style={styles.clearIcon}
+            />
+          </View>
+        ) : null
+      }
     />
   );
 
@@ -61,9 +59,7 @@ const TagsField = ({ editing, field, value, onChange }) => {
   );
 
   const TagsFieldView = () => (
-    <Text>
-      { values.map(tag => tag?.value).join(", ") }
-    </Text>
+    <Text>{values.map((tag) => tag?.value).join(", ")}</Text>
   );
 
   if (editing) return <TagsFieldEdit />;

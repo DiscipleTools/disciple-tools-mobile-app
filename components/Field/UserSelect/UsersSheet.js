@@ -12,7 +12,6 @@ import useUsers from "hooks/use-users";
 import { localStyles } from "./UsersSheet.styles";
 
 const UsersSheet = ({ id, values, onChange }) => {
-
   const { styles, globalStyles } = useStyles(localStyles);
   const { delayedClose } = useBottomSheet();
   const { search, onSearch } = useFilter();
@@ -29,14 +28,16 @@ const UsersSheet = ({ id, values, onChange }) => {
 
   // MAP FROM API
   const mapFromAPI = (items) => {
-    return items?.map(item => {
+    return items?.map((item) => {
       // NOTE: for "UserSelect" fields (eg, "assigned_to") use "ID" rather than "contact_id" (like with "Connections")
       return {
         key: item?.ID,
         label: item?.name,
         avatar: item?.avatar,
         contactId: item?.contact_id ? new String(item?.contact_id) : null,
-        selected: values?.some(selectedItem => Number(selectedItem?.value) === item?.contact_id),
+        selected: values?.some(
+          (selectedItem) => Number(selectedItem?.value) === item?.contact_id
+        ),
       };
     });
   };
@@ -46,37 +47,37 @@ const UsersSheet = ({ id, values, onChange }) => {
     // NOTE: no comparison req bc we already exclude prevoiusly selected value
     onChange(mappedValue, {
       autosave: true,
-      force: true
+      force: true,
     });
     delayedClose();
   };
 
   const _renderItem = ({ item }) => {
     const { key, label, icon, avatar, selected } = item;
-    return(
+    return (
       <Pressable onPress={() => _onChange(item)}>
-        <View key={key}
-          style={[
-            globalStyles.rowContainer,
-            styles.itemContainer
-          ]}
+        <View
+          key={key}
+          style={[globalStyles.rowContainer, styles.itemContainer]}
         >
-            {avatar && (
-              <Image style={styles.avatar} source={{ uri: avatar }} />
-            )}
-            {icon && (
-              <View style={globalStyles.rowIcon}>
-                <MaterialCommunityIcon
-                  type={icon?.type}
-                  name={icon?.name}
-                  style={[globalStyles.icon, icon?.style ? icon?.style : {}]} 
-                />
-              </View>
-            )}
-          <View style={{
-            marginEnd: "auto",
-          }}>
-            <Text>{label} (#{key})</Text>
+          {avatar && <Image style={styles.avatar} source={{ uri: avatar }} />}
+          {icon && (
+            <View style={globalStyles.rowIcon}>
+              <MaterialCommunityIcon
+                type={icon?.type}
+                name={icon?.name}
+                style={[globalStyles.icon, icon?.style ? icon?.style : {}]}
+              />
+            </View>
+          )}
+          <View
+            style={{
+              marginEnd: "auto",
+            }}
+          >
+            <Text>
+              {label} (#{key})
+            </Text>
           </View>
           {selected && (
             <View style={globalStyles.rowIcon}>
@@ -91,7 +92,7 @@ const UsersSheet = ({ id, values, onChange }) => {
   // SELECT OPTIONS
   const mappedItems = mapFromAPI(items);
 
-  return(
+  return (
     <FilterList
       items={mappedItems}
       renderItem={_renderItem}

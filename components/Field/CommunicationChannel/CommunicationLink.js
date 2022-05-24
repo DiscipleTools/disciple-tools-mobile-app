@@ -6,7 +6,6 @@ import useStyles from "hooks/use-styles";
 import { localStyles } from "./CommunicationLink.styles";
 
 const CommunicationLink = ({ key, value, fieldName }) => {
-
   const { styles, globalStyles } = useStyles(localStyles);
 
   const isValidPhone = (fieldName) => {
@@ -36,27 +35,27 @@ const CommunicationLink = ({ key, value, fieldName }) => {
 
   const isValidURL = (value) => {
     // TODO: URL regex
-    return (
-      isValidHttp(value) ||
-      isValidTLD(value)
-    );
+    return isValidHttp(value) || isValidTLD(value);
   };
 
   const getProtocol = (fieldName, value) => {
     if (isValidPhone(fieldName)) return "tel:";
     if (isValidEmail(fieldName)) return "mailto:";
-    if (isValidHttp(value)) return '';
+    if (isValidHttp(value)) return "";
     return null;
   };
 
   let protocol = getProtocol(fieldName, value);
   const url = `${protocol}${value}`;
-  return(
-    <Pressable key={key} onPress={() => { protocol ? Linking.openURL(url) : null }}>
+  return (
+    <Pressable
+      key={key}
+      onPress={() => {
+        protocol ? Linking.openURL(url) : null;
+      }}
+    >
       <View style={styles.container}>
-        <Text style={styles.linkingText}>
-          {value}
-        </Text>
+        <Text style={styles.linkingText}>{value}</Text>
       </View>
     </Pressable>
   );

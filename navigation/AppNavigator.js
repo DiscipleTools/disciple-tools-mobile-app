@@ -5,7 +5,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { navigationRef } from './RootNavigation';
+import { navigationRef } from "./RootNavigation";
 
 import PINScreen from "screens/PINScreen";
 import LoginScreen from "screens/LoginScreen";
@@ -19,7 +19,6 @@ import useCache from "hooks/use-cache";
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-
   // subsribe to app state changes and sync SWR cache w/ persistent storage
   useCache();
 

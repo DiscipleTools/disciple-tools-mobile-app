@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef } from "react";
-import {
-  Image,
-  Keyboard,
-  Linking,
-  Text,
-  View,
-} from "react-native";
+import { Image, Keyboard, Linking, Text, View } from "react-native";
 import { UsernameIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
 import Button from "components/Button";
 import Link from "components/Link";
@@ -71,7 +65,7 @@ const LoginScreen = () => {
         passwordValidation: !password,
       });
       setLoading(false);
-    };
+    }
   };
 
   const Header = () => {

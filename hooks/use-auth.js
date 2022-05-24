@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   toggleAutoLogin as _toggleAutoLogin,
@@ -26,17 +32,12 @@ const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
   const auth = useCustomAuth();
-  return (
-    <AuthContext.Provider value={auth}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 };
 
 const useAuth = () => useContext(AuthContext);
 
 const useCustomAuth = () => {
-
   const { setLocale } = useI18N();
 
   // TODO: validate "iss" === domain
@@ -54,7 +55,7 @@ const useCustomAuth = () => {
       return jwt_decode(token);
     } catch (error) {
       return null;
-    };
+    }
   };
 
   const [accessToken, setAccessToken] = useState(null);
@@ -65,9 +66,11 @@ const useCustomAuth = () => {
   const dispatch = useDispatch();
 
   // NOTE: Redux already does a good job indicating whether to rehydrate state, so use that
-  const rehydrate = useSelector(state => state?.authReducer?.rehydrate);
-  const isAutoLogin = useSelector(state => state?.authReducer?.isAutoLogin);
-  const rememberLoginDetails = useSelector(state => state?.authReducer?.rememberLoginDetails);
+  const rehydrate = useSelector((state) => state?.authReducer?.rehydrate);
+  const isAutoLogin = useSelector((state) => state?.authReducer?.isAutoLogin);
+  const rememberLoginDetails = useSelector(
+    (state) => state?.authReducer?.rememberLoginDetails
+  );
 
   const { isConnected } = useNetwork();
   const { getSecureItem, setSecureItem, deleteSecureItem } = useSecureStore();
@@ -80,25 +83,33 @@ const useCustomAuth = () => {
       then attempt to rehydrate accessToken from secure storage
       else do nothing bc user will be prompted to re-login
       */
-      if (isAutoLogin && (!accessToken || (accessToken && !validateToken(accessToken)))) {
+      if (
+        isAutoLogin &&
+        (!accessToken || (accessToken && !validateToken(accessToken)))
+      ) {
         // rehydrate access token
-        const rehydratedAccessToken = await getSecureItem(AuthConstants.ACCESS_TOKEN);
+        const rehydratedAccessToken = await getSecureItem(
+          AuthConstants.ACCESS_TOKEN
+        );
         //console.log(`~~~~~~~~~~ rehydratedAccessToken: ${rehydratedAccessToken}`);
-        if (validateToken(rehydratedAccessToken)) setAccessToken(rehydratedAccessToken);
-      };
+        if (validateToken(rehydratedAccessToken))
+          setAccessToken(rehydratedAccessToken);
+      }
       // rehydrate baseUrl
-      const rehydratedBaseUrl = baseUrl ?? (await getSecureItem(AuthConstants.BASE_URL));
+      const rehydratedBaseUrl =
+        baseUrl ?? (await getSecureItem(AuthConstants.BASE_URL));
       //console.log(`~~~~~~~~~~ rehydratedBaseUrl: ${rehydratedBaseUrl}`);
       setBaseUrl(rehydratedBaseUrl);
       // rehydrate user
       try {
-        const rehydratedUser = user ?? JSON.parse((await getSecureItem(AuthConstants.USER)));
+        const rehydratedUser =
+          user ?? JSON.parse(await getSecureItem(AuthConstants.USER));
         //console.log(`~~~~~~~~~~ rehydratedUser: ${JSON.stringify(rehydratedUser)}`);
         // TODO: if user unable to be rehydrated AND have valid accessToken and baseUrl, then request user info
         setUser(rehydratedUser);
       } catch (error) {
         setUser(null);
-      };
+      }
     })();
   }, [rehydrate]);
 
@@ -110,31 +121,31 @@ const useCustomAuth = () => {
       if (accessToken && validateToken(accessToken)) {
         // Add a request interceptor
         axios.interceptors.request.use(
-          config => {
+          (config) => {
             if (accessToken && accessToken !== config.headers?.Authorization) {
               config.headers["Authorization"] = `Bearer ${accessToken}`;
             } else {
               delete config.headers["Authorization"];
               setAuthenticated(false);
-            };
+            }
             return config;
           },
-          error => error
+          (error) => error
         );
         // Add a response interceptor
         axios.interceptors.response.use(
-          response => response,
-          async(error) => {
+          (response) => response,
+          async (error) => {
             if (error?.response?.status === 401) {
               setAuthenticated(false);
-            };
+            }
             return Promise.reject(error);
           }
         );
         setAuthenticated(true);
       } else {
         setAuthenticated(false);
-      };
+      }
     })();
   }, [accessToken]);
 
@@ -142,10 +153,11 @@ const useCustomAuth = () => {
   useEffect(() => {
     (async () => {
       if (baseUrl) {
-        if (baseUrl !== axios.defaults.baseURL) axios.defaults.baseURL = baseUrl;
+        if (baseUrl !== axios.defaults.baseURL)
+          axios.defaults.baseURL = baseUrl;
       } else {
         setAuthenticated(false);
-      };
+      }
       return;
     })();
   }, [baseUrl]);
@@ -165,7 +177,7 @@ const useCustomAuth = () => {
     } catch (error) {
       // TODO:
       console.error(error);
-    };
+    }
   };
 
   // TODO: implement timeout
@@ -205,7 +217,7 @@ const useCustomAuth = () => {
       }
     } catch (error) {
       throw new Error(error);
-    };
+    }
   };
 
   const signOut = async () => {
@@ -229,15 +241,24 @@ const useCustomAuth = () => {
     }
   };
 
-  return useMemo (() => ({
-    authenticated,
-    user,
-    isAutoLogin,
-    toggleAutoLogin,
-    rememberLoginDetails,
-    toggleRememberLoginDetails,
-    signIn,
-    signOut,
-  }), [authenticated, user, isAutoLogin, rememberLoginDetails, rememberLoginDetails]);
+  return useMemo(
+    () => ({
+      authenticated,
+      user,
+      isAutoLogin,
+      toggleAutoLogin,
+      rememberLoginDetails,
+      toggleRememberLoginDetails,
+      signIn,
+      signOut,
+    }),
+    [
+      authenticated,
+      user,
+      isAutoLogin,
+      rememberLoginDetails,
+      rememberLoginDetails,
+    ]
+  );
 };
 export { useAuth, AuthProvider };

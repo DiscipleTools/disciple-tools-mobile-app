@@ -5,6 +5,6 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   icon: {
     marginStart: "auto",
     marginTop: "auto",
-    marginBottom: "auto"
-  }
+    marginBottom: "auto",
+  },
 });

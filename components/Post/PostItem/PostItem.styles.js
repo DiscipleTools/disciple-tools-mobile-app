@@ -9,7 +9,7 @@ export const localStyles = ({ theme, isRTL }) => ({
     height: Constants.LIST_ITEM_HEIGHT,
   },
   subcontainer: {
-    flex: 12
+    flex: 12,
   },
   subsubcontainer: {
     flex: 1,
@@ -29,7 +29,7 @@ export const localStyles = ({ theme, isRTL }) => ({
   },
   caption: {
     color: theme.placeholder,
-    fontSize: 11
+    fontSize: 11,
   },
   lastModifiedDateText: {
     flex: 1.5,
@@ -44,16 +44,16 @@ export const localStyles = ({ theme, isRTL }) => ({
   },
   infoIconContainer: {
     justifyContent: "center",
-    marginTop: 2
+    marginTop: 2,
   },
   infoIcon: {
     margin: "auto",
-    fontSize: 15
+    fontSize: 15,
   },
   alertIcon: {
     color: theme.error,
   },
   actionIcon: {
     paddingEnd: 20,
-  }
+  },
 });

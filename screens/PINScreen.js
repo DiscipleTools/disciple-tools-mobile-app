@@ -72,7 +72,12 @@ const PINScreen = ({ navigation, route }) => {
         } else if (isDelete) {
           deletePIN();
           navigation.goBack();
-          toast(i18n.t("global.pinCodeAction", { action: i18n.t("global.deleted") }), true);
+          toast(
+            i18n.t("global.pinCodeAction", {
+              action: i18n.t("global.deleted"),
+            }),
+            true
+          );
         } else {
           console.warn(`Unknown PINScreen type: ${type}`);
           navigation.goBack();
@@ -110,7 +115,9 @@ const PINScreen = ({ navigation, route }) => {
         setPIN(code);
         setState({ code: "", tmpCode: null });
         navigation.goBack();
-        toast(i18n.t("global.pinCodeAction", { action: i18n.t("global.saved") }));
+        toast(
+          i18n.t("global.pinCodeAction", { action: i18n.t("global.saved") })
+        );
       } else {
         pinInput.current.shake().then(() =>
           setState({

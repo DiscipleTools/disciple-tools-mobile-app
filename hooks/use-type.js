@@ -5,11 +5,10 @@ import {
   ScreenConstants,
   TabScreenConstants,
   TypeConstants,
-  SubTypeConstants
+  SubTypeConstants,
 } from "constants";
 
 const useType = ({ type, subtype } = {}) => {
-
   const route = RootNavigation.getRoute();
   if (!type) type = route?.params?.type;
   if (!subtype) subtype = route?.params?.subtype;
@@ -21,20 +20,14 @@ const useType = ({ type, subtype } = {}) => {
 
   const isNotification = type === TypeConstants.NOTIFICATION;
 
-  const isCustomPostType = (type || subtype) && !(
-    isContact ||
-    isGroup ||
-    isNotification ||
-    isCommentsActivity
-  );
+  const isCustomPostType =
+    (type || subtype) &&
+    !(isContact || isGroup || isNotification || isCommentsActivity);
 
-  const isPost = (
-    isContact ||
-    isGroup ||
-    isCustomPostType
-  );
+  const isPost = isContact || isGroup || isCustomPostType;
 
-  const isCommentsActivity = (isPost && subtype === SubTypeConstants.COMMENTS_ACTIVITY);
+  const isCommentsActivity =
+    isPost && subtype === SubTypeConstants.COMMENTS_ACTIVITY;
 
   const postType = () => {
     if (isContact) return TypeConstants.CONTACT;
@@ -58,8 +51,9 @@ const useType = ({ type, subtype } = {}) => {
         return TypeConstants.GROUP;
       case FieldNames.PEOPLE_GROUPS:
         return TypeConstants.PEOPLE_GROUP;
-      default: return null;
-    };
+      default:
+        return null;
+    }
   };
 
   const getPostTypeByField = (field) => {

@@ -9,7 +9,7 @@ import {
   LeaderIcon,
   MeatballIcon,
   StarIcon,
-  StarOutlineIcon
+  StarOutlineIcon,
 } from "components/Icon";
 import PostItemSkeleton from "./PostItemSkeleton";
 import SelectSheet from "components/Sheet/SelectSheet";
@@ -59,9 +59,9 @@ const PostItem = ({ item, loading, mutate }) => {
         id: item?.ID,
         name: item?.title,
         type: item?.post_type,
-        subtype: SubTypeConstants.COMMENTS_ACTIVITY
+        subtype: SubTypeConstants.COMMENTS_ACTIVITY,
       });
-    };
+    }
     return null;
   };
 
@@ -69,22 +69,13 @@ const PostItem = ({ item, loading, mutate }) => {
     const title = item?.name;
     const sections = generateOptions();
     expand({
-      snapPoints: ["33%","95%"],
+      snapPoints: ["33%", "95%"],
       dismissable: true,
       defaultIndex: 0,
-      renderHeader: () => (
-        <SheetHeader
-          expandable
-          dismissable
-          title={title}
-        />
-      ),
+      renderHeader: () => <SheetHeader expandable dismissable title={title} />,
       renderContent: () => (
-        <SelectSheet
-          sections={sections}
-          onChange={onChange}
-        />
-      )
+        <SelectSheet sections={sections} onChange={onChange} />
+      ),
     });
   };
 
@@ -93,9 +84,7 @@ const PostItem = ({ item, loading, mutate }) => {
   const PostTitle = () => {
     const title = item?.name ? item.name : item?.title;
     return (
-      <Text style={[globalStyles.text, styles.title]}>
-        {titleize(title)}
-      </Text>
+      <Text style={[globalStyles.text, styles.title]}>{titleize(title)}</Text>
     );
   };
 
@@ -109,19 +98,22 @@ const PostItem = ({ item, loading, mutate }) => {
     let subtitle2Key = "seeker_path";
     if (isGroup) subtitle2Key = "group_type";
     //
-    const subtitle1 = settings?.fields?.[subtitle1Key]?.values[item?.[subtitle1Key]]?.label;
-    const subtitle2 = settings?.fields?.[subtitle2Key]?.values[item?.[subtitle2Key]]?.label;
+    const subtitle1 =
+      settings?.fields?.[subtitle1Key]?.values[item?.[subtitle1Key]]?.label;
+    const subtitle2 =
+      settings?.fields?.[subtitle2Key]?.values[item?.[subtitle2Key]]?.label;
     //
-    let subtitle = '';
+    let subtitle = "";
     if (subtitle1) subtitle += subtitle1;
     if (subtitle2) {
-      if (subtitle1) subtitle += ' • ';
+      if (subtitle1) subtitle += " • ";
       subtitle += subtitle2;
-    };
-    if (isGroup && item?.member_count) subtitle += ` • ${ numberFormat(item.member_count) }`;
+    }
+    if (isGroup && item?.member_count)
+      subtitle += ` • ${numberFormat(item.member_count)}`;
     return (
       <Text style={globalStyles.caption}>
-        { truncate(subtitle, { maxLength: 70 })}
+        {truncate(subtitle, { maxLength: 70 })}
       </Text>
     );
   };
@@ -130,18 +122,13 @@ const PostItem = ({ item, loading, mutate }) => {
     const { postType } = useType();
     const { settings } = useSettings({ type: postType });
     if (!settings) return null;
-    const lastModDate = moment(parseDateSafe(item?.last_modified)).format('L');
+    const lastModDate = moment(parseDateSafe(item?.last_modified)).format("L");
     if (!lastModDate) return null;
     return (
       <View style={globalStyles.rowContainer}>
         <View>
-          <Text
-            style={[
-              globalStyles.caption,
-              styles.caption
-            ]}
-          >
-            { lastModDate }
+          <Text style={[globalStyles.caption, styles.caption]}>
+            {lastModDate}
           </Text>
         </View>
         <InfoIcons />
@@ -150,8 +137,11 @@ const PostItem = ({ item, loading, mutate }) => {
   };
 
   const getStatusColor = (settings) => {
-    if (item?.overall_status) return settings?.fields?.overall_status?.values?.[item.overall_status]?.color;
-    if (item?.group_status) return settings?.fields?.group_status?.values?.[item.group_status]?.color;
+    if (item?.overall_status)
+      return settings?.fields?.overall_status?.values?.[item.overall_status]
+        ?.color;
+    if (item?.group_status)
+      return settings?.fields?.group_status?.values?.[item.group_status]?.color;
     return settings?.fields?.status?.values?.[item?.status]?.color;
   };
 
@@ -159,11 +149,11 @@ const PostItem = ({ item, loading, mutate }) => {
     const { settings } = useSettings();
     if (!settings) return null;
     const backgroundColor = getStatusColor(settings);
-    return(
+    return (
       <View
         style={{
           width: 10,
-          backgroundColor
+          backgroundColor,
         }}
       />
     );
@@ -179,16 +169,12 @@ const PostItem = ({ item, loading, mutate }) => {
             id: Number(item?.ID),
             type: item?.post_type,
             mutate,
-          })
+          });
         }}
         style={globalStyles.columnContainer}
       >
         <View style={globalStyles.icon}>
-          {item?.favorite ? (
-            <StarIcon />
-          ) : (
-            <StarOutlineIcon />
-          )}
+          {item?.favorite ? <StarIcon /> : <StarOutlineIcon />}
         </View>
       </Pressable>
     );
@@ -203,17 +189,12 @@ const PostItem = ({ item, loading, mutate }) => {
 
   const InfoIcons = () => (
     <>
-      { item?.requires_update && (
+      {item?.requires_update && (
         <View style={styles.infoIconContainer}>
-          <UpdateRequiredIcon
-            style={[
-              styles.alertIcon,
-              styles.infoIcon,
-            ]}
-          />
+          <UpdateRequiredIcon style={[styles.alertIcon, styles.infoIcon]} />
         </View>
       )}
-      { item?.group_leader?.values?.length > 0 && (
+      {item?.group_leader?.values?.length > 0 && (
         <View style={styles.infoIconContainer}>
           <LeaderIcon style={styles.infoIcon} />
         </View>
@@ -224,10 +205,7 @@ const PostItem = ({ item, loading, mutate }) => {
   const SheetOptions = () => (
     <Pressable
       onPress={() => showSheet(item)}
-      style={[
-        styles.icon,
-        styles.actionIcon
-      ]}
+      style={[styles.icon, styles.actionIcon]}
     >
       <MeatballIcon />
     </Pressable>
@@ -235,12 +213,7 @@ const PostItem = ({ item, loading, mutate }) => {
 
   if (!item || loading) return <PostItemSkeleton />;
   return (
-    <View
-      style={[
-        globalStyles.rowContainer,
-        styles.container
-      ]}
-    >
+    <View style={[globalStyles.rowContainer, styles.container]}>
       <Pressable
         key={item?.ID}
         onPress={() => {
@@ -251,16 +224,10 @@ const PostItem = ({ item, loading, mutate }) => {
           });
         }}
         //onLongPress={() => onLongPress()}
-        style={[
-          globalStyles.rowContainer,
-          styles.subcontainer
-        ]}
+        style={[globalStyles.rowContainer, styles.subcontainer]}
       >
         <StatusBorder />
-        <View style={[
-          globalStyles.rowContainer,
-          styles.subsubcontainer
-        ]}>
+        <View style={[globalStyles.rowContainer, styles.subsubcontainer]}>
           <FavoriteStar />
           <PostDetails />
         </View>

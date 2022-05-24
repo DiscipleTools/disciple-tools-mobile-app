@@ -1,5 +1,5 @@
 // TODO: move Style-related Constants to Theme
-import Constants from 'constants';
+import Constants from "constants";
 
 // TODO: move to globalStyles bc this is verbatim same as NumberField
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
@@ -15,6 +15,6 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     width: "100%",
   },
   controlIcons: {
-    justifyContent: "space-between"
-  }
+    justifyContent: "space-between",
+  },
 });

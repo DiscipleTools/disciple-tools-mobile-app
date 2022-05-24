@@ -13,19 +13,12 @@ const ExpandableCard = ({
   renderPartialCard,
   renderExpandedCard,
 }) => {
-
   const { expand } = useBottomSheet();
 
   const showSheet = () => {
     expand({
-      renderHeader: () => (
-        <SheetHeader
-          expandable
-          dismissable
-          title={title}
-        />
-      ),
-      renderContent: () => renderExpandedCard()
+      renderHeader: () => <SheetHeader expandable dismissable title={title} />,
+      renderContent: () => renderExpandedCard(),
     });
   };
 

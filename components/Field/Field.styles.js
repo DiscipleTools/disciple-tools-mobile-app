@@ -1,10 +1,10 @@
-import Constants from 'constants';
+import Constants from "constants";
 
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: {
     padding: 10,
     height: "auto",
-    width: "auto"
+    width: "auto",
   },
   component: {
     backgroundColor: theme.background.primary,

@@ -19,7 +19,7 @@ import useAPI from "hooks/use-api";
 import {
   QuickActionButtonConstants,
   TypeConstants,
-  ScreenConstants
+  ScreenConstants,
 } from "constants";
 
 import { localStyles } from "./FAB.styles";
@@ -203,12 +203,13 @@ const FAB = ({ offsetX, offsetY }) => {
               screen: ScreenConstants.CREATE,
               type: postType,
             });
-          };
+          }
         }}
       >
         {quickButtonFields?.length > 0 &&
           quickButtonFields.map((field) => {
-            const { title, count, name, bgColor, fgColor, callback } = mapItem(field);
+            const { title, count, name, bgColor, fgColor, callback } =
+              mapItem(field);
             return (
               <ActionButton.Item
                 key={count}
@@ -229,7 +230,7 @@ const FAB = ({ offsetX, offsetY }) => {
           })}
       </ActionButton>
     );
-  };
+  }
   return null;
 };
 export default FAB;

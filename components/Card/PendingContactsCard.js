@@ -22,7 +22,6 @@ import { findFilterById } from "utils";
 import { localStyles } from "./PendingContactsCard.styles";
 
 const PendingContactsCard = ({ refreshing, onRefresh }) => {
-
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
@@ -83,17 +82,13 @@ const PendingContactsCard = ({ refreshing, onRefresh }) => {
           onPress={() => handleAccept({ contact, accept: true })}
           style={[styles.buttonContainer, styles.buttonAccept]}
         >
-          <Text style={styles.buttonText}>
-            {i18n.t("global.accept")}
-          </Text>
+          <Text style={styles.buttonText}>{i18n.t("global.accept")}</Text>
         </Pressable>
         <Pressable
           onPress={() => handleAccept({ contact, accept: false })}
           style={[styles.buttonContainer, styles.buttonDecline]}
         >
-          <Text style={styles.buttonText}>
-            {i18n.t("global.decline")}
-          </Text>
+          <Text style={styles.buttonText}>{i18n.t("global.decline")}</Text>
         </Pressable>
       </View>
     </View>

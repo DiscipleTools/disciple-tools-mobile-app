@@ -1,11 +1,11 @@
 import * as Haptics from "expo-haptics";
 
 const useHaptics = () => {
-  const vibrate = async() => {
+  const vibrate = async () => {
     return Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
-  return { 
-    vibrate
+  return {
+    vibrate,
   };
 };
 export default useHaptics;

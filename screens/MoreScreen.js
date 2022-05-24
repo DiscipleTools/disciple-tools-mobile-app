@@ -16,7 +16,6 @@ import { ScreenConstants } from "constants";
 import { localStyles } from "./MoreScreen.styles";
 
 const MoreScreen = ({ navigation }) => {
-
   const { customPostTypes } = useCustomPostTypes() || {};
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, isRTL } = useI18N();
@@ -34,12 +33,7 @@ const MoreScreen = ({ navigation }) => {
     ];
     navigation.setOptions({
       title: i18n.t("global.more"),
-      headerRight: (props) => (
-        <HeaderRight
-          kebabItems={kebabItems}
-          props
-        />
-      ),
+      headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />,
     });
   }, []);
 
@@ -47,7 +41,7 @@ const MoreScreen = ({ navigation }) => {
     const { settings } = useSettings({ type });
     if (!settings?.label) return null;
     const label = settings.label;
-    return(
+    return (
       <ListItem
         startComponent={<PostIcon />}
         label={label}
@@ -65,7 +59,7 @@ const MoreScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={globalStyles.screenContainer}>
       <OfflineBar />
-      { customPostTypes?.map(postType => (
+      {customPostTypes?.map((postType) => (
         <PostButton key={postType} type={postType} />
       ))}
     </SafeAreaView>

@@ -10,19 +10,19 @@ import MetricCard from "components/Card/MetricCard";
 import PendingContactsCard from "components/Card/PendingContactsCard";
 import ActivityLogCard from "components/Card/ActivityLogCard";
 
-import { 
-  CommentActivityIcon, 
-  StarIcon, 
-  StarOutlineIcon, 
-  SearchIcon, 
-  AddNewIcon, 
+import {
+  CommentActivityIcon,
+  StarIcon,
+  StarOutlineIcon,
+  SearchIcon,
+  AddNewIcon,
   UpdateRequiredIcon,
   TasksIcon,
   FollowingIcon,
   ShareIcon,
   ExternalLinkIcon,
   HelpIcon,
-  } from "components/Icon";
+} from "components/Icon";
 
 import useFilters from "hooks/use-filters";
 import useI18N from "hooks/use-i18n";
@@ -37,10 +37,9 @@ import { findFilterById } from "utils";
 import { localStyles } from "./HomeScreen.styles";
 
 const HomeScreen = ({ navigation }) => {
-
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
- 
+
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = () => {
@@ -66,7 +65,7 @@ const HomeScreen = ({ navigation }) => {
       },
       {
         label: i18n.t("global.documentation"),
-       url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/home-screen/`,
+        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/home-screen/`,
       },
     ];
     navigation.setOptions({
@@ -77,8 +76,8 @@ const HomeScreen = ({ navigation }) => {
           kebabItems={kebabItems}
           renderStartIcons={() => (
             <>
-            <SearchIcon style={globalStyles.placeholder} />
-            <AddNewIcon style={globalStyles.placeholder} />
+              <SearchIcon style={globalStyles.placeholder} />
+              <AddNewIcon style={globalStyles.placeholder} />
             </>
           )}
           props
@@ -96,12 +95,18 @@ const HomeScreen = ({ navigation }) => {
     return (
       <>
         {
-        // Prefetch any favorite posts so that the records
-        // are available if the user goes OFFLINE.
+          // Prefetch any favorite posts so that the records
+          // are available if the user goes OFFLINE.
         }
-        { items?.map(item => {
+        {items?.map((item) => {
           if (!item?.ID || !item?.post_type) return null;
-          return <PrefetchCacheRecord key={item.ID} id={item.ID} type={item.post_type} />;
+          return (
+            <PrefetchCacheRecord
+              key={item.ID}
+              id={item.ID}
+              type={item.post_type}
+            />
+          );
         })}
         <MetricCard
           title={filter?.name}
@@ -119,7 +124,9 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
-  const FavoriteContactsCard = () => <FavoriteCard type={TypeConstants.CONTACT} />;
+  const FavoriteContactsCard = () => (
+    <FavoriteCard type={TypeConstants.CONTACT} />
+  );
   const FavoriteGroupsCard = () => <FavoriteCard type={TypeConstants.GROUP} />;
 
   /*
@@ -178,10 +185,7 @@ const HomeScreen = ({ navigation }) => {
           <FavoriteContactsCard />
           <FavoriteGroupsCard />
         </View>
-        <PendingContactsCard
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
+        <PendingContactsCard refreshing={refreshing} onRefresh={onRefresh} />
         <ActivityLogCard preview={5} refreshing={refreshing} />
       </ScrollView>
     </>

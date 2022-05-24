@@ -8,8 +8,7 @@ import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./TextField.styles";
 
-const TextField = ({ grouped=false, editing, value, onChange }) => {
-
+const TextField = ({ grouped = false, editing, value, onChange }) => {
   const { styles, globalStyles } = useStyles(localStyles);
 
   const [showSave, setShowSave] = useState(false);
@@ -24,9 +23,9 @@ const TextField = ({ grouped=false, editing, value, onChange }) => {
       if (grouped) {
         onChange(debouncedValue);
         return;
-      };
+      }
       setShowSave(true);
-    };
+    }
     return;
   }, [debouncedValue]);
 
@@ -39,9 +38,9 @@ const TextField = ({ grouped=false, editing, value, onChange }) => {
     if (_value !== value) {
       onChange(_value, {
         autosave: true,
-        automutate: true
+        automutate: true,
       });
-    };
+    }
   };
 
   const renderTextFieldEdit = () => (
@@ -52,7 +51,7 @@ const TextField = ({ grouped=false, editing, value, onChange }) => {
           onChangeText={_setValue}
           style={styles.input}
         />
-        { showSave && (
+        {showSave && (
           <View style={[globalStyles.rowContainer, styles.controlIcons]}>
             <CancelIcon onPress={() => _onClear()} />
             <SaveIcon onPress={() => _onChange()} />

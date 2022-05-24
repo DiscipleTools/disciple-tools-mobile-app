@@ -21,7 +21,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     justifyContent: "center",
   },
   link: {
-    color: theme.text.link
+    color: theme.text.link,
   },
   dontHaveNotificationsText: {
     fontSize: 14,

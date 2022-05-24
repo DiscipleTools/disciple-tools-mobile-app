@@ -33,5 +33,5 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     fontStyle: "italic",
     // TODO: use Theme
     fontSize: 12,
-  }
+  },
 });

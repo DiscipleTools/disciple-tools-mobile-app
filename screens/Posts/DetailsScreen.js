@@ -1,26 +1,22 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Pressable, View, useWindowDimensions } from "react-native";
 
-import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
+import { TabView, TabBar, SceneMap } from "react-native-tab-view";
 
 import { HeaderLeft, HeaderRight } from "components/Header/Header";
-import { 
-  CommentActivityIcon, 
-  StarIcon, 
-  StarOutlineIcon, 
-  SearchIcon, 
-  AddNewIcon, 
+import {
+  CommentActivityIcon,
+  StarIcon,
+  StarOutlineIcon,
+  SearchIcon,
+  AddNewIcon,
   UpdateRequiredIcon,
   TasksIcon,
   FollowingIcon,
   ShareIcon,
   ExternalLinkIcon,
   HelpIcon,
-  } from "components/Icon";
+} from "components/Icon";
 import OfflineBar from "components/OfflineBar";
 import TitleBar from "components/TitleBar";
 import Tile from "components/Post/Tile";
@@ -39,7 +35,6 @@ import { ScreenConstants, SubTypeConstants } from "constants";
 import { localStyles } from "./DetailsScreen.styles";
 
 const DetailsScreen = ({ navigation }) => {
-
   const layout = useWindowDimensions();
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
@@ -91,11 +86,11 @@ const DetailsScreen = ({ navigation }) => {
             key: tile.name,
             title: tile.label,
           });
-        };
+        }
       });
       setScenes(_scenes);
       setRoutes(_routes);
-    };
+    }
   }, [JSON.stringify(post), settings?.tiles?.length]);
 
   useLayoutEffect(() => {
@@ -117,39 +112,36 @@ const DetailsScreen = ({ navigation }) => {
           kebabItems={kebabItems}
           renderStartIcons={() => (
             <>
-            <Pressable
-              onPress={() => {
-                vibrate();
-                updatePost({
-                  fields: { favorite: !post?.favorite },
-                  id: Number(post?.ID),
-                  type: post?.post_type,
-                  mutate,
-                });
-              }}
-              style={[
-                globalStyles.headerIcon,
-                styles.headerIcon
-              ]}
-            >
-              {post?.favorite ? (
-                <StarIcon style={globalStyles.icon} />
-              ) : (
-                <StarOutlineIcon style={globalStyles.icon} />
-              )}
-            </Pressable>
-            <View style={globalStyles.headerIcon}>
-              <CommentActivityIcon
+              <Pressable
                 onPress={() => {
-                  navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
-                    id: post?.ID,
-                    name: post?.name,
+                  vibrate();
+                  updatePost({
+                    fields: { favorite: !post?.favorite },
+                    id: Number(post?.ID),
                     type: post?.post_type,
-                    subtype: SubTypeConstants.COMMENTS_ACTIVITY
+                    mutate,
                   });
                 }}
-              />
-            </View>
+                style={[globalStyles.headerIcon, styles.headerIcon]}
+              >
+                {post?.favorite ? (
+                  <StarIcon style={globalStyles.icon} />
+                ) : (
+                  <StarOutlineIcon style={globalStyles.icon} />
+                )}
+              </Pressable>
+              <View style={globalStyles.headerIcon}>
+                <CommentActivityIcon
+                  onPress={() => {
+                    navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
+                      id: post?.ID,
+                      name: post?.name,
+                      type: post?.post_type,
+                      subtype: SubTypeConstants.COMMENTS_ACTIVITY,
+                    });
+                  }}
+                />
+              </View>
             </>
           )}
           props
@@ -160,18 +152,13 @@ const DetailsScreen = ({ navigation }) => {
     //}, []);
   });
 
-
   if (!scenes || !post || !settings || isLoading) return <PostSkeleton />;
   // TODO: switch to toggle Update Required
   // updatePost({ fields: { "requires_update": true|false }});
-  return(
+  return (
     <>
       <OfflineBar />
-      <TitleBar
-        center
-        title={post?.title}
-        style={styles.titleBar}
-      />
+      <TitleBar center title={post?.title} style={styles.titleBar} />
       <TabView
         lazy
         renderLazyPlaceholder={() => <PostSkeleton />}
@@ -202,11 +189,7 @@ const DetailsScreen = ({ navigation }) => {
   return (
     <>
       <OfflineBar />
-      <TitleBar
-        center
-        title={post?.title}
-        style={styles.titleBar}
-      />
+      <TitleBar center title={post?.title} style={styles.titleBar} />
       <TabScrollView
         index={index}
         onIndexChange={onIndexChange}

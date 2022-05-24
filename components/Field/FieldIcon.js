@@ -26,9 +26,9 @@ const FieldIcon = ({ field, hide }) => {
     case FieldTypes.LOCATION_META:
       iconName = "map-marker";
       break;
-      case FieldTypes.LOCATION:
-        iconName = "map-marker-outline";
-        break;
+    case FieldTypes.LOCATION:
+      iconName = "map-marker-outline";
+      break;
     case FieldTypes.TEXTAREA: //TODO: why does this not work?
       if (name.includes("list")) {
         iconName = "format-list-group";
@@ -73,25 +73,28 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "sitemap";
       } else if (name.includes("relation")) {
         iconName = "account-switch";
-      } else if ((name.includes("people_groups") || name.includes("peoplegroups")) ) {
+      } else if (
+        name.includes("people_groups") ||
+        name.includes("peoplegroups")
+      ) {
         iconName = "earth";
       } else if (name.includes("reporter")) {
         iconName = "human-male-board";
-        iconStyle = { transform: [{ scaleX: -1 }] }
+        iconStyle = { transform: [{ scaleX: -1 }] };
       } else if (name.includes("coaching")) {
         iconName = "human-male-board";
-        iconStyle = { transform: [{ scaleX: -1 }] }
+        iconStyle = { transform: [{ scaleX: -1 }] };
       } else if (name.includes("coached_by")) {
         iconName = "human-male-board";
       } else if (name.includes("coaches")) {
         iconName = "human-male-board";
       } else if (name.includes("baptizing")) {
-        iconName = "waves"; 
+        iconName = "waves";
       } else if (name.includes("bapti")) {
         iconName = "waves";
       } else if (name.includes("trainings")) {
         iconName = "school";
-      } else if (name === ("group_leader") || name.includes("leaders")) {
+      } else if (name === "group_leader" || name.includes("leaders")) {
         iconName = "foot-print";
       } else if (name.includes("leader")) {
         iconName = "shield-account";
@@ -156,7 +159,7 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "sign-direction";
       } else if (name.includes("gender")) {
         iconName = "gender-male-female";
-      } else if (name === ("age")) {
+      } else if (name === "age") {
         iconName = "account-clock";
       } else if (name.includes("status")) {
         iconName = "traffic-light";
@@ -176,15 +179,15 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "account-network";
       } else if (name.includes("access_placeholder")) {
         iconName = "account-network-outline";
-        
+
         // Plugins
-      } else if (name.includes("timezone") || (name === ("campaign_timezone"))) {
+      } else if (name.includes("timezone") || name === "campaign_timezone") {
         iconName = "map-clock";
       } else if (name.includes("min_time_duration")) {
         iconName = "timer-outline";
       } else if (name.includes("duration_options")) {
         iconName = "timer";
-      } else if (name === ("languages")) {
+      } else if (name === "languages") {
         iconName = "translate";
       } else {
         iconName = "format-list-checks";
@@ -218,19 +221,19 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "sign-text";
       } else if (name.includes("note")) {
         iconName = "note-text";
-      } else if (name === ("four_fields_unbelievers")) {
+      } else if (name === "four_fields_unbelievers") {
         iconName = "crosshairs-off";
-      } else if (name === ("four_fields_believers")) {
+      } else if (name === "four_fields_believers") {
         iconName = "target-account";
-      } else if (name === ("four_fields_accountable")) {
+      } else if (name === "four_fields_accountable") {
         iconName = "crosshairs-question";
-      } else if (name === ("four_fields_church_commitment")) {
+      } else if (name === "four_fields_church_commitment") {
         iconName = "shield-check";
-      } else if (name === ("four_fields_multiplying")) {
+      } else if (name === "four_fields_multiplying") {
         iconName = "shield-plus";
       } else if (name.includes("four_fields")) {
-        iconName = "crosshairs";      
-      } else if (name === ("video_link")) {
+        iconName = "crosshairs";
+      } else if (name === "video_link") {
         iconName = "video-image";
       } else {
         iconName = "text-short";
@@ -245,15 +248,15 @@ const FieldIcon = ({ field, hide }) => {
         iconName = "pound";
       }
       break;
-      case FieldTypes.BOOLEAN:
-        if (name.includes("favorite")) {
-          iconName = "star";
-        } else if (name === ("receive_prayer_time_notifications")) {
-          iconName = "bell-ring-outline";
-        } else {
-          iconName = "toggle-switch";
-        }
-        break;
+    case FieldTypes.BOOLEAN:
+      if (name.includes("favorite")) {
+        iconName = "star";
+      } else if (name === "receive_prayer_time_notifications") {
+        iconName = "bell-ring-outline";
+      } else {
+        iconName = "toggle-switch";
+      }
+      break;
     default:
       iconName = "square-small";
       break;
@@ -268,7 +271,7 @@ const FieldIcon = ({ field, hide }) => {
           fill={globalStyles.text.color}
         />
       );
-    };
+    }
     if (name.includes("peer")) {
       return (
         <PeerIcon
@@ -278,7 +281,7 @@ const FieldIcon = ({ field, hide }) => {
           fill={globalStyles.text.color}
         />
       );
-    };
+    }
     if (name.includes("child")) {
       return (
         <ChildIcon
@@ -288,8 +291,8 @@ const FieldIcon = ({ field, hide }) => {
           fill={globalStyles.text.color}
         />
       );
-    };
-    if ((name.includes("people_groups") || name.includes("peoplegroups")) ) {
+    }
+    if (name.includes("people_groups") || name.includes("peoplegroups")) {
       return (
         <PeopleGroupsIcon
           height={globalStyles.icon.fontSize}
@@ -298,18 +301,18 @@ const FieldIcon = ({ field, hide }) => {
           fill={globalStyles.text.color}
         />
       );
-    };
+    }
     if (name.includes("groups")) {
       return (
         <TypeIcon
-        height={globalStyles.icon.fontSize}
-        width={globalStyles.icon.fontSize}
-        style={styles.svgIcon}
-        fill={globalStyles.text.color}
-      />
+          height={globalStyles.icon.fontSize}
+          width={globalStyles.icon.fontSize}
+          style={styles.svgIcon}
+          fill={globalStyles.text.color}
+        />
       );
-    };
-    if (name === ("baptized")) {
+    }
+    if (name === "baptized") {
       return (
         <Baptize2Icon
           height={globalStyles.icon.fontSize}
@@ -318,8 +321,8 @@ const FieldIcon = ({ field, hide }) => {
           fill={globalStyles.text.color}
         />
       );
-    };
-    if (name === ("baptized_by") || name.includes("bapti")) {
+    }
+    if (name === "baptized_by" || name.includes("bapti")) {
       return (
         <BaptizeIcon
           height={globalStyles.icon.fontSize}
@@ -328,8 +331,8 @@ const FieldIcon = ({ field, hide }) => {
           fill={globalStyles.text.color}
         />
       );
-    };
-  };
+    }
+  }
   // if (type === FieldTypes.KEY_SELECT) {
   //   if (name === ("group_type")) {
   //     return (

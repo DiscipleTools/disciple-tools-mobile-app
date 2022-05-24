@@ -5,11 +5,14 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     alignItems: "center",
     borderTopWidth: idx !== 0 ? 1 : null,
     borderTopColor: idx !== 0 ? theme.surface.primary : null,
-    paddingVertical: 10
+    paddingVertical: 10,
   }),
   // TODO: move to use-styles?
   title: {
-    color: ThemeConstants.DARK === theme.mode ? theme.text.primary : theme.brand.primary,
+    color:
+      ThemeConstants.DARK === theme.mode
+        ? theme.text.primary
+        : theme.brand.primary,
     fontWeight: "bold",
     textDecorationLine: "underline",
     fontSize: 18,
@@ -38,5 +41,5 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   },
   etcetera: {
     alignItems: "center",
-  }
+  },
 });

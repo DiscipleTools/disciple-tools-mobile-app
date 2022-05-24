@@ -5,7 +5,7 @@ import useSecureStore from "hooks/use-secure-store";
 
 import {
   setHasPIN,
-  setCNoncePIN as _setCNoncePIN
+  setCNoncePIN as _setCNoncePIN,
 } from "store/actions/auth.actions";
 
 const PINConstants = {
@@ -19,21 +19,20 @@ const PINConstants = {
 };
 
 const usePIN = () => {
-
   const dispatch = useDispatch();
-  const hasPIN = useSelector(state => state?.authReducer?.hasPIN);
-  const cnoncePIN = useSelector(state => state?.authReducer?.cnoncePIN);
+  const hasPIN = useSelector((state) => state?.authReducer?.hasPIN);
+  const cnoncePIN = useSelector((state) => state?.authReducer?.cnoncePIN);
   const { getSecureItem, setSecureItem, deleteSecureItem } = useSecureStore();
 
-  const CNONCE_THRESHOLD = 10; // seconds 
+  const CNONCE_THRESHOLD = 10; // seconds
   const isTimelyCNonce = (cnonceDT) => {
     const now = new Date();
-    const diff = now.getTime()-new Date(cnonceDT).getTime();
-    const diffSecs = Math.floor((diff/1000));
+    const diff = now.getTime() - new Date(cnonceDT).getTime();
+    const diffSecs = Math.floor(diff / 1000);
     return diffSecs < CNONCE_THRESHOLD;
   };
 
-  const validateCNoncePIN = async() => {
+  const validateCNoncePIN = async () => {
     const cnonce = await getSecureItem(PINConstants.CNONCE);
     if (cnoncePIN !== cnonce) return false;
     const cnonceDT = await getSecureItem(PINConstants.CNONCE_DATETIME);
@@ -63,15 +62,18 @@ const usePIN = () => {
     dispatch(_setCNoncePIN(cnonce));
   };
 
-  return useMemo (() => ({
-    PINConstants,
-    hasPIN,
-    getPIN,
-    setPIN,
-    deletePIN,
-    cnoncePIN,
-    setCNoncePIN,
-    validateCNoncePIN,
-  }), [hasPIN, cnoncePIN]);
+  return useMemo(
+    () => ({
+      PINConstants,
+      hasPIN,
+      getPIN,
+      setPIN,
+      deletePIN,
+      cnoncePIN,
+      setCNoncePIN,
+      validateCNoncePIN,
+    }),
+    [hasPIN, cnoncePIN]
+  );
 };
 export default usePIN;

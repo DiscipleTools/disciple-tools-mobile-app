@@ -13,9 +13,8 @@ import { TypeConstants, SubTypeConstants } from "constants";
 import { findFilterById } from "utils";
 
 const useFilter = () => {
-
   const dispatch = useDispatch();
-  const persistedFilters = useSelector(state => state.userReducer.filters);
+  const persistedFilters = useSelector((state) => state.userReducer.filters);
   const { isContact, isNotification, isCommentsActivity, postType } = useType();
   const route = RootNavigation.getRoute();
 
@@ -35,19 +34,19 @@ const useFilter = () => {
   };
 
   const getDefaultFilter = () => {
-    for (let ii=0; ii < filters?.length; ii++) {
+    for (let ii = 0; ii < filters?.length; ii++) {
       const filterType = filters[ii];
-      for (let jj=0; jj < filterType?.content?.length; jj++) {
+      for (let jj = 0; jj < filterType?.content?.length; jj++) {
         const filter = filterType.content[jj];
         // TODO: constants?
         if (
           (isContact && filter?.ID === "all_my_contacts") ||
-          (filter?.ID === "all")
+          filter?.ID === "all"
         ) {
           return filter;
-        };
-      };
-    };
+        }
+      }
+    }
     //return null;
     //return { ID: "recent" };
     return { ID: "all" };
@@ -62,7 +61,7 @@ const useFilter = () => {
       const filterID = persistedFilters[key];
       const _filter = findFilterById(filterID, filters);
       if (_filter) return _filter;
-    };
+    }
     return getDefaultFilter();
   };
 
@@ -87,27 +86,30 @@ const useFilter = () => {
 
   const filterByKey = (items, key) => {
     if (!key || !value) return items;
-    return items.filter(item => item.hasOwnProperty(key));
+    return items.filter((item) => item.hasOwnProperty(key));
   };
 
   const filterByKeyValue = (items, key, value) => {
     if (!key || !value) return items;
-    return items.filter(item => item?.[key] === value);
+    return items.filter((item) => item?.[key] === value);
   };
 
   const sortByKey = (items, key) => {
-    items.sort((a,b) =>  b[key]-a[key]);
+    items.sort((a, b) => b[key] - a[key]);
   };
 
-  return useMemo(() => ({
-    defaultFilter,
-    filter,
-    onFilter,
-    search,
-    onSearch,
-    filterByKey,
-    filterByKeyValue,
-    sortByKey
-  }), [defaultFilter?.ID, filter?.ID, search, postType]);
+  return useMemo(
+    () => ({
+      defaultFilter,
+      filter,
+      onFilter,
+      search,
+      onSearch,
+      filterByKey,
+      filterByKeyValue,
+      sortByKey,
+    }),
+    [defaultFilter?.ID, filter?.ID, search, postType]
+  );
 };
 export default useFilter;

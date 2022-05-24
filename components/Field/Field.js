@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { Text, View, useWindowDimensions } from "react-native";
-import {
-  AddIcon,
-  CancelIcon,
-  EditIcon,
-  SaveIcon
-} from "components/Icon";
+import { AddIcon, CancelIcon, EditIcon, SaveIcon } from "components/Icon";
 import FieldSkeleton from "./FieldSkeleton";
 import FieldIcon from "./FieldIcon";
 import BooleanField from "components/Field/Boolean/BooleanField";
@@ -28,8 +23,14 @@ import { FieldConstants, FieldTypes, FieldNames } from "constants";
 
 import { localStyles } from "./Field.styles";
 
-const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) => {
-
+const Field = ({
+  grouped = false,
+  editing = false,
+  field,
+  post,
+  onChange,
+  mutate,
+}) => {
   const windowWidth = useWindowDimensions()?.width;
   const { styles, globalStyles } = useStyles(localStyles);
   const { updatePost } = useAPI();
@@ -39,7 +40,9 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   //if (!post.hasOwnProperty(field?.name)) return null;
 
   let value = null;
-  try { value = post[field?.name]; } catch (error) {};
+  try {
+    value = post[field?.name];
+  } catch (error) {}
 
   const [_loading, _setLoading] = useState(false);
   const [_editing, _setEditing] = useState(editing);
@@ -54,26 +57,19 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   const isUncontrolledField = () => {
     const fieldName = field?.name;
     const fieldType = field?.type;
-    if (
-      fieldType === FieldTypes.CONNECTION &&
-      isGroupField()
-    ) return false;
+    if (fieldType === FieldTypes.CONNECTION && isGroupField()) return false;
     if (
       fieldType === FieldTypes.MULTI_SELECT &&
-      (
-        fieldName === FieldNames.CHURCH_HEALTH
-      )
-    ) return false;
-    return(
-      grouped ||
-      fieldType !== FieldTypes.COMMUNICATION_CHANNEL
-    );
+      fieldName === FieldNames.CHURCH_HEALTH
+    )
+      return false;
+    return grouped || fieldType !== FieldTypes.COMMUNICATION_CHANNEL;
   };
 
   const isMultiInputTextField = () => {
     const fieldType = field?.type;
-    return(
-      fieldType === FieldTypes.COMMUNICATION_CHANNEL// ||
+    return (
+      fieldType === FieldTypes.COMMUNICATION_CHANNEL // ||
       //fieldType === FieldTypes.LOCATION_META
     );
   };
@@ -88,22 +84,31 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   const mapField = (newValue, { force } = {}) => {
     let fieldName = field?.name;
     if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) {
-      newValue = newValue.map(value => {
+      newValue = newValue.map((value) => {
         if (!value?.key) {
-          const random3Chars = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0,3);
+          const random3Chars = Math.random()
+            .toString(36)
+            .replace(/[^a-z]+/g, "")
+            .substr(0, 3);
           value["key"] = `${fieldName}_${random3Chars}`;
-        };
+        }
         return value;
       });
-    };
+    }
     let data = { [fieldName]: newValue };
-    if (force && newValue?.values && field?.type !== FieldTypes.COMMUNICATION_CHANNEL) data[fieldName]["force_values"] = true;
+    if (
+      force &&
+      newValue?.values &&
+      field?.type !== FieldTypes.COMMUNICATION_CHANNEL
+    )
+      data[fieldName]["force_values"] = true;
     return data;
   };
 
-  const _onSave = async(newValue) => {
+  const _onSave = async (newValue) => {
     // TODO: handle this differently (we shouldn't need one-off for this field.type)
-    if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) newValue = mapField(newValue);
+    if (field?.type === FieldTypes.COMMUNICATION_CHANNEL)
+      newValue = mapField(newValue);
     await updatePost({ fields: newValue });
     mutate();
   };
@@ -125,32 +130,30 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
     if (grouped) {
       onChange(mappedField);
       return;
-    };
+    }
     if (autosave) {
       onChange(mappedField);
       _onSave(mappedField);
       return;
-    };
+    }
     _setValue(newValue);
     _setLoading(false);
     return;
   };
 
-  const DefaultControls = () => (
-    <EditIcon onPress={_setEditing} />
-  );
+  const DefaultControls = () => <EditIcon onPress={_setEditing} />;
 
   const EditControls = () => {
     // TODO: ignore empty communication channel fields
     const hasChanged = _value !== value; // && !(value === null && (_value === null || _value === ''));
-    return(
+    return (
       <View style={globalStyles.rowContainer}>
         <CancelIcon onPress={_onCancel} />
-        { hasChanged && (
+        {hasChanged && (
           <SaveIcon
             onPress={() => {
               vibrate();
-              _onSave(_value)
+              _onSave(_value);
             }}
           />
         )}
@@ -164,12 +167,12 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
     return <DefaultControls />;
   };
 
-  const isGroupField = () => (
-    field?.name === FieldNames.GROUPS ||
-    field?.name === FieldNames.PARENT_GROUPS ||
-    field?.name === FieldNames.PEER_GROUPS ||
-    field?.name === FieldNames.CHILD_GROUPS
-  ) && value?.values?.length > 0;
+  const isGroupField = () =>
+    (field?.name === FieldNames.GROUPS ||
+      field?.name === FieldNames.PARENT_GROUPS ||
+      field?.name === FieldNames.PEER_GROUPS ||
+      field?.name === FieldNames.CHILD_GROUPS) &&
+    value?.values?.length > 0;
 
   const FieldComponent = () => {
     switch (field?.type) {
@@ -281,7 +284,7 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
   };
 
   const _onAdd = () => {
-    const newValue = _value ? [..._value, { value: '' }] : [{ value: '' }];
+    const newValue = _value ? [..._value, { value: "" }] : [{ value: "" }];
     const mappedValue = mapField(newValue);
     _onChange(newValue);
     if (!grouped) _setEditing(true);
@@ -291,17 +294,15 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
    * [ICON | LABEL              | CONTROL(S)]
    */
   const FieldLabelControls = ({ label }) => {
-    return(
+    return (
       <View style={[globalStyles.rowContainer, styles.fieldLabelContainer]}>
         <View>
           <FieldIcon field={field} />
         </View>
         <View>
-          <Text style={styles.fieldLabelText}>
-            {label}
-          </Text>
+          <Text style={styles.fieldLabelText}>{label}</Text>
         </View>
-        { isMultiInputTextField() && (
+        {isMultiInputTextField() && (
           <View>
             <AddIcon onPress={() => _onAdd()} style={{ color: "green" }} />
           </View>
@@ -321,12 +322,10 @@ const Field = ({ grouped=false, editing=false, field, post, onChange, mutate }) 
    */
   return (
     <View style={styles.container}>
-      <FieldLabelControls label={ field?.label } />
-      <View style={
-        isMultiInputTextField() ? null : styles.component
-      }>
+      <FieldLabelControls label={field?.label} />
+      <View style={isMultiInputTextField() ? null : styles.component}>
         {_loading ? (
-          <FieldSkeleton windowWidth={windowWidth-10 ?? 400} />
+          <FieldSkeleton windowWidth={windowWidth - 10 ?? 400} />
         ) : (
           <FieldComponent />
         )}

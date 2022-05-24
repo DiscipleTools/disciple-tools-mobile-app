@@ -13,13 +13,12 @@ import { findFilterOptionById } from "utils";
 import { localStyles } from "./FilterOptions.styles";
 
 const FilterOptions = ({ defaultFilter, filter, filters, onFilter }) => {
-
   const { styles, globalStyles } = useStyle(localStyles);
   const { expand, getDefaultIndex } = useBottomSheet();
 
   const filterContent = (title) => (
     <FilterSheet
-      filters={filters?.filter(filter => title === filter?.title)}
+      filters={filters?.filter((filter) => title === filter?.title)}
       filter={filter}
       onFilter={onFilter}
     />
@@ -47,7 +46,7 @@ const FilterOptions = ({ defaultFilter, filter, filters, onFilter }) => {
     if (!title || !filter?.ID) return null;
     const filterOption = findFilterOptionById(filter?.ID, filters);
     const selected = filterOption?.title === title;
-    return(
+    return (
       <Chip
         onPress={() => showFilter(title)}
         label={title}
@@ -61,12 +60,12 @@ const FilterOptions = ({ defaultFilter, filter, filters, onFilter }) => {
       />
     );
   };
-  
+
   const ClearFilters = () => {
     const isDefaultFilter = filter?.ID === defaultFilter?.ID;
-    return(
+    return (
       <ClearFiltersIcon
-        onPress={() => isDefaultFilter ? null : onFilter(defaultFilter) }
+        onPress={() => (isDefaultFilter ? null : onFilter(defaultFilter))}
         style={styles.clearFiltersIcon(!isDefaultFilter)}
       />
     );
@@ -74,19 +73,12 @@ const FilterOptions = ({ defaultFilter, filter, filters, onFilter }) => {
 
   if (!filters) return null;
   return (
-    <View
-      style={[
-        globalStyles.rowContainer,
-        styles.container,
-      ]}
-    >
+    <View style={[globalStyles.rowContainer, styles.container]}>
       <ClearFilters />
-      { Array.isArray(filters) && filters?.map((filter, idx) => (
-          <FilterOption
-            key={filter?.title ?? idx}
-            title={filter?.title}
-          />
-      ))}
+      {Array.isArray(filters) &&
+        filters?.map((filter, idx) => (
+          <FilterOption key={filter?.title ?? idx} title={filter?.title} />
+        ))}
     </View>
   );
 };

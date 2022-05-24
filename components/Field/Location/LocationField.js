@@ -13,7 +13,6 @@ import useStyles from "hooks/use-styles";
 import { localStyles } from "./LocationField.styles";
 
 const LocationField = ({ editing, field, value, onChange }) => {
-
   const { styles } = useStyles(localStyles);
   const { expand, snapPoints } = useBottomSheet();
   const { isIOS } = useDevice();
@@ -31,7 +30,7 @@ const LocationField = ({ editing, field, value, onChange }) => {
    */
   const onRemove = (id) => {
     onChange(
-      { values: [{ grid_meta_id: Number(id), delete: true }]},
+      { values: [{ grid_meta_id: Number(id), delete: true }] },
       { autosave: true }
     );
   };
@@ -45,8 +44,8 @@ const LocationField = ({ editing, field, value, onChange }) => {
       mapURL = isIOS
         ? `http://maps.apple.com/?ll=${item?.lat},${item?.lng}`
         : `https://www.google.com/maps/search/?api=1&query=${item?.lat},${item?.lng}`;
-    };
-    return(
+    }
+    return (
       <Chip
         label={name}
         onPress={() => Linking.openURL(mapURL)}
@@ -72,13 +71,14 @@ const LocationField = ({ editing, field, value, onChange }) => {
       onOpen={() => {
         expand({
           defaultIndex: 3,
-          renderContent: () => 
+          renderContent: () => (
             <LocationsSheet
               id={value?.key}
-              title={field?.label || ''}
+              title={field?.label || ""}
               values={value}
               onChange={onChange}
             />
+          ),
         });
       }}
       items={values}
@@ -87,9 +87,7 @@ const LocationField = ({ editing, field, value, onChange }) => {
   );
 
   const LocationFieldView = () => (
-    <Text>
-      { values.map(tag => tag?.value).join(", ") }
-    </Text>
+    <Text>{values.map((tag) => tag?.value).join(", ")}</Text>
   );
 
   if (editing) return <LocationFieldEdit />;

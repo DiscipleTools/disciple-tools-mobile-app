@@ -10,13 +10,17 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     margin: 2,
     paddingStart: 5,
     paddingEnd: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   }),
   label: (selected, isLink) => ({
-    color: selected ? (ThemeConstants.DARK === theme.mode ? theme.text.primary : theme.text.inverse ) : theme.text.primary,
+    color: selected
+      ? ThemeConstants.DARK === theme.mode
+        ? theme.text.primary
+        : theme.text.inverse
+      : theme.text.primary,
     fontWeight: selected && !isLink ? "bold" : null,
-    //textDecorationLine: "underline",   
+    //textDecorationLine: "underline",
     paddingHorizontal: 2,
   }),
 });

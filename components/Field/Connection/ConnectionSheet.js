@@ -12,14 +12,13 @@ import useStyles from "hooks/use-styles";
 import { localStyles } from "./ConnectionSheet.styles";
 
 const ConnectionSheet = ({ id, type, renderItem, values, onChange }) => {
-
   const { styles, globalStyles } = useStyles(localStyles);
   const { delayedClose } = useBottomSheet();
 
   const { search, onSearch } = useFilter();
 
   // exclude currently selected values from options list
-  const exclude = values?.map(item => item?.value);
+  const exclude = values?.map((item) => item?.value);
   // exclude the the current post (ie, contact or group)
   if (id) exclude.push(id);
 
@@ -29,8 +28,8 @@ const ConnectionSheet = ({ id, type, renderItem, values, onChange }) => {
   // MAP TO API
   const mapToAPI = (newItem) => {
     let _values = JSON.parse(JSON.stringify(values));
-    _values = _values.map(value => ({
-      value: value?.value
+    _values = _values.map((value) => ({
+      value: value?.value,
     }));
     _values.push({
       value: newItem?.key,
@@ -40,7 +39,7 @@ const ConnectionSheet = ({ id, type, renderItem, values, onChange }) => {
 
   // MAP FROM API
   const mapFromAPI = (items) => {
-    return items?.map(item => {
+    return items?.map((item) => {
       const key = item?.contact_id || item?.ID || item?.value;
       return {
         key,
@@ -55,40 +54,37 @@ const ConnectionSheet = ({ id, type, renderItem, values, onChange }) => {
   const _onChange = (selectedItem) => {
     const mappedValues = mapToAPI(selectedItem);
     if (JSON.stringify(mappedValues) !== JSON.stringify(items)) {
-      onChange(
-        { values: mappedValues },
-        { autosave: true, force: true }
-      );
-    };
+      onChange({ values: mappedValues }, { autosave: true, force: true });
+    }
     delayedClose();
   };
 
   const _renderItem = ({ item }) => {
     const { key, label, icon, avatar, selected } = item;
-    return(
+    return (
       <Pressable onPress={() => _onChange(item)}>
-        <View key={key}
-          style={[
-            globalStyles.rowContainer,
-            styles.itemContainer
-          ]}
+        <View
+          key={key}
+          style={[globalStyles.rowContainer, styles.itemContainer]}
         >
-            {avatar && (
-              <Image style={styles.avatar} source={{ uri: avatar }} />
-            )}
-            {icon && (
-              <View style={globalStyles.rowIcon}>
-                <MaterialCommunityIcon
-                  type={icon?.type}
-                  name={icon?.name}
-                  style={[globalStyles.icon, icon?.style ? icon?.style : {}]} 
-                />
-              </View>
-            )}
-          <View style={{
-            marginEnd: "auto",
-          }}>
-            <Text>{label} (#{key})</Text>
+          {avatar && <Image style={styles.avatar} source={{ uri: avatar }} />}
+          {icon && (
+            <View style={globalStyles.rowIcon}>
+              <MaterialCommunityIcon
+                type={icon?.type}
+                name={icon?.name}
+                style={[globalStyles.icon, icon?.style ? icon?.style : {}]}
+              />
+            </View>
+          )}
+          <View
+            style={{
+              marginEnd: "auto",
+            }}
+          >
+            <Text>
+              {label} (#{key})
+            </Text>
           </View>
           {selected && (
             <View style={globalStyles.rowIcon}>
@@ -104,7 +100,7 @@ const ConnectionSheet = ({ id, type, renderItem, values, onChange }) => {
   //const sections = useMemo(() => [{ data: mapFromAPI(items) }], [items, values]);
   const mappedItems = mapFromAPI(items);
 
-  return(
+  return (
     <FilterList
       items={mappedItems}
       renderItem={renderItem ?? _renderItem}
