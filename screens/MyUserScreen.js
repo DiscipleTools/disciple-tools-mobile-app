@@ -40,7 +40,6 @@ import { ScreenConstants, TypeConstants, SubTypeConstants } from "constants";
 import { localStyles } from "./MyUserScreen.styles";
 
 const MyUserScreen = ({ navigation }) => {
-
   // NOTE: invoking this hook causes the desired re-render onBack()
   //useIsFocused();
 
@@ -59,11 +58,11 @@ const MyUserScreen = ({ navigation }) => {
   const { isDarkMode, toggleMode } = useTheme();
   const { data: userData } = useMyUser();
   const { data: users } = useUsers();
-  const myUser = users?.find(user => user?.ID === userData?.ID);
+  const myUser = users?.find((user) => user?.ID === userData?.ID);
   const id = myUser?.contact_id;
-  const name = userData?.display_name ?? '';
-  const role = userData?.ID ?? '';
-  const domain = user?.domain ?? '';
+  const name = userData?.display_name ?? "";
+  const role = userData?.ID ?? "";
+  const domain = user?.domain ?? "";
 
   useLayoutEffect(() => {
     const kebabItems = [
@@ -82,69 +81,64 @@ const MyUserScreen = ({ navigation }) => {
         <HeaderRight
           kebabItems={kebabItems}
           renderStartIcons={() => (
-              <>
-                      <Pressable
-          onPress={() => {
-            navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
-              id,
-              name,
-              type: TypeConstants.CONTACT,
-              subtype: SubTypeConstants.COMMENTS_ACTIVITY
-            });
-          }}
-          style={styles.commentActivityIcon}
-        >
-          <CommentActivityIcon />
-        </Pressable>
-              </>         
-           )} 
+            <>
+              <Pressable
+                onPress={() => {
+                  navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
+                    id,
+                    name,
+                    type: TypeConstants.CONTACT,
+                    subtype: SubTypeConstants.COMMENTS_ACTIVITY,
+                  });
+                }}
+                style={styles.commentActivityIcon}
+              >
+                <CommentActivityIcon />
+              </Pressable>
+            </>
+          )}
           props
         />
       ),
     });
   }, []);
 
-  const Header = () => {
-    // console.log("userData", userData);
-    return (
-      <View style={[globalStyles.rowContainer, styles.headerContainer]}>
-        <Image source={gravatar} style={styles.avatar} />
-        <View style={[globalStyles.columnContainer]}>
-          { id ? (
-            <Pressable
-              onPress={() => {
-                navigation.push(ScreenConstants.DETAILS, {
-                  id,
-                  name,
-                  type: TypeConstants.CONTACT,
-                });
-              }}
+  const Header = () => (
+    <View style={[globalStyles.rowContainer, styles.headerContainer]}>
+      <Image source={gravatar} style={styles.avatar} />
+      <View style={[globalStyles.columnContainer]}>
+        {id ? (
+          <Pressable
+            onPress={() => {
+              navigation.push(ScreenConstants.DETAILS, {
+                id,
+                name,
+                type: TypeConstants.CONTACT,
+              });
+            }}
+          >
+            <Text
+              style={[styles.headerText, globalStyles.title, globalStyles.link]}
             >
-              <Text style={[styles.headerText, globalStyles.title, globalStyles.link]}>
-                {name}
-              </Text>
-            </Pressable>
-          ) : (
-            <Text style={[styles.headerText, globalStyles.title]}>
               {name}
             </Text>
-          )}
-          {/*<Text style={styles.headerText2}>{role}</Text>*/}
-          <Text style={styles.headerText}>{domain}</Text>
-        </View>
-        <Pressable
-          onPress={() => {
-            //todo: add logs screen
-          }}
-          style={styles.commentActivityIcon}
-        >
-          <LogsIcon />
-        </Pressable>
+          </Pressable>
+        ) : (
+          <Text style={[styles.headerText, globalStyles.title]}>{name}</Text>
+        )}
+        {/*<Text style={styles.headerText2}>{role}</Text>*/}
+        <Text style={styles.headerText}>{domain}</Text>
       </View>
-    );
-  };
-
-  //const StorybookButton = () => null;
+      <Pressable
+        onPress={() => {
+          //todo: add logs screen
+        }}
+        style={styles.commentActivityIcon}
+      >
+        <LogsIcon />
+      </Pressable>
+    </View>
+  );
 
   const OnlineToggle = () => (
     <ListItem
