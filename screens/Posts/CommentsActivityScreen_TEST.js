@@ -123,67 +123,35 @@ const CommentsActivityScreen = ({
 
     // console.log("------ item ------", item);
 
-    // GETTING URLs IN AN ARRAY.
     let hasUrl =
       message.match(/\bhttps?::\/\/\S+/gi) ||
       message.match(/\bhttps?:\/\/\S+/gi);
-
-    let names = [];
     let strArr;
-    let tempMsg = message;
-    let startIndex = 0;
-    let counter = 0;
-    let messageArr = [];
+    let tempName;
+    let preMsg;
+    let postMsg;
 
     if (hasUrl) {
       for (let i = 0; i < hasUrl.length; i++) {
-        // REMOVING URLs.
-        tempMsg = tempMsg.replace(`(${hasUrl[i]}`, "");
+        message = message.replace(`(${hasUrl[i]}`, "");
       }
 
-      for (let i = 0; i < hasUrl.length; i++) {
-        // EXTRACTING NAMES AND STORING IN AN ARRAY.
-        let nameStart = tempMsg.indexOf("[", startIndex);
-        let nameEnd = tempMsg.indexOf("]", nameStart);
-        names.push(tempMsg.slice(nameStart + 1, nameEnd));
-        startIndex = nameEnd;
-      }
+      strArr = hasUrl[0].split("/");
 
-      for (let i = 0; i < names.length; i++) {
-        // REPLACING NAMES WITH A RANDOM VALUE.
-        tempMsg = tempMsg.replace(names[i], "random_value");
-      }
+      let nameStart = message.indexOf("[");
+      let nameEnd = message.indexOf("]", nameStart);
 
-      strArr = tempMsg.split(" ");
-
-      for (let i = 0; i < strArr.length; i++) {
-        if (strArr[i] === "[random_value]") {
-          // MAPPING NAMES TO CORRESPONDING URLs AND REPLACING random_value WITH A Text COMPONENT.
-          let urlArr = hasUrl[counter].split("/");
-
-          let textComp = (
-            <Text
-              onPress={() => {
-                const type = urlArr[urlArr.length - 3];
-                const tabScreen = getTabScreenFromType(type);
-                navigation.jumpTo(tabScreen, {
-                  screen: ScreenConstants.DETAILS,
-                  id: urlArr[urlArr.length - 2],
-                  type,
-                });
-              }}
-              style={styles.activityLink}
-            >
-              {names[counter] + " "}
-            </Text>
-          );
-          counter++;
-          messageArr.push(textComp);
-        } else {
-          messageArr.push(strArr[i] + " ");
-        }
+      if (nameStart >= 0 && nameEnd >= 0) {
+        tempName = message.slice(nameStart + 1, nameEnd);
+        preMsg = message.slice(0, nameStart);
+        postMsg = message.slice(nameEnd + 1);
+        // console.log(message.slice(nameStart + 1, nameEnd));
+        // console.log(message.slice(0, nameStart + 1));
+        // console.log(message.slice(nameEnd));
       }
     }
+
+    // let msgArr = message.split(" ");
 
     const onCopy = () => setClipboard(message);
 
@@ -306,20 +274,53 @@ const CommentsActivityScreen = ({
                 </View>
               </View>
             </View>
-
-            <ParsedText
-              //selectable
-              style={styles.commentText(isActivity)}
-              parse={[
-                {
-                  pattern: MENTION_PATTERN,
-                  style: styles.parseText,
-                  renderText: renderMention,
-                },
-              ]}
-            >
-              {hasUrl ? messageArr : message}
-            </ParsedText>
+            {hasUrl ? (
+              <ParsedText
+                //selectable
+                style={styles.commentText(isActivity)}
+                parse={[
+                  {
+                    pattern: MENTION_PATTERN,
+                    style: styles.parseText,
+                    renderText: renderMention,
+                  },
+                ]}
+              >
+                {preMsg}
+                <Text
+                  onPress={() => {
+                    const type = strArr[strArr.length - 3];
+                    const tabScreen = getTabScreenFromType(type);
+                    navigation.jumpTo(tabScreen, {
+                      screen: ScreenConstants.DETAILS,
+                      id: strArr[strArr.length - 2],
+                      name: tempName,
+                      type,
+                    });
+                  }}
+                  style={styles.activityLink}
+                >
+                  {tempName}
+                </Text>
+                {postMsg}
+              </ParsedText>
+            ) : (
+              <ParsedText
+                style={styles.commentText(isActivity)}
+                parse={[
+                  {
+                    pattern: MENTION_PATTERN,
+                    style: styles.parseText,
+                    renderText: renderMention,
+                  },
+                ]}
+              >
+                {/* {msgArr.map((val, index) => {
+                  return val + " ";
+                })} */}
+                {message}
+              </ParsedText>
+            )}
           </View>
         </View>
       </Pressable>
