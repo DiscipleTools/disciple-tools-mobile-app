@@ -22,8 +22,6 @@ const TextField = ({ grouped = false, editing, field, value, onChange }) => {
 
   const isSliderField = field?.name === FieldNames.INFLUENCE;
 
-  // console.log("------ isSliderField ------", isSliderField);
-
   useEffect(() => {
     if (debouncedValue !== value) {
       // TODO: explain
@@ -52,8 +50,6 @@ const TextField = ({ grouped = false, editing, field, value, onChange }) => {
 
   useEffect(() => {
     if (isSliderField) {
-      // console.log("------ _value ------", _value, typeof _value);
-
       _onChange();
     }
     return;

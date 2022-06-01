@@ -37,8 +37,6 @@ const ActivityLogCard = ({ preview, refreshing }) => {
           onPress={() => {
             const type = log?.post_type;
             const tabScreen = getTabScreenFromType(type);
-            // console.log("----- type -----", type);
-            // console.log("----- tabScreen -----", tabScreen);
             navigation.jumpTo(tabScreen, {
               screen: ScreenConstants.DETAILS,
               id: log?.object_id,
@@ -62,8 +60,6 @@ const ActivityLogCard = ({ preview, refreshing }) => {
     isValidating,
     mutate,
   } = useActivityLog();
-
-  // console.log("------ activityLog ------", activityLog);
 
   // force data refresh on reload
   useEffect(() => {

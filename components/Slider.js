@@ -7,8 +7,6 @@ import useStyles from "hooks/use-styles";
 import { localStyles } from "./Slider.styles";
 
 const Slider = ({ value, onValueChange }) => {
-  // console.log("------Slider value ------", value, typeof value);
-
   const [showSlider, setShowSlider] = useState(value ? true : false);
   const [sliderDisplayValue, setSliderDisplayValue] = useState(
     value ? value : 50
@@ -23,8 +21,6 @@ const Slider = ({ value, onValueChange }) => {
   };
 
   useEffect(() => {
-    // console.log("------ showSlider ------", showSlider);
-
     if (showSlider === false) {
       onValueChange("");
     } else if (switchToggled === true && showSlider === true) {
@@ -32,12 +28,6 @@ const Slider = ({ value, onValueChange }) => {
     }
     return;
   }, [showSlider, switchToggled]);
-
-  // useEffect(() => {
-  //   console.log("------ sliderDisplayValue ------", sliderDisplayValue);
-
-  //   return;
-  // }, [sliderDisplayValue]);
 
   return (
     <View style={styles.container}>
@@ -71,12 +61,10 @@ const Slider = ({ value, onValueChange }) => {
             }
             thumbTintColor={styles.sliderThumbColor}
             onValueChange={(value) => {
-              // console.log(Math.floor(sliderDisplayValue));
               setSliderDisplayValue(Math.floor(value));
             }}
             onSlidingComplete={(completedValue) => {
               completedValue = Math.floor(completedValue);
-              // console.log("------ onSlidingComplete ------", completedValue);
               if (completedValue === 100) {
                 alert("COMPLETE INFLUENCE");
               } else if (completedValue === 0) {

@@ -250,6 +250,7 @@ const Field = ({
             field={field}
             value={_value}
             onChange={_onChange}
+            post={post}
           />
         );
       case FieldTypes.NUMBER:

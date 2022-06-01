@@ -43,14 +43,12 @@ const ValidateOtpScreen = (props) => {
       setLoading(true);
       try {
         let response = await validateOtp(domain, username, password, otp);
-        console.log("------onSubmitPress validateOtp------", response);
 
         if (response?.token) {
           // PERSIST USER
           await persistUser(domain, username, response);
         }
       } catch (error) {
-        console.log("------ERROR------", error);
         toast(error.message, true);
       } finally {
         setLoading(false);

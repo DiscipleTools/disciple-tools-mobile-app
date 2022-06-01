@@ -36,6 +36,7 @@ const LoginScreen = (props) => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [loadingO365, setLoadingO365] = useState(false);
 
   const domainRef = useRef(null);
   const usernameRef = useRef(null);
@@ -58,9 +59,7 @@ const LoginScreen = (props) => {
       try {
         // await signIn(cleanedDomain, username, password);
         let response = await check2FaEnabled(cleanedDomain, username, password);
-        // console.log("------onLoginPress check2FaEnabled------", response);
-        // console.log("------TOKEN?------", response.token);
-        // console.log("------wp_2fa_totp_key?------", response.wp_2fa_totp_key);
+
         if (response?.token) {
           await persistUser(cleanedDomain, username, response);
         } else if (response?.wp_2fa_totp_key) {
@@ -96,13 +95,13 @@ const LoginScreen = (props) => {
     const domain = domainRef.current;
     if (domain) {
       const cleanedDomain = cleanDomain(domain);
-      setLoading(true);
+      setLoadingO365(true);
       try {
         await signInO365(cleanedDomain);
       } catch (error) {
         toast(error.message, true);
       } finally {
-        setLoading(false);
+        setLoadingO365(false);
       }
     } else {
       // if any of the required fields are not set, then update state to show error
@@ -287,7 +286,7 @@ const LoginScreen = (props) => {
   const O365LoginButton = () => (
     <Button
       title={i18n.t("global.login") + " O365"}
-      loading={loading}
+      loading={loadingO365}
       onPress={onLoginPressO365}
     />
   );

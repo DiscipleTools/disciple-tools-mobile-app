@@ -47,7 +47,6 @@ const AuthProvider = ({ children }) => {
 WebBrowser.maybeCompleteAuthSession();
 
 let uri = makeRedirectUri();
-// console.log("------ URI ------", uri);
 
 const useAuth = () => useContext(AuthContext);
 
@@ -210,13 +209,8 @@ const useCustomAuth = () => {
     discovery
   );
 
-  // console.log("------ request ------", request);
-
   useEffect(() => {
-    // console.log("----RESPONSE---- ", response);
-
     if (response !== null && response.type === "success") {
-      // console.log("------exchangeCodeAsync------");
       exchangeCodeAsync(
         {
           clientId: CLIENT_ID,
@@ -228,15 +222,12 @@ const useCustomAuth = () => {
         discovery
       )
         .then((token) => {
-          // console.log("------TOKEN------", token);
           let decodedToken = jwt_decode(token.idToken);
-          console.log("------DECODEDTOKEN------", decodedToken);
 
           //VALIDATE THE ACCESS TOKEN AT THE BACKEND.
           validateAccessToken(token);
         })
         .catch((exchangeError) => {
-          // console.log("------ERROR------", exchangeError);
           throw new Error(exchangeError);
         });
     }
@@ -257,8 +248,6 @@ const useCustomAuth = () => {
           accessToken: token.accessToken,
         },
       });
-
-      // console.log("------ res.data ------", res?.data);
 
       if (res?.status === 200 && res?.data?.token) {
         const accessToken = res.data.token;
@@ -283,7 +272,6 @@ const useCustomAuth = () => {
         return;
       }
     } catch (err) {
-      // console.log("------validateAccessToken ERROR------", err);
       throw new Error(err);
     }
   };
@@ -291,10 +279,8 @@ const useCustomAuth = () => {
   const signInO365 = async (domain) => {
     setO365domain(domain);
     try {
-      // console.log("------ signInO365 ------");
       await promptAsync();
     } catch (error) {
-      // console.log("------ signInO365 ERROR------", error);
       throw new Error(error);
     }
   };
@@ -352,15 +338,12 @@ const useCustomAuth = () => {
         },
       });
 
-      // console.log("------ check2FaEnabled res.status------", res.status);
-
       if (res?.status === 200 && res?.data) {
         return { ...res.data, baseUrl };
       } else {
         throw new Error(res.data.status);
       }
     } catch (error) {
-      // console.log("------ ERROR check2FaEnabled ------", error.response.data);
       throw new Error(error.response.data.message);
     }
   };
@@ -378,7 +361,7 @@ const useCustomAuth = () => {
           authcode: otp,
         },
       });
-      // console.log("------ VALIDATEOTP res.data ------", res?.data);
+
       if (res?.status === 200 && res?.data?.token) {
         return { ...res.data, baseUrl };
       } else {

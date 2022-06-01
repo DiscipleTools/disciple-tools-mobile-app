@@ -48,7 +48,7 @@ const DetailsScreen = ({ navigation }) => {
     postId,
     postType,
   } = useDetails();
-  // console.log("------ POST ------", post);
+
   const { settings } = useSettings();
   const { updatePost } = useAPI();
 

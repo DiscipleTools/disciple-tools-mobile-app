@@ -17,8 +17,7 @@ import { FieldNames } from "constants";
 
 import { localStyles } from "./MultiSelectField.styles";
 
-const MultiSelectField = ({ editing, field, value, onChange }) => {
-
+const MultiSelectField = ({ editing, field, value, onChange, post }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { expand, setMultiSelectValues } = useBottomSheet();
   const { postType } = useType();
@@ -56,24 +55,23 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
 
   const selectedItems = getSelectedItems();
 
-  const isFaithMilestones = () => (field?.name === FieldNames.FAITH_MILESTONES);
+  const isFaithMilestones = () => field?.name === FieldNames.FAITH_MILESTONES;
 
-  const isChurchHealth = () => (field?.name === FieldNames.CHURCH_HEALTH);
+  const isChurchHealth = () => field?.name === FieldNames.CHURCH_HEALTH;
 
-  const isMilestones = (isFaithMilestones() || isChurchHealth());
+  const isMilestones = isFaithMilestones() || isChurchHealth();
 
   const MultiSelectFieldEdit = () => {
-
     // MAP TO API
     const mapToAPI = (sections) => {
       const values = [];
       sections.forEach((section) => {
-        section?.data?.forEach(item => {
+        section?.data?.forEach((item) => {
           if (item?.selected) {
             values.push({
               value: item?.key,
             });
-          };
+          }
         });
       });
       return values;
@@ -81,11 +79,13 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
 
     // MAP FROM API
     const mapFromAPI = (items) => {
-      return items?.map(item => {
+      return items?.map((item) => {
         return {
           key: item?.key,
           label: item?.label,
-          selected: selectedItems?.some(selectedItem => selectedItem?.key === item?.key),
+          selected: selectedItems?.some(
+            (selectedItem) => selectedItem?.key === item?.key
+          ),
         };
       });
     };
@@ -95,49 +95,47 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
      * the user clicks the "Done" button, and all 'sections' are passed
      * back (along with 'selected' property values).
      */
-    const _onChange = async(newSections) => {
+    const _onChange = async (newSections) => {
       const mappedValues = mapToAPI(newSections);
       if (JSON.stringify(mappedValues) !== JSON.stringify(values)) {
         setMultiSelectValues({ values: mappedValues });
-      };
+      }
     };
 
     const onDone = (selectedValues) => {
-      onChange(selectedValues,
-        {
-          autosave: true,
-          force: true
-        }
-      );
+      onChange(selectedValues, {
+        autosave: true,
+        force: true,
+      });
     };
 
     // SELECT OPTIONS
-    const sections = useMemo(() => [{ data: mapFromAPI(items) }], [items, selectedItems]);
-    const title = field?.label || '';
+    const sections = useMemo(
+      () => [{ data: mapFromAPI(items) }],
+      [items, selectedItems]
+    );
+    const title = field?.label || "";
 
-    const sheetContent = useMemo(() => (
-      <>
-        <SelectSheet
-          multiple
-          sections={sections}
-          onChange={_onChange}
-        />
-      </>
-    ), [title, sections]);
+    const sheetContent = useMemo(
+      () => (
+        <>
+          <SelectSheet multiple sections={sections} onChange={_onChange} />
+        </>
+      ),
+      [title, sections]
+    );
 
-    const renderItemLinkless = (item) => <PostChip id={item?.key} title={item?.label} />;
+    const renderItemLinkless = (item) => (
+      <PostChip id={item?.key} title={item?.label} />
+    );
 
-    return(
+    return (
       <Select
         onOpen={() => {
           expand({
             defaultIndex: 3,
             renderHeader: () => (
-              <SheetHeader
-                expandable
-                dismissable
-                title={title}
-              />
+              <SheetHeader expandable dismissable title={title} />
             ),
             renderContent: () => sheetContent,
             onDone: (selectedValues) => onDone(selectedValues),
@@ -150,7 +148,15 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
   };
 
   const MultiSelectFieldView = () => {
-    if (isChurchHealth()) return <ChurchHealth items={items} selectedItems={selectedItems} />;
+    if (isChurchHealth())
+      return (
+        <ChurchHealth
+          items={items}
+          selectedItems={selectedItems}
+          post={post}
+          values={values}
+        />
+      );
     return <MultiSelectFieldEdit />;
   };
 

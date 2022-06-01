@@ -78,11 +78,9 @@ const CommentsActivityScreen = ({
   } = useCommentsActivities({ search, filter });
   if (!items) return null;
 
-  // console.log("------ items ------", items);
-
   useLayoutEffect(() => {
     const postType = route?.params?.type;
-    // console.log("------ postType ------", postType);
+
     const postId = route?.params?.id;
     const kebabItems = [
       {
@@ -120,8 +118,6 @@ const CommentsActivityScreen = ({
     const authorId = Number(item?.user_id);
     const userIsAuthor = authorId === userData?.ID;
     const isActivity = item?.object_note?.length > 0;
-
-    // console.log("------ item ------", item);
 
     // GETTING URLs IN AN ARRAY.
     let hasUrl =
