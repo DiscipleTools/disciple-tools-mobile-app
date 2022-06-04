@@ -17,7 +17,7 @@ import { FieldNames } from "constants";
 
 import { localStyles } from "./MultiSelectField.styles";
 
-const MultiSelectField = ({ editing, field, value, onChange }) => {
+const MultiSelectField = ({ editing, field, value, onChange, post }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { expand, setMultiSelectValues } = useBottomSheet();
   const { postType } = useType();
@@ -149,7 +149,14 @@ const MultiSelectField = ({ editing, field, value, onChange }) => {
 
   const MultiSelectFieldView = () => {
     if (isChurchHealth())
-      return <ChurchHealth items={items} selectedItems={selectedItems} />;
+      return (
+        <ChurchHealth
+          items={items}
+          selectedItems={selectedItems}
+          post={post}
+          values={values}
+        />
+      );
     return <MultiSelectFieldEdit />;
   };
 

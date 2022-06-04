@@ -23,6 +23,9 @@ import useI18N from "hooks/use-i18n";
 import useMyUser from "hooks/use-my-user";
 import useStyles from "hooks/use-styles";
 import useToast from "hooks/use-toast";
+import useType from "hooks/use-type";
+
+import { ScreenConstants } from "constants";
 
 import { parseDateSafe } from "utils";
 
@@ -45,6 +48,7 @@ const CommentsActivityScreen = ({
   insets,
 }) => {
   const { styles, globalStyles } = useStyles(localStyles);
+  const { getTabScreenFromType } = useType();
   const { i18n, isRTL, moment } = useI18N();
   const { setClipboard } = useApp();
   const toast = useToast();
@@ -76,6 +80,7 @@ const CommentsActivityScreen = ({
 
   useLayoutEffect(() => {
     const postType = route?.params?.type;
+
     const postId = route?.params?.id;
     const kebabItems = [
       {
@@ -107,12 +112,74 @@ const CommentsActivityScreen = ({
 
   const CommentsActivityItem = ({ item, loading }) => {
     if (!item || loading) return <CommentsActivityItemLoadingSkeleton />;
-    const message = item?.comment_content || item?.object_note;
+    let message = item?.comment_content || item?.object_note;
     const datetime = moment(parseDate(item)).format("LLLL");
     const author = item?.comment_author || item?.name;
     const authorId = Number(item?.user_id);
     const userIsAuthor = authorId === userData?.ID;
     const isActivity = item?.object_note?.length > 0;
+
+    // GETTING URLs IN AN ARRAY.
+    let hasUrl =
+      message.match(/\bhttps?::\/\/\S+/gi) ||
+      message.match(/\bhttps?:\/\/\S+/gi);
+
+    let names = [];
+    let strArr;
+    let tempMsg = message;
+    let startIndex = 0;
+    let counter = 0;
+    let messageArr = [];
+
+    if (hasUrl) {
+      for (let i = 0; i < hasUrl.length; i++) {
+        // REMOVING URLs.
+        tempMsg = tempMsg.replace(`(${hasUrl[i]}`, "");
+      }
+
+      for (let i = 0; i < hasUrl.length; i++) {
+        // EXTRACTING NAMES AND STORING IN AN ARRAY.
+        let nameStart = tempMsg.indexOf("[", startIndex);
+        let nameEnd = tempMsg.indexOf("]", nameStart);
+        names.push(tempMsg.slice(nameStart + 1, nameEnd));
+        startIndex = nameEnd;
+      }
+
+      for (let i = 0; i < names.length; i++) {
+        // REPLACING NAMES WITH A RANDOM VALUE.
+        tempMsg = tempMsg.replace(names[i], "random_value");
+      }
+
+      strArr = tempMsg.split(" ");
+
+      for (let i = 0; i < strArr.length; i++) {
+        if (strArr[i] === "[random_value]") {
+          // MAPPING NAMES TO CORRESPONDING URLs AND REPLACING random_value WITH A Text COMPONENT.
+          let urlArr = hasUrl[counter].split("/");
+
+          let textComp = (
+            <Text
+              onPress={() => {
+                const type = urlArr[urlArr.length - 3];
+                const tabScreen = getTabScreenFromType(type);
+                navigation.jumpTo(tabScreen, {
+                  screen: ScreenConstants.DETAILS,
+                  id: urlArr[urlArr.length - 2],
+                  type,
+                });
+              }}
+              style={styles.activityLink}
+            >
+              {names[counter] + " "}
+            </Text>
+          );
+          counter++;
+          messageArr.push(textComp);
+        } else {
+          messageArr.push(strArr[i] + " ");
+        }
+      }
+    }
 
     const onCopy = () => setClipboard(message);
 
@@ -235,6 +302,7 @@ const CommentsActivityScreen = ({
                 </View>
               </View>
             </View>
+
             <ParsedText
               //selectable
               style={styles.commentText(isActivity)}
@@ -246,7 +314,7 @@ const CommentsActivityScreen = ({
                 },
               ]}
             >
-              {message}
+              {hasUrl ? messageArr : message}
             </ParsedText>
           </View>
         </View>

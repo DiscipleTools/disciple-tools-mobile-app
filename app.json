@@ -27,6 +27,7 @@
       "useNextNotificationsApi": true,
       "versionCode": 1100
     },
-    "description": ""
+    "description": "",
+    "scheme": "discipletoolsapp"
   }
 }

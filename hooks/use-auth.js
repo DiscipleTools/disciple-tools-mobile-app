@@ -19,6 +19,15 @@ import axios from "services/axios";
 
 import jwt_decode from "jwt-decode";
 
+import * as WebBrowser from "expo-web-browser";
+import {
+  makeRedirectUri,
+  useAuthRequest,
+  useAutoDiscovery,
+  exchangeCodeAsync,
+} from "expo-auth-session";
+import { TENANT_ID, CLIENT_ID } from "@env";
+
 const AuthConstants = {
   ACCESS_TOKEN: "ACCESS_TOKEN",
   BASE_URL: "BASE_URL",
@@ -34,6 +43,10 @@ const AuthProvider = ({ children }) => {
   const auth = useCustomAuth();
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 };
+
+WebBrowser.maybeCompleteAuthSession();
+
+let uri = makeRedirectUri();
 
 const useAuth = () => useContext(AuthContext);
 
@@ -62,6 +75,7 @@ const useCustomAuth = () => {
   const [baseUrl, setBaseUrl] = useState(null);
   const [user, setUser] = useState(null);
   const [authenticated, setAuthenticated] = useState(false);
+  const [o365domain, setO365domain] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -180,6 +194,96 @@ const useCustomAuth = () => {
     }
   };
 
+  // FOR o365 LOG IN
+  const discovery = useAutoDiscovery(
+    `https://login.microsoftonline.com/${TENANT_ID}/v2.0`
+  );
+
+  // Request
+  const [request, response, promptAsync] = useAuthRequest(
+    {
+      clientId: CLIENT_ID,
+      scopes: ["openid", "profile", "email", "offline_access"],
+      redirectUri: uri,
+    },
+    discovery
+  );
+
+  useEffect(() => {
+    if (response !== null && response.type === "success") {
+      exchangeCodeAsync(
+        {
+          clientId: CLIENT_ID,
+          scopes: ["openid", "profile", "email", "offline_access"],
+          code: response.params.code,
+          redirectUri: uri,
+          extraParams: { code_verifier: request.codeVerifier },
+        },
+        discovery
+      )
+        .then((token) => {
+          let decodedToken = jwt_decode(token.idToken);
+
+          //VALIDATE THE ACCESS TOKEN AT THE BACKEND.
+          validateAccessToken(token);
+        })
+        .catch((exchangeError) => {
+          throw new Error(exchangeError);
+        });
+    }
+  }, [response]);
+
+  const validateAccessToken = async (token) => {
+    try {
+      const domain = o365domain;
+
+      const baseUrl = `${PROTOCOL}://${domain}/wp-json`;
+      const url = `${baseUrl}/jwt-auth/v1/token/o365validate`;
+
+      const res = await axios({
+        url,
+        method: "POST",
+        data: {
+          accessToken: token.accessToken,
+        },
+      });
+
+      if (res?.status === 200 && res?.data?.token) {
+        const accessToken = res.data.token;
+        const id = decodeToken(accessToken)?.data?.user?.id;
+        const user = {
+          id,
+          username: res.data?.user_email,
+          domain,
+          display_name: res.data?.user_display_name,
+          email: res.data?.user_email,
+          nicename: res.data?.user_nicename,
+          o365Login: true,
+        };
+        // set persisted storage values
+        await setPersistedAuth(accessToken, baseUrl, user);
+        // sync local locale with server
+        if (res.data?.locale) setLocale(res.data.locale);
+        // set in-memory provider value
+        setAccessToken(accessToken);
+        setBaseUrl(baseUrl);
+        setUser(user);
+        return;
+      }
+    } catch (err) {
+      throw new Error(err);
+    }
+  };
+
+  const signInO365 = async (domain) => {
+    setO365domain(domain);
+    try {
+      await promptAsync();
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
+
   // TODO: implement timeout
   const signIn = async (domain, username, password) => {
     // TODO: handle offline
@@ -220,6 +324,76 @@ const useCustomAuth = () => {
     }
   };
 
+  const check2FaEnabled = async (domain, username, password) => {
+    try {
+      const baseUrl = `${PROTOCOL}://${domain}/wp-json`;
+      const url = `${baseUrl}/jwt-auth/v1/login/validate`;
+      const res = await axios({
+        url,
+        method: "POST",
+        data: {
+          username,
+          password,
+        },
+      });
+
+      if (res?.status === 200 && res?.data) {
+        return { ...res.data, baseUrl };
+      } else {
+        throw new Error(res.data.status);
+      }
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  };
+
+  const validateOtp = async (domain, username, password, otp) => {
+    try {
+      const baseUrl = `${PROTOCOL}://${domain}/wp-json`;
+      const url = `${baseUrl}/jwt-auth/v1/login/validate-otp`;
+      const res = await axios({
+        url,
+        method: "POST",
+        data: {
+          username,
+          password,
+          authcode: otp,
+        },
+      });
+
+      if (res?.status === 200 && res?.data?.token) {
+        return { ...res.data, baseUrl };
+      } else {
+        throw new Error(res.data.status);
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
+
+  const persistUser = async (domain, username, data) => {
+    const accessToken = data.token;
+    const id = decodeToken(accessToken)?.data?.user?.id;
+    const user = {
+      id,
+      username,
+      domain,
+      display_name: data?.user_display_name,
+      email: data?.user_email,
+      nicename: data?.user_nicename,
+      o365Login: false,
+    };
+    // set persisted storage values
+    await setPersistedAuth(accessToken, data.baseUrl, user);
+    // sync local locale with server
+    if (data?.locale) setLocale(data.locale);
+    // set in-memory provider value
+    setAccessToken(accessToken);
+    setBaseUrl(data.baseUrl);
+    setUser(user);
+    return;
+  };
+
   const signOut = async () => {
     try {
       // TODO: delete PIN related values
@@ -234,6 +408,12 @@ const useCustomAuth = () => {
       // disable "auto login" and "remember login details" on signOut
       if (isAutoLogin) toggleAutoLogin();
       if (rememberLoginDetails) toggleRememberLoginDetails();
+      if (user.o365Login) {
+        await WebBrowser.openAuthSessionAsync(
+          `https://login.windows.net/${TENANT_ID}/oauth2/logout`,
+          uri
+        );
+      }
       // nullify in-memory auth provider values
       setAccessToken(null);
       setBaseUrl(null);
@@ -241,7 +421,7 @@ const useCustomAuth = () => {
     }
   };
 
-  return useMemo(
+  let memoizedValues = useMemo(
     () => ({
       authenticated,
       user,
@@ -250,6 +430,9 @@ const useCustomAuth = () => {
       rememberLoginDetails,
       toggleRememberLoginDetails,
       signIn,
+      check2FaEnabled,
+      validateOtp,
+      persistUser,
       signOut,
     }),
     [
@@ -260,5 +443,6 @@ const useCustomAuth = () => {
       rememberLoginDetails,
     ]
   );
+  return { ...memoizedValues, signInO365 };
 };
 export { useAuth, AuthProvider };

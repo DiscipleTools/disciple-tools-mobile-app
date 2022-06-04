@@ -2,12 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Text, TextInput, View } from "react-native";
 
 import { CancelIcon, SaveIcon } from "components/Icon";
-import Slider from "components/Slider";
 
 import useDebounce from "hooks/use-debounce";
 import useStyles from "hooks/use-styles";
-
-import { FieldNames } from "constants";
 
 import { localStyles } from "./NumberField.styles";
 
@@ -21,11 +18,9 @@ const NumberField = ({ grouped = false, editing, field, value, onChange }) => {
   // TODO: use constant for debounce time
   const debouncedValue = useDebounce(_value, 1500);
 
-  const isSliderField = field?.name === FieldNames.INFLUENCE;
-
   useEffect(() => {
     if (debouncedValue !== value) {
-      if (grouped || isSliderField) {
+      if (grouped) {
         onChange(debouncedValue);
         return;
       }
@@ -76,9 +71,6 @@ const NumberField = ({ grouped = false, editing, field, value, onChange }) => {
   );
 
   if (editing) {
-    if (isSliderField) {
-      return <Slider value={_value} onValueChange={_setValue} />;
-    }
     return renderNumberFieldEdit();
   }
   return renderNumberFieldView();

@@ -68,4 +68,13 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   activityIndicator: {
     marginEnd: 15,
   },
+  activityLink: {
+    color:
+      ThemeConstants.DARK === theme.mode
+        ? theme.text.primary
+        : theme.brand.primary,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+    marginVertical: 2,
+  },
 });

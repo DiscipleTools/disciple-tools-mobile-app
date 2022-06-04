@@ -1,5 +1,5 @@
 // TODO: move Style-related Constants to Theme
-import Constants from "constants";
+import Constants, { ThemeConstants } from "constants";
 
 // TODO: move to globalStyles bc this is verbatim same as NumberField
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
@@ -16,5 +16,11 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   },
   controlIcons: {
     justifyContent: "space-between",
+  },
+  switch: {
+    color:
+      theme.mode === ThemeConstants.DARK
+        ? theme.highlight
+        : theme.brand.primary,
   },
 });

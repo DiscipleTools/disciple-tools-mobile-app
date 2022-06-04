@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, ImageBackground, Switch, Text, View } from "react-native";
 
-import ListItem from "components/ListItem";
+//import ListItem from "components/ListItem";
 
 import useStyles from "hooks/use-styles";
 
@@ -20,10 +20,11 @@ import {
 } from "constants/icons";
 
 import { ChurchHealthConstants } from "constants";
+import { baptizeIconChurchHealth } from "constants/icons";
 
 import { localStyles } from "./ChurchHealth.styles";
 
-const ChurchHealth = ({ items, selectedItems }) => {
+const ChurchHealth = ({ items, selectedItems, post, values }) => {
   const { styles, globalStyles } = useStyles(localStyles);
 
   const isSelected = (key) => selectedItems?.some((item) => item?.key === key);
@@ -169,6 +170,19 @@ const ChurchHealth = ({ items, selectedItems }) => {
         />
         <GridItem top={300} left={240} />
         <GridItem top={300} left={300} />
+        <View style={styles.baptismContainer}>
+          <Text>
+            {post?.member_count && post?.baptized_member_count
+              ? post.member_count - post.baptized_member_count
+              : 0}
+          </Text>
+          <Image
+            resizeMode="contain"
+            source={baptizeIconChurchHealth}
+            style={styles.baptizeIconChurchHealth}
+          />
+          <Text>{post?.baptized_member_count ?? ""}</Text>
+        </View>
       </View>
       {/*
       <View style={{ padding: 5 }}>
