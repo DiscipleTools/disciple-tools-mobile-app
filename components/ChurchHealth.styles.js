@@ -38,4 +38,13 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   listItem: {
     backgroundColor: theme.background.primary,
   },
+  baptismContainer: {
+    alignItems: "center",
+    alignSelf: "flex-start",
+    marginVertical: 10,
+  },
+  baptizeIconChurchHealth: {
+    height: 20,
+    width: 50,
+  },
 });

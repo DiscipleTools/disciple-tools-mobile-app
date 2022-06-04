@@ -48,6 +48,7 @@ const DetailsScreen = ({ navigation }) => {
     postId,
     postType,
   } = useDetails();
+
   const { settings } = useSettings();
   const { updatePost } = useAPI();
 
@@ -88,6 +89,7 @@ const DetailsScreen = ({ navigation }) => {
           });
         }
       });
+
       setScenes(_scenes);
       setRoutes(_routes);
     }

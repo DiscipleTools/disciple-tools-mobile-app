@@ -182,6 +182,7 @@ export const defaultThemeLight = Object.freeze({
   highlight,
   facebook,
   whatsapp,
+  sliderThumb: systemBlueDark,
 });
 
 export const defaultThemeDark = Object.freeze({
@@ -226,6 +227,7 @@ export const defaultThemeDark = Object.freeze({
   highlight,
   facebook,
   whatsapp,
+  sliderThumb: systemBlueDark,
 });
 
 // NOTE: lowercase constants bc used in D.T API requests

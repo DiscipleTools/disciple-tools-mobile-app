@@ -175,6 +175,18 @@ const Field = ({
     value?.values?.length > 0;
 
   const FieldComponent = () => {
+    if (field?.name === FieldNames.INFLUENCE) {
+      return (
+        <TextField
+          grouped={grouped}
+          editing
+          field={field}
+          value={_value}
+          onChange={_onChange}
+        />
+      );
+    }
+
     switch (field?.type) {
       case FieldTypes.BOOLEAN:
         return (
@@ -238,6 +250,7 @@ const Field = ({
             field={field}
             value={_value}
             onChange={_onChange}
+            post={post}
           />
         );
       case FieldTypes.NUMBER:
@@ -265,6 +278,7 @@ const Field = ({
           <TextField
             grouped={grouped}
             editing
+            field={field}
             value={_value}
             onChange={_onChange}
           />
