@@ -20,9 +20,11 @@ const useType = ({ type, subtype } = {}) => {
 
   const isNotification = type === TypeConstants.NOTIFICATION;
 
+  const isMyUser = type === TypeConstants.MY_USER;
+
   const isCustomPostType =
     (type || subtype) &&
-    !(isContact || isGroup || isNotification || isCommentsActivity);
+    !(isContact || isGroup || isNotification || isCommentsActivity || isMyUser);
 
   const isPost = isContact || isGroup || isCustomPostType;
 

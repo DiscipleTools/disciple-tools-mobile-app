@@ -171,14 +171,11 @@ const useSettings = ({ type } = {}) => {
     : "dt-core/v1/settings";
   const { data, error, isLoading, isValidating } = useRequest({ url });
   const settings = data?.fields ? mapSettings(data) : data;
-  return useMemo(
-    () => ({
-      settings,
-      error,
-      isLoading,
-      isValidating,
-    }),
-    [JSON.stringify(settings)]
-  );
+  return {
+    settings,
+    error,
+    isLoading,
+    isValidating,
+  };
 };
 export default useSettings;
