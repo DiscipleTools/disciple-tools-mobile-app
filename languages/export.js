@@ -68,6 +68,7 @@ const mapCode = (code) => {
   if (code === "ro") return "ro_RO";
   if (code === "pa") return "pa_IN";
   if (code === "it") return "it_IT";
+  if (code === "hu") return "hu_HU";
   return code;
 };
 
@@ -137,7 +138,7 @@ const getLangCodes = async (id) => {
   return codes;
 };
 
-const runner = async () => {
+const run = async () => {
   try {
     const themeCodes = await getLangCodes(POEDITOR_THEME_ID);
     const mobileCodes = await getLangCodes(POEDITOR_MOBILE_ID);
@@ -147,30 +148,30 @@ const runner = async () => {
       })
       .filter((x) => !!x);
     console.log(`supportedCodes: ${JSON.stringify(supportedCodes)}`);
-    const exportVar = {};
-    var stream = fs.createWriteStream(__dirname + "/index.js", { flags: "w" });
+    //const exportVar = {};
+    //var stream = fs.createWriteStream(__dirname + "/index.js", { flags: "w" });
     //supportedCodes.forEach(code => {
     for (let ii = 0; ii < supportedCodes.length; ii++) {
       const code = supportedCodes[ii];
       const mappedCode = mapCode(code);
       const desc = code !== mappedCode ? `${code} (${mappedCode})` : code;
       console.log(`processing "${desc}"`);
-      const data = `const ${mappedCode} = require('./${mappedCode}.json');\n`;
-      stream.write(data);
-      exportVar[mappedCode] = code;
+      //const data = `const ${mappedCode} = require('./${mappedCode}.json');\n`;
+      //stream.write(data);
+      //exportVar[mappedCode] = code;
       const res = await getExportLink(code, POEDITOR_MOBILE_ID);
       const url = JSON.parse(res).result.url;
       await downloadExport(code, url);
     }
-    stream.write("module.exports = {\n");
-    supportedCodes.forEach((code) => {
-      const mappedCode = mapCode(code);
-      stream.write(`\t"${mappedCode}": ${mappedCode},\n`);
-    });
-    stream.write("};\n");
-    stream.end();
+    //stream.write("module.exports = {\n");
+    //supportedCodes.forEach((code) => {
+    //  const mappedCode = mapCode(code);
+    //  stream.write(`\t"${mappedCode}": ${mappedCode},\n`);
+    //});
+    //stream.write("};\n");
+    //stream.end();
   } catch (err) {
     console.error(err);
   }
 };
-runner();
+run();

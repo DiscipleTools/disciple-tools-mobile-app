@@ -2,12 +2,10 @@
   "endonym": "فارسی",
   "global": {
     "accept": "تایید کنید",
-    "activity": "فعالیت",
     "activityLog": "گزارش فعالیت",
     "addNew": "جدید اضافه کن",
     "alert": "هشدار",
     "all": "همه",
-    "appRestart": "راه اندازی مجدد برنامه",
     "autoLogin": "ورود خودکار",
     "cancel": "لغو کنید",
     "comments": "نظرات",
@@ -18,7 +16,6 @@
     "dataSaved": "داده ها با موفقیت ذخیره شد!",
     "decline": "کاهش می یابد",
     "delete": "حذف",
-    "deleted": "حذف شده",
     "documentation": "مستندات",
     "done": "انجام شده",
     "edit": "ویرایش کنید",
@@ -63,7 +60,6 @@
     "read": "فقط خواندنی",
     "rememberLoginDetails": "جزئیات ورود را به خاطر بسپارید",
     "save": "صرفه جویی",
-    "saved": "ذخیره",
     "search": "جستجو کردن",
     "settings": "تنظیمات",
     "share": "اشتراک گذاری",
@@ -78,6 +74,11 @@
     "updateRequiredText": "لطفا با ارسال نظر یک به روز رسانی ارائه دهید",
     "url": "URL",
     "username": "نام کاربری",
-    "viewOnWeb": "مشاهده در وب"
+    "viewOnWeb": "مشاهده در وب",
+    "activity": "فعالیت",
+    "appRestart": "راه اندازی مجدد برنامه",
+    "deleted": "حذف شده",
+    "saved": "ذخیره",
+    "user": "کاربر من"
   }
 }

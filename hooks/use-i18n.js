@@ -15,103 +15,112 @@ import * as Updates from "expo-updates";
 //https://github.com/fnando/i18n-js
 import i18n from "i18n-js";
 
-import * as ar from "languages/ar.json";
-//const ar_MA from 'languages/ar_MA.json');
-/*
 import * as am_ET from "languages/am_ET.json";
+import * as ar from "languages/ar.json";
+import * as ar_MA from "languages/ar_MA.json";
+import * as bg_BG from "languages/bg_BG.json";
 import * as bn_BD from "languages/bn_BD.json";
 import * as bs_BA from "languages/bs_BA.json";
 import * as cs from "languages/cs.json";
-import * as my_MM from "languages/my_MM.json";
-import * as zh_CN from "languages/zh_CN.json";
-import * as zh_TW from "languages/zh_TW.json";
-import * as hr from "languages/hr.json";
-import * as nl_NL from "languages/nl_NL.json";
-*/
-import * as en_US from "languages/en_US.json";
-/*
-import * as fr_FR from "languages/fr_FR.json";
 import * as de_DE from "languages/de_DE.json";
+import * as en_US from "languages/en_US.json";
+import * as es_ES from "languages/es_ES.json";
+import * as fa_IR from "languages/fa_IR.json";
+import * as fr_FR from "languages/fr_FR.json";
 import * as gu from "languages/gu.json";
 import * as ha from "languages/ha.json";
 import * as hi_IN from "languages/hi_IN.json";
+import * as hr from "languages/hr.json";
+import * as hu_HU from "languages/hu_HU.json";
 import * as id_ID from "languages/id_ID.json";
 import * as it_IT from "languages/it_IT.json";
 import * as ja from "languages/ja.json";
 import * as kn from "languages/kn.json";
 import * as ko_KR from "languages/ko_KR.json";
+import * as ku from "languages/ku.json";
+import * as lo from "languages/lo.json";
 import * as mk_MK from "languages/mk_MK.json";
+import * as ml from "languages/ml.json";
 import * as mr from "languages/mr.json";
+import * as my_MM from "languages/my_MM.json";
 import * as ne_NP from "languages/ne_NP.json";
+import * as nl_NL from "languages/nl_NL.json";
 import * as pa_IN from "languages/pa_IN.json";
-*/
-import * as fa_IR from "languages/fa_IR.json";
-/*
 import * as pl from "languages/pl.json";
 import * as pt_BR from "languages/pt_BR.json";
 import * as ro_RO from "languages/ro_RO.json";
 import * as ru_RU from "languages/ru_RU.json";
-import * as sr_BA from "languages/sr_BA.json";
 import * as sl_SI from "languages/sl_SI.json";
 import * as so from "languages/so.json";
-*/
-import * as es_ES from "languages/es_ES.json";
-/*
+import * as sr_BA from "languages/sr_BA.json";
 import * as sw from "languages/sw.json";
-import * as tl from "languages/tl.json";
 import * as ta from "languages/ta.json";
 import * as te from "languages/te.json";
 import * as th from "languages/th.json";
+import * as tl from "languages/tl.json";
 import * as tr_TR from "languages/tr_TR.json";
+import * as uk from "languages/uk.json";
 import * as ur from "languages/ur.json";
 import * as vi from "languages/vi.json";
-*/
+import * as yo from "languages/yo.json";
+import * as zh_CN from "languages/zh_CN.json";
+import * as zh_TW from "languages/zh_TW.json";
+
+const DEFAULT_LOCALE = "en_US";
 
 i18n.translations = {
-  //am_ET,
+  am_ET,
   ar,
-  //bn_BD,
-  //bs_BA,
-  //cs,
-  //my_MM,
-  //zh_CN,
-  //zh_TW,
-  //hr,
-  //nl_NL,
+  ar_MA,
+  bg_BG,
+  bn_BD,
+  bs_BA,
+  cs,
+  de_DE,
   en_US,
-  //fr_FR,
-  //de_DE,
-  //gu,
-  //ha,
-  //hi_IN,
-  //id_ID,
-  //it_IT,
-  //ja,
-  //kn,
-  //ko_KR,
-  //mk_MK,
-  //mr,
-  //ne_NP,
-  //pa_IN,
-  fa_IR,
-  //pl,
-  //pt_BR,
-  //ro_RO,
-  //ru_RU,
-  //sr_BA,
-  //sl_SI,
-  //so,
   es_ES,
-  //sw,
-  //tl,
-  //ta,
-  //te,
-  //th,
-  //tr_TR,
-  //ur,
-  //vi,
+  fa_IR,
+  fr_FR,
+  gu,
+  ha,
+  hi_IN,
+  hr,
+  hu_HU,
+  id_ID,
+  it_IT,
+  ja,
+  kn,
+  ko_KR,
+  ku,
+  lo,
+  mk_MK,
+  ml,
+  mr,
+  my_MM,
+  ne_NP,
+  nl_NL,
+  pa_IN,
+  pl,
+  pt_BR,
+  ro_RO,
+  ru_RU,
+  sl_SI,
+  so,
+  sr_BA,
+  sw,
+  ta,
+  te,
+  th,
+  tl,
+  tr_TR,
+  uk,
+  ur,
+  vi,
+  yo,
+  zh_CN,
+  zh_TW,
 };
-i18n.defaultLocale = "en_US";
+i18n.defaultLocale = DEFAULT_LOCALE;
 i18n.fallbacks = true;
 // Set fallback chain
 //i18n.locales.zh = ["zh_CN", "zh_TW"];
@@ -132,8 +141,6 @@ const RTL_LANGS = [
   "yi", // Yiddish
 ];
 
-const DEFAULT_LOCALE = "en_US";
-
 const useI18N = () => {
   const dispatch = useDispatch();
   const locale = useSelector((state) => state.i18nReducer?.locale);
@@ -152,14 +159,10 @@ const useI18N = () => {
   const isRTL = _isRTL();
 
   const mapLocaleToMomentLocale = (locale) => {
-    const special = ["pt_BR"];
+    const special = ["ar_MA", "bn_BD", "pt_BR", "tl"];
     if (special.includes(locale)) {
-      switch (locale) {
-        case "pt_BR":
-          return "pt-br";
-        default:
-          return "en";
-      }
+      if (locale === "tl") return "tl-ph";
+      return locale?.toLowerCase()?.replace("_", "-") ?? "en";
     }
     return locale?.split("_")?.[0];
   };
@@ -172,11 +175,13 @@ const useI18N = () => {
       i18n.locale = locale;
       moment.locale(mapLocaleToMomentLocale(locale));
     }
+    return;
   }, [locale]);
 
   // NOTE: detect API language change and update app locale
   useEffect(() => {
-    if (userData?.locale !== locale) _setLocale(locale);
+    _setLocale(userData?.locale);
+    return;
   }, [userData?.locale]);
 
   const reloadApp = () => {
@@ -186,7 +191,7 @@ const useI18N = () => {
   };
 
   const _setLocale = (_locale) => {
-    if (_locale !== locale) {
+    if (_locale && _locale !== locale) {
       i18n.locale = _locale;
       moment.locale(mapLocaleToMomentLocale(_locale));
       const isRTL = _isRTL(_locale);
@@ -209,7 +214,7 @@ const useI18N = () => {
       return new Intl.NumberFormat(locale?.replace("_", "-")).format(
         numberValue
       );
-    } catch (ee) {
+    } catch (error) {
       return numberValue;
     }
   };
