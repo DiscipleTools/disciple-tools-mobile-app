@@ -170,7 +170,7 @@ const CommentsActivityScreen = ({
               }}
               style={styles.activityLink}
             >
-              {names[counter] + " "}
+              {names[counter]}
             </Text>
           );
           counter++;
