@@ -5,6 +5,7 @@ import { ChevronIcon, PostIcon } from "components/Icon";
 import { HeaderRight } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
 import ListItem from "components/ListItem";
+import Placeholder from "components/Placeholder";
 
 import useCustomPostTypes from "hooks/use-custom-post-types";
 import useSettings from "hooks/use-settings";
@@ -16,7 +17,7 @@ import { ScreenConstants } from "constants";
 import { localStyles } from "./MoreScreen.styles";
 
 const MoreScreen = ({ navigation }) => {
-  const { customPostTypes } = useCustomPostTypes() || {};
+  const { customPostTypes } = useCustomPostTypes();
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, isRTL } = useI18N();
 
@@ -59,6 +60,7 @@ const MoreScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={globalStyles.screenContainer}>
       <OfflineBar />
+      {!customPostTypes?.length > 0 && <Placeholder />}
       {customPostTypes?.map((postType) => (
         <PostButton key={postType} type={postType} />
       ))}
