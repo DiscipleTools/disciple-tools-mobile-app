@@ -135,7 +135,7 @@ const MyUserScreen = ({ navigation }) => {
         }}
         style={styles.commentActivityIcon}
       >
-        <LogsIcon />
+        <LogsIcon style={globalStyles.placeholder} />
       </Pressable>
     </View>
   );
