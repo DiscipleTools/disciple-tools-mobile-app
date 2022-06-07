@@ -158,20 +158,23 @@ const CommentsActivityScreen = ({
           let urlArr = hasUrl[counter].split("/");
 
           let textComp = (
-            <Text
-              onPress={() => {
-                const type = urlArr[urlArr.length - 3];
-                const tabScreen = getTabScreenFromType(type);
-                navigation.jumpTo(tabScreen, {
-                  screen: ScreenConstants.DETAILS,
-                  id: urlArr[urlArr.length - 2],
-                  type,
-                });
-              }}
-              style={styles.activityLink}
-            >
-              {names[counter]}
-            </Text>
+            <>
+              <Text
+                onPress={() => {
+                  const type = urlArr[urlArr.length - 3];
+                  const tabScreen = getTabScreenFromType(type);
+                  navigation.jumpTo(tabScreen, {
+                    screen: ScreenConstants.DETAILS,
+                    id: urlArr[urlArr.length - 2],
+                    type,
+                  });
+                }}
+                style={styles.activityLink}
+              >
+                {names[counter]}
+              </Text>
+              <Text> </Text>
+            </>
           );
           counter++;
           messageArr.push(textComp);
