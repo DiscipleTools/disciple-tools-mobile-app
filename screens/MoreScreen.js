@@ -17,7 +17,7 @@ import { ScreenConstants } from "constants";
 import { localStyles } from "./MoreScreen.styles";
 
 const MoreScreen = ({ navigation }) => {
-  const { customPostTypes } = useCustomPostTypes();
+  const { customPostTypes } = useCustomPostTypes() || [];
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, isRTL } = useI18N();
 
