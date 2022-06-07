@@ -27,7 +27,7 @@ import useType from "hooks/use-type";
 
 import { ScreenConstants } from "constants";
 
-import { parseDateSafe } from "utils";
+import { parseDateSafe, decodeHTMLEntities } from "utils";
 
 import { localStyles } from "./CommentsActivityScreen.styles";
 
@@ -314,7 +314,7 @@ const CommentsActivityScreen = ({
                 },
               ]}
             >
-              {hasUrl ? messageArr : message}
+              {hasUrl ? messageArr : decodeHTMLEntities(message)}
             </ParsedText>
           </View>
         </View>
