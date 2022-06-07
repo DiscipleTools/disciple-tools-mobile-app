@@ -105,7 +105,13 @@ const MyUserScreen = ({ navigation }) => {
 
   const Header = () => (
     <View style={[globalStyles.rowContainer, styles.headerContainer]}>
-      <Image source={gravatar} style={styles.avatar} />
+      <Image
+        defaultSource={gravatar}
+        source={gravatar}
+        resizeMethod="scale"
+        resizeMode="cover"
+        style={styles.avatar}
+      />
       <View style={[globalStyles.columnContainer]}>
         {id ? (
           <Pressable
@@ -129,6 +135,7 @@ const MyUserScreen = ({ navigation }) => {
         {/*<Text style={styles.headerText2}>{role}</Text>*/}
         <Text style={styles.headerText}>{domain}</Text>
       </View>
+      {/*
       <Pressable
         onPress={() => {
           //todo: add logs screen
@@ -137,6 +144,7 @@ const MyUserScreen = ({ navigation }) => {
       >
         <LogsIcon style={globalStyles.placeholder} />
       </Pressable>
+      */}
     </View>
   );
 

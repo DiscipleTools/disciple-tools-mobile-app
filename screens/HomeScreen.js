@@ -52,7 +52,13 @@ const HomeScreen = ({ navigation }) => {
 
   const renderHeaderLeft = (props) => (
     <View style={globalStyles.rowContainer}>
-      <Image source={require("assets/dt-icon.png")} style={styles.logo} />
+      <Image
+        defaultSource={require("assets/dt-icon.png")}
+        source={require("assets/dt-icon.png")}
+        resizeMethod="scale"
+        resizeMode="cover"
+        style={styles.logo}
+      />
       <Text style={styles.brandText}>D.T</Text>
     </View>
   );
@@ -74,12 +80,12 @@ const HomeScreen = ({ navigation }) => {
       headerRight: (props) => (
         <HeaderRight
           kebabItems={kebabItems}
-          renderStartIcons={() => (
-            <>
-              <SearchIcon style={globalStyles.placeholder} />
-              <AddNewIcon style={globalStyles.placeholder} />
-            </>
-          )}
+          //renderStartIcons={() => (
+          //  <>
+          //    <SearchIcon style={globalStyles.placeholder} />
+          //    <AddNewIcon style={globalStyles.placeholder} />
+          //  </>
+          //)}
           props
         />
       ),
