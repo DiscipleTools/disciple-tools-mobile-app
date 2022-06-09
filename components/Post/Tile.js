@@ -101,7 +101,7 @@ const Tile = ({
       (field) => field?.required === true && field?.in_create_form === true
     );
     const filteredPost = Object.fromEntries(
-      Object.entries(_post).filter(([_, v]) => v != null && v?.length > 0)
+      Object.entries(_post).filter(([_, v]) => v !== null || v?.length > 0)
     );
     for (let ii = 0; ii < requiredFields?.length; ii++) {
       const fieldName = requiredFields[ii]?.name;

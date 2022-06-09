@@ -12,7 +12,7 @@ import useLocations from "hooks/use-locations";
 
 import { localStyles } from "./LocationsSheet.styles";
 
-const LocationsSheet = ({ id, title, values, onChange }) => {
+const LocationsSheet = ({ id, title, grouped, values, onChange }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { delayedClose } = useBottomSheet();
   const { search, onSearch } = useFilter();
@@ -26,9 +26,25 @@ const LocationsSheet = ({ id, title, values, onChange }) => {
   // MAP TO API
   /*
    * NOTE: if we append to existing values, then API will duplicate those values
-   * so we only send the new value to the API
+   * so we only send the new value to the API *UNLESS* is 'grouped'
+   * (eg, Create New Screen)
    */
-  const mapToAPI = (newItem) => [{ grid_id: newItem?.key }];
+  const mapToAPI = (newItem) => {
+    if (grouped && values?.values)
+      return [
+        ...values?.values,
+        {
+          grid_id: newItem?.key,
+          label: newItem?.label,
+        },
+      ];
+    return [
+      {
+        grid_id: newItem?.key,
+        label: newItem?.label,
+      },
+    ];
+  };
 
   // MAP FROM API
   const mapFromAPI = (items) => {

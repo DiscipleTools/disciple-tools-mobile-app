@@ -12,7 +12,7 @@ import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./LocationField.styles";
 
-const LocationField = ({ editing, field, value, onChange }) => {
+const LocationField = ({ grouped, editing, field, value, onChange }) => {
   const { styles } = useStyles(localStyles);
   const { expand, snapPoints } = useBottomSheet();
   const { isIOS } = useDevice();
@@ -75,6 +75,7 @@ const LocationField = ({ editing, field, value, onChange }) => {
             <LocationsSheet
               id={value?.key}
               title={field?.label || ""}
+              grouped={grouped}
               values={value}
               onChange={onChange}
             />

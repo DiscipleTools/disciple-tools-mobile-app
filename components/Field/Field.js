@@ -237,6 +237,7 @@ const Field = ({
       case FieldTypes.LOCATION_META:
         return (
           <LocationField
+            grouped={grouped}
             editing
             field={field}
             value={_value}
