@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import * as Notifications from "expo-notifications";
 
 import useAPI from "./use-api";
 import useDevice from "hooks/use-device";
-import useType from "hooks/use-type";
+//import useType from "hooks/use-type";
 
-import { ScreenConstants } from "constants";
+//import { ScreenConstants } from "constants";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -18,7 +18,7 @@ Notifications.setNotificationHandler({
 
 const usePushNotifications = ({ navigation }) => {
   const { deviceUID, isDevice, isAndroid, isIOS } = useDevice();
-  const { getTabScreenFromType } = useType();
+  //const { getTabScreenFromType } = useType();
   const { updateUser } = useAPI();
   const notificationListener = useRef();
   const responseListener = useRef();

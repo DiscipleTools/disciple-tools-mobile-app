@@ -126,4 +126,13 @@ const AppNavigator = () => {
     </NavigationContainer>
   );
 };
-export default AppNavigator;
+const areEqual = (prevProps, nextProps) => {
+  return (
+    prevProps.authenticated === nextProps.authenticated &&
+    prevProps.isAutoLogin === nextProps.isAutoLogin &&
+    prevProps.hasPIN === nextProps.hasPIN &&
+    prevProps.cnoncePIN === nextProps.cnoncePIN &&
+    prevProps?.user?.id === nextProps?.user?.id
+  );
+};
+export default React.memo(AppNavigator, areEqual);

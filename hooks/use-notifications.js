@@ -90,18 +90,5 @@ const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
     markViewed,
     markUnread,
   };
-  return useMemo(
-    () => ({
-      data: filtered,
-      error,
-      isLoading,
-      isValidating,
-      mutate,
-      hasNotifications: filteredNew?.length > 0,
-      markViewed,
-      markUnread,
-    }),
-    [filtered?.length]
-  );
 };
 export default useNotifications;

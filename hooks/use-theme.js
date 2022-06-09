@@ -1,15 +1,25 @@
 import React, { useMemo } from "react";
 import { Appearance, useColorScheme } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
 import { setTheme } from "store/actions/user.actions";
 
 import { ThemeConstants, defaultThemeLight, defaultThemeDark } from "constants";
 
+const areEqual = (prevItem, nextItem) => {
+  return (
+    prevItem?.mode === nextItem?.mode &&
+    prevItem?.brand?.primary === nextItem?.brand?.primary
+  );
+};
+
 const useTheme = () => {
   const colorScheme = useColorScheme();
   const dispatch = useDispatch();
-  const persistedTheme = useSelector((state) => state.userReducer.theme);
+  const persistedTheme = useSelector(
+    (state) => state.userReducer.theme,
+    areEqual
+  );
 
   let mode = persistedTheme?.mode || colorScheme;
   if (!mode || (mode !== ThemeConstants.DARK && mode !== ThemeConstants.LIGHT))

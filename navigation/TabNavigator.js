@@ -55,7 +55,6 @@ const TabNavigator = ({ navigation }) => {
   const { isDarkMode, theme } = useTheme();
   const { i18n } = useI18N();
   const { hasNotifications } = useNotifications();
-  //const hasNotifications = false;
 
   const screenOptions = {
     headerStyle: {
@@ -543,4 +542,14 @@ const TabNavigator = ({ navigation }) => {
     </Tab.Navigator>
   );
 };
-export default TabNavigator;
+const areEqual = (prevProps, nextProps) => {
+  //if (prevProps?.value === nextProps?.value) return true;
+  return (
+    prevProps.i18n?.locale === nextProps.i18n?.locale &&
+    prevProps.theme?.mode === nextProps.theme?.mode &&
+    prevProps.theme?.brand?.primary === nextProps.theme?.brand?.primary &&
+    prevProps.isDarkMode === nextProps.isDarkMode &&
+    prevProps.hasNotifications === nextProps.hasNotifications
+  );
+};
+export default React.memo(TabNavigator, areEqual);
