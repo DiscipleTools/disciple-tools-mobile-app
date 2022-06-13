@@ -82,7 +82,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   // Components
   container: (tabBarHeight) => ({
     backgroundColor: theme.background.primary,
-    marginBottom: isIOS ? tabBarHeight * 1.5 : tabBarHeight * 2.5, // ? tabBarHeight + Constants.LIST_ITEM_HEIGHT : null,
+    //marginBottom: isIOS ? tabBarHeight * 1.5 : tabBarHeight * 2.5, // ? tabBarHeight + Constants.LIST_ITEM_HEIGHT : null,
   }),
   screenContainer: {
     backgroundColor: theme.surface.primary,
