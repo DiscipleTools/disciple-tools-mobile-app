@@ -58,7 +58,6 @@ const ChurchHealth = ({ items, selectedItems, post, values }) => {
     for (let [key, value] of Object.entries(iconsData || {})) {
       iconsDataArray.push({ key, value });
     }
-    // console.log(iconsDataArray);
 
     let totalIcons = iconsDataArray.length - 1;
     let svgIconsArray = [];
