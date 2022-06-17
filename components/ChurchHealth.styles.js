@@ -11,8 +11,8 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     marginEnd: "auto",
   },
   gridBox: {
-    height: 50,
-    width: 50,
+    height: 40,
+    width: 40,
   },
   circle: {
     flex: 1,
@@ -24,7 +24,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   }),
   iconImage: (selected) => ({
     //tintColor: selected ? null : "gray",
-    opacity: selected ? null : 0.15,
+    opacity: selected ? null : 0.5,
     // RN throws console error about Image having a border property
     //borderBottomColor: theme.mode === ThemeConstants.DARK ? theme.highlight : theme.brand.primary,
     //borderBottomWidth: selected ? 2 : 0,

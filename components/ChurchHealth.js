@@ -1,37 +1,93 @@
 import React from "react";
 import { Image, ImageBackground, Switch, Text, View } from "react-native";
+import { SvgUri } from "react-native-svg";
 
 //import ListItem from "components/ListItem";
 
-import useStyles from "hooks/use-styles";
+import SheetHeader from "components/Sheet/SheetHeader";
 
-import {
-  baptismsIcon,
-  bibleStudyIcon,
-  communionIcon,
-  fellowshipIcon,
-  givingIcon,
-  prayerIcon,
-  praiseIcon,
-  sharingIcon,
-  leadersIcon,
-  circleIcon,
-  dottedCircleIcon,
-} from "constants/icons";
+import useBottomSheet from "hooks/use-bottom-sheet";
+import useStyles from "hooks/use-styles";
+import useSettings from "hooks/use-settings";
+
+import { circleIcon, dottedCircleIcon } from "constants/icons";
 
 import { ChurchHealthConstants } from "constants";
 import { baptizeIconChurchHealth } from "constants/icons";
 
 import { localStyles } from "./ChurchHealth.styles";
 
+const size = 250;
+const symbolSize = 16;
+
+const radius = size / 2;
+const center = radius;
+
 const ChurchHealth = ({ items, selectedItems, post, values }) => {
   const { styles, globalStyles } = useStyles(localStyles);
+  const { settings } = useSettings();
+
+  const { expand } = useBottomSheet();
+
+  const showSheet = (iconDescription = "") => {
+    expand({
+      renderHeader: () => (
+        <SheetHeader expandable dismissable title={"Church Health"} />
+      ),
+      renderContent: () => (
+        <Text style={{ marginHorizontal: 10 }}>{iconDescription}</Text>
+      ),
+    });
+  };
 
   const isSelected = (key) => selectedItems?.some((item) => item?.key === key);
 
   const hasChurchCommitment = isSelected(
     ChurchHealthConstants.CHURCH_COMMITMENT
   );
+
+  let degToRad = (deg) => {
+    return (deg * Math.PI) / 180;
+  };
+
+  let renderIcons = () => {
+    const iconsData = settings?.fields?.health_metrics?.values || {};
+    let iconsDataArray = [];
+
+    // MAKING AN ARRAY OF OBJECTS FROM AN OBJECT OF OBJECTS
+    for (let [key, value] of Object.entries(iconsData || {})) {
+      iconsDataArray.push({ key, value });
+    }
+
+    let totalIcons = iconsDataArray.length - 1;
+    let svgIconsArray = [];
+    let angle = 0;
+    let increaseAngle = Math.floor(360 / totalIcons);
+
+    for (let i = 0; i < totalIcons; i++) {
+      let angleRad = degToRad(angle);
+      let x = radius * Math.cos(angleRad) + center - symbolSize / 2;
+      let y = radius * Math.sin(angleRad) + center - symbolSize / 2;
+      let selected = isSelected(iconsDataArray[i].key);
+
+      let tempComp = (
+        <SvgUri
+          width={40}
+          height={40}
+          left={x + 25}
+          top={y + 25}
+          position="absolute"
+          style={styles.iconImage(selected)}
+          uri={iconsDataArray[i].value.icon}
+          onPress={() => showSheet(iconsDataArray[i].value.description)}
+          key={iconsDataArray[i].value.description}
+        />
+      );
+      svgIconsArray.push(tempComp);
+      angle += increaseAngle;
+    }
+    return svgIconsArray;
+  };
 
   /*
   const ChurchCommitment = ({ hasChurchCommitment }) => {
@@ -55,121 +111,27 @@ const ChurchHealth = ({ items, selectedItems, post, values }) => {
   };
   */
 
-  const GridItem = ({ top, left, icon, selected }) => (
-    <View
-      style={[
-        {
-          position: "absolute",
-          top,
-          left,
-        },
-        styles.gridBox,
-      ]}
-    >
-      {icon && (
-        <Image
-          source={icon}
-          //resizeMode="contain"
-          style={[styles.gridBox, styles.iconImage(selected)]}
-        />
-      )}
-    </View>
-  );
-
   return (
     <>
       <View style={styles.container}>
-        <ImageBackground
-          source={hasChurchCommitment ? circleIcon : dottedCircleIcon}
-          style={styles.circle}
-          imageStyle={styles.circleImage(hasChurchCommitment)}
-        />
-        <GridItem top={0 + 10} left={0} />
-        <GridItem top={0 + 10} left={60} />
-        <GridItem
-          top={0 + 10}
-          left={150}
-          icon={sharingIcon}
-          selected={isSelected(ChurchHealthConstants.SHARING)}
-        />
-        <GridItem top={0 + 10} left={180} />
-        <GridItem top={0 + 10} left={240} />
-        <GridItem top={0 + 10} left={300} />
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingVertical: 10,
+          }}
+        >
+          <View>
+            <ImageBackground
+              source={hasChurchCommitment ? circleIcon : dottedCircleIcon}
+              style={styles.circle}
+              imageStyle={styles.circleImage(hasChurchCommitment)}
+            />
+            {renderIcons()}
+          </View>
+        </View>
 
-        <GridItem top={60 - 5} left={0} />
-        <GridItem
-          top={60 - 5}
-          left={60}
-          icon={praiseIcon}
-          selected={isSelected(ChurchHealthConstants.PRAISE)}
-        />
-        <GridItem top={60 - 5} left={120} />
-        <GridItem top={60 - 5} left={180} />
-        <GridItem
-          top={60 - 5}
-          left={240}
-          icon={leadersIcon}
-          selected={isSelected(ChurchHealthConstants.LEADERS)}
-        />
-        <GridItem top={60 - 5} left={300} />
-
-        <GridItem
-          top={120 - 5}
-          left={0 + 25}
-          icon={prayerIcon}
-          selected={isSelected(ChurchHealthConstants.PRAYER)}
-        />
-        <GridItem top={120} left={60} />
-        <GridItem top={120} left={120} />
-        <GridItem top={120} left={180} />
-        <GridItem top={120} left={240} />
-        <GridItem
-          top={120 + 30}
-          left={300 - 20}
-          icon={baptismsIcon}
-          selected={isSelected(ChurchHealthConstants.BAPTISM)}
-        />
-
-        <GridItem
-          top={180}
-          left={0 + 25}
-          icon={givingIcon}
-          selected={isSelected(ChurchHealthConstants.GIVING)}
-        />
-        <GridItem top={180} left={60} />
-        <GridItem top={180} left={120} />
-        <GridItem top={180} left={180} />
-        <GridItem top={180} left={240} />
-        <GridItem top={180} left={300} />
-
-        <GridItem top={240} left={0} />
-        <GridItem
-          top={240}
-          left={60 + 10}
-          icon={fellowshipIcon}
-          selected={isSelected(ChurchHealthConstants.FELLOWSHIP)}
-        />
-        <GridItem top={240} left={120} />
-        <GridItem top={240} left={180} />
-        <GridItem
-          top={240}
-          left={240 - 20}
-          icon={bibleStudyIcon}
-          selected={isSelected(ChurchHealthConstants.BIBLE)}
-        />
-        <GridItem top={240} left={300} />
-
-        <GridItem top={300} left={0} />
-        <GridItem top={300} left={60} />
-        <GridItem top={300} left={120} />
-        <GridItem
-          top={300 - 20}
-          left={180 - 30}
-          icon={communionIcon}
-          selected={isSelected(ChurchHealthConstants.COMMUNION)}
-        />
-        <GridItem top={300} left={240} />
-        <GridItem top={300} left={300} />
         <View style={styles.baptismContainer}>
           <Text>
             {post?.member_count && post?.baptized_member_count
