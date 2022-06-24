@@ -307,13 +307,42 @@ export const MentionIcon = ({ onPress, style }) => (
 // Sort
 export const SortAscIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon
-    name="sort-reverse-variant"
+    name="sort-ascending"
     onPress={onPress}
     style={style}
   />
 );
 export const SortDescIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon name="sort-variant" onPress={onPress} style={style} />
+  <MaterialCommunityIcon 
+  name="sort-descending" 
+  onPress={onPress} 
+  style={style} />
+);
+export const SortAscIconDate = ({ onPress, style }) => (
+  <MaterialCommunityIcon
+    name="sort-calendar-ascending"
+    onPress={onPress}
+    style={style}
+  />
+);
+export const SortDescIconDate = ({ onPress, style }) => (
+  <MaterialCommunityIcon 
+  name="sort-calendar-descending" 
+  onPress={onPress} 
+  style={style} />
+);
+export const SortAscIconMod = ({ onPress, style }) => (
+  <MaterialCommunityIcon
+    name="sort-clock-ascending"
+    onPress={onPress}
+    style={style}
+  />
+);
+export const SortDescIconMod = ({ onPress, style }) => (
+  <MaterialCommunityIcon 
+  name="sort-clock-descending"
+  onPress={onPress} 
+  style={style} />
 );
 
 // Nav Tab Bar
