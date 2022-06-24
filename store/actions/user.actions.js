@@ -16,6 +16,7 @@ export const USER_ADD_PUSH_TOKEN_SUCCESS = "USER_ADD_PUSH_TOKEN_SUCCESS";
 export const USER_ADD_PUSH_TOKEN_FAILURE = "USER_ADD_PUSH_TOKEN_FAILURE";
 
 export const SET_FILTER = "SET_FILTER";
+export const REMOVE_FILTER = "REMOVE_FILTER";
 
 export const SET_THEME = "SET_THEME";
 
@@ -64,6 +65,10 @@ export function login(domain, username, password) {
 export function setFilter({ key, filter }) {
   return { type: SET_FILTER, key, filter };
 }
+
+// export function removeFilter() {
+//   return { type: REMOVE_FILTER };
+// }
 
 export function setTheme(theme) {
   return { type: SET_THEME, theme };

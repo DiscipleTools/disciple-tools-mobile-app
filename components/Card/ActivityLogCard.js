@@ -1,64 +1,54 @@
-import React, { useEffect } from "react";
-import { Pressable, Text, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import React, { useState, useEffect } from "react";
+import { Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useIsFocused } from "@react-navigation/native";
 
-import ExpandableCard from "components/Card/ExpandableCard";
-import PrefetchCacheRecord from "components/PrefetchCacheRecord";
+import Card from "components/Card/Card";
 
 import useI18N from "hooks/use-i18n";
 import useActivityLog from "hooks/use-activity-log";
-import useBottomSheet from "hooks/use-bottom-sheet";
+
 import useStyles from "hooks/use-styles";
-import useType from "hooks/use-type";
 
 import { ScreenConstants } from "constants";
 
 import { localStyles } from "./ActivityLogCard.styles";
+import RenderActivityLog from "components/RenderActivityLog";
 
 const ActivityLogCard = ({ preview, refreshing }) => {
   // NOTE: invoking this hook causes the desired re-render onBack()
   useIsFocused();
 
+  const [accordionState, setAccordionState] = useState([]);
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
-  const { getTabScreenFromType } = useType();
-  const { collapse } = useBottomSheet();
   const { i18n, numberFormat } = useI18N();
 
+  useEffect(() => {
+    if (groupedActivityLog) {
+      setAccordionState(
+        new Array(Object.keys(groupedActivityLog).length).fill(false)
+      );
+    }
+  }, [groupedActivityLog]);
+
+  const handleAccordionChange = (groupIndex) => {
+    const updatedAccordionState = accordionState.map((item, index) =>
+      index === groupIndex ? !item : item
+    );
+    setAccordionState(updatedAccordionState);
+  };
+
   // TODO: FilterList
-  const renderActivityLog = (log, idx) => {
-    const _key = `${log.object_id}-${idx}`;
+  const renderActivityLog = (logs, idx) => {
     return (
-      <View
-        key={_key}
-        style={[globalStyles.columnContainer, styles.activityView]}
-      >
-        <Pressable
-          onPress={() => {
-            const type = log?.post_type;
-            const tabScreen = getTabScreenFromType(type);
-            navigation.jumpTo(tabScreen, {
-              screen: ScreenConstants.DETAILS,
-              id: log?.object_id,
-              name: log?.object_name,
-              type,
-            });
-            collapse();
-          }}
-        >
-          <Text style={styles.activityLink}>{log?.object_name}</Text>
-        </Pressable>
-        <Text style={styles.activityText}>{log?.object_note}</Text>
-        {
-          // Prefetch any posts in the ActivityLog so that the records
-          // are available if the user goes OFFLINE.
-        }
-        {log?.object_id && log?.post_type && (
-          <PrefetchCacheRecord id={log.object_id} type={log.post_type} />
-        )}
-      </View>
+      <RenderActivityLog
+        key={logs[0]}
+        logs={logs}
+        index={idx}
+        accordionState={accordionState}
+        handleAccordionChange={handleAccordionChange}
+      />
     );
   };
 
@@ -70,25 +60,42 @@ const ActivityLogCard = ({ preview, refreshing }) => {
     mutate,
   } = useActivityLog();
 
+  let groupedActivityLog = {};
+
+  // Group by name
+  activityLog?.forEach((element) => {
+    let makeKey = element.object_name;
+    if (!groupedActivityLog[makeKey]) {
+      groupedActivityLog[makeKey] = [];
+    }
+
+    groupedActivityLog[makeKey].push({
+      ...element,
+    });
+  });
+
   // force data refresh on reload
   useEffect(() => {
     if (refreshing && mutate) mutate();
   }, [refreshing]);
 
-  const renderExpandedCard = () => (
-    <ScrollView
-      style={{
-        padding: 10,
-      }}
-    >
-      {activityLog?.map((log, idx) => renderActivityLog(log, idx))}
-    </ScrollView>
-  );
+  const renderExpandedCard = () => {
+    navigation.navigate(ScreenConstants.ALL_ACTIVITY_LOGS, {
+      paramsData: {
+        title: `${title} (${numberFormat(activityLog?.length)})`,
+        data: groupedActivityLog,
+      },
+    });
+  };
 
   const renderPartialCard = () => (
     <>
-      <View>{activityLog?.slice(0, preview ?? 3)?.map(renderActivityLog)}</View>
-      {activityLog?.length > 1 && (
+      <View>
+        {Object.entries(groupedActivityLog)
+          .slice(0, preview)
+          .map(renderActivityLog)}
+      </View>
+      {Object.keys(groupedActivityLog).length > 1 && (
         <View style={styles.etcetera}>
           <Text>...</Text>
         </View>
@@ -96,15 +103,16 @@ const ActivityLogCard = ({ preview, refreshing }) => {
     </>
   );
 
-  const title = i18n.t("global.activityLog");
   if (!activityLog) return null;
+
+  const title = i18n.t("global.activityLog");
+
   return (
-    <ExpandableCard
+    <Card
       border
-      title={title}
-      count={numberFormat(activityLog?.length)}
-      renderPartialCard={renderPartialCard}
-      renderExpandedCard={renderExpandedCard}
+      title={`${title} (${numberFormat(activityLog?.length)})`}
+      body={renderPartialCard()}
+      onPress={() => renderExpandedCard()}
     />
   );
 };

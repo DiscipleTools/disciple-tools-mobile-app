@@ -48,6 +48,14 @@ export default function userReducer(state = initialState, action) {
           [action?.key]: action?.filter,
         },
       };
+    case actions.REMOVE_FILTER:
+      return {
+        ...newState,
+        userData: {
+          ...newState?.userData,
+        },
+        filters: null,
+      };
     case actions.SET_THEME:
       return {
         ...newState,

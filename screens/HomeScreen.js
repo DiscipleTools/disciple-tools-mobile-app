@@ -1,5 +1,5 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Image, SafeAreaView, Text, View } from "react-native";
+import React, { useLayoutEffect, useState } from "react";
+import { Image, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { HeaderRight } from "components/Header/Header";

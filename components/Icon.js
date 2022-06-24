@@ -99,6 +99,9 @@ export const CheckIcon = ({ onPress, style }) => (
 export const ChevronDownIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="chevron-down" onPress={onPress} style={style} />
 );
+export const ChevronUpIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="chevron-up" onPress={onPress} style={style} />
+);
 export const ChevronBackIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="chevron-left" onPress={onPress} style={style} />
 );

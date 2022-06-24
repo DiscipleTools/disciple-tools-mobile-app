@@ -6,7 +6,7 @@ import useFilters from "./use-filters";
 import useI18N from "./use-i18n";
 import useType from "hooks/use-type";
 
-import { setFilter } from "store/actions/user.actions";
+import { setFilter, removeFilter } from "store/actions/user.actions";
 
 import { TypeConstants, SubTypeConstants } from "constants";
 
@@ -64,6 +64,10 @@ const useFilter = () => {
     }
     return getDefaultFilter();
   };
+
+  // useEffect(() => {
+  //   dispatch(removeFilter());
+  // }, []);
 
   useEffect(() => {
     const filter = getActiveFilter();
