@@ -1,6 +1,6 @@
 import * as actions from "store/actions/auth.actions";
 import { REHYDRATE } from "redux-persist/lib/constants";
-import { CLEAR_REDUX_DATA } from "store/rootActions";
+import { REINITIALIZE_REDUX } from "store/rootActions";
 
 const initialState = {
   rehydrate: false,
@@ -12,7 +12,7 @@ const initialState = {
 
 export default function authReducer(state = initialState, action) {
   switch (action.type) {
-    case CLEAR_REDUX_DATA:
+    case REINITIALIZE_REDUX:
       return initialState;
     case REHYDRATE:
       return {
@@ -29,12 +29,6 @@ export default function authReducer(state = initialState, action) {
       return {
         ...state,
         rememberLoginDetails: !state.rememberLoginDetails,
-        rehydrate: false,
-      };
-    case actions.AUTH_TOGGLE_HAS_PIN:
-      return {
-        ...state,
-        hasPIN: !state.hasPIN,
         rehydrate: false,
       };
     case actions.AUTH_SET_HAS_PIN:

@@ -7,7 +7,7 @@ import networkReducer from "./reducers/network.reducer";
 import requestReducer from "./reducers/request.reducer";
 import userReducer from "./reducers/user.reducer";
 
-import * as actions from "./rootActions";
+//import * as actions from "./rootActions";
 
 //const combinedReducers = combineReducers({
 const rootReducer = combineReducers({
@@ -19,14 +19,14 @@ const rootReducer = combineReducers({
   cacheReducer,
 });
 
-// Handling CLEAR_REDUX_DATA in each individual reducer reducer is better bc we can reset to initialState rather than completely undefined
+// Handling REINITIALIZE_REDUX in each individual reducer reducer is better bc we can reset to initialState rather than completely undefined
 /* 
 const rootReducer = (state, action) => {
   switch (action.type) {
     //case REHYDRATE:
     //  return state;
     // Clear all data in redux store (reset to initial)
-    case actions.CLEAR_REDUX_DATA:
+    case actions.REINITIALIZE_REDUX:
       return state = undefined;
     default:
       return combinedReducers(state, action);

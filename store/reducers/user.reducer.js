@@ -17,12 +17,6 @@ const initialState = {
   userData: {
     ...userDataInitialState,
   },
-  rememberLoginDetails: null,
-  isAutoLogin: null,
-  hasPIN: null,
-  cnoncePIN: null,
-  cnonceLogin: null,
-  isSignout: null,
 };
 
 export default function userReducer(state = initialState, action) {

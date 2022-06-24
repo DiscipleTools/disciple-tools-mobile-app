@@ -1,5 +1,5 @@
-export const CLEAR_REDUX_DATA = "CLEAR_REDUX_DATA";
+export const REINITIALIZE_REDUX = "REINITIALIZE_REDUX";
 
-export function clearReduxData() {
-  return { type: CLEAR_REDUX_DATA };
+export function reinitializeRedux() {
+  return { type: REINITIALIZE_REDUX };
 }
