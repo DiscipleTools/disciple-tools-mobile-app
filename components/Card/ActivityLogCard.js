@@ -25,10 +25,16 @@ const ActivityLogCard = ({ preview, refreshing }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { getTabScreenFromType } = useType();
   const { collapse } = useBottomSheet();
-  const { i18n, numberFormat } = useI18N();
-
+  const { i18n,moment, numberFormat } = useI18N();
+  const baptismTimestamptoDate = (match, timestamp) => {
+    if ( isNaN(timestamp) ){
+      return false
+    }
+    return moment(timestamp*1000).format('MMM D, YYYY');
+  }
   // TODO: FilterList
   const renderActivityLog = (log, idx) => {
+    const baptismDateRegex = /\{(\d+)\}+/;
     const _key = `${log.object_id}-${idx}`;
     return (
       <View
@@ -50,7 +56,7 @@ const ActivityLogCard = ({ preview, refreshing }) => {
         >
           <Text style={styles.activityLink}>{log?.object_name}</Text>
         </Pressable>
-        <Text style={styles.activityText}>{log?.object_note}</Text>
+        <Text style={styles.activityText}>{baptismDateRegex.test(log?.object_note)?log?.object_note.replace(baptismDateRegex, baptismTimestamptoDate):log?.object_note}</Text>
         {
           // Prefetch any posts in the ActivityLog so that the records
           // are available if the user goes OFFLINE.
