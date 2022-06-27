@@ -21,7 +21,4 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     fontStyle: "italic",
     paddingVertical: 2,
   },
-  etcetera: {
-    alignItems: "center",
-  },
 });

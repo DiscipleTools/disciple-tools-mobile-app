@@ -16,6 +16,7 @@ import {
   UserIcon,
 } from "components/Icon";
 import HomeScreen from "screens/HomeScreen";
+import AllActivityLogsScreen from "screens/AllActivityLogsScreen";
 import MoreScreen from "screens/MoreScreen";
 import PINScreen from "screens/PINScreen";
 import CreateScreen from "screens/Posts/CreateScreen";
@@ -146,6 +147,10 @@ const TabNavigator = ({ navigation }) => {
     return (
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen name={TabScreenConstants.HOME} component={HomeScreen} />
+        <Stack.Screen
+          name={ScreenConstants.ALL_ACTIVITY_LOGS}
+          component={AllActivityLogsScreen}
+        />
         <Stack.Screen
           name={TabScreenConstants.CONTACTS}
           component={PostStack}
