@@ -46,7 +46,6 @@
     "react-native-action-button": "^2.8.5",
     "react-native-dotenv": "^3.3.1",
     "react-native-gesture-handler": "~2.2.1",
-    "react-native-intl": "^1.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-material-menu": "^2.0.0",
     "react-native-mentions": "^1.1.4",
