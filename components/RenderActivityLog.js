@@ -22,7 +22,7 @@ const RenderActivityLog = ({
   const { getTabScreenFromType } = useType();
   const navigation = useNavigation();
 
-  if (!logs || accordionState.length === 0) return null;
+  if (!logs || logs.length === 0 || accordionState.length === 0) return null;
 
   return (
     <>
@@ -35,17 +35,19 @@ const RenderActivityLog = ({
       >
         <Pressable
           onPress={() => {
-            const type = logs[1][0]?.post_type;
-            const tabScreen = getTabScreenFromType(type);
-            navigation.jumpTo(tabScreen, {
-              screen: ScreenConstants.DETAILS,
-              id: logs[1][0]?.object_id,
-              name: logs[1][0]?.object_name,
-              type,
-            });
+            if (logs?.[1][0]) {
+              const type = logs[1][0]?.post_type;
+              const tabScreen = getTabScreenFromType(type);
+              navigation.jumpTo(tabScreen, {
+                screen: ScreenConstants.DETAILS,
+                id: logs[1][0]?.object_id,
+                name: logs[1][0]?.object_name,
+                type,
+              });
+            }
           }}
         >
-          <Text style={styles.activityLink}>{logs[0]}</Text>
+          <Text style={styles.activityLink}>{logs?.[0] ?? " "}</Text>
         </Pressable>
         <Pressable
           onPress={() => {
@@ -57,7 +59,7 @@ const RenderActivityLog = ({
       </View>
 
       {accordionState[index] ? (
-        logs[1]?.map((log, index) => (
+        logs?.[1]?.map((log, index) => (
           <>
             {/* Show all the entries. */}
             <Text key={`${log.object_id}-${index}`} style={styles.activityText}>
@@ -75,12 +77,12 @@ const RenderActivityLog = ({
       ) : (
         <>
           {/* Show only one entry. */}
-          <Text style={styles.activityText}>{logs[1][0]?.object_note}</Text>
+          <Text style={styles.activityText}>{logs?.[1][0]?.object_note}</Text>
           {
             // Prefetch any posts in the ActivityLog so that the records
             // are available if the user goes OFFLINE.
           }
-          {logs[1][0]?.object_id && logs[1][0]?.post_type && (
+          {logs?.[1][0]?.object_id && logs?.[1][0]?.post_type && (
             <PrefetchCacheRecord
               id={logs[1][0].object_id}
               type={logs[1][0].post_type}

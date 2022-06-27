@@ -49,7 +49,7 @@ const AllActivityLogsScreen = ({ navigation, route }) => {
       >
         {Object.entries(groupedActivityLog).map((logs, idx) => (
           <RenderActivityLog
-            key={logs[0]}
+            key={logs?.[0] ?? Math.random()}
             logs={logs}
             index={idx}
             accordionState={accordionState}

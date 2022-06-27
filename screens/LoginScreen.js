@@ -60,6 +60,8 @@ const LoginScreen = (props) => {
     if (domain && username && password) {
       const cleanedDomain = cleanDomain(domain);
       try {
+        await signIn(cleanedDomain, username, password);
+        /*
         let response = await check2FaEnabled(cleanedDomain, username, password);
         if (response?.token) {
           await persistUser(cleanedDomain, username, response);
@@ -74,6 +76,7 @@ const LoginScreen = (props) => {
             },
           });
         }
+        */
       } catch (error) {
         toast(error.message, true);
       } finally {

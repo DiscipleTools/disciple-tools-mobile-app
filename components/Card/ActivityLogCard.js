@@ -43,7 +43,7 @@ const ActivityLogCard = ({ preview, refreshing }) => {
   const renderActivityLog = (logs, idx) => {
     return (
       <RenderActivityLog
-        key={logs[0]}
+        key={logs?.[0] ?? Math.random()}
         logs={logs}
         index={idx}
         accordionState={accordionState}
@@ -103,7 +103,7 @@ const ActivityLogCard = ({ preview, refreshing }) => {
     </>
   );
 
-  if (!activityLog) return null;
+  if (!activityLog || activityLog?.length === 0) return null;
 
   const title = i18n.t("global.activityLog");
 
