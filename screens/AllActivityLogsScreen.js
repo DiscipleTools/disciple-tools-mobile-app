@@ -1,14 +1,18 @@
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import { Pressable, ScrollView } from "react-native";
 
+import useStyles from "hooks/use-styles";
 import OfflineBar from "components/OfflineBar";
 import { ArrowBackIcon } from "components/Icon";
 import RenderActivityLog from "components/RenderActivityLog";
+
+import { localStyles } from "./AllActivityLogsScreen.styles";
 
 const AllActivityLogsScreen = ({ navigation, route }) => {
   const { title, data: groupedActivityLog } = route.params.paramsData;
 
   const [accordionState, setAccordionState] = useState([]);
+  const { styles, globalStyles } = useStyles(localStyles);
 
   useEffect(() => {
     if (groupedActivityLog) {
@@ -41,12 +45,7 @@ const AllActivityLogsScreen = ({ navigation, route }) => {
   return (
     <>
       <OfflineBar />
-      <ScrollView
-        contentContainerStyle={{
-          padding: 10,
-          paddingBottom: 30,
-        }}
-      >
+      <ScrollView contentContainerStyle={styles.container}>
         {Object.entries(groupedActivityLog).map((logs, idx) => (
           <RenderActivityLog
             key={logs?.[0] ?? Math.random()}
