@@ -1,6 +1,6 @@
 import React from "react";
 
-import { SortAscIcon, SortDescIcon } from "components/Icon";
+import { SortAscIcon, SortDescIcon, SortAscIconDate, SortDescIconDate, SortAscIconMod, SortDescIconMod } from "components/Icon";
 import SelectSheet from "./SelectSheet";
 import SheetHeader from "./SheetHeader";
 
@@ -27,13 +27,13 @@ const SortSheet = ({ items, setItems, filter, onFilter }) => {
         {
           key: SortConstants.LAST_MOD_DESC,
           label: i18n.t("global.newest"),
-          icon: <SortDescIcon />,
+          icon: <SortDescIconMod />,
           selected: SortConstants.LAST_MOD_DESC === sortKey,
         },
         {
           key: SortConstants.LAST_MOD_ASC,
           label: i18n.t("global.oldest"),
-          icon: <SortAscIcon />,
+          icon: <SortAscIconMod />,
           selected: SortConstants.LAST_MOD_ASC === sortKey,
         },
       ],
@@ -44,13 +44,13 @@ const SortSheet = ({ items, setItems, filter, onFilter }) => {
         {
           key: SortConstants.CREATED_DESC,
           label: i18n.t("global.newest"),
-          icon: <SortDescIcon />,
+          icon: <SortDescIconDate />,
           selected: SortConstants.CREATED_DESC === sortKey,
         },
         {
           key: SortConstants.CREATED_ASC,
           label: i18n.t("global.oldest"),
-          icon: <SortAscIcon />,
+          icon: <SortAscIconDate />,
           selected: SortConstants.CREATED_ASC === sortKey,
         },
       ],

@@ -1,11 +1,16 @@
 import { createStore, applyMiddleware, compose } from "redux";
-import { persistStore, persistReducer } from "redux-persist";
+import { createMigrate, persistReducer, persistStore } from "redux-persist";
 import ExpoFileSystemStorage from "redux-persist-expo-filesystem";
 import hardSet from "redux-persist/es/stateReconciler/hardSet";
 
+import * as actions from "./rootActions";
 import rootReducer from "./rootReducer";
 
 const middleware = [];
+
+const migrations = {
+  1101: (state) => rootReducer(undefined, actions.REINITIALIZE_REDUX),
+};
 
 // Redux-Persist config
 const persistConfig = {
@@ -14,6 +19,10 @@ const persistConfig = {
   //blacklist: [
   //  "requestReducer"
   //],
+  migrate: createMigrate(migrations, { debug: false }),
+  // semver-ish 1-digit (major), 2-digit (minor), 1-digit (patch)
+  // 1101 -> v1.10.1 or 2050 -> v2.5
+  version: 1101,
   stateReconciler: hardSet,
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);

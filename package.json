@@ -28,7 +28,7 @@
     "expo-haptics": "~11.2.0",
     "expo-localization": "~13.0.0",
     "expo-mail-composer": "~11.2.0",
-    "expo-notifications": "~0.15.2",
+    "expo-notifications": "~0.15.3",
     "expo-permissions": "~13.2.0",
     "expo-random": "~12.2.0",
     "expo-secure-store": "~11.2.0",
