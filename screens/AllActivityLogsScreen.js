@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState, useEffect } from "react";
-import { Pressable, ScrollView } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 
 import useStyles from "hooks/use-styles";
 import OfflineBar from "components/OfflineBar";
@@ -43,9 +43,9 @@ const AllActivityLogsScreen = ({ navigation, route }) => {
   }, []);
 
   return (
-    <>
+    <View style={styles.container}>
       <OfflineBar />
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         {Object.entries(groupedActivityLog).map((logs, idx) => (
           <RenderActivityLog
             key={logs?.[0] ?? Math.random()}
@@ -56,7 +56,7 @@ const AllActivityLogsScreen = ({ navigation, route }) => {
           />
         ))}
       </ScrollView>
-    </>
+    </View>
   );
 };
 export default AllActivityLogsScreen;
