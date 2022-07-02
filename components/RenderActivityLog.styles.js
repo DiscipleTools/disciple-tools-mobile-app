@@ -21,4 +21,17 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     fontStyle: "italic",
     paddingVertical: 2,
   },
+  commentText: (isActivity) => ({
+    flexDirection: "row",
+    color: isActivity ? theme.text.secondary : theme.text.primary,
+    fontStyle: isActivity ? "italic" : null,
+    padding: 5,
+  }),
+  parseText: {
+    color:
+      ThemeConstants.DARK === theme.mode
+        ? theme.highlight
+        : theme.brand.primary,
+    textDecorationLine: "underline",
+  }
 });
