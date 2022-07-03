@@ -24,7 +24,6 @@ const ActivityLogCard = ({ preview, refreshing }) => {
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, numberFormat } = useI18N();
-  const { data: users } = useUsers();
 
   useEffect(() => {
     if (groupedActivityLog) {
@@ -67,6 +66,7 @@ const ActivityLogCard = ({ preview, refreshing }) => {
   // Group by name
   activityLog?.forEach((element) => {
     let makeKey = element.object_name;
+    const baptismDateRegex = /\{(\d+)\}+/;
     if (!groupedActivityLog[makeKey]) {
       groupedActivityLog[makeKey] = [];
     }
