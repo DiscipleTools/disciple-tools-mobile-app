@@ -9,7 +9,6 @@ import useI18N from "hooks/use-i18n";
 import useActivityLog from "hooks/use-activity-log";
 
 import useStyles from "hooks/use-styles";
-import useUsers from "hooks/use-users";
 
 import { ScreenConstants } from "constants";
 
@@ -24,7 +23,6 @@ const ActivityLogCard = ({ preview, refreshing }) => {
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n, numberFormat } = useI18N();
-  const { data: users } = useUsers();
 
   useEffect(() => {
     if (groupedActivityLog) {
