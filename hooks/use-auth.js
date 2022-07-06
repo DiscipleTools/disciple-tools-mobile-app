@@ -26,7 +26,9 @@ import {
   useAutoDiscovery,
   exchangeCodeAsync,
 } from "expo-auth-session";
-import { TENANT_ID, CLIENT_ID } from "@env";
+
+const TENANT_ID = "1917185a-187d-415b-87e6-295e95df8a01";
+const CLIENT_ID = "9a83c1ef-d132-47b2-bf77-d42c465c949a";
 
 const AuthConstants = {
   ACCESS_TOKEN: "ACCESS_TOKEN",
@@ -46,7 +48,7 @@ const AuthProvider = ({ children }) => {
 
 WebBrowser.maybeCompleteAuthSession();
 
-let uri = makeRedirectUri();
+let uri = "tools.disciple.app://login";
 
 const useAuth = () => useContext(AuthContext);
 

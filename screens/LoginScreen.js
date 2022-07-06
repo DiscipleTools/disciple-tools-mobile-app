@@ -14,8 +14,6 @@ import usePlugins from "hooks/use-plugins";
 import useStyles from "hooks/use-styles";
 import useToast from "hooks/use-toast";
 
-import { TENANT_ID, CLIENT_ID } from "@env";
-
 import { localStyles } from "./LoginScreen.styles";
 
 const LoginScreen = (props) => {
@@ -305,7 +303,7 @@ const LoginScreen = (props) => {
         <PasswordField ref={passwordRef} />
         <LoginButton />
         <ForgotPasswordLink />
-        {TENANT_ID && CLIENT_ID && <O365LoginButton />}
+        <O365LoginButton />
         <LanguagePicker />
         <AppVersion />
       </View>
