@@ -8,13 +8,6 @@ export const USER_LOGOUT = "USER_LOGOUT";
 export const USER_LOGOUT_SUCCESS = "USER_LOGOUT_SUCCESS";
 export const USER_LOGOUT_FAILURE = "USER_LOGOUT_FAILURE";
 
-export const USER_GET_PUSH_TOKEN = "USER_GET_PUSH_TOKEN";
-
-export const USER_ADD_PUSH_TOKEN = "USER_ADD_PUSH_TOKEN";
-export const USER_ADD_PUSH_TOKEN_RESPONSE = "USER_ADD_PUSH_TOKEN_RESPONSE";
-export const USER_ADD_PUSH_TOKEN_SUCCESS = "USER_ADD_PUSH_TOKEN_SUCCESS";
-export const USER_ADD_PUSH_TOKEN_FAILURE = "USER_ADD_PUSH_TOKEN_FAILURE";
-
 export const SET_FILTER = "SET_FILTER";
 export const SET_THEME = "SET_THEME";
 
@@ -66,10 +59,6 @@ export function setFilter({ key, filter }) {
 
 export function setTheme(theme) {
   return { type: SET_THEME, theme };
-}
-
-export function getPushToken() {
-  return { type: USER_GET_PUSH_TOKEN };
 }
 
 export function getUserInfo() {

@@ -20,9 +20,10 @@ const persistConfig = {
   //  "requestReducer"
   //],
   migrate: createMigrate(migrations, { debug: false }),
-  // semver-ish 1-digit (major), 2-digit (minor), 1-digit (patch)
-  // 1101 -> v1.10.1 or 2050 -> v2.5
-  version: 1101,
+  // SemVer-ish format:
+  // 1-digit (major), 2-digit (minor), 1-digit (patch), 1-digit (version)
+  // 11011 -> v1.10.1.1 or 205 -> v2.5
+  version: 11012,
   stateReconciler: hardSet,
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
