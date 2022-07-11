@@ -134,6 +134,7 @@ const LoginScreen = (props) => {
         setDomain(user.domain);
       }
     }, []);
+
     const [domain, setDomain] = useState(ref?.current);
     const domainErrorMessage = state.domainValidation ? (
       <Text style={styles.validationErrorMessage}>

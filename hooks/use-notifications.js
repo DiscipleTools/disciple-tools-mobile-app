@@ -7,7 +7,7 @@ import useRequest from "hooks/use-request";
 import { searchObjList } from "utils";
 
 const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
-  const { uid } = useAuth();
+  const { user } = useAuth();
   const { updatePost } = useAPI();
 
   // TODO: constant
@@ -58,9 +58,10 @@ const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
   const markViewed = ({ id } = {}) => {
     // if !id, then mark all as viewed
     // NOTE: *not* passing `mutate` bc we want responsive updates, but pull refresh will mutate
-    if (!id && uid) {
+
+    if (!id && user.id) {
       updatePost({
-        urlPath: `/dt/v1/notifications/mark_all_viewed/${uid}`,
+        urlPath: `/dt/v1/notifications/mark_all_viewed/${user.id}`,
       });
       return;
     }

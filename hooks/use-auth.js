@@ -385,6 +385,7 @@ const useCustomAuth = () => {
       nicename: data?.user_nicename,
       o365Login: false,
     };
+
     // set persisted storage values
     await setPersistedAuth(accessToken, data.baseUrl, user);
     // sync local locale with server
