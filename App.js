@@ -1,6 +1,6 @@
 //import './wdyr';
 import React from "react";
-import { Text } from "react-native";
+import { LogBox, Text } from "react-native";
 import AppNavigator from "navigation/AppNavigator";
 
 import { store, persistor } from "store/store";
@@ -22,18 +22,19 @@ import { AppConstants } from "constants";
 import { enableScreens } from "react-native-screens";
 enableScreens();
 
+const StyledApp = () => {
+  // set default text styles
+  const { globalStyles } = useStyles();
+  Text.defaultProps = Text.defaultProps || {};
+  Text.defaultProps.style = { ...globalStyles.text };
+  return <AppNavigator />;
+};
+
 const App = () => {
   // Initialize the app
   useApp();
 
-  // NOTE: Necessary bc our chain of hooks depends on Redux and we need to be inside the Redux Provider
-  const StyledApp = () => {
-    // set default text styles
-    const { globalStyles } = useStyles();
-    Text.defaultProps = Text.defaultProps || {};
-    Text.defaultProps.style = { ...globalStyles.text };
-    return <AppNavigator />;
-  };
+  LogBox.ignoreAllLogs();
 
   return (
     <>

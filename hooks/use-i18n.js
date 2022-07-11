@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { Alert, I18nManager } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment/min/moment-with-locales";
@@ -146,26 +146,29 @@ const useI18N = () => {
   const locale = useSelector((state) => state.i18nReducer?.locale);
   const { data: userData } = useMyUser();
 
-  const getCountryCode = (locale) => locale?.substring(0, 2);
+  const getCountryCode = useCallback((locale) => locale?.substring(0, 2), []);
 
-  const _isRTL = (_locale) => {
-    // if param is undefined, then default to use existing/persisted locale
-    _locale = _locale ?? locale;
-    if (!_locale) return null;
-    const countryCode = getCountryCode(_locale);
-    return RTL_LANGS.includes(countryCode);
-  };
+  const _isRTL = useCallback(
+    (_locale) => {
+      // if param is undefined, then default to use existing/persisted locale
+      _locale = _locale ?? locale;
+      if (!_locale) return null;
+      const countryCode = getCountryCode(_locale);
+      return RTL_LANGS.includes(countryCode);
+    },
+    [locale]
+  );
 
   const isRTL = _isRTL();
 
-  const mapLocaleToMomentLocale = (locale) => {
+  const mapLocaleToMomentLocale = useCallback((locale) => {
     const special = ["ar_MA", "bn_BD", "pt_BR", "tl"];
     if (special.includes(locale)) {
       if (locale === "tl") return "tl-ph";
       return locale?.toLowerCase()?.replace("_", "-") ?? "en";
     }
     return locale?.split("_")?.[0];
-  };
+  }, []);
 
   useEffect(() => {
     // if no 'locale' existing in-memory or storage, then use device locale
@@ -184,54 +187,57 @@ const useI18N = () => {
     return;
   }, [userData?.locale]);
 
-  const reloadApp = () => {
+  const reloadApp = useCallback(() => {
     setTimeout(() => {
       Updates.reloadAsync();
     }, 1000);
-  };
+  }, []);
 
-  const _setLocale = (_locale) => {
-    if (_locale && _locale !== locale) {
-      i18n.locale = _locale;
-      moment.locale(mapLocaleToMomentLocale(_locale));
-      const isRTL = _isRTL(_locale);
-      dispatch(setLocale(_locale));
-      if (isRTL !== I18nManager?.isRTL) {
-        I18nManager.allowRTL(isRTL);
-        I18nManager.forceRTL(isRTL);
-        Alert.alert(i18n.t("global.alert"), i18n.t("global.appRestart"), [
-          {
-            text: "OK",
-            onPress: () => reloadApp(),
-          },
-        ]);
+  const _setLocale = useCallback(
+    (_locale) => {
+      if (_locale && _locale !== locale) {
+        i18n.locale = _locale;
+        moment.locale(mapLocaleToMomentLocale(_locale));
+        const isRTL = _isRTL(_locale);
+        dispatch(setLocale(_locale));
+        if (isRTL !== I18nManager?.isRTL) {
+          I18nManager.allowRTL(isRTL);
+          I18nManager.forceRTL(isRTL);
+          Alert.alert(i18n.t("global.alert"), i18n.t("global.appRestart"), [
+            {
+              text: "OK",
+              onPress: () => reloadApp(),
+            },
+          ]);
+        }
       }
-    }
-  };
+    },
+    [locale]
+  );
 
-  const numberFormat = (numberValue) => {
-    try {
-      return new Intl.NumberFormat(locale?.replace("_", "-")).format(
-        numberValue
-      );
-    } catch (error) {
-      return numberValue;
-    }
-  };
+  const numberFormat = useCallback(
+    (numberValue) => {
+      try {
+        return new Intl.NumberFormat(locale?.replace("_", "-")).format(
+          numberValue
+        );
+      } catch (error) {
+        return numberValue;
+      }
+    },
+    [locale]
+  );
 
   const selectedEndonym = i18n?.translations[locale]?.endonym ?? "";
 
-  return useMemo(
-    () => ({
-      i18n,
-      isRTL,
-      locale,
-      setLocale: _setLocale,
-      selectedEndonym,
-      moment,
-      numberFormat,
-    }),
-    [isRTL, locale, selectedEndonym]
-  );
+  return {
+    i18n,
+    isRTL,
+    locale,
+    setLocale: _setLocale,
+    selectedEndonym,
+    moment,
+    numberFormat,
+  };
 };
 export default useI18N;

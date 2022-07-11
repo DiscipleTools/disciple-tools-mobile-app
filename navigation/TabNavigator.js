@@ -30,8 +30,8 @@ import NotificationsScreen from "screens/NotificationsScreen";
 import MyUserScreen from "screens/MyUserScreen";
 
 import useI18N from "hooks/use-i18n";
-import useNotifications from "hooks/use-notifications";
 import usePushNotifications from "hooks/use-push-notifications";
+import useNotifications from "hooks/use-notifications";
 import useTheme from "hooks/use-theme";
 
 import {
@@ -51,7 +51,7 @@ const TabNavigator = ({ navigation }) => {
   console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
   */
 
-  usePushNotifications({ navigation });
+  usePushNotifications();
 
   const { isDarkMode, theme } = useTheme();
   const { i18n } = useI18N();
@@ -548,7 +548,6 @@ const TabNavigator = ({ navigation }) => {
   );
 };
 const areEqual = (prevProps, nextProps) => {
-  //if (prevProps?.value === nextProps?.value) return true;
   return (
     prevProps.i18n?.locale === nextProps.i18n?.locale &&
     prevProps.theme?.mode === nextProps.theme?.mode &&

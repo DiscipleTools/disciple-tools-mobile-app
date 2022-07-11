@@ -35,7 +35,12 @@ import useTheme from "hooks/use-theme";
 
 import gravatar from "assets/gravatar-default.png";
 
-import { ScreenConstants, TypeConstants, SubTypeConstants } from "constants";
+import {
+  PINConstants,
+  ScreenConstants,
+  TypeConstants,
+  SubTypeConstants,
+} from "constants";
 
 import { localStyles } from "./MyUserScreen.styles";
 
@@ -46,7 +51,7 @@ const MyUserScreen = ({ navigation }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { isConnected, toggleNetwork } = useNetwork();
   const { i18n, isRTL } = useI18N();
-  const { PINConstants, hasPIN } = usePIN();
+  const { hasPIN } = usePIN();
   const {
     user,
     isAutoLogin,

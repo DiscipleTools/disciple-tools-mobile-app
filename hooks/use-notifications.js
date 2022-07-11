@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback } from "react";
 
 import { useAuth } from "hooks/use-auth";
 import useAPI from "hooks/use-api";
@@ -7,8 +7,35 @@ import useRequest from "hooks/use-request";
 import { searchObjList } from "utils";
 
 const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
-  const { uid } = useAuth();
   const { updatePost } = useAPI();
+  const { user } = useAuth();
+  const uid = user?.uid;
+
+  const markViewed = useCallback(
+    ({ id } = {}) => {
+      // if !id, then mark all as viewed
+      // NOTE: *not* passing `mutate` bc we want responsive updates, but pull refresh will mutate
+      if (!id && uid) {
+        updatePost({
+          urlPath: `/dt/v1/notifications/mark_all_viewed/${uid}`,
+        });
+        return;
+      }
+      if (id)
+        updatePost({
+          urlPath: `/dt/v1/notifications/mark_viewed/${id}`,
+        });
+    },
+    [uid]
+  );
+
+  const markUnread = useCallback(({ id } = {}) => {
+    // NOTE: *not* passing `mutate` bc we want responsive updates, but pull refresh will mutate
+    if (id)
+      updatePost({
+        urlPath: `/dt/v1/notifications/mark_unread/${id}`,
+      });
+  }, []);
 
   // TODO: constant
   if (!limit) limit = 1000;
@@ -54,29 +81,6 @@ const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
   const filteredNew = filtered?.filter((item) => item?.is_new === "1");
   // place new items at the top of list
   filtered = [...filteredNew, ...filteredRead];
-
-  const markViewed = ({ id } = {}) => {
-    // if !id, then mark all as viewed
-    // NOTE: *not* passing `mutate` bc we want responsive updates, but pull refresh will mutate
-    if (!id && uid) {
-      updatePost({
-        urlPath: `/dt/v1/notifications/mark_all_viewed/${uid}`,
-      });
-      return;
-    }
-    if (id)
-      updatePost({
-        urlPath: `/dt/v1/notifications/mark_viewed/${id}`,
-      });
-  };
-
-  const markUnread = ({ id } = {}) => {
-    // NOTE: *not* passing `mutate` bc we want responsive updates, but pull refresh will mutate
-    if (id)
-      updatePost({
-        urlPath: `/dt/v1/notifications/mark_unread/${id}`,
-      });
-  };
 
   const hasNotifications = filteredNew?.length > 0;
 
