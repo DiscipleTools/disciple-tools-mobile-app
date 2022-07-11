@@ -249,6 +249,13 @@ export const ReadIcon = ({ onPress, style }) => (
     style={style}
   />
 );
+export const ReadAllIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon
+    name="checkbox-multiple-marked-circle-outline"
+    onPress={onPress}
+    style={style}
+  />
+);
 export const RemoveIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="minus" onPress={onPress} style={style} />
 );
@@ -316,10 +323,11 @@ export const SortAscIcon = ({ onPress, style }) => (
   />
 );
 export const SortDescIcon = ({ onPress, style }) => (
-  <MaterialCommunityIcon 
-  name="sort-descending" 
-  onPress={onPress} 
-  style={style} />
+  <MaterialCommunityIcon
+    name="sort-descending"
+    onPress={onPress}
+    style={style}
+  />
 );
 export const SortAscIconDate = ({ onPress, style }) => (
   <MaterialCommunityIcon
@@ -329,10 +337,11 @@ export const SortAscIconDate = ({ onPress, style }) => (
   />
 );
 export const SortDescIconDate = ({ onPress, style }) => (
-  <MaterialCommunityIcon 
-  name="sort-calendar-descending" 
-  onPress={onPress} 
-  style={style} />
+  <MaterialCommunityIcon
+    name="sort-calendar-descending"
+    onPress={onPress}
+    style={style}
+  />
 );
 export const SortAscIconMod = ({ onPress, style }) => (
   <MaterialCommunityIcon
@@ -342,10 +351,11 @@ export const SortAscIconMod = ({ onPress, style }) => (
   />
 );
 export const SortDescIconMod = ({ onPress, style }) => (
-  <MaterialCommunityIcon 
-  name="sort-clock-descending"
-  onPress={onPress} 
-  style={style} />
+  <MaterialCommunityIcon
+    name="sort-clock-descending"
+    onPress={onPress}
+    style={style}
+  />
 );
 
 // Nav Tab Bar

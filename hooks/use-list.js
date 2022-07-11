@@ -502,6 +502,9 @@ const useList = ({ limit, search, filter, exclude, type, subtype } = {}) => {
     let queryParams = "";
     Object.keys(filter).forEach((key) => {
       let filterValue = filter[key];
+      if (key === "fields") {
+        filterValue = { ...filter[key] };
+      }
       let filterValueType = Object.prototype.toString.call(filterValue);
       if (filterValueType === "[object Array]") {
         filterValue.forEach((value) => {
