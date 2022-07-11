@@ -6,7 +6,6 @@ const userDataInitialState = {
   displayName: null,
   locale: null,
   id: null,
-  expoPushToken: null,
   theme: null,
 };
 const initialState = {
@@ -114,15 +113,6 @@ export default function userReducer(state = initialState, action) {
         ...newState,
         error: action?.error,
         loading: false,
-      };
-    //case actions.USER_GET_PUSH_TOKEN:
-    case actions.USER_ADD_PUSH_TOKEN:
-      return {
-        ...newState,
-        userData: {
-          ...newState?.userData,
-          expoPushToken: action?.expoPushToken,
-        },
       };
     case actions.USER_LOGOUT_SUCCESS:
       return {

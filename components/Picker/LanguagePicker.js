@@ -11,11 +11,14 @@ import useI18N from "hooks/use-i18n";
 import useSettings from "hooks/use-settings";
 
 const LanguagePicker = () => {
+  const { i18n, selectedEndonym } = useI18N();
   const { settings } = useSettings();
-  const availableTranslations = settings?.available_translations?.map(
+  let availableTranslations = settings?.available_translations?.map(
     (translation) => translation?.language
   );
-  const { i18n, selectedEndonym } = useI18N();
+  if (!availableTranslations) {
+    availableTranslations = Object.keys(i18n.translations);
+  }
   const { expand } = useBottomSheet();
   const showLanguageSheet = () => {
     expand({
@@ -27,7 +30,6 @@ const LanguagePicker = () => {
       ),
     });
   };
-  if (!availableTranslations) return null;
   return (
     <Picker
       icon={<TranslateIcon />}

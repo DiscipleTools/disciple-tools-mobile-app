@@ -64,7 +64,10 @@ const PendingContactsCard = ({ refreshing, onRefresh }) => {
   };
 
   const renderContactAccept = (contact, idx) => (
-    <View style={[globalStyles.columnContainer, styles.container(idx)]}>
+    <View
+      key={idx}
+      style={[globalStyles.columnContainer, styles.container(idx)]}
+    >
       <Pressable
         onPress={() => {
           navigation.jumpTo(TabScreenConstants.CONTACTS, {

@@ -72,6 +72,7 @@ export const ChurchHealthConstants = Object.freeze({
 export const AppConstants = Object.freeze({
   NAME: "D.T",
   PROTOCOL: "https",
+  CONTENT_TYPE_JSON: "application/json",
   TIMEOUT: 15000, // 15 secs
   REFRESH_INTERVAL: 0, //10 secs
 });
@@ -273,6 +274,12 @@ export const NotificationActionConstants = Object.freeze({
   MENTION: "mentioned",
 });
 
+export const NotificationPermissionConstants = Object.freeze({
+  GRANTED: "granted",
+  UNDETERMINED: "undetermined",
+  DENIED: "denied",
+});
+
 export const QuickActionButtonConstants = Object.freeze({
   NO_ANSWER: "quick_button_no_answer",
   CONTACT_ESTABLISHED: "quick_button_contact_established",
@@ -305,7 +312,18 @@ export const AppStateConstants = Object.freeze({
   INACTIVE: "inactive",
 });
 
-export const EMPTY_CACHE = new Map([]);
+export const PINConstants = {
+  CNONCE: "CNONCE",
+  CNONCE_DATETIME: "CNONCE_DATETIME",
+  CODE: "CODE",
+  DELETE: "DELETE",
+  SCREEN: "PIN",
+  SET: "SET",
+  VALIDATE: "VALIDATE",
+  CNONCE_THRESHOLD: 10,
+};
+
+export const CACHE_INTERVAL = 1000 * 60 * 2; // 2 minutes
 
 export default {
   STATUS_CIRCLE_SIZE: 15,

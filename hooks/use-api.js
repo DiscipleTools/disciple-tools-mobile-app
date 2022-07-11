@@ -22,12 +22,17 @@ const useAPI = () => {
     let data = {};
     if (add_push_token) data["add_push_token"] = add_push_token;
     if (locale) data["locale"] = locale;
-    return request({
-      url,
-      method: HTTP.METHODS.POST,
-      headers: HTTP.HEADERS.DEFAULT,
-      data,
-    });
+    return request(
+      {
+        url,
+        method: HTTP.METHODS.POST,
+        headers: HTTP.HEADERS.DEFAULT,
+        data,
+      },
+      {
+        ignoreUI: true,
+      }
+    );
   };
 
   // POSTS
@@ -77,6 +82,7 @@ const useAPI = () => {
         data: { ...fields },
       });
       if (mutate) mutate();
+      return res;
     } catch (error) {
       // TODO
       console.error(error);

@@ -1,6 +1,7 @@
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { useNetInfo } from "@react-native-community/netinfo";
+import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
 
 import { setNetworkIsConnected } from "store/actions/network.actions";
 
@@ -12,26 +13,29 @@ const useNetwork = () => {
   const netInfo = useNetInfo();
 
   const isInitializing =
-    netInfo?.details === null &&
-    netInfo?.isInternetReachable === null &&
-    netInfo?.isConnected === null &&
-    netInfo?.type === "unknown";
+    (netInfo?.details === null &&
+      netInfo?.isConnected === null &&
+      netInfo?.isInternetReachable === null &&
+      netInfo?.type === "unknown") ||
+    (netInfo?.isConnected === true && netInfo?.isInternetReachable === null);
 
   // 'isConnected' is a combination of device connectivity and user setting
   const isConnected =
-    netInfo?.isConnected &&
-    netInfo?.isInternetReachable &&
-    isConnectedUserSetting !== false;
+    netInfo?.isInternetReachable && isConnectedUserSetting !== false;
 
-  const toggleNetwork = (_isConnected) =>
+  const isConnectedNow = useCallback(async () => {
+    const _netInfo = await NetInfo.fetch();
+    return _netInfo?.isInternetReachable && isConnectedUserSetting !== false;
+  }, [isConnectedUserSetting]);
+
+  const toggleNetwork = useCallback((_isConnected) => {
     dispatch(setNetworkIsConnected(_isConnected));
+  }, []);
 
-  // return 'isInitializing' and 'isConnected' both because the consideration
-  // of 'isConnected' is different per <OfflineBar /> vs. 'use-request-queue'
-  // ie, do *not* display <OfflineBar /> 'isInitializing' is true
   return {
     isInitializing,
     isConnected,
+    isConnectedNow,
     toggleNetwork,
   };
 };

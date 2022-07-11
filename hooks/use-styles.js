@@ -4,8 +4,6 @@ import useDevice from "hooks/use-device";
 import useI18N from "hooks/use-i18n";
 import useTheme from "hooks/use-theme";
 
-import Constants from "constants";
-
 const globalStyles = ({ theme, isRTL, isIOS }) => ({
   // Palette
   primary: {
@@ -150,6 +148,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
 });
 
 const useStyles = (localStyles) => {
+  // TODO: refactor these hooks calls?
   const { theme } = useTheme();
   const { isRTL } = useI18N();
   const { isIOS } = useDevice();
