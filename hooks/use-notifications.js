@@ -9,14 +9,15 @@ import { searchObjList } from "utils";
 const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
   const { updatePost } = useAPI();
   const { user } = useAuth();
+  const uid = user?.uid;
 
   const markViewed = useCallback(
     ({ id } = {}) => {
       // if !id, then mark all as viewed
       // NOTE: *not* passing `mutate` bc we want responsive updates, but pull refresh will mutate
-      if (!id && user.id) {
+      if (!id && uid) {
         updatePost({
-          urlPath: `/dt/v1/notifications/mark_all_viewed/${user.id}`,
+          urlPath: `/dt/v1/notifications/mark_all_viewed/${uid}`,
         });
         return;
       }
@@ -25,7 +26,7 @@ const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
           urlPath: `/dt/v1/notifications/mark_viewed/${id}`,
         });
     },
-    [user.id]
+    [uid]
   );
 
   const markUnread = useCallback(({ id } = {}) => {
