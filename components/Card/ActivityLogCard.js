@@ -65,6 +65,7 @@ const ActivityLogCard = ({ preview, refreshing }) => {
   // Group by name
   activityLog?.forEach((element) => {
     let makeKey = element.object_name;
+    const baptismDateRegex = /\{(\d+)\}+/;
     if (!groupedActivityLog[makeKey]) {
       groupedActivityLog[makeKey] = [];
     }
