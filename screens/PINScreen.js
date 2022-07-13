@@ -9,6 +9,8 @@ import usePIN from "hooks/use-pin";
 import useStyles from "hooks/use-styles";
 import useToast from "hooks/use-toast";
 
+import { PINConstants } from "constants";
+
 import { localStyles } from "./PINScreen.styles";
 
 const PINScreen = ({ navigation, route }) => {
@@ -19,7 +21,7 @@ const PINScreen = ({ navigation, route }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
-  const { PINConstants, getPIN, setPIN, deletePIN, setCNoncePIN } = usePIN();
+  const { getPIN, setPIN, deletePIN, setCNoncePIN } = usePIN();
   const toast = useToast();
 
   const type = route?.params?.type ? route.params.type : null;

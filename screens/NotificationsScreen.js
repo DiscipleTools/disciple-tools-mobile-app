@@ -7,6 +7,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import {
   ReadIcon,
+  ReadAllIcon,
   UnreadIcon,
   CommentIcon,
   CommentAlertIcon,
@@ -47,7 +48,7 @@ const NotificationsScreen = ({ navigation }) => {
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
 
   const {
-    data: items,
+    data,
     error,
     isLoading,
     isValidating,
@@ -55,6 +56,12 @@ const NotificationsScreen = ({ navigation }) => {
     markViewed,
     markUnread,
   } = useNotifications({ search, filter, offset, limit });
+
+  const [items, setItems] = useState(data);
+
+  useEffect(() => {
+    setItems(data);
+  }, [search, filter]);
 
   //const { userData, error: userError } = useMyUser();
 
@@ -71,12 +78,29 @@ const NotificationsScreen = ({ navigation }) => {
       },
     ];
     navigation.setOptions({
-      headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />,
+      headerRight: (props) => {
+        return (
+          <View style={globalStyles.rowContainer}>
+            <ReadAllIcon
+              style={globalStyles.selectedIcon}
+              onPress={markAllRead}
+            />
+            <HeaderRight kebabItems={kebabItems} props />
+          </View>
+        );
+      },
     });
   });
 
+  const markAllRead = () => {
+    markViewed();
+    let newItems = items.map((item) => ({ ...item, is_new: "0" }));
+    setItems(newItems);
+  };
+
   const NotificationItem = ({ item, loading, mutate }) => {
     const [isNew, setIsNew] = useState(item?.is_new === "1" ? true : false);
+
     if (!item || loading) return <PostItemSkeleton />;
     const str1 = item?.notification_note?.search("<");
     const str2 = item?.notification_note?.search(">");

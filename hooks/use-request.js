@@ -1,4 +1,4 @@
-import useSWR, { useSWRConfig } from "swr";
+import useSWR from "swr";
 import axios from "services/axios";
 
 import useCache from "hooks/use-cache";
