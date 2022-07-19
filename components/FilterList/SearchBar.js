@@ -26,7 +26,7 @@ const SearchBar = ({
   const debouncedSearch = useDebounce(_search, 1000);
 
   useEffect(() => {
-    if (onSearch) onSearch(debouncedSearch);
+    if (onSearch) onSearch(debouncedSearch.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
     Keyboard.dismiss();
     return;
   }, [debouncedSearch]);
