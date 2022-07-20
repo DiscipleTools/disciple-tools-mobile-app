@@ -31,8 +31,9 @@ import { parseDateSafe, decodeHTMLEntities } from "utils";
 
 import { localStyles } from "./CommentsActivityScreen.styles";
 
-const MENTION_PATTERN = /@\[.+?\]\((.*)\)/g;
-
+//const MENTION_PATTERN = /@\[.+?\]\((.*)\)/g;
+const MENTION_PATTERN = /@\[\w* \w* \(\w*\)\]\(\.?\w*\)*/g
+const BAPTISM_DATE_PATTERN = /\{(\d+)\}+/;
 const OFFSET_Y = 125;
 
 const CommentsActivityConstants = Object.freeze({
@@ -113,7 +114,7 @@ const CommentsActivityScreen = ({
   const CommentsActivityItem = ({ item, loading }) => {
     if (!item || loading) return <CommentsActivityItemLoadingSkeleton />;
     let message = item?.comment_content || item?.object_note;
-    const datetime = moment(parseDate(item)).format("LLLL");
+    const datetime = moment(parseDate(item)).format("d MMMM YYYY,H:m");
     const author = item?.comment_author || item?.name;
     const authorId = Number(item?.user_id);
     const userIsAuthor = authorId === userData?.ID;
@@ -261,6 +262,15 @@ const CommentsActivityScreen = ({
       return `@${mentionText}`;
     };
 
+    const timestamptoDate = (match, timestamp) => {
+      match = match.replace('{','');
+      match = match.replace('}','');
+      if ( isNaN(match*1000) ){
+        return false;
+      }
+      return moment(match*1000).format('MMM D, YYYY');
+    }
+
     return (
       <Pressable onLongPress={() => onLongPress()}>
         <View style={styles.container}>
@@ -315,6 +325,11 @@ const CommentsActivityScreen = ({
                   style: styles.parseText,
                   renderText: renderMention,
                 },
+                {
+                  pattern: BAPTISM_DATE_PATTERN,
+                  style: styles.time,
+                  renderText: timestamptoDate,
+                }
               ]}
             >
               {hasUrl ? messageArr : decodeHTMLEntities(message)}

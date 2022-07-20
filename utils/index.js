@@ -31,13 +31,13 @@ export const searchObj = (
   searchStr,
   { caseInsensitive, include, exclude } = {}
 ) => {
-  if (caseInsensitive) searchStr = searchStr?.toLowerCase();
+  if (caseInsensitive) searchStr = searchStr?.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const result = [];
   const recursiveSearch = (obj = {}) => {
     if (!obj || typeof obj !== "object") return;
     Object.keys(obj).forEach((key) => {
       let value = String(obj[key]);
-      if (caseInsensitive) value = value?.toLowerCase();
+      if (caseInsensitive) value = value?.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       // if key/prop is in include list, then check if value contains searchStr
       if (include?.length > 0) {
         include.forEach((prop) => {

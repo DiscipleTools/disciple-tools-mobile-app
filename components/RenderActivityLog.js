@@ -4,6 +4,8 @@ import { View, Text, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import { ScreenConstants } from "constants";
+import ParsedText from "react-native-parsed-text";
+import useI18N from "hooks/use-i18n";
 
 import PrefetchCacheRecord from "components/PrefetchCacheRecord";
 import { ChevronDownIcon, ChevronUpIcon } from "components/Icon";
@@ -20,9 +22,29 @@ const RenderActivityLog = ({
 }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { getTabScreenFromType } = useType();
+  const { moment } = useI18N();
   const navigation = useNavigation();
-
+  const MENTION_PATTERN = /@\[\w* \w* \(\w*\)\]\(\.?\w*\)*/g;
+  const MENTION_PATTERN_2 = /@\[\w*\]\(\.?\w*\)*/g;
+  const BAPTISM_DATE_PATTERN = /\{(\d+)\}+/;
   if (!logs || logs.length === 0 || accordionState.length === 0) return null;
+
+  const renderMention = (matchingString, matches) => {
+    let mentionText = matchingString.substring(
+      matchingString.lastIndexOf("[") + 1,
+      matchingString.lastIndexOf("]")
+    );
+    return `@${mentionText}`;
+  };
+
+  const timestamptoDate = (match, timestamp) => {
+    match = match.replace('{','');
+    match = match.replace('}','');
+    if ( isNaN(match*1000) ){
+      return false;
+    }
+    return moment(match*1000).format('MMM D, YYYY');
+  }
 
   return (
     <>
@@ -47,7 +69,8 @@ const RenderActivityLog = ({
             }
           }}
         >
-          <Text style={styles.activityLink}>{logs?.[0] ?? " "}</Text>
+          <Text style={styles.activityLink}>
+            {logs?.[0] ?? " "}</Text>
         </Pressable>
         <Pressable
           onPress={() => {
@@ -63,7 +86,30 @@ const RenderActivityLog = ({
           <>
             {/* Show all the entries. */}
             <Text key={`${log.object_id}-${index}`} style={styles.activityText}>
+            <ParsedText
+              //selectable
+              style={styles.commentText(true)}
+              parse={[
+                {
+                  pattern: MENTION_PATTERN,
+                  style: styles.parseText,
+                  renderText: renderMention,
+                },
+                {
+                  pattern: MENTION_PATTERN_2,
+                  style: styles.parseText,
+                  renderText: renderMention,
+                },
+                {
+                  pattern: BAPTISM_DATE_PATTERN,
+                  style: styles.activityText,
+                  renderText: timestamptoDate,
+                },
+              ]}
+            >
               {log?.object_note}
+            </ParsedText>
+              {/* {log?.object_note} */}
             </Text>
             {
               // Prefetch any posts in the ActivityLog so that the records
@@ -77,7 +123,29 @@ const RenderActivityLog = ({
       ) : (
         <>
           {/* Show only one entry. */}
-          <Text style={styles.activityText}>{logs?.[1][0]?.object_note}</Text>
+          <Text style={styles.activityText}><ParsedText
+              //selectable
+              style={styles.commentText(true)}
+              parse={[
+                {
+                  pattern: MENTION_PATTERN,
+                  style: styles.parseText,
+                  renderText: renderMention,
+                },
+                {
+                  pattern: MENTION_PATTERN_2,
+                  style: styles.parseText,
+                  renderText: renderMention,
+                },
+                {
+                  pattern: BAPTISM_DATE_PATTERN,
+                  style: styles.activityText,
+                  renderText: timestamptoDate,
+                },
+              ]}
+            >
+              {logs?.[1][0]?.object_note}
+            </ParsedText></Text>
           {
             // Prefetch any posts in the ActivityLog so that the records
             // are available if the user goes OFFLINE.

@@ -22,7 +22,7 @@ const ActivityLogCard = ({ preview, refreshing }) => {
   const [accordionState, setAccordionState] = useState([]);
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
-  const { i18n,moment, numberFormat } = useI18N();
+  const { i18n, numberFormat } = useI18N();
 
   useEffect(() => {
     if (groupedActivityLog) {
@@ -31,13 +31,6 @@ const ActivityLogCard = ({ preview, refreshing }) => {
       );
     }
   }, [groupedActivityLog]);
-
-  const timestamptoDate = (match, timestamp) => {
-    if ( isNaN(timestamp) ){
-      return false
-    }
-    return moment(timestamp*1000).format('MMM D, YYYY');
-  }
 
   const handleAccordionChange = (groupIndex) => {
     const updatedAccordionState = accordionState.map((item, index) =>
@@ -76,7 +69,8 @@ const ActivityLogCard = ({ preview, refreshing }) => {
     if (!groupedActivityLog[makeKey]) {
       groupedActivityLog[makeKey] = [];
     }
-    element.object_note = baptismDateRegex.test(element.object_note)?element.object_note.replace(baptismDateRegex, timestamptoDate):element.object_note;
+    //element.object_note = baptismDateRegex.test(element.object_note)?element.object_note.replace(baptismDateRegex, timestamptoDate):element.object_note;
+    //element.object_note = mentionName.test(element.object_note)?element.object_note.replace(mentionName, stringtoMention):element.object_note;
     groupedActivityLog[makeKey].push({
       ...element,
     });
