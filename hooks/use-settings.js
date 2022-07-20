@@ -1,10 +1,10 @@
-import { useMemo } from "react";
-
+import useI18N from "hooks/use-i18n";
 import useType from "hooks/use-type";
 import useRequest from "hooks/use-request";
 
 const useSettings = ({ type } = {}) => {
-  const { isPost, isGroup, postType } = useType({ type });
+  const { locale } = useI18N();
+  const { isPost, postType } = useType({ type });
 
   const mapSettings = (settings) => {
     let fieldList = {};
@@ -166,8 +166,9 @@ const useSettings = ({ type } = {}) => {
     };
   };
 
+  // NOTE: we include locale in the URL to force a settings refresh on-change
   const url = isPost
-    ? `/dt-posts/v2/${postType}/settings`
+    ? `/dt-posts/v2/${postType}/settings?locale=${locale}`
     : "dt-core/v1/settings";
   const { data, error, isLoading, isValidating } = useRequest({ url });
   const settings = data?.fields ? mapSettings(data) : data;

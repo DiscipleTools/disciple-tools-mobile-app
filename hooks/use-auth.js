@@ -159,6 +159,20 @@ const useCustomAuth = () => {
     })();
   }, [baseUrl]);
 
+  useEffect(() => {
+    if (user) return;
+    (async () => {
+      try {
+        const user = JSON.parse(
+          await getSecureItem(AuthConstants.USER, JSON.stringify(user))
+        );
+        setUser(user);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, [JSON.stringify(user)]);
+
   const toggleAutoLogin = useCallback(() => {
     dispatch(_toggleAutoLogin());
   }, []);
@@ -282,7 +296,7 @@ const useCustomAuth = () => {
       signIn,
       signOut,
     }),
-    [authenticated, user?.userData?.id, isAutoLogin, rememberLoginDetails]
+    [authenticated, user?.id, isAutoLogin, rememberLoginDetails]
   );
 };
 export { useAuth, AuthProvider };

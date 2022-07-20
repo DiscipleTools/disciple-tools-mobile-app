@@ -1,14 +1,11 @@
-import React, { useLayoutEffect } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
 import { Image, Pressable, Switch, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-//import { useIsFocused } from "@react-navigation/native";
 
 import {
   ChevronForwardIcon,
   ChevronBackIcon,
   CommentActivityIcon,
-  ActivityIcon,
-  LogsIcon,
   DarkModeIcon,
   FlashIcon,
   HelpIcon,
@@ -45,12 +42,8 @@ import {
 import { localStyles } from "./MyUserScreen.styles";
 
 const MyUserScreen = ({ navigation }) => {
-  // NOTE: invoking this hook causes the desired re-render onBack()
-  //useIsFocused();
-
   const { styles, globalStyles } = useStyles(localStyles);
   const { isConnected, toggleNetwork } = useNetwork();
-  const { i18n, isRTL } = useI18N();
   const { hasPIN } = usePIN();
   const {
     user,
@@ -61,13 +54,23 @@ const MyUserScreen = ({ navigation }) => {
     signOut,
   } = useAuth();
   const { isDarkMode, toggleMode } = useTheme();
+  const { i18n, isRTL, locale, setLocale } = useI18N();
   const { data: userData } = useMyUser();
+  const name = userData?.display_name ?? "";
+  const role = useMemo(
+    () => Object.values(userData?.profile?.roles ?? {})?.[0] ?? "",
+    [locale]
+  );
+  const domain = user?.domain ?? "";
   const { data: users } = useUsers();
   const myUser = users?.find((user) => user?.ID === userData?.ID);
   const id = myUser?.contact_id;
-  const name = userData?.display_name ?? "";
-  const role = userData?.ID ?? "";
-  const domain = user?.domain ?? "";
+
+  useEffect(() => {
+    if (userData?.locale && i18n?.locale !== userData.locale && isConnected) {
+      setLocale(userData.locale);
+    }
+  }, []);
 
   useLayoutEffect(() => {
     const kebabItems = [
@@ -106,7 +109,7 @@ const MyUserScreen = ({ navigation }) => {
         />
       ),
     });
-  }, []);
+  }, [i18n?.locale]);
 
   const Header = () => (
     <View style={[globalStyles.rowContainer, styles.headerContainer]}>
@@ -137,19 +140,9 @@ const MyUserScreen = ({ navigation }) => {
         ) : (
           <Text style={[styles.headerText, globalStyles.title]}>{name}</Text>
         )}
-        {/*<Text style={styles.headerText2}>{role}</Text>*/}
         <Text style={styles.headerText}>{domain}</Text>
+        <Text style={styles.headerText2}>{role}</Text>
       </View>
-      {/*
-      <Pressable
-        onPress={() => {
-          //todo: add logs screen
-        }}
-        style={styles.commentActivityIcon}
-      >
-        <LogsIcon style={globalStyles.placeholder} />
-      </Pressable>
-      */}
     </View>
   );
 
