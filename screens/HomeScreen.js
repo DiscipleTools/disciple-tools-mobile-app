@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { HeaderRight } from "components/Header/Header";
@@ -10,23 +11,10 @@ import MetricCard from "components/Card/MetricCard";
 import PendingContactsCard from "components/Card/PendingContactsCard";
 import ActivityLogCard from "components/Card/ActivityLogCard";
 
-import {
-  CommentActivityIcon,
-  StarIcon,
-  StarOutlineIcon,
-  SearchIcon,
-  AddNewIcon,
-  UpdateRequiredIcon,
-  TasksIcon,
-  FollowingIcon,
-  ShareIcon,
-  ExternalLinkIcon,
-  HelpIcon,
-} from "components/Icon";
-
 import useFilters from "hooks/use-filters";
 import useI18N from "hooks/use-i18n";
 import useList from "hooks/use-list";
+import useNetwork from "hooks/use-network";
 import useStyles from "hooks/use-styles";
 import useType from "hooks/use-type";
 
@@ -35,6 +23,48 @@ import { ScreenConstants, TypeConstants } from "constants";
 import { findFilterById } from "utils";
 
 import { localStyles } from "./HomeScreen.styles";
+
+const FavoriteCard = ({ type }) => {
+  const navigation = useNavigation();
+  const { isConnected } = useNetwork();
+  const { getTabScreenFromType } = useType({ type });
+  const { data: filters } = useFilters({ type });
+  const filter = findFilterById("favorite", filters);
+  const { data: items } = useList({ filter, type });
+  const value = items?.length;
+  return (
+    <>
+      {
+        // Prefetch any favorite posts so that the records
+        // are available if the user goes OFFLINE.
+      }
+      {items?.map((item, idx) => {
+        if (!item?.ID || !item?.post_type) return null;
+        if (!isConnected) return null;
+        return (
+          <PrefetchCacheRecord key={idx} id={item.ID} type={item.post_type} />
+        );
+      })}
+      <MetricCard
+        title={filter?.name}
+        value={value}
+        onPress={() => {
+          const tabScreen = getTabScreenFromType(type);
+          navigation.jumpTo(tabScreen, {
+            screen: ScreenConstants.LIST,
+            type,
+            filter: filter,
+          });
+        }}
+      />
+    </>
+  );
+};
+
+const FavoriteContactsCard = () => (
+  <FavoriteCard type={TypeConstants.CONTACT} />
+);
+const FavoriteGroupsCard = () => <FavoriteCard type={TypeConstants.GROUP} />;
 
 const HomeScreen = ({ navigation }) => {
   const { styles, globalStyles } = useStyles(localStyles);
@@ -91,49 +121,6 @@ const HomeScreen = ({ navigation }) => {
       ),
     });
   }, []);
-
-  const FavoriteCard = ({ type }) => {
-    const { getTabScreenFromType } = useType({ type });
-    const { data: filters } = useFilters({ type });
-    const filter = findFilterById("favorite", filters);
-    const { data: items } = useList({ filter, type });
-    const value = items?.length;
-    return (
-      <>
-        {
-          // Prefetch any favorite posts so that the records
-          // are available if the user goes OFFLINE.
-        }
-        {items?.map((item) => {
-          if (!item?.ID || !item?.post_type) return null;
-          return (
-            <PrefetchCacheRecord
-              key={item.ID}
-              id={item.ID}
-              type={item.post_type}
-            />
-          );
-        })}
-        <MetricCard
-          title={filter?.name}
-          value={value}
-          onPress={() => {
-            const tabScreen = getTabScreenFromType(type);
-            navigation.jumpTo(tabScreen, {
-              screen: ScreenConstants.LIST,
-              type,
-              filter: filter,
-            });
-          }}
-        />
-      </>
-    );
-  };
-
-  const FavoriteContactsCard = () => (
-    <FavoriteCard type={TypeConstants.CONTACT} />
-  );
-  const FavoriteGroupsCard = () => <FavoriteCard type={TypeConstants.GROUP} />;
 
   /*
   const CustomQueryCard = () => {

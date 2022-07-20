@@ -10,7 +10,7 @@ import { formatDateAPI } from "utils";
 
 const useAPI = () => {
   const postId = RootNavigation.getId();
-  const { cache, mutate } = useCache();
+  const { cache } = useCache();
   const { request } = useRequestQueue();
   const { postType } = useType();
 
@@ -30,7 +30,7 @@ const useAPI = () => {
         data,
       },
       {
-        ignoreUI: true,
+        ignoreUI: add_push_token ? true : false,
       }
     );
   };

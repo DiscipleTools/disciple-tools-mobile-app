@@ -32,6 +32,7 @@ import MyUserScreen from "screens/MyUserScreen";
 import useCache from "hooks/use-cache";
 import useI18N from "hooks/use-i18n";
 import useMyUser from "hooks/use-my-user";
+import useNetwork from "hooks/use-network";
 import useNotifications from "hooks/use-notifications";
 import usePushNotifications from "hooks/use-push-notifications";
 import useTheme from "hooks/use-theme";
@@ -47,7 +48,6 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = ({ navigation }) => {
-
   // subscribe to push notifications
   /*
    * NOTE: we include here rather than `use-app` in order to be under the Redux
@@ -60,6 +60,7 @@ const TabNavigator = ({ navigation }) => {
   const { hasNotifications } = useNotifications();
   const { onAppBackgroundCallback } = useCache();
   const { data: userData } = useMyUser();
+  const { isConnected } = useNetwork();
 
   useEffect(() => {
     if (!userData?.locale) return;
@@ -67,10 +68,12 @@ const TabNavigator = ({ navigation }) => {
      * NOTE: sync the in-memory cache to storage (to ensure prevent a cache miss
      * on subsequent App launches)
      */
-    onAppBackgroundCallback();
-    if (userData.locale !== i18n?.locale) {
-      setLocale(userData.locale);
-    };
+    if (isConnected) {
+      onAppBackgroundCallback();
+      if (userData.locale !== i18n?.locale) {
+        setLocale(userData.locale);
+      }
+    }
     return;
   }, [userData?.locale]);
 
@@ -565,7 +568,7 @@ const TabNavigator = ({ navigation }) => {
   );
 };
 const areEqual = (prevProps, nextProps) => {
-  return(
+  return (
     prevProps.i18n?.locale === nextProps.i18n?.locale &&
     prevProps.theme?.mode === nextProps.theme?.mode &&
     prevProps.theme?.brand?.primary === nextProps.theme?.brand?.primary
