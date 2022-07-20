@@ -39,8 +39,7 @@ const ListScreen = ({ navigation, route }) => {
   // TODO: handler error case
 
   useLayoutEffect(() => {
-    if (!settings?.label) return;
-    const title = settings?.label ? settings.label : "";
+    const title = settings?.label ?? "";
     const kebabItems = [
       {
         label: i18n.t("global.viewOnWeb"),
