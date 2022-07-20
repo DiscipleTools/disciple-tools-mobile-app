@@ -48,22 +48,21 @@ const NotificationsScreen = ({ navigation }) => {
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
 
   const {
-    data,
+    data: notifications,
     error,
     isLoading,
     isValidating,
     mutate,
+    hasNotifications,
     markViewed,
     markUnread,
   } = useNotifications({ search, filter, offset, limit });
 
-  const [items, setItems] = useState(data);
+  const [items, setItems] = useState();
 
   useEffect(() => {
-    setItems(data);
-  }, [search, filter]);
-
-  //const { userData, error: userError } = useMyUser();
+    setItems(notifications);
+  }, [hasNotifications, search, filter?.ID]);
 
   // TODO: custom useHeaderLayoutEffect hook for reuse
   useLayoutEffect(() => {
@@ -78,12 +77,13 @@ const NotificationsScreen = ({ navigation }) => {
       },
     ];
     navigation.setOptions({
+      title: i18n.t("global.notifications"),
       headerRight: (props) => {
         return (
           <View style={globalStyles.rowContainer}>
             <ReadAllIcon
-              style={globalStyles.selectedIcon}
-              onPress={markAllRead}
+              style={styles.readAllIcon(hasNotifications)}
+              onPress={() => markAllRead()}
             />
             <HeaderRight kebabItems={kebabItems} props />
           </View>
@@ -93,8 +93,12 @@ const NotificationsScreen = ({ navigation }) => {
   });
 
   const markAllRead = () => {
+    vibrate();
     markViewed();
     let newItems = items.map((item) => ({ ...item, is_new: "0" }));
+    setTimeout(() => {
+      mutate();
+    }, 1000);
     setItems(newItems);
   };
 

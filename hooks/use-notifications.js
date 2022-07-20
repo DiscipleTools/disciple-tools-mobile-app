@@ -1,15 +1,15 @@
 import { useCallback } from "react";
 
-import { useAuth } from "hooks/use-auth";
 import useAPI from "hooks/use-api";
+import useMyUser from "hooks/use-my-user";
 import useRequest from "hooks/use-request";
 
 import { searchObjList } from "utils";
 
 const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
   const { updatePost } = useAPI();
-  const { user } = useAuth();
-  const uid = user?.uid;
+  const { data: userData } = useMyUser();
+  const uid = userData?.ID;
 
   const markViewed = useCallback(
     ({ id } = {}) => {
@@ -69,6 +69,7 @@ const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
       isValidating,
       mutate,
     };
+
   let filtered = notifications.filter((item) => !exclude?.includes(item?.id));
   // NOTE: filter by key/value per "useFilters" query value
   if (filter?.query?.key && filter?.query?.value)
@@ -82,6 +83,7 @@ const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
   // place new items at the top of list
   filtered = [...filteredNew, ...filteredRead];
 
+  // NOTE: do not memoize or it will cause not render badge properly
   const hasNotifications = filteredNew?.length > 0;
 
   return {
