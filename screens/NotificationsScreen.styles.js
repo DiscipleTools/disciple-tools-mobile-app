@@ -31,4 +31,8 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     alignItems: "center",
     justifyContent: "center",
   },
+  readAllIcon: (hasNotifications) => ({
+    fontSize: 24,
+    color: hasNotifications ? theme.text.link : theme.placeholder,
+  }),
 });

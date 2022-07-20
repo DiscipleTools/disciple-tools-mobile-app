@@ -2,9 +2,10 @@ import * as actions from "store/actions/auth.actions";
 import { REHYDRATE } from "redux-persist/lib/constants";
 import { REINITIALIZE_REDUX } from "store/rootActions";
 
+// default to isAutoLogin=true (https://github.com/DiscipleTools/disciple-tools-mobile-app/issues/632)
 const initialState = {
   rehydrate: false,
-  isAutoLogin: null,
+  isAutoLogin: true,
   rememberLoginDetails: null,
   hasPIN: null,
   cnoncePIN: null,
@@ -12,13 +13,13 @@ const initialState = {
 
 export default function authReducer(state = initialState, action) {
   switch (action.type) {
-    case REINITIALIZE_REDUX:
-      return initialState;
     case REHYDRATE:
       return {
         ...state,
         rehydrate: true,
       };
+    case REINITIALIZE_REDUX:
+      return initialState;
     case actions.AUTH_TOGGLE_AUTO_LOGIN:
       return {
         ...state,

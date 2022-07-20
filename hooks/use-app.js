@@ -10,7 +10,7 @@ import useCache from "hooks/use-cache";
 import useDevice from "hooks/use-device";
 import useToast from "hooks/use-toast";
 
-import { CACHE_INTERVAL, NotificationPermissionConstants } from "constants";
+import { NotificationPermissionConstants } from "constants";
 
 const useApp = () => {
   /////////////////////////////////////////////////////////////////////////////
@@ -46,20 +46,13 @@ const useApp = () => {
     return;
   }, []);
 
-  // Rehydrate in-memory cache on App launch
-  const { onAppBackgroundCallback, onAppForegroundCallback } = useCache();
-  useEffect(() => {
-    onAppForegroundCallback();
-    return;
-  }, []);
-
   // Handle App State changes
+  const { onAppBackgroundCallback, onAppForegroundCallback } = useCache();
   useAppState({ onAppForegroundCallback, onAppBackgroundCallback });
 
-  // Periodically sync in-memory cache with persistent storage
+  // Rehydrate Cache on App launch
   useEffect(() => {
-    const id = setInterval(onAppBackgroundCallback, CACHE_INTERVAL);
-    return () => clearInterval(id);
+    onAppForegroundCallback();
   }, []);
 
   /////////////////////////////////////////////////////////////////////////////

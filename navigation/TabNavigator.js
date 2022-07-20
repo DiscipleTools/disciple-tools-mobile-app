@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
@@ -29,9 +29,12 @@ import CommentsActivityScreen from "screens/Posts/CommentsActivityScreen";
 import NotificationsScreen from "screens/NotificationsScreen";
 import MyUserScreen from "screens/MyUserScreen";
 
+import useCache from "hooks/use-cache";
 import useI18N from "hooks/use-i18n";
-import usePushNotifications from "hooks/use-push-notifications";
+import useMyUser from "hooks/use-my-user";
+import useNetwork from "hooks/use-network";
 import useNotifications from "hooks/use-notifications";
+import usePushNotifications from "hooks/use-push-notifications";
 import useTheme from "hooks/use-theme";
 
 import {
@@ -45,17 +48,34 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = ({ navigation }) => {
+  // subscribe to push notifications
   /*
-  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-  console.log("$$$$$          MAIN TAB NAVIGATOR             $$$$$");
-  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-  */
-
+   * NOTE: we include here rather than `use-app` in order to be under the Redux
+   * Provider Context (this hook depends on other hooks which depend on Redux)
+   */
   usePushNotifications();
 
   const { isDarkMode, theme } = useTheme();
-  const { i18n } = useI18N();
+  const { i18n, setLocale } = useI18N();
   const { hasNotifications } = useNotifications();
+  const { onAppBackgroundCallback } = useCache();
+  const { data: userData } = useMyUser();
+  const { isConnected } = useNetwork();
+
+  useEffect(() => {
+    if (!userData?.locale) return;
+    /*
+     * NOTE: sync the in-memory cache to storage (to ensure prevent a cache miss
+     * on subsequent App launches)
+     */
+    if (isConnected) {
+      onAppBackgroundCallback();
+      if (userData.locale !== i18n?.locale) {
+        setLocale(userData.locale);
+      }
+    }
+    return;
+  }, [userData?.locale]);
 
   const screenOptions = {
     headerStyle: {
@@ -551,9 +571,7 @@ const areEqual = (prevProps, nextProps) => {
   return (
     prevProps.i18n?.locale === nextProps.i18n?.locale &&
     prevProps.theme?.mode === nextProps.theme?.mode &&
-    prevProps.theme?.brand?.primary === nextProps.theme?.brand?.primary &&
-    prevProps.isDarkMode === nextProps.isDarkMode &&
-    prevProps.hasNotifications === nextProps.hasNotifications
+    prevProps.theme?.brand?.primary === nextProps.theme?.brand?.primary
   );
 };
 export default React.memo(TabNavigator, areEqual);

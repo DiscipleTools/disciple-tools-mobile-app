@@ -17,13 +17,17 @@ const useAppState = ({ onAppForegroundCallback, onAppBackgroundCallback }) => {
           ) &&
           nextAppState === AppStateConstants.ACTIVE
         ) {
-          if (onAppForegroundCallback) onAppForegroundCallback();
+          if (onAppForegroundCallback) {
+            onAppForegroundCallback();
+          }
         }
         if (
           appState.current.match(new RegExp(AppStateConstants.ACTIVE)) &&
           nextAppState !== AppStateConstants.ACTIVE
         ) {
-          if (onAppBackgroundCallback) onAppBackgroundCallback();
+          if (onAppBackgroundCallback) {
+            onAppBackgroundCallback();
+          }
         }
         appState.current = nextAppState;
       }

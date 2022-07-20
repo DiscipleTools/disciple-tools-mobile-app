@@ -1,5 +1,6 @@
 import * as actions from "store/actions/user.actions";
 import { REHYDRATE } from "redux-persist/lib/constants";
+import { REINITIALIZE_REDUX } from "store/rootActions";
 
 const userDataInitialState = {
   username: null,
@@ -25,11 +26,9 @@ export default function userReducer(state = initialState, action) {
   };
   switch (action.type) {
     case REHYDRATE:
-      console.log("*** REHYDRATE! ***");
-      return {
-        ...newState,
-        loading: false,
-      };
+      return state;
+    case REINITIALIZE_REDUX:
+      return initialState;
     case actions.SET_FILTER:
       return {
         ...newState,

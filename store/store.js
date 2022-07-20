@@ -9,7 +9,7 @@ import rootReducer from "./rootReducer";
 const middleware = [];
 
 const migrations = {
-  1101: (state) => rootReducer(undefined, actions.REINITIALIZE_REDUX),
+  11012: (state) => rootReducer(undefined, actions.REINITIALIZE_REDUX),
 };
 
 // Redux-Persist config

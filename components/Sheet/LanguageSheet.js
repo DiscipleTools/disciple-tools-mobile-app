@@ -4,10 +4,8 @@ import SelectSheet from "./SelectSheet";
 
 import useAPI from "hooks/use-api";
 import useI18N from "hooks/use-i18n";
-import useMyUser from "hooks/use-my-user";
 
 const LanguageSheet = ({ availableTranslations }) => {
-  const { data: userData } = useMyUser();
   const { updateUser } = useAPI();
 
   const { i18n, locale, setLocale } = useI18N();
@@ -35,7 +33,7 @@ const LanguageSheet = ({ availableTranslations }) => {
     const newLocale = newValue?.key;
     if (newLocale) {
       // set locale remotely
-      if (userData?.locale !== newLocale) updateUser({ locale: newLocale });
+      updateUser({ locale: newLocale });
       // set locale locally
       setLocale(newLocale);
     }

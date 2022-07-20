@@ -39,8 +39,10 @@ const FilterList = ({
   const [_items, setItems] = useState(null);
 
   useEffect(() => {
-    if (JSON.stringify(items) !== JSON.stringify(_items)) setItems(items);
-  }, [items?.length, JSON.stringify(items?.[0])]);
+    if (JSON.stringify(items) !== JSON.stringify(_items)) {
+      setItems(items);
+    }
+  }, [JSON.stringify(items)]);
 
   const _onRefresh = useCallback(() => {
     if (onRefresh) {

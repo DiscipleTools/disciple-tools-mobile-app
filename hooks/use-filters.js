@@ -16,22 +16,21 @@ import {
   MentionIcon,
 } from "components/Icon";
 
-//import useNetwork from "hooks/use-network";
-import useI18n from "hooks/use-i18n";
+import useI18N from "hooks/use-i18n";
 import useType from "hooks/use-type";
 import useRequest from "hooks/use-request";
 
 import { NotificationActionConstants } from "constants";
 
 const useFilters = ({ type } = {}) => {
-  //const { isConnected } = useNetwork();
   const { isPost, isNotification, isCommentsActivity, postType } = useType({
     type,
   });
-  const { i18n } = useI18n();
+  const { i18n } = useI18N();
 
+  // TODO: resolve caching issue (so as to no need to specify locale in URL)
   const url = isPost
-    ? `/dt/v1/users/get_filters?post_type=${postType}&force_refresh=1`
+    ? `/dt/v1/users/get_filters?post_type=${postType}&force_refresh=1&locale=${i18n?.locale}`
     : null;
   let { data, error, isLoading, isValidating, mutate } = useRequest({ url });
 

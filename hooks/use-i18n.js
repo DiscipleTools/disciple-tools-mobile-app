@@ -3,14 +3,10 @@ import { Alert, I18nManager } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment/min/moment-with-locales";
 
-import useMyUser from "hooks/use-my-user";
-
 import { setLocale } from "store/actions/i18n.actions";
 
 import * as Localization from "expo-localization";
 import * as Updates from "expo-updates";
-
-//import axios from "services/axios";
 
 //https://github.com/fnando/i18n-js
 import i18n from "i18n-js";
@@ -144,7 +140,6 @@ const RTL_LANGS = [
 const useI18N = () => {
   const dispatch = useDispatch();
   const locale = useSelector((state) => state.i18nReducer?.locale);
-  const { data: userData } = useMyUser();
 
   const getCountryCode = useCallback((locale) => locale?.substring(0, 2), []);
 
@@ -159,33 +154,28 @@ const useI18N = () => {
     [locale]
   );
 
-  const isRTL = _isRTL();
-
-  const mapLocaleToMomentLocale = useCallback((locale) => {
+  const mapLocaleToMomentLocale = useCallback((_locale) => {
     const special = ["ar_MA", "bn_BD", "pt_BR", "tl"];
-    if (special.includes(locale)) {
-      if (locale === "tl") return "tl-ph";
-      return locale?.toLowerCase()?.replace("_", "-") ?? "en";
+    if (special.includes(_locale)) {
+      if (_locale === "tl") return "tl-ph";
+      return _locale?.toLowerCase()?.replace("_", "-") ?? "en";
     }
-    return locale?.split("_")?.[0];
+    return _locale?.split("_")?.[0];
   }, []);
 
   useEffect(() => {
     // if no 'locale' existing in-memory or storage, then use device locale
-    if (!locale) _setLocale(Localization?.locale ?? DEFAULT_LOCALE);
-    // NOTE: not sure why this is necessary, but it is...
-    if (locale !== i18n?.locale) {
+    if (!locale) {
+      _setLocale(Localization?.locale ?? DEFAULT_LOCALE);
+      return;
+    }
+    // sync in-memory locale
+    if (i18n?.locale !== locale) {
       i18n.locale = locale;
       moment.locale(mapLocaleToMomentLocale(locale));
     }
     return;
   }, [locale]);
-
-  // NOTE: detect API language change and update app locale
-  useEffect(() => {
-    _setLocale(userData?.locale);
-    return;
-  }, [userData?.locale]);
 
   const reloadApp = useCallback(() => {
     setTimeout(() => {
@@ -193,27 +183,28 @@ const useI18N = () => {
     }, 1000);
   }, []);
 
-  const _setLocale = useCallback(
-    (_locale) => {
-      if (_locale && _locale !== locale) {
-        i18n.locale = _locale;
-        moment.locale(mapLocaleToMomentLocale(_locale));
-        const isRTL = _isRTL(_locale);
-        dispatch(setLocale(_locale));
-        if (isRTL !== I18nManager?.isRTL) {
-          I18nManager.allowRTL(isRTL);
-          I18nManager.forceRTL(isRTL);
-          Alert.alert(i18n.t("global.alert"), i18n.t("global.appRestart"), [
-            {
-              text: "OK",
-              onPress: () => reloadApp(),
-            },
-          ]);
-        }
-      }
-    },
-    [locale]
-  );
+  const _setLocale = (_locale) => {
+    const isRTL = _isRTL(_locale);
+    if (i18n?.locale !== _locale) {
+      i18n.locale = _locale;
+    }
+    if (moment?.locale() !== mapLocaleToMomentLocale(_locale)) {
+      moment.locale(mapLocaleToMomentLocale(_locale));
+    }
+    if (locale !== _locale) {
+      dispatch(setLocale(_locale));
+    }
+    if (isRTL !== I18nManager?.isRTL) {
+      I18nManager.allowRTL(isRTL);
+      I18nManager.forceRTL(isRTL);
+      Alert.alert(i18n.t("global.alert"), i18n.t("global.appRestart"), [
+        {
+          text: "OK",
+          onPress: () => reloadApp(),
+        },
+      ]);
+    }
+  };
 
   const numberFormat = useCallback(
     (numberValue) => {
@@ -228,11 +219,16 @@ const useI18N = () => {
     [locale]
   );
 
-  const selectedEndonym = i18n?.translations[locale]?.endonym ?? "";
+  const selectedEndonym = useMemo(
+    () => i18n?.translations[locale]?.endonym ?? "",
+    [locale]
+  );
 
   return {
     i18n,
-    isRTL,
+    get isRTL() {
+      return _isRTL();
+    },
     locale,
     setLocale: _setLocale,
     selectedEndonym,

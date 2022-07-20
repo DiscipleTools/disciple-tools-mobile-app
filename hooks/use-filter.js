@@ -3,7 +3,6 @@ import * as RootNavigation from "navigation/RootNavigation";
 import { useSelector, useDispatch } from "react-redux";
 
 import useFilters from "./use-filters";
-import useI18N from "./use-i18n";
 import useType from "hooks/use-type";
 
 import { setFilter } from "store/actions/user.actions";
@@ -17,8 +16,6 @@ const useFilter = () => {
   const persistedFilters = useSelector((state) => state.userReducer.filters);
   const { isContact, isNotification, isCommentsActivity, postType } = useType();
   const route = RootNavigation.getRoute();
-
-  const { locale } = useI18N();
 
   const { data: filters } = useFilters({ type: postType });
 
