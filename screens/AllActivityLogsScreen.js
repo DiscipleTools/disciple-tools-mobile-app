@@ -8,6 +8,8 @@ import RenderActivityLog from "components/RenderActivityLog";
 
 import { localStyles } from "./AllActivityLogsScreen.styles";
 
+const DEFAULT_ACCORDION_STATE = true; // true=expanded, false=collapsed
+
 const AllActivityLogsScreen = ({ navigation, route }) => {
   const { title, data: groupedActivityLog } = route.params.paramsData;
 
@@ -17,10 +19,13 @@ const AllActivityLogsScreen = ({ navigation, route }) => {
   useEffect(() => {
     if (groupedActivityLog) {
       setAccordionState(
-        new Array(Object.keys(groupedActivityLog).length).fill(false)
+        new Array(Object.keys(groupedActivityLog).length).fill(
+          DEFAULT_ACCORDION_STATE
+        )
       );
     }
-  }, [groupedActivityLog]);
+    return;
+  }, []);
 
   const handleAccordionChange = (groupIndex) => {
     const updatedAccordionState = accordionState.map((item, index) =>
