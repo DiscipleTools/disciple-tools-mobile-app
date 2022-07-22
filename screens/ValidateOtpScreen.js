@@ -2,7 +2,7 @@ import React, { useState, useRef, forwardRef } from "react";
 import { Image, Keyboard, Text, View } from "react-native";
 import { EyeIcon, KeyIcon } from "components/Icon";
 import PluginRequired from "components/PluginRequired";
-import LabeledTextInput from "components/LabeledTextInput";
+import { LabeledTextInput } from "components/LabeledTextInput";
 import Button from "components/Button";
 
 import { useAuth } from "hooks/use-auth";
@@ -83,7 +83,6 @@ const ValidateOtpScreen = (props) => {
       <View>
         <LabeledTextInput
           maxLength={6}
-          editing
           value={otp}
           onChangeText={(text) => {
             ref.current = text;
@@ -92,12 +91,10 @@ const ValidateOtpScreen = (props) => {
           ref={ref}
           accessibilityLabel={i18n.t("loginScreen.otp.label", { locale })}
           label="OTP"
-          //style={styles.inputText}
           containerStyle={[
             styles.textField,
             state.otpValidation && styles.validationErrorInput,
           ]}
-          //iconName={isIOS ? "ios-key" : "md-key"}
           startIcon={<KeyIcon />}
           endIcon={
             <EyeIcon
@@ -107,7 +104,6 @@ const ValidateOtpScreen = (props) => {
           }
           underlineColorAndroid="transparent"
           secureTextEntry={!showOtp}
-          // textAlign={isRTL ? "right" : "left"}
         />
         {otpErrorMessage}
       </View>

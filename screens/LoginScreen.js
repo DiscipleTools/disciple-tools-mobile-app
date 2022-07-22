@@ -1,68 +1,74 @@
-import React, { useState, useEffect, useRef, forwardRef } from "react";
-import { Image, Keyboard, Linking, Text, View } from "react-native";
+import React, { useState, useEffect } from "react";
+
+//Components
+import { Image, Keyboard, Linking, View } from "react-native";
 import { UsernameIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
 import Button from "components/Button";
 import Link from "components/Link";
 import PluginRequired from "components/PluginRequired";
-import LabeledTextInput from "components/LabeledTextInput";
+import { LabeledTextInput } from "components/LabeledTextInput";
 import LanguagePicker from "components/Picker/LanguagePicker";
 import AppVersion from "components/AppVersion";
 
+//Hooks
 import { useAuth } from "hooks/use-auth";
 import useI18N from "hooks/use-i18n";
 import usePlugins from "hooks/use-plugins";
 import useStyles from "hooks/use-styles";
 import useToast from "hooks/use-toast";
 
+//Styles
 import { localStyles } from "./LoginScreen.styles";
 
-const LoginScreen = (props) => {
+const LoginScreen = () => {
+  
   const { styles, globalStyles } = useStyles(localStyles);
   const { user, rememberLoginDetails, signIn } = useAuth();
-  const { i18n, isRTL } = useI18N();
+  const { i18n } = useI18N();
   const { mobileAppPlugin } = usePlugins();
   const toast = useToast();
-
-  const [state, setState] = useState({
-    domainValidation: null,
-    userValidation: null,
-    passwordValidation: null,
-  });
-
+  
   const [loading, setLoading] = useState(false);
 
-  const domainRef = useRef(null);
-  const usernameRef = useRef(null);
-  const passwordRef = useRef(null);
+  const [state, setState] = useState({
+    domainValidation: false,
+    userValidation: false,
+    passwordValidation: false,
+  });
 
-  const cleanDomain = (domain) => {
-    // trim leading/trailing whitespace and remove protocol
-    return domain?.trim()?.replace("http://", "")?.replace("https://", "");
-  };
+  const [domainInput, setDomainInput] = useState('');
+  const [usernameInput, setUsernameInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
+  const [showPassword, toggleShowPassword] = useState(false)
+
+  useEffect(() => {
+    if (rememberLoginDetails && user) {
+      setUsernameInput(user.username);
+      setDomainInput(user.domain);
+    }
+  }, []);
 
   // TODO: add validation
   const onLoginPress = async () => {
     Keyboard.dismiss();
     setLoading(true);
-    const domain = domainRef.current;
-    const username = usernameRef.current;
-    const password = passwordRef.current;
-    if (domain && username && password) {
-      const cleanedDomain = cleanDomain(domain);
+
+    // TODO ensure that React Native allows empty string checks like this
+    if (domainInput.length > 0 && usernameInput.length > 0 && passwordInput.length > 0) {
+      const cleanedDomain = domainInput?.trim()?.replace("http://", "")?.replace("https://", "");
       try {
-        await signIn(cleanedDomain, username, password);
+        await signIn(cleanedDomain, usernameInput, passwordInput);
       } catch (error) {
         toast(error.message, true);
       } finally {
         setLoading(false);
       }
     } else {
-      // if any of the required fields are not set, then update state to show error
       setState({
         ...state,
-        domainValidation: !domain,
-        userValidation: !username,
-        passwordValidation: !password,
+        domainValidation: domainInput.length === 0,
+        userValidation: usernameInput.length === 0,
+        passwordValidation: passwordInput.length === 0,
       });
       setLoading(false);
     }
@@ -79,148 +85,13 @@ const LoginScreen = (props) => {
     );
   };
 
-  const DomainField = forwardRef((props, ref) => {
-    useEffect(() => {
-      if (rememberLoginDetails && user?.domain) {
-        ref.current = user.domain;
-        setDomain(user.domain);
-      }
-    }, []);
-    const [domain, setDomain] = useState(ref?.current);
-    const domainErrorMessage = state.domainValidation ? (
-      <Text style={styles.validationErrorMessage}>
-        {i18n.t("global.error.isRequired", { item: i18n.t("global.url") })}
-      </Text>
-    ) : null;
-    const label = i18n.t("global.url");
-    return (
-      <>
-        <LabeledTextInput
-          editing
-          onChangeText={(text) => {
-            ref.current = text;
-            setDomain(text);
-          }}
-          value={domain}
-          accessibilityLabel={label}
-          label={label}
-          containerStyle={[
-            styles.textField,
-            state.domainValidation && styles.domainErrorInput,
-          ]}
-          startIcon={<LinkIcon />}
-          // TODO: is this necessary (using rowContainer in component?)
-          textAlign={isRTL ? "right" : "left"}
-          autoCapitalize="none"
-          autoCorrect={false}
-          //returnKeyType="next"
-          //onSubmitEditing={() => usernameFieldRef.current.focus()}
-          //blurOnSubmit={false}
-          textContentType="URL"
-          keyboardType="url"
-          disabled={loading}
-        />
-        {domainErrorMessage}
-      </>
-    );
-  });
-
-  const UsernameField = forwardRef((props, ref) => {
-    useEffect(() => {
-      if (rememberLoginDetails && user?.username) {
-        ref.current = user.username;
-        setUsername(user.username);
-      }
-    }, []);
-    const [username, setUsername] = useState(ref?.current);
-    const userErrorMessage = state.userValidation ? (
-      <Text style={styles.validationErrorMessage}>
-        {i18n.t("global.error.isRequired", { item: i18n.t("global.username") })}
-      </Text>
-    ) : null;
-    const label = i18n.t("global.username");
-    return (
-      <>
-        <LabeledTextInput
-          editing
-          value={username}
-          onChangeText={(text) => {
-            setUsername(text);
-            ref.current = text;
-          }}
-          accessibilityLabel={label}
-          label={label}
-          containerStyle={[
-            styles.textField,
-            state.usernameValidation && styles.validationErrorInput,
-          ]}
-          startIcon={<UsernameIcon />}
-          textAlign={isRTL ? "right" : "left"}
-          autoCapitalize="none"
-          autoCorrect={false}
-          //ref={usernameFieldRef}
-          //returnKeyType="next"
-          //onSubmitEditing={() => passwordFieldRef.current.focus()}
-          //blurOnSubmit={false}
-          textContentType="emailAddress"
-          keyboardType="email-address"
-          disabled={loading}
-        />
-        {userErrorMessage}
-      </>
-    );
-  });
-
-  const PasswordField = forwardRef((props, ref) => {
-    const [password, setPassword] = useState(ref?.current);
-    const [showPassword, setShowPassword] = useState(false);
-    const passwordErrorMessage = state.passwordValidation ? (
-      <Text style={styles.validationErrorMessage}>
-        {i18n.t("global.error.isRequired", { item: i18n.t("global.password") })}
-      </Text>
-    ) : null;
-    const label = i18n.t("global.password");
-    return (
-      <View>
-        <LabeledTextInput
-          editing
-          value={password}
-          onChangeText={(text) => {
-            ref.current = text;
-            setPassword(text);
-          }}
-          ref={ref}
-          accessibilityLabel={label}
-          label={label}
-          //style={styles.inputText}
-          containerStyle={[
-            styles.textField,
-            state.passwordValidation && styles.validationErrorInput,
-          ]}
-          startIcon={<KeyIcon />}
-          endIcon={
-            <EyeIcon
-              onPress={() => setShowPassword(!showPassword)}
-              style={styles.showPasswordIcon(showPassword)}
-            />
-          }
-          underlineColorAndroid="transparent"
-          secureTextEntry={!showPassword}
-          textAlign={isRTL ? "right" : "left"}
-        />
-        {passwordErrorMessage}
-      </View>
-    );
-  });
-
   const ForgotPasswordLink = () => (
     <Link
       disabled={loading}
       title={i18n.t("global.forgotPassword")}
       onPress={() => {
-        const domain = domainRef?.current;
-        if (domain?.length > 0) {
-          Linking.openURL(`https://${domain}/wp-login.php?action=lostpassword`);
+        if (domainInput?.length > 0) {
+          Linking.openURL(`https://${domainInput}/wp-login.php?action=lostpassword`);
         } else {
           toast(i18n.t("loginScreen.domain.errorForgotPass"), true);
         }
@@ -229,23 +100,51 @@ const LoginScreen = (props) => {
     />
   );
 
-  const LoginButton = () => (
-    <Button
-      title={i18n.t("global.login")}
-      loading={loading}
-      onPress={onLoginPress}
-    />
-  );
 
   return (
     <View style={globalStyles.screenContainer}>
       <Header />
       <View style={styles.formContainer}>
         <PluginRequired {...mobileAppPlugin} />
-        <DomainField ref={domainRef} />
-        <UsernameField ref={usernameRef} />
-        <PasswordField ref={passwordRef} />
-        <LoginButton />
+        <LabeledTextInput 
+          editing
+          value={domainInput}
+          i18nKey='global.url'
+          onChangeText={text => setDomainInput(text)}
+          startIcon={<LinkIcon />}
+          textContentType="URL"
+          keyboardType="url"
+          disabled={loading}
+          error={state.domainValidation}
+        />
+        <LabeledTextInput 
+          editing
+          value={usernameInput}
+          i18nKey='global.username'
+          onChangeText={text => setUsernameInput(text)}
+          startIcon={<UsernameIcon />}
+          textContentType="emailAddress"
+          keyboardType="email-address"
+          disabled={loading}
+          error={state.userValidation}
+        />
+        <LabeledTextInput 
+          editing
+          value={passwordInput}
+          i18nKey='global.password'
+          onChangeText={text => setPasswordInput(text)}
+          disabled={loading}
+          startIcon={<KeyIcon />}
+          endIcon={
+            <EyeIcon
+              onPress={() => toggleShowPassword(!showPassword)}
+              style={styles.showPasswordIcon(showPassword)}
+            />
+          }
+          secureTextEntry={!showPassword}
+          error={state.passwordValidation}
+        />
+        <Button title={i18n.t("global.login")} loading={loading} onPress={onLoginPress} />
         <ForgotPasswordLink />
         <LanguagePicker />
         <AppVersion />
@@ -253,4 +152,5 @@ const LoginScreen = (props) => {
     </View>
   );
 };
+
 export default LoginScreen;
