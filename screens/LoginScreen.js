@@ -55,9 +55,9 @@ const LoginScreen = () => {
 
     // TODO ensure that React Native allows empty string checks like this
     if (domainInput.length > 0 && usernameInput.length > 0 && passwordInput.length > 0) {
-      const cleanedDomain = domain?.trim()?.replace("http://", "")?.replace("https://", "");
+      const cleanedDomain = domainInput?.trim()?.replace("http://", "")?.replace("https://", "");
       try {
-        await signIn(cleanedDomain, username, password);
+        await signIn(cleanedDomain, usernameInput, passwordInput);
       } catch (error) {
         toast(error.message, true);
       } finally {

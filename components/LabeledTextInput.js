@@ -20,9 +20,9 @@ export const LabeledTextInput = (props) => {
   const text = React.useMemo(() => i18n.t(i18nKey), [i18nKey])
 
   return (
-    <View>
+    <View style={[styles.inputContainer, styles.textField]}>
       <Text style={[styles.inputLabelText]}>{text}</Text>
-      <View style={globalStyles.rowContainer}>
+      <View style={[globalStyles.rowContainer, { alignItems: 'center' }]}>
         {startIcon}
         <TextInput
           style={[styles.inputRowTextInput]}
