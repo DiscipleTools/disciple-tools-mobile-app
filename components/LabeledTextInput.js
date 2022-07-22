@@ -1,69 +1,46 @@
 import React from "react";
+
+//Components
 import { View, Text, TextInput } from "react-native";
 
-import useStyles from "hooks/use-styles";
+//Hooks
+import useI18N from "hooks/use-i18n";
 
+//Styles
+import useStyles from "hooks/use-styles";
 import { localStyles } from "./LabeledTextInput.styles";
 
-const LabeledTextInput = (props) => {
-  const {
-    containerStyle,
-    labelStyle,
-    labelTextStyle,
-    textInputStyle,
-    startIcon,
-    endIcon,
-    label,
-    value,
-    editing,
-    onChangeText,
-  } = props;
-
+  
+export const LabeledTextInput = (props) => {
+  const { startIcon, endIcon, error, i18nKey } = props;
+  
   const { styles, globalStyles } = useStyles(localStyles);
+  const { isRTL, i18n } = useI18N();
 
-  //const TextFieldEdit = () => (
-  const renderTextFieldEdit = () => (
-    <View style={[styles.inputContainer, containerStyle]}>
-      <View style={[styles.inputLabel, labelStyle]}>
-        <Text style={[styles.inputLabelText, labelTextStyle]}>{label}</Text>
-      </View>
-      <View style={globalStyles.rowContainer}>
+  const text = React.useMemo(() => i18n.t(i18nKey), [i18nKey])
+
+  return (
+    <View style={[styles.inputContainer, styles.textField]}>
+      <Text style={[styles.inputLabelText]}>{text}</Text>
+      <View style={[globalStyles.rowContainer, { alignItems: 'center' }]}>
         {startIcon}
         <TextInput
-          style={[styles.inputRowTextInput, textInputStyle]}
+          style={[styles.inputRowTextInput]}
+          accessibilityLabel={text}
+          textAlign={isRTL ? 'right' : 'left'}
+          autoCapitalize="none"
+          autoCorrect={false}
+          returnKeyType='next'
           {...props}
         />
         {endIcon}
       </View>
-    </View>
-  );
-
-  //const TextFieldView = () => (
-  const renderTextFieldView = () => (
-    <View style={[styles.inputContainer, containerStyle]}>
-      <View style={[styles.inputLabel, labelStyle]}>
-        <Text style={[styles.inputLabelText, labelTextStyle]}>{label}</Text>
-      </View>
-      <View style={styles.inputRow}>
-        {icon}
-        <Text
-          style={[
-            styles.inputRowTextInput,
-            textInputStyle,
-            isRTL ? { textAlign: "left", flex: 1 } : {},
-          ]}
-        >
-          {value}
+      {error && 
+        <Text style={styles.validationErrorMessage}>
+          {i18n.t("global.error.isRequired", { item: text })}
         </Text>
-      </View>
+      }
     </View>
-  );
-
-  /*
-   * NOTE: returning a component  will cause loss of focus and Keyboard dismissal
-   * (instead 'trick' React by invoking lowercase render method)
-   */
-  //return <>{editing ? <TextFieldEdit /> : <TextFieldView />}</>;
-  return <>{editing ? renderTextFieldEdit() : renderTextFieldView()}</>;
+  )
 };
-export default LabeledTextInput;
+
