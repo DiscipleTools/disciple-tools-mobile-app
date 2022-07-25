@@ -3,7 +3,7 @@ import { Pressable, Text, View } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 //import { useIsFocused } from "@react-navigation/native";
 
-//import { Html5Entities } from 'html-entities';
+import { decode } from 'html-entities';
 
 import {
   ReadIcon,
@@ -119,8 +119,7 @@ const NotificationsScreen = ({ navigation }) => {
     );
     let id = entityLink?.split("/")[4];
     let type = entityLink?.split("/")[3];
-    // TODO
-    //const entities = new Html5Entities();
+
     const name = item?.notification_name;
     const action = item?.notification_action;
 
@@ -144,8 +143,7 @@ const NotificationsScreen = ({ navigation }) => {
     const NotificationDetails = () => (
       <View style={globalStyles.columnContainer}>
         <View style={[globalStyles.rowContainer, styles.notificationDetails]}>
-          {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
-          <Text>{truncate(newNotificationNoteA, { maxLength: 35 })}</Text>
+          <Text>{truncate(decode(newNotificationNoteA), { maxLength: 35 })}</Text>
           <Pressable
             onPress={() => {
               const tabScreen = getTabScreenFromType(type);
@@ -158,8 +156,7 @@ const NotificationsScreen = ({ navigation }) => {
             }}
           >
             <Text style={globalStyles.link}>
-              {truncate(newNotificationNoteC, { maxLength: 35 })}
-              {/*entities.decode(newNotificationNoteC)*/}
+              {truncate(decode(newNotificationNoteC), { maxLength: 35 })}
             </Text>
           </Pressable>
         </View>
