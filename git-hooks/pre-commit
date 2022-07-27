@@ -1,6 +1,0 @@
-#!/bin/bash
-#
-# Pre-commit hooks
-
-# ESLint stuff before committing
-npm run lint

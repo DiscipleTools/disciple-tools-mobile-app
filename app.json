@@ -4,11 +4,12 @@
     "slug": "discipletoolsapp",
     "privacy": "public",
     "platforms": ["ios", "android"],
-    "version": "1.9.3",
+    "version": "1.10.1",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/splash.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
@@ -24,8 +25,9 @@
       "package": "tools.disciple.app",
       "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
-      "versionCode": 193
+      "versionCode": 1101
     },
-    "description": ""
+    "description": "",
+    "scheme": "tools.disciple.app"
   }
 }

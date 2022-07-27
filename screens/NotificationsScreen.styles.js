@@ -1,110 +1,38 @@
-import { StyleSheet } from 'react-native';
+import Constants from "constants";
 
-export const styles = StyleSheet.create({
-  notificationContainer: {
-    padding: 20,
+export const localStyles = ({ theme, isRTL, isIOS }) => ({
+  container: (isNew) => ({
+    backgroundColor: isNew ? theme.surface.secondary : theme.surface.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.background.primary,
+    paddingTop: 10,
+    height: Constants.LIST_ITEM_HEIGHT,
+  }),
+  notificationDetails: {
+    flexWrap: "wrap",
+    marginEnd: "auto",
   },
-  prettyTime: {
-    color: '#8A8A8A',
-    fontSize: 10,
+  startIcon: {
+    //justifyContent: "center",
+    marginTop: 5,
   },
-  loadMoreFooterText: {
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#3f729b',
+  markIcon: {
+    height: "100%",
+    justifyContent: "center",
   },
-  buttoContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 35,
-    padding: 5,
-  },
-  notificationUnreadButton: {
-    borderRadius: 100,
-    width: 25,
-    height: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#3f729b',
-  },
-  notificationReadButton: {
-    borderRadius: 100,
-    width: 25,
-    height: 25,
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#3f729b',
-  },
-  newHeader: {
-    fontWeight: 'bold',
-    marginBottom: 'auto',
-    fontSize: 12,
-  },
-  newHeaderNumber: {
-    marginRight: 5,
-    fontSize: 12,
-    padding: 2,
-    backgroundColor: 'red',
-    borderRadius: 100,
-    color: 'white',
-    marginBottom: 'auto',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  markAllHeader: {
-    color: '#3f729b',
-    fontSize: 12,
-    marginLeft: 'auto',
-    marginBottom: 'auto',
-  },
-  marketButton: {
-    borderRadius: 5,
-    padding: 10,
-    margin: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'white',
-    backgroundColor: '#3f729b',
-  },
-  marketButtonText: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'white',
-    fontSize: 14,
-  },
-  unmarketButton: {
-    borderRadius: 5,
-    padding: 10,
-    margin: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#3f729b',
-  },
-  unmarketButtonText: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#3f729b',
-    fontSize: 14,
-  },
-  offlineBar: {
-    height: 20,
-    backgroundColor: '#FCAB10',
-  },
-  offlineBarText: {
-    fontSize: 14,
-    color: 'white',
-    textAlignVertical: 'center',
-    textAlign: 'center',
+  link: {
+    color: theme.text.link,
   },
   dontHaveNotificationsText: {
     fontSize: 14,
-    color: 'black',
-    fontWeight: 'bold',
+    color: "black",
+    fontWeight: "bold",
     padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
+  readAllIcon: (hasNotifications) => ({
+    fontSize: 24,
+    color: hasNotifications ? theme.text.link : theme.placeholder,
+  }),
 });

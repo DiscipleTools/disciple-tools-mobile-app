@@ -1,77 +1,187 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { Image, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
-import PropTypes from 'prop-types';
-import * as WebBrowser from 'expo-web-browser';
+import React, { useLayoutEffect, useState } from "react";
+import { Image, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { ScrollView } from "react-native-gesture-handler";
 
-import Colors from '../constants/Colors';
+import { HeaderRight } from "components/Header/Header";
+import OfflineBar from "components/OfflineBar";
 
-const propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
-  userData: PropTypes.shape({
-    id: PropTypes.number,
-  }).isRequired,
+import PrefetchCacheRecord from "components/PrefetchCacheRecord";
+import MetricCard from "components/Card/MetricCard";
+import PendingContactsCard from "components/Card/PendingContactsCard";
+import ActivityLogCard from "components/Card/ActivityLogCard";
+
+import useFilters from "hooks/use-filters";
+import useI18N from "hooks/use-i18n";
+import useList from "hooks/use-list";
+import useNetwork from "hooks/use-network";
+import useStyles from "hooks/use-styles";
+import useType from "hooks/use-type";
+
+import { ScreenConstants, TypeConstants } from "constants";
+
+import { findFilterById } from "utils";
+
+import { localStyles } from "./HomeScreen.styles";
+
+const FavoriteCard = ({ type }) => {
+  const navigation = useNavigation();
+  const { isConnected } = useNetwork();
+  const { getTabScreenFromType } = useType({ type });
+  const { data: filters } = useFilters({ type });
+  const filter = findFilterById("favorite", filters);
+  const { data: items } = useList({ filter, type });
+  const value = items?.length;
+  return (
+    <>
+      {
+        // Prefetch any favorite posts so that the records
+        // are available if the user goes OFFLINE.
+      }
+      {items?.map((item, idx) => {
+        if (!item?.ID || !item?.post_type) return null;
+        if (!isConnected) return null;
+        return (
+          <PrefetchCacheRecord key={idx} id={item.ID} type={item.post_type} />
+        );
+      })}
+      <MetricCard
+        title={filter?.name}
+        value={value}
+        onPress={() => {
+          const tabScreen = getTabScreenFromType(type);
+          navigation.jumpTo(tabScreen, {
+            screen: ScreenConstants.LIST,
+            type,
+            filter: filter,
+          });
+        }}
+      />
+    </>
+  );
 };
 
-import { styles } from './HomeScreen.styles';
+const FavoriteContactsCard = () => (
+  <FavoriteCard type={TypeConstants.CONTACT} />
+);
+const FavoriteGroupsCard = () => <FavoriteCard type={TypeConstants.GROUP} />;
 
-class HomeScreen extends React.Component {
-  handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
+const HomeScreen = ({ navigation }) => {
+  const { styles, globalStyles } = useStyles(localStyles);
+  const { i18n } = useI18N();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+    return;
   };
 
-  static navigationOptions = {
-    headerShown: false,
+  const renderHeaderLeft = (props) => (
+    <View style={globalStyles.rowContainer}>
+      <Image
+        defaultSource={require("assets/dt-icon.png")}
+        source={require("assets/dt-icon.png")}
+        resizeMethod="scale"
+        resizeMode="cover"
+        style={styles.logo}
+      />
+      <Text style={styles.brandText}>D.T</Text>
+    </View>
+  );
+
+  useLayoutEffect(() => {
+    const kebabItems = [
+      {
+        label: i18n.t("global.viewOnWeb"),
+        urlPath: "#",
+      },
+      {
+        label: i18n.t("global.documentation"),
+        url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/home-screen/`,
+      },
+    ];
+    navigation.setOptions({
+      title: "",
+      headerLeft: (props) => renderHeaderLeft(props),
+      headerRight: (props) => (
+        <HeaderRight
+          kebabItems={kebabItems}
+          //renderStartIcons={() => (
+          //  <>
+          //    <SearchIcon style={globalStyles.placeholder} />
+          //    <AddNewIcon style={globalStyles.placeholder} />
+          //  </>
+          //)}
+          props
+        />
+      ),
+    });
+  }, []);
+
+  /*
+  const CustomQueryCard = () => {
+    const filter = {
+      ID: "contacts_requires_update",
+      // TODO: translate
+      name: "Custom Query",
+      query: {
+        "assigned_to":["me"],
+        "subassigned":["me"],
+        "combine":["subassigned"],
+        "overall_status":["active"],
+        //"group_status":["active"],
+        "requires_update":[true],
+        "type":["access"],
+        //"sort":"seeker_path"
+      }
+    };
+    return (
+      <MetricCard
+        title={filter?.name}
+        filter={filter}
+        type={TypeConstants.CONTACT}
+      />
+    );
+  };
+  */
+
+  /*
+  const ActiveContactsCard = () => {
+    const filter = findFilterById("my_active", contactFilters);
+    const title = `${filter?.name} ${labelize(TypeConstants.CONTACT)}`;
+    return (
+      <MetricCard title={title} filter={filter} type={TypeConstants.CONTACT} />
+    );
   };
 
-  maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this.handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      const debugInfo = <Text>{JSON.stringify(this.props.userData)}</Text>;
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools.
-          {learnMoreButton}
-          {debugInfo}
-        </Text>
-      );
-    }
-
+  const ActiveGroupsCard = () => {
+    const filter = findFilterById("my_active", groupFilters);
+    const title = `${filter?.name} ${labelize(TypeConstants.GROUP)}`;
     return (
-      <Text style={styles.developmentModeText}>
-        You are not in development mode, your app will run at full speed.
-      </Text>
+      <MetricCard title={title} filter={filter} type={TypeConstants.GROUP} />
     );
-  }
+  };
+  */
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <View style={styles.welcomeContainer}>
-            <Image source={require('../assets/images/dt-icon.png')} style={styles.welcomeImage} />
-          </View>
-
-          <View style={styles.getStartedContainer}>{this.maybeRenderDevelopmentModeWarning()}</View>
-        </ScrollView>
-      </View>
-    );
-  }
-}
-
-HomeScreen.propTypes = propTypes;
-// export default HomeScreen;
-const mapStateToProps = (state) => ({
-  userData: state.userReducer.userData,
-});
-
-export default connect(mapStateToProps, null)(HomeScreen);
+  return (
+    <>
+      <OfflineBar />
+      <ScrollView
+        style={[globalStyles.screenContainer, styles.container]}
+        //contentContainerStyle={globalStyles.screenGutter}
+      >
+        <View style={[globalStyles.rowContainer, styles.cardRowContainer]}>
+          <FavoriteContactsCard />
+          <FavoriteGroupsCard />
+        </View>
+        <PendingContactsCard refreshing={refreshing} onRefresh={onRefresh} />
+        <ActivityLogCard preview={5} refreshing={refreshing} />
+      </ScrollView>
+    </>
+  );
+};
+export default HomeScreen;

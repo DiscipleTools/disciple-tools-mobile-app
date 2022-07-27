@@ -1,28 +1,21 @@
-import * as actions from '../actions/user.actions';
-import { REHYDRATE } from 'redux-persist/lib/constants';
+import * as actions from "store/actions/user.actions";
+import { REHYDRATE } from "redux-persist/lib/constants";
+import { REINITIALIZE_REDUX } from "store/rootActions";
 
 const userDataInitialState = {
-  domain: null,
-  token: null,
   username: null,
-  password: null,
   displayName: null,
-  email: null,
   locale: null,
   id: null,
-  expoPushToken: null,
+  theme: null,
 };
 const initialState = {
   error: null,
   loading: null,
   domain: null,
+  filters: null,
   userData: {
     ...userDataInitialState,
-  },
-  rememberPassword: true,
-  pinCode: {
-    enabled: false,
-    value: null,
   },
 };
 
@@ -32,128 +25,134 @@ export default function userReducer(state = initialState, action) {
     error: null,
   };
   switch (action.type) {
-    case REHYDRATE: {
+    case REHYDRATE:
+      return state;
+    case REINITIALIZE_REDUX:
+      return initialState;
+    case actions.SET_FILTER:
       return {
         ...newState,
-        loading: false,
+        userData: {
+          ...newState?.userData,
+        },
+        filters: {
+          ...newState?.filters,
+          [action?.key]: action?.filter,
+        },
       };
-    }
+    case actions.SET_THEME:
+      return {
+        ...newState,
+        userData: {
+          ...newState?.userData,
+        },
+        theme: action?.theme,
+      };
+    case actions.SET_PIN_SUCCESS:
+      return {
+        ...newState,
+        hasPIN: true,
+      };
+    case actions.DELETE_PIN_SUCCESS:
+      return {
+        ...newState,
+        hasPIN: false,
+      };
+    case actions.SET_CNONCE_LOGIN:
+      return {
+        ...newState,
+        cnonceLogin: action?.cnonceLogin,
+      };
+    case actions.GENERATE_PIN_CNONCE_SUCCESS:
+      return {
+        ...newState,
+        cnoncePIN: action?.cnoncePIN,
+      };
+    case actions.GENERATE_PIN_CNONCE_FAILURE:
+      return {
+        ...newState,
+        cnoncePIN: null,
+        error: action?.error,
+      };
     case actions.USER_LOGIN_START:
       return {
         ...newState,
         loading: true,
       };
-    case actions.USER_LOGIN_SUCCESS: {
-      let state = { ...newState };
-      if (newState.userData.username !== action.user.username) {
-        state = {
-          ...state,
-          pinCode: {
-            enabled: false,
-            value: null,
-          },
-        };
-      }
-      state = {
-        ...state,
+    case actions.USER_LOGIN_SUCCESS:
+      return {
+        ...newState,
+        loading: false,
         userData: {
-          domain: action.domain,
-          token: action.user.token,
-          username: action.user.username,
-          password: action.user.password,
-          displayName: action.user.user_display_name,
-          email: action.user.user_email,
-          locale: null,
+          ...newState?.userData,
+          displayName: action?.user?.user_display_name,
+          locale: action?.user?.locale,
           id: null,
         },
+        cnonceLogin: action?.cnonceLogin,
       };
-      return state;
-    }
     case actions.USER_LOGIN_FAILURE:
       return {
         ...newState,
-        error: action.error,
+        error: action?.error,
         loading: false,
+        cnonceLogin: null,
       };
     case actions.GET_MY_USER_INFO_SUCCESS:
       return {
         ...newState,
         userData: {
-          ...newState.userData,
-          locale: action.userInfo.locale,
-          id: action.userInfo.ID,
+          ...newState?.userData,
+          locale: action?.userInfo?.locale,
+          id: action?.userInfo?.ID,
         },
       };
     case actions.GET_MY_USER_INFO_FAILURE:
       return {
         ...newState,
-        error: action.error,
+        error: action?.error,
         loading: false,
       };
-    case actions.USER_GET_PUSH_TOKEN:
+    case actions.USER_LOGOUT_SUCCESS:
+      return {
+        ...initialState,
+        hasPIN: state?.hasPIN, // TODO: explain
+        isSignout: action?.isSignout,
+      };
+    case actions.TOGGLE_AUTO_LOGIN:
+      return {
+        ...newState,
+        isAutoLogin: !newState?.isAutoLogin,
+      };
+    case actions.TOGGLE_REMEMBER_LOGIN_DETAILS_SUCCESS:
       return {
         ...newState,
         userData: {
-          ...newState.userData,
+          ...newState?.userData,
+          ...action?.userData,
         },
+        rememberLoginDetails: action?.rememberLoginDetails,
       };
-    case actions.USER_ADD_PUSH_TOKEN:
+    case actions.TOGGLE_REMEMBER_LOGIN_DETAILS_FAILURE:
+      return {
+        ...newState,
+        error: action?.error,
+      };
+    case actions.UPDATE_USER_INFO_SUCCESS:
       return {
         ...newState,
         userData: {
-          ...newState.userData,
-          expoPushToken: action.expoPushToken,
+          ...newState?.userData,
+          locale: action?.locale,
         },
       };
-    case actions.USER_LOGOUT:
-      return {
-        ...newState,
-        userData: {
-          ...newState.userData,
-          token: null,
-          password: null,
-        },
-        pinCode: {
-          enabled: false,
-          value: null,
-        },
-        rememberPassword: false,
-        loading: false,
-      };
-    case actions.REMEMBER_PASSWORD:
-      return {
-        ...newState,
-        rememberPassword: !newState.rememberPassword,
-      };
-    case actions.SAVE_PIN_CODE:
-      return {
-        ...newState,
-        pinCode: {
-          enabled: true,
-          value: action.value,
-        },
-      };
-    case actions.REMOVE_PIN_CODE:
-      return {
-        ...newState,
-        pinCode: {
-          enabled: false,
-          value: null,
-        },
-      };
-    case actions.UPDATE_USER_INFO_SUCCESS: {
-      return {
-        ...newState,
-        userData: {
-          ...newState.userData,
-          locale: action.locale,
-        },
-      };
-    }
     case actions.UPDATE_USER_INFO_FAILURE:
+    case actions.SET_PIN_FAILURE:
+    case actions.DELETE_PIN_FAILURE:
+    case actions.USER_LOGOUT_FAILURE:
       return {
         ...newState,
-        error: action.error,
+        error: action?.error,
       };
     default:
       return newState;

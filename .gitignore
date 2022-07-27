@@ -95,3 +95,9 @@ __snapshots__
 
 # VSCode
 .vscode
+
+*.jks
+
+*.bak
+NOTES
+zz
