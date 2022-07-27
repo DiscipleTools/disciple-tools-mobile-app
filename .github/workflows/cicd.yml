@@ -10,10 +10,11 @@ jobs:
     name: CI/CD
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          node-version: 12.x
+          node-version: 14.x
+          cache: npm
       #- uses: microsoft/variable-substitution@v1
       #  with:
       #    files: './app.json'
@@ -28,28 +29,22 @@ jobs:
           client.0.oauth_client.0.client_id: ${{ secrets.FIREBASE_OAUTH_CLIENT_ID }}
           client.0.api_key.0.current_key: ${{ secrets.FIREBASE_API_KEY }}
           client.0.services.appinvite_service.other_platform_oauth_client.0.client_id: ${{ secrets.FIREBASE_OAUTH_CLIENT_ID }}
-      - uses: expo/expo-github-action@v5
+      #- run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+      - name: Setup Expo and EAS
+        uses: expo/expo-github-action@v7
         with:
-          expo-version: 3.x
-          expo-username: ${{ secrets.EXPO_CLI_USERNAME }}
-          expo-password: ${{ secrets.EXPO_CLI_PASSWORD }}
-      - run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-      - name: Cache node modules
-        uses: actions/cache@v1
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - run: npm install
+          expo-version: 5.x
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Install dependencies
+        run: npm ci
       #- run: npm test
-      - name: Deploy Prod
+      - name: Build on EAS and Publish to Production
         if: github.ref == 'refs/heads/main'
-        run: expo publish --release-channel production && expo build:ios --release-channel production --non-interactive && expo build:android --type app-bundle --release-channel production --non-interactive
+        run: eas build --platform all --non-interactive && expo publish --release-channel production 
       - name: Deploy Release
         if: github.ref == 'refs/heads/release'
         run: expo publish --release-channel release
       - name: Deploy Test
         if: github.ref == 'refs/heads/development'
         run: expo publish
-
