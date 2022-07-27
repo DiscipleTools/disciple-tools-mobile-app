@@ -28,6 +28,7 @@
       "versionCode": 1101
     },
     "description": "",
-    "scheme": "tools.disciple.app"
+    "scheme": "tools.disciple.app",
+    "jsEngine": "hermes"
   }
 }
