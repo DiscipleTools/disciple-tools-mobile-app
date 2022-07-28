@@ -9,8 +9,12 @@ jobs:
   publish:
     name: CI/CD
     runs-on: ubuntu-latest
+    outputs:
+      branch: ${{ steps.check_step.outputs.branch }}
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
           node-version: 16.x
@@ -39,12 +43,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
       #- run: npm test
-      - name: Build on EAS and Publish to Production
-        if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Get Current Branch
+        id: check_step
+        run: |
+          raw=$(git branch -r --contains ${{ github.ref }})
+          branch=${raw##*/}
+          echo "::set-output name=branch::$branch"
+      - name: Build on EAS and Publish to Production Channel
+        if: steps.check_step.outputs.branch == 'main'
         run: eas build --platform all --non-interactive && expo publish --release-channel production 
-      - name: Deploy Release
-        if: ${{ github.ref == 'refs/heads/release' }}
+      - name: Publish to Release Channel
+        if: steps.check_step.outputs.branch == 'release'
         run: expo publish --release-channel release
-      - name: Deploy Test
-        if: ${{ github.ref == 'refs/heads/development' }}
+      - name: Publish to Test Channel
+        if: steps.check_step.outputs.branch == 'development'
         run: expo publish
