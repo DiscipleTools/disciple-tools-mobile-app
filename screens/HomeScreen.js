@@ -103,6 +103,10 @@ const HomeScreen = ({ navigation }) => {
         label: i18n.t("global.documentation"),
         url: `https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/home-screen/`,
       },
+      {
+        label: "Share App",
+        shareApp: true,
+      },
     ];
     navigation.setOptions({
       title: "",

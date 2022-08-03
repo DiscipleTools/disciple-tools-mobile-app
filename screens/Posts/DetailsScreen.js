@@ -32,6 +32,7 @@ import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
 import useBottomSheet from "hooks/use-bottom-sheet";
 import useToast from "hooks/use-toast";
+import useShares from "hooks/use-shares";
 
 import { ScreenConstants, SubTypeConstants } from "constants";
 
@@ -53,6 +54,15 @@ const DetailsScreen = ({ navigation }) => {
     postId,
     postType,
   } = useDetails();
+
+  const { data: shareData } = useShares(
+    post ? `dt-posts/v2/${post.post_type}/${post.ID}/shares` : null
+  );
+
+  let sharedIDs = [];
+  if (shareData && shareData.length !== 0) {
+    sharedIDs = shareData.map((item) => parseInt(item.user_id));
+  }
 
   const { settings } = useSettings();
   const { updatePost, createShare } = useAPI();
@@ -130,7 +140,11 @@ const DetailsScreen = ({ navigation }) => {
                       <SheetHeader dismissable title="Share Post" />
                     ),
                     renderContent: () => (
-                      <UsersSheet id={parseInt(user.id)} onChange={_onChange} />
+                      <UsersSheet
+                        id={parseInt(user.id)}
+                        onChange={_onChange}
+                        sharedIDs={sharedIDs}
+                      />
                     ),
                   });
                 }}

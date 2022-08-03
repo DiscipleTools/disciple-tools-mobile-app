@@ -2,6 +2,8 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Random from "expo-random";
 import useSecureStore from "hooks/use-secure-store";
+import { useAuth } from "hooks/use-auth";
+import useCache from "hooks/use-cache";
 
 import {
   setHasPIN,
@@ -9,12 +11,15 @@ import {
 } from "store/actions/auth.actions";
 
 import { PINConstants } from "constants";
+import { reinitializeRedux } from "store/rootActions";
 
 const usePIN = () => {
   const dispatch = useDispatch();
   const hasPIN = useSelector((state) => state?.authReducer?.hasPIN);
   const cnoncePIN = useSelector((state) => state?.authReducer?.cnoncePIN);
   const { getSecureItem, setSecureItem, deleteSecureItem } = useSecureStore();
+  const { signOut } = useAuth();
+  const { clearCache, clearStorage } = useCache();
 
   const isTimelyCNonce = useCallback((cnonceDT) => {
     const now = new Date();
@@ -53,6 +58,13 @@ const usePIN = () => {
     dispatch(_setCNoncePIN(cnonce));
   }, []);
 
+  const activateDistress = useCallback(async () => {
+    dispatch(reinitializeRedux());
+    clearStorage();
+    clearCache();
+    signOut();
+  }, []);
+
   return {
     hasPIN,
     getPIN,
@@ -61,6 +73,7 @@ const usePIN = () => {
     cnoncePIN,
     setCNoncePIN,
     validateCNoncePIN,
+    activateDistress,
   };
 };
 export default usePIN;
