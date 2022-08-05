@@ -125,7 +125,4 @@ const AppNavigator = () => {
     </NavigationContainer>
   );
 };
-const areEqual = (prevProps, nextProps) => {
-  return prevProps?.hasPIN === nextProps?.hasPIN;
-};
-export default React.memo(AppNavigator, areEqual);
+export default AppNavigator;
