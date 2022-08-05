@@ -35,7 +35,7 @@
     "expo-random": "~12.2.0",
     "expo-secure-store": "~11.2.0",
     "expo-splash-screen": "~0.15.1",
-    "expo-updates": "~0.13.3",
+    "expo-updates": "~0.13.4",
     "expo-web-browser": "~10.2.0",
     "html-entities": "^2.3.2",
     "i18n-js": "^3.8.0",
