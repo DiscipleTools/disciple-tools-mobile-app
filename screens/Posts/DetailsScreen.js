@@ -23,16 +23,22 @@ import Tile from "components/Post/Tile";
 import PostSkeleton from "components/Post/PostSkeleton";
 import FAB from "components/FAB";
 
+import { useAuth } from "hooks/use-auth";
 import useAPI from "hooks/use-api";
 import useDetails from "hooks/use-details";
 import useHaptics from "hooks/use-haptics";
 import useI18N from "hooks/use-i18n";
 import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
+import useBottomSheet from "hooks/use-bottom-sheet";
+import useToast from "hooks/use-toast";
+import useShares from "hooks/use-shares";
 
 import { ScreenConstants, SubTypeConstants } from "constants";
 
 import { localStyles } from "./DetailsScreen.styles";
+import SheetHeader from "components/Sheet/SheetHeader";
+import UsersSheet from "components/Field/UserSelect/UsersSheet";
 
 const DetailsScreen = ({ navigation }) => {
   const layout = useWindowDimensions();
@@ -49,8 +55,20 @@ const DetailsScreen = ({ navigation }) => {
     postType,
   } = useDetails();
 
+  const { data: shareData } = useShares(
+    post ? `dt-posts/v2/${post.post_type}/${post.ID}/shares` : null
+  );
+
+  let sharedIDs = [];
+  if (shareData && shareData.length !== 0) {
+    sharedIDs = shareData.map((item) => parseInt(item.user_id));
+  }
+
   const { settings } = useSettings();
-  const { updatePost } = useAPI();
+  const { updatePost, createShare } = useAPI();
+  const { expand } = useBottomSheet();
+  const { user } = useAuth();
+  const toast = useToast();
 
   const [index, setIndex] = useState(0);
   const [scenes, setScenes] = useState(null);
@@ -116,6 +134,25 @@ const DetailsScreen = ({ navigation }) => {
             <>
               <Pressable
                 onPress={() => {
+                  expand({
+                    defaultIndex: 3,
+                    renderHeader: () => (
+                      <SheetHeader dismissable title="Share Post" />
+                    ),
+                    renderContent: () => (
+                      <UsersSheet
+                        id={parseInt(user.id)}
+                        onChange={_onChange}
+                        sharedIDs={sharedIDs}
+                      />
+                    ),
+                  });
+                }}
+              >
+                <ShareIcon />
+              </Pressable>
+              <Pressable
+                onPress={() => {
                   vibrate();
                   updatePost({
                     fields: { favorite: !post?.favorite },
@@ -153,6 +190,14 @@ const DetailsScreen = ({ navigation }) => {
     //}, [navigation, route?.params?.name]);
     //}, []);
   });
+
+  const _onChange = async (selectedUser) => {
+    try {
+      await createShare(selectedUser.key);
+    } catch (err) {
+      toast(err, true);
+    }
+  };
 
   if (!scenes || !post || !settings || isLoading) return <PostSkeleton />;
   // TODO: switch to toggle Update Required

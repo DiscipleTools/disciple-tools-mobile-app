@@ -1,14 +1,13 @@
-import { useCallback, useEffect, useRef } from "react";
-//import { useNavigation } from "@react-navigation/native";
+import { useEffect, useRef } from "react";
 
 import * as Notifications from "expo-notifications";
 
-import useAPI from "hooks/use-api";
+import useAPI from "./use-api";
 import useDevice from "hooks/use-device";
-import useNetwork from "hooks/use-network";
-//import useType from "hooks/use-type";
+import useType from "hooks/use-type";
+import { useNavigation, TabActions } from "@react-navigation/native";
 
-import { NotificationPermissionConstants } from "constants";
+import { ScreenConstants } from "constants";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -19,33 +18,33 @@ Notifications.setNotificationHandler({
 });
 
 const usePushNotifications = () => {
+  const navigation = useNavigation();
   const { deviceUID, isDevice, isAndroid, isIOS } = useDevice();
-  const { isConnected } = useNetwork();
+  const { getTabScreenFromType } = useType();
   const { updateUser } = useAPI();
-  //const { getTabScreenFromType } = useType();
-  //const navigation = useNavigation();
   const notificationListener = useRef();
-  const responseListener = useRef();
 
-  const registerForPushNotificationsAsync = useCallback(async () => {
+  const registerForPushNotificationsAsync = async () => {
     let token;
     if (isDevice) {
-      const { status } = await Notifications.getPermissionsAsync();
-      if (status === NotificationPermissionConstants.GRANTED) {
-        token = (await Notifications.getExpoPushTokenAsync()).data;
-        if (token) {
-          /*
-           * NOTE: API returns 500 if token is already registered (so we can
-           * ignore the response, and just try to update on every app launch)
-           */
-          await updateUser({
-            add_push_token: {
-              device_id: deviceUID,
-              token,
-            },
-          });
-        }
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
       }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      await updateUser({
+        add_push_token: {
+          token,
+          device_id: deviceUID,
+        },
+      });
     } else {
       alert("Must use physical device for Push Notifications");
     }
@@ -60,49 +59,52 @@ const usePushNotifications = () => {
     }
 
     return token;
-  }, []);
+  };
+
+  const lastNotificationResponse = Notifications.useLastNotificationResponse();
 
   useEffect(() => {
-    if (isConnected) {
-      registerForPushNotificationsAsync();
-      // This listener is fired whenever a notification is received while the app is foregrounded
-      notificationListener.current =
-        Notifications.addNotificationReceivedListener((notification) => {
-          console.log("************ RECVD NOTIFICATION ************");
-          //console.log(notification);
-          //console.log(notification?.request?.content?.data);
-        });
+    if (
+      lastNotificationResponse &&
+      lastNotificationResponse.notification.request.content.data &&
+      lastNotificationResponse.actionIdentifier ===
+        Notifications.DEFAULT_ACTION_IDENTIFIER
+    ) {
+      const data =
+        lastNotificationResponse?.notification?.request?.content?.data;
 
-      // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-      responseListener.current =
-        Notifications.addNotificationResponseReceivedListener((response) => {
-          console.log("************ RESPONDED TO NOTIFICATION ************");
-          //const body = response?.notification?.request?.content?.body;
-          //console.log(`NOTIFICATION BODY: ${body}`);
-          /*
-        if (navigation) {
-          //const data = response?.notification?.request?.content?.data;
-          // TODO: parse HTML for the following: id, type
-          const id = "";
-          //const name = "";
-          const type = "";
-          const tabScreen = getTabScreenFromType(type);
-          navigation.jumpTo(tabScreen, {
-            screen: ScreenConstants.DETAILS,
-            id,
-            type,
-          });
-        };
-        */
-        });
-      return () => {
-        Notifications.removeNotificationSubscription(
-          notificationListener.current
-        );
-        Notifications.removeNotificationSubscription(responseListener.current);
-      };
+      const id = data?.id ?? "";
+      const type = data?.type ?? "";
+      const tabScreen = getTabScreenFromType(type);
+
+      const jumpToAction = TabActions.jumpTo(tabScreen, {
+        screen: ScreenConstants.DETAILS,
+        id,
+        type,
+      });
+      navigation.dispatch(jumpToAction);
     }
-    return;
-  }, [isConnected]);
+  }, [lastNotificationResponse]);
+
+  useEffect(() => {
+    const run = async () => {
+      registerForPushNotificationsAsync();
+    };
+    run();
+
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        // useNotifications and then force re-render when receiving a notification?
+        //setNotification(notification);
+        console.log("************ RECVD NOTIFICATION ************");
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+    };
+  }, []);
 };
 export default usePushNotifications;

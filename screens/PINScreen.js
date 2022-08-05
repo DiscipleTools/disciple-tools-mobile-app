@@ -21,7 +21,8 @@ const PINScreen = ({ navigation, route }) => {
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
-  const { getPIN, setPIN, deletePIN, setCNoncePIN } = usePIN();
+  const { getPIN, setPIN, deletePIN, setCNoncePIN, activateDistress } =
+    usePIN();
   const toast = useToast();
 
   const type = route?.params?.type ? route.params.type : null;
@@ -42,7 +43,7 @@ const PINScreen = ({ navigation, route }) => {
       "777777",
       "888888",
       "999999",
-      "000000",
+      // "000000",
     ].includes(code);
   };
 
@@ -61,11 +62,14 @@ const PINScreen = ({ navigation, route }) => {
     ].includes(code);
   };
 
-  // TODO: add support for "distress"
   const handleFulfill = async (code) => {
     if (isValidate || isDelete) {
       const secretCode = await getPIN();
-      if (secretCode === null) {
+
+      if (isValidate && code === "000000") {
+        // Support for "distress"
+        activateDistress();
+      } else if (secretCode === null) {
         toast(i18n.t("global.error.pinExisting"), true);
         pinInput.current.shake().then(() => setState({ ...state, code: "" }));
       } else if (code === secretCode) {

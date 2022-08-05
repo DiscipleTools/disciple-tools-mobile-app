@@ -43,11 +43,21 @@ const useCache = () => {
     }
   }, []);
 
+  const clearStorage = useCallback(async () => {
+    await ExpoFileSystemStorage.removeItem("cache");
+  }, []);
+
+  const clearCache = useCallback(async () => {
+    cache.clear();
+  }, []);
+
   return {
     cache,
     mutate,
     onAppBackgroundCallback,
     onAppForegroundCallback,
+    clearStorage,
+    clearCache,
   };
 };
 export default useCache;

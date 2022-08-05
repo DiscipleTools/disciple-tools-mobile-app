@@ -25,6 +25,8 @@ const ConnectionSheet = ({ id, type, renderItem, values, onChange }) => {
   const { data: items } = useList({ search, exclude, type });
   if (!items) return [];
 
+  items.sort((a, b) => b.last_modified - a.last_modified);
+
   // MAP TO API
   const mapToAPI = (newItem) => {
     let _values = JSON.parse(JSON.stringify(values));

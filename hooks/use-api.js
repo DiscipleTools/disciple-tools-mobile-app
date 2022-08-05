@@ -160,10 +160,19 @@ const useAPI = () => {
   };
 
   // SHARE
-  // TODO:
   // https://developers.disciple.tools/theme-core/api-posts/post-sharing
-
-  //const createShare = async(userId) => {};
+  const createShare = async (userId) => {
+    const url =
+      postType && postId && userId
+        ? `/dt-posts/v2/${postType}/${postId}/shares`
+        : null;
+    return request({
+      url,
+      method: HTTP.METHODS.POST,
+      headers: HTTP.HEADERS.DEFAULT,
+      data: { user_id: userId },
+    });
+  };
   //const deleteShare = async(userId) => {};
 
   // NOTIFICATIONS
@@ -193,8 +202,8 @@ const useAPI = () => {
     createComment,
     updateComment,
     deleteComment,
+    createShare,
     // TODO
-    //createShare,
     //deleteShare,
     markNotificationViewed,
     markNotificationUnread,
