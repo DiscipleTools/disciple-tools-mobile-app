@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView, RefreshControl, View } from "react-native";
-import { SwipeListView } from "react-native-swipe-list-view";
+import { FlashList } from "@shopify/flash-list";
 
 import SearchBar from "./SearchBar";
 import FilterBar from "./FilterBar";
@@ -93,37 +93,20 @@ const FilterList = ({
           <Placeholder placeholder={placeholder} />
         </View>
       ) : (
-        <SwipeListView
+        <FlashList
           keyExtractor={keyExtractor}
           data={_items}
           renderItem={renderItem}
-          renderHiddenItem={renderHiddenItem ?? null}
-          leftOpenValue={leftOpenValue}
-          rightOpenValue={leftOpenValue}
-          onRowDidOpen={(item) => {
-            onRowDidOpen === undefined ? null : onRowDidOpen(item);
-          }}
-          onRowDidClose={(item) => {
-            onRowDidClose === undefined ? null : onRowDidClose(item);
-          }}
           refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={_onRefresh}
-              //colors={globalStyles.refreshControl.color}
-              //tintColor={globalStyles.refreshControl.color}
-            />
+            <RefreshControl refreshing={refreshing} onRefresh={_onRefresh} />
           }
-          disableScrollViewPanResponder={true}
-          style={styles.container}
-          contentContainerStyle={globalStyles.screenGutter}
+          contentContainerStyle={{
+            ...globalStyles.screenGutter,
+            ...styles.container,
+          }}
           // Performance settings
           getItemLayout={getItemLayout}
-          //removeClippedSubviews={true} // Unmount components when outside of window
-          //maxToRenderPerBatch={10} // Reduce number in each render batch
-          //updateCellsBatchingPeriod={50} // Increase time between renders
-          //initialNumToRender={10} // Reduce initial render amount
-          windowSize={3} // Reduce the window size
+          estimatedItemSize={200}
         />
       )}
     </SafeAreaView>

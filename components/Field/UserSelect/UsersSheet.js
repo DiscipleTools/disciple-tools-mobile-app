@@ -11,14 +11,17 @@ import useUsers from "hooks/use-users";
 
 import { localStyles } from "./UsersSheet.styles";
 
-const UsersSheet = ({ id, values, onChange }) => {
+const UsersSheet = ({ id, values, onChange, sharedIDs }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { delayedClose } = useBottomSheet();
   const { search, onSearch } = useFilter();
 
   // exclude currently selected values from options list
-  const exclude = [];
+  let exclude = [];
   if (id) exclude.push(id);
+  if (sharedIDs && sharedIDs.length !== 0) {
+    exclude = [...exclude, ...sharedIDs];
+  }
 
   const { data: items } = useUsers({ search, exclude });
   if (!items) return null;
