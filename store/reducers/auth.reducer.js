@@ -7,6 +7,7 @@ const initialState = {
   rehydrate: false,
   isAutoLogin: true,
   rememberLoginDetails: null,
+  cnonceLogin: null,
   hasPIN: null,
   cnoncePIN: null,
 };
@@ -30,6 +31,12 @@ export default function authReducer(state = initialState, action) {
       return {
         ...state,
         rememberLoginDetails: !state.rememberLoginDetails,
+        rehydrate: false,
+      };
+    case actions.AUTH_SET_CNONCE_LOGIN:
+      return {
+        ...state,
+        cnonceLogin: action?.cnonceLogin,
         rehydrate: false,
       };
     case actions.AUTH_SET_HAS_PIN:

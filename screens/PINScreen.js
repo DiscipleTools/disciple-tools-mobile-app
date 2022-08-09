@@ -66,7 +66,7 @@ const PINScreen = ({ navigation, route }) => {
     if (isValidate || isDelete) {
       const secretCode = await getPIN();
 
-      if (isValidate && code === "000000") {
+      if (isValidate && code === PINConstants.DISTRESS_CODE) {
         // Support for "distress"
         activateDistress();
       } else if (secretCode === null) {
@@ -118,6 +118,7 @@ const PINScreen = ({ navigation, route }) => {
       }
     } else if (isSet && state.tmpCode !== null) {
       if (code === state.tmpCode) {
+        await setCNoncePIN();
         setPIN(code);
         setState({ code: "", tmpCode: null });
         navigation.goBack();
