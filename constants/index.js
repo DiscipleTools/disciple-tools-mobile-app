@@ -312,16 +312,28 @@ export const AppStateConstants = Object.freeze({
   INACTIVE: "inactive",
 });
 
-export const PINConstants = {
-  CNONCE: "CNONCE",
-  CNONCE_DATETIME: "CNONCE_DATETIME",
+export const AuthConstants = Object.freeze({
+  ACCESS_TOKEN: "ACCESS_TOKEN",
+  BASE_URL: "BASE_URL",
+  USER: "USER",
+  CNONCE_PERSISTED: "cnonceLogin",
+  CNONCE: "CNONCE_LOGIN",
+  CNONCE_DATETIME: "CNONCE_LOGIN_DATETIME",
+  CNONCE_THRESHOLD: 2 // seconds
+});
+
+export const PINConstants = Object.freeze({
+  DISTRESS_CODE: "000000",
   CODE: "CODE",
   DELETE: "DELETE",
   SCREEN: "PIN",
   SET: "SET",
   VALIDATE: "VALIDATE",
-  CNONCE_THRESHOLD: 10,
-};
+  CNONCE_PERSISTED: "cnoncePIN",
+  CNONCE: "CNONCE_PIN",
+  CNONCE_DATETIME: "CNONCE_PIN_DATETIME",
+  CNONCE_THRESHOLD: 2 // seconds
+});
 
 export const CACHE_INTERVAL = 1000 * 60 * 2; // 2 minutes
 

@@ -12,16 +12,16 @@ const useCache = () => {
    * When user "backgrounds" the app, persist the in-memory cache (SWR)
    * to device storage (via Redux).
    */
-  const onAppBackgroundCallback = useCallback(async () => {
+  const onAppBackgroundCallback = async () => {
     const inMemoryCacheMap = SWRConfig.default.cache;
     const cacheObj = Object.fromEntries(inMemoryCacheMap);
     await ExpoFileSystemStorage.setItem("cache", JSON.stringify(cacheObj));
-  }, []);
+  };
 
   /**
    * When user "foregrounds" the app, rehydrate the in-memory cache.
    */
-  const onAppForegroundCallback = useCallback(async () => {
+  const onAppForegroundCallback = async () => {
     let cacheObj;
     try {
       const cacheStr = await ExpoFileSystemStorage.getItem("cache");
@@ -41,15 +41,19 @@ const useCache = () => {
         }
       }
     }
-  }, []);
+  };
 
   const clearStorage = useCallback(async () => {
-    await ExpoFileSystemStorage.removeItem("cache");
+    try {
+      await ExpoFileSystemStorage.removeItem("cache");
+    } catch (error) {
+      console.error(error);
+    };
   }, []);
 
-  const clearCache = useCallback(async () => {
+  const clearCache = async() => {
     cache.clear();
-  }, []);
+  };
 
   return {
     cache,
