@@ -1,10 +1,9 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "build": "tsc",
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "pretty-quick": "pretty-quick --staged",
     "lint": "npx eslint --ext .jsx,.js ./ --fix",
     "test": "npx jest --testEnvironment --passWithNoTests node --colors --coverage --updateSnapshot ."
@@ -24,6 +23,7 @@
     "expo": "~45.0.0",
     "expo-auth-session": "~3.6.0",
     "expo-clipboard": "~3.0.1",
+    "expo-constants": "~13.1.1",
     "expo-contacts": "~10.2.0",
     "expo-device": "~4.2.0",
     "expo-font": "~10.1.0",
@@ -35,6 +35,7 @@
     "expo-random": "~12.2.0",
     "expo-secure-store": "~11.2.0",
     "expo-splash-screen": "~0.15.1",
+    "expo-status-bar": "~1.3.0",
     "expo-updates": "~0.13.4",
     "expo-web-browser": "~10.2.0",
     "html-entities": "^2.3.2",
@@ -63,6 +64,8 @@
     "redux": "^4.1.2",
     "redux-persist": "^6.0.0",
     "redux-persist-expo-filesystem": "^2.0.0",
+    "react-dom": "17.0.2",
+    "react-native-web": "0.17.7",
     "swr": "^1.3.0"
   },
   "devDependencies": {
@@ -87,5 +90,7 @@
     "react-native-svg-transformer": "^1.0.0",
     "typescript": "~4.3.5"
   },
-  "private": true
+  "private": true,
+  "name": "disciple-tools-mobile-app",
+  "version": "1.10.1"
 }
