@@ -23,11 +23,11 @@ import Tile from "components/Post/Tile";
 import PostSkeleton from "components/Post/PostSkeleton";
 import FAB from "components/FAB";
 
-import { useAuth } from "hooks/use-auth";
 import useAPI from "hooks/use-api";
 import useDetails from "hooks/use-details";
 import useHaptics from "hooks/use-haptics";
 import useI18N from "hooks/use-i18n";
+import useMyUser from "hooks/use-my-user";
 import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
 import useBottomSheet from "hooks/use-bottom-sheet";
@@ -67,7 +67,7 @@ const DetailsScreen = ({ navigation }) => {
   const { settings } = useSettings();
   const { updatePost, createShare } = useAPI();
   const { expand } = useBottomSheet();
-  const { user } = useAuth();
+  const { data: userData } = useMyUser();
   const toast = useToast();
 
   const [index, setIndex] = useState(0);
@@ -141,7 +141,7 @@ const DetailsScreen = ({ navigation }) => {
                     ),
                     renderContent: () => (
                       <UsersSheet
-                        id={parseInt(user.id)}
+                        id={parseInt(userData.ID)}
                         onChange={_onChange}
                         sharedIDs={sharedIDs}
                       />
