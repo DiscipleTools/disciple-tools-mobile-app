@@ -8,7 +8,6 @@ import React, {
 } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  setCNonceLogin as _setCNonceLogin,
   toggleAutoLogin as _toggleAutoLogin,
   toggleRememberLoginDetails as _toggleRememberLoginDetails,
 } from "store/actions/auth.actions";
@@ -219,7 +218,7 @@ const useCustomAuth = () => {
           nicename: res.data?.user_nicename,
         };
         // set login cnonce
-        await setCNonce(_setCNonceLogin)
+        await setCNonce()
         // set persisted storage values
         await setPersistedAuth(accessToken, baseUrl, user);
         // sync local locale with server

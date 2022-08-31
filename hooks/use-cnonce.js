@@ -2,6 +2,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 import * as Random from "expo-random";
 
+import {
+  setCNonceLogin as _setCNonceLogin,
+} from "store/actions/auth.actions";
+
 import useSecureStore from "hooks/use-secure-store";
 
 const useCNonce = ({
@@ -30,16 +34,20 @@ const useCNonce = ({
     const _cnonce = await getSecureItem(cnonceKey);
     if (cnonce !== _cnonce) return false;
     const cnonceDT = await getSecureItem(cnonceDTKey);
-    if (isTimelyCNonce(cnonceDT)) return true;
+    if (isTimelyCNonce(cnonceDT)) {
+      // refresh the cnonce
+      await setCNonce();
+      return true;
+    };
     return false;
   };
 
-  const setCNonce = async (setCNonce) => {
+  const setCNonce = async () => {
     const cnonce = Random.getRandomBytes(256).toString();
     const cnonceDT = new Date().toString();
     await setSecureItem(cnonceDTKey, cnonceDT);
     await setSecureItem(cnonceKey, cnonce);
-    dispatch(setCNonce(cnonce));
+    dispatch(_setCNonceLogin(cnonce));
   };
 
   return {
