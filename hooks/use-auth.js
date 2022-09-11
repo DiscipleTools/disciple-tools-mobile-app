@@ -120,15 +120,22 @@ const useCustomAuth = () => {
   }, []);
 
   // when baseUrl changes, set axios default baseURL (if applicable)
+  // clear cache and storage when switching D.T instances
   useEffect(() => {
     if (baseUrl && baseUrl !== axios.defaults.baseURL) {
       axios.defaults.baseURL = baseUrl;
-      // when switching D.T instances, clear any previous data
       clearStorage();
       clearCache();
     };
     return;
   }, [baseUrl]);
+
+  // clear cache and storage when switching user accounts within same instance
+  useEffect(() => {
+    clearStorage();
+    clearCache();
+    return;
+  }, [user?.id]);
 
   /*
    * When "accessToken" changes, validate it.
