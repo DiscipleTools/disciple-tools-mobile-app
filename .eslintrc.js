@@ -37,6 +37,7 @@ module.exports = {
     "jest",
   ],
   rules: {
+    "no-unused-vars": 1,
     indent: ["error", 2],
     "linebreak-style": ["error", "unix"],
     quotes: ["error", "double"],
@@ -49,7 +50,7 @@ module.exports = {
     "react-native/no-single-element-style-arrays": 2,
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-    "react/prop-types": "never",
+    "react/prop-types": 0,
     "prettier/prettier": "warn",
     "jest/no-disabled-tests": "warn",
     "jest/no-focused-tests": "error",
