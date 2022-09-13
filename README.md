@@ -59,6 +59,8 @@ UI/Framework-specific:
 ```
 npm install
 npm start
+OR
+expo start
 ```
 
 - Run in Simulator:
@@ -69,10 +71,28 @@ npm start
   - Scan the QR code above with Expo Go (Android) or the Camera app (iOS), or
   - or, manually open Expo app on phone and select appropriate option from under "Development servers"
   - (NOTE: Your phone must be on the same local network as the development computer)
+  - To run on the phone you will first need to patch the diff with `npm run patch:List`
+  - Before committing make sure to unpatch using `npm run unpatch:List`
 
 - Recently tested with the following library versions:
   - Node v14 or v16 (or should work with latest)
   - Expo CLI v5+
+
+### Issues
+
+#### HTTPS
+
+You MUST connect to a D.T. instance URL with https protocol, otherwise it will fail to connect with
+
+"Network Error"
+
+If you are using a local D.T. instance without SSL, you can use a service like ngrok or cloudflared to create a tunnel to an https address.
+
+With this solution, you would then also need to change the values of `home` and `siteurl` in the `dt_options` table in your WP database.
+
+#### Firewall
+
+If running on a device using Expo, you may need to open the necessary port on your computer to allow expo to access the app.
 
 ## DataStore
 
