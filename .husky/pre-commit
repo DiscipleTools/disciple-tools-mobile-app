@@ -1,7 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm run unpatch:File 2> /dev/null
 npm run pretty-quick
 
 #npm run lint
