@@ -4,13 +4,13 @@ module.exports = {
       version: "latest",
     },
     jest: {
-      version: require('jest/package.json').version,
-    }
+      version: require("jest/package.json").version,
+    },
   },
   env: {
     es2021: true,
     "react-native/react-native": true,
-    "jest/globals": true
+    "jest/globals": true,
   },
   extends: [
     "eslint:recommended",
@@ -19,7 +19,7 @@ module.exports = {
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended",
     "plugin:prettier/recommended",
-    "plugin:jest/recommended"
+    "plugin:jest/recommended",
   ],
   parserOptions: {
     ecmaFeatures: {
@@ -28,8 +28,16 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: "module",
   },
-  plugins: ["react", "react-native", "react-hooks", "jsx-a11y", "prettier", "jest"],
+  plugins: [
+    "react",
+    "react-native",
+    "react-hooks",
+    "jsx-a11y",
+    "prettier",
+    "jest",
+  ],
   rules: {
+    "no-unused-vars": 1,
     indent: ["error", 2],
     "linebreak-style": ["error", "unix"],
     quotes: ["error", "double"],
@@ -40,13 +48,14 @@ module.exports = {
     //"react-native/no-color-literals": 2,
     "react-native/no-raw-text": 2,
     "react-native/no-single-element-style-arrays": 2,
-    "react-hooks/rules-of-hooks": 'error',
-    "react-hooks/exhaustive-deps": 'warn',
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "react/prop-types": 0,
     "prettier/prettier": "warn",
     "jest/no-disabled-tests": "warn",
     "jest/no-focused-tests": "error",
     "jest/no-identical-title": "error",
     "jest/prefer-to-have-length": "warn",
-    "jest/valid-expect": "error"
-  }
-}
+    "jest/valid-expect": "error",
+  },
+};
