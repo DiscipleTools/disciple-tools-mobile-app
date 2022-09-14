@@ -10,17 +10,20 @@ import useStyles from "hooks/use-styles";
 import useType from "hooks/use-type";
 
 import { ScreenConstants } from "constants";
+import { screenGrey } from "constants/colors";
 
 import { titleize } from "utils";
 
 import { localStyles } from "./PostChip.styles";
 
-const PostChip = ({ id, icon, title, type, onRemove, onGoBack }) => {
+const PostChip = ({ id, icon, title, type, color, onRemove, onGoBack }) => {
   const navigation = useNavigation();
   const { vibrate } = useHaptics();
   const { styles, globalStyles } = useStyles(localStyles);
   const { postType, getTabScreenFromType } = useType();
   const selected = type ? true : null;
+  const backgroundColorStyle = color ? { backgroundColor: color } : null;
+  const borderColorStyle = color ? { borderColor: screenGrey } : null;
   return (
     <Chip
       // TODO: handle this better
@@ -50,7 +53,7 @@ const PostChip = ({ id, icon, title, type, onRemove, onGoBack }) => {
       startIcon={icon ?? null}
       endIcon={
         onRemove ? (
-          <View style={styles.clearIconContainer(selected)}>
+          <View style={[styles.clearIconContainer(selected), borderColorStyle]}>
             <ClearIcon
               onPress={() => {
                 vibrate();
@@ -61,7 +64,7 @@ const PostChip = ({ id, icon, title, type, onRemove, onGoBack }) => {
           </View>
         ) : null
       }
-      style={styles.container}
+      style={[styles.container, borderColorStyle, backgroundColorStyle]}
     />
   );
 };

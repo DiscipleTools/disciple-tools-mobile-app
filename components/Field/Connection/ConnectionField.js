@@ -41,6 +41,7 @@ const ConnectionField = ({ editing, field, value, onChange }) => {
       title={item?.name}
       type={getPostTypeByField(field)}
       onRemove={onRemove}
+      color={item?.status.color}
     />
   );
   const renderItemView = (item) => (
