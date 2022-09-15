@@ -1,9 +1,11 @@
 import { ThemeConstants } from "constants";
 
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
-  container: (selected) => ({
+  containerColor: (selected) => ({
     backgroundColor: selected ? theme.brand.primary : theme.background.primary,
     borderColor: selected ? theme.highlight : theme.disabled,
+  }),
+  container: {
     borderWidth: 1,
     borderRadius: 25,
     height: 30,
@@ -12,7 +14,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     paddingEnd: 5,
     alignItems: "center",
     justifyContent: "center",
-  }),
+  },
   label: (selected, isLink) => ({
     color: selected
       ? ThemeConstants.DARK === theme.mode

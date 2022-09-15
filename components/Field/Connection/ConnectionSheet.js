@@ -3,6 +3,7 @@ import { Image, Pressable, Text, View } from "react-native";
 
 import { CheckIcon, MaterialCommunityIcon } from "components/Icon";
 import FilterList from "components/FilterList";
+import StatusBorder from "components/StatusBorder";
 
 import useBottomSheet from "hooks/use-bottom-sheet";
 import useFilter from "hooks/use-filter";
@@ -48,6 +49,7 @@ const ConnectionSheet = ({ id, type, renderItem, values, onChange }) => {
         label: item?.name || item?.title,
         avatar: item?.avatar,
         contactId: item?.contact_id ? String(item?.contact_id) : null,
+        overall_status: item?.overall_status,
         //selected: values?.some(selectedItem => Number(selectedItem?.value) === item?.contact_id),
       };
     });
@@ -69,6 +71,12 @@ const ConnectionSheet = ({ id, type, renderItem, values, onChange }) => {
           key={key}
           style={[globalStyles.rowContainer, styles.itemContainer]}
         >
+          <StatusBorder
+            overall_status={item?.overall_status}
+            group_status={item?.group_status}
+            status={item?.status}
+            type={type}
+          />
           {avatar && <Image style={styles.avatar} source={{ uri: avatar }} />}
           {icon && (
             <View style={globalStyles.rowIcon}>
@@ -79,11 +87,7 @@ const ConnectionSheet = ({ id, type, renderItem, values, onChange }) => {
               />
             </View>
           )}
-          <View
-            style={{
-              marginEnd: "auto",
-            }}
-          >
+          <View style={styles.textContainer}>
             <Text>
               {label} (#{key})
             </Text>

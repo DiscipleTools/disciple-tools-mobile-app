@@ -227,6 +227,7 @@ const useDetails = ({ id, type } = {}) => {
                       value: valueTwo.ID.toString(),
                       //name: entities.decode(valueTwo.post_title),
                       name: valueTwo.post_title,
+                      status: valueTwo?.status,
                     };
                     // groups
                     if (

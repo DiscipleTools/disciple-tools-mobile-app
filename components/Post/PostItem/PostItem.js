@@ -14,6 +14,7 @@ import {
 import PostItemSkeleton from "./PostItemSkeleton";
 import SelectSheet from "components/Sheet/SelectSheet";
 import SheetHeader from "components/Sheet/SheetHeader";
+import StatusBorder from "components/StatusBorder";
 
 import useAPI from "hooks/use-api";
 import useBottomSheet from "hooks/use-bottom-sheet";
@@ -29,31 +30,6 @@ import { parseDateSafe, titleize, truncate } from "utils";
 
 import { localStyles } from "./PostItem.styles";
 import { mutate } from "swr";
-
-const StatusBorder = ({ overall_status, group_status, status }) => {
-  const { settings } = useSettings();
-  if (!settings) return null;
-
-  const getStatusColor = (settings) => {
-    if (overall_status) {
-      return settings?.fields?.overall_status?.values?.[overall_status]?.color;
-    }
-    if (group_status) {
-      return settings?.fields?.group_status?.values?.[group_status]?.color;
-    }
-    return settings?.fields?.status?.values?.[status]?.color;
-  };
-
-  const backgroundColor = getStatusColor(settings);
-  return (
-    <View
-      style={{
-        width: 10,
-        backgroundColor,
-      }}
-    />
-  );
-};
 
 const FavoriteStar = ({ ID, post_type, favorite, mutate }) => {
   const { styles, globalStyles } = useStyles(localStyles);
