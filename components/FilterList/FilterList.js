@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView, RefreshControl, View } from "react-native";
-//import { FlashList } from "@shopify/flash-list";
-import { FlatList } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 
 import SearchBar from "./SearchBar";
 import FilterBar from "./FilterBar";
@@ -94,21 +93,17 @@ const FilterList = ({
           <Placeholder placeholder={placeholder} />
         </View>
       ) : (
-        <FlatList
+        <FlashList
           keyExtractor={keyExtractor}
           data={_items}
           renderItem={renderItem}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={_onRefresh} />
           }
-          style={styles.container}
-          contentContainerStyle={globalStyles.screenGutter}
-          /*
           contentContainerStyle={{
             ...globalStyles.screenGutter,
             ...styles.container,
           }}
-          */
           // Performance settings
           getItemLayout={getItemLayout}
           estimatedItemSize={200}
