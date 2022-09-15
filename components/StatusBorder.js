@@ -18,15 +18,12 @@ const StatusBorder = ({ overall_status, group_status, status, type }) => {
   };
 
   const backgroundColor = getStatusColor(settings);
-  return (
-    <View
-      style={{
-        width: 10,
-        height: "100%",
-        backgroundColor,
-      }}
-    />
-  );
+  const style = {
+    width: 10,
+    height: "100%",
+    backgroundColor,
+  };
+  return <View style={style} />;
 };
 
 export default StatusBorder;

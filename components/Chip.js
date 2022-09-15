@@ -15,13 +15,22 @@ const Chip = ({
   startIcon,
   endIcon,
   style,
+  color,
 }) => {
   const { styles, globalStyles } = useStyle(localStyles);
+  const statusBorderSize = styles.container.height / 2;
+  const adjustStylePadding = color ? { ...style, paddingStart: 0 } : style;
   return (
     <Pressable onPress={!onPress || disabled ? null : onPress}>
       <View
-        style={[globalStyles.rowContainer, styles.container(selected), style]}
+        style={[
+          globalStyles.rowContainer,
+          styles.containerColor(selected),
+          styles.container,
+          adjustStylePadding,
+        ]}
       >
+        {color && <ChipStatusBorder size={statusBorderSize} color={color} />}
         {startIcon}
         <Text style={styles.label(selected, isLink)}>{label}</Text>
         {endIcon}
@@ -30,3 +39,15 @@ const Chip = ({
   );
 };
 export default Chip;
+
+function ChipStatusBorder({ size, color }) {
+  const colorStyle = {
+    borderStartColor: color ?? "transparent",
+    borderStartWidth: size,
+    borderRadius: size,
+    width: 2 * size,
+    height: "100%",
+    marginEnd: -size + 5,
+  };
+  return <View style={colorStyle} />;
+}
