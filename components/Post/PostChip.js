@@ -15,7 +15,7 @@ import { titleize } from "utils";
 
 import { localStyles } from "./PostChip.styles";
 
-const PostChip = ({ id, icon, title, type, onRemove, onGoBack }) => {
+const PostChip = ({ id, icon, title, type, color, onRemove, onGoBack }) => {
   const navigation = useNavigation();
   const { vibrate } = useHaptics();
   const { styles, globalStyles } = useStyles(localStyles);
@@ -62,6 +62,7 @@ const PostChip = ({ id, icon, title, type, onRemove, onGoBack }) => {
         ) : null
       }
       style={styles.container}
+      color={color}
     />
   );
 };

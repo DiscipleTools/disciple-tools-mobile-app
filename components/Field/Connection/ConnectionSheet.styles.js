@@ -19,11 +19,14 @@ export const localStyles = ({ theme, isRTL }) => ({
     borderTopColor: theme.background.primary,
     borderTopWidth: 1,
     alignItems: "center",
-    marginStart: 15,
     minHeight: 50,
   },
   itemText: {
     fontSize: 32,
+  },
+  textContainer: {
+    marginEnd: "auto",
+    marginStart: 15,
   },
   sectionHeader: {
     backgroundColor: theme.background.primary,
