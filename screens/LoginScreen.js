@@ -21,13 +21,12 @@ import useToast from "hooks/use-toast";
 import { localStyles } from "./LoginScreen.styles";
 
 const LoginScreen = () => {
-  
   const { styles, globalStyles } = useStyles(localStyles);
   const { user, rememberLoginDetails, signIn } = useAuth();
   const { i18n } = useI18N();
   const { mobileAppPlugin } = usePlugins();
   const toast = useToast();
-  
+
   const [loading, setLoading] = useState(false);
 
   const [state, setState] = useState({
@@ -36,10 +35,10 @@ const LoginScreen = () => {
     passwordValidation: false,
   });
 
-  const [domainInput, setDomainInput] = useState('');
-  const [usernameInput, setUsernameInput] = useState('');
-  const [passwordInput, setPasswordInput] = useState('');
-  const [showPassword, toggleShowPassword] = useState(false)
+  const [domainInput, setDomainInput] = useState("");
+  const [usernameInput, setUsernameInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+  const [showPassword, toggleShowPassword] = useState(false);
 
   useEffect(() => {
     if (rememberLoginDetails && user) {
@@ -54,8 +53,15 @@ const LoginScreen = () => {
     setLoading(true);
 
     // TODO ensure that React Native allows empty string checks like this
-    if (domainInput.length > 0 && usernameInput.length > 0 && passwordInput.length > 0) {
-      const cleanedDomain = domainInput?.trim()?.replace("http://", "")?.replace("https://", "");
+    if (
+      domainInput.length > 0 &&
+      usernameInput.length > 0 &&
+      passwordInput.length > 0
+    ) {
+      const cleanedDomain = domainInput
+        ?.trim()
+        ?.replace("http://", "")
+        ?.replace("https://", "");
       try {
         await signIn(cleanedDomain, usernameInput, passwordInput);
       } catch (error) {
@@ -91,7 +97,9 @@ const LoginScreen = () => {
       title={i18n.t("global.forgotPassword")}
       onPress={() => {
         if (domainInput?.length > 0) {
-          Linking.openURL(`https://${domainInput}/wp-login.php?action=lostpassword`);
+          Linking.openURL(
+            `https://${domainInput}/wp-login.php?action=lostpassword`
+          );
         } else {
           toast(i18n.t("loginScreen.domain.errorForgotPass"), true);
         }
@@ -100,39 +108,38 @@ const LoginScreen = () => {
     />
   );
 
-
   return (
     <View style={globalStyles.screenContainer}>
       <Header />
       <View style={styles.formContainer}>
         <PluginRequired {...mobileAppPlugin} />
-        <LabeledTextInput 
+        <LabeledTextInput
           editing
           value={domainInput}
-          i18nKey='global.url'
-          onChangeText={text => setDomainInput(text)}
+          i18nKey="global.url"
+          onChangeText={(text) => setDomainInput(text)}
           startIcon={<LinkIcon />}
           textContentType="URL"
           keyboardType="url"
           disabled={loading}
           error={state.domainValidation}
         />
-        <LabeledTextInput 
+        <LabeledTextInput
           editing
           value={usernameInput}
-          i18nKey='global.username'
-          onChangeText={text => setUsernameInput(text)}
+          i18nKey="global.username"
+          onChangeText={(text) => setUsernameInput(text)}
           startIcon={<UsernameIcon />}
           textContentType="emailAddress"
           keyboardType="email-address"
           disabled={loading}
           error={state.userValidation}
         />
-        <LabeledTextInput 
+        <LabeledTextInput
           editing
           value={passwordInput}
-          i18nKey='global.password'
-          onChangeText={text => setPasswordInput(text)}
+          i18nKey="global.password"
+          onChangeText={(text) => setPasswordInput(text)}
           disabled={loading}
           startIcon={<KeyIcon />}
           endIcon={
@@ -144,7 +151,11 @@ const LoginScreen = () => {
           secureTextEntry={!showPassword}
           error={state.passwordValidation}
         />
-        <Button title={i18n.t("global.login")} loading={loading} onPress={onLoginPress} />
+        <Button
+          title={i18n.t("global.login")}
+          loading={loading}
+          onPress={onLoginPress}
+        />
         <ForgotPasswordLink />
         <LanguagePicker />
         <AppVersion />

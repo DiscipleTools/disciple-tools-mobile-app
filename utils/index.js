@@ -31,13 +31,23 @@ export const searchObj = (
   searchStr,
   { caseInsensitive, include, exclude } = {}
 ) => {
-  if (caseInsensitive) searchStr = searchStr?.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (caseInsensitive)
+    searchStr = searchStr
+      ?.toLowerCase()
+      .trim()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
   const result = [];
   const recursiveSearch = (obj = {}) => {
     if (!obj || typeof obj !== "object") return;
     Object.keys(obj).forEach((key) => {
       let value = String(obj[key]);
-      if (caseInsensitive) value = value?.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      if (caseInsensitive)
+        value = value
+          ?.toLowerCase()
+          .trim()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
       // if key/prop is in include list, then check if value contains searchStr
       if (include?.length > 0) {
         include.forEach((prop) => {
@@ -127,7 +137,7 @@ export const labelize = (str) => {
 
 // TODO: constant for maxLength?
 export const titleize = (title) => {
-  return truncate(title, { maxLength: 35 });
+  return truncate(title, { maxLength: 32 });
 };
 
 export const getAvailablePostTypes = () => {

@@ -11,6 +11,7 @@ import useSettings from "hooks/use-settings";
 import useType from "hooks/use-type";
 
 import { labelize } from "utils";
+import { View } from "react-native";
 
 const CreateScreen = ({ navigation, route }) => {
   const { mutate } = useSWRConfig();
@@ -69,14 +70,16 @@ const CreateScreen = ({ navigation, route }) => {
   return (
     <>
       <OfflineBar />
-      <Tile
-        isCreate
-        grouped
-        post={route?.params?.post ?? null}
-        fields={fields}
-        save={createPost}
-        mutate={mutate}
-      />
+      <View>
+        <Tile
+          isCreate
+          grouped
+          post={route?.params?.post ?? null}
+          fields={fields}
+          save={createPost}
+          mutate={mutate}
+        />
+      </View>
     </>
   );
 };

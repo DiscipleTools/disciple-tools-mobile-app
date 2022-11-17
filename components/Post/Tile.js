@@ -17,6 +17,7 @@ import useType from "hooks/use-type";
 import { FieldNames, ScreenConstants } from "constants";
 
 import { localStyles } from "./Tile.styles";
+import ReasonSelect from "components/ReasonSelect";
 
 const Tile = ({
   isCreate,
@@ -133,29 +134,37 @@ const Tile = ({
   );
 
   const Fields = () => {
-    return fields.map((field, _idx) => (
-      <>
-        {idx === 0 && _idx === 0 && post?.requires_update && (
-          <Alert
-            title={i18n.t("global.updateRequired")}
-            subtitle={i18n.t("global.updateRequiredText")}
-            icon={<UpdateRequiredIcon style={styles.icon} />}
+    return fields.map((field, _idx) => {
+      return (
+        <>
+          {idx === 0 && _idx === 0 && post?.requires_update && (
+            <Alert
+              title={i18n.t("global.updateRequired")}
+              subtitle={i18n.t("global.updateRequiredText")}
+              icon={<UpdateRequiredIcon style={styles.icon} />}
+            />
+          )}
+          <Field
+            key={field?.name ?? idx}
+            grouped={grouped}
+            editing={editing}
+            field={field}
+            post={grouped ? _post : post}
+            onChange={onChange}
+            mutate={mutate}
           />
-        )}
-        <Field
-          key={field?.name ?? idx}
-          grouped={grouped}
-          editing={editing}
-          field={field}
-          post={grouped ? _post : post}
-          onChange={onChange}
-          mutate={mutate}
-        />
-        {field?.name === FieldNames.MEMBER_COUNT && (
-          <MemberList post={post} onChange={onChange} mutate={mutate} />
-        )}
-      </>
-    ));
+          {field?.name === FieldNames.MEMBER_COUNT && (
+            <MemberList post={post} onChange={onChange} mutate={mutate} />
+          )}
+          {field?.name === FieldNames.OVERALL_STATUS &&
+            (post.overall_status === "unassignable" ||
+              post.overall_status === "paused" ||
+              post.overall_status === "closed") && (
+              <ReasonSelect post={post} onChange={onChange} mutate={mutate} />
+            )}
+        </>
+      );
+    });
   };
 
   return (

@@ -3,7 +3,7 @@ import { Pressable, Text, View } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 //import { useIsFocused } from "@react-navigation/native";
 
-import { decode } from 'html-entities';
+import { decode } from "html-entities";
 
 import {
   ReadIcon,
@@ -143,7 +143,9 @@ const NotificationsScreen = ({ navigation }) => {
     const NotificationDetails = () => (
       <View style={globalStyles.columnContainer}>
         <View style={[globalStyles.rowContainer, styles.notificationDetails]}>
-          <Text>{truncate(decode(newNotificationNoteA), { maxLength: 35 })}</Text>
+          <Text>
+            {truncate(decode(newNotificationNoteA), { maxLength: 32 })}
+          </Text>
           <Pressable
             onPress={() => {
               const tabScreen = getTabScreenFromType(type);
@@ -156,7 +158,7 @@ const NotificationsScreen = ({ navigation }) => {
             }}
           >
             <Text style={globalStyles.link}>
-              {truncate(decode(newNotificationNoteC), { maxLength: 35 })}
+              {truncate(decode(newNotificationNoteC), { maxLength: 32 })}
             </Text>
           </Pressable>
         </View>

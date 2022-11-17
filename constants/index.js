@@ -118,6 +118,9 @@ export const FieldTypes = Object.freeze({
 export const FieldNames = Object.freeze({
   NAME: "name",
   OVERALL_STATUS: "overall_status",
+  REASON_CLOSED: "reason_closed",
+  REASON_PAUSED: "reason_paused",
+  REASON_UNASSIGNABLE: "reason_unassignable",
   GROUP_STATUS: "group_status",
   COACHES: "coaches",
   PARENT_GROUPS: "parent_groups",
@@ -135,6 +138,7 @@ export const FieldNames = Object.freeze({
   FAITH_MILESTONES: "milestones",
   CHURCH_HEALTH: "health_metrics",
   INFLUENCE: "influence",
+  INFLUENCE_SLIDER: "influence_slider",
 });
 
 export const ThemeConstants = Object.freeze({
@@ -319,7 +323,7 @@ export const AuthConstants = Object.freeze({
   CNONCE_PERSISTED: "cnonceLogin",
   CNONCE: "CNONCE_LOGIN",
   CNONCE_DATETIME: "CNONCE_LOGIN_DATETIME",
-  CNONCE_THRESHOLD: 2 // seconds
+  CNONCE_THRESHOLD: 2, // seconds
 });
 
 export const PINConstants = Object.freeze({
@@ -332,7 +336,7 @@ export const PINConstants = Object.freeze({
   CNONCE_PERSISTED: "cnoncePIN",
   CNONCE: "CNONCE_PIN",
   CNONCE_DATETIME: "CNONCE_PIN_DATETIME",
-  CNONCE_THRESHOLD: 2 // seconds
+  CNONCE_THRESHOLD: 2, // seconds
 });
 
 export const CACHE_INTERVAL = 1000 * 60 * 2; // 2 minutes

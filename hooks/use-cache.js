@@ -48,10 +48,10 @@ const useCache = () => {
       await ExpoFileSystemStorage.removeItem("cache");
     } catch (error) {
       console.error(error);
-    };
+    }
   }, []);
 
-  const clearCache = async() => {
+  const clearCache = async () => {
     cache.clear();
   };
 

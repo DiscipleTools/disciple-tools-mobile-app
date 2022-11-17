@@ -148,6 +148,13 @@ const MultiSelectField = ({ editing, field, value, onChange, post }) => {
   };
 
   const MultiSelectFieldView = () => {
+    const onDone = (selectedValues = {}) => {
+      onChange(selectedValues, {
+        autosave: true,
+        force: true,
+      });
+    };
+
     if (isChurchHealth())
       return (
         <ChurchHealth
@@ -155,6 +162,7 @@ const MultiSelectField = ({ editing, field, value, onChange, post }) => {
           selectedItems={selectedItems}
           post={post}
           values={values}
+          onDone={onDone}
         />
       );
     return <MultiSelectFieldEdit />;

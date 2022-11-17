@@ -83,13 +83,51 @@ const DetailsScreen = ({ navigation }) => {
   useEffect(() => {
     if (!post || !settings) return;
     if (settings?.tiles?.length > 0) {
+      let swapFields = [];
+      let newDetailsFields = [];
+
+      settings?.tiles.forEach((tile) => {
+        if (tile.name === "details") {
+          tile.fields.forEach((field) => {
+            if (
+              field.name === "influence" ||
+              field.name === "partner_involvement" ||
+              field.name === "least_reached_category"
+            ) {
+              swapFields.push(field);
+            } else {
+              newDetailsFields.push(field);
+            }
+          });
+        }
+      });
+
+      let tiles = settings?.tiles.map((tile) => {
+        if (tile.name === "other") {
+          return {
+            ...tile,
+            tile_priority: 25,
+            fields: [...tile.fields, ...swapFields],
+          };
+        }
+        if (tile.name === "details") {
+          return {
+            ...tile,
+            fields: newDetailsFields,
+          };
+        } else {
+          return tile;
+        }
+      });
+
       let _scenes = {};
       let _routes = [];
       // TODO: constant
       const sortKey = "tile_priority";
-      const sortedTiles = [...settings.tiles].sort((a, b) =>
+      const sortedTiles = [...tiles].sort((a, b) =>
         true ? a[sortKey] - b[sortKey] : b[sortKey] - a[sortKey]
       );
+
       sortedTiles.forEach((tile, idx) => {
         if (tile?.name && tile?.label) {
           _scenes[tile.name] = () => (

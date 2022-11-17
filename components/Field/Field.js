@@ -41,7 +41,16 @@ const Field = ({
 
   let value = null;
   try {
-    value = post[field?.name];
+    if (field?.name === FieldNames.INFLUENCE_SLIDER) return null;
+    if (field?.name === FieldNames.INFLUENCE) {
+      value = {
+        [field?.name]: post[field?.name] ?? null,
+        [FieldNames.INFLUENCE_SLIDER]:
+          post[FieldNames.INFLUENCE_SLIDER] ?? null,
+      };
+    } else {
+      value = post[field?.name];
+    }
   } catch (error) {}
 
   const [_loading, _setLoading] = useState(false);
@@ -81,8 +90,8 @@ const Field = ({
    * those implementations are mapping values, and this is mapping those
    * mapped values to the corresponding Field Name
    */
-  const mapField = (newValue, { force } = {}) => {
-    let fieldName = field?.name;
+  const mapField = (newValue, { force } = {}, field_name) => {
+    let fieldName = field_name ?? field?.name;
     if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) {
       newValue = newValue.map((value) => {
         if (!value?.key) {
@@ -126,7 +135,19 @@ const Field = ({
    */
   const _onChange = (newValue, { autosave, force } = {}) => {
     _setLoading(true);
-    const mappedField = mapField(newValue, { force });
+    let mappedField = mapField(newValue, { force });
+    if (field?.name === FieldNames.INFLUENCE) {
+      mappedField = mapField(newValue[field?.name], { force });
+      mappedField = {
+        ...mappedField,
+        ...mapField(
+          newValue[FieldNames.INFLUENCE_SLIDER],
+          { force },
+          FieldNames.INFLUENCE_SLIDER
+        ),
+      };
+    }
+
     if (grouped) {
       onChange(mappedField);
       return;
@@ -162,7 +183,8 @@ const Field = ({
   };
 
   const Controls = () => {
-    if (isUncontrolledField()) return null;
+    if (isUncontrolledField() || field?.name === FieldNames.CHURCH_HEALTH)
+      return null;
     if (_editing) return <EditControls />;
     return <DefaultControls />;
   };
@@ -177,7 +199,7 @@ const Field = ({
   const FieldComponent = () => {
     if (field?.name === FieldNames.INFLUENCE) {
       return (
-        <TextField
+        <NumberField
           grouped={grouped}
           editing
           field={field}
@@ -314,7 +336,7 @@ const Field = ({
         <View>
           <FieldIcon field={field} />
         </View>
-        <View>
+        <View style={{ marginRight: 30 }}>
           <Text style={styles.fieldLabelText}>{label}</Text>
         </View>
         {isMultiInputTextField() && (

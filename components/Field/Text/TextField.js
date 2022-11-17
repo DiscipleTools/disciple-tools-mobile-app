@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Text, TextInput, View } from "react-native";
 
 import { CancelIcon, SaveIcon } from "components/Icon";
-import Slider from "components/Slider";
 
 import useDebounce from "hooks/use-debounce";
 import useStyles from "hooks/use-styles";
@@ -87,9 +86,6 @@ const TextField = ({ grouped = false, editing, field, value, onChange }) => {
    */
   //return <>{editing ? <TextFieldEdit /> : <TextFieldView />}</>;
   if (editing) {
-    if (isSliderField) {
-      return <Slider value={_value} onValueChange={_setValue} />;
-    }
     return renderTextFieldEdit();
   }
   // if (editing) return renderTextFieldEdit();

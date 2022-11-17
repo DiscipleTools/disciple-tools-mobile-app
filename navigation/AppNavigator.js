@@ -9,6 +9,7 @@ import { navigationRef } from "./RootNavigation";
 
 import PINScreen from "screens/PINScreen";
 import LoginScreen from "screens/LoginScreen";
+import ValidateOtpScreen from "screens/ValidateOtpScreen";
 import TabNavigator from "./TabNavigator";
 
 import usePIN from "hooks/use-pin";
@@ -53,6 +54,7 @@ const AppNavigator = () => {
           // when logging out, a pop animation feels intuitive
           //options={{ animationTypeForReplace: authenticated ? 'push' : 'pop' } }
         />
+        <Stack.Screen name="ValidateOtp" component={ValidateOtpScreen} />
       </Stack.Navigator>
     );
   };
@@ -76,13 +78,13 @@ const AppNavigator = () => {
     }, [cnoncePIN]);
 
     /*
-     * IF PIN option is enabled AND PIN CNonce is invalid/stale, then navigate 
+     * IF PIN option is enabled AND PIN CNonce is invalid/stale, then navigate
      * user to PIN entry screen. Otherwise (CNonce is valid OR PIN option is
      * disabled), check if the user is authenticated (via RenderLogin)
      */
     if (hasPIN && !isValidCNoncePIN) {
       return <PINStack />;
-    };
+    }
     return <RenderLogin />;
   };
 
