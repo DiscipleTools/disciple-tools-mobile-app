@@ -2,7 +2,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 import * as Random from "expo-random";
 
-import { setCNonceLogin as _setCNonceLogin } from "store/actions/auth.actions";
+import {
+  setCNonceLogin as _setCNonceLogin,
+  setCNoncePIN as _setCNoncePIN,
+} from "store/actions/auth.actions";
 
 import useSecureStore from "hooks/use-secure-store";
 
@@ -39,12 +42,16 @@ const useCNonce = ({
     return false;
   };
 
-  const setCNonce = async () => {
+  const setCNonce = async (isPinCNonce = false) => {
     const cnonce = Random.getRandomBytes(256).toString();
     const cnonceDT = new Date().toString();
     await setSecureItem(cnonceDTKey, cnonceDT);
     await setSecureItem(cnonceKey, cnonce);
-    dispatch(_setCNonceLogin(cnonce));
+    if (isPinCNonce) {
+      dispatch(_setCNoncePIN(cnonce));
+    } else {
+      dispatch(_setCNonceLogin(cnonce));
+    }
   };
 
   return {
