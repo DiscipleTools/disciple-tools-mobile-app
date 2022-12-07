@@ -10,6 +10,8 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   toggleAutoLogin as _toggleAutoLogin,
   toggleRememberLoginDetails as _toggleRememberLoginDetails,
+  clearFormFields as _clearFormFields,
+  setFormField,
 } from "store/actions/auth.actions";
 
 import useCache from "hooks/use-cache";
@@ -46,6 +48,20 @@ const useCustomAuth = () => {
   const rememberLoginDetails = useSelector(
     (state) => state?.authReducer?.rememberLoginDetails
   );
+
+  const clearFormFields = useCallback(() => {
+    dispatch(_clearFormFields());
+    return;
+  }, []);
+
+  useEffect(() => {
+    if (!rememberLoginDetails) {
+      clearFormFields();
+    } else if (rememberLoginDetails && user) {
+      dispatch(setFormField({ key: "domain", value: user?.domain }));
+      dispatch(setFormField({ key: "username", value: user?.username }));
+    }
+  }, [rememberLoginDetails, user]);
 
   const { getSecureItem, setSecureItem, deleteSecureItem } = useSecureStore();
 
@@ -193,6 +209,10 @@ const useCustomAuth = () => {
     return;
   }, []);
 
+  const modifyUser = useCallback(async ({ key, value }) => {
+    setUser((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
   // set persisted secure storage values (if applicable per user options)
   const setPersistedAuth = useCallback(
     async (accessToken, baseUrl, user) => {
@@ -244,6 +264,7 @@ const useCustomAuth = () => {
         }
         // set in-memory provider value
         // NOTE: order matters here (per hook ordering)!
+        clearFormFields();
         setUser(user);
         setBaseUrl(baseUrl);
         setAccessToken(accessToken);
@@ -284,15 +305,14 @@ const useCustomAuth = () => {
     try {
       await deleteSecureItem(AuthConstants.ACCESS_TOKEN);
       await deleteSecureItem(AuthConstants.BASE_URL);
-      await deleteSecureItem(AuthConstants.USER);
+      if (!rememberLoginDetails) await deleteSecureItem(AuthConstants.USER);
     } catch (error) {
       console.warn(error);
     } finally {
       // disable "auto login" and "remember login details" on signOut
-      //if (isAutoLogin) toggleAutoLogin();
-      if (rememberLoginDetails) toggleRememberLoginDetails();
+      // if (isAutoLogin) toggleAutoLogin();
       // nullify in-memory auth provider values
-      setUser(null);
+      if (!rememberLoginDetails) setUser(null);
       setBaseUrl(null);
       setAccessToken(null);
       setAuthenticated(false);
@@ -309,10 +329,18 @@ const useCustomAuth = () => {
       toggleAutoLogin,
       rememberLoginDetails,
       toggleRememberLoginDetails,
+      modifyUser,
       signIn,
       signOut,
     }),
-    [authenticated, user?.id, isAutoLogin, rememberLoginDetails]
+    [
+      authenticated,
+      user?.id,
+      user?.domain,
+      user?.username,
+      isAutoLogin,
+      rememberLoginDetails,
+    ]
   );
 };
 export { useAuth, AuthProvider };

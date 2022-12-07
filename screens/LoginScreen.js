@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 //Components
 import { Image, Keyboard, Linking, View } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
 import { UsernameIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
 import Button from "components/Button";
 import Link from "components/Link";
@@ -9,6 +10,7 @@ import PluginRequired from "components/PluginRequired";
 import { LabeledTextInput } from "components/LabeledTextInput";
 import LanguagePicker from "components/Picker/LanguagePicker";
 import AppVersion from "components/AppVersion";
+import { setFormField } from "store/actions/auth.actions";
 
 //Hooks
 import { useAuth } from "hooks/use-auth";
@@ -22,10 +24,16 @@ import { localStyles } from "./LoginScreen.styles";
 
 const LoginScreen = () => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { user, rememberLoginDetails, signIn } = useAuth();
+  const { user, rememberLoginDetails, signIn, modifyUser } = useAuth();
   const { i18n } = useI18N();
   const { mobileAppPlugin } = usePlugins();
   const toast = useToast();
+
+  const dispatch = useDispatch();
+
+  const domainInput = useSelector((state) => state?.authReducer?.domain);
+  const usernameInput = useSelector((state) => state?.authReducer?.username);
+  const passwordInput = useSelector((state) => state?.authReducer?.password);
 
   const [loading, setLoading] = useState(false);
 
@@ -35,15 +43,12 @@ const LoginScreen = () => {
     passwordValidation: false,
   });
 
-  const [domainInput, setDomainInput] = useState("");
-  const [usernameInput, setUsernameInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
   const [showPassword, toggleShowPassword] = useState(false);
 
   useEffect(() => {
     if (rememberLoginDetails && user) {
-      setUsernameInput(user.username);
-      setDomainInput(user.domain);
+      dispatch(setFormField({ key: "domain", value: user?.domain }));
+      dispatch(setFormField({ key: "username", value: user?.username }));
     }
   }, []);
 
@@ -117,7 +122,12 @@ const LoginScreen = () => {
           editing
           value={domainInput}
           i18nKey="global.url"
-          onChangeText={(text) => setDomainInput(text)}
+          onChangeText={(text) => {
+            dispatch(setFormField({ key: "domain", value: text }));
+            if (rememberLoginDetails) {
+              modifyUser({ key: "domain", value: text });
+            }
+          }}
           startIcon={<LinkIcon />}
           textContentType="URL"
           keyboardType="url"
@@ -128,7 +138,12 @@ const LoginScreen = () => {
           editing
           value={usernameInput}
           i18nKey="global.username"
-          onChangeText={(text) => setUsernameInput(text)}
+          onChangeText={(text) => {
+            dispatch(setFormField({ key: "username", value: text }));
+            if (rememberLoginDetails) {
+              modifyUser({ key: "username", value: text });
+            }
+          }}
           startIcon={<UsernameIcon />}
           textContentType="emailAddress"
           keyboardType="email-address"
@@ -139,7 +154,9 @@ const LoginScreen = () => {
           editing
           value={passwordInput}
           i18nKey="global.password"
-          onChangeText={(text) => setPasswordInput(text)}
+          onChangeText={(text) => {
+            dispatch(setFormField({ key: "password", value: text }));
+          }}
           disabled={loading}
           startIcon={<KeyIcon />}
           endIcon={
