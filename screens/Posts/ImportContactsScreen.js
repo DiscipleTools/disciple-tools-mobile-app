@@ -70,14 +70,6 @@ const ImportContactsScreen = ({ navigation }) => {
       return <Text style={globalStyles.caption}>{truncated}</Text>;
     };
 
-    const mapItem = (item) => {
-      // TODO: constant?
-      item["type"] = "personal";
-      item["name"] = item?.title;
-      delete item["ID"];
-      return item;
-    };
-
     const PostDetails = () => (
       <View style={[globalStyles.columnContainer, styles.postDetails]}>
         <PostTitle />
@@ -92,7 +84,7 @@ const ImportContactsScreen = ({ navigation }) => {
         onPress={() => {
           navigation.navigate(ScreenConstants.CREATE, {
             type: TypeConstants.CONTACT,
-            post: mapItem(item),
+            post: item,
           });
         }}
       >

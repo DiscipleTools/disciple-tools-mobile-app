@@ -89,8 +89,8 @@ export const BottomSheetProvider = ({ children }) => {
           opts?.defaultIndex < snapPoints?.length
             ? opts?.defaultIndex
             : snapPoints?.length - 1
-        ), //.expand();
-          dispatch({ type: EXPAND, ...opts });
+        );
+        dispatch({ type: EXPAND, ...opts });
       },
       collapse: collapseBottomSheet,
       getDefaultIndex,

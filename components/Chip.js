@@ -15,15 +15,17 @@ const Chip = ({
   startIcon,
   endIcon,
   style,
+  containerStyle,
+  labelStyle,
 }) => {
   const { styles, globalStyles } = useStyle(localStyles);
   return (
     <Pressable onPress={!onPress || disabled ? null : onPress}>
       <View
-        style={[globalStyles.rowContainer, styles.container(selected), style]}
+        style={[globalStyles.rowContainer, styles.container(selected), style, containerStyle]}
       >
         {startIcon}
-        <Text style={styles.label(selected, isLink)}>{label}</Text>
+        <Text style={[styles.label(selected, isLink), labelStyle]}>{label}</Text>
         {endIcon}
       </View>
     </Pressable>

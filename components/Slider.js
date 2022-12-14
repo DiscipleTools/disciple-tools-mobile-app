@@ -7,9 +7,22 @@ import useStyles from "hooks/use-styles";
 import { localStyles } from "./Slider.styles";
 
 const Slider = ({ value, onValueChange }) => {
-  const [showSlider, setShowSlider] = useState(value ? true : false);
+  let tempShowSlider = false;
+  let tempSliderDisplayValue = 50;
+  if (
+    value?.influence_slider === false ||
+    value?.influence === null ||
+    (value?.influence_slider === null && value?.influence === 0)
+  ) {
+    tempShowSlider = false;
+  } else {
+    tempShowSlider = true;
+    tempSliderDisplayValue = value?.influence;
+  }
+
+  const [showSlider, setShowSlider] = useState(tempShowSlider);
   const [sliderDisplayValue, setSliderDisplayValue] = useState(
-    value ? value : 50
+    tempSliderDisplayValue
   );
   const [switchToggled, setSwitchToggled] = useState(false);
 
@@ -21,12 +34,11 @@ const Slider = ({ value, onValueChange }) => {
   };
 
   useEffect(() => {
-    if (showSlider === false) {
-      onValueChange("");
-    } else if (switchToggled === true && showSlider === true) {
+    if (showSlider === false && switchToggled === true) {
+      onValueChange({ influence: null, influence_slider: false });
+    } else if (showSlider === true && switchToggled === true) {
       setSliderDisplayValue(50);
     }
-    return;
   }, [showSlider, switchToggled]);
 
   return (
@@ -73,7 +85,10 @@ const Slider = ({ value, onValueChange }) => {
                 // TODO: translate
                 alert("NO INFLUENCE");
               }
-              onValueChange(String(completedValue));
+              onValueChange({
+                influence: completedValue,
+                influence_slider: true,
+              });
             }}
           />
         </>

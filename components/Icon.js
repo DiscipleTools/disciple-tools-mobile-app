@@ -160,6 +160,9 @@ export const DeleteIcon = ({ onPress, style }) => (
 export const DoneIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="check" onPress={onPress} style={style} />
 );
+export const DownloadIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="download" onPress={onPress} style={style} />
+);
 export const AcceptIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="check-circle" onPress={onPress} style={style} />
 );
@@ -282,6 +285,12 @@ export const StarIcon = ({ onPress, style }) => (
 );
 export const StarOutlineIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="star-outline" onPress={onPress} style={style} />
+);
+export const StorageIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="database-arrow-down" onPress={onPress} style={style} />
+);
+export const TagIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="tag" onPress={onPress} style={style} />
 );
 export const TranslateIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="translate" onPress={onPress} style={style} />

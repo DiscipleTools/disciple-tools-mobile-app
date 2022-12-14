@@ -54,8 +54,11 @@ const NotificationsScreen = ({ navigation }) => {
     isValidating,
     mutate,
     hasNotifications,
-    markViewed,
-    markUnread,
+    //markViewed,
+    //markUnread,
+    markAllViewed,
+    markNotificationViewed,
+    markNotificationUnread,
   } = useNotifications({ search, filter, offset, limit });
 
   const [items, setItems] = useState();
@@ -83,7 +86,7 @@ const NotificationsScreen = ({ navigation }) => {
           <View style={globalStyles.rowContainer}>
             <ReadAllIcon
               style={styles.readAllIcon(hasNotifications)}
-              onPress={() => markAllRead()}
+              onPress={() => _markAllViewed()}
             />
             <HeaderRight kebabItems={kebabItems} props />
           </View>
@@ -92,14 +95,19 @@ const NotificationsScreen = ({ navigation }) => {
     });
   });
 
-  const markAllRead = () => {
+  const _markAllViewed = () => {
     vibrate();
-    markViewed();
     let newItems = items.map((item) => ({ ...item, is_new: "0" }));
+    // TODO: why delay?
     setTimeout(() => {
       mutate();
     }, 1000);
+    // component state
     setItems(newItems);
+    // TODO
+    // in-memory cache state
+    // remote API state
+    markAllViewed();
   };
 
   const NotificationItem = ({ item, loading, mutate }) => {
@@ -143,7 +151,7 @@ const NotificationsScreen = ({ navigation }) => {
     const NotificationDetails = () => (
       <View style={globalStyles.columnContainer}>
         <View style={[globalStyles.rowContainer, styles.notificationDetails]}>
-          <Text>{truncate(decode(newNotificationNoteA), { maxLength: 35 })}</Text>
+          <Text>{truncate(decode(newNotificationNoteA))}</Text>
           <Pressable
             onPress={() => {
               const tabScreen = getTabScreenFromType(type);
@@ -156,7 +164,7 @@ const NotificationsScreen = ({ navigation }) => {
             }}
           >
             <Text style={globalStyles.link}>
-              {truncate(decode(newNotificationNoteC), { maxLength: 35 })}
+              {truncate(decode(newNotificationNoteC))}
             </Text>
           </Pressable>
         </View>
@@ -175,6 +183,26 @@ const NotificationsScreen = ({ navigation }) => {
       </View>
     );
 
+    const _markViewed = ({ id }) => {
+      // component state
+      setIsNew(false);
+      // in-memory cache state
+      // TODO:
+      // remote API state
+      markNotificationViewed({ notificationId: id });
+      return;
+    };
+
+    const _markUnread = ({ id }) => {
+      // component state
+      setIsNew(true);
+      // TODO:
+      // in-memory cache state
+      // remote API state
+      markNotificationUnread({ notificationId: id });
+      return;
+    };
+
     const NotificationButton = () => (
       <Pressable
         onPress={() => {
@@ -182,12 +210,10 @@ const NotificationsScreen = ({ navigation }) => {
           const id = item?.id;
           if (id) {
             if (isNew) {
-              markViewed({ id });
-              setIsNew(false);
+              _markViewed({ id });
               return;
             }
-            markUnread({ id });
-            setIsNew(true);
+            _markUnread({ id });
             return;
           }
         }}
@@ -242,6 +268,7 @@ const NotificationsScreen = ({ navigation }) => {
       .fill(null)
       .map((_, ii) => <PostItemSkeleton key={ii} />);
 
+
   if (!items) return <ListSkeleton />;
   return (
     <View style={[globalStyles.container(tabBarHeight)]}>
@@ -252,7 +279,7 @@ const NotificationsScreen = ({ navigation }) => {
         items={items}
         renderItem={renderItem}
         //renderHiddenItem={renderHiddenItem}
-        keyExtractor={(item) => item?.id?.toString()}
+        keyExtractor={(item) => item?.id}
         search={search}
         onSearch={onSearch}
         defaultFilter={defaultFilter}

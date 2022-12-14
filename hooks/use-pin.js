@@ -7,10 +7,7 @@ import useCache from "hooks/use-cache";
 import useCNonce from "hooks/use-cnonce";
 import useSecureStore from "hooks/use-secure-store";
 
-import {
-  setHasPIN,
-  setCNoncePIN as _setCNoncePIN,
-} from "store/actions/auth.actions";
+import { setHasPIN } from "store/actions/auth.actions";
 
 import { PINConstants } from "constants";
 import { reinitializeRedux } from "store/rootActions";
@@ -21,14 +18,18 @@ const usePIN = () => {
   const { getSecureItem, setSecureItem, deleteSecureItem } = useSecureStore();
   const { signOut } = useAuth();
   const { clearCache, clearStorage } = useCache();
-  const { cnonce: cnoncePIN, setCNonce, validateCNonce } = useCNonce({
+  const {
+    cnonce: cnoncePIN,
+    setCNonce,
+    validateCNonce,
+  } = useCNonce({
     persistedKey: PINConstants.CNONCE_PERSISTED,
     cnonceKey: PINConstants.CNONCE,
     cnonceDTKey: PINConstants.CNONCE_DATETIME,
-    threshold: PINConstants.CNONCE_THRESHOLD
+    threshold: PINConstants.CNONCE_THRESHOLD,
   });
 
-  const validateCNoncePIN = useCallback(async() => {
+  const validateCNoncePIN = useCallback(async () => {
     return validateCNonce();
   }, [cnoncePIN]);
 
@@ -48,8 +49,9 @@ const usePIN = () => {
     return;
   }, []);
 
-  const setCNoncePIN = useCallback(() => {
-    return setCNonce(_setCNoncePIN);
+  const setCNoncePIN = useCallback(async () => {
+    let isPinCNonce = true;
+    await setCNonce(isPinCNonce);
   }, []);
 
   const activateDistress = useCallback(async () => {
@@ -57,7 +59,7 @@ const usePIN = () => {
     clearStorage();
     clearCache();
     signOut();
-    return
+    return;
   }, []);
 
   return {

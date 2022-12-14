@@ -1,18 +1,15 @@
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
-
-import useCache from "hooks/use-cache";
+import { useNetInfo } from "@react-native-community/netinfo";
 
 import { setNetworkIsConnected } from "store/actions/network.actions";
 
+import { persistCache } from "helpers";
+
 const useNetwork = () => {
-  const { onAppBackgroundCallback } = useCache();
   const dispatch = useDispatch();
-  const isConnectedUserSetting = useSelector(
-    (state) => state.networkReducer.isConnected
-  );
+  const isConnectedUserSetting = useSelector(state => state.networkReducer.isConnected);
   const netInfo = useNetInfo();
 
   const isInitializing =
@@ -23,20 +20,18 @@ const useNetwork = () => {
     (netInfo?.isConnected === true && netInfo?.isInternetReachable === null);
 
   // 'isConnected' is a combination of device connectivity and user setting
-  const isConnected =
-    netInfo?.isInternetReachable && isConnectedUserSetting !== false;
+  const isConnected = netInfo?.isInternetReachable && isConnectedUserSetting !== false;
 
-  const isConnectedNow = useCallback(async () => {
-    const _netInfo = await NetInfo.fetch();
-    return _netInfo?.isInternetReachable && isConnectedUserSetting !== false;
-  }, [isConnectedUserSetting]);
-
-  // write cache to local store upon network disconnect
+  /*
+  // write cache to storage on network disconnect
   useEffect(() => {
     if (!isConnected && !isInitializing) {
-      onAppBackgroundCallback();
-    }
-  }, [isConnected]);
+      (async () => {
+        await persistCache();
+      })();
+    };
+  }, [isConnected, isInitializing]);
+  */
 
   const toggleNetwork = useCallback((_isConnected) => {
     dispatch(setNetworkIsConnected(_isConnected));
@@ -45,7 +40,6 @@ const useNetwork = () => {
   return {
     isInitializing,
     isConnected,
-    isConnectedNow,
     toggleNetwork,
   };
 };

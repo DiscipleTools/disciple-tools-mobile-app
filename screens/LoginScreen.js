@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-//Components
 import { Image, Keyboard, Linking, View } from "react-native";
 import { UsernameIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
 import Button from "components/Button";
@@ -10,23 +10,41 @@ import { LabeledTextInput } from "components/LabeledTextInput";
 import LanguagePicker from "components/Picker/LanguagePicker";
 import AppVersion from "components/AppVersion";
 
-//Hooks
 import { useAuth } from "hooks/use-auth";
 import useI18N from "hooks/use-i18n";
 import usePlugins from "hooks/use-plugins";
 import useStyles from "hooks/use-styles";
 import useToast from "hooks/use-toast";
 
-//Styles
+import { setFormField } from "store/actions/auth.actions";
+
 import { localStyles } from "./LoginScreen.styles";
+
+const Header = React.memo(() => {
+  const { styles } = useStyles(localStyles);
+  return (
+    <View style={styles.header}>
+      <Image
+        source={require("assets/dt-icon.png")}
+        style={styles.welcomeImage}
+      />
+    </View>
+  );
+});
 
 const LoginScreen = () => {
   
   const { styles, globalStyles } = useStyles(localStyles);
-  const { user, rememberLoginDetails, signIn } = useAuth();
+  const { user, rememberLoginDetails, signIn, modifyUser } = useAuth();
   const { i18n } = useI18N();
   const { mobileAppPlugin } = usePlugins();
   const toast = useToast();
+
+  const dispatch = useDispatch();
+
+  const domainInput = useSelector((state) => state?.authReducer?.domain);
+  const usernameInput = useSelector((state) => state?.authReducer?.username);
+  const passwordInput = useSelector((state) => state?.authReducer?.password);
   
   const [loading, setLoading] = useState(false);
 
@@ -36,15 +54,12 @@ const LoginScreen = () => {
     passwordValidation: false,
   });
 
-  const [domainInput, setDomainInput] = useState('');
-  const [usernameInput, setUsernameInput] = useState('');
-  const [passwordInput, setPasswordInput] = useState('');
   const [showPassword, toggleShowPassword] = useState(false)
 
   useEffect(() => {
     if (rememberLoginDetails && user) {
-      setUsernameInput(user.username);
-      setDomainInput(user.domain);
+      dispatch(setFormField({ key: "domain", value: user?.domain }));
+      dispatch(setFormField({ key: "username", value: user?.username }));
     }
   }, []);
 
@@ -53,9 +68,15 @@ const LoginScreen = () => {
     Keyboard.dismiss();
     setLoading(true);
 
-    // TODO ensure that React Native allows empty string checks like this
-    if (domainInput.length > 0 && usernameInput.length > 0 && passwordInput.length > 0) {
-      const cleanedDomain = domainInput?.trim()?.replace("http://", "")?.replace("https://", "");
+    if (
+      domainInput.length > 0 &&
+      usernameInput.length > 0 &&
+      passwordInput.length > 0
+    ) {
+      const cleanedDomain = domainInput
+        ?.trim()
+        ?.replace("http://", "")
+        ?.replace("https://", "");
       try {
         await signIn(cleanedDomain, usernameInput, passwordInput);
       } catch (error) {
@@ -72,17 +93,6 @@ const LoginScreen = () => {
       });
       setLoading(false);
     }
-  };
-
-  const Header = () => {
-    return (
-      <View style={styles.header}>
-        <Image
-          source={require("assets/dt-icon.png")}
-          style={styles.welcomeImage}
-        />
-      </View>
-    );
   };
 
   const ForgotPasswordLink = () => (
@@ -109,8 +119,13 @@ const LoginScreen = () => {
         <LabeledTextInput 
           editing
           value={domainInput}
-          i18nKey='global.url'
-          onChangeText={text => setDomainInput(text)}
+          i18nKey="global.url"
+          onChangeText={(text) => {
+            dispatch(setFormField({ key: "domain", value: text }));
+            if (rememberLoginDetails) {
+              modifyUser({ key: "domain", value: text });
+            }
+          }}
           startIcon={<LinkIcon />}
           textContentType="URL"
           keyboardType="url"
@@ -120,8 +135,13 @@ const LoginScreen = () => {
         <LabeledTextInput 
           editing
           value={usernameInput}
-          i18nKey='global.username'
-          onChangeText={text => setUsernameInput(text)}
+          i18nKey="global.username"
+          onChangeText={(text) => {
+            dispatch(setFormField({ key: "username", value: text }));
+            if (rememberLoginDetails) {
+              modifyUser({ key: "username", value: text });
+            }
+          }}
           startIcon={<UsernameIcon />}
           textContentType="emailAddress"
           keyboardType="email-address"
@@ -131,8 +151,10 @@ const LoginScreen = () => {
         <LabeledTextInput 
           editing
           value={passwordInput}
-          i18nKey='global.password'
-          onChangeText={text => setPasswordInput(text)}
+          i18nKey="global.password"
+          onChangeText={(text) => {
+            dispatch(setFormField({ key: "password", value: text }));
+          }}
           disabled={loading}
           startIcon={<KeyIcon />}
           endIcon={

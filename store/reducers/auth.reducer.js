@@ -10,6 +10,9 @@ const initialState = {
   cnonceLogin: null,
   hasPIN: null,
   cnoncePIN: null,
+  domain: "",
+  username: "",
+  password: "",
 };
 
 export default function authReducer(state = initialState, action) {
@@ -49,6 +52,20 @@ export default function authReducer(state = initialState, action) {
       return {
         ...state,
         cnoncePIN: action?.cnoncePIN,
+        rehydrate: false,
+      };
+    case actions.AUTH_SET_FORM_FIELD:
+      return {
+        ...state,
+        [action?.key]: action?.value,
+        rehydrate: false,
+      };
+    case actions.AUTH_CLEAR_FORM_FIELDS:
+      return {
+        ...state,
+        domain: "",
+        username: "",
+        password: "",
         rehydrate: false,
       };
     default:

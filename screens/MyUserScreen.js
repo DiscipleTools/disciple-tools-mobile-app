@@ -1,11 +1,12 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Image, Pressable, Switch, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import {
-  ChevronForwardIcon,
-  ChevronBackIcon,
   CommentActivityIcon,
+  ChevronBackIcon,
+  ChevronForwardIcon,
   DarkModeIcon,
   FlashIcon,
   HelpIcon,
@@ -13,6 +14,7 @@ import {
   LogoutIcon,
   OnePasswordIcon,
   SecurityIcon,
+  StorageIcon
 } from "components/Icon";
 import { HeaderRight } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
@@ -22,6 +24,7 @@ import AppVersion from "components/AppVersion";
 
 import { useAuth } from "hooks/use-auth";
 import useApp from "hooks/use-app";
+import useCache from "hooks/use-cache";
 import useNetwork from "hooks/use-network";
 import useI18N from "hooks/use-i18n";
 import useMyUser from "hooks/use-my-user";
@@ -40,6 +43,40 @@ import {
 } from "constants";
 
 import { localStyles } from "./MyUserScreen.styles";
+
+const HelpSupportButton = ({ label }) => {
+  const { draftNewSupportEmail } = useApp();
+  //const { cache } = useCache();
+  return (
+    <ListItem
+      hoverable
+      startComponent={<HelpIcon />}
+      label={label}
+      onPress={draftNewSupportEmail}
+    />
+  );
+};
+
+const StorageButton = ({ label }) => {
+  const { globalStyles } = useStyles();
+  const { isRTL } = useI18N();
+  const navigation = useNavigation();
+  return (
+    <ListItem
+      hoverable
+      startComponent={<StorageIcon />}
+      label={label}
+      onPress={()=>navigation.navigate(ScreenConstants.STORAGE)}
+      endComponent={
+        isRTL ? (
+          <ChevronBackIcon style={globalStyles.icon} />
+        ) : (
+          <ChevronForwardIcon style={globalStyles.icon} />
+        )
+      }
+    />
+  );
+};
 
 const MyUserScreen = ({ navigation }) => {
   const { styles, globalStyles } = useStyles(localStyles);
@@ -111,6 +148,7 @@ const MyUserScreen = ({ navigation }) => {
     });
   }, [i18n?.locale]);
 
+  //const Header = () => null;
   const Header = () => (
     <View style={[globalStyles.rowContainer, styles.headerContainer]}>
       <Image
@@ -238,28 +276,11 @@ const MyUserScreen = ({ navigation }) => {
     );
   };
 
-  const HelpSupportButton = () => {
-    const { draftNewSupportEmail } = useApp();
-    return (
-      <ListItem
-        startComponent={<HelpIcon />}
-        label={i18n.t("global.support")}
-        onPress={draftNewSupportEmail}
-      />
-    );
-  };
-
   const LogoutButton = () => (
     <ListItem
+      hoverable
       startComponent={<LogoutIcon />}
       label={i18n.t("global.logout")}
-      endComponent={
-        isRTL ? (
-          <ChevronBackIcon style={globalStyles.icon} />
-        ) : (
-          <ChevronForwardIcon style={globalStyles.icon} />
-        )
-      }
       onPress={signOut}
     />
   );
@@ -274,7 +295,8 @@ const MyUserScreen = ({ navigation }) => {
       <AutoLoginToggle />
       <RememberLoginDetailsToggle />
       <PINCodeToggle />
-      <HelpSupportButton />
+      <HelpSupportButton label={i18n.t("global.support")} />
+      <StorageButton label={i18n.t("global.storage")} />
       <LogoutButton />
       <View style={styles.formContainer}>
         <LanguagePicker />

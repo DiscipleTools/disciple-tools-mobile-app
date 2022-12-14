@@ -1,6 +1,9 @@
-//import './wdyr';
-import React from "react";
+import './wdyr';
+import React, { useEffect } from "react";
 import { LogBox, Text } from "react-native";
+
+import * as SplashScreen from "expo-splash-screen";
+
 import AppNavigator from "navigation/AppNavigator";
 
 import { store, persistor } from "store/store";
@@ -14,10 +17,12 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import { AuthProvider } from "hooks/use-auth";
-import useApp from "hooks/use-app";
+//import useApp from "hooks/use-app";
+import useAppState from "hooks/use-app-state";
 import useStyles from "hooks/use-styles";
+import { toastConfig } from 'hooks/use-toast';
 
-import { AppConstants } from "constants";
+//import { AppConstants } from "constants";
 
 import { enableScreens } from "react-native-screens";
 enableScreens();
@@ -31,8 +36,37 @@ const StyledApp = () => {
 };
 
 const App = () => {
+
   // Initialize the app
-  useApp();
+  //useApp();
+
+  // Dispay splash screen (keep visible until iniital screens ready to render)
+  useEffect(() => {
+    try {
+      (async () => {
+        await SplashScreen.preventAutoHideAsync();
+      })();
+    } catch (e) {
+      console.warn(e);
+    }
+    return;
+  }, []);
+
+  // Persist SWR in-memory cache to device storage on an interval
+  /*
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log(`Persist cache (runs every ${CacheConstants.INTERVAL} ms) -`, new Date());
+      (async () => {
+        await persistCache();
+      })();
+    }, CacheConstants.INTERVAL);
+    return () => clearInterval(interval);
+  }, []);
+  */
+
+  // Handle App State change(s)
+  useAppState();
 
   LogBox.ignoreAllLogs();
 
@@ -41,11 +75,10 @@ const App = () => {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <BottomSheetModalProvider>
               <SWRConfig
                 value={{
                   revalidateOnFocus: true,
-                  refreshInterval: AppConstants.REFRESH_INTERVAL,
+                  refreshInterval: 0, //5000, //AppConstants.REFRESH_INTERVAL,
                   shouldRetryOnError: false,
                   dedupingInterval: 2000,
                   focusThrottleInterval: 5000,
@@ -53,14 +86,15 @@ const App = () => {
                 }}
               >
                 <AuthProvider>
-                  <StyledApp />
+                  <BottomSheetModalProvider>
+                    <StyledApp />
+                  </BottomSheetModalProvider>
                 </AuthProvider>
               </SWRConfig>
-            </BottomSheetModalProvider>
           </GestureHandlerRootView>
         </PersistGate>
       </Provider>
-      <Toast />
+      <Toast config={toastConfig} />
     </>
   );
 };

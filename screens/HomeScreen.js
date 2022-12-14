@@ -1,74 +1,67 @@
-import React, { useLayoutEffect, useState } from "react";
-import { Image, Text, View } from "react-native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 
-import { HeaderRight } from "components/Header/Header";
+import * as Notifications from "expo-notifications";
+
+import { HeaderRight, LogoHeader } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
 
-import PrefetchCacheRecord from "components/PrefetchCacheRecord";
 import MetricCard from "components/Card/MetricCard";
 import PendingContactsCard from "components/Card/PendingContactsCard";
 import ActivityLogCard from "components/Card/ActivityLogCard";
 
-import useFilters from "hooks/use-filters";
+import useDevice from "hooks/use-device";
+//import useFilters from "hooks/use-filters";
 import useI18N from "hooks/use-i18n";
 import useList from "hooks/use-list";
-import useNetwork from "hooks/use-network";
 import useStyles from "hooks/use-styles";
 import useType from "hooks/use-type";
 
-import { ScreenConstants, TypeConstants } from "constants";
+import {
+  NotificationPermissionConstants,
+  ScreenConstants,
+  TypeConstants
+} from "constants";
 
-import { findFilterById } from "utils";
+import { getDefaultFavoritesFilter } from "helpers";
+
+//import { findFilterById } from "utils";
 
 import { localStyles } from "./HomeScreen.styles";
 
 const FavoriteCard = ({ type }) => {
   const navigation = useNavigation();
-  const { isConnected } = useNetwork();
+  const { i18n } = useI18N();
   const { getTabScreenFromType } = useType({ type });
-  const { data: filters } = useFilters({ type });
-  const filter = findFilterById("favorite", filters);
-  const { data: items } = useList({ filter, type });
+  const filter = getDefaultFavoritesFilter({ i18n, type });
+  const { data: items } = useList({ filter, type, filterByAPI: true });
   const value = items?.length;
-  return (
-    <>
-      {
-        // Prefetch any favorite posts so that the records
-        // are available if the user goes OFFLINE.
-      }
-      {items?.map((item, idx) => {
-        if (!item?.ID || !item?.post_type) return null;
-        if (!isConnected) return null;
-        return (
-          <PrefetchCacheRecord key={idx} id={item.ID} type={item.post_type} />
-        );
-      })}
-      <MetricCard
-        title={filter?.name}
-        value={value}
-        onPress={() => {
-          const tabScreen = getTabScreenFromType(type);
-          navigation.jumpTo(tabScreen, {
-            screen: ScreenConstants.LIST,
-            type,
-            filter: filter,
-          });
-        }}
-      />
-    </>
+  return(
+    <MetricCard
+      title={filter?.name}
+      value={value}
+      onPress={() => {
+        const tabScreen = getTabScreenFromType(type);
+        navigation.jumpTo(tabScreen, {
+          screen: ScreenConstants.LIST,
+          type,
+          filter: filter,
+          filterByAPI: true,
+        });
+      }}
+    />
   );
 };
 
-const FavoriteContactsCard = () => (
-  <FavoriteCard type={TypeConstants.CONTACT} />
-);
+const FavoriteContactsCard = () => <FavoriteCard type={TypeConstants.CONTACT} />;
 const FavoriteGroupsCard = () => <FavoriteCard type={TypeConstants.GROUP} />;
 
 const HomeScreen = ({ navigation }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
+  const { isDevice } = useDevice();
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -80,18 +73,19 @@ const HomeScreen = ({ navigation }) => {
     return;
   };
 
-  const renderHeaderLeft = (props) => (
-    <View style={globalStyles.rowContainer}>
-      <Image
-        defaultSource={require("assets/dt-icon.png")}
-        source={require("assets/dt-icon.png")}
-        resizeMethod="scale"
-        resizeMode="cover"
-        style={styles.logo}
-      />
-      <Text style={styles.brandText}>D.T</Text>
-    </View>
-  );
+  // Request permission for Push Notifications
+  useEffect(() => {
+    if (isDevice) {
+      (async () => {
+        const { status } = await Notifications.getPermissionsAsync();
+        if (status === NotificationPermissionConstants.UNDETERMINED) {
+          await Notifications.requestPermissionsAsync();
+        };
+        return;
+      })();
+    };
+    return;
+  }, []);
 
   useLayoutEffect(() => {
     const kebabItems = [
@@ -110,7 +104,7 @@ const HomeScreen = ({ navigation }) => {
     ];
     navigation.setOptions({
       title: "",
-      headerLeft: (props) => renderHeaderLeft(props),
+      headerLeft: (props) => <LogoHeader props={props} />,
       headerRight: (props) => (
         <HeaderRight
           kebabItems={kebabItems}
@@ -120,64 +114,16 @@ const HomeScreen = ({ navigation }) => {
           //    <AddNewIcon style={globalStyles.placeholder} />
           //  </>
           //)}
-          props
+          props={props}
         />
       ),
     });
   }, []);
 
-  /*
-  const CustomQueryCard = () => {
-    const filter = {
-      ID: "contacts_requires_update",
-      // TODO: translate
-      name: "Custom Query",
-      query: {
-        "assigned_to":["me"],
-        "subassigned":["me"],
-        "combine":["subassigned"],
-        "overall_status":["active"],
-        //"group_status":["active"],
-        "requires_update":[true],
-        "type":["access"],
-        //"sort":"seeker_path"
-      }
-    };
-    return (
-      <MetricCard
-        title={filter?.name}
-        filter={filter}
-        type={TypeConstants.CONTACT}
-      />
-    );
-  };
-  */
-
-  /*
-  const ActiveContactsCard = () => {
-    const filter = findFilterById("my_active", contactFilters);
-    const title = `${filter?.name} ${labelize(TypeConstants.CONTACT)}`;
-    return (
-      <MetricCard title={title} filter={filter} type={TypeConstants.CONTACT} />
-    );
-  };
-
-  const ActiveGroupsCard = () => {
-    const filter = findFilterById("my_active", groupFilters);
-    const title = `${filter?.name} ${labelize(TypeConstants.GROUP)}`;
-    return (
-      <MetricCard title={title} filter={filter} type={TypeConstants.GROUP} />
-    );
-  };
-  */
-
   return (
     <>
       <OfflineBar />
-      <ScrollView
-        style={[globalStyles.screenContainer, styles.container]}
-        //contentContainerStyle={globalStyles.screenGutter}
-      >
+      <ScrollView style={[globalStyles.screenContainer, styles.container]}>
         <View style={[globalStyles.rowContainer, styles.cardRowContainer]}>
           <FavoriteContactsCard />
           <FavoriteGroupsCard />

@@ -1,78 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { Text, TextInput, View } from "react-native";
+import React from "react";
 
-import { CancelIcon, SaveIcon } from "components/Icon";
+import TextField from "components/Field/Text/TextField";
 
-import useDebounce from "hooks/use-debounce";
-import useStyles from "hooks/use-styles";
-
-import { localStyles } from "./NumberField.styles";
-
-// TODO: most of this can be reused with TextField
-// only the TextInput prop 'keyboardType="numeric" is different
-const NumberField = ({ grouped = false, editing, field, value, onChange }) => {
-  const { styles, globalStyles } = useStyles(localStyles);
-
-  const [showSave, setShowSave] = useState(false);
-  const [_value, _setValue] = useState(value);
-  // TODO: use constant for debounce time
-  const debouncedValue = useDebounce(_value, 1500);
-
-  useEffect(() => {
-    if (debouncedValue !== value) {
-      if (grouped) {
-        onChange(debouncedValue);
-        return;
-      }
-      setShowSave(true);
-    }
-    return;
-  }, [debouncedValue]);
-
-  const _onClear = () => {
-    _setValue(value);
-    setShowSave(false);
-  };
-
-  const _onChange = () => {
-    if (_value !== value) {
-      onChange(_value, {
-        autosave: true,
-        automutate: true,
-      });
-    }
-  };
-
-  const renderNumberFieldEdit = () => (
-    <View style={styles.container}>
-      <View style={globalStyles.rowContainer}>
-        <TextInput
-          keyboardType="numeric"
-          value={_value ? String(_value) : ""}
-          onChangeText={_setValue}
-          style={styles.input}
-        />
-        {showSave && (
-          <View style={[globalStyles.rowContainer, styles.controlIcons]}>
-            <CancelIcon onPress={() => _onClear()} />
-            <SaveIcon onPress={() => _onChange()} />
-          </View>
-        )}
-      </View>
-    </View>
+// this is a TextField with a keyboard type of "numeric"
+const NumberField = ({
+  editing,
+  cacheKey,
+  fieldKey,
+  field,
+  value,
+  onChange
+}) => {
+  return(
+    <TextField
+      editing={editing}
+      cacheKey={cacheKey}
+      fieldKey={fieldKey}
+      field={field}
+      value={value}
+      onChange={onChange}
+      keyboardType="numeric"
+    />
   );
-
-  const renderNumberFieldView = () => (
-    <View style={styles.container}>
-      <View style={globalStyles.rowContainer}>
-        <Text style={styles.input}>{_value}</Text>
-      </View>
-    </View>
-  );
-
-  if (editing) {
-    return renderNumberFieldEdit();
-  }
-  return renderNumberFieldView();
 };
 export default NumberField;

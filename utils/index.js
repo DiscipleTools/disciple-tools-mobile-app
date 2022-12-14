@@ -1,3 +1,5 @@
+import hash from 'object-hash'
+
 import { TypeConstants } from "constants";
 
 export const complementListByObjProps = ({
@@ -111,7 +113,8 @@ export const findFilterOptionById = (id, filters) => {
 };
 
 export const truncate = (str, { maxLength } = {}) => {
-  if (maxLength && str?.length > maxLength) {
+  if (!maxLength) maxLength = 32; // default
+  if (str?.length > maxLength) {
     return str.substring(0, maxLength) + "...";
   }
   return str;
@@ -127,7 +130,7 @@ export const labelize = (str) => {
 
 // TODO: constant for maxLength?
 export const titleize = (title) => {
-  return truncate(title, { maxLength: 35 });
+  return truncate(title);
 };
 
 export const getAvailablePostTypes = () => {
@@ -195,7 +198,46 @@ export const formatDateAPI = (date) => {
 };
 
 export const decodeHTMLEntities = (str) => {
+  if (!str) return str;
   return str.replace(/&#(\d+);/g, function (match, dec) {
     return String.fromCharCode(dec);
   });
+};
+
+export const getCacheKeyByRequest = (request) => {
+  // order and hash the request for a consistent key
+  return hash(request, {
+    unorderedArrays: true,
+    unorderedSets: true,
+    unorderedObjects: true
+  });
+};
+
+export const delay = (ms) => new Promise(_ => setTimeout(_, ms));
+
+export const isValidPhone = ({ value }) => {
+  const regex = new RegExp(
+    "^(\\+?\\d{1,2}[\\s.-]?)?(\\(?\\d{3}\\)?[\\s.-]?)?(\\d{3}[\\s.-]?\\d{4})$"
+  );
+  return regex.test(value);
+};
+
+export const isValidEmail = ({ value }) => {
+  const regex = new RegExp(
+    "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+  );
+  return regex.test(value);
+};
+
+export const isValidURL = ({ value }) => {
+  const regex = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$",
+    "i"
+  );
+  return regex.test(value);
 };

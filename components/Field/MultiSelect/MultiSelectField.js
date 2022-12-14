@@ -1,166 +1,202 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { Text, View } from "react-native";
+import React, { useRef, useState } from "react";
+import { View } from "react-native";
 
-import { FlashIcon } from "components/Icon";
+//import { FlashIcon } from "components/Icon";
 //import Milestones from "components/Milestones";
 import ChurchHealth from "components/ChurchHealth";
 import Select from "components/Select";
 import PostChip from "components/Post/PostChip";
+import ModalSheet, { getDefaultIndex } from "components/Sheet/ModalSheet";
 import SelectSheet from "components/Sheet/SelectSheet";
-import SheetHeader from "components/Sheet/SheetHeader";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
+import useAPI from "hooks/use-api";
+import useCache from "hooks/use-cache";
 import useStyles from "hooks/use-styles";
-import useType from "hooks/use-type";
 
 import { FieldNames } from "constants";
 
 import { localStyles } from "./MultiSelectField.styles";
 
-const MultiSelectField = ({ editing, field, value, onChange, post }) => {
-  const { styles, globalStyles } = useStyles(localStyles);
-  const { expand, setMultiSelectValues } = useBottomSheet();
-  const { postType } = useType();
+// eg, {"health_metrics":{"values":[{"value":"church_prayer"}]}}
+const mapToAPI = ({ fieldKey, newValue }) => {
+  return { [fieldKey]: { values: [{ value: newValue?.key }]}};
+};
 
-  // VALUES
-  const values = value?.values || [];
+// eg, {"health_metrics":{"values":[{"value":"church_prayer", delete: true}]}}
+const mapToAPIRemove = ({ fieldKey, newValue }) => {
+  return { [fieldKey]: { values: [{ value: newValue?.key, delete: true }] }};
+};
 
-  // ITEMS
+const MultiSelectFieldView = ({
+  selectedItems,
+  renderItem
+}) => {
+  const { styles } = useStyles(localStyles);
+  return(
+    <View style={styles.optionContainer}>
+      {selectedItems?.map(renderItem)}
+    </View>
+  );
+};
 
-  const options = field?.default;
+const MultiSelectFieldEdit = ({
+  post,
+  cacheKey,
+  fieldKey,
+  fieldLabel,
+  items,
+  selectedItems,
+  setSelectedItems,
+  renderItem,
+  sheetComponent
+}) => {
 
-  const getItems = useCallback(() => {
-    return Object.keys(options).map((key) => {
-      if (options[key].hasOwnProperty("key")) return options[key];
-      // 'milestones' do not have a 'key' property, so we set one for consistency sake
-      let option = options[key];
-      option["key"] = key;
-      return option;
-    });
-  }, [options]);
+  const { cache, mutate } = useCache();
+  const { updatePost } = useAPI();
 
-  const items = getItems();
+  //const isFaithMilestones = fieldKey === FieldNames.FAITH_MILESTONES;
+  const isChurchHealth = fieldKey === FieldNames.CHURCH_HEALTH;
+  //const isMilestones = isFaithMilestones || isChurchHealth;
 
-  const getSelectedItems = useCallback(() => {
-    const selectedItems = [];
-    values.forEach((selectedItem) => {
-      items.find((option) => {
-        if (option?.key === selectedItem?.value) {
-          selectedItems.push(option);
-        }
-      });
-    });
-    return selectedItems;
-  }, [items, values]);
+  const _onRemove = async(newValue) => {
+    // component state
+    setSelectedItems(selectedItems.filter(item => item?.key !== newValue?.key));
+    // in-memory cache (and persisted storage) state
+    const cachedData = cache.get(cacheKey);
+    const cachedDataModified = cachedData?.[fieldKey]?.filter(item => item !== newValue?.key);
+    if (!cachedDataModified) return; 
+    cachedData[fieldKey] = cachedDataModified;
+    mutate(cacheKey, async() => (cachedData), { revalidate: false });
+    // remote API state
+    const data = mapToAPIRemove({ fieldKey, newValue });
+    await updatePost({ data });
+  };
 
-  const selectedItems = getSelectedItems();
-
-  const isFaithMilestones = () => field?.name === FieldNames.FAITH_MILESTONES;
-
-  const isChurchHealth = () => field?.name === FieldNames.CHURCH_HEALTH;
-
-  const isMilestones = isFaithMilestones() || isChurchHealth();
-
-  const MultiSelectFieldEdit = () => {
-    // MAP TO API
-    const mapToAPI = (sections) => {
-      const values = [];
-      sections.forEach((section) => {
-        section?.data?.forEach((item) => {
-          if (item?.selected) {
-            values.push({
-              value: item?.key,
-            });
-          }
-        });
-      });
-      return values;
+  // TODO: support for grouped/create new form
+  // TODO: per 'members' list, also need to update list cache and member count
+  const _onChange = async(newValue) => {
+    const newValueKey = newValue?.key;
+    if (!newValueKey) return;
+    const exists = selectedItems?.some(item => item?.key === newValueKey);
+    if (exists) {
+      _onRemove(newValue);
+      return;
     };
+    // component state
+    setSelectedItems([...selectedItems, newValue]);
+    // in-memory cache (and persisted storage) state
+    const cachedData = cache.get(cacheKey);
+    cachedData[fieldKey] = cachedData?.[fieldKey] ? [...cachedData[fieldKey], newValueKey] : [newValueKey];
+    mutate(cacheKey, async() => (cachedData), { revalidate: false });
+    // remote API state
+    const data = mapToAPI({ fieldKey, newValue });
+    await updatePost({ data });
+  };
 
-    // MAP FROM API
-    const mapFromAPI = (items) => {
-      return items?.map((item) => {
-        return {
-          key: item?.key,
-          label: item?.label,
-          selected: selectedItems?.some(
-            (selectedItem) => selectedItem?.key === item?.key
-          ),
-        };
-      });
-    };
+  const mapFromAPI = ({ items }) => {
+    return items?.map((item) => ({
+      key: item?.key,
+      label: item?.label,
+      selected: selectedItems?.some(
+        (selectedItem) => selectedItem?.key === item?.key
+      )
+    }));
+  };
 
-    /*
-     * NOTE: Since this is a multi-select, this method gets called when
-     * the user clicks the "Done" button, and all 'sections' are passed
-     * back (along with 'selected' property values).
-     */
-    const _onChange = async (newSections) => {
-      const mappedValues = mapToAPI(newSections);
-      if (JSON.stringify(mappedValues) !== JSON.stringify(values)) {
-        setMultiSelectValues({ values: mappedValues });
-      }
-    };
+  const sections = [{ data: mapFromAPI({ items }) }]
 
-    const onDone = (selectedValues) => {
-      onChange(selectedValues, {
-        autosave: true,
-        force: true,
-      });
-    };
+  // MODAL SHEET
+  const modalRef = useRef(null);
+  const modalName = `${fieldKey}_modal`;
+  const defaultIndex =  getDefaultIndex();
 
-    // SELECT OPTIONS
-    const sections = useMemo(
-      () => [{ data: mapFromAPI(items) }],
-      [items, selectedItems]
-    );
-    const title = field?.label || "";
-
-    const sheetContent = useMemo(
-      () => (
-        <>
-          <SelectSheet multiple sections={sections} onChange={_onChange} />
-        </>
-      ),
-      [title, sections]
-    );
-
-    const renderItemLinkless = (item) => (
-      <PostChip id={item?.key} title={item?.label} />
-    );
-
+  if (isChurchHealth) {
     return (
-      <Select
-        onOpen={() => {
-          expand({
-            defaultIndex: 3,
-            renderHeader: () => (
-              <SheetHeader expandable dismissable title={title} />
-            ),
-            renderContent: () => sheetContent,
-            onDone: (selectedValues) => onDone(selectedValues),
-          });
-        }}
-        items={selectedItems}
-        renderItem={renderItemLinkless}
+      <ChurchHealth
+        post={post}
+        selectedItems={selectedItems}
+        onChange={_onChange}
       />
     );
   };
+  return (
+    <>
+      <Select
+        onOpen={() => modalRef.current?.present()} 
+        items={selectedItems}
+        renderItem={renderItem}
+      />
+      <ModalSheet
+        ref={modalRef}
+        name={modalName}
+        title={fieldLabel}
+        defaultIndex={defaultIndex}
+        onDone={() => modalRef.current?.dismiss()}
+      >
+        {sheetComponent ? (
+          <>
+            {sheetComponent}
+          </>
+        ) : (
+          <SelectSheet
+            multiple
+            sections={sections}
+            onChange={_onChange}
+            modalName={modalName}
+          />
+        )}
+      </ModalSheet>
+    </>
+  );
+};
 
-  const MultiSelectFieldView = () => {
-    if (isChurchHealth())
-      return (
-        <ChurchHealth
-          items={items}
-          selectedItems={selectedItems}
-          post={post}
-          values={values}
-        />
-      );
-    return <MultiSelectFieldEdit />;
+const MultiSelectField = ({
+  post,
+  editing,
+  cacheKey,
+  fieldKey,
+  field,
+  value,
+  onChange,
+  sheetComponent
+}) => {
+
+  const items = Object.entries(field?.default).map(
+    ([key, val]) => ({ key, ...val })
+  );
+
+  const selectedItems = items.map(item => value?.includes(item?.key)
+    ? item
+    : false
+  ).filter(Boolean);
+
+  const [_selectedItems, _setSelectedItems] = useState(selectedItems);
+
+  const renderItemLinkless = (item) => (
+    <PostChip id={item?.key} title={item?.label} />
+  );
+
+  if (editing) {
+    return(
+      <MultiSelectFieldEdit
+        post={post}
+        cacheKey={cacheKey}
+        fieldKey={fieldKey}
+        fieldLabel={field?.name}
+        items={items}
+        selectedItems={_selectedItems}
+        setSelectedItems={_setSelectedItems}
+        renderItem={renderItemLinkless}
+        sheetComponent={sheetComponent}
+        onChange={onChange}
+      />
+    );
   };
-
-  if (editing) return <MultiSelectFieldEdit />;
-  return <MultiSelectFieldView />;
+  return(
+    <MultiSelectFieldView
+      selectedItems={_selectedItems}
+      renderItem={renderItemLinkless}
+    />
+  );
 };
 export default MultiSelectField;

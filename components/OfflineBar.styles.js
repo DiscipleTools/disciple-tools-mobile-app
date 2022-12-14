@@ -1,12 +1,13 @@
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   offlineBar: {
-    height: 24,
+    height: 20,
     backgroundColor: theme.warning,
   },
   offlineBarText: {
-    fontSize: 14,
     color: theme.offDark,
-    textAlignVertical: "center",
+    fontSize: 14,
+    fontWeight: "bold",
     textAlign: "center",
+    textTransform: "uppercase",
   },
 });

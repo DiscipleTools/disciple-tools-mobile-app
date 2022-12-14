@@ -97,7 +97,7 @@ const usePushNotifications = () => {
       Notifications.addNotificationReceivedListener((notification) => {
         // useNotifications and then force re-render when receiving a notification?
         //setNotification(notification);
-        console.log("************ RECVD NOTIFICATION ************");
+        //console.log("************ RECVD NOTIFICATION ************");
       });
 
     return () => {

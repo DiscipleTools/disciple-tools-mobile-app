@@ -13,21 +13,19 @@ const deepEqual = (x, y) => {
     : x === y;
 };
 
+const filterByRequest = ({ state, request }) => state?.filter(existingRequest => !deepEqual(existingRequest, request)) ?? [];
+
 export default function requestReducer(state = initialState, action) {
   switch (action.type) {
     case actions.REQUEST_ENQUEUE:
+      //console.log("~~~ ENQUEUE ACTION ~~~", JSON.stringify(action));
       if (!action?.request) return state;
-      // NOTE: filter out duplicates
-      const _state = state?.filter(
-        (request) => !deepEqual(request, action.request)
-      );
-      return [..._state, action.request];
+      return [...state, action.request];
     case actions.REQUEST_DEQUEUE:
+      //console.log("~~~ DEQUEUE ACTION ~~~", JSON.stringify(action));
       if (!action?.request) return state;
-      return (
-        state?.filter((request) => !deepEqual(request, action.request)) ?? []
-      );
+      return filterByRequest({ state, request: action.request });
     default:
       return state;
-  }
-}
+  };
+};

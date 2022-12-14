@@ -1,6 +1,7 @@
-import React, { useEffect, useLayoutEffect } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { View } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useSWRConfig } from "swr";
 
 import { HeaderRight } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
@@ -15,30 +16,42 @@ import {
 import useFilter from "hooks/use-filter";
 import useI18N from "hooks/use-i18n";
 import useList from "hooks/use-list";
+import useNetwork from "hooks/use-network";
 import useType from "hooks/use-type";
 import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
 
-import { localStyles } from "./ListScreen.styles";
+import { getPostsFetcher } from "helpers";
+import { getListURL } from "helpers/urls";
+
+//import { localStyles } from "./ListScreen.styles";
+
+const renderItem = ({ item }) => <PostItem item={item} />;
+//const renderHiddenItem = ({ item }) => <PostItemHidden item={item} />;
+
+// TODO: mock search bar, filter tags, FAB, etc..
+const ListSkeleton = () =>
+  Array(10)
+    .fill(null)
+    .map((_, ii) => <PostItemSkeleton key={ii} />);
 
 const ListScreen = ({ navigation, route }) => {
   const tabBarHeight = useBottomTabBarHeight();
-  const { styles, globalStyles } = useStyles(localStyles);
+  const { mutate } = useSWRConfig();
+  const { globalStyles } = useStyles();
+  const { isConnected } = useNetwork();
   const { i18n } = useI18N();
   const { postType } = useType();
   const { settings } = useSettings({ type: postType });
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
 
-  const {
-    data: items,
-    error,
-    isLoading,
-    isValidating,
-    mutate,
-  } = useList({ search, filter });
-  // TODO: handler error case
+  const [refreshing, setRefreshing] = useState(false);
+
+  const { data: items } = useList({ search, filter });
+  // TODO: handler error case?
 
   useLayoutEffect(() => {
+    // TODO
     const title = settings?.label ?? "";
     const kebabItems = [
       {
@@ -56,16 +69,18 @@ const ListScreen = ({ navigation, route }) => {
     });
   }, [settings?.label]);
 
-  const renderItem = ({ item }) => (
-    <PostItem item={item} loading={isLoading} mutate={mutate} />
-  );
-  //const renderHiddenItem = ({ item }) => <PostItemHidden item={item} loading={isLoading||isValidating} />;
-
-  // TODO: mock search bar, filter tags, FAB, etc..
-  const ListSkeleton = () =>
-    Array(10)
-      .fill(null)
-      .map((_, ii) => <PostItemSkeleton key={ii} />);
+  /* 
+   * only favorites are auto-refreshed on app launch, so this manual refresh 
+   * is the mechanism by which a user may refresh the list of posts
+   */
+  const onRefresh = async() => {
+    if (isConnected) {
+      setRefreshing(true);
+      const { url, fetcher }= getPostsFetcher({ postType });
+      await mutate(url, fetcher);
+      setRefreshing(false);
+    };
+  };
 
   if (!items) return <ListSkeleton />;
   return (
@@ -84,7 +99,8 @@ const ListScreen = ({ navigation, route }) => {
           defaultFilter={defaultFilter}
           filter={filter}
           onFilter={onFilter}
-          onRefresh={mutate}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
           //leftOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_LEFT}
           //rightOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_RIGHT}
         />

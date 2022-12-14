@@ -2,11 +2,9 @@ import React from "react";
 import { Image, ImageBackground, Switch, Text, View } from "react-native";
 import { SvgUri } from "react-native-svg";
 
-//import ListItem from "components/ListItem";
+import ListItem from "components/ListItem";
 
-import SheetHeader from "components/Sheet/SheetHeader";
-
-import useBottomSheet from "hooks/use-bottom-sheet";
+import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
 import useSettings from "hooks/use-settings";
 
@@ -23,35 +21,53 @@ const symbolSize = 16;
 const radius = size / 2;
 const center = radius;
 
-const ChurchHealth = ({ items, selectedItems, post, values }) => {
-  const { styles, globalStyles } = useStyles(localStyles);
+const ChurchCommitment = ({
+  hasChurchCommitment,
+  toggleChurchCommitment,
+  styles
+}) => {
+  const { i18n } = useI18N();
+  return(
+    <ListItem
+      label={i18n.t("global.churchCommitment")}
+      endComponent={
+        <Switch
+          trackColor={{ true: styles.switch.color }}
+          thumbColor={styles.switch}
+          value={hasChurchCommitment}
+          onChange={toggleChurchCommitment}
+        />
+      }
+      style={styles.listItem}
+    />
+  );
+};
+
+const ChurchHealth = ({
+  post,
+  selectedItems,
+  onChange,
+}) => {
+
+  const { styles } = useStyles(localStyles);
+
   const { settings } = useSettings();
 
-  const { expand } = useBottomSheet();
+  const toggleChurchCommitment = () => onChange({ key: ChurchHealthConstants.CHURCH_COMMITMENT });
 
-  const showSheet = (iconDescription = "") => {
-    expand({
-      renderHeader: () => (
-        <SheetHeader expandable dismissable title={"Church Health"} />
-      ),
-      renderContent: () => (
-        <Text style={{ marginHorizontal: 10 }}>{iconDescription}</Text>
-      ),
-    });
-  };
+  const isSelected = ({ key }) => selectedItems?.some(item => item?.key === key);
 
-  const isSelected = (key) => selectedItems?.some((item) => item?.key === key);
+  const hasChurchCommitment = isSelected({
+    key: ChurchHealthConstants.CHURCH_COMMITMENT
+  });
 
-  const hasChurchCommitment = isSelected(
-    ChurchHealthConstants.CHURCH_COMMITMENT
-  );
-
-  let degToRad = (deg) => {
-    return (deg * Math.PI) / 180;
+  let degToRad = ({ angle }) => {
+    return (angle * Math.PI) / 180;
   };
 
   let renderIcons = () => {
-    const iconsData = settings?.fields?.health_metrics?.values || {};
+    // TODO: constants
+    const iconsData = settings?.["post_types"]?.["groups"]?.fields?.health_metrics?.default || {};
     let iconsDataArray = [];
 
     // MAKING AN ARRAY OF OBJECTS FROM AN OBJECT OF OBJECTS
@@ -65,10 +81,10 @@ const ChurchHealth = ({ items, selectedItems, post, values }) => {
     let increaseAngle = Math.floor(360 / totalIcons);
 
     for (let i = 0; i < totalIcons; i++) {
-      let angleRad = degToRad(angle);
+      let angleRad = degToRad({ angle });
       let x = radius * Math.cos(angleRad) + center - symbolSize / 2;
       let y = radius * Math.sin(angleRad) + center - symbolSize / 2;
-      let selected = isSelected(iconsDataArray[i].key);
+      let selected = isSelected({ key: iconsDataArray[i].key });
 
       let tempComp = (
         <SvgUri
@@ -79,7 +95,7 @@ const ChurchHealth = ({ items, selectedItems, post, values }) => {
           position="absolute"
           style={styles.iconImage(selected)}
           uri={iconsDataArray[i].value.icon}
-          onPress={() => showSheet(iconsDataArray[i].value.description)}
+          onPress={() => onChange(iconsDataArray[i])}
           key={iconsDataArray[i].value.description}
         />
       );
@@ -88,28 +104,6 @@ const ChurchHealth = ({ items, selectedItems, post, values }) => {
     }
     return svgIconsArray;
   };
-
-  /*
-  const ChurchCommitment = ({ hasChurchCommitment }) => {
-    //const toggleChurchCommitment = () => null;
-    return(
-      <ListItem
-        label={i18n.t("global.churchCommitment")}
-        endComponent={
-          <Switch
-            trackColor={{ true: styles.switch.color }}
-            thumbColor={styles.switch}
-            value={hasChurchCommitment}
-            //onChange={toggleChurchCommitment}
-            // NOTE: disabled bc user will click Edit and use multi-select
-            disabled={true}
-          />
-        }
-        style={styles.listItem}
-      />
-    );
-  };
-  */
 
   return (
     <>
@@ -146,11 +140,13 @@ const ChurchHealth = ({ items, selectedItems, post, values }) => {
           <Text>{post?.baptized_member_count ?? ""}</Text>
         </View>
       </View>
-      {/*
       <View style={{ padding: 5 }}>
-        <ChurchCommitment hasChurchCommitment={hasChurchCommitment} />
+        <ChurchCommitment
+          hasChurchCommitment={hasChurchCommitment}
+          toggleChurchCommitment={toggleChurchCommitment}
+          styles={styles}
+        />
       </View>
-      */}
     </>
   );
 };

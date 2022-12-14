@@ -7,9 +7,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { navigationRef } from "./RootNavigation";
 
+import LaunchScreen from "screens/LaunchScreen";
 import PINScreen from "screens/PINScreen";
 import LoginScreen from "screens/LoginScreen";
-import TabNavigator from "./TabNavigator";
+//import TabNavigator from "./TabNavigator";
 
 import usePIN from "hooks/use-pin";
 import { useAuth } from "hooks/use-auth";
@@ -59,7 +60,8 @@ const AppNavigator = () => {
 
   const RenderLogin = () => {
     const { authenticated } = useAuth();
-    if (authenticated) return <TabNavigator />;
+    if (authenticated) return <LaunchScreen />;
+    //if (authenticated) return <TabNavigator />;
     return <LoginStack />;
   };
 

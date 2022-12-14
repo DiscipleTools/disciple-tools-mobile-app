@@ -7,7 +7,6 @@ import { ScreenConstants } from "constants";
 import ParsedText from "react-native-parsed-text";
 import useI18N from "hooks/use-i18n";
 
-import PrefetchCacheRecord from "components/PrefetchCacheRecord";
 import { ChevronDownIcon, ChevronUpIcon } from "components/Icon";
 import { localStyles } from "./RenderActivityLog.styles";
 import useStyles from "hooks/use-styles";
@@ -70,7 +69,7 @@ const RenderActivityLog = ({
           }}
         >
           <Text style={styles.activityLink}>
-            {logs?.[0] ?? " "}</Text>
+            {logs?.[1][0]?.object_name ?? " "}</Text>
         </Pressable>
         <Pressable
           onPress={() => {
@@ -111,13 +110,6 @@ const RenderActivityLog = ({
             </ParsedText>
               {/* {log?.object_note} */}
             </Text>
-            {
-              // Prefetch any posts in the ActivityLog so that the records
-              // are available if the user goes OFFLINE.
-            }
-            {log?.object_id && log?.post_type && (
-              <PrefetchCacheRecord id={log.object_id} type={log.post_type} />
-            )}
           </>
         ))
       ) : (
@@ -146,16 +138,6 @@ const RenderActivityLog = ({
             >
               {logs?.[1][0]?.object_note}
             </ParsedText></Text>
-          {
-            // Prefetch any posts in the ActivityLog so that the records
-            // are available if the user goes OFFLINE.
-          }
-          {logs?.[1][0]?.object_id && logs?.[1][0]?.post_type && (
-            <PrefetchCacheRecord
-              id={logs[1][0].object_id}
-              type={logs[1][0].post_type}
-            />
-          )}
         </>
       )}
     </>

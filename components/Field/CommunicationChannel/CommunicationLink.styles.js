@@ -21,4 +21,8 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     textDecorationLine: "underline",
     paddingHorizontal: 10,
   },
+  unlinkingText: {
+    color: theme.text.primary,
+    paddingHorizontal: 10,
+  }
 });

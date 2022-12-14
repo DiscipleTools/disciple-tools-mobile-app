@@ -28,6 +28,8 @@
       "requestQueued": "SIN CONEXIÓN, solicitud en fila...",
       "text": "Error"
     },
+    "favoriteContacts": "Contactos Favoritos",
+    "favoriteGroups": "Grupos Favoritos",
     "filter": "Filtrar",
     "filterBy": "Filtrado por",
     "forgotPassword": "¿Perdiste tu contraseña?",

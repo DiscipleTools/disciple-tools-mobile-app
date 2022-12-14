@@ -15,4 +15,9 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     fontSize: 16,
     fontWeight: "bold",
   },
+  optionContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    padding: 10
+  }
 });

@@ -4,13 +4,13 @@ export const REQUEST_DEQUEUE = "REQUEST_DEQUEUE";
 export const enqueueRequest = (request) => {
   return {
     type: REQUEST_ENQUEUE,
-    request,
+    request
   };
 };
 
 export const dequeueRequest = (request) => {
   return {
     type: REQUEST_DEQUEUE,
-    request,
+    request
   };
 };

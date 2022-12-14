@@ -17,7 +17,7 @@ const Select = ({ onOpen, items, renderItem, style, optionStyle }) => {
       <View
         style={[globalStyles.rowContainer, styles.optionContainer, optionStyle]}
       >
-        {items?.map(renderItem)}
+        {items?.map((item, idx) => renderItem(item, idx))}
       </View>
       {onOpen && <CaretIcon />}
     </Pressable>

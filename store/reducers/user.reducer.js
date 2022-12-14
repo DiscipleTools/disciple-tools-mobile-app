@@ -17,6 +17,10 @@ const initialState = {
   userData: {
     ...userDataInitialState,
   },
+  refresh: {
+    locations: null,
+    peopleGroups: null
+  },
 };
 
 export default function userReducer(state = initialState, action) {

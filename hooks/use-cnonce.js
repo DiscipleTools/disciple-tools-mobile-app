@@ -4,6 +4,7 @@ import * as Random from "expo-random";
 
 import {
   setCNonceLogin as _setCNonceLogin,
+  setCNoncePIN as _setCNoncePIN,
 } from "store/actions/auth.actions";
 
 import useSecureStore from "hooks/use-secure-store";
@@ -12,9 +13,8 @@ const useCNonce = ({
   persistedKey,
   cnonceKey,
   cnonceDTKey,
-  threshold
-}={}) => {
-
+  threshold,
+} = {}) => {
   const dispatch = useDispatch();
   const cnonce = useSelector((state) => state?.authReducer?.[persistedKey]);
   const { getSecureItem, setSecureItem } = useSecureStore();
@@ -25,9 +25,9 @@ const useCNonce = ({
       const diff = now.getTime() - new Date(cnonceDT).getTime();
       const diffSecs = Math.floor(diff / 1000);
       return diffSecs < threshold;
-    } catch(error) {
+    } catch (error) {
       return false;
-    };
+    }
   };
 
   const validateCNonce = async () => {
@@ -38,22 +38,26 @@ const useCNonce = ({
       // refresh the cnonce
       await setCNonce();
       return true;
-    };
+    }
     return false;
   };
 
-  const setCNonce = async () => {
+  const setCNonce = async (isPinCNonce = false) => {
     const cnonce = Random.getRandomBytes(256).toString();
     const cnonceDT = new Date().toString();
     await setSecureItem(cnonceDTKey, cnonceDT);
     await setSecureItem(cnonceKey, cnonce);
-    dispatch(_setCNonceLogin(cnonce));
+    if (isPinCNonce) {
+      dispatch(_setCNoncePIN(cnonce));
+    } else {
+      dispatch(_setCNonceLogin(cnonce));
+    }
   };
 
   return {
     cnonce,
     setCNonce,
-    validateCNonce
-  }
+    validateCNonce,
+  };
 };
 export default useCNonce;

@@ -9,4 +9,9 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     marginBottom: "auto",
     paddingVertical: 5,
   },
+  optionContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    padding: 10
+  }
 });

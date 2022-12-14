@@ -24,8 +24,11 @@ const useImportContacts = ({ search }) => {
           data.map((contact) => {
             const contactData = {};
             if (contact.contactType === "person") {
-              contactData["ID"] = contact.id;
-              contactData["title"] = contact.name;
+              const name = (contact?.name || ((contact?.firstName ?? '') + ' ' + (contact?.lastName ?? '')))?.trim() ?? '';
+              // TODO: constant?
+              // API and component differ, for now have user manually choose
+              //contactData["type"] = { key: "personal" };
+              contactData["name"] = name;
               if (
                 contact.hasOwnProperty("emails") &&
                 contact.emails.length > 0
@@ -63,7 +66,7 @@ const useImportContacts = ({ search }) => {
 
   // filter any items marked to be excluded
   let filtered = importContacts?.filter(
-    (item) => !exclude?.includes(item?.title)
+    (item) => !exclude?.includes(item?.name)
   );
   // search
   if (search) {
@@ -74,7 +77,7 @@ const useImportContacts = ({ search }) => {
     filtered = searchObjList(filtered, search, searchOptions);
   }
   return {
-    data: filtered, //importContacts?.reverse(),
+    data: filtered, //filtered?.reverse(),
     error,
     isLoading: loading,
     isValidating: null,

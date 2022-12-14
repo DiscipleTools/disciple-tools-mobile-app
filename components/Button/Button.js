@@ -5,7 +5,15 @@ import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./Button.styles";
 
-const Button = ({ title, loading, onPress, containerStyle, style }) => {
+const Button = ({
+  title,
+  loading,
+  onPress,
+  startIcon,
+  endIcon,
+  containerStyle,
+  style
+}) => {
   const { styles, globalStyles } = useStyles(localStyles);
   return (
     <>
@@ -14,11 +22,13 @@ const Button = ({ title, loading, onPress, containerStyle, style }) => {
       ) : (
         <Pressable
           onPress={onPress ?? null}
-          style={[styles.container, containerStyle]}
+          style={[globalStyles.rowContainer, styles.container, containerStyle]}
           accessible={true}
           accessibilityLabel={title}
         >
+          {startIcon}
           <Text style={[styles.text, style]}>{title}</Text>
+          {endIcon}
         </Pressable>
       )}
     </>

@@ -1,8 +1,5 @@
 import useRequest from "hooks/use-request";
+import { MyUserDataURL } from "constants/urls";
 
-// https://developers.disciple.tools/theme-core/api-other/users
-const useMyUser = () => {
-  const url = "dt/v1/user/my";
-  return useRequest({ url });
-};
+const useMyUser = () => useRequest({ request: { url: MyUserDataURL, method: "GET" }});
 export default useMyUser;

@@ -1,11 +1,3 @@
-import React, {
-  useCallback,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
-
 import {
   ReadIcon,
   UnreadIcon,
@@ -20,19 +12,27 @@ import useI18N from "hooks/use-i18n";
 import useType from "hooks/use-type";
 import useRequest from "hooks/use-request";
 
+import { getFiltersURL } from "helpers/urls";
+
 import { NotificationActionConstants } from "constants";
 
 const useFilters = ({ type } = {}) => {
-  const { isPost, isNotification, isCommentsActivity, postType } = useType({
-    type,
-  });
+  const {
+    isPost,
+    isNotification,
+    isCommentsActivity,
+    postType
+  } = useType({ type });
   const { i18n } = useI18N();
 
-  // TODO: resolve caching issue (so as to no need to specify locale in URL)
   const url = isPost
-    ? `/dt/v1/users/get_filters?post_type=${postType}&force_refresh=1&locale=${i18n?.locale}`
+    ? getFiltersURL({ postType })
     : null;
-  let { data, error, isLoading, isValidating, mutate } = useRequest({ url });
+  const request = {
+    url,
+    method: "GET",
+  };
+  let { data, error, isValidating, mutate } = useRequest({ request });
 
   if (isCommentsActivity)
     data = [
@@ -45,7 +45,9 @@ const useFilters = ({ type } = {}) => {
             //count: 1350,
             name: i18n.t("global.all"),
             icon: <InfinityIcon />,
-            query: null,
+            query: {
+              sort: "-last_modified"
+            },
             subfilter: false,
           },
           {
@@ -54,7 +56,8 @@ const useFilters = ({ type } = {}) => {
             name: i18n.t("global.comments"),
             icon: <CommentIcon />,
             query: {
-              key: "comment_ID",
+              "comment_ID": '*',
+              sort: "-last_modified"
             },
             subfilter: false,
           },
@@ -64,7 +67,8 @@ const useFilters = ({ type } = {}) => {
             name: i18n.t("global.activity"),
             icon: <ActivityIcon />,
             query: {
-              key: "histid",
+              "histid": '*',
+              sort: "-last_modified"
             },
             subfilter: false,
           },
@@ -201,7 +205,7 @@ const useFilters = ({ type } = {}) => {
   return {
     data: filters,
     error,
-    isLoading,
+    isLoading: !error && !data,
     isValidating,
     mutate,
   };

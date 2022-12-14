@@ -3,57 +3,55 @@ import Constants from "expo-constants";
 import * as Clipboard from "expo-clipboard";
 import * as MailComposer from "expo-mail-composer";
 import * as Notifications from "expo-notifications";
-import * as SplashScreen from "expo-splash-screen";
 
-import useAppState from "hooks/use-app-state";
-import useCache from "hooks/use-cache";
-import useDevice from "hooks/use-device";
+//import useAppState from "hooks/use-app-state";
+//import useCache from "hooks/use-cache";
+//import useDevice from "hooks/use-device";
 import useToast from "hooks/use-toast";
 
-import { NotificationPermissionConstants } from "constants";
+//import { persistCache } from "helpers";
+
+//import { CacheConstants, NotificationPermissionConstants } from "constants";
 
 const useApp = () => {
-  /////////////////////////////////////////////////////////////////////////////
-  // ON-LAUNCH AND LISTENER METHODS
-  /////////////////////////////////////////////////////////////////////////////
 
-  // Dispay splash screen (keep visible until iniital screens ready to render)
-  const displaySplashScreen = useCallback(async () => {
-    try {
-      await SplashScreen.preventAutoHideAsync();
-    } catch (e) {
-      console.warn(e);
-    }
-  }, []);
-  useEffect(() => {
-    displaySplashScreen();
-    return;
-  }, []);
+  //const { isDevice } = useDevice();
+
+  /////////////////////////////////////////////////////////////////////////////
+  // ON-LAUNCH ACTIONS, INTERVALS, AND LISTENERS
+  /////////////////////////////////////////////////////////////////////////////
 
   // Request permission for Push Notifications
-  const { isDevice } = useDevice();
-  const requestNotificationPermissions = async () => {
-    if (isDevice) {
-      const { status } = await Notifications.getPermissionsAsync();
-      if (status === NotificationPermissionConstants.UNDETERMINED) {
-        await Notifications.requestPermissionsAsync();
-      }
-      return;
-    }
-  };
+  /*
   useEffect(() => {
-    requestNotificationPermissions();
+    if (isDevice) {
+      (async () => {
+        const { status } = await Notifications.getPermissionsAsync();
+        if (status === NotificationPermissionConstants.UNDETERMINED) {
+          await Notifications.requestPermissionsAsync();
+        };
+        return;
+      })();
+    };
     return;
   }, []);
+  */
 
-  // Handle App State changes
-  const { onAppBackgroundCallback, onAppForegroundCallback } = useCache();
-  useAppState({ onAppForegroundCallback, onAppBackgroundCallback });
-
-  // Rehydrate Cache on App launch
+  // Persist SWR in-memory cache to device storage on an interval
+  /*
   useEffect(() => {
-    onAppForegroundCallback();
+    const interval = setInterval(() => {
+      //console.log(`Persist cache (runs every ${CacheConstants.INTERVAL} ms) -`, new Date());
+      (async () => {
+        await persistCache();
+      })();
+    }, CacheConstants.INTERVAL);
+    return () => clearInterval(interval);
   }, []);
+  */
+
+  // Handle App State change(s)
+  //useAppState();
 
   /////////////////////////////////////////////////////////////////////////////
   // GENERAL PURPOSE APP METHODS

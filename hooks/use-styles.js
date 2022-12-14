@@ -141,6 +141,13 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   },
   activityIndicator: {
     color: theme.text.primary,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: '50%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   refreshControl: {
     color: theme.placeholder,
