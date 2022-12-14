@@ -1,36 +1,74 @@
-import React from "react";
+import React, { useRef } from "react";
 import { View } from "react-native";
 
 import { CaretIcon, ClearFiltersIcon } from "components/Icon";
 import Chip from "components/Chip";
+import ModalSheet, { getDefaultIndex } from "components/Sheet/ModalSheet";
 import FilterSheet from "components/Sheet/FilterSheet";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
+import useI18N from "hooks/use-i18n";
 import useStyle from "hooks/use-styles";
 
 import { findFilterOptionById } from "utils";
 
 import { localStyles } from "./FilterOptions.styles";
 
-const FilterOptions = ({ defaultFilter, filter, filters, onFilter }) => {
-  const { styles, globalStyles } = useStyle(localStyles);
-  const { expand, getDefaultIndex } = useBottomSheet();
-
-  const filterContent = (title) => (
-    <FilterSheet
-      filters={filters?.filter((filter) => title === filter?.title)}
-      filter={filter}
-      onFilter={onFilter}
+const ClearFilters = ({ filter, defaultFilter, onFilter }) => {
+  const { styles } = useStyle(localStyles);
+  const isDefaultFilter = filter?.ID === defaultFilter?.ID;
+  return (
+    <ClearFiltersIcon
+      onPress={() => (isDefaultFilter ? null : onFilter(defaultFilter))}
+      style={styles.clearFiltersIcon(!isDefaultFilter)}
     />
   );
+};
 
-  const showFilter = (title) => {
-    const filterOption = findFilterOptionById(filter?.ID, filters);
-    return expand({
-      defaultIndex: getDefaultIndex({ items: filterOption?.content }),
-      renderContent: () => filterContent(title),
-    });
-  };
+const FilterOption = ({ idx, filters, filter, selectedFilter, onFilter }) => {
+  const { styles } = useStyle(localStyles);
+  const { i18n } = useI18N();
+  // highlight the selected filter
+  const title = filter?.title ?? "";
+  if (!title) return null;
+  const selectedFilterID = selectedFilter?.ID;
+  const filterGroup = findFilterOptionById(selectedFilterID, filters);
+  const selected = filterGroup?.title === title;
+  // MODAL
+  const modalRef = useRef(null);
+  const modalName = `${title}_${idx}_modal`;
+  const defaultIndex = getDefaultIndex();
+  return (
+    <>
+      <Chip
+        onPress={() => modalRef.current?.present()}
+        label={title}
+        selected={selected}
+        endIcon={
+          <CaretIcon
+            onPress={() => modalRef.current?.present()}
+            style={styles.optionCaret(selected)}
+          />
+        }
+      />
+      <ModalSheet
+        ref={modalRef}
+        name={modalName}
+        title={i18n.t("global.filterBy") ?? ""}
+        defaultIndex={defaultIndex}
+      >
+        <FilterSheet
+          filters={filters?.filter((filter) => title === filter?.title)}
+          filter={filter}
+          onFilter={onFilter}
+          modalName={modalName}
+        />
+      </ModalSheet>
+    </>
+  );
+};
+
+const FilterOptions = ({ defaultFilter, filters, filter, onFilter }) => {
+  const { styles, globalStyles } = useStyle(localStyles);
 
   /*
   const Count = ({ count, selected }) => (
@@ -42,42 +80,24 @@ const FilterOptions = ({ defaultFilter, filter, filters, onFilter }) => {
   );
   */
 
-  const FilterOption = ({ title } = {}) => {
-    if (!title || !filter?.ID) return null;
-    const filterOption = findFilterOptionById(filter?.ID, filters);
-    const selected = filterOption?.title === title;
-    return (
-      <Chip
-        onPress={() => showFilter(title)}
-        label={title}
-        selected={selected}
-        endIcon={
-          <CaretIcon
-            onPress={() => showFilter(title)}
-            style={styles.optionCaret(selected)}
-          />
-        }
-      />
-    );
-  };
-
-  const ClearFilters = () => {
-    const isDefaultFilter = filter?.ID === defaultFilter?.ID;
-    return (
-      <ClearFiltersIcon
-        onPress={() => (isDefaultFilter ? null : onFilter(defaultFilter))}
-        style={styles.clearFiltersIcon(!isDefaultFilter)}
-      />
-    );
-  };
-
   if (!filters) return null;
   return (
     <View style={[globalStyles.rowContainer, styles.container]}>
-      <ClearFilters />
+      <ClearFilters
+        filter={filter}
+        defaultFilter={defaultFilter}
+        onFilter={onFilter}
+      />
       {Array.isArray(filters) &&
-        filters?.map((filter, idx) => (
-          <FilterOption key={filter?.title ?? idx} title={filter?.title} />
+        filters?.map((_filter, idx) => (
+          <FilterOption
+            key={_filter?.title ?? idx}
+            idx={idx}
+            filters={filters}
+            filter={_filter}
+            selectedFilter={filter}
+            onFilter={onFilter}
+          />
         ))}
     </View>
   );

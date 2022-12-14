@@ -1,7 +1,7 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { Pressable, View, useWindowDimensions } from "react-native";
 
-import { TabView, TabBar, SceneMap } from "react-native-tab-view";
+import { TabView, TabBar } from "react-native-tab-view";
 
 import { HeaderLeft, HeaderRight } from "components/Header/Header";
 import {
@@ -22,6 +22,8 @@ import TitleBar from "components/TitleBar";
 import Tile from "components/Post/Tile";
 import PostSkeleton from "components/Post/PostSkeleton";
 import FAB from "components/FAB";
+import ModalSheet, { getDefaultIndex } from "components/Sheet/ModalSheet";
+import UsersSheet from "components/Field/UserSelect/UsersSheet";
 
 import useAPI from "hooks/use-api";
 import useDetails from "hooks/use-details";
@@ -29,89 +31,71 @@ import useHaptics from "hooks/use-haptics";
 import useI18N from "hooks/use-i18n";
 import useMyUser from "hooks/use-my-user";
 import useSettings from "hooks/use-settings";
-import useStyles from "hooks/use-styles";
-import useBottomSheet from "hooks/use-bottom-sheet";
-import useToast from "hooks/use-toast";
 import useShares from "hooks/use-shares";
+import useStyles from "hooks/use-styles";
+import useToast from "hooks/use-toast";
 
-import { ScreenConstants, SubTypeConstants } from "constants";
+import { getSharesURL } from "helpers/urls";
+
+import { ScreenConstants, SubTypeConstants, TileNames } from "constants";
 
 import { localStyles } from "./DetailsScreen.styles";
-import SheetHeader from "components/Sheet/SheetHeader";
-import UsersSheet from "components/Field/UserSelect/UsersSheet";
+import { FieldNames } from "constants";
 
-const DetailsScreen = ({ navigation }) => {
+// expects fields in Object.entries(...) format
+const filterPostFields = ({ fields, post }) =>
+  fields?.filter(([key, _]) => key in post);
+
+// expects fields in Object.entries(...) format
+const filterTileFields = ({ fields, tileKey }) =>
+  fields?.filter(([_, field]) => field?.tile === tileKey);
+
+const DetailsScreen = ({ navigation, route }) => {
   const layout = useWindowDimensions();
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
   const { vibrate } = useHaptics();
   const {
+    cacheKey,
     data: post,
     error,
     isLoading,
     isValidating,
     mutate,
-    postId,
-    postType,
   } = useDetails();
 
-  const { data: shareData } = useShares(
-    post ? `dt-posts/v2/${post.post_type}/${post.ID}/shares` : null
-  );
+  const postType = post?.post_type;
+  const postId = post?.ID;
+  const postName = post?.name;
+  const isFavorite = post?.favorite === "1";
 
+  const { data: shareData } = useShares(
+    post ? getSharesURL({ postType, postId }) : null
+  );
   let sharedIDs = [];
   if (shareData && shareData.length !== 0) {
     sharedIDs = shareData.map((item) => parseInt(item.user_id));
   }
 
   const { settings } = useSettings();
+
   const { updatePost, createShare } = useAPI();
-  const { expand } = useBottomSheet();
   const { data: userData } = useMyUser();
   const toast = useToast();
 
-  const [index, setIndex] = useState(0);
-  const [scenes, setScenes] = useState(null);
-  const [routes, setRoutes] = useState([]);
+  // MODAL SHEET
+  const modalRef = useRef(null);
+  const modalName = "share_modal";
+  const defaultIndex = getDefaultIndex();
+  const modalTitle = i18n.t("global.share");
 
-  const renderScene = SceneMap(scenes);
-
-  /*
-   * NOTE: we need to stringify 'post' otherwise React will consider it
-   * a new object and re-render until max update update depth is exceeded
-   */
-  useEffect(() => {
-    if (!post || !settings) return;
-    if (settings?.tiles?.length > 0) {
-      let _scenes = {};
-      let _routes = [];
-      // TODO: constant
-      const sortKey = "tile_priority";
-      const sortedTiles = [...settings.tiles].sort((a, b) =>
-        true ? a[sortKey] - b[sortKey] : b[sortKey] - a[sortKey]
-      );
-      sortedTiles.forEach((tile, idx) => {
-        if (tile?.name && tile?.label) {
-          _scenes[tile.name] = () => (
-            <Tile
-              idx={idx}
-              post={post}
-              fields={tile?.fields}
-              save={updatePost}
-              mutate={mutate}
-            />
-          );
-          _routes.push({
-            key: tile.name,
-            title: tile.label,
-          });
-        }
-      });
-
-      setScenes(_scenes);
-      setRoutes(_routes);
+  const _onChange = async (selectedUser) => {
+    try {
+      await createShare(selectedUser.key);
+    } catch (err) {
+      toast(err, true);
     }
-  }, [JSON.stringify(post), settings?.tiles?.length]);
+  };
 
   useLayoutEffect(() => {
     const kebabItems = [
@@ -132,38 +116,18 @@ const DetailsScreen = ({ navigation }) => {
           kebabItems={kebabItems}
           renderStartIcons={() => (
             <>
-              <Pressable
-                onPress={() => {
-                  expand({
-                    defaultIndex: 3,
-                    renderHeader: () => (
-                      <SheetHeader dismissable title="Share Post" />
-                    ),
-                    renderContent: () => (
-                      <UsersSheet
-                        id={parseInt(userData.ID)}
-                        onChange={_onChange}
-                        sharedIDs={sharedIDs}
-                      />
-                    ),
-                  });
-                }}
-              >
+              <Pressable onPress={() => modalRef?.current?.present()}>
                 <ShareIcon />
               </Pressable>
               <Pressable
                 onPress={() => {
                   vibrate();
-                  updatePost({
-                    fields: { favorite: !post?.favorite },
-                    id: Number(post?.ID),
-                    type: post?.post_type,
-                    mutate,
-                  });
+                  const data = { favorite: !isFavorite };
+                  updatePost({ data });
                 }}
                 style={[globalStyles.headerIcon, styles.headerIcon]}
               >
-                {post?.favorite ? (
+                {isFavorite ? (
                   <StarIcon style={globalStyles.icon} />
                 ) : (
                   <StarOutlineIcon style={globalStyles.icon} />
@@ -173,39 +137,109 @@ const DetailsScreen = ({ navigation }) => {
                 <CommentActivityIcon
                   onPress={() => {
                     navigation.push(ScreenConstants.COMMENTS_ACTIVITY, {
-                      id: post?.ID,
-                      name: post?.name,
-                      type: post?.post_type,
+                      post: { ...post },
+                      id: postId,
+                      name: postName,
+                      type: postType,
                       subtype: SubTypeConstants.COMMENTS_ACTIVITY,
                     });
                   }}
                 />
               </View>
+              <ModalSheet
+                ref={modalRef}
+                name={modalName}
+                title={modalTitle}
+                defaultIndex={defaultIndex}
+              >
+                <UsersSheet
+                  id={parseInt(userData.ID)}
+                  onChange={_onChange}
+                  sharedIDs={sharedIDs}
+                />
+              </ModalSheet>
             </>
           )}
           props
         />
       ),
     });
-    //}, [navigation, route?.params?.name]);
-    //}, []);
-  });
+  }, [route?.params?.name]);
 
-  const _onChange = async (selectedUser) => {
-    try {
-      await createShare(selectedUser.key);
-    } catch (err) {
-      toast(err, true);
+  const [index, setIndex] = useState(0);
+
+  if (!settings || isLoading || !postType) return <PostSkeleton />;
+
+  const fields = settings?.post_types?.[postType]?.fields;
+
+  // TODO: open a bug report with API?
+  /*
+   * NOTE: the API does not specify a 'tile' property for some fields, so we
+   * add the property here in order to have it be displayed under the expected
+   * tile. (eg, "members", "reason_paused")
+   *
+   * (not doing the same for "leaders" because it is not currently displayed)
+   */
+  if (fields?.[FieldNames.MEMBERS] && !fields[FieldNames.MEMBERS]?.tile) {
+    fields[FieldNames.MEMBERS]["tile"] = TileNames.RELATIONSHIPS;
+  }
+  if (fields?.[FieldNames.OVERALL_STATUS]) {
+    const overallStatus = post?.[FieldNames.OVERALL_STATUS]?.key;
+    if (
+      overallStatus === "unassignable" ||
+      overallStatus === "paused" ||
+      overallStatus === "closed"
+    ) {
+      const reasonSettings = fields?.[`reason_${overallStatus}`];
+      if (reasonSettings) {
+        // this will mutate the settings/fields object, which is what we *want*
+        reasonSettings["tile"] = TileNames.STATUS;
+      }
     }
+  }
+
+  // filter fields where tile property does not exist
+  const fieldEntries = Object.entries(fields || {});
+
+  const tiles = settings?.post_types?.[postType]?.tiles;
+  const tileEntries = Object.entries(tiles || {});
+
+  // sort tiles by tile_priority
+  const sortedTileEntries = [...tileEntries].sort(
+    (a, b) => a[1]?.tile_priority - b[1]?.tile_priority
+  );
+
+  // tab view component routes
+  const routes = sortedTileEntries.map(([key, val]) => ({
+    key,
+    title: val?.label ?? "",
+  }));
+
+  // tab view component render
+  const renderScene = ({ route }) => {
+    const tileFields = filterTileFields({
+      fields: fieldEntries,
+      tileKey: route.key,
+    });
+    const idx = routes.findIndex((_route) => _route.key === route);
+    return (
+      <Tile
+        idx={idx}
+        post={post}
+        fields={tileFields}
+        save={updatePost}
+        mutate={mutate}
+        cacheKey={cacheKey}
+      />
+    );
   };
 
-  if (!scenes || !post || !settings || isLoading) return <PostSkeleton />;
   // TODO: switch to toggle Update Required
-  // updatePost({ fields: { "requires_update": true|false }});
+  // updatePost({ data: { "requires_update": true|false }});
   return (
     <>
       <OfflineBar />
-      <TitleBar center title={post?.title} style={styles.titleBar} />
+      <TitleBar center title={postName} style={styles.titleBar} />
       <TabView
         lazy
         renderLazyPlaceholder={() => <PostSkeleton />}
@@ -229,20 +263,6 @@ const DetailsScreen = ({ navigation }) => {
           />
         )}
         style={globalStyles.surface}
-      />
-      <FAB />
-    </>
-  );
-  return (
-    <>
-      <OfflineBar />
-      <TitleBar center title={post?.title} style={styles.titleBar} />
-      <TabScrollView
-        index={index}
-        onIndexChange={onIndexChange}
-        scenes={scenes}
-        style={globalStyles.screenContainer}
-        contentContainerStyle={globalStyles.screenGutter}
       />
       <FAB />
     </>

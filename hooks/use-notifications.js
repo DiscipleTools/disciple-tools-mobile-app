@@ -4,63 +4,31 @@ import useAPI from "hooks/use-api";
 import useMyUser from "hooks/use-my-user";
 import useRequest from "hooks/use-request";
 
+import { NotificationsRequest } from "constants/urls";
 import { searchObjList } from "utils";
 
 const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
-  const { updatePost } = useAPI();
+  const {
+    markAllNotificationsViewed,
+    markNotificationViewed,
+    markNotificationUnread,
+  } = useAPI();
   const { data: userData } = useMyUser();
-  const uid = userData?.ID;
+  const userId = userData?.ID;
 
-  const markViewed = useCallback(
-    ({ id } = {}) => {
-      // if !id, then mark all as viewed
-      // NOTE: *not* passing `mutate` bc we want responsive updates, but pull refresh will mutate
-      if (!id && uid) {
-        updatePost({
-          urlPath: `/dt/v1/notifications/mark_all_viewed/${uid}`,
-        });
-        return;
-      }
-      if (id)
-        updatePost({
-          urlPath: `/dt/v1/notifications/mark_viewed/${id}`,
-        });
-    },
-    [uid]
-  );
+  const markAllViewed = useCallback(() => {
+    if (!userId) return;
+    markAllNotificationsViewed({ userId });
+    return;
+  }, [userId]);
 
-  const markUnread = useCallback(({ id } = {}) => {
-    // NOTE: *not* passing `mutate` bc we want responsive updates, but pull refresh will mutate
-    if (id)
-      updatePost({
-        urlPath: `/dt/v1/notifications/mark_unread/${id}`,
-      });
-  }, []);
-
-  // TODO: constant
-  if (!limit) limit = 1000;
-
-  const url = "dt/v1/notifications/get_notifications";
-  const request = {
-    url,
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: {
-      all: true,
-      page: 0,
-      limit,
-      mentions: false,
-    },
-  };
   const {
     data: notifications,
     error,
     isLoading,
     isValidating,
     mutate,
-  } = useRequest(request);
+  } = useRequest({ request: NotificationsRequest });
   if (error || isLoading || !notifications)
     return {
       data: null,
@@ -71,13 +39,16 @@ const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
     };
 
   let filtered = notifications.filter((item) => !exclude?.includes(item?.id));
+  // TODO: use helpers/index->filterPosts
   // NOTE: filter by key/value per "useFilters" query value
   if (filter?.query?.key && filter?.query?.value)
     filtered = filtered.filter(
       (item) => item?.[filter.query.key] === filter.query.value
     );
   //if (search && isConnected == false) filtered = searchObjList(filtered, search);
-  if (search) filtered = searchObjList(filtered, search);
+  if (search) {
+    filtered = searchObjList(filtered, search);
+  }
   const filteredRead = filtered?.filter((item) => item?.is_new === "0");
   const filteredNew = filtered?.filter((item) => item?.is_new === "1");
   // place new items at the top of list
@@ -93,8 +64,11 @@ const useNotifications = ({ search, filter, exclude, offset, limit } = {}) => {
     isValidating,
     mutate,
     hasNotifications,
-    markViewed,
-    markUnread,
+    //markViewed,
+    //markUnread,
+    markAllViewed,
+    markNotificationViewed,
+    markNotificationUnread,
   };
 };
 export default useNotifications;

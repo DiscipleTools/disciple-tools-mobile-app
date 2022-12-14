@@ -7,7 +7,6 @@ import { ScreenConstants } from "constants";
 import ParsedText from "react-native-parsed-text";
 import useI18N from "hooks/use-i18n";
 
-import PrefetchCacheRecord from "components/PrefetchCacheRecord";
 import { ChevronDownIcon, ChevronUpIcon } from "components/Icon";
 import { localStyles } from "./RenderActivityLog.styles";
 import useStyles from "hooks/use-styles";
@@ -38,13 +37,13 @@ const RenderActivityLog = ({
   };
 
   const timestamptoDate = (match, timestamp) => {
-    match = match.replace('{','');
-    match = match.replace('}','');
-    if ( isNaN(match*1000) ){
+    match = match.replace("{", "");
+    match = match.replace("}", "");
+    if (isNaN(match * 1000)) {
       return false;
     }
-    return moment(match*1000).format('MMM D, YYYY');
-  }
+    return moment(match * 1000).format("MMM D, YYYY");
+  };
 
   return (
     <>
@@ -70,7 +69,8 @@ const RenderActivityLog = ({
           }}
         >
           <Text style={styles.activityLink}>
-            {logs?.[0] ?? " "}</Text>
+            {logs?.[1][0]?.object_name ?? " "}
+          </Text>
         </Pressable>
         <Pressable
           onPress={() => {
@@ -86,6 +86,37 @@ const RenderActivityLog = ({
           <>
             {/* Show all the entries. */}
             <Text key={`${log.object_id}-${index}`} style={styles.activityText}>
+              <ParsedText
+                //selectable
+                style={styles.commentText(true)}
+                parse={[
+                  {
+                    pattern: MENTION_PATTERN,
+                    style: styles.parseText,
+                    renderText: renderMention,
+                  },
+                  {
+                    pattern: MENTION_PATTERN_2,
+                    style: styles.parseText,
+                    renderText: renderMention,
+                  },
+                  {
+                    pattern: BAPTISM_DATE_PATTERN,
+                    style: styles.activityText,
+                    renderText: timestamptoDate,
+                  },
+                ]}
+              >
+                {log?.object_note}
+              </ParsedText>
+              {/* {log?.object_note} */}
+            </Text>
+          </>
+        ))
+      ) : (
+        <>
+          {/* Show only one entry. */}
+          <Text style={styles.activityText}>
             <ParsedText
               //selectable
               style={styles.commentText(true)}
@@ -107,55 +138,9 @@ const RenderActivityLog = ({
                 },
               ]}
             >
-              {log?.object_note}
-            </ParsedText>
-              {/* {log?.object_note} */}
-            </Text>
-            {
-              // Prefetch any posts in the ActivityLog so that the records
-              // are available if the user goes OFFLINE.
-            }
-            {log?.object_id && log?.post_type && (
-              <PrefetchCacheRecord id={log.object_id} type={log.post_type} />
-            )}
-          </>
-        ))
-      ) : (
-        <>
-          {/* Show only one entry. */}
-          <Text style={styles.activityText}><ParsedText
-              //selectable
-              style={styles.commentText(true)}
-              parse={[
-                {
-                  pattern: MENTION_PATTERN,
-                  style: styles.parseText,
-                  renderText: renderMention,
-                },
-                {
-                  pattern: MENTION_PATTERN_2,
-                  style: styles.parseText,
-                  renderText: renderMention,
-                },
-                {
-                  pattern: BAPTISM_DATE_PATTERN,
-                  style: styles.activityText,
-                  renderText: timestamptoDate,
-                },
-              ]}
-            >
               {logs?.[1][0]?.object_note}
-            </ParsedText></Text>
-          {
-            // Prefetch any posts in the ActivityLog so that the records
-            // are available if the user goes OFFLINE.
-          }
-          {logs?.[1][0]?.object_id && logs?.[1][0]?.post_type && (
-            <PrefetchCacheRecord
-              id={logs[1][0].object_id}
-              type={logs[1][0].post_type}
-            />
-          )}
+            </ParsedText>
+          </Text>
         </>
       )}
     </>

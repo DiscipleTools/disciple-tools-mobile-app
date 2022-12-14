@@ -22,31 +22,13 @@ The React Native code base for the Disciple Tools mobile app.
 - [Disciple Tools Mobile App Plugin](https://github.com/DiscipleTools/disciple-tools-mobile-app-plugin)
 - OAuth2 plugin (coming soon)
 
+## Offline Usage
+
+[Offline Usage Guide](https://github.com/DiscipleTools/disciple-tools-mobile-app/blob/development/OFFLINE.md)
+
 ## Basic Design Idea
 
 ![Basic Design Idea](https://github.com/DiscipleTools/disciple-tools-mobile-app-plugin/raw/master/mobile-app-design.png)
-
-## Design Decisions
-
-General:
-
-- Offline-First (via dispatch to Redux onAppBackground & persistent FIFO request queue for API writes)
-- Aggressive data fetching, preferring to get all vs. pagination (so that data is available offline)
-- CNonce: PIN (3 sec)
-- (Coming soon) Accessibility (double as Test IDs?)
-
-UI/Framework-specific:
-
-- Functional Components vs. Class
-- Modular component design to mirror D.T Post Types and Fields, and dynamically respond to API changes, and support plugins
-- Custom Hooks - map well to REST endpoints 
-- SWR (stale-while-revalidate), also meets requirement for background fetching, onFocus fetching (prevent stale data on refocus of app)
-- Redux AND Context - Redux handles any persisted state, and Context is in-memory, runtime app state
-- Prefer Skeletons to Spinners, except for Button Actions
-- Minimize 3rd party dependencies where possible (eg, implement own Login form validation vs. something like Formik). Purpose: long-term maintenance (since this is an OSS project with volunteers), fewer library preference debates, less app bloat
-- SecureStore - use as much as practical
-- Component Library: N/A (removed Native Base)
-- Abstract service libraries (ie, Expo, SWR, Axios) via Hooks, in case we want to swap for something else later
 
 ## Installation (Development)
 
@@ -56,6 +38,7 @@ UI/Framework-specific:
   - [Expo Client (iOS)](https://apps.apple.com/us/app/expo-go/id982107779)
   - [Expo Client (Android)](https://play.google.com/store/apps/details?id=host.exp.exponent&gl=US)
 - Run the following commands:
+
 ```
 npm install
 npm start
@@ -64,10 +47,12 @@ expo start
 ```
 
 - Run in Simulator:
+
   - Press a │ open Android (Studio): https://docs.expo.dev/workflow/android-studio-emulator/
   - Press i | open iOS (XCode): https://docs.expo.dev/workflow/ios-simulator/
 
 - Run on device (phone) via Expo:
+
   - Scan the QR code above with Expo Go (Android) or the Camera app (iOS), or
   - or, manually open Expo app on phone and select appropriate option from under "Development servers"
   - (NOTE: Your phone must be on the same local network as the development computer)
@@ -110,6 +95,28 @@ npm run test
 [playstore-image]: https://github.com/DiscipleTools/disciple-tools-mobile-app/blob/development/assets/badges/playstore.png
 [appstore-url]: https://apps.apple.com/us/app/d-t/id1483836867
 [playstore-url]: https://play.google.com/store/apps/details?id=tools.disciple.app
+
+## Design Decisions
+
+General:
+
+- Offline-First (via dispatch to Redux onAppBackground & persistent FIFO request queue for API writes)
+- Aggressive data fetching, preferring to get all vs. pagination (so that data is available offline)
+- CNonce: PIN (3 sec)
+- (Coming soon) Accessibility (double as Test IDs?)
+
+UI/Framework-specific:
+
+- Functional Components vs. Class
+- Modular component design to mirror D.T Post Types and Fields, and dynamically respond to API changes, and support plugins
+- Custom Hooks - map well to REST endpoints
+- SWR (stale-while-revalidate), also meets requirement for background fetching, onFocus fetching (prevent stale data on refocus of app)
+- Redux AND Context - Redux handles any persisted state, and Context is in-memory, runtime app state
+- Prefer Skeletons to Spinners, except for Button Actions
+- Minimize 3rd party dependencies where possible (eg, implement own Login form validation vs. something like Formik). Purpose: long-term maintenance (since this is an OSS project with volunteers), fewer library preference debates, less app bloat
+- SecureStore - use as much as practical
+- Component Library: N/A (removed Native Base)
+- Abstract service libraries (ie, Expo, SWR, Axios) via Hooks, in case we want to swap for something else later
 
 ## Contributing
 

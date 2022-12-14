@@ -1,5 +1,5 @@
 import React, { useLayoutEffect } from "react";
-import { SafeAreaView } from "react-native";
+import { View } from "react-native";
 
 import { ChevronIcon, PostIcon } from "components/Icon";
 import { HeaderRight } from "components/Header/Header";
@@ -58,13 +58,13 @@ const MoreScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={globalStyles.screenContainer}>
+    <View style={globalStyles.screenContainer}>
       <OfflineBar />
       {!customPostTypes?.length > 0 && <Placeholder />}
       {customPostTypes?.map((postType) => (
         <PostButton key={postType} type={postType} />
       ))}
-    </SafeAreaView>
+    </View>
   );
 };
 export default MoreScreen;

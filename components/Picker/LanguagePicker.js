@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 
-import SheetHeader from "components/Sheet/SheetHeader";
+import ModalSheet, { getDefaultIndex } from "components/Sheet/ModalSheet";
+import LanguageSheet from "components/Sheet/LanguageSheet";
 import Picker from "components/Picker/Picker";
 
 import { TranslateIcon } from "components/Icon";
-import LanguageSheet from "components/Sheet/LanguageSheet";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
 import useI18N from "hooks/use-i18n";
 import useSettings from "hooks/use-settings";
 
@@ -19,23 +18,26 @@ const LanguagePicker = () => {
   if (!availableTranslations) {
     availableTranslations = Object.keys(i18n.translations);
   }
-  const { expand } = useBottomSheet();
-  const showLanguageSheet = () => {
-    expand({
-      renderHeader: () => (
-        <SheetHeader expandable dismissable title={i18n.t("global.language")} />
-      ),
-      renderContent: () => (
-        <LanguageSheet availableTranslations={availableTranslations} />
-      ),
-    });
-  };
+  // MODAL SHEET
+  const modalRef = useRef(null);
+  const modalName = `language_modal`;
+  const defaultIndex = getDefaultIndex();
   return (
-    <Picker
-      icon={<TranslateIcon />}
-      label={selectedEndonym}
-      onOpen={() => showLanguageSheet()}
-    />
+    <>
+      <Picker
+        icon={<TranslateIcon />}
+        label={selectedEndonym}
+        onOpen={() => modalRef.current?.present()}
+      />
+      <ModalSheet
+        ref={modalRef}
+        name={modalName}
+        title={i18n.t("global.language")}
+        defaultIndex={defaultIndex}
+      >
+        <LanguageSheet availableTranslations={availableTranslations} />
+      </ModalSheet>
+    </>
   );
 };
 export default LanguagePicker;

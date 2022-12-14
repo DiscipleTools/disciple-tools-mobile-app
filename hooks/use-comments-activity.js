@@ -5,6 +5,7 @@ import useFilter from "hooks/use-filter";
 const useCommentsActivity = ({ search, filter, exclude }) => {
   const { filterByKey, sortByKey } = useFilter();
   let {
+    cacheKey,
     data: comments,
     error,
     isLoading,
@@ -45,6 +46,7 @@ const useCommentsActivity = ({ search, filter, exclude }) => {
     merged = merged.filter((item) => item.hasOwnProperty(filter.query.key));
   merged.sort((a, b) => b[sortKey] - a[sortKey]);
   return {
+    cacheKey,
     data: merged,
     error: null,
     isLoading: null,

@@ -21,9 +21,7 @@ const TitleBar = ({ border, center, startIcon, title, endIcon, style }) => {
       ]}
     >
       {startIcon}
-      <Text style={styles.title(center)}>
-        {truncate(title, { maxLength: 35 })}
-      </Text>
+      <Text style={styles.title(center)}>{truncate(title)}</Text>
       <View
         style={{
           marginStart: "auto",

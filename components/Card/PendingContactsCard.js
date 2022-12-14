@@ -10,14 +10,11 @@ import Placeholder from "components/Placeholder";
 import { DeclineIcon, AcceptIcon } from "components/Icon";
 
 import useAPI from "hooks/use-api";
-import useFilters from "hooks/use-filters";
 import useI18N from "hooks/use-i18n";
 import useList from "hooks/use-list";
 import useStyles from "hooks/use-styles";
 
 import { TabScreenConstants, TypeConstants, ScreenConstants } from "constants";
-
-import { findFilterById } from "utils";
 
 import { localStyles } from "./PendingContactsCard.styles";
 
@@ -31,18 +28,21 @@ const PendingContactsCard = ({ refreshing, onRefresh }) => {
 
   const { updatePost } = useAPI();
 
-  const { data: contactFilters, mutate: mutateContactFilters } = useFilters({
+  // TODO: constant
+  const filter = {
+    ID: "all_assigned",
+    name: "Waiting to be accepted", // TODO: translate?
+    query: {
+      overall_status: ["assigned"],
+      type: ["access"],
+      sort: "-last_modified",
+    },
+  };
+  const title = filter ? filter?.name : "";
+  const { data: contacts, mutate } = useList({
+    filter,
     type: TypeConstants.CONTACT,
   });
-  const filter = findFilterById("my_assigned", contactFilters);
-  const title = filter ? filter?.name : "";
-  const {
-    data: contacts,
-    error,
-    isLoading,
-    isValidating,
-    mutate,
-  } = useList({ filter, type: TypeConstants.CONTACT });
 
   const [_contacts, setContacts] = useState(contacts);
 
@@ -56,7 +56,7 @@ const PendingContactsCard = ({ refreshing, onRefresh }) => {
     setContacts(_contacts?.filter((_contact) => _contact.ID !== contact.ID));
     updatePost({
       urlPathPostfix: "/accept",
-      fields: { accept },
+      data: { accept },
       id: contact?.ID,
       type: contact?.post_type,
       mutate: onRefresh,
@@ -73,12 +73,12 @@ const PendingContactsCard = ({ refreshing, onRefresh }) => {
           navigation.jumpTo(TabScreenConstants.CONTACTS, {
             screen: ScreenConstants.DETAILS,
             id: contact?.ID,
-            name: contact?.title,
+            name: contact?.post_title,
             type: TypeConstants.CONTACT,
           });
         }}
       >
-        <Text style={styles.title}>{contact?.title}</Text>
+        <Text style={styles.title}>{contact?.post_title}</Text>
       </Pressable>
       <View style={[globalStyles.rowContainer, styles.buttonRowContainer]}>
         <Pressable

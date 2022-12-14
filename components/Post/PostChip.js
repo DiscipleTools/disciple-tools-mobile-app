@@ -54,7 +54,7 @@ const PostChip = ({ id, icon, title, type, color, onRemove, onGoBack }) => {
             <ClearIcon
               onPress={() => {
                 vibrate();
-                onRemove(id);
+                onRemove({ id });
               }}
               style={styles.clearIcon}
             />

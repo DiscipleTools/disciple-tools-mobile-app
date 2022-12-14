@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
@@ -12,27 +12,31 @@ import {
   StarOutlineIcon,
 } from "components/Icon";
 import PostItemSkeleton from "./PostItemSkeleton";
+import ModalSheet, { getDefaultIndex } from "components/Sheet/ModalSheet";
 import SelectSheet from "components/Sheet/SelectSheet";
-import SheetHeader from "components/Sheet/SheetHeader";
 import StatusBorder from "components/StatusBorder";
 
 import useAPI from "hooks/use-api";
-import useBottomSheet from "hooks/use-bottom-sheet";
 import useHaptics from "hooks/use-haptics";
 import useI18N from "hooks/use-i18n";
 import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
-import useType from "hooks/use-type";
 
-import { ScreenConstants, SubTypeConstants } from "constants";
+import { getStatusKey } from "helpers";
+
+import { ScreenConstants, SubTypeConstants, TypeConstants } from "constants";
 
 import { parseDateSafe, titleize, truncate } from "utils";
 
 import { localStyles } from "./PostItem.styles";
-import { mutate } from "swr";
 
-const FavoriteStar = ({ ID, post_type, favorite, mutate }) => {
-  const { styles, globalStyles } = useStyles(localStyles);
+const getProgressKey = ({ postType }) => {
+  if (postType === TypeConstants.CONTACT) return "seeker_path";
+  if (postType === TypeConstants.GROUP) return "group_type";
+  return "progress";
+};
+
+const FavoriteStar = ({ ID, post_type, favorite, globalStyles }) => {
   const { vibrate } = useHaptics();
   const { updatePost } = useAPI();
   const [isFavorite, setIsFavorite] = useState(favorite);
@@ -41,10 +45,9 @@ const FavoriteStar = ({ ID, post_type, favorite, mutate }) => {
       onPress={() => {
         vibrate();
         updatePost({
-          fields: { favorite: !favorite },
           id: Number(ID),
           type: post_type,
-          mutate,
+          data: { favorite: !favorite },
         });
         setIsFavorite(!isFavorite);
       }}
@@ -57,8 +60,7 @@ const FavoriteStar = ({ ID, post_type, favorite, mutate }) => {
   );
 };
 
-const PostTitle = ({ title, name }) => {
-  const { styles, globalStyles } = useStyles(localStyles);
+const PostTitle = ({ title, name, styles, globalStyles }) => {
   if (!title && !name) return null;
   return (
     <Text style={[globalStyles.text, styles.title]}>
@@ -67,23 +69,15 @@ const PostTitle = ({ title, name }) => {
   );
 };
 
-const PostSubtitle1 = ({ item }) => {
-  const { styles, globalStyles } = useStyles(localStyles);
-  const { isGroup, postType } = useType();
-  const { numberFormat } = useI18N();
-  const { settings } = useSettings({ type: postType });
-  if (!settings) return null;
-  // TODO: constants?
-  let subtitle1Key = "overall_status";
-  if (isGroup) subtitle1Key = "group_status";
-  let subtitle2Key = "seeker_path";
-  if (isGroup) subtitle2Key = "group_type";
-  //
+const PostSubtitle1 = ({ fields, item, numberFormat, globalStyles }) => {
+  if (!fields) return null;
+  const isGroup = item?.post_type === TypeConstants.GROUP;
+  const statusKey = getStatusKey({ postType: item?.post_type });
+  const progressKey = getProgressKey({ postType: item?.post_type });
   const subtitle1 =
-    settings?.fields?.[subtitle1Key]?.values[item?.[subtitle1Key]]?.label;
+    fields?.[statusKey]?.default?.[item?.[statusKey]?.key]?.label;
   const subtitle2 =
-    settings?.fields?.[subtitle2Key]?.values[item?.[subtitle2Key]]?.label;
-  //
+    fields?.[progressKey]?.default?.[item?.[progressKey]?.key]?.label;
   let subtitle = "";
   if (subtitle1) subtitle += subtitle1;
   if (subtitle2) {
@@ -99,28 +93,33 @@ const PostSubtitle1 = ({ item }) => {
   );
 };
 
-const InfoIcons = ({ requires_update, isGroupLeader }) => {
-  const { styles, globalStyles } = useStyles(localStyles);
-  return (
-    <>
-      {requires_update && (
-        <View style={styles.infoIconContainer}>
-          <UpdateRequiredIcon style={[styles.alertIcon, styles.infoIcon]} />
-        </View>
-      )}
-      {isGroupLeader && (
-        <View style={styles.infoIconContainer}>
-          <LeaderIcon style={styles.infoIcon} />
-        </View>
-      )}
-    </>
-  );
-};
+const InfoIcons = ({ requires_update, isGroupLeader, styles }) => (
+  <>
+    {requires_update && (
+      <View style={styles.infoIconContainer}>
+        <UpdateRequiredIcon style={[styles.alertIcon, styles.infoIcon]} />
+      </View>
+    )}
+    {isGroupLeader && (
+      <View style={styles.infoIconContainer}>
+        <LeaderIcon style={styles.infoIcon} />
+      </View>
+    )}
+  </>
+);
 
-const PostSubtitle2 = ({ last_modified, requires_update, isGroupLeader }) => {
-  const { moment } = useI18N();
-  const { styles, globalStyles } = useStyles(localStyles);
-  const lastModDate = moment(parseDateSafe(last_modified)).format("L");
+const PostSubtitle2 = ({
+  last_modified,
+  requires_update,
+  isGroupLeader,
+  moment,
+  styles,
+  globalStyles,
+}) => {
+  if (!last_modified?.timestamp) return null;
+  const lastModDate = moment(parseDateSafe(last_modified.timestamp)).format(
+    "L"
+  );
   if (!lastModDate) return null;
   return (
     <View style={globalStyles.rowContainer}>
@@ -132,6 +131,7 @@ const PostSubtitle2 = ({ last_modified, requires_update, isGroupLeader }) => {
       <InfoIcons
         requires_update={requires_update}
         isGroupLeader={isGroupLeader}
+        styles={styles}
       />
     </View>
   );
@@ -139,24 +139,10 @@ const PostSubtitle2 = ({ last_modified, requires_update, isGroupLeader }) => {
 
 const PostItem = ({ item, loading }) => {
   const navigation = useNavigation();
-  const { expand } = useBottomSheet();
-  const { i18n } = useI18N();
+  const { i18n, moment, numberFormat } = useI18N();
   const { styles, globalStyles } = useStyles(localStyles);
 
-  const generateOptions = () => {
-    const sections = [
-      {
-        data: [
-          {
-            key: "commentsActivity",
-            label: i18n.t("global.commentsActivity"),
-            icon: <CommentActivityIcon />,
-          },
-        ],
-      },
-    ];
-    return sections;
-  };
+  const { settings } = useSettings();
 
   const onChange = (value) => {
     const key = value?.key;
@@ -171,71 +157,94 @@ const PostItem = ({ item, loading }) => {
     return null;
   };
 
-  const showSheet = (item) => {
-    const title = item?.name;
-    const sections = generateOptions();
-    expand({
-      snapPoints: ["33%", "95%"],
-      dismissable: true,
-      defaultIndex: 0,
-      renderHeader: () => <SheetHeader expandable dismissable title={title} />,
-      renderContent: () => (
-        <SelectSheet sections={sections} onChange={onChange} />
-      ),
-    });
-  };
-
   const onLongPress = () => null;
 
-  const SheetOptions = () => (
-    <Pressable
-      onPress={() => showSheet(item)}
-      style={[styles.icon, styles.actionIcon]}
-    >
-      <MeatballIcon />
-    </Pressable>
-  );
-
   if (!item || loading) return <PostItemSkeleton />;
+
+  const fields = settings?.post_types?.[item?.post_type]?.fields;
+  const title = item?.name;
+  const sections = [
+    {
+      data: [
+        {
+          key: "commentsActivity",
+          label: i18n.t("global.commentsActivity"),
+          icon: <CommentActivityIcon />,
+        },
+      ],
+    },
+  ];
+
+  // MODAL SHEET
+  const modalRef = useRef(null);
+  const modalName = `${title}_modal`;
+  const defaultIndex = getDefaultIndex({ items: sections?.[0]?.data });
+
   return (
-    <View style={[globalStyles.rowContainer, styles.container]}>
-      <Pressable
-        key={item?.ID}
-        onPress={() => {
-          navigation.push(ScreenConstants.DETAILS, {
-            id: item?.ID,
-            name: item?.title,
-            type: item?.post_type,
-          });
-        }}
-        onLongPress={() => onLongPress()}
-        style={[globalStyles.rowContainer, styles.subcontainer]}
-      >
-        <StatusBorder
-          overall_status={item?.overall_status}
-          group_status={item?.group_status}
-          status={item?.status}
-        />
-        <View style={[globalStyles.rowContainer, styles.subsubcontainer]}>
-          <FavoriteStar
-            ID={item?.ID}
-            post_type={item?.post_type}
-            favorite={item?.favorite}
-            mutate={mutate}
-          />
-          <View style={[globalStyles.columnContainer, styles.detailsContainer]}>
-            <PostTitle title={item?.title} name={item?.name} />
-            <PostSubtitle1 item={item} />
-            <PostSubtitle2
-              last_modified={item?.last_modified}
-              requires_update={item?.requires_update}
-              isGroupLeader={item?.group_leader?.values?.length > 0}
+    <>
+      <View style={[globalStyles.rowContainer, styles.container]}>
+        <Pressable
+          key={item?.ID}
+          onPress={() => {
+            navigation.push(ScreenConstants.DETAILS, {
+              id: item?.ID,
+              name: item?.post_title,
+              type: item?.post_type,
+            });
+          }}
+          onLongPress={() => onLongPress()}
+          style={[globalStyles.rowContainer, styles.subcontainer]}
+        >
+          <StatusBorder fields={fields} item={item} />
+          <View style={[globalStyles.rowContainer, styles.subsubcontainer]}>
+            <FavoriteStar
+              ID={item?.ID}
+              post_type={item?.post_type}
+              favorite={item?.favorite}
+              globalStyles={globalStyles}
             />
+            <View
+              style={[globalStyles.columnContainer, styles.detailsContainer]}
+            >
+              <PostTitle
+                title={item?.post_title}
+                name={item?.name}
+                styles={styles}
+                globalStyles={globalStyles}
+              />
+              <PostSubtitle1
+                fields={fields}
+                item={item}
+                numberFormat={numberFormat}
+                globalStyles={globalStyles}
+              />
+              <PostSubtitle2
+                last_modified={item?.last_modified}
+                requires_update={item?.requires_update}
+                isGroupLeader={item?.group_leader?.values?.length > 0}
+                moment={moment}
+                styles={styles}
+                globalStyles={globalStyles}
+              />
+            </View>
           </View>
-        </View>
-      </Pressable>
-      <SheetOptions />
-    </View>
+        </Pressable>
+        <Pressable
+          onPress={() => modalRef?.current?.present()}
+          style={[styles.icon, styles.actionIcon]}
+        >
+          <MeatballIcon />
+        </Pressable>
+      </View>
+      <ModalSheet
+        ref={modalRef}
+        name={modalName}
+        title={title}
+        defaultIndex={defaultIndex}
+      >
+        <SelectSheet sections={sections} onChange={onChange} />
+      </ModalSheet>
+    </>
   );
 };
 export default PostItem;

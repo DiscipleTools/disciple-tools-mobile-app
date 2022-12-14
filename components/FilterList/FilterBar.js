@@ -15,6 +15,7 @@ import { findFilterById } from "utils";
 import { SortConstants } from "constants";
 
 import { localStyles } from "./FilterBar.styles";
+import FilterList from "./FilterList";
 
 const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
   const { styles, globalStyles } = useStyles(localStyles);
@@ -78,6 +79,7 @@ const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
   };
 
   if (!filter) return null;
+  const filterName = filter?.name !== "" ? filter.name : null;
   return (
     <View style={styles.filtersScrollContainer}>
       <ScrollView
@@ -98,11 +100,9 @@ const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
         <View style={[globalStyles.rowContainer, styles.displayContainer]}>
           <Count />
           <View>
-            {filter?.name && (
-              <Text style={styles.filterSelections}>
-                {i18n.t("global.filter")}: {filter.name}
-              </Text>
-            )}
+            <Text style={styles.filterSelections}>
+              {i18n.t("global.filter")}: {filterName}
+            </Text>
             {filter?.query?.sort && (
               <Text style={styles.filterSelections}>
                 {" "}

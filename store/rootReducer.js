@@ -5,6 +5,7 @@ import i18nReducer from "./reducers/i18n.reducer";
 import networkReducer from "./reducers/network.reducer";
 import requestReducer from "./reducers/request.reducer";
 import userReducer from "./reducers/user.reducer";
+import cacheReducer from "./reducers/cache.reducer";
 
 const rootReducer = combineReducers({
   authReducer,
@@ -12,5 +13,6 @@ const rootReducer = combineReducers({
   networkReducer,
   requestReducer,
   userReducer,
+  cacheReducer,
 });
 export default rootReducer;

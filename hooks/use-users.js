@@ -1,27 +1,22 @@
 import useRequest from "hooks/use-request";
 
+import { UsersURL } from "constants/urls";
+
 import { searchObjList } from "utils";
 
-/*
-see: https://developers.disciple.tools/theme-core/api-other/users#list-users
-[{
-  "name": String,
-  "ID": Number,
-  "avatar": String,
-  "contact_id": Number,
-},{..}]
-*/
+// ref: https://developers.disciple.tools/theme-core/api-other/users#list-users
 const useUsers = ({ search, filter, exclude } = {}) => {
-  let url = "dt/v1/users/get_users?get_all=1";
-  // NOTE: see local search implementation below
-  //if (search) url += `&s=${search}`;
+  const request = {
+    url: UsersURL,
+    method: "GET",
+  };
   const {
     data: users,
     error,
     isLoading,
     isValidating,
     mutate,
-  } = useRequest({ url });
+  } = useRequest({ request });
   if (error || isLoading || !users)
     return {
       data: null,

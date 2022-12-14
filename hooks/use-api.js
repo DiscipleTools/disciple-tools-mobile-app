@@ -4,11 +4,13 @@ import useCache from "hooks/use-cache";
 import useRequestQueue from "hooks/use-request-queue";
 import useType from "hooks/use-type";
 
-import { HTTP } from "constants";
+import { getCommentURL, getCommentsURL, getListURL } from "helpers/urls";
 
 import { formatDateAPI } from "utils";
 
-const useAPI = () => {
+import { HTTP } from "constants";
+
+const useAPI = ({ cacheKey } = {}) => {
   const postId = RootNavigation.getId();
   const { cache } = useCache();
   const { request } = useRequestQueue();
@@ -20,36 +22,38 @@ const useAPI = () => {
   const updateUser = async ({ add_push_token, locale }) => {
     const url = "/dt/v1/user/update";
     let data = {};
-    if (add_push_token) data["add_push_token"] = add_push_token;
+    //if (add_push_token) data["add_push_token"] = add_push_token;
+    // TODO
+    if (add_push_token) return;
     if (locale) data["locale"] = locale;
-    return request(
-      {
+    return request({
+      request: {
         url,
         method: HTTP.METHODS.POST,
         headers: HTTP.HEADERS.DEFAULT,
         data,
       },
-      {
-        ignoreUI: add_push_token ? true : false,
-      }
-    );
+      // TODO: getCacheKeyByRequest?
+      cacheKey: url,
+    });
   };
 
   // POSTS
   // https://developers.disciple.tools/theme-core/api-posts/create-post
-
-  const createPost = async (fields, mutate = null, silent = false) => {
-    let url = postType ? `/dt-posts/v2/${postType}` : null;
+  const createPost = async ({ data, mutate, silent }) => {
+    let url = postType ? getListURL({ postType }) : null;
     if (silent) url += "?silent=true";
     try {
       const res = await request({
-        url,
-        method: HTTP.METHODS.POST,
-        headers: HTTP.HEADERS.DEFAULT,
-        data: { ...fields },
+        request: {
+          url,
+          method: HTTP.METHODS.POST,
+          headers: HTTP.HEADERS.DEFAULT,
+          data,
+        },
       });
       if (mutate) mutate();
-      return res;
+      return res?.data;
     } catch (error) {
       // TODO
       console.error(error);
@@ -61,7 +65,7 @@ const useAPI = () => {
   const updatePost = async ({
     urlPath,
     urlPathPostfix,
-    fields,
+    data,
     id,
     type,
     mutate,
@@ -76,10 +80,12 @@ const useAPI = () => {
     //if (silent) url += "?silent=true";
     try {
       const res = await request({
-        url,
-        method: HTTP.METHODS.POST,
-        headers: HTTP.HEADERS.DEFAULT,
-        data: { ...fields },
+        request: {
+          url,
+          method: HTTP.METHODS.POST,
+          headers: HTTP.HEADERS.DEFAULT,
+          data,
+        },
       });
       if (mutate) mutate();
       return res;
@@ -97,19 +103,17 @@ const useAPI = () => {
   // COMMENTS
   // https://developers.disciple.tools/theme-core/api-posts/post-comments
 
-  const createComment = async (
-    comment,
-    date = null,
-    commentType = "comment"
-  ) => {
-    const url =
-      postType && postId ? `/dt-posts/v2/${postType}/${postId}/comments` : null;
+  const createComment = async ({ comment }) => {
+    let url = null;
+    if (postType && postId) {
+      url = getCommentsURL({ postType, postId });
+    }
     const data = {
       comment,
-      comment_type: commentType,
+      comment_type: "comment", // hardcoded
     };
-    if (date) data["date"] = date;
-    //
+    // TODO: remove
+    /*
     const localData = {
       comments: [
         {
@@ -120,19 +124,19 @@ const useAPI = () => {
         },
       ],
     };
-    const key = url;
-    const localCachedData = cache.get(key);
+    //const key = url;
+    const localCachedData = cache.get(cacheKey);
     if (localCachedData?.comments?.length > 0)
       localData.comments.push(...localCachedData.comments);
-    return request(
-      {
+    */
+    return request({
+      request: {
         url,
         method: HTTP.METHODS.POST,
         headers: HTTP.HEADERS.DEFAULT,
         data,
       },
-      { localData }
-    );
+    });
   };
 
   const updateComment = async (commentId, comment) => {
@@ -141,21 +145,26 @@ const useAPI = () => {
         ? `/dt-posts/v2/${postType}/${postId}/comments/${commentId}`
         : null;
     return request({
-      url,
-      method: HTTP.METHODS.POST,
-      headers: HTTP.HEADERS.DEFAULT,
-      data: { comment },
+      request: {
+        url,
+        method: HTTP.METHODS.POST,
+        headers: HTTP.HEADERS.DEFAULT,
+        data: { comment },
+      },
+      cacheKey,
     });
   };
 
-  const deleteComment = async (commentId) => {
-    const url =
-      postType && postId && commentId
-        ? `/dt-posts/v2/${postType}/${postId}/comments/${commentId}`
-        : null;
+  const deleteComment = async ({ commentId }) => {
+    let url = null;
+    if (postType && postId && commentId) {
+      url = getCommentURL({ postType, postId, commentId });
+    }
     return request({
-      url,
-      method: HTTP.METHODS.DELETE,
+      request: {
+        url,
+        method: HTTP.METHODS.DELETE,
+      },
     });
   };
 
@@ -167,33 +176,34 @@ const useAPI = () => {
         ? `/dt-posts/v2/${postType}/${postId}/shares`
         : null;
     return request({
-      url,
-      method: HTTP.METHODS.POST,
-      headers: HTTP.HEADERS.DEFAULT,
-      data: { user_id: userId },
+      request: {
+        url,
+        method: HTTP.METHODS.POST,
+        headers: HTTP.HEADERS.DEFAULT,
+        data: { user_id: userId },
+      },
+      cacheKey,
     });
   };
   //const deleteShare = async(userId) => {};
 
   // NOTIFICATIONS
 
-  const markAllNotificationsViewed = async () => null;
-
-  const markNotificationViewed = async (id) => {
-    const url = id ? `/dt/v1/notifications/mark_viewed/${id}` : null;
+  const markNotifications = async ({ action, id }) => {
+    const url = id ? `dt/v1/notifications/${action}/${id}` : null;
     return request({
-      url,
-      method: HTTP.METHODS.POST,
+      request: {
+        url,
+        method: HTTP.METHODS.POST,
+      },
     });
   };
-
-  const markNotificationUnread = async (id) => {
-    const url = id ? `/dt/v1/notifications/mark_unread/${id}` : null;
-    return request({
-      url,
-      method: HTTP.METHODS.POST,
-    });
-  };
+  const markAllNotificationsViewed = async ({ userId }) =>
+    markNotifications({ action: "mark_all_viewed", id: userId });
+  const markNotificationViewed = async ({ notificationId }) =>
+    markNotifications({ action: "mark_viewed", id: notificationId });
+  const markNotificationUnread = async ({ notificationId }) =>
+    markNotifications({ action: "mark_unread", id: notificationId });
 
   return {
     updateUser,
@@ -205,6 +215,7 @@ const useAPI = () => {
     createShare,
     // TODO
     //deleteShare,
+    markAllNotificationsViewed,
     markNotificationViewed,
     markNotificationUnread,
   };

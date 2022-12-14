@@ -1,95 +1,67 @@
-import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 
-import { CheckIcon, MaterialCommunityIcon } from "components/Icon";
+import { CheckIcon } from "components/Icon";
 import FilterList from "components/FilterList";
 import StatusBorder from "components/StatusBorder";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 import useFilter from "hooks/use-filter";
 import useList from "hooks/use-list";
+import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
+
+import { TypeConstants } from "constants";
 
 import { localStyles } from "./ConnectionSheet.styles";
 
-const ConnectionSheet = ({ id, type, renderItem, values, onChange }) => {
+const ConnectionSheet = ({
+  id,
+  type,
+  renderItem,
+  values,
+  onChange,
+  modalName,
+}) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { delayedClose } = useBottomSheet();
-
+  const { dismiss } = useBottomSheetModal();
   const { search, onSearch } = useFilter();
+  const { settings } = useSettings();
+
+  const fields = settings?.post_types?.[type]?.fields;
 
   // exclude currently selected values from options list
-  const exclude = values?.map((item) => item?.value);
+  const exclude = values?.map((item) => item?.ID);
   // exclude the the current post (ie, contact or group)
-  if (id) exclude.push(id);
+  if (exclude && id) exclude.push(id);
 
-  const { data: items } = useList({ search, exclude, type });
-  if (!items) return [];
+  const revalidate = type === TypeConstants.PEOPLE_GROUP ? true : false;
 
-  items.sort((a, b) => b.last_modified - a.last_modified);
+  const { data: items } = useList({ search, exclude, type, revalidate });
+  if (!items) return null;
 
-  // MAP TO API
-  const mapToAPI = (newItem) => {
-    let _values = JSON.parse(JSON.stringify(values));
-    _values = _values.map((value) => ({
-      value: value?.value,
-    }));
-    _values.push({
-      value: newItem?.key,
-    });
-    return _values;
-  };
-
-  // MAP FROM API
-  const mapFromAPI = (items) => {
-    return items?.map((item) => {
-      const key = item?.contact_id || item?.ID || item?.value;
-      return {
-        key,
-        label: item?.name || item?.title,
-        avatar: item?.avatar,
-        contactId: item?.contact_id ? String(item?.contact_id) : null,
-        overall_status: item?.overall_status,
-        //selected: values?.some(selectedItem => Number(selectedItem?.value) === item?.contact_id),
-      };
-    });
-  };
+  // TODO: this should not be necessary with use-list defaulting to sort by last_modified (fix that first)
+  items?.sort(
+    (a, b) => b?.last_modified?.timestamp - a?.last_modified?.timestamp
+  );
 
   const _onChange = (selectedItem) => {
-    const mappedValues = mapToAPI(selectedItem);
-    if (JSON.stringify(mappedValues) !== JSON.stringify(items)) {
-      onChange({ values: mappedValues }, { autosave: true, force: true });
-    }
-    delayedClose();
+    onChange(selectedItem);
+    dismiss(modalName);
   };
 
   const _renderItem = ({ item }) => {
-    const { key, label, icon, avatar, selected } = item;
+    const { ID, avatar, name, post_title, selected } = item;
     return (
       <Pressable onPress={() => _onChange(item)}>
         <View
-          key={key}
+          key={ID}
           style={[globalStyles.rowContainer, styles.itemContainer]}
         >
-          <StatusBorder
-            overall_status={item?.overall_status}
-            group_status={item?.group_status}
-            status={item?.status}
-            type={type}
-          />
+          <StatusBorder fields={fields} item={item} />
           {avatar && <Image style={styles.avatar} source={{ uri: avatar }} />}
-          {icon && (
-            <View style={globalStyles.rowIcon}>
-              <MaterialCommunityIcon
-                type={icon?.type}
-                name={icon?.name}
-                style={[globalStyles.icon, icon?.style ? icon?.style : {}]}
-              />
-            </View>
-          )}
           <View style={styles.textContainer}>
             <Text>
-              {label} (#{key})
+              {name || post_title} (#{ID})
             </Text>
           </View>
           {selected && (
@@ -102,13 +74,9 @@ const ConnectionSheet = ({ id, type, renderItem, values, onChange }) => {
     );
   };
 
-  // SELECT OPTIONS
-  //const sections = useMemo(() => [{ data: mapFromAPI(items) }], [items, values]);
-  const mappedItems = mapFromAPI(items);
-
   return (
     <FilterList
-      items={mappedItems}
+      items={items}
       renderItem={renderItem ?? _renderItem}
       search={search}
       onSearch={onSearch}

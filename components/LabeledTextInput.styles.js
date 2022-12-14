@@ -1,18 +1,19 @@
+import { Platform } from "react-native";
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   inputContainer: {
     alignSelf: "stretch",
     marginVertical: 5,
     padding: 5,
     alignItems: "flex-start",
-    height: 75,
+    height: Platform.OS === "ios" ? 75 : 90,
   },
   inputLabel: {
     margin: 5,
   },
   inputLabelText: {
     color: theme.text.primary,
-    fontWeight: '600',
-    marginLeft: 5
+    fontWeight: "600",
+    marginLeft: 5,
   },
   inputRow: {
     alignSelf: "stretch",

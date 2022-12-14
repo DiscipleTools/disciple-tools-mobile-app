@@ -3,18 +3,24 @@ import * as RootNavigation from "navigation/RootNavigation";
 import { useSelector, useDispatch } from "react-redux";
 
 import useFilters from "./use-filters";
+import useI18N from "./use-i18n";
 import useType from "hooks/use-type";
 
 import { setFilter } from "store/actions/user.actions";
 
 import { TypeConstants, SubTypeConstants } from "constants";
 
+import { getDefaultFavoritesFilter } from "helpers";
+
 import { findFilterById } from "utils";
 
 const useFilter = () => {
+  const { i18n } = useI18N();
   const dispatch = useDispatch();
   const persistedFilters = useSelector((state) => state.userReducer.filters);
-  const { isContact, isNotification, isCommentsActivity, postType } = useType();
+  const { isContact, isGroup, isNotification, isCommentsActivity, postType } =
+    useType();
+
   const route = RootNavigation.getRoute();
 
   const { data: filters } = useFilters({ type: postType });
@@ -31,22 +37,16 @@ const useFilter = () => {
   };
 
   const getDefaultFilter = () => {
-    for (let ii = 0; ii < filters?.length; ii++) {
-      const filterType = filters[ii];
-      for (let jj = 0; jj < filterType?.content?.length; jj++) {
-        const filter = filterType.content[jj];
-        // TODO: constants?
-        if (
-          (isContact && filter?.ID === "all_my_contacts") ||
-          filter?.ID === "all"
-        ) {
-          return filter;
-        }
-      }
+    if ((isContact || isGroup) && !isNotification && !isCommentsActivity) {
+      return getDefaultFavoritesFilter({ i18n, type: postType });
     }
-    //return null;
-    //return { ID: "recent" };
-    return { ID: "all" };
+    return {
+      ID: "all",
+      name: i18n.t("global.all"),
+      query: {
+        sort: "-last_modified",
+      },
+    };
   };
 
   const getActiveFilter = () => {
@@ -56,6 +56,10 @@ const useFilter = () => {
     if (isCommentsActivity) key = SubTypeConstants.COMMENTS_ACTIVITY;
     if (persistedFilters && persistedFilters[key]) {
       const filterID = persistedFilters[key];
+      // TODO: explain... necessary to ensure consistency beteween LaunchScreen, HomeScreen, and ListScreen
+      if (filterID === "favorite") {
+        return getDefaultFilter();
+      }
       const _filter = findFilterById(filterID, filters);
       if (_filter) return _filter;
     }
@@ -95,6 +99,16 @@ const useFilter = () => {
     items.sort((a, b) => b[key] - a[key]);
   };
 
+  return {
+    defaultFilter,
+    filter,
+    onFilter,
+    search,
+    onSearch,
+    filterByKey,
+    filterByKeyValue,
+    sortByKey,
+  };
   return useMemo(
     () => ({
       defaultFilter,

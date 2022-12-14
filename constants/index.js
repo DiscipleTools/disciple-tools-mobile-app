@@ -1,3 +1,5 @@
+import Constants from "expo-constants";
+
 import {
   primaryBrand,
   secondaryBrand,
@@ -92,7 +94,11 @@ export const HTTP = Object.freeze({
 });
 
 export const FieldConstants = Object.freeze({
-  TMP_KEY_PREFIX: "tmp_",
+  TMP_ID_PREFIX: "tmp_",
+});
+
+export const FieldDefaultValues = Object.freeze({
+  COMMUNICATION_CHANNEL: { value: "" },
 });
 
 export const FieldTypes = Object.freeze({
@@ -116,9 +122,19 @@ export const FieldTypes = Object.freeze({
 });
 
 export const FieldNames = Object.freeze({
+  ID: "ID",
+  POST_TITLE: "post_title",
+  POST_TYPE: "post_type",
+  POST_DATE: "post_date",
+  LAST_MODIFIED: "last_modified",
+  TITLE: "title",
   NAME: "name",
   OVERALL_STATUS: "overall_status",
+  REASON_CLOSED: "reason_closed",
+  REASON_PAUSED: "reason_paused",
+  REASON_UNASSIGNABLE: "reason_unassignable",
   GROUP_STATUS: "group_status",
+  GROUP_TYPE: "group_type",
   COACHES: "coaches",
   PARENT_GROUPS: "parent_groups",
   PEER_GROUPS: "peer_groups",
@@ -133,8 +149,26 @@ export const FieldNames = Object.freeze({
   LOCATION_GRID_META: "location_grid_meta",
   LOCATION_GRID: "location_grid",
   FAITH_MILESTONES: "milestones",
+  FAITH_STATUS: "faith_status",
   CHURCH_HEALTH: "health_metrics",
   INFLUENCE: "influence",
+  INFLUENCE_SLIDER: "influence_slider",
+  TYPE: "type",
+  SOURCES: "sources",
+  CONTACT_PHONE: "contact_phone",
+  CONTACT_EMAIL: "contact_email",
+  OFFLINE: "offline",
+});
+
+export const TileNames = Object.freeze({
+  STATUS: "status",
+  DETAILS: "details",
+  RELATIONSHIPS: "relationships",
+  HEALTH_METRICS: "health-metrics",
+  FAITH: "faith",
+  FOLLOWUP: "followup",
+  GROUPS: "groups",
+  OTHER: "other",
 });
 
 export const ThemeConstants = Object.freeze({
@@ -257,6 +291,7 @@ export const TabScreenConstants = Object.freeze({
 });
 
 export const ScreenConstants = Object.freeze({
+  LAUNCH: "LAUNCH",
   LIST: "LIST",
   DETAILS: "DETAILS",
   CREATE: "CREATE",
@@ -266,6 +301,7 @@ export const ScreenConstants = Object.freeze({
   NOTIFICATIONS: "NOTIFICATIONS",
   PIN: "PIN",
   ALL_ACTIVITY_LOGS: "ALL_ACTIVITY_LOGS",
+  STORAGE: "STORAGE",
 });
 
 export const NotificationActionConstants = Object.freeze({
@@ -319,7 +355,7 @@ export const AuthConstants = Object.freeze({
   CNONCE_PERSISTED: "cnonceLogin",
   CNONCE: "CNONCE_LOGIN",
   CNONCE_DATETIME: "CNONCE_LOGIN_DATETIME",
-  CNONCE_THRESHOLD: 2 // seconds
+  CNONCE_THRESHOLD: 2, // seconds
 });
 
 export const PINConstants = Object.freeze({
@@ -332,10 +368,15 @@ export const PINConstants = Object.freeze({
   CNONCE_PERSISTED: "cnoncePIN",
   CNONCE: "CNONCE_PIN",
   CNONCE_DATETIME: "CNONCE_PIN_DATETIME",
-  CNONCE_THRESHOLD: 2 // seconds
+  CNONCE_THRESHOLD: 2, // seconds
 });
 
-export const CACHE_INTERVAL = 1000 * 60 * 2; // 2 minutes
+export const CacheConstants = Object.freeze({
+  FILENAME: "cache.json",
+  INTERVAL: 1000 * 30, // 30 seconds
+});
+
+export const APP_VERSION = Constants.manifest.version;
 
 export default {
   STATUS_CIRCLE_SIZE: 15,

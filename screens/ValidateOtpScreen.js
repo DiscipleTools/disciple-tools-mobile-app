@@ -1,13 +1,11 @@
-import React, { useState, useRef, forwardRef } from "react";
-import { Image, Keyboard, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Image, Keyboard, View } from "react-native";
 import { EyeIcon, KeyIcon } from "components/Icon";
 import PluginRequired from "components/PluginRequired";
 import { LabeledTextInput } from "components/LabeledTextInput";
 import Button from "components/Button";
 
 import { useAuth } from "hooks/use-auth";
-import useDevice from "hooks/use-device";
-import useI18N from "hooks/use-i18n";
 import usePlugins from "hooks/use-plugins";
 import useStyles from "hooks/use-styles";
 import useToast from "hooks/use-toast";
@@ -16,12 +14,11 @@ import { localStyles } from "./LoginScreen.styles";
 
 const ValidateOtpScreen = (props) => {
   const { domain, username, password, userData } =
-    props.route.params.paramsData;
+    props?.route?.params?.paramsData ?? {};
 
   const { styles, globalStyles } = useStyles(localStyles);
   const { persistUser, validateOtp } = useAuth();
-  const { isIOS } = useDevice();
-  const { i18n, isRTL, locale } = useI18N();
+
   const { mobileAppPlugin } = usePlugins();
   const toast = useToast();
 
@@ -29,18 +26,22 @@ const ValidateOtpScreen = (props) => {
     otpValidation: null,
   });
 
-  const [loading, setLoading] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [showOtp, setShowOtp] = useState(false);
 
-  const otpRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   // TODO: add validation
   const onSubmitPress = async () => {
     Keyboard.dismiss();
     // setLoading(true);
 
-    const otp = otpRef.current;
-    if (otp) {
+    if (otp?.trim().length > 0) {
       setLoading(true);
+      setState({
+        ...state,
+        otpValidation: null,
+      });
       try {
         let response = await validateOtp(domain, username, password, otp);
 
@@ -73,43 +74,6 @@ const ValidateOtpScreen = (props) => {
     );
   };
 
-  const OtpField = forwardRef((props, ref) => {
-    const [otp, setOtp] = useState(ref?.current);
-    const [showOtp, setShowOtp] = useState(false);
-    const otpErrorMessage = state.otpValidation ? (
-      <Text style={styles.validationErrorMessage}>Please enter OTP</Text>
-    ) : null;
-    return (
-      <View>
-        <LabeledTextInput
-          maxLength={6}
-          value={otp}
-          onChangeText={(text) => {
-            ref.current = text;
-            setOtp(text);
-          }}
-          ref={ref}
-          accessibilityLabel={i18n.t("loginScreen.otp.label", { locale })}
-          label="OTP"
-          containerStyle={[
-            styles.textField,
-            state.otpValidation && styles.validationErrorInput,
-          ]}
-          startIcon={<KeyIcon />}
-          endIcon={
-            <EyeIcon
-              onPress={() => setShowOtp(!showOtp)}
-              style={styles.showPasswordIcon(showOtp)}
-            />
-          }
-          underlineColorAndroid="transparent"
-          secureTextEntry={!showOtp}
-        />
-        {otpErrorMessage}
-      </View>
-    );
-  });
-
   const SubmitButton = () => (
     <Button title={"Submit"} loading={loading} onPress={onSubmitPress} />
   );
@@ -119,7 +83,25 @@ const ValidateOtpScreen = (props) => {
       <Header />
       <View style={styles.formContainer}>
         <PluginRequired {...mobileAppPlugin} />
-        <OtpField ref={otpRef} />
+        <LabeledTextInput
+          editing
+          maxLength={8}
+          value={otp}
+          onChangeText={(text) => {
+            setOtp(text);
+          }}
+          i18nKey="global.otp"
+          keyboardType="number-pad"
+          startIcon={<KeyIcon />}
+          endIcon={
+            <EyeIcon
+              onPress={() => setShowOtp(!showOtp)}
+              style={styles.showPasswordIcon(showOtp)}
+            />
+          }
+          secureTextEntry={!showOtp}
+          error={state.otpValidation}
+        />
         <SubmitButton />
       </View>
     </View>

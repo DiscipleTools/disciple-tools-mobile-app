@@ -4,7 +4,7 @@ import { ScrollView } from "react-native-gesture-handler";
 
 import { CheckIcon } from "components/Icon";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./SelectSheet.styles";
@@ -17,35 +17,20 @@ const SelectSheet = ({
   renderItem,
   onDismiss,
   onChange,
+  modalName,
 }) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { collapse, delayedClose } = useBottomSheet();
+  const { dismiss } = useBottomSheetModal();
 
   const [_sections, _setSections] = useState(sections);
 
-  // TODO: used for...
   const selectedCount = useRef(1);
-
-  /*
-  const _onDismiss = () => {
-    if (onDismiss) {
-      onDismiss(_sections);
-      return;
-    };
-    collapse();
-  };
-
-  const _onDone = () => {
-    onChange(_sections);
-    delayedClose();
-  };
-  */
 
   // TODO: prettier implementation
   const _onChange = (selectedItem) => {
     if (!multiple) {
+      dismiss(modalName);
       onChange(selectedItem);
-      collapse();
       return;
     }
     const key = selectedItem.key;
@@ -79,7 +64,7 @@ const SelectSheet = ({
       };
     });
     _setSections(updatedSections);
-    onChange(updatedSections);
+    onChange(selectedItem);
   };
 
   const _renderItem = (item, idx) => {

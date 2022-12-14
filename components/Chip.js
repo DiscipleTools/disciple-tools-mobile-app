@@ -16,6 +16,8 @@ const Chip = ({
   endIcon,
   style,
   color,
+  containerStyle,
+  labelStyle,
 }) => {
   const { styles, globalStyles } = useStyle(localStyles);
   const statusBorderSize = styles.container.height / 2;
@@ -28,11 +30,15 @@ const Chip = ({
           styles.containerColor(selected),
           styles.container,
           adjustStylePadding,
+          ,
+          containerStyle,
         ]}
       >
         {color && <ChipStatusBorder size={statusBorderSize} color={color} />}
         {startIcon}
-        <Text style={styles.label(selected, isLink)}>{label}</Text>
+        <Text style={[styles.label(selected, isLink), labelStyle]}>
+          {label}
+        </Text>
         {endIcon}
       </View>
     </Pressable>

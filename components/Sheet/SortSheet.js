@@ -1,8 +1,12 @@
 import React from "react";
 
-import { SortAscIcon, SortDescIcon, SortAscIconDate, SortDescIconDate, SortAscIconMod, SortDescIconMod } from "components/Icon";
+import {
+  SortAscIconDate,
+  SortDescIconDate,
+  SortAscIconMod,
+  SortDescIconMod,
+} from "components/Icon";
 import SelectSheet from "./SelectSheet";
-import SheetHeader from "./SheetHeader";
 
 import useI18N from "hooks/use-i18n";
 import useSettings from "hooks/use-settings";
@@ -90,14 +94,6 @@ const SortSheet = ({ items, setItems, filter, onFilter }) => {
       }
     }
   };
-
-  const title = i18n.t("global.sortBy");
-
-  return (
-    <>
-      <SheetHeader expandable dismissable title={title} />
-      <SelectSheet require sections={sections} onChange={onChange} />
-    </>
-  );
+  return <SelectSheet require sections={sections} onChange={onChange} />;
 };
 export default SortSheet;

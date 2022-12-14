@@ -1,17 +1,18 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
-import { useRoute } from "@react-navigation/native";
 
+import { LeaderIcon } from "components/Icon";
 import Select from "components/Select";
 import PostChip from "components/Post/PostChip";
-import SheetHeader from "components/Sheet/SheetHeader";
+import ModalSheet, { getDefaultIndex } from "components/Sheet/ModalSheet";
 import ConnectionSheet from "./ConnectionSheet";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
+import useAPI from "hooks/use-api";
+import useCache from "hooks/use-cache";
+import useId from "hooks/use-id";
 import useStyles from "hooks/use-styles";
-import useType from "hooks/use-type";
 
 import {
   groupCircleIcon,
@@ -22,151 +23,259 @@ import {
 import { ScreenConstants, TabScreenConstants, TypeConstants } from "constants";
 
 import { localStyles } from "./ConnectionField.styles";
+import { FieldNames } from "constants";
 
-const ConnectionField = ({ editing, field, value, onChange }) => {
+// eg, {"coaches":{"values":[{"value":"101"}]}}
+const mapToAPI = ({ fieldKey, newValue }) => {
+  return { [fieldKey]: { values: [{ value: newValue?.ID }] } };
+};
+
+const mapToComponentRemove = ({ existingItems, id }) =>
+  existingItems.filter((item) => item.ID !== id);
+
+// eg, {"coaches":{"values":[{"value":"101"}]}}
+const mapToAPIRemove = ({ key, id }) => {
+  return { [key]: { values: [{ value: id, delete: true }] } };
+};
+
+const renderItemView = (item) => (
+  <PostChip
+    id={item?.ID}
+    title={item?.name || item?.post_title}
+    //type={item?.post_type}
+    type={null}
+  />
+);
+
+// TODO: improve
+const GroupView = ({ values }) => {
+  const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
-  const { expand } = useBottomSheet();
-  const { isPost, getPostTypeByField } = useType();
+  return (
+    <View style={globalStyles.rowContainer}>
+      <ScrollView horizontal>
+        {values?.map((group, index) => {
+          const id = group?.value;
+          const title = group?.name;
+          const isChurch = group?.is_church;
+          const baptizedMemberCount =
+            group?.baptized_member_count?.length > 0
+              ? group.baptized_member_count
+              : "0";
+          const memberCount =
+            group?.member_count?.length > 0 ? group.member_count : "0";
+          // TODO: constant?
+          const type = "groups";
+          return (
+            <Pressable
+              key={index.toString()}
+              style={[
+                globalStyles.columnContainer,
+                styles.groupCircleContainer,
+              ]}
+              onPress={() => {
+                navigation.jumpTo(TabScreenConstants.GROUPS, {
+                  screen: ScreenConstants.DETAILS,
+                  id,
+                  name: title,
+                  type,
+                  //onGoBack: () => onRefresh(),
+                });
+              }}
+            >
+              {isChurch ? (
+                <Image source={groupCircleIcon} style={styles.groupCircle} />
+              ) : (
+                <Image
+                  source={groupDottedCircleIcon}
+                  style={styles.groupCircle}
+                />
+              )}
+              <Image source={baptizeIcon} style={styles.groupCenterIcon} />
+              <View style={[globalStyles.rowContainer, styles.groupCircleName]}>
+                <Text style={styles.groupCircleNameText}>{group.name}</Text>
+              </View>
+              <View
+                style={[globalStyles.rowContainer, styles.groupCircleCounter]}
+              >
+                <Text>{baptizedMemberCount}</Text>
+              </View>
+              <View
+                style={[globalStyles.rowContainer, styles.groupCircleCounter]}
+              >
+                <Text>{memberCount}</Text>
+              </View>
+            </Pressable>
+          );
+        })}
+      </ScrollView>
+    </View>
+  );
+};
 
-  // VALUES
-  const values = value?.values || [];
+const PostView = ({ values }) => (
+  <Select items={values} renderItem={renderItemView} />
+);
 
-  const onRemove = (id) => {
-    onChange({ values: [{ value: id, delete: true }] }, { autosave: true });
+const ConnectionFieldView = ({ field, values }) => {
+  const postType = field?.post_type;
+  const isPost = field?.post_type ? true : false;
+  if (postType === TypeConstants.GROUP) return <GroupView values={values} />;
+  if (isPost) return <PostView value={values} />;
+  return null;
+};
+
+const ConnectionFieldEdit = ({
+  post,
+  cacheKey,
+  fieldKey,
+  field,
+  values,
+  setValues,
+  onChange,
+}) => {
+  const postId = useId();
+  const { cache, mutate } = useCache();
+  const { updatePost } = useAPI();
+
+  const _onRemove = async ({ id }) => {
+    // component state
+    const componentData = mapToComponentRemove({ existingItems: values, id });
+    setValues(componentData);
+    // grouped/form state (if applicable)
+    /*
+    if (onChange) {
+      onChange(newValue);
+      return;
+    };
+    */
+    // in-memory cache (and persisted storage) state
+    const cachedData = cache.get(cacheKey);
+    const cachedDataModified = cachedData?.[fieldKey]?.filter(
+      (item) => item?.ID !== id.toString()
+    );
+    if (!cachedDataModified) return;
+    cachedData[fieldKey] = cachedDataModified;
+    mutate(cacheKey, async () => cachedData, { revalidate: false });
+    // remote API state
+    const data = mapToAPIRemove({ key: fieldKey, id });
+    await updatePost({ data });
   };
 
-  const renderItemEdit = (item) => (
-    <PostChip
-      id={item?.value}
-      title={item?.name}
-      type={getPostTypeByField(field)}
-      onRemove={onRemove}
-      color={item?.status?.color}
-    />
-  );
-  const renderItemView = (item) => (
-    <PostChip
-      id={item?.value}
-      title={item?.name}
-      type={getPostTypeByField(field)}
-    />
-  );
+  const _onChange = async (newValue) => {
+    // TODO:
+    const exists = values?.find(
+      (existingItem) => existingItem?.ID === newValue?.ID
+    );
+    if (exists) {
+      _onRemove(newValue);
+      return;
+    }
+    // component state
+    setValues(values ? [...values, newValue] : [newValue]);
+    // grouped/form state (if applicable)
+    /*
+    if (onChange) {
+      onChange(newValue);
+      return;
+    };
+    */
+    // in-memory cache (and persisted storage) state
+    const cachedData = cache.get(cacheKey);
+    cachedData[fieldKey] = cachedData?.[fieldKey]
+      ? [...cachedData[fieldKey], newValue]
+      : [newValue];
+    mutate(cacheKey, async () => cachedData, { revalidate: false });
+    // remote API state
+    const data = mapToAPI({ fieldKey, newValue });
+    await updatePost({ data });
+  };
+
+  const renderItemEdit = (item) => {
+    const leaderIds = post?.leaders?.map((leader) => leader?.ID);
+    const icon =
+      fieldKey === FieldNames.MEMBERS && leaderIds?.includes(item?.ID) ? (
+        <LeaderIcon />
+      ) : null;
+    return (
+      <PostChip
+        id={item?.ID}
+        title={item?.name || item?.post_title}
+        icon={icon}
+        type={item?.post_type}
+        onRemove={() => _onRemove({ id: item?.ID })}
+        color={item?.status?.color}
+      />
+    );
+  };
+
   const renderItemLinkless = (item) => (
-    <PostChip id={item?.value} title={item?.name} onRemove={onRemove} />
+    <PostChip
+      id={item?.ID}
+      title={item?.post_title}
+      onRemove={() => _onRemove({ id: item?.ID })}
+    />
   );
 
-  const PostEdit = ({ linkless }) => {
-    const route = useRoute();
-    const type = getPostTypeByField(field);
-    return (
+  // MODAL SHEET
+  const modalRef = useRef(null);
+  const modalName = `${fieldKey}_modal`;
+  const defaultIndex = getDefaultIndex();
+
+  const postType = field?.post_type;
+  const fieldLabel = field?.name;
+  const linkless = postType === TypeConstants.PEOPLE_GROUP;
+
+  return (
+    <>
       <Select
-        onOpen={() => {
-          expand({
-            defaultIndex: 3,
-            renderHeader: () => (
-              <SheetHeader expandable dismissable title={field?.label || ""} />
-            ),
-            renderContent: () => (
-              <ConnectionSheet
-                id={route?.params?.id}
-                type={type}
-                values={values}
-                onChange={onChange}
-              />
-            ),
-          });
-        }}
+        onOpen={() => modalRef.current?.present()}
         items={values}
         renderItem={linkless ? renderItemLinkless : renderItemEdit}
         //style={style}
         //optionStyle={optionStyle}
       />
-    );
-  };
+      <ModalSheet
+        ref={modalRef}
+        name={modalName}
+        title={fieldLabel}
+        defaultIndex={defaultIndex}
+      >
+        <ConnectionSheet
+          id={postId}
+          type={postType}
+          values={values}
+          onChange={_onChange}
+          modalName={modalName}
+        />
+      </ModalSheet>
+    </>
+  );
+};
 
-  const GroupView = () => {
-    const navigation = useNavigation();
+const ConnectionField = ({
+  editing,
+  post,
+  cacheKey,
+  fieldKey,
+  field,
+  value,
+  onChange,
+}) => {
+  const [_values, _setValues] = useState(value);
+
+  if (editing)
     return (
-      <View style={globalStyles.rowContainer}>
-        <ScrollView horizontal>
-          {values?.map((group, index) => {
-            const id = group?.value;
-            const title = group?.name;
-            const isChurch = group?.is_church;
-            const baptizedMemberCount =
-              group?.baptized_member_count?.length > 0
-                ? group.baptized_member_count
-                : "0";
-            const memberCount =
-              group?.member_count?.length > 0 ? group.member_count : "0";
-            // TODO: constant?
-            const type = "groups";
-            return (
-              <Pressable
-                key={index.toString()}
-                style={[
-                  globalStyles.columnContainer,
-                  styles.groupCircleContainer,
-                ]}
-                onPress={() => {
-                  navigation.jumpTo(TabScreenConstants.GROUPS, {
-                    screen: ScreenConstants.DETAILS,
-                    id,
-                    name: title,
-                    type,
-                    //onGoBack: () => onRefresh(),
-                  });
-                }}
-              >
-                {isChurch ? (
-                  <Image source={groupCircleIcon} style={styles.groupCircle} />
-                ) : (
-                  <Image
-                    source={groupDottedCircleIcon}
-                    style={styles.groupCircle}
-                  />
-                )}
-                <Image source={baptizeIcon} style={styles.groupCenterIcon} />
-                <View
-                  style={[globalStyles.rowContainer, styles.groupCircleName]}
-                >
-                  <Text style={styles.groupCircleNameText}>{group.name}</Text>
-                </View>
-                <View
-                  style={[globalStyles.rowContainer, styles.groupCircleCounter]}
-                >
-                  <Text>{baptizedMemberCount}</Text>
-                </View>
-                <View
-                  style={[globalStyles.rowContainer, styles.groupCircleCounter]}
-                >
-                  <Text>{memberCount}</Text>
-                </View>
-              </Pressable>
-            );
-          })}
-        </ScrollView>
-      </View>
+      <ConnectionFieldEdit
+        post={post}
+        cacheKey={cacheKey}
+        fieldKey={fieldKey}
+        field={field}
+        values={_values}
+        setValues={_setValues}
+        onChange={onChange}
+      />
     );
-  };
-
-  const PostView = () => <Select items={values} renderItem={renderItemView} />;
-
-  const ConnectionFieldEdit = () => {
-    const postType = getPostTypeByField(field);
-    if (postType === TypeConstants.PEOPLE_GROUP) return <PostEdit linkless />;
-    if (isPost) return <PostEdit />;
-    return null;
-  };
-
-  const ConnectionFieldView = () => {
-    const postType = getPostTypeByField(field);
-    if (postType === TypeConstants.GROUP) return <GroupView />;
-    if (isPost) return <PostView />;
-    return null;
-  };
-
-  if (editing) return <ConnectionFieldEdit />;
-  return <ConnectionFieldView />;
+  return <ConnectionFieldView field={field} value={_values} />;
 };
 export default ConnectionField;

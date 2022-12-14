@@ -15,24 +15,25 @@ import {
   MoreIcon,
   UserIcon,
 } from "components/Icon";
+
+import PINScreen from "screens/PINScreen";
 import HomeScreen from "screens/HomeScreen";
 import AllActivityLogsScreen from "screens/AllActivityLogsScreen";
-import MoreScreen from "screens/MoreScreen";
-import PINScreen from "screens/PINScreen";
+import ListScreen from "screens/Posts/ListScreen";
 import CreateScreen from "screens/Posts/CreateScreen";
 import ImportContactsScreen from "screens/Posts/ImportContactsScreen";
-import ListScreen from "screens/Posts/ListScreen";
 import DetailsScreen from "screens/Posts/DetailsScreen";
 //import AttendanceScreen from 'screens/AttendanceScreen';
 //import QuestionnaireScreen from 'screens/Posts/QuestionnaireScreen';
 import CommentsActivityScreen from "screens/Posts/CommentsActivityScreen";
-import NotificationsScreen from "screens/NotificationsScreen";
 import MyUserScreen from "screens/MyUserScreen";
+import StorageScreen from "screens/StorageScreen";
+import NotificationsScreen from "screens/NotificationsScreen";
+import MoreScreen from "screens/MoreScreen";
 
-import useCache from "hooks/use-cache";
 import useI18N from "hooks/use-i18n";
-import useMyUser from "hooks/use-my-user";
-import useNetwork from "hooks/use-network";
+//import useMyUser from "hooks/use-my-user";
+//import useNetwork from "hooks/use-network";
 import useNotifications from "hooks/use-notifications";
 import usePushNotifications from "hooks/use-push-notifications";
 import useTheme from "hooks/use-theme";
@@ -58,24 +59,21 @@ const TabNavigator = ({ navigation }) => {
   const { isDarkMode, theme } = useTheme();
   const { i18n, setLocale } = useI18N();
   const { hasNotifications } = useNotifications();
-  const { onAppBackgroundCallback } = useCache();
-  const { data: userData } = useMyUser();
-  const { isConnected } = useNetwork();
+  //const { data: userData } = useMyUser();
+  //const { isConnected } = useNetwork();
 
+  /*
+  // TODO: is this still necessary?
   useEffect(() => {
     if (!userData?.locale) return;
-    /*
-     * NOTE: sync the in-memory cache to storage (to ensure prevent a cache miss
-     * on subsequent App launches)
-     */
     if (isConnected) {
-      onAppBackgroundCallback();
       if (userData.locale !== i18n?.locale) {
         setLocale(userData.locale);
       }
     }
     return;
   }, [userData?.locale]);
+  */
 
   const screenOptions = {
     headerStyle: {
@@ -122,9 +120,9 @@ const TabNavigator = ({ navigation }) => {
         <Stack.Screen
           name={ScreenConstants.CREATE}
           component={CreateScreen}
-          options={{
-            ...TransitionPresets.ModalTransition,
-          }}
+          //options={{
+          //  ...TransitionPresets.ModalTransition,
+          //}}
           initialParams={
             route?.params
               ? {
@@ -147,10 +145,10 @@ const TabNavigator = ({ navigation }) => {
         <Stack.Screen
           name={ScreenConstants.COMMENTS_ACTIVITY}
           component={CommentsActivityScreen}
-          options={{
-            title: i18n.t("global.commentsActivity"),
-            ...TransitionPresets.ModalTransition,
-          }}
+          //options={{
+          //  title: i18n.t("global.commentsActivity"),
+          //  ...TransitionPresets.ModalTransition,
+          //}}
           initialParams={
             route?.params
               ? {
@@ -212,10 +210,10 @@ const TabNavigator = ({ navigation }) => {
         <Stack.Screen
           name={ScreenConstants.COMMENTS_ACTIVITY}
           component={CommentsActivityScreen}
-          options={{
-            title: i18n.t("global.commentsActivity"),
-            ...TransitionPresets.ModalTransition,
-          }}
+          //options={{
+          //  title: i18n.t("global.commentsActivity"),
+          //  ...TransitionPresets.ModalTransition,
+          //}}
           initialParams={
             route?.params
               ? {
@@ -244,6 +242,14 @@ const TabNavigator = ({ navigation }) => {
           }}
         >
           {(props) => <PINScreen {...props} />}
+        </Stack.Screen>
+        <Stack.Screen
+          name={ScreenConstants.STORAGE}
+          options={{
+            title: i18n.t("global.storage"),
+          }}
+        >
+          {(props) => <StorageScreen {...props} />}
         </Stack.Screen>
       </Stack.Navigator>
     );
@@ -304,9 +310,9 @@ const TabNavigator = ({ navigation }) => {
         <Stack.Screen
           name={ScreenConstants.CREATE}
           component={CreateScreen}
-          options={{
-            ...TransitionPresets.ModalTransition,
-          }}
+          //options={{
+          //  ...TransitionPresets.ModalTransition,
+          //}}
           initialParams={
             route?.params
               ? {
@@ -318,10 +324,10 @@ const TabNavigator = ({ navigation }) => {
         <Stack.Screen
           name={ScreenConstants.COMMENTS_ACTIVITY}
           component={CommentsActivityScreen}
-          options={{
-            title: i18n.t("global.commentsActivity"),
-            ...TransitionPresets.ModalTransition,
-          }}
+          //options={{
+          //  title: i18n.t("global.commentsActivity"),
+          //  ...TransitionPresets.ModalTransition,
+          //}}
           initialParams={
             route?.params
               ? {
@@ -359,7 +365,6 @@ const TabNavigator = ({ navigation }) => {
           borderTopColor: theme.divider,
           display: [
             ScreenConstants.PIN,
-            //ScreenConstants.SETTINGS,
             ScreenConstants.COMMENTS_ACTIVITY,
           ].includes(getFocusedRouteNameFromRoute(route))
             ? "none"

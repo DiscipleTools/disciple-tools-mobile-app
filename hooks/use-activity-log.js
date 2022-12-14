@@ -1,20 +1,17 @@
 import useRequest from "./use-request";
 
+import { ActivityLogURL } from "constants/urls";
+
 const useActivityLog = () => {
-  let url = "dt-users/v1/activity-log";
-  const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
-  if (error || isLoading || !data)
-    return {
-      data: null,
-      error,
-      isLoading,
-      isValidating,
-      mutate,
-    };
+  const request = {
+    url: ActivityLogURL,
+    method: "GET",
+  };
+  const { data, error, isValidating, mutate } = useRequest({ request });
   return {
     data,
     error,
-    isLoading,
+    isLoading: !error && !data,
     isValidating,
     mutate,
   };

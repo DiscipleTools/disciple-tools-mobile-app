@@ -3,72 +3,35 @@ import { Pressable, Text, View } from "react-native";
 
 import { MaterialCommunityIcon, CheckIcon } from "components/Icon";
 import FilterList from "components/FilterList";
-import SheetHeader from "components/Sheet/SheetHeader";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 import useFilter from "hooks/use-filter";
 import useStyles from "hooks/use-styles";
 import useLocations from "hooks/use-locations";
 
 import { localStyles } from "./LocationsSheet.styles";
 
-const LocationsSheet = ({ id, title, grouped, values, onChange }) => {
+const LocationsSheet = ({ selectedItems, onChange, modalName }) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { delayedClose } = useBottomSheet();
+  const { dismiss } = useBottomSheetModal();
   const { search, onSearch } = useFilter();
 
-  // exclude currently selected values from options list
-  const exclude = values?.values?.map((item) => item?.grid_id);
+  // exclude currently selected items from options list
+  const exclude = selectedItems?.map((item) => item?.id);
 
-  const { data: items } = useLocations({ search, exclude });
-  if (!items) return [];
-
-  // MAP TO API
-  /*
-   * NOTE: if we append to existing values, then API will duplicate those values
-   * so we only send the new value to the API *UNLESS* is 'grouped'
-   * (eg, Create New Screen)
-   */
-  const mapToAPI = (newItem) => {
-    if (grouped && values?.values)
-      return [
-        ...values?.values,
-        {
-          grid_id: newItem?.key,
-          label: newItem?.label,
-        },
-      ];
-    return [
-      {
-        grid_id: newItem?.key,
-        label: newItem?.label,
-      },
-    ];
-  };
-
-  // MAP FROM API
-  const mapFromAPI = (items) => {
-    return items?.map((item) => {
-      return {
-        key: item?.ID,
-        label: item?.name,
-      };
-    });
-  };
+  const { data: locations } = useLocations({ search, exclude });
+  if (!locations) return [];
 
   const _onChange = (selectedItem) => {
-    const mappedValues = mapToAPI(selectedItem);
-    if (JSON.stringify(mappedValues) !== JSON.stringify(values)) {
-      onChange({ values: mappedValues }, { autosave: true });
-    }
-    delayedClose();
+    dismiss(modalName);
+    onChange(selectedItem);
   };
 
   const _renderItem = ({ item }) => {
-    const { key, label, icon, selected } = item;
+    const { ID, name, icon, selected } = item;
     return (
       <Pressable onPress={() => _onChange(item)}>
-        <View key={key} style={styles.itemContainer}>
+        <View key={ID} style={styles.itemContainer}>
           {icon && (
             <View style={globalStyles.rowIcon}>
               <MaterialCommunityIcon
@@ -82,7 +45,7 @@ const LocationsSheet = ({ id, title, grouped, values, onChange }) => {
               marginEnd: "auto",
             }}
           >
-            <Text>{label}</Text>
+            <Text>{name}</Text>
           </View>
           {selected && (
             <View style={globalStyles.rowIcon}>
@@ -94,20 +57,13 @@ const LocationsSheet = ({ id, title, grouped, values, onChange }) => {
     );
   };
 
-  // SELECT OPTIONS
-  //const sections = useMemo(() => [{ data: mapFromAPI(items) }], [items, values]);
-  const mappedItems = mapFromAPI(items);
-
   return (
-    <>
-      <SheetHeader expandable dismissable title={title} />
-      <FilterList
-        items={mappedItems}
-        renderItem={_renderItem}
-        search={search}
-        onSearch={onSearch}
-      />
-    </>
+    <FilterList
+      items={locations}
+      renderItem={_renderItem}
+      search={search}
+      onSearch={onSearch}
+    />
   );
 };
 export default LocationsSheet;

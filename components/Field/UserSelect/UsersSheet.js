@@ -4,16 +4,19 @@ import { Image, Pressable, Text, View } from "react-native";
 import { MaterialCommunityIcon, CheckIcon } from "components/Icon";
 import FilterList from "components/FilterList";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
+
 import useFilter from "hooks/use-filter";
 import useStyles from "hooks/use-styles";
 import useUsers from "hooks/use-users";
 
 import { localStyles } from "./UsersSheet.styles";
 
-const UsersSheet = ({ id, values, onChange, sharedIDs }) => {
+const UsersSheet = ({ id, values, onChange, sharedIDs, modalName }) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { delayedClose } = useBottomSheet();
+
+  const { dismiss } = useBottomSheetModal();
+
   const { search, onSearch } = useFilter();
 
   // exclude currently selected values from options list
@@ -26,41 +29,17 @@ const UsersSheet = ({ id, values, onChange, sharedIDs }) => {
   const { data: items } = useUsers({ search, exclude });
   if (!items) return null;
 
-  // MAP TO API
-  const mapToAPI = (newItem) => newItem;
-
-  // MAP FROM API
-  const mapFromAPI = (items) => {
-    return items?.map((item) => {
-      // NOTE: for "UserSelect" fields (eg, "assigned_to") use "ID" rather than "contact_id" (like with "Connections")
-      return {
-        key: item?.ID,
-        label: item?.name,
-        avatar: item?.avatar,
-        contactId: item?.contact_id ? new String(item?.contact_id) : null,
-        selected: values?.some(
-          (selectedItem) => Number(selectedItem?.value) === item?.contact_id
-        ),
-      };
-    });
+  const _onChange = (newValue) => {
+    onChange(newValue);
+    dismiss(modalName);
   };
 
-  const _onChange = (selectedItem) => {
-    const mappedValue = mapToAPI(selectedItem);
-    // NOTE: no comparison req bc we already exclude prevoiusly selected value
-    onChange(mappedValue, {
-      autosave: true,
-      force: true,
-    });
-    delayedClose();
-  };
-
-  const _renderItem = ({ item }) => {
-    const { key, label, icon, avatar, selected } = item;
+  const renderItem = ({ item }) => {
+    const { ID, name, icon, avatar, contact_id, selected } = item;
     return (
       <Pressable onPress={() => _onChange(item)}>
         <View
-          key={key}
+          key={ID}
           style={[globalStyles.rowContainer, styles.itemContainer]}
         >
           {avatar && <Image style={styles.avatar} source={{ uri: avatar }} />}
@@ -79,7 +58,7 @@ const UsersSheet = ({ id, values, onChange, sharedIDs }) => {
             }}
           >
             <Text>
-              {label} (#{key})
+              {name} (#{ID})
             </Text>
           </View>
           {selected && (
@@ -92,13 +71,10 @@ const UsersSheet = ({ id, values, onChange, sharedIDs }) => {
     );
   };
 
-  // SELECT OPTIONS
-  const mappedItems = mapFromAPI(items);
-
   return (
     <FilterList
-      items={mappedItems}
-      renderItem={_renderItem}
+      items={items}
+      renderItem={renderItem}
       search={search}
       onSearch={onSearch}
     />

@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, View, Text } from "react-native";
-import { useBottomSheet } from "@gorhom/bottom-sheet";
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 
 import { DoneIcon, CancelIcon } from "components/Icon";
 
@@ -12,7 +12,7 @@ import { localStyles } from "./SheetFooter.styles";
 const SheetFooter = ({ label, renderIcon, onPress }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   return (
-    <Pressable onPress={() => onPress()}>
+    <Pressable onPress={onPress}>
       <View style={[globalStyles.rowContainer, styles.container]}>
         <View>{renderIcon}</View>
         <Text>{label}</Text>
@@ -22,20 +22,13 @@ const SheetFooter = ({ label, renderIcon, onPress }) => {
 };
 
 export const SheetFooterCancel = ({ onDismiss }) => {
-  const { close } = useBottomSheet();
+  const { dismissAll } = useBottomSheetModal();
   const { i18n } = useI18N();
   const { globalStyles } = useStyles();
   const label = i18n.t("global.cancel");
-  let onPress = () => close();
-  if (onDismiss) {
-    onPress = () => {
-      onDismiss();
-      close();
-    };
-  }
   return (
     <SheetFooter
-      onPress={onPress}
+      onPress={onDismiss ? onDismiss : dismissAll}
       label={label}
       renderIcon={<CancelIcon style={globalStyles.icon} />}
     />
@@ -43,20 +36,13 @@ export const SheetFooterCancel = ({ onDismiss }) => {
 };
 
 export const SheetFooterDone = ({ onDone }) => {
-  const { close } = useBottomSheet();
+  const { dismissAll } = useBottomSheetModal();
   const { i18n } = useI18N();
   const { globalStyles } = useStyles();
   const label = i18n.t("global.done");
-  let onPress = () => close();
-  if (onDone) {
-    onPress = () => {
-      onDone();
-      close();
-    };
-  }
   return (
     <SheetFooter
-      onPress={onPress}
+      onPress={onDone ? onDone : dismissAll}
       label={label}
       renderIcon={<DoneIcon style={globalStyles.icon} />}
     />

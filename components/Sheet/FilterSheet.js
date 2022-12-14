@@ -3,22 +3,19 @@ import { Pressable, Text, View } from "react-native";
 
 import { CheckIcon } from "components/Icon";
 import SelectSheet from "./SelectSheet";
-import SheetHeader from "./SheetHeader";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 import useStyles from "hooks/use-styles";
-import useI18N from "hooks/use-i18n";
 
 import { localStyles } from "./FilterSheet.styles";
 
-const FilterSheet = ({ multiple, filters, filter, onFilter }) => {
-  const { i18n } = useI18N();
+const FilterSheet = ({ multiple, filters, filter, onFilter, modalName }) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { delayedClose } = useBottomSheet();
+  const { dismiss } = useBottomSheetModal();
 
   const onChange = (selectedFilter) => {
     if (onFilter) onFilter(selectedFilter);
-    if (!multiple) delayedClose();
+    if (!multiple) dismiss(modalName);
   };
 
   const renderItem = (item, idx) => {
@@ -58,19 +55,14 @@ const FilterSheet = ({ multiple, filters, filter, onFilter }) => {
 
   const sections = mapFilters(filters);
 
-  const title = i18n.t("global.filterBy");
-
   return (
-    <>
-      <SheetHeader expandable dismissable title={title} />
-      <SelectSheet
-        required
-        multiple={multiple}
-        sections={sections}
-        renderItem={renderItem}
-        onChange={onChange}
-      />
-    </>
+    <SelectSheet
+      required
+      multiple={multiple}
+      sections={sections}
+      renderItem={renderItem}
+      onChange={onChange}
+    />
   );
 };
 export default FilterSheet;

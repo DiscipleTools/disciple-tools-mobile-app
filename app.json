@@ -4,7 +4,7 @@
     "slug": "discipletoolsapp",
     "privacy": "public",
     "platforms": ["ios", "android"],
-    "version": "1.10.1.1",
+    "version": "1.11.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/icon.png",
@@ -25,7 +25,7 @@
       "package": "tools.disciple.app",
       "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
-      "versionCode": 1101
+      "versionCode": 1110
     },
     "description": "",
     "scheme": "tools.disciple.app"
