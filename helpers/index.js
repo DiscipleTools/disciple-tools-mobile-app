@@ -11,6 +11,7 @@ import {
   getActivitiesURL,
 } from "helpers/urls";
 import {
+  ActivityLogURL,
   LocationsURL,
   MyUserDataURL,
   NotificationsRequest,
@@ -297,9 +298,14 @@ export const fetchPostData = async ({ postType, posts }) => {
 };
 
 // TODO: support non-contacts/groups post types (read settings to see what is available)
-// TODO: activity log
 export const downloadAllData = async () => {
   const options = { revalidate: true, rollbackOnError: true };
+  // refresh activity log
+  await mutate(
+    ActivityLogURL,
+    defaultFetcher({ url: ActivityLogURL, method: "GET" }),
+    options
+  );
   // refresh settings
   await mutate(
     SettingsURL,

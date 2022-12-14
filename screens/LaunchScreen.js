@@ -129,9 +129,8 @@ const PrefetchData = ({ setFetching }) => {
      * this will run asynchronously in the background - user will proceed with
      * the normal app launch flow (ie, Home Screen) while this is happening
      */
-    // TODO: re-implement when done with merge/testing
-    //fetchPostData({ postType: TypeConstants.CONTACT, posts: contacts?.posts })
-    //fetchPostData({ postType: TypeConstants.GROUP, posts: groups?.posts })
+    fetchPostData({ postType: TypeConstants.CONTACT, posts: contacts?.posts });
+    fetchPostData({ postType: TypeConstants.GROUP, posts: groups?.posts });
     // proceed to Home Screen once the appropriate data is fetched
     if (contacts && groups) {
       setFetching(false);
