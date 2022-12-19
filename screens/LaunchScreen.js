@@ -97,6 +97,8 @@ const prefetchListFresh = async ({ postType }) => {
   return { posts };
 };
 
+const prefetchPosts = async ({ postType }) => {};
+
 /**
  * Component to prefetch data for offline use
  *
@@ -108,18 +110,40 @@ const PrefetchData = ({ setFetching }) => {
   (async () => {
     // prefetch contacts (favorites, recent, activity log, but use common cacheKey)
     const contactsListUrl = getListURL({ postType: TypeConstants.CONTACT });
-    let contacts = cache.get(contactsListUrl);
+    const contacts = cache.get(contactsListUrl);
+    const prefetchContacts = await prefetchListFresh({
+      postType: TypeConstants.CONTACT,
+    });
     // do not overwrite any existing contacts
     if (!contacts) {
-      contacts = await prefetchListFresh({ postType: TypeConstants.CONTACT });
+      cache.set(contactsListUrl, prefetchContacts);
+    } else {
+      // else contacts exist, update existing contacts list w/ prefetch data
+      for (let ii = 0; ii < prefetchContacts?.posts?.length; ii++) {
+        const idx = contacts.posts.findIndex(
+          (post) => post.ID === prefetchContacts.posts[ii].ID
+        );
+        contacts.posts[idx] = prefetchContacts.posts[ii];
+      }
       cache.set(contactsListUrl, contacts);
     }
     // prefetch groups (favorites, recent, activity log, but use common cacheKey)
     const groupsListUrl = getListURL({ postType: TypeConstants.GROUP });
-    let groups = cache.get(groupsListUrl);
+    const groups = cache.get(groupsListUrl);
+    const prefetchGroups = await prefetchListFresh({
+      postType: TypeConstants.GROUP,
+    });
     // do not overwrite any existing groups
     if (!groups) {
-      groups = await prefetchListFresh({ postType: TypeConstants.GROUP });
+      cache.set(groupsListUrl, prefetchGroups);
+    } else {
+      // else groups exist, update existing groups list w/ prefetch data
+      for (let ii = 0; ii < prefetchGroups?.posts?.length; ii++) {
+        const idx = groups.posts.findIndex(
+          (post) => post.ID === prefetchGroups.posts[ii].ID
+        );
+        groups.posts[idx] = prefetchGroups.posts[ii];
+      }
       cache.set(groupsListUrl, groups);
     }
     /*
@@ -129,8 +153,14 @@ const PrefetchData = ({ setFetching }) => {
      * this will run asynchronously in the background - user will proceed with
      * the normal app launch flow (ie, Home Screen) while this is happening
      */
-    fetchPostData({ postType: TypeConstants.CONTACT, posts: contacts?.posts });
-    fetchPostData({ postType: TypeConstants.GROUP, posts: groups?.posts });
+    fetchPostData({
+      postType: TypeConstants.CONTACT,
+      posts: prefetchContacts?.posts,
+    });
+    fetchPostData({
+      postType: TypeConstants.GROUP,
+      posts: prefetchGroups?.posts,
+    });
     // proceed to Home Screen once the appropriate data is fetched
     if (contacts && groups) {
       setFetching(false);
