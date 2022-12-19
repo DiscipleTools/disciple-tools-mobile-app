@@ -32,6 +32,7 @@ const Field = ({
   post,
   onChange,
   onRemove,
+  mutate,
 }) => {
   const windowWidth = useWindowDimensions()?.width;
   const { styles, globalStyles } = useStyles(localStyles);
@@ -183,6 +184,7 @@ const Field = ({
             field={field}
             value={value}
             onChange={onChange}
+            mutate={mutate}
           />
         );
       case FieldTypes.LOCATION_META:

@@ -30,7 +30,6 @@ const Chip = ({
           styles.containerColor(selected),
           styles.container,
           adjustStylePadding,
-          ,
           containerStyle,
         ]}
       >

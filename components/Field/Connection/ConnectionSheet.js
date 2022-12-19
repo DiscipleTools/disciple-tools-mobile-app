@@ -7,7 +7,6 @@ import StatusBorder from "components/StatusBorder";
 import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 import useFilter from "hooks/use-filter";
 import useList from "hooks/use-list";
-import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
 
 import { TypeConstants } from "constants";
@@ -18,6 +17,7 @@ const ConnectionSheet = ({
   id,
   type,
   renderItem,
+  fields,
   values,
   onChange,
   modalName,
@@ -25,9 +25,6 @@ const ConnectionSheet = ({
   const { styles, globalStyles } = useStyles(localStyles);
   const { dismiss } = useBottomSheetModal();
   const { search, onSearch } = useFilter();
-  const { settings } = useSettings();
-
-  const fields = settings?.post_types?.[type]?.fields;
 
   // exclude currently selected values from options list
   const exclude = values?.map((item) => item?.ID);

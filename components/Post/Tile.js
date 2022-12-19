@@ -43,6 +43,7 @@ const Tile = ({ cacheKey, editing, idx, post, fields, mutate }) => {
           fieldKey={key}
           field={field}
           post={post}
+          mutate={mutate}
         />
       </View>
     ));

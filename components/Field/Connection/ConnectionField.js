@@ -12,7 +12,10 @@ import ConnectionSheet from "./ConnectionSheet";
 import useAPI from "hooks/use-api";
 import useCache from "hooks/use-cache";
 import useId from "hooks/use-id";
+import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
+
+import { getStatusKey } from "helpers";
 
 import {
   groupCircleIcon,
@@ -40,10 +43,13 @@ const mapToAPIRemove = ({ key, id }) => {
 
 const renderItemView = (item) => (
   <PostChip
+    key={item?.ID}
     id={item?.ID}
     title={item?.name || item?.post_title}
     //type={item?.post_type}
     type={null}
+    // TODO: requires fields to lookup
+    color={item?.status?.color}
   />
 );
 
@@ -135,8 +141,12 @@ const ConnectionFieldEdit = ({
   onChange,
 }) => {
   const postId = useId();
+  const postType = field?.post_type;
   const { cache, mutate } = useCache();
   const { updatePost } = useAPI();
+
+  const { settings } = useSettings();
+  const fields = settings?.post_types?.[postType]?.fields;
 
   const _onRemove = async ({ id }) => {
     // component state
@@ -163,7 +173,6 @@ const ConnectionFieldEdit = ({
   };
 
   const _onChange = async (newValue) => {
-    // TODO:
     const exists = values?.find(
       (existingItem) => existingItem?.ID === newValue?.ID
     );
@@ -173,6 +182,7 @@ const ConnectionFieldEdit = ({
     }
     // component state
     setValues(values ? [...values, newValue] : [newValue]);
+    // TODO:
     // grouped/form state (if applicable)
     /*
     if (onChange) {
@@ -192,6 +202,12 @@ const ConnectionFieldEdit = ({
   };
 
   const renderItemEdit = (item) => {
+    const statusKey = getStatusKey({ postType: item?.post_type });
+    let itemStatus = statusKey;
+    // TODO: refactor
+    if (!item?.[itemStatus]?.key) itemStatus = "status";
+    const color =
+      fields?.[statusKey]?.default?.[item?.[itemStatus]?.key]?.color ?? null;
     const leaderIds = post?.leaders?.map((leader) => leader?.ID);
     const icon =
       fieldKey === FieldNames.MEMBERS && leaderIds?.includes(item?.ID) ? (
@@ -204,7 +220,7 @@ const ConnectionFieldEdit = ({
         icon={icon}
         type={item?.post_type}
         onRemove={() => _onRemove({ id: item?.ID })}
-        color={item?.status?.color}
+        color={color}
       />
     );
   };
@@ -222,7 +238,6 @@ const ConnectionFieldEdit = ({
   const modalName = `${fieldKey}_modal`;
   const defaultIndex = getDefaultIndex();
 
-  const postType = field?.post_type;
   const fieldLabel = field?.name;
   const linkless = postType === TypeConstants.PEOPLE_GROUP;
 
@@ -244,6 +259,7 @@ const ConnectionFieldEdit = ({
         <ConnectionSheet
           id={postId}
           type={postType}
+          fields={fields}
           values={values}
           onChange={_onChange}
           modalName={modalName}

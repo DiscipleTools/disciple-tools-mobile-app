@@ -27,6 +27,7 @@ const KeySelectFieldEdit = ({
   value,
   setValue,
   onChange,
+  mutate,
 }) => {
   const { styles } = useStyles(localStyles);
   //const postId = useId();
@@ -50,6 +51,8 @@ const KeySelectFieldEdit = ({
       setCacheByKey({ cacheKey, fieldKey, newValue });
       // remote API state
       await updatePost({ data });
+      // force mutate (to display/hide status reason)
+      mutate();
     }
     return;
   };
@@ -129,6 +132,7 @@ const KeySelectField = ({
   field,
   value,
   onChange,
+  mutate,
 }) => {
   const [_value, _setValue] = useState(value);
   const fieldOptions = field?.default;
@@ -145,6 +149,7 @@ const KeySelectField = ({
         value={_value}
         setValue={_setValue}
         onChange={onChange}
+        mutate={mutate}
       />
     );
   }

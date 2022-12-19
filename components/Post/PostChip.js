@@ -18,7 +18,7 @@ import { localStyles } from "./PostChip.styles";
 const PostChip = ({ id, icon, title, type, color, onRemove, onGoBack }) => {
   const navigation = useNavigation();
   const { vibrate } = useHaptics();
-  const { styles, globalStyles } = useStyles(localStyles);
+  const { styles } = useStyles(localStyles);
   const { postType, getTabScreenFromType } = useType();
   const selected = type ? true : null;
   return (
