@@ -61,40 +61,40 @@ const ActivityLogCard = ({ preview, refreshing }) => {
   const { data: activityLog, mutate } = useActivityLog();
   if (!activityLog) return null;
 
+  // sort activity log (grouped sort below depends on it - using 0th index)
+  activityLog.sort((a, b) => new Date(b?.hist_time) - new Date(a?.hist_time));
+
   // group by post
-  const groupedActivityLog = {};
+  let groupedActivityLog = {};
   activityLog?.forEach((element) => {
     let logKey = element?.object_id;
     const logType = element?.object_type;
     if (logType === TypeConstants.CONTACT || logType === TypeConstants.GROUP) {
-      groupedActivityLog[logKey] = !groupedActivityLog?.[logKey]
-        ? [{ ...element }]
-        : [...groupedActivityLog[logKey], { ...element }];
+      if (!groupedActivityLog?.[logKey]) {
+        groupedActivityLog[logKey] = [];
+      }
+      groupedActivityLog[logKey].push({ ...element });
     }
   });
 
-  // TODO: sort
-  /*
-  // sort each group's array by hist_time
-  Object.entries(groupedActivityLog).forEach(([key, value]) => {
-    value?.sort((a, b) => {
-      return new Date(b?.hist_time)-new Date(a?.hist_time);
-    });
-  });
-
-  // sort by each group's latest log
-  Object.entries(groupedActivityLog).sort((a, b) => {
-    const aLatestLog = a[1][a[1].length-1];
-    const bLatestLog = b[1][b[1].length-1];
-    return new Date(bLatestLog?.created_at)-new Date(aLatestLog?.created_at);
-  });
-  */
+  // sort posts by most recent activity
+  const sortedGroupedActivityLog = Object.entries(groupedActivityLog).sort(
+    (a, b) => {
+      // 0th is most recent bc 'Activity Log' already sorted (by 'hist_time')
+      const aLatestLog = a[1][0];
+      const bLatestLog = b[1][0];
+      return (
+        new Date(Number(bLatestLog?.hist_time) * 1000) -
+        new Date(Number(aLatestLog?.hist_time) * 1000)
+      );
+    }
+  );
 
   const renderExpandedCard = () => {
     navigation.navigate(ScreenConstants.ALL_ACTIVITY_LOGS, {
       paramsData: {
         title,
-        data: groupedActivityLog,
+        data: sortedGroupedActivityLog,
       },
     });
   };
@@ -102,15 +102,11 @@ const ActivityLogCard = ({ preview, refreshing }) => {
   const renderPartialCard = () => (
     <>
       <View>
-        {Object.entries(groupedActivityLog)
-          .slice(0, preview)
-          .map(renderActivityLog)}
+        {sortedGroupedActivityLog.slice(0, preview).map(renderActivityLog)}
       </View>
-      {Object.keys(groupedActivityLog).length > 1 && (
-        <View style={styles.etcetera}>
-          <Text>...</Text>
-        </View>
-      )}
+      <View style={styles.etcetera}>
+        <Text>...</Text>
+      </View>
     </>
   );
 

@@ -14,7 +14,7 @@ const AllActivityLogsScreen = ({ navigation, route }) => {
   const { title, data: groupedActivityLog } = route.params.paramsData;
 
   const [accordionState, setAccordionState] = useState([]);
-  const { styles, globalStyles } = useStyles(localStyles);
+  const { styles } = useStyles(localStyles);
 
   useEffect(() => {
     if (groupedActivityLog) {
@@ -51,7 +51,7 @@ const AllActivityLogsScreen = ({ navigation, route }) => {
     <View style={styles.container}>
       <OfflineBar />
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        {Object.entries(groupedActivityLog).map((logs, idx) => (
+        {groupedActivityLog.map((logs, idx) => (
           <RenderActivityLog
             key={logs?.[0] ?? Math.random()}
             logs={logs}
