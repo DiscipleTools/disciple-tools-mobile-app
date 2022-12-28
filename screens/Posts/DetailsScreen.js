@@ -67,7 +67,10 @@ const DetailsScreen = ({ navigation, route }) => {
   const postType = post?.post_type;
   const postId = post?.ID;
   const postName = post?.name;
-  const isFavorite = post?.favorite === "1";
+  const favoriteValue = post?.favorite;
+  const [isFavorite, setIsFavorite] = useState(
+    favoriteValue === true || favoriteValue === "1"
+  );
 
   const { data: shareData } = useShares(
     post ? getSharesURL({ postType, postId }) : null
@@ -124,6 +127,7 @@ const DetailsScreen = ({ navigation, route }) => {
                   vibrate();
                   const data = { favorite: !isFavorite };
                   updatePost({ data });
+                  setIsFavorite(!isFavorite);
                 }}
                 style={[globalStyles.headerIcon, styles.headerIcon]}
               >
@@ -164,7 +168,7 @@ const DetailsScreen = ({ navigation, route }) => {
         />
       ),
     });
-  }, [route?.params?.name]);
+  }, [route?.params?.name, isFavorite]);
 
   const [index, setIndex] = useState(0);
 
