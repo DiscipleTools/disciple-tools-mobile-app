@@ -1,5 +1,6 @@
 import React, { useLayoutEffect } from "react";
 import { View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import { ChevronIcon, PostIcon } from "components/Icon";
 import { HeaderRight } from "components/Header/Header";
@@ -14,12 +15,33 @@ import useStyles from "hooks/use-styles";
 
 import { ScreenConstants } from "constants";
 
-import { localStyles } from "./MoreScreen.styles";
+//import { localStyles } from "./MoreScreen.styles";
+
+const PostButton = ({ type }) => {
+  const navigation = useNavigation();
+  const { globalStyles } = useStyles();
+  const { settings } = useSettings({ type });
+  if (!settings?.post_types?.[type]?.label_plural) return null;
+  const label = settings.post_types[type].label_plural;
+  return (
+    <ListItem
+      startComponent={<PostIcon />}
+      label={label}
+      endComponent={<ChevronIcon style={globalStyles.icon} />}
+      onPress={() => {
+        navigation.push(ScreenConstants.LIST, {
+          type,
+          filter: null,
+        });
+      }}
+    />
+  );
+};
 
 const MoreScreen = ({ navigation }) => {
   const { customPostTypes } = useCustomPostTypes() || [];
-  const { styles, globalStyles } = useStyles(localStyles);
-  const { i18n, isRTL } = useI18N();
+  const { globalStyles } = useStyles();
+  const { i18n } = useI18N();
 
   useLayoutEffect(() => {
     const kebabItems = [
@@ -37,25 +59,6 @@ const MoreScreen = ({ navigation }) => {
       headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />,
     });
   }, []);
-
-  const PostButton = ({ type }) => {
-    const { settings } = useSettings({ type });
-    if (!settings?.label) return null;
-    const label = settings.label;
-    return (
-      <ListItem
-        startComponent={<PostIcon />}
-        label={label}
-        endComponent={<ChevronIcon style={globalStyles.icon} />}
-        onPress={() => {
-          navigation.push(ScreenConstants.LIST, {
-            type,
-            filter: null,
-          });
-        }}
-      />
-    );
-  };
 
   return (
     <View style={globalStyles.screenContainer}>
