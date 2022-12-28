@@ -162,8 +162,8 @@ export const sortPosts = ({ posts, sortKey }) => {
 };
 
 export const getPosts = async ({ url, offset, limit, posts }) => {
-  //const _url = `${url}&offset=${offset}&limit=${limit}`;
-  const _url = `${url}?offset=${offset}&limit=${limit}`;
+  const delimiter = url.includes("?") ? "&" : "?";
+  const _url = `${url}${delimiter}offset=${offset}&limit=${limit}`;
   const res = await axios({
     url: _url,
     method: "GET",
@@ -190,17 +190,18 @@ export const getPostsFetcher = ({ postType }) => {
    * but then the filters do not work (bc the relevant fields are not present)
    */
   /*
+  let mappedUrl = null;
   if (postType === TypeConstants.CONTACT) {
-    url = `${url}?fields_to_return[]=last_modified&fields_to_return[]=seeker_path&fields_to_return[]=overall_status`;
-  }; 
-  if (postType === TypeConstants.GROUP) {
-    url = `${url}?fields_to_return[]=last_modified&fields_to_return[]=group_status&fields_to_return[]=group_type&fields_to_return[]=member_count`;
+    mappedUrl = `${url}?fields_to_return[]=last_modified&fields_to_return[]=seeker_path&fields_to_return[]=overall_status`;
   };
-  url = `${url}?fields_to_return[]=last_modified`;
+  if (postType === TypeConstants.GROUP) {
+    mappedUrl = `${url}?fields_to_return[]=last_modified&fields_to_return[]=group_status&fields_to_return[]=group_type&fields_to_return[]=member_count&fields_to_return[]=favorite`;
+  };
   */
   return {
     url,
     fetcher: postFetcher({ url, offset: 0, limit: 1000, posts: [] }),
+    //fetcher: postFetcher({ url: mappedUrl ?? url, offset: 0, limit: 1000, posts: [] }),
   };
 };
 
