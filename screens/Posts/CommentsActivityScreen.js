@@ -5,14 +5,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  View,
-  Text,
-  Pressable,
-  SegmentedControlIOSComponent,
-} from "react-native";
+import { ActivityIndicator, Image, View, Text, Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import ParsedText from "react-native-parsed-text";
@@ -252,6 +246,7 @@ const CommentsActivityItem = ({
   mutate,
 }) => {
   const { styles, globalStyles } = useStyles(localStyles);
+  const navigation = useNavigation();
   const { getTabScreenFromType } = useType();
   const { i18n, isRTL, moment } = useI18N();
   const toast = useToast();
