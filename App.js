@@ -1,6 +1,6 @@
 import "./wdyr";
 import React, { useEffect } from "react";
-import { LogBox, Text } from "react-native";
+import { LogBox, Platform, Text } from "react-native";
 
 import * as SplashScreen from "expo-splash-screen";
 
@@ -38,6 +38,13 @@ const StyledApp = () => {
 const App = () => {
   // Initialize the app
   //useApp();
+
+  // https://github.com/react-navigation/react-navigation/issues/10432#issuecomment-1081942421
+  useEffect(() => {
+    if (Platform.OS === "ios") {
+      enableScreens(false);
+    }
+  }, []);
 
   // Dispay splash screen (keep visible until iniital screens ready to render)
   useEffect(() => {
