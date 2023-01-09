@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { Image, Keyboard, Linking, ScrollView, View } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector, useDispatch } from "react-redux";
 
-import { Image, Keyboard, Linking, View } from "react-native";
 import { UsernameIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
 import Button from "components/Button";
 import Link from "components/Link";
@@ -112,70 +113,72 @@ const LoginScreen = () => {
   );
 
   return (
-    <View style={globalStyles.screenContainer}>
-      <Header />
-      <View style={styles.formContainer}>
-        <PluginRequired {...mobileAppPlugin} />
-        <LabeledTextInput
-          editing
-          value={domainInput}
-          i18nKey="global.url"
-          onChangeText={(text) => {
-            dispatch(setFormField({ key: "domain", value: text }));
-            if (rememberLoginDetails) {
-              modifyUser({ key: "domain", value: text });
+    <SafeAreaView style={globalStyles.screenContainer}>
+      <ScrollView>
+        <Header />
+        <View style={styles.formContainer}>
+          <PluginRequired {...mobileAppPlugin} />
+          <LabeledTextInput
+            editing
+            value={domainInput}
+            i18nKey="global.url"
+            onChangeText={(text) => {
+              dispatch(setFormField({ key: "domain", value: text }));
+              if (rememberLoginDetails) {
+                modifyUser({ key: "domain", value: text });
+              }
+            }}
+            startIcon={<LinkIcon />}
+            textContentType="URL"
+            keyboardType="url"
+            disabled={loading}
+            error={state.domainValidation}
+          />
+          <LabeledTextInput
+            editing
+            value={usernameInput}
+            i18nKey="global.username"
+            onChangeText={(text) => {
+              dispatch(setFormField({ key: "username", value: text }));
+              if (rememberLoginDetails) {
+                modifyUser({ key: "username", value: text });
+              }
+            }}
+            startIcon={<UsernameIcon />}
+            textContentType="emailAddress"
+            keyboardType="email-address"
+            disabled={loading}
+            error={state.userValidation}
+          />
+          <LabeledTextInput
+            editing
+            value={passwordInput}
+            i18nKey="global.password"
+            onChangeText={(text) => {
+              dispatch(setFormField({ key: "password", value: text }));
+            }}
+            disabled={loading}
+            startIcon={<KeyIcon />}
+            endIcon={
+              <EyeIcon
+                onPress={() => toggleShowPassword(!showPassword)}
+                style={styles.showPasswordIcon(showPassword)}
+              />
             }
-          }}
-          startIcon={<LinkIcon />}
-          textContentType="URL"
-          keyboardType="url"
-          disabled={loading}
-          error={state.domainValidation}
-        />
-        <LabeledTextInput
-          editing
-          value={usernameInput}
-          i18nKey="global.username"
-          onChangeText={(text) => {
-            dispatch(setFormField({ key: "username", value: text }));
-            if (rememberLoginDetails) {
-              modifyUser({ key: "username", value: text });
-            }
-          }}
-          startIcon={<UsernameIcon />}
-          textContentType="emailAddress"
-          keyboardType="email-address"
-          disabled={loading}
-          error={state.userValidation}
-        />
-        <LabeledTextInput
-          editing
-          value={passwordInput}
-          i18nKey="global.password"
-          onChangeText={(text) => {
-            dispatch(setFormField({ key: "password", value: text }));
-          }}
-          disabled={loading}
-          startIcon={<KeyIcon />}
-          endIcon={
-            <EyeIcon
-              onPress={() => toggleShowPassword(!showPassword)}
-              style={styles.showPasswordIcon(showPassword)}
-            />
-          }
-          secureTextEntry={!showPassword}
-          error={state.passwordValidation}
-        />
-        <Button
-          title={i18n.t("global.login")}
-          loading={loading}
-          onPress={onLoginPress}
-        />
-        <ForgotPasswordLink />
-        <LanguagePicker />
-        <AppVersion />
-      </View>
-    </View>
+            secureTextEntry={!showPassword}
+            error={state.passwordValidation}
+          />
+          <Button
+            title={i18n.t("global.login")}
+            loading={loading}
+            onPress={onLoginPress}
+          />
+          <ForgotPasswordLink />
+          <LanguagePicker />
+          <AppVersion />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
