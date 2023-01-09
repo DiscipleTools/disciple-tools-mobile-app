@@ -22,7 +22,8 @@ import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
 
 import { getPostsFetcher } from "helpers";
-import { getListURL } from "helpers/urls";
+
+import { labelize } from "utils";
 
 //import { localStyles } from "./ListScreen.styles";
 
@@ -42,7 +43,7 @@ const ListScreen = ({ navigation, route }) => {
   const { isConnected } = useNetwork();
   const { i18n } = useI18N();
   const { postType } = useType();
-  const { settings } = useSettings({ type: postType });
+  const { data: settings } = useSettings({ type: postType });
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -52,7 +53,7 @@ const ListScreen = ({ navigation, route }) => {
 
   useLayoutEffect(() => {
     // TODO
-    const title = settings?.label ?? "";
+    const title = labelize(postType) ?? "";
     const kebabItems = [
       {
         label: i18n.t("global.viewOnWeb"),
@@ -67,7 +68,7 @@ const ListScreen = ({ navigation, route }) => {
       title,
       headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />,
     });
-  }, [settings?.label]);
+  }, [postType]);
 
   /*
    * only favorites are auto-refreshed on app launch, so this manual refresh
