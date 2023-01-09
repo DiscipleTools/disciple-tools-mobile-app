@@ -97,32 +97,59 @@ const useCustomAuth = () => {
 
   // rehydrate state from secure storage
   useEffect(() => {
-    if (!accessToken && !baseUrl && !user) {
+    console.log("*** REHYDRATING AUTH STATE ***");
+    console.log("accessToken", accessToken);
+    console.log("baseUrl", baseUrl);
+    console.log("user", user);
+    if (!accessToken || !baseUrl || !user) {
       (async () => {
         // rehydrate user
-        try {
-          const rehydratedUser = JSON.parse(
-            await getSecureItem(AuthConstants.USER)
-          );
-          setUser(rehydratedUser);
-        } catch (error) {
-          console.error(error);
-        }
+        if (!user) {
+          try {
+            console.log("...REHYDRATING USER");
+            const rehydratedUser = JSON.parse(
+              await getSecureItem(AuthConstants.USER)
+            );
+            console.log("rehydratedUser", rehydratedUser);
+            setUser(rehydratedUser);
+          } catch (error) {
+            console.error(error);
+          }
+        };
         // rehydrate baseUrl
-        const rehydratedBaseUrl = await getSecureItem(AuthConstants.BASE_URL);
-        setBaseUrl(rehydratedBaseUrl);
+        if (!baseUrl) {
+          console.log("...REHYDRATING BASE URL");
+          const rehydratedBaseUrl = await getSecureItem(AuthConstants.BASE_URL);
+          console.log("rehydratedBaseUrl", rehydratedBaseUrl);
+          setBaseUrl(rehydratedBaseUrl);
+        };
         // rehydrate access token
-        const rehydratedAccessToken = await getSecureItem(
-          AuthConstants.ACCESS_TOKEN
-        );
-        setAccessToken(rehydratedAccessToken);
+        if (!accessToken) {
+          console.log("...REHYDRATING ACCESS TOKEN");
+          const rehydratedAccessToken = await getSecureItem(
+            AuthConstants.ACCESS_TOKEN
+          );
+          console.log("rehydratedAccessToken", rehydratedAccessToken);
+          setAccessToken(rehydratedAccessToken);
+        };
       })();
-    }
+      return;
+    };
+    (async () => {
+      // if auto-login enabled, then proceeed, otherwise validate login cnonce
+      if (isAutoLogin) {
+        setAuthenticated(true);
+      } else {
+        const validatedLogin = await validateCNonce();
+        setAuthenticated(validatedLogin);
+      };
+    })();
     return;
-  }, []);
+  }, [accessToken, baseUrl, user?.id]);
 
   // auto-logout on any 401 - Unauthorized
   useEffect(() => {
+    console.log("$$$ SETTING UP RESPONSE INTERCEPTOR $$$")
     // add a response interceptor
     const responseInterceptor = axios.interceptors.response.use(
       (response) => response,
@@ -183,14 +210,7 @@ const useCustomAuth = () => {
           },
           (error) => error
         );
-        // if auto-login enabled, then proceeed, otherwise validate login cnonce
-        if (isAutoLogin) {
-          setAuthenticated(true);
-        } else {
-          const validatedLogin = await validateCNonce();
-          setAuthenticated(validatedLogin);
-        }
-      }
+      };
     })();
     return () => {
       if (requestInterceptor) {
@@ -320,6 +340,22 @@ const useCustomAuth = () => {
     }
   }, []);
 
+  return {
+    authenticated,
+    accessToken,
+    baseUrl,
+    user,
+    persistUser,
+    isAutoLogin,
+    toggleAutoLogin,
+    rememberLoginDetails,
+    toggleRememberLoginDetails,
+    modifyUser,
+    signIn,
+    signOut,
+  };
+
+  /*
   return useMemo(
     () => ({
       authenticated,
@@ -343,5 +379,6 @@ const useCustomAuth = () => {
       rememberLoginDetails,
     ]
   );
+  */
 };
 export { useAuth, AuthProvider };

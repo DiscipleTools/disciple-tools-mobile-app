@@ -11,7 +11,8 @@ import useSettings from "hooks/use-settings";
 
 const LanguagePicker = () => {
   const { i18n, selectedEndonym } = useI18N();
-  const { settings } = useSettings();
+  //const { data: settings } = useSettings();
+  const settings = null;
   let availableTranslations = settings?.available_translations?.map(
     (translation) => translation?.language
   );
