@@ -18,7 +18,6 @@ import useI18N from "hooks/use-i18n";
 import useList from "hooks/use-list";
 import useNetwork from "hooks/use-network";
 import useType from "hooks/use-type";
-import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
 
 import { getPostsFetcher } from "helpers";
@@ -43,7 +42,6 @@ const ListScreen = ({ navigation, route }) => {
   const { isConnected } = useNetwork();
   const { i18n } = useI18N();
   const { postType } = useType();
-  const { data: settings } = useSettings({ type: postType });
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -52,7 +50,6 @@ const ListScreen = ({ navigation, route }) => {
   // TODO: handler error case?
 
   useLayoutEffect(() => {
-    // TODO
     const title = labelize(postType) ?? "";
     const kebabItems = [
       {

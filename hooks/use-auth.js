@@ -97,20 +97,14 @@ const useCustomAuth = () => {
 
   // rehydrate state from secure storage
   useEffect(() => {
-    console.log("*** REHYDRATING AUTH STATE ***");
-    console.log("accessToken", accessToken);
-    console.log("baseUrl", baseUrl);
-    console.log("user", user);
     if (!accessToken || !baseUrl || !user) {
       (async () => {
         // rehydrate user
         if (!user) {
           try {
-            console.log("...REHYDRATING USER");
             const rehydratedUser = JSON.parse(
               await getSecureItem(AuthConstants.USER)
             );
-            console.log("rehydratedUser", rehydratedUser);
             setUser(rehydratedUser);
           } catch (error) {
             console.error(error);
@@ -118,18 +112,14 @@ const useCustomAuth = () => {
         };
         // rehydrate baseUrl
         if (!baseUrl) {
-          console.log("...REHYDRATING BASE URL");
           const rehydratedBaseUrl = await getSecureItem(AuthConstants.BASE_URL);
-          console.log("rehydratedBaseUrl", rehydratedBaseUrl);
           setBaseUrl(rehydratedBaseUrl);
         };
         // rehydrate access token
         if (!accessToken) {
-          console.log("...REHYDRATING ACCESS TOKEN");
           const rehydratedAccessToken = await getSecureItem(
             AuthConstants.ACCESS_TOKEN
           );
-          console.log("rehydratedAccessToken", rehydratedAccessToken);
           setAccessToken(rehydratedAccessToken);
         };
       })();
@@ -149,7 +139,6 @@ const useCustomAuth = () => {
 
   // auto-logout on any 401 - Unauthorized
   useEffect(() => {
-    console.log("$$$ SETTING UP RESPONSE INTERCEPTOR $$$")
     // add a response interceptor
     const responseInterceptor = axios.interceptors.response.use(
       (response) => response,
