@@ -64,15 +64,14 @@ const LocationFieldEdit = ({
       (existingItem) => existingItem?.id === mappedNewValue?.id
     );
     if (!exists) {
-      // COMPONENT STATE
       const componentData = selectedItems
         ? [...selectedItems, mappedNewValue]
         : [mappedNewValue];
+      // COMPONENT STATE
       setSelectedItems(componentData);
       // FORM STATE
       if (onChange) {
-        const mappedFormValues = mapToFormValues(componentData);
-        onChange({ key: fieldKey, value: { ...mappedFormValues } });
+        onChange({ key: fieldKey, value: componentData });
         return;
       }
       // CACHE STATE, API STATE
@@ -124,15 +123,14 @@ const LocationField = ({
   const [_selectedItems, _setSelectedItems] = useState(value);
 
   const _onRemove = async ({ id }) => {
-    const remainingSelectedItems = _selectedItems?.filter(
+    const componentData = _selectedItems?.filter(
       (item) => item?.id !== id
     );
     // COMPONENT STATE
-    _setSelectedItems(remainingSelectedItems ?? []);
+    _setSelectedItems(componentData);
     // GROUPED/FORM STATE (ie, Create New)
     if (onChange) {
-      const mappedFormValues = mapToFormValues(remainingSelectedItems);
-      onChange({ key: fieldKey, value: { ...mappedFormValues } });
+      onChange({ key: fieldKey, value: componentData });
       return;
     }
     // CACHE STATE, API STATE

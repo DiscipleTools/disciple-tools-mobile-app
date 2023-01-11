@@ -40,6 +40,7 @@ const initialMapFieldsToPost = ({ fields, post, postType }) => {
     initialPost[FieldNames.TYPE] = { key: "personal" };
   }
   if (postType === TypeConstants.GROUP) {
+    // TODO: this does not hold for OM
     initialPost[FieldNames.GROUP_TYPE] = { key: "pre-group" };
   }
   initialPost = { ...initialPost, ...post };
@@ -51,8 +52,11 @@ const filterEmptyFields = ({ post }) => {
     Object.entries(post).filter(([_, val]) => {
       if (Array.isArray(val)) {
         if (
-          val.length === 1 &&
-          (val[0]?.value === null || val[0]?.value === "")
+          val.length === 1 && (
+            (val[0]?.value === null || val[0]?.value === "") ||
+            (val[0]?.key === null || val[0]?.key === "") ||
+            (val[0]?.id === null || val[0]?.id === "")
+          )
         ) {
           return false;
         }
@@ -76,17 +80,16 @@ const validateFields = ({ fields, post, i18n, toast }) => {
   return true;
 };
 
-const mapToAPI = ({ post, postType }) => {
+const mapToAPI = ({ post }) => {
   const mappedPost = { ...post };
-  if (postType === TypeConstants.CONTACT) {
-    mappedPost[FieldNames.TYPE] = post?.[FieldNames.TYPE]?.key ?? "";
-    mappedPost[FieldNames.FAITH_STATUS] =
-      post?.[FieldNames.FAITH_STATUS]?.key ?? "";
-  }
-  if (postType === TypeConstants.GROUP) {
-    mappedPost[FieldNames.GROUP_TYPE] =
-      post?.[FieldNames.GROUP_TYPE]?.key ?? "";
-  }
+  for (const [key, val] of Object.entries(post)) {
+    if (val?.key) {
+      mappedPost[key] = val.key;
+    };
+    if (Array.isArray(val)) {
+      mappedPost[key] = { values: val.map(item => ({ value: item?.key || item?.value || item?.id || "" })) };
+    };
+  };
   return mappedPost;
 };
 
@@ -98,9 +101,6 @@ const mapToCache = ({ post, postType, postId }) => {
   const currentDate = getCurrentDate();
   mappedPost[FieldNames.POST_DATE] = currentDate;
   mappedPost[FieldNames.LAST_MODIFIED] = currentDate;
-  if (postType === TypeConstants.GROUP) {
-    mappedPost[FieldNames.GROUP_TYPE] = { key: post?.group_type ?? "" };
-  }
   return mappedPost;
 };
 
@@ -235,8 +235,8 @@ const CreateScreen = ({ navigation, route }) => {
     if (!isConnected) {
       post[FieldNames.ID] = tmpId;
       post[FieldNames.OFFLINE] = true;
-    }
-    const apiPost = mapToAPI({ post, postType });
+    };
+    const apiPost = mapToAPI({ post });
     const res = await createPost({ data: apiPost });
     if (isConnected && res?.ID) {
       // use the ID returned from the API
