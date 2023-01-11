@@ -6,7 +6,9 @@ import {
   View,
 } from "react-native";
 //import { FlashList } from "@shopify/flash-list";
-import { FlatList } from "react-native";
+//import { FlatList } from "react-native";
+// ref: https://gorhom.github.io/react-native-bottom-sheet/troubleshooting/#adding-horizontal-flatlist-or-scrollview-is-not-working-properly-on-android
+import { FlatList } from "react-native-gesture-handler";
 
 import SearchBar from "./SearchBar";
 import FilterBar from "./FilterBar";
