@@ -296,7 +296,6 @@ const CreateScreen = ({ navigation, route }) => {
         <Field
           key={key}
           editing
-          grouped={true}
           fieldKey={key}
           field={field}
           post={postRef.current}

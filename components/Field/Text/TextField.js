@@ -36,10 +36,10 @@ const TextFieldView = ({ value }) => {
 
 const TextFieldEdit = ({
   editing,
-  grouped,
   cacheKey,
   fieldKey,
   field,
+  defaultValue,
   value,
   onChange,
   keyboardType,
@@ -51,21 +51,16 @@ const TextFieldEdit = ({
   const { cache, mutate } = useCache();
   const { updatePost } = useAPI();
 
+  const isSliderField = field?.name === FieldNames.INFLUENCE;
+
   const mappedValue = mapFromAPI({ value });
   const [_value, _setValue] = useState(mappedValue);
 
-  useEffect(() => {
-    if (_value !== mappedValue) {
-      _setValue(mappedValue);
-    }
-  }, [mappedValue]);
-
   // TODO: use env var for debounce time?
-  const debouncedValue = useDebounce(_value, 3000); // 3 secs //1500
+  const debounceRate = onChange || isSliderField ? null : 3000; // 3 secs
+  const debouncedValue = useDebounce(_value, debounceRate);
 
   const [showSave, setShowSave] = useState(false);
-
-  const isSliderField = field?.name === FieldNames.INFLUENCE;
 
   const _onClear = useCallback(() => {
     _setValue(mappedValue);
@@ -73,16 +68,15 @@ const TextFieldEdit = ({
     Keyboard.dismiss();
   }, [mappedValue]);
 
-  const _onChange = useCallback(async () => {
-    // component state
-    _setValue(debouncedValue);
+  const _onChange = async () => {
     // grouped/form state (if applicable)
     if (onChange) {
       onChange({ key: fieldKey, value: debouncedValue });
       setShowSave(false);
-      Keyboard.dismiss();
       return;
     }
+    // component state
+    _setValue(debouncedValue);
     // in-memory cache (and persisted storage) state
     const cachedData = cache.get(cacheKey);
     cachedData[fieldKey] = debouncedValue;
@@ -113,30 +107,40 @@ const TextFieldEdit = ({
     await updatePost({ data });
     setShowSave(false);
     Keyboard.dismiss();
-  }, [debouncedValue]);
+  };
 
   useEffect(() => {
-    if (debouncedValue !== mappedValue && debouncedValue !== null) {
-      if (!grouped && !isSliderField) {
-        setShowSave(true);
+    // if the value has changed, or if value is empty and onChange is defined
+    if (
+      debouncedValue !== mappedValue ||
+      (
+        debouncedValue === mappedValue &&
+        mappedValue === '' &&
+        onChange
+      )
+    ) {
+      // if onChange is defined or is a slider field, then immediately update,
+      // otherwise, show the save/cancel icons to manually revert or update
+      if (onChange || isSliderField) {
+        _onChange(debouncedValue);
         return;
-      }
-      _onChange(debouncedValue);
-      return;
-    }
+      };
+      setShowSave(true);
+    };
     return;
   }, [debouncedValue]);
 
   if (isSliderField) {
     return <Slider value={_value} onValueChange={_setValue} />;
-  }
+  };
   return (
     <View style={styles.container}>
       <View style={globalStyles.rowContainer}>
         <TextInput
-          keyboardType={keyboardType ?? "default"}
-          value={_value}
+          defaultValue={defaultValue}
+          value={onChange ? null : _value}
           onChangeText={_setValue}
+          keyboardType={keyboardType ?? "default"}
           style={styles.input}
         />
         {showSave && (
@@ -152,7 +156,6 @@ const TextFieldEdit = ({
 
 const TextField = ({
   editing,
-  grouped,
   cacheKey,
   fieldKey,
   field,
@@ -164,7 +167,6 @@ const TextField = ({
     return (
       <TextFieldEdit
         editing={editing}
-        grouped={grouped}
         cacheKey={cacheKey}
         fieldKey={fieldKey}
         field={field}

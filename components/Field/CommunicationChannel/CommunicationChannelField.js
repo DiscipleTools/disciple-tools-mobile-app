@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { View } from "react-native";
-import { RemoveIcon } from "components/Icon";
+import React, { useState } from "react";
+import { Keyboard, TextInput, View } from "react-native";
 
 import CommunicationLink from "./CommunicationLink";
-import TextField from "components/Field/Text/TextField";
+
+import {
+  AddIcon,
+  RemoveIcon,
+  SaveIcon,
+  CancelIcon,
+} from "components/Icon";
 
 import useAPI from "hooks/use-api";
 import useCache from "hooks/use-cache";
-import useDebounce from "hooks/use-debounce";
 import useStyles from "hooks/use-styles";
 
 import { FieldDefaultValues } from "constants";
@@ -18,10 +22,19 @@ const mapToComponent = ({ existingValues, idx, newValue }) => {
   let newValues = [...existingValues];
   const prevValue = existingValues[idx];
   if (prevValue?.value === newValue) return existingValues;
-  if (!newValue?.value) return existingValues;
-  const mergedValue = { ...prevValue, value: newValue.value };
+  if (!newValue) return existingValues;
+  const mergedValue = { ...prevValue, value: newValue };
   newValues[idx] = mergedValue;
   return newValues;
+};
+
+const mapToComponentRemove = ({ existingValues, idx }) => {
+  if (idx === 0 && existingValues?.length === 1) {
+    const newValues = [...existingValues];
+    newValues[idx].value = '';
+    return newValues;
+  };
+  return existingValues.filter((_, i) => i !== idx);
 };
 
 // eg, {"contact_email":[{"key":"contact_email_123","value":"101"}]}
@@ -30,20 +43,6 @@ const mapToAPI = ({ fieldKey, newValue }) => {
   // use existing key if available, otherwise API will create a new key
   if (newValue?.key) data[fieldKey][0].key = newValue.key;
   return data;
-};
-
-const mapToComponentRemove = ({ existingValues, idx }) => {
-  let newValues = [...existingValues];
-  // if only remaining field and is empty, do not remove
-  if (idx === 0 && existingValues?.length === 1) {
-    const removedValue = newValues[idx];
-    // if value is not empty, clear it
-    if (removedValue?.value !== "") {
-      removedValue.value = "";
-    }
-    return newValues;
-  }
-  return newValues.filter((_, _idx) => _idx !== idx);
 };
 
 // eg, {"contact_email":[{"key":"contact_email_123","delete":true}]}
@@ -61,60 +60,55 @@ const CommunicationChannelFieldView = ({ values }) => {
   ));
 };
 
+// TODO: move to helpers?
+const getKeyboardType = ({ field }) => {
+  const fieldName = field?.name?.toLowerCase();
+  if (!fieldName) return "default";
+  if (fieldName.includes("phone")) return "phone-pad";
+  if (fieldName.includes("email")) return "email-address";
+  return "default";
+};
+
 // ref: https://developers.disciple.tools/theme-core/api-posts/post-types-fields-format#communication_channel
-const CommunicationTextField = ({
+const CommunicationTextInput = ({
   idx,
-  grouped,
-  cacheKey,
-  fieldKey,
-  field,
-  value,
+  controls,
+  defaultValue,
   onChange,
   onRemove,
+  keyboardType
 }) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const [_value, _setValue] = useState(value);
-  const _text = value?.value ?? "";
-
-  // TODO: 1000 too slow and user may click plus sign, but less is too fast for entries like email
-  const debouncedValue = useDebounce(_value, 1500);
-
-  useEffect(() => {
-    if (debouncedValue?.value !== value?.value) {
-      onChange({ idx, value: debouncedValue });
-    }
-    return;
-  }, [debouncedValue]);
-
-  const getKeyboardType = () => {
-    const fieldName = field?.name?.toLowerCase();
-    if (!fieldName) return "default";
-    if (fieldName.includes("phone")) return "phone-pad";
-    if (fieldName.includes("email")) return "email-address";
-    return "default";
-  };
-
-  const keyboardType = getKeyboardType();
-  return (
+  const [_text, _setText] = useState(null);
+  if (controls === undefined) controls = true; // default to manual save/cancel
+  const [showSave, setShowSave] = useState(false);
+  return(
     <View style={globalStyles.rowContainer}>
-      <View style={styles.container}>
-        <TextField
-          editing
-          grouped={grouped}
-          cacheKey={cacheKey}
-          fieldKey={fieldKey}
-          field={field}
-          value={_text}
-          /*
-           * NOTE: this 'onChange' may be unexpected bc the TextField component
-           * returns fieldKey with value (not just text value)
-           */
-          onChange={_setValue}
-          style={styles.input}
+      <View style={[globalStyles.rowContainer, styles.container]}>
+        <TextInput
+          defaultValue={defaultValue}
+          onChangeText={(text) => {
+            _setText(text);
+            if (text !== defaultValue) {
+              if (controls) {
+                setShowSave(true);
+                return;
+              };
+              onChange({ idx, value: text })
+            };
+          }}
+          onEndEditing={() => Keyboard.dismiss()}
+          style={styles.input(controls && showSave)}
           keyboardType={keyboardType}
         />
+        {controls && showSave && (
+          <View style={[globalStyles.rowContainer, styles.controlIcons]}>
+            <CancelIcon onPress={() => onChange({ idx, value: defaultValue })} />
+            <SaveIcon onPress={() => onChange({ idx, value: _text })} />
+          </View>
+        )}
       </View>
-      <View style={styles.removeIcon}>
+      <View style={styles.actionIcons}>
         <RemoveIcon
           onPress={() => onRemove({ idx })}
           style={{ color: "red" }}
@@ -125,19 +119,27 @@ const CommunicationTextField = ({
 };
 
 const CommunicationChannelFieldEdit = ({
-  grouped,
   cacheKey,
   fieldKey,
   field,
   values,
   onChange,
 }) => {
-  const [_values, _setValues] = useState(values?.length > 0 ? values : []);
+  const [_values, _setValues] = useState(values);
 
   const { cache, mutate } = useCache();
   const { updatePost } = useAPI();
 
+  const _onAdd = () => {
+    Keyboard.dismiss();
+    const newValues = _values?.length > 0 ?
+      [..._values, FieldDefaultValues.COMMUNICATION_CHANNEL] :
+      [FieldDefaultValues.COMMUNICATION_CHANNEL];
+    _setValues(newValues);
+  };
+
   const _onRemove = ({ idx }) => {
+    Keyboard.dismiss();
     // component state
     const componentData = mapToComponentRemove({
       existingValues: _values,
@@ -148,7 +150,7 @@ const CommunicationChannelFieldEdit = ({
     if (onChange) {
       onChange({ key: fieldKey, value: componentData });
       return;
-    }
+    };
     // in-memory cache (and persisted storage) state
     const cachedData = cache.get(cacheKey);
     if (!cachedData?.[fieldKey]) return;
@@ -186,39 +188,42 @@ const CommunicationChannelFieldEdit = ({
     return;
   };
 
-  return _values?.map((value, idx) => {
-    if (value?.delete === true) return null;
-    return (
-      <CommunicationTextField
-        key={idx}
-        idx={idx}
-        grouped={grouped}
-        cacheKey={cacheKey}
-        fieldKey={fieldKey}
-        field={field}
-        value={value}
-        onChange={_onChange}
-        onRemove={_onRemove}
+  const keyboardType = getKeyboardType({ field });
+  return (
+    <View style={{ position: "relative", top: -10 }}>
+      <AddIcon
+        onPress={() => _onAdd({ _values, _setValues })}
+        style={{ color: "green", position: "relative", top: -17, left: -30 }}
       />
-    );
-  });
+      { _values?.map((value, idx) => {
+        return(
+            <CommunicationTextInput
+              key={idx}
+              idx={idx}
+              controls={onChange ? false : true}
+              defaultValue={value?.value ?? ''}
+              onChange={_onChange}
+              onRemove={_onRemove}
+              keyboardType={keyboardType}
+            />
+        );
+      })}
+    </View>
+  );
 };
 
 const CommunicationChannelField = ({
   editing,
-  grouped,
   cacheKey,
   fieldKey,
   field,
   values,
   onChange,
 }) => {
-  const _values =
-    values?.length > 0 ? values : [FieldDefaultValues.COMMUNICATION_CHANNEL];
+  const _values = values?.length > 0 ? values : [FieldDefaultValues.COMMUNICATION_CHANNEL];
   if (editing) {
     return (
       <CommunicationChannelFieldEdit
-        grouped={grouped}
         cacheKey={cacheKey}
         fieldKey={fieldKey}
         field={field}

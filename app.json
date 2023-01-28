@@ -4,7 +4,7 @@
     "slug": "discipletoolsapp",
     "privacy": "public",
     "platforms": ["ios", "android"],
-    "version": "1.11.0 b20230108.1",
+    "version": "1.11.0 b20230127.1",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/icon.png",

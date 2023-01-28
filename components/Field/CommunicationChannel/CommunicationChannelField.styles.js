@@ -16,15 +16,18 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     marginEnd: "auto",
     flex: 11,
     width: "100%",
-  },
-  input: {
-    color: theme.text.primary,
     paddingHorizontal: 10,
   },
+  input: (showSave) => ({
+    color: theme.text.primary,
+    // TODO: refactor out percentage widths
+    width: showSave ? "85%" : "100%",
+  }),
   controlIcons: {
+    paddingVertical: 10,
     justifyContent: "space-between",
   },
-  removeIcon: {
+  actionIcons: {
     flex: 1,
     justifyContent: "center",
   },

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Text, View, useWindowDimensions } from "react-native";
 
-import { AddIcon, CancelIcon, EditIcon } from "components/Icon";
+import { CancelIcon, EditIcon } from "components/Icon";
 import FieldSkeleton from "./FieldSkeleton";
 import FieldIcon from "./FieldIcon";
 
@@ -19,12 +19,11 @@ import UserSelectField from "components/Field/UserSelect/UserSelectField";
 
 import useStyles from "hooks/use-styles";
 
-import { FieldDefaultValues, FieldTypes, FieldNames } from "constants";
+import { FieldTypes, FieldNames } from "constants";
 
 import { localStyles } from "./Field.styles";
 
 const Field = ({
-  grouped,
   editing,
   cacheKey,
   fieldKey,
@@ -73,19 +72,6 @@ const Field = ({
     fieldType === FieldTypes.COMMUNICATION_CHANNEL ||
     fieldType === FieldTypes.LOCATION_META;
 
-  const getNewValue = ({ field }) => {
-    if (field?.type === FieldTypes.COMMUNICATION_CHANNEL) {
-      return FieldDefaultValues.COMMUNICATION_CHANNEL;
-    }
-    return "";
-  };
-
-  const _onAdd = () => {
-    _setEditing(true);
-    const newValue = getNewValue({ field });
-    _setValue(_value?.length > 0 ? [..._value, newValue] : [newValue]);
-  };
-
   const _onCancel = () => {
     _setEditing(false);
     _setValue(value);
@@ -101,14 +87,25 @@ const Field = ({
     );
   };
 
+  // TODO: comments
   const isUncontrolledField = () => {
-    if (fieldType === FieldTypes.CONNECTION && isGroupField) return false;
     if (
-      fieldType === FieldTypes.MULTI_SELECT &&
-      fieldName === FieldNames.CHURCH_HEALTH
-    )
+      (
+        fieldType === FieldTypes.CONNECTION &&
+        isGroupField
+      ) ||
+      (
+        fieldType === FieldTypes.MULTI_SELECT &&
+        fieldName === FieldNames.CHURCH_HEALTH
+      ) ||
+      (
+        fieldType === FieldTypes.COMMUNICATION_CHANNEL &&
+        !onChange
+      )
+    ) {
       return false;
-    return fieldType !== FieldTypes.COMMUNICATION_CHANNEL;
+    };
+    return true;
   };
 
   const Controls = () => {
@@ -145,8 +142,7 @@ const Field = ({
       case FieldTypes.COMMUNICATION_CHANNEL:
         return (
           <CommunicationChannelField
-            grouped={grouped}
-            editing={grouped ? true : _editing}
+            editing={_editing}
             cacheKey={cacheKey}
             fieldKey={fieldKey}
             field={field}
@@ -182,7 +178,7 @@ const Field = ({
             cacheKey={cacheKey}
             fieldKey={fieldKey}
             field={field}
-            value={value}
+            value={_value}
             onChange={onChange}
             mutate={mutate}
           />
@@ -240,11 +236,10 @@ const Field = ({
         return (
           <TextField
             editing
-            grouped={grouped}
             cacheKey={cacheKey}
             fieldKey={fieldKey}
             field={field}
-            value={value}
+            value={_value}
             onChange={onChange}
           />
         );
@@ -278,11 +273,6 @@ const Field = ({
         <View>
           <Text style={styles.fieldLabelText}>{label}</Text>
         </View>
-        {isMultiInputTextField && (
-          <View>
-            <AddIcon onPress={() => _onAdd()} style={{ color: "green" }} />
-          </View>
-        )}
         <View style={styles.fieldControls}>
           <Controls />
         </View>
