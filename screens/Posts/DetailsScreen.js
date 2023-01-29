@@ -94,7 +94,7 @@ const DetailsScreen = ({ navigation, route }) => {
 
   const _onChange = async (selectedUser) => {
     try {
-      await createShare(selectedUser.key);
+      await createShare({ userId: selectedUser?.key });
     } catch (err) {
       toast(err, true);
     }

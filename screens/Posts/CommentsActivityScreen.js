@@ -133,6 +133,7 @@ const CommentInput = forwardRef(
   ) => {
     const { styles, globalStyles } = useStyles(localStyles);
     const { i18n } = useI18N();
+    const toast = useToast();
 
     const { createComment, updateComment } = useAPI();
 
@@ -163,6 +164,7 @@ const CommentInput = forwardRef(
         createCommentCache({ cache, cacheKey, newComment });
         await createComment({ comment });
       } catch (error) {
+        console.error(error);
         toast(error, true);
       } finally {
         mutate();

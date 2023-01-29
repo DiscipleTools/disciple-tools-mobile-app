@@ -1,24 +1,19 @@
 import * as RootNavigation from "navigation/RootNavigation";
 
-import useCache from "hooks/use-cache";
 import useRequestQueue from "hooks/use-request-queue";
 import useType from "hooks/use-type";
 
 import { getCommentURL, getCommentsURL, getListURL } from "helpers/urls";
 
-import { formatDateAPI } from "utils";
-
 import { HTTP } from "constants";
 
 const useAPI = ({ cacheKey } = {}) => {
   const postId = RootNavigation.getId();
-  const { cache } = useCache();
-  const { request } = useRequestQueue();
   const { postType } = useType();
+  const { request } = useRequestQueue();
 
   // USER
   // https://developers.disciple.tools/theme-core/api-other/users
-
   const updateUser = async ({ add_push_token, locale }) => {
     const url = "/dt/v1/user/update";
     let data = {};
@@ -112,23 +107,6 @@ const useAPI = ({ cacheKey } = {}) => {
       comment,
       comment_type: "comment", // hardcoded
     };
-    // TODO: remove
-    /*
-    const localData = {
-      comments: [
-        {
-          comment_ID: "-1",
-          comment_content: comment,
-          comment_date: formatDateAPI(new Date()),
-          comment_type: "comment",
-        },
-      ],
-    };
-    //const key = url;
-    const localCachedData = cache.get(cacheKey);
-    if (localCachedData?.comments?.length > 0)
-      localData.comments.push(...localCachedData.comments);
-    */
     return request({
       request: {
         url,
@@ -139,17 +117,18 @@ const useAPI = ({ cacheKey } = {}) => {
     });
   };
 
-  const updateComment = async (commentId, comment) => {
-    const url =
-      postType && postId && commentId
-        ? `/dt-posts/v2/${postType}/${postId}/comments/${commentId}`
-        : null;
+  const updateComment = async ({ commentId, comment }) => {
+    let url = null;
+    if (postType && postId) {
+      url = getCommentURL({ postType, postId, commentId });
+    };
+    const data = { comment };
     return request({
       request: {
         url,
         method: HTTP.METHODS.POST,
         headers: HTTP.HEADERS.DEFAULT,
-        data: { comment },
+        data,
       },
       cacheKey,
     });
@@ -170,7 +149,7 @@ const useAPI = ({ cacheKey } = {}) => {
 
   // SHARE
   // https://developers.disciple.tools/theme-core/api-posts/post-sharing
-  const createShare = async (userId) => {
+  const createShare = async ({ userId }) => {
     const url =
       postType && postId && userId
         ? `/dt-posts/v2/${postType}/${postId}/shares`
