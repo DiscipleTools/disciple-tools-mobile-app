@@ -104,9 +104,10 @@ const useRequestQueue = () => {
                 // delete the existing, tmp post from cache
                 cache.delete(existingPostURL);
               }
+            } else {
+              // reprocess any pending update requests
+              await processRequest({ request, reprocess: true });
             }
-            // reprocess any pending update requests
-            await processRequest({ request, reprocess: true });
           }
         }
       }
