@@ -247,7 +247,7 @@ const DetailsScreen = ({ navigation, route }) => {
       <TabView
         lazy
         renderLazyPlaceholder={() => <PostSkeleton />}
-        keyboardDismissMode="none"
+        keyboardDismissMode="auto"
         navigationState={{ index, routes }}
         renderScene={renderScene}
         onIndexChange={setIndex}

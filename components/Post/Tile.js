@@ -69,4 +69,4 @@ const Tile = ({ cacheKey, editing, idx, post, fields, mutate }) => {
     </KeyboardAwareScrollView>
   );
 };
-export default Tile;
+export default React.memo(Tile);
