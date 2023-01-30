@@ -123,9 +123,7 @@ const LocationField = ({
   const [_selectedItems, _setSelectedItems] = useState(value);
 
   const _onRemove = async ({ id }) => {
-    const componentData = _selectedItems?.filter(
-      (item) => item?.id !== id
-    );
+    const componentData = _selectedItems?.filter((item) => item?.id !== id);
     // COMPONENT STATE
     _setSelectedItems(componentData);
     // GROUPED/FORM STATE (ie, Create New)
@@ -162,6 +160,7 @@ const LocationField = ({
     }
     return (
       <Chip
+        key={name}
         label={name}
         // TODO
         //onPress={() => Linking.openURL(mapURL)}

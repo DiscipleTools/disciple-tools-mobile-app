@@ -73,6 +73,7 @@ const UserSelectFieldEdit = ({
 
   const renderItemEdit = (item) => (
     <PostChip
+      key={item?.id}
       id={item?.id}
       title={item?.display}
       type={null} //item?.type}

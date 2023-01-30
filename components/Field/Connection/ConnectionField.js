@@ -215,6 +215,7 @@ const ConnectionFieldEdit = ({
       ) : null;
     return (
       <PostChip
+        key={item?.ID}
         id={item?.ID}
         title={item?.name || item?.post_title}
         icon={icon}
@@ -227,6 +228,7 @@ const ConnectionFieldEdit = ({
 
   const renderItemLinkless = (item) => (
     <PostChip
+      key={item?.ID}
       id={item?.ID}
       title={item?.post_title}
       onRemove={() => _onRemove({ id: item?.ID })}
