@@ -113,26 +113,22 @@ const TextFieldEdit = ({
     // if the value has changed, or if value is empty and onChange is defined
     if (
       debouncedValue !== mappedValue ||
-      (
-        debouncedValue === mappedValue &&
-        mappedValue === '' &&
-        onChange
-      )
+      (debouncedValue === mappedValue && mappedValue === "" && onChange)
     ) {
       // if onChange is defined or is a slider field, then immediately update,
       // otherwise, show the save/cancel icons to manually revert or update
       if (onChange || isSliderField) {
         _onChange(debouncedValue);
         return;
-      };
+      }
       setShowSave(true);
-    };
+    }
     return;
   }, [debouncedValue]);
 
   if (isSliderField) {
     return <Slider value={_value} onValueChange={_setValue} />;
-  };
+  }
   return (
     <View style={styles.container}>
       <View style={globalStyles.rowContainer}>
@@ -170,6 +166,7 @@ const TextField = ({
         cacheKey={cacheKey}
         fieldKey={fieldKey}
         field={field}
+        defaultValue={value}
         value={value}
         onChange={onChange}
         keyboardType={keyboardType}
