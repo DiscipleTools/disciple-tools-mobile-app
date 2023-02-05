@@ -76,7 +76,7 @@ const useImportContacts = ({ search }) => {
   if (search) {
     const searchOptions = {
       caseInsensitive: true,
-      include: ["title"],
+      include: ["name", "title"],
     };
     filtered = searchObjList(filtered, search, searchOptions);
   }
