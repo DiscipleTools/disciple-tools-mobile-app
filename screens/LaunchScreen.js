@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, SafeAreaView, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { mutate, useSWRConfig } from "swr";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import axios from "services/axios";
 
