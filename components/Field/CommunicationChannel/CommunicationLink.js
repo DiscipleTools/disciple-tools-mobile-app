@@ -6,7 +6,14 @@ import { isValidEmail, isValidPhone, isValidURL } from "utils";
 
 import { localStyles } from "./CommunicationLink.styles";
 
-const getProtocol = ({ key, value }) => {
+const getProtocolByFieldName = ({ fieldName }) => {
+  if (!fieldName) return null;
+  if (fieldName.includes("phone")) return "tel:";
+  if (fieldName.includes("email")) return "mailto:";
+  return null;
+};
+
+const getProtocol = ({ fieldName, key, value }) => {
   if (isValidEmail({ value })) return "mailto:";
   // be lenient with phone numbers and let the phone app handle it
   if (typeof key === "string" && key?.toLowerCase()?.includes("phone"))
@@ -16,13 +23,13 @@ const getProtocol = ({ key, value }) => {
     if (!value.includes("http")) return "https://";
     return "";
   }
-  return null;
+  return getProtocolByFieldName({ fieldName });
 };
 
-const CommunicationLink = ({ entryKey, value }) => {
+const CommunicationLink = ({ fieldName, entryKey, value }) => {
   const { styles } = useStyles(localStyles);
 
-  let protocol = getProtocol({ key: entryKey, value });
+  let protocol = getProtocol({ fieldName, key: entryKey, value });
   const url = `${protocol}${value}`;
   const isLink = protocol !== null;
   return (

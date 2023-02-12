@@ -96,6 +96,44 @@ export const searchObjList = (objList, searchStr, options) => {
     ?.flat();
 };
 
+export const searchCommFields = (
+  objList,
+  searchStr,
+  { caseInsensitive } = {}
+) => {
+  if (caseInsensitive) {
+    searchStr = searchStr
+      ?.toLowerCase()
+      .trim()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+  const resList = [];
+  objList.forEach((obj) => {
+    Object.keys(obj)?.forEach((key) => {
+      // TODO: constant?
+      if (key?.startsWith("contact_")) {
+        obj?.[key]?.forEach((value) => {
+          if (value?.value) {
+            let _value = value?.value;
+            if (caseInsensitive) {
+              _value = _value
+                ?.toLowerCase()
+                .trim()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
+            }
+            if (_value?.includes(searchStr)) {
+              resList.push(obj);
+            }
+          }
+        });
+      }
+    });
+  });
+  return resList;
+};
+
 export const findFilterById = (id, filters) => {
   for (let ii = 0; ii < filters?.length; ii++) {
     const option = filters[ii];

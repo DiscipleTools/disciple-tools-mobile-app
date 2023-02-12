@@ -129,6 +129,7 @@ export const FieldNames = Object.freeze({
   LAST_MODIFIED: "last_modified",
   TITLE: "title",
   NAME: "name",
+  NICKNAME: "nickname",
   OVERALL_STATUS: "overall_status",
   REASON_CLOSED: "reason_closed",
   REASON_PAUSED: "reason_paused",
