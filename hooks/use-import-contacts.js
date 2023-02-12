@@ -40,7 +40,8 @@ const useImportContacts = ({ search }) => {
                 contactData["contact_email"] = [];
                 contact.emails.map((email, idx) => {
                   contactData["contact_email"].push({
-                    key: `contact_email_${idx}`,
+                    // including key on create new causes bug (used as value)
+                    //key: `contact_email_${idx}`,
                     value: email.email,
                   });
                 });
@@ -52,7 +53,8 @@ const useImportContacts = ({ search }) => {
                 contactData["contact_phone"] = [];
                 contact.phoneNumbers.map((phoneNumber, idx) => {
                   contactData["contact_phone"].push({
-                    key: `contact_phone_${idx}`,
+                    // including key on create new causes bug (used as value)
+                    //key: `contact_phone_${idx}`,
                     value: phoneNumber.number,
                   });
                 });
