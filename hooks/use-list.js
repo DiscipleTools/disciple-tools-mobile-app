@@ -11,7 +11,7 @@ import {
   mapFilterOnQueryParams,
 } from "helpers";
 import { getListURL } from "helpers/urls";
-import { searchObjList } from "utils";
+import { searchObjList, searchCommFields } from "utils";
 
 import { FieldNames } from "constants";
 
@@ -73,9 +73,18 @@ const useList = ({
   if (search) {
     const searchOptions = {
       caseInsensitive: true,
-      include: [FieldNames.NAME, FieldNames.POST_TITLE],
+      include: [
+        FieldNames.POST_TITLE,
+        FieldNames.NAME,
+        FieldNames.NICKNAME,
+        //FieldNames.NOTE, NOTE property is "oikos" ??
+      ],
     };
-    posts = searchObjList(posts, search, searchOptions);
+    const objSearchResList = searchObjList(posts, search, searchOptions);
+    const commSearchResList = searchCommFields(posts, search, {
+      caseInsensitive: true,
+    });
+    posts = [...commSearchResList, ...objSearchResList];
   }
   // sort posts
   posts = sortPosts({ posts, sortKey: filter?.query?.sort });
