@@ -3,12 +3,7 @@ import { Keyboard, TextInput, View } from "react-native";
 
 import CommunicationLink from "./CommunicationLink";
 
-import {
-  AddIcon,
-  RemoveIcon,
-  SaveIcon,
-  CancelIcon,
-} from "components/Icon";
+import { AddIcon, RemoveIcon, SaveIcon, CancelIcon } from "components/Icon";
 
 import useAPI from "hooks/use-api";
 import useCache from "hooks/use-cache";
@@ -31,9 +26,9 @@ const mapToComponent = ({ existingValues, idx, newValue }) => {
 const mapToComponentRemove = ({ existingValues, idx }) => {
   if (idx === 0 && existingValues?.length === 1) {
     const newValues = [...existingValues];
-    newValues[idx].value = '';
+    newValues[idx].value = "";
     return newValues;
-  };
+  }
   return existingValues.filter((_, i) => i !== idx);
 };
 
@@ -50,10 +45,12 @@ const mapToAPIRemove = ({ fieldKey, key }) => {
   return { [fieldKey]: [{ key, delete: true }] };
 };
 
-const CommunicationChannelFieldView = ({ values }) => {
+const CommunicationChannelFieldView = ({ field, values }) => {
+  const fieldName = field?.name?.toLowerCase();
   return values?.map((value, idx) => (
     <CommunicationLink
       key={value?.key ?? idx}
+      fieldName={fieldName}
       entryKey={value?.key ?? idx}
       value={value?.value}
     />
@@ -76,13 +73,13 @@ const CommunicationTextInput = ({
   defaultValue,
   onChange,
   onRemove,
-  keyboardType
+  keyboardType,
 }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const [_text, _setText] = useState(null);
   if (controls === undefined) controls = true; // default to manual save/cancel
   const [showSave, setShowSave] = useState(false);
-  return(
+  return (
     <View style={globalStyles.rowContainer}>
       <View style={[globalStyles.rowContainer, styles.container]}>
         <TextInput
@@ -93,9 +90,9 @@ const CommunicationTextInput = ({
               if (controls) {
                 setShowSave(true);
                 return;
-              };
-              onChange({ idx, value: text })
-            };
+              }
+              onChange({ idx, value: text });
+            }
           }}
           onEndEditing={() => Keyboard.dismiss()}
           style={styles.input(controls && showSave)}
@@ -103,7 +100,9 @@ const CommunicationTextInput = ({
         />
         {controls && showSave && (
           <View style={[globalStyles.rowContainer, styles.controlIcons]}>
-            <CancelIcon onPress={() => onChange({ idx, value: defaultValue })} />
+            <CancelIcon
+              onPress={() => onChange({ idx, value: defaultValue })}
+            />
             <SaveIcon onPress={() => onChange({ idx, value: _text })} />
           </View>
         )}
@@ -132,9 +131,10 @@ const CommunicationChannelFieldEdit = ({
 
   const _onAdd = () => {
     Keyboard.dismiss();
-    const newValues = _values?.length > 0 ?
-      [..._values, FieldDefaultValues.COMMUNICATION_CHANNEL] :
-      [FieldDefaultValues.COMMUNICATION_CHANNEL];
+    const newValues =
+      _values?.length > 0
+        ? [..._values, FieldDefaultValues.COMMUNICATION_CHANNEL]
+        : [FieldDefaultValues.COMMUNICATION_CHANNEL];
     _setValues(newValues);
   };
 
@@ -150,7 +150,7 @@ const CommunicationChannelFieldEdit = ({
     if (onChange) {
       onChange({ key: fieldKey, value: componentData });
       return;
-    };
+    }
     // in-memory cache (and persisted storage) state
     const cachedData = cache.get(cacheKey);
     if (!cachedData?.[fieldKey]) return;
@@ -179,6 +179,7 @@ const CommunicationChannelFieldEdit = ({
     }
     // in-memory cache (and persisted storage) state
     const cachedData = cache.get(cacheKey);
+    if (!cachedData?.[fieldKey]) return;
     cachedData[fieldKey] = componentData;
     mutate(cacheKey, cachedData);
     // remote API state
@@ -195,17 +196,17 @@ const CommunicationChannelFieldEdit = ({
         onPress={() => _onAdd({ _values, _setValues })}
         style={{ color: "green", position: "relative", top: -17, left: -30 }}
       />
-      { _values?.map((value, idx) => {
-        return(
-            <CommunicationTextInput
-              key={idx}
-              idx={idx}
-              controls={onChange ? false : true}
-              defaultValue={value?.value ?? ''}
-              onChange={_onChange}
-              onRemove={_onRemove}
-              keyboardType={keyboardType}
-            />
+      {_values?.map((value, idx) => {
+        return (
+          <CommunicationTextInput
+            key={idx}
+            idx={idx}
+            controls={onChange ? false : true}
+            defaultValue={value?.value ?? ""}
+            onChange={_onChange}
+            onRemove={_onRemove}
+            keyboardType={keyboardType}
+          />
         );
       })}
     </View>
@@ -220,7 +221,8 @@ const CommunicationChannelField = ({
   values,
   onChange,
 }) => {
-  const _values = values?.length > 0 ? values : [FieldDefaultValues.COMMUNICATION_CHANNEL];
+  const _values =
+    values?.length > 0 ? values : [FieldDefaultValues.COMMUNICATION_CHANNEL];
   if (editing) {
     return (
       <CommunicationChannelFieldEdit
@@ -232,6 +234,6 @@ const CommunicationChannelField = ({
       />
     );
   }
-  return <CommunicationChannelFieldView values={_values} />;
+  return <CommunicationChannelFieldView field={field} values={_values} />;
 };
 export default CommunicationChannelField;
