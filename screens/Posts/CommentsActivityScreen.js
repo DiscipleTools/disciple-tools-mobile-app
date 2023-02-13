@@ -257,7 +257,7 @@ const CommentsActivityItem = ({
   const defaultIndexOptions = 1; //getDefaultIndex();
   if (!item || loading) return <CommentsActivityItemLoadingSkeleton />;
   let message = item?.comment_content || item?.object_note;
-  const datetime = moment(parseDate(item)).format("d MMMM YYYY,H:m");
+  const datetime = moment(parseDate(item)).format("LLL");
   const author = item?.comment_author || item?.name;
   const authorId = Number(item?.user_id);
   const userIsAuthor = authorId === userData?.ID;
