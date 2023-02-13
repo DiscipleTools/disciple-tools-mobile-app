@@ -11,7 +11,7 @@ import {
   mapFilterOnQueryParams,
 } from "helpers";
 import { getListURL } from "helpers/urls";
-import { searchObjList, searchCommFields } from "utils";
+import { searchObjList, searchCommFields, dedupeObjList } from "utils";
 
 import { FieldNames } from "constants";
 
@@ -84,7 +84,7 @@ const useList = ({
     const commSearchResList = searchCommFields(posts, search, {
       caseInsensitive: true,
     });
-    posts = [...commSearchResList, ...objSearchResList];
+    posts = dedupeObjList([...commSearchResList, ...objSearchResList]);
   }
   // sort posts
   posts = sortPosts({ posts, sortKey: filter?.query?.sort });
