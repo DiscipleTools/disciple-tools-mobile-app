@@ -66,7 +66,7 @@ const DetailsScreen = ({ navigation, route }) => {
 
   const postType = post?.post_type;
   const postId = post?.ID;
-  const postName = post?.name;
+  const postName = route?.params?.name || post?.name || "";
   const favoriteValue = post?.favorite;
   const [isFavorite, setIsFavorite] = useState(
     favoriteValue === true || favoriteValue === "1"
@@ -168,7 +168,7 @@ const DetailsScreen = ({ navigation, route }) => {
         />
       ),
     });
-  }, [route?.params?.name, isFavorite]);
+  }, [postId, postType, isFavorite]);
 
   const [index, setIndex] = useState(0);
 
