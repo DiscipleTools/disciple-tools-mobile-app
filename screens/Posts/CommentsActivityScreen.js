@@ -497,7 +497,7 @@ const CommentsActivityScreen = ({ navigation, route }) => {
 
   const modalRefComments = useRef(null);
   const modalNameComments = "comments_modal";
-  const defaultIndexComments = 3; //getDefaultIndex();
+  const defaultIndexComments = 2; //getDefaultIndex();
 
   useLayoutEffect(() => {
     const postType = route?.params?.type;

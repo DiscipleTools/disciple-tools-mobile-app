@@ -36,7 +36,7 @@ const FilterOption = ({ idx, filters, filter, selectedFilter, onFilter }) => {
   // MODAL
   const modalRef = useRef(null);
   const modalName = `${title}_${idx}_modal`;
-  const defaultIndex = getDefaultIndex();
+  const defaultIndex = 3;
   return (
     <>
       <Chip

@@ -93,7 +93,7 @@ const KeySelectFieldEdit = ({
   // MODAL SHEET
   const modalRef = useRef(null);
   const modalName = `${fieldKey}_modal`;
-  const defaultIndex = getDefaultIndex({ items: sections?.[0]?.data });
+  const defaultIndex = getDefaultIndex();
 
   const backgroundColor = fieldOptions?.[value?.key]?.color ?? null;
 

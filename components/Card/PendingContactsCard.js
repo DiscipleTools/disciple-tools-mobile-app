@@ -27,11 +27,11 @@ const PendingContactsCard = ({ refreshing, onRefresh }) => {
   const { i18n, numberFormat } = useI18N();
 
   const { updatePost } = useAPI();
-
+  const name = i18n.t("global.pending") ?? "Waiting to be accepted";
   // TODO: constant
   const filter = {
     ID: "all_assigned",
-    name: "Waiting to be accepted", // TODO: translate?
+    name,
     query: {
       overall_status: ["assigned"],
       type: ["access"],

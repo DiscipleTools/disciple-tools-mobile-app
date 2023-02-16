@@ -58,6 +58,7 @@
     "oldest": "Oldest",
     "online": "Online",
     "options": "Options",
+    "pending": "Waiting to be accepted",
     "password": "Password",
     "pinCode": "PIN code",
     "pinCodeAction": "PIN code %{action} successfully!",
