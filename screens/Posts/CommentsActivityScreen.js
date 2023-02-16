@@ -257,7 +257,7 @@ const CommentsActivityItem = ({
   const defaultIndexOptions = 1; //getDefaultIndex();
   if (!item || loading) return <CommentsActivityItemLoadingSkeleton />;
   let message = item?.comment_content || item?.object_note;
-  const datetime = moment(parseDate(item)).format("d MMMM YYYY,H:m");
+  const datetime = moment(parseDate(item)).format("LLL");
   const author = item?.comment_author || item?.name;
   const authorId = Number(item?.user_id);
   const userIsAuthor = authorId === userData?.ID;
@@ -485,9 +485,15 @@ const CommentsActivityScreen = ({ navigation, route }) => {
     isValidating,
     mutate,
   } = useCommentsActivities({ search, filter });
-  //if (!items) return null;
 
   const [_items, _setItems] = useState(items);
+
+  useEffect(() => {
+    if (items.length > 0) {
+      _setItems(items);
+    }
+    return;
+  }, [items?.length]);
 
   const modalRefComments = useRef(null);
   const modalNameComments = "comments_modal";
@@ -495,7 +501,6 @@ const CommentsActivityScreen = ({ navigation, route }) => {
 
   useLayoutEffect(() => {
     const postType = route?.params?.type;
-
     const postId = route?.params?.id;
     const kebabItems = [
       {
@@ -512,7 +517,7 @@ const CommentsActivityScreen = ({ navigation, route }) => {
       headerRight: (props) => <HeaderRight kebabItems={kebabItems} props />,
     });
     return;
-  }, [route?.params?.id]);
+  }, [route?.params?.id, route?.params?.type]);
 
   const onEdit = ({ id, message }) => {
     setEditComment({ id, message });
