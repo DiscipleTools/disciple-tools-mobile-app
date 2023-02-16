@@ -7,6 +7,7 @@ import DangerButton from "components/Button/DangerButton";
 
 import useCache from "hooks/use-cache";
 import useStyles from "hooks/use-styles";
+import useI18N from "hooks/use-i18n";
 
 import { downloadAllData, memorySizeOf, persistCache } from "helpers";
 
@@ -39,7 +40,7 @@ const StorageScreen = () => {
       {fetching && <FetchData setFetching={setFetching} />}
       <View style={styles.listItemContainer}>
         <ActionButton
-          label={"Download Data"}
+          label={i18n.t("global.downloadData")}
           loading={fetching}
           onPress={() => setFetching(true)}
           startIcon={<DownloadIcon style={styles.buttonIcon} />}
@@ -47,18 +48,12 @@ const StorageScreen = () => {
       </View>
       <View style={styles.buttonDescriptionContainer}>
         <Text style={styles.buttonDescriptionText}>
-          This action will trigger the app to fetch and storage all possible
-          data (including all contacts, groups, their associated comments,
-          locations, people groups, etc...). Depending on your team's usage,
-          this may be several MBs of data and cause the app to run sluggishly.
-          (By default, we download only favorites and their associated data. Any
-          other data *accessed* while online is also storaged and available for
-          offline use, unless deleted).
+          {i18n.t("global.downloadDataNote")}
         </Text>
       </View>
       <View style={styles.listItemContainer}>
         <DangerButton
-          label={"Clear Storage"}
+          label={i18n.t("global.clearStorage")}
           onPress={() => {
             clearStorage();
             cache.clear();
@@ -69,9 +64,7 @@ const StorageScreen = () => {
       </View>
       <View style={styles.buttonDescriptionContainer}>
         <Text style={styles.buttonDescriptionText}>
-          Warning! If you are OFFLINE and you clear storage, then you will not
-          be able to access your data until you are back online and it is
-          refreshed.
+          {i18n.t("global.clearStorageNote")}
         </Text>
       </View>
     </View>
