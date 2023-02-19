@@ -15,7 +15,6 @@ import { findFilterById } from "utils";
 import { SortConstants } from "constants";
 
 import { localStyles } from "./FilterBar.styles";
-import FilterList from "./FilterList";
 
 const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
   const { styles, globalStyles } = useStyles(localStyles);
