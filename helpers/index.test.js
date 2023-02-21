@@ -27,7 +27,7 @@ const filterPosts = ({ posts, query, userData }) => {
         }
       }
 
-      if (queryKey?.includes(postKey)) {
+      if (Array.isArray(queryKey) && queryKey?.includes(postKey)) {
         return true;
       }
 
@@ -473,7 +473,7 @@ describe("helpers/index::filterPosts::groups", () => {
     };
     expect(filterPosts({ posts, query, userData: {} })?.length).toEqual(0);
   });
-  test.skip("filter by '1672659888.77'", () => {
+  test("filter by '1672659888.77'", () => {
     query = { fields: [{ group_status: ["inactive"] }], sort: "name" };
     expect(filterPosts({ posts, query, userData })?.length).toEqual(0);
   });

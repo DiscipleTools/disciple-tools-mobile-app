@@ -118,7 +118,7 @@ export const filterPosts = ({ posts, query }) => {
         }
       }
 
-      if (queryKey?.includes(postKey)) {
+      if (Array.isArray(queryKey) && queryKey?.includes(postKey)) {
         return true;
       }
 
