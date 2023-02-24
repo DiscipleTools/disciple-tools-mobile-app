@@ -1,0 +1,21 @@
+diff --git a/node_modules/react-native-action-button/ActionButton.js b/node_modules/react-native-action-button/ActionButton.js
+index b8306c2..28d9eed 100644
+--- a/node_modules/react-native-action-button/ActionButton.js
++++ b/node_modules/react-native-action-button/ActionButton.js
+@@ -7,6 +7,7 @@ import {
+   Animated,
+   TouchableOpacity,
+ } from "react-native";
++import {TextPropTypes} from "deprecated-react-native-prop-types";
+ import ActionButtonItem from "./ActionButtonItem";
+ import {
+   shadowStyle,
+@@ -363,7 +364,7 @@ ActionButton.propTypes = {
+   bgColor: PropTypes.string,
+   bgOpacity: PropTypes.number,
+   buttonColor: PropTypes.string,
+-  buttonTextStyle: Text.propTypes.style,
++  buttonTextStyle: TextPropTypes.style,
+   buttonText: PropTypes.string,
+ 
+   offsetX: PropTypes.number,

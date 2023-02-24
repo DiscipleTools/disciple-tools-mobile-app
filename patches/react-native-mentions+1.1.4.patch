@@ -1,0 +1,25 @@
+diff --git a/node_modules/react-native-mentions/src/MentionsTextInput.js b/node_modules/react-native-mentions/src/MentionsTextInput.js
+index 41d9d6b..4f81f2a 100644
+--- a/node_modules/react-native-mentions/src/MentionsTextInput.js
++++ b/node_modules/react-native-mentions/src/MentionsTextInput.js
+@@ -4,9 +4,9 @@ import {
+   View,
+   Animated,
+   TextInput,
+-  FlatList,
+-  ViewPropTypes
++  FlatList
+ } from 'react-native';
++import {TextInputPropTypes,ViewPropTypes} from 'deprecated-react-native-prop-types';
+ import PropTypes from 'prop-types';
+ 
+ export default class MentionsTextInput extends Component {
+@@ -137,7 +137,7 @@ export default class MentionsTextInput extends Component {
+ }
+ 
+ MentionsTextInput.propTypes = {
+-  textInputStyle: TextInput.propTypes.style,
++  textInputStyle: TextInputPropTypes.style,
+   suggestionsPanelStyle: ViewPropTypes.style,
+   loadingComponent: PropTypes.oneOfType([
+     PropTypes.func,

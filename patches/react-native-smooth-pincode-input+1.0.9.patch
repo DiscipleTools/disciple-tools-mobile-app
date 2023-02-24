@@ -1,0 +1,50 @@
+diff --git a/node_modules/react-native-smooth-pincode-input/src/index.js b/node_modules/react-native-smooth-pincode-input/src/index.js
+index 0a00f22..939fe7c 100644
+--- a/node_modules/react-native-smooth-pincode-input/src/index.js
++++ b/node_modules/react-native-smooth-pincode-input/src/index.js
+@@ -5,11 +5,12 @@ import {
+   Text,
+   TextInput,
+   StyleSheet,
+-  I18nManager,
+-  ViewPropTypes,
++  I18nManager
+ } from 'react-native';
++import { TextPropTypes, TextInputPropTypes, ViewPropTypes } from 'deprecated-react-native-prop-types';
+ import * as Animatable from 'react-native-animatable';
+ 
++
+ const styles = StyleSheet.create({
+   containerDefault: {},
+   cellDefault: {
+@@ -255,8 +256,8 @@ class SmoothPinCodeInput extends Component {
+     containerStyle: styles.containerDefault,
+     cellStyle: styles.cellDefault,
+     cellStyleFocused: styles.cellFocusedDefault,
+-    textStyle: styles.textStyleDefault,
+-    textStyleFocused: styles.textStyleFocusedDefault,
++    textStyle: TextPropTypes.style,
++    textStyleFocused: TextPropTypes.style,
+     animationFocused: 'pulse',
+     animated: true,
+     editable: true,
+@@ -292,8 +293,8 @@ SmoothPinCodeInput.propTypes = {
+   cellStyleFocused: ViewPropTypes.style,
+   cellStyleFilled: ViewPropTypes.style,
+ 
+-  textStyle: Text.propTypes.style,
+-  textStyleFocused: Text.propTypes.style,
++  textStyle: TextPropTypes.style,
++  textStyleFocused: TextPropTypes.style,
+ 
+   animated: PropTypes.bool,
+   animationFocused: PropTypes.oneOfType([
+@@ -310,7 +311,7 @@ SmoothPinCodeInput.propTypes = {
+   onBlur: PropTypes.func,
+   keyboardType: PropTypes.string,
+   editable: PropTypes.bool,
+-  inputProps: PropTypes.exact(TextInput.propTypes),
++  inputProps: PropTypes.exact(TextInputPropTypes),
+ };
+ 
+ export default SmoothPinCodeInput;
