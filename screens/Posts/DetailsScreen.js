@@ -21,7 +21,7 @@ import OfflineBar from "components/OfflineBar";
 import TitleBar from "components/TitleBar";
 import Tile from "components/Post/Tile";
 import PostSkeleton from "components/Post/PostSkeleton";
-import FAB from "components/FAB";
+import { PostFAB } from "components/FAB";
 import ModalSheet, { getDefaultIndex } from "components/Sheet/ModalSheet";
 import UsersSheet from "components/Field/UserSelect/UsersSheet";
 
@@ -268,7 +268,7 @@ const DetailsScreen = ({ navigation, route }) => {
         )}
         style={globalStyles.surface}
       />
-      <FAB />
+      <PostFAB />
     </>
   );
 };
