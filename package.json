@@ -8,8 +8,6 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "pretty-quick": "pretty-quick --staged",
-    "patch:List": "git apply FilterList.patch",
-    "unpatch:List": "git apply -R FilterList.patch",
     "postinstall": "patch-package",
     "lint": "npx eslint --ext .jsx,.js ./ --fix",
     "test": "npx jest --testEnvironment --passWithNoTests node --colors --coverage --updateSnapshot .",
