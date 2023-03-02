@@ -54,7 +54,7 @@ const useFilter = () => {
     let key = postType;
     if (isNotification) key = TypeConstants.NOTIFICATION;
     if (isCommentsActivity) key = SubTypeConstants.COMMENTS_ACTIVITY;
-    if (persistedFilters && persistedFilters[key]) {
+    if (persistedFilters && persistedFilters?.[key]) {
       const filterID = persistedFilters[key];
       // TODO: explain... necessary to ensure consistency beteween LaunchScreen, HomeScreen, and ListScreen
       if (filterID === "favorite") {

@@ -91,44 +91,87 @@ export const memorySizeOf = (obj) => {
 
 export const filterPosts = ({ posts, query }) => {
   if (!query) return posts;
-  // TODO: constant, and fill out remainer!!
-  const meMultipleFields = ["subassigned", "coached_by"];
+  // eg, {"assigned_to":["me"],"subassigned":["me"],"combine":["subassigned"],"overall_status":["-closed"],"type":["access"],"sort":"overall_status"};
+  // TODO: do this dynamically?
+  const meList = ["subassigned", "coached_by", "shared_with"];
   if (query?.fields) query = query.fields;
-  return posts?.filter((item) => {
+  return posts?.filter((post) => {
     let queryKeys = Object.keys(query);
-    queryKeys = queryKeys.filter(
-      (key) => key !== "sort" && key !== "combine" && key !== "subassigned"
-    );
+    queryKeys = queryKeys.filter((key) => key !== "sort" && key !== "combine");
     if (!queryKeys?.length > 0) return true;
     const queryMatches = queryKeys?.map((key) => {
-      if (!item?.[key]) return false;
-      if (item[key] === "*") return true; // matches: ...query { "comment_ID": '*' ...}
-      if (query[key]?.includes(item?.[key])) return true;
-      if (query[key]?.includes(item?.[key]?.key)) return true;
+      let queryKey = query?.[key];
+      if (!queryKey) return false;
+      let postKey = post?.[key]?.key || post?.[key];
+
+      // eg, { "comment_ID": '*' ...}
+      if (postKey === "*") return true;
+
+      /*
+       * NOTE: "post?.[key]?.key" is checked prior to "post?.[key]", and
+       * check negated properties first
+       */
+
+      if (typeof queryKey?.[0] === "string" && queryKey?.[0]?.startsWith("-")) {
+        if (queryKey[0] === undefined || queryKey[0].slice(1) !== postKey) {
+          return true;
+        }
+      }
+
+      if (Array.isArray(queryKey) && queryKey?.includes(postKey)) {
+        return true;
+      }
+
       // special handler for "favorite" field
-      if (query[key][0] === "1" && item?.[key] === true) return true;
+      if (queryKey?.[0] === "1" && postKey === true) {
+        return true;
+      }
+
       /*
        * NOTE: userData is accessed from cache (bc problematic to access it via
        * 'use-my-user' hook from within 'use-list' for some unknown reason)
        */
       const userData = SWRConfig.default.cache.get(MyUserDataURL);
-      // special handler for "assigned_to" field
+
       if (
         key === "assigned_to" &&
-        query[key][0] === "me" &&
-        item?.[key]?.id === userData?.ID?.toString()
-      )
+        queryKey.includes("me") &&
+        postKey?.id === userData?.ID?.toString()
+      ) {
         return true;
-      // special handler for "subassigned" (and other "me") fields
+      }
+
+      // handle case where record is both "assigned_to" and "subassigned" to user
       if (
-        meMultipleFields.includes(key) &&
-        query[key][0] === "me" &&
-        item?.[key]?.find((_item) => _item?.ID === userData?.ID?.toString())
-      )
+        key === "subassigned" &&
+        queryKey.includes("me") &&
+        query?.["assigned_to"]?.includes("me")
+      ) {
         return true;
+      }
+
+      // handler for "me" queries (like "assigned_to" query, but list of values)
+      // TODO: API BUG (need "contact_id" property since "subassigned".ID refers to contact ID, not user ID)
+      //postKey?.find((_item) => _item?.ID === userData?.ID?.toString())
+      if (
+        meList.includes(key) &&
+        queryKey.includes("me") &&
+        postKey?.find(
+          (_item) => _item?.post_title === userData?.profile?.username
+        )
+      ) {
+        return true;
+      }
+
       return false;
     });
-    if (!queryMatches?.includes(false)) return true;
+
+    // if none of the rules have failed (false), then return true for post
+    if (!queryMatches?.includes(false)) {
+      return true;
+    }
+
+    // default to false, to be cautious
     return false;
   });
 };

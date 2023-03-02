@@ -59,6 +59,7 @@ const FilterOption = ({ idx, filters, filter, selectedFilter, onFilter }) => {
         <FilterSheet
           filters={filters?.filter((filter) => title === filter?.title)}
           filter={filter}
+          selectedFilter={selectedFilter}
           onFilter={onFilter}
           modalName={modalName}
         />

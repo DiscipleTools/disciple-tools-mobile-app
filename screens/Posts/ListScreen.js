@@ -6,7 +6,7 @@ import { useSWRConfig } from "swr";
 import { HeaderRight } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
 import FilterList from "components/FilterList";
-import FAB from "components/FAB";
+import { ListFAB } from "components/FAB";
 import {
   PostItem,
   PostItemSkeleton,
@@ -103,7 +103,7 @@ const ListScreen = ({ navigation, route }) => {
           //rightOpenValue={Constants.SWIPE_BTN_WIDTH * Constants.NUM_SWIPE_BUTTONS_RIGHT}
         />
       </View>
-      <FAB />
+      <ListFAB />
     </>
   );
 };

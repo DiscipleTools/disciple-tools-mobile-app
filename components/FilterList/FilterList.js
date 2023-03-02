@@ -5,10 +5,7 @@ import {
   RefreshControl,
   View,
 } from "react-native";
-//import { FlashList } from "@shopify/flash-list";
-//import { FlatList } from "react-native";
-// ref: https://gorhom.github.io/react-native-bottom-sheet/troubleshooting/#adding-horizontal-flatlist-or-scrollview-is-not-working-properly-on-android
-import { FlatList } from "react-native-gesture-handler";
+import { FlashList } from "@shopify/flash-list";
 
 import SearchBar from "./SearchBar";
 import FilterBar from "./FilterBar";
@@ -98,7 +95,7 @@ const FilterList = ({
           onFilter={onFilter}
         />
       )}
-      <FlatList
+      <FlashList
         keyExtractor={keyExtractor}
         data={_items}
         renderItem={renderItem}
@@ -106,14 +103,7 @@ const FilterList = ({
         refreshControl={
           <RefreshControl refreshing={_refreshing} onRefresh={_onRefresh} />
         }
-        style={styles.container}
         contentContainerStyle={globalStyles.screenGutter}
-        /*
-        contentContainerStyle={{
-          ...globalStyles.screenGutter,
-          ...styles.container,
-        }}
-        */
         // Performance settings
         getItemLayout={getItemLayout}
         estimatedItemSize={200}

@@ -5,11 +5,19 @@ import { CheckIcon } from "components/Icon";
 import SelectSheet from "./SelectSheet";
 
 import { useBottomSheetModal } from "@gorhom/bottom-sheet";
+import useList from "hooks/use-list";
 import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./FilterSheet.styles";
 
-const FilterSheet = ({ multiple, filters, filter, onFilter, modalName }) => {
+const FilterSheet = ({
+  multiple,
+  filters,
+  filter,
+  selectedFilter,
+  onFilter,
+  modalName,
+}) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { dismiss } = useBottomSheetModal();
 
@@ -18,10 +26,15 @@ const FilterSheet = ({ multiple, filters, filter, onFilter, modalName }) => {
     if (!multiple) dismiss(modalName);
   };
 
+  const Count = ({ filter }) => {
+    const { data: items } = useList({ filter });
+    return items?.length ?? null;
+  };
+
   const renderItem = (item, idx) => {
     if (!item) return null;
     const { ID, name, icon, count, subfilter, query } = item;
-    const selected = ID === filter?.ID;
+    const selected = selectedFilter?.ID === ID;
     const _key = `${ID}_${idx}`;
     return (
       <Pressable
@@ -32,7 +45,9 @@ const FilterSheet = ({ multiple, filters, filter, onFilter, modalName }) => {
         {icon && <View style={globalStyles.rowIcon}>{icon}</View>}
         <View style={styles.itemSubFilterContainer(subfilter)}>
           <Text style={styles.itemText}>
-            {name} {count > 0 ? `(${count})` : null}
+            {name} {"("}
+            <Count filter={item} />
+            {")"}
           </Text>
         </View>
         {selected && (

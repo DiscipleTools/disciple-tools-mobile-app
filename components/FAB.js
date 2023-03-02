@@ -24,7 +24,7 @@ import {
 
 import { localStyles } from "./FAB.styles";
 
-const ListFAB = ({ offsetX, offsetY }) => {
+export const ListFAB = ({ offsetX, offsetY }) => {
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
@@ -98,7 +98,7 @@ const ListFAB = ({ offsetX, offsetY }) => {
   );
 };
 
-const PostFAB = ({ offsetX, offsetY }) => {
+export const PostFAB = ({ offsetX, offsetY }) => {
   const navigation = useNavigation();
 
   const { styles, globalStyles } = useStyles(localStyles);
@@ -108,10 +108,10 @@ const PostFAB = ({ offsetX, offsetY }) => {
   const { isList, isPost, isContact, postType, getTabScreenFromType } =
     useType();
 
-  const { data: post } = useDetails();
-
+  const { data: post, error, isLoading } = useDetails();
   const { settings } = useSettings();
-  if (!settings) return null;
+  if (!post || error || isLoading || !settings) return null;
+
   const fields = settings?.post_types?.[post?.post_type]?.fields;
 
   const onSaveQuickAction = (quickActionPropertyName) => {
@@ -229,16 +229,3 @@ const PostFAB = ({ offsetX, offsetY }) => {
     </ActionButton>
   );
 };
-
-const FAB = ({ offsetX, offsetY }) => {
-  const { isList, isContact } = useType();
-  if (isList) {
-    return <ListFAB offsetX={offsetX} offsetY={offsetY} />;
-  }
-  // Groups (and other Post Types) are not supported yet
-  if (isContact) {
-    return <PostFAB offsetX={offsetX} offsetY={offsetY} />;
-  }
-  return null;
-};
-export default FAB;

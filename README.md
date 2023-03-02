@@ -56,8 +56,6 @@ expo start
   - Scan the QR code above with Expo Go (Android) or the Camera app (iOS), or
   - or, manually open Expo app on phone and select appropriate option from under "Development servers"
   - (NOTE: Your phone must be on the same local network as the development computer)
-  - To run on the phone you will first need to patch the diff with `npm run patch:List`
-  - Before committing make sure to unpatch using `npm run unpatch:List`
 
 - Recently tested with the following library versions:
   - Node v14 or v16 (or should work with latest)
