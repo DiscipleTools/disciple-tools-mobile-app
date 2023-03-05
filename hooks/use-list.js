@@ -11,7 +11,8 @@ import {
   mapFilterOnQueryParams,
 } from "helpers";
 import { getListURL } from "helpers/urls";
-import { searchObjList, searchCommFields, dedupeObjList } from "utils";
+//import { searchObjList, searchCommFields, dedupeObjList } from "utils";
+import { searchObjList, dedupeObjList } from "utils";
 
 import { FieldNames } from "constants";
 
@@ -80,11 +81,14 @@ const useList = ({
         //FieldNames.NOTE, NOTE property is "oikos" ??
       ],
     };
+    posts = searchObjList(posts, search, searchOptions);
+    /*
     const objSearchResList = searchObjList(posts, search, searchOptions);
     const commSearchResList = searchCommFields(posts, search, {
       caseInsensitive: true,
     });
     posts = dedupeObjList([...commSearchResList, ...objSearchResList]);
+*/
   }
   // sort posts
   posts = sortPosts({ posts, sortKey: filter?.query?.sort });
