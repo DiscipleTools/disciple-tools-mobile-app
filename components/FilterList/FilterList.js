@@ -5,6 +5,7 @@ import {
   RefreshControl,
   View,
 } from "react-native";
+import { ScrollView, FlatList } from "react-native-gesture-handler";
 import { FlashList } from "@shopify/flash-list";
 
 import SearchBar from "./SearchBar";
@@ -18,6 +19,7 @@ import Constants from "constants";
 import { localStyles } from "./FilterList.styles";
 
 const FilterList = ({
+  isFlashList,
   display,
   sortable,
   items,
@@ -95,19 +97,35 @@ const FilterList = ({
           onFilter={onFilter}
         />
       )}
-      <FlashList
-        keyExtractor={keyExtractor}
-        data={_items}
-        renderItem={renderItem}
-        ListEmptyComponent={<Placeholder placeholder={placeholder} />}
-        refreshControl={
-          <RefreshControl refreshing={_refreshing} onRefresh={_onRefresh} />
-        }
-        contentContainerStyle={globalStyles.screenGutter}
-        // Performance settings
-        getItemLayout={getItemLayout}
-        estimatedItemSize={200}
-      />
+      {isFlashList ? (
+        <FlashList
+          keyExtractor={keyExtractor}
+          data={_items}
+          renderItem={renderItem}
+          ListEmptyComponent={<Placeholder placeholder={placeholder} />}
+          refreshControl={
+            <RefreshControl refreshing={_refreshing} onRefresh={_onRefresh} />
+          }
+          contentContainerStyle={globalStyles.screenGutter}
+          // Performance settings
+          getItemLayout={getItemLayout}
+          estimatedItemSize={200}
+        />
+      ) : (
+        <FlatList
+          keyExtractor={keyExtractor}
+          data={_items}
+          renderItem={renderItem}
+          ListEmptyComponent={<Placeholder placeholder={placeholder} />}
+          refreshControl={
+            <RefreshControl refreshing={_refreshing} onRefresh={_onRefresh} />
+          }
+          contentContainerStyle={globalStyles.screenGutter}
+          // Performance settings
+          getItemLayout={getItemLayout}
+          estimatedItemSize={200}
+        />
+      )}
       {refreshing && (
         <View style={globalStyles.activityIndicator}>
           <ActivityIndicator size="large" />

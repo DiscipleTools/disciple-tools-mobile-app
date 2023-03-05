@@ -86,6 +86,7 @@ const ListScreen = ({ navigation, route }) => {
       <View style={[globalStyles.container(tabBarHeight)]}>
         <OfflineBar />
         <FilterList
+          isFlashList
           display
           sortable
           items={items}
