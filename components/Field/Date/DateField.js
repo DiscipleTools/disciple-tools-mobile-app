@@ -7,6 +7,7 @@ import { CancelIcon, EditIcon } from "components/Icon";
 
 import useAPI from "hooks/use-api";
 import useCache from "hooks/use-cache";
+import useDevice from "hooks/use-device";
 import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
 
@@ -32,7 +33,8 @@ const getTimezoneOffset = ({ date, unit }) => {
       default:
         break;
     }
-    return timezoneOffset;
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset#description
+    return timezoneOffset * -1;
   } catch (error) {
     console.error(error);
     return null;
@@ -71,9 +73,15 @@ const mapToCache = ({ newValue }) => {
   return { formatted, timestamp: Math.floor(newValue.valueOf() / 1000) };
 };
 
-const mapToAPI = ({ fieldKey, newValue }) => ({
-  [fieldKey]: Math.floor(newValue.valueOf() / 1000),
-});
+const mapToAPI = ({ fieldKey, newValue }) => {
+  if (!newValue)
+    return {
+      [fieldKey]: "",
+    };
+  return {
+    [fieldKey]: Math.floor(newValue.valueOf() / 1000),
+  };
+};
 
 const formatDateView = ({ date, locale }) => {
   const options = {
@@ -114,30 +122,45 @@ const DateFieldEdit = ({
 
   const { cache, mutate } = useCache();
 
-  const _onChange = async (_, newValue) => {
+  const { isAndroid } = useDevice();
+
+  const _onChange = async (evt, newValue) => {
     /*
     if (onChange) {
       onChange(newValue);
       return;
     };
     */
-    if (value != newValue) {
-      // component state
-      setValue(newValue);
+    if (isAndroid && evt.type === "neutralButtonPressed") {
+      newValue = null;
+    }
+    // if Android, then we need to check the DateTimePicker event type
+    if (
+      (isAndroid &&
+        (evt.type === "set" || evt.type === "neutralButtonPressed") &&
+        value != newValue) ||
+      (!isAndroid && value != newValue)
+    ) {
       // in-memory cache (and persisted storage) state
       const cachedData = cache.get(cacheKey);
       const mappedCacheData = mapToCache({ fieldKey, newValue });
       cachedData[fieldKey] = mappedCacheData;
       mutate(cacheKey, () => cachedData, { revalidate: false });
+      // component state
+      setValue(newValue);
       // remote API state
       const data = mapToAPI({ fieldKey, newValue });
       await updatePost({ data });
-      setEditing(false);
     }
+    setEditing(false);
   };
 
   const getMaxDate = () => {
-    if (fieldKey === FieldNames.BAPTISM_DATE) return new Date();
+    if (
+      fieldKey === FieldNames.BAPTISM_DATE ||
+      fieldKey === FieldNames.DATE_OF_BIRTH
+    )
+      return new Date();
     return null;
   };
 
@@ -156,6 +179,7 @@ const DateFieldEdit = ({
         display="default"
         locale={locale?.replace("_", "-")}
         onChange={_onChange}
+        neutralButtonLabel="clear"
         style={styles.picker}
       />
       {editing && <CancelIcon onPress={() => setEditing(false)} />}
