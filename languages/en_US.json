@@ -43,6 +43,10 @@
     "importContact": "Import a phone contact",
     "items": "Items",
     "language": "Language",
+    "launchCard": {
+      "title": "Loading data for offline use",
+      "body": "Prefetching Favorites and any recently modified records (for offline use)"
+    },
     "login": "Log In",
     "otp": "OTP",
     "logout": "Sign Out",

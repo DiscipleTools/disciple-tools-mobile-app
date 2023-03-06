@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { mutate, useSWRConfig } from "swr";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -9,8 +9,10 @@ import TabNavigator from "navigation/TabNavigator";
 
 import { LogoHeader } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
+import Card from "components/Card/Card";
 
 import useCache from "hooks/use-cache";
+import useI18N from "hooks/use-i18n";
 import useNetwork from "hooks/use-network";
 import useStyles from "hooks/use-styles";
 
@@ -186,6 +188,27 @@ const HydrateCache = ({ setHydrating }) => {
   return null;
 };
 
+const Announcement = () => {
+  const { styles, globalStyles } = useStyles(localStyles);
+  const { i18n } = useI18N();
+  return (
+    <View style={globalStyles.activityIndicator}>
+      <Card
+        border
+        title={i18n.t("global.launchCard.title")}
+        body={
+          <>
+            <Text style={styles.announcement}>
+              {i18n.t("global.launchCard.body")}
+            </Text>
+            <ActivityIndicator size="large" />
+          </>
+        }
+      />
+    </View>
+  );
+};
+
 const LaunchScreen = () => {
   const { isConnected, isInitializing } = useNetwork();
   const { styles, globalStyles } = useStyles(localStyles);
@@ -222,9 +245,7 @@ const LaunchScreen = () => {
         {isConnected && fetching && !hydrating && (
           <PrefetchData setFetching={setFetching} />
         )}
-        <View style={globalStyles.activityIndicator}>
-          <ActivityIndicator size="large" />
-        </View>
+        <Announcement />
       </View>
     </SafeAreaView>
   );
