@@ -20,7 +20,7 @@ const snapPoints = ["15%", "33%", "50%", "66%", "85%", "95%"];
 
 export const getDefaultIndex = ({ items, itemHeight } = {}) => {
   const optionsCount = items?.length;
-  if (!optionsCount) return snapPoints.length - 1;
+  if (!optionsCount) return snapPoints.length - 2;
   //if (optionsCount < 2) return 0;
   if (optionsCount < 3) return 1;
   if (optionsCount < 5) return 2;

@@ -13,7 +13,7 @@ const Sort = ({ items, setItems, filter, onFilter }) => {
   // MODAL SHEET
   const modalRef = useRef(null);
   const modalName = `sort_${filter?.ID ?? ""}_modal`;
-  const defaultIndex = 2;
+  const defaultIndex = 3;
   const title = i18n.t("global.sortBy");
   return (
     <>
