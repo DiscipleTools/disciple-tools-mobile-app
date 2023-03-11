@@ -27,11 +27,11 @@ const PendingContactsCard = ({ refreshing, onRefresh }) => {
   const { i18n, numberFormat } = useI18N();
 
   const { updatePost } = useAPI();
-
+  const name = i18n.t("global.pending") ?? "Waiting to be accepted";
   // TODO: constant
   const filter = {
     ID: "all_assigned",
-    name: "Waiting to be accepted", // TODO: translate?
+    name,
     query: {
       overall_status: ["assigned"],
       type: ["access"],
@@ -83,14 +83,24 @@ const PendingContactsCard = ({ refreshing, onRefresh }) => {
       <View style={[globalStyles.rowContainer, styles.buttonRowContainer]}>
         <Pressable
           onPress={() => handleAccept({ contact, accept: true })}
-          style={[styles.buttonContainer, styles.buttonAccept]}
+          style={[
+            globalStyles.rowContainer,
+            styles.buttonContainer,
+            styles.buttonAccept,
+          ]}
         >
+          <AcceptIcon style={{ color: "#fff" }} />
           <Text style={styles.buttonText}>{i18n.t("global.accept")}</Text>
         </Pressable>
         <Pressable
           onPress={() => handleAccept({ contact, accept: false })}
-          style={[styles.buttonContainer, styles.buttonDecline]}
+          style={[
+            globalStyles.rowContainer,
+            styles.buttonContainer,
+            styles.buttonDecline,
+          ]}
         >
+          <DeclineIcon style={{ color: "#fff" }} />
           <Text style={styles.buttonText}>{i18n.t("global.decline")}</Text>
         </Pressable>
       </View>

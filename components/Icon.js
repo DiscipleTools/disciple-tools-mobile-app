@@ -198,6 +198,12 @@ export const HamburgerIcon = ({ onPress, style }) => (
     style={style}
   />
 );
+export const ExtLinkIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="open-in-new" onPress={onPress} style={style} />
+);
+export const HelpSupportIcon = ({ onPress, style }) => (
+  <MaterialCommunityIcon name="lifebuoy" onPress={onPress} style={style} />
+);
 export const HelpIcon = ({ onPress, style }) => (
   <MaterialCommunityIcon name="help-circle" onPress={onPress} style={style} />
 );
